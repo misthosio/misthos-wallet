@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "blockstack": "^0.11.1",
+    "bootstrap": "^3.3.7",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "reason-scripts": "0.6.11"
