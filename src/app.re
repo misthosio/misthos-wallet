@@ -1,7 +1,5 @@
 [%bs.raw {|require('./app.css')|}];
 
-external logo : string = "./logo.svg" [@@bs.module];
-
 let component = ReasonReact.statelessComponent "App";
 
 let make ::userData _children => {
@@ -9,6 +7,7 @@ let make ::userData _children => {
   render: fun _self =>
     <div className="site-wrapper">
       <div className="site-wrapper-inner">
+        <SignIn />
         (
           switch userData {
           | None => <div> (ReasonReact.stringToElement "None") </div>
