@@ -2,9 +2,10 @@
 
 [@bs.module "blockstack"] external isSignInPending : unit => bool = "";
 
-type userData = {username: string};
+type userData = {. "username": Js.nullable(string)};
 
-[@bs.module "blockstack"] external loadUserData : unit => option(userData) = "";
+[@bs.module "blockstack"] [@bs.return nullable] external loadUserData : unit => option(userData) =
+  "";
 
 [@bs.module "blockstack"] external redirectToSignIn : unit => unit = "";
 

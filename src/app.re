@@ -4,16 +4,23 @@
 
 let component = ReasonReact.statelessComponent("App");
 
-let make = (~userData, _children) => {
+let make = (~session: Session.session, _children) => {
   ...component,
   render: (_self) =>
     <div className="site-wrapper">
+      {
+        let header =
+          switch session {
+          | NotLoggedIn => "Welcome To Misthos"
+          | LoggedIn(user) => "Hello " ++ user.userName
+          };
+        <h1 className="landing-heading"> (ReasonReact.stringToElement(header)) </h1>
+      }
       <div className="site-wrapper-inner">
-        <SignIn />
         (
-          switch userData {
-          | None => <div> (ReasonReact.stringToElement("None")) </div>
-          | Some(_) => <div> (ReasonReact.stringToElement("Some")) </div>
+          switch session {
+          | NotLoggedIn => <SignIn />
+          | LoggedIn(_) => <SignOut />
           }
         )
       </div>
