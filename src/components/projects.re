@@ -14,21 +14,21 @@ let make = (_children) => {
     switch action {
     | ProjectsLoaded(projects) => ReasonReact.Update(Loaded(projects))
     },
-  didMount: ({reduce}) => {
-    Js.Promise.(
-      State.loadProjects()
-      |> then_((projects) => reduce(() => ProjectsLoaded(projects), ()) |> resolve)
-    )
-    |> ignore;
-    ReasonReact.NoUpdate
-  },
+  /* didMount: ({reduce}) => { */
+  /*   Js.Promise.( */
+  /*     State.loadProjects() */
+  /*     |> then_((projects) => reduce(() => ProjectsLoaded(projects), ()) |> resolve) */
+  /*   ) */
+  /*   |> ignore; */
+  /*   ReasonReact.NoUpdate */
+  /* }, */
   render: ({state}) =>
-    <div>
-      (
-        switch state {
-        | NotLoaded => ReasonReact.stringToElement("NotLoaded")
-        | Loaded(projects) => ReasonReact.stringToElement(projects)
-        }
-      )
-    </div>
+    <div
+      /* ( */
+      /*   switch state { */
+      /*   | NotLoaded => ReasonReact.stringToElement("NotLoaded") */
+      /*   | Loaded(projects) => ReasonReact.stringToElement(projects) */
+      /*   } */
+      /* ) */
+    />
 };

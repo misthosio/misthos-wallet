@@ -1,18 +1,24 @@
-type project = {name: string};
+type t = {name: string};
+
+module Serialization = {
+  let project = (json) => Json.Decode.{name: json |> field("name", string)};
+  let projectsFromJson = (projectsString) =>
+    Js.Json.parseExn(projectsString) |> Json.Decode.list(project);
+};
 
 let indexPath = "/index.json";
 
 let initializeProjects = () =>
   Js.Promise.(Blockstack.putFile(indexPath, "[]", Js.false_) |> then_(() => resolve([])));
 
-let loadProjects = () =>
+let loadProjectList = () =>
   Js.Promise.(
     Blockstack.getFile(indexPath, Js.false_)
     |> then_(
          (nullProjects) =>
            switch (Js.Nullable.to_opt(nullProjects)) {
            | None => initializeProjects()
-           | Some(projects) => resolve([])
+           | Some(projects) => resolve(Serialization.projectsFromJson(projects))
            }
        )
   );

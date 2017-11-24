@@ -20,4 +20,6 @@ let handlePendingSignIn = () =>
 [@bs.module "blockstack"] external putFile : (string, string, Js.boolean) => Js.Promise.t(unit) =
   "";
 
-[@bs.module "blockstack"] external getFile : (string, Js.boolean) => Js.Promise.t(string) = "";
+[@bs.module "blockstack"]
+external getFile : (string, Js.boolean) => Js.Promise.t(Js.nullable(string)) =
+  "";
