@@ -13,16 +13,17 @@ let make = (~session: Session.session, _children) => {
           switch session {
           | NotLoggedIn => "Welcome To Misthos"
           | LoggedIn(user) => "Hello " ++ user.userName
+          | LoginPending => "Logging in"
           };
         <h1 className="landing-heading"> (ReasonReact.stringToElement(header)) </h1>
       }
-      <div className="site-wrapper-inner">
-        (
-          switch session {
-          | NotLoggedIn => <SignIn />
-          | LoggedIn(_) => <SignOut />
-          }
-        )
-      </div>
+      (
+        switch session {
+        | NotLoggedIn => <SignIn />
+        | LoggedIn(_) => <SignOut />
+        | LoginPending => <div />
+        }
+      )
+      <div className="site-wrapper-inner"> <Projects /> </div>
     </div>
 };

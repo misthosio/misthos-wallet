@@ -2,6 +2,7 @@ type user = {userName: string};
 
 type session =
   | NotLoggedIn
+  | LoginPending
   | LoggedIn(user);
 
 let getCurrentSession = () =>
@@ -16,10 +17,10 @@ let getCurrentSession = () =>
         };
       LoggedIn({userName: userName})
     }
+  } else if (Blockstack.isSignInPending()) {
+    Blockstack.handlePendingSignIn();
+    LoginPending
   } else {
-    if (Blockstack.isSignInPending()) {
-      Blockstack.handlePendingSignIn()
-    };
     NotLoggedIn
   };
 
