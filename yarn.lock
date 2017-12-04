@@ -1065,6 +1065,10 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bech32@0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/bech32/-/bech32-0.0.3.tgz#736747c4a6531c5d8937d0400498de30e93b2f9c"
+
 big.js@^3.1.3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-3.2.0.tgz#a5fc298b81b9e0dca2e458824784b65c52ba588e"
@@ -1083,6 +1087,10 @@ bip66@^1.1.0:
   dependencies:
     safe-buffer "^5.0.1"
 
+bitcoin-ops@^1.3.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/bitcoin-ops/-/bitcoin-ops-1.4.0.tgz#90d9c95c067e9a34a6ccaa3dd324ffa84e31e3d8"
+
 bitcoinjs-lib@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-2.3.0.tgz#fa4d27b9696415d5b30357eeac5d222713e1966a"
@@ -1098,6 +1106,26 @@ bitcoinjs-lib@^2.3.0:
     ecurve "^1.0.0"
     randombytes "^2.0.1"
     typeforce "^1.6.2"
+    wif "^2.0.1"
+
+bitcoinjs-lib@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-3.3.1.tgz#0bb9358dc3fd3f55066704cf8bf57b8b8b4020ca"
+  dependencies:
+    bech32 "0.0.3"
+    bigi "^1.4.0"
+    bip66 "^1.1.0"
+    bitcoin-ops "^1.3.0"
+    bs58check "^2.0.0"
+    create-hash "^1.1.0"
+    create-hmac "^1.1.3"
+    ecurve "^1.0.0"
+    merkle-lib "^2.0.10"
+    pushdata-bitcoin "^1.0.1"
+    randombytes "^2.0.1"
+    safe-buffer "^5.0.1"
+    typeforce "^1.11.3"
+    varuint-bitcoin "^1.0.4"
     wif "^2.0.1"
 
 block-stream@*:
@@ -1345,7 +1373,7 @@ bs58@^4.0.0:
   dependencies:
     base-x "^3.0.2"
 
-bs58check@<3.0.0:
+bs58check@<3.0.0, bs58check@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/bs58check/-/bs58check-2.1.0.tgz#0d378950b49261c807fbe46e5dd2cf5eb2f89513"
   dependencies:
@@ -4459,6 +4487,10 @@ merge@^1.1.3:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/merge/-/merge-1.2.0.tgz#7531e39d4949c281a66b8c5a6e0265e8b05894da"
 
+merkle-lib@^2.0.10:
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/merkle-lib/-/merkle-lib-2.0.10.tgz#82b8dbae75e27a7785388b73f9d7725d0f6f3326"
+
 methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
@@ -5451,6 +5483,12 @@ punycode@1.3.2:
 punycode@^1.2.4, punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
+
+pushdata-bitcoin@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/pushdata-bitcoin/-/pushdata-bitcoin-1.0.1.tgz#15931d3cd967ade52206f523aa7331aef7d43af7"
+  dependencies:
+    bitcoin-ops "^1.3.0"
 
 q@^1.1.2:
   version "1.5.1"
@@ -6617,7 +6655,7 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typeforce@^1.6.2:
+typeforce@^1.11.3, typeforce@^1.6.2:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/typeforce/-/typeforce-1.12.0.tgz#ca40899919f1466d7819e37be039406beb912a2e"
 
@@ -6776,6 +6814,10 @@ validate-npm-package-license@^3.0.1:
 validator@^7.0.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-7.2.0.tgz#a63dcbaba51d4350bf8df20988e0d5a54d711791"
+
+varuint-bitcoin@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/varuint-bitcoin/-/varuint-bitcoin-1.0.4.tgz#d812c5dae16e32f60544b6adee1d4be1307d0283"
 
 vary@~1.1.2:
   version "1.1.2"
