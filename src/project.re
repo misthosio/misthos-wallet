@@ -11,7 +11,7 @@ let indexPath = "/index.json";
 let initializeProjects = () =>
   Js.Promise.(Blockstack.putFile(indexPath, "[]", Js.false_) |> then_(() => resolve([])));
 
-let loadProjectList = () =>
+let listAll = () =>
   Js.Promise.(
     Blockstack.getFile(indexPath, Js.false_)
     |> then_(

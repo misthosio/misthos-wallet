@@ -24,6 +24,11 @@ let make = (~session: Session.session, _children) => {
         | LoginPending => <div />
         }
       )
-      <div className="site-wrapper-inner"> <Projects /> </div>
+      (
+        switch session {
+        | LoggedIn(_) => <div className="site-wrapper-inner"> <Projects /> </div>
+        | _ => <div />
+        }
+      )
     </div>
 };
