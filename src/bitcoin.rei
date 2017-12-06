@@ -20,3 +20,14 @@ module ECPair: {
   let toWIF: t => string;
   let getAddress: t => string;
 };
+
+module Tx: {type t; let toHex: t => string;};
+
+module TxBuilder: {
+  type t;
+  let create: (~network: Networks.t=?, ~maxixumFeeRate: int=?, unit) => t;
+  let addInput: (t, string, int) => int;
+  let addOutput: (t, string, int) => int;
+  let sign: (t, int, ECPair.t) => unit;
+  let build: t => Tx.t;
+};

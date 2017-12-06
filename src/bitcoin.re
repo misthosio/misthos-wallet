@@ -9,11 +9,11 @@ module Networks = {
     "wif": string
   };
   [@bs.val] [@bs.module "bitcoinjs-lib"]
-  external networks_ : {. "bitcoin": t, "testnet": t, "litecoin": t} =
+  external networks : {. "bitcoin": t, "testnet": t, "litecoin": t} =
     "networks";
-  let bitcoin = networks_##bitcoin;
-  let testnet = networks_##testnet;
-  let litecoin = networks_##litecoin;
+  let bitcoin = networks##bitcoin;
+  let testnet = networks##testnet;
+  let litecoin = networks##litecoin;
 };
 
 module ECPair = {
@@ -30,14 +30,28 @@ module ECPair = {
     ) =>
     t =
     "fromWIF";
-  [@bs.send] external toWIF_ : t => string = "toWIF";
-  [@bs.send] external getAddress_ : t => string = "getAddress";
+  [@bs.send] external toWIF : t => string = "toWIF";
+  [@bs.send] external getAddress : t => string = "getAddress";
   let makeRandom: unit => t = () => makeRandom_(ecpair_);
   let fromWIF = (wif, networks) =>
     switch (Array.length(networks)) {
     | 0 => fromWIF_(ecpair_, wif, `Single(None))
     | _ => fromWIF_(ecpair_, wif, `Array(networks))
     };
-  let toWIF: t => string = (ecpair) => toWIF_(ecpair);
-  let getAddress: t => string = (ecpair) => getAddress_(ecpair);
+};
+
+module Tx = {
+  type t;
+  [@bs.send] external toHex : t => string = "";
+};
+
+module TxBuilder = {
+  type t;
+  [@bs.new] [@bs.module "bitcoinjs-lib"]
+  external create : (~network: Networks.t=?, ~maxixumFeeRate: int=?, unit) => t =
+    "TransactionBuilder";
+  [@bs.send] external addInput : (t, string, int) => int = "";
+  [@bs.send] external addOutput : (t, string, int) => int = "";
+  [@bs.send] external sign : (t, int, ECPair.t) => unit = "";
+  [@bs.send] external build : t => Tx.t = "";
 };
