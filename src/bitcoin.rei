@@ -16,7 +16,7 @@ module Networks: {
 module ECPair: {
   type t;
   let makeRandom: unit => t;
-  let fromWIF: (string, array(Networks.t)) => t;
+  let fromWIF: string => t;
   let toWIF: t => string;
   let getAddress: t => string;
 };

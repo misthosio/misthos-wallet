@@ -33,11 +33,7 @@ module ECPair = {
   [@bs.send] external toWIF : t => string = "toWIF";
   [@bs.send] external getAddress : t => string = "getAddress";
   let makeRandom: unit => t = () => makeRandom_(ecpair_);
-  let fromWIF = (wif, networks) =>
-    switch (Array.length(networks)) {
-    | 0 => fromWIF_(ecpair_, wif, `Single(None))
-    | _ => fromWIF_(ecpair_, wif, `Array(networks))
-    };
+  let fromWIF = (wif) => fromWIF_(ecpair_, wif, `Single(None));
 };
 
 module Tx = {
