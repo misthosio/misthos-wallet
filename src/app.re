@@ -26,7 +26,7 @@ let make = (~session: Session.session, _children) => {
       )
       (
         switch session {
-        | LoggedIn(_) => <div className="site-wrapper-inner"> <Projects /> </div>
+        | LoggedIn(_) => <Projects />
         | _ => <div />
         }
       )
