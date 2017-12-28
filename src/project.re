@@ -6,7 +6,7 @@ module Serialization = {
     Js.Json.parseExn(projectsString) |> Json.Decode.list(project);
 };
 
-let indexPath = "/index.json";
+let indexPath = "index.json";
 
 let initializeProjects = () =>
   Js.Promise.(Blockstack.putFile(indexPath, "[]", Js.false_) |> then_(() => resolve([])));
