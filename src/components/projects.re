@@ -1,12 +1,12 @@
 open Project;
 
-type asyncAction =
+type status =
   | None
   | LoadingIndex
   | CreatingProject(string);
 
 type state = {
-  asyncAction,
+  status,
   index: Project.index,
   newProject: string
 };
@@ -26,7 +26,7 @@ let addProject = (_) => AddProject;
 
 let make = (_children) => {
   ...component,
-  initialState: () => {newProject: "", asyncAction: LoadingIndex, index: []},
+  initialState: () => {newProject: "", status: LoadingIndex, index: []},
   didMount: ({reduce}) => {
     Js.Promise.(
       Project.loadIndex() |> then_((index) => reduce(() => IndexLoaded(index), ()) |> resolve)
@@ -36,15 +36,15 @@ let make = (_children) => {
   },
   reducer: (action, state) =>
     switch action {
-    | IndexLoaded(index) => ReasonReact.Update({...state, asyncAction: None, index})
-    | ProjectCreated(index) => ReasonReact.Update({...state, asyncAction: None, index})
+    | IndexLoaded(index) => ReasonReact.Update({...state, status: None, index})
+    | ProjectCreated(index) => ReasonReact.Update({...state, status: None, index})
     | ChangeNewProject(text) => ReasonReact.Update({...state, newProject: text})
     | AddProject =>
       switch (String.trim(state.newProject)) {
       | "" => ReasonReact.NoUpdate
       | nonEmptyValue =>
         ReasonReact.UpdateWithSideEffects(
-          {...state, asyncAction: CreatingProject(nonEmptyValue), newProject: ""},
+          {...state, status: CreatingProject(nonEmptyValue), newProject: ""},
           (
             (self) =>
               Project.createProject(nonEmptyValue)
@@ -61,7 +61,7 @@ let make = (_children) => {
       ReasonReact.arrayToElement(
         Array.of_list(
           (
-            switch state.asyncAction {
+            switch state.status {
             | LoadingIndex => []
             | CreatingProject(newProject) => [
                 (newProject, "new"),
@@ -74,7 +74,7 @@ let make = (_children) => {
         )
       );
     let status =
-      switch state.asyncAction {
+      switch state.status {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
       | CreatingProject(newProject) =>
         ReasonReact.stringToElement("Creating project '" ++ newProject ++ "'")
