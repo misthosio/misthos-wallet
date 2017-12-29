@@ -1,43 +1,74 @@
 open Project;
 
+type asyncAction =
+  | None
+  | LoadingIndex
+  | CreatingProject(string);
+
 type state = {
-  newProject: string,
-  loading: bool,
-  projects: list(Project.t)
+  asyncAction,
+  index: Project.index,
+  newProject: string
 };
 
 type action =
-  | ProjectsLoaded(list(Project.t))
-  | ChangeNewProject(string);
+  | IndexLoaded(Project.index)
+  | ChangeNewProject(string)
+  | AddProject;
 
 let component = ReasonReact.reducerComponent("Projects");
 
 let changeNewProject = (event) =>
   ChangeNewProject(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value);
 
+let addProject = (_) => AddProject;
+
 let make = (_children) => {
   ...component,
-  initialState: () => {newProject: "", loading: true, projects: []},
-  reducer: (action, state) =>
-    switch action {
-    | ProjectsLoaded(projects) => ReasonReact.Update({...state, loading: false, projects})
-    | ChangeNewProject(text) => ReasonReact.Update({...state, newProject: text})
-    },
+  initialState: () => {newProject: "", asyncAction: LoadingIndex, index: []},
   didMount: ({reduce}) => {
     Js.Promise.(
-      Project.listAll()
-      |> then_((projects) => reduce(() => ProjectsLoaded(projects), ()) |> resolve)
+      Project.loadIndex() |> then_((index) => reduce(() => IndexLoaded(index), ()) |> resolve)
     )
     |> ignore;
     ReasonReact.NoUpdate
   },
+  reducer: (action, state) =>
+    switch action {
+    | IndexLoaded(index) => ReasonReact.Update({...state, asyncAction: None, index})
+    | ChangeNewProject(text) => ReasonReact.Update({...state, newProject: text})
+    | AddProject =>
+      switch (String.trim(state.newProject)) {
+      | "" => ReasonReact.NoUpdate
+      | nonEmptyValue =>
+        ReasonReact.UpdateWithSideEffects(
+          {...state, asyncAction: CreatingProject(nonEmptyValue), newProject: ""},
+          (
+            (self) =>
+              Project.createProject(nonEmptyValue)
+              |> Js.Promise.(
+                   then_((newIndex) => self.reduce(() => IndexLoaded(newIndex), ()) |> resolve)
+                 )
+              |> ignore
+          )
+        )
+      }
+    },
   render: ({reduce, state}) => {
     let projectList =
       ReasonReact.arrayToElement(
         Array.of_list(
-          state.loading ?
-            [] :
-            state.projects |> List.map(({name}) => <ul> (ReasonReact.stringToElement(name)) </ul>)
+          (
+            switch state.asyncAction {
+            | LoadingIndex => []
+            | CreatingProject(newProject) => [
+                newProject,
+                ...state.index |> List.map(({name}) => name)
+              ]
+            | None => state.index |> List.map(({name}) => name)
+            }
+          )
+          |> List.map((name) => <ul key=name> (ReasonReact.stringToElement(name)) </ul>)
         )
       );
     <div>
@@ -45,10 +76,10 @@ let make = (_children) => {
       <input
         placeholder="Create new Project"
         value=state.newProject
-        /* onKeyDown=(reduce(newProjectKeyDown)) */
         onChange=(reduce(changeNewProject))
         autoFocus=Js.true_
       />
+      <button onClick=(reduce(addProject))> (ReasonReact.stringToElement("Add")) </button>
     </div>
   }
 };

@@ -1,24 +1,42 @@
 type t = {name: string};
 
-module Serialization = {
+type index = list(t);
+
+module Decode = {
   let project = (json) => Json.Decode.{name: json |> field("name", string)};
-  let projectsFromJson = (projectsString) =>
-    Js.Json.parseExn(projectsString) |> Json.Decode.list(project);
+  let index = (indexString) => Js.Json.parseExn(indexString) |> Json.Decode.list(project);
+};
+
+module Encode = {
+  let project = (project) => Json.Encode.(object_([("name", string(project.name))]));
+  let index = (index) => Json.Encode.list(project, index) |> Json.stringify;
 };
 
 let indexPath = "index.json";
 
-let initializeProjects = () =>
-  Js.Promise.(Blockstack.putFile(indexPath, "[]", Js.false_) |> then_(() => resolve([])));
+let persistIndex = (index) => Blockstack.putFile(indexPath, Encode.index(index), Js.false_);
 
-let listAll = () =>
+let loadIndex = () =>
   Js.Promise.(
     Blockstack.getFile(indexPath, Js.false_)
     |> then_(
          (nullProjects) =>
            switch (Js.Nullable.to_opt(nullProjects)) {
-           | None => initializeProjects()
-           | Some(projects) => resolve(Serialization.projectsFromJson(projects))
+           | None => persistIndex([]) |> then_(() => resolve([]))
+           | Some(index) => resolve(Decode.index(index))
            }
        )
   );
+
+let createProject = (name) => {
+  let project = {name: name};
+  Js.Promise.(
+    loadIndex()
+    |> then_(
+         (index) => {
+           let newIndex = [project, ...index];
+           persistIndex(newIndex) |> then_(() => resolve(newIndex))
+         }
+       )
+  )
+};

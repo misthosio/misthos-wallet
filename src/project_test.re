@@ -8,12 +8,18 @@ let () =
   describe(
     "Serialization",
     () => {
-      test("empty", () => expect(Serialization.projectsFromJson("[]")) |> toEqual([]));
+      test("empty", () => expect(Decode.index("[]")) |> toEqual([]));
       test(
-        "items",
+        "Decode items",
         () =>
-          expect(Serialization.projectsFromJson({| [{"name": "projectA"},{"name": "projectB"}] |}))
+          expect(Decode.index({| [{"name": "projectA"},{"name": "projectB"}] |}))
           |> toEqual([{name: "projectA"}, {name: "projectB"}])
+      );
+      test(
+        "Encode items",
+        () =>
+          expect(Encode.index([{name: "projectA"}, {name: "projectB"}]))
+          |> toEqual({|[{"name":"projectA"},{"name":"projectB"}]|})
       )
     }
   );
