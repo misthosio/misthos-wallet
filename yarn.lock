@@ -1134,27 +1134,14 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-blockstack-storage@0.2.11:
-  version "0.2.11"
-  resolved "https://registry.yarnpkg.com/blockstack-storage/-/blockstack-storage-0.2.11.tgz#a31e92e18b7781000998a968a3c6bb7508b73f76"
-  dependencies:
-    ajv "^4.11.5"
-    bitcoinjs-lib "^2.3.0"
-    elliptic "^6.4.0"
-    isomorphic-fetch "^2.2.1"
-    jsontokens "^0.7.4"
-    uuid "^3.0.1"
-
-blockstack@^0.13.5:
-  version "0.13.7"
-  resolved "https://registry.yarnpkg.com/blockstack/-/blockstack-0.13.7.tgz#7f844ea544c7e0b4bc9abc638059d6e9978cca07"
+blockstack@^0.14.0:
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/blockstack/-/blockstack-0.14.2.tgz#a4071918bbb9e2c84f0c051acaf9473e416eaca9"
   dependencies:
     ajv "^4.11.5"
     bigi "^1.4.2"
     bitcoinjs-lib "^2.3.0"
-    blockstack-storage "0.2.11"
     cheerio "^0.22.0"
-    crypto "^0.0.3"
     custom-protocol-detection-blockstack "1.1.3"
     ecurve "^1.0.5"
     elliptic "^6.4.0"
@@ -1885,7 +1872,7 @@ crypto-browserify@^3.11.0:
     randombytes "^2.0.0"
     randomfill "^1.0.3"
 
-crypto@0.0.3, crypto@^0.0.3:
+crypto@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/crypto/-/crypto-0.0.3.tgz#470a81b86be4c5ee17acc8207a1f5315ae20dbb0"
 
@@ -4170,7 +4157,7 @@ jsonpointer@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.0.1.tgz#4fd92cb34e0e9db3c89c8622ecf51f9b978c6cb9"
 
-jsontokens@^0.7.4, jsontokens@^0.7.6:
+jsontokens@^0.7.6:
   version "0.7.6"
   resolved "https://registry.yarnpkg.com/jsontokens/-/jsontokens-0.7.6.tgz#e23dd75ea10b1028ea9d5d7512dcb249c598d4ad"
   dependencies:
