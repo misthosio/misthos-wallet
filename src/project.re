@@ -1,14 +1,19 @@
-type t = {name: string};
+type t = {
+  name: string,
+  id: string
+};
 
 type index = list(t);
 
 module Decode = {
-  let project = (json) => Json.Decode.{name: json |> field("name", string)};
+  let project = (json) =>
+    Json.Decode.{name: json |> field("name", string), id: json |> field("id", string)};
   let index = (indexString) => Js.Json.parseExn(indexString) |> Json.Decode.list(project);
 };
 
 module Encode = {
-  let project = (project) => Json.Encode.(object_([("name", string(project.name))]));
+  let project = (project) =>
+    Json.Encode.(object_([("name", string(project.name)), ("id", string(project.id))]));
   let index = (index) => Json.Encode.list(project, index) |> Json.stringify;
 };
 
@@ -29,7 +34,7 @@ let loadIndex = () =>
   );
 
 let createProject = (name) => {
-  let project = {name: name};
+  let project = {name, id: Uuid.v4()};
   Js.Promise.(
     loadIndex()
     |> then_(

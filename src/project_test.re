@@ -12,14 +12,16 @@ let () =
       test(
         "Decode items",
         () =>
-          expect(Decode.index({| [{"name": "projectA"},{"name": "projectB"}] |}))
-          |> toEqual([{name: "projectA"}, {name: "projectB"}])
+          expect(
+            Decode.index({| [{"name": "projectA", "id": "A"},{"name": "projectB", "id": "B"}] |})
+          )
+          |> toEqual([{name: "projectA", id: "A"}, {name: "projectB", id: "B"}])
       );
       test(
         "Encode items",
         () =>
-          expect(Encode.index([{name: "projectA"}, {name: "projectB"}]))
-          |> toEqual({|[{"name":"projectA"},{"name":"projectB"}]|})
+          expect(Encode.index([{name: "projectA", id: "A"}]))
+          |> toEqual({|[{"name":"projectA","id":"A"}]|})
       )
     }
   );

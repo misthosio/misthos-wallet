@@ -62,13 +62,13 @@ let make = (_children) => {
             switch state.asyncAction {
             | LoadingIndex => []
             | CreatingProject(newProject) => [
-                newProject,
-                ...state.index |> List.map(({name}) => name)
+                (newProject, "new"),
+                ...state.index |> List.map(({name, id}) => (name, id))
               ]
-            | None => state.index |> List.map(({name}) => name)
+            | None => state.index |> List.map(({name, id}) => (name, id))
             }
           )
-          |> List.map((name) => <ul key=name> (ReasonReact.stringToElement(name)) </ul>)
+          |> List.map(((name, id)) => <ul key=id> (ReasonReact.stringToElement(name)) </ul>)
         )
       );
     <div>
