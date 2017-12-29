@@ -14,7 +14,8 @@ type state = {
 type action =
   | IndexLoaded(Project.index)
   | ChangeNewProject(string)
-  | AddProject;
+  | AddProject
+  | ProjectCreated(Project.index);
 
 let component = ReasonReact.reducerComponent("Projects");
 
@@ -36,6 +37,7 @@ let make = (_children) => {
   reducer: (action, state) =>
     switch action {
     | IndexLoaded(index) => ReasonReact.Update({...state, asyncAction: None, index})
+    | ProjectCreated(index) => ReasonReact.Update({...state, asyncAction: None, index})
     | ChangeNewProject(text) => ReasonReact.Update({...state, newProject: text})
     | AddProject =>
       switch (String.trim(state.newProject)) {
@@ -47,7 +49,7 @@ let make = (_children) => {
             (self) =>
               Project.createProject(nonEmptyValue)
               |> Js.Promise.(
-                   then_((newIndex) => self.reduce(() => IndexLoaded(newIndex), ()) |> resolve)
+                   then_((newIndex) => self.reduce(() => ProjectCreated(newIndex), ()) |> resolve)
                  )
               |> ignore
           )
@@ -71,7 +73,15 @@ let make = (_children) => {
           |> List.map(((name, id)) => <ul key=id> (ReasonReact.stringToElement(name)) </ul>)
         )
       );
+    let status =
+      switch state.asyncAction {
+      | LoadingIndex => ReasonReact.stringToElement("Loading Index")
+      | CreatingProject(newProject) =>
+        ReasonReact.stringToElement("Creating project '" ++ newProject ++ "'")
+      | None => ReasonReact.stringToElement("projects:")
+      };
     <div>
+      <h2> status </h2>
       projectList
       <input
         placeholder="Create new Project"
