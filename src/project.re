@@ -8,7 +8,7 @@ type index = list(t);
 module Decode = {
   let project = (json) =>
     Json.Decode.{name: json |> field("name", string), id: json |> field("id", string)};
-  let index = (indexString) => Js.Json.parseExn(indexString) |> Json.Decode.list(project);
+  let index = (indexString) => Json.parseOrRaise(indexString) |> Json.Decode.list(project);
 };
 
 module Encode = {
