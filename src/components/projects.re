@@ -22,18 +22,17 @@ let component = ReasonReact.reducerComponent("Projects");
 let changeNewProject = (event) =>
   ChangeNewProject(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value);
 
-let addProject = (_) => AddProject;
-
 let make = (_children) => {
   ...component,
   initialState: () => {newProject: "", status: LoadingIndex, index: []},
-  didMount: ({reduce}) => {
-    Js.Promise.(
-      Project.loadIndex() |> then_((index) => reduce(() => IndexLoaded(index), ()) |> resolve)
-    )
-    |> ignore;
-    ReasonReact.NoUpdate
-  },
+  didMount: (_self) =>
+    ReasonReact.SideEffects(
+      ({reduce}) =>
+        Js.Promise.(
+          Project.loadIndex() |> then_((index) => reduce(() => IndexLoaded(index), ()) |> resolve)
+        )
+        |> ignore
+    ),
   reducer: (action, state) =>
     switch action {
     | IndexLoaded(index) => ReasonReact.Update({...state, status: None, index})
@@ -89,7 +88,7 @@ let make = (_children) => {
         onChange=(reduce(changeNewProject))
         autoFocus=Js.true_
       />
-      <button onClick=(reduce(addProject))> (ReasonReact.stringToElement("Add")) </button>
+      <button onClick=(reduce((_) => AddProject))> (ReasonReact.stringToElement("Add")) </button>
     </div>
   }
 };
