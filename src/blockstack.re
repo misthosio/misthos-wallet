@@ -9,13 +9,9 @@ type userData = {. "username": Js.nullable(string)};
 
 [@bs.module "blockstack"] external redirectToSignIn : unit => unit = "";
 
-let signUserOut = () => [%bs.raw {|require('blockstack').signUserOut(window.location.origin)|}];
+[@bs.module "blockstack"] external signUserOut : unit => unit = "";
 
-let handlePendingSignIn = () =>
-  [%bs.raw
-    {|require('blockstack').handlePendingSignIn().then(userData => { console.log("then handler"); window.location = window.location.origin; })|}
-  ]
-  |> ignore;
+[@bs.module "blockstack"] external handlePendingSignIn : unit => Js.Promise.t(userData) = "";
 
 [@bs.module "blockstack"] external putFile : (string, string, Js.boolean) => Js.Promise.t(unit) =
   "";

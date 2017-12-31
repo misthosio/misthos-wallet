@@ -46,10 +46,10 @@ let make = (_children) => {
         ReasonReact.UpdateWithSideEffects(
           {...state, status: CreatingProject(nonEmptyValue), newProject: ""},
           (
-            (self) =>
+            ({reduce}) =>
               Project.createProject(nonEmptyValue)
               |> Js.Promise.(
-                   then_((newIndex) => self.reduce(() => ProjectCreated(newIndex), ()) |> resolve)
+                   then_((newIndex) => reduce(() => ProjectCreated(newIndex), ()) |> resolve)
                  )
               |> ignore
           )

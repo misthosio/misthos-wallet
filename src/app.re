@@ -2,30 +2,65 @@
 
 [@bs.module] external logo : string = "./logo.svg";
 
-let component = ReasonReact.statelessComponent("App");
+type action =
+  | LoginCompleted(Session.t)
+  | SignIn
+  | SignOut;
 
-let make = (~session: Session.session, _children) => {
+type state = {session: Session.t};
+
+let component = ReasonReact.reducerComponent("App");
+
+let make = (_children) => {
   ...component,
-  render: (_self) =>
+  initialState: () => {session: Session.getCurrentSession()},
+  didMount: ({state}) =>
+    switch state.session {
+    | LoginPending =>
+      ReasonReact.SideEffects(
+        (
+          ({reduce}) =>
+            Session.completeLogIn()
+            |> Js.Promise.(
+                 then_((session) => reduce(() => LoginCompleted(session), ()) |> resolve)
+               )
+            |> ignore
+        )
+      )
+    | _ => ReasonReact.NoUpdate
+    },
+  reducer: (action, _state) =>
+    switch action {
+    | LoginCompleted(session) => ReasonReact.Update({session: session})
+    | SignIn => ReasonReact.Update({session: Session.signIn()})
+    | SignOut => ReasonReact.Update({session: Session.signOut()})
+    },
+  render: ({reduce, state}) =>
     <div className="site-wrapper">
       {
         let header =
-          switch session {
+          switch state.session {
           | NotLoggedIn => "Welcome To Misthos"
-          | LoggedIn(user) => "Hello " ++ user.userName
-          | LoginPending => "Logging in"
+          | LoggedIn(data) => "Hello " ++ data.userName
+          | LoginPending => "Waiting for login to complete"
           };
-        <h1 className="landing-heading"> (ReasonReact.stringToElement(header)) </h1>
+        <h1> (ReasonReact.stringToElement(header)) </h1>
       }
       (
-        switch session {
-        | NotLoggedIn => <SignIn />
-        | LoggedIn(_) => <SignOut />
+        switch state.session {
+        | NotLoggedIn =>
+          <button id="signin-button" onClick=(reduce((_) => SignIn))>
+            (ReasonReact.stringToElement("Sign In with Blockstack"))
+          </button>
+        | LoggedIn(_) =>
+          <button id="signout-button" onClick=(reduce((_) => SignOut))>
+            (ReasonReact.stringToElement("SignOut"))
+          </button>
         | LoginPending => <div />
         }
       )
       (
-        switch session {
+        switch state.session {
         | LoggedIn(_) => <Projects />
         | _ => <div />
         }
