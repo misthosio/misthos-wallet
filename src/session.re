@@ -29,7 +29,7 @@ let getCurrentSession = () =>
 let completeLogIn = () =>
   Js.Promise.(
     Blockstack.handlePendingSignIn()
-    |> then_((userData) => resolve(LoggedIn(sessionFromUserData(userData))))
+    |> then_((userData) => LoggedIn(sessionFromUserData(userData)) |> resolve)
   );
 
 let signIn = () => {

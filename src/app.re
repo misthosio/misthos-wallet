@@ -20,10 +20,10 @@ let make = (_children) => {
       ReasonReact.SideEffects(
         (
           ({reduce}) =>
-            Session.completeLogIn()
-            |> Js.Promise.(
-                 then_((session) => reduce(() => LoginCompleted(session), ()) |> resolve)
-               )
+            Js.Promise.(
+              Session.completeLogIn()
+              |> then_((session) => reduce(() => LoginCompleted(session), ()) |> resolve)
+            )
             |> ignore
         )
       )
@@ -36,24 +36,24 @@ let make = (_children) => {
     | SignOut => ReasonReact.Update({session: Session.signOut()})
     },
   render: ({reduce, state}) =>
-    <div className="site-wrapper">
+    <div>
       {
         let header =
           switch state.session {
           | NotLoggedIn => "Welcome To Misthos"
-          | LoggedIn(data) => "Hello " ++ data.userName
           | LoginPending => "Waiting for login to complete"
+          | LoggedIn(data) => "Hello " ++ data.userName
           };
         <h1> (ReasonReact.stringToElement(header)) </h1>
       }
       (
         switch state.session {
         | NotLoggedIn =>
-          <button id="signin-button" onClick=(reduce((_) => SignIn))>
+          <button onClick=(reduce((_) => SignIn))>
             (ReasonReact.stringToElement("Sign In with Blockstack"))
           </button>
         | LoggedIn(_) =>
-          <button id="signout-button" onClick=(reduce((_) => SignOut))>
+          <button onClick=(reduce((_) => SignOut))>
             (ReasonReact.stringToElement("SignOut"))
           </button>
         | LoginPending => <div />

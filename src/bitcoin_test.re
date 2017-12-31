@@ -17,7 +17,7 @@ let () = {
         () => {
           let wif = "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn";
           let address = "1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH";
-          let keyPair = ECPair.fromWIF(wif);
+          let keyPair = wif |> ECPair.fromWIF;
           expect(keyPair |> ECPair.getAddress) |> toBe(address)
         }
       )
