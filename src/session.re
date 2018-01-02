@@ -1,4 +1,7 @@
-type data = {userName: string};
+type data = {
+  userName: string,
+  appPrivateKey: Keys.privateKey
+};
 
 type t =
   | NotLoggedIn
@@ -11,7 +14,7 @@ let sessionFromUserData = (userData) => {
     | None => "Anonymous"
     | Some(name) => name
     };
-  {userName: userName}
+  {userName, appPrivateKey: userData##appPrivateKey}
 };
 
 let getCurrentSession = () =>

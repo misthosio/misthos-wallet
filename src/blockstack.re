@@ -2,7 +2,7 @@
 
 [@bs.module "blockstack"] external isSignInPending : unit => bool = "";
 
-type userData = {. "username": Js.nullable(string)};
+type userData = {. "username": Js.nullable(string), "appPrivateKey": string};
 
 [@bs.module "blockstack"] [@bs.return nullable] external loadUserData : unit => option(userData) =
   "";
