@@ -49,7 +49,7 @@ let () = {
         () => {
           let event = TestPayload.StringEvent("hello") |> TestLog.createEvent(keyPair);
           let decoded = event |> TestLog.Encode.event |> TestLog.Decode.event;
-          expect(event) |> toEqual(decoded)
+          expect(event.payload) |> toEqual(decoded.payload)
         }
       );
       test(
@@ -57,7 +57,7 @@ let () = {
         () => {
           let event = TestPayload.IntEvent(1) |> TestLog.createEvent(keyPair);
           let decoded = event |> TestLog.Encode.event |> TestLog.Decode.event;
-          expect(event) |> toEqual(decoded)
+          expect(event.payload) |> toEqual(decoded.payload)
         }
       );
       test(
@@ -66,7 +66,7 @@ let () = {
           let event =
             TestPayload.DataEvent({text: "text", number: 1}) |> TestLog.createEvent(keyPair);
           let decoded = event |> TestLog.Encode.event |> TestLog.Decode.event;
-          expect(event) |> toEqual(decoded)
+          expect(event.payload) |> toEqual(decoded.payload)
         }
       )
     }
@@ -76,18 +76,14 @@ let () = {
     () => {
       open Bitcoin;
       let event = TestPayload.StringEvent("hello") |> TestLog.createEvent(keyPair);
-      expect(event.signature)
-      |> toBe(
-           keyPair
-           |> ECPair.sign(
-                BufferExt.fromStringWithEncoding(
-                  "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
-                  "hex"
-                )
-              )
-           |> ECSignature.toDER
-           |> BufferExt.toStringWithEncoding("hex")
-         )
+      let decoded = event |> TestLog.Encode.event |> TestLog.Decode.event;
+      let verified =
+        keyPair
+        |> ECPair.verify(
+             decoded.payloadHash |> BufferExt.fromStringWithEncoding(~encoding="hex"),
+             decoded.signature
+           );
+      expect(verified) |> toEqual(Js.true_)
     }
   )
 };
