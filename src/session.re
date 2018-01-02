@@ -1,6 +1,6 @@
 type data = {
   userName: string,
-  appPrivateKey: Keys.privateKey
+  appKeyPair: Bitcoin.ECPair.t
 };
 
 type t =
@@ -14,7 +14,7 @@ let sessionFromUserData = (userData) => {
     | None => "Anonymous"
     | Some(name) => name
     };
-  {userName, appPrivateKey: userData##appPrivateKey}
+  {userName, appKeyPair: Bitcoin.(userData##appPrivateKey |> BigInteger.fromHex |> ECPair.create)}
 };
 
 let getCurrentSession = () =>
