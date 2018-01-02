@@ -19,6 +19,7 @@ module Networks = {
 
 module ECSignature = {
   type t;
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECSignature"] external fromDER : Node.buffer => t = "";
   [@bs.send] external toDER : t => Node.buffer = "";
 };
 
@@ -35,8 +36,7 @@ module ECPair = {
   [@bs.send] external getAddress : t => string = "";
   [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
   [@bs.send.pipe : t] external sign : Node.buffer => ECSignature.t = "";
-  /* [@bs.send.pipe : t] external verify : (string, string) => Js.boolean = ""; */
-  /* let verify = (ecpair, hash, signature) => verify_(ecpair, hash, signature) |> Js.to_bool; */
+  [@bs.send.pipe : t] external verify : (Node.buffer, ECSignature.t) => Js.boolean = "";
 };
 
 module Tx = {

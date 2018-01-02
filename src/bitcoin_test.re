@@ -10,11 +10,9 @@ let () = {
     () =>
       test(
         "sha256",
-        () => {
-          Js.log("hello");
+        () =>
           expect(Crypto.sha256("hello") |> BufferExt.toStringWithEncoding("hex"))
           |> toBe("2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824")
-        }
       )
   );
   describe(
@@ -23,7 +21,7 @@ let () = {
   );
   describe(
     "ECPair",
-    () =>
+    () => {
       test(
         "fromWIF",
         () => {
@@ -32,7 +30,22 @@ let () = {
           let keyPair = wif |> ECPair.fromWIF;
           expect(keyPair |> ECPair.getAddress) |> toBe(address)
         }
+      );
+      test(
+        "sign/verify",
+        () => {
+          let keyPair = ECPair.makeRandom();
+          let der =
+            keyPair
+            |> ECPair.sign(Crypto.sha256("hello"))
+            |> ECSignature.toDER
+            |> BufferExt.toStringWithEncoding("hex");
+          let signature = ECSignature.fromDER(BufferExt.fromStringWithEncoding(der, "hex"));
+          let verified = keyPair |> ECPair.verify(Crypto.sha256("hello"), signature);
+          expect(verified) |> toEqual(Js.true_)
+        }
       )
+    }
   );
   describe(
     "TransactionBuilder",
