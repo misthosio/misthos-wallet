@@ -1,1 +1,0 @@
-src/project.cmj : src/blockstack.cmj src/uuid.cmj
