@@ -41,7 +41,7 @@ let () = {
           /* taken from https://bitcoinjs.org/ */
           let wif = "L1uyy5qTuGrVXrmrsvHWHgVzW9kKdrp27wBC7Vs6nZDTF2BRUVwy";
           let keyPair = ECPair.fromWIF(wif);
-          let tx = TxBuilder.create(~network=Networks.bitcoin, ());
+          let tx = TxBuilder.create();
           let txId = "aa94ab02c182214f090e99a0d57021caffd0f195a81c24602b1028b130b63e31";
           TxBuilder.addInput(tx, txId, 0) |> ignore;
           TxBuilder.addOutput(tx, "1Gokm82v6DmtwKEB8AiVhm82hyFSsEvBDK", 15000) |> ignore;

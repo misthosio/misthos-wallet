@@ -46,8 +46,9 @@ module Tx = {
 
 module TxBuilder = {
   type t;
+  [@bs.new] [@bs.module "bitcoinjs-lib"] external create : unit => t = "TransactionBuilder";
   [@bs.new] [@bs.module "bitcoinjs-lib"]
-  external create : (~network: Networks.t=?, ~maxixumFeeRate: int=?, unit) => t =
+  external createWithOptions : (~network: Networks.t=?, ~maxixumFeeRate: int=?, unit) => t =
     "TransactionBuilder";
   [@bs.send] external addInput : (t, string, int) => int = "";
   [@bs.send] external addOutput : (t, string, int) => int = "";
