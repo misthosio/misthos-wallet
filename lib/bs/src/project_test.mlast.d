@@ -1,0 +1,1 @@
+src/project_test.cmj : src/project.cmj

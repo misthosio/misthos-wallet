@@ -47,7 +47,7 @@ let () = {
       test(
         "StringEvent",
         () => {
-          let event = TestPayload.StringEvent("hello") |> TestLog.createItem(keyPair);
+          let event = TestPayload.StringEvent("hello") |> TestLog.createEvent(keyPair);
           let decoded = event |> TestLog.Encode.event |> TestLog.Decode.event;
           expect(event) |> toEqual(decoded)
         }
@@ -55,7 +55,7 @@ let () = {
       test(
         "IntEvent",
         () => {
-          let event = TestPayload.IntEvent(1) |> TestLog.createItem(keyPair);
+          let event = TestPayload.IntEvent(1) |> TestLog.createEvent(keyPair);
           let decoded = event |> TestLog.Encode.event |> TestLog.Decode.event;
           expect(event) |> toEqual(decoded)
         }
@@ -64,7 +64,7 @@ let () = {
         "DataEvent",
         () => {
           let event =
-            TestPayload.DataEvent({text: "text", number: 1}) |> TestLog.createItem(keyPair);
+            TestPayload.DataEvent({text: "text", number: 1}) |> TestLog.createEvent(keyPair);
           let decoded = event |> TestLog.Encode.event |> TestLog.Decode.event;
           expect(event) |> toEqual(decoded)
         }
@@ -75,7 +75,7 @@ let () = {
     "sign/verify",
     () => {
       open Bitcoin;
-      let event = TestPayload.StringEvent("hello") |> TestLog.createItem(keyPair);
+      let event = TestPayload.StringEvent("hello") |> TestLog.createEvent(keyPair);
       expect(event.signature)
       |> toBe(
            keyPair

@@ -13,13 +13,8 @@ type event('t) = {
   signature: string
 };
 
-type rawEvent = {
-  payload: string,
-  type_: string,
-  payloadHash: string,
-  issuerPubKey: string,
-  signature: string
-};
+type verified('t) =
+  | Verified('t);
 
 /* type witness = (string * string); */
 /* type logItem('t) = { */
@@ -36,7 +31,7 @@ module Encode = {
 
 module Make = (Item: Payload) => {
   type item = event(Item.t);
-  let createItem = (issuerKeyPair, payload) : event(Item.t) => {
+  let createEvent = (issuerKeyPair, payload) => {
     open Bitcoin;
     let payloadHashBuffer = payload |> Item.encode |> Crypto.sha256;
     let payloadHash = payloadHashBuffer |> toHex;
@@ -44,11 +39,9 @@ module Make = (Item: Payload) => {
     let signature = issuerKeyPair |> ECPair.sign(payloadHashBuffer) |> ECSignature.toDER |> toHex;
     {payload, type_: Item.getType(payload), signature, payloadHash, issuerPubKey}
   };
-  /* let verifyItem(item, allowedPubKeys) => { */
-  /*   let payloadHashBuffer = item.payload |> Item.encode |> Crypto.sha256; */
-  /* }; */
+  /* let verifyEvent = (event: item) => Verified(event); */
   module Encode = {
-    let event = (event: event(Item.t)) =>
+    let event = (event) =>
       Json.Encode.(
         object_([
           ("type", string(Item.getType(event.payload))),
@@ -61,7 +54,7 @@ module Make = (Item: Payload) => {
       |> Json.stringify;
   };
   module Decode = {
-    let event = (raw) : event(Item.t) => {
+    let event = (raw) => {
       let json = Json.parseOrRaise(raw);
       let type_ = json |> Json.Decode.(field("type", string));
       Json.Decode.{

@@ -1,0 +1,1 @@
+src/bitcoin_test.cmj : src/bitcoin.cmj src/bufferExt.cmj

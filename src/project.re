@@ -34,6 +34,7 @@ let loadIndex = () =>
   );
 
 let createProject = (name) => {
+  /* EventLog.createProject(name); */
   let project = {name, id: Uuid.v4()};
   Js.Promise.(
     loadIndex()

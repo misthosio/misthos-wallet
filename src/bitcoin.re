@@ -35,7 +35,7 @@ module ECPair = {
   [@bs.send] external getAddress : t => string = "";
   [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
   [@bs.send.pipe : t] external sign : Node.buffer => ECSignature.t = "";
-  /* [@bs.send.pipe : t] external verify_ : (string, string) => Js.boolean = ""; */
+  /* [@bs.send.pipe : t] external verify : (string, string) => Js.boolean = ""; */
   /* let verify = (ecpair, hash, signature) => verify_(ecpair, hash, signature) |> Js.to_bool; */
 };
 
