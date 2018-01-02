@@ -16,24 +16,23 @@ module Networks = {
   let litecoin = networks##litecoin;
 };
 
+module ECSignature = {
+  type t;
+  [@bs.send] external toDER : t => Buffer.t = "";
+};
+
 module ECPair = {
   type t;
   type ecpairMod;
-  [@bs.val] [@bs.module "bitcoinjs-lib"] external ecpair_ : ecpairMod = "ECPair";
-  [@bs.send] external makeRandom_ : ecpairMod => t = "makeRandom";
-  [@bs.send]
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"] external makeRandom : unit => t = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"] external fromWIF : string => t = "";
+  /* Complete function incase needed */
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIF_ :
-    (
-      ecpairMod,
-      string,
-      [@bs.unwrap] [ | `Single(option(Networks.t)) | `Array(array(Networks.t))]
-    ) =>
-    t =
+    (string, [@bs.unwrap] [ | `Single(option(Networks.t)) | `Array(array(Networks.t))]) => t =
     "fromWIF";
-  [@bs.send] external toWIF : t => string = "toWIF";
-  [@bs.send] external getAddress : t => string = "getAddress";
-  let makeRandom: unit => t = () => makeRandom_(ecpair_);
-  let fromWIF = (wif) => fromWIF_(ecpair_, wif, `Single(None));
+  [@bs.send] external toWIF : t => string = "";
+  [@bs.send] external getAddress : t => string = "";
 };
 
 module Tx = {
