@@ -12,22 +12,18 @@ module Networks = {
     "scriptHash": string,
     "wif": string
   };
-  [@bs.val] [@bs.module "bitcoinjs-lib"]
-  external networks : {. "bitcoin": t, "testnet": t, "litecoin": t} =
-    "networks";
-  let bitcoin = networks##bitcoin;
-  let testnet = networks##testnet;
-  let litecoin = networks##litecoin;
+  [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"] external bitcoin : t = "";
+  [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"] external testnet : t = "";
+  [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"] external litecoin : t = "";
 };
 
 module ECSignature = {
   type t;
-  [@bs.send] external toDER : t => Buffer.t = "";
+  [@bs.send] external toDER : t => Node.buffer = "";
 };
 
 module ECPair = {
   type t;
-  type ecpairMod;
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"] external makeRandom : unit => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"] external fromWIF : string => t = "";
   /* Complete function incase needed */
@@ -37,6 +33,10 @@ module ECPair = {
     "fromWIF";
   [@bs.send] external toWIF : t => string = "";
   [@bs.send] external getAddress : t => string = "";
+  [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
+  [@bs.send.pipe : t] external sign : Node.buffer => ECSignature.t = "";
+  /* [@bs.send.pipe : t] external verify_ : (string, string) => Js.boolean = ""; */
+  /* let verify = (ecpair, hash, signature) => verify_(ecpair, hash, signature) |> Js.to_bool; */
 };
 
 module Tx = {
