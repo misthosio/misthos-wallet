@@ -1,3 +1,5 @@
+module Crypto: {let sha256: string => Node.buffer;};
+
 module Networks: {
   type t = {
     .

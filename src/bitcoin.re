@@ -1,3 +1,7 @@
+module Crypto = {
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "crypto"] external sha256 : string => Node.buffer = "";
+};
+
 module Networks = {
   type t = {
     .
