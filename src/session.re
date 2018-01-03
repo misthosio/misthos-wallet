@@ -14,7 +14,7 @@ let sessionFromUserData = (userData) => {
     | None => "Anonymous"
     | Some(name) => name
     };
-  {userName, appKeyPair: Bitcoin.(userData##appPrivateKey |> BigInteger.fromHex |> ECPair.create)}
+  {userName, appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey}
 };
 
 let getCurrentSession = () =>
