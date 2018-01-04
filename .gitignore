@@ -10,8 +10,7 @@
 /build
 
 # bucklescript
-/lib/.*
-/lib/bs
+/lib
 /types
 .merlin
 
