@@ -4,32 +4,22 @@ open Expect;
 
 module TestItem = {
   type t = string;
-  let decode = (item, ~type_) => item;
-  let encode = (item) => item;
-  let getType = (_item) => "string";
-  type validatorState = int;
-  let canKeySignItem = (_state, _item, _pubKey) => true;
-  let canKeyWitnessItem = (_state, _item, _pubKey) => true;
-  let validate = (state, _item) => (true, state);
+  let decode = item => item;
+  let encode = item => item;
 };
 
 let () = {
-  module TestLog = Log.Make(TestItem);
+  module TestLog = WitnessedLog.Make(TestItem);
   let keyPair = Bitcoin.ECPair.makeRandom();
-  describe(
-    "append",
-    () =>
-      test(
-        "valid append",
-        () => {
-          let log = TestLog.make(0);
-          let log = log |> TestLog.append("hello", keyPair);
-          let log = log |> TestLog.append(" - bye", keyPair);
-          expect(log |> TestLog.reduce((state, entry) => state ++ entry, ""))
-          |> toEqual("hello - bye")
-        }
-      )
-  )
+  test("append/reduce", () => {
+    let log = TestLog.make();
+    let log =
+      log
+      |> TestLog.append("hello", keyPair)
+      |> TestLog.append(" - bye", keyPair);
+    expect(log |> TestLog.reduce((state, entry) => state ++ entry, ""))
+    |> toEqual("hello - bye");
+  });
   /* describe( */
   /*   "Encode/Decode", */
   /*   () => { */

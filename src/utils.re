@@ -5,3 +5,6 @@ let keyPairFromPrivateKey = key =>
 
 let publicKeyFromKeyPair = pair =>
   Bitcoin.(pair |> ECPair.getPublicKeyBuffer |> toHex);
+
+let signatureToString = ecSignature =>
+  ecSignature |> Bitcoin.ECSignature.toDER |> toHex;
