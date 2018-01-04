@@ -11,7 +11,7 @@ type state = {session: Session.t};
 
 let component = ReasonReact.reducerComponent("App");
 
-let make = (_children) => {
+let make = _children => {
   ...component,
   initialState: () => {session: Session.getCurrentSession()},
   didMount: ({state}) =>
@@ -22,7 +22,9 @@ let make = (_children) => {
           ({reduce}) =>
             Js.Promise.(
               Session.completeLogIn()
-              |> then_((session) => reduce(() => LoginCompleted(session), ()) |> resolve)
+              |> then_(session =>
+                   reduce(() => LoginCompleted(session), ()) |> resolve
+                 )
             )
             |> ignore
         )
@@ -44,7 +46,7 @@ let make = (_children) => {
           | LoginPending => "Waiting for login to complete"
           | LoggedIn(data) => "Hello " ++ data.userName
           };
-        <h1> (ReasonReact.stringToElement(header)) </h1>
+        <h1> (ReasonReact.stringToElement(header)) </h1>;
       }
       (
         switch state.session {

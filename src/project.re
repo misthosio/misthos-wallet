@@ -6,43 +6,47 @@ type t = {
 type index = list(t);
 
 module Decode = {
-  let project = (json) =>
-    Json.Decode.{name: json |> field("name", string), id: json |> field("id", string)};
-  let index = (indexString) => Json.parseOrRaise(indexString) |> Json.Decode.list(project);
+  let project = json =>
+    Json.Decode.{
+      name: json |> field("name", string),
+      id: json |> field("id", string)
+    };
+  let index = indexString =>
+    Json.parseOrRaise(indexString) |> Json.Decode.list(project);
 };
 
 module Encode = {
-  let project = (project) =>
-    Json.Encode.(object_([("name", string(project.name)), ("id", string(project.id))]));
-  let index = (index) => Json.Encode.list(project, index) |> Json.stringify;
+  let project = project =>
+    Json.Encode.(
+      object_([("name", string(project.name)), ("id", string(project.id))])
+    );
+  let index = index => Json.Encode.list(project, index) |> Json.stringify;
 };
 
 let indexPath = "index.json";
 
-let persistIndex = (index) => Blockstack.putFile(indexPath, Encode.index(index), Js.false_);
+let persistIndex = index =>
+  Blockstack.putFile(indexPath, Encode.index(index), Js.false_);
 
 let loadIndex = () =>
   Js.Promise.(
     Blockstack.getFile(indexPath, Js.false_)
-    |> then_(
-         (nullProjects) =>
-           switch (Js.Nullable.to_opt(nullProjects)) {
-           | None => persistIndex([]) |> then_(() => resolve([]))
-           | Some(index) => resolve(Decode.index(index))
-           }
+    |> then_(nullProjects =>
+         switch (Js.Nullable.to_opt(nullProjects)) {
+         | None => persistIndex([]) |> then_(() => resolve([]))
+         | Some(index) => resolve(Decode.index(index))
+         }
        )
   );
 
-let createProject = (name) => {
+let createProject = name => {
   /* EventLog.createProject(name); */
   let project = {name, id: Uuid.v4()};
   Js.Promise.(
     loadIndex()
-    |> then_(
-         (index) => {
-           let newIndex = [project, ...index];
-           persistIndex(newIndex) |> then_(() => resolve(newIndex))
-         }
-       )
-  )
+    |> then_(index => {
+         let newIndex = [project, ...index];
+         persistIndex(newIndex) |> then_(() => resolve(newIndex));
+       })
+  );
 };

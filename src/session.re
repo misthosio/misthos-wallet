@@ -8,13 +8,16 @@ type t =
   | LoginPending
   | LoggedIn(data);
 
-let sessionFromUserData = (userData) => {
+let sessionFromUserData = userData => {
   let userName =
     switch (Js.Nullable.to_opt(userData##username)) {
     | None => "Anonymous"
     | Some(name) => name
     };
-  {userName, appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey}
+  {
+    userName,
+    appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey
+  };
 };
 
 let getCurrentSession = () =>
@@ -22,25 +25,25 @@ let getCurrentSession = () =>
     switch (Blockstack.loadUserData()) {
     | None => NotLoggedIn
     | Some(userData) => LoggedIn(sessionFromUserData(userData))
-    }
+    };
   } else if (Blockstack.isSignInPending()) {
-    LoginPending
+    LoginPending;
   } else {
-    NotLoggedIn
+    NotLoggedIn;
   };
 
 let completeLogIn = () =>
   Js.Promise.(
     Blockstack.handlePendingSignIn()
-    |> then_((userData) => LoggedIn(sessionFromUserData(userData)) |> resolve)
+    |> then_(userData => LoggedIn(sessionFromUserData(userData)) |> resolve)
   );
 
 let signIn = () => {
   Blockstack.redirectToSignIn();
-  LoginPending
+  LoginPending;
 };
 
 let signOut = () => {
   Blockstack.signUserOut();
-  NotLoggedIn
+  NotLoggedIn;
 };

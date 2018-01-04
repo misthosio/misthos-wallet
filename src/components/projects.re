@@ -19,25 +19,30 @@ type action =
 
 let component = ReasonReact.reducerComponent("Projects");
 
-let changeNewProject = (event) =>
-  ChangeNewProject(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value);
+let changeNewProject = event =>
+  ChangeNewProject(
+    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
+  );
 
-let make = (_children) => {
+let make = _children => {
   ...component,
   initialState: () => {newProject: "", status: LoadingIndex, index: []},
-  didMount: (_self) =>
+  didMount: _self =>
     ReasonReact.SideEffects(
       ({reduce}) =>
         Js.Promise.(
-          Project.loadIndex() |> then_((index) => reduce(() => IndexLoaded(index), ()) |> resolve)
+          Project.loadIndex()
+          |> then_(index => reduce(() => IndexLoaded(index), ()) |> resolve)
         )
         |> ignore
     ),
   reducer: (action, state) =>
     switch action {
     | IndexLoaded(index) => ReasonReact.Update({...state, status: None, index})
-    | ProjectCreated(index) => ReasonReact.Update({...state, status: None, index})
-    | ChangeNewProject(text) => ReasonReact.Update({...state, newProject: text})
+    | ProjectCreated(index) =>
+      ReasonReact.Update({...state, status: None, index})
+    | ChangeNewProject(text) =>
+      ReasonReact.Update({...state, newProject: text})
     | AddProject =>
       switch (String.trim(state.newProject)) {
       | "" => ReasonReact.NoUpdate
@@ -48,7 +53,9 @@ let make = (_children) => {
             ({reduce}) =>
               Project.createProject(nonEmptyValue)
               |> Js.Promise.(
-                   then_((newIndex) => reduce(() => ProjectCreated(newIndex), ()) |> resolve)
+                   then_(newIndex =>
+                     reduce(() => ProjectCreated(newIndex), ()) |> resolve
+                   )
                  )
               |> ignore
           )
@@ -69,7 +76,9 @@ let make = (_children) => {
             | None => state.index |> List.map(({name, id}) => (name, id))
             }
           )
-          |> List.map(((name, id)) => <ul key=id> (ReasonReact.stringToElement(name)) </ul>)
+          |> List.map(((name, id)) =>
+               <ul key=id> (ReasonReact.stringToElement(name)) </ul>
+             )
         )
       );
     let status =
@@ -88,7 +97,9 @@ let make = (_children) => {
         onChange=(reduce(changeNewProject))
         autoFocus=Js.true_
       />
-      <button onClick=(reduce((_) => AddProject))> (ReasonReact.stringToElement("Add")) </button>
-    </div>
+      <button onClick=(reduce((_) => AddProject))>
+        (ReasonReact.stringToElement("Add"))
+      </button>
+    </div>;
   }
 };
