@@ -35,13 +35,12 @@ let () = {
       let logB = logA |> TestLog.append("eventB", issuerB);
       let resultA = logA |> TestLog.merge(issuerA, [issuerBPubKey], [logB]);
       let resultB = logB |> TestLog.merge(issuerB, [issuerAPubKey], [logA]);
-      test("head", ()
-        /* expect(TestLog.head(resultA)) |> toEqual(TestLog.head(resultB)) */
-        =>
-          expect(TestLog.head(resultA)) |> toEqual(TestLog.head(resultA))
-        );
+      test("head", () =>
+        expect(TestLog.head(resultA)) |> toEqual(TestLog.head(resultB))
+      );
     });
   });
+  /* expect(TestLog.head(resultA)) |> toEqual(TestLog.head(resultA)) */
   /* describe( */
   /*   "Encode/Decode", */
   /*   () => { */

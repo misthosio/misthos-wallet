@@ -118,16 +118,94 @@ module Make = (Event: Encodable) => {
   /*     } */
   /*   }; */
   /* }; */
-  module Merge = {
-    let exec = (witness, otherWitnesses, otherLogs, log) => log;
-  };
-  let merge = Merge.exec;
   /* For Testing: */
   let head = ({entries}) =>
     switch entries {
     | [h, ..._rest] => h.logHash
     | [] => ""
     };
+  module Merge = {
+    let signEntry = (witness, {logHash}) => {
+      let logHashBuffer = logHash |> Utils.fromHex;
+      let signature = witness |> Bitcoin.ECPair.sign(logHashBuffer);
+      (logHash, signature);
+    };
+    let updateWitnesses = (witness, whiteList, {witnesses, entries}) => {
+      let witnessPubKey = Utils.publicKeyFromKeyPair(witness);
+      {
+        witnesses: [
+          (witnessPubKey, signEntry(witness, List.hd(entries))),
+          ...witnesses
+             |> List.remove_assoc(witnessPubKey)
+             |> List.filter(((pubKey, _)) => whiteList |> List.mem(pubKey))
+        ],
+        entries
+      };
+    };
+    type scoreCounter = {
+      found: int,
+      score: int,
+      length: int,
+      search: list(witnessSig)
+    };
+    let witnessScore = ({witnesses, entries}) => {
+      let state = {found: 0, score: 0, length: 0, search: witnesses};
+      let score =
+        entries
+        |> List.fold_left(
+             ({found, score, length, search}, {logHash}) =>
+               switch search {
+               | [] => {
+                   found,
+                   score: score + found,
+                   length: length + 1,
+                   search
+                 }
+               | _ =>
+                 let (hits, rest) =
+                   witnesses
+                   |> List.partition(((_, (hash, _))) => hash == logHash);
+                 let nHits = List.length(hits);
+                 {
+                   found: found + nHits,
+                   score: score + found + nHits,
+                   length: length + 1,
+                   search: rest
+                 };
+               },
+             state
+           );
+      (score.score, score.length);
+    };
+    let exec = (witness, whiteList, otherLogs, log) => {
+      let updatedLogs = [
+        log,
+        ...otherLogs |> List.map(updateWitnesses(witness, whiteList))
+      ];
+      let scores = updatedLogs |> List.map(witnessScore);
+      let scoredLogs =
+        List.combine(scores, updatedLogs)
+        |> List.sort_uniq(
+             (((scoreA, lengthA), logA), ((scoreB, lengthB), logB)) =>
+             if (head(logB) == head(logA)) {
+               0;
+             } else {
+               switch (compare(scoreB, scoreA)) {
+               | 0 =>
+                 switch (compare(lengthB, lengthA)) {
+                 | 0 => compare(head(logB), head(logA))
+                 | n => n
+                 }
+               | n => n
+               };
+             }
+           );
+      let [(_, best), ..._rest] = scoredLogs;
+      best;
+    };
+  };
+  let merge = Merge.exec;
+  /* For Testing: */
   let hasWitnessed = (pubKey, {witnesses}) =>
     witnesses |> List.mem_assoc(pubKey);
 };
