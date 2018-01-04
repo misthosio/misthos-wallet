@@ -34,7 +34,7 @@ module Make = (Event: Encodable) => {
     let encodedEvent = event |> Event.encode;
     let issuerPubKey = issuerKeyPair |> Utils.publicKeyFromKeyPair;
     let hashBuffer = issuerPubKey ++ encodedEvent |> Bitcoin.Crypto.sha256;
-    let hash = hashBuffer |> Utils.toHex;
+    let hash = hashBuffer |> Utils.bufToHex;
     let signature = (
       issuerPubKey,
       issuerKeyPair |> Bitcoin.ECPair.sign(hashBuffer)
@@ -45,7 +45,7 @@ module Make = (Event: Encodable) => {
     let (_, itemSig) = item.signature;
     let logHashBuffer =
       lastHash ++ (itemSig |> Utils.signatureToString) |> Bitcoin.Crypto.sha256;
-    let logHash = logHashBuffer |> Utils.toHex;
+    let logHash = logHashBuffer |> Utils.bufToHex;
     let signature = witness |> Bitcoin.ECPair.sign(logHashBuffer);
     ({item, logHash}, (logHash, signature));
   };
@@ -126,7 +126,7 @@ module Make = (Event: Encodable) => {
     };
   module Merge = {
     let signEntry = (witness, {logHash}) => {
-      let logHashBuffer = logHash |> Utils.fromHex;
+      let logHashBuffer = logHash |> Utils.bufFromHex;
       let signature = witness |> Bitcoin.ECPair.sign(logHashBuffer);
       (logHash, signature);
     };
