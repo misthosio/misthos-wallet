@@ -187,21 +187,19 @@ module Make = (Event: Encodable) => {
         List.combine(scores, updatedLogs)
         |> List.sort_uniq(
              (((scoreA, lengthA), logA), ((scoreB, lengthB), logB)) =>
-             if (head(logB) == head(logA)) {
-               0;
-             } else {
-               switch (compare(scoreB, scoreA)) {
-               | 0 =>
-                 switch (compare(lengthB, lengthA)) {
-                 | 0 => compare(head(logB), head(logA))
-                 | n => n
-                 }
+             switch (compare(scoreB, scoreA)) {
+             | 0 =>
+               switch (compare(lengthB, lengthA)) {
+               | 0 => compare(head(logB), head(logA))
                | n => n
-               };
+               }
+             | n => n
              }
            );
-      let [(_, best), ..._rest] = scoredLogs;
-      best;
+      switch scoredLogs {
+      | [(_, best), ..._rest] => best
+      | _ => log
+      };
     };
   };
   let merge = Merge.exec;
