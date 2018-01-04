@@ -32,9 +32,9 @@ module Make = (Event: Encodable) => {
   let make = () => {witnesses: [], entries: []};
   let createItem = (issuerKeyPair, event) => {
     let encodedEvent = event |> Event.encode;
-    let hashBuffer = encodedEvent |> Bitcoin.Crypto.sha256;
-    let hash = hashBuffer |> Utils.toHex;
     let issuerPubKey = issuerKeyPair |> Utils.publicKeyFromKeyPair;
+    let hashBuffer = issuerPubKey ++ encodedEvent |> Bitcoin.Crypto.sha256;
+    let hash = hashBuffer |> Utils.toHex;
     let signature = (
       issuerPubKey,
       issuerKeyPair |> Bitcoin.ECPair.sign(hashBuffer)
