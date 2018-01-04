@@ -10,15 +10,37 @@ module TestItem = {
 
 let () = {
   module TestLog = WitnessedLog.Make(TestItem);
-  let keyPair = Bitcoin.ECPair.makeRandom();
+  let print = log => Js.log(log |> TestLog.encode);
   test("append/reduce", () => {
-    let log = TestLog.make();
+    let keyPair = Bitcoin.ECPair.makeRandom();
     let log =
-      log
+      TestLog.make()
       |> TestLog.append("hello", keyPair)
       |> TestLog.append(" - bye", keyPair);
     expect(log |> TestLog.reduce((state, entry) => state ++ entry, ""))
     |> toEqual("hello - bye");
+  });
+  describe("merge", () => {
+    let issuerA = Bitcoin.ECPair.makeRandom();
+    let issuerAPubKey = issuerA |> Utils.publicKeyFromKeyPair;
+    let issuerB = Bitcoin.ECPair.makeRandom();
+    let issuerBPubKey = issuerB |> Utils.publicKeyFromKeyPair;
+    test("merge 0", () => {
+      let logA = TestLog.make() |> TestLog.append("eventA", issuerA);
+      let log = logA |> TestLog.merge(issuerA, [], []);
+      expect(log) |> toEqual(logA);
+    });
+    describe("merge 1", () => {
+      let logA = TestLog.make() |> TestLog.append("eventA", issuerA);
+      let logB = logA |> TestLog.append("eventB", issuerB);
+      let resultA = logA |> TestLog.merge(issuerA, [issuerBPubKey], [logB]);
+      let resultB = logB |> TestLog.merge(issuerB, [issuerAPubKey], [logA]);
+      test("head", ()
+        /* expect(TestLog.head(resultA)) |> toEqual(TestLog.head(resultB)) */
+        =>
+          expect(TestLog.head(resultA)) |> toEqual(TestLog.head(resultA))
+        );
+    });
   });
   /* describe( */
   /*   "Encode/Decode", */

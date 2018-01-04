@@ -71,7 +71,6 @@ module Make = (Event: Encodable) => {
     entries
     |> List.rev_map(entry => entry.item.event)
     |> List.fold_left(reducer, start);
-  let merge = (log, otherLogs) => log;
   let decode = raw => {entries: [], witnesses: []};
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
@@ -119,4 +118,16 @@ module Make = (Event: Encodable) => {
   /*     } */
   /*   }; */
   /* }; */
+  module Merge = {
+    let exec = (witness, otherWitnesses, otherLogs, log) => log;
+  };
+  let merge = Merge.exec;
+  /* For Testing: */
+  let head = ({entries}) =>
+    switch entries {
+    | [h, ..._rest] => h.logHash
+    | [] => ""
+    };
+  let hasWitnessed = (pubKey, {witnesses}) =>
+    witnesses |> List.mem_assoc(pubKey);
 };
