@@ -29,8 +29,6 @@ let syncClocks = (clockA, clockB) => {
   rest @ result;
 };
 
-let encode = clock =>
-  clock |> Json.Encode.(list(pair(string, int))) |> Json.stringify;
+let encode = Json.Encode.(list(pair(string, int)));
 
-let decode = raw =>
-  Json.parseOrRaise(raw) |> Json.Decode.(list(pair(string, int)));
+let decode = Json.Decode.(list(pair(string, int)));

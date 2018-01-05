@@ -8,6 +8,6 @@ let getCounter: (string, t) => int;
 
 let syncClocks: (t, t) => t;
 
-let encode: t => string;
+let encode: t => Js.Json.t;
 
-let decode: string => t;
+let decode: Js.Json.t => t;
