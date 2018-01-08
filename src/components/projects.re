@@ -24,7 +24,7 @@ let changeNewProject = event =>
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
-let make = _children => {
+let make = (~session, _children) => {
   ...component,
   initialState: () => {newProject: "", status: LoadingIndex, index: []},
   didMount: _self =>
@@ -51,9 +51,9 @@ let make = _children => {
           {...state, status: CreatingProject(nonEmptyValue), newProject: ""},
           (
             ({reduce}) =>
-              Project.createProject(nonEmptyValue)
+              Project.createProject(session, nonEmptyValue)
               |> Js.Promise.(
-                   then_(newIndex =>
+                   then_(((_project, newIndex)) =>
                      reduce(() => ProjectCreated(newIndex), ()) |> resolve
                    )
                  )
