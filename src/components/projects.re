@@ -7,15 +7,15 @@ type status =
 
 type state = {
   status,
-  index: Project.index,
+  index: Project.Index.t,
   newProject: string
 };
 
 type action =
-  | IndexLoaded(Project.index)
+  | IndexLoaded(Project.Index.t)
   | ChangeNewProject(string)
   | AddProject
-  | ProjectCreated(Project.index);
+  | ProjectCreated(Project.Index.t);
 
 let component = ReasonReact.reducerComponent("Projects");
 
@@ -31,7 +31,7 @@ let make = _children => {
     ReasonReact.SideEffects(
       ({reduce}) =>
         Js.Promise.(
-          Project.loadIndex()
+          Project.Index.load()
           |> then_(index => reduce(() => IndexLoaded(index), ()) |> resolve)
         )
         |> ignore
@@ -66,7 +66,7 @@ let make = _children => {
     let projectList =
       ReasonReact.arrayToElement(
         Array.of_list(
-          (
+          Project.Index.(
             switch state.status {
             | LoadingIndex => []
             | CreatingProject(newProject) => [

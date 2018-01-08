@@ -6,21 +6,17 @@ module TestItem = {
   type t = string;
   let decode = Json.Decode.string;
   let encode = Json.Encode.string;
-  let hash = item => item |> encode |> Json.stringify |> Utils.hash;
 };
 
 let () = {
-  test("true", () =>
-    expect(true) |> toBe(true)
-  );
-  module TestLog = VectorLog.Make(TestItem);
+  module TestLog = Log.Make(TestItem);
   let print = log => Js.log(log |> TestLog.encode);
   let reduceLog = log =>
     log |> TestLog.reduce((state, entry) => state ++ entry, "");
   test("append/reduce", () => {
     let keyPair = Bitcoin.ECPair.makeRandom();
     let log =
-      TestLog.make(Bitcoin.ECPair.getAddress(keyPair))
+      TestLog.make()
       |> TestLog.append("hello", keyPair)
       |> TestLog.append(" - bye", keyPair);
     expect(log |> TestLog.reduce((state, entry) => state ++ entry, ""))
