@@ -30,7 +30,3 @@ type gaiaConfig = {
   "url_prefix": string,
   "address": string
 };
-
-[@bs.module "blockstack"]
-external getOrSetLocalGaiaHubConnection : unit => Js.Promise.t(gaiaConfig) =
-  "";

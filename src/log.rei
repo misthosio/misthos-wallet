@@ -10,7 +10,7 @@ module Make:
     type t;
     let make: unit => t;
     let append: (Event.t, Bitcoin.ECPair.t, t) => t;
-    let reduce: (('s, Event.t) => 's, 's, t) => 's;
+    let reduce: (('s, (string, Event.t)) => 's, 's, t) => 's;
     let encode: t => Js.Json.t;
     let decode: Js.Json.t => t;
   };

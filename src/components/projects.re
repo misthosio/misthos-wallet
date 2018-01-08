@@ -64,7 +64,7 @@ let make = (~session, _children) => {
       Js.log("SelectProject(" ++ id ++ ")");
       let selectedId =
         switch state.selected {
-        | Some(project) => Project.getState(project).id
+        | Some(project) => Project.getId(project)
         | None => ""
         };
       id == selectedId ?
@@ -106,7 +106,7 @@ let make = (~session, _children) => {
     let selectedId =
       switch (state.status, state.selected) {
       | (CreatingProject(_), _) => "new"
-      | (_, Some(project)) => Project.getState(project).id
+      | (_, Some(project)) => Project.getId(project)
       | _ => ""
       };
     let projectList =

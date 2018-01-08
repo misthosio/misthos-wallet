@@ -38,7 +38,12 @@ module Make = (Event: Encodable) => {
     [item, ...log];
   };
   let reduce = (reducer, start, log) =>
-    log |> List.rev_map(entry => entry.event) |> List.fold_left(reducer, start);
+    log
+    |> List.rev_map(entry => {
+         let (pubKey, _) = entry.signature;
+         (pubKey, entry.event);
+       })
+    |> List.fold_left(reducer, start);
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let signature = Json.Encode.(pair(string, ecSig));

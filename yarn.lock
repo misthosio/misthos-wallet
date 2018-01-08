@@ -1134,7 +1134,7 @@ block-stream@*:
   dependencies:
     inherits "~2.0.0"
 
-blockstack@^0.14.0:
+blockstack@^0.14.2:
   version "0.14.2"
   resolved "https://registry.yarnpkg.com/blockstack/-/blockstack-0.14.2.tgz#a4071918bbb9e2c84f0c051acaf9473e416eaca9"
   dependencies:

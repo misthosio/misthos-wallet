@@ -1,3 +1,5 @@
+open Project;
+
 type action =
   | None;
 
@@ -12,8 +14,22 @@ let make = (~project, _children) => {
     switch action {
     | None => ReasonReact.Update()
     },
-  render: _self =>
+  render: _self => {
+    let members =
+      ReasonReact.arrayToElement(
+        Array.of_list(
+          Project.getMembers(project)
+          |> List.map(m =>
+               <li key=m.blockstackId>
+                 (ReasonReact.stringToElement(m.blockstackId))
+               </li>
+             )
+        )
+      );
     <div>
-      <h2> (ReasonReact.stringToElement(Project.getState(project).name)) </h2>
-    </div>
+      <h2> (ReasonReact.stringToElement(Project.getName(project))) </h2>
+      (ReasonReact.stringToElement("Members:"))
+      <ul> members </ul>
+    </div>;
+  }
 };

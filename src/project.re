@@ -43,64 +43,75 @@ module Index = {
     Js.Promise.(load() |> then_(index => [{id, name}, ...index] |> persist));
 };
 
-type member = {
-  blockstackId: string,
-  appPublicKey: string,
-  address: string,
-  storageUrlPrefix: string
-};
-
 module Event = {
   type projectCreated = {
-    id: string,
-    name: string,
-    creator: member
+    projectId: string,
+    projectName: string,
+    creatorId: string,
+    creatorPubKey: string,
+    creatorStorageUrlPrefix: string
+  };
+  type candidateSuggested = {
+    candidateId: string,
+    candidatePubKey: string,
+    candidateStorageUrlPrefix: string
   };
   type t =
-    | ProjectCreated(projectCreated);
+    | ProjectCreated(projectCreated)
+    | CandidateSuggested(candidateSuggested);
   module Encode = {
-    let member = member =>
+    let projectCreated = event =>
       Json.Encode.(
         object_([
-          ("blockstackId", string(member.blockstackId)),
-          ("appPublicKey", string(member.appPublicKey)),
-          ("address", string(member.address)),
-          ("storageUrlPrefix", string(member.storageUrlPrefix))
+          ("type", string("ProjectCreated")),
+          ("projectId", string(event.projectId)),
+          ("projectName", string(event.projectName)),
+          ("creatorId", string(event.creatorId)),
+          ("creatorPubKey", string(event.creatorPubKey)),
+          ("creatorStorageUrlPrefix", string(event.creatorStorageUrlPrefix))
+        ])
+      );
+    let candidateSuggested = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("CandidateSuggested")),
+          ("candidateId", string(event.candidateId)),
+          ("candidatePubKey", string(event.candidatePubKey)),
+          (
+            "candidateStorageUrlPrefix",
+            string(event.candidateStorageUrlPrefix)
+          )
         ])
       );
     let event = event =>
       switch event {
-      | ProjectCreated(event) =>
-        Json.Encode.(
-          object_([
-            ("type", string("ProjectCreated")),
-            ("id", string(event.id)),
-            ("name", string(event.name)),
-            ("creator", member(event.creator))
-          ])
-        )
+      | ProjectCreated(event) => projectCreated(event)
+      | CandidateSuggested(event) => candidateSuggested(event)
       };
   };
   module Decode = {
-    let member = raw =>
+    let projectCreated = raw =>
       Json.Decode.{
-        blockstackId: raw |> field("blockstackId", string),
-        appPublicKey: raw |> field("appPublicKey", string),
-        address: raw |> field("address", string),
-        storageUrlPrefix: raw |> field("storageUrlPrefix", string)
+        projectId: raw |> field("projectId", string),
+        projectName: raw |> field("projectName", string),
+        creatorId: raw |> field("creatorId", string),
+        creatorPubKey: raw |> field("creatorPubKey", string),
+        creatorStorageUrlPrefix:
+          raw |> field("creatorStorageUrlPrefix", string)
+      };
+    let candidateSuggested = raw =>
+      Json.Decode.{
+        candidateId: raw |> field("candidateId", string),
+        candidatePubKey: raw |> field("candidatePubKey", string),
+        candidateStorageUrlPrefix:
+          raw |> field("candidateStorageUrlPrefix", string)
       };
     let event = raw => {
       let type_ = raw |> Json.Decode.(field("type", string));
-      Json.Decode.(
-        switch type_ {
-        | "ProjectCreated" =>
-          ProjectCreated({
-            id: raw |> field("id", string),
-            name: raw |> field("name", string),
-            creator: raw |> field("creator", member)
-          })
-        }
-      );
+      switch type_ {
+      | "ProjectCreated" => ProjectCreated(projectCreated(raw))
+      | "CandidateSuggested" => CandidateSuggested(candidateSuggested(raw))
+      };
     };
   };
   let encode = Encode.event;
@@ -109,10 +120,25 @@ module Event = {
 
 module EventLog = Log.Make(Event);
 
+type pubKey = string;
+
+type member = {
+  blockstackId: string,
+  pubKey,
+  address: string,
+  storageUrlPrefix: string
+};
+
+type candidate = {
+  member,
+  approval: list(pubKey)
+};
+
 type state = {
   id: string,
   name: string,
-  members: list(member)
+  members: list((pubKey, member)),
+  candidates: list(candidate)
 };
 
 type t = {
@@ -124,25 +150,52 @@ let make = () => {
   state: {
     id: "",
     name: "",
-    members: []
+    members: [],
+    candidates: []
   },
   log: EventLog.make()
 };
 
-let applyToState = (event, _state) : state =>
+let applyToState = (issuerPubKey, event, state) : state =>
   Event.(
     switch event {
     | ProjectCreated(created) => {
-        id: created.id,
-        name: created.name,
-        members: [created.creator]
+        ...state,
+        id: created.projectId,
+        name: created.projectName,
+        members: [
+          (
+            created.creatorPubKey,
+            {
+              blockstackId: created.creatorId,
+              pubKey: created.creatorPubKey,
+              address: created.creatorPubKey |> Utils.addressFromPublicKey,
+              storageUrlPrefix: created.creatorStorageUrlPrefix
+            }
+          )
+        ]
+      }
+    | CandidateSuggested(suggestion) => {
+        ...state,
+        candidates: [
+          {
+            member: {
+              blockstackId: suggestion.candidateId,
+              pubKey: suggestion.candidatePubKey,
+              address: suggestion.candidatePubKey |> Utils.addressFromPublicKey,
+              storageUrlPrefix: suggestion.candidateStorageUrlPrefix
+            },
+            approval: [issuerPubKey]
+          },
+          ...state.candidates
+        ]
       }
     }
   );
 
 let apply = (event, issuer, {state, log}) => {
   log: log |> EventLog.append(event, issuer),
-  state: state |> applyToState(event)
+  state: state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event)
 };
 
 let reconstruct = log => {
@@ -150,7 +203,10 @@ let reconstruct = log => {
   {
     state:
       log
-      |> EventLog.reduce((state, event) => state |> applyToState(event), state),
+      |> EventLog.reduce(
+           (state, (issuer, event)) => state |> applyToState(issuer, event),
+           state
+         ),
     log
   };
 };
@@ -165,30 +221,35 @@ let persist = project =>
     |> then_(() => resolve(project))
   );
 
-let create = (session, name) =>
-  Event.(
-    Session.(
-      Blockstack.getOrSetLocalGaiaHubConnection()
-      |> Js.Promise.then_(gaiaCon => {
-           let projectCreated = {
-             id: Uuid.v4(),
-             name,
-             creator: {
-               blockstackId: session.userName,
-               appPublicKey: session.appKeyPair |> Utils.publicKeyFromKeyPair,
-               address: gaiaCon##address,
-               storageUrlPrefix: gaiaCon##url_prefix
-             }
-           };
-           Js.Promise.all2((
-             make()
-             |> apply(ProjectCreated(projectCreated), session.appKeyPair)
-             |> persist,
-             Index.add(~id=projectCreated.id, ~name)
-           ));
-         })
-    )
-  );
+let create = (session, projectName) => {
+  open Session;
+  open Event;
+  let projectCreated = {
+    projectId: Uuid.v4(),
+    projectName,
+    creatorId: session.userName,
+    creatorPubKey: session.appKeyPair |> Utils.publicKeyFromKeyPair,
+    creatorStorageUrlPrefix: "https://gaia.blockstack.org/hub/"
+  };
+  Js.Promise.all2((
+    make()
+    |> apply(ProjectCreated(projectCreated), session.appKeyPair)
+    |> persist,
+    Index.add(~id=projectCreated.projectId, ~name=projectName)
+  ));
+};
+
+let suggestCandidate = (session: Session.data, blockstackId, project) =>
+  project
+  |> apply(
+       CandidateSuggested({
+         candidateId: blockstackId,
+         candidatePubKey: "",
+         candidateStorageUrlPrefix: ""
+       }),
+       session.appKeyPair
+     )
+  |> persist;
 
 let load = id =>
   Js.Promise.(
@@ -202,4 +263,8 @@ let load = id =>
        )
   );
 
-let getState = project => project.state;
+let getId = ({state}) => state.id;
+
+let getName = ({state}) => state.name;
+
+let getMembers = ({state}) => state.members |> List.map(((_, m)) => m);

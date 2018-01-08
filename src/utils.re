@@ -8,6 +8,12 @@ let keyPairFromPrivateKey = key =>
 let publicKeyFromKeyPair = pair =>
   Bitcoin.(pair |> ECPair.getPublicKeyBuffer |> bufToHex);
 
+let addressFromPublicKey = pubKey =>
+  pubKey
+  |> bufFromHex
+  |> Bitcoin.ECPair.fromPublicKeyBuffer
+  |> Bitcoin.ECPair.getAddress;
+
 let signatureToString = ecSignature =>
   ecSignature |> Bitcoin.ECSignature.toDER |> bufToHex;
 
