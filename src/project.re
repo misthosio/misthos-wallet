@@ -43,14 +43,31 @@ module Index = {
     Js.Promise.(load() |> then_(index => [{id, name}, ...index] |> persist));
 };
 
+type member = {
+  blockstackId: string,
+  appPublicKey: string,
+  address: string,
+  storageUrlPrefix: string
+};
+
 module Event = {
   type projectCreated = {
     id: string,
-    name: string
+    name: string,
+    creator: member
   };
   type t =
     | ProjectCreated(projectCreated);
   module Encode = {
+    let member = member =>
+      Json.Encode.(
+        object_([
+          ("blockstackId", string(member.blockstackId)),
+          ("appPublicKey", string(member.appPublicKey)),
+          ("address", string(member.address)),
+          ("storageUrlPrefix", string(member.storageUrlPrefix))
+        ])
+      );
     let event = event =>
       switch event {
       | ProjectCreated(event) =>
@@ -58,12 +75,20 @@ module Event = {
           object_([
             ("type", string("ProjectCreated")),
             ("id", string(event.id)),
-            ("name", string(event.name))
+            ("name", string(event.name)),
+            ("creator", member(event.creator))
           ])
         )
       };
   };
   module Decode = {
+    let member = raw =>
+      Json.Decode.{
+        blockstackId: raw |> field("blockstackId", string),
+        appPublicKey: raw |> field("appPublicKey", string),
+        address: raw |> field("address", string),
+        storageUrlPrefix: raw |> field("storageUrlPrefix", string)
+      };
     let event = raw => {
       let type_ = raw |> Json.Decode.(field("type", string));
       Json.Decode.(
@@ -71,7 +96,8 @@ module Event = {
         | "ProjectCreated" =>
           ProjectCreated({
             id: raw |> field("id", string),
-            name: raw |> field("name", string)
+            name: raw |> field("name", string),
+            creator: raw |> field("creator", member)
           })
         }
       );
@@ -85,7 +111,8 @@ module EventLog = Log.Make(Event);
 
 type state = {
   id: string,
-  name: string
+  name: string,
+  members: list(member)
 };
 
 type t = {
@@ -96,7 +123,8 @@ type t = {
 let make = () => {
   state: {
     id: "",
-    name: ""
+    name: "",
+    members: []
   },
   log: EventLog.make()
 };
@@ -104,7 +132,11 @@ let make = () => {
 let applyToState = (event, _state) : state =>
   Event.(
     switch event {
-    | ProjectCreated(created) => {id: created.id, name: created.name}
+    | ProjectCreated(created) => {
+        id: created.id,
+        name: created.name,
+        members: [created.creator]
+      }
     }
   );
 
@@ -133,16 +165,30 @@ let persist = project =>
     |> then_(() => resolve(project))
   );
 
-let createProject = (session, name) => {
-  open Event;
-  open Session;
-  let appKeyPair = session.appKeyPair;
-  let projectCreated = {id: Uuid.v4(), name};
-  Js.Promise.all2((
-    make() |> apply(ProjectCreated(projectCreated), appKeyPair) |> persist,
-    Index.add(~id=projectCreated.id, ~name)
-  ));
-};
+let create = (session, name) =>
+  Event.(
+    Session.(
+      Blockstack.getOrSetLocalGaiaHubConnection()
+      |> Js.Promise.then_(gaiaCon => {
+           let projectCreated = {
+             id: Uuid.v4(),
+             name,
+             creator: {
+               blockstackId: session.userName,
+               appPublicKey: session.appKeyPair |> Utils.publicKeyFromKeyPair,
+               address: gaiaCon##address,
+               storageUrlPrefix: gaiaCon##url_prefix
+             }
+           };
+           Js.Promise.all2((
+             make()
+             |> apply(ProjectCreated(projectCreated), session.appKeyPair)
+             |> persist,
+             Index.add(~id=projectCreated.id, ~name)
+           ));
+         })
+    )
+  );
 
 let load = id =>
   Js.Promise.(

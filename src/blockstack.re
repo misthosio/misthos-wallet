@@ -24,3 +24,13 @@ external putFile : (string, string, Js.boolean) => Js.Promise.t(unit) = "";
 [@bs.module "blockstack"]
 external getFile : (string, Js.boolean) => Js.Promise.t(Js.nullable(string)) =
   "";
+
+type gaiaConfig = {
+  .
+  "url_prefix": string,
+  "address": string
+};
+
+[@bs.module "blockstack"]
+external getOrSetLocalGaiaHubConnection : unit => Js.Promise.t(gaiaConfig) =
+  "";

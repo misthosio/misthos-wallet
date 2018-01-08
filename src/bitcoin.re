@@ -42,6 +42,8 @@ module ECPair = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external makeRandom : unit => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
+  external fromPublicKeyBuffer : Node.buffer => t = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIF : string => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.new]
   external create : BigInteger.t => t = "ECPair";

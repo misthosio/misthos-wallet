@@ -7,15 +7,23 @@ module Index: {
   let load: unit => Js.Promise.t(t);
 };
 
+type member = {
+  blockstackId: string,
+  appPublicKey: string,
+  address: string,
+  storageUrlPrefix: string
+};
+
 type state = {
   id: string,
-  name: string
+  name: string,
+  members: list(member)
 };
 
 type t;
 
 let load: string => Js.Promise.t(t);
 
-let createProject: (Session.data, string) => Js.Promise.t((t, Index.t));
+let create: (Session.data, string) => Js.Promise.t((t, Index.t));
 
 let getState: t => state;

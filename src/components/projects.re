@@ -85,12 +85,12 @@ let make = (~session, _children) => {
     | AddProject =>
       switch (String.trim(state.newProject)) {
       | "" => ReasonReact.NoUpdate
-      | nonEmptyValue =>
+      | name =>
         ReasonReact.UpdateWithSideEffects(
-          {...state, status: CreatingProject(nonEmptyValue), newProject: ""},
+          {...state, status: CreatingProject(name), newProject: ""},
           (
             ({reduce}) =>
-              Project.createProject(session, nonEmptyValue)
+              Project.create(session, name)
               |> Js.Promise.(
                    then_(((project, newIndex)) =>
                      reduce(() => ProjectCreated(project, newIndex), ())
