@@ -1,21 +1,26 @@
-open Project;
-
 type status =
   | None
   | LoadingIndex
+  | LoadingProject
   | CreatingProject(string);
 
 type state = {
   status,
+  selected: option(Project.t),
   index: Project.Index.t,
   newProject: string
 };
 
 type action =
   | IndexLoaded(Project.Index.t)
+  | ProjectLoaded(Project.t)
   | ChangeNewProject(string)
+  | SelectProject(string)
   | AddProject
-  | ProjectCreated(Project.Index.t);
+  | ProjectCreated(Project.t, Project.Index.t);
+
+let selectProject = e =>
+  SelectProject(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
 
 let component = ReasonReact.reducerComponent("Projects");
 
@@ -26,7 +31,12 @@ let changeNewProject = event =>
 
 let make = (~session, _children) => {
   ...component,
-  initialState: () => {newProject: "", status: LoadingIndex, index: []},
+  initialState: () => {
+    newProject: "",
+    status: LoadingIndex,
+    index: [],
+    selected: None
+  },
   didMount: _self =>
     ReasonReact.SideEffects(
       ({reduce}) =>
@@ -39,10 +49,38 @@ let make = (~session, _children) => {
   reducer: (action, state) =>
     switch action {
     | IndexLoaded(index) => ReasonReact.Update({...state, status: None, index})
-    | ProjectCreated(index) =>
-      ReasonReact.Update({...state, status: None, index})
+    | ProjectLoaded(project) =>
+      ReasonReact.Update({...state, status: None, selected: Some(project)})
+    | ProjectCreated(selected, index) =>
+      ReasonReact.Update({
+        ...state,
+        status: None,
+        index,
+        selected: Some(selected)
+      })
     | ChangeNewProject(text) =>
       ReasonReact.Update({...state, newProject: text})
+    | SelectProject(id) =>
+      let selectedId =
+        switch state.selected {
+        | Some(project) => Project.getState(project).id
+        | None => ""
+        };
+      id == selectedId ?
+        ReasonReact.NoUpdate :
+        ReasonReact.UpdateWithSideEffects(
+          {...state, status: LoadingProject},
+          (
+            ({reduce}) =>
+              Project.load(id)
+              |> Js.Promise.(
+                   then_(project =>
+                     reduce(() => ProjectLoaded(project), ()) |> resolve
+                   )
+                 )
+              |> ignore
+          )
+        );
     | AddProject =>
       switch (String.trim(state.newProject)) {
       | "" => ReasonReact.NoUpdate
@@ -53,8 +91,9 @@ let make = (~session, _children) => {
             ({reduce}) =>
               Project.createProject(session, nonEmptyValue)
               |> Js.Promise.(
-                   then_(((_project, newIndex)) =>
-                     reduce(() => ProjectCreated(newIndex), ()) |> resolve
+                   then_(((project, newIndex)) =>
+                     reduce(() => ProjectCreated(project, newIndex), ())
+                     |> resolve
                    )
                  )
               |> ignore
@@ -63,6 +102,12 @@ let make = (~session, _children) => {
       }
     },
   render: ({reduce, state}) => {
+    let selectedId =
+      switch (state.status, state.selected) {
+      | (CreatingProject(_), _) => "new"
+      | (_, Some(project)) => Project.getState(project).id
+      | _ => ""
+      };
     let projectList =
       ReasonReact.arrayToElement(
         Array.of_list(
@@ -73,24 +118,31 @@ let make = (~session, _children) => {
                 (newProject, "new"),
                 ...state.index |> List.map(({name, id}) => (name, id))
               ]
-            | None => state.index |> List.map(({name, id}) => (name, id))
+            | _ => state.index |> List.map(({name, id}) => (name, id))
             }
           )
           |> List.map(((name, id)) =>
-               <ul key=id> (ReasonReact.stringToElement(name)) </ul>
+               <li
+                 key=id
+                 id
+                 className=(id == selectedId ? "selected" : "")
+                 onClick=(reduce(e => selectProject(e)))>
+                 (ReasonReact.stringToElement(name))
+               </li>
              )
         )
       );
     let status =
       switch state.status {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
+      | LoadingProject => ReasonReact.stringToElement("Loading Project")
       | CreatingProject(newProject) =>
         ReasonReact.stringToElement("Creating project '" ++ newProject ++ "'")
       | None => ReasonReact.stringToElement("projects:")
       };
     <div>
       <h2> status </h2>
-      projectList
+      <ul> projectList </ul>
       <input
         placeholder="Create new Project"
         value=state.newProject

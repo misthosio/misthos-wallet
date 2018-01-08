@@ -51,20 +51,30 @@ module Event = {
   type t =
     | ProjectCreated(projectCreated);
   module Encode = {
-    let type_ = event =>
-      Json.Encode.string(
-        switch event {
-        | ProjectCreated(_) => "ProjectCreated"
-        }
-      );
-    let event = event => Json.Encode.(object_([("type", type_(event))]));
+    let event = event =>
+      switch event {
+      | ProjectCreated(event) =>
+        Json.Encode.(
+          object_([
+            ("type", string("ProjectCreated")),
+            ("id", string(event.id)),
+            ("name", string(event.name))
+          ])
+        )
+      };
   };
   module Decode = {
     let event = raw => {
       let type_ = raw |> Json.Decode.(field("type", string));
-      switch type_ {
-      | "ProjectCreated" => ProjectCreated({id: "", name: ""})
-      };
+      Json.Decode.(
+        switch type_ {
+        | "ProjectCreated" =>
+          ProjectCreated({
+            id: raw |> field("id", string),
+            name: raw |> field("name", string)
+          })
+        }
+      );
     };
   };
   let encode = Encode.event;
@@ -91,18 +101,27 @@ let make = () => {
   log: EventLog.make()
 };
 
-let apply = (event, issuer, {state, log}) =>
+let applyToState = (event, _state) : state =>
   Event.(
     switch event {
-    | ProjectCreated(created) => {
-        log: log |> EventLog.append(event, issuer),
-        state: {
-          id: created.id,
-          name: created.name
-        }
-      }
+    | ProjectCreated(created) => {id: created.id, name: created.name}
     }
   );
+
+let apply = (event, issuer, {state, log}) => {
+  log: log |> EventLog.append(event, issuer),
+  state: state |> applyToState(event)
+};
+
+let reconstruct = log => {
+  let {state} = make();
+  {
+    state:
+      log
+      |> EventLog.reduce((state, event) => state |> applyToState(event), state),
+    log
+  };
+};
 
 let persist = project =>
   Js.Promise.(
@@ -119,8 +138,21 @@ let createProject = (session, name) => {
   open Session;
   let appKeyPair = session.appKeyPair;
   let projectCreated = {id: Uuid.v4(), name};
-  let persisting =
-    make() |> apply(ProjectCreated(projectCreated), appKeyPair) |> persist;
-  let added = Index.add(~id=projectCreated.id, ~name);
-  Js.Promise.all2((persisting, added));
+  Js.Promise.all2((
+    make() |> apply(ProjectCreated(projectCreated), appKeyPair) |> persist,
+    Index.add(~id=projectCreated.id, ~name)
+  ));
 };
+
+let load = id =>
+  Js.Promise.(
+    Blockstack.getFile(id ++ "/log.json", Js.false_)
+    |> then_(nullLog =>
+         switch (Js.Nullable.to_opt(nullLog)) {
+         | Some(raw) =>
+           resolve(raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct)
+         }
+       )
+  );
+
+let getState = project => project.state;
