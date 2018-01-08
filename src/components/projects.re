@@ -19,15 +19,15 @@ type action =
   | AddProject
   | ProjectCreated(Project.t, Project.Index.t);
 
-let selectProject = e =>
-  SelectProject(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
-
 let component = ReasonReact.reducerComponent("Projects");
 
 let changeNewProject = event =>
   ChangeNewProject(
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
+
+let selectProject = e =>
+  SelectProject(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
 
 let make = (~session, _children) => {
   ...component,
@@ -61,6 +61,7 @@ let make = (~session, _children) => {
     | ChangeNewProject(text) =>
       ReasonReact.Update({...state, newProject: text})
     | SelectProject(id) =>
+      Js.log("SelectProject(" ++ id ++ ")");
       let selectedId =
         switch state.selected {
         | Some(project) => Project.getState(project).id
@@ -69,7 +70,7 @@ let make = (~session, _children) => {
       id == selectedId ?
         ReasonReact.NoUpdate :
         ReasonReact.UpdateWithSideEffects(
-          {...state, status: LoadingProject},
+          {...state, status: LoadingProject, selected: None},
           (
             ({reduce}) =>
               Project.load(id)
@@ -135,10 +136,14 @@ let make = (~session, _children) => {
     let status =
       switch state.status {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
-      | LoadingProject => ReasonReact.stringToElement("Loading Project")
       | CreatingProject(newProject) =>
         ReasonReact.stringToElement("Creating project '" ++ newProject ++ "'")
-      | None => ReasonReact.stringToElement("projects:")
+      | _ => ReasonReact.stringToElement("projects:")
+      };
+    let project =
+      switch state.selected {
+      | Some(project) => <SelectedProject project />
+      | None => <div> (ReasonReact.stringToElement("Loading Project")) </div>
       };
     <div>
       <h2> status </h2>
@@ -152,6 +157,7 @@ let make = (~session, _children) => {
       <button onClick=(reduce((_) => AddProject))>
         (ReasonReact.stringToElement("Add"))
       </button>
+      project
     </div>;
   }
 };

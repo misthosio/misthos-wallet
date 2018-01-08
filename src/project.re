@@ -151,6 +151,7 @@ let load = id =>
          switch (Js.Nullable.to_opt(nullLog)) {
          | Some(raw) =>
            resolve(raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct)
+         | None => raise(Not_found)
          }
        )
   );

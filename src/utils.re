@@ -11,4 +11,7 @@ let publicKeyFromKeyPair = pair =>
 let signatureToString = ecSignature =>
   ecSignature |> Bitcoin.ECSignature.toDER |> bufToHex;
 
+let signatureFromString = ecSignature =>
+  ecSignature |> bufFromHex |> Bitcoin.ECSignature.fromDER;
+
 let hash = s => s |> Bitcoin.Crypto.sha256 |> bufToHex;

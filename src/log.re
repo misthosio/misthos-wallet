@@ -39,7 +39,6 @@ module Make = (Event: Encodable) => {
   };
   let reduce = (reducer, start, log) =>
     log |> List.rev_map(entry => entry.event) |> List.fold_left(reducer, start);
-  let decode = _raw => make();
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let signature = Json.Encode.(pair(string, ecSig));
@@ -54,4 +53,17 @@ module Make = (Event: Encodable) => {
     let log = Json.Encode.(list(entry));
   };
   let encode = Encode.log;
+  module Decode = {
+    let ecSig = ecSig =>
+      ecSig |> Json.Decode.string |> Utils.signatureFromString;
+    let signature = Json.Decode.(pair(string, ecSig));
+    let entry = entry =>
+      Json.Decode.{
+        hash: entry |> field("hash", string),
+        signature: entry |> field("sig", signature),
+        event: entry |> field("event", Event.decode)
+      };
+    let log = Json.Decode.(list(entry));
+  };
+  let decode = Decode.log;
 };
