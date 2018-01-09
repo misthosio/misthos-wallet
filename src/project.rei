@@ -17,8 +17,11 @@ type member = {
 };
 
 type candidate = {
-  member,
-  approval: list(pubKey)
+  blockstackId: string,
+  pubKey,
+  address: string,
+  storageUrlPrefix: string,
+  approvedBy: list(string)
 };
 
 type state = {
@@ -41,3 +44,5 @@ let getId: t => string;
 let getName: t => string;
 
 let getMembers: t => list(member);
+
+let getCandidates: t => list(candidate);

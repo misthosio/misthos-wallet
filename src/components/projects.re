@@ -48,7 +48,24 @@ let make = (~session, _children) => {
     ),
   reducer: (action, state) =>
     switch action {
-    | IndexLoaded(index) => ReasonReact.Update({...state, status: None, index})
+    | IndexLoaded(index) =>
+      ReasonReact.UpdateWithSideEffects(
+        {...state, status: None, index},
+        (
+          ({reduce}) =>
+            switch index {
+            | [p, ..._rest] =>
+              Project.load(p.id)
+              |> Js.Promise.(
+                   then_(project =>
+                     reduce(() => ProjectLoaded(project), ()) |> resolve
+                   )
+                 )
+              |> ignore
+            | _ => ()
+            }
+        )
+      )
     | ProjectLoaded(project) =>
       ReasonReact.Update({...state, status: None, selected: Some(project)})
     | ProjectCreated(selected, index) =>
@@ -142,7 +159,7 @@ let make = (~session, _children) => {
       };
     let project =
       switch state.selected {
-      | Some(project) => <SelectedProject project />
+      | Some(project) => <SelectedProject project session />
       | None => <div> (ReasonReact.stringToElement("Loading Project")) </div>
       };
     <div>

@@ -130,8 +130,11 @@ type member = {
 };
 
 type candidate = {
-  member,
-  approval: list(pubKey)
+  blockstackId: string,
+  pubKey,
+  address: string,
+  storageUrlPrefix: string,
+  approvedBy: list(string)
 };
 
 type state = {
@@ -156,6 +159,9 @@ let make = () => {
   log: EventLog.make()
 };
 
+let memberIdFromPubKey = (pubKey, {members}) =>
+  List.assoc(pubKey, members).blockstackId;
+
 let applyToState = (issuerPubKey, event, state) : state =>
   Event.(
     switch event {
@@ -179,13 +185,12 @@ let applyToState = (issuerPubKey, event, state) : state =>
         ...state,
         candidates: [
           {
-            member: {
-              blockstackId: suggestion.candidateId,
-              pubKey: suggestion.candidatePubKey,
-              address: suggestion.candidatePubKey |> Utils.addressFromPublicKey,
-              storageUrlPrefix: suggestion.candidateStorageUrlPrefix
-            },
-            approval: [issuerPubKey]
+            blockstackId: suggestion.candidateId,
+            pubKey: suggestion.candidatePubKey,
+            /* address: suggestion.candidatePubKey |> Utils.addressFromPublicKey, */
+            address: "",
+            storageUrlPrefix: suggestion.candidateStorageUrlPrefix,
+            approvedBy: [memberIdFromPubKey(issuerPubKey, state)]
           },
           ...state.candidates
         ]
@@ -268,3 +273,5 @@ let getId = ({state}) => state.id;
 let getName = ({state}) => state.name;
 
 let getMembers = ({state}) => state.members |> List.map(((_, m)) => m);
+
+let getCandidates = ({state}) => state.candidates;
