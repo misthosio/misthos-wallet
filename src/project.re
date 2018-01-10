@@ -140,7 +140,11 @@ let create = (session: Session.data, projectName) => {
 let suggestCandidate = (session: Session.data, candidateId, project) =>
   project
   |> apply(
-       Event.makeCandidateSuggested(~candidateId, ~candidatePubKey=""),
+       Event.makeCandidateSuggested(
+         ~supporterId=session.userName,
+         ~candidateId,
+         ~candidatePubKey=""
+       ),
        session.appKeyPair
      )
   |> persist;

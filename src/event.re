@@ -37,11 +37,13 @@ module ProjectCreated = {
 module CandidateSuggested = {
   type t = {
     processId: string,
+    supporterId: string,
     candidateId: string,
     candidatePubKey: string
   };
-  let make = (~candidateId, ~candidatePubKey) => {
+  let make = (~supporterId, ~candidateId, ~candidatePubKey) => {
     processId: Uuid.v4(),
+    supporterId,
     candidateId,
     candidatePubKey
   };
@@ -50,6 +52,7 @@ module CandidateSuggested = {
       object_([
         ("type", string("CandidateSuggested")),
         ("processId", string(event.processId)),
+        ("supporterId", string(event.supporterId)),
         ("candidateId", string(event.candidateId)),
         ("candidatePubKey", string(event.candidatePubKey))
       ])
@@ -57,6 +60,7 @@ module CandidateSuggested = {
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", string),
+      supporterId: raw |> field("supporterId", string),
       candidateId: raw |> field("candidateId", string),
       candidatePubKey: raw |> field("candidatePubKey", string)
     };
@@ -183,8 +187,10 @@ type t =
   | ContributionApproved(ContributionApproved.t)
   | ContributionAccepted(ContributionAccepted.t);
 
-let makeCandidateSuggested = (~candidateId, ~candidatePubKey) =>
-  CandidateSuggested(CandidateSuggested.make(~candidateId, ~candidatePubKey));
+let makeCandidateSuggested = (~supporterId, ~candidateId, ~candidatePubKey) =>
+  CandidateSuggested(
+    CandidateSuggested.make(~supporterId, ~candidateId, ~candidatePubKey)
+  );
 
 let encode = event =>
   switch event {

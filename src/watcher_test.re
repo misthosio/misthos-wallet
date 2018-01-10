@@ -20,10 +20,14 @@ let () =
            ),
            issuer
          );
-    let candidateId = "bozzio.id";
+    let candidateId = "wackerman.id";
     let candidatePubKey = "sticks";
     let candidateSuggestion =
-      Event.CandidateSuggested.make(~candidateId, ~candidatePubKey);
+      Event.CandidateSuggested.make(
+        ~supporterId="bozzio.id",
+        ~candidateId,
+        ~candidatePubKey
+      );
     let processId = candidateSuggestion.processId;
     test("started", () => {
       let candidateWatcher =

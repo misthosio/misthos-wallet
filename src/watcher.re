@@ -15,36 +15,42 @@ module CandidateApproval = {
   };
   let make = (suggestion: CandidateSuggested.t, log) => {
     let process = {
-      val state = ref({eligable: [], approvals: [], policy: Policy.absolute});
+      val state =
+        ref({
+          eligable: [],
+          approvals: [suggestion.supporterId],
+          policy: Policy.absolute
+        });
       val completed = ref(false);
       val result = ref(None);
-      pub receive = event =>
+      pub receive = event => {
         switch event {
         | ProjectCreated(event) =>
           state :=
             {...state^, eligable: [event.creatorId], policy: event.metaPolicy}
         | CandidateApproved(event) when event.processId == suggestion.processId =>
           state :=
-            {...state^, approvals: [event.supporterId, ...state^.approvals]};
-          if (state^.policy
-              |> Policy.fulfilled(
-                   ~eligable=state^.eligable,
-                   ~approved=state^.approvals
-                 )) {
-            result :=
-              Some(
-                MemberAdded({
-                  processId: suggestion.processId,
-                  blockstackId: suggestion.candidateId,
-                  pubKey: suggestion.candidatePubKey
-                })
-              );
-          };
+            {...state^, approvals: [event.supporterId, ...state^.approvals]}
         | MemberAdded(event) when event.processId == suggestion.processId =>
           completed := true;
           result := None;
         | _ => ()
         };
+        if (state^.policy
+            |> Policy.fulfilled(
+                 ~eligable=state^.eligable,
+                 ~approved=state^.approvals
+               )) {
+          result :=
+            Some(
+              MemberAdded({
+                processId: suggestion.processId,
+                blockstackId: suggestion.candidateId,
+                pubKey: suggestion.candidatePubKey
+              })
+            );
+        };
+      };
       pub processCompleted = () => completed^;
       pub resultingEvent = () => result^
     };
