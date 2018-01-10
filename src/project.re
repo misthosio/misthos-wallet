@@ -120,6 +120,27 @@ module Event = {
 
 module EventLog = Log.Make(Event);
 
+module Watcher = {
+  type t = {. receive: Event.t => unit};
+  module CandidateApproval = {
+    let make = suggestion => {
+      val suggestion = suggestion;
+      val approval = ref(1);
+      pub receive = event => approval := approval^ + 1
+    };
+  };
+  let addWatcher = (event, watchers) =>
+    Event.(
+      switch event {
+      | CandidateSuggested(suggestion) => [
+          CandidateApproval.make(suggestion),
+          ...watchers
+        ]
+      | _ => watchers
+      }
+    );
+};
+
 type pubKey = string;
 
 type member = {
@@ -146,7 +167,8 @@ type state = {
 
 type t = {
   state,
-  log: EventLog.t
+  log: EventLog.t,
+  watchers: list(Watcher.t)
 };
 
 let make = () => {
@@ -156,7 +178,8 @@ let make = () => {
     members: [],
     candidates: []
   },
-  log: EventLog.make()
+  log: EventLog.make(),
+  watchers: []
 };
 
 let memberIdFromPubKey = (pubKey, {members}) =>
@@ -198,22 +221,29 @@ let applyToState = (issuerPubKey, event, state) : state =>
     }
   );
 
-let apply = (event, issuer, {state, log}) => {
-  log: log |> EventLog.append(event, issuer),
-  state: state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event)
+let apply = (event, issuer, {state, log, watchers}) => {
+  let log = log |> EventLog.append(event, issuer);
+  let state = state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event);
+  watchers |> List.iter(w => w#receive(event));
+  let watchers = Watcher.addWatcher(event, watchers);
+  {log, state, watchers};
 };
 
 let reconstruct = log => {
   let {state} = make();
-  {
-    state:
-      log
-      |> EventLog.reduce(
-           (state, (issuer, event)) => state |> applyToState(issuer, event),
-           state
-         ),
+  let (state, watchers) =
     log
-  };
+    |> EventLog.reduce(
+         ((state, watchers), (issuer, event)) => {
+           watchers |> List.iter(w => w#receive(event));
+           (
+             state |> applyToState(issuer, event),
+             watchers |> Watcher.addWatcher(event)
+           );
+         },
+         (state, [])
+       );
+  {log, state, watchers};
 };
 
 let persist = project =>
@@ -254,6 +284,7 @@ let suggestCandidate = (session: Session.data, blockstackId, project) =>
        }),
        session.appKeyPair
      )
+  /* check policy and add member */
   |> persist;
 
 let load = id =>
