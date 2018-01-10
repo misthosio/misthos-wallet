@@ -1,7 +1,5 @@
 module Index = ProjectIndex;
 
-module EventLog = Log.Make(Event);
-
 type pubKey = string;
 
 type member = {
@@ -86,7 +84,11 @@ let apply = (event, issuer, {state, log, watchers}) => {
   let log = log |> EventLog.append(event, issuer);
   let state = state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event);
   watchers |> List.iter(w => w#receive(event));
-  let watchers = Watcher.addWatcher(event, watchers);
+  let watchers =
+    switch (Watcher.initWatcherFor(event, log)) {
+    | Some(w) => [w, ...watchers]
+    | None => watchers
+    };
   {log, state, watchers};
 };
 
@@ -95,13 +97,13 @@ let reconstruct = log => {
   let (state, watchers) =
     log
     |> EventLog.reduce(
-         ((state, watchers), (issuer, event)) => {
-           watchers |> List.iter(w => w#receive(event));
-           (
-             state |> applyToState(issuer, event),
-             watchers |> Watcher.addWatcher(event)
-           );
-         },
+         ((state, watchers), (issuer, event)) => (
+           state |> applyToState(issuer, event),
+           switch (Watcher.initWatcherFor(event, log)) {
+           | Some(w) => [w, ...watchers]
+           | None => watchers
+           }
+         ),
          (state, [])
        );
   {log, state, watchers};
@@ -117,12 +119,15 @@ let persist = project =>
     |> then_(() => resolve(project))
   );
 
+let defaultPolicy = Policy.absolute;
+
 let create = (session: Session.data, projectName) => {
   let projectCreated =
     Event.ProjectCreated.make(
       ~projectName,
       ~creatorId=session.userName,
-      ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair
+      ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
+      ~metaPolicy=defaultPolicy
     );
   Js.Promise.all2((
     make()

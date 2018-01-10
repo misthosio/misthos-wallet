@@ -3,13 +3,15 @@ module ProjectCreated = {
     projectId: string,
     projectName: string,
     creatorId: string,
-    creatorPubKey: string
+    creatorPubKey: string,
+    metaPolicy: Policy.t
   };
-  let make = (~projectName, ~creatorId, ~creatorPubKey) => {
+  let make = (~projectName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
     projectId: Uuid.v4(),
     projectName,
     creatorId,
-    creatorPubKey
+    creatorPubKey,
+    metaPolicy
   };
   let encode = event =>
     Json.Encode.(
@@ -18,7 +20,8 @@ module ProjectCreated = {
         ("projectId", string(event.projectId)),
         ("projectName", string(event.projectName)),
         ("creatorId", string(event.creatorId)),
-        ("creatorPubKey", string(event.creatorPubKey))
+        ("creatorPubKey", string(event.creatorPubKey)),
+        ("metaPolicy", Policy.encode(event.metaPolicy))
       ])
     );
   let decode = raw =>
@@ -26,7 +29,8 @@ module ProjectCreated = {
       projectId: raw |> field("projectId", string),
       projectName: raw |> field("projectName", string),
       creatorId: raw |> field("creatorId", string),
-      creatorPubKey: raw |> field("creatorPubKey", string)
+      creatorPubKey: raw |> field("creatorPubKey", string),
+      metaPolicy: raw |> field("metaPolicy", Policy.decode)
     };
 };
 
