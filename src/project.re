@@ -1,145 +1,6 @@
-module Index = {
-  type item = {
-    id: string,
-    name: string
-  };
-  type t = list(item);
-  module Encode = {
-    let item = item =>
-      Json.Encode.(
-        object_([("name", string(item.name)), ("id", string(item.id))])
-      );
-    let index = Json.Encode.list(item);
-  };
-  module Decode = {
-    let item = json =>
-      Json.Decode.{
-        name: json |> field("name", string),
-        id: json |> field("id", string)
-      };
-    let index = Json.Decode.list(item);
-  };
-  let indexPath = "index.json";
-  let persist = index =>
-    Js.Promise.(
-      Blockstack.putFile(
-        indexPath,
-        Encode.index(index) |> Json.stringify,
-        Js.false_
-      )
-      |> then_(() => resolve(index))
-    );
-  let load = () =>
-    Js.Promise.(
-      Blockstack.getFile(indexPath, Js.false_)
-      |> then_(nullProjects =>
-           switch (Js.Nullable.to_opt(nullProjects)) {
-           | None => persist([])
-           | Some(index) => resolve(index |> Json.parseOrRaise |> Decode.index)
-           }
-         )
-    );
-  let add = (~id, ~name) =>
-    Js.Promise.(load() |> then_(index => [{id, name}, ...index] |> persist));
-};
-
-module Event = {
-  type projectCreated = {
-    projectId: string,
-    projectName: string,
-    creatorId: string,
-    creatorPubKey: string,
-    creatorStorageUrlPrefix: string
-  };
-  type candidateSuggested = {
-    candidateId: string,
-    candidatePubKey: string,
-    candidateStorageUrlPrefix: string
-  };
-  type t =
-    | ProjectCreated(projectCreated)
-    | CandidateSuggested(candidateSuggested);
-  module Encode = {
-    let projectCreated = event =>
-      Json.Encode.(
-        object_([
-          ("type", string("ProjectCreated")),
-          ("projectId", string(event.projectId)),
-          ("projectName", string(event.projectName)),
-          ("creatorId", string(event.creatorId)),
-          ("creatorPubKey", string(event.creatorPubKey)),
-          ("creatorStorageUrlPrefix", string(event.creatorStorageUrlPrefix))
-        ])
-      );
-    let candidateSuggested = event =>
-      Json.Encode.(
-        object_([
-          ("type", string("CandidateSuggested")),
-          ("candidateId", string(event.candidateId)),
-          ("candidatePubKey", string(event.candidatePubKey)),
-          (
-            "candidateStorageUrlPrefix",
-            string(event.candidateStorageUrlPrefix)
-          )
-        ])
-      );
-    let event = event =>
-      switch event {
-      | ProjectCreated(event) => projectCreated(event)
-      | CandidateSuggested(event) => candidateSuggested(event)
-      };
-  };
-  module Decode = {
-    let projectCreated = raw =>
-      Json.Decode.{
-        projectId: raw |> field("projectId", string),
-        projectName: raw |> field("projectName", string),
-        creatorId: raw |> field("creatorId", string),
-        creatorPubKey: raw |> field("creatorPubKey", string),
-        creatorStorageUrlPrefix:
-          raw |> field("creatorStorageUrlPrefix", string)
-      };
-    let candidateSuggested = raw =>
-      Json.Decode.{
-        candidateId: raw |> field("candidateId", string),
-        candidatePubKey: raw |> field("candidatePubKey", string),
-        candidateStorageUrlPrefix:
-          raw |> field("candidateStorageUrlPrefix", string)
-      };
-    let event = raw => {
-      let type_ = raw |> Json.Decode.(field("type", string));
-      switch type_ {
-      | "ProjectCreated" => ProjectCreated(projectCreated(raw))
-      | "CandidateSuggested" => CandidateSuggested(candidateSuggested(raw))
-      };
-    };
-  };
-  let encode = Encode.event;
-  let decode = Decode.event;
-};
+module Index = ProjectIndex;
 
 module EventLog = Log.Make(Event);
-
-module Watcher = {
-  type t = {. receive: Event.t => unit};
-  module CandidateApproval = {
-    let make = suggestion => {
-      val suggestion = suggestion;
-      val approval = ref(1);
-      pub receive = event => approval := approval^ + 1
-    };
-  };
-  let addWatcher = (event, watchers) =>
-    Event.(
-      switch event {
-      | CandidateSuggested(suggestion) => [
-          CandidateApproval.make(suggestion),
-          ...watchers
-        ]
-      | _ => watchers
-      }
-    );
-};
 
 type pubKey = string;
 
@@ -258,19 +119,18 @@ let persist = project =>
 
 let create = (session, projectName) => {
   open Session;
-  open Event;
-  let projectCreated = {
-    projectId: Uuid.v4(),
-    projectName,
-    creatorId: session.userName,
-    creatorPubKey: session.appKeyPair |> Utils.publicKeyFromKeyPair,
-    creatorStorageUrlPrefix: "https://gaia.blockstack.org/hub/"
-  };
+  let projectId = Uuid.v4();
+  let projectCreated: Event.t =
+    ProjectCreated({
+      projectId,
+      projectName,
+      creatorId: session.userName,
+      creatorPubKey: session.appKeyPair |> Utils.publicKeyFromKeyPair,
+      creatorStorageUrlPrefix: "https://gaia.blockstack.org/hub/"
+    });
   Js.Promise.all2((
-    make()
-    |> apply(ProjectCreated(projectCreated), session.appKeyPair)
-    |> persist,
-    Index.add(~id=projectCreated.projectId, ~name=projectName)
+    make() |> apply(projectCreated, session.appKeyPair) |> persist,
+    Index.add(~projectId, ~projectName)
   ));
 };
 
