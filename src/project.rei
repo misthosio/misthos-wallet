@@ -11,16 +11,12 @@ type pubKey = string;
 
 type member = {
   blockstackId: string,
-  pubKey,
-  address: string,
-  storageUrlPrefix: string
+  pubKey
 };
 
 type candidate = {
   blockstackId: string,
   pubKey,
-  address: string,
-  storageUrlPrefix: string,
   approvedBy: list(string)
 };
 
@@ -28,7 +24,7 @@ type state = {
   id: string,
   name: string,
   members: list((pubKey, member)),
-  candidates: list(candidate)
+  candidates: list((string, candidate))
 };
 
 type t;

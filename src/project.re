@@ -6,16 +6,12 @@ type pubKey = string;
 
 type member = {
   blockstackId: string,
-  pubKey,
-  address: string,
-  storageUrlPrefix: string
+  pubKey
 };
 
 type candidate = {
   blockstackId: string,
   pubKey,
-  address: string,
-  storageUrlPrefix: string,
   approvedBy: list(string)
 };
 
@@ -23,7 +19,7 @@ type state = {
   id: string,
   name: string,
   members: list((pubKey, member)),
-  candidates: list(candidate)
+  candidates: list((string, candidate))
 };
 
 type t = {
@@ -55,29 +51,35 @@ let applyToState = (issuerPubKey, event: Event.t, state) =>
       members: [
         (
           created.creatorPubKey,
-          {
-            blockstackId: created.creatorId,
-            pubKey: created.creatorPubKey,
-            address: created.creatorPubKey |> Utils.addressFromPublicKey,
-            storageUrlPrefix: created.creatorStorageUrlPrefix
-          }
+          {blockstackId: created.creatorId, pubKey: created.creatorPubKey}
         )
       ]
     }
   | CandidateSuggested(suggestion) => {
       ...state,
       candidates: [
-        {
-          blockstackId: suggestion.candidateId,
-          pubKey: suggestion.candidatePubKey,
-          /* address: suggestion.candidatePubKey |> Utils.addressFromPublicKey, */
-          address: "",
-          storageUrlPrefix: suggestion.candidateStorageUrlPrefix,
-          approvedBy: [memberIdFromPubKey(issuerPubKey, state)]
-        },
+        (
+          suggestion.candidateId,
+          {
+            blockstackId: suggestion.candidateId,
+            pubKey: suggestion.candidatePubKey,
+            approvedBy: [memberIdFromPubKey(issuerPubKey, state)]
+          }
+        ),
         ...state.candidates
       ]
     }
+  | CandidateApproved(approval) =>
+    let candidates =
+      state.candidates
+      |> List.map(((id, c)) =>
+           if (id == approval.candidateId) {
+             (id, {...c, approvedBy: [approval.supporterId, ...c.approvedBy]});
+           } else {
+             (id, c);
+           }
+         );
+    {...state, candidates};
   };
 
 let apply = (event, issuer, {state, log, watchers}) => {
@@ -116,32 +118,26 @@ let persist = project =>
   );
 
 let create = (session: Session.data, projectName) => {
-  let projectId = Uuid.v4();
-  let projectCreated: Event.t =
-    ProjectCreated({
-      projectId,
-      projectName,
-      creatorId: session.userName,
-      creatorPubKey: session.appKeyPair |> Utils.publicKeyFromKeyPair,
-      creatorStorageUrlPrefix: "https://gaia.blockstack.org/hub/"
-    });
+  let projectCreated =
+    Event.ProjectCreated.make(
+      ~projectName,
+      ~creatorId=session.userName,
+      ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair
+    );
   Js.Promise.all2((
-    make() |> apply(projectCreated, session.appKeyPair) |> persist,
-    Index.add(~projectId, ~projectName)
+    make()
+    |> apply(ProjectCreated(projectCreated), session.appKeyPair)
+    |> persist,
+    Index.add(~projectId=projectCreated.projectId, ~projectName)
   ));
 };
 
-let suggestCandidate = (session: Session.data, blockstackId, project) =>
+let suggestCandidate = (session: Session.data, candidateId, project) =>
   project
   |> apply(
-       CandidateSuggested({
-         candidateId: blockstackId,
-         candidatePubKey: "",
-         candidateStorageUrlPrefix: ""
-       }),
+       Event.makeCandidateSuggested(~candidateId, ~candidatePubKey=""),
        session.appKeyPair
      )
-  /* check policy and add member */
   |> persist;
 
 let load = id =>
@@ -162,4 +158,4 @@ let getName = ({state}) => state.name;
 
 let getMembers = ({state}) => state.members |> List.map(((_, m)) => m);
 
-let getCandidates = ({state}) => state.candidates;
+let getCandidates = ({state}) => state.candidates |> List.map(((_, c)) => c);
