@@ -46,41 +46,39 @@ let make = () => {
 let memberIdFromPubKey = (pubKey, {members}) =>
   List.assoc(pubKey, members).blockstackId;
 
-let applyToState = (issuerPubKey, event, state) : state =>
-  Event.(
-    switch event {
-    | ProjectCreated(created) => {
-        ...state,
-        id: created.projectId,
-        name: created.projectName,
-        members: [
-          (
-            created.creatorPubKey,
-            {
-              blockstackId: created.creatorId,
-              pubKey: created.creatorPubKey,
-              address: created.creatorPubKey |> Utils.addressFromPublicKey,
-              storageUrlPrefix: created.creatorStorageUrlPrefix
-            }
-          )
-        ]
-      }
-    | CandidateSuggested(suggestion) => {
-        ...state,
-        candidates: [
+let applyToState = (issuerPubKey, event: Event.t, state) =>
+  switch event {
+  | ProjectCreated(created) => {
+      ...state,
+      id: created.projectId,
+      name: created.projectName,
+      members: [
+        (
+          created.creatorPubKey,
           {
-            blockstackId: suggestion.candidateId,
-            pubKey: suggestion.candidatePubKey,
-            /* address: suggestion.candidatePubKey |> Utils.addressFromPublicKey, */
-            address: "",
-            storageUrlPrefix: suggestion.candidateStorageUrlPrefix,
-            approvedBy: [memberIdFromPubKey(issuerPubKey, state)]
-          },
-          ...state.candidates
-        ]
-      }
+            blockstackId: created.creatorId,
+            pubKey: created.creatorPubKey,
+            address: created.creatorPubKey |> Utils.addressFromPublicKey,
+            storageUrlPrefix: created.creatorStorageUrlPrefix
+          }
+        )
+      ]
     }
-  );
+  | CandidateSuggested(suggestion) => {
+      ...state,
+      candidates: [
+        {
+          blockstackId: suggestion.candidateId,
+          pubKey: suggestion.candidatePubKey,
+          /* address: suggestion.candidatePubKey |> Utils.addressFromPublicKey, */
+          address: "",
+          storageUrlPrefix: suggestion.candidateStorageUrlPrefix,
+          approvedBy: [memberIdFromPubKey(issuerPubKey, state)]
+        },
+        ...state.candidates
+      ]
+    }
+  };
 
 let apply = (event, issuer, {state, log, watchers}) => {
   let log = log |> EventLog.append(event, issuer);
@@ -117,8 +115,7 @@ let persist = project =>
     |> then_(() => resolve(project))
   );
 
-let create = (session, projectName) => {
-  open Session;
+let create = (session: Session.data, projectName) => {
   let projectId = Uuid.v4();
   let projectCreated: Event.t =
     ProjectCreated({
