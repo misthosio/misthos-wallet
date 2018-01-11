@@ -7,19 +7,16 @@ open Event;
 let () =
   describe("CandidateApproval", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
+    let projectCreated =
+      Event.ProjectCreated.make(
+        ~projectName="TheMothers",
+        ~creatorId="frank.id",
+        ~creatorPubKey=issuer |> Utils.publicKeyFromKeyPair,
+        ~metaPolicy=Policy.absolute
+      );
     let log =
       EventLog.make()
-      |> EventLog.append(
-           ProjectCreated(
-             Event.ProjectCreated.make(
-               ~projectName="TheMothers",
-               ~creatorId="frank.id",
-               ~creatorPubKey=issuer |> Utils.publicKeyFromKeyPair,
-               ~metaPolicy=Policy.absolute
-             )
-           ),
-           issuer
-         );
+      |> EventLog.append(ProjectCreated(projectCreated), issuer);
     let candidateId = "wackerman.id";
     let candidatePubKey = "sticks";
     let candidateSuggestion =
@@ -60,13 +57,14 @@ let () =
       );
       expect(candidateWatcher#resultingEvent())
       |> toEqual(
-           Some(
+           Some((
+             projectCreated.systemIssuer,
              MemberAdded({
                processId,
                blockstackId: candidateId,
                pubKey: candidatePubKey
              })
-           )
+           ))
          );
     });
   });

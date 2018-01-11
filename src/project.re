@@ -80,16 +80,52 @@ let applyToState = (issuerPubKey, event: Event.t, state) =>
     {...state, candidates};
   };
 
+let rec applyWatcherEvents = ({state, log, watchers} as project) => {
+  let nextEvent =
+    (
+      try (
+        Some(
+          watchers
+          |> List.rev
+          |> List.find(w => w#resultingEvent() |> Js.Option.isSome)
+        )
+      ) {
+      | Not_found => None
+      }
+    )
+    |> DoNotFormat.andThenGetEvent;
+  switch nextEvent {
+  | None => project
+  | Some((issuer, event)) =>
+    let log = log |> EventLog.append(event, issuer);
+    let state =
+      state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event);
+    watchers |> List.iter(w => w#receive(event));
+    let watchers =
+      (
+        switch (Watcher.initWatcherFor(event, log)) {
+        | Some(w) => [w, ...watchers]
+        | None => watchers
+        }
+      )
+      |> List.filter(w => w#processCompleted() == false);
+    applyWatcherEvents({state, log, watchers});
+  };
+};
+
 let apply = (event, issuer, {state, log, watchers}) => {
   let log = log |> EventLog.append(event, issuer);
   let state = state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event);
   watchers |> List.iter(w => w#receive(event));
   let watchers =
-    switch (Watcher.initWatcherFor(event, log)) {
-    | Some(w) => [w, ...watchers]
-    | None => watchers
-    };
-  {log, state, watchers};
+    (
+      switch (Watcher.initWatcherFor(event, log)) {
+      | Some(w) => [w, ...watchers]
+      | None => watchers
+      }
+    )
+    |> List.filter(w => w#processCompleted() == false);
+  applyWatcherEvents({log, state, watchers});
 };
 
 let reconstruct = log => {

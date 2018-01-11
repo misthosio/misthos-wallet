@@ -3,7 +3,7 @@ open Event;
 type t = {
   .
   receive: Event.t => unit,
-  resultingEvent: unit => option(Event.t),
+  resultingEvent: unit => option((Bitcoin.ECPair.t, Event.t)),
   processCompleted: unit => bool
 };
 
@@ -11,7 +11,8 @@ module CandidateApproval = {
   type state = {
     eligable: list(string),
     approvals: list(string),
-    policy: Policy.t
+    policy: Policy.t,
+    systemIssuer: Bitcoin.ECPair.t
   };
   let make = (suggestion: CandidateSuggested.t, log) => {
     let process = {
@@ -19,7 +20,8 @@ module CandidateApproval = {
         ref({
           eligable: [],
           approvals: [suggestion.supporterId],
-          policy: Policy.absolute
+          policy: Policy.absolute,
+          systemIssuer: Bitcoin.ECPair.makeRandom()
         });
       val completed = ref(false);
       val result = ref(None);
@@ -27,7 +29,12 @@ module CandidateApproval = {
         switch event {
         | ProjectCreated(event) =>
           state :=
-            {...state^, eligable: [event.creatorId], policy: event.metaPolicy}
+            {
+              ...state^,
+              eligable: [event.creatorId],
+              policy: event.metaPolicy,
+              systemIssuer: event.systemIssuer
+            }
         | CandidateApproved(event) when event.processId == suggestion.processId =>
           state :=
             {...state^, approvals: [event.supporterId, ...state^.approvals]}
@@ -42,13 +49,14 @@ module CandidateApproval = {
                  ~approved=state^.approvals
                )) {
           result :=
-            Some(
+            Some((
+              state^.systemIssuer,
               MemberAdded({
                 processId: suggestion.processId,
                 blockstackId: suggestion.candidateId,
                 pubKey: suggestion.candidatePubKey
               })
-            );
+            ));
         };
       };
       pub processCompleted = () => completed^;

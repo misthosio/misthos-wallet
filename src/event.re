@@ -4,14 +4,16 @@ module ProjectCreated = {
     projectName: string,
     creatorId: string,
     creatorPubKey: string,
-    metaPolicy: Policy.t
+    metaPolicy: Policy.t,
+    systemIssuer: Bitcoin.ECPair.t
   };
   let make = (~projectName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
     projectId: Uuid.v4(),
     projectName,
     creatorId,
     creatorPubKey,
-    metaPolicy
+    metaPolicy,
+    systemIssuer: Bitcoin.ECPair.makeRandom()
   };
   let encode = event =>
     Json.Encode.(
@@ -21,7 +23,8 @@ module ProjectCreated = {
         ("projectName", string(event.projectName)),
         ("creatorId", string(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
-        ("metaPolicy", Policy.encode(event.metaPolicy))
+        ("metaPolicy", Policy.encode(event.metaPolicy)),
+        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer)))
       ])
     );
   let decode = raw =>
@@ -30,7 +33,9 @@ module ProjectCreated = {
       projectName: raw |> field("projectName", string),
       creatorId: raw |> field("creatorId", string),
       creatorPubKey: raw |> field("creatorPubKey", string),
-      metaPolicy: raw |> field("metaPolicy", Policy.decode)
+      metaPolicy: raw |> field("metaPolicy", Policy.decode),
+      systemIssuer:
+        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF
     };
 };
 
