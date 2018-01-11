@@ -80,7 +80,7 @@ let applyToState = ({issuerPubKey, event}: EventLog.item, state) =>
     {...state, candidates};
   };
 
-let updateWatchers = (item, watchers, log) => {
+let updateWatchers = (item, log, watchers) => {
   watchers |> List.iter(w => w#receive(item));
   (
     switch (Watcher.initWatcherFor(item, log)) {
@@ -110,7 +110,7 @@ let rec applyWatcherEvents = ({state, log, watchers} as project) => {
   | Some((issuer, event)) =>
     let (item, log) = log |> EventLog.append(issuer, event);
     let state = state |> applyToState(item);
-    let watchers = updateWatchers(item, watchers, log);
+    let watchers = watchers |> updateWatchers(item, log);
     applyWatcherEvents({state, log, watchers});
   };
 };
@@ -118,7 +118,7 @@ let rec applyWatcherEvents = ({state, log, watchers} as project) => {
 let apply = (issuer, event, {state, log, watchers}) => {
   let (item, log) = log |> EventLog.append(issuer, event);
   let state = state |> applyToState(item);
-  let watchers = updateWatchers(item, watchers, log);
+  let watchers = watchers |> updateWatchers(item, log);
   applyWatcherEvents({log, state, watchers});
 };
 
