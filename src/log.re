@@ -36,8 +36,41 @@ module Make = (Event: Encodable) => {
     let item = event |> makeItem(issuer);
     (item, [item, ...log]);
   };
+  /* let appendItem = (item, log) => [item, ...log]; */
   let reduce = (reducer, start, log) =>
     log |> List.rev |> List.fold_left(reducer, start);
+  let findNewItems = (others, log) => {
+    let existingHashes = log |> List.rev_map(({hash}) => hash);
+    others
+    |> List.fold_left(
+         (found, other) =>
+           other
+           |> List.rev
+           |> List.fold_left(
+                (found, {hash} as item) =>
+                  if (found |> List.mem_assoc(hash)) {
+                    found;
+                  } else if (existingHashes |> List.mem(hash)) {
+                    found;
+                  } else {
+                    [(hash, item), ...found];
+                  },
+                found
+              ),
+         []
+       )
+    |> List.rev_map(((_, item)) => item)
+    |> List.find_all(({issuerPubKey, event, hash, signature}) => {
+         let hashCheck = makeItemHash(issuerPubKey, event);
+         if (hashCheck |> Utils.bufToHex != hash) {
+           false;
+         } else {
+           Utils.keyFromPublicKey(issuerPubKey)
+           |> Bitcoin.ECPair.verify(hashCheck, signature)
+           |> Js.to_bool;
+         };
+       });
+  };
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let item = item =>

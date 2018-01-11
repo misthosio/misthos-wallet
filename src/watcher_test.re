@@ -51,17 +51,17 @@ let () =
       let candidateWatcher =
         Watcher.CandidateApproval.make(candidateSuggestion, log);
       let (item, _) =
-        EventLog.append(
-          issuer,
-          CandidateApproved(
-            Event.CandidateApproved.make(
-              ~processId,
-              ~candidateId,
-              ~supporterId="frank.id"
-            )
-          ),
-          log
-        );
+        log
+        |> EventLog.append(
+             issuer,
+             CandidateApproved(
+               Event.CandidateApproved.make(
+                 ~processId,
+                 ~candidateId,
+                 ~supporterId="frank.id"
+               )
+             )
+           );
       candidateWatcher#receive(item);
       expect(candidateWatcher#resultingEvent())
       |> toEqual(

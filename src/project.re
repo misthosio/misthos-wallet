@@ -191,6 +191,27 @@ let load = id =>
        )
   );
 
+/* let sync = (otherLogs, {state, watchers, log} as project) => { */
+/*   let (state,log) = log |> EventLog.merge(otherLogs,,item) => Verification.includeItem(item),((state,log),item) => { */
+/*            let state = state |> applyToState(item); */
+/*            let watchers = watchers |> updateWatchers(item, log); */
+/*            state */
+/*     } */
+/* let newItems = log |> EventLog.findNewItems(otherLogs); */
+/* let project = */
+/*   newItems */
+/*   |> List.fold_left( */
+/*        ({state, watchers, log}, item) => { */
+/*          /1* Verification.includeItem(item); *1/ */
+/*          let log = log |> EventLog.appendItem(item); */
+/*          let state = state |> applyToState(item); */
+/*          let watchers = watchers |> updateWatchers(item, log); */
+/*          {state, watchers, log}; */
+/*        }, */
+/*        project */
+/*      ); */
+/* applyWatcherEvents({log, state, watchers}); */
+/* }; */
 let getId = ({state}) => state.id;
 
 let getName = ({state}) => state.name;
