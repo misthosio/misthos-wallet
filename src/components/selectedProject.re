@@ -2,6 +2,7 @@ open Project;
 
 type state = {
   project: Project.t,
+  viewState: ViewState.t,
   candidateId: string
 };
 
@@ -19,7 +20,11 @@ let component = ReasonReact.reducerComponent("SelectedProject");
 
 let make = (~project as initialProject, ~session, _children) => {
   ...component,
-  initialState: () => {project: initialProject, candidateId: ""},
+  initialState: () => {
+    project: initialProject,
+    viewState: Project.getViewState(initialProject),
+    candidateId: ""
+  },
   reducer: (action, state) =>
     switch action {
     | ChangeNewMemberId(text) =>
@@ -32,7 +37,7 @@ let make = (~project as initialProject, ~session, _children) => {
           (
             ({reduce}) =>
               state.project
-              |> Project.suggestCandidate(session, candidateId)
+              |> Project.Command.suggestCandidate(session, candidateId)
               |> Js.Promise.(
                    then_(project =>
                      reduce(() => UpdateProject(project), ()) |> resolve
@@ -42,14 +47,19 @@ let make = (~project as initialProject, ~session, _children) => {
           )
         )
       }
-    | UpdateProject(project) => ReasonReact.Update({...state, project})
+    | UpdateProject(project) =>
+      ReasonReact.Update({
+        ...state,
+        project,
+        viewState: Project.getViewState(project)
+      })
     },
   render: ({reduce, state}) => {
     let members =
       ReasonReact.arrayToElement(
         Array.of_list(
-          Project.getMembers(state.project)
-          |> List.map((m: Project.member) =>
+          ViewState.getMembers(state.viewState)
+          |> List.map((m: ViewState.Member.t) =>
                <li key=m.blockstackId>
                  (ReasonReact.stringToElement(m.blockstackId))
                </li>
@@ -59,8 +69,8 @@ let make = (~project as initialProject, ~session, _children) => {
     let candidates =
       ReasonReact.arrayToElement(
         Array.of_list(
-          Project.getCandidates(state.project)
-          |> List.map(candidate =>
+          ViewState.getCandidates(state.viewState)
+          |> List.map((candidate: ViewState.Candidate.t) =>
                <li key=candidate.blockstackId>
                  (
                    ReasonReact.stringToElement(
@@ -79,7 +89,9 @@ let make = (~project as initialProject, ~session, _children) => {
         )
       );
     <div>
-      <h2> (ReasonReact.stringToElement(Project.getName(initialProject))) </h2>
+      <h2>
+        (ReasonReact.stringToElement(ViewState.projectName(initialProject)))
+      </h2>
       (ReasonReact.stringToElement("Members:"))
       <ul> members </ul>
       (ReasonReact.stringToElement("Candidates:"))

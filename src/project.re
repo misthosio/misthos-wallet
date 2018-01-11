@@ -1,84 +1,18 @@
 module Index = ProjectIndex;
 
-type pubKey = string;
-
-type member = {
-  blockstackId: string,
-  pubKey
-};
-
-type candidate = {
-  blockstackId: string,
-  pubKey,
-  approvedBy: list(string)
-};
-
-type state = {
-  id: string,
-  name: string,
-  members: list((pubKey, member)),
-  candidates: list((string, candidate))
-};
-
 type t = {
-  state,
+  id: string,
   log: EventLog.t,
-  watchers: list(Watcher.t)
+  watchers: list(Watcher.t),
+  viewState: ViewState.t
 };
 
 let make = () => {
-  state: {
-    id: "",
-    name: "",
-    members: [],
-    candidates: []
-  },
+  id: "",
   log: EventLog.make(),
-  watchers: []
+  watchers: [],
+  viewState: ViewState.make()
 };
-
-let memberIdFromPubKey = (pubKey, {members}) =>
-  List.assoc(pubKey, members).blockstackId;
-
-let applyToState = ({issuerPubKey, event}: EventLog.item, state) =>
-  switch event {
-  | ProjectCreated(created) => {
-      ...state,
-      id: created.projectId,
-      name: created.projectName,
-      members: [
-        (
-          created.creatorPubKey,
-          {blockstackId: created.creatorId, pubKey: created.creatorPubKey}
-        )
-      ]
-    }
-  | CandidateSuggested(suggestion) => {
-      ...state,
-      candidates: [
-        (
-          suggestion.candidateId,
-          {
-            blockstackId: suggestion.candidateId,
-            pubKey: suggestion.candidatePubKey,
-            approvedBy: [memberIdFromPubKey(issuerPubKey, state)]
-          }
-        ),
-        ...state.candidates
-      ]
-    }
-  | CandidateApproved(approval) =>
-    let candidates =
-      state.candidates
-      |> List.map(((id, c)) =>
-           if (id == approval.candidateId) {
-             (id, {...c, approvedBy: [approval.supporterId, ...c.approvedBy]});
-           } else {
-             (id, c);
-           }
-         );
-    {...state, candidates};
-  };
 
 let updateWatchers = (item, log, watchers) => {
   watchers |> List.iter(w => w#receive(item));
@@ -91,7 +25,7 @@ let updateWatchers = (item, log, watchers) => {
   |> List.filter(w => w#processCompleted() == false);
 };
 
-let rec applyWatcherEvents = ({state, log, watchers} as project) => {
+let rec applyWatcherEvents = ({log, watchers, viewState} as project) => {
   let nextEvent =
     (
       try (
@@ -109,40 +43,44 @@ let rec applyWatcherEvents = ({state, log, watchers} as project) => {
   | None => project
   | Some((issuer, event)) =>
     let (item, log) = log |> EventLog.append(issuer, event);
-    let state = state |> applyToState(item);
     let watchers = watchers |> updateWatchers(item, log);
-    applyWatcherEvents({state, log, watchers});
+    let viewState = viewState |> ViewState.apply(event);
+    applyWatcherEvents({...project, viewState, log, watchers});
   };
 };
 
-let apply = (issuer, event, {state, log, watchers}) => {
+let apply = (issuer, event, {log, watchers, viewState} as project) => {
   let (item, log) = log |> EventLog.append(issuer, event);
-  let state = state |> applyToState(item);
   let watchers = watchers |> updateWatchers(item, log);
-  applyWatcherEvents({log, state, watchers});
+  let viewState = viewState |> ViewState.apply(event);
+  applyWatcherEvents({...project, log, watchers, viewState});
 };
 
 let reconstruct = log => {
-  let {state} = make();
-  let (state, watchers) =
+  let {viewState} = make();
+  let (id, watchers, viewState) =
     log
     |> EventLog.reduce(
-         ((state, watchers), item) => (
-           state |> applyToState(item),
+         ((id, watchers, viewState), item) => (
+           switch item.event {
+           | ProjectCreated({projectId}) => projectId
+           | _ => id
+           },
            switch (Watcher.initWatcherFor(item, log)) {
            | Some(w) => [w, ...watchers]
            | None => watchers
-           }
+           },
+           viewState |> ViewState.apply(item.event)
          ),
-         (state, [])
+         ("", [], viewState)
        );
-  {log, state, watchers};
+  {id, log, watchers, viewState};
 };
 
 let persist = project =>
   Js.Promise.(
     Blockstack.putFile(
-      project.state.id ++ "/log.json",
+      project.id ++ "/log.json",
       EventLog.encode(project.log) |> Json.stringify,
       Js.false_
     )
@@ -150,34 +88,6 @@ let persist = project =>
   );
 
 let defaultPolicy = Policy.absolute;
-
-let create = (session: Session.data, projectName) => {
-  let projectCreated =
-    Event.ProjectCreated.make(
-      ~projectName,
-      ~creatorId=session.userName,
-      ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
-      ~metaPolicy=defaultPolicy
-    );
-  Js.Promise.all2((
-    make()
-    |> apply(session.appKeyPair, ProjectCreated(projectCreated))
-    |> persist,
-    Index.add(~projectId=projectCreated.projectId, ~projectName)
-  ));
-};
-
-let suggestCandidate = (session: Session.data, candidateId, project) =>
-  project
-  |> apply(
-       session.appKeyPair,
-       Event.makeCandidateSuggested(
-         ~supporterId=session.userName,
-         ~candidateId,
-         ~candidatePubKey=""
-       )
-     )
-  |> persist;
 
 let load = id =>
   Js.Promise.(
@@ -212,10 +122,35 @@ let load = id =>
 /*      ); */
 /* applyWatcherEvents({log, state, watchers}); */
 /* }; */
-let getId = ({state}) => state.id;
+let getId = ({id}) => id;
 
-let getName = ({state}) => state.name;
+let getViewState = ({viewState}) => viewState;
 
-let getMembers = ({state}) => state.members |> List.map(((_, m)) => m);
-
-let getCandidates = ({state}) => state.candidates |> List.map(((_, c)) => c);
+module Command = {
+  let create = (session: Session.data, projectName) => {
+    let projectCreated =
+      Event.ProjectCreated.make(
+        ~projectName,
+        ~creatorId=session.userName,
+        ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
+        ~metaPolicy=defaultPolicy
+      );
+    Js.Promise.all2((
+      make()
+      |> apply(session.appKeyPair, ProjectCreated(projectCreated))
+      |> persist,
+      Index.add(~projectId=projectCreated.projectId, ~projectName)
+    ));
+  };
+  let suggestCandidate = (session: Session.data, candidateId, project) =>
+    project
+    |> apply(
+         session.appKeyPair,
+         Event.makeCandidateSuggested(
+           ~supporterId=session.userName,
+           ~candidateId,
+           ~candidatePubKey=""
+         )
+       )
+    |> persist;
+};

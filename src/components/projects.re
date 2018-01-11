@@ -107,7 +107,7 @@ let make = (~session, _children) => {
           {...state, status: CreatingProject(name), newProject: ""},
           (
             ({reduce}) =>
-              Project.create(session, name)
+              Project.Command.create(session, name)
               |> Js.Promise.(
                    then_(((project, newIndex)) =>
                      reduce(() => ProjectCreated(project, newIndex), ())
