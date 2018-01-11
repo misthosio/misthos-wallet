@@ -12,13 +12,15 @@ let () = {
   module TestLog = Log.Make(TestItem);
   let print = log => Js.log(log |> TestLog.encode);
   let reduceLog = log =>
-    log |> TestLog.reduce((state, (_, event)) => state ++ event, "");
+    log |> TestLog.reduce((state, {event}) => state ++ event, "");
   test("append/reduce", () => {
     let keyPair = Bitcoin.ECPair.makeRandom();
     let log =
       TestLog.make()
-      |> TestLog.append("hello", keyPair)
-      |> TestLog.append(" - bye", keyPair);
+      |> TestLog.append(keyPair, "hello")
+      |> snd
+      |> TestLog.append(keyPair, " - bye")
+      |> snd;
     expect(log |> reduceLog) |> toEqual("hello - bye");
   });
   /* describe("merge", () => { */

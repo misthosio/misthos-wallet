@@ -14,9 +14,9 @@ let () =
         ~creatorPubKey=issuer |> Utils.publicKeyFromKeyPair,
         ~metaPolicy=Policy.absolute
       );
-    let log =
+    let (_, log) =
       EventLog.make()
-      |> EventLog.append(ProjectCreated(projectCreated), issuer);
+      |> EventLog.append(issuer, ProjectCreated(projectCreated));
     let candidateId = "wackerman.id";
     let candidatePubKey = "sticks";
     let candidateSuggestion =
@@ -34,27 +34,35 @@ let () =
     test("completes when Member is added", () => {
       let candidateWatcher =
         Watcher.CandidateApproval.make(candidateSuggestion, log);
-      candidateWatcher#receive(
-        MemberAdded({
-          processId,
-          blockstackId: candidateId,
-          pubKey: candidatePubKey
-        })
-      );
+      let (item, _) =
+        EventLog.append(
+          issuer,
+          MemberAdded({
+            processId,
+            blockstackId: candidateId,
+            pubKey: candidatePubKey
+          }),
+          log
+        );
+      candidateWatcher#receive(item);
       expect(candidateWatcher#processCompleted()) |> toBe(true);
     });
     test("Issues an event when approval is reached", () => {
       let candidateWatcher =
         Watcher.CandidateApproval.make(candidateSuggestion, log);
-      candidateWatcher#receive(
-        CandidateApproved(
-          Event.CandidateApproved.make(
-            ~processId,
-            ~candidateId,
-            ~supporterId="frank.id"
-          )
-        )
-      );
+      let (item, _) =
+        EventLog.append(
+          issuer,
+          CandidateApproved(
+            Event.CandidateApproved.make(
+              ~processId,
+              ~candidateId,
+              ~supporterId="frank.id"
+            )
+          ),
+          log
+        );
+      candidateWatcher#receive(item);
       expect(candidateWatcher#resultingEvent())
       |> toEqual(
            Some((

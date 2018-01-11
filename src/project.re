@@ -40,7 +40,7 @@ let make = () => {
 let memberIdFromPubKey = (pubKey, {members}) =>
   List.assoc(pubKey, members).blockstackId;
 
-let applyToState = (issuerPubKey, event: Event.t, state) =>
+let applyToState = ({issuerPubKey, event}: EventLog.item, state) =>
   switch event {
   | ProjectCreated(created) => {
       ...state,
@@ -80,6 +80,17 @@ let applyToState = (issuerPubKey, event: Event.t, state) =>
     {...state, candidates};
   };
 
+let updateWatchers = (item, watchers, log) => {
+  watchers |> List.iter(w => w#receive(item));
+  (
+    switch (Watcher.initWatcherFor(item, log)) {
+    | Some(w) => [w, ...watchers]
+    | None => watchers
+    }
+  )
+  |> List.filter(w => w#processCompleted() == false);
+};
+
 let rec applyWatcherEvents = ({state, log, watchers} as project) => {
   let nextEvent =
     (
@@ -97,34 +108,17 @@ let rec applyWatcherEvents = ({state, log, watchers} as project) => {
   switch nextEvent {
   | None => project
   | Some((issuer, event)) =>
-    let log = log |> EventLog.append(event, issuer);
-    let state =
-      state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event);
-    watchers |> List.iter(w => w#receive(event));
-    let watchers =
-      (
-        switch (Watcher.initWatcherFor(event, log)) {
-        | Some(w) => [w, ...watchers]
-        | None => watchers
-        }
-      )
-      |> List.filter(w => w#processCompleted() == false);
+    let (item, log) = log |> EventLog.append(issuer, event);
+    let state = state |> applyToState(item);
+    let watchers = updateWatchers(item, watchers, log);
     applyWatcherEvents({state, log, watchers});
   };
 };
 
-let apply = (event, issuer, {state, log, watchers}) => {
-  let log = log |> EventLog.append(event, issuer);
-  let state = state |> applyToState(Utils.publicKeyFromKeyPair(issuer), event);
-  watchers |> List.iter(w => w#receive(event));
-  let watchers =
-    (
-      switch (Watcher.initWatcherFor(event, log)) {
-      | Some(w) => [w, ...watchers]
-      | None => watchers
-      }
-    )
-    |> List.filter(w => w#processCompleted() == false);
+let apply = (issuer, event, {state, log, watchers}) => {
+  let (item, log) = log |> EventLog.append(issuer, event);
+  let state = state |> applyToState(item);
+  let watchers = updateWatchers(item, watchers, log);
   applyWatcherEvents({log, state, watchers});
 };
 
@@ -133,9 +127,9 @@ let reconstruct = log => {
   let (state, watchers) =
     log
     |> EventLog.reduce(
-         ((state, watchers), (issuer, event)) => (
-           state |> applyToState(issuer, event),
-           switch (Watcher.initWatcherFor(event, log)) {
+         ((state, watchers), item) => (
+           state |> applyToState(item),
+           switch (Watcher.initWatcherFor(item, log)) {
            | Some(w) => [w, ...watchers]
            | None => watchers
            }
@@ -167,7 +161,7 @@ let create = (session: Session.data, projectName) => {
     );
   Js.Promise.all2((
     make()
-    |> apply(ProjectCreated(projectCreated), session.appKeyPair)
+    |> apply(session.appKeyPair, ProjectCreated(projectCreated))
     |> persist,
     Index.add(~projectId=projectCreated.projectId, ~projectName)
   ));
@@ -176,12 +170,12 @@ let create = (session: Session.data, projectName) => {
 let suggestCandidate = (session: Session.data, candidateId, project) =>
   project
   |> apply(
+       session.appKeyPair,
        Event.makeCandidateSuggested(
          ~supporterId=session.userName,
          ~candidateId,
          ~candidatePubKey=""
-       ),
-       session.appKeyPair
+       )
      )
   |> persist;
 

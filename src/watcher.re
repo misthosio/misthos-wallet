@@ -2,7 +2,7 @@ open Event;
 
 type t = {
   .
-  receive: Event.t => unit,
+  receive: EventLog.item => unit,
   resultingEvent: unit => option((Bitcoin.ECPair.t, Event.t)),
   processCompleted: unit => bool
 };
@@ -25,7 +25,7 @@ module CandidateApproval = {
         });
       val completed = ref(false);
       val result = ref(None);
-      pub receive = event => {
+      pub receive = ({event}: EventLog.item) => {
         switch event {
         | ProjectCreated(event) =>
           state :=
@@ -62,7 +62,7 @@ module CandidateApproval = {
       pub processCompleted = () => completed^;
       pub resultingEvent = () => result^
     };
-    log |> EventLog.reduce((_, (_, event)) => process#receive(event), ());
+    log |> EventLog.reduce((_, item) => process#receive(item), ());
     process;
   };
 };
@@ -77,7 +77,7 @@ module ContributionApproval = {
   };
 };
 
-let initWatcherFor = (event: Event.t, log) =>
+let initWatcherFor = ({event}: EventLog.item, log) =>
   switch event {
   | CandidateSuggested(suggestion) =>
     Some(CandidateApproval.make(suggestion, log))
