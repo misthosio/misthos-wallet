@@ -13,7 +13,7 @@ let load: string => Js.Promise.t(t);
 
 let getId: t => string;
 
-let getViewState: t => ViewState.t;
+let getViewModel: t => ViewModel.t;
 
 module Command: {
   let create: (Session.data, string) => Js.Promise.t((t, Index.t));

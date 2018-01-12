@@ -1,8 +1,6 @@
-open Project;
-
 type state = {
   project: Project.t,
-  viewState: ViewState.t,
+  viewModel: ViewModel.t,
   candidateId: string
 };
 
@@ -22,7 +20,7 @@ let make = (~project as initialProject, ~session, _children) => {
   ...component,
   initialState: () => {
     project: initialProject,
-    viewState: Project.getViewState(initialProject),
+    viewModel: Project.getViewModel(initialProject),
     candidateId: ""
   },
   reducer: (action, state) =>
@@ -51,15 +49,15 @@ let make = (~project as initialProject, ~session, _children) => {
       ReasonReact.Update({
         ...state,
         project,
-        viewState: Project.getViewState(project)
+        viewModel: Project.getViewModel(project)
       })
     },
   render: ({reduce, state}) => {
     let members =
       ReasonReact.arrayToElement(
         Array.of_list(
-          ViewState.getMembers(state.viewState)
-          |> List.map((m: ViewState.Member.t) =>
+          ViewModel.getMembers(state.viewModel)
+          |> List.map((m: ViewModel.Member.t) =>
                <li key=m.blockstackId>
                  (ReasonReact.stringToElement(m.blockstackId))
                </li>
@@ -69,8 +67,8 @@ let make = (~project as initialProject, ~session, _children) => {
     let candidates =
       ReasonReact.arrayToElement(
         Array.of_list(
-          ViewState.getCandidates(state.viewState)
-          |> List.map((candidate: ViewState.Candidate.t) =>
+          ViewModel.getCandidates(state.viewModel)
+          |> List.map((candidate: ViewModel.Candidate.t) =>
                <li key=candidate.blockstackId>
                  (
                    ReasonReact.stringToElement(
@@ -90,7 +88,7 @@ let make = (~project as initialProject, ~session, _children) => {
       );
     <div>
       <h2>
-        (ReasonReact.stringToElement(ViewState.projectName(initialProject)))
+        (ReasonReact.stringToElement(ViewModel.projectName(initialProject)))
       </h2>
       (ReasonReact.stringToElement("Members:"))
       <ul> members </ul>

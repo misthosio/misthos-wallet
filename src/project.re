@@ -4,14 +4,14 @@ type t = {
   id: string,
   log: EventLog.t,
   watchers: list(Watcher.t),
-  viewState: ViewState.t
+  viewModel: ViewModel.t
 };
 
 let make = () => {
   id: "",
   log: EventLog.make(),
   watchers: [],
-  viewState: ViewState.make()
+  viewModel: ViewModel.make()
 };
 
 let updateWatchers = (item, log, watchers) => {
@@ -25,7 +25,7 @@ let updateWatchers = (item, log, watchers) => {
   |> List.filter(w => w#processCompleted() == false);
 };
 
-let rec applyWatcherEvents = ({log, watchers, viewState} as project) => {
+let rec applyWatcherEvents = ({log, watchers, viewModel} as project) => {
   let nextEvent =
     (
       try (
@@ -44,24 +44,24 @@ let rec applyWatcherEvents = ({log, watchers, viewState} as project) => {
   | Some((issuer, event)) =>
     let (item, log) = log |> EventLog.append(issuer, event);
     let watchers = watchers |> updateWatchers(item, log);
-    let viewState = viewState |> ViewState.apply(event);
-    applyWatcherEvents({...project, viewState, log, watchers});
+    let viewModel = viewModel |> ViewModel.apply(event);
+    applyWatcherEvents({...project, viewModel, log, watchers});
   };
 };
 
-let apply = (issuer, event, {log, watchers, viewState} as project) => {
+let apply = (issuer, event, {log, watchers, viewModel} as project) => {
   let (item, log) = log |> EventLog.append(issuer, event);
   let watchers = watchers |> updateWatchers(item, log);
-  let viewState = viewState |> ViewState.apply(event);
-  applyWatcherEvents({...project, log, watchers, viewState});
+  let viewModel = viewModel |> ViewModel.apply(event);
+  applyWatcherEvents({...project, log, watchers, viewModel});
 };
 
 let reconstruct = log => {
-  let {viewState} = make();
-  let (id, watchers, viewState) =
+  let {viewModel} = make();
+  let (id, watchers, viewModel) =
     log
     |> EventLog.reduce(
-         ((id, watchers, viewState), item) => (
+         ((id, watchers, viewModel), item) => (
            switch item.event {
            | ProjectCreated({projectId}) => projectId
            | _ => id
@@ -70,11 +70,11 @@ let reconstruct = log => {
            | Some(w) => [w, ...watchers]
            | None => watchers
            },
-           viewState |> ViewState.apply(item.event)
+           viewModel |> ViewModel.apply(item.event)
          ),
-         ("", [], viewState)
+         ("", [], viewModel)
        );
-  {id, log, watchers, viewState};
+  {id, log, watchers, viewModel};
 };
 
 let persist = project =>
@@ -124,7 +124,7 @@ let load = id =>
 /* }; */
 let getId = ({id}) => id;
 
-let getViewState = ({viewState}) => viewState;
+let getViewModel = ({viewModel}) => viewModel;
 
 module Command = {
   let create = (session: Session.data, projectName) => {
