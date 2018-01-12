@@ -69,7 +69,7 @@ let () =
              )
            );
       candidateWatcher#receive(item);
-      expect(candidateWatcher#resultingEvent())
+      expect(candidateWatcher#pendingEvent())
       |> toEqual(
            Some((
              projectCreated.systemIssuer,
@@ -109,6 +109,6 @@ let () =
              )
            );
       candidateWatcher#receive(item);
-      expect(candidateWatcher#resultingEvent()) |> toBe(None);
+      expect(candidateWatcher#pendingEvent()) |> toBe(None);
     });
   });

@@ -32,7 +32,7 @@ let rec applyWatcherEvents = ({log, watchers, viewModel} as project) => {
         Some(
           watchers
           |> List.rev
-          |> List.find(w => w#resultingEvent() |> Js.Option.isSome)
+          |> List.find(w => w#pendingEvent() |> Js.Option.isSome)
         )
       ) {
       | Not_found => None

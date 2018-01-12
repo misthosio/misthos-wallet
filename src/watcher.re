@@ -3,7 +3,7 @@ open Event;
 type t = {
   .
   receive: EventLog.item => unit,
-  resultingEvent: unit => option((Bitcoin.ECPair.t, Event.t)),
+  pendingEvent: unit => option((Bitcoin.ECPair.t, Event.t)),
   processCompleted: unit => bool
 };
 
@@ -68,7 +68,7 @@ module CandidateApproval = {
         };
       };
       pub processCompleted = () => completed^;
-      pub resultingEvent = () => result^
+      pub pendingEvent = () => result^
     };
     log |> EventLog.reduce((_, item) => process#receive(item), ());
     process;
@@ -81,7 +81,7 @@ module ContributionApproval = {
     val approval = ref(1);
     pub receive = _event => approval := approval^ + 1;
     pub processCompleted = () => false;
-    pub resultingEvent = () => None
+    pub pendingEvent = () => None
   };
 };
 
