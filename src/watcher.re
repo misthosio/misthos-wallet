@@ -41,6 +41,9 @@ module CandidateApproval = {
         | MemberAdded(event) when event.processId == suggestion.processId =>
           completed := true;
           result := None;
+        | MemberAdded(event) =>
+          state :=
+            {...state^, eligable: [event.blockstackId, ...state^.eligable]}
         | _ => ()
         };
         if (state^.policy

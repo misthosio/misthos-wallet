@@ -26,14 +26,18 @@ let () =
         ~candidatePubKey
       );
     let processId = candidateSuggestion.processId;
-    test("started", () => {
+    test("Process is in progress", () => {
+      let (item, log) =
+        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
       let candidateWatcher =
-        Watcher.CandidateApproval.make(candidateSuggestion, log);
+        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       expect(candidateWatcher#processCompleted()) |> toBe(false);
     });
     test("completes when Member is added", () => {
+      let (item, log) =
+        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
       let candidateWatcher =
-        Watcher.CandidateApproval.make(candidateSuggestion, log);
+        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         EventLog.append(
           issuer,
@@ -48,8 +52,10 @@ let () =
       expect(candidateWatcher#processCompleted()) |> toBe(true);
     });
     test("Issues an event when approval is reached", () => {
+      let (item, log) =
+        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
       let candidateWatcher =
-        Watcher.CandidateApproval.make(candidateSuggestion, log);
+        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         log
         |> EventLog.append(
@@ -74,5 +80,35 @@ let () =
              })
            ))
          );
+    });
+    test("Does not complete without absolute approval", () => {
+      let (_, log) =
+        log
+        |> EventLog.append(
+             issuer,
+             MemberAdded({
+               processId: Uuid.v4(),
+               blockstackId: "ruth.id",
+               pubKey: "mallets"
+             })
+           );
+      let (item, log) =
+        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
+      let candidateWatcher =
+        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
+      let (item, _) =
+        log
+        |> EventLog.append(
+             issuer,
+             CandidateApproved(
+               Event.CandidateApproved.make(
+                 ~processId,
+                 ~candidateId,
+                 ~supporterId="frank.id"
+               )
+             )
+           );
+      candidateWatcher#receive(item);
+      expect(candidateWatcher#resultingEvent()) |> toBe(None);
     });
   });
