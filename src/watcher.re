@@ -26,26 +26,31 @@ module CandidateApproval = {
       val completed = ref(false);
       val result = ref(None);
       pub receive = ({event}: EventLog.item) => {
-        switch event {
-        | ProjectCreated(event) =>
-          state :=
-            {
-              ...state^,
-              eligable: [event.creatorId],
-              policy: event.metaPolicy,
-              systemIssuer: event.systemIssuer
+        state :=
+          (
+            switch event {
+            | ProjectCreated(event) => {
+                ...state^,
+                eligable: [event.creatorId],
+                policy: event.metaPolicy,
+                systemIssuer: event.systemIssuer
+              }
+            | CandidateApproved(event)
+                when event.processId == suggestion.processId => {
+                ...state^,
+                approvals: [event.supporterId, ...state^.approvals]
+              }
+            | MemberAdded(event) when event.processId == suggestion.processId =>
+              completed := true;
+              result := None;
+              state^;
+            | MemberAdded(event) => {
+                ...state^,
+                eligable: [event.blockstackId, ...state^.eligable]
+              }
+            | _ => state^
             }
-        | CandidateApproved(event) when event.processId == suggestion.processId =>
-          state :=
-            {...state^, approvals: [event.supporterId, ...state^.approvals]}
-        | MemberAdded(event) when event.processId == suggestion.processId =>
-          completed := true;
-          result := None;
-        | MemberAdded(event) =>
-          state :=
-            {...state^, eligable: [event.blockstackId, ...state^.eligable]}
-        | _ => ()
-        };
+          );
         if (state^.policy
             |> Policy.fulfilled(
                  ~eligable=state^.eligable,
