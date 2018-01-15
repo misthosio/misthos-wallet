@@ -1,30 +1,33 @@
 type data = {
-  userName: string,
+  blockstackId: string,
   appKeyPair: Bitcoin.ECPair.t
 };
 
 type t =
   | NotLoggedIn
   | LoginPending
+  | AnonymousLogin
   | LoggedIn(data);
 
-let sessionFromUserData = userData => {
-  let userName =
-    switch (Js.Nullable.to_opt(userData##username)) {
-    | None => "Anonymous"
-    | Some(name) => name
-    };
-  {
-    userName,
-    appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey
+let sessionDataFromUserData = userData =>
+  switch (Js.Nullable.to_opt(userData##username)) {
+  | None => None
+  | Some(blockstackId) =>
+    Some({
+      blockstackId,
+      appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey
+    })
   };
-};
 
 let getCurrentSession = () =>
   if (Blockstack.isUserSignedIn()) {
     switch (Blockstack.loadUserData()) {
     | None => NotLoggedIn
-    | Some(userData) => LoggedIn(sessionFromUserData(userData))
+    | Some(userData) =>
+      switch (sessionDataFromUserData(userData)) {
+      | None => AnonymousLogin
+      | Some(sessionData) => LoggedIn(sessionData)
+      }
     };
   } else if (Blockstack.isSignInPending()) {
     LoginPending;
@@ -35,7 +38,16 @@ let getCurrentSession = () =>
 let completeLogIn = () =>
   Js.Promise.(
     Blockstack.handlePendingSignIn()
-    |> then_(userData => LoggedIn(sessionFromUserData(userData)) |> resolve)
+    |> then_(userData =>
+         switch (sessionDataFromUserData(userData)) {
+         | None => resolve(AnonymousLogin)
+         | Some(sessionData) =>
+           let appPubKey =
+             sessionData.appKeyPair |> Utils.publicKeyFromKeyPair;
+           Public.writePublicFile(~appPubKey)
+           |> then_(() => resolve(LoggedIn(sessionData)));
+         }
+       )
   );
 
 let signIn = () => {

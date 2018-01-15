@@ -44,7 +44,8 @@ let make = _children => {
           switch state.session {
           | NotLoggedIn => "Welcome To Misthos"
           | LoginPending => "Waiting for login to complete"
-          | LoggedIn(data) => "Hello " ++ data.userName
+          | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
+          | LoggedIn(data) => "Hello " ++ data.blockstackId
           };
         <h1> (ReasonReact.stringToElement(header)) </h1>;
       }
@@ -58,7 +59,8 @@ let make = _children => {
           <button onClick=(reduce((_) => SignOut))>
             (ReasonReact.stringToElement("SignOut"))
           </button>
-        | LoginPending => <div />
+        | LoginPending
+        | AnonymousLogin => <div />
         }
       )
       (

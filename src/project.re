@@ -130,7 +130,7 @@ module Command = {
     let projectCreated =
       Event.ProjectCreated.make(
         ~projectName,
-        ~creatorId=session.userName,
+        ~creatorId=session.blockstackId,
         ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
         ~metaPolicy=defaultPolicy
       );
@@ -146,7 +146,7 @@ module Command = {
     |> apply(
          session.appKeyPair,
          Event.makeCandidateSuggested(
-           ~supporterId=session.userName,
+           ~supporterId=session.blockstackId,
            ~candidateId,
            ~candidatePubKey=""
          )
