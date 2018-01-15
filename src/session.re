@@ -45,14 +45,18 @@ let completeLogIn = () =>
          | Some(sessionData) =>
            let appPubKey =
              sessionData.appKeyPair |> Utils.publicKeyFromKeyPair;
-           Public.writePublicFile(~appPubKey)
+           UserPublicData.persistPublicData(~appPubKey)
            |> then_(() => resolve(LoggedIn(sessionData)));
          }
        )
   );
 
 let signIn = () => {
-  Blockstack.redirectToSignIn();
+  Blockstack.redirectToSignIn(
+    ~redirectURI=[%bs.raw {|window.location.origin|}] ++ "/",
+    ~manifestURI=[%bs.raw {|window.location.origin|}] ++ "/manifest.json",
+    ~scopes=[|"store_write", "publish_data"|]
+  );
   LoginPending;
 };
 

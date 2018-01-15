@@ -141,15 +141,24 @@ module Command = {
       Index.add(~projectId=projectCreated.projectId, ~projectName)
     ));
   };
-  let suggestCandidate = (session: Session.Data.t, candidateId, project) =>
-    project
-    |> apply(
-         session.appKeyPair,
-         Event.makeCandidateSuggested(
-           ~supporterId=session.blockstackId,
-           ~candidateId,
-           ~candidatePubKey=""
+  let suggestCandidate = (session: Session.Data.t, ~candidateId, project) =>
+    UserPublicData.lookUpPubKey(~blockstackId=candidateId)
+    |> Js.Promise.(
+         then_(maybePubKey =>
+           switch maybePubKey {
+           | Some(candidateId) =>
+             project
+             |> apply(
+                  session.appKeyPair,
+                  Event.makeCandidateSuggested(
+                    ~supporterId=session.blockstackId,
+                    ~candidateId,
+                    ~candidatePubKey=""
+                  )
+                )
+             |> persist
+           | None => resolve(project)
+           }
          )
-       )
-    |> persist;
+       );
 };

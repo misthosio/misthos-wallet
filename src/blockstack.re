@@ -11,7 +11,10 @@ type userData = {
 [@bs.module "blockstack"] [@bs.return nullable]
 external loadUserData : unit => option(userData) = "";
 
-[@bs.module "blockstack"] external redirectToSignIn : unit => unit = "";
+[@bs.module "blockstack"]
+external redirectToSignIn :
+  (~redirectURI: string, ~manifestURI: string, ~scopes: array(string)) => unit =
+  "";
 
 [@bs.module "blockstack"] external signUserOut : unit => unit = "";
 

@@ -35,7 +35,7 @@ let make = (~project as initialProject, ~session, _children) => {
           (
             ({reduce}) =>
               state.project
-              |> Project.Command.suggestCandidate(session, candidateId)
+              |> Project.Command.suggestCandidate(session, ~candidateId)
               |> Js.Promise.(
                    then_(project =>
                      reduce(() => UpdateProject(project), ()) |> resolve

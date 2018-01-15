@@ -17,5 +17,6 @@ let getViewModel: t => ViewModel.t;
 
 module Command: {
   let create: (Session.Data.t, string) => Js.Promise.t((t, Index.t));
-  let suggestCandidate: (Session.Data.t, string, t) => Js.Promise.t(t);
+  let suggestCandidate:
+    (Session.Data.t, ~candidateId: string, t) => Js.Promise.t(t);
 };
