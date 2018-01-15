@@ -16,7 +16,10 @@ let getId: t => string;
 let getViewModel: t => ViewModel.t;
 
 module Command: {
+  type result =
+    | Ok(t)
+    | NoUserInfo;
   let create: (Session.Data.t, string) => Js.Promise.t((t, Index.t));
   let suggestCandidate:
-    (Session.Data.t, ~candidateId: string, t) => Js.Promise.t(t);
+    (Session.Data.t, ~candidateId: string, t) => Js.Promise.t(result);
 };

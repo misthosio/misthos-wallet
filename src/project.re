@@ -126,6 +126,9 @@ let getId = ({id}) => id;
 let getViewModel = ({viewModel}) => viewModel;
 
 module Command = {
+  type result =
+    | Ok(t)
+    | NoUserInfo;
   let create = (session: Session.Data.t, projectName) => {
     let projectCreated =
       Event.ProjectCreated.make(
@@ -142,22 +145,23 @@ module Command = {
     ));
   };
   let suggestCandidate = (session: Session.Data.t, ~candidateId, project) =>
-    UserPublicData.lookUpPubKey(~blockstackId=candidateId)
+    UserPublicInfo.read(~blockstackId=candidateId)
     |> Js.Promise.(
-         then_(maybePubKey =>
-           switch maybePubKey {
-           | Some(candidateId) =>
+         then_(readResult =>
+           switch readResult {
+           | UserPublicInfo.Ok(info) =>
              project
              |> apply(
                   session.appKeyPair,
                   Event.makeCandidateSuggested(
                     ~supporterId=session.blockstackId,
                     ~candidateId,
-                    ~candidatePubKey=""
+                    ~candidatePubKey=info.appPubKey
                   )
                 )
              |> persist
-           | None => resolve(project)
+             |> then_(p => resolve(Ok(p)))
+           | UserPublicInfo.NotFound => resolve(NoUserInfo)
            }
          )
        );

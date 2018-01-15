@@ -1,46 +1,3 @@
-type t = string;
-
-let make = () => "";
-
-let apply = (event: Event.t, state) => state;
-
-/* switch event { */
-/* | ProjectCreated(created) => { */
-/*     ...state, */
-/*     id: created.projectId, */
-/*     name: created.projectName, */
-/*     members: [ */
-/*       ( */
-/*         created.creatorPubKey, */
-/*         {blockstackId: created.creatorId, pubKey: created.creatorPubKey} */
-/*       ) */
-/*     ] */
-/*   } */
-/* | CandidateSuggested(suggestion) => { */
-/*     ...state, */
-/*     candidates: [ */
-/*       ( */
-/*         suggestion.candidateId, */
-/*         { */
-/*           blockstackId: suggestion.candidateId, */
-/*           pubKey: suggestion.candidatePubKey, */
-/*           approvedBy: [memberIdFromPubKey(issuerPubKey, state)] */
-/*         } */
-/*       ), */
-/*       ...state.candidates */
-/*     ] */
-/*   } */
-/* | CandidateApproved(approval) => */
-/*   let candidates = */
-/*     state.candidates */
-/*     |> List.map(((id, c)) => */
-/*          if (id == approval.candidateId) { */
-/*            (id, {...c, approvedBy: [approval.supporterId, ...c.approvedBy]}); */
-/*          } else { */
-/*            (id, c); */
-/*          } */
-/*        ); */
-/*   {...state, candidates}; */
 module Member = {
   type t = {blockstackId: string};
 };
@@ -52,8 +9,28 @@ module Candidate = {
   };
 };
 
+type t = {
+  name: string,
+  candidates: list(Candidate.t)
+};
+
+let make = () => {name: "", candidates: []};
+
+let apply = (event: Event.t, state) =>
+  switch event {
+  | ProjectCreated(event) => {...state, name: event.projectName}
+  | CandidateSuggested(event) => {
+      ...state,
+      candidates: [
+        {blockstackId: event.candidateId, approvedBy: [event.supporterId]},
+        ...state.candidates
+      ]
+    }
+  | _ => state
+  };
+
 let getMembers = state => [];
 
-let getCandidates = state => [];
+let getCandidates = state => state.candidates;
 
-let projectName = state => "";
+let projectName = state => state.name;

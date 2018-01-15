@@ -37,8 +37,15 @@ let make = (~project as initialProject, ~session, _children) => {
               state.project
               |> Project.Command.suggestCandidate(session, ~candidateId)
               |> Js.Promise.(
-                   then_(project =>
-                     reduce(() => UpdateProject(project), ()) |> resolve
+                   then_(result =>
+                     (
+                       switch result {
+                       | Project.Command.Ok(project) =>
+                         reduce(() => UpdateProject(project), ())
+                       | NoUserInfo => Js.log("NoUserInfo")
+                       }
+                     )
+                     |> resolve
                    )
                  )
               |> ignore
@@ -88,7 +95,7 @@ let make = (~project as initialProject, ~session, _children) => {
       );
     <div>
       <h2>
-        (ReasonReact.stringToElement(ViewModel.projectName(initialProject)))
+        (ReasonReact.stringToElement(ViewModel.projectName(state.viewModel)))
       </h2>
       (ReasonReact.stringToElement("Members:"))
       <ul> members </ul>
