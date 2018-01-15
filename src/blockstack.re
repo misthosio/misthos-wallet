@@ -19,14 +19,43 @@ external loadUserData : unit => option(userData) = "";
 external handlePendingSignIn : unit => Js.Promise.t(userData) = "";
 
 [@bs.module "blockstack"]
-external putFile : (string, string, Js.boolean) => Js.Promise.t(unit) = "";
+external getFile : string => Js.Promise.t(Js.nullable(string)) = "";
 
 [@bs.module "blockstack"]
-external getFile : (string, Js.boolean) => Js.Promise.t(Js.nullable(string)) =
-  "";
+external getFileDecrypted :
+  (string, [@bs.as {json| {"decrypt": true} |json}] _) =>
+  Js.Promise.t(Js.nullable(string)) =
+  "getFile";
 
-type gaiaConfig = {
+type getFileOpts = {
   .
-  "url_prefix": string,
-  "address": string
+  "decrypt": Js.null(Js.boolean),
+  "username": Js.null(string),
+  "app": Js.null(string),
+  "zoneFileLookupURL": Js.null(string)
 };
+
+[@bs.module "blockstack"]
+external getFileWithJsOpts :
+  (string, getFileOpts) => Js.Promise.t(Js.nullable(string)) =
+  "getFile";
+
+let getFileWithOpts =
+    (file, ~decrypt=?, ~username=?, ~app=?, ~zoneFileLookupURL=?, ()) => {
+  let opts = {
+    "decrypt": Js.Null.from_opt(DoNotFormat.boolToJsBoolean(decrypt)),
+    "username": Js.Null.from_opt(username),
+    "app": Js.Null.from_opt(app),
+    "zoneFileLookupURL": Js.Null.from_opt(zoneFileLookupURL)
+  };
+  getFileWithJsOpts(file, opts);
+};
+
+[@bs.module "blockstack"]
+external putFile : (string, string) => Js.Promise.t(unit) = "";
+
+[@bs.module "blockstack"]
+external putFileEncrypted :
+  (string, string, [@bs.as {json| {"encrypt": true} |json}] _) =>
+  Js.Promise.t(unit) =
+  "putFile";

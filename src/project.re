@@ -81,8 +81,7 @@ let persist = project =>
   Js.Promise.(
     Blockstack.putFile(
       project.id ++ "/log.json",
-      EventLog.encode(project.log) |> Json.stringify,
-      Js.false_
+      EventLog.encode(project.log) |> Json.stringify
     )
     |> then_(() => resolve(project))
   );
@@ -91,7 +90,7 @@ let defaultPolicy = Policy.absolute;
 
 let load = id =>
   Js.Promise.(
-    Blockstack.getFile(id ++ "/log.json", Js.false_)
+    Blockstack.getFile(id ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.to_opt(nullLog)) {
          | Some(raw) =>

@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "bitcoinjs-lib": "^3.3",
-    "blockstack": "^0.14",
+    "blockstack": "^0.15",
     "bs-json": "^1.0",
     "uuid":"^3.1",
     "autoprefixer": "7.1.6",

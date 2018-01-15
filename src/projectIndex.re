@@ -26,17 +26,16 @@ let indexPath = "index.json";
 
 let persist = index =>
   Js.Promise.(
-    Blockstack.putFile(
+    Blockstack.putFileEncrypted(
       indexPath,
-      Encode.index(index) |> Json.stringify,
-      Js.false_
+      Encode.index(index) |> Json.stringify
     )
     |> then_(() => resolve(index))
   );
 
 let load = () =>
   Js.Promise.(
-    Blockstack.getFile(indexPath, Js.false_)
+    Blockstack.getFileDecrypted(indexPath)
     |> then_(nullProjects =>
          switch (Js.Nullable.to_opt(nullProjects)) {
          | None => persist([])
