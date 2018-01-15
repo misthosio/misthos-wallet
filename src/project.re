@@ -7,8 +7,8 @@ type t = {
   viewModel: ViewModel.t
 };
 
-let make = () => {
-  id: "",
+let make = id => {
+  id,
   log: EventLog.make(),
   watchers: [],
   viewModel: ViewModel.make()
@@ -57,7 +57,7 @@ let apply = (issuer, event, {log, watchers, viewModel} as project) => {
 };
 
 let reconstruct = log => {
-  let {viewModel} = make();
+  let {viewModel} = make("");
   let (id, watchers, viewModel) =
     log
     |> EventLog.reduce(
@@ -135,7 +135,7 @@ module Command = {
         ~metaPolicy=defaultPolicy
       );
     Js.Promise.all2((
-      make()
+      make(projectCreated.projectId)
       |> apply(session.appKeyPair, ProjectCreated(projectCreated))
       |> persist,
       Index.add(~projectId=projectCreated.projectId, ~projectName)
