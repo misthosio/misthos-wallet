@@ -126,7 +126,7 @@ let getId = ({id}) => id;
 let getViewModel = ({viewModel}) => viewModel;
 
 module Command = {
-  let create = (session: Session.data, projectName) => {
+  let create = (session: Session.Data.t, projectName) => {
     let projectCreated =
       Event.ProjectCreated.make(
         ~projectName,
@@ -141,7 +141,7 @@ module Command = {
       Index.add(~projectId=projectCreated.projectId, ~projectName)
     ));
   };
-  let suggestCandidate = (session: Session.data, candidateId, project) =>
+  let suggestCandidate = (session: Session.Data.t, candidateId, project) =>
     project
     |> apply(
          session.appKeyPair,

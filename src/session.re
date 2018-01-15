@@ -1,30 +1,31 @@
-type data = {
-  blockstackId: string,
-  appKeyPair: Bitcoin.ECPair.t
+module Data = {
+  type t = {
+    blockstackId: string,
+    appKeyPair: Bitcoin.ECPair.t
+  };
+  let fromUserData = userData =>
+    switch (Js.Nullable.to_opt(userData##username)) {
+    | None => None
+    | Some(blockstackId) =>
+      Some({
+        blockstackId,
+        appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey
+      })
+    };
 };
 
 type t =
   | NotLoggedIn
   | LoginPending
   | AnonymousLogin
-  | LoggedIn(data);
-
-let sessionDataFromUserData = userData =>
-  switch (Js.Nullable.to_opt(userData##username)) {
-  | None => None
-  | Some(blockstackId) =>
-    Some({
-      blockstackId,
-      appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey
-    })
-  };
+  | LoggedIn(Data.t);
 
 let getCurrentSession = () =>
   if (Blockstack.isUserSignedIn()) {
     switch (Blockstack.loadUserData()) {
     | None => NotLoggedIn
     | Some(userData) =>
-      switch (sessionDataFromUserData(userData)) {
+      switch (Data.fromUserData(userData)) {
       | None => AnonymousLogin
       | Some(sessionData) => LoggedIn(sessionData)
       }
@@ -39,7 +40,7 @@ let completeLogIn = () =>
   Js.Promise.(
     Blockstack.handlePendingSignIn()
     |> then_(userData =>
-         switch (sessionDataFromUserData(userData)) {
+         switch (Data.fromUserData(userData)) {
          | None => resolve(AnonymousLogin)
          | Some(sessionData) =>
            let appPubKey =
