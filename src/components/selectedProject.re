@@ -1,3 +1,5 @@
+open Project;
+
 type state = {
   project: Project.t,
   viewModel: ViewModel.t,
@@ -34,21 +36,23 @@ let make = (~project as initialProject, ~session, _children) => {
         ReasonReact.SideEffects(
           (
             ({reduce}) =>
-              state.project
-              |> Project.Command.suggestCandidate(session, ~candidateId)
-              |> Js.Promise.(
-                   then_(result =>
-                     (
-                       switch result {
-                       | Project.Command.Ok(project) =>
-                         reduce(() => UpdateProject(project), ())
-                       | NoUserInfo => Js.log("NoUserInfo")
-                       }
+              Js.Promise.(
+                Cmd.SuggestCandidate.(
+                  state.project
+                  |> exec(session, ~candidateId)
+                  |> then_(result =>
+                       (
+                         switch result {
+                         | Ok(project) =>
+                           reduce(() => UpdateProject(project), ())
+                         | NoUserInfo => Js.log("NoUserInfo")
+                         }
+                       )
+                       |> resolve
                      )
-                     |> resolve
-                   )
-                 )
-              |> ignore
+                  |> ignore
+                )
+              )
           )
         )
       }

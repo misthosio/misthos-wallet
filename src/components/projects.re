@@ -17,7 +17,7 @@ type action =
   | ChangeNewProject(string)
   | SelectProject(string)
   | AddProject
-  | ProjectCreated(Project.t, Project.Index.t);
+  | ProjectCreated(Project.Index.t, Project.t);
 
 let component = ReasonReact.reducerComponent("Projects");
 
@@ -43,8 +43,8 @@ let make = (~session, _children) => {
         Js.Promise.(
           Project.Index.load()
           |> then_(index => reduce(() => IndexLoaded(index), ()) |> resolve)
+          |> ignore
         )
-        |> ignore
     ),
   reducer: (action, state) =>
     switch action {
@@ -55,20 +55,20 @@ let make = (~session, _children) => {
           ({reduce}) =>
             switch index {
             | [p, ..._rest] =>
-              Project.load(p.id)
-              |> Js.Promise.(
-                   then_(project =>
+              Js.Promise.(
+                Project.load(~projectId=p.id)
+                |> then_(project =>
                      reduce(() => ProjectLoaded(project), ()) |> resolve
                    )
-                 )
-              |> ignore
+                |> ignore
+              )
             | _ => ()
             }
         )
       )
     | ProjectLoaded(project) =>
       ReasonReact.Update({...state, status: None, selected: Some(project)})
-    | ProjectCreated(selected, index) =>
+    | ProjectCreated(index, selected) =>
       ReasonReact.Update({
         ...state,
         status: None,
@@ -90,13 +90,13 @@ let make = (~session, _children) => {
           {...state, status: LoadingProject, selected: None},
           (
             ({reduce}) =>
-              Project.load(id)
-              |> Js.Promise.(
-                   then_(project =>
+              Js.Promise.(
+                Project.load(~projectId=id)
+                |> then_(project =>
                      reduce(() => ProjectLoaded(project), ()) |> resolve
                    )
-                 )
-              |> ignore
+                |> ignore
+              )
           )
         );
     | AddProject =>
@@ -107,14 +107,14 @@ let make = (~session, _children) => {
           {...state, status: CreatingProject(name), newProject: ""},
           (
             ({reduce}) =>
-              Project.Command.create(session, name)
-              |> Js.Promise.(
-                   then_(((project, newIndex)) =>
-                     reduce(() => ProjectCreated(project, newIndex), ())
+              Js.Promise.(
+                Project.Cmd.Create.exec(session, ~name)
+                |> then_(((newIndex, project)) =>
+                     reduce(() => ProjectCreated(newIndex, project), ())
                      |> resolve
                    )
-                 )
-              |> ignore
+                |> ignore
+              )
           )
         )
       }

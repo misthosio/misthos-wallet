@@ -25,8 +25,8 @@ let make = _children => {
               |> then_(session =>
                    reduce(() => LoginCompleted(session), ()) |> resolve
                  )
+              |> ignore
             )
-            |> ignore
         )
       )
     | _ => ReasonReact.NoUpdate

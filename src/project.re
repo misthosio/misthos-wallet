@@ -88,9 +88,9 @@ let persist = project =>
 
 let defaultPolicy = Policy.absolute;
 
-let load = id =>
+let load = (~projectId) =>
   Js.Promise.(
-    Blockstack.getFile(id ++ "/log.json")
+    Blockstack.getFile(projectId ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.to_opt(nullLog)) {
          | Some(raw) =>
@@ -125,44 +125,49 @@ let getId = ({id}) => id;
 
 let getViewModel = ({viewModel}) => viewModel;
 
-module Command = {
-  type result =
-    | Ok(t)
-    | NoUserInfo;
-  let create = (session: Session.Data.t, projectName) => {
-    let projectCreated =
-      Event.ProjectCreated.make(
-        ~projectName,
-        ~creatorId=session.blockstackId,
-        ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
-        ~metaPolicy=defaultPolicy
-      );
-    Js.Promise.all2((
-      make(projectCreated.projectId)
-      |> apply(session.appKeyPair, ProjectCreated(projectCreated))
-      |> persist,
-      Index.add(~projectId=projectCreated.projectId, ~projectName)
-    ));
+module Cmd = {
+  module Create = {
+    type result = (Index.t, t);
+    let exec = (session: Session.Data.t, ~name as projectName) => {
+      let projectCreated =
+        Event.ProjectCreated.make(
+          ~projectName,
+          ~creatorId=session.blockstackId,
+          ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
+          ~metaPolicy=defaultPolicy
+        );
+      Js.Promise.all2((
+        Index.add(~projectId=projectCreated.projectId, ~projectName),
+        make(projectCreated.projectId)
+        |> apply(session.appKeyPair, ProjectCreated(projectCreated))
+        |> persist
+      ));
+    };
   };
-  let suggestCandidate = (session: Session.Data.t, ~candidateId, project) =>
-    UserPublicInfo.read(~blockstackId=candidateId)
-    |> Js.Promise.(
-         then_(readResult =>
-           switch readResult {
-           | UserPublicInfo.Ok(info) =>
-             project
-             |> apply(
-                  session.appKeyPair,
-                  Event.makeCandidateSuggested(
-                    ~supporterId=session.blockstackId,
-                    ~candidateId,
-                    ~candidatePubKey=info.appPubKey
+  module SuggestCandidate = {
+    type result =
+      | Ok(t)
+      | NoUserInfo;
+    let exec = (session: Session.Data.t, ~candidateId, project) =>
+      Js.Promise.(
+        UserPublicInfo.read(~blockstackId=candidateId)
+        |> then_(readResult =>
+             switch readResult {
+             | UserPublicInfo.Ok(info) =>
+               project
+               |> apply(
+                    session.appKeyPair,
+                    Event.makeCandidateSuggested(
+                      ~supporterId=session.blockstackId,
+                      ~candidateId,
+                      ~candidatePubKey=info.appPubKey
+                    )
                   )
-                )
-             |> persist
-             |> then_(p => resolve(Ok(p)))
-           | UserPublicInfo.NotFound => resolve(NoUserInfo)
-           }
-         )
-       );
+               |> persist
+               |> then_(p => resolve(Ok(p)))
+             | UserPublicInfo.NotFound => resolve(NoUserInfo)
+             }
+           )
+      );
+  };
 };
