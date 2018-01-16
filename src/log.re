@@ -77,8 +77,8 @@ module Make = (Event: Encodable) => {
       Json.Encode.(
         object_([
           ("event", Event.encode(item.event)),
-          ("hash", string(item.hash)),
           ("issuerPubKey", string(item.issuerPubKey)),
+          ("hash", string(item.hash)),
           ("signature", ecSig(item.signature))
         ])
       );
