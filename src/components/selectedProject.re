@@ -35,7 +35,7 @@ let make = (~project as initialProject, ~session, _children) => {
       | candidateId =>
         ReasonReact.SideEffects(
           (
-            ({reduce}) =>
+            ({send}) =>
               Js.Promise.(
                 Cmd.SuggestCandidate.(
                   state.project
@@ -43,8 +43,7 @@ let make = (~project as initialProject, ~session, _children) => {
                   |> then_(result =>
                        (
                          switch result {
-                         | Ok(project) =>
-                           reduce(() => UpdateProject(project), ())
+                         | Ok(project) => send(UpdateProject(project))
                          | NoUserInfo => Js.log("NoUserInfo")
                          }
                        )
@@ -63,7 +62,7 @@ let make = (~project as initialProject, ~session, _children) => {
         viewModel: Project.getViewModel(project)
       })
     },
-  render: ({reduce, state}) => {
+  render: ({send, state}) => {
     let members =
       ReasonReact.arrayToElement(
         Array.of_list(
@@ -108,10 +107,10 @@ let make = (~project as initialProject, ~session, _children) => {
       <input
         placeholder="BlockstackId"
         value=state.candidateId
-        onChange=(reduce(changeNewMemberId))
+        onChange=(e => send(changeNewMemberId(e)))
         autoFocus=Js.false_
       />
-      <button onClick=(reduce((_) => SuggestCandidate))>
+      <button onClick=(_e => send(SuggestCandidate))>
         (ReasonReact.stringToElement("Suggest Candidate"))
       </button>
     </div>;

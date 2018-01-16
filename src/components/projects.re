@@ -39,10 +39,10 @@ let make = (~session, _children) => {
   },
   didMount: _self =>
     ReasonReact.SideEffects(
-      ({reduce}) =>
+      ({send}) =>
         Js.Promise.(
           Project.Index.load()
-          |> then_(index => reduce(() => IndexLoaded(index), ()) |> resolve)
+          |> then_(index => send(IndexLoaded(index)) |> resolve)
           |> ignore
         )
     ),
@@ -52,14 +52,12 @@ let make = (~session, _children) => {
       ReasonReact.UpdateWithSideEffects(
         {...state, status: None, index},
         (
-          ({reduce}) =>
+          ({send}) =>
             switch index {
             | [p, ..._rest] =>
               Js.Promise.(
                 Project.load(~projectId=p.id)
-                |> then_(project =>
-                     reduce(() => ProjectLoaded(project), ()) |> resolve
-                   )
+                |> then_(project => send(ProjectLoaded(project)) |> resolve)
                 |> ignore
               )
             | _ => ()
@@ -89,12 +87,10 @@ let make = (~session, _children) => {
         ReasonReact.UpdateWithSideEffects(
           {...state, status: LoadingProject, selected: None},
           (
-            ({reduce}) =>
+            ({send}) =>
               Js.Promise.(
                 Project.load(~projectId=id)
-                |> then_(project =>
-                     reduce(() => ProjectLoaded(project), ()) |> resolve
-                   )
+                |> then_(project => send(ProjectLoaded(project)) |> resolve)
                 |> ignore
               )
           )
@@ -106,12 +102,11 @@ let make = (~session, _children) => {
         ReasonReact.UpdateWithSideEffects(
           {...state, status: CreatingProject(name), newProject: ""},
           (
-            ({reduce}) =>
+            ({send}) =>
               Js.Promise.(
                 Project.Cmd.Create.exec(session, ~name)
                 |> then_(((newIndex, project)) =>
-                     reduce(() => ProjectCreated(newIndex, project), ())
-                     |> resolve
+                     send(ProjectCreated(newIndex, project)) |> resolve
                    )
                 |> ignore
               )
@@ -119,7 +114,7 @@ let make = (~session, _children) => {
         )
       }
     },
-  render: ({reduce, state}) => {
+  render: ({send, state}) => {
     let selectedId =
       switch (state.status, state.selected) {
       | (CreatingProject(_), _) => "new"
@@ -144,7 +139,7 @@ let make = (~session, _children) => {
                  key=id
                  id
                  className=(id == selectedId ? "selected" : "")
-                 onClick=(reduce(e => selectProject(e)))>
+                 onClick=(e => send(selectProject(e)))>
                  (ReasonReact.stringToElement(name))
                </li>
              )
@@ -168,10 +163,10 @@ let make = (~session, _children) => {
       <input
         placeholder="Create new Project"
         value=state.newProject
-        onChange=(reduce(changeNewProject))
+        onChange=(e => send(changeNewProject(e)))
         autoFocus=Js.true_
       />
-      <button onClick=(reduce((_) => AddProject))>
+      <button onClick=(_e => send(AddProject))>
         (ReasonReact.stringToElement("Add"))
       </button>
       project

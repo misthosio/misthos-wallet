@@ -19,12 +19,10 @@ let make = _children => {
     | LoginPending =>
       ReasonReact.SideEffects(
         (
-          ({reduce}) =>
+          ({send}) =>
             Js.Promise.(
               Session.completeLogIn()
-              |> then_(session =>
-                   reduce(() => LoginCompleted(session), ()) |> resolve
-                 )
+              |> then_(session => send(LoginCompleted(session)) |> resolve)
               |> ignore
             )
         )
@@ -37,7 +35,7 @@ let make = _children => {
     | SignIn => ReasonReact.Update({session: Session.signIn()})
     | SignOut => ReasonReact.Update({session: Session.signOut()})
     },
-  render: ({reduce, state}) =>
+  render: ({send, state}) =>
     <div>
       {
         let header =
@@ -52,11 +50,11 @@ let make = _children => {
       (
         switch state.session {
         | NotLoggedIn =>
-          <button onClick=(reduce((_) => SignIn))>
+          <button onClick=(_e => send(SignIn))>
             (ReasonReact.stringToElement("Sign In with Blockstack"))
           </button>
         | LoggedIn(_) =>
-          <button onClick=(reduce((_) => SignOut))>
+          <button onClick=(_e => send(SignOut))>
             (ReasonReact.stringToElement("SignOut"))
           </button>
         | LoginPending
