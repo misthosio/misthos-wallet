@@ -1,9 +1,38 @@
 module Index = ProjectIndex;
 
+module State = {
+  type member = {
+    address: string,
+    pubKey: string
+  };
+  type t = {members: list(member)};
+  let make = () => {members: []};
+  let apply = (event: Event.t, state) =>
+    switch event {
+    | ProjectCreated({creatorPubKey}) => {
+        ...state,
+        members: [
+          {
+            pubKey: creatorPubKey,
+            address: Utils.addressFromPublicKey(creatorPubKey)
+          }
+        ]
+      }
+    /* | MemberAdded(event) => { */
+    /*     memberAddresses: [ */
+    /*       Utils.addressFromPublicKey(event.pubKey), */
+    /*       ...state.memberAddresses */
+    /*     ] */
+    /*   } */
+    | _ => state
+    };
+};
+
 type t = {
   id: string,
   log: EventLog.t,
   watchers: list(Watcher.t),
+  state: State.t,
   viewModel: ViewModel.t
 };
 
@@ -11,6 +40,7 @@ let make = id => {
   id,
   log: EventLog.make(),
   watchers: [],
+  state: State.make(),
   viewModel: ViewModel.make()
 };
 
@@ -25,7 +55,7 @@ let updateWatchers = (item, log, watchers) => {
   |> List.filter(w => w#processCompleted() == false);
 };
 
-let rec applyWatcherEvents = ({log, watchers, viewModel} as project) => {
+let rec applyWatcherEvents = ({id, log, watchers, state, viewModel}) => {
   let nextEvent =
     (
       try (
@@ -40,29 +70,31 @@ let rec applyWatcherEvents = ({log, watchers, viewModel} as project) => {
     )
     |> DoNotFormat.andThenGetEvent;
   switch nextEvent {
-  | None => project
+  | None => {id, log, watchers, state, viewModel}
   | Some((issuer, event)) =>
     let (item, log) = log |> EventLog.append(issuer, event);
     let watchers = watchers |> updateWatchers(item, log);
+    let state = state |> State.apply(event);
     let viewModel = viewModel |> ViewModel.apply(event);
-    applyWatcherEvents({...project, viewModel, log, watchers});
+    applyWatcherEvents({id, log, watchers, state, viewModel});
   };
 };
 
-let apply = (issuer, event, {log, watchers, viewModel} as project) => {
+let apply = (issuer, event, {id, log, watchers, state, viewModel}) => {
   let (item, log) = log |> EventLog.append(issuer, event);
   let watchers = watchers |> updateWatchers(item, log);
+  let state = state |> State.apply(event);
   let viewModel = viewModel |> ViewModel.apply(event);
-  applyWatcherEvents({...project, log, watchers, viewModel});
+  applyWatcherEvents({id, log, watchers, state, viewModel});
 };
 
 let reconstruct = log => {
-  let {viewModel} = make("");
-  let (id, watchers, viewModel) =
+  let {viewModel, state} = make("");
+  let (id, watchers, state, viewModel) =
     log
     |> EventLog.reduce(
-         ((id, watchers, viewModel), item) => (
-           switch item.event {
+         ((id, watchers, state, viewModel), {event} as item) => (
+           switch event {
            | ProjectCreated({projectId}) => projectId
            | _ => id
            },
@@ -70,21 +102,28 @@ let reconstruct = log => {
            | Some(w) => [w, ...watchers]
            | None => watchers
            },
-           viewModel |> ViewModel.apply(item.event)
+           state |> State.apply(event),
+           viewModel |> ViewModel.apply(event)
          ),
-         ("", [], viewModel)
+         ("", [], state, viewModel)
        );
-  {id, log, watchers, viewModel};
+  {id, log, watchers, state, viewModel};
 };
 
-let persist = project =>
-  Js.Promise.(
-    Blockstack.putFile(
-      project.id ++ "/log.json",
-      EventLog.encode(project.log) |> Json.stringify
-    )
-    |> then_(() => resolve(project))
-  );
+let persist = ({id, log, state} as project) => {
+  let logString = log |> EventLog.encode |> Json.stringify;
+  let returnPromise =
+    Js.Promise.(
+      Blockstack.putFile(id ++ "/log.json", logString)
+      |> then_(() => resolve(project))
+    );
+  state.members
+  |> List.map(({address}: State.member) =>
+       Blockstack.putFile(id ++ "/" ++ address ++ "/log.json", logString)
+     )
+  |> ignore;
+  returnPromise;
+};
 
 let defaultPolicy = Policy.absolute;
 
