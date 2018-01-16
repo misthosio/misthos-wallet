@@ -2,6 +2,7 @@ module Index = ProjectIndex;
 
 module State = {
   type member = {
+    blockstackId: string,
     address: string,
     pubKey: string
   };
@@ -9,10 +10,11 @@ module State = {
   let make = () => {members: []};
   let apply = (event: Event.t, state) =>
     switch event {
-    | ProjectCreated({creatorPubKey}) => {
+    | ProjectCreated({creatorId, creatorPubKey}) => {
         ...state,
         members: [
           {
+            blockstackId: creatorId,
             pubKey: creatorPubKey,
             address: Utils.addressFromPublicKey(creatorPubKey)
           }
@@ -34,6 +36,61 @@ type t = {
   watchers: list(Watcher.t),
   state: State.t,
   viewModel: ViewModel.t
+};
+
+module Syncronize = {
+  let getMemberHistories = (session: Session.Data.t, {id, state}) =>
+    Js.Promise.(
+      state.members
+      |> List.filter(({blockstackId}: State.member) =>
+           blockstackId != session.blockstackId
+         )
+      |> List.map(({blockstackId}: State.member) =>
+           Blockstack.getFileWithOpts(
+             id ++ "/" ++ session.address ++ "/log.json",
+             ~username=blockstackId,
+             ()
+           )
+           |> then_(nullLog =>
+                switch (Js.Nullable.to_opt(nullLog)) {
+                | Some(raw) =>
+                  resolve(Some(raw |> Json.parseOrRaise |> EventLog.decode))
+                | None => resolve(None)
+                }
+              )
+           |> catch(_error => resolve(None))
+         )
+      |> Array.of_list
+      |> all
+      |> then_(histories =>
+           histories
+           |> Array.to_list
+           |> List.filter(Js.Option.isSome)
+           |> List.rev_map(Js.Option.getExn)
+           |> resolve
+         )
+    );
+  /* let sync = (otherLogs, {state, watchers, log} as project) => { */
+  /*   let (state,log) = log |> EventLog.merge(otherLogs,,item) => Verification.includeItem(item),((state,log),item) => { */
+  /*            let state = state |> applyToState(item); */
+  /*            let watchers = watchers |> updateWatchers(item, log); */
+  /*            state */
+  /*     } */
+  /* let newItems = log |> EventLog.findNewItems(otherLogs); */
+  /* let project = */
+  /*   newItems */
+  /*   |> List.fold_left( */
+  /*        ({state, watchers, log}, item) => { */
+  /*          /1* Verification.includeItem(item); *1/ */
+  /*          let log = log |> EventLog.appendItem(item); */
+  /*          let state = state |> applyToState(item); */
+  /*          let watchers = watchers |> updateWatchers(item, log); */
+  /*          {state, watchers, log}; */
+  /*        }, */
+  /*        project */
+  /*      ); */
+  /* applyWatcherEvents({log, state, watchers}); */
+  /* }; */
 };
 
 let make = id => {
@@ -139,27 +196,6 @@ let load = (~projectId) =>
        )
   );
 
-/* let sync = (otherLogs, {state, watchers, log} as project) => { */
-/*   let (state,log) = log |> EventLog.merge(otherLogs,,item) => Verification.includeItem(item),((state,log),item) => { */
-/*            let state = state |> applyToState(item); */
-/*            let watchers = watchers |> updateWatchers(item, log); */
-/*            state */
-/*     } */
-/* let newItems = log |> EventLog.findNewItems(otherLogs); */
-/* let project = */
-/*   newItems */
-/*   |> List.fold_left( */
-/*        ({state, watchers, log}, item) => { */
-/*          /1* Verification.includeItem(item); *1/ */
-/*          let log = log |> EventLog.appendItem(item); */
-/*          let state = state |> applyToState(item); */
-/*          let watchers = watchers |> updateWatchers(item, log); */
-/*          {state, watchers, log}; */
-/*        }, */
-/*        project */
-/*      ); */
-/* applyWatcherEvents({log, state, watchers}); */
-/* }; */
 let getId = ({id}) => id;
 
 let getViewModel = ({viewModel}) => viewModel;

@@ -1,16 +1,19 @@
 module Data = {
   type t = {
     blockstackId: string,
-    appKeyPair: Bitcoin.ECPair.t
+    appKeyPair: Bitcoin.ECPair.t,
+    address: string
   };
   let fromUserData = userData =>
     switch (Js.Nullable.to_opt(userData##username)) {
     | None => None
     | Some(blockstackId) =>
+      let appKeyPair = userData##appPrivateKey |> Utils.keyPairFromPrivateKey;
       Some({
         blockstackId,
-        appKeyPair: userData##appPrivateKey |> Utils.keyPairFromPrivateKey
-      })
+        appKeyPair,
+        address: appKeyPair |> Bitcoin.ECPair.getAddress
+      });
     };
 };
 
