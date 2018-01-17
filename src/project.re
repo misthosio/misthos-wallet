@@ -1,6 +1,6 @@
 module Index = ProjectIndex;
 
-module State = {
+module ValidationState = {
   type member = {
     blockstackId: string,
     address: string,
@@ -34,18 +34,32 @@ type t = {
   id: string,
   log: EventLog.t,
   watchers: list(Watcher.t),
-  state: State.t,
+  state: ValidationState.t,
   viewModel: ViewModel.t
 };
 
-module Syncronize = {
+module Synchronize = {
+  let getMemberHistoryUrls = (session: Session.Data.t, {id, state}) =>
+    state.members
+    /* |> List.filter(({blockstackId}: ValidationState.member) => */
+    /*      blockstackId != session.blockstackId */
+    /*    ) */
+    |> List.map(({blockstackId}: ValidationState.member) =>
+         Blockstack.getUserAppFileUrl(
+           ~path=id ++ "/" ++ session.address ++ "/log.json",
+           ~username=blockstackId,
+           ~appOrigin=Utils.origin()
+         )
+       )
+    |> Array.of_list
+    |> Js.Promise.all;
   let getMemberHistories = (session: Session.Data.t, {id, state}) =>
     Js.Promise.(
       state.members
-      |> List.filter(({blockstackId}: State.member) =>
+      |> List.filter(({blockstackId}: ValidationState.member) =>
            blockstackId != session.blockstackId
          )
-      |> List.map(({blockstackId}: State.member) =>
+      |> List.map(({blockstackId}: ValidationState.member) =>
            Blockstack.getFileWithOpts(
              id ++ "/" ++ session.address ++ "/log.json",
              ~username=blockstackId,
@@ -93,11 +107,13 @@ module Syncronize = {
   /* }; */
 };
 
+let getMemberHistoryUrls = Synchronize.getMemberHistoryUrls;
+
 let make = id => {
   id,
   log: EventLog.make(),
   watchers: [],
-  state: State.make(),
+  state: ValidationState.make(),
   viewModel: ViewModel.make()
 };
 
@@ -131,7 +147,7 @@ let rec applyWatcherEvents = ({id, log, watchers, state, viewModel}) => {
   | Some((issuer, event)) =>
     let (item, log) = log |> EventLog.append(issuer, event);
     let watchers = watchers |> updateWatchers(item, log);
-    let state = state |> State.apply(event);
+    let state = state |> ValidationState.apply(event);
     let viewModel = viewModel |> ViewModel.apply(event);
     applyWatcherEvents({id, log, watchers, state, viewModel});
   };
@@ -140,7 +156,7 @@ let rec applyWatcherEvents = ({id, log, watchers, state, viewModel}) => {
 let apply = (issuer, event, {id, log, watchers, state, viewModel}) => {
   let (item, log) = log |> EventLog.append(issuer, event);
   let watchers = watchers |> updateWatchers(item, log);
-  let state = state |> State.apply(event);
+  let state = state |> ValidationState.apply(event);
   let viewModel = viewModel |> ViewModel.apply(event);
   applyWatcherEvents({id, log, watchers, state, viewModel});
 };
@@ -159,7 +175,7 @@ let reconstruct = log => {
            | Some(w) => [w, ...watchers]
            | None => watchers
            },
-           state |> State.apply(event),
+           state |> ValidationState.apply(event),
            viewModel |> ViewModel.apply(event)
          ),
          ("", [], state, viewModel)
@@ -175,7 +191,7 @@ let persist = ({id, log, state} as project) => {
       |> then_(() => resolve(project))
     );
   state.members
-  |> List.map(({address}: State.member) =>
+  |> List.map(({address}: ValidationState.member) =>
        Blockstack.putFile(id ++ "/" ++ address ++ "/log.json", logString)
      )
   |> ignore;

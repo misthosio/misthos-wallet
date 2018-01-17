@@ -3,13 +3,15 @@ open Project;
 type state = {
   project: Project.t,
   viewModel: ViewModel.t,
-  candidateId: string
+  candidateId: string,
+  worker: ref(Worker.t)
 };
 
 type action =
   | ChangeNewMemberId(string)
   | UpdateProject(Project.t)
-  | SuggestCandidate;
+  | SuggestCandidate
+  | WorkerMessage(Worker.Message.receive);
 
 let changeNewMemberId = event =>
   ChangeNewMemberId(
@@ -23,10 +25,30 @@ let make = (~project as initialProject, ~session, _children) => {
   initialState: () => {
     project: initialProject,
     viewModel: Project.getViewModel(initialProject),
-    candidateId: ""
+    candidateId: "",
+    worker: ref(Worker.make(~onMessage=Js.log))
+  },
+  didMount: ({send, state}) => {
+    Worker.terminate(state.worker^);
+    let worker =
+      ref(Worker.make(~onMessage=message => send(WorkerMessage(message))));
+    Js.Promise.(
+      Project.getMemberHistoryUrls(session, initialProject)
+      |> then_(urls =>
+           Worker.Message.RegularlyFetch(urls)
+           |> Worker.postMessage(worker^)
+           |> resolve
+         )
+    )
+    |> ignore;
+    ReasonReact.Update({...state, worker});
   },
   reducer: (action, state) =>
     switch action {
+    | WorkerMessage(Fetched(eventLogs)) =>
+      Js.log("Received event logs from worker");
+      Js.log(eventLogs);
+      ReasonReact.NoUpdate;
     | ChangeNewMemberId(text) =>
       ReasonReact.Update({...state, candidateId: text})
     | SuggestCandidate =>
@@ -56,11 +78,20 @@ let make = (~project as initialProject, ~session, _children) => {
         )
       }
     | UpdateProject(project) =>
+      Js.Promise.(
+        Project.getMemberHistoryUrls(session, project)
+        |> then_(urls =>
+             Worker.Message.RegularlyFetch(urls)
+             |> Worker.postMessage(state.worker^)
+             |> resolve
+           )
+      )
+      |> ignore;
       ReasonReact.Update({
         ...state,
         project,
         viewModel: Project.getViewModel(project)
-      })
+      });
     },
   render: ({send, state}) => {
     let members =

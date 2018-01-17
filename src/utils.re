@@ -24,3 +24,5 @@ let signatureFromString = ecSignature =>
   ecSignature |> bufFromHex |> Bitcoin.ECSignature.fromDER;
 
 let hash = s => s |> Bitcoin.Crypto.sha256 |> bufToHex;
+
+let origin = () => [%bs.raw {|window.location.origin|}];

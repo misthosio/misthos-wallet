@@ -62,3 +62,9 @@ external putFileEncrypted :
   (string, string, [@bs.as {json| {"encrypt": true} |json}] _) =>
   Js.Promise.t(unit) =
   "putFile";
+
+[@bs.module "blockstack"]
+external getUserAppFileUrl :
+  (~path: string, ~username: string, ~appOrigin: string) =>
+  Js.Promise.t(string) =
+  "";

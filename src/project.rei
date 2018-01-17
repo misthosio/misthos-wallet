@@ -15,6 +15,8 @@ let getId: t => string;
 
 let getViewModel: t => ViewModel.t;
 
+let getMemberHistoryUrls: (Session.Data.t, t) => Js.Promise.t(array(string));
+
 module Cmd: {
   module Create: {
     type result = (Index.t, t);
