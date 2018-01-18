@@ -89,8 +89,8 @@ let persist = ({id, log, state} as deal) => {
       Blockstack.putFile(id ++ "/log.json", logString)
       |> then_(() => resolve(deal))
     );
-  state.partners
-  |> List.map(({address}: ValidationState.partner) =>
+  state.partnerAddresses
+  |> List.map(address =>
        Blockstack.putFile(id ++ "/" ++ address ++ "/log.json", logString)
      )
   |> ignore;
@@ -117,39 +117,44 @@ let getViewModel = ({viewModel}) => viewModel;
 
 module Synchronize = {
   let getPartnerHistoryUrls = (session: Session.Data.t, {id, state}) =>
-    state.partners
-    |> List.filter(({blockstackId}: ValidationState.partner) =>
-         blockstackId != session.blockstackId
-       )
-    |> List.map(({blockstackId}: ValidationState.partner) =>
+    state.partnerIds
+    |> List.filter(partnerId => partnerId != session.blockstackId)
+    |> List.map(partnerId =>
          Blockstack.getUserAppFileUrl(
            ~path=id ++ "/" ++ session.address ++ "/log.json",
-           ~username=blockstackId,
+           ~username=partnerId,
            ~appOrigin=Utils.origin
          )
        )
     |> Array.of_list
     |> Js.Promise.all;
   type result =
-    | Ok(t);
+    | Ok(t)
+    | Error(EventLog.item, ValidationState.validation);
   let exec = (otherLogs, {log} as deal) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
-    let deal =
+    let (deal, _error) =
       newItems
       |> List.fold_left(
            (
-             {log, watchers, state, viewModel} as deal,
+             ({log, watchers, state, viewModel} as deal, error),
              {event} as item: EventLog.item
            ) =>
-             switch (item |> ValidationState.validate(state)) {
-             | Ok =>
-               let log = log |> EventLog.appendItem(item);
-               let watchers = watchers |> updateWatchers(item, log);
-               let state = state |> ValidationState.apply(event);
-               let viewModel = viewModel |> ViewModel.apply(event);
-               {...deal, log, watchers, state, viewModel};
+             if (Js.Option.isSome(error)) {
+               (deal, error);
+             } else {
+               switch (item |> ValidationState.validate(state)) {
+               | Ok =>
+                 let log = log |> EventLog.appendItem(item);
+                 let watchers = watchers |> updateWatchers(item, log);
+                 let state = state |> ValidationState.apply(event);
+                 let viewModel = viewModel |> ViewModel.apply(event);
+                 ({...deal, log, watchers, state, viewModel}, None);
+               /* When the issuerPubKey is not recognized ignore the event */
+               | InvalidIssuer => (deal, None)
+               };
              },
-           deal
+           (deal, None)
          );
     Js.Promise.(
       applyWatcherEvents(deal) |> persist |> then_(p => Ok(p) |> resolve)

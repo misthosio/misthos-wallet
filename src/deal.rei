@@ -30,7 +30,8 @@ module Cmd: {
   };
   module Synchronize: {
     type result =
-      | Ok(t);
+      | Ok(t)
+      | Error(EventLog.item, ValidationState.validation);
     let exec: (list(EventLog.t), t) => Js.Promise.t(result);
   };
 };
