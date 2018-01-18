@@ -28,21 +28,27 @@ let make = (~project as initialProject, ~session, _children) => {
     candidateId: "",
     worker: ref(Worker.make(~onMessage=Js.log))
   },
-  didMount: ({send, state}) => {
-    Worker.terminate(state.worker^);
-    let worker =
-      ref(Worker.make(~onMessage=message => send(WorkerMessage(message))));
-    Js.Promise.(
-      Project.getMemberHistoryUrls(session, initialProject)
-      |> then_(urls =>
-           Worker.Message.RegularlyFetch(urls)
-           |> Worker.postMessage(worker^)
-           |> resolve
-         )
+  subscriptions: ({send, state}) => [
+    Sub(
+      () => {
+        Worker.terminate(state.worker^);
+        let worker =
+          Worker.make(~onMessage=message => send(WorkerMessage(message)));
+        Js.Promise.(
+          Project.getMemberHistoryUrls(session, initialProject)
+          |> then_(urls =>
+               Worker.Message.RegularlyFetch(urls)
+               |> Worker.postMessage(worker)
+               |> resolve
+             )
+          |> ignore
+        );
+        state.worker := worker;
+        worker;
+      },
+      Worker.terminate
     )
-    |> ignore;
-    ReasonReact.Update({...state, worker});
-  },
+  ],
   reducer: (action, state) =>
     switch action {
     | WorkerMessage(Fetched(eventLogs)) =>
