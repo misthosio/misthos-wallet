@@ -28,8 +28,8 @@ external _onmessage : (_worker, Js.t({..}) => unit) => unit = "onmessage";
 
 type t = _worker;
 
-let postMessage = worker =>
-  Utils.(Message._encodeToSend >> _postMessage(worker));
+let postMessage = (worker, message) =>
+  message |> Message._encodeToSend |> _postMessage(worker);
 
 let make = (~onMessage) => {
   let worker = _makeWorker("worker.js");
