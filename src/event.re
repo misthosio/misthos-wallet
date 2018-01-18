@@ -220,5 +220,6 @@ let decode = raw => {
     ContributionApproved(ContributionApproved.decode(raw))
   | "ContributionAccepted" =>
     ContributionAccepted(ContributionAccepted.decode(raw))
+  | _ => raise(Not_found)
   };
 };
