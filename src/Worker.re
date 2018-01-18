@@ -9,9 +9,7 @@ module Message = {
   let _decodeToReceived = message =>
     Fetched(
       Array.to_list(message##data)
-      |> List.map(logString =>
-           logString |> Json.parseOrRaise |> EventLog.decode
-         )
+      |> List.map(Utils.(Json.parseOrRaise >> EventLog.decode))
     );
 };
 
@@ -30,13 +28,11 @@ external _onmessage : (_worker, Js.t({..}) => unit) => unit = "onmessage";
 
 type t = _worker;
 
-let postMessage = (worker, message) =>
-  message |> Message._encodeToSend |> _postMessage(worker);
+let postMessage = worker =>
+  Utils.(Message._encodeToSend >> _postMessage(worker));
 
 let make = (~onMessage) => {
   let worker = _makeWorker("worker.js");
-  _onmessage(worker, message =>
-    message |> Message._decodeToReceived |> onMessage
-  );
+  _onmessage(worker, Utils.(Message._decodeToReceived >> onMessage));
   worker;
 };
