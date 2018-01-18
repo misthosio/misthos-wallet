@@ -1,38 +1,38 @@
 type status =
   | None
   | LoadingIndex
-  | LoadingProject
-  | CreatingProject(string);
+  | LoadingDeal
+  | CreatingDeal(string);
 
 type state = {
   status,
-  selected: option(Project.t),
-  index: Project.Index.t,
-  newProject: string
+  selected: option(Deal.t),
+  index: Deal.Index.t,
+  newDeal: string
 };
 
 type action =
-  | IndexLoaded(Project.Index.t)
-  | ProjectLoaded(Project.t)
-  | ChangeNewProject(string)
-  | SelectProject(string)
-  | AddProject
-  | ProjectCreated(Project.Index.t, Project.t);
+  | IndexLoaded(Deal.Index.t)
+  | DealLoaded(Deal.t)
+  | ChangeNewDeal(string)
+  | SelectDeal(string)
+  | AddDeal
+  | DealCreated(Deal.Index.t, Deal.t);
 
-let component = ReasonReact.reducerComponent("Projects");
+let component = ReasonReact.reducerComponent("Deals");
 
-let changeNewProject = event =>
-  ChangeNewProject(
+let changeNewDeal = event =>
+  ChangeNewDeal(
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
-let selectProject = e =>
-  SelectProject(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
+let selectDeal = e =>
+  SelectDeal(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
 
 let make = (~session, _children) => {
   ...component,
   initialState: () => {
-    newProject: "",
+    newDeal: "",
     status: LoadingIndex,
     index: [],
     selected: None
@@ -41,7 +41,7 @@ let make = (~session, _children) => {
     ReasonReact.SideEffects(
       ({send}) =>
         Js.Promise.(
-          Project.Index.load()
+          Deal.Index.load()
           |> then_(index => send(IndexLoaded(index)) |> resolve)
           |> ignore
         )
@@ -56,57 +56,56 @@ let make = (~session, _children) => {
             switch index {
             | [p, ..._rest] =>
               Js.Promise.(
-                Project.load(~projectId=p.id)
-                |> then_(project => send(ProjectLoaded(project)) |> resolve)
+                Deal.load(~projectId=p.id)
+                |> then_(project => send(DealLoaded(project)) |> resolve)
                 |> ignore
               )
             | _ => ()
             }
         )
       )
-    | ProjectLoaded(project) =>
+    | DealLoaded(project) =>
       ReasonReact.Update({...state, status: None, selected: Some(project)})
-    | ProjectCreated(index, selected) =>
+    | DealCreated(index, selected) =>
       ReasonReact.Update({
         ...state,
         status: None,
         index,
         selected: Some(selected)
       })
-    | ChangeNewProject(text) =>
-      ReasonReact.Update({...state, newProject: text})
-    | SelectProject(id) =>
-      Js.log("SelectProject(" ++ id ++ ")");
+    | ChangeNewDeal(text) => ReasonReact.Update({...state, newDeal: text})
+    | SelectDeal(id) =>
+      Js.log("SelectDeal(" ++ id ++ ")");
       let selectedId =
         switch state.selected {
-        | Some(project) => Project.getId(project)
+        | Some(project) => Deal.getId(project)
         | None => ""
         };
       id == selectedId ?
         ReasonReact.NoUpdate :
         ReasonReact.UpdateWithSideEffects(
-          {...state, status: LoadingProject, selected: None},
+          {...state, status: LoadingDeal, selected: None},
           (
             ({send}) =>
               Js.Promise.(
-                Project.load(~projectId=id)
-                |> then_(project => send(ProjectLoaded(project)) |> resolve)
+                Deal.load(~projectId=id)
+                |> then_(project => send(DealLoaded(project)) |> resolve)
                 |> ignore
               )
           )
         );
-    | AddProject =>
-      switch (String.trim(state.newProject)) {
+    | AddDeal =>
+      switch (String.trim(state.newDeal)) {
       | "" => ReasonReact.NoUpdate
       | name =>
         ReasonReact.UpdateWithSideEffects(
-          {...state, status: CreatingProject(name), newProject: ""},
+          {...state, status: CreatingDeal(name), newDeal: ""},
           (
             ({send}) =>
               Js.Promise.(
-                Project.Cmd.Create.exec(session, ~name)
+                Deal.Cmd.Create.exec(session, ~name)
                 |> then_(((newIndex, project)) =>
-                     send(ProjectCreated(newIndex, project)) |> resolve
+                     send(DealCreated(newIndex, project)) |> resolve
                    )
                 |> ignore
               )
@@ -117,18 +116,18 @@ let make = (~session, _children) => {
   render: ({send, state}) => {
     let selectedId =
       switch (state.status, state.selected) {
-      | (CreatingProject(_), _) => "new"
-      | (_, Some(project)) => Project.getId(project)
+      | (CreatingDeal(_), _) => "new"
+      | (_, Some(project)) => Deal.getId(project)
       | _ => ""
       };
     let projectList =
       ReasonReact.arrayToElement(
         Array.of_list(
-          Project.Index.(
+          Deal.Index.(
             switch state.status {
             | LoadingIndex => []
-            | CreatingProject(newProject) => [
-                (newProject, "new"),
+            | CreatingDeal(newDeal) => [
+                (newDeal, "new"),
                 ...state.index |> List.map(({name, id}) => (name, id))
               ]
             | _ => state.index |> List.map(({name, id}) => (name, id))
@@ -139,7 +138,7 @@ let make = (~session, _children) => {
                  key=id
                  id
                  className=(id == selectedId ? "selected" : "")
-                 onClick=(e => send(selectProject(e)))>
+                 onClick=(e => send(selectDeal(e)))>
                  (ReasonReact.stringToElement(name))
                </li>
              )
@@ -148,25 +147,25 @@ let make = (~session, _children) => {
     let status =
       switch state.status {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
-      | CreatingProject(newProject) =>
-        ReasonReact.stringToElement("Creating project '" ++ newProject ++ "'")
+      | CreatingDeal(newDeal) =>
+        ReasonReact.stringToElement("Creating project '" ++ newDeal ++ "'")
       | _ => ReasonReact.stringToElement("projects:")
       };
     let project =
       switch state.selected {
-      | Some(project) => <SelectedProject project session />
-      | None => <div> (ReasonReact.stringToElement("Loading Project")) </div>
+      | Some(project) => <SelectedDeal project session />
+      | None => <div> (ReasonReact.stringToElement("Loading Deal")) </div>
       };
     <div>
       <h2> status </h2>
       <ul> projectList </ul>
       <input
-        placeholder="Create new Project"
-        value=state.newProject
-        onChange=(e => send(changeNewProject(e)))
+        placeholder="Create new Deal"
+        value=state.newDeal
+        onChange=(e => send(changeNewDeal(e)))
         autoFocus=Js.true_
       />
-      <button onClick=(_e => send(AddProject))>
+      <button onClick=(_e => send(AddDeal))>
         (ReasonReact.stringToElement("Add"))
       </button>
       project

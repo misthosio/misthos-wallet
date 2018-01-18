@@ -1,4 +1,4 @@
-module ProjectCreated = {
+module DealCreated = {
   type t = {
     projectId: string,
     projectName: string,
@@ -18,7 +18,7 @@ module ProjectCreated = {
   let encode = event =>
     Json.Encode.(
       object_([
-        ("type", string("ProjectCreated")),
+        ("type", string("DealCreated")),
         ("projectId", string(event.projectId)),
         ("projectName", string(event.projectName)),
         ("creatorId", string(event.creatorId)),
@@ -184,7 +184,7 @@ module ContributionAccepted = {
 };
 
 type t =
-  | ProjectCreated(ProjectCreated.t)
+  | DealCreated(DealCreated.t)
   | CandidateSuggested(CandidateSuggested.t)
   | CandidateApproved(CandidateApproved.t)
   | MemberAdded(MemberAdded.t)
@@ -197,21 +197,20 @@ let makeCandidateSuggested = (~supporterId, ~candidateId, ~candidatePubKey) =>
     CandidateSuggested.make(~supporterId, ~candidateId, ~candidatePubKey)
   );
 
-let encode = event =>
-  switch event {
-  | ProjectCreated(event) => ProjectCreated.encode(event)
+let encode =
+  fun
+  | DealCreated(event) => DealCreated.encode(event)
   | CandidateSuggested(event) => CandidateSuggested.encode(event)
   | CandidateApproved(event) => CandidateApproved.encode(event)
   | MemberAdded(event) => MemberAdded.encode(event)
   | ContributionSubmitted(event) => ContributionSubmitted.encode(event)
   | ContributionApproved(event) => ContributionApproved.encode(event)
-  | ContributionAccepted(event) => ContributionAccepted.encode(event)
-  };
+  | ContributionAccepted(event) => ContributionAccepted.encode(event);
 
 let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch type_ {
-  | "ProjectCreated" => ProjectCreated(ProjectCreated.decode(raw))
+  | "DealCreated" => DealCreated(DealCreated.decode(raw))
   | "CandidateSuggested" => CandidateSuggested(CandidateSuggested.decode(raw))
   | "CandidateApproved" => CandidateApproved(CandidateApproved.decode(raw))
   | "MemberAdded" => MemberAdded(MemberAdded.decode(raw))

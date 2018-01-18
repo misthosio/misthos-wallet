@@ -1,7 +1,7 @@
-open Project;
+open Deal;
 
 type state = {
-  project: Project.t,
+  project: Deal.t,
   viewModel: ViewModel.t,
   candidateId: string,
   worker: ref(Worker.t)
@@ -9,7 +9,7 @@ type state = {
 
 type action =
   | ChangeNewMemberId(string)
-  | UpdateProject(Project.t)
+  | UpdateDeal(Deal.t)
   | SuggestCandidate
   | WorkerMessage(Worker.Message.receive);
 
@@ -18,13 +18,13 @@ let changeNewMemberId = event =>
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
-let component = ReasonReact.reducerComponent("SelectedProject");
+let component = ReasonReact.reducerComponent("SelectedDeal");
 
-let make = (~project as initialProject, ~session, _children) => {
+let make = (~project as initialDeal, ~session, _children) => {
   ...component,
   initialState: () => {
-    project: initialProject,
-    viewModel: Project.getViewModel(initialProject),
+    project: initialDeal,
+    viewModel: Deal.getViewModel(initialDeal),
     candidateId: "",
     worker: ref(Worker.make(~onMessage=Js.log))
   },
@@ -35,7 +35,7 @@ let make = (~project as initialProject, ~session, _children) => {
         let worker =
           Worker.make(~onMessage=message => send(WorkerMessage(message)));
         Js.Promise.(
-          Project.getMemberHistoryUrls(session, initialProject)
+          Deal.getMemberHistoryUrls(session, initialDeal)
           |> then_(urls =>
                Worker.Message.RegularlyFetch(urls)
                |> Worker.postMessage(worker)
@@ -71,7 +71,7 @@ let make = (~project as initialProject, ~session, _children) => {
                   |> then_(result =>
                        (
                          switch result {
-                         | Ok(project) => send(UpdateProject(project))
+                         | Ok(project) => send(UpdateDeal(project))
                          | NoUserInfo => Js.log("NoUserInfo")
                          }
                        )
@@ -83,9 +83,9 @@ let make = (~project as initialProject, ~session, _children) => {
           )
         )
       }
-    | UpdateProject(project) =>
+    | UpdateDeal(project) =>
       Js.Promise.(
-        Project.getMemberHistoryUrls(session, project)
+        Deal.getMemberHistoryUrls(session, project)
         |> then_(urls =>
              Worker.Message.RegularlyFetch(urls)
              |> Worker.postMessage(state.worker^)
@@ -96,7 +96,7 @@ let make = (~project as initialProject, ~session, _children) => {
       ReasonReact.Update({
         ...state,
         project,
-        viewModel: Project.getViewModel(project)
+        viewModel: Deal.getViewModel(project)
       });
     },
   render: ({send, state}) => {

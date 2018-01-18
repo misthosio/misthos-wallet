@@ -1,4 +1,4 @@
-module Index = ProjectIndex;
+module Index = DealIndex;
 
 module ValidationState = {
   type member = {
@@ -10,7 +10,7 @@ module ValidationState = {
   let make = () => {members: []};
   let apply = (event: Event.t, state) =>
     switch event {
-    | ProjectCreated({creatorId, creatorPubKey}) => {
+    | DealCreated({creatorId, creatorPubKey}) => {
         ...state,
         members: [
           {
@@ -100,7 +100,7 @@ let reconstruct = log => {
     |> EventLog.reduce(
          ((id, watchers, state, viewModel), {event} as item) => (
            switch event {
-           | ProjectCreated({projectId}) => projectId
+           | DealCreated({projectId}) => projectId
            | _ => id
            },
            switch (Watcher.initWatcherFor(item, log)) {
@@ -197,7 +197,7 @@ module Cmd = {
     type result = (Index.t, t);
     let exec = (session: Session.Data.t, ~name as projectName) => {
       let projectCreated =
-        Event.ProjectCreated.make(
+        Event.DealCreated.make(
           ~projectName,
           ~creatorId=session.blockstackId,
           ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
@@ -206,7 +206,7 @@ module Cmd = {
       Js.Promise.all2((
         Index.add(~projectId=projectCreated.projectId, ~projectName),
         make(projectCreated.projectId)
-        |> apply(session.appKeyPair, ProjectCreated(projectCreated))
+        |> apply(session.appKeyPair, DealCreated(projectCreated))
         |> persist
       ));
     };

@@ -63,7 +63,7 @@ let make = _children => {
       )
       (
         switch state.session {
-        | LoggedIn(session) => <Projects session />
+        | LoggedIn(session) => <Deals session />
         | _ => <div />
         }
       )

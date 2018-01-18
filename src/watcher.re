@@ -29,7 +29,7 @@ module CandidateApproval = {
         state :=
           (
             switch event {
-            | ProjectCreated(event) => {
+            | DealCreated(event) => {
                 ...state^,
                 eligable: [event.creatorId],
                 policy: event.metaPolicy,

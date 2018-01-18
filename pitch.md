@@ -4,24 +4,24 @@ The goal: enable economic activity management in distributed / decentralized / n
 ## Structure
 
 - The unit of account in Misthos is Bitcoin.
-- Every Project has a Bitcoin Wallet secured by a multi-sig address.
+- Every Deal has a Bitcoin Wallet secured by a multi-sig address.
 - The 'custodians' of the multi-sig are chosen by a pseudo-random process out of all currently active members.
 - Payouts that have been approved are batched and submitted to the Bitcoin network at regular intervals.
 - The custodians can be rotated every payout by transferring the remaining bitcoin to a new multi-sig address.
 - Using Bitcoin assumes the project already has a steady income stream that needs to be distributed fairly to the participants creating the value.
 - For projects in early, pre-income phases, tokens may be distributed that can be transferred into Bitcoin once income streams stabilize.
 
-## Projects
+## Deals
 
-- The main container unit of Misthos within which all activity is scoped is called a ‘Project’. Anyone can create a Project.
-- Once a Project has been created, members can add other members, submit requests for payouts for 1 off contributions, and agree upon regular payouts to active members.
+- The main container unit of Misthos within which all activity is scoped is called a ‘Deal’. Anyone can create a Deal.
+- Once a Deal has been created, members can add other members, submit requests for payouts for 1 off contributions, and agree upon regular payouts to active members.
 - Any proposal that a member submits to the system must be reviewed and approved by other members.
 
 ## Governance
 
 - How much 'approval' a submission requires to become 'accepted' is determined by numerous situational policies that create a fine grained and well documented governance structure.   
 - Policies themselves can also be changed following the same process.
-- At Project creation time the 'meta-policy' is determined.  The meta-policy governs how policies can be updated and changed, including the meta-policy itself.
+- At Deal creation time the 'meta-policy' is determined.  The meta-policy governs how policies can be updated and changed, including the meta-policy itself.
 - In order to scale the submission and approval processes to projects with a large number of members, ‘sub-groups’ can be created.
 - Sub-groups are implicitly defined via adding 'tags' to submissions and contributors that determine areas of expertise and fitness for reviewing.  This is important to differentiate between decisions effecting a few contributors vs. effecting almost everyone.
 

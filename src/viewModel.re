@@ -18,7 +18,7 @@ let make = () => {name: "", candidates: []};
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | ProjectCreated(event) => {...state, name: event.projectName}
+  | DealCreated(event) => {...state, name: event.projectName}
   | CandidateSuggested(event) => {
       ...state,
       candidates: [

@@ -2,15 +2,15 @@ type project = {name: string};
 
 let indexPath = "/index.json";
 
-let initializeProjects = () =>
+let initializeDeals = () =>
   Js.Promise.(Blockstack.putFile(indexPath, "[]") |> then_(() => resolve([])));
 
-let loadProjects = () =>
+let loadDeals = () =>
   Js.Promise.(
     Blockstack.getFile(indexPath)
-    |> then_(nullProjects =>
-         switch (Js.Nullable.to_opt(nullProjects)) {
-         | None => initializeProjects()
+    |> then_(nullDeals =>
+         switch (Js.Nullable.to_opt(nullDeals)) {
+         | None => initializeDeals()
          | Some(projects) => resolve([])
          }
        )

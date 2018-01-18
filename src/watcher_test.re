@@ -8,15 +8,14 @@ let () =
   describe("CandidateApproval", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
     let projectCreated =
-      Event.ProjectCreated.make(
+      Event.DealCreated.make(
         ~projectName="TheMothers",
         ~creatorId="frank.id",
         ~creatorPubKey=issuer |> Utils.publicKeyFromKeyPair,
         ~metaPolicy=Policy.absolute
       );
     let (_, log) =
-      EventLog.make()
-      |> EventLog.append(issuer, ProjectCreated(projectCreated));
+      EventLog.make() |> EventLog.append(issuer, DealCreated(projectCreated));
     let candidateId = "wackerman.id";
     let candidatePubKey = "sticks";
     let candidateSuggestion =
