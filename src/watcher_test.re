@@ -5,7 +5,7 @@ open Expect;
 open Event;
 
 let () =
-  describe("ProspectApproval", () => {
+  describe("PartnerApproval", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
     let projectCreated =
       Event.DealCreated.make(

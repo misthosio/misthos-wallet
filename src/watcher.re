@@ -7,7 +7,7 @@ type t = {
   processCompleted: unit => bool
 };
 
-module ProspectApproval = {
+module PartnerApproval = {
   type state = {
     eligable: list(string),
     approvals: list(string),
@@ -88,7 +88,7 @@ module ContributionApproval = {
 let initWatcherFor = ({event}: EventLog.item, log) =>
   switch event {
   | ProspectSuggested(suggestion) =>
-    Some(ProspectApproval.make(suggestion, log))
+    Some(PartnerApproval.make(suggestion, log))
   | ContributionSubmitted(submission) =>
     Some(ContributionApproval.make(submission, log))
   | _ => None
