@@ -18,7 +18,7 @@ let make = () => {name: "", prospects: []};
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | DealCreated(event) => {...state, name: event.projectName}
+  | DealCreated(event) => {...state, name: event.dealName}
   | ProspectSuggested(event) => {
       ...state,
       prospects: [
@@ -33,4 +33,4 @@ let getPartners = state => [];
 
 let getProspects = state => state.prospects;
 
-let projectName = state => state.name;
+let dealName = state => state.name;

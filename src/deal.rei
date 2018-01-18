@@ -9,7 +9,7 @@ module Index: {
 
 type t;
 
-let load: (~projectId: string) => Js.Promise.t(t);
+let load: (~dealId: string) => Js.Promise.t(t);
 
 let getId: t => string;
 

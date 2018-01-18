@@ -44,5 +44,5 @@ let load = () =>
        )
   );
 
-let add = (~projectId as id, ~projectName as name) =>
+let add = (~dealId as id, ~dealName as name) =>
   Js.Promise.(load() |> then_(index => [{id, name}, ...index] |> persist));

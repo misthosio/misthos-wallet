@@ -1,15 +1,15 @@
 module DealCreated = {
   type t = {
-    projectId: string,
-    projectName: string,
+    dealId: string,
+    dealName: string,
     creatorId: string,
     creatorPubKey: string,
     metaPolicy: Policy.t,
     systemIssuer: Bitcoin.ECPair.t
   };
-  let make = (~projectName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
-    projectId: Uuid.v4(),
-    projectName,
+  let make = (~dealName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
+    dealId: Uuid.v4(),
+    dealName,
     creatorId,
     creatorPubKey,
     metaPolicy,
@@ -19,8 +19,8 @@ module DealCreated = {
     Json.Encode.(
       object_([
         ("type", string("DealCreated")),
-        ("projectId", string(event.projectId)),
-        ("projectName", string(event.projectName)),
+        ("dealId", string(event.dealId)),
+        ("dealName", string(event.dealName)),
         ("creatorId", string(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
@@ -29,8 +29,8 @@ module DealCreated = {
     );
   let decode = raw =>
     Json.Decode.{
-      projectId: raw |> field("projectId", string),
-      projectName: raw |> field("projectName", string),
+      dealId: raw |> field("dealId", string),
+      dealName: raw |> field("dealName", string),
       creatorId: raw |> field("creatorId", string),
       creatorPubKey: raw |> field("creatorPubKey", string),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),

@@ -100,7 +100,7 @@ let reconstruct = log => {
     |> EventLog.reduce(
          ((id, watchers, state, viewModel), {event} as item) => (
            switch event {
-           | DealCreated({projectId}) => projectId
+           | DealCreated({dealId}) => dealId
            | _ => id
            },
            switch (Watcher.initWatcherFor(item, log)) {
@@ -115,12 +115,12 @@ let reconstruct = log => {
   {id, log, watchers, state, viewModel};
 };
 
-let persist = ({id, log, state} as project) => {
+let persist = ({id, log, state} as deal) => {
   let logString = log |> EventLog.encode |> Json.stringify;
   let returnPromise =
     Js.Promise.(
       Blockstack.putFile(id ++ "/log.json", logString)
-      |> then_(() => resolve(project))
+      |> then_(() => resolve(deal))
     );
   state.partners
   |> List.map(({address}: ValidationState.partner) =>
@@ -132,9 +132,9 @@ let persist = ({id, log, state} as project) => {
 
 let defaultPolicy = Policy.absolute;
 
-let load = (~projectId) =>
+let load = (~dealId) =>
   Js.Promise.(
-    Blockstack.getFile(projectId ++ "/log.json")
+    Blockstack.getFile(dealId ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.to_opt(nullLog)) {
          | Some(raw) =>
@@ -165,13 +165,13 @@ module Synchronize = {
     |> Js.Promise.all;
   type result =
     | Ok(t);
-  let exec = (otherLogs, {log} as project) => {
+  let exec = (otherLogs, {log} as deal) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
-    let project =
+    let deal =
       newItems
       |> List.fold_left(
            (
-             {log, watchers, state, viewModel} as project,
+             {log, watchers, state, viewModel} as deal,
              {event} as item: EventLog.item
            ) =>
              switch (item |> ValidationState.validate(state)) {
@@ -180,12 +180,12 @@ module Synchronize = {
                let watchers = watchers |> updateWatchers(item, log);
                let state = state |> ValidationState.apply(event);
                let viewModel = viewModel |> ViewModel.apply(event);
-               {...project, log, watchers, state, viewModel};
+               {...deal, log, watchers, state, viewModel};
              },
-           project
+           deal
          );
     Js.Promise.(
-      applyWatcherEvents(project) |> persist |> then_(p => Ok(p) |> resolve)
+      applyWatcherEvents(deal) |> persist |> then_(p => Ok(p) |> resolve)
     );
   };
 };
@@ -195,18 +195,18 @@ let getPartnerHistoryUrls = Synchronize.getPartnerHistoryUrls;
 module Cmd = {
   module Create = {
     type result = (Index.t, t);
-    let exec = (session: Session.Data.t, ~name as projectName) => {
-      let projectCreated =
+    let exec = (session: Session.Data.t, ~name as dealName) => {
+      let dealCreated =
         Event.DealCreated.make(
-          ~projectName,
+          ~dealName,
           ~creatorId=session.blockstackId,
           ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
           ~metaPolicy=defaultPolicy
         );
       Js.Promise.all2((
-        Index.add(~projectId=projectCreated.projectId, ~projectName),
-        make(projectCreated.projectId)
-        |> apply(session.appKeyPair, DealCreated(projectCreated))
+        Index.add(~dealId=dealCreated.dealId, ~dealName),
+        make(dealCreated.dealId)
+        |> apply(session.appKeyPair, DealCreated(dealCreated))
         |> persist
       ));
     };
@@ -215,13 +215,13 @@ module Cmd = {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec = (session: Session.Data.t, ~prospectId, project) =>
+    let exec = (session: Session.Data.t, ~prospectId, deal) =>
       Js.Promise.(
         UserPublicInfo.read(~blockstackId=prospectId)
         |> then_(readResult =>
              switch readResult {
              | UserPublicInfo.Ok(info) =>
-               project
+               deal
                |> apply(
                     session.appKeyPair,
                     Event.makeProspectSuggested(

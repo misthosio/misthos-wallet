@@ -56,16 +56,16 @@ let make = (~session, _children) => {
             switch index {
             | [p, ..._rest] =>
               Js.Promise.(
-                Deal.load(~projectId=p.id)
-                |> then_(project => send(DealLoaded(project)) |> resolve)
+                Deal.load(~dealId=p.id)
+                |> then_(deal => send(DealLoaded(deal)) |> resolve)
                 |> ignore
               )
             | _ => ()
             }
         )
       )
-    | DealLoaded(project) =>
-      ReasonReact.Update({...state, status: None, selected: Some(project)})
+    | DealLoaded(deal) =>
+      ReasonReact.Update({...state, status: None, selected: Some(deal)})
     | DealCreated(index, selected) =>
       ReasonReact.Update({
         ...state,
@@ -78,7 +78,7 @@ let make = (~session, _children) => {
       Js.log("SelectDeal(" ++ id ++ ")");
       let selectedId =
         switch state.selected {
-        | Some(project) => Deal.getId(project)
+        | Some(deal) => Deal.getId(deal)
         | None => ""
         };
       id == selectedId ?
@@ -88,8 +88,8 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Deal.load(~projectId=id)
-                |> then_(project => send(DealLoaded(project)) |> resolve)
+                Deal.load(~dealId=id)
+                |> then_(deal => send(DealLoaded(deal)) |> resolve)
                 |> ignore
               )
           )
@@ -104,8 +104,8 @@ let make = (~session, _children) => {
             ({send}) =>
               Js.Promise.(
                 Deal.Cmd.Create.exec(session, ~name)
-                |> then_(((newIndex, project)) =>
-                     send(DealCreated(newIndex, project)) |> resolve
+                |> then_(((newIndex, deal)) =>
+                     send(DealCreated(newIndex, deal)) |> resolve
                    )
                 |> ignore
               )
@@ -117,10 +117,10 @@ let make = (~session, _children) => {
     let selectedId =
       switch (state.status, state.selected) {
       | (CreatingDeal(_), _) => "new"
-      | (_, Some(project)) => Deal.getId(project)
+      | (_, Some(deal)) => Deal.getId(deal)
       | _ => ""
       };
-    let projectList =
+    let dealList =
       ReasonReact.arrayToElement(
         Array.of_list(
           Deal.Index.(
@@ -148,17 +148,17 @@ let make = (~session, _children) => {
       switch state.status {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
       | CreatingDeal(newDeal) =>
-        ReasonReact.stringToElement("Creating project '" ++ newDeal ++ "'")
-      | _ => ReasonReact.stringToElement("projects:")
+        ReasonReact.stringToElement("Creating deal '" ++ newDeal ++ "'")
+      | _ => ReasonReact.stringToElement("deals:")
       };
-    let project =
+    let deal =
       switch state.selected {
-      | Some(project) => <SelectedDeal project session />
+      | Some(deal) => <SelectedDeal deal session />
       | None => <div> (ReasonReact.stringToElement("Loading Deal")) </div>
       };
     <div>
       <h2> status </h2>
-      <ul> projectList </ul>
+      <ul> dealList </ul>
       <input
         placeholder="Create new Deal"
         value=state.newDeal
@@ -168,7 +168,7 @@ let make = (~session, _children) => {
       <button onClick=(_e => send(AddDeal))>
         (ReasonReact.stringToElement("Add"))
       </button>
-      project
+      deal
     </div>;
   }
 };

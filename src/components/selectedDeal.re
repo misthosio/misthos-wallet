@@ -1,7 +1,7 @@
 open Deal;
 
 type state = {
-  project: Deal.t,
+  deal: Deal.t,
   viewModel: ViewModel.t,
   prospectId: string,
   worker: ref(Worker.t)
@@ -20,10 +20,10 @@ let changeNewPartnerId = event =>
 
 let component = ReasonReact.reducerComponent("SelectedDeal");
 
-let make = (~project as initialDeal, ~session, _children) => {
+let make = (~deal as initialDeal, ~session, _children) => {
   ...component,
   initialState: () => {
-    project: initialDeal,
+    deal: initialDeal,
     viewModel: Deal.getViewModel(initialDeal),
     prospectId: "",
     worker: ref(Worker.make(~onMessage=Js.log))
@@ -66,12 +66,12 @@ let make = (~project as initialDeal, ~session, _children) => {
             ({send}) =>
               Js.Promise.(
                 Cmd.SuggestProspect.(
-                  state.project
+                  state.deal
                   |> exec(session, ~prospectId)
                   |> then_(result =>
                        (
                          switch result {
-                         | Ok(project) => send(UpdateDeal(project))
+                         | Ok(deal) => send(UpdateDeal(deal))
                          | NoUserInfo => Js.log("NoUserInfo")
                          }
                        )
@@ -83,9 +83,9 @@ let make = (~project as initialDeal, ~session, _children) => {
           )
         )
       }
-    | UpdateDeal(project) =>
+    | UpdateDeal(deal) =>
       Js.Promise.(
-        Deal.getPartnerHistoryUrls(session, project)
+        Deal.getPartnerHistoryUrls(session, deal)
         |> then_(urls =>
              Worker.Message.RegularlyFetch(urls)
              |> Worker.postMessage(state.worker^)
@@ -93,11 +93,7 @@ let make = (~project as initialDeal, ~session, _children) => {
            )
       )
       |> ignore;
-      ReasonReact.Update({
-        ...state,
-        project,
-        viewModel: Deal.getViewModel(project)
-      });
+      ReasonReact.Update({...state, deal, viewModel: Deal.getViewModel(deal)});
     },
   render: ({send, state}) => {
     let partners =
@@ -135,7 +131,7 @@ let make = (~project as initialDeal, ~session, _children) => {
       );
     <div>
       <h2>
-        (ReasonReact.stringToElement(ViewModel.projectName(state.viewModel)))
+        (ReasonReact.stringToElement(ViewModel.dealName(state.viewModel)))
       </h2>
       (ReasonReact.stringToElement("Partners:"))
       <ul> partners </ul>
