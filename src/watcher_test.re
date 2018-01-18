@@ -5,7 +5,7 @@ open Expect;
 open Event;
 
 let () =
-  describe("CandidateApproval", () => {
+  describe("ProspectApproval", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
     let projectCreated =
       Event.DealCreated.make(
@@ -16,66 +16,66 @@ let () =
       );
     let (_, log) =
       EventLog.make() |> EventLog.append(issuer, DealCreated(projectCreated));
-    let candidateId = "wackerman.id";
-    let candidatePubKey = "sticks";
-    let candidateSuggestion =
-      Event.CandidateSuggested.make(
+    let prospectId = "wackerman.id";
+    let prospectPubKey = "sticks";
+    let prospectSuggestion =
+      Event.ProspectSuggested.make(
         ~supporterId="bozzio.id",
-        ~candidateId,
-        ~candidatePubKey
+        ~prospectId,
+        ~prospectPubKey
       );
-    let processId = candidateSuggestion.processId;
+    let processId = prospectSuggestion.processId;
     test("Process is in progress", () => {
       let (item, log) =
-        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
-      let candidateWatcher =
+        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+      let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
-      expect(candidateWatcher#processCompleted()) |> toBe(false);
+      expect(prospectWatcher#processCompleted()) |> toBe(false);
     });
-    test("completes when Member is added", () => {
+    test("completes when Partner is added", () => {
       let (item, log) =
-        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
-      let candidateWatcher =
+        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+      let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         EventLog.append(
           issuer,
-          MemberAdded({
+          PartnerAdded({
             processId,
-            blockstackId: candidateId,
-            pubKey: candidatePubKey
+            blockstackId: prospectId,
+            pubKey: prospectPubKey
           }),
           log
         );
-      candidateWatcher#receive(item);
-      expect(candidateWatcher#processCompleted()) |> toBe(true);
+      prospectWatcher#receive(item);
+      expect(prospectWatcher#processCompleted()) |> toBe(true);
     });
     test("Issues an event when approval is reached", () => {
       let (item, log) =
-        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
-      let candidateWatcher =
+        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+      let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         log
         |> EventLog.append(
              issuer,
-             CandidateApproved(
-               Event.CandidateApproved.make(
+             ProspectApproved(
+               Event.ProspectApproved.make(
                  ~processId,
-                 ~candidateId,
+                 ~prospectId,
                  ~supporterId="frank.id"
                )
              )
            );
-      candidateWatcher#receive(item);
-      expect(candidateWatcher#pendingEvent())
+      prospectWatcher#receive(item);
+      expect(prospectWatcher#pendingEvent())
       |> toEqual(
            Some((
              projectCreated.systemIssuer,
-             MemberAdded({
+             PartnerAdded({
                processId,
-               blockstackId: candidateId,
-               pubKey: candidatePubKey
+               blockstackId: prospectId,
+               pubKey: prospectPubKey
              })
            ))
          );
@@ -85,29 +85,29 @@ let () =
         log
         |> EventLog.append(
              issuer,
-             MemberAdded({
+             PartnerAdded({
                processId: Uuid.v4(),
                blockstackId: "ruth.id",
                pubKey: "mallets"
              })
            );
       let (item, log) =
-        log |> EventLog.append(issuer, CandidateSuggested(candidateSuggestion));
-      let candidateWatcher =
+        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+      let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         log
         |> EventLog.append(
              issuer,
-             CandidateApproved(
-               Event.CandidateApproved.make(
+             ProspectApproved(
+               Event.ProspectApproved.make(
                  ~processId,
-                 ~candidateId,
+                 ~prospectId,
                  ~supporterId="frank.id"
                )
              )
            );
-      candidateWatcher#receive(item);
-      expect(candidateWatcher#pendingEvent()) |> toBe(None);
+      prospectWatcher#receive(item);
+      expect(prospectWatcher#pendingEvent()) |> toBe(None);
     });
   });

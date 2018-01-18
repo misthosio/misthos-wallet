@@ -3,18 +3,18 @@ open Deal;
 type state = {
   project: Deal.t,
   viewModel: ViewModel.t,
-  candidateId: string,
+  prospectId: string,
   worker: ref(Worker.t)
 };
 
 type action =
-  | ChangeNewMemberId(string)
+  | ChangeNewPartnerId(string)
   | UpdateDeal(Deal.t)
-  | SuggestCandidate
+  | SuggestProspect
   | WorkerMessage(Worker.Message.receive);
 
-let changeNewMemberId = event =>
-  ChangeNewMemberId(
+let changeNewPartnerId = event =>
+  ChangeNewPartnerId(
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
@@ -25,7 +25,7 @@ let make = (~project as initialDeal, ~session, _children) => {
   initialState: () => {
     project: initialDeal,
     viewModel: Deal.getViewModel(initialDeal),
-    candidateId: "",
+    prospectId: "",
     worker: ref(Worker.make(~onMessage=Js.log))
   },
   subscriptions: ({send, state}) => [
@@ -35,7 +35,7 @@ let make = (~project as initialDeal, ~session, _children) => {
         let worker =
           Worker.make(~onMessage=message => send(WorkerMessage(message)));
         Js.Promise.(
-          Deal.getMemberHistoryUrls(session, initialDeal)
+          Deal.getPartnerHistoryUrls(session, initialDeal)
           |> then_(urls =>
                Worker.Message.RegularlyFetch(urls)
                |> Worker.postMessage(worker)
@@ -55,19 +55,19 @@ let make = (~project as initialDeal, ~session, _children) => {
       Js.log("Received event logs from worker");
       Js.log(eventLogs);
       ReasonReact.NoUpdate;
-    | ChangeNewMemberId(text) =>
-      ReasonReact.Update({...state, candidateId: text})
-    | SuggestCandidate =>
-      switch (String.trim(state.candidateId)) {
+    | ChangeNewPartnerId(text) =>
+      ReasonReact.Update({...state, prospectId: text})
+    | SuggestProspect =>
+      switch (String.trim(state.prospectId)) {
       | "" => ReasonReact.NoUpdate
-      | candidateId =>
+      | prospectId =>
         ReasonReact.SideEffects(
           (
             ({send}) =>
               Js.Promise.(
-                Cmd.SuggestCandidate.(
+                Cmd.SuggestProspect.(
                   state.project
-                  |> exec(session, ~candidateId)
+                  |> exec(session, ~prospectId)
                   |> then_(result =>
                        (
                          switch result {
@@ -85,7 +85,7 @@ let make = (~project as initialDeal, ~session, _children) => {
       }
     | UpdateDeal(project) =>
       Js.Promise.(
-        Deal.getMemberHistoryUrls(session, project)
+        Deal.getPartnerHistoryUrls(session, project)
         |> then_(urls =>
              Worker.Message.RegularlyFetch(urls)
              |> Worker.postMessage(state.worker^)
@@ -100,32 +100,32 @@ let make = (~project as initialDeal, ~session, _children) => {
       });
     },
   render: ({send, state}) => {
-    let members =
+    let partners =
       ReasonReact.arrayToElement(
         Array.of_list(
-          ViewModel.getMembers(state.viewModel)
-          |> List.map((m: ViewModel.Member.t) =>
+          ViewModel.getPartners(state.viewModel)
+          |> List.map((m: ViewModel.Partner.t) =>
                <li key=m.blockstackId>
                  (ReasonReact.stringToElement(m.blockstackId))
                </li>
              )
         )
       );
-    let candidates =
+    let prospects =
       ReasonReact.arrayToElement(
         Array.of_list(
-          ViewModel.getCandidates(state.viewModel)
-          |> List.map((candidate: ViewModel.Candidate.t) =>
-               <li key=candidate.blockstackId>
+          ViewModel.getProspects(state.viewModel)
+          |> List.map((prospect: ViewModel.Prospect.t) =>
+               <li key=prospect.blockstackId>
                  (
                    ReasonReact.stringToElement(
                      "'"
-                     ++ candidate.blockstackId
+                     ++ prospect.blockstackId
                      ++ "' approved by: "
                      ++ List.fold_left(
-                          (state, memberId) => state ++ memberId ++ " ",
+                          (state, partnerId) => state ++ partnerId ++ " ",
                           "",
-                          candidate.approvedBy
+                          prospect.approvedBy
                         )
                    )
                  )
@@ -137,18 +137,18 @@ let make = (~project as initialDeal, ~session, _children) => {
       <h2>
         (ReasonReact.stringToElement(ViewModel.projectName(state.viewModel)))
       </h2>
-      (ReasonReact.stringToElement("Members:"))
-      <ul> members </ul>
-      (ReasonReact.stringToElement("Candidates:"))
-      <ul> candidates </ul>
+      (ReasonReact.stringToElement("Partners:"))
+      <ul> partners </ul>
+      (ReasonReact.stringToElement("Prospects:"))
+      <ul> prospects </ul>
       <input
         placeholder="BlockstackId"
-        value=state.candidateId
-        onChange=(e => send(changeNewMemberId(e)))
+        value=state.prospectId
+        onChange=(e => send(changeNewPartnerId(e)))
         autoFocus=Js.false_
       />
-      <button onClick=(_e => send(SuggestCandidate))>
-        (ReasonReact.stringToElement("Suggest Candidate"))
+      <button onClick=(_e => send(SuggestProspect))>
+        (ReasonReact.stringToElement("Suggest Prospect"))
       </button>
     </div>;
   }

@@ -7,14 +7,14 @@ type t = {
   processCompleted: unit => bool
 };
 
-module CandidateApproval = {
+module ProspectApproval = {
   type state = {
     eligable: list(string),
     approvals: list(string),
     policy: Policy.t,
     systemIssuer: Bitcoin.ECPair.t
   };
-  let make = (suggestion: CandidateSuggested.t, log) => {
+  let make = (suggestion: ProspectSuggested.t, log) => {
     let process = {
       val state =
         ref({
@@ -35,16 +35,16 @@ module CandidateApproval = {
                 policy: event.metaPolicy,
                 systemIssuer: event.systemIssuer
               }
-            | CandidateApproved(event)
+            | ProspectApproved(event)
                 when event.processId == suggestion.processId => {
                 ...state^,
                 approvals: [event.supporterId, ...state^.approvals]
               }
-            | MemberAdded(event) when event.processId == suggestion.processId =>
+            | PartnerAdded(event) when event.processId == suggestion.processId =>
               completed := true;
               result := None;
               state^;
-            | MemberAdded(event) => {
+            | PartnerAdded(event) => {
                 ...state^,
                 eligable: [event.blockstackId, ...state^.eligable]
               }
@@ -59,10 +59,10 @@ module CandidateApproval = {
           result :=
             Some((
               state^.systemIssuer,
-              MemberAdded({
+              PartnerAdded({
                 processId: suggestion.processId,
-                blockstackId: suggestion.candidateId,
-                pubKey: suggestion.candidatePubKey
+                blockstackId: suggestion.prospectId,
+                pubKey: suggestion.prospectPubKey
               })
             ));
         };
@@ -87,8 +87,8 @@ module ContributionApproval = {
 
 let initWatcherFor = ({event}: EventLog.item, log) =>
   switch event {
-  | CandidateSuggested(suggestion) =>
-    Some(CandidateApproval.make(suggestion, log))
+  | ProspectSuggested(suggestion) =>
+    Some(ProspectApproval.make(suggestion, log))
   | ContributionSubmitted(submission) =>
     Some(ContributionApproval.make(submission, log))
   | _ => None

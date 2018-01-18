@@ -1,18 +1,18 @@
 module Index = DealIndex;
 
 module ValidationState = {
-  type member = {
+  type partner = {
     blockstackId: string,
     address: string,
     pubKey: string
   };
-  type t = {members: list(member)};
-  let make = () => {members: []};
+  type t = {partners: list(partner)};
+  let make = () => {partners: []};
   let apply = (event: Event.t, state) =>
     switch event {
     | DealCreated({creatorId, creatorPubKey}) => {
         ...state,
-        members: [
+        partners: [
           {
             blockstackId: creatorId,
             pubKey: creatorPubKey,
@@ -20,10 +20,10 @@ module ValidationState = {
           }
         ]
       }
-    /* | MemberAdded(event) => { */
-    /*     memberAddresses: [ */
+    /* | partnerAdded(event) => { */
+    /*     partnerAddresses: [ */
     /*       Utils.addressFromPublicKey(event.pubKey), */
-    /*       ...state.memberAddresses */
+    /*       ...state.partnerAddresses */
     /*     ] */
     /*   } */
     | _ => state
@@ -122,8 +122,8 @@ let persist = ({id, log, state} as project) => {
       Blockstack.putFile(id ++ "/log.json", logString)
       |> then_(() => resolve(project))
     );
-  state.members
-  |> List.map(({address}: ValidationState.member) =>
+  state.partners
+  |> List.map(({address}: ValidationState.partner) =>
        Blockstack.putFile(id ++ "/" ++ address ++ "/log.json", logString)
      )
   |> ignore;
@@ -149,12 +149,12 @@ let getId = ({id}) => id;
 let getViewModel = ({viewModel}) => viewModel;
 
 module Synchronize = {
-  let getMemberHistoryUrls = (session: Session.Data.t, {id, state}) =>
-    state.members
-    |> List.filter(({blockstackId}: ValidationState.member) =>
+  let getPartnerHistoryUrls = (session: Session.Data.t, {id, state}) =>
+    state.partners
+    |> List.filter(({blockstackId}: ValidationState.partner) =>
          blockstackId != session.blockstackId
        )
-    |> List.map(({blockstackId}: ValidationState.member) =>
+    |> List.map(({blockstackId}: ValidationState.partner) =>
          Blockstack.getUserAppFileUrl(
            ~path=id ++ "/" ++ session.address ++ "/log.json",
            ~username=blockstackId,
@@ -190,7 +190,7 @@ module Synchronize = {
   };
 };
 
-let getMemberHistoryUrls = Synchronize.getMemberHistoryUrls;
+let getPartnerHistoryUrls = Synchronize.getPartnerHistoryUrls;
 
 module Cmd = {
   module Create = {
@@ -211,23 +211,23 @@ module Cmd = {
       ));
     };
   };
-  module SuggestCandidate = {
+  module SuggestProspect = {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec = (session: Session.Data.t, ~candidateId, project) =>
+    let exec = (session: Session.Data.t, ~prospectId, project) =>
       Js.Promise.(
-        UserPublicInfo.read(~blockstackId=candidateId)
+        UserPublicInfo.read(~blockstackId=prospectId)
         |> then_(readResult =>
              switch readResult {
              | UserPublicInfo.Ok(info) =>
                project
                |> apply(
                     session.appKeyPair,
-                    Event.makeCandidateSuggested(
+                    Event.makeProspectSuggested(
                       ~supporterId=session.blockstackId,
-                      ~candidateId,
-                      ~candidatePubKey=info.appPubKey
+                      ~prospectId,
+                      ~prospectPubKey=info.appPubKey
                     )
                   )
                |> persist

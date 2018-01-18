@@ -1,8 +1,8 @@
-module Member = {
+module Partner = {
   type t = {blockstackId: string};
 };
 
-module Candidate = {
+module Prospect = {
   type t = {
     blockstackId: string,
     approvedBy: list(string)
@@ -11,26 +11,26 @@ module Candidate = {
 
 type t = {
   name: string,
-  candidates: list(Candidate.t)
+  prospects: list(Prospect.t)
 };
 
-let make = () => {name: "", candidates: []};
+let make = () => {name: "", prospects: []};
 
 let apply = (event: Event.t, state) =>
   switch event {
   | DealCreated(event) => {...state, name: event.projectName}
-  | CandidateSuggested(event) => {
+  | ProspectSuggested(event) => {
       ...state,
-      candidates: [
-        {blockstackId: event.candidateId, approvedBy: [event.supporterId]},
-        ...state.candidates
+      prospects: [
+        {blockstackId: event.prospectId, approvedBy: [event.supporterId]},
+        ...state.prospects
       ]
     }
   | _ => state
   };
 
-let getMembers = state => [];
+let getPartners = state => [];
 
-let getCandidates = state => state.candidates;
+let getProspects = state => state.prospects;
 
 let projectName = state => state.name;

@@ -39,67 +39,67 @@ module DealCreated = {
     };
 };
 
-module CandidateSuggested = {
+module ProspectSuggested = {
   type t = {
     processId: string,
     supporterId: string,
-    candidateId: string,
-    candidatePubKey: string
+    prospectId: string,
+    prospectPubKey: string
   };
-  let make = (~supporterId, ~candidateId, ~candidatePubKey) => {
+  let make = (~supporterId, ~prospectId, ~prospectPubKey) => {
     processId: Uuid.v4(),
     supporterId,
-    candidateId,
-    candidatePubKey
+    prospectId,
+    prospectPubKey
   };
   let encode = event =>
     Json.Encode.(
       object_([
-        ("type", string("CandidateSuggested")),
+        ("type", string("ProspectSuggested")),
         ("processId", string(event.processId)),
         ("supporterId", string(event.supporterId)),
-        ("candidateId", string(event.candidateId)),
-        ("candidatePubKey", string(event.candidatePubKey))
+        ("prospectId", string(event.prospectId)),
+        ("prospectPubKey", string(event.prospectPubKey))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", string),
       supporterId: raw |> field("supporterId", string),
-      candidateId: raw |> field("candidateId", string),
-      candidatePubKey: raw |> field("candidatePubKey", string)
+      prospectId: raw |> field("prospectId", string),
+      prospectPubKey: raw |> field("prospectPubKey", string)
     };
 };
 
-module CandidateApproved = {
+module ProspectApproved = {
   type t = {
     processId: string,
-    candidateId: string,
+    prospectId: string,
     supporterId: string
   };
-  let make = (~processId, ~candidateId, ~supporterId) => {
+  let make = (~processId, ~prospectId, ~supporterId) => {
     processId,
-    candidateId,
+    prospectId,
     supporterId
   };
   let encode = event =>
     Json.Encode.(
       object_([
-        ("type", string("CandidateApproved")),
+        ("type", string("ProspectApproved")),
         ("processId", string(event.processId)),
-        ("candidateId", string(event.candidateId)),
+        ("prospectId", string(event.prospectId)),
         ("supporterId", string(event.supporterId))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", string),
-      candidateId: raw |> field("candidateId", string),
+      prospectId: raw |> field("prospectId", string),
       supporterId: raw |> field("supporterId", string)
     };
 };
 
-module MemberAdded = {
+module PartnerAdded = {
   type t = {
     processId: string,
     blockstackId: string,
@@ -108,7 +108,7 @@ module MemberAdded = {
   let encode = event =>
     Json.Encode.(
       object_([
-        ("type", string("MemberAdded")),
+        ("type", string("PartnerAdded")),
         ("processId", string(event.processId)),
         ("blockstackId", string(event.blockstackId)),
         ("pubKey", string(event.pubKey))
@@ -185,24 +185,24 @@ module ContributionAccepted = {
 
 type t =
   | DealCreated(DealCreated.t)
-  | CandidateSuggested(CandidateSuggested.t)
-  | CandidateApproved(CandidateApproved.t)
-  | MemberAdded(MemberAdded.t)
+  | ProspectSuggested(ProspectSuggested.t)
+  | ProspectApproved(ProspectApproved.t)
+  | PartnerAdded(PartnerAdded.t)
   | ContributionSubmitted(ContributionSubmitted.t)
   | ContributionApproved(ContributionApproved.t)
   | ContributionAccepted(ContributionAccepted.t);
 
-let makeCandidateSuggested = (~supporterId, ~candidateId, ~candidatePubKey) =>
-  CandidateSuggested(
-    CandidateSuggested.make(~supporterId, ~candidateId, ~candidatePubKey)
+let makeProspectSuggested = (~supporterId, ~prospectId, ~prospectPubKey) =>
+  ProspectSuggested(
+    ProspectSuggested.make(~supporterId, ~prospectId, ~prospectPubKey)
   );
 
 let encode =
   fun
   | DealCreated(event) => DealCreated.encode(event)
-  | CandidateSuggested(event) => CandidateSuggested.encode(event)
-  | CandidateApproved(event) => CandidateApproved.encode(event)
-  | MemberAdded(event) => MemberAdded.encode(event)
+  | ProspectSuggested(event) => ProspectSuggested.encode(event)
+  | ProspectApproved(event) => ProspectApproved.encode(event)
+  | PartnerAdded(event) => PartnerAdded.encode(event)
   | ContributionSubmitted(event) => ContributionSubmitted.encode(event)
   | ContributionApproved(event) => ContributionApproved.encode(event)
   | ContributionAccepted(event) => ContributionAccepted.encode(event);
@@ -211,9 +211,9 @@ let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch type_ {
   | "DealCreated" => DealCreated(DealCreated.decode(raw))
-  | "CandidateSuggested" => CandidateSuggested(CandidateSuggested.decode(raw))
-  | "CandidateApproved" => CandidateApproved(CandidateApproved.decode(raw))
-  | "MemberAdded" => MemberAdded(MemberAdded.decode(raw))
+  | "ProspectSuggested" => ProspectSuggested(ProspectSuggested.decode(raw))
+  | "ProspectApproved" => ProspectApproved(ProspectApproved.decode(raw))
+  | "PartnerAdded" => PartnerAdded(PartnerAdded.decode(raw))
   | "ContributionSubmitted" =>
     ContributionSubmitted(ContributionSubmitted.decode(raw))
   | "ContributionApproved" =>

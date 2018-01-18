@@ -15,19 +15,18 @@ let getId: t => string;
 
 let getViewModel: t => ViewModel.t;
 
-let getMemberHistoryUrls: (Session.Data.t, t) => Js.Promise.t(array(string));
+let getPartnerHistoryUrls: (Session.Data.t, t) => Js.Promise.t(array(string));
 
 module Cmd: {
   module Create: {
     type result = (Index.t, t);
     let exec: (Session.Data.t, ~name: string) => Js.Promise.t(result);
   };
-  module SuggestCandidate: {
+  module SuggestProspect: {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec:
-      (Session.Data.t, ~candidateId: string, t) => Js.Promise.t(result);
+    let exec: (Session.Data.t, ~prospectId: string, t) => Js.Promise.t(result);
   };
   module Synchronize: {
     type result =
