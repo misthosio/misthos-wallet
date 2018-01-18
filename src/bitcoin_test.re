@@ -33,7 +33,9 @@ let () = {
         |> ECSignature.toDER
         |> BufferExt.toStringWithEncoding("hex");
       let signature =
-        ECSignature.fromDER(BufferExt.fromStringWithEncoding(der, "hex"));
+        ECSignature.fromDER(
+          BufferExt.fromStringWithEncoding(der, ~encoding="hex")
+        );
       let verified =
         keyPair |> ECPair.verify(Crypto.sha256("hello"), signature);
       expect(verified) |> toEqual(Js.true_);
