@@ -29,4 +29,9 @@ module Cmd: {
     let exec:
       (Session.Data.t, ~candidateId: string, t) => Js.Promise.t(result);
   };
+  module Synchronize: {
+    type result =
+      | Ok(t);
+    let exec: (list(EventLog.t), t) => Js.Promise.t(result);
+  };
 };

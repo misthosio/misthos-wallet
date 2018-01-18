@@ -36,7 +36,7 @@ module Make = (Event: Encodable) => {
     let item = event |> makeItem(issuer);
     (item, [item, ...log]);
   };
-  /* let appendItem = (item, log) => [item, ...log]; */
+  let appendItem = (item, log) => [item, ...log];
   let reduce = (reducer, start, log) =>
     log |> List.rev |> List.fold_left(reducer, start);
   let findNewItems = (others, log) => {

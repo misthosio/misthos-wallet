@@ -16,18 +16,9 @@ module Make:
     };
     let make: unit => t;
     let append: (Bitcoin.ECPair.t, Event.t, t) => (item, t);
-    /* let appendItem: (item, t) => t; */
+    let appendItem: (item, t) => t;
     let reduce: (('s, item) => 's, 's, t) => 's;
     let findNewItems: (list(t), t) => list(item);
-    /* let merge: */
-    /*   ( */
-    /*     list(t), */
-    /*     ~filter: ('s, item) => bool, */
-    /*     ~reducer: ('s, item) => 's, */
-    /*     's, */
-    /*     t */
-    /*   ) => */
-    /*   list(item); */
     let encode: t => Js.Json.t;
     let decode: Js.Json.t => t;
   };

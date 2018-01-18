@@ -28,6 +28,9 @@ module ValidationState = {
     /*   } */
     | _ => state
     };
+  type validation =
+    | Ok;
+  let validate = (_, _) => Ok;
 };
 
 type t = {
@@ -37,77 +40,6 @@ type t = {
   state: ValidationState.t,
   viewModel: ViewModel.t
 };
-
-module Synchronize = {
-  let getMemberHistoryUrls = (session: Session.Data.t, {id, state}) =>
-    state.members
-    /* |> List.filter(({blockstackId}: ValidationState.member) => */
-    /*      blockstackId != session.blockstackId */
-    /*    ) */
-    |> List.map(({blockstackId}: ValidationState.member) =>
-         Blockstack.getUserAppFileUrl(
-           ~path=id ++ "/" ++ session.address ++ "/log.json",
-           ~username=blockstackId,
-           ~appOrigin=Utils.origin
-         )
-       )
-    |> Array.of_list
-    |> Js.Promise.all;
-  let getMemberHistories = (session: Session.Data.t, {id, state}) =>
-    Js.Promise.(
-      state.members
-      |> List.filter(({blockstackId}: ValidationState.member) =>
-           blockstackId != session.blockstackId
-         )
-      |> List.map(({blockstackId}: ValidationState.member) =>
-           Blockstack.getFileWithOpts(
-             id ++ "/" ++ session.address ++ "/log.json",
-             ~username=blockstackId,
-             ()
-           )
-           |> then_(nullLog =>
-                switch (Js.Nullable.to_opt(nullLog)) {
-                | Some(raw) =>
-                  resolve(Some(raw |> Json.parseOrRaise |> EventLog.decode))
-                | None => resolve(None)
-                }
-              )
-           |> catch(_error => resolve(None))
-         )
-      |> Array.of_list
-      |> all
-      |> then_(histories =>
-           histories
-           |> Array.to_list
-           |> List.filter(Js.Option.isSome)
-           |> List.rev_map(Js.Option.getExn)
-           |> resolve
-         )
-    );
-  /* let sync = (otherLogs, {state, watchers, log} as project) => { */
-  /*   let (state,log) = log |> EventLog.merge(otherLogs,,item) => Verification.includeItem(item),((state,log),item) => { */
-  /*            let state = state |> applyToState(item); */
-  /*            let watchers = watchers |> updateWatchers(item, log); */
-  /*            state */
-  /*     } */
-  /* let newItems = log |> EventLog.findNewItems(otherLogs); */
-  /* let project = */
-  /*   newItems */
-  /*   |> List.fold_left( */
-  /*        ({state, watchers, log}, item) => { */
-  /*          /1* Verification.includeItem(item); *1/ */
-  /*          let log = log |> EventLog.appendItem(item); */
-  /*          let state = state |> applyToState(item); */
-  /*          let watchers = watchers |> updateWatchers(item, log); */
-  /*          {state, watchers, log}; */
-  /*        }, */
-  /*        project */
-  /*      ); */
-  /* applyWatcherEvents({log, state, watchers}); */
-  /* }; */
-};
-
-let getMemberHistoryUrls = Synchronize.getMemberHistoryUrls;
 
 let make = id => {
   id,
@@ -216,6 +148,50 @@ let getId = ({id}) => id;
 
 let getViewModel = ({viewModel}) => viewModel;
 
+module Synchronize = {
+  let getMemberHistoryUrls = (session: Session.Data.t, {id, state}) =>
+    state.members
+    |> List.filter(({blockstackId}: ValidationState.member) =>
+         blockstackId != session.blockstackId
+       )
+    |> List.map(({blockstackId}: ValidationState.member) =>
+         Blockstack.getUserAppFileUrl(
+           ~path=id ++ "/" ++ session.address ++ "/log.json",
+           ~username=blockstackId,
+           ~appOrigin=Utils.origin
+         )
+       )
+    |> Array.of_list
+    |> Js.Promise.all;
+  type result =
+    | Ok(t);
+  let exec = (otherLogs, {log} as project) => {
+    let newItems = log |> EventLog.findNewItems(otherLogs);
+    let project =
+      newItems
+      |> List.fold_left(
+           (
+             {log, watchers, state, viewModel} as project,
+             {event} as item: EventLog.item
+           ) =>
+             switch (item |> ValidationState.validate(state)) {
+             | Ok =>
+               let log = log |> EventLog.appendItem(item);
+               let watchers = watchers |> updateWatchers(item, log);
+               let state = state |> ValidationState.apply(event);
+               let viewModel = viewModel |> ViewModel.apply(event);
+               {...project, log, watchers, state, viewModel};
+             },
+           project
+         );
+    Js.Promise.(
+      applyWatcherEvents(project) |> persist |> then_(p => Ok(p) |> resolve)
+    );
+  };
+};
+
+let getMemberHistoryUrls = Synchronize.getMemberHistoryUrls;
+
 module Cmd = {
   module Create = {
     type result = (Index.t, t);
@@ -261,4 +237,5 @@ module Cmd = {
            )
       );
   };
+  module Synchronize = Synchronize;
 };
