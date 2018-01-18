@@ -25,7 +25,7 @@ self.onmessage = ({data}) => {
       fetchAll(links).then(texts => {
           postMessage(texts);
         });
-    }, 10000);
+    }, 300000);
   }
 };
 
