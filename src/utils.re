@@ -25,4 +25,4 @@ let signatureFromString = ecSignature =>
 
 let hash = s => s |> Bitcoin.Crypto.sha256 |> bufToHex;
 
-let origin = () => [%bs.raw {|window.location.origin|}];
+[@bs.val] [@bs.scope "window.location"] external origin : string = "origin";

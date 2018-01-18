@@ -56,8 +56,8 @@ let completeLogIn = () =>
 
 let signIn = () => {
   Blockstack.redirectToSignIn(
-    ~redirectURI=Utils.origin() ++ "/",
-    ~manifestURI=Utils.origin() ++ "/manifest.json",
+    ~redirectURI=Utils.origin ++ "/",
+    ~manifestURI=Utils.origin ++ "/manifest.json",
     ~scopes=[|"store_write", "publish_data"|]
   );
   LoginPending;

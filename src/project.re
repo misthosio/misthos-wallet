@@ -48,7 +48,7 @@ module Synchronize = {
          Blockstack.getUserAppFileUrl(
            ~path=id ++ "/" ++ session.address ++ "/log.json",
            ~username=blockstackId,
-           ~appOrigin=Utils.origin()
+           ~appOrigin=Utils.origin
          )
        )
     |> Array.of_list
