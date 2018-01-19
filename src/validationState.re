@@ -14,7 +14,7 @@ let make = () => {
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | DealCreated({creatorId, creatorPubKey, systemIssuer}) => {
+  | VentureCreated({creatorId, creatorPubKey, systemIssuer}) => {
       ...state,
       partnerIds: [creatorId, ...state.partnerIds],
       partnerAddresses: [

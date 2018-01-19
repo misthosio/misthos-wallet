@@ -1,7 +1,7 @@
-open Deal;
+open Venture;
 
 type state = {
-  deal: Deal.t,
+  venture: Venture.t,
   viewModel: ViewModel.t,
   prospectId: string,
   worker: ref(Worker.t)
@@ -9,7 +9,7 @@ type state = {
 
 type action =
   | ChangeNewPartnerId(string)
-  | UpdateDeal(Deal.t)
+  | UpdateVenture(Venture.t)
   | SuggestProspect
   | WorkerMessage(Worker.Message.receive);
 
@@ -18,13 +18,13 @@ let changeNewPartnerId = event =>
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
-let component = ReasonReact.reducerComponent("SelectedDeal");
+let component = ReasonReact.reducerComponent("SelectedVenture");
 
-let make = (~deal as initialDeal, ~session, _children) => {
+let make = (~venture as initialVenture, ~session, _children) => {
   ...component,
   initialState: () => {
-    deal: initialDeal,
-    viewModel: Deal.getViewModel(initialDeal),
+    venture: initialVenture,
+    viewModel: Venture.getViewModel(initialVenture),
     prospectId: "",
     worker: ref(Worker.make(~onMessage=Js.log))
   },
@@ -35,7 +35,7 @@ let make = (~deal as initialDeal, ~session, _children) => {
         let worker =
           Worker.make(~onMessage=message => send(WorkerMessage(message)));
         Js.Promise.(
-          Deal.getPartnerHistoryUrls(session, initialDeal)
+          Venture.getPartnerHistoryUrls(session, initialVenture)
           |> then_(urls =>
                Worker.Message.RegularlyFetch(urls)
                |> Worker.postMessage(worker)
@@ -66,12 +66,12 @@ let make = (~deal as initialDeal, ~session, _children) => {
             ({send}) =>
               Js.Promise.(
                 Cmd.SuggestProspect.(
-                  state.deal
+                  state.venture
                   |> exec(session, ~prospectId)
                   |> then_(result =>
                        (
                          switch result {
-                         | Ok(deal) => send(UpdateDeal(deal))
+                         | Ok(venture) => send(UpdateVenture(venture))
                          | NoUserInfo => Js.log("NoUserInfo")
                          }
                        )
@@ -83,9 +83,9 @@ let make = (~deal as initialDeal, ~session, _children) => {
           )
         )
       }
-    | UpdateDeal(deal) =>
+    | UpdateVenture(venture) =>
       Js.Promise.(
-        Deal.getPartnerHistoryUrls(session, deal)
+        Venture.getPartnerHistoryUrls(session, venture)
         |> then_(urls =>
              Worker.Message.RegularlyFetch(urls)
              |> Worker.postMessage(state.worker^)
@@ -93,7 +93,7 @@ let make = (~deal as initialDeal, ~session, _children) => {
            )
       )
       |> ignore;
-      ReasonReact.Update({...state, deal, viewModel: Deal.getViewModel(deal)});
+      ReasonReact.Update({...state, venture, viewModel: Venture.getViewModel(venture)});
     },
   render: ({send, state}) => {
     let partners =
@@ -131,7 +131,7 @@ let make = (~deal as initialDeal, ~session, _children) => {
       );
     <div>
       <h2>
-        (ReasonReact.stringToElement(ViewModel.dealName(state.viewModel)))
+        (ReasonReact.stringToElement(ViewModel.ventureName(state.viewModel)))
       </h2>
       (ReasonReact.stringToElement("Partners:"))
       <ul> partners </ul>

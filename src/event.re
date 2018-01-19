@@ -1,15 +1,15 @@
-module DealCreated = {
+module VentureCreated = {
   type t = {
-    dealId: string,
-    dealName: string,
+    ventureId: string,
+    ventureName: string,
     creatorId: string,
     creatorPubKey: string,
     metaPolicy: Policy.t,
     systemIssuer: Bitcoin.ECPair.t
   };
-  let make = (~dealName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
-    dealId: Uuid.v4(),
-    dealName,
+  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
+    ventureId: Uuid.v4(),
+    ventureName,
     creatorId,
     creatorPubKey,
     metaPolicy,
@@ -18,9 +18,9 @@ module DealCreated = {
   let encode = event =>
     Json.Encode.(
       object_([
-        ("type", string("DealCreated")),
-        ("dealId", string(event.dealId)),
-        ("dealName", string(event.dealName)),
+        ("type", string("VentureCreated")),
+        ("ventureId", string(event.ventureId)),
+        ("ventureName", string(event.ventureName)),
         ("creatorId", string(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
@@ -29,8 +29,8 @@ module DealCreated = {
     );
   let decode = raw =>
     Json.Decode.{
-      dealId: raw |> field("dealId", string),
-      dealName: raw |> field("dealName", string),
+      ventureId: raw |> field("ventureId", string),
+      ventureName: raw |> field("ventureName", string),
       creatorId: raw |> field("creatorId", string),
       creatorPubKey: raw |> field("creatorPubKey", string),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
@@ -184,7 +184,7 @@ module ContributionAccepted = {
 };
 
 type t =
-  | DealCreated(DealCreated.t)
+  | VentureCreated(VentureCreated.t)
   | ProspectSuggested(ProspectSuggested.t)
   | ProspectApproved(ProspectApproved.t)
   | PartnerAdded(PartnerAdded.t)
@@ -199,7 +199,7 @@ let makeProspectSuggested = (~supporterId, ~prospectId, ~prospectPubKey) =>
 
 let encode =
   fun
-  | DealCreated(event) => DealCreated.encode(event)
+  | VentureCreated(event) => VentureCreated.encode(event)
   | ProspectSuggested(event) => ProspectSuggested.encode(event)
   | ProspectApproved(event) => ProspectApproved.encode(event)
   | PartnerAdded(event) => PartnerAdded.encode(event)
@@ -216,7 +216,7 @@ let isSystemEvent =
 let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch type_ {
-  | "DealCreated" => DealCreated(DealCreated.decode(raw))
+  | "VentureCreated" => VentureCreated(VentureCreated.decode(raw))
   | "ProspectSuggested" => ProspectSuggested(ProspectSuggested.decode(raw))
   | "ProspectApproved" => ProspectApproved(ProspectApproved.decode(raw))
   | "PartnerAdded" => PartnerAdded(PartnerAdded.decode(raw))

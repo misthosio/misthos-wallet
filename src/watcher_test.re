@@ -7,15 +7,15 @@ open Event;
 let () =
   describe("PartnerApproval", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
-    let dealCreated =
-      Event.DealCreated.make(
-        ~dealName="TheMothers",
+    let ventureCreated =
+      Event.VentureCreated.make(
+        ~ventureName="TheMothers",
         ~creatorId="frank.id",
         ~creatorPubKey=issuer |> Utils.publicKeyFromKeyPair,
         ~metaPolicy=Policy.absolute
       );
     let (_, log) =
-      EventLog.make() |> EventLog.append(issuer, DealCreated(dealCreated));
+      EventLog.make() |> EventLog.append(issuer, VentureCreated(ventureCreated));
     let prospectId = "wackerman.id";
     let prospectPubKey = "sticks";
     let prospectSuggestion =
@@ -71,7 +71,7 @@ let () =
       expect(prospectWatcher#pendingEvent())
       |> toEqual(
            Some((
-             dealCreated.systemIssuer,
+             ventureCreated.systemIssuer,
              PartnerAdded({
                processId,
                blockstackId: prospectId,

@@ -36,13 +36,13 @@ let persist = index =>
 let load = () =>
   Js.Promise.(
     Blockstack.getFileDecrypted(indexPath)
-    |> then_(nullDeals =>
-         switch (Js.Nullable.to_opt(nullDeals)) {
+    |> then_(nullVentures =>
+         switch (Js.Nullable.to_opt(nullVentures)) {
          | None => persist([])
          | Some(index) => resolve(index |> Json.parseOrRaise |> Decode.index)
          }
        )
   );
 
-let add = (~dealId as id, ~dealName as name) =>
+let add = (~ventureId as id, ~ventureName as name) =>
   Js.Promise.(load() |> then_(index => [{id, name}, ...index] |> persist));

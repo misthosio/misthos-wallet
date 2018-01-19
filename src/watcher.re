@@ -29,7 +29,7 @@ module PartnerApproval = {
         state :=
           (
             switch event {
-            | DealCreated(event) => {
+            | VentureCreated(event) => {
                 ...state^,
                 eligable: [event.creatorId],
                 policy: event.metaPolicy,

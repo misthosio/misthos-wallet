@@ -1,38 +1,38 @@
 type status =
   | None
   | LoadingIndex
-  | LoadingDeal
-  | CreatingDeal(string);
+  | LoadingVenture
+  | CreatingVenture(string);
 
 type state = {
   status,
-  selected: option(Deal.t),
-  index: Deal.Index.t,
-  newDeal: string
+  selected: option(Venture.t),
+  index: Venture.Index.t,
+  newVenture: string
 };
 
 type action =
-  | IndexLoaded(Deal.Index.t)
-  | DealLoaded(Deal.t)
-  | ChangeNewDeal(string)
-  | SelectDeal(string)
-  | AddDeal
-  | DealCreated(Deal.Index.t, Deal.t);
+  | IndexLoaded(Venture.Index.t)
+  | VentureLoaded(Venture.t)
+  | ChangeNewVenture(string)
+  | SelectVenture(string)
+  | AddVenture
+  | VentureCreated(Venture.Index.t, Venture.t);
 
-let component = ReasonReact.reducerComponent("Deals");
+let component = ReasonReact.reducerComponent("Ventures");
 
-let changeNewDeal = event =>
-  ChangeNewDeal(
+let changeNewVenture = event =>
+  ChangeNewVenture(
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
-let selectDeal = e =>
-  SelectDeal(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
+let selectVenture = e =>
+  SelectVenture(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
 
 let make = (~session, _children) => {
   ...component,
   initialState: () => {
-    newDeal: "",
+    newVenture: "",
     status: LoadingIndex,
     index: [],
     selected: None
@@ -41,7 +41,7 @@ let make = (~session, _children) => {
     ReasonReact.SideEffects(
       ({send}) =>
         Js.Promise.(
-          Deal.Index.load()
+          Venture.Index.load()
           |> then_(index => send(IndexLoaded(index)) |> resolve)
           |> ignore
         )
@@ -56,56 +56,56 @@ let make = (~session, _children) => {
             switch index {
             | [p, ..._rest] =>
               Js.Promise.(
-                Deal.load(~dealId=p.id)
-                |> then_(deal => send(DealLoaded(deal)) |> resolve)
+                Venture.load(~ventureId=p.id)
+                |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )
             | _ => ()
             }
         )
       )
-    | DealLoaded(deal) =>
-      ReasonReact.Update({...state, status: None, selected: Some(deal)})
-    | DealCreated(index, selected) =>
+    | VentureLoaded(venture) =>
+      ReasonReact.Update({...state, status: None, selected: Some(venture)})
+    | VentureCreated(index, selected) =>
       ReasonReact.Update({
         ...state,
         status: None,
         index,
         selected: Some(selected)
       })
-    | ChangeNewDeal(text) => ReasonReact.Update({...state, newDeal: text})
-    | SelectDeal(id) =>
-      Js.log("SelectDeal(" ++ id ++ ")");
+    | ChangeNewVenture(text) => ReasonReact.Update({...state, newVenture: text})
+    | SelectVenture(id) =>
+      Js.log("SelectVenture(" ++ id ++ ")");
       let selectedId =
         switch state.selected {
-        | Some(deal) => Deal.getId(deal)
+        | Some(venture) => Venture.getId(venture)
         | None => ""
         };
       id == selectedId ?
         ReasonReact.NoUpdate :
         ReasonReact.UpdateWithSideEffects(
-          {...state, status: LoadingDeal, selected: None},
+          {...state, status: LoadingVenture, selected: None},
           (
             ({send}) =>
               Js.Promise.(
-                Deal.load(~dealId=id)
-                |> then_(deal => send(DealLoaded(deal)) |> resolve)
+                Venture.load(~ventureId=id)
+                |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )
           )
         );
-    | AddDeal =>
-      switch (String.trim(state.newDeal)) {
+    | AddVenture =>
+      switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
       | name =>
         ReasonReact.UpdateWithSideEffects(
-          {...state, status: CreatingDeal(name), newDeal: ""},
+          {...state, status: CreatingVenture(name), newVenture: ""},
           (
             ({send}) =>
               Js.Promise.(
-                Deal.Cmd.Create.exec(session, ~name)
-                |> then_(((newIndex, deal)) =>
-                     send(DealCreated(newIndex, deal)) |> resolve
+                Venture.Cmd.Create.exec(session, ~name)
+                |> then_(((newIndex, venture)) =>
+                     send(VentureCreated(newIndex, venture)) |> resolve
                    )
                 |> ignore
               )
@@ -116,18 +116,18 @@ let make = (~session, _children) => {
   render: ({send, state}) => {
     let selectedId =
       switch (state.status, state.selected) {
-      | (CreatingDeal(_), _) => "new"
-      | (_, Some(deal)) => Deal.getId(deal)
+      | (CreatingVenture(_), _) => "new"
+      | (_, Some(venture)) => Venture.getId(venture)
       | _ => ""
       };
-    let dealList =
+    let ventureList =
       ReasonReact.arrayToElement(
         Array.of_list(
-          Deal.Index.(
+          Venture.Index.(
             switch state.status {
             | LoadingIndex => []
-            | CreatingDeal(newDeal) => [
-                (newDeal, "new"),
+            | CreatingVenture(newVenture) => [
+                (newVenture, "new"),
                 ...state.index |> List.map(({name, id}) => (name, id))
               ]
             | _ => state.index |> List.map(({name, id}) => (name, id))
@@ -138,7 +138,7 @@ let make = (~session, _children) => {
                  key=id
                  id
                  className=(id == selectedId ? "selected" : "")
-                 onClick=(e => send(selectDeal(e)))>
+                 onClick=(e => send(selectVenture(e)))>
                  (ReasonReact.stringToElement(name))
                </li>
              )
@@ -147,28 +147,28 @@ let make = (~session, _children) => {
     let status =
       switch state.status {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
-      | CreatingDeal(newDeal) =>
-        ReasonReact.stringToElement("Creating deal '" ++ newDeal ++ "'")
-      | _ => ReasonReact.stringToElement("deals:")
+      | CreatingVenture(newVenture) =>
+        ReasonReact.stringToElement("Creating venture '" ++ newVenture ++ "'")
+      | _ => ReasonReact.stringToElement("ventures:")
       };
-    let deal =
+    let venture =
       switch state.selected {
-      | Some(deal) => <SelectedDeal deal session />
-      | None => <div> (ReasonReact.stringToElement("Loading Deal")) </div>
+      | Some(venture) => <SelectedVenture venture session />
+      | None => <div> (ReasonReact.stringToElement("Loading Venture")) </div>
       };
     <div>
       <h2> status </h2>
-      <ul> dealList </ul>
+      <ul> ventureList </ul>
       <input
-        placeholder="Create new Deal"
-        value=state.newDeal
-        onChange=(e => send(changeNewDeal(e)))
+        placeholder="Create new Venture"
+        value=state.newVenture
+        onChange=(e => send(changeNewVenture(e)))
         autoFocus=Js.true_
       />
-      <button onClick=(_e => send(AddDeal))>
+      <button onClick=(_e => send(AddVenture))>
         (ReasonReact.stringToElement("Add"))
       </button>
-      deal
+      venture
     </div>;
   }
 };

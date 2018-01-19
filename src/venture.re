@@ -1,4 +1,4 @@
-module Index = DealIndex;
+module Index = VentureIndex;
 
 type t = {
   id: string,
@@ -67,7 +67,7 @@ let reconstruct = log => {
     |> EventLog.reduce(
          ((id, watchers, state, viewModel), {event} as item) => (
            switch event {
-           | DealCreated({dealId}) => dealId
+           | VentureCreated({ventureId}) => ventureId
            | _ => id
            },
            switch (Watcher.initWatcherFor(item, log)) {
@@ -82,12 +82,12 @@ let reconstruct = log => {
   {id, log, watchers, state, viewModel};
 };
 
-let persist = ({id, log, state} as deal) => {
+let persist = ({id, log, state} as venture) => {
   let logString = log |> EventLog.encode |> Json.stringify;
   let returnPromise =
     Js.Promise.(
       Blockstack.putFile(id ++ "/log.json", logString)
-      |> then_(() => resolve(deal))
+      |> then_(() => resolve(venture))
     );
   state.partnerAddresses
   |> List.map(address =>
@@ -99,9 +99,9 @@ let persist = ({id, log, state} as deal) => {
 
 let defaultPolicy = Policy.absolute;
 
-let load = (~dealId) =>
+let load = (~ventureId) =>
   Js.Promise.(
-    Blockstack.getFile(dealId ++ "/log.json")
+    Blockstack.getFile(ventureId ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.to_opt(nullLog)) {
          | Some(raw) =>
@@ -131,17 +131,17 @@ module Synchronize = {
   type result =
     | Ok(t)
     | Error(EventLog.item, ValidationState.validation);
-  let exec = (otherLogs, {log} as deal) => {
+  let exec = (otherLogs, {log} as venture) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
-    let (deal, _error) =
+    let (venture, _error) =
       newItems
       |> List.fold_left(
            (
-             ({log, watchers, state, viewModel} as deal, error),
+             ({log, watchers, state, viewModel} as venture, error),
              {event} as item: EventLog.item
            ) =>
              if (Js.Option.isSome(error)) {
-               (deal, error);
+               (venture, error);
              } else {
                switch (item |> ValidationState.validate(state)) {
                | Ok =>
@@ -149,15 +149,15 @@ module Synchronize = {
                  let watchers = watchers |> updateWatchers(item, log);
                  let state = state |> ValidationState.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
-                 ({...deal, log, watchers, state, viewModel}, None);
+                 ({...venture, log, watchers, state, viewModel}, None);
                /* When the issuerPubKey is not recognized ignore the event */
-               | InvalidIssuer => (deal, None)
+               | InvalidIssuer => (venture, None)
                };
              },
-           (deal, None)
+           (venture, None)
          );
     Js.Promise.(
-      applyWatcherEvents(deal) |> persist |> then_(p => Ok(p) |> resolve)
+      applyWatcherEvents(venture) |> persist |> then_(p => Ok(p) |> resolve)
     );
   };
 };
@@ -167,18 +167,18 @@ let getPartnerHistoryUrls = Synchronize.getPartnerHistoryUrls;
 module Cmd = {
   module Create = {
     type result = (Index.t, t);
-    let exec = (session: Session.Data.t, ~name as dealName) => {
-      let dealCreated =
-        Event.DealCreated.make(
-          ~dealName,
+    let exec = (session: Session.Data.t, ~name as ventureName) => {
+      let ventureCreated =
+        Event.VentureCreated.make(
+          ~ventureName,
           ~creatorId=session.blockstackId,
           ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
           ~metaPolicy=defaultPolicy
         );
       Js.Promise.all2((
-        Index.add(~dealId=dealCreated.dealId, ~dealName),
-        make(dealCreated.dealId)
-        |> apply(session.appKeyPair, DealCreated(dealCreated))
+        Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
+        make(ventureCreated.ventureId)
+        |> apply(session.appKeyPair, VentureCreated(ventureCreated))
         |> persist
       ));
     };
@@ -187,13 +187,13 @@ module Cmd = {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec = (session: Session.Data.t, ~prospectId, deal) =>
+    let exec = (session: Session.Data.t, ~prospectId, venture) =>
       Js.Promise.(
         UserPublicInfo.read(~blockstackId=prospectId)
         |> then_(readResult =>
              switch readResult {
              | UserPublicInfo.Ok(info) =>
-               deal
+               venture
                |> apply(
                     session.appKeyPair,
                     Event.makeProspectSuggested(
