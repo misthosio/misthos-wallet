@@ -2,29 +2,35 @@ type status =
   | None
   | LoadingIndex
   | LoadingVenture
+  | JoiningVenture
   | CreatingVenture(string);
 
 type state = {
   status,
   selected: option(Venture.t),
   index: Venture.Index.t,
-  newVenture: string
+  newVenture: string,
+  joinVentureId: string,
+  joinVentureUserId: string
 };
 
 type action =
   | IndexLoaded(Venture.Index.t)
   | VentureLoaded(Venture.t)
   | ChangeNewVenture(string)
+  | ChangeJoinVentureUserId(string)
+  | ChangeJoinVentureId(string)
   | SelectVenture(string)
-  | AddVenture
-  | VentureCreated(Venture.Index.t, Venture.t);
+  | JoinVenture
+  | CreateVenture
+  | VentureCreated(Venture.Index.t, Venture.t)
+  | VentureJoined(Venture.Index.t, Venture.t);
 
 let component = ReasonReact.reducerComponent("Ventures");
 
-let changeNewVenture = event =>
-  ChangeNewVenture(
-    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
-  );
+let formText = event => ReactDOMRe.domElementToObj(
+                          ReactEventRe.Form.target(event)
+                        )##value;
 
 let selectVenture = e =>
   SelectVenture(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
@@ -33,6 +39,8 @@ let make = (~session, _children) => {
   ...component,
   initialState: () => {
     newVenture: "",
+    joinVentureId: "",
+    joinVentureUserId: "",
     status: LoadingIndex,
     index: [],
     selected: None
@@ -66,14 +74,20 @@ let make = (~session, _children) => {
       )
     | VentureLoaded(venture) =>
       ReasonReact.Update({...state, status: None, selected: Some(venture)})
-    | VentureCreated(index, selected) =>
+    | VentureCreated(index, selected)
+    | VentureJoined(index, selected) =>
       ReasonReact.Update({
         ...state,
         status: None,
         index,
         selected: Some(selected)
       })
-    | ChangeNewVenture(text) => ReasonReact.Update({...state, newVenture: text})
+    | ChangeNewVenture(text) =>
+      ReasonReact.Update({...state, newVenture: text})
+    | ChangeJoinVentureUserId(text) =>
+      ReasonReact.Update({...state, joinVentureUserId: text})
+    | ChangeJoinVentureId(text) =>
+      ReasonReact.Update({...state, joinVentureId: text})
     | SelectVenture(id) =>
       Js.log("SelectVenture(" ++ id ++ ")");
       let selectedId =
@@ -94,7 +108,7 @@ let make = (~session, _children) => {
               )
           )
         );
-    | AddVenture =>
+    | CreateVenture =>
       switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
       | name =>
@@ -106,6 +120,33 @@ let make = (~session, _children) => {
                 Venture.Cmd.Create.exec(session, ~name)
                 |> then_(((newIndex, venture)) =>
                      send(VentureCreated(newIndex, venture)) |> resolve
+                   )
+                |> ignore
+              )
+          )
+        )
+      }
+    | JoinVenture =>
+      switch (
+        String.trim(state.joinVentureUserId),
+        String.trim(state.joinVentureId)
+      ) {
+      | ("", _) => ReasonReact.NoUpdate
+      | (_, "") => ReasonReact.NoUpdate
+      | (userId, ventureId) =>
+        ReasonReact.UpdateWithSideEffects(
+          {
+            ...state,
+            status: JoiningVenture,
+            joinVentureUserId: "",
+            joinVentureId: ""
+          },
+          (
+            ({send}) =>
+              Js.Promise.(
+                Venture.join(session, ~blockstackId=userId, ~ventureId)
+                |> then_(((newIndex, venture)) =>
+                     send(VentureJoined(newIndex, venture)) |> resolve
                    )
                 |> ignore
               )
@@ -162,11 +203,26 @@ let make = (~session, _children) => {
       <input
         placeholder="Create new Venture"
         value=state.newVenture
-        onChange=(e => send(changeNewVenture(e)))
+        onChange=(e => send(ChangeNewVenture(formText(e))))
         autoFocus=Js.true_
       />
-      <button onClick=(_e => send(AddVenture))>
-        (ReasonReact.stringToElement("Add"))
+      <button onClick=(_e => send(CreateVenture))>
+        (ReasonReact.stringToElement("create"))
+      </button>
+      <input
+        placeholder="Join Venture User"
+        value=state.joinVentureUserId
+        onChange=(e => send(ChangeJoinVentureUserId(formText(e))))
+        autoFocus=Js.true_
+      />
+      <input
+        placeholder="Join Venture Id"
+        value=state.joinVentureUserId
+        onChange=(e => send(ChangeJoinVentureId(formText(e))))
+        autoFocus=Js.true_
+      />
+      <button onClick=(_e => send(JoinVenture))>
+        (ReasonReact.stringToElement("join"))
       </button>
       venture
     </div>;

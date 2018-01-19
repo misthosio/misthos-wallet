@@ -16,6 +16,10 @@ module Validation: {
 
 type t;
 
+let join:
+  (Session.Data.t, ~blockstackId: string, ~ventureId: string) =>
+  Js.Promise.t((Index.t, t));
+
 let load: (~ventureId: string) => Js.Promise.t(t);
 
 let getId: t => string;

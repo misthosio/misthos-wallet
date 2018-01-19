@@ -1,6 +1,7 @@
 open Event;
 
 type state = {
+  ventureName: string,
   partnerIds: list(string),
   partnerAddresses: list(string),
   partnerPubKeys: list(string),
@@ -10,6 +11,7 @@ type state = {
 };
 
 let makeState = () => {
+  ventureName: "",
   partnerIds: [],
   partnerAddresses: [],
   partnerPubKeys: [],
@@ -20,8 +22,15 @@ let makeState = () => {
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated({creatorId, creatorPubKey, metaPolicy, systemIssuer}) => {
+  | VentureCreated({
+      ventureName,
+      creatorId,
+      creatorPubKey,
+      metaPolicy,
+      systemIssuer
+    }) => {
       ...state,
+      ventureName,
       partnerIds: [creatorId, ...state.partnerIds],
       partnerAddresses: [
         Utils.addressFromPublicKey(creatorPubKey),

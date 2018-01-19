@@ -113,6 +113,31 @@ let load = (~ventureId) =>
        )
   );
 
+let join = (session: Session.Data.t, ~blockstackId, ~ventureId) =>
+  Js.Promise.(
+    Blockstack.getFileWithOpts(
+      ventureId ++ "/" ++ session.address ++ "/log.json",
+      ~username=blockstackId,
+      ()
+    )
+    |> catch(_error => raise(Not_found))
+    |> then_(nullFile =>
+         switch (Js.Nullable.to_opt(nullFile)) {
+         | None => raise(Not_found)
+         | Some(raw) =>
+           raw
+           |> Json.parseOrRaise
+           |> EventLog.decode
+           |> reconstruct
+           |> persist
+         }
+       )
+    |> then_(venture =>
+         Index.add(~ventureId, ~ventureName=venture.state.ventureName)
+         |> then_(index => resolve((index, venture)))
+       )
+  );
+
 let getId = ({id}) => id;
 
 let getViewModel = ({viewModel}) => viewModel;
