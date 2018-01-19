@@ -207,6 +207,12 @@ let encode =
   | ContributionApproved(event) => ContributionApproved.encode(event)
   | ContributionAccepted(event) => ContributionAccepted.encode(event);
 
+let isSystemEvent =
+  fun
+  | PartnerAdded(_)
+  | ContributionAccepted(_) => true
+  | _ => false;
+
 let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch type_ {

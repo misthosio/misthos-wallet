@@ -1,21 +1,28 @@
 type t = {
   partnerIds: list(string),
   partnerAddresses: list(string),
-  partnerPubKeys: list(string)
+  partnerPubKeys: list(string),
+  systemPubKey: string
 };
 
-let make = () => {partnerIds: [], partnerAddresses: [], partnerPubKeys: []};
+let make = () => {
+  partnerIds: [],
+  partnerAddresses: [],
+  partnerPubKeys: [],
+  systemPubKey: ""
+};
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | DealCreated({creatorId, creatorPubKey}) => {
+  | DealCreated({creatorId, creatorPubKey, systemIssuer}) => {
       ...state,
       partnerIds: [creatorId, ...state.partnerIds],
       partnerAddresses: [
         Utils.addressFromPublicKey(creatorPubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [creatorPubKey, ...state.partnerPubKeys]
+      partnerPubKeys: [creatorPubKey, ...state.partnerPubKeys],
+      systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair
     }
   | PartnerAdded({blockstackId, pubKey}) => {
       ...state,
@@ -33,8 +40,10 @@ type validation =
   | Ok
   | InvalidIssuer;
 
-let validate = (state, {issuerPubKey}: EventLog.item) =>
-  if (state.partnerPubKeys |> List.mem(issuerPubKey)) {
+let validate = (state, {event, issuerPubKey}: EventLog.item) =>
+  if (Event.isSystemEvent(event) && issuerPubKey == state.systemPubKey) {
+    Ok;
+  } else if (state.partnerPubKeys |> List.mem(issuerPubKey)) {
     Ok;
   } else {
     InvalidIssuer;
