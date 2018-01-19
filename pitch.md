@@ -4,24 +4,24 @@ The goal: enable economic activity management in distributed / decentralized / n
 ## Structure
 
 - The unit of account in Misthos is Bitcoin.
-- Every Deal has a Bitcoin Wallet secured by a multi-sig address.
+- Every Venture has a Bitcoin Wallet secured by a multi-sig address.
 - The 'custodians' of the multi-sig are chosen by a pseudo-random process out of all currently active partners.
 - Payouts that have been approved are batched and submitted to the Bitcoin network at regular intervals.
 - The custodians can be rotated every payout by transferring the remaining bitcoin to a new multi-sig address.
 - Using Bitcoin assumes the project already has a steady income stream that needs to be distributed fairly to the participants creating the value.
 - For projects in early, pre-income phases, tokens may be distributed that can be transferred into Bitcoin once income streams stabilize.
 
-## Deals
+## Ventures
 
-- The main container unit of Misthos within which all activity is scoped is called a ‘Deal’. Anyone can create a Deal.
-- Once a Deal has been created, partners can add other partners, submit requests for payouts for 1 off contributions, and agree upon regular payouts to active partners.
+- The main container unit of Misthos within which all activity is scoped is called a ‘Venture’. Anyone can create a Venture.
+- Once a Venture has been created, partners can add other partners, submit requests for payouts for 1 off contributions, and agree upon regular payouts to active partners.
 - Any proposal that a partner submits to the system must be reviewed and approved by other partners.
 
 ## Governance
 
 - How much 'approval' a submission requires to become 'accepted' is determined by numerous situational policies that create a fine grained and well documented governance structure.   
 - Policies themselves can also be changed following the same process.
-- At Deal creation time the 'meta-policy' is determined.  The meta-policy governs how policies can be updated and changed, including the meta-policy itself.
+- At Venture creation time the 'meta-policy' is determined.  The meta-policy governs how policies can be updated and changed, including the meta-policy itself.
 - In order to scale the submission and approval processes to projects with a large number of partners, ‘sub-groups’ can be created.
 - Sub-groups are implicitly defined via adding 'tags' to submissions and contributors that determine areas of expertise and fitness for reviewing.  This is important to differentiate between decisions effecting a few contributors vs. effecting almost everyone.
 
@@ -36,7 +36,7 @@ The goal: enable economic activity management in distributed / decentralized / n
 ## What Needs to be Done: Now to Signature Berlin
 
 After a long conceptualization phase and 2 months of dedicated research into the technological and domain specific components in 2017 I am currently working full time on code level implementation.
-My goal for Signature Berlin is to have a working skeleton with the fundamental system architecture in place.  Ideally a demo of a basic end-to-end use case will be possible
+My goal for Signature Berlin is to have a working skeleton with the fundamental system architecture in place.  Iventurely a demo of a basic end-to-end use case will be possible
 This walk through would include:
   
 - Creating projects
