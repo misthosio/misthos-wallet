@@ -189,7 +189,7 @@ module Cmd = {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec = (session: Session.Data.t, ~prospectId, venture) =>
+    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) =>
       Js.Promise.(
         UserPublicInfo.read(~blockstackId=prospectId)
         |> then_(readResult =>
@@ -201,7 +201,8 @@ module Cmd = {
                     Event.makeProspectSuggested(
                       ~supporterId=session.blockstackId,
                       ~prospectId,
-                      ~prospectPubKey=info.appPubKey
+                      ~prospectPubKey=info.appPubKey,
+                      ~policy=state.metaPolicy
                     )
                   )
                |> persist

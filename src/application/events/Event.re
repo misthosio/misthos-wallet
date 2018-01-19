@@ -44,13 +44,15 @@ module ProspectSuggested = {
     processId: string,
     supporterId: string,
     prospectId: string,
-    prospectPubKey: string
+    prospectPubKey: string,
+    policy: Policy.t
   };
-  let make = (~supporterId, ~prospectId, ~prospectPubKey) => {
+  let make = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) => {
     processId: Uuid.v4(),
     supporterId,
     prospectId,
-    prospectPubKey
+    prospectPubKey,
+    policy
   };
   let encode = event =>
     Json.Encode.(
@@ -59,7 +61,8 @@ module ProspectSuggested = {
         ("processId", string(event.processId)),
         ("supporterId", string(event.supporterId)),
         ("prospectId", string(event.prospectId)),
-        ("prospectPubKey", string(event.prospectPubKey))
+        ("prospectPubKey", string(event.prospectPubKey)),
+        ("policy", Policy.encode(event.policy))
       ])
     );
   let decode = raw =>
@@ -67,7 +70,8 @@ module ProspectSuggested = {
       processId: raw |> field("processId", string),
       supporterId: raw |> field("supporterId", string),
       prospectId: raw |> field("prospectId", string),
-      prospectPubKey: raw |> field("prospectPubKey", string)
+      prospectPubKey: raw |> field("prospectPubKey", string),
+      policy: raw |> field("policy", Policy.decode)
     };
 };
 
@@ -192,9 +196,10 @@ type t =
   | ContributionApproved(ContributionApproved.t)
   | ContributionAccepted(ContributionAccepted.t);
 
-let makeProspectSuggested = (~supporterId, ~prospectId, ~prospectPubKey) =>
+let makeProspectSuggested =
+    (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   ProspectSuggested(
-    ProspectSuggested.make(~supporterId, ~prospectId, ~prospectPubKey)
+    ProspectSuggested.make(~supporterId, ~prospectId, ~prospectPubKey, ~policy)
   );
 
 let encode =

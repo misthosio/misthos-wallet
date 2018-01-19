@@ -1,20 +1,24 @@
+open Event;
+
 type state = {
   partnerIds: list(string),
   partnerAddresses: list(string),
   partnerPubKeys: list(string),
-  systemPubKey: string
+  systemPubKey: string,
+  metaPolicy: Policy.t
 };
 
 let makeState = () => {
   partnerIds: [],
   partnerAddresses: [],
   partnerPubKeys: [],
-  systemPubKey: ""
+  systemPubKey: "",
+  metaPolicy: Policy.absolute
 };
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated({creatorId, creatorPubKey, systemIssuer}) => {
+  | VentureCreated({creatorId, creatorPubKey, metaPolicy, systemIssuer}) => {
       ...state,
       partnerIds: [creatorId, ...state.partnerIds],
       partnerAddresses: [
@@ -22,7 +26,8 @@ let apply = (event: Event.t, state) =>
         ...state.partnerAddresses
       ],
       partnerPubKeys: [creatorPubKey, ...state.partnerPubKeys],
-      systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair
+      systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
+      metaPolicy
     }
   | PartnerAdded({blockstackId, pubKey}) => {
       ...state,
@@ -40,11 +45,18 @@ type result =
   | Ok
   | InvalidIssuer;
 
+let validateProspectSuggested = (event, state) => Ok;
+
+let validateEvent =
+  fun
+  | ProspectSuggested(event) => validateProspectSuggested(event)
+  | _ => ((_) => Ok);
+
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
-  if (Event.isSystemEvent(event) && issuerPubKey == state.systemPubKey) {
-    Ok;
-  } else if (state.partnerPubKeys |> List.mem(issuerPubKey)) {
-    Ok;
-  } else {
+  if (Event.isSystemEvent(event) && issuerPubKey != state.systemPubKey) {
     InvalidIssuer;
+  } else if (state.partnerPubKeys |> List.mem(issuerPubKey) == false) {
+    InvalidIssuer;
+  } else {
+    validateEvent(event, state);
   };

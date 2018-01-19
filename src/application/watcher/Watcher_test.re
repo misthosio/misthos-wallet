@@ -15,14 +15,16 @@ let () =
         ~metaPolicy=Policy.absolute
       );
     let (_, log) =
-      EventLog.make() |> EventLog.append(issuer, VentureCreated(ventureCreated));
+      EventLog.make()
+      |> EventLog.append(issuer, VentureCreated(ventureCreated));
     let prospectId = "wackerman.id";
     let prospectPubKey = "sticks";
     let prospectSuggestion =
       Event.ProspectSuggested.make(
         ~supporterId="bozzio.id",
         ~prospectId,
-        ~prospectPubKey
+        ~prospectPubKey,
+        ~policy=Policy.absolute
       );
     let processId = prospectSuggestion.processId;
     test("Process is in progress", () => {
