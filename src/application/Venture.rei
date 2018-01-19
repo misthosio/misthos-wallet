@@ -7,12 +7,19 @@ module Index: {
   let load: unit => Js.Promise.t(t);
 };
 
+module Validation: {
+  type result =
+    | Ok
+    | InvalidIssuer;
+};
+
 type t;
 
 let load: (~ventureId: string) => Js.Promise.t(t);
 
 let getId: t => string;
 
+/* TODO remove dependency. Move into view Folder */
 let getViewModel: t => ViewModel.t;
 
 let getPartnerHistoryUrls: (Session.Data.t, t) => Js.Promise.t(array(string));
@@ -31,7 +38,7 @@ module Cmd: {
   module Synchronize: {
     type result =
       | Ok(t)
-      | Error(EventLog.item, ValidationState.validation);
+      | Error(EventLog.item, Validation.result);
     let exec: (list(EventLog.t), t) => Js.Promise.t(result);
   };
 };

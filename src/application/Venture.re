@@ -1,10 +1,12 @@
-module Index = VentureIndex;
+module Index = Venture__Index;
+
+module Validation = Venture__Validation;
 
 type t = {
   id: string,
   log: EventLog.t,
   watchers: list(Watcher.t),
-  state: ValidationState.t,
+  state: Validation.state,
   viewModel: ViewModel.t
 };
 
@@ -12,7 +14,7 @@ let make = id => {
   id,
   log: EventLog.make(),
   watchers: [],
-  state: ValidationState.make(),
+  state: Validation.makeState(),
   viewModel: ViewModel.make()
 };
 
@@ -46,7 +48,7 @@ let rec applyWatcherEvents = ({id, log, watchers, state, viewModel}) => {
   | Some((issuer, event)) =>
     let (item, log) = log |> EventLog.append(issuer, event);
     let watchers = watchers |> updateWatchers(item, log);
-    let state = state |> ValidationState.apply(event);
+    let state = state |> Validation.apply(event);
     let viewModel = viewModel |> ViewModel.apply(event);
     applyWatcherEvents({id, log, watchers, state, viewModel});
   };
@@ -55,7 +57,7 @@ let rec applyWatcherEvents = ({id, log, watchers, state, viewModel}) => {
 let apply = (issuer, event, {id, log, watchers, state, viewModel}) => {
   let (item, log) = log |> EventLog.append(issuer, event);
   let watchers = watchers |> updateWatchers(item, log);
-  let state = state |> ValidationState.apply(event);
+  let state = state |> Validation.apply(event);
   let viewModel = viewModel |> ViewModel.apply(event);
   applyWatcherEvents({id, log, watchers, state, viewModel});
 };
@@ -74,7 +76,7 @@ let reconstruct = log => {
            | Some(w) => [w, ...watchers]
            | None => watchers
            },
-           state |> ValidationState.apply(event),
+           state |> Validation.apply(event),
            viewModel |> ViewModel.apply(event)
          ),
          ("", [], state, viewModel)
@@ -130,7 +132,7 @@ module Synchronize = {
     |> Js.Promise.all;
   type result =
     | Ok(t)
-    | Error(EventLog.item, ValidationState.validation);
+    | Error(EventLog.item, Validation.result);
   let exec = (otherLogs, {log} as venture) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
     let (venture, _error) =
@@ -143,11 +145,11 @@ module Synchronize = {
              if (Js.Option.isSome(error)) {
                (venture, error);
              } else {
-               switch (item |> ValidationState.validate(state)) {
+               switch (item |> Validation.validate(state)) {
                | Ok =>
                  let log = log |> EventLog.appendItem(item);
                  let watchers = watchers |> updateWatchers(item, log);
-                 let state = state |> ValidationState.apply(event);
+                 let state = state |> Validation.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
                  ({...venture, log, watchers, state, viewModel}, None);
                /* When the issuerPubKey is not recognized ignore the event */

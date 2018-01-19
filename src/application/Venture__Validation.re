@@ -1,11 +1,11 @@
-type t = {
+type state = {
   partnerIds: list(string),
   partnerAddresses: list(string),
   partnerPubKeys: list(string),
   systemPubKey: string
 };
 
-let make = () => {
+let makeState = () => {
   partnerIds: [],
   partnerAddresses: [],
   partnerPubKeys: [],
@@ -36,7 +36,7 @@ let apply = (event: Event.t, state) =>
   | _ => state
   };
 
-type validation =
+type result =
   | Ok
   | InvalidIssuer;
 
