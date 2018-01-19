@@ -132,10 +132,10 @@ module Synchronize = {
     |> Js.Promise.all;
   type result =
     | Ok(t)
-    | Error(EventLog.item, Validation.result);
+    | Error(t, EventLog.item, Validation.result);
   let exec = (otherLogs, {log} as venture) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
-    let (venture, _error) =
+    let (venture, error) =
       newItems
       |> List.fold_left(
            (
@@ -154,12 +154,26 @@ module Synchronize = {
                  ({...venture, log, watchers, state, viewModel}, None);
                /* When the issuerPubKey is not recognized ignore the event */
                | InvalidIssuer => (venture, None)
+               | PartnerApprovalPolicyConflict(_, _) as conflict => (
+                   venture,
+                   Some(Error(venture, item, conflict))
+                 )
                };
              },
            (venture, None)
          );
     Js.Promise.(
-      applyWatcherEvents(venture) |> persist |> then_(p => Ok(p) |> resolve)
+      applyWatcherEvents(venture)
+      |> persist
+      |> then_(p =>
+           (
+             switch error {
+             | None => Ok(p)
+             | Some(e) => e
+             }
+           )
+           |> resolve
+         )
     );
   };
 };

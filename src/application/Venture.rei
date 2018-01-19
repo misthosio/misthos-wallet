@@ -10,7 +10,8 @@ module Index: {
 module Validation: {
   type result =
     | Ok
-    | InvalidIssuer;
+    | InvalidIssuer
+    | PartnerApprovalPolicyConflict(Event.ProspectSuggested.t, Policy.t);
 };
 
 type t;
@@ -38,7 +39,7 @@ module Cmd: {
   module Synchronize: {
     type result =
       | Ok(t)
-      | Error(EventLog.item, Validation.result);
+      | Error(t, EventLog.item, Validation.result);
     let exec: (list(EventLog.t), t) => Js.Promise.t(result);
   };
 };

@@ -5,7 +5,8 @@ type state = {
   partnerAddresses: list(string),
   partnerPubKeys: list(string),
   systemPubKey: string,
-  metaPolicy: Policy.t
+  metaPolicy: Policy.t,
+  addPartnerPolicy: Policy.t
 };
 
 let makeState = () => {
@@ -13,7 +14,8 @@ let makeState = () => {
   partnerAddresses: [],
   partnerPubKeys: [],
   systemPubKey: "",
-  metaPolicy: Policy.absolute
+  metaPolicy: Policy.absolute,
+  addPartnerPolicy: Policy.absolute
 };
 
 let apply = (event: Event.t, state) =>
@@ -27,7 +29,8 @@ let apply = (event: Event.t, state) =>
       ],
       partnerPubKeys: [creatorPubKey, ...state.partnerPubKeys],
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
-      metaPolicy
+      metaPolicy,
+      addPartnerPolicy: metaPolicy
     }
   | PartnerAdded({blockstackId, pubKey}) => {
       ...state,
@@ -43,9 +46,14 @@ let apply = (event: Event.t, state) =>
 
 type result =
   | Ok
-  | InvalidIssuer;
+  | InvalidIssuer
+  | PartnerApprovalPolicyConflict(ProspectSuggested.t, Policy.t);
 
-let validateProspectSuggested = (event, state) => Ok;
+let validateProspectSuggested = (event: ProspectSuggested.t, state) =>
+  switch (state.addPartnerPolicy == event.policy) {
+  | true => Ok
+  | _ => PartnerApprovalPolicyConflict(event, state.addPartnerPolicy)
+  };
 
 let validateEvent =
   fun

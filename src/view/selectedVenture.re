@@ -52,9 +52,26 @@ let make = (~venture as initialVenture, ~session, _children) => {
   reducer: (action, state) =>
     switch action {
     | WorkerMessage(Fetched(eventLogs)) =>
-      Js.log("Received event logs from worker");
-      Js.log(eventLogs);
-      ReasonReact.NoUpdate;
+      ReasonReact.SideEffects(
+        (
+          ({send, state}) =>
+            Js.Promise.(
+              Cmd.Synchronize.(
+                state.venture
+                |> exec(eventLogs)
+                |> then_(
+                     fun
+                     | Ok(venture) => send(UpdateVenture(venture)) |> resolve
+                     | Error(venture, _item, _result) => {
+                         Js.log("An error occured while synchronizing");
+                         send(UpdateVenture(venture)) |> resolve;
+                       }
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({...state, prospectId: text})
     | SuggestProspect =>
@@ -93,7 +110,11 @@ let make = (~venture as initialVenture, ~session, _children) => {
            )
       )
       |> ignore;
-      ReasonReact.Update({...state, venture, viewModel: Venture.getViewModel(venture)});
+      ReasonReact.Update({
+        ...state,
+        venture,
+        viewModel: Venture.getViewModel(venture)
+      });
     },
   render: ({send, state}) => {
     let partners =
