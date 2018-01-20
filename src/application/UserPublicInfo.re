@@ -19,12 +19,15 @@ type readResult =
 
 let read = (~blockstackId as username) =>
   Js.Promise.(
-    Blockstack.getFileWithOpts(infoFileName, ~username, ())
+    Blockstack.getFileFromUser(infoFileName, ~username)
     |> then_(nullFile =>
          switch (Js.Nullable.to_opt(nullFile)) {
          | None => resolve(NotFound)
          | Some(raw) => resolve(Ok(raw |> Json.parseOrRaise |> decode))
          }
        )
-    |> catch(_error => resolve(NotFound))
+    |> catch(error => {
+         Utils.printError("Couldn't fetch public.json", error);
+         resolve(NotFound);
+       })
   );

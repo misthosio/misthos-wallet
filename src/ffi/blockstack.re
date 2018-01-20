@@ -30,29 +30,13 @@ external getFileDecrypted :
   Js.Promise.t(Js.nullable(string)) =
   "getFile";
 
-type getFileOpts = {
-  .
-  "decrypt": Js.null(Js.boolean),
-  "username": Js.null(string),
-  "app": Js.null(string),
-  "zoneFileLookupURL": Js.null(string)
-};
-
 [@bs.module "blockstack"]
 external getFileWithJsOpts :
-  (string, getFileOpts) => Js.Promise.t(Js.nullable(string)) =
+  (string, Js.t({..})) => Js.Promise.t(Js.nullable(string)) =
   "getFile";
 
-let getFileWithOpts =
-    (file, ~decrypt=?, ~username=?, ~app=?, ~zoneFileLookupURL=?, ()) => {
-  let opts = {
-    "decrypt": Js.Null.from_opt(DoNotFormat.boolToJsBoolean(decrypt)),
-    "username": Js.Null.from_opt(username),
-    "app": Js.Null.from_opt(app),
-    "zoneFileLookupURL": Js.Null.from_opt(zoneFileLookupURL)
-  };
-  getFileWithJsOpts(file, opts);
-};
+let getFileFromUser = (file, ~username) =>
+  getFileWithJsOpts(file, {"username": username});
 
 [@bs.module "blockstack"]
 external putFile : (string, string) => Js.Promise.t(unit) = "";

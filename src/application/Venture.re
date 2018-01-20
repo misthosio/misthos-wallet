@@ -115,10 +115,9 @@ let load = (~ventureId) =>
 
 let join = (session: Session.Data.t, ~blockstackId, ~ventureId) =>
   Js.Promise.(
-    Blockstack.getFileWithOpts(
+    Blockstack.getFileFromUser(
       ventureId ++ "/" ++ session.address ++ "/log.json",
-      ~username=blockstackId,
-      ()
+      ~username=blockstackId
     )
     |> catch(_error => raise(Not_found))
     |> then_(nullFile =>

@@ -28,3 +28,8 @@ let hash = s => s |> Bitcoin.Crypto.sha256 |> bufToHex;
 [@bs.val] [@bs.scope "window.location"] external origin : string = "origin";
 
 let (>>) = (f, g, v) => v |> f |> g;
+
+let printError = (message, error) => {
+  Js.log("Error - " ++ message ++ ":");
+  Js.log(error);
+};
