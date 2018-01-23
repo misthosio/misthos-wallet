@@ -1,29 +1,21 @@
 [@bs.module] external logo : string = "../assets/img/reactlogo.png";
 
-[@bs.module] external imagine : string = "../assets/img/sidebar-3.jpg";
-
 let text = ReasonReact.stringToElement;
 
 let component = ReasonReact.statelessComponent("Sidebar");
 
 let make = (~currentUrl, _children) => {
   ...component,
-  render: (_) => {
-    let sidebarBackground =
-      ReactDOMRe.Style.make(~backgroundImage="url(" ++ imagine ++ ")", ());
+  render: (_) =>
     <div id="sidebar" className="sidebar">
-      <div className="sidebar-background" style=sidebarBackground />
+      <div className="sidebar-background" />
       <div className="logo">
-        <a
-          href="/"
-          className="simple-text logo-mini">
+        <Router.Link href="/" className="simple-text logo-mini">
           <div className="logo-img"> <img src=logo alt="logo_image" /> </div>
-        </a>
-        <a
-          href="/"
-          className="simple-text logo-normal">
+        </Router.Link>
+        <Router.Link href="/" className="simple-text logo-normal">
           (text("Misthos"))
-        </a>
+        </Router.Link>
       </div>
       <div className="sidebar-wrapper">
         <ul className="nav flex-column">
@@ -43,6 +35,5 @@ let make = (~currentUrl, _children) => {
             </li>
           </ul>
       </div>
-    </div>;
-  }
+    </div>
 };
