@@ -217,7 +217,7 @@ let make = (~session, _children) => {
       />
       <input
         placeholder="Join Venture Id"
-        value=state.joinVentureUserId
+        value=state.joinVentureId
         onChange=(e => send(ChangeJoinVentureId(formText(e))))
         autoFocus=Js.true_
       />
