@@ -15,14 +15,14 @@ let make = (~currentUrl, _children) => {
       <div className="sidebar-background" style=sidebarBackground />
       <div className="logo">
         <a
-          href="https://www.creative-tim.com"
+          href="/"
           className="simple-text logo-mini">
           <div className="logo-img"> <img src=logo alt="logo_image" /> </div>
         </a>
         <a
-          href="https://www.creative-tim.com"
+          href="/"
           className="simple-text logo-normal">
-          (text("Creative Tim"))
+          (text("Misthos"))
         </a>
       </div>
       <div className="sidebar-wrapper">
