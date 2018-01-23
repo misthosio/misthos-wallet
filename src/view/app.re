@@ -1,6 +1,6 @@
 [%bs.raw {|require('./app.css')|}];
 
-[@bs.module] external logo : string = "./logo.svg";
+let text = ReasonReact.stringToElement;
 
 type action =
   | LoginCompleted(Session.t)
@@ -11,7 +11,7 @@ type state = {session: Session.t};
 
 let component = ReasonReact.reducerComponent("App");
 
-let make = _children => {
+let make = (~currentUrl: ReasonReact.Router.url, _children) => {
   ...component,
   initialState: () => {session: Session.getCurrentSession()},
   didMount: ({state}) =>
@@ -36,36 +36,37 @@ let make = _children => {
     | SignOut => ReasonReact.Update({session: Session.signOut()})
     },
   render: ({send, state}) =>
-    <div>
-      {
-        let header =
+    <div className="wrapper">
+      <Sidebar currentUrl />
+      <div>
+        {
+          let header =
+            switch state.session {
+            | NotLoggedIn => "Welcome To Misthos"
+            | LoginPending => "Waiting for login to complete"
+            | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
+            | LoggedIn(data) => "Hello " ++ data.blockstackId
+            };
+          <h1> (text(header)) </h1>;
+        }
+        (
           switch state.session {
-          | NotLoggedIn => "Welcome To Misthos"
-          | LoginPending => "Waiting for login to complete"
-          | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
-          | LoggedIn(data) => "Hello " ++ data.blockstackId
-          };
-        <h1> (ReasonReact.stringToElement(header)) </h1>;
-      }
-      (
-        switch state.session {
-        | NotLoggedIn =>
-          <button onClick=(_e => send(SignIn))>
-            (ReasonReact.stringToElement("Sign In with Blockstack"))
-          </button>
-        | LoggedIn(_) =>
-          <button onClick=(_e => send(SignOut))>
-            (ReasonReact.stringToElement("SignOut"))
-          </button>
-        | LoginPending
-        | AnonymousLogin => <div />
-        }
-      )
-      (
-        switch state.session {
-        | LoggedIn(session) => <Ventures session />
-        | _ => <div />
-        }
-      )
+          | NotLoggedIn =>
+            <button onClick=(_e => send(SignIn))>
+              (text("Sign In with Blockstack"))
+            </button>
+          | LoggedIn(_) =>
+            <button onClick=(_e => send(SignOut))> (text("SignOut")) </button>
+          | LoginPending
+          | AnonymousLogin => <div />
+          }
+        )
+        (
+          switch state.session {
+          | LoggedIn(session) => <Ventures session />
+          | _ => <div />
+          }
+        )
+      </div>
     </div>
 };
