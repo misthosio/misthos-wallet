@@ -1,4 +1,4 @@
-[%bs.raw {|require('./index.css')|}];
+[%bs.raw {|require('./assets/css/index.css')|}];
 
 [%bs.raw {|require('bootstrap/dist/css/bootstrap.css')|}];
 

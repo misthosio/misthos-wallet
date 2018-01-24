@@ -1,4 +1,4 @@
-[@bs.module] external logo : string = "../assets/img/reactlogo.png";
+[@bs.module] external logo : string = "../../assets/img/reactlogo.png";
 
 let text = ReasonReact.stringToElement;
 
