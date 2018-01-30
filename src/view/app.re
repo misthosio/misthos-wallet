@@ -37,36 +37,40 @@ let make = (~currentUrl: ReasonReact.Router.url, _children) => {
     },
   render: ({send, state}) =>
     <div className="wrapper">
-      <Sidebar currentUrl />
-      <div>
-        {
-          let header =
+      /* <Sidebar currentUrl /> */
+      /* <div id="main-panel" className="main-panel"> <Header /> </div> */
+
+        <div>
+          {
+            let header =
+              switch state.session {
+              | NotLoggedIn => "Welcome To Misthos"
+              | LoginPending => "Waiting for login to complete"
+              | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
+              | LoggedIn(data) => "Hello " ++ data.blockstackId
+              };
+            <h1> (text(header)) </h1>;
+          }
+          (
             switch state.session {
-            | NotLoggedIn => "Welcome To Misthos"
-            | LoginPending => "Waiting for login to complete"
-            | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
-            | LoggedIn(data) => "Hello " ++ data.blockstackId
-            };
-          <h1> (text(header)) </h1>;
-        }
-        (
-          switch state.session {
-          | NotLoggedIn =>
-            <button onClick=(_e => send(SignIn))>
-              (text("Sign In with Blockstack"))
-            </button>
-          | LoggedIn(_) =>
-            <button onClick=(_e => send(SignOut))> (text("SignOut")) </button>
-          | LoginPending
-          | AnonymousLogin => <div />
-          }
-        )
-        (
-          switch state.session {
-          | LoggedIn(session) => <Ventures session />
-          | _ => <div />
-          }
-        )
+            | NotLoggedIn =>
+              <button onClick=(_e => send(SignIn))>
+                (text("Sign In with Blockstack"))
+              </button>
+            | LoggedIn(_) =>
+              <button onClick=(_e => send(SignOut))>
+                (text("SignOut"))
+              </button>
+            | LoginPending
+            | AnonymousLogin => <div />
+            }
+          )
+          (
+            switch state.session {
+            | LoggedIn(session) => <Ventures session />
+            | _ => <div />
+            }
+          )
+        </div>
       </div>
-    </div>
 };
