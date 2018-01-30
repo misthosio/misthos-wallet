@@ -35,7 +35,6 @@ let make = (suggestion: ProspectSuggested.t, log) => {
             }
           | PartnerAdded(event) when event.processId == suggestion.processId =>
             completed := true;
-            result := None;
             state^;
           | PartnerAdded(event) => {
               ...state^,
@@ -44,6 +43,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
           | _ => state^
           }
         );
+      result := None;
       if (completed^ == false
           && state^.policy
           |> Policy.fulfilled(
