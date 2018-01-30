@@ -7,7 +7,8 @@ type state = {
   partnerPubKeys: list(string),
   systemPubKey: string,
   metaPolicy: Policy.t,
-  addPartnerPolicy: Policy.t
+  addPartnerPolicy: Policy.t,
+  prospectIds: list((string, string))
 };
 
 let makeState = () => {
@@ -17,7 +18,8 @@ let makeState = () => {
   partnerPubKeys: [],
   systemPubKey: "",
   metaPolicy: Policy.absolute,
-  addPartnerPolicy: Policy.absolute
+  addPartnerPolicy: Policy.absolute,
+  prospectIds: []
 };
 
 let apply = (event: Event.t, state) =>
@@ -40,6 +42,10 @@ let apply = (event: Event.t, state) =>
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
       addPartnerPolicy: metaPolicy
+    }
+  | ProspectSuggested({prospectId, processId}) => {
+      ...state,
+      prospectIds: [(prospectId, processId), ...state.prospectIds]
     }
   | PartnerAdded({blockstackId, pubKey}) => {
       ...state,
@@ -77,3 +83,6 @@ let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   } else {
     validateEvent(event, state);
   };
+
+let processIdForProspect = (prospectId, state) =>
+  state.prospectIds |> List.assoc(prospectId);

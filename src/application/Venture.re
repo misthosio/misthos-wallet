@@ -250,5 +250,23 @@ module Cmd = {
            )
       );
   };
+  module ApproveProspect = {
+    type result =
+      | Ok(t);
+    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) =>
+      Js.Promise.(
+        venture
+        |> apply(
+             session.appKeyPair,
+             Event.makeProspectApproved(
+               ~processId=Validation.processIdForProspect(prospectId, state),
+               ~prospectId,
+               ~supporterId=session.blockstackId
+             )
+           )
+        |> persist
+        |> then_(p => resolve(Ok(p)))
+      );
+  };
   module Synchronize = Synchronize;
 };

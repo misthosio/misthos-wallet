@@ -1,5 +1,7 @@
 open Venture;
 
+let text = ReasonReact.stringToElement;
+
 type state = {
   venture: Venture.t,
   viewModel: ViewModel.t,
@@ -11,6 +13,7 @@ type action =
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | SuggestProspect
+  | ApproveProspect(string)
   | WorkerMessage(Worker.Message.receive);
 
 let changeNewPartnerId = event =>
@@ -100,6 +103,27 @@ let make = (~venture as initialVenture, ~session, _children) => {
           )
         )
       }
+    | ApproveProspect(prospectId) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.ApproveProspect.(
+                state.venture
+                |> exec(session, ~prospectId)
+                |> then_(result =>
+                     (
+                       switch result {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
     | UpdateVenture(venture) =>
       Js.Promise.(
         Venture.getPartnerHistoryUrls(session, venture)
@@ -108,8 +132,8 @@ let make = (~venture as initialVenture, ~session, _children) => {
              |> Worker.postMessage(state.worker^)
              |> resolve
            )
-      )
-      |> ignore;
+        |> ignore
+      );
       ReasonReact.Update({
         ...state,
         venture,
@@ -121,10 +145,8 @@ let make = (~venture as initialVenture, ~session, _children) => {
       ReasonReact.arrayToElement(
         Array.of_list(
           ViewModel.getPartners(state.viewModel)
-          |> List.map((m: ViewModel.Partner.t) =>
-               <li key=m.blockstackId>
-                 (ReasonReact.stringToElement(m.blockstackId))
-               </li>
+          |> List.map((m: ViewModel.partner) =>
+               <li key=m.blockstackId> (text(m.blockstackId)) </li>
              )
         )
       );
@@ -132,10 +154,10 @@ let make = (~venture as initialVenture, ~session, _children) => {
       ReasonReact.arrayToElement(
         Array.of_list(
           ViewModel.getProspects(state.viewModel)
-          |> List.map((prospect: ViewModel.Prospect.t) =>
+          |> List.map((prospect: ViewModel.prospect) =>
                <li key=prospect.blockstackId>
                  (
-                   ReasonReact.stringToElement(
+                   text(
                      "'"
                      ++ prospect.blockstackId
                      ++ "' approved by: "
@@ -146,17 +168,19 @@ let make = (~venture as initialVenture, ~session, _children) => {
                         )
                    )
                  )
+                 <button
+                   onClick=(_e => send(ApproveProspect(prospect.blockstackId)))>
+                   (text("Approve Prospect"))
+                 </button>
                </li>
              )
         )
       );
     <div>
-      <h2>
-        (ReasonReact.stringToElement(ViewModel.ventureName(state.viewModel)))
-      </h2>
-      (ReasonReact.stringToElement("Partners:"))
+      <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
+      (text("Partners:"))
       <ul> partners </ul>
-      (ReasonReact.stringToElement("Prospects:"))
+      (text("Prospects:"))
       <ul> prospects </ul>
       <input
         placeholder="BlockstackId"
@@ -165,7 +189,7 @@ let make = (~venture as initialVenture, ~session, _children) => {
         autoFocus=Js.false_
       />
       <button onClick=(_e => send(SuggestProspect))>
-        (ReasonReact.stringToElement("Suggest Prospect"))
+        (text("Suggest Prospect"))
       </button>
     </div>;
   }

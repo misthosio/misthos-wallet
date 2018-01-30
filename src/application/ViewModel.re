@@ -1,24 +1,37 @@
-module Partner = {
-  type t = {blockstackId: string};
-};
+type partner = {blockstackId: string};
 
-module Prospect = {
-  type t = {
-    blockstackId: string,
-    approvedBy: list(string)
-  };
+type prospect = {
+  blockstackId: string,
+  approvedBy: list(string)
 };
 
 type t = {
   name: string,
-  prospects: list(Prospect.t)
+  partners: list(partner),
+  prospects: list(prospect)
 };
 
-let make = () => {name: "", prospects: []};
+let make = () => {name: "", partners: [], prospects: []};
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated(event) => {...state, name: event.ventureName}
+  | VentureCreated({ventureName, creatorId}) => {
+      ...state,
+      name: ventureName,
+      partners: [{blockstackId: creatorId}]
+    }
+  | ProspectApproved({prospectId, supporterId}) => {
+      ...state,
+      prospects:
+        state.prospects
+        |> List.map(p =>
+             if (p.blockstackId == prospectId) {
+               {...p, approvedBy: [supporterId, ...p.approvedBy]};
+             } else {
+               p;
+             }
+           )
+    }
   | ProspectSuggested(event) => {
       ...state,
       prospects: [
@@ -26,10 +39,16 @@ let apply = (event: Event.t, state) =>
         ...state.prospects
       ]
     }
+  | PartnerAdded({blockstackId}) => {
+      ...state,
+      partners: [{blockstackId: blockstackId}, ...state.partners],
+      prospects:
+        state.prospects |> List.filter(p => p.blockstackId != blockstackId)
+    }
   | _ => state
   };
 
-let getPartners = state => [];
+let getPartners = state => state.partners;
 
 let getProspects = state => state.prospects;
 

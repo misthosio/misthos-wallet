@@ -202,6 +202,11 @@ let makeProspectSuggested =
     ProspectSuggested.make(~supporterId, ~prospectId, ~prospectPubKey, ~policy)
   );
 
+let makeProspectApproved = (~processId, ~prospectId, ~supporterId) =>
+  ProspectApproved(
+    ProspectApproved.make(~processId, ~prospectId, ~supporterId)
+  );
+
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)

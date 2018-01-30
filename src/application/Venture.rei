@@ -40,6 +40,11 @@ module Cmd: {
       | NoUserInfo;
     let exec: (Session.Data.t, ~prospectId: string, t) => Js.Promise.t(result);
   };
+  module ApproveProspect: {
+    type result =
+      | Ok(t);
+    let exec: (Session.Data.t, ~prospectId: string, t) => Js.Promise.t(result);
+  };
   module Synchronize: {
     type result =
       | Ok(t)
