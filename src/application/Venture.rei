@@ -11,8 +11,9 @@ module Validation: {
   type result =
     | Ok
     | InvalidIssuer
-    | PartnerApprovalPolicyConflict(Event.ProspectSuggested.t, Policy.t)
-    | PartnerApprovalProcessIdMissmatch(Event.ProspectApproved.t, string);
+    | ProcessIdMissmatch
+    | ProspectSuggestedPolicyMissmatch(Event.ProspectSuggested.t, Policy.t)
+    | PartnerAddedPolicyNotFulfilled(Event.PartnerAdded.t, Policy.t);
 };
 
 type t;

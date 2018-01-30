@@ -178,7 +178,11 @@ module Synchronize = {
                  let state = state |> Validation.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
                  ({...venture, log, watchers, state, viewModel}, None);
-               | PartnerApprovalPolicyConflict(_, _) as conflict => (
+               | ProspectSuggestedPolicyMissmatch(_, _) as conflict => (
+                   venture,
+                   Some(Error(venture, item, conflict))
+                 )
+               | PartnerAddedPolicyNotFulfilled(_, _) as conflict => (
                    venture,
                    Some(Error(venture, item, conflict))
                  )
@@ -186,7 +190,7 @@ module Synchronize = {
                | InvalidIssuer =>
                  logMessage("Invalid issuer detected in log item");
                  (venture, None);
-               | PartnerApprovalProcessIdMissmatch(_, _) =>
+               | ProcessIdMissmatch =>
                  logMessage("Invalid ProcessId detected");
                  (venture, None);
                };

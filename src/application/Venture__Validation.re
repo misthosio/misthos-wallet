@@ -74,27 +74,49 @@ let apply = (event: Event.t, state) =>
 type result =
   | Ok
   | InvalidIssuer
-  | PartnerApprovalPolicyConflict(ProspectSuggested.t, Policy.t)
-  | PartnerApprovalProcessIdMissmatch(ProspectApproved.t, string);
+  | ProcessIdMissmatch
+  | ProspectSuggestedPolicyMissmatch(ProspectSuggested.t, Policy.t)
+  | PartnerAddedPolicyNotFulfilled(PartnerAdded.t, Policy.t);
 
 let validateProspectSuggested =
     (event: ProspectSuggested.t, _issuerPubKey, {addPartnerPolicy}) =>
   switch (addPartnerPolicy == event.policy) {
   | true => Ok
-  | _ => PartnerApprovalPolicyConflict(event, addPartnerPolicy)
+  | _ => ProspectSuggestedPolicyMissmatch(event, addPartnerPolicy)
   };
 
 let validateProspectApproved =
     (
-      {processId, prospectId, supporterId} as event: ProspectApproved.t,
+      {processId, prospectId, supporterId}: ProspectApproved.t,
       issuerPubKey,
       {prospects, partnerPubKeys}
     ) => {
   let prospect = prospects |> List.assoc(prospectId);
   if (prospect.processId != processId) {
-    PartnerApprovalProcessIdMissmatch(event, prospect.processId);
+    ProcessIdMissmatch;
   } else if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
     InvalidIssuer;
+  } else {
+    Ok;
+  };
+};
+
+let validatePartnerAdded =
+    (
+      {processId, blockstackId} as event: PartnerAdded.t,
+      _issuerPubKey,
+      {prospects, partnerIds}
+    ) => {
+  let prospect = prospects |> List.assoc(blockstackId);
+  if (prospect.processId != processId) {
+    ProcessIdMissmatch;
+  } else if (Policy.fulfilled(
+               ~eligable=partnerIds,
+               ~approved=prospect.supporterIds,
+               prospect.policy
+             )
+             == false) {
+    PartnerAddedPolicyNotFulfilled(event, prospect.policy);
   } else {
     Ok;
   };
@@ -104,6 +126,7 @@ let validateEvent =
   fun
   | ProspectSuggested(event) => validateProspectSuggested(event)
   | ProspectApproved(event) => validateProspectApproved(event)
+  | PartnerAdded(event) => validatePartnerAdded(event)
   | _ => ((_, _) => Ok);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
