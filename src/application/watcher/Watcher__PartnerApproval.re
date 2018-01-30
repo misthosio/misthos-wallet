@@ -44,7 +44,8 @@ let make = (suggestion: ProspectSuggested.t, log) => {
           | _ => state^
           }
         );
-      if (state^.policy
+      if (completed^ == false
+          && state^.policy
           |> Policy.fulfilled(
                ~eligable=state^.eligable,
                ~approved=state^.approvals
