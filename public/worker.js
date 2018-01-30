@@ -17,6 +17,8 @@ function fetchAll(links) {
 
 intervalId = -1;
 links = [];
+oneMinuteInMilliseconds = 60000;
+syncInterval = oneMinuteInMilliseconds;
 
 self.onmessage = ({data}) => {
   logMessage("Message received");
@@ -33,7 +35,7 @@ self.onmessage = ({data}) => {
       fetchAll(links).then(texts => {
           postMessage(texts);
         });
-    }, 300000);
+    }, syncInterval);
   }
 };
 
