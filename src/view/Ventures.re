@@ -74,8 +74,8 @@ let make = (~session, _children) => {
       )
     | VentureLoaded(venture) =>
       ReasonReact.Update({...state, status: None, selected: Some(venture)})
-    | VentureCreated(index, selected)
-    | VentureJoined(index, selected) =>
+    | VentureJoined(index, selected)
+    | VentureCreated(index, selected) =>
       ReasonReact.Update({
         ...state,
         status: None,
@@ -113,7 +113,12 @@ let make = (~session, _children) => {
       | "" => ReasonReact.NoUpdate
       | name =>
         ReasonReact.UpdateWithSideEffects(
-          {...state, status: CreatingVenture(name), newVenture: ""},
+          {
+            ...state,
+            status: CreatingVenture(name),
+            selected: None,
+            newVenture: ""
+          },
           (
             ({send}) =>
               Js.Promise.(
@@ -138,6 +143,7 @@ let make = (~session, _children) => {
           {
             ...state,
             status: JoiningVenture,
+            selected: None,
             joinVentureUserId: "",
             joinVentureId: ""
           },
