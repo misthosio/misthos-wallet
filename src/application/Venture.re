@@ -1,5 +1,3 @@
-let logMessage = msg => Js.log("[Venture] - " ++ msg);
-
 module Index = Venture__Index;
 
 module Validation = Venture__Validation;
