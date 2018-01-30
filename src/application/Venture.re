@@ -1,3 +1,5 @@
+let logMessage = msg => Js.log("[Venture] - " ++ msg);
+
 module Index = Venture__Index;
 
 module Validation = Venture__Validation;
@@ -176,12 +178,17 @@ module Synchronize = {
                  let state = state |> Validation.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
                  ({...venture, log, watchers, state, viewModel}, None);
-               /* When the issuerPubKey is not recognized ignore the event */
-               | InvalidIssuer => (venture, None)
                | PartnerApprovalPolicyConflict(_, _) as conflict => (
                    venture,
                    Some(Error(venture, item, conflict))
                  )
+               /* Ignored validation issues */
+               | InvalidIssuer =>
+                 logMessage("Invalid issuer detected in log item");
+                 (venture, None);
+               | PartnerApprovalProcessIdMissmatch(_, _) =>
+                 logMessage("Invalid ProcessId detected");
+                 (venture, None);
                };
              },
            (venture, None)
