@@ -7,15 +7,7 @@ type t = {
 
 module PartnerApproval = Watcher__PartnerApproval;
 
-module ContributionApproval = {
-  let make = (submission, log) => {
-    val submission = submission;
-    val approval = ref(1);
-    pub receive = _event => approval := approval^ + 1;
-    pub processCompleted = () => false;
-    pub pendingEvent = () => None
-  };
-};
+module ContributionApproval = Watcher__ContributionApproval;
 
 let initWatcherFor = ({event}: EventLog.item, log) =>
   switch event {

@@ -53,11 +53,13 @@ let make = (suggestion: ProspectSuggested.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAdded({
-              processId: suggestion.processId,
-              blockstackId: suggestion.prospectId,
-              pubKey: suggestion.prospectPubKey
-            })
+            PartnerAdded(
+              PartnerAdded.make(
+                ~processId=suggestion.processId,
+                ~blockstackId=suggestion.prospectId,
+                ~pubKey=suggestion.prospectPubKey
+              )
+            )
           ));
       };
     };

@@ -84,6 +84,12 @@ let apply = (event: Event.t, state) =>
                {...c, supporters: [supporterId, ...c.supporters]} : c
            )
     }
+  | ContributionAccepted({processId}) => {
+      ...state,
+      contributions:
+        state.contributions
+        |> List.map(c => c.processId == processId ? {...c, accepted: true} : c)
+    }
   | _ => state
   };
 

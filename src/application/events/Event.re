@@ -109,6 +109,11 @@ module PartnerAdded = {
     blockstackId: string,
     pubKey: string
   };
+  let make = (~processId, ~blockstackId, ~pubKey) => {
+    processId,
+    blockstackId,
+    pubKey
+  };
   let encode = event =>
     Json.Encode.(
       object_([
@@ -201,6 +206,7 @@ module ContributionApproved = {
 
 module ContributionAccepted = {
   type t = {processId: string};
+  let make = (~processId) => {processId: processId};
   let encode = event =>
     Json.Encode.(
       object_([

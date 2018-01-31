@@ -232,6 +232,31 @@ let make = (~venture as initialVenture, ~session, _children) => {
              )
         )
       );
+    let contributions =
+      ReasonReact.arrayToElement(
+        Array.of_list(
+          ViewModel.getContributions(state.viewModel)
+          |> List.filter((contribution: ViewModel.contribution) =>
+               contribution.accepted == true
+             )
+          |> List.map((contribution: ViewModel.contribution) =>
+               <li key=contribution.processId>
+                 (
+                   text(
+                     "'"
+                     ++ contribution.description
+                     ++ "' approved by: "
+                     ++ List.fold_left(
+                          (state, partnerId) => state ++ partnerId ++ " ",
+                          "",
+                          contribution.supporters
+                        )
+                   )
+                 )
+               </li>
+             )
+        )
+      );
     let contributionProcesses =
       ReasonReact.arrayToElement(
         Array.of_list(
@@ -266,6 +291,8 @@ let make = (~venture as initialVenture, ~session, _children) => {
     <div>
       <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
       (text("Contributions:"))
+      <ul> contributions </ul>
+      (text("Pending acceptance:"))
       <ul> contributionProcesses </ul>
       <ContributionInput submit=(submitContribution(send)) />
       (text("Partners:"))
