@@ -316,4 +316,23 @@ module Cmd = {
       );
     };
   };
+  module ApproveContribution = {
+    type result =
+      | Ok(t);
+    let exec = (session: Session.Data.t, ~processId, venture) => {
+      logMessage("Executing 'ApproveContribution' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             session.appKeyPair,
+             Event.makeContributionApproved(
+               ~processId,
+               ~supporterId=session.blockstackId
+             )
+           )
+        |> persist
+        |> then_(p => resolve(Ok(p)))
+      );
+    };
+  };
 };

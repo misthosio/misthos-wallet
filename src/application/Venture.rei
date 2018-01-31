@@ -67,4 +67,9 @@ module Cmd: {
       ) =>
       Js.Promise.t(result);
   };
+  module ApproveContribution: {
+    type result =
+      | Ok(t);
+    let exec: (Session.Data.t, ~processId: string, t) => Js.Promise.t(result);
+  };
 };

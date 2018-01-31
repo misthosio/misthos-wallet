@@ -10,12 +10,13 @@ type state = {
 };
 
 type action =
+  | WorkerMessage(Worker.Message.receive)
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | SuggestProspect
   | ApproveProspect(string)
-  | WorkerMessage(Worker.Message.receive)
-  | SubmitContribution(int, int, string, string);
+  | SubmitContribution(int, int, string, string)
+  | ApproveContribution(string);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
@@ -158,6 +159,27 @@ let make = (~venture as initialVenture, ~session, _children) => {
             )
         )
       )
+    | ApproveContribution(processId) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.ApproveContribution.(
+                state.venture
+                |> exec(session, ~processId)
+                |> then_(result =>
+                     (
+                       switch result {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
     | UpdateVenture(venture) =>
       Js.Promise.(
         Venture.getPartnerHistoryUrls(session, venture)
@@ -210,9 +232,41 @@ let make = (~venture as initialVenture, ~session, _children) => {
              )
         )
       );
+    let contributionProcesses =
+      ReasonReact.arrayToElement(
+        Array.of_list(
+          ViewModel.getContributions(state.viewModel)
+          |> List.filter((contribution: ViewModel.contribution) =>
+               contribution.accepted == false
+             )
+          |> List.map((contribution: ViewModel.contribution) =>
+               <li key=contribution.processId>
+                 (
+                   text(
+                     "'"
+                     ++ contribution.description
+                     ++ "' approved by: "
+                     ++ List.fold_left(
+                          (state, partnerId) => state ++ partnerId ++ " ",
+                          "",
+                          contribution.supporters
+                        )
+                   )
+                 )
+                 <button
+                   onClick=(
+                     _e => send(ApproveContribution(contribution.processId))
+                   )>
+                   (text("Approve Contribution"))
+                 </button>
+               </li>
+             )
+        )
+      );
     <div>
       <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
       (text("Contributions:"))
+      <ul> contributionProcesses </ul>
       <ContributionInput submit=(submitContribution(send)) />
       (text("Partners:"))
       <ul> partners </ul>

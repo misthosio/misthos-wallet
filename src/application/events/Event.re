@@ -183,6 +183,7 @@ module ContributionApproved = {
     processId: string,
     supporterId: string
   };
+  let make = (~processId, ~supporterId) => {processId, supporterId};
   let encode = event =>
     Json.Encode.(
       object_([
@@ -250,6 +251,9 @@ let makeContributionSubmitted =
       ~policy
     )
   );
+
+let makeContributionApproved = (~processId, ~supporterId) =>
+  ContributionApproved(ContributionApproved.make(~processId, ~supporterId));
 
 let encode =
   fun

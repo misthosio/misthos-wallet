@@ -5,13 +5,23 @@ type prospect = {
   approvedBy: list(string)
 };
 
+type contribution = {
+  processId: string,
+  amountInteger: int,
+  amountFraction: int,
+  description: string,
+  supporters: list(string),
+  accepted: bool
+};
+
 type t = {
   name: string,
   partners: list(partner),
-  prospects: list(prospect)
+  prospects: list(prospect),
+  contributions: list(contribution)
 };
 
-let make = () => {name: "", partners: [], prospects: []};
+let make = () => {name: "", partners: [], prospects: [], contributions: []};
 
 let apply = (event: Event.t, state) =>
   switch event {
@@ -45,11 +55,42 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> List.filter(p => p.blockstackId != blockstackId)
     }
+  | ContributionSubmitted({
+      processId,
+      submitterId,
+      amountInteger,
+      amountFraction,
+      description
+    }) => {
+      ...state,
+      contributions: [
+        {
+          processId,
+          amountInteger,
+          amountFraction,
+          description,
+          accepted: false,
+          supporters: [submitterId]
+        },
+        ...state.contributions
+      ]
+    }
+  | ContributionApproved({processId, supporterId}) => {
+      ...state,
+      contributions:
+        state.contributions
+        |> List.map(c =>
+             c.processId == processId ?
+               {...c, supporters: [supporterId, ...c.supporters]} : c
+           )
+    }
   | _ => state
   };
 
 let getPartners = state => state.partners;
 
 let getProspects = state => state.prospects;
+
+let getContributions = state => state.contributions;
 
 let ventureName = state => state.name;
