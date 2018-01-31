@@ -14,6 +14,7 @@ type state = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   addPartnerPolicy: Policy.t,
+  contributionPolicy: Policy.t,
   prospects: list((string, prospect))
 };
 
@@ -25,6 +26,7 @@ let makeState = () => {
   systemPubKey: "",
   metaPolicy: Policy.absolute,
   addPartnerPolicy: Policy.absolute,
+  contributionPolicy: Policy.absolute,
   prospects: []
 };
 
@@ -47,7 +49,8 @@ let apply = (event: Event.t, state) =>
       partnerPubKeys: [(creatorPubKey, creatorId), ...state.partnerPubKeys],
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
-      addPartnerPolicy: metaPolicy
+      addPartnerPolicy: metaPolicy,
+      contributionPolicy: metaPolicy
     }
   | ProspectSuggested({prospectId, processId, supporterId, policy}) => {
       ...state,

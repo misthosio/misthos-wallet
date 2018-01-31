@@ -14,11 +14,18 @@ type action =
   | UpdateVenture(Venture.t)
   | SuggestProspect
   | ApproveProspect(string)
-  | WorkerMessage(Worker.Message.receive);
+  | WorkerMessage(Worker.Message.receive)
+  | SubmitContribution(int, int, string, string);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
+  );
+
+let submitContribution =
+    (send, ~amountInteger, ~amountFraction, ~currency, ~description) =>
+  send(
+    SubmitContribution(amountInteger, amountFraction, currency, description)
   );
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
@@ -124,6 +131,33 @@ let make = (~venture as initialVenture, ~session, _children) => {
             )
         )
       )
+    | SubmitContribution(amountInteger, amountFraction, currency, description) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.SubmitContribution.(
+                state.venture
+                |> exec(
+                     session,
+                     ~amountInteger,
+                     ~amountFraction,
+                     ~currency,
+                     ~description
+                   )
+                |> then_(result =>
+                     (
+                       switch result {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
     | UpdateVenture(venture) =>
       Js.Promise.(
         Venture.getPartnerHistoryUrls(session, venture)
@@ -178,6 +212,8 @@ let make = (~venture as initialVenture, ~session, _children) => {
       );
     <div>
       <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
+      (text("Contributions:"))
+      <ContributionInput submit=(submitContribution(send)) />
       (text("Partners:"))
       <ul> partners </ul>
       (text("Prospects:"))

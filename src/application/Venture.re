@@ -283,6 +283,37 @@ module Cmd = {
         |> persist
         |> then_(p => resolve(Ok(p)))
       );
+    };
   };
-  module Synchronize = Synchronize;
+  module SubmitContribution = {
+    type result =
+      | Ok(t);
+    let exec =
+        (
+          session: Session.Data.t,
+          ~amountInteger: int,
+          ~amountFraction: int,
+          ~currency: string,
+          ~description: string,
+          {state} as venture
+        ) => {
+      logMessage("Executing 'SubmitContribution' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             session.appKeyPair,
+             Event.makeContributionSubmitted(
+               ~submitterId=session.blockstackId,
+               ~amountInteger,
+               ~amountFraction,
+               ~currency,
+               ~description,
+               ~policy=state.contributionPolicy
+             )
+           )
+        |> persist
+        |> then_(p => resolve(Ok(p)))
+      );
+    };
+  };
 };

@@ -36,6 +36,12 @@ module Cmd: {
     type result = (Index.t, t);
     let exec: (Session.Data.t, ~name: string) => Js.Promise.t(result);
   };
+  module Synchronize: {
+    type result =
+      | Ok(t)
+      | Error(t, EventLog.item, Validation.result);
+    let exec: (list(EventLog.t), t) => Js.Promise.t(result);
+  };
   module SuggestProspect: {
     type result =
       | Ok(t)
@@ -47,10 +53,18 @@ module Cmd: {
       | Ok(t);
     let exec: (Session.Data.t, ~prospectId: string, t) => Js.Promise.t(result);
   };
-  module Synchronize: {
+  module SubmitContribution: {
     type result =
-      | Ok(t)
-      | Error(t, EventLog.item, Validation.result);
-    let exec: (list(EventLog.t), t) => Js.Promise.t(result);
+      | Ok(t);
+    let exec:
+      (
+        Session.Data.t,
+        ~amountInteger: int,
+        ~amountFraction: int,
+        ~currency: string,
+        ~description: string,
+        t
+      ) =>
+      Js.Promise.t(result);
   };
 };

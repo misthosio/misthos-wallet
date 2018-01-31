@@ -129,28 +129,52 @@ module PartnerAdded = {
 module ContributionSubmitted = {
   type t = {
     processId: string,
-    amount: float,
-    description: string
+    submitterId: string,
+    amountInteger: int,
+    amountFraction: int,
+    currency: string,
+    description: string,
+    policy: Policy.t
   };
-  let make = (~amount, ~description) => {
+  let make =
+      (
+        ~submitterId,
+        ~amountInteger,
+        ~amountFraction,
+        ~currency,
+        ~description,
+        ~policy
+      ) => {
     processId: Uuid.v4(),
-    amount,
-    description
+    submitterId,
+    amountInteger,
+    amountFraction,
+    currency,
+    description,
+    policy
   };
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("ContributionSubmitted")),
         ("processId", string(event.processId)),
-        ("amount", float(event.amount)),
-        ("description", string(event.description))
+        ("submitterId", string(event.submitterId)),
+        ("amountInteger", int(event.amountInteger)),
+        ("amountFraction", int(event.amountFraction)),
+        ("currency", string(event.currency)),
+        ("description", string(event.description)),
+        ("policy", Policy.encode(event.policy))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", string),
-      amount: raw |> field("amount", float),
-      description: raw |> field("description", string)
+      submitterId: raw |> field("submitterId", string),
+      amountInteger: raw |> field("amountInteger", int),
+      amountFraction: raw |> field("amountFraction", int),
+      currency: raw |> field("currency", string),
+      description: raw |> field("description", string),
+      policy: raw |> field("policy", Policy.decode)
     };
 };
 
@@ -205,6 +229,26 @@ let makeProspectSuggested =
 let makeProspectApproved = (~processId, ~prospectId, ~supporterId) =>
   ProspectApproved(
     ProspectApproved.make(~processId, ~prospectId, ~supporterId)
+  );
+
+let makeContributionSubmitted =
+    (
+      ~submitterId,
+      ~amountInteger,
+      ~amountFraction,
+      ~currency,
+      ~description,
+      ~policy
+    ) =>
+  ContributionSubmitted(
+    ContributionSubmitted.make(
+      ~submitterId,
+      ~amountInteger,
+      ~amountFraction,
+      ~currency,
+      ~description,
+      ~policy
+    )
   );
 
 let encode =
