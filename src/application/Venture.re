@@ -254,7 +254,7 @@ module Cmd = {
                       ~supporterId=session.blockstackId,
                       ~prospectId,
                       ~prospectPubKey=info.appPubKey,
-                      ~policy=state.metaPolicy
+                      ~policy=state.addPartnerPolicy
                     )
                   )
                |> persist
