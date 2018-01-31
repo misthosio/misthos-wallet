@@ -212,12 +212,13 @@ let validateEvent =
   | _ => ((_, _) => Ok);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
-  if (Event.isSystemEvent(event) && issuerPubKey != state.systemPubKey) {
-    InvalidIssuer;
-  } else if (state.partnerPubKeys |> List.mem_assoc(issuerPubKey) == false) {
-    InvalidIssuer;
-  } else {
-    validateEvent(event, issuerPubKey, state);
+  switch (
+    Event.isSystemEvent(event),
+    state.partnerPubKeys |> List.mem_assoc(issuerPubKey)
+  ) {
+  | (false, false) => InvalidIssuer
+  | (true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
+  | _ => validateEvent(event, issuerPubKey, state)
   };
 
 let processIdForProspect = (prospectId, state) =>
