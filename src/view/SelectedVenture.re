@@ -48,7 +48,10 @@ let make = (~venture as initialVenture, ~session, _children) => {
         Js.Promise.(
           Venture.getPartnerHistoryUrls(session, initialVenture)
           |> then_(urls =>
-               Worker.Message.RegularlyFetch(urls)
+               Worker.Message.RegularlyFetch(
+                 urls,
+                 Venture.getSummary(initialVenture)
+               )
                |> Worker.postMessage(worker)
                |> resolve
              )
@@ -184,7 +187,7 @@ let make = (~venture as initialVenture, ~session, _children) => {
       Js.Promise.(
         Venture.getPartnerHistoryUrls(session, venture)
         |> then_(urls =>
-             Worker.Message.RegularlyFetch(urls)
+             Worker.Message.RegularlyFetch(urls, Venture.getSummary(venture))
              |> Worker.postMessage(state.worker^)
              |> resolve
            )

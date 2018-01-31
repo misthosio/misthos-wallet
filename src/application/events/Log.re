@@ -12,6 +12,7 @@ module Make = (Event: Encodable) => {
     signature: Bitcoin.ECSignature.t
   };
   type t = list(item);
+  type summary = {knownItems: list(string)};
   let make = () => [];
   let makeItemHash = (issuerPubKey, event) => {
     let issuerPubKeyHash = issuerPubKey |> Bitcoin.Crypto.sha256;
@@ -71,6 +72,14 @@ module Make = (Event: Encodable) => {
          };
        });
   };
+  let getSummary = log => {
+    knownItems:
+      log
+      |> List.fold_left((items, {hash}) => [hash, ...items], [])
+      |> List.sort(compare)
+  };
+  let encodeSummary = summary =>
+    Json.Encode.(object_([("knownItems", list(string, summary.knownItems))]));
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let item = item =>

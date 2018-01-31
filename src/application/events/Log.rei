@@ -8,6 +8,7 @@ module Make:
   (Event: Encodable) =>
   {
     type t;
+    type summary = {knownItems: list(string)};
     type item = {
       event: Event.t,
       hash: string,
@@ -21,4 +22,6 @@ module Make:
     let findNewItems: (list(t), t) => list(item);
     let encode: t => Js.Json.t;
     let decode: Js.Json.t => t;
+    let getSummary: t => summary;
+    let encodeSummary: summary => Js.Json.t;
   };

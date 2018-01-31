@@ -26,6 +26,8 @@ let load: (~ventureId: string) => Js.Promise.t(t);
 
 let getId: t => string;
 
+let getSummary: t => EventLog.summary;
+
 /* TODO remove dependency. Move into view Folder */
 let getViewModel: t => ViewModel.t;
 

@@ -88,16 +88,26 @@ let reconstruct = log => {
 
 let persist = ({id, log, state} as venture) => {
   let logString = log |> EventLog.encode |> Json.stringify;
+  let summaryString =
+    log |> EventLog.getSummary |> EventLog.encodeSummary |> Json.stringify;
   let returnPromise =
     Js.Promise.(
       Blockstack.putFile(id ++ "/log.json", logString)
       |> then_(() => resolve(venture))
     );
-  state.partnerAddresses
-  |> List.map(address =>
-       Blockstack.putFile(id ++ "/" ++ address ++ "/log.json", logString)
-     )
-  |> ignore;
+  Js.Promise.(
+    state.partnerAddresses
+    |> List.iter(address =>
+         Blockstack.putFile(id ++ "/" ++ address ++ "/log.json", logString)
+         |> then_(() =>
+              Blockstack.putFile(
+                id ++ "/" ++ address ++ "/summary.json",
+                summaryString
+              )
+            )
+         |> ignore
+       )
+  );
   returnPromise;
 };
 
@@ -141,6 +151,8 @@ let join = (session: Session.Data.t, ~blockstackId, ~ventureId) =>
 
 let getId = ({id}) => id;
 
+let getSummary = ({log}) => log |> EventLog.getSummary;
+
 let getViewModel = ({viewModel}) => viewModel;
 
 module Synchronize = {
@@ -149,7 +161,7 @@ module Synchronize = {
     |> List.filter(partnerId => partnerId != session.blockstackId)
     |> List.map(partnerId =>
          Blockstack.getUserAppFileUrl(
-           ~path=id ++ "/" ++ session.address ++ "/log.json",
+           ~path=id ++ "/" ++ session.address,
            ~username=partnerId,
            ~appOrigin=Location.origin
          )

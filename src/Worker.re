@@ -1,16 +1,16 @@
 module Message = {
   type send =
-    | RegularlyFetch(array(string));
+    | RegularlyFetch(array(string), EventLog.summary);
   type receive =
     | Fetched(list(EventLog.t));
   let _encodeToSend =
     fun
-    | RegularlyFetch(links) => links;
+    | RegularlyFetch(links, summary) => {
+        "links": links,
+        "summary": EventLog.encodeSummary(summary)
+      };
   let _decodeToReceived = message =>
-    Fetched(
-      Array.to_list(message##data)
-      |> List.map(Utils.(Json.parseOrRaise >> EventLog.decode))
-    );
+    Fetched([message##data |> Json.parseOrRaise |> EventLog.decode]);
 };
 
 type _worker;
