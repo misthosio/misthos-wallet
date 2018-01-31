@@ -74,15 +74,15 @@ let apply = (event: Event.t, state) =>
 type result =
   | Ok
   | InvalidIssuer
-  | ProcessIdMissmatch
-  | ProspectSuggestedPolicyMissmatch(ProspectSuggested.t, Policy.t)
-  | PartnerAddedPolicyNotFulfilled(PartnerAdded.t, Policy.t);
+  | UnknownProcessId
+  | PolicyMissmatch
+  | PolicyNotFulfilled;
 
 let validateProspectSuggested =
     (event: ProspectSuggested.t, _issuerPubKey, {addPartnerPolicy}) =>
   switch (addPartnerPolicy == event.policy) {
   | true => Ok
-  | _ => ProspectSuggestedPolicyMissmatch(event, addPartnerPolicy)
+  | _ => PolicyMissmatch
   };
 
 let validateProspectApproved =
@@ -90,37 +90,43 @@ let validateProspectApproved =
       {processId, prospectId, supporterId}: ProspectApproved.t,
       issuerPubKey,
       {prospects, partnerPubKeys}
-    ) => {
-  let prospect = prospects |> List.assoc(prospectId);
-  if (prospect.processId != processId) {
-    ProcessIdMissmatch;
-  } else if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
-    InvalidIssuer;
-  } else {
-    Ok;
+    ) =>
+  try {
+    let prospect = prospects |> List.assoc(prospectId);
+    if (prospect.processId != processId) {
+      UnknownProcessId;
+    } else if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
+      InvalidIssuer;
+    } else {
+      Ok;
+    };
+  } {
+  | Not_found => UnknownProcessId
   };
-};
 
 let validatePartnerAdded =
     (
-      {processId, blockstackId} as event: PartnerAdded.t,
+      {processId, blockstackId}: PartnerAdded.t,
       _issuerPubKey,
       {prospects, partnerIds}
-    ) => {
-  let prospect = prospects |> List.assoc(blockstackId);
-  if (prospect.processId != processId) {
-    ProcessIdMissmatch;
-  } else if (Policy.fulfilled(
-               ~eligable=partnerIds,
-               ~approved=prospect.supporterIds,
-               prospect.policy
-             )
-             == false) {
-    PartnerAddedPolicyNotFulfilled(event, prospect.policy);
-  } else {
-    Ok;
+    ) =>
+  try {
+    let prospect = prospects |> List.assoc(blockstackId);
+    if (prospect.processId != processId) {
+      UnknownProcessId;
+    } else if (Policy.fulfilled(
+                 ~eligable=partnerIds,
+                 ~approved=prospect.supporterIds,
+                 prospect.policy
+               )
+               == false) {
+      PolicyNotFulfilled;
+    } else {
+      Ok;
+    };
+  } {
+  | Not_found => UnknownProcessId
   };
-};
 
 let validateEvent =
   fun
