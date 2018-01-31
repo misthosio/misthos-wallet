@@ -219,6 +219,7 @@ module Cmd = {
   module Create = {
     type result = (Index.t, t);
     let exec = (session: Session.Data.t, ~name as ventureName) => {
+      logMessage("Executing 'Create' command");
       let ventureCreated =
         Event.VentureCreated.make(
           ~ventureName,
@@ -234,11 +235,13 @@ module Cmd = {
       ));
     };
   };
+  module Synchronize = Synchronize;
   module SuggestProspect = {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) =>
+    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) => {
+      logMessage("Executing 'SuggestProspect' command");
       Js.Promise.(
         UserPublicInfo.read(~blockstackId=prospectId)
         |> then_(readResult =>
@@ -260,11 +263,13 @@ module Cmd = {
              }
            )
       );
+    };
   };
   module ApproveProspect = {
     type result =
       | Ok(t);
-    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) =>
+    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) => {
+      logMessage("Executing 'ApproveProspect' command");
       Js.Promise.(
         venture
         |> apply(
