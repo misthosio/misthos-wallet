@@ -104,16 +104,24 @@ let persist = ({id, log, state} as venture) => {
     );
   Js.Promise.(
     state.partnerAddresses
-    |> List.iter(address =>
-         Blockstack.putFile(id ++ "/" ++ address ++ "/log.json", logString)
-         |> then_(() =>
-              Blockstack.putFile(
-                id ++ "/" ++ address ++ "/summary.json",
-                summaryString
+    |> List.fold_left(
+         (promise, address) =>
+           promise
+           |> then_(() =>
+                Blockstack.putFile(
+                  id ++ "/" ++ address ++ "/log.json",
+                  logString
+                )
               )
-            )
-         |> ignore
+           |> then_(() =>
+                Blockstack.putFile(
+                  id ++ "/" ++ address ++ "/summary.json",
+                  summaryString
+                )
+              ),
+         resolve()
        )
+    |> ignore
   );
   returnPromise;
 };
