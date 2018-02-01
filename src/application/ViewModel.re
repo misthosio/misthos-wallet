@@ -18,17 +18,31 @@ type t = {
   name: string,
   partners: list(partner),
   prospects: list(prospect),
-  contributions: list(contribution)
+  contributions: list(contribution),
+  metaPolicy: Policy.t,
+  addPartnerPolicy: Policy.t,
+  acceptContributionPolicy: Policy.t
 };
 
-let make = () => {name: "", partners: [], prospects: [], contributions: []};
+let make = () => {
+  name: "",
+  partners: [],
+  prospects: [],
+  contributions: [],
+  metaPolicy: Policy.absolute,
+  addPartnerPolicy: Policy.absolute,
+  acceptContributionPolicy: Policy.absolute
+};
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated({ventureName, creatorId}) => {
+  | VentureCreated({ventureName, creatorId, metaPolicy}) => {
       ...state,
       name: ventureName,
-      partners: [{blockstackId: creatorId}]
+      partners: [{blockstackId: creatorId}],
+      metaPolicy,
+      addPartnerPolicy: metaPolicy,
+      acceptContributionPolicy: metaPolicy
     }
   | ProspectApproved({prospectId, supporterId}) => {
       ...state,

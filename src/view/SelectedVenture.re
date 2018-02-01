@@ -292,15 +292,56 @@ let make = (~venture as initialVenture, ~session, _children) => {
         )
       );
     <div>
-      <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
-      (text("Contributions:"))
+      <h2>
+        (
+          text(
+            ViewModel.ventureName(state.viewModel)
+            ++ " ("
+            ++ Venture.getId(initialVenture)
+            ++ ")"
+          )
+        )
+      </h2>
+      <h3> (text("Policies:")) </h3>
+      <div>
+        (
+          text(
+            "MetaPolicy - ActivationThreshold "
+            ++ string_of_float(state.viewModel.metaPolicy.thresholdPercent)
+            ++ "%"
+          )
+        )
+      </div>
+      <div>
+        (
+          text(
+            "AddPartnerPolicy - ActivationThreshold "
+            ++ string_of_float(
+                 state.viewModel.addPartnerPolicy.thresholdPercent
+               )
+            ++ "%"
+          )
+        )
+      </div>
+      <div>
+        (
+          text(
+            "AcceptContributionPolicy - ActivationThreshold "
+            ++ string_of_float(
+                 state.viewModel.acceptContributionPolicy.thresholdPercent
+               )
+            ++ "%"
+          )
+        )
+      </div>
+      <h3> (text("Contributions:")) </h3>
       <ul> contributions </ul>
-      (text("Pending acceptance:"))
+      <h4> (text("Pending acceptance:")) </h4>
       <ul> contributionProcesses </ul>
       <ContributionInput submit=(submitContribution(send)) />
-      (text("Partners:"))
+      <h3> (text("Partners:")) </h3>
       <ul> partners </ul>
-      (text("Prospects:"))
+      <h4> (text("Prospects:")) </h4>
       <ul> prospects </ul>
       <input
         placeholder="BlockstackId"

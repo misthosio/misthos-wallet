@@ -320,7 +320,7 @@ module Cmd = {
                ~amountFraction,
                ~currency,
                ~description,
-               ~policy=state.contributionPolicy
+               ~policy=state.acceptContributionPolicy
              )
            )
         |> persist

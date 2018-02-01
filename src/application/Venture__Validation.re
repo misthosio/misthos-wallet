@@ -20,7 +20,7 @@ type state = {
   partnerAddresses: list(string),
   partnerPubKeys: list((string, string)),
   prospects: list((string, prospect)),
-  contributionPolicy: Policy.t,
+  acceptContributionPolicy: Policy.t,
   contributions: list((string, contribution))
 };
 
@@ -33,7 +33,7 @@ let makeState = () => {
   metaPolicy: Policy.absolute,
   addPartnerPolicy: Policy.absolute,
   prospects: [],
-  contributionPolicy: Policy.absolute,
+  acceptContributionPolicy: Policy.absolute,
   contributions: []
 };
 
@@ -57,7 +57,7 @@ let apply = (event: Event.t, state) =>
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
       addPartnerPolicy: metaPolicy,
-      contributionPolicy: metaPolicy
+      acceptContributionPolicy: metaPolicy
     }
   | ProspectSuggested({prospectId, processId, supporterId, policy}) => {
       ...state,
@@ -159,8 +159,8 @@ let validatePartnerAdded =
   };
 
 let validateContributionSubmitted =
-    (event: ContributionSubmitted.t, _issuerPubKey, {contributionPolicy}) =>
-  switch (contributionPolicy == event.policy) {
+    (event: ContributionSubmitted.t, _issuerPubKey, {acceptContributionPolicy}) =>
+  switch (acceptContributionPolicy == event.policy) {
   | true => Ok
   | _ => PolicyMissmatch
   };
