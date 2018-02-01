@@ -66,6 +66,19 @@ let apply = (event: Event.t, state) =>
         ...state.prospects
       ]
     }
+  | ProspectApproved({processId, supporterId}) => {
+      ...state,
+      prospects:
+        state.prospects
+        |> List.map(((prospectId, p: prospect)) =>
+             p.processId == processId ?
+               (
+                 prospectId,
+                 {...p, supporterIds: [supporterId, ...p.supporterIds]}
+               ) :
+               (prospectId, p)
+           )
+    }
   | PartnerAdded({blockstackId, pubKey}) => {
       ...state,
       partnerIds: [blockstackId, ...state.partnerIds],
