@@ -4,7 +4,7 @@ let text = ReasonReact.stringToElement;
 
 let component = ReasonReact.statelessComponent("Sidebar");
 
-let make = (~currentUrl, _children) => {
+let make = /*~currentUrl,*/ _children => {
   ...component,
   render: (_) =>
     <div id="sidebar" className="sidebar">

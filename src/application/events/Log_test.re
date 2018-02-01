@@ -10,9 +10,6 @@ module TestItem = {
 
 let () = {
   module TestLog = Log.Make(TestItem);
-  let print = log => Js.log(log |> TestLog.encode);
-  let reduceLog = log =>
-    log |> TestLog.reduce((state, {event}) => state ++ event, "");
   let keyPair = Bitcoin.ECPair.makeRandom();
   describe("findNewItems", () =>
     test("preserve order", () => {

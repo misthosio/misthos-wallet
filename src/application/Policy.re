@@ -10,7 +10,11 @@ let fulfilled = (~eligable, ~approved, policy) => {
 };
 
 let encode = p =>
-  Json.Encode.(object_([("thresholdPercent", float(p.thresholdPercent))]));
+  Json.Encode.(
+    object_([("thresholdPercent", Json.Encode.float(p.thresholdPercent))])
+  );
 
 let decode = raw =>
-  Json.Decode.{thresholdPercent: raw |> field("thresholdPercent", float)};
+  Json.Decode.{
+    thresholdPercent: raw |> field("thresholdPercent", Json.Decode.float)
+  };

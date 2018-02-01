@@ -31,9 +31,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
           | ProspectApproved(event)
               when event.processId == suggestion.processId => {
               ...state^,
-              approvals:
-                [event.supporterId, ...state^.approvals]
-                |> List.sort_uniq(compare)
+              approvals: [event.supporterId, ...state^.approvals]
             }
           | PartnerAdded(event) when event.processId == suggestion.processId =>
             completed := true;

@@ -11,7 +11,7 @@ type state = {session: Session.t};
 
 let component = ReasonReact.reducerComponent("App");
 
-let make = (~currentUrl: ReasonReact.Router.url, _children) => {
+let make = /*~currentUrl: ReasonReact.Router.url,*/ _children => {
   ...component,
   initialState: () => {session: Session.getCurrentSession()},
   didMount: ({state}) =>

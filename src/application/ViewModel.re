@@ -104,7 +104,6 @@ let apply = (event: Event.t, state) =>
         state.contributions
         |> List.map(c => c.processId == processId ? {...c, accepted: true} : c)
     }
-  | _ => state
   };
 
 let getPartners = state => state.partners;

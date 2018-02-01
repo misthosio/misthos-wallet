@@ -35,9 +35,7 @@ let make = (submission: ContributionSubmitted.t, log) => {
           | ContributionApproved(event)
               when event.processId == submission.processId => {
               ...state^,
-              approvals:
-                [event.supporterId, ...state^.approvals]
-                |> List.sort_uniq(compare)
+              approvals: [event.supporterId, ...state^.approvals]
             }
           | ContributionAccepted(event)
               when event.processId == submission.processId =>
