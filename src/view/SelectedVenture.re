@@ -31,7 +31,7 @@ let submitContribution =
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
 
-let make = (~venture as initialVenture, ~session, _children) => {
+let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => {
   ...component,
   initialState: () => {
     venture: initialVenture,
@@ -228,10 +228,19 @@ let make = (~venture as initialVenture, ~session, _children) => {
                         )
                    )
                  )
-                 <button
-                   onClick=(_e => send(ApproveProspect(prospect.blockstackId)))>
-                   (text("Approve Prospect"))
-                 </button>
+                 (
+                   if (prospect.approvedBy
+                       |> List.mem(session.blockstackId) == false) {
+                     <button
+                       onClick=(
+                         _e => send(ApproveProspect(prospect.blockstackId))
+                       )>
+                       (text("Approve Prospect"))
+                     </button>;
+                   } else {
+                     ReasonReact.nullElement;
+                   }
+                 )
                </li>
              )
         )
@@ -282,12 +291,20 @@ let make = (~venture as initialVenture, ~session, _children) => {
                         )
                    )
                  )
-                 <button
-                   onClick=(
-                     _e => send(ApproveContribution(contribution.processId))
-                   )>
-                   (text("Approve Contribution"))
-                 </button>
+                 (
+                   if (contribution.supporters
+                       |> List.mem(session.blockstackId) == false) {
+                     <button
+                       onClick=(
+                         _e =>
+                           send(ApproveContribution(contribution.processId))
+                       )>
+                       (text("Approve Contribution"))
+                     </button>;
+                   } else {
+                     ReasonReact.nullElement;
+                   }
+                 )
                </li>
              )
         )
