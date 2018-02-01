@@ -111,7 +111,7 @@ let apply = (event: Event.t, state) =>
                (cProcess, c)
            )
     }
-  | _ => state
+  | ContributionAccepted(_) => state
   };
 
 type result =
