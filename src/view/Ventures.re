@@ -206,30 +206,34 @@ let make = (~session, _children) => {
     <div>
       <h2> status </h2>
       <ul> ventureList </ul>
-      <input
-        placeholder="Create new Venture"
-        value=state.newVenture
-        onChange=(e => send(ChangeNewVenture(formText(e))))
-        autoFocus=Js.true_
-      />
-      <button onClick=(_e => send(CreateVenture))>
-        (ReasonReact.stringToElement("create"))
-      </button>
-      <input
-        placeholder="Join Venture User"
-        value=state.joinVentureUserId
-        onChange=(e => send(ChangeJoinVentureUserId(formText(e))))
-        autoFocus=Js.true_
-      />
-      <input
-        placeholder="Join Venture Id"
-        value=state.joinVentureId
-        onChange=(e => send(ChangeJoinVentureId(formText(e))))
-        autoFocus=Js.true_
-      />
-      <button onClick=(_e => send(JoinVenture))>
-        (ReasonReact.stringToElement("join"))
-      </button>
+      <div>
+        <input
+          placeholder="Create new Venture"
+          value=state.newVenture
+          onChange=(e => send(ChangeNewVenture(formText(e))))
+          autoFocus=Js.true_
+        />
+        <button onClick=(_e => send(CreateVenture))>
+          (ReasonReact.stringToElement("create"))
+        </button>
+      </div>
+      <div>
+        <input
+          placeholder="Join Venture User"
+          value=state.joinVentureUserId
+          onChange=(e => send(ChangeJoinVentureUserId(formText(e))))
+          autoFocus=Js.true_
+        />
+        <input
+          placeholder="Join Venture Id"
+          value=state.joinVentureId
+          onChange=(e => send(ChangeJoinVentureId(formText(e))))
+          autoFocus=Js.true_
+        />
+        <button onClick=(_e => send(JoinVenture))>
+          (ReasonReact.stringToElement("join"))
+        </button>
+      </div>
       venture
     </div>;
   }
