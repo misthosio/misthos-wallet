@@ -4,6 +4,8 @@ module Index = Venture__Index;
 
 module Validation = Venture__Validation;
 
+exception InvalidEvent(Validation.result);
+
 type t = {
   id: string,
   log: EventLog.t,
@@ -58,10 +60,15 @@ let rec applyWatcherEvents = ({id, log, watchers, state, viewModel}) => {
 
 let apply = (issuer, event, {id, log, watchers, state, viewModel}) => {
   let (item, log) = log |> EventLog.append(issuer, event);
-  let watchers = watchers |> updateWatchers(item, log);
-  let state = state |> Validation.apply(event);
-  let viewModel = viewModel |> ViewModel.apply(event);
-  applyWatcherEvents({id, log, watchers, state, viewModel});
+  switch (item |> Validation.validate(state)) {
+  | Ok =>
+    let watchers = watchers |> updateWatchers(item, log);
+    let state = state |> Validation.apply(event);
+    let viewModel = viewModel |> ViewModel.apply(event);
+    applyWatcherEvents({id, log, watchers, state, viewModel});
+  /* This should never happen / only incase of an UI input bug!!! */
+  | result => raise(InvalidEvent(result))
+  };
 };
 
 let reconstruct = log => {
@@ -204,6 +211,9 @@ module Synchronize = {
                  (venture, None);
                | UnknownProcessId =>
                  logMessage("Unknown ProcessId detected");
+                 (venture, None);
+               | DuplicateApproval =>
+                 logMessage("Duplicate Approval detected");
                  (venture, None);
                };
              },

@@ -12,9 +12,12 @@ module Validation: {
     | Ok
     | InvalidIssuer
     | UnknownProcessId
+    | DuplicateApproval
     | PolicyMissmatch
     | PolicyNotFulfilled;
 };
+
+exception InvalidEvent(Validation.result);
 
 type t;
 

@@ -105,6 +105,7 @@ type result =
   | Ok
   | InvalidIssuer
   | UnknownProcessId
+  | DuplicateApproval
   | PolicyMissmatch
   | PolicyNotFulfilled;
 
@@ -127,6 +128,8 @@ let validateProspectApproved =
       UnknownProcessId;
     } else if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
       InvalidIssuer;
+    } else if (prospect.supporterIds |> List.mem(supporterId)) {
+      DuplicateApproval;
     } else {
       Ok;
     };
@@ -171,12 +174,17 @@ let validateContributionApproved =
       issuerPubKey,
       {contributions, partnerPubKeys}
     ) =>
-  if (contributions |> List.mem_assoc(processId) == false) {
-    UnknownProcessId;
-  } else if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
-    InvalidIssuer;
-  } else {
-    Ok;
+  try {
+    let contribution = contributions |> List.assoc(processId);
+    if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
+      InvalidIssuer;
+    } else if (contribution.supporterIds |> List.mem(supporterId)) {
+      DuplicateApproval;
+    } else {
+      Ok;
+    };
+  } {
+  | Not_found => UnknownProcessId
   };
 
 let validateContributionAccepted =
@@ -213,11 +221,13 @@ let validateEvent =
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (
+    event,
     Event.isSystemEvent(event),
     state.partnerPubKeys |> List.mem_assoc(issuerPubKey)
   ) {
-  | (false, false) => InvalidIssuer
-  | (true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
+  | (VentureCreated(_), _, _) => Ok
+  | (_, false, false) => InvalidIssuer
+  | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
   | _ => validateEvent(event, issuerPubKey, state)
   };
 

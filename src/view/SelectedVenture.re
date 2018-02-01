@@ -76,8 +76,9 @@ let make = (~venture as initialVenture, ~session, _children) => {
                 |> then_(
                      fun
                      | Ok(venture) => send(UpdateVenture(venture)) |> resolve
-                     | Error(venture, _item, _result) => {
+                     | Error(venture, _item, result) => {
                          Js.log("An error occured while synchronizing");
+                         Js.log(result);
                          send(UpdateVenture(venture)) |> resolve;
                        }
                    )
