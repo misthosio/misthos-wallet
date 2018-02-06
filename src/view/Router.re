@@ -30,13 +30,7 @@ let component = ReasonReact.reducerComponent("Router");
 
 let make = renderChildren => {
   ...component,
-  initialState: () => {
-    url: {
-      path: [],
-      hash: "",
-      search: ""
-    }
-  },
+  initialState: () => {url: ReasonReact.Router.dangerouslyGetInitialUrl()},
   subscriptions: ({send}) => [
     Sub(
       () => ReasonReact.Router.watchUrl(url => send(UpdateUrl(url))),

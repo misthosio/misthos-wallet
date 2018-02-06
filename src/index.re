@@ -10,5 +10,3 @@ ReactDOMRe.renderToElementWithId(
   <Router> ...(_currentUrl => <App /*currentUrl*/ />) </Router>,
   "root"
 );
-
-ReasonReact.Router.push(Location.pathname ++ Location.search);
