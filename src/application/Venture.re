@@ -1,3 +1,5 @@
+open PrimitiveTypes;
+
 let logMessage = msg => Js.log("[Venture] - " ++ msg);
 
 module Index = Venture__Index;
@@ -7,7 +9,7 @@ module Validation = Venture__Validation;
 exception InvalidEvent(Validation.result);
 
 type t = {
-  id: string,
+  id: ventureId,
   log: EventLog.t,
   watchers: list(Watcher.t),
   state: Validation.state,
@@ -72,7 +74,7 @@ let apply = (issuer, event, {id, log, watchers, state, viewModel}) => {
 };
 
 let reconstruct = log => {
-  let {viewModel, state} = make("");
+  let {viewModel, state} = make(VentureId.make());
   let (id, watchers, state, viewModel) =
     log
     |> EventLog.reduce(
@@ -88,7 +90,7 @@ let reconstruct = log => {
            state |> Validation.apply(event),
            viewModel |> ViewModel.apply(event)
          ),
-         ("", [], state, viewModel)
+         (VentureId.make(), [], state, viewModel)
        );
   {id, log, watchers, state, viewModel};
 };
@@ -99,7 +101,7 @@ let persist = ({id, log, state} as venture) => {
     log |> EventLog.getSummary |> EventLog.encodeSummary |> Json.stringify;
   let returnPromise =
     Js.Promise.(
-      Blockstack.putFile(id ++ "/log.json", logString)
+      Blockstack.putFile((id |> VentureId.toString) ++ "/log.json", logString)
       |> then_(() => resolve(venture))
     );
   Js.Promise.(
@@ -109,13 +111,16 @@ let persist = ({id, log, state} as venture) => {
            promise
            |> then_(() =>
                 Blockstack.putFile(
-                  id ++ "/" ++ address ++ "/log.json",
+                  (id |> VentureId.toString) ++ "/" ++ address ++ "/log.json",
                   logString
                 )
               )
            |> then_(() =>
                 Blockstack.putFile(
-                  id ++ "/" ++ address ++ "/summary.json",
+                  (id |> VentureId.toString)
+                  ++ "/"
+                  ++ address
+                  ++ "/summary.json",
                   summaryString
                 )
               ),
@@ -130,7 +135,7 @@ let defaultPolicy = Policy.absolute;
 
 let load = (~ventureId) =>
   Js.Promise.(
-    Blockstack.getFile(ventureId ++ "/log.json")
+    Blockstack.getFile((ventureId |> VentureId.toString) ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.to_opt(nullLog)) {
          | Some(raw) =>
@@ -140,11 +145,11 @@ let load = (~ventureId) =>
        )
   );
 
-let join = (session: Session.Data.t, ~blockstackId, ~ventureId) =>
+let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
     Blockstack.getFileFromUser(
       ventureId ++ "/" ++ session.address ++ "/log.json",
-      ~username=blockstackId
+      ~username=userId
     )
     |> catch(_error => raise(Not_found))
     |> then_(nullFile =>
@@ -159,12 +164,15 @@ let join = (session: Session.Data.t, ~blockstackId, ~ventureId) =>
          }
        )
     |> then_(venture =>
-         Index.add(~ventureId, ~ventureName=venture.state.ventureName)
+         Index.add(
+           ~ventureId=venture.id,
+           ~ventureName=venture.state.ventureName
+         )
          |> then_(index => resolve((index, venture)))
        )
   );
 
-let getId = ({id}) => id;
+let getId = ({id}) => id |> VentureId.toString;
 
 let getSummary = ({log}) => log |> EventLog.getSummary;
 
@@ -173,11 +181,11 @@ let getViewModel = ({viewModel}) => viewModel;
 module Synchronize = {
   let getPartnerHistoryUrls = (session: Session.Data.t, {id, state}) =>
     state.partnerIds
-    |> List.filter(partnerId => partnerId != session.blockstackId)
+    |> List.filter(partnerId => partnerId != session.userId)
     |> List.map(partnerId =>
          Blockstack.getUserAppFileUrl(
-           ~path=id ++ "/" ++ session.address,
-           ~username=partnerId,
+           ~path=(id |> VentureId.toString) ++ "/" ++ session.address,
+           ~username=partnerId |> UserId.toString,
            ~appOrigin=Location.origin
          )
        )
@@ -253,7 +261,7 @@ module Cmd = {
       let ventureCreated =
         Event.VentureCreated.make(
           ~ventureName,
-          ~creatorId=session.blockstackId,
+          ~creatorId=session.userId,
           ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
           ~metaPolicy=defaultPolicy
         );
@@ -281,7 +289,7 @@ module Cmd = {
                |> apply(
                     session.appKeyPair,
                     Event.makeProspectSuggested(
-                      ~supporterId=session.blockstackId,
+                      ~supporterId=session.userId,
                       ~prospectId,
                       ~prospectPubKey=info.appPubKey,
                       ~policy=state.addPartnerPolicy
@@ -307,7 +315,7 @@ module Cmd = {
              Event.makeProspectApproved(
                ~processId=Validation.processIdForProspect(prospectId, state),
                ~prospectId,
-               ~supporterId=session.blockstackId
+               ~supporterId=session.userId
              )
            )
         |> persist
@@ -333,7 +341,7 @@ module Cmd = {
         |> apply(
              session.appKeyPair,
              Event.makeContributionSubmitted(
-               ~submitterId=session.blockstackId,
+               ~submitterId=session.userId,
                ~amountInteger,
                ~amountFraction,
                ~currency,
@@ -357,7 +365,7 @@ module Cmd = {
              session.appKeyPair,
              Event.makeContributionApproved(
                ~processId,
-               ~supporterId=session.blockstackId
+               ~supporterId=session.userId
              )
            )
         |> persist

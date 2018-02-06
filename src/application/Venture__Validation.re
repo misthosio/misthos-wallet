@@ -1,13 +1,15 @@
+open PrimitiveTypes;
+
 open Event;
 
 type prospect = {
-  processId: string,
-  supporterIds: list(string),
+  processId,
+  supporterIds: list(userId),
   policy: Policy.t
 };
 
 type contribution = {
-  supporterIds: list(string),
+  supporterIds: list(userId),
   policy: Policy.t
 };
 
@@ -16,12 +18,12 @@ type state = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   addPartnerPolicy: Policy.t,
-  partnerIds: list(string),
+  partnerIds: list(userId),
   partnerAddresses: list(string),
-  partnerPubKeys: list((string, string)),
-  prospects: list((string, prospect)),
+  partnerPubKeys: list((string, userId)),
+  prospects: list((userId, prospect)),
   acceptContributionPolicy: Policy.t,
-  contributions: list((string, contribution))
+  contributions: list((processId, contribution))
 };
 
 let makeState = () => {
@@ -79,17 +81,17 @@ let apply = (event: Event.t, state) =>
                (prospectId, p)
            )
     }
-  | PartnerAdded({blockstackId, pubKey}) => {
+  | PartnerAdded({userId, pubKey}) => {
       ...state,
-      partnerIds: [blockstackId, ...state.partnerIds],
+      partnerIds: [userId, ...state.partnerIds],
       partnerAddresses: [
         Utils.addressFromPublicKey(pubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [(pubKey, blockstackId), ...state.partnerPubKeys],
+      partnerPubKeys: [(pubKey, userId), ...state.partnerPubKeys],
       prospects:
         state.prospects
-        |> List.filter(((prospectId, _)) => prospectId != blockstackId)
+        |> List.filter(((prospectId, _)) => prospectId != userId)
     }
   | ContributionSubmitted({processId, submitterId, policy}) => {
       ...state,
@@ -152,12 +154,12 @@ let validateProspectApproved =
 
 let validatePartnerAdded =
     (
-      {processId, blockstackId}: PartnerAdded.t,
+      {processId, userId}: PartnerAdded.t,
       _issuerPubKey,
       {prospects, partnerIds}
     ) =>
   try {
-    let prospect = prospects |> List.assoc(blockstackId);
+    let prospect = prospects |> List.assoc(userId);
     if (prospect.processId != processId) {
       UnknownProcessId;
     } else if (Policy.fulfilled(

@@ -1,5 +1,7 @@
 open Venture;
 
+open PrimitiveTypes;
+
 let text = ReasonReact.stringToElement;
 
 type state = {
@@ -14,9 +16,9 @@ type action =
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | SuggestProspect
-  | ApproveProspect(string)
+  | ApproveProspect(userId)
   | SubmitContribution(int, int, string, string)
-  | ApproveContribution(string);
+  | ApproveContribution(processId);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
@@ -99,7 +101,10 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
               Js.Promise.(
                 Cmd.SuggestProspect.(
                   state.venture
-                  |> exec(session, ~prospectId)
+                  |> exec(
+                       session,
+                       ~prospectId=prospectId |> UserId.fromString
+                     )
                   |> then_(result =>
                        (
                          switch result {
@@ -206,7 +211,9 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         Array.of_list(
           ViewModel.getPartners(state.viewModel)
           |> List.map((m: ViewModel.partner) =>
-               <li key=m.blockstackId> (text(m.blockstackId)) </li>
+               <li key=(m.userId |> UserId.toString)>
+                 (text(m.userId |> UserId.toString))
+               </li>
              )
         )
       );
@@ -215,26 +222,23 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         Array.of_list(
           ViewModel.getProspects(state.viewModel)
           |> List.map((prospect: ViewModel.prospect) =>
-               <li key=prospect.blockstackId>
+               <li key=(prospect.userId |> UserId.toString)>
                  (
                    text(
                      "'"
-                     ++ prospect.blockstackId
+                     ++ (prospect.userId |> UserId.toString)
                      ++ "' approved by: "
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
-                          prospect.approvedBy
+                          prospect.approvedBy |> List.map(UserId.toString)
                         )
                    )
                  )
                  (
-                   if (prospect.approvedBy
-                       |> List.mem(session.blockstackId) == false) {
+                   if (prospect.approvedBy |> List.mem(session.userId) == false) {
                      <button
-                       onClick=(
-                         _e => send(ApproveProspect(prospect.blockstackId))
-                       )>
+                       onClick=(_e => send(ApproveProspect(prospect.userId)))>
                        (text("Approve Prospect"))
                      </button>;
                    } else {
@@ -253,7 +257,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                contribution.accepted == true
              )
           |> List.map((contribution: ViewModel.contribution) =>
-               <li key=contribution.processId>
+               <li key=(contribution.processId |> ProcessId.toString)>
                  (
                    text(
                      "'"
@@ -262,7 +266,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
-                          contribution.supporters
+                          contribution.supporters |> List.map(UserId.toString)
                         )
                    )
                  )
@@ -278,7 +282,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                contribution.accepted == false
              )
           |> List.map((contribution: ViewModel.contribution) =>
-               <li key=contribution.processId>
+               <li key=(contribution.processId |> ProcessId.toString)>
                  (
                    text(
                      "'"
@@ -287,13 +291,13 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
-                          contribution.supporters
+                          contribution.supporters |> List.map(UserId.toString)
                         )
                    )
                  )
                  (
                    if (contribution.supporters
-                       |> List.mem(session.blockstackId) == false) {
+                       |> List.mem(session.userId) == false) {
                      <button
                        onClick=(
                          _e =>

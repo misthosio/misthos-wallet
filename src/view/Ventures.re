@@ -1,3 +1,5 @@
+open PrimitiveTypes;
+
 type status =
   | None
   | LoadingIndex
@@ -102,7 +104,7 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Venture.load(~ventureId=id)
+                Venture.load(~ventureId=id |> VentureId.fromString)
                 |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )
@@ -150,7 +152,7 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Venture.join(session, ~blockstackId=userId, ~ventureId)
+                Venture.join(session, ~userId, ~ventureId)
                 |> then_(((newIndex, venture)) =>
                      send(VentureJoined(newIndex, venture)) |> resolve
                    )
@@ -175,9 +177,14 @@ let make = (~session, _children) => {
             | LoadingIndex => []
             | CreatingVenture(newVenture) => [
                 (newVenture, "new"),
-                ...state.index |> List.map(({name, id}) => (name, id))
+                ...state.index
+                   |> List.map(({name, id}) =>
+                        (name, id |> VentureId.toString)
+                      )
               ]
-            | _ => state.index |> List.map(({name, id}) => (name, id))
+            | _ =>
+              state.index
+              |> List.map(({name, id}) => (name, id |> VentureId.toString))
             }
           )
           |> List.map(((name, id)) =>

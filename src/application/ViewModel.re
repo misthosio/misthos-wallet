@@ -1,16 +1,18 @@
-type partner = {blockstackId: string};
+open PrimitiveTypes;
+
+type partner = {userId};
 
 type prospect = {
-  blockstackId: string,
-  approvedBy: list(string)
+  userId,
+  approvedBy: list(userId)
 };
 
 type contribution = {
-  processId: string,
+  processId,
   amountInteger: int,
   amountFraction: int,
   description: string,
-  supporters: list(string),
+  supporters: list(userId),
   accepted: bool
 };
 
@@ -39,7 +41,7 @@ let apply = (event: Event.t, state) =>
   | VentureCreated({ventureName, creatorId, metaPolicy}) => {
       ...state,
       name: ventureName,
-      partners: [{blockstackId: creatorId}],
+      partners: [{userId: creatorId}],
       metaPolicy,
       addPartnerPolicy: metaPolicy,
       acceptContributionPolicy: metaPolicy
@@ -49,7 +51,7 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects
         |> List.map(p =>
-             if (p.blockstackId == prospectId) {
+             if (p.userId == prospectId) {
                {...p, approvedBy: [supporterId, ...p.approvedBy]};
              } else {
                p;
@@ -59,15 +61,14 @@ let apply = (event: Event.t, state) =>
   | ProspectSuggested(event) => {
       ...state,
       prospects: [
-        {blockstackId: event.prospectId, approvedBy: [event.supporterId]},
+        {userId: event.prospectId, approvedBy: [event.supporterId]},
         ...state.prospects
       ]
     }
-  | PartnerAdded({blockstackId}) => {
+  | PartnerAdded({userId}) => {
       ...state,
-      partners: [{blockstackId: blockstackId}, ...state.partners],
-      prospects:
-        state.prospects |> List.filter(p => p.blockstackId != blockstackId)
+      partners: [{userId: userId}, ...state.partners],
+      prospects: state.prospects |> List.filter(p => p.userId != userId)
     }
   | ContributionSubmitted({
       processId,

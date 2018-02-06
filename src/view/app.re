@@ -1,3 +1,5 @@
+open PrimitiveTypes;
+
 [%bs.raw {|require('./app.css')|}];
 
 let text = ReasonReact.stringToElement;
@@ -47,7 +49,7 @@ let make = /*~currentUrl: ReasonReact.Router.url,*/ _children => {
               | NotLoggedIn => "Welcome To Misthos"
               | LoginPending => "Waiting for login to complete"
               | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
-              | LoggedIn(data) => "Hello " ++ data.blockstackId
+              | LoggedIn(data) => "Hello " ++ (data.userId |> UserId.toString)
               };
             <h1> (text(header)) </h1>;
           }

@@ -1,14 +1,16 @@
+open PrimitiveTypes;
+
 module VentureCreated = {
   type t = {
-    ventureId: string,
+    ventureId,
     ventureName: string,
-    creatorId: string,
+    creatorId: userId,
     creatorPubKey: string,
     metaPolicy: Policy.t,
     systemIssuer: Bitcoin.ECPair.t
   };
   let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
-    ventureId: Uuid.v4(),
+    ventureId: VentureId.make(),
     ventureName,
     creatorId,
     creatorPubKey,
@@ -19,9 +21,9 @@ module VentureCreated = {
     Json.Encode.(
       object_([
         ("type", string("VentureCreated")),
-        ("ventureId", string(event.ventureId)),
+        ("ventureId", VentureId.encode(event.ventureId)),
         ("ventureName", string(event.ventureName)),
-        ("creatorId", string(event.creatorId)),
+        ("creatorId", UserId.encode(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
         ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer)))
@@ -29,9 +31,9 @@ module VentureCreated = {
     );
   let decode = raw =>
     Json.Decode.{
-      ventureId: raw |> field("ventureId", string),
+      ventureId: raw |> field("ventureId", VentureId.decode),
       ventureName: raw |> field("ventureName", string),
-      creatorId: raw |> field("creatorId", string),
+      creatorId: raw |> field("creatorId", UserId.decode),
       creatorPubKey: raw |> field("creatorPubKey", string),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
@@ -41,14 +43,14 @@ module VentureCreated = {
 
 module ProspectSuggested = {
   type t = {
-    processId: string,
-    supporterId: string,
-    prospectId: string,
+    processId,
+    supporterId: userId,
+    prospectId: userId,
     prospectPubKey: string,
     policy: Policy.t
   };
   let make = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) => {
-    processId: Uuid.v4(),
+    processId: ProcessId.make(),
     supporterId,
     prospectId,
     prospectPubKey,
@@ -58,18 +60,18 @@ module ProspectSuggested = {
     Json.Encode.(
       object_([
         ("type", string("ProspectSuggested")),
-        ("processId", string(event.processId)),
-        ("supporterId", string(event.supporterId)),
-        ("prospectId", string(event.prospectId)),
+        ("processId", ProcessId.encode(event.processId)),
+        ("supporterId", UserId.encode(event.supporterId)),
+        ("prospectId", UserId.encode(event.prospectId)),
         ("prospectPubKey", string(event.prospectPubKey)),
         ("policy", Policy.encode(event.policy))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      processId: raw |> field("processId", string),
-      supporterId: raw |> field("supporterId", string),
-      prospectId: raw |> field("prospectId", string),
+      processId: raw |> field("processId", ProcessId.decode),
+      supporterId: raw |> field("supporterId", UserId.decode),
+      prospectId: raw |> field("prospectId", UserId.decode),
       prospectPubKey: raw |> field("prospectPubKey", string),
       policy: raw |> field("policy", Policy.decode)
     };
@@ -77,9 +79,9 @@ module ProspectSuggested = {
 
 module ProspectApproved = {
   type t = {
-    processId: string,
-    prospectId: string,
-    supporterId: string
+    processId,
+    prospectId: userId,
+    supporterId: userId
   };
   let make = (~processId, ~prospectId, ~supporterId) => {
     processId,
@@ -90,51 +92,47 @@ module ProspectApproved = {
     Json.Encode.(
       object_([
         ("type", string("ProspectApproved")),
-        ("processId", string(event.processId)),
-        ("prospectId", string(event.prospectId)),
-        ("supporterId", string(event.supporterId))
+        ("processId", ProcessId.encode(event.processId)),
+        ("prospectId", UserId.encode(event.prospectId)),
+        ("supporterId", UserId.encode(event.supporterId))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      processId: raw |> field("processId", string),
-      prospectId: raw |> field("prospectId", string),
-      supporterId: raw |> field("supporterId", string)
+      processId: raw |> field("processId", ProcessId.decode),
+      prospectId: raw |> field("prospectId", UserId.decode),
+      supporterId: raw |> field("supporterId", UserId.decode)
     };
 };
 
 module PartnerAdded = {
   type t = {
-    processId: string,
-    blockstackId: string,
+    processId,
+    userId,
     pubKey: string
   };
-  let make = (~processId, ~blockstackId, ~pubKey) => {
-    processId,
-    blockstackId,
-    pubKey
-  };
+  let make = (~processId, ~userId, ~pubKey) => {processId, userId, pubKey};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("PartnerAdded")),
-        ("processId", string(event.processId)),
-        ("blockstackId", string(event.blockstackId)),
+        ("processId", ProcessId.encode(event.processId)),
+        ("userId", UserId.encode(event.userId)),
         ("pubKey", string(event.pubKey))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      processId: raw |> field("processId", string),
-      blockstackId: raw |> field("blockstackId", string),
+      processId: raw |> field("processId", ProcessId.decode),
+      userId: raw |> field("userId", UserId.decode),
       pubKey: raw |> field("pubKey", string)
     };
 };
 
 module ContributionSubmitted = {
   type t = {
-    processId: string,
-    submitterId: string,
+    processId,
+    submitterId: userId,
     amountInteger: int,
     amountFraction: int,
     currency: string,
@@ -150,7 +148,7 @@ module ContributionSubmitted = {
         ~description,
         ~policy
       ) => {
-    processId: Uuid.v4(),
+    processId: ProcessId.make(),
     submitterId,
     amountInteger,
     amountFraction,
@@ -162,8 +160,8 @@ module ContributionSubmitted = {
     Json.Encode.(
       object_([
         ("type", string("ContributionSubmitted")),
-        ("processId", string(event.processId)),
-        ("submitterId", string(event.submitterId)),
+        ("processId", ProcessId.encode(event.processId)),
+        ("submitterId", UserId.encode(event.submitterId)),
         ("amountInteger", int(event.amountInteger)),
         ("amountFraction", int(event.amountFraction)),
         ("currency", string(event.currency)),
@@ -173,8 +171,8 @@ module ContributionSubmitted = {
     );
   let decode = raw =>
     Json.Decode.{
-      processId: raw |> field("processId", string),
-      submitterId: raw |> field("submitterId", string),
+      processId: raw |> field("processId", ProcessId.decode),
+      submitterId: raw |> field("submitterId", UserId.decode),
       amountInteger: raw |> field("amountInteger", int),
       amountFraction: raw |> field("amountFraction", int),
       currency: raw |> field("currency", string),
@@ -185,37 +183,37 @@ module ContributionSubmitted = {
 
 module ContributionApproved = {
   type t = {
-    processId: string,
-    supporterId: string
+    processId,
+    supporterId: userId
   };
   let make = (~processId, ~supporterId) => {processId, supporterId};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("ContributionApproved")),
-        ("processId", string(event.processId)),
-        ("supporterId", string(event.supporterId))
+        ("processId", ProcessId.encode(event.processId)),
+        ("supporterId", UserId.encode(event.supporterId))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      processId: raw |> field("processId", string),
-      supporterId: raw |> field("supporterId", string)
+      processId: raw |> field("processId", ProcessId.decode),
+      supporterId: raw |> field("supporterId", UserId.decode)
     };
 };
 
 module ContributionAccepted = {
-  type t = {processId: string};
+  type t = {processId};
   let make = (~processId) => {processId: processId};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("ContributionAccepted")),
-        ("processId", string(event.processId))
+        ("processId", ProcessId.encode(event.processId))
       ])
     );
   let decode = raw =>
-    Json.Decode.{processId: raw |> field("processId", string)};
+    Json.Decode.{processId: raw |> field("processId", ProcessId.decode)};
 };
 
 type t =

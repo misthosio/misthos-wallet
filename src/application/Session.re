@@ -1,6 +1,8 @@
+open PrimitiveTypes;
+
 module Data = {
   type t = {
-    blockstackId: string,
+    userId,
     appKeyPair: Bitcoin.ECPair.t,
     address: string
   };
@@ -10,7 +12,7 @@ module Data = {
     | Some(blockstackId) =>
       let appKeyPair = userData##appPrivateKey |> Utils.keyPairFromPrivateKey;
       Some({
-        blockstackId,
+        userId: blockstackId |> UserId.fromString,
         appKeyPair,
         address: appKeyPair |> Bitcoin.ECPair.getAddress
       });

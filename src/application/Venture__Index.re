@@ -1,5 +1,7 @@
+open PrimitiveTypes;
+
 type item = {
-  id: string,
+  id: ventureId,
   name: string
 };
 
@@ -8,7 +10,7 @@ type t = list(item);
 module Encode = {
   let item = item =>
     Json.Encode.(
-      object_([("name", string(item.name)), ("id", string(item.id))])
+      object_([("name", string(item.name)), ("id", VentureId.encode(item.id))])
     );
   let index = Json.Encode.list(item);
 };
@@ -17,7 +19,7 @@ module Decode = {
   let item = json =>
     Json.Decode.{
       name: json |> field("name", string),
-      id: json |> field("id", string)
+      id: json |> field("id", VentureId.decode)
     };
   let index = Json.Decode.list(item);
 };

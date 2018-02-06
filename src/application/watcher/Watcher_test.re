@@ -4,24 +4,26 @@ open Expect;
 
 open Event;
 
+open PrimitiveTypes;
+
 let () =
   describe("PartnerApproval", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
     let ventureCreated =
       Event.VentureCreated.make(
         ~ventureName="TheMothers",
-        ~creatorId="frank.id",
+        ~creatorId="frank.id" |> UserId.fromString,
         ~creatorPubKey=issuer |> Utils.publicKeyFromKeyPair,
         ~metaPolicy=Policy.absolute
       );
     let (_, log) =
       EventLog.make()
       |> EventLog.append(issuer, VentureCreated(ventureCreated));
-    let prospectId = "wackerman.id";
+    let prospectId = "wackerman.id" |> UserId.fromString;
     let prospectPubKey = "sticks";
     let prospectSuggestion =
       Event.ProspectSuggested.make(
-        ~supporterId="bozzio.id",
+        ~supporterId="bozzio.id" |> UserId.fromString,
         ~prospectId,
         ~prospectPubKey,
         ~policy=Policy.absolute
@@ -44,7 +46,7 @@ let () =
           issuer,
           PartnerAdded({
             processId,
-            blockstackId: prospectId,
+            userId: prospectId,
             pubKey: prospectPubKey
           }),
           log
@@ -65,7 +67,7 @@ let () =
                Event.ProspectApproved.make(
                  ~processId,
                  ~prospectId,
-                 ~supporterId="frank.id"
+                 ~supporterId="frank.id" |> UserId.fromString
                )
              )
            );
@@ -76,7 +78,7 @@ let () =
              ventureCreated.systemIssuer,
              PartnerAdded({
                processId,
-               blockstackId: prospectId,
+               userId: prospectId,
                pubKey: prospectPubKey
              })
            ))
@@ -88,8 +90,8 @@ let () =
         |> EventLog.append(
              issuer,
              PartnerAdded({
-               processId: Uuid.v4(),
-               blockstackId: "ruth.id",
+               processId: ProcessId.make(),
+               userId: "ruth.id" |> UserId.fromString,
                pubKey: "mallets"
              })
            );
@@ -105,7 +107,7 @@ let () =
                Event.ProspectApproved.make(
                  ~processId,
                  ~prospectId,
-                 ~supporterId="frank.id"
+                 ~supporterId="frank.id" |> UserId.fromString
                )
              )
            );

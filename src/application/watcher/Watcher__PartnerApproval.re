@@ -1,8 +1,10 @@
 open Event;
 
+open PrimitiveTypes;
+
 type state = {
-  eligable: list(string),
-  approvals: list(string),
+  eligable: list(userId),
+  approvals: list(userId),
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t
 };
@@ -38,7 +40,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
             state^;
           | PartnerAdded(event) => {
               ...state^,
-              eligable: [event.blockstackId, ...state^.eligable]
+              eligable: [event.userId, ...state^.eligable]
             }
           | _ => state^
           }
@@ -56,7 +58,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
             PartnerAdded(
               PartnerAdded.make(
                 ~processId=suggestion.processId,
-                ~blockstackId=suggestion.prospectId,
+                ~userId=suggestion.prospectId,
                 ~pubKey=suggestion.prospectPubKey
               )
             )

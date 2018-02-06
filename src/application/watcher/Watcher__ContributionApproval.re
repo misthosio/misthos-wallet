@@ -1,8 +1,10 @@
 open Event;
 
+open PrimitiveTypes;
+
 type state = {
-  eligable: list(string),
-  approvals: list(string),
+  eligable: list(userId),
+  approvals: list(userId),
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t
 };
@@ -30,7 +32,7 @@ let make = (submission: ContributionSubmitted.t, log) => {
             }
           | PartnerAdded(event) => {
               ...state^,
-              eligable: [event.blockstackId, ...state^.eligable]
+              eligable: [event.userId, ...state^.eligable]
             }
           | ContributionApproved(event)
               when event.processId == submission.processId => {
