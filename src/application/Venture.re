@@ -225,6 +225,9 @@ module Synchronize = {
                | InvalidIssuer =>
                  logMessage("Invalid issuer detected");
                  (venture, None);
+               | BadData =>
+                 logMessage("Bad data in event detected");
+                 (venture, None);
                | UnknownProcessId =>
                  logMessage("Unknown ProcessId detected");
                  (venture, None);
@@ -306,15 +309,53 @@ module Cmd = {
   module ApproveProspect = {
     type result =
       | Ok(t);
-    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) => {
+    let exec = (session: Session.Data.t, ~processId, venture) => {
       logMessage("Executing 'ApproveProspect' command");
       Js.Promise.(
         venture
         |> apply(
              session.appKeyPair,
              Event.makeProspectApproved(
-               ~processId=Validation.processIdForProspect(prospectId, state),
-               ~prospectId,
+               ~processId,
+               ~supporterId=session.userId
+             )
+           )
+        |> persist
+        |> then_(p => resolve(Ok(p)))
+      );
+    };
+  };
+  module SuggestPartnerLabel = {
+    type result =
+      | Ok(t);
+    let exec = (session: Session.Data.t, ~partnerId, ~labelId, venture) => {
+      logMessage("Executing 'SuggestPartnerLabel' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             session.appKeyPair,
+             Event.makePartnerLabelSuggested(
+               ~partnerId,
+               ~supporterId=session.userId,
+               ~labelId
+             )
+           )
+        |> persist
+        |> then_(p => resolve(Ok(p)))
+      );
+    };
+  };
+  module ApprovePartnerLabel = {
+    type result =
+      | Ok(t);
+    let exec = (session: Session.Data.t, ~processId, venture) => {
+      logMessage("Executing 'ApprovePartnerLabel' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             session.appKeyPair,
+             Event.makePartnerLabelApproved(
+               ~processId,
                ~supporterId=session.userId
              )
            )

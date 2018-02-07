@@ -80,27 +80,20 @@ module ProspectSuggested = {
 module ProspectApproved = {
   type t = {
     processId,
-    prospectId: userId,
     supporterId: userId
   };
-  let make = (~processId, ~prospectId, ~supporterId) => {
-    processId,
-    prospectId,
-    supporterId
-  };
+  let make = (~processId, ~supporterId) => {processId, supporterId};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("ProspectApproved")),
         ("processId", ProcessId.encode(event.processId)),
-        ("prospectId", UserId.encode(event.prospectId)),
         ("supporterId", UserId.encode(event.supporterId))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", ProcessId.decode),
-      prospectId: raw |> field("prospectId", UserId.decode),
       supporterId: raw |> field("supporterId", UserId.decode)
     };
 };
@@ -317,10 +310,8 @@ let makeProspectSuggested =
     ProspectSuggested.make(~supporterId, ~prospectId, ~prospectPubKey, ~policy)
   );
 
-let makeProspectApproved = (~processId, ~prospectId, ~supporterId) =>
-  ProspectApproved(
-    ProspectApproved.make(~processId, ~prospectId, ~supporterId)
-  );
+let makeProspectApproved = (~processId, ~supporterId) =>
+  ProspectApproved(ProspectApproved.make(~processId, ~supporterId));
 
 let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId) =>
   PartnerLabelSuggested(

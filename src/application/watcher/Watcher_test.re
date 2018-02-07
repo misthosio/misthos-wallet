@@ -66,7 +66,6 @@ let () =
              ProspectApproved(
                Event.ProspectApproved.make(
                  ~processId,
-                 ~prospectId,
                  ~supporterId="frank.id" |> UserId.fromString
                )
              )
@@ -106,7 +105,6 @@ let () =
              ProspectApproved(
                Event.ProspectApproved.make(
                  ~processId,
-                 ~prospectId,
                  ~supporterId="frank.id" |> UserId.fromString
                )
              )

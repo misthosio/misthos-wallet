@@ -3,7 +3,7 @@ open PrimitiveTypes;
 open Event;
 
 type prospect = {
-  processId,
+  userId,
   supporterIds: list(userId),
   policy: Policy.t
 };
@@ -21,7 +21,7 @@ type state = {
   partnerIds: list(userId),
   partnerAddresses: list(string),
   partnerPubKeys: list((string, userId)),
-  prospects: list((userId, prospect)),
+  prospects: list((processId, prospect)),
   acceptContributionPolicy: Policy.t,
   contributions: list((processId, contribution))
 };
@@ -64,7 +64,7 @@ let apply = (event: Event.t, state) =>
   | ProspectSuggested({prospectId, processId, supporterId, policy}) => {
       ...state,
       prospects: [
-        (prospectId, {processId, supporterIds: [supporterId], policy}),
+        (processId, {userId: prospectId, supporterIds: [supporterId], policy}),
         ...state.prospects
       ]
     }
@@ -72,16 +72,16 @@ let apply = (event: Event.t, state) =>
       ...state,
       prospects:
         state.prospects
-        |> List.map(((prospectId, p: prospect)) =>
-             p.processId == processId ?
+        |> List.map(((pId, p: prospect)) =>
+             pId == processId ?
                (
-                 prospectId,
+                 processId,
                  {...p, supporterIds: [supporterId, ...p.supporterIds]}
                ) :
-               (prospectId, p)
+               (processId, p)
            )
     }
-  | PartnerAdded({partnerId, pubKey}) => {
+  | PartnerAdded({processId, partnerId, pubKey}) => {
       ...state,
       partnerIds: [partnerId, ...state.partnerIds],
       partnerAddresses: [
@@ -89,9 +89,7 @@ let apply = (event: Event.t, state) =>
         ...state.partnerAddresses
       ],
       partnerPubKeys: [(pubKey, partnerId), ...state.partnerPubKeys],
-      prospects:
-        state.prospects
-        |> List.filter(((prospectId, _)) => prospectId != partnerId)
+      prospects: state.prospects |> List.filter(((pId, _)) => pId != processId)
     }
   | ContributionSubmitted({processId, submitterId, policy}) => {
       ...state,
@@ -120,6 +118,7 @@ type result =
   | Ok
   | InvalidIssuer
   | UnknownProcessId
+  | BadData
   | DuplicateApproval
   | PolicyMissmatch
   | PolicyNotFulfilled;
@@ -133,15 +132,13 @@ let validateProspectSuggested =
 
 let validateProspectApproved =
     (
-      {processId, prospectId, supporterId}: ProspectApproved.t,
+      {processId, supporterId}: ProspectApproved.t,
       issuerPubKey,
       {prospects, partnerPubKeys}
     ) =>
   try {
-    let prospect = prospects |> List.assoc(prospectId);
-    if (prospect.processId != processId) {
-      UnknownProcessId;
-    } else if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
+    let prospect = prospects |> List.assoc(processId);
+    if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
       InvalidIssuer;
     } else if (prospect.supporterIds |> List.mem(supporterId)) {
       DuplicateApproval;
@@ -159,9 +156,9 @@ let validatePartnerAdded =
       {prospects, partnerIds}
     ) =>
   try {
-    let prospect = prospects |> List.assoc(partnerId);
-    if (prospect.processId != processId) {
-      UnknownProcessId;
+    let prospect = prospects |> List.assoc(processId);
+    if (prospect.userId != partnerId) {
+      BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
                  ~approved=prospect.supporterIds,
@@ -245,6 +242,3 @@ let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
   | _ => validateEvent(event, issuerPubKey, state)
   };
-
-let processIdForProspect = (prospectId, state) =>
-  (state.prospects |> List.assoc(prospectId)).processId;

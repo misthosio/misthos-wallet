@@ -16,7 +16,7 @@ type action =
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | SuggestProspect
-  | ApproveProspect(userId)
+  | ApproveProspect(processId)
   | SubmitContribution(int, int, string, string)
   | ApproveContribution(processId);
 
@@ -120,14 +120,14 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           )
         )
       }
-    | ApproveProspect(prospectId) =>
+    | ApproveProspect(processId) =>
       ReasonReact.SideEffects(
         (
           ({send}) =>
             Js.Promise.(
               Cmd.ApproveProspect.(
                 state.venture
-                |> exec(session, ~prospectId)
+                |> exec(session, ~processId)
                 |> then_(result =>
                      (
                        switch result {
@@ -238,7 +238,9 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                  (
                    if (prospect.approvedBy |> List.mem(session.userId) == false) {
                      <button
-                       onClick=(_e => send(ApproveProspect(prospect.userId)))>
+                       onClick=(
+                         _e => send(ApproveProspect(prospect.processId))
+                       )>
                        (text("Approve Prospect"))
                      </button>;
                    } else {

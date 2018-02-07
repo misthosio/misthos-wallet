@@ -3,6 +3,7 @@ open PrimitiveTypes;
 type partner = {userId};
 
 type prospect = {
+  processId,
   userId,
   approvedBy: list(userId)
 };
@@ -46,22 +47,24 @@ let apply = (event: Event.t, state) =>
       addPartnerPolicy: metaPolicy,
       acceptContributionPolicy: metaPolicy
     }
-  | ProspectApproved({prospectId, supporterId}) => {
+  | ProspectApproved({processId, supporterId}) => {
       ...state,
       prospects:
         state.prospects
-        |> List.map(p =>
-             if (p.userId == prospectId) {
-               {...p, approvedBy: [supporterId, ...p.approvedBy]};
-             } else {
-               p;
-             }
+        |> List.map((p: prospect) =>
+             (
+               if (p.processId == processId) {
+                 {...p, approvedBy: [supporterId, ...p.approvedBy]};
+               } else {
+                 p;
+               }: prospect
+             )
            )
     }
-  | ProspectSuggested(event) => {
+  | ProspectSuggested({processId, prospectId, supporterId}) => {
       ...state,
       prospects: [
-        {userId: event.prospectId, approvedBy: [event.supporterId]},
+        {processId, userId: prospectId, approvedBy: [supporterId]},
         ...state.prospects
       ]
     }
