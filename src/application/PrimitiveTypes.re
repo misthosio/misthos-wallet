@@ -35,3 +35,13 @@ module ProcessId = {
 };
 
 type processId = ProcessId.t;
+
+module LabelId = {
+  type t = string;
+  let make = Uuid.v4;
+  let toString = Helper.unpack;
+  let encode = Helper.encode;
+  let decode = Helper.decode;
+};
+
+type labelId = LabelId.t;

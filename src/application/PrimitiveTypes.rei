@@ -28,3 +28,13 @@ module ProcessId: {
 };
 
 type processId = ProcessId.t;
+
+module LabelId: {
+  type t;
+  let make: unit => t;
+  let toString: t => string;
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
+};
+
+type labelId = LabelId.t;

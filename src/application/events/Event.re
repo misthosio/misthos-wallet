@@ -133,6 +133,85 @@ module PartnerAdded = {
     };
 };
 
+module PartnerLabelSuggested = {
+  type t = {
+    processId,
+    partnerId: userId,
+    labelId,
+    supporterId: userId
+  };
+  let make = (~partnerId, ~labelId, ~supporterId) => {
+    processId: ProcessId.make(),
+    partnerId,
+    labelId,
+    supporterId
+  };
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("PartnerLabelSuggested")),
+        ("processId", ProcessId.encode(event.processId)),
+        ("partnerId", UserId.encode(event.partnerId)),
+        ("labelId", LabelId.encode(event.labelId)),
+        ("supporterId", UserId.encode(event.supporterId))
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      processId: raw |> field("processId", ProcessId.decode),
+      partnerId: raw |> field("partnerId", UserId.decode),
+      labelId: raw |> field("labelId", LabelId.decode),
+      supporterId: raw |> field("supporterId", UserId.decode)
+    };
+};
+
+module PartnerLabelApproved = {
+  type t = {
+    processId,
+    supporterId: userId
+  };
+  let make = (~processId, ~supporterId) => {processId, supporterId};
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("PartnerLabelApproved")),
+        ("processId", ProcessId.encode(event.processId)),
+        ("supporterId", UserId.encode(event.supporterId))
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      processId: raw |> field("processId", ProcessId.decode),
+      supporterId: raw |> field("supporterId", UserId.decode)
+    };
+};
+
+module PartnerLabelAccepted = {
+  type t = {
+    processId,
+    userId,
+    labelId,
+    supporterId: userId
+  };
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("PartnerLabelAccepted")),
+        ("processId", ProcessId.encode(event.processId)),
+        ("userId", UserId.encode(event.userId)),
+        ("labelId", LabelId.encode(event.labelId)),
+        ("supporterId", UserId.encode(event.supporterId))
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      processId: raw |> field("processId", ProcessId.decode),
+      userId: raw |> field("userId", UserId.decode),
+      labelId: raw |> field("labelId", LabelId.decode),
+      supporterId: raw |> field("supporterId", UserId.decode)
+    };
+};
+
 module ContributionSubmitted = {
   type t = {
     processId,
@@ -225,6 +304,9 @@ type t =
   | ProspectSuggested(ProspectSuggested.t)
   | ProspectApproved(ProspectApproved.t)
   | PartnerAdded(PartnerAdded.t)
+  | PartnerLabelSuggested(PartnerLabelSuggested.t)
+  | PartnerLabelApproved(PartnerLabelApproved.t)
+  | PartnerLabelAccepted(PartnerLabelAccepted.t)
   | ContributionSubmitted(ContributionSubmitted.t)
   | ContributionApproved(ContributionApproved.t)
   | ContributionAccepted(ContributionAccepted.t);
@@ -239,6 +321,14 @@ let makeProspectApproved = (~processId, ~prospectId, ~supporterId) =>
   ProspectApproved(
     ProspectApproved.make(~processId, ~prospectId, ~supporterId)
   );
+
+let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId) =>
+  PartnerLabelSuggested(
+    PartnerLabelSuggested.make(~partnerId, ~labelId, ~supporterId)
+  );
+
+let makePartnerLabelApproved = (~processId, ~supporterId) =>
+  PartnerLabelApproved(PartnerLabelApproved.make(~processId, ~supporterId));
 
 let makeContributionSubmitted =
     (
@@ -269,6 +359,9 @@ let encode =
   | ProspectSuggested(event) => ProspectSuggested.encode(event)
   | ProspectApproved(event) => ProspectApproved.encode(event)
   | PartnerAdded(event) => PartnerAdded.encode(event)
+  | PartnerLabelSuggested(event) => PartnerLabelSuggested.encode(event)
+  | PartnerLabelApproved(event) => PartnerLabelApproved.encode(event)
+  | PartnerLabelAccepted(event) => PartnerLabelAccepted.encode(event)
   | ContributionSubmitted(event) => ContributionSubmitted.encode(event)
   | ContributionApproved(event) => ContributionApproved.encode(event)
   | ContributionAccepted(event) => ContributionAccepted.encode(event);
@@ -276,6 +369,7 @@ let encode =
 let isSystemEvent =
   fun
   | PartnerAdded(_)
+  | PartnerLabelAccepted(_)
   | ContributionAccepted(_) => true
   | _ => false;
 
@@ -286,6 +380,12 @@ let decode = raw => {
   | "ProspectSuggested" => ProspectSuggested(ProspectSuggested.decode(raw))
   | "ProspectApproved" => ProspectApproved(ProspectApproved.decode(raw))
   | "PartnerAdded" => PartnerAdded(PartnerAdded.decode(raw))
+  | "PartnerLabelSuggested" =>
+    PartnerLabelSuggested(PartnerLabelSuggested.decode(raw))
+  | "PartnerLabelApproved" =>
+    PartnerLabelApproved(PartnerLabelApproved.decode(raw))
+  | "PartnerLabelAccepted" =>
+    PartnerLabelAccepted(PartnerLabelAccepted.decode(raw))
   | "ContributionSubmitted" =>
     ContributionSubmitted(ContributionSubmitted.decode(raw))
   | "ContributionApproved" =>
