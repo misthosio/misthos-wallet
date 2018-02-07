@@ -65,10 +65,10 @@ let apply = (event: Event.t, state) =>
         ...state.prospects
       ]
     }
-  | PartnerAdded({userId}) => {
+  | PartnerAdded({partnerId}) => {
       ...state,
-      partners: [{userId: userId}, ...state.partners],
-      prospects: state.prospects |> List.filter(p => p.userId != userId)
+      partners: [{userId: partnerId}, ...state.partners],
+      prospects: state.prospects |> List.filter(p => p.userId != partnerId)
     }
   | ContributionSubmitted({
       processId,

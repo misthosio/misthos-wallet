@@ -32,7 +32,7 @@ let make = (submission: ContributionSubmitted.t, log) => {
             }
           | PartnerAdded(event) => {
               ...state^,
-              eligable: [event.userId, ...state^.eligable]
+              eligable: [event.partnerId, ...state^.eligable]
             }
           | ContributionApproved(event)
               when event.processId == submission.processId => {

@@ -40,7 +40,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
             state^;
           | PartnerAdded(event) => {
               ...state^,
-              eligable: [event.userId, ...state^.eligable]
+              eligable: [event.partnerId, ...state^.eligable]
             }
           | _ => state^
           }
@@ -58,7 +58,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
             PartnerAdded(
               PartnerAdded.make(
                 ~processId=suggestion.processId,
-                ~userId=suggestion.prospectId,
+                ~partnerId=suggestion.prospectId,
                 ~pubKey=suggestion.prospectPubKey
               )
             )

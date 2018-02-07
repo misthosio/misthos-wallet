@@ -81,17 +81,17 @@ let apply = (event: Event.t, state) =>
                (prospectId, p)
            )
     }
-  | PartnerAdded({userId, pubKey}) => {
+  | PartnerAdded({partnerId, pubKey}) => {
       ...state,
-      partnerIds: [userId, ...state.partnerIds],
+      partnerIds: [partnerId, ...state.partnerIds],
       partnerAddresses: [
         Utils.addressFromPublicKey(pubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [(pubKey, userId), ...state.partnerPubKeys],
+      partnerPubKeys: [(pubKey, partnerId), ...state.partnerPubKeys],
       prospects:
         state.prospects
-        |> List.filter(((prospectId, _)) => prospectId != userId)
+        |> List.filter(((prospectId, _)) => prospectId != partnerId)
     }
   | ContributionSubmitted({processId, submitterId, policy}) => {
       ...state,
@@ -154,12 +154,12 @@ let validateProspectApproved =
 
 let validatePartnerAdded =
     (
-      {processId, userId}: PartnerAdded.t,
+      {processId, partnerId}: PartnerAdded.t,
       _issuerPubKey,
       {prospects, partnerIds}
     ) =>
   try {
-    let prospect = prospects |> List.assoc(userId);
+    let prospect = prospects |> List.assoc(partnerId);
     if (prospect.processId != processId) {
       UnknownProcessId;
     } else if (Policy.fulfilled(

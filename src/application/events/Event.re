@@ -108,23 +108,27 @@ module ProspectApproved = {
 module PartnerAdded = {
   type t = {
     processId,
-    userId,
+    partnerId: userId,
     pubKey: string
   };
-  let make = (~processId, ~userId, ~pubKey) => {processId, userId, pubKey};
+  let make = (~processId, ~partnerId, ~pubKey) => {
+    processId,
+    partnerId,
+    pubKey
+  };
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("PartnerAdded")),
         ("processId", ProcessId.encode(event.processId)),
-        ("userId", UserId.encode(event.userId)),
+        ("partnerId", UserId.encode(event.partnerId)),
         ("pubKey", string(event.pubKey))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", ProcessId.decode),
-      userId: raw |> field("userId", UserId.decode),
+      partnerId: raw |> field("partnerId", UserId.decode),
       pubKey: raw |> field("pubKey", string)
     };
 };

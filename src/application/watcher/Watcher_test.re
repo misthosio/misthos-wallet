@@ -46,7 +46,7 @@ let () =
           issuer,
           PartnerAdded({
             processId,
-            userId: prospectId,
+            partnerId: prospectId,
             pubKey: prospectPubKey
           }),
           log
@@ -78,7 +78,7 @@ let () =
              ventureCreated.systemIssuer,
              PartnerAdded({
                processId,
-               userId: prospectId,
+               partnerId: prospectId,
                pubKey: prospectPubKey
              })
            ))
@@ -91,7 +91,7 @@ let () =
              issuer,
              PartnerAdded({
                processId: ProcessId.make(),
-               userId: "ruth.id" |> UserId.fromString,
+               partnerId: "ruth.id" |> UserId.fromString,
                pubKey: "mallets"
              })
            );
