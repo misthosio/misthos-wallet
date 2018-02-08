@@ -1,47 +1,46 @@
-module Helper = {
-  external pack : string => 'a = "%identity";
-  external unpack : 'a => string = "%identity";
-  let encode = id => unpack(id) |> Json.Encode.string;
-  let decode = id => id |> Json.Decode.string |> pack;
+module Base = {
+  type t = string;
+  external toString : string => 'a = "%identity";
+  external fromString : 'a => string = "%identity";
+  let encode = id => toString(id) |> Json.Encode.string;
+  let decode = id => id |> Json.Decode.string |> fromString;
+  let eq = (a, b) => toString(a) == toString(b);
+  let neq = (a, b) => toString(a) != toString(b);
+};
+
+module type PrimitiveType = {
+  type t;
+  let toString: t => string;
+  let fromString: string => t;
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
+  let eq: (t, t) => bool;
+  let neq: (t, t) => bool;
 };
 
 module VentureId = {
-  type t = string;
+  include Base;
   let make = Uuid.v4;
-  let toString = Helper.unpack;
-  let fromString = Helper.unpack;
-  let encode = Helper.encode;
-  let decode = Helper.decode;
 };
 
 type ventureId = VentureId.t;
 
 module UserId = {
-  type t = string;
-  let fromString = Helper.pack;
-  let toString = Helper.unpack;
-  let encode = Helper.encode;
-  let decode = Helper.decode;
+  include Base;
 };
 
 type userId = UserId.t;
 
 module ProcessId = {
-  type t = string;
+  include Base;
   let make = Uuid.v4;
-  let toString = Helper.unpack;
-  let encode = Helper.encode;
-  let decode = Helper.decode;
 };
 
 type processId = ProcessId.t;
 
 module LabelId = {
-  type t = string;
+  include Base;
   let make = Uuid.v4;
-  let toString = Helper.unpack;
-  let encode = Helper.encode;
-  let decode = Helper.decode;
 };
 
 type labelId = LabelId.t;

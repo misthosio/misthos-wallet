@@ -1,40 +1,25 @@
-module VentureId: {
+module type PrimitiveType = {
   type t;
-  let make: unit => t;
   let toString: t => string;
   let fromString: string => t;
   let encode: t => Js.Json.t;
   let decode: Js.Json.t => t;
+  let eq: (t, t) => bool;
+  let neq: (t, t) => bool;
 };
+
+module VentureId: {include PrimitiveType; let make: unit => t;};
 
 type ventureId = VentureId.t;
 
-module UserId: {
-  type t;
-  let fromString: string => t;
-  let toString: t => string;
-  let encode: t => Js.Json.t;
-  let decode: Js.Json.t => t;
-};
+module UserId: {include PrimitiveType;};
 
 type userId = UserId.t;
 
-module ProcessId: {
-  type t;
-  let make: unit => t;
-  let toString: t => string;
-  let encode: t => Js.Json.t;
-  let decode: Js.Json.t => t;
-};
+module ProcessId: {include PrimitiveType; let make: unit => t;};
 
 type processId = ProcessId.t;
 
-module LabelId: {
-  type t;
-  let make: unit => t;
-  let toString: t => string;
-  let encode: t => Js.Json.t;
-  let decode: Js.Json.t => t;
-};
+module LabelId: {include PrimitiveType; let make: unit => t;};
 
 type labelId = LabelId.t;
