@@ -1,5 +1,38 @@
 open PrimitiveTypes;
 
+module type ApproveEvent = {
+  type t = {
+    processId,
+    supporterId: userId
+  };
+  let make: (~processId: processId, ~supporterId: userId) => t;
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
+};
+
+let makeApproveEventModule = (name: string) : (module ApproveEvent) =>
+  (module
+   {
+     type t = {
+       processId,
+       supporterId: userId
+     };
+     let make = (~processId, ~supporterId) => {processId, supporterId};
+     let encode = event =>
+       Json.Encode.(
+         object_([
+           ("type", string(name)),
+           ("processId", ProcessId.encode(event.processId)),
+           ("supporterId", UserId.encode(event.supporterId))
+         ])
+       );
+     let decode = raw =>
+       Json.Decode.{
+         processId: raw |> field("processId", ProcessId.decode),
+         supporterId: raw |> field("supporterId", UserId.decode)
+       };
+   });
+
 module VentureCreated = {
   type t = {
     ventureId,
@@ -77,26 +110,7 @@ module ProspectSuggested = {
     };
 };
 
-module ProspectApproved = {
-  type t = {
-    processId,
-    supporterId: userId
-  };
-  let make = (~processId, ~supporterId) => {processId, supporterId};
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("ProspectApproved")),
-        ("processId", ProcessId.encode(event.processId)),
-        ("supporterId", UserId.encode(event.supporterId))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      processId: raw |> field("processId", ProcessId.decode),
-      supporterId: raw |> field("supporterId", UserId.decode)
-    };
-};
+module ProspectApproved = (val makeApproveEventModule("ProspectApproved"));
 
 module PartnerAdded = {
   type t = {
@@ -158,26 +172,9 @@ module PartnerLabelSuggested = {
     };
 };
 
-module PartnerLabelApproved = {
-  type t = {
-    processId,
-    supporterId: userId
-  };
-  let make = (~processId, ~supporterId) => {processId, supporterId};
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("PartnerLabelApproved")),
-        ("processId", ProcessId.encode(event.processId)),
-        ("supporterId", UserId.encode(event.supporterId))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      processId: raw |> field("processId", ProcessId.decode),
-      supporterId: raw |> field("supporterId", UserId.decode)
-    };
-};
+module PartnerLabelApproved = (
+  val makeApproveEventModule("PartnerLabelApproved")
+);
 
 module PartnerLabelAccepted = {
   type t = {
@@ -257,26 +254,9 @@ module ContributionSubmitted = {
     };
 };
 
-module ContributionApproved = {
-  type t = {
-    processId,
-    supporterId: userId
-  };
-  let make = (~processId, ~supporterId) => {processId, supporterId};
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("ContributionApproved")),
-        ("processId", ProcessId.encode(event.processId)),
-        ("supporterId", UserId.encode(event.supporterId))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      processId: raw |> field("processId", ProcessId.decode),
-      supporterId: raw |> field("supporterId", UserId.decode)
-    };
-};
+module ContributionApproved = (
+  val makeApproveEventModule("ContributionApproved")
+);
 
 module ContributionAccepted = {
   type t = {processId};
