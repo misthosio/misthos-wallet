@@ -116,12 +116,12 @@ module PartnerAdded = {
   type t = {
     processId,
     partnerId: userId,
-    pubKey: string
+    partnerPubKey: string
   };
-  let make = (~processId, ~partnerId, ~pubKey) => {
+  let make = (~processId, ~partnerId, ~partnerPubKey) => {
     processId,
     partnerId,
-    pubKey
+    partnerPubKey
   };
   let encode = event =>
     Json.Encode.(
@@ -129,14 +129,14 @@ module PartnerAdded = {
         ("type", string("PartnerAdded")),
         ("processId", ProcessId.encode(event.processId)),
         ("partnerId", UserId.encode(event.partnerId)),
-        ("pubKey", string(event.pubKey))
+        ("partnerPubKey", string(event.partnerPubKey))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", ProcessId.decode),
       partnerId: raw |> field("partnerId", UserId.decode),
-      pubKey: raw |> field("pubKey", string)
+      partnerPubKey: raw |> field("partnerPubKey", string)
     };
 };
 
@@ -145,13 +145,15 @@ module PartnerLabelSuggested = {
     processId,
     partnerId: userId,
     labelId,
-    supporterId: userId
+    supporterId: userId,
+    policy: Policy.t
   };
-  let make = (~partnerId, ~labelId, ~supporterId) => {
+  let make = (~partnerId, ~labelId, ~supporterId, ~policy) => {
     processId: ProcessId.make(),
     partnerId,
     labelId,
-    supporterId
+    supporterId,
+    policy
   };
   let encode = event =>
     Json.Encode.(
@@ -160,7 +162,8 @@ module PartnerLabelSuggested = {
         ("processId", ProcessId.encode(event.processId)),
         ("partnerId", UserId.encode(event.partnerId)),
         ("labelId", LabelId.encode(event.labelId)),
-        ("supporterId", UserId.encode(event.supporterId))
+        ("supporterId", UserId.encode(event.supporterId)),
+        ("policy", Policy.encode(event.policy))
       ])
     );
   let decode = raw =>
@@ -168,7 +171,8 @@ module PartnerLabelSuggested = {
       processId: raw |> field("processId", ProcessId.decode),
       partnerId: raw |> field("partnerId", UserId.decode),
       labelId: raw |> field("labelId", LabelId.decode),
-      supporterId: raw |> field("supporterId", UserId.decode)
+      supporterId: raw |> field("supporterId", UserId.decode),
+      policy: raw |> field("policy", Policy.decode)
     };
 };
 
@@ -179,26 +183,23 @@ module PartnerLabelApproved = (
 module PartnerLabelAccepted = {
   type t = {
     processId,
-    userId,
-    labelId,
-    supporterId: userId
+    partnerId: userId,
+    labelId
   };
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("PartnerLabelAccepted")),
         ("processId", ProcessId.encode(event.processId)),
-        ("userId", UserId.encode(event.userId)),
-        ("labelId", LabelId.encode(event.labelId)),
-        ("supporterId", UserId.encode(event.supporterId))
+        ("partnerId", UserId.encode(event.partnerId)),
+        ("labelId", LabelId.encode(event.labelId))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       processId: raw |> field("processId", ProcessId.decode),
-      userId: raw |> field("userId", UserId.decode),
-      labelId: raw |> field("labelId", LabelId.decode),
-      supporterId: raw |> field("supporterId", UserId.decode)
+      partnerId: raw |> field("partnerId", UserId.decode),
+      labelId: raw |> field("labelId", LabelId.decode)
     };
 };
 
@@ -293,9 +294,9 @@ let makeProspectSuggested =
 let makeProspectApproved = (~processId, ~supporterId) =>
   ProspectApproved(ProspectApproved.make(~processId, ~supporterId));
 
-let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId) =>
+let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId, ~policy) =>
   PartnerLabelSuggested(
-    PartnerLabelSuggested.make(~partnerId, ~labelId, ~supporterId)
+    PartnerLabelSuggested.make(~partnerId, ~labelId, ~supporterId, ~policy)
   );
 
 let makePartnerLabelApproved = (~processId, ~supporterId) =>

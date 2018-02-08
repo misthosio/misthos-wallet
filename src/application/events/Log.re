@@ -73,10 +73,7 @@ module Make = (Event: Encodable) => {
        });
   };
   let getSummary = log => {
-    knownItems:
-      log
-      |> List.fold_left((items, {hash}) => [hash, ...items], [])
-      |> List.sort(compare)
+    knownItems: log |> List.fold_left((items, {hash}) => [hash, ...items], [])
   };
   let encodeSummary = summary =>
     Json.Encode.(object_([("knownItems", list(string, summary.knownItems))]));

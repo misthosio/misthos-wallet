@@ -35,12 +35,12 @@ let make = (submission: ContributionSubmitted.t, log) => {
               eligable: [event.partnerId, ...state^.eligable]
             }
           | ContributionApproved(event)
-              when event.processId == submission.processId => {
+              when ProcessId.eq(event.processId, submission.processId) => {
               ...state^,
               approvals: [event.supporterId, ...state^.approvals]
             }
           | ContributionAccepted(event)
-              when event.processId == submission.processId =>
+              when ProcessId.eq(event.processId, submission.processId) =>
             completed := true;
             state^;
           | _ => state^

@@ -328,7 +328,8 @@ module Cmd = {
   module SuggestPartnerLabel = {
     type result =
       | Ok(t);
-    let exec = (session: Session.Data.t, ~partnerId, ~labelId, venture) => {
+    let exec =
+        (session: Session.Data.t, ~partnerId, ~labelId, {state} as venture) => {
       logMessage("Executing 'SuggestPartnerLabel' command");
       Js.Promise.(
         venture
@@ -337,7 +338,8 @@ module Cmd = {
              Event.makePartnerLabelSuggested(
                ~partnerId,
                ~supporterId=session.userId,
-               ~labelId
+               ~labelId,
+               ~policy=state.addPartnerLabelPolicy
              )
            )
         |> persist

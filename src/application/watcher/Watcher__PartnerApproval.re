@@ -31,11 +31,12 @@ let make = (suggestion: ProspectSuggested.t, log) => {
               systemIssuer: event.systemIssuer
             }
           | ProspectApproved(event)
-              when event.processId == suggestion.processId => {
+              when ProcessId.eq(event.processId, suggestion.processId) => {
               ...state^,
               approvals: [event.supporterId, ...state^.approvals]
             }
-          | PartnerAdded(event) when event.processId == suggestion.processId =>
+          | PartnerAdded(event)
+              when ProcessId.eq(event.processId, suggestion.processId) =>
             completed := true;
             state^;
           | PartnerAdded(event) => {
@@ -59,7 +60,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
               PartnerAdded.make(
                 ~processId=suggestion.processId,
                 ~partnerId=suggestion.prospectId,
-                ~pubKey=suggestion.prospectPubKey
+                ~partnerPubKey=suggestion.prospectPubKey
               )
             )
           ));

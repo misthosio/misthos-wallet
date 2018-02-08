@@ -5,11 +5,19 @@ open Event;
 type prospect = {
   userId,
   supporterIds: list(userId),
+  pubKey: string,
   policy: Policy.t
 };
 
 type contribution = {
   supporterIds: list(userId),
+  policy: Policy.t
+};
+
+type partnerLabelProcess = {
+  partnerId: userId,
+  supporterIds: list(userId),
+  labelId,
   policy: Policy.t
 };
 
@@ -21,6 +29,9 @@ type state = {
   partnerIds: list(userId),
   partnerAddresses: list(string),
   partnerPubKeys: list((string, userId)),
+  addPartnerLabelPolicy: Policy.t,
+  partnerLabels: list((userId, list(labelId))),
+  partnerLabelProcesses: list((processId, partnerLabelProcess)),
   prospects: list((processId, prospect)),
   acceptContributionPolicy: Policy.t,
   contributions: list((processId, contribution))
@@ -28,15 +39,18 @@ type state = {
 
 let makeState = () => {
   ventureName: "",
+  systemPubKey: "",
   partnerIds: [],
   partnerAddresses: [],
   partnerPubKeys: [],
-  systemPubKey: "",
+  partnerLabels: [],
+  addPartnerLabelPolicy: Policy.absolute,
   metaPolicy: Policy.absolute,
   addPartnerPolicy: Policy.absolute,
   prospects: [],
   acceptContributionPolicy: Policy.absolute,
-  contributions: []
+  contributions: [],
+  partnerLabelProcesses: []
 };
 
 let apply = (event: Event.t, state) =>
@@ -61,10 +75,24 @@ let apply = (event: Event.t, state) =>
       addPartnerPolicy: metaPolicy,
       acceptContributionPolicy: metaPolicy
     }
-  | ProspectSuggested({prospectId, processId, supporterId, policy}) => {
+  | ProspectSuggested({
+      prospectId,
+      prospectPubKey,
+      processId,
+      supporterId,
+      policy
+    }) => {
       ...state,
       prospects: [
-        (processId, {userId: prospectId, supporterIds: [supporterId], policy}),
+        (
+          processId,
+          {
+            userId: prospectId,
+            pubKey: prospectPubKey,
+            supporterIds: [supporterId],
+            policy
+          }
+        ),
         ...state.prospects
       ]
     }
@@ -73,7 +101,7 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects
         |> List.map(((pId, p: prospect)) =>
-             pId == processId ?
+             ProcessId.eq(pId, processId) ?
                (
                  processId,
                  {...p, supporterIds: [supporterId, ...p.supporterIds]}
@@ -81,15 +109,49 @@ let apply = (event: Event.t, state) =>
                (processId, p)
            )
     }
-  | PartnerAdded({processId, partnerId, pubKey}) => {
+  | PartnerAdded({processId, partnerId, partnerPubKey}) => {
       ...state,
       partnerIds: [partnerId, ...state.partnerIds],
       partnerAddresses: [
-        Utils.addressFromPublicKey(pubKey),
+        Utils.addressFromPublicKey(partnerPubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [(pubKey, partnerId), ...state.partnerPubKeys],
-      prospects: state.prospects |> List.filter(((pId, _)) => pId != processId)
+      partnerPubKeys: [(partnerPubKey, partnerId), ...state.partnerPubKeys],
+      prospects:
+        state.prospects
+        |> List.filter(((pId, _)) => ProcessId.neq(pId, processId))
+    }
+  | PartnerLabelSuggested({processId, partnerId, labelId, supporterId, policy}) => {
+      ...state,
+      partnerLabelProcesses: [
+        (processId, {partnerId, labelId, policy, supporterIds: [supporterId]}),
+        ...state.partnerLabelProcesses
+      ]
+    }
+  | PartnerLabelApproved({processId, supporterId}) => {
+      ...state,
+      partnerLabelProcesses:
+        state.partnerLabelProcesses
+        |> List.map(((pId, process)) =>
+             ProcessId.eq(pId, processId) ?
+               (
+                 pId,
+                 {
+                   ...process,
+                   supporterIds: [supporterId, ...process.supporterIds]
+                 }
+               ) :
+               (pId, process)
+           )
+    }
+  | PartnerLabelAccepted({partnerId, labelId}) => {
+      ...state,
+      partnerLabels:
+        state.partnerLabels
+        |> List.map(((pId, labels)) =>
+             UserId.eq(pId, partnerId) ?
+               (partnerId, [labelId, ...labels]) : (pId, labels)
+           )
     }
   | ContributionSubmitted({processId, submitterId, policy}) => {
       ...state,
@@ -102,8 +164,8 @@ let apply = (event: Event.t, state) =>
       ...state,
       contributions:
         state.contributions
-        |> List.map(((cProcess, c)) =>
-             cProcess == processId ?
+        |> List.map(((cProcess, c: contribution)) =>
+             ProcessId.eq(cProcess, processId) ?
                (
                  cProcess,
                  {...c, supporterIds: [supporterId, ...c.supporterIds]}
@@ -123,24 +185,19 @@ type result =
   | PolicyMissmatch
   | PolicyNotFulfilled;
 
-let validateProspectSuggested =
-    (event: ProspectSuggested.t, _issuerPubKey, {addPartnerPolicy}) =>
-  switch (addPartnerPolicy == event.policy) {
-  | true => Ok
-  | _ => PolicyMissmatch
-  };
-
-let validateProspectApproved =
+let validateApproval =
     (
-      {processId, supporterId}: ProspectApproved.t,
-      issuerPubKey,
-      {prospects, partnerPubKeys}
+      processId: processId,
+      supporterId: userId,
+      supporters: list((processId, list(userId))),
+      {partnerPubKeys},
+      issuerPubKey
     ) =>
   try {
-    let prospect = prospects |> List.assoc(processId);
-    if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
+    let supporterIds = supporters |> List.assoc(processId);
+    if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
       InvalidIssuer;
-    } else if (prospect.supporterIds |> List.mem(supporterId)) {
+    } else if (supporterIds |> List.mem(supporterId)) {
       DuplicateApproval;
     } else {
       Ok;
@@ -151,13 +208,15 @@ let validateProspectApproved =
 
 let validatePartnerAdded =
     (
-      {processId, partnerId}: PartnerAdded.t,
-      _issuerPubKey,
-      {prospects, partnerIds}
+      {processId, partnerId, partnerPubKey}: PartnerAdded.t,
+      {prospects, partnerIds},
+      _issuerPubKey
     ) =>
   try {
     let prospect = prospects |> List.assoc(processId);
-    if (prospect.userId != partnerId) {
+    if (UserId.neq(prospect.userId, partnerId)) {
+      BadData;
+    } else if (prospect.pubKey != partnerPubKey) {
       BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
@@ -173,25 +232,25 @@ let validatePartnerAdded =
   | Not_found => UnknownProcessId
   };
 
-let validateContributionSubmitted =
-    (event: ContributionSubmitted.t, _issuerPubKey, {acceptContributionPolicy}) =>
-  switch (acceptContributionPolicy == event.policy) {
-  | true => Ok
-  | _ => PolicyMissmatch
-  };
-
-let validateContributionApproved =
+let validatePartnerLabelAccepted =
     (
-      {processId, supporterId}: ContributionApproved.t,
-      issuerPubKey,
-      {contributions, partnerPubKeys}
+      {processId, partnerId, labelId}: PartnerLabelAccepted.t,
+      {partnerLabelProcesses, partnerIds},
+      _issuerPubKey
     ) =>
   try {
-    let contribution = contributions |> List.assoc(processId);
-    if (partnerPubKeys |> List.assoc(issuerPubKey) != supporterId) {
-      InvalidIssuer;
-    } else if (contribution.supporterIds |> List.mem(supporterId)) {
-      DuplicateApproval;
+    let process = partnerLabelProcesses |> List.assoc(processId);
+    if (UserId.neq(process.partnerId, partnerId)) {
+      BadData;
+    } else if (process.labelId != labelId) {
+      BadData;
+    } else if (Policy.fulfilled(
+                 ~eligable=partnerIds,
+                 ~approved=process.supporterIds,
+                 process.policy
+               )
+               == false) {
+      PolicyNotFulfilled;
     } else {
       Ok;
     };
@@ -202,8 +261,8 @@ let validateContributionApproved =
 let validateContributionAccepted =
     (
       {processId}: ContributionAccepted.t,
-      _issuerPubKey,
-      {contributions, partnerIds}
+      {contributions, partnerIds},
+      _issuerPubKey
     ) =>
   try {
     let contribution = contributions |> List.assoc(processId);
@@ -223,13 +282,50 @@ let validateContributionAccepted =
 
 let validateEvent =
   fun
-  | ProspectSuggested(event) => validateProspectSuggested(event)
-  | ProspectApproved(event) => validateProspectApproved(event)
+  | ProspectSuggested({policy}) => (
+      (state, _) => policy == state.addPartnerPolicy ? Ok : PolicyMissmatch
+    )
+  | ProspectApproved({processId, supporterId}) => (
+      state =>
+        validateApproval(
+          processId,
+          supporterId,
+          state.contributions
+          |> List.map(((pId, p: contribution)) => (pId, p.supporterIds)),
+          state
+        )
+    )
   | PartnerAdded(event) => validatePartnerAdded(event)
-  | ContributionSubmitted(event) => validateContributionSubmitted(event)
-  | ContributionApproved(event) => validateContributionApproved(event)
-  | ContributionAccepted(event) => validateContributionAccepted(event)
-  | _ => ((_, _) => Ok);
+  | PartnerLabelSuggested({policy}) => (
+      (state, _) =>
+        policy == state.addPartnerLabelPolicy ? Ok : PolicyMissmatch
+    )
+  | PartnerLabelApproved({processId, supporterId}) => (
+      state =>
+        validateApproval(
+          processId,
+          supporterId,
+          state.partnerLabelProcesses
+          |> List.map(((pId, p: partnerLabelProcess)) => (pId, p.supporterIds)),
+          state
+        )
+    )
+  | PartnerLabelAccepted(event) => validatePartnerLabelAccepted(event)
+  | ContributionSubmitted({policy}) => (
+      (state, _) =>
+        policy == state.acceptContributionPolicy ? Ok : PolicyMissmatch
+    )
+  | ContributionApproved({processId, supporterId}) => (
+      state =>
+        validateApproval(
+          processId,
+          supporterId,
+          state.contributions
+          |> List.map(((pId, c: contribution)) => (pId, c.supporterIds)),
+          state
+        )
+    )
+  | ContributionAccepted(event) => validateContributionAccepted(event);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (
@@ -240,5 +336,5 @@ let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   | (VentureCreated(_), _, _) => Ok
   | (_, false, false) => InvalidIssuer
   | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
-  | _ => validateEvent(event, issuerPubKey, state)
+  | _ => validateEvent(event, state, issuerPubKey)
   };

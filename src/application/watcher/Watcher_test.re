@@ -47,7 +47,7 @@ let () =
           PartnerAdded({
             processId,
             partnerId: prospectId,
-            pubKey: prospectPubKey
+            partnerPubKey: prospectPubKey
           }),
           log
         );
@@ -78,7 +78,7 @@ let () =
              PartnerAdded({
                processId,
                partnerId: prospectId,
-               pubKey: prospectPubKey
+               partnerPubKey: prospectPubKey
              })
            ))
          );
@@ -91,7 +91,7 @@ let () =
              PartnerAdded({
                processId: ProcessId.make(),
                partnerId: "ruth.id" |> UserId.fromString,
-               pubKey: "mallets"
+               partnerPubKey: "mallets"
              })
            );
       let (item, log) =

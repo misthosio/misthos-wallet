@@ -52,13 +52,8 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects
         |> List.map((p: prospect) =>
-             (
-               if (p.processId == processId) {
-                 {...p, approvedBy: [supporterId, ...p.approvedBy]};
-               } else {
-                 p;
-               }: prospect
-             )
+             ProcessId.eq(p.processId, processId) ?
+               {...p, approvedBy: [supporterId, ...p.approvedBy]} : p
            )
     }
   | ProspectSuggested({processId, prospectId, supporterId}) => {
@@ -71,7 +66,8 @@ let apply = (event: Event.t, state) =>
   | PartnerAdded({partnerId}) => {
       ...state,
       partners: [{userId: partnerId}, ...state.partners],
-      prospects: state.prospects |> List.filter(p => p.userId != partnerId)
+      prospects:
+        state.prospects |> List.filter(p => UserId.neq(p.userId, partnerId))
     }
   | ContributionSubmitted({
       processId,
@@ -98,7 +94,7 @@ let apply = (event: Event.t, state) =>
       contributions:
         state.contributions
         |> List.map(c =>
-             c.processId == processId ?
+             ProcessId.eq(c.processId, processId) ?
                {...c, supporters: [supporterId, ...c.supporters]} : c
            )
     }
@@ -106,8 +102,13 @@ let apply = (event: Event.t, state) =>
       ...state,
       contributions:
         state.contributions
-        |> List.map(c => c.processId == processId ? {...c, accepted: true} : c)
+        |> List.map(c =>
+             ProcessId.eq(c.processId, processId) ? {...c, accepted: true} : c
+           )
     }
+  | PartnerLabelSuggested(_)
+  | PartnerLabelApproved(_)
+  | PartnerLabelAccepted(_) => state
   };
 
 let getPartners = state => state.partners;
