@@ -1,7 +1,6 @@
 open PrimitiveTypes;
 
 type proposal('a) = {
-  name: string,
   processId,
   supporterId: userId,
   policy: Policy.t,
@@ -9,13 +8,11 @@ type proposal('a) = {
 };
 
 type endorsement = {
-  name: string,
   processId,
   supporterId: userId
 };
 
 type acceptance('a) = {
-  name: string,
   processId,
   data: 'a
 };
@@ -40,7 +37,6 @@ let makeProposal = (name: string) : (module ProposalEvent) =>
    (Data: EventData) => {
      type t = proposal(Data.t);
      let make = (~supporterId, ~policy, ~data) => {
-       name,
        processId: ProcessId.make(),
        supporterId,
        policy,
@@ -58,7 +54,6 @@ let makeProposal = (name: string) : (module ProposalEvent) =>
        );
      let decode = raw =>
        Json.Decode.{
-         name,
          processId: raw |> field("processId", ProcessId.decode),
          supporterId: raw |> field("supporterId", UserId.decode),
          policy: raw |> field("policy", Policy.decode),
@@ -77,7 +72,7 @@ let makeEndorsement = (name: string) : (module EndorsementEvent) =>
   (module
    {
      type t = endorsement;
-     let make = (~processId, ~supporterId) => {name, processId, supporterId};
+     let make = (~processId, ~supporterId) => {processId, supporterId};
      let encode = (event: t) =>
        Json.Encode.(
          object_([
@@ -88,7 +83,6 @@ let makeEndorsement = (name: string) : (module EndorsementEvent) =>
        );
      let decode = raw =>
        Json.Decode.{
-         name,
          processId: raw |> field("processId", ProcessId.decode),
          supporterId: raw |> field("supporterId", UserId.decode)
        };
@@ -107,7 +101,7 @@ let makeAcceptance = (name: string) : (module AcceptanceEvent) =>
   (module
    (Data: EventData) => {
      type t = acceptance(Data.t);
-     let make = (~processId, ~data) => {name, processId, data};
+     let make = (~processId, ~data) => {processId, data};
      let encode = (event: t) =>
        Json.Encode.(
          object_([
@@ -118,7 +112,6 @@ let makeAcceptance = (name: string) : (module AcceptanceEvent) =>
        );
      let decode = raw =>
        Json.Decode.{
-         name,
          processId: raw |> field("processId", ProcessId.decode),
          data: raw |> field("data", Data.decode)
        };
@@ -127,6 +120,7 @@ let makeAcceptance = (name: string) : (module AcceptanceEvent) =>
 module type Process =
   (Data: EventData) =>
   {
+    let processName: string;
     module Proposal: {
       type t = proposal(Data.t);
       let make: (~supporterId: userId, ~policy: Policy.t, ~data: Data.t) => t;
@@ -150,6 +144,7 @@ module type Process =
 let makeProcess = (name: string) : (module Process) =>
   (module
    (Data: EventData) => {
+     let processName = name ++ "ApprovalProcess";
      module Proposal = (val makeProposal(name ++ "Proposed"))(Data);
      module Endorsement = (val makeEndorsement(name ++ "Endorsed"));
      module Acceptance = (val makeAcceptance(name ++ "Acceptance"))(Data);

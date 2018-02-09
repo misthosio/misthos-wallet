@@ -295,7 +295,8 @@ module Cmd = {
                       ~supporterId=session.userId,
                       ~prospectId,
                       ~prospectPubKey=info.appPubKey,
-                      ~policy=state.addPartnerPolicy
+                      ~policy=
+                        state.policies |> List.assoc(Event.Partner.processName)
                     )
                   )
                |> persist
@@ -336,7 +337,8 @@ module Cmd = {
                ~partnerId,
                ~supporterId=session.userId,
                ~labelId,
-               ~policy=state.addPartnerLabelPolicy
+               ~policy=
+                 state.policies |> List.assoc(Event.PartnerLabel.processName)
              )
            )
         |> persist
@@ -386,7 +388,8 @@ module Cmd = {
                ~amountFraction,
                ~currency,
                ~description,
-               ~policy=state.acceptContributionPolicy
+               ~policy=
+                 state.policies |> List.assoc(Event.Contribution.processName)
              )
            )
         |> persist

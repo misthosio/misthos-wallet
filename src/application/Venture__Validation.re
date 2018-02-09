@@ -2,22 +2,8 @@ open PrimitiveTypes;
 
 open Event;
 
-type prospect = {
-  userId,
+type approvalProcess = {
   supporterIds: list(userId),
-  pubKey: string,
-  policy: Policy.t
-};
-
-type contribution = {
-  supporterIds: list(userId),
-  policy: Policy.t
-};
-
-type partnerLabelProcess = {
-  partnerId: userId,
-  supporterIds: list(userId),
-  labelId,
   policy: Policy.t
 };
 
@@ -25,16 +11,14 @@ type state = {
   ventureName: string,
   systemPubKey: string,
   metaPolicy: Policy.t,
-  addPartnerPolicy: Policy.t,
   partnerIds: list(userId),
   partnerAddresses: list(string),
   partnerPubKeys: list((string, userId)),
-  addPartnerLabelPolicy: Policy.t,
-  partnerLabels: list((userId, list(labelId))),
-  partnerLabelProcesses: list((processId, partnerLabelProcess)),
-  prospects: list((processId, prospect)),
-  acceptContributionPolicy: Policy.t,
-  contributions: list((processId, contribution))
+  partnerData: list((processId, Partner.Data.t)),
+  partnerLabelData: list((processId, PartnerLabel.Data.t)),
+  contributionData: list((processId, Contribution.Data.t)),
+  processes: list((processId, approvalProcess)),
+  policies: list((string, Policy.t))
 };
 
 let makeState = () => {
@@ -43,14 +27,36 @@ let makeState = () => {
   partnerIds: [],
   partnerAddresses: [],
   partnerPubKeys: [],
-  partnerLabels: [],
-  addPartnerLabelPolicy: Policy.absolute,
+  partnerLabelData: [],
   metaPolicy: Policy.absolute,
-  addPartnerPolicy: Policy.absolute,
-  prospects: [],
-  acceptContributionPolicy: Policy.absolute,
-  contributions: [],
-  partnerLabelProcesses: []
+  partnerData: [],
+  contributionData: [],
+  processes: [],
+  policies: []
+};
+
+let addProcess =
+    (
+      {processId, policy, supporterId}: EventTypes.proposal('a),
+      {processes} as state
+    ) => {
+  ...state,
+  processes: [(processId, {policy, supporterIds: [supporterId]}), ...processes]
+};
+
+let endorseProcess =
+    ({processId, supporterId}: EventTypes.endorsement, {processes} as state) => {
+  ...state,
+  processes:
+    processes
+    |> List.map(((pId, process)) =>
+         ProcessId.eq(pId, processId) ?
+           (
+             pId,
+             {...process, supporterIds: [supporterId, ...process.supporterIds]}
+           ) :
+           (pId, process)
+       )
 };
 
 let apply = (event: Event.t, state) =>
@@ -72,109 +78,39 @@ let apply = (event: Event.t, state) =>
       partnerPubKeys: [(creatorPubKey, creatorId), ...state.partnerPubKeys],
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
-      addPartnerPolicy: metaPolicy,
-      acceptContributionPolicy: metaPolicy
+      policies:
+        [
+          Partner.processName,
+          PartnerLabel.processName,
+          Contribution.processName
+        ]
+        |> List.map(n => (n, metaPolicy))
     }
-  | PartnerProposed({processId, supporterId, policy, data}) => {
-      ...state,
-      prospects: [
-        (
-          processId,
-          {
-            userId: data.id,
-            pubKey: data.pubKey,
-            supporterIds: [supporterId],
-            policy
-          }
-        ),
-        ...state.prospects
-      ]
+  | PartnerProposed({processId, data} as proposal) => {
+      ...addProcess(proposal, state),
+      partnerData: [(processId, data), ...state.partnerData]
     }
-  | PartnerEndorsed({processId, supporterId}) => {
-      ...state,
-      prospects:
-        state.prospects
-        |> List.map(((pId, p: prospect)) =>
-             ProcessId.eq(pId, processId) ?
-               (
-                 processId,
-                 {...p, supporterIds: [supporterId, ...p.supporterIds]}
-               ) :
-               (processId, p)
-           )
+  | PartnerLabelProposed({processId, data} as proposal) => {
+      ...addProcess(proposal, state),
+      partnerLabelData: [(processId, data), ...state.partnerLabelData]
     }
-  | PartnerAccepted({processId, data}) => {
+  | ContributionProposed({processId, data} as proposal) => {
+      ...addProcess(proposal, state),
+      contributionData: [(processId, data), ...state.contributionData]
+    }
+  | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
+  | PartnerLabelEndorsed(endorsement) => endorseProcess(endorsement, state)
+  | PartnerAccepted({data}) => {
       ...state,
       partnerIds: [data.id, ...state.partnerIds],
       partnerAddresses: [
         Utils.addressFromPublicKey(data.pubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys],
-      prospects:
-        state.prospects
-        |> List.filter(((pId, _)) => ProcessId.neq(pId, processId))
+      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
-  | PartnerLabelProposed({processId, supporterId, policy, data}) => {
-      ...state,
-      partnerLabelProcesses: [
-        (
-          processId,
-          {
-            partnerId: data.partnerId,
-            labelId: data.labelId,
-            policy,
-            supporterIds: [supporterId]
-          }
-        ),
-        ...state.partnerLabelProcesses
-      ]
-    }
-  | PartnerLabelEndorsed({processId, supporterId}) => {
-      ...state,
-      partnerLabelProcesses:
-        state.partnerLabelProcesses
-        |> List.map(((pId, process)) =>
-             ProcessId.eq(pId, processId) ?
-               (
-                 pId,
-                 {
-                   ...process,
-                   supporterIds: [supporterId, ...process.supporterIds]
-                 }
-               ) :
-               (pId, process)
-           )
-    }
-  | PartnerLabelAccepted({data}) => {
-      ...state,
-      partnerLabels:
-        state.partnerLabels
-        |> List.map(((pId, labels)) =>
-             UserId.eq(pId, data.partnerId) ?
-               (data.partnerId, [data.labelId, ...labels]) : (pId, labels)
-           )
-    }
-  | ContributionProposed({processId, supporterId, policy}) => {
-      ...state,
-      contributions: [
-        (processId, {policy, supporterIds: [supporterId]}),
-        ...state.contributions
-      ]
-    }
-  | ContributionEndorsed({processId, supporterId}) => {
-      ...state,
-      contributions:
-        state.contributions
-        |> List.map(((cProcess, c: contribution)) =>
-             ProcessId.eq(cProcess, processId) ?
-               (
-                 cProcess,
-                 {...c, supporterIds: [supporterId, ...c.supporterIds]}
-               ) :
-               (cProcess, c)
-           )
-    }
+  | PartnerLabelAccepted(_) => state
+  | ContributionEndorsed(endorsement) => endorseProcess(endorsement, state)
   | ContributionAccepted(_) => state
   };
 
@@ -190,11 +126,11 @@ type result =
 let validateProposal =
     (
       {policy, supporterId}: EventTypes.proposal('a),
-      correctPolicy,
-      {partnerPubKeys},
+      processName,
+      {policies, partnerPubKeys},
       issuerPubKey
     ) =>
-  if (Policy.neq(policy, correctPolicy)) {
+  if (Policy.neq(policy, policies |> List.assoc(processName))) {
     PolicyMissmatch;
   } else if (UserId.neq(
                partnerPubKeys |> List.assoc(issuerPubKey),
@@ -208,12 +144,11 @@ let validateProposal =
 let validateEndorsement =
     (
       {processId, supporterId}: EventTypes.endorsement,
-      supporters: list((processId, list(userId))),
-      {partnerPubKeys},
+      {processes, partnerPubKeys},
       issuerPubKey
     ) =>
   try {
-    let supporterIds = supporters |> List.assoc(processId);
+    let {supporterIds} = processes |> List.assoc(processId);
     if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
       InvalidIssuer;
     } else if (supporterIds |> List.mem(supporterId)) {
@@ -225,72 +160,23 @@ let validateEndorsement =
   | Not_found => UnknownProcessId
   };
 
-let validatePartnerAccepted =
+let validateAcceptance =
     (
-      {processId, data}: Partner.Acceptance.t,
-      {prospects, partnerIds},
+      {processId, data}: EventTypes.acceptance('a),
+      dataList: list((processId, 'a)),
+      {processes, partnerIds},
       _issuerPubKey
     ) =>
   try {
-    let prospect = prospects |> List.assoc(processId);
-    if (UserId.neq(prospect.userId, data.id)) {
-      BadData;
-    } else if (prospect.pubKey != data.pubKey) {
+    let {policy, supporterIds} = processes |> List.assoc(processId);
+    if (data != (dataList |> List.assoc(processId))) {
       BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
-                 ~endorsed=prospect.supporterIds,
-                 prospect.policy
+                 ~endorsed=supporterIds,
+                 policy
                )
                == false) {
-      PolicyNotFulfilled;
-    } else {
-      Ok;
-    };
-  } {
-  | Not_found => UnknownProcessId
-  };
-
-let validatePartnerLabelAccepted =
-    (
-      {processId, data}: PartnerLabel.Acceptance.t,
-      {partnerLabelProcesses, partnerIds},
-      _issuerPubKey
-    ) =>
-  try {
-    let process = partnerLabelProcesses |> List.assoc(processId);
-    if (UserId.neq(process.partnerId, data.partnerId)) {
-      BadData;
-    } else if (LabelId.neq(process.labelId, data.labelId)) {
-      BadData;
-    } else if (Policy.fulfilled(
-                 ~eligable=partnerIds,
-                 ~endorsed=process.supporterIds,
-                 process.policy
-               )
-               == false) {
-      PolicyNotFulfilled;
-    } else {
-      Ok;
-    };
-  } {
-  | Not_found => UnknownProcessId
-  };
-
-let validateContributionAccepted =
-    (
-      {processId}: Contribution.Acceptance.t,
-      {contributions, partnerIds},
-      _issuerPubKey
-    ) =>
-  try {
-    let contribution = contributions |> List.assoc(processId);
-    if (Policy.fulfilled(
-          ~eligable=partnerIds,
-          ~endorsed=contribution.supporterIds,
-          contribution.policy
-        )
-        == false) {
       PolicyNotFulfilled;
     } else {
       Ok;
@@ -302,47 +188,24 @@ let validateContributionAccepted =
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
-  | PartnerProposed(proposal) => (
-      state =>
-        validateProposal(proposal, state.acceptContributionPolicy, state)
+  | PartnerProposed(proposal) =>
+    validateProposal(proposal, Partner.processName)
+  | PartnerLabelProposed(proposal) =>
+    validateProposal(proposal, PartnerLabel.processName)
+  | ContributionProposed(proposal) =>
+    validateProposal(proposal, Contribution.processName)
+  | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
+  | PartnerLabelEndorsed(endorsement) => validateEndorsement(endorsement)
+  | ContributionEndorsed(endorsement) => validateEndorsement(endorsement)
+  | PartnerAccepted(acceptance) => (
+      state => validateAcceptance(acceptance, state.partnerData, state)
     )
-  | PartnerEndorsed(event) => (
-      state =>
-        validateEndorsement(
-          event,
-          state.contributions
-          |> List.map(((pId, p: contribution)) => (pId, p.supporterIds)),
-          state
-        )
+  | PartnerLabelAccepted(acceptance) => (
+      state => validateAcceptance(acceptance, state.partnerLabelData, state)
     )
-  | PartnerAccepted(event) => validatePartnerAccepted(event)
-  | PartnerLabelProposed(proposal) => (
-      state => validateProposal(proposal, state.addPartnerLabelPolicy, state)
-    )
-  | PartnerLabelEndorsed(event) => (
-      state =>
-        validateEndorsement(
-          event,
-          state.partnerLabelProcesses
-          |> List.map(((pId, p: partnerLabelProcess)) => (pId, p.supporterIds)),
-          state
-        )
-    )
-  | PartnerLabelAccepted(event) => validatePartnerLabelAccepted(event)
-  | ContributionProposed(proposal) => (
-      state =>
-        validateProposal(proposal, state.acceptContributionPolicy, state)
-    )
-  | ContributionEndorsed(event) => (
-      state =>
-        validateEndorsement(
-          event,
-          state.contributions
-          |> List.map(((pId, c: contribution)) => (pId, c.supporterIds)),
-          state
-        )
-    )
-  | ContributionAccepted(event) => validateContributionAccepted(event);
+  | ContributionAccepted(acceptance) => (
+      state => validateAcceptance(acceptance, state.contributionData, state)
+    );
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (
