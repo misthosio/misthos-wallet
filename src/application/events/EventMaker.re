@@ -13,7 +13,7 @@ module type EventData = {
   let decode: Js.Json.t => t;
 };
 
-module type ProposalEventModuleMaker =
+module type Proposal =
   (Data: EventData) =>
   {
     type t = {
@@ -27,7 +27,7 @@ module type ProposalEventModuleMaker =
     let decode: Js.Json.t => t;
   };
 
-let makeProposalEvent = (name: string) : (module ProposalEventModuleMaker) =>
+let makeProposal = (name: string) : (module Proposal) =>
   (module
    (Data: EventData) => {
      type t = {
@@ -61,7 +61,7 @@ let makeProposalEvent = (name: string) : (module ProposalEventModuleMaker) =>
        };
    });
 
-module type EndorseEvent = {
+module type Endorsement = {
   type t = {
     processId,
     supporterId: userId
@@ -71,7 +71,7 @@ module type EndorseEvent = {
   let decode: Js.Json.t => t;
 };
 
-let makeEndorseEvent = (name: string) : (module EndorseEvent) =>
+let makeEndorsement = (name: string) : (module Endorsement) =>
   (module
    {
      type t = {

@@ -61,11 +61,9 @@ module PartnerData = {
 };
 
 module PartnerProposed =
-  (val EventMaker.makeProposalEvent("PartnerProposed"))(PartnerData);
+  (val EventMaker.makeProposal("PartnerProposed"))(PartnerData);
 
-module ProspectEndorsed = (
-  val EventMaker.makeEndorseEvent("ProspectEndorsed")
-);
+module ProspectEndorsed = (val EventMaker.makeEndorsement("ProspectEndorsed"));
 
 module PartnerAdded = {
   type t = {
@@ -132,7 +130,7 @@ module PartnerLabelSuggested = {
 };
 
 module PartnerLabelEndorsed = (
-  val EventMaker.makeEndorseEvent("PartnerLabelEndorsed")
+  val EventMaker.makeEndorsement("PartnerLabelEndorsed")
 );
 
 module PartnerLabelAccepted = {
@@ -211,7 +209,7 @@ module ContributionSubmitted = {
 };
 
 module ContributionEndorsed = (
-  val EventMaker.makeEndorseEvent("ContributionEndorsed")
+  val EventMaker.makeEndorsement("ContributionEndorsed")
 );
 
 module ContributionAccepted = {
