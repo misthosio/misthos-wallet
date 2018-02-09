@@ -175,11 +175,11 @@ type result =
   | InvalidIssuer
   | UnknownProcessId
   | BadData
-  | DuplicateEndorsal
+  | DuplicateEndorsement
   | PolicyMissmatch
   | PolicyNotFulfilled;
 
-let validateEndorsal =
+let validateEndorsement =
     (
       processId: processId,
       supporterId: userId,
@@ -192,7 +192,7 @@ let validateEndorsal =
     if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
       InvalidIssuer;
     } else if (supporterIds |> List.mem(supporterId)) {
-      DuplicateEndorsal;
+      DuplicateEndorsement;
     } else {
       Ok;
     };
@@ -283,7 +283,7 @@ let validateEvent =
     )
   | ProspectEndorsed({processId, supporterId}) => (
       state =>
-        validateEndorsal(
+        validateEndorsement(
           processId,
           supporterId,
           state.contributions
@@ -298,7 +298,7 @@ let validateEvent =
     )
   | PartnerLabelEndorsed({processId, supporterId}) => (
       state =>
-        validateEndorsal(
+        validateEndorsement(
           processId,
           supporterId,
           state.partnerLabelProcesses
@@ -314,7 +314,7 @@ let validateEvent =
     )
   | ContributionEndorsed({processId, supporterId}) => (
       state =>
-        validateEndorsal(
+        validateEndorsement(
           processId,
           supporterId,
           state.contributions

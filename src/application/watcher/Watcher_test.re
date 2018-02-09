@@ -7,7 +7,7 @@ open Event;
 open PrimitiveTypes;
 
 let () =
-  describe("PartnerEndorsal", () => {
+  describe("PartnerEndorsement", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
     let ventureCreated =
       Event.VentureCreated.make(

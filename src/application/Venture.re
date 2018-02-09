@@ -231,8 +231,8 @@ module Synchronize = {
                | UnknownProcessId =>
                  logMessage("Unknown ProcessId detected");
                  (venture, None);
-               | DuplicateEndorsal =>
-                 logMessage("Duplicate Endorsal detected");
+               | DuplicateEndorsement =>
+                 logMessage("Duplicate Endorsement detected");
                  (venture, None);
                };
              },
