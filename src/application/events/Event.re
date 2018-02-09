@@ -63,115 +63,67 @@ module Partner = {
   include (val EventTypes.makeProcess("Partner"))(Data);
 };
 
-module PartnerLabelSuggested = {
-  type t = {
-    processId,
-    partnerId: userId,
-    labelId,
-    supporterId: userId,
-    policy: Policy.t
-  };
-  let make = (~partnerId, ~labelId, ~supporterId, ~policy) => {
-    processId: ProcessId.make(),
-    partnerId,
-    labelId,
-    supporterId,
-    policy
-  };
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("PartnerLabelSuggested")),
-        ("processId", ProcessId.encode(event.processId)),
-        ("partnerId", UserId.encode(event.partnerId)),
-        ("labelId", LabelId.encode(event.labelId)),
-        ("supporterId", UserId.encode(event.supporterId)),
-        ("policy", Policy.encode(event.policy))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      processId: raw |> field("processId", ProcessId.decode),
-      partnerId: raw |> field("partnerId", UserId.decode),
-      labelId: raw |> field("labelId", LabelId.decode),
-      supporterId: raw |> field("supporterId", UserId.decode),
-      policy: raw |> field("policy", Policy.decode)
+module PartnerLabel = {
+  module Data = {
+    type t = {
+      partnerId: userId,
+      labelId
     };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("partnerId", UserId.encode(event.partnerId)),
+          ("labelId", LabelId.encode(event.labelId))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        partnerId: raw |> field("partnerId", UserId.decode),
+        labelId: raw |> field("labelId", LabelId.decode)
+      };
+  };
+  include (val EventTypes.makeProcess("PartnerLabel"))(Data);
 };
 
-module PartnerLabelEndorsed = (
-  val EventTypes.makeEndorsement("PartnerLabelEndorsed")
-);
-
-module PartnerLabelAccepted = {
-  type t = {
-    processId,
-    partnerId: userId,
-    labelId
-  };
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("PartnerLabelAccepted")),
-        ("processId", ProcessId.encode(event.processId)),
-        ("partnerId", UserId.encode(event.partnerId)),
-        ("labelId", LabelId.encode(event.labelId))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      processId: raw |> field("processId", ProcessId.decode),
-      partnerId: raw |> field("partnerId", UserId.decode),
-      labelId: raw |> field("labelId", LabelId.decode)
+module Contribution = {
+  module Data = {
+    type t = {
+      amountInteger: int,
+      amountFraction: int,
+      currency: string,
+      description: string
     };
-};
-
-module ContributionData = {
-  type t = {
-    amountInteger: int,
-    amountFraction: int,
-    currency: string,
-    description: string
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("amountInteger", int(event.amountInteger)),
+          ("amountFraction", int(event.amountFraction)),
+          ("currency", string(event.currency)),
+          ("description", string(event.description))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        amountInteger: raw |> field("amountInteger", int),
+        amountFraction: raw |> field("amountFraction", int),
+        currency: raw |> field("currency", string),
+        description: raw |> field("description", string)
+      };
   };
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("amountInteger", int(event.amountInteger)),
-        ("amountFraction", int(event.amountFraction)),
-        ("currency", string(event.currency)),
-        ("description", string(event.description))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      amountInteger: raw |> field("amountInteger", int),
-      amountFraction: raw |> field("amountFraction", int),
-      currency: raw |> field("currency", string),
-      description: raw |> field("description", string)
-    };
+  include (val EventTypes.makeProcess("PartnerLabel"))(Data);
 };
-
-module ContributionProposed =
-  (val EventTypes.makeProposal("ContributionProposed"))(ContributionData);
-
-module ContributionEndorsed = (
-  val EventTypes.makeEndorsement("ContributionEndorsed")
-);
-
-module ContributionAccepted =
-  (val EventTypes.makeAcceptance("ContributionAccepted"))(ContributionData);
 
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposal.t)
   | PartnerEndorsed(Partner.Endorsement.t)
   | PartnerAccepted(Partner.Acceptance.t)
-  | PartnerLabelSuggested(PartnerLabelSuggested.t)
-  | PartnerLabelEndorsed(PartnerLabelEndorsed.t)
-  | PartnerLabelAccepted(PartnerLabelAccepted.t)
-  | ContributionProposed(ContributionProposed.t)
-  | ContributionEndorsed(ContributionEndorsed.t)
-  | ContributionAccepted(ContributionAccepted.t);
+  | PartnerLabelProposed(PartnerLabel.Proposal.t)
+  | PartnerLabelEndorsed(PartnerLabel.Endorsement.t)
+  | PartnerLabelAccepted(PartnerLabel.Acceptance.t)
+  | ContributionProposed(Contribution.Proposal.t)
+  | ContributionEndorsed(Contribution.Endorsement.t)
+  | ContributionAccepted(Contribution.Acceptance.t);
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
@@ -186,12 +138,18 @@ let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsement.make(~processId, ~supporterId));
 
 let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId, ~policy) =>
-  PartnerLabelSuggested(
-    PartnerLabelSuggested.make(~partnerId, ~labelId, ~supporterId, ~policy)
+  PartnerLabelProposed(
+    PartnerLabel.Proposal.make(
+      ~supporterId,
+      ~policy,
+      ~data=PartnerLabel.Data.{partnerId, labelId}
+    )
   );
 
 let makePartnerLabelEndorsed = (~processId, ~supporterId) =>
-  PartnerLabelEndorsed(PartnerLabelEndorsed.make(~processId, ~supporterId));
+  PartnerLabelEndorsed(
+    PartnerLabel.Endorsement.make(~processId, ~supporterId)
+  );
 
 let makeContributionProposed =
     (
@@ -203,16 +161,23 @@ let makeContributionProposed =
       ~policy
     ) =>
   ContributionProposed(
-    ContributionProposed.make(
+    Contribution.Proposal.make(
       ~supporterId,
       ~policy,
       ~data=
-        ContributionData.{amountInteger, amountFraction, currency, description}
+        Contribution.Data.{
+          amountInteger,
+          amountFraction,
+          currency,
+          description
+        }
     )
   );
 
 let makeContributionEndorsed = (~processId, ~supporterId) =>
-  ContributionEndorsed(ContributionEndorsed.make(~processId, ~supporterId));
+  ContributionEndorsed(
+    Contribution.Endorsement.make(~processId, ~supporterId)
+  );
 
 let encode =
   fun
@@ -220,12 +185,12 @@ let encode =
   | PartnerProposed(event) => Partner.Proposal.encode(event)
   | PartnerEndorsed(event) => Partner.Endorsement.encode(event)
   | PartnerAccepted(event) => Partner.Acceptance.encode(event)
-  | PartnerLabelSuggested(event) => PartnerLabelSuggested.encode(event)
-  | PartnerLabelEndorsed(event) => PartnerLabelEndorsed.encode(event)
-  | PartnerLabelAccepted(event) => PartnerLabelAccepted.encode(event)
-  | ContributionProposed(event) => ContributionProposed.encode(event)
-  | ContributionEndorsed(event) => ContributionEndorsed.encode(event)
-  | ContributionAccepted(event) => ContributionAccepted.encode(event);
+  | PartnerLabelProposed(event) => PartnerLabel.Proposal.encode(event)
+  | PartnerLabelEndorsed(event) => PartnerLabel.Endorsement.encode(event)
+  | PartnerLabelAccepted(event) => PartnerLabel.Acceptance.encode(event)
+  | ContributionProposed(event) => Contribution.Proposal.encode(event)
+  | ContributionEndorsed(event) => Contribution.Endorsement.encode(event)
+  | ContributionAccepted(event) => Contribution.Acceptance.encode(event);
 
 let isSystemEvent =
   fun
@@ -241,18 +206,18 @@ let decode = raw => {
   | "PartnerProposed" => PartnerProposed(Partner.Proposal.decode(raw))
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsement.decode(raw))
   | "PartnerAccepted" => PartnerAccepted(Partner.Acceptance.decode(raw))
-  | "PartnerLabelSuggested" =>
-    PartnerLabelSuggested(PartnerLabelSuggested.decode(raw))
+  | "PartnerLabelProposed" =>
+    PartnerLabelProposed(PartnerLabel.Proposal.decode(raw))
   | "PartnerLabelEndorsed" =>
-    PartnerLabelEndorsed(PartnerLabelEndorsed.decode(raw))
+    PartnerLabelEndorsed(PartnerLabel.Endorsement.decode(raw))
   | "PartnerLabelAccepted" =>
-    PartnerLabelAccepted(PartnerLabelAccepted.decode(raw))
+    PartnerLabelAccepted(PartnerLabel.Acceptance.decode(raw))
   | "ContributionProposed" =>
-    ContributionProposed(ContributionProposed.decode(raw))
+    ContributionProposed(Contribution.Proposal.decode(raw))
   | "ContributionEndorsed" =>
-    ContributionEndorsed(ContributionEndorsed.decode(raw))
+    ContributionEndorsed(Contribution.Endorsement.decode(raw))
   | "ContributionAccepted" =>
-    ContributionAccepted(ContributionAccepted.decode(raw))
+    ContributionAccepted(Contribution.Acceptance.decode(raw))
   | _ => raise(Not_found)
   };
 };

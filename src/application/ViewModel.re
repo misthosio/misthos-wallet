@@ -100,7 +100,7 @@ let apply = (event: Event.t, state) =>
              ProcessId.eq(c.processId, processId) ? {...c, accepted: true} : c
            )
     }
-  | PartnerLabelSuggested(_)
+  | PartnerLabelProposed(_)
   | PartnerLabelEndorsed(_)
   | PartnerLabelAccepted(_) => state
   };

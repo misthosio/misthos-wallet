@@ -9,7 +9,7 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t
 };
 
-let make = (proposal: ContributionProposed.t, log) => {
+let make = (proposal: Contribution.Proposal.t, log) => {
   let process = {
     val state =
       ref({
@@ -57,7 +57,7 @@ let make = (proposal: ContributionProposed.t, log) => {
           Some((
             state^.systemIssuer,
             ContributionAccepted(
-              ContributionAccepted.make(
+              Contribution.Acceptance.make(
                 ~processId=proposal.processId,
                 ~data=proposal.data
               )

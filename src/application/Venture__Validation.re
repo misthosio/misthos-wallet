@@ -115,10 +115,18 @@ let apply = (event: Event.t, state) =>
         state.prospects
         |> List.filter(((pId, _)) => ProcessId.neq(pId, processId))
     }
-  | PartnerLabelSuggested({processId, partnerId, labelId, supporterId, policy}) => {
+  | PartnerLabelProposed({processId, supporterId, policy, data}) => {
       ...state,
       partnerLabelProcesses: [
-        (processId, {partnerId, labelId, policy, supporterIds: [supporterId]}),
+        (
+          processId,
+          {
+            partnerId: data.partnerId,
+            labelId: data.labelId,
+            policy,
+            supporterIds: [supporterId]
+          }
+        ),
         ...state.partnerLabelProcesses
       ]
     }
@@ -138,13 +146,13 @@ let apply = (event: Event.t, state) =>
                (pId, process)
            )
     }
-  | PartnerLabelAccepted({partnerId, labelId}) => {
+  | PartnerLabelAccepted({data}) => {
       ...state,
       partnerLabels:
         state.partnerLabels
         |> List.map(((pId, labels)) =>
-             UserId.eq(pId, partnerId) ?
-               (partnerId, [labelId, ...labels]) : (pId, labels)
+             UserId.eq(pId, data.partnerId) ?
+               (data.partnerId, [data.labelId, ...labels]) : (pId, labels)
            )
     }
   | ContributionProposed({processId, supporterId, policy}) => {
@@ -245,15 +253,15 @@ let validatePartnerAccepted =
 
 let validatePartnerLabelAccepted =
     (
-      {processId, partnerId, labelId}: PartnerLabelAccepted.t,
+      {processId, data}: PartnerLabel.Acceptance.t,
       {partnerLabelProcesses, partnerIds},
       _issuerPubKey
     ) =>
   try {
     let process = partnerLabelProcesses |> List.assoc(processId);
-    if (UserId.neq(process.partnerId, partnerId)) {
+    if (UserId.neq(process.partnerId, data.partnerId)) {
       BadData;
-    } else if (LabelId.neq(process.labelId, labelId)) {
+    } else if (LabelId.neq(process.labelId, data.labelId)) {
       BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
@@ -271,7 +279,7 @@ let validatePartnerLabelAccepted =
 
 let validateContributionAccepted =
     (
-      {processId}: ContributionAccepted.t,
+      {processId}: Contribution.Acceptance.t,
       {contributions, partnerIds},
       _issuerPubKey
     ) =>
@@ -308,9 +316,8 @@ let validateEvent =
         )
     )
   | PartnerAccepted(event) => validatePartnerAccepted(event)
-  | PartnerLabelSuggested({policy}) => (
-      (state, _) =>
-        Policy.eq(policy, state.addPartnerLabelPolicy) ? Ok : PolicyMissmatch
+  | PartnerLabelProposed(proposal) => (
+      state => validateProposal(proposal, state.addPartnerLabelPolicy, state)
     )
   | PartnerLabelEndorsed(event) => (
       state =>
