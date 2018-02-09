@@ -181,7 +181,7 @@ let getViewModel = ({viewModel}) => viewModel;
 module Synchronize = {
   let getPartnerHistoryUrls = (session: Session.Data.t, {id, state}) =>
     state.partnerIds
-    |> List.filter(partnerId => partnerId != session.userId)
+    |> List.filter(partnerId => UserId.neq(partnerId, session.userId))
     |> List.map(partnerId =>
          Blockstack.getUserAppFileUrl(
            ~path=(id |> VentureId.toString) ++ "/" ++ session.address,

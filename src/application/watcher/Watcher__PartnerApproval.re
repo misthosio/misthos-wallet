@@ -11,6 +11,7 @@ type state = {
 
 let make = (suggestion: ProspectSuggested.t, log) => {
   let process = {
+    /*eslint-disable */
     val state =
       ref({
         eligable: [],
@@ -18,6 +19,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
         policy: Policy.absolute,
         systemIssuer: Bitcoin.ECPair.makeRandom()
       });
+    /*eslint-enable */
     val completed = ref(false);
     val result = ref(None);
     pub receive = ({event}: EventLog.item) => {

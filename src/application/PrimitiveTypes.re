@@ -4,8 +4,8 @@ module Base = {
   external fromString : 'a => string = "%identity";
   let encode = id => toString(id) |> Json.Encode.string;
   let decode = id => id |> Json.Decode.string |> fromString;
-  let eq = (a, b) => toString(a) == toString(b);
-  let neq = (a, b) => toString(a) != toString(b);
+  let eq = (a, b) => String.compare(toString(a), toString(b)) == 0;
+  let neq = (a, b) => String.compare(toString(a), toString(b)) != 0;
 };
 
 module type PrimitiveType = {

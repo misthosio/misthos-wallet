@@ -242,7 +242,7 @@ let validatePartnerLabelAccepted =
     let process = partnerLabelProcesses |> List.assoc(processId);
     if (UserId.neq(process.partnerId, partnerId)) {
       BadData;
-    } else if (process.labelId != labelId) {
+    } else if (LabelId.neq(process.labelId, labelId)) {
       BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
@@ -282,8 +282,10 @@ let validateContributionAccepted =
 
 let validateEvent =
   fun
+  | VentureCreated(_) => ((_, _) => Ok)
   | ProspectSuggested({policy}) => (
-      (state, _) => policy == state.addPartnerPolicy ? Ok : PolicyMissmatch
+      (state, _) =>
+        Policy.eq(policy, state.addPartnerPolicy) ? Ok : PolicyMissmatch
     )
   | ProspectApproved({processId, supporterId}) => (
       state =>
@@ -298,7 +300,7 @@ let validateEvent =
   | PartnerAdded(event) => validatePartnerAdded(event)
   | PartnerLabelSuggested({policy}) => (
       (state, _) =>
-        policy == state.addPartnerLabelPolicy ? Ok : PolicyMissmatch
+        Policy.eq(policy, state.addPartnerLabelPolicy) ? Ok : PolicyMissmatch
     )
   | PartnerLabelApproved({processId, supporterId}) => (
       state =>
@@ -313,7 +315,8 @@ let validateEvent =
   | PartnerLabelAccepted(event) => validatePartnerLabelAccepted(event)
   | ContributionSubmitted({policy}) => (
       (state, _) =>
-        policy == state.acceptContributionPolicy ? Ok : PolicyMissmatch
+        Policy.eq(policy, state.acceptContributionPolicy) ?
+          Ok : PolicyMissmatch
     )
   | ContributionApproved({processId, supporterId}) => (
       state =>

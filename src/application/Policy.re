@@ -11,6 +11,8 @@ let fulfilled = (~eligable: list(userId), ~approved: list(userId), policy) => {
   nApprovers /. nVoters *. 100.0 >= policy.thresholdPercent;
 };
 
+let eq = (p1, p2) => p1.thresholdPercent == p2.thresholdPercent;
+
 let encode = p =>
   Json.Encode.(
     object_([("thresholdPercent", Json.Encode.float(p.thresholdPercent))])
