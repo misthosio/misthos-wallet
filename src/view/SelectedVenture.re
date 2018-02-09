@@ -15,9 +15,9 @@ type action =
   | WorkerMessage(Worker.Message.receive)
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
-  | SuggestProspect
-  | EndorseProspect(processId)
-  | SubmitContribution(int, int, string, string)
+  | ProposePartner
+  | EndorsePartner(processId)
+  | ProposeContribution(int, int, string, string)
   | EndorseContribution(processId);
 
 let changeNewPartnerId = event =>
@@ -28,7 +28,7 @@ let changeNewPartnerId = event =>
 let submitContribution =
     (send, ~amountInteger, ~amountFraction, ~currency, ~description) =>
   send(
-    SubmitContribution(amountInteger, amountFraction, currency, description)
+    ProposeContribution(amountInteger, amountFraction, currency, description)
   );
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
@@ -91,7 +91,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       )
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({...state, prospectId: text})
-    | SuggestProspect =>
+    | ProposePartner =>
       switch (String.trim(state.prospectId)) {
       | "" => ReasonReact.NoUpdate
       | prospectId =>
@@ -99,7 +99,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           (
             ({send}) =>
               Js.Promise.(
-                Cmd.SuggestProspect.(
+                Cmd.ProposePartner.(
                   state.venture
                   |> exec(
                        session,
@@ -120,12 +120,12 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           )
         )
       }
-    | EndorseProspect(processId) =>
+    | EndorsePartner(processId) =>
       ReasonReact.SideEffects(
         (
           ({send}) =>
             Js.Promise.(
-              Cmd.EndorseProspect.(
+              Cmd.EndorsePartner.(
                 state.venture
                 |> exec(session, ~processId)
                 |> then_(result =>
@@ -141,12 +141,12 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         )
       )
-    | SubmitContribution(amountInteger, amountFraction, currency, description) =>
+    | ProposeContribution(amountInteger, amountFraction, currency, description) =>
       ReasonReact.SideEffects(
         (
           ({send}) =>
             Js.Promise.(
-              Cmd.SubmitContribution.(
+              Cmd.ProposeContribution.(
                 state.venture
                 |> exec(
                      session,
@@ -238,10 +238,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                  (
                    if (prospect.endorsedBy |> List.mem(session.userId) == false) {
                      <button
-                       onClick=(
-                         _e => send(EndorseProspect(prospect.processId))
-                       )>
-                       (text("Endorse Prospect"))
+                       onClick=(_e => send(EndorsePartner(prospect.processId)))>
+                       (text("Endorse Partner"))
                      </button>;
                    } else {
                      ReasonReact.nullElement;
@@ -373,8 +371,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         onChange=(e => send(changeNewPartnerId(e)))
         autoFocus=Js.false_
       />
-      <button onClick=(_e => send(SuggestProspect))>
-        (text("Suggest Prospect"))
+      <button onClick=(_e => send(ProposePartner))>
+        (text("Propose Partner"))
       </button>
     </div>;
   }

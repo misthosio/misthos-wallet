@@ -137,7 +137,7 @@ let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) 
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsement.make(~processId, ~supporterId));
 
-let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId, ~policy) =>
+let makePartnerLabelProposed = (~partnerId, ~labelId, ~supporterId, ~policy) =>
   PartnerLabelProposed(
     PartnerLabel.Proposal.make(
       ~supporterId,

@@ -50,19 +50,19 @@ module Cmd: {
       | Error(t, EventLog.item, Validation.result);
     let exec: (list(EventLog.t), t) => Js.Promise.t(result);
   };
-  module SuggestProspect: {
+  module ProposePartner: {
     type result =
       | Ok(t)
       | NoUserInfo;
     let exec: (Session.Data.t, ~prospectId: userId, t) => Js.Promise.t(result);
   };
-  module EndorseProspect: {
+  module EndorsePartner: {
     type result =
       | Ok(t);
     let exec:
       (Session.Data.t, ~processId: processId, t) => Js.Promise.t(result);
   };
-  module SuggestPartnerLabel: {
+  module ProposePartnerLabel: {
     type result =
       | Ok(t);
     let exec:
@@ -75,7 +75,7 @@ module Cmd: {
     let exec:
       (Session.Data.t, ~processId: processId, t) => Js.Promise.t(result);
   };
-  module SubmitContribution: {
+  module ProposeContribution: {
     type result =
       | Ok(t);
     let exec:

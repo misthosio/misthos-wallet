@@ -277,12 +277,12 @@ module Cmd = {
     };
   };
   module Synchronize = Synchronize;
-  module SuggestProspect = {
+  module ProposePartner = {
     type result =
       | Ok(t)
       | NoUserInfo;
     let exec = (session: Session.Data.t, ~prospectId, {state} as venture) => {
-      logMessage("Executing 'SuggestProspect' command");
+      logMessage("Executing 'ProposePartner' command");
       Js.Promise.(
         UserPublicInfo.read(~blockstackId=prospectId)
         |> then_(readResult =>
@@ -307,11 +307,11 @@ module Cmd = {
       );
     };
   };
-  module EndorseProspect = {
+  module EndorsePartner = {
     type result =
       | Ok(t);
     let exec = (session: Session.Data.t, ~processId, venture) => {
-      logMessage("Executing 'EndorseProspect' command");
+      logMessage("Executing 'EndorsePartner' command");
       Js.Promise.(
         venture
         |> apply(
@@ -323,17 +323,17 @@ module Cmd = {
       );
     };
   };
-  module SuggestPartnerLabel = {
+  module ProposePartnerLabel = {
     type result =
       | Ok(t);
     let exec =
         (session: Session.Data.t, ~partnerId, ~labelId, {state} as venture) => {
-      logMessage("Executing 'SuggestPartnerLabel' command");
+      logMessage("Executing 'ProposePartnerLabel' command");
       Js.Promise.(
         venture
         |> apply(
              session.appKeyPair,
-             Event.makePartnerLabelSuggested(
+             Event.makePartnerLabelProposed(
                ~partnerId,
                ~supporterId=session.userId,
                ~labelId,
@@ -365,7 +365,7 @@ module Cmd = {
       );
     };
   };
-  module SubmitContribution = {
+  module ProposeContribution = {
     type result =
       | Ok(t);
     let exec =
@@ -377,7 +377,7 @@ module Cmd = {
           ~description: string,
           {state} as venture
         ) => {
-      logMessage("Executing 'SubmitContribution' command");
+      logMessage("Executing 'ProposeContribution' command");
       Js.Promise.(
         venture
         |> apply(
