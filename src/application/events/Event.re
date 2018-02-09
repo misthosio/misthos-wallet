@@ -110,7 +110,7 @@ module Contribution = {
         description: raw |> field("description", string)
       };
   };
-  include (val EventTypes.makeProcess("PartnerLabel"))(Data);
+  include (val EventTypes.makeProcess("Contribution"))(Data);
 };
 
 type t =
@@ -199,6 +199,8 @@ let isSystemEvent =
   | ContributionAccepted(_) => true
   | _ => false;
 
+exception UnknownEvent(Js.Json.t);
+
 let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch type_ {
@@ -218,6 +220,6 @@ let decode = raw => {
     ContributionEndorsed(Contribution.Endorsement.decode(raw))
   | "ContributionAccepted" =>
     ContributionAccepted(Contribution.Acceptance.decode(raw))
-  | _ => raise(Not_found)
+  | _ => raise(UnknownEvent(raw))
   };
 };

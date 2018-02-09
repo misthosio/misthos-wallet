@@ -147,5 +147,5 @@ let makeProcess = (name: string) : (module Process) =>
      let processName = name ++ "ApprovalProcess";
      module Proposal = (val makeProposal(name ++ "Proposed"))(Data);
      module Endorsement = (val makeEndorsement(name ++ "Endorsed"));
-     module Acceptance = (val makeAcceptance(name ++ "Acceptance"))(Data);
+     module Acceptance = (val makeAcceptance(name ++ "Accepted"))(Data);
    });
