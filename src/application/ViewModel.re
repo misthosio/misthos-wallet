@@ -56,10 +56,10 @@ let apply = (event: Event.t, state) =>
                {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
            )
     }
-  | ProspectSuggested({processId, prospectId, supporterId}) => {
+  | PartnerProposed({processId, supporterId, data}) => {
       ...state,
       prospects: [
-        {processId, userId: prospectId, endorsedBy: [supporterId]},
+        {processId, userId: data.id, endorsedBy: [supporterId]},
         ...state.prospects
       ]
     }

@@ -75,20 +75,14 @@ let apply = (event: Event.t, state) =>
       addPartnerPolicy: metaPolicy,
       acceptContributionPolicy: metaPolicy
     }
-  | ProspectSuggested({
-      prospectId,
-      prospectPubKey,
-      processId,
-      supporterId,
-      policy
-    }) => {
+  | PartnerProposed({processId, supporterId, policy, data}) => {
       ...state,
       prospects: [
         (
           processId,
           {
-            userId: prospectId,
-            pubKey: prospectPubKey,
+            userId: data.id,
+            pubKey: data.pubKey,
             supporterIds: [supporterId],
             policy
           }
@@ -283,7 +277,7 @@ let validateContributionAccepted =
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
-  | ProspectSuggested({policy}) => (
+  | PartnerProposed({policy}) => (
       (state, _) =>
         Policy.eq(policy, state.addPartnerPolicy) ? Ok : PolicyMissmatch
     )

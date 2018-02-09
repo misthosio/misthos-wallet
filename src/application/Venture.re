@@ -291,7 +291,7 @@ module Cmd = {
                venture
                |> apply(
                     session.appKeyPair,
-                    Event.makeProspectSuggested(
+                    Event.makePartnerProposed(
                       ~supporterId=session.userId,
                       ~prospectId,
                       ~prospectPubKey=info.appPubKey,

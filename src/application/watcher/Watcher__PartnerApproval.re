@@ -9,13 +9,13 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t
 };
 
-let make = (suggestion: ProspectSuggested.t, log) => {
+let make = (proposal: PartnerProposed.t, log) => {
   let process = {
     /*eslint-disable */
     val state =
       ref({
         eligable: [],
-        endorsals: [suggestion.supporterId],
+        endorsals: [proposal.supporterId],
         policy: Policy.absolute,
         systemIssuer: Bitcoin.ECPair.makeRandom()
       });
@@ -33,12 +33,12 @@ let make = (suggestion: ProspectSuggested.t, log) => {
               systemIssuer: event.systemIssuer
             }
           | ProspectEndorsed(event)
-              when ProcessId.eq(event.processId, suggestion.processId) => {
+              when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
               endorsals: [event.supporterId, ...state^.endorsals]
             }
           | PartnerAdded(event)
-              when ProcessId.eq(event.processId, suggestion.processId) =>
+              when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;
             state^;
           | PartnerAdded(event) => {
@@ -60,9 +60,9 @@ let make = (suggestion: ProspectSuggested.t, log) => {
             state^.systemIssuer,
             PartnerAdded(
               PartnerAdded.make(
-                ~processId=suggestion.processId,
-                ~partnerId=suggestion.prospectId,
-                ~partnerPubKey=suggestion.prospectPubKey
+                ~processId=proposal.processId,
+                ~partnerId=proposal.data.id,
+                ~partnerPubKey=proposal.data.pubKey
               )
             )
           ));

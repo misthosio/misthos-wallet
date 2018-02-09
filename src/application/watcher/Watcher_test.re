@@ -21,24 +21,23 @@ let () =
       |> EventLog.append(issuer, VentureCreated(ventureCreated));
     let prospectId = "wackerman.id" |> UserId.fromString;
     let prospectPubKey = "sticks";
-    let prospectSuggestion =
-      Event.ProspectSuggested.make(
+    let partnerProposal =
+      Event.PartnerProposed.make(
         ~supporterId="bozzio.id" |> UserId.fromString,
-        ~prospectId,
-        ~prospectPubKey,
-        ~policy=Policy.absolute
+        ~policy=Policy.absolute,
+        ~data=PartnerData.{id: prospectId, pubKey: prospectPubKey}
       );
-    let processId = prospectSuggestion.processId;
+    let processId = partnerProposal.processId;
     test("Process is in progress", () => {
       let (item, log) =
-        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+        log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       expect(prospectWatcher#processCompleted()) |> toBe(false);
     });
     test("completes when Partner is added", () => {
       let (item, log) =
-        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+        log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
@@ -56,7 +55,7 @@ let () =
     });
     test("Issues an event when approval is reached", () => {
       let (item, log) =
-        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+        log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
@@ -95,7 +94,7 @@ let () =
              })
            );
       let (item, log) =
-        log |> EventLog.append(issuer, ProspectSuggested(prospectSuggestion));
+        log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
         Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
