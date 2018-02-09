@@ -1,12 +1,17 @@
 open PrimitiveTypes;
 
-/* module ProposeEvent = { */
-/*   type t('a) = { */
-/*     processId, */
-/*     supporterId: userId, */
-/*     data: 'a */
-/*   }; */
-/* }; */
+type proposal('a) = {
+  processId,
+  supporterId: userId,
+  policy: Policy.t,
+  data: 'a
+};
+
+type endorsement = {
+  processId,
+  supporterId: userId
+};
+
 module type EventData = {
   type t;
   let encode: t => Js.Json.t;
@@ -16,12 +21,7 @@ module type EventData = {
 module type Proposal =
   (Data: EventData) =>
   {
-    type t = {
-      processId,
-      supporterId: userId,
-      policy: Policy.t,
-      data: Data.t
-    };
+    type t = proposal(Data.t);
     let make: (~supporterId: userId, ~policy: Policy.t, ~data: Data.t) => t;
     let encode: t => Js.Json.t;
     let decode: Js.Json.t => t;
@@ -30,19 +30,14 @@ module type Proposal =
 let makeProposal = (name: string) : (module Proposal) =>
   (module
    (Data: EventData) => {
-     type t = {
-       processId,
-       supporterId: userId,
-       policy: Policy.t,
-       data: Data.t
-     };
+     type t = proposal(Data.t);
      let make = (~supporterId, ~policy, ~data) => {
        processId: ProcessId.make(),
        supporterId,
        policy,
        data
      };
-     let encode = event =>
+     let encode = (event: t) =>
        Json.Encode.(
          object_([
            ("type", string(name)),
@@ -62,10 +57,7 @@ let makeProposal = (name: string) : (module Proposal) =>
    });
 
 module type Endorsement = {
-  type t = {
-    processId,
-    supporterId: userId
-  };
+  type t = endorsement;
   let make: (~processId: processId, ~supporterId: userId) => t;
   let encode: t => Js.Json.t;
   let decode: Js.Json.t => t;
@@ -74,10 +66,7 @@ module type Endorsement = {
 let makeEndorsement = (name: string) : (module Endorsement) =>
   (module
    {
-     type t = {
-       processId,
-       supporterId: userId
-     };
+     type t = endorsement;
      let make = (~processId, ~supporterId) => {processId, supporterId};
      let encode = event =>
        Json.Encode.(

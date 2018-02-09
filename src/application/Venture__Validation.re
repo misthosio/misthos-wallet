@@ -179,10 +179,27 @@ type result =
   | PolicyMissmatch
   | PolicyNotFulfilled;
 
+let validateProposal =
+    (
+      {policy, supporterId}: EventTypes.proposal('a),
+      correctPolicy,
+      {partnerPubKeys},
+      issuerPubKey
+    ) =>
+  if (Policy.neq(policy, correctPolicy)) {
+    PolicyMissmatch;
+  } else if (UserId.neq(
+               partnerPubKeys |> List.assoc(issuerPubKey),
+               supporterId
+             )) {
+    InvalidIssuer;
+  } else {
+    Ok;
+  };
+
 let validateEndorsement =
     (
-      processId: processId,
-      supporterId: userId,
+      {processId, supporterId}: EventTypes.endorsement,
       supporters: list((processId, list(userId))),
       {partnerPubKeys},
       issuerPubKey
@@ -277,15 +294,14 @@ let validateContributionAccepted =
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
-  | PartnerProposed({policy}) => (
-      (state, _) =>
-        Policy.eq(policy, state.addPartnerPolicy) ? Ok : PolicyMissmatch
+  | PartnerProposed(proposal) => (
+      state =>
+        validateProposal(proposal, state.acceptContributionPolicy, state)
     )
-  | ProspectEndorsed({processId, supporterId}) => (
+  | ProspectEndorsed(event) => (
       state =>
         validateEndorsement(
-          processId,
-          supporterId,
+          event,
           state.contributions
           |> List.map(((pId, p: contribution)) => (pId, p.supporterIds)),
           state
@@ -296,27 +312,24 @@ let validateEvent =
       (state, _) =>
         Policy.eq(policy, state.addPartnerLabelPolicy) ? Ok : PolicyMissmatch
     )
-  | PartnerLabelEndorsed({processId, supporterId}) => (
+  | PartnerLabelEndorsed(event) => (
       state =>
         validateEndorsement(
-          processId,
-          supporterId,
+          event,
           state.partnerLabelProcesses
           |> List.map(((pId, p: partnerLabelProcess)) => (pId, p.supporterIds)),
           state
         )
     )
   | PartnerLabelAccepted(event) => validatePartnerLabelAccepted(event)
-  | ContributionProposed({policy}) => (
-      (state, _) =>
-        Policy.eq(policy, state.acceptContributionPolicy) ?
-          Ok : PolicyMissmatch
+  | ContributionProposed(proposal) => (
+      state =>
+        validateProposal(proposal, state.acceptContributionPolicy, state)
     )
-  | ContributionEndorsed({processId, supporterId}) => (
+  | ContributionEndorsed(event) => (
       state =>
         validateEndorsement(
-          processId,
-          supporterId,
+          event,
           state.contributions
           |> List.map(((pId, c: contribution)) => (pId, c.supporterIds)),
           state

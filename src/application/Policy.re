@@ -13,6 +13,8 @@ let fulfilled = (~eligable: list(userId), ~endorsed: list(userId), policy) => {
 
 let eq = (p1, p2) => p1.thresholdPercent == p2.thresholdPercent;
 
+let neq = (p1, p2) => p1.thresholdPercent != p2.thresholdPercent;
+
 let encode = p =>
   Json.Encode.(
     object_([("thresholdPercent", Json.Encode.float(p.thresholdPercent))])
