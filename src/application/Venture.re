@@ -231,8 +231,8 @@ module Synchronize = {
                | UnknownProcessId =>
                  logMessage("Unknown ProcessId detected");
                  (venture, None);
-               | DuplicateApproval =>
-                 logMessage("Duplicate Approval detected");
+               | DuplicateEndorsal =>
+                 logMessage("Duplicate Endorsal detected");
                  (venture, None);
                };
              },
@@ -306,16 +306,16 @@ module Cmd = {
       );
     };
   };
-  module ApproveProspect = {
+  module EndorseProspect = {
     type result =
       | Ok(t);
     let exec = (session: Session.Data.t, ~processId, venture) => {
-      logMessage("Executing 'ApproveProspect' command");
+      logMessage("Executing 'EndorseProspect' command");
       Js.Promise.(
         venture
         |> apply(
              session.appKeyPair,
-             Event.makeProspectApproved(
+             Event.makeProspectEndorsed(
                ~processId,
                ~supporterId=session.userId
              )
@@ -347,16 +347,16 @@ module Cmd = {
       );
     };
   };
-  module ApprovePartnerLabel = {
+  module EndorsePartnerLabel = {
     type result =
       | Ok(t);
     let exec = (session: Session.Data.t, ~processId, venture) => {
-      logMessage("Executing 'ApprovePartnerLabel' command");
+      logMessage("Executing 'EndorsePartnerLabel' command");
       Js.Promise.(
         venture
         |> apply(
              session.appKeyPair,
-             Event.makePartnerLabelApproved(
+             Event.makePartnerLabelEndorsed(
                ~processId,
                ~supporterId=session.userId
              )
@@ -397,16 +397,16 @@ module Cmd = {
       );
     };
   };
-  module ApproveContribution = {
+  module EndorseContribution = {
     type result =
       | Ok(t);
     let exec = (session: Session.Data.t, ~processId, venture) => {
-      logMessage("Executing 'ApproveContribution' command");
+      logMessage("Executing 'EndorseContribution' command");
       Js.Promise.(
         venture
         |> apply(
              session.appKeyPair,
-             Event.makeContributionApproved(
+             Event.makeContributionEndorsed(
                ~processId,
                ~supporterId=session.userId
              )

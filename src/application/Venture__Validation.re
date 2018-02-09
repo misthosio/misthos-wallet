@@ -96,7 +96,7 @@ let apply = (event: Event.t, state) =>
         ...state.prospects
       ]
     }
-  | ProspectApproved({processId, supporterId}) => {
+  | ProspectEndorsed({processId, supporterId}) => {
       ...state,
       prospects:
         state.prospects
@@ -128,7 +128,7 @@ let apply = (event: Event.t, state) =>
         ...state.partnerLabelProcesses
       ]
     }
-  | PartnerLabelApproved({processId, supporterId}) => {
+  | PartnerLabelEndorsed({processId, supporterId}) => {
       ...state,
       partnerLabelProcesses:
         state.partnerLabelProcesses
@@ -160,7 +160,7 @@ let apply = (event: Event.t, state) =>
         ...state.contributions
       ]
     }
-  | ContributionApproved({processId, supporterId}) => {
+  | ContributionEndorsed({processId, supporterId}) => {
       ...state,
       contributions:
         state.contributions
@@ -181,11 +181,11 @@ type result =
   | InvalidIssuer
   | UnknownProcessId
   | BadData
-  | DuplicateApproval
+  | DuplicateEndorsal
   | PolicyMissmatch
   | PolicyNotFulfilled;
 
-let validateApproval =
+let validateEndorsal =
     (
       processId: processId,
       supporterId: userId,
@@ -198,7 +198,7 @@ let validateApproval =
     if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
       InvalidIssuer;
     } else if (supporterIds |> List.mem(supporterId)) {
-      DuplicateApproval;
+      DuplicateEndorsal;
     } else {
       Ok;
     };
@@ -220,7 +220,7 @@ let validatePartnerAdded =
       BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
-                 ~approved=prospect.supporterIds,
+                 ~endorsed=prospect.supporterIds,
                  prospect.policy
                )
                == false) {
@@ -246,7 +246,7 @@ let validatePartnerLabelAccepted =
       BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
-                 ~approved=process.supporterIds,
+                 ~endorsed=process.supporterIds,
                  process.policy
                )
                == false) {
@@ -268,7 +268,7 @@ let validateContributionAccepted =
     let contribution = contributions |> List.assoc(processId);
     if (Policy.fulfilled(
           ~eligable=partnerIds,
-          ~approved=contribution.supporterIds,
+          ~endorsed=contribution.supporterIds,
           contribution.policy
         )
         == false) {
@@ -287,9 +287,9 @@ let validateEvent =
       (state, _) =>
         Policy.eq(policy, state.addPartnerPolicy) ? Ok : PolicyMissmatch
     )
-  | ProspectApproved({processId, supporterId}) => (
+  | ProspectEndorsed({processId, supporterId}) => (
       state =>
-        validateApproval(
+        validateEndorsal(
           processId,
           supporterId,
           state.contributions
@@ -302,9 +302,9 @@ let validateEvent =
       (state, _) =>
         Policy.eq(policy, state.addPartnerLabelPolicy) ? Ok : PolicyMissmatch
     )
-  | PartnerLabelApproved({processId, supporterId}) => (
+  | PartnerLabelEndorsed({processId, supporterId}) => (
       state =>
-        validateApproval(
+        validateEndorsal(
           processId,
           supporterId,
           state.partnerLabelProcesses
@@ -318,9 +318,9 @@ let validateEvent =
         Policy.eq(policy, state.acceptContributionPolicy) ?
           Ok : PolicyMissmatch
     )
-  | ContributionApproved({processId, supporterId}) => (
+  | ContributionEndorsed({processId, supporterId}) => (
       state =>
-        validateApproval(
+        validateEndorsal(
           processId,
           supporterId,
           state.contributions

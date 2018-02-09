@@ -16,9 +16,9 @@ type action =
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | SuggestProspect
-  | ApproveProspect(processId)
+  | EndorseProspect(processId)
   | SubmitContribution(int, int, string, string)
-  | ApproveContribution(processId);
+  | EndorseContribution(processId);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
@@ -120,12 +120,12 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           )
         )
       }
-    | ApproveProspect(processId) =>
+    | EndorseProspect(processId) =>
       ReasonReact.SideEffects(
         (
           ({send}) =>
             Js.Promise.(
-              Cmd.ApproveProspect.(
+              Cmd.EndorseProspect.(
                 state.venture
                 |> exec(session, ~processId)
                 |> then_(result =>
@@ -168,12 +168,12 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         )
       )
-    | ApproveContribution(processId) =>
+    | EndorseContribution(processId) =>
       ReasonReact.SideEffects(
         (
           ({send}) =>
             Js.Promise.(
-              Cmd.ApproveContribution.(
+              Cmd.EndorseContribution.(
                 state.venture
                 |> exec(session, ~processId)
                 |> then_(result =>
@@ -227,21 +227,21 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                    text(
                      "'"
                      ++ (prospect.userId |> UserId.toString)
-                     ++ "' approved by: "
+                     ++ "' endorsed by: "
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
-                          prospect.approvedBy |> List.map(UserId.toString)
+                          prospect.endorsedBy |> List.map(UserId.toString)
                         )
                    )
                  )
                  (
-                   if (prospect.approvedBy |> List.mem(session.userId) == false) {
+                   if (prospect.endorsedBy |> List.mem(session.userId) == false) {
                      <button
                        onClick=(
-                         _e => send(ApproveProspect(prospect.processId))
+                         _e => send(EndorseProspect(prospect.processId))
                        )>
-                       (text("Approve Prospect"))
+                       (text("Endorse Prospect"))
                      </button>;
                    } else {
                      ReasonReact.nullElement;
@@ -264,7 +264,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                    text(
                      "'"
                      ++ contribution.description
-                     ++ "' approved by: "
+                     ++ "' endorsed by: "
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
@@ -289,7 +289,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                    text(
                      "'"
                      ++ contribution.description
-                     ++ "' approved by: "
+                     ++ "' endorsed by: "
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
@@ -303,9 +303,9 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                      <button
                        onClick=(
                          _e =>
-                           send(ApproveContribution(contribution.processId))
+                           send(EndorseContribution(contribution.processId))
                        )>
-                       (text("Approve Contribution"))
+                       (text("Endorse Contribution"))
                      </button>;
                    } else {
                      ReasonReact.nullElement;

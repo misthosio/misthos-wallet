@@ -1,6 +1,6 @@
 open PrimitiveTypes;
 
-module type ApproveEvent = {
+module type EndorseEvent = {
   type t = {
     processId,
     supporterId: userId
@@ -10,7 +10,7 @@ module type ApproveEvent = {
   let decode: Js.Json.t => t;
 };
 
-let makeApproveEventModule = (name: string) : (module ApproveEvent) =>
+let makeEndorseEventModule = (name: string) : (module EndorseEvent) =>
   (module
    {
      type t = {
@@ -110,7 +110,7 @@ module ProspectSuggested = {
     };
 };
 
-module ProspectApproved = (val makeApproveEventModule("ProspectApproved"));
+module ProspectEndorsed = (val makeEndorseEventModule("ProspectEndorsed"));
 
 module PartnerAdded = {
   type t = {
@@ -176,8 +176,8 @@ module PartnerLabelSuggested = {
     };
 };
 
-module PartnerLabelApproved = (
-  val makeApproveEventModule("PartnerLabelApproved")
+module PartnerLabelEndorsed = (
+  val makeEndorseEventModule("PartnerLabelEndorsed")
 );
 
 module PartnerLabelAccepted = {
@@ -255,8 +255,8 @@ module ContributionSubmitted = {
     };
 };
 
-module ContributionApproved = (
-  val makeApproveEventModule("ContributionApproved")
+module ContributionEndorsed = (
+  val makeEndorseEventModule("ContributionEndorsed")
 );
 
 module ContributionAccepted = {
@@ -276,13 +276,13 @@ module ContributionAccepted = {
 type t =
   | VentureCreated(VentureCreated.t)
   | ProspectSuggested(ProspectSuggested.t)
-  | ProspectApproved(ProspectApproved.t)
+  | ProspectEndorsed(ProspectEndorsed.t)
   | PartnerAdded(PartnerAdded.t)
   | PartnerLabelSuggested(PartnerLabelSuggested.t)
-  | PartnerLabelApproved(PartnerLabelApproved.t)
+  | PartnerLabelEndorsed(PartnerLabelEndorsed.t)
   | PartnerLabelAccepted(PartnerLabelAccepted.t)
   | ContributionSubmitted(ContributionSubmitted.t)
-  | ContributionApproved(ContributionApproved.t)
+  | ContributionEndorsed(ContributionEndorsed.t)
   | ContributionAccepted(ContributionAccepted.t);
 
 let makeProspectSuggested =
@@ -291,16 +291,16 @@ let makeProspectSuggested =
     ProspectSuggested.make(~supporterId, ~prospectId, ~prospectPubKey, ~policy)
   );
 
-let makeProspectApproved = (~processId, ~supporterId) =>
-  ProspectApproved(ProspectApproved.make(~processId, ~supporterId));
+let makeProspectEndorsed = (~processId, ~supporterId) =>
+  ProspectEndorsed(ProspectEndorsed.make(~processId, ~supporterId));
 
 let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId, ~policy) =>
   PartnerLabelSuggested(
     PartnerLabelSuggested.make(~partnerId, ~labelId, ~supporterId, ~policy)
   );
 
-let makePartnerLabelApproved = (~processId, ~supporterId) =>
-  PartnerLabelApproved(PartnerLabelApproved.make(~processId, ~supporterId));
+let makePartnerLabelEndorsed = (~processId, ~supporterId) =>
+  PartnerLabelEndorsed(PartnerLabelEndorsed.make(~processId, ~supporterId));
 
 let makeContributionSubmitted =
     (
@@ -322,20 +322,20 @@ let makeContributionSubmitted =
     )
   );
 
-let makeContributionApproved = (~processId, ~supporterId) =>
-  ContributionApproved(ContributionApproved.make(~processId, ~supporterId));
+let makeContributionEndorsed = (~processId, ~supporterId) =>
+  ContributionEndorsed(ContributionEndorsed.make(~processId, ~supporterId));
 
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
   | ProspectSuggested(event) => ProspectSuggested.encode(event)
-  | ProspectApproved(event) => ProspectApproved.encode(event)
+  | ProspectEndorsed(event) => ProspectEndorsed.encode(event)
   | PartnerAdded(event) => PartnerAdded.encode(event)
   | PartnerLabelSuggested(event) => PartnerLabelSuggested.encode(event)
-  | PartnerLabelApproved(event) => PartnerLabelApproved.encode(event)
+  | PartnerLabelEndorsed(event) => PartnerLabelEndorsed.encode(event)
   | PartnerLabelAccepted(event) => PartnerLabelAccepted.encode(event)
   | ContributionSubmitted(event) => ContributionSubmitted.encode(event)
-  | ContributionApproved(event) => ContributionApproved.encode(event)
+  | ContributionEndorsed(event) => ContributionEndorsed.encode(event)
   | ContributionAccepted(event) => ContributionAccepted.encode(event);
 
 let isSystemEvent =
@@ -350,18 +350,18 @@ let decode = raw => {
   switch type_ {
   | "VentureCreated" => VentureCreated(VentureCreated.decode(raw))
   | "ProspectSuggested" => ProspectSuggested(ProspectSuggested.decode(raw))
-  | "ProspectApproved" => ProspectApproved(ProspectApproved.decode(raw))
+  | "ProspectEndorsed" => ProspectEndorsed(ProspectEndorsed.decode(raw))
   | "PartnerAdded" => PartnerAdded(PartnerAdded.decode(raw))
   | "PartnerLabelSuggested" =>
     PartnerLabelSuggested(PartnerLabelSuggested.decode(raw))
-  | "PartnerLabelApproved" =>
-    PartnerLabelApproved(PartnerLabelApproved.decode(raw))
+  | "PartnerLabelEndorsed" =>
+    PartnerLabelEndorsed(PartnerLabelEndorsed.decode(raw))
   | "PartnerLabelAccepted" =>
     PartnerLabelAccepted(PartnerLabelAccepted.decode(raw))
   | "ContributionSubmitted" =>
     ContributionSubmitted(ContributionSubmitted.decode(raw))
-  | "ContributionApproved" =>
-    ContributionApproved(ContributionApproved.decode(raw))
+  | "ContributionEndorsed" =>
+    ContributionEndorsed(ContributionEndorsed.decode(raw))
   | "ContributionAccepted" =>
     ContributionAccepted(ContributionAccepted.decode(raw))
   | _ => raise(Not_found)

@@ -4,7 +4,7 @@ open PrimitiveTypes;
 
 type state = {
   eligable: list(userId),
-  approvals: list(userId),
+  endorsals: list(userId),
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t
 };
@@ -15,7 +15,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
     val state =
       ref({
         eligable: [],
-        approvals: [suggestion.supporterId],
+        endorsals: [suggestion.supporterId],
         policy: Policy.absolute,
         systemIssuer: Bitcoin.ECPair.makeRandom()
       });
@@ -32,10 +32,10 @@ let make = (suggestion: ProspectSuggested.t, log) => {
               policy: event.metaPolicy,
               systemIssuer: event.systemIssuer
             }
-          | ProspectApproved(event)
+          | ProspectEndorsed(event)
               when ProcessId.eq(event.processId, suggestion.processId) => {
               ...state^,
-              approvals: [event.supporterId, ...state^.approvals]
+              endorsals: [event.supporterId, ...state^.endorsals]
             }
           | PartnerAdded(event)
               when ProcessId.eq(event.processId, suggestion.processId) =>
@@ -53,7 +53,7 @@ let make = (suggestion: ProspectSuggested.t, log) => {
           && state^.policy
           |> Policy.fulfilled(
                ~eligable=state^.eligable,
-               ~approved=state^.approvals
+               ~endorsed=state^.endorsals
              )) {
         result :=
           Some((

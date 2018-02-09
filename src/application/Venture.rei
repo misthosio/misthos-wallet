@@ -15,7 +15,7 @@ module Validation: {
     | InvalidIssuer
     | UnknownProcessId
     | BadData
-    | DuplicateApproval
+    | DuplicateEndorsal
     | PolicyMissmatch
     | PolicyNotFulfilled;
 };
@@ -56,7 +56,7 @@ module Cmd: {
       | NoUserInfo;
     let exec: (Session.Data.t, ~prospectId: userId, t) => Js.Promise.t(result);
   };
-  module ApproveProspect: {
+  module EndorseProspect: {
     type result =
       | Ok(t);
     let exec:
@@ -69,7 +69,7 @@ module Cmd: {
       (Session.Data.t, ~partnerId: userId, ~labelId: labelId, t) =>
       Js.Promise.t(result);
   };
-  module ApprovePartnerLabel: {
+  module EndorsePartnerLabel: {
     type result =
       | Ok(t);
     let exec:
@@ -89,7 +89,7 @@ module Cmd: {
       ) =>
       Js.Promise.t(result);
   };
-  module ApproveContribution: {
+  module EndorseContribution: {
     type result =
       | Ok(t);
     let exec:

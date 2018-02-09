@@ -5,7 +5,7 @@ type partner = {userId};
 type prospect = {
   processId,
   userId,
-  approvedBy: list(userId)
+  endorsedBy: list(userId)
 };
 
 type contribution = {
@@ -47,19 +47,19 @@ let apply = (event: Event.t, state) =>
       addPartnerPolicy: metaPolicy,
       acceptContributionPolicy: metaPolicy
     }
-  | ProspectApproved({processId, supporterId}) => {
+  | ProspectEndorsed({processId, supporterId}) => {
       ...state,
       prospects:
         state.prospects
         |> List.map((p: prospect) =>
              ProcessId.eq(p.processId, processId) ?
-               {...p, approvedBy: [supporterId, ...p.approvedBy]} : p
+               {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
            )
     }
   | ProspectSuggested({processId, prospectId, supporterId}) => {
       ...state,
       prospects: [
-        {processId, userId: prospectId, approvedBy: [supporterId]},
+        {processId, userId: prospectId, endorsedBy: [supporterId]},
         ...state.prospects
       ]
     }
@@ -89,7 +89,7 @@ let apply = (event: Event.t, state) =>
         ...state.contributions
       ]
     }
-  | ContributionApproved({processId, supporterId}) => {
+  | ContributionEndorsed({processId, supporterId}) => {
       ...state,
       contributions:
         state.contributions
@@ -107,7 +107,7 @@ let apply = (event: Event.t, state) =>
            )
     }
   | PartnerLabelSuggested(_)
-  | PartnerLabelApproved(_)
+  | PartnerLabelEndorsed(_)
   | PartnerLabelAccepted(_) => state
   };
 

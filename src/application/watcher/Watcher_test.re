@@ -7,7 +7,7 @@ open Event;
 open PrimitiveTypes;
 
 let () =
-  describe("PartnerApproval", () => {
+  describe("PartnerEndorsal", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
     let ventureCreated =
       Event.VentureCreated.make(
@@ -63,8 +63,8 @@ let () =
         log
         |> EventLog.append(
              issuer,
-             ProspectApproved(
-               Event.ProspectApproved.make(
+             ProspectEndorsed(
+               Event.ProspectEndorsed.make(
                  ~processId,
                  ~supporterId="frank.id" |> UserId.fromString
                )
@@ -102,8 +102,8 @@ let () =
         log
         |> EventLog.append(
              issuer,
-             ProspectApproved(
-               Event.ProspectApproved.make(
+             ProspectEndorsed(
+               Event.ProspectEndorsed.make(
                  ~processId,
                  ~supporterId="frank.id" |> UserId.fromString
                )
