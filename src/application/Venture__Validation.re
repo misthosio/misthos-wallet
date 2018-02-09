@@ -90,7 +90,7 @@ let apply = (event: Event.t, state) =>
         ...state.prospects
       ]
     }
-  | ProspectEndorsed({processId, supporterId}) => {
+  | PartnerEndorsed({processId, supporterId}) => {
       ...state,
       prospects:
         state.prospects
@@ -103,14 +103,14 @@ let apply = (event: Event.t, state) =>
                (processId, p)
            )
     }
-  | PartnerAdded({processId, partnerId, partnerPubKey}) => {
+  | PartnerAccepted({processId, data}) => {
       ...state,
-      partnerIds: [partnerId, ...state.partnerIds],
+      partnerIds: [data.id, ...state.partnerIds],
       partnerAddresses: [
-        Utils.addressFromPublicKey(partnerPubKey),
+        Utils.addressFromPublicKey(data.pubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [(partnerPubKey, partnerId), ...state.partnerPubKeys],
+      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys],
       prospects:
         state.prospects
         |> List.filter(((pId, _)) => ProcessId.neq(pId, processId))
@@ -217,17 +217,17 @@ let validateEndorsement =
   | Not_found => UnknownProcessId
   };
 
-let validatePartnerAdded =
+let validatePartnerAccepted =
     (
-      {processId, partnerId, partnerPubKey}: PartnerAdded.t,
+      {processId, data}: Partner.Acceptance.t,
       {prospects, partnerIds},
       _issuerPubKey
     ) =>
   try {
     let prospect = prospects |> List.assoc(processId);
-    if (UserId.neq(prospect.userId, partnerId)) {
+    if (UserId.neq(prospect.userId, data.id)) {
       BadData;
-    } else if (prospect.pubKey != partnerPubKey) {
+    } else if (prospect.pubKey != data.pubKey) {
       BadData;
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
@@ -298,7 +298,7 @@ let validateEvent =
       state =>
         validateProposal(proposal, state.acceptContributionPolicy, state)
     )
-  | ProspectEndorsed(event) => (
+  | PartnerEndorsed(event) => (
       state =>
         validateEndorsement(
           event,
@@ -307,7 +307,7 @@ let validateEvent =
           state
         )
     )
-  | PartnerAdded(event) => validatePartnerAdded(event)
+  | PartnerAccepted(event) => validatePartnerAccepted(event)
   | PartnerLabelSuggested({policy}) => (
       (state, _) =>
         Policy.eq(policy, state.addPartnerLabelPolicy) ? Ok : PolicyMissmatch

@@ -47,7 +47,7 @@ let apply = (event: Event.t, state) =>
       addPartnerPolicy: metaPolicy,
       acceptContributionPolicy: metaPolicy
     }
-  | ProspectEndorsed({processId, supporterId}) => {
+  | PartnerEndorsed({processId, supporterId}) => {
       ...state,
       prospects:
         state.prospects
@@ -63,11 +63,11 @@ let apply = (event: Event.t, state) =>
         ...state.prospects
       ]
     }
-  | PartnerAdded({partnerId}) => {
+  | PartnerAccepted({data}) => {
       ...state,
-      partners: [{userId: partnerId}, ...state.partners],
+      partners: [{userId: data.id}, ...state.partners],
       prospects:
-        state.prospects |> List.filter(p => UserId.neq(p.userId, partnerId))
+        state.prospects |> List.filter(p => UserId.neq(p.userId, data.id))
     }
   | ContributionProposed({processId, supporterId, data}) => {
       ...state,

@@ -315,10 +315,7 @@ module Cmd = {
         venture
         |> apply(
              session.appKeyPair,
-             Event.makeProspectEndorsed(
-               ~processId,
-               ~supporterId=session.userId
-             )
+             Event.makePartnerEndorsed(~processId, ~supporterId=session.userId)
            )
         |> persist
         |> then_(p => resolve(Ok(p)))

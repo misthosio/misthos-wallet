@@ -41,56 +41,26 @@ module VentureCreated = {
     };
 };
 
-module PartnerData = {
-  type t = {
-    id: userId,
-    pubKey: string
-  };
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("id", UserId.encode(event.id)),
-        ("pubKey", string(event.pubKey))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      id: raw |> field("id", UserId.decode),
-      pubKey: raw |> field("pubKey", string)
+module Partner = {
+  module Data = {
+    type t = {
+      id: userId,
+      pubKey: string
     };
-};
-
-module PartnerProposed =
-  (val EventTypes.makeProposal("PartnerProposed"))(PartnerData);
-
-module ProspectEndorsed = (val EventTypes.makeEndorsement("ProspectEndorsed"));
-
-module PartnerAdded = {
-  type t = {
-    processId,
-    partnerId: userId,
-    partnerPubKey: string
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("id", UserId.encode(event.id)),
+          ("pubKey", string(event.pubKey))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        id: raw |> field("id", UserId.decode),
+        pubKey: raw |> field("pubKey", string)
+      };
   };
-  let make = (~processId, ~partnerId, ~partnerPubKey) => {
-    processId,
-    partnerId,
-    partnerPubKey
-  };
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("PartnerAdded")),
-        ("processId", ProcessId.encode(event.processId)),
-        ("partnerId", UserId.encode(event.partnerId)),
-        ("partnerPubKey", string(event.partnerPubKey))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      processId: raw |> field("processId", ProcessId.decode),
-      partnerId: raw |> field("partnerId", UserId.decode),
-      partnerPubKey: raw |> field("partnerPubKey", string)
-    };
+  include (val EventTypes.makeProcess("Partner"))(Data);
 };
 
 module PartnerLabelSuggested = {
@@ -188,25 +158,14 @@ module ContributionEndorsed = (
   val EventTypes.makeEndorsement("ContributionEndorsed")
 );
 
-module ContributionAccepted = {
-  type t = {processId};
-  let make = (~processId) => {processId: processId};
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("ContributionAccepted")),
-        ("processId", ProcessId.encode(event.processId))
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{processId: raw |> field("processId", ProcessId.decode)};
-};
+module ContributionAccepted =
+  (val EventTypes.makeAcceptance("ContributionAccepted"))(ContributionData);
 
 type t =
   | VentureCreated(VentureCreated.t)
-  | PartnerProposed(PartnerProposed.t)
-  | ProspectEndorsed(ProspectEndorsed.t)
-  | PartnerAdded(PartnerAdded.t)
+  | PartnerProposed(Partner.Proposal.t)
+  | PartnerEndorsed(Partner.Endorsement.t)
+  | PartnerAccepted(Partner.Acceptance.t)
   | PartnerLabelSuggested(PartnerLabelSuggested.t)
   | PartnerLabelEndorsed(PartnerLabelEndorsed.t)
   | PartnerLabelAccepted(PartnerLabelAccepted.t)
@@ -216,15 +175,15 @@ type t =
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
-    PartnerProposed.make(
+    Partner.Proposal.make(
       ~supporterId,
       ~policy,
-      ~data=PartnerData.{id: prospectId, pubKey: prospectPubKey}
+      ~data=Partner.Data.{id: prospectId, pubKey: prospectPubKey}
     )
   );
 
-let makeProspectEndorsed = (~processId, ~supporterId) =>
-  ProspectEndorsed(ProspectEndorsed.make(~processId, ~supporterId));
+let makePartnerEndorsed = (~processId, ~supporterId) =>
+  PartnerEndorsed(Partner.Endorsement.make(~processId, ~supporterId));
 
 let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId, ~policy) =>
   PartnerLabelSuggested(
@@ -258,9 +217,9 @@ let makeContributionEndorsed = (~processId, ~supporterId) =>
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
-  | PartnerProposed(event) => PartnerProposed.encode(event)
-  | ProspectEndorsed(event) => ProspectEndorsed.encode(event)
-  | PartnerAdded(event) => PartnerAdded.encode(event)
+  | PartnerProposed(event) => Partner.Proposal.encode(event)
+  | PartnerEndorsed(event) => Partner.Endorsement.encode(event)
+  | PartnerAccepted(event) => Partner.Acceptance.encode(event)
   | PartnerLabelSuggested(event) => PartnerLabelSuggested.encode(event)
   | PartnerLabelEndorsed(event) => PartnerLabelEndorsed.encode(event)
   | PartnerLabelAccepted(event) => PartnerLabelAccepted.encode(event)
@@ -270,7 +229,7 @@ let encode =
 
 let isSystemEvent =
   fun
-  | PartnerAdded(_)
+  | PartnerAccepted(_)
   | PartnerLabelAccepted(_)
   | ContributionAccepted(_) => true
   | _ => false;
@@ -279,9 +238,9 @@ let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch type_ {
   | "VentureCreated" => VentureCreated(VentureCreated.decode(raw))
-  | "PartnerProposed" => PartnerProposed(PartnerProposed.decode(raw))
-  | "ProspectEndorsed" => ProspectEndorsed(ProspectEndorsed.decode(raw))
-  | "PartnerAdded" => PartnerAdded(PartnerAdded.decode(raw))
+  | "PartnerProposed" => PartnerProposed(Partner.Proposal.decode(raw))
+  | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsement.decode(raw))
+  | "PartnerAccepted" => PartnerAccepted(Partner.Acceptance.decode(raw))
   | "PartnerLabelSuggested" =>
     PartnerLabelSuggested(PartnerLabelSuggested.decode(raw))
   | "PartnerLabelEndorsed" =>

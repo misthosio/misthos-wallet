@@ -9,7 +9,7 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t
 };
 
-let make = (proposal: PartnerProposed.t, log) => {
+let make = (proposal: Partner.Proposal.t, log) => {
   let process = {
     /*eslint-disable */
     val state =
@@ -32,18 +32,18 @@ let make = (proposal: PartnerProposed.t, log) => {
               policy: event.metaPolicy,
               systemIssuer: event.systemIssuer
             }
-          | ProspectEndorsed(event)
+          | PartnerEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
               endorsements: [event.supporterId, ...state^.endorsements]
             }
-          | PartnerAdded(event)
+          | PartnerAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;
             state^;
-          | PartnerAdded(event) => {
+          | PartnerAccepted({data}) => {
               ...state^,
-              eligable: [event.partnerId, ...state^.eligable]
+              eligable: [data.id, ...state^.eligable]
             }
           | _ => state^
           }
@@ -58,11 +58,10 @@ let make = (proposal: PartnerProposed.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAdded(
-              PartnerAdded.make(
+            PartnerAccepted(
+              Partner.Acceptance.make(
                 ~processId=proposal.processId,
-                ~partnerId=proposal.data.id,
-                ~partnerPubKey=proposal.data.pubKey
+                ~data=proposal.data
               )
             )
           ));

@@ -22,10 +22,10 @@ let () =
     let prospectId = "wackerman.id" |> UserId.fromString;
     let prospectPubKey = "sticks";
     let partnerProposal =
-      Event.PartnerProposed.make(
+      Event.Partner.Proposal.make(
         ~supporterId="bozzio.id" |> UserId.fromString,
         ~policy=Policy.absolute,
-        ~data=PartnerData.{id: prospectId, pubKey: prospectPubKey}
+        ~data=Partner.Data.{id: prospectId, pubKey: prospectPubKey}
       );
     let processId = partnerProposal.processId;
     test("Process is in progress", () => {
@@ -43,11 +43,12 @@ let () =
       let (item, _) =
         EventLog.append(
           issuer,
-          PartnerAdded({
-            processId,
-            partnerId: prospectId,
-            partnerPubKey: prospectPubKey
-          }),
+          PartnerAccepted(
+            Partner.Acceptance.make(
+              ~processId,
+              ~data=Partner.Data.{id: prospectId, pubKey: prospectPubKey}
+            )
+          ),
           log
         );
       prospectWatcher#receive(item);
@@ -62,8 +63,8 @@ let () =
         log
         |> EventLog.append(
              issuer,
-             ProspectEndorsed(
-               Event.ProspectEndorsed.make(
+             PartnerEndorsed(
+               Partner.Endorsement.make(
                  ~processId,
                  ~supporterId="frank.id" |> UserId.fromString
                )
@@ -74,11 +75,12 @@ let () =
       |> toEqual(
            Some((
              ventureCreated.systemIssuer,
-             PartnerAdded({
-               processId,
-               partnerId: prospectId,
-               partnerPubKey: prospectPubKey
-             })
+             PartnerAccepted(
+               Partner.Acceptance.make(
+                 ~processId,
+                 ~data={id: prospectId, pubKey: prospectPubKey}
+               )
+             )
            ))
          );
     });
@@ -87,11 +89,12 @@ let () =
         log
         |> EventLog.append(
              issuer,
-             PartnerAdded({
-               processId: ProcessId.make(),
-               partnerId: "ruth.id" |> UserId.fromString,
-               partnerPubKey: "mallets"
-             })
+             PartnerAccepted(
+               Partner.Acceptance.make(
+                 ~processId=ProcessId.make(),
+                 ~data={id: "ruth.id" |> UserId.fromString, pubKey: "mallets"}
+               )
+             )
            );
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
@@ -101,8 +104,8 @@ let () =
         log
         |> EventLog.append(
              issuer,
-             ProspectEndorsed(
-               Event.ProspectEndorsed.make(
+             PartnerEndorsed(
+               Partner.Endorsement.make(
                  ~processId,
                  ~supporterId="frank.id" |> UserId.fromString
                )

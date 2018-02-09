@@ -30,9 +30,9 @@ let make = (proposal: ContributionProposed.t, log) => {
               policy: event.metaPolicy,
               systemIssuer: event.systemIssuer
             }
-          | PartnerAdded(event) => {
+          | PartnerAccepted({data}) => {
               ...state^,
-              eligable: [event.partnerId, ...state^.eligable]
+              eligable: [data.id, ...state^.eligable]
             }
           | ContributionEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
@@ -57,7 +57,10 @@ let make = (proposal: ContributionProposed.t, log) => {
           Some((
             state^.systemIssuer,
             ContributionAccepted(
-              ContributionAccepted.make(~processId=proposal.processId)
+              ContributionAccepted.make(
+                ~processId=proposal.processId,
+                ~data=proposal.data
+              )
             )
           ));
       };
