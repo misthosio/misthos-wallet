@@ -12,7 +12,7 @@ module ContributionApproval = Watcher__ContributionApproval;
 let initWatcherFor = ({event}: EventLog.item, log) =>
   switch event {
   | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
-  | ContributionSubmitted(submission) =>
-    Some(ContributionApproval.make(submission, log))
+  | ContributionProposed(proposal) =>
+    Some(ContributionApproval.make(proposal, log))
   | _ => None
   };

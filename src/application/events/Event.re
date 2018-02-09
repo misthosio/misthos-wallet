@@ -156,57 +156,33 @@ module PartnerLabelAccepted = {
     };
 };
 
-module ContributionSubmitted = {
+module ContributionData = {
   type t = {
-    processId,
-    submitterId: userId,
     amountInteger: int,
     amountFraction: int,
     currency: string,
-    description: string,
-    policy: Policy.t
-  };
-  let make =
-      (
-        ~submitterId,
-        ~amountInteger,
-        ~amountFraction,
-        ~currency,
-        ~description,
-        ~policy
-      ) => {
-    processId: ProcessId.make(),
-    submitterId,
-    amountInteger,
-    amountFraction,
-    currency,
-    description,
-    policy
+    description: string
   };
   let encode = event =>
     Json.Encode.(
       object_([
-        ("type", string("ContributionSubmitted")),
-        ("processId", ProcessId.encode(event.processId)),
-        ("submitterId", UserId.encode(event.submitterId)),
         ("amountInteger", int(event.amountInteger)),
         ("amountFraction", int(event.amountFraction)),
         ("currency", string(event.currency)),
-        ("description", string(event.description)),
-        ("policy", Policy.encode(event.policy))
+        ("description", string(event.description))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      processId: raw |> field("processId", ProcessId.decode),
-      submitterId: raw |> field("submitterId", UserId.decode),
       amountInteger: raw |> field("amountInteger", int),
       amountFraction: raw |> field("amountFraction", int),
       currency: raw |> field("currency", string),
-      description: raw |> field("description", string),
-      policy: raw |> field("policy", Policy.decode)
+      description: raw |> field("description", string)
     };
 };
+
+module ContributionProposed =
+  (val EventMaker.makeProposal("ContributionProposed"))(ContributionData);
 
 module ContributionEndorsed = (
   val EventMaker.makeEndorsement("ContributionEndorsed")
@@ -234,7 +210,7 @@ type t =
   | PartnerLabelSuggested(PartnerLabelSuggested.t)
   | PartnerLabelEndorsed(PartnerLabelEndorsed.t)
   | PartnerLabelAccepted(PartnerLabelAccepted.t)
-  | ContributionSubmitted(ContributionSubmitted.t)
+  | ContributionProposed(ContributionProposed.t)
   | ContributionEndorsed(ContributionEndorsed.t)
   | ContributionAccepted(ContributionAccepted.t);
 
@@ -258,23 +234,21 @@ let makePartnerLabelSuggested = (~partnerId, ~labelId, ~supporterId, ~policy) =>
 let makePartnerLabelEndorsed = (~processId, ~supporterId) =>
   PartnerLabelEndorsed(PartnerLabelEndorsed.make(~processId, ~supporterId));
 
-let makeContributionSubmitted =
+let makeContributionProposed =
     (
-      ~submitterId,
+      ~supporterId,
       ~amountInteger,
       ~amountFraction,
       ~currency,
       ~description,
       ~policy
     ) =>
-  ContributionSubmitted(
-    ContributionSubmitted.make(
-      ~submitterId,
-      ~amountInteger,
-      ~amountFraction,
-      ~currency,
-      ~description,
-      ~policy
+  ContributionProposed(
+    ContributionProposed.make(
+      ~supporterId,
+      ~policy,
+      ~data=
+        ContributionData.{amountInteger, amountFraction, currency, description}
     )
   );
 
@@ -290,7 +264,7 @@ let encode =
   | PartnerLabelSuggested(event) => PartnerLabelSuggested.encode(event)
   | PartnerLabelEndorsed(event) => PartnerLabelEndorsed.encode(event)
   | PartnerLabelAccepted(event) => PartnerLabelAccepted.encode(event)
-  | ContributionSubmitted(event) => ContributionSubmitted.encode(event)
+  | ContributionProposed(event) => ContributionProposed.encode(event)
   | ContributionEndorsed(event) => ContributionEndorsed.encode(event)
   | ContributionAccepted(event) => ContributionAccepted.encode(event);
 
@@ -314,8 +288,8 @@ let decode = raw => {
     PartnerLabelEndorsed(PartnerLabelEndorsed.decode(raw))
   | "PartnerLabelAccepted" =>
     PartnerLabelAccepted(PartnerLabelAccepted.decode(raw))
-  | "ContributionSubmitted" =>
-    ContributionSubmitted(ContributionSubmitted.decode(raw))
+  | "ContributionProposed" =>
+    ContributionProposed(ContributionProposed.decode(raw))
   | "ContributionEndorsed" =>
     ContributionEndorsed(ContributionEndorsed.decode(raw))
   | "ContributionAccepted" =>

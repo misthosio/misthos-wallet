@@ -69,22 +69,16 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, partnerId))
     }
-  | ContributionSubmitted({
-      processId,
-      submitterId,
-      amountInteger,
-      amountFraction,
-      description
-    }) => {
+  | ContributionProposed({processId, supporterId, data}) => {
       ...state,
       contributions: [
         {
           processId,
-          amountInteger,
-          amountFraction,
-          description,
+          amountInteger: data.amountInteger,
+          amountFraction: data.amountFraction,
+          description: data.description,
           accepted: false,
-          supporters: [submitterId]
+          supporters: [supporterId]
         },
         ...state.contributions
       ]

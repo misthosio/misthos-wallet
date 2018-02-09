@@ -147,10 +147,10 @@ let apply = (event: Event.t, state) =>
                (partnerId, [labelId, ...labels]) : (pId, labels)
            )
     }
-  | ContributionSubmitted({processId, submitterId, policy}) => {
+  | ContributionProposed({processId, supporterId, policy}) => {
       ...state,
       contributions: [
-        (processId, {policy, supporterIds: [submitterId]}),
+        (processId, {policy, supporterIds: [supporterId]}),
         ...state.contributions
       ]
     }
@@ -307,7 +307,7 @@ let validateEvent =
         )
     )
   | PartnerLabelAccepted(event) => validatePartnerLabelAccepted(event)
-  | ContributionSubmitted({policy}) => (
+  | ContributionProposed({policy}) => (
       (state, _) =>
         Policy.eq(policy, state.acceptContributionPolicy) ?
           Ok : PolicyMissmatch

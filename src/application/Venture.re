@@ -383,8 +383,8 @@ module Cmd = {
         venture
         |> apply(
              session.appKeyPair,
-             Event.makeContributionSubmitted(
-               ~submitterId=session.userId,
+             Event.makeContributionProposed(
+               ~supporterId=session.userId,
                ~amountInteger,
                ~amountFraction,
                ~currency,

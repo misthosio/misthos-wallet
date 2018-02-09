@@ -9,12 +9,12 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t
 };
 
-let make = (submission: ContributionSubmitted.t, log) => {
+let make = (proposal: ContributionProposed.t, log) => {
   let process = {
     val state =
       ref({
         eligable: [],
-        endorsals: [submission.submitterId],
+        endorsals: [proposal.supporterId],
         policy: Policy.absolute,
         systemIssuer: Bitcoin.ECPair.makeRandom()
       });
@@ -35,12 +35,12 @@ let make = (submission: ContributionSubmitted.t, log) => {
               eligable: [event.partnerId, ...state^.eligable]
             }
           | ContributionEndorsed(event)
-              when ProcessId.eq(event.processId, submission.processId) => {
+              when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
               endorsals: [event.supporterId, ...state^.endorsals]
             }
           | ContributionAccepted(event)
-              when ProcessId.eq(event.processId, submission.processId) =>
+              when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;
             state^;
           | _ => state^
@@ -57,7 +57,7 @@ let make = (submission: ContributionSubmitted.t, log) => {
           Some((
             state^.systemIssuer,
             ContributionAccepted(
-              ContributionAccepted.make(~processId=submission.processId)
+              ContributionAccepted.make(~processId=proposal.processId)
             )
           ));
       };
