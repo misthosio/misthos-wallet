@@ -123,11 +123,14 @@ type result =
   | PolicyMissmatch
   | PolicyNotFulfilled;
 
+let defaultDataValidator = (_, _) => Ok;
+
 let validateProposal =
     (
-      {policy, supporterId}: EventTypes.proposal('a),
+      ~validateData: ('a, state) => result=defaultDataValidator,
       processName,
-      {policies, partnerPubKeys},
+      {policy, supporterId, data}: EventTypes.proposal('a),
+      {policies, partnerPubKeys} as state,
       issuerPubKey
     ) =>
   if (Policy.neq(policy, policies |> List.assoc(processName))) {
@@ -138,7 +141,7 @@ let validateProposal =
              )) {
     InvalidIssuer;
   } else {
-    Ok;
+    validateData(data, state);
   };
 
 let validateEndorsement =
@@ -185,15 +188,22 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
+let validatePartneLabelData = (data: PartnerLabel.Data.t, {partnerIds}) =>
+  partnerIds |> List.mem(data.partnerId) ? Ok : BadData;
+
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
   | PartnerProposed(proposal) =>
-    validateProposal(proposal, Partner.processName)
+    validateProposal(Partner.processName, proposal)
   | PartnerLabelProposed(proposal) =>
-    validateProposal(proposal, PartnerLabel.processName)
+    validateProposal(
+      ~validateData=validatePartneLabelData,
+      PartnerLabel.processName,
+      proposal
+    )
   | ContributionProposed(proposal) =>
-    validateProposal(proposal, Contribution.processName)
+    validateProposal(Contribution.processName, proposal)
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerLabelEndorsed(endorsement) => validateEndorsement(endorsement)
   | ContributionEndorsed(endorsement) => validateEndorsement(endorsement)
