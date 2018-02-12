@@ -16,16 +16,21 @@ type action =
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | ProposePartner
-  | EndorsePartner(processId)
+  | EndorsePartner(ProcessId.t)
+  | ProposePartnerLabel(UserId.t, LabelId.t)
+  | EndorsePartnerLabel(ProcessId.t)
   | ProposeContribution(int, int, string, string)
-  | EndorseContribution(processId);
+  | EndorseContribution(ProcessId.t);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
-let submitContribution =
+let proposePartnerLabel = (send, userId, ~labelId) =>
+  send(ProposePartnerLabel(userId, labelId));
+
+let proposeContribution =
     (send, ~amountInteger, ~amountFraction, ~currency, ~description) =>
   send(
     ProposeContribution(amountInteger, amountFraction, currency, description)
@@ -141,6 +146,48 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         )
       )
+    | ProposePartnerLabel(partnerId, labelId) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.ProposePartnerLabel.(
+                state.venture
+                |> exec(session, ~partnerId, ~labelId)
+                |> then_(result =>
+                     (
+                       switch result {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
+    | EndorsePartnerLabel(processId) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.EndorsePartnerLabel.(
+                state.venture
+                |> exec(session, ~processId)
+                |> then_(result =>
+                     (
+                       switch result {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
     | ProposeContribution(amountInteger, amountFraction, currency, description) =>
       ReasonReact.SideEffects(
         (
@@ -212,7 +259,80 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           ViewModel.getPartners(state.viewModel)
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
-                 (text(m.userId |> UserId.toString))
+                 <div>
+                   (text(m.userId |> UserId.toString))
+                   (text(" Labels: "))
+                   (
+                     text(
+                       List.fold_left(
+                         (state, label) =>
+                           state ++ LabelId.toString(label) ++ ", ",
+                         "",
+                         m.labels
+                       )
+                     )
+                   )
+                 </div>
+                 <div>
+                   (text("Pending Labels: "))
+                   <ul>
+                     {
+                       let pending =
+                         Array.of_list(
+                           ViewModel.getPendingPartnerLabels(
+                             m.userId,
+                             state.viewModel
+                           )
+                           |> List.map((partnerLabel: ViewModel.partnerLabel) =>
+                                <li
+                                  key=(
+                                    partnerLabel.processId
+                                    |> ProcessId.toString
+                                  )>
+                                  (
+                                    text(
+                                      "'"
+                                      ++ LabelId.toString(
+                                           partnerLabel.labelId
+                                         )
+                                      ++ "' endorsed by: "
+                                      ++ List.fold_left(
+                                           (state, partnerId) =>
+                                             state ++ partnerId ++ " ",
+                                           "",
+                                           partnerLabel.supporters
+                                           |> List.map(UserId.toString)
+                                         )
+                                    )
+                                  )
+                                  (
+                                    if (partnerLabel.supporters
+                                        |> List.mem(session.userId) == false) {
+                                      <button
+                                        onClick=(
+                                          _e =>
+                                            send(
+                                              EndorsePartnerLabel(
+                                                partnerLabel.processId
+                                              )
+                                            )
+                                        )>
+                                        (text("Endorse Partner Label"))
+                                      </button>;
+                                    } else {
+                                      ReasonReact.nullElement;
+                                    }
+                                  )
+                                </li>
+                              )
+                         );
+                       ReasonReact.arrayToElement(pending);
+                     }
+                   </ul>
+                 </div>
+                 <PartnerLabelInput
+                   submit=(proposePartnerLabel(send, m.userId))
+                 />
                </li>
              )
         )
@@ -360,7 +480,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       <ul> contributions </ul>
       <h4> (text("Pending acceptance:")) </h4>
       <ul> contributionProcesses </ul>
-      <ContributionInput submit=(submitContribution(send)) />
+      <ContributionInput submit=(proposeContribution(send)) />
       <h3> (text("Partners:")) </h3>
       <ul> partners </ul>
       <h4> (text("Prospects:")) </h4>

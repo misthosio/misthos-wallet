@@ -81,7 +81,7 @@ let make = (~submit, _children) => {
         onChange=(e => send(ChangeDescription(extractDescription(e))))
       />
       <button onClick=(_e => send(Submit))>
-        (text("Submit Contribution"))
+        (text("Propose Contribution"))
       </button>
     </div>
 };
