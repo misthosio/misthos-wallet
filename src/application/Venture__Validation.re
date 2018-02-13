@@ -17,6 +17,8 @@ type state = {
   partnerData: list((processId, Partner.Data.t)),
   partnerLabelData: list((processId, PartnerLabel.Data.t)),
   contributionData: list((processId, Contribution.Data.t)),
+  partnerDistributionData: list((processId, PartnerDistribution.Data.t)),
+  labelDistributionData: list((processId, LabelDistribution.Data.t)),
   processes: list((processId, approvalProcess)),
   policies: list((string, Policy.t))
 };
@@ -31,6 +33,8 @@ let makeState = () => {
   metaPolicy: Policy.absolute,
   partnerData: [],
   contributionData: [],
+  partnerDistributionData: [],
+  labelDistributionData: [],
   processes: [],
   policies: []
 };
@@ -98,8 +102,27 @@ let apply = (event: Event.t, state) =>
       ...addProcess(proposal, state),
       contributionData: [(processId, data), ...state.contributionData]
     }
+  | PartnerDistributionProposed({processId, data} as proposal) => {
+      ...addProcess(proposal, state),
+      partnerDistributionData: [
+        (processId, data),
+        ...state.partnerDistributionData
+      ]
+    }
+  | LabelDistributionProposed({processId, data} as proposal) => {
+      ...addProcess(proposal, state),
+      labelDistributionData: [
+        (processId, data),
+        ...state.labelDistributionData
+      ]
+    }
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerLabelEndorsed(endorsement) => endorseProcess(endorsement, state)
+  | ContributionEndorsed(endorsement) => endorseProcess(endorsement, state)
+  | PartnerDistributionEndorsed(endorsement) =>
+    endorseProcess(endorsement, state)
+  | LabelDistributionEndorsed(endorsement) =>
+    endorseProcess(endorsement, state)
   | PartnerAccepted({data}) => {
       ...state,
       partnerIds: [data.id, ...state.partnerIds],
@@ -109,9 +132,10 @@ let apply = (event: Event.t, state) =>
       ],
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
-  | PartnerLabelAccepted(_) => state
-  | ContributionEndorsed(endorsement) => endorseProcess(endorsement, state)
-  | ContributionAccepted(_) => state
+  | PartnerLabelAccepted(_)
+  | ContributionAccepted(_)
+  | PartnerDistributionAccepted(_)
+  | LabelDistributionAccepted(_) => state
   };
 
 type result =
@@ -204,9 +228,16 @@ let validateEvent =
     )
   | ContributionProposed(proposal) =>
     validateProposal(Contribution.processName, proposal)
+  | PartnerDistributionProposed(proposal) =>
+    validateProposal(PartnerDistribution.processName, proposal)
+  | LabelDistributionProposed(proposal) =>
+    validateProposal(LabelDistribution.processName, proposal)
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerLabelEndorsed(endorsement) => validateEndorsement(endorsement)
   | ContributionEndorsed(endorsement) => validateEndorsement(endorsement)
+  | PartnerDistributionEndorsed(endorsement) =>
+    validateEndorsement(endorsement)
+  | LabelDistributionEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.partnerData, state)
     )
@@ -215,6 +246,14 @@ let validateEvent =
     )
   | ContributionAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.contributionData, state)
+    )
+  | PartnerDistributionAccepted(acceptance) => (
+      state =>
+        validateAcceptance(acceptance, state.partnerDistributionData, state)
+    )
+  | LabelDistributionAccepted(acceptance) => (
+      state =>
+        validateAcceptance(acceptance, state.labelDistributionData, state)
     );
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
