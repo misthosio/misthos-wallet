@@ -122,6 +122,24 @@ module Contribution = {
   include (val EventTypes.makeProcess("Contribution"))(Data);
 };
 
+module PartnerDistribution = {
+  module Data = {
+    type t = DistributionGraph.PartnerDistribution.t;
+    let encode = DistributionGraph.PartnerDistribution.encode;
+    let decode = DistributionGraph.PartnerDistribution.decode;
+  };
+  include (val EventTypes.makeProcess("PartnerDistribution"))(Data);
+};
+
+module LabelDistribution = {
+  module Data = {
+    type t = DistributionGraph.LabelDistribution.t;
+    let encode = DistributionGraph.LabelDistribution.encode;
+    let decode = DistributionGraph.LabelDistribution.decode;
+  };
+  include (val EventTypes.makeProcess("LabelDistribution"))(Data);
+};
+
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposal.t)
@@ -132,7 +150,13 @@ type t =
   | PartnerLabelAccepted(PartnerLabel.Acceptance.t)
   | ContributionProposed(Contribution.Proposal.t)
   | ContributionEndorsed(Contribution.Endorsement.t)
-  | ContributionAccepted(Contribution.Acceptance.t);
+  | ContributionAccepted(Contribution.Acceptance.t)
+  | PartnerDistributionProposed(PartnerDistribution.Proposal.t)
+  | PartnerDistributionEndorsed(PartnerDistribution.Endorsement.t)
+  | PartnerDistributionAccepted(PartnerDistribution.Acceptance.t)
+  | LabelDistributionProposed(LabelDistribution.Proposal.t)
+  | LabelDistributionEndorsed(LabelDistribution.Endorsement.t)
+  | LabelDistributionAccepted(LabelDistribution.Acceptance.t);
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
@@ -188,6 +212,36 @@ let makeContributionEndorsed = (~processId, ~supporterId) =>
     Contribution.Endorsement.make(~processId, ~supporterId)
   );
 
+let makePartnerDistributionProposed =
+    (~supporterId, ~policy, ~labelId, ~distribution) =>
+  PartnerDistributionProposed(
+    PartnerDistribution.Proposal.make(
+      ~supporterId,
+      ~policy,
+      ~data={labelId, distribution}
+    )
+  );
+
+let makePartnerDistributionEndorsed = (~processId, ~supporterId) =>
+  PartnerDistributionEndorsed(
+    PartnerDistribution.Endorsement.make(~processId, ~supporterId)
+  );
+
+let makeLabelDistributionProposed =
+    (~supporterId, ~policy, ~labelId, ~distribution) =>
+  LabelDistributionProposed(
+    LabelDistribution.Proposal.make(
+      ~supporterId,
+      ~policy,
+      ~data={labelId, distribution}
+    )
+  );
+
+let makeLabelDistributionEndorsed = (~processId, ~supporterId) =>
+  LabelDistributionEndorsed(
+    LabelDistribution.Endorsement.make(~processId, ~supporterId)
+  );
+
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
@@ -199,7 +253,19 @@ let encode =
   | PartnerLabelAccepted(event) => PartnerLabel.Acceptance.encode(event)
   | ContributionProposed(event) => Contribution.Proposal.encode(event)
   | ContributionEndorsed(event) => Contribution.Endorsement.encode(event)
-  | ContributionAccepted(event) => Contribution.Acceptance.encode(event);
+  | ContributionAccepted(event) => Contribution.Acceptance.encode(event)
+  | PartnerDistributionProposed(event) =>
+    PartnerDistribution.Proposal.encode(event)
+  | PartnerDistributionEndorsed(event) =>
+    PartnerDistribution.Endorsement.encode(event)
+  | PartnerDistributionAccepted(event) =>
+    PartnerDistribution.Acceptance.encode(event)
+  | LabelDistributionProposed(event) =>
+    LabelDistribution.Proposal.encode(event)
+  | LabelDistributionEndorsed(event) =>
+    LabelDistribution.Endorsement.encode(event)
+  | LabelDistributionAccepted(event) =>
+    LabelDistribution.Acceptance.encode(event);
 
 let isSystemEvent =
   fun
@@ -229,6 +295,18 @@ let decode = raw => {
     ContributionEndorsed(Contribution.Endorsement.decode(raw))
   | "ContributionAccepted" =>
     ContributionAccepted(Contribution.Acceptance.decode(raw))
+  | "PartnerDistributionProposed" =>
+    PartnerDistributionProposed(PartnerDistribution.Proposal.decode(raw))
+  | "PartnerDistributionEndorsed" =>
+    PartnerDistributionEndorsed(PartnerDistribution.Endorsement.decode(raw))
+  | "PartnerDistributionAccepted" =>
+    PartnerDistributionAccepted(PartnerDistribution.Acceptance.decode(raw))
+  | "LabelDistributionProposed" =>
+    LabelDistributionProposed(LabelDistribution.Proposal.decode(raw))
+  | "LabelDistributionEndorsed" =>
+    LabelDistributionEndorsed(LabelDistribution.Endorsement.decode(raw))
+  | "LabelDistributionAccepted" =>
+    LabelDistributionAccepted(LabelDistribution.Acceptance.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };
