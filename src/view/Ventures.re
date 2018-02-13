@@ -128,7 +128,7 @@ let make = (~session, _children) => {
                   session,
                   ~name,
                   ~initialLabelIds=
-                    ["know-how", "implementation", "sales", "coordination"]
+                    ["know-how", "implementation", "marketing", "coordination"]
                     |> List.map(LabelId.fromString)
                 )
                 |> then_(((newIndex, venture)) =>
