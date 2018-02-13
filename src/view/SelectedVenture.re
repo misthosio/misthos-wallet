@@ -457,9 +457,18 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       <div>
         (
           text(
-            "AddPartnerPolicy - ActivationThreshold "
+            "PartnerPolicy - ActivationThreshold "
+            ++ string_of_float(state.viewModel.partnerPolicy.thresholdPercent)
+            ++ "%"
+          )
+        )
+      </div>
+      <div>
+        (
+          text(
+            "ContributionPolicy - ActivationThreshold "
             ++ string_of_float(
-                 state.viewModel.addPartnerPolicy.thresholdPercent
+                 state.viewModel.contributionPolicy.thresholdPercent
                )
             ++ "%"
           )
@@ -468,9 +477,9 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       <div>
         (
           text(
-            "AcceptContributionPolicy - ActivationThreshold "
+            "PartnerLabelPolicy - ActivationThreshold "
             ++ string_of_float(
-                 state.viewModel.acceptContributionPolicy.thresholdPercent
+                 state.viewModel.partnerLabelPolicy.thresholdPercent
                )
             ++ "%"
           )

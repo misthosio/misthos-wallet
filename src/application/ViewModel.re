@@ -34,8 +34,9 @@ type t = {
   prospects: list(prospect),
   contributions: list(contribution),
   metaPolicy: Policy.t,
-  addPartnerPolicy: Policy.t,
-  acceptContributionPolicy: Policy.t
+  partnerPolicy: Policy.t,
+  contributionPolicy: Policy.t,
+  partnerLabelPolicy: Policy.t
 };
 
 let make = () => {
@@ -45,8 +46,9 @@ let make = () => {
   contributions: [],
   partnerLabelProcesses: [],
   metaPolicy: Policy.absolute,
-  addPartnerPolicy: Policy.absolute,
-  acceptContributionPolicy: Policy.absolute
+  partnerPolicy: Policy.absolute,
+  contributionPolicy: Policy.absolute,
+  partnerLabelPolicy: Policy.absolute
 };
 
 let apply = (event: Event.t, state) =>
@@ -56,8 +58,9 @@ let apply = (event: Event.t, state) =>
       name: ventureName,
       partners: [{userId: creatorId, labels: []}],
       metaPolicy,
-      addPartnerPolicy: metaPolicy,
-      acceptContributionPolicy: metaPolicy
+      partnerPolicy: metaPolicy,
+      contributionPolicy: metaPolicy,
+      partnerLabelPolicy: metaPolicy
     }
   | PartnerEndorsed({processId, supporterId}) => {
       ...state,
