@@ -7,15 +7,20 @@ module VentureCreated = {
     creatorId: userId,
     creatorPubKey: string,
     metaPolicy: Policy.t,
-    systemIssuer: Bitcoin.ECPair.t
+    systemIssuer: Bitcoin.ECPair.t,
+    initialLabelIds: list(labelId),
+    distribution: DistributionGraph.t
   };
-  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
+  let make =
+      (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~initialLabelIds) => {
     ventureId: VentureId.make(),
     ventureName,
     creatorId,
     creatorPubKey,
     metaPolicy,
-    systemIssuer: Bitcoin.ECPair.makeRandom()
+    systemIssuer: Bitcoin.ECPair.makeRandom(),
+    initialLabelIds,
+    distribution: DistributionGraph.make(creatorId, initialLabelIds)
   };
   let encode = event =>
     Json.Encode.(
@@ -26,7 +31,9 @@ module VentureCreated = {
         ("creatorId", UserId.encode(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
-        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer)))
+        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
+        ("initialLabelIds", list(LabelId.encode, event.initialLabelIds)),
+        ("distributionGraph", DistributionGraph.encode(event.distribution))
       ])
     );
   let decode = raw =>
@@ -37,7 +44,9 @@ module VentureCreated = {
       creatorPubKey: raw |> field("creatorPubKey", string),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
-        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF
+        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
+      initialLabelIds: raw |> field("initialLabelIds", list(LabelId.decode)),
+      distribution: raw |> field("distributionGraph", DistributionGraph.decode)
     };
 };
 

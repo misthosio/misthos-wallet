@@ -259,14 +259,16 @@ let getPartnerHistoryUrls = Synchronize.getPartnerHistoryUrls;
 module Cmd = {
   module Create = {
     type result = (Index.t, t);
-    let exec = (session: Session.Data.t, ~name as ventureName) => {
+    let exec =
+        (session: Session.Data.t, ~name as ventureName, ~initialLabelIds) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
         Event.VentureCreated.make(
           ~ventureName,
           ~creatorId=session.userId,
           ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
-          ~metaPolicy=defaultPolicy
+          ~metaPolicy=defaultPolicy,
+          ~initialLabelIds
         );
       Js.Promise.all2((
         Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),

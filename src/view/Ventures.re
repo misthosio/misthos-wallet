@@ -124,7 +124,13 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Venture.Cmd.Create.exec(session, ~name)
+                Venture.Cmd.Create.exec(
+                  session,
+                  ~name,
+                  ~initialLabelIds=
+                    ["know-how", "implementation", "sales", "coordination"]
+                    |> List.map(LabelId.fromString)
+                )
                 |> then_(((newIndex, venture)) =>
                      send(VentureCreated(newIndex, venture)) |> resolve
                    )

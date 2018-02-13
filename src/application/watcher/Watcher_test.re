@@ -14,7 +14,8 @@ let () =
         ~ventureName="TheMothers",
         ~creatorId="frank.id" |> UserId.fromString,
         ~creatorPubKey=issuer |> Utils.publicKeyFromKeyPair,
-        ~metaPolicy=Policy.absolute
+        ~metaPolicy=Policy.absolute,
+        ~initialLabelIds=["all"] |> List.map(LabelId.fromString)
       );
     let (_, log) =
       EventLog.make()

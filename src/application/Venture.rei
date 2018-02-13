@@ -42,7 +42,9 @@ let getPartnerHistoryUrls: (Session.Data.t, t) => Js.Promise.t(array(string));
 module Cmd: {
   module Create: {
     type result = (Index.t, t);
-    let exec: (Session.Data.t, ~name: string) => Js.Promise.t(result);
+    let exec:
+      (Session.Data.t, ~name: string, ~initialLabelIds: list(LabelId.t)) =>
+      Js.Promise.t(result);
   };
   module Synchronize: {
     type result =
