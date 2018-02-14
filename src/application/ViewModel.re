@@ -33,6 +33,7 @@ type t = {
   partnerLabelProcesses: list((processId, partnerLabel)),
   prospects: list(prospect),
   contributions: list(contribution),
+  distributionGraph: DistributionGraph.t,
   metaPolicy: Policy.t,
   partnerPolicy: Policy.t,
   contributionPolicy: Policy.t,
@@ -45,6 +46,7 @@ let make = () => {
   prospects: [],
   contributions: [],
   partnerLabelProcesses: [],
+  distributionGraph: DistributionGraph.make(UserId.fromString(""), []),
   metaPolicy: Policy.absolute,
   partnerPolicy: Policy.absolute,
   contributionPolicy: Policy.absolute,
@@ -53,10 +55,17 @@ let make = () => {
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated({ventureName, creatorId, metaPolicy}) => {
+  | VentureCreated({
+      ventureName,
+      creatorId,
+      metaPolicy,
+      initialLabelIds,
+      distributionGraph
+    }) => {
       ...state,
       name: ventureName,
-      partners: [{userId: creatorId, labels: []}],
+      partners: [{userId: creatorId, labels: initialLabelIds}],
+      distributionGraph,
       metaPolicy,
       partnerPolicy: metaPolicy,
       contributionPolicy: metaPolicy,
@@ -159,6 +168,12 @@ let apply = (event: Event.t, state) =>
         state.partnerLabelProcesses
         |> List.filter(((pId, _)) => ProcessId.neq(pId, processId))
     }
+  | PartnerDistributionProposed(_)
+  | PartnerDistributionEndorsed(_)
+  | PartnerDistributionAccepted(_)
+  | LabelDistributionProposed(_)
+  | LabelDistributionEndorsed(_)
+  | LabelDistributionAccepted(_) => state
   };
 
 let getPartners = state => state.partners;
