@@ -434,75 +434,80 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         )
       );
     <div>
-      <h2>
-        (
-          text(
-            ViewModel.ventureName(state.viewModel)
-            ++ " ("
-            ++ Venture.getId(initialVenture)
-            ++ ")"
-          )
-        )
-      </h2>
-      <h3> (text("Policies:")) </h3>
       <div>
-        (
-          text(
-            "MetaPolicy - ActivationThreshold "
-            ++ string_of_float(state.viewModel.metaPolicy.thresholdPercent)
-            ++ "%"
+        <h2>
+          (
+            text(
+              ViewModel.ventureName(state.viewModel)
+              ++ " ("
+              ++ Venture.getId(initialVenture)
+              ++ ")"
+            )
           )
-        )
-      </div>
-      <div>
-        (
-          text(
-            "PartnerPolicy - ActivationThreshold "
-            ++ string_of_float(state.viewModel.partnerPolicy.thresholdPercent)
-            ++ "%"
+        </h2>
+        <h3> (text("Policies:")) </h3>
+        <div>
+          (
+            text(
+              "MetaPolicy - ActivationThreshold "
+              ++ string_of_float(state.viewModel.metaPolicy.thresholdPercent)
+              ++ "%"
+            )
           )
-        )
-      </div>
-      <div>
-        (
-          text(
-            "ContributionPolicy - ActivationThreshold "
-            ++ string_of_float(
-                 state.viewModel.contributionPolicy.thresholdPercent
-               )
-            ++ "%"
+        </div>
+        <div>
+          (
+            text(
+              "PartnerPolicy - ActivationThreshold "
+              ++ string_of_float(
+                   state.viewModel.partnerPolicy.thresholdPercent
+                 )
+              ++ "%"
+            )
           )
-        )
-      </div>
-      <div>
-        (
-          text(
-            "PartnerLabelPolicy - ActivationThreshold "
-            ++ string_of_float(
-                 state.viewModel.partnerLabelPolicy.thresholdPercent
-               )
-            ++ "%"
+        </div>
+        <div>
+          (
+            text(
+              "ContributionPolicy - ActivationThreshold "
+              ++ string_of_float(
+                   state.viewModel.contributionPolicy.thresholdPercent
+                 )
+              ++ "%"
+            )
           )
-        )
+        </div>
+        <div>
+          (
+            text(
+              "PartnerLabelPolicy - ActivationThreshold "
+              ++ string_of_float(
+                   state.viewModel.partnerLabelPolicy.thresholdPercent
+                 )
+              ++ "%"
+            )
+          )
+        </div>
+        <h3> (text("Contributions:")) </h3>
+        <ul> contributions </ul>
+        <h4> (text("Pending acceptance:")) </h4>
+        <ul> contributionProcesses </ul>
+        <ContributionInput submit=(proposeContribution(send)) />
+        <h3> (text("Partners:")) </h3>
+        <ul> partners </ul>
+        <h4> (text("Prospects:")) </h4>
+        <ul> prospects </ul>
+        <input
+          placeholder="BlockstackId"
+          value=state.prospectId
+          onChange=(e => send(changeNewPartnerId(e)))
+          autoFocus=Js.false_
+        />
+        <button onClick=(_e => send(ProposePartner))>
+          (text("Propose Partner"))
+        </button>
       </div>
-      <h3> (text("Contributions:")) </h3>
-      <ul> contributions </ul>
-      <h4> (text("Pending acceptance:")) </h4>
-      <ul> contributionProcesses </ul>
-      <ContributionInput submit=(proposeContribution(send)) />
-      <h3> (text("Partners:")) </h3>
-      <ul> partners </ul>
-      <h4> (text("Prospects:")) </h4>
-      <ul> prospects </ul>
-      <input
-        placeholder="BlockstackId"
-        value=state.prospectId
-        onChange=(e => send(changeNewPartnerId(e)))
-        autoFocus=Js.false_
-      />
-      <button onClick=(_e => send(ProposePartner))>
-        (text("Propose Partner"))
-      </button>
+      <DistributionGraphView graph=state.viewModel.distributionGraph />
     </div>;
   }
 };
