@@ -131,9 +131,14 @@ let make = (~graph: DistributionGraph.t, _children) => {
              d##nodeType == "label" ? "labelNode" : "userNode"
            )
       );
-    Selection.(node |> append("circle") |> attr("r", 5) |> ignore);
+    Selection.(node |> append("circle") |> ignore);
     Selection.(
-      node |> append("text") |> attr("dy", -3) |> text(d => d##id) |> ignore
+      node
+      |> append("text")
+      |> attr("dy", -5)
+      |> attr("dx", -5)
+      |> text(d => d##id)
+      |> ignore
     );
     simulation
     |> Force.Simulation.on("tick", () => {

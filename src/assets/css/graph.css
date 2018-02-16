@@ -7,9 +7,11 @@
   stroke: #fff;
   stroke-width: 1.5px;
   fill: yellow;
+  r: 5;
 }
 .userNode circle {
   stroke: #fff;
   stroke-width: 1.5px;
   fill: red;
+  r: 10;
 }
