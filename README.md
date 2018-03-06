@@ -3,6 +3,21 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 Below you will find some information on how to perform common tasks.<br>
 You can find the most recent version of this guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
+## Setup Local Dev
+```
+git clone https://github.com/misthosio/misthos
+cd misthos
+brew install node
+❯ node --version
+v9.7.1
+brew install yarn
+npm -g install bs-platform
+❯ yarn --version
+1.5.1
+yarn
+yarn test
+```
+
 ## Table of Contents
 
 - [Updating to New Releases](#updating-to-new-releases)
