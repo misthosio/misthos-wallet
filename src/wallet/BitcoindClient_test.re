@@ -30,15 +30,27 @@ let () = {
       )
     );
   });
+  let config: BitcoindClient.config = {
+    bitcoindUrl: "http://localhost:18322",
+    rpcUser: "bitcoin",
+    rpcPassword: "bitcoin"
+  };
   describe("GetBlockHeight", () =>
     testPromise("is at 700", () =>
       Js.Promise.(
-        BitcoindClient.getBlockHeight({
-          bitcoindUrl: "http://localhost:18322",
-          rpcUser: "bitcoin",
-          rpcPassword: "bitcoin"
-        })
+        BitcoindClient.getBlockHeight(config)
         |> then_(blockHeight => resolve(expect(blockHeight) |> toBe(700)))
+      )
+    )
+  );
+  describe("getUTXOs", () =>
+    testPromise("Returns UTXOs", () =>
+      Js.Promise.(
+        BitcoindClient.getUTXOs(config, "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU")
+        |> then_((utxos: list(bitcoindUTXO) => {
+             Js.log(utxos);
+             resolve(expect(List.hd(utxos).satoshis) |> toBe(1000010000000.));
+           })
       )
     )
   );

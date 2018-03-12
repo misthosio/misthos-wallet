@@ -53,10 +53,10 @@ TEST_PRIVATE_KEY="92Qba5hnyWSn5Ffcka56yMQauaWY6ZLd91Vzxbi4a9CCetaHtYj"
 TEST_ADDRESS="mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU"
 
 echo 'Importing privkey'
-${CMD} importprivkey ${TEST_PRIVATE_KEY} "test"
+# ${CMD} importprivkey ${TEST_PRIVATE_KEY} "test"
 
 echo "Sending to ${TEST_ADDRESS}"
-${CMD} sendtoaddress ${TEST_ADDRESS} 100
+${CMD} sendtoaddress ${TEST_ADDRESS} "10000.1"
 ${CMD} generate 18
 
-${CMD} getbalance "test"
+# ${CMD} getbalance "test"
