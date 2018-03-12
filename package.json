@@ -13,6 +13,7 @@
     "bitcoinjs-lib": "^3.3",
     "blockstack": "^0.16",
     "bootstrap": "^4.0",
+    "bs-fetch": "^0.2.1",
     "bs-json": "^1.0",
     "bs-loader": "^1.8.0",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
