@@ -57,7 +57,7 @@
     "prepare": "npm link bs-platform"
   },
   "devDependencies": {
-    "bs-jest": "^0.3.2",
+    "@glennsl/bs-jest": "^0.4.0",
     "reason-react": "^0.3.4"
   },
   "jest": {
