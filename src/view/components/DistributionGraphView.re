@@ -105,6 +105,7 @@ let make = (~graph: DistributionGraph.t, _children) => {
              "charge",
              ManyBody.make() |> ManyBody.strength(-1000)
            )
+        /* |> Simulation.force("collide", Collide.make(30)) */
         |> Simulation.force("center", Center.make(width / 2, height / 2))
       );
     let svg = Selection.make("svg");

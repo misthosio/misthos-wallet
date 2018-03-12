@@ -97,4 +97,28 @@ module Cmd: {
     let exec:
       (Session.Data.t, ~processId: processId, t) => Js.Promise.t(result);
   };
+  /* module ProposeOutputDistributionNode: { */
+  /*   type result = */
+  /*     | Ok(t); */
+  /*   let exec: */
+  /*     ( */
+  /*       Session.Data.t, */
+  /*       ~labelId: labelId, */
+  /*       ~distribution: list((userId, int)), */
+  /*       t */
+  /*     ) => */
+  /*     Js.Promise.t(result); */
+  /* }; */
+  /* module ProposeInternalDistributionNode: { */
+  /*   type result = */
+  /*     | Ok(t); */
+  /*   let exec: */
+  /*     ( */
+  /*       Session.Data.t, */
+  /*       ~labelId: labelId, */
+  /*       ~distribution: list((labelId, int)), */
+  /*       t */
+  /*     ) => */
+  /*     Js.Promise.t(result); */
+  /* }; */
 };
