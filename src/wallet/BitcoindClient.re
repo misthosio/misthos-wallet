@@ -43,8 +43,8 @@ let getBlockHeight = ({bitcoindUrl} as config) => {
 };
 
 type bitcoindUTXO = {
-  txid: string,
-  vout: int,
+  txId: string,
+  txOutputN: int,
   amount: float,
   satoshis: float,
   confirmations: int
@@ -79,8 +79,8 @@ let getUTXOs = ({bitcoindUrl} as config, address) => {
                 "result",
                 list(utxo =>
                   {
-                    txid: utxo |> field("txid", string),
-                    vout: utxo |> field("vout", int),
+                    txId: utxo |> field("txid", string),
+                    txOutputN: utxo |> field("vout", int),
                     amount: utxo |> field("amount", float),
                     satoshis: field("amount", float, utxo) *. satoshisPerBTC,
                     confirmations: utxo |> field("confirmations", int)
@@ -91,4 +91,17 @@ let getUTXOs = ({bitcoindUrl} as config, address) => {
          |> resolve
        )
   );
+};
+
+let broadcastTransaction = (config, transaction) => {
+  let jsonRPC =
+    Json.Encode.(
+      object_([
+        ("jsonrpc", string("1.0")),
+        ("method", string("sendrawtransaction")),
+        ("params", list(string, [transaction |> Bitcoin.Tx.toHex]))
+      ])
+    )
+    |> Json.stringify;
+  Js.Promise.(rpcCall(config, jsonRPC));
 };

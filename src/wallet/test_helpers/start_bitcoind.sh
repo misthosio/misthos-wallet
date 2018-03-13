@@ -56,7 +56,7 @@ echo 'Importing privkey'
 # ${CMD} importprivkey ${TEST_PRIVATE_KEY} "test"
 
 echo "Sending to ${TEST_ADDRESS}"
-${CMD} sendtoaddress ${TEST_ADDRESS} "10000.1"
+${CMD} sendtoaddress ${TEST_ADDRESS} "10010.1"
 ${CMD} generate 18
 
 # ${CMD} getbalance "test"
