@@ -13,17 +13,15 @@ let () = {
          )
     )
   );
-  describe("Networks", () =>
-    test("bitcoin", () =>
-      expect(Networks.bitcoin##bech32) |> toBe("bc")
-    )
-  );
   describe("ECPair", () => {
     test("fromWIF", () => {
       let wif = "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn";
-      let address = "1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH";
       let keyPair = wif |> ECPair.fromWIF;
-      expect(keyPair |> ECPair.getAddress) |> toBe(address);
+      expect(keyPair |> ECPair.getNetwork) |> toBe(Networks.bitcoin);
+    });
+    test("makeRandomWithNetwork", () => {
+      let keyPair = ECPair.makeRandomWithNetwork(Networks.testnet);
+      expect(keyPair |> ECPair.getNetwork) |> toBe(Networks.testnet);
     });
     test("sign/verify", () => {
       let keyPair = ECPair.makeRandom();
@@ -49,7 +47,7 @@ let () = {
       let tx = TxBuilder.create();
       let txId = "aa94ab02c182214f090e99a0d57021caffd0f195a81c24602b1028b130b63e31";
       TxBuilder.addInput(tx, txId, 0) |> ignore;
-      TxBuilder.addOutput(tx, "1Gokm82v6DmtwKEB8AiVhm82hyFSsEvBDK", 15000)
+      TxBuilder.addOutput(tx, "1Gokm82v6DmtwKEB8AiVhm82hyFSsEvBDK", 15000.)
       |> ignore;
       TxBuilder.sign(tx, 0, keyPair);
       let hex = tx |> TxBuilder.build |> Tx.toHex;

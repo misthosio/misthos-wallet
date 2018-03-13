@@ -9,19 +9,7 @@ module Crypto = {
 };
 
 module Networks = {
-  type t = {
-    .
-    "messagePrefix": string,
-    "bech32": string,
-    "bip32": {
-      .
-      public: string,
-      private: string
-    },
-    "pubKeyHash": string,
-    "scriptHash": string,
-    "wif": string
-  };
+  type t;
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
   external bitcoin : t = "";
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
@@ -39,25 +27,24 @@ module ECSignature = {
 
 module ECPair = {
   type t;
+  type options = {. "network": Networks.t};
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external makeRandom : unit => t = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
+  external makeRandomWithOptions : options => t = "makeRandom";
+  let makeRandomWithNetwork = network =>
+    makeRandomWithOptions({"network": network});
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromPublicKeyBuffer : Node.buffer => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIF : string => t = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
+  external fromWIFWithNetwork : (string, Networks.t) => t = "fromWIF";
   [@bs.module "bitcoinjs-lib"] [@bs.new]
   external create : BigInteger.t => t = "ECPair";
-  /* Complete function incase needed */
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
-  external fromWIF_ :
-    (
-      string,
-      [@bs.unwrap] [ | `Single(option(Networks.t)) | `Array(array(Networks.t))]
-    ) =>
-    t =
-    "fromWIF";
   [@bs.send] external toWIF : t => string = "";
   [@bs.send] external getAddress : t => string = "";
+  [@bs.send] external getNetwork : t => Networks.t = "";
   [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
   [@bs.send.pipe : t] external sign : Node.buffer => ECSignature.t = "";
   [@bs.send.pipe : t]
@@ -78,7 +65,7 @@ module TxBuilder = {
     (~network: Networks.t=?, ~maxixumFeeRate: int=?, unit) => t =
     "TransactionBuilder";
   [@bs.send] external addInput : (t, string, int) => int = "";
-  [@bs.send] external addOutput : (t, string, int) => int = "";
+  [@bs.send] external addOutput : (t, string, float) => int = "";
   [@bs.send] external sign : (t, int, ECPair.t) => unit = "";
   [@bs.send] external build : t => Tx.t = "";
 };
