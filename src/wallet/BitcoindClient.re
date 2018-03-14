@@ -45,6 +45,7 @@ let getBlockHeight = ({bitcoindUrl} as config) => {
 type bitcoindUTXO = {
   txId: string,
   txOutputN: int,
+  address: string,
   amount: float,
   satoshis: float,
   confirmations: int
@@ -77,14 +78,18 @@ let getUTXOs = ({bitcoindUrl} as config, address) => {
            obj
            |> field(
                 "result",
-                list(utxo =>
-                  {
-                    txId: utxo |> field("txid", string),
-                    txOutputN: utxo |> field("vout", int),
-                    amount: utxo |> field("amount", float),
-                    satoshis: field("amount", float, utxo) *. satoshisPerBTC,
-                    confirmations: utxo |> field("confirmations", int)
-                  }
+                withDefault(
+                  [],
+                  list(utxo =>
+                    {
+                      txId: utxo |> field("txid", string),
+                      txOutputN: utxo |> field("vout", int),
+                      address: utxo |> field("address", string),
+                      amount: utxo |> field("amount", float),
+                      satoshis: field("amount", float, utxo) *. satoshisPerBTC,
+                      confirmations: utxo |> field("confirmations", int)
+                    }
+                  )
                 )
               )
          )
