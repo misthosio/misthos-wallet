@@ -7,29 +7,8 @@ open Jest;
 open Expect;
 
 let () = {
-  let dirname =
-    switch [%node __dirname] {
-    | Some(name) => name
-    | None => raise(Not_found)
-    };
-  beforeAll(() => {
-    Js.log("Starting bitcoind");
-    Js.log(
-      Node.Child_process.execSync(
-        dirname ++ "/test_helpers/start_bitcoind.sh",
-        Node.Child_process.option(~cwd=dirname, ~encoding="utf8", ())
-      )
-    );
-  });
-  afterAll(() => {
-    Js.log("Stopping bitcoind");
-    Js.log(
-      Node.Child_process.execSync(
-        dirname ++ "/test_helpers/stop_bitcoind.sh",
-        Node.Child_process.option(~cwd=dirname, ~encoding="utf8", ())
-      )
-    );
-  });
+  beforeAll(() => TestHelpers.startBitcoind());
+  afterAll(() => TestHelpers.stopBitcoind());
   let config: BitcoindClient.config = {
     bitcoindUrl: "http://localhost:18322",
     rpcUser: "bitcoin",
@@ -48,7 +27,7 @@ let () = {
       Js.Promise.(
         BitcoindClient.getUTXOs(config, "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU")
         |> then_((utxos: list(BitcoindClient.bitcoindUTXO)) =>
-             resolve(expect(List.hd(utxos).satoshis) |> toBe(1001010000000.))
+             resolve(expect(List.hd(utxos).satoshis) |> toBe(101010000000.))
            )
       )
     )
@@ -79,7 +58,7 @@ let () = {
                TxBuilder.addOutput(
                  txBuilder,
                  ECPair.getAddress(key),
-                 10000. *. BitcoindClient.satoshisPerBTC
+                 1000. *. BitcoindClient.satoshisPerBTC
                )
                |> ignore;
                TxBuilder.sign(txBuilder, 0, key);
@@ -93,11 +72,7 @@ let () = {
                Js.log(
                  Node.Child_process.execSync(
                    "bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate 2",
-                   Node.Child_process.option(
-                     ~cwd=dirname,
-                     ~encoding="utf8",
-                     ()
-                   )
+                   Node.Child_process.option(~encoding="utf8", ())
                  )
                );
                BitcoindClient.getUTXOs(config, ECPair.getAddress(destination));
