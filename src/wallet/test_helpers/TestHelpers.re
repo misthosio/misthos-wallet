@@ -1,3 +1,7 @@
+let enableHttpRequests = () => [%bs.raw
+  {| global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest |}
+];
+
 let startBitcoind = () => {
   let dirname =
     switch [%node __dirname] {
