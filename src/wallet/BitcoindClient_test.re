@@ -45,26 +45,25 @@ let () = {
           BitcoindClient.getUTXOs(config, key |> ECPair.getAddress)
           |> then_((utxos: list(BitcoindClient.bitcoindUTXO)) => {
                let utxo = utxos |> List.hd;
-               let txBuilder =
+               let txB =
                  TxBuilder.createWithOptions(~network=Networks.testnet, ());
-               TxBuilder.addInput(txBuilder, utxo.txId, utxo.txOutputN)
+               txB |> TxBuilder.addInput(utxo.txId, utxo.txOutputN) |> ignore;
+               txB
+               |> TxBuilder.addOutput(
+                    ECPair.getAddress(destination),
+                    10. *. BitcoindClient.satoshisPerBTC
+                  )
                |> ignore;
-               TxBuilder.addOutput(
-                 txBuilder,
-                 ECPair.getAddress(destination),
-                 10. *. BitcoindClient.satoshisPerBTC
-               )
+               txB
+               |> TxBuilder.addOutput(
+                    ECPair.getAddress(key),
+                    1000. *. BitcoindClient.satoshisPerBTC
+                  )
                |> ignore;
-               TxBuilder.addOutput(
-                 txBuilder,
-                 ECPair.getAddress(key),
-                 1000. *. BitcoindClient.satoshisPerBTC
-               )
-               |> ignore;
-               TxBuilder.sign(txBuilder, 0, key);
+               txB |> TxBuilder.sign(0, key);
                BitcoindClient.broadcastTransaction(
                  config,
-                 txBuilder |> TxBuilder.build
+                 txB |> TxBuilder.build
                );
              })
           |> then_(result => {

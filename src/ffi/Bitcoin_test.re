@@ -46,10 +46,11 @@ let () = {
       let keyPair = ECPair.fromWIF(wif);
       let tx = TxBuilder.create();
       let txId = "aa94ab02c182214f090e99a0d57021caffd0f195a81c24602b1028b130b63e31";
-      TxBuilder.addInput(tx, txId, 0) |> ignore;
-      TxBuilder.addOutput(tx, "1Gokm82v6DmtwKEB8AiVhm82hyFSsEvBDK", 15000.)
+      tx |> TxBuilder.addInput(txId, 0) |> ignore;
+      tx
+      |> TxBuilder.addOutput("1Gokm82v6DmtwKEB8AiVhm82hyFSsEvBDK", 15000.)
       |> ignore;
-      TxBuilder.sign(tx, 0, keyPair);
+      tx |> TxBuilder.sign(0, keyPair);
       let hex = tx |> TxBuilder.build |> Tx.toHex;
       expect(hex) |> toMatch("0100000001313eb630b128102b60241ca895f1d0ffca21");
     })
