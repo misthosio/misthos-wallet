@@ -68,7 +68,9 @@ module Tx = {
 };
 
 module TxBuilder = {
-  type t;
+  type signatures = array(Js.Nullable.t(Node.buffer));
+  type input = {. "signatures": signatures};
+  type t = {. "inputs": array(input)};
   [@bs.new] [@bs.module "bitcoinjs-lib"]
   external create : unit => t = "TransactionBuilder";
   [@bs.new] [@bs.module "bitcoinjs-lib"]

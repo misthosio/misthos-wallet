@@ -44,30 +44,41 @@ let () = {
           Wallet.preparePayoutTx(
             address,
             [
-              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", 1061.),
-              ("2N1yHtM4yha7QGCzAX1V14Sd4BxE3PqgJzN", 50.)
+              (
+                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                1061. *. BitcoindClient.satoshisPerBTC
+              ),
+              (
+                "2N1yHtM4yha7QGCzAX1V14Sd4BxE3PqgJzN",
+                50.19 *. BitcoindClient.satoshisPerBTC
+              )
             ],
             keyA,
             ~network=Networks.testnet
           )
           |> then_((payoutTx: Wallet.payoutTx) => {
-               let tx = Tx.fromHex(payoutTx.txHex);
-               Js.log(tx);
-               /* let nextT: Wallet.payoutTx = */
-               /*   Wallet.signPayoutTx(payoutTx, keyB, address, ~network=Network.testnet); */
-               /* let tx = Tx.fromHex(nextT.txHex); */
-               /* Js.log(tx); */
-               /* [%bs.raw {| console.log(tx.ins[0].witness)|}]; */
-               /* let txB = TxBuilder.fromTransaction(tx); */
-               /* Js.log(txB); */
-               /* [%bs.raw {| console.log(txB.inputs[0].signatures)|}]; */
-               /* let nextT = Wallet.signPayoutTx(payoutTx, keyA, address); */
-               /* let tx2 = Tx.fromHex(nextT.txHex); */
-               /* Js.log(tx2); */
-               /* [%bs.raw {| console.log(tx2.ins[0].witness)|}]; */
-               /* let txB2 = TxBuilder.fromTransaction(tx2); */
-               /* Js.log(txB2); */
-               /* [%bs.raw {| console.log(txB2.inputs[0].signatures)|}]; */
+               let signature =
+                 Wallet.signPayoutTx(
+                   payoutTx,
+                   keyC,
+                   address,
+                   ~network=Networks.testnet
+                 );
+               BitcoindClient.broadcastTransaction(
+                 {
+                   bitcoindUrl: "http://localhost:18322",
+                   rpcUser: "bitcoin",
+                   rpcPassword: "bitcoin"
+                 },
+                 Wallet.finalizeTx(
+                   payoutTx,
+                   [signature],
+                   ~network=Networks.testnet
+                 )
+               );
+             })
+          |> then_(result => {
+               Js.log(result);
                resolve(expect(true) |> toBe(true));
              })
         )
