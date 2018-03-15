@@ -7,8 +7,8 @@ open Jest;
 open Expect;
 
 let () = {
-  beforeAll(() => TestHelpers.startBitcoind());
-  afterAll(() => TestHelpers.stopBitcoind());
+  beforeAll(() => Helpers.startBitcoind());
+  afterAll(() => Helpers.stopBitcoind());
   let config: BitcoindClient.config = {
     bitcoindUrl: "http://localhost:18322",
     rpcUser: "bitcoin",

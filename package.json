@@ -68,7 +68,7 @@
       "<rootDir>/config/polyfills.js"
     ],
     "testMatch": [
-      "<rootDir>/src/**/*test.{ml,re,js}"
+      "<rootDir>/__tests__/**/*test.{ml,re,js}"
     ],
     "testEnvironment": "node",
     "testURL": "http://localhost",

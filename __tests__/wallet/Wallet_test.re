@@ -1,4 +1,4 @@
-TestHelpers.enableHttpRequests();
+Helpers.enableHttpRequests();
 
 open Jest;
 
@@ -7,8 +7,8 @@ open Expect;
 open Bitcoin;
 
 let () = {
-  beforeAll(() => TestHelpers.startBitcoind());
-  afterAll(() => TestHelpers.stopBitcoind());
+  beforeAll(() => Helpers.startBitcoind());
+  afterAll(() => Helpers.stopBitcoind());
   let (keyA, keyB, keyC) = (
     ECPair.fromWIFWithNetwork(
       "cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1",
