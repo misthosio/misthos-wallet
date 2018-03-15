@@ -17,6 +17,8 @@ require('../config/env');
 
 const jest = require('jest');
 const argv = process.argv.slice(2);
+
+// Run tests sequentially because of integration tests calling bitcoind api
 argv.push('--runInBand');
 
 // Watch unless on CI or in coverage mode

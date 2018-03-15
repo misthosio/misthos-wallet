@@ -60,7 +60,7 @@ module ECPair = {
   external verify : (Node.buffer, ECSignature.t) => Js.boolean = "";
 };
 
-module Tx = {
+module Transaction = {
   type t;
   [@bs.send] external toHex : t => string = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
@@ -74,13 +74,11 @@ module TxBuilder = {
   [@bs.new] [@bs.module "bitcoinjs-lib"]
   external create : unit => t = "TransactionBuilder";
   [@bs.new] [@bs.module "bitcoinjs-lib"]
-  external createWithOptions :
-    (~network: Networks.t=?, ~maxixumFeeRate: int=?, unit) => t =
-    "TransactionBuilder";
+  external createWithNetwork : Networks.t => t = "TransactionBuilder";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "TransactionBuilder"]
-  external fromTransaction : Tx.t => t = "";
+  external fromTransaction : Transaction.t => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "TransactionBuilder"]
-  external fromTransactionWithNetwork : (Tx.t, Networks.t) => t =
+  external fromTransactionWithNetwork : (Transaction.t, Networks.t) => t =
     "fromTransaction";
   [@bs.send.pipe : t] external addInput : (string, int) => int = "";
   [@bs.send.pipe : t] external addOutput : (string, float) => int = "";
@@ -97,8 +95,8 @@ module TxBuilder = {
     ) =>
     unit =
     "sign";
-  [@bs.send] external build : t => Tx.t = "";
-  [@bs.send] external buildIncomplete : t => Tx.t = "";
+  [@bs.send] external build : t => Transaction.t = "";
+  [@bs.send] external buildIncomplete : t => Transaction.t = "";
 };
 
 module Script = {

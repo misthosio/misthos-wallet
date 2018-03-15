@@ -72,7 +72,7 @@ let preparePayoutTx =
       systemKey,
       ~network=Networks.bitcoin
     ) => {
-  let txB = TxBuilder.createWithOptions(~network, ());
+  let txB = TxBuilder.createWithNetwork(network);
   destinations
   |> List.iter(((address, satoshis)) =>
        txB |> TxBuilder.addOutput(address, satoshis) |> ignore
@@ -87,7 +87,7 @@ let preparePayoutTx =
                   ({txId, txOutputN, satoshis}: BitcoindClient.bitcoindUTXO) =>
                   (txB |> TxBuilder.addInput(txId, txOutputN), satoshis)
                 ),
-           txHex: txB |> TxBuilder.buildIncomplete |> Tx.toHex
+           txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex
          }
          |> resolve
        )
@@ -103,7 +103,10 @@ let preparePayoutTx =
                    ~witnessScript=Utils.bufFromHex(witnessScript)
                  )
             );
-         {inputValues, txHex: txB |> TxBuilder.buildIncomplete |> Tx.toHex}
+         {
+           inputValues,
+           txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex
+         }
          |> resolve;
        })
   );
@@ -137,7 +140,8 @@ let signPayoutTx =
       {redeemScript, witnessScript},
       ~network=Networks.bitcoin
     ) => {
-  let txB = TxBuilder.fromTransactionWithNetwork(Tx.fromHex(txHex), network);
+  let txB =
+    TxBuilder.fromTransactionWithNetwork(Transaction.fromHex(txHex), network);
   let signatures = getSignatures(txB);
   inputValues
   |> List.iter(((index, witnessValue)) =>
@@ -164,7 +168,8 @@ let signPayoutTx =
 };
 
 let finalizeTx = ({txHex}, signatures, ~network=Networks.bitcoin) => {
-  let txB = TxBuilder.fromTransactionWithNetwork(Tx.fromHex(txHex), network);
+  let txB =
+    TxBuilder.fromTransactionWithNetwork(Transaction.fromHex(txHex), network);
   signatures
   |> List.iter(signature =>
        signature

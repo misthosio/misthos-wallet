@@ -104,7 +104,7 @@ let broadcastTransaction = (config, transaction) => {
       object_([
         ("jsonrpc", string("1.0")),
         ("method", string("sendrawtransaction")),
-        ("params", list(string, [transaction |> Bitcoin.Tx.toHex]))
+        ("params", list(string, [transaction |> Bitcoin.Transaction.toHex]))
       ])
     )
     |> Json.stringify;

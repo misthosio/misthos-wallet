@@ -51,7 +51,7 @@ let () = {
       |> TxBuilder.addOutput("1Gokm82v6DmtwKEB8AiVhm82hyFSsEvBDK", 15000.)
       |> ignore;
       tx |> TxBuilder.sign(0, keyPair);
-      let hex = tx |> TxBuilder.build |> Tx.toHex;
+      let hex = tx |> TxBuilder.build |> Transaction.toHex;
       expect(hex) |> toMatch("0100000001313eb630b128102b60241ca895f1d0ffca21");
     })
   );

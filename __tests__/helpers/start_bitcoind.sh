@@ -49,19 +49,12 @@ echo "Generating blocks"
 ${CMD} generate 250
 ${CMD} generate 432
 
-TEST_PRIVATE_KEY="92Qba5hnyWSn5Ffcka56yMQauaWY6ZLd91Vzxbi4a9CCetaHtYj"
-TEST_ADDRESS="mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU"
+FAUCET_PRIVATE_KEY="92Qba5hnyWSn5Ffcka56yMQauaWY6ZLd91Vzxbi4a9CCetaHtYj"
+FAUCET="mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU"
 
 echo 'Importing privkey'
-# ${CMD} importprivkey ${TEST_PRIVATE_KEY} "test"
 
-echo "Sending to ${TEST_ADDRESS}"
-${CMD} sendtoaddress ${TEST_ADDRESS} "1010.1"
-
-TEST_MULTISIG_ADDRESS="2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T"
-echo "Sending to ${TEST_MULTISIG_ADDRESS}"
-${CMD} sendtoaddress ${TEST_MULTISIG_ADDRESS} "1010.1"
-${CMD} sendtoaddress ${TEST_MULTISIG_ADDRESS} "101.1"
+echo "Setting up faucet"
+${CMD} sendtoaddress ${FAUCET} "12000"
 
 ${CMD} generate 18
-# ${CMD} getbalance "test"
