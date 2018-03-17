@@ -46,8 +46,7 @@ type bitcoindUTXO = {
   txId: string,
   txOutputN: int,
   address: string,
-  amount: float,
-  satoshis: float,
+  amount: BTC.t,
   confirmations: int
 };
 
@@ -85,8 +84,7 @@ let getUTXOs = ({bitcoindUrl} as config, address) => {
                       txId: utxo |> field("txid", string),
                       txOutputN: utxo |> field("vout", int),
                       address: utxo |> field("address", string),
-                      amount: utxo |> field("amount", float),
-                      satoshis: field("amount", float, utxo) *. satoshisPerBTC,
+                      amount: utxo |> field("amount", float) |> BTC.fromFloat,
                       confirmations: utxo |> field("confirmations", int)
                     }
                   )

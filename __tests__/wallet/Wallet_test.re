@@ -41,14 +41,20 @@ let () = {
         Js.Promise.(
           Helpers.faucet(
             "2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T",
-            [11000., 10100.]
+            [BTC.fromSatoshis(11000L), BTC.fromSatoshis(10100L)]
           )
           |> then_(utxos =>
                Wallet.preparePayoutTx(
                  address,
                  [
-                   ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", 9400.),
-                   ("2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T", 10100.)
+                   (
+                     "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                     BTC.fromSatoshis(9400L)
+                   ),
+                   (
+                     "2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T",
+                     BTC.fromSatoshis(10100L)
+                   )
                  ],
                  keyA,
                  ~network=Networks.testnet
@@ -74,7 +80,10 @@ let () = {
                Helpers.getUTXOs("2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T")
              )
           |> then_((utxos: list(BitcoindClient.bitcoindUTXO)) =>
-               resolve(expect(List.hd(utxos).satoshis) |> toBe(10100.))
+               resolve(
+                 expect(List.hd(utxos).amount)
+                 |> toEqual(BTC.fromSatoshis(10100L))
+               )
              )
         )
       )

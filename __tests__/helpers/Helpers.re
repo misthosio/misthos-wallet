@@ -18,22 +18,24 @@ let bitcoindConfig: BitcoindClient.config = {
   rpcPassword: "bitcoin"
 };
 
-let defaultFee = 600.;
+let defaultFee = BTC.fromSatoshis(600L);
 
 let selectUTXOs = (utxos, totalAmount) => {
   let utxos =
     utxos
     |> List.filter(({confirmations}: utxo) => confirmations > 0)
-    |> List.sort((u1: utxo, u2: utxo) => compare(u1.satoshis, u2.satoshis));
+    |> List.sort((u1: utxo, u2: utxo) =>
+         u1.amount |> BTC.comparedTo(u2.amount)
+       );
   utxos
   |> List.fold_left(
        ((result, total), utxo: utxo) =>
-         if (total > totalAmount +. defaultFee) {
+         if (total |> BTC.gt(totalAmount |> BTC.plus(defaultFee))) {
            (result, total);
          } else {
-           ([utxo, ...result], total +. utxo.satoshis);
+           ([utxo, ...result], total |> BTC.plus(utxo.amount));
          },
-       ([], 0.)
+       ([], BTC.zero)
      );
 };
 
@@ -53,7 +55,8 @@ let broadcastTransaction = tx =>
      });
 
 let fundAddress = (address, values, utxos) => {
-  let totalValues = values |> List.fold_left((n, v) => n +. v, 0.);
+  let totalValues =
+    values |> List.fold_left((n, v) => n |> BTC.plus(v), BTC.zero);
   let (inputs, totalIn) = selectUTXOs(utxos, totalValues);
   if (totalIn < totalValues) {
     raise(FaucetEmpty);
@@ -63,10 +66,16 @@ let fundAddress = (address, values, utxos) => {
   |> List.iter((utxo: utxo) =>
        txB |> TxBuilder.addInput(utxo.txId, utxo.txOutputN) |> ignore
      );
-  values |> List.iter(v => txB |> TxBuilder.addOutput(address, v) |> ignore);
-  let remainder = totalIn -. totalValues -. defaultFee;
+  values
+  |> List.iter(v =>
+       txB |> TxBuilder.addOutput(address, v |> BTC.toSatoshisFloat) |> ignore
+     );
+  let remainder = totalIn |> BTC.minus(totalValues) |> BTC.minus(defaultFee);
   txB
-  |> TxBuilder.addOutput(faucetKey |> ECPair.getAddress, remainder)
+  |> TxBuilder.addOutput(
+       faucetKey |> ECPair.getAddress,
+       remainder |> BTC.toSatoshisFloat
+     )
   |> ignore;
   inputs |> List.iteri((i, _utxo) => txB |> TxBuilder.sign(i, faucetKey));
   Js.Promise.(

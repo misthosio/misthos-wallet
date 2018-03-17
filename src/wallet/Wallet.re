@@ -1,6 +1,6 @@
 open Bitcoin;
 
-let minimumSatoshisInUTXO = 10000.;
+let minimumUTXOAmount = BTC.fromSatoshis(10000L);
 
 type t = {
   witnessScript: string,
@@ -9,7 +9,7 @@ type t = {
 };
 
 type payoutTx = {
-  inputValues: list((int, float)),
+  inputValues: list((int, BTC.t)),
   txHex: string
 };
 
@@ -46,7 +46,7 @@ let getUTXOs = address =>
     |> then_(utxos =>
          utxos
          |> List.filter((utxo: BitcoindClient.bitcoindUTXO) =>
-              utxo.satoshis >= minimumSatoshisInUTXO
+              utxo.amount |> BTC.gte(minimumUTXOAmount)
             )
          |> resolve
        )
@@ -58,8 +58,9 @@ let getBalance = ({address}, ~network=Networks.bitcoin) =>
     |> then_(utxos =>
          utxos
          |> List.fold_left(
-              (n, utxo: BitcoindClient.bitcoindUTXO) => n +. utxo.satoshis,
-              0.
+              (n, utxo: BitcoindClient.bitcoindUTXO) =>
+                n |> BTC.plus(utxo.amount),
+              BTC.zero
             )
          |> resolve
        )
@@ -74,8 +75,10 @@ let preparePayoutTx =
     ) => {
   let txB = TxBuilder.createWithNetwork(network);
   destinations
-  |> List.iter(((address, satoshis)) =>
-       txB |> TxBuilder.addOutput(address, satoshis) |> ignore
+  |> List.iter(((address, amount)) =>
+       txB
+       |> TxBuilder.addOutput(address, amount |> BTC.toSatoshisFloat)
+       |> ignore
      );
   Js.Promise.(
     getUTXOs(address)
@@ -84,8 +87,8 @@ let preparePayoutTx =
            inputValues:
              utxos
              |> List.map(
-                  ({txId, txOutputN, satoshis}: BitcoindClient.bitcoindUTXO) =>
-                  (txB |> TxBuilder.addInput(txId, txOutputN), satoshis)
+                  ({txId, txOutputN, amount}: BitcoindClient.bitcoindUTXO) =>
+                  (txB |> TxBuilder.addInput(txId, txOutputN), amount)
                 ),
            txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex
          }
@@ -99,7 +102,7 @@ let preparePayoutTx =
                    index,
                    systemKey,
                    ~redeemScript=Utils.bufFromHex(redeemScript),
-                   ~witnessValue,
+                   ~witnessValue=witnessValue |> BTC.toSatoshisFloat,
                    ~witnessScript=Utils.bufFromHex(witnessScript)
                  )
             );
@@ -150,7 +153,7 @@ let signPayoutTx =
             index,
             key,
             ~redeemScript=Utils.bufFromHex(redeemScript),
-            ~witnessValue,
+            ~witnessValue=witnessValue |> BTC.toSatoshisFloat,
             ~witnessScript=Utils.bufFromHex(witnessScript)
           )
      );
