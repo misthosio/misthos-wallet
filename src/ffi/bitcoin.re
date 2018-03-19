@@ -120,4 +120,10 @@ module Script = {
       external encode : Node.buffer => Node.buffer = "";
     };
   };
+  module NullData = {
+    module Output = {
+      [@bs.module "bitcoinjs-lib"] [@bs.scope ("script", "nullData", "output")]
+      external encode : Node.buffer => string = "";
+    };
+  };
 };

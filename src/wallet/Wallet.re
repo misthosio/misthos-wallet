@@ -70,6 +70,7 @@ let preparePayoutTx =
     (
       {address, redeemScript, witnessScript} as wallet,
       destinations,
+      reference,
       systemKey,
       ~network=Networks.bitcoin
     ) => {
@@ -79,6 +80,11 @@ let preparePayoutTx =
        txB
        |> TxBuilder.addOutput(address, amount |> BTC.toSatoshisFloat)
        |> ignore
+     );
+  txB
+  |> TxBuilder.addOutput(
+       Script.NullData.Output.encode(reference |> Node_buffer.fromString),
+       0.
      );
   Js.Promise.(
     getUTXOs(address)

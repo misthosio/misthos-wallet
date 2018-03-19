@@ -56,6 +56,7 @@ let () = {
                      BTC.fromSatoshis(10100L)
                    )
                  ],
+                 "reference",
                  keyA,
                  ~network=Networks.testnet
                )
