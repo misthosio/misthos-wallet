@@ -2,6 +2,8 @@ let bufToHex = BufferExt.toStringWithEncoding("hex");
 
 let bufFromHex = BufferExt.fromStringWithEncoding(~encoding="hex");
 
+let hexByteLength = BufferExt.byteLength(~encoding="hex");
+
 let keyPairFromPrivateKey = key =>
   Bitcoin.(key |> BigInteger.fromHex |> ECPair.create);
 

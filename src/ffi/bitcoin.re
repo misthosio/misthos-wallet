@@ -62,6 +62,7 @@ module ECPair = {
 
 module Transaction = {
   type t;
+  [@bs.send] external toBuffer : t => Node.buffer = "";
   [@bs.send] external toHex : t => string = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
   external fromHex : string => t = "";

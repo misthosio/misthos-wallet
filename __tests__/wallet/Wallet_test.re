@@ -24,7 +24,7 @@ let () = {
   let address =
     Wallet.makeAddress(~network=Networks.testnet, 2, [keyA, keyB, keyC]);
   describe("makeAddress", () =>
-    test("Correct", () =>
+    test("Creates a multi sig seg-wit address", () =>
       expect(address)
       |> toEqual(
            Wallet.{
@@ -35,9 +35,10 @@ let () = {
          )
     )
   );
-  describe("preparePayoutTx", () =>
+  describe("execute transaction", () =>
     Bitcoin.(
-      testPromise(~timeout=10000, "thing", () =>
+      testPromise(
+        ~timeout=10000, "Can prepare, sign and finalize a transaction", () =>
         Js.Promise.(
           Helpers.faucet(
             "2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T",
@@ -69,6 +70,13 @@ let () = {
                    address,
                    ~network=Networks.testnet
                  );
+               let tx =
+                 Wallet.finalizeTx(
+                   payoutTx,
+                   [signature],
+                   ~network=Networks.testnet
+                 );
+               /* Helpers.displayTx(Transaction.toHex(tx)); */
                Helpers.broadcastTransaction(
                  Wallet.finalizeTx(
                    payoutTx,
