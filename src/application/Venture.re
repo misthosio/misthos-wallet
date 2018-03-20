@@ -11,88 +11,62 @@ exception InvalidEvent(Validation.result);
 type t = {
   id: ventureId,
   log: EventLog.t,
-  watchers: list(Watcher.t),
   state: Validation.state,
-  viewModel: ViewModel.t
+  viewModel: ViewModel.t,
+  watchers: Watchers.t
 };
 
 let make = id => {
   id,
   log: EventLog.make(),
-  watchers: [],
   state: Validation.makeState(),
-  viewModel: ViewModel.make()
+  viewModel: ViewModel.make(),
+  watchers: []
 };
 
-let updateWatchers = (item, log, watchers) => {
-  watchers |> List.iter(w => w#receive(item));
-  (
-    switch (Watcher.initWatcherFor(item, log)) {
-    | Some(w) => [w, ...watchers]
-    | None => watchers
-    }
-  )
-  |> List.filter(w => w#processCompleted() == false);
-};
-
-let rec applyWatcherEvents = ({id, log, watchers, state, viewModel}) => {
-  let nextEvent =
-    (
-      try (
-        Some(
-          watchers
-          |> List.rev
-          |> List.find(w => w#pendingEvent() |> Js.Option.isSome)
-        )
-      ) {
-      | Not_found => None
-      }
-    )
-    |> DoNotFormat.andThenGetEvent;
-  switch nextEvent {
-  | None => {id, log, watchers, state, viewModel}
-  | Some((issuer, event)) =>
-    let (item, log) = log |> EventLog.append(issuer, event);
-    let watchers = watchers |> updateWatchers(item, log);
-    let state = state |> Validation.apply(event);
-    let viewModel = viewModel |> ViewModel.apply(event);
-    applyWatcherEvents({id, log, watchers, state, viewModel});
-  };
-};
-
-let apply = (issuer, event, {id, log, watchers, state, viewModel}) => {
+let applyInternal = (issuer, event, log, (state, viewModel)) => {
   let (item, log) = log |> EventLog.append(issuer, event);
   switch (item |> Validation.validate(state)) {
   | Ok =>
-    let watchers = watchers |> updateWatchers(item, log);
     let state = state |> Validation.apply(event);
     let viewModel = viewModel |> ViewModel.apply(event);
-    applyWatcherEvents({id, log, watchers, state, viewModel});
-  /* This should never happen / only incase of an UI input bug!!! */
+    (item, log, (state, viewModel));
+  /* /1* This should never happen / only incase of an UI input bug!!! *1/ */
   | result => raise(InvalidEvent(result))
   };
 };
 
+let apply = (issuer, event, {id, log, state, viewModel, watchers}) => {
+  let (item, log, (state, viewModel)) =
+    applyInternal(issuer, event, log, (state, viewModel));
+  let (log, (state, viewModel), watchers) =
+    watchers
+    |> Watchers.applyAndProcessPending(
+         item,
+         log,
+         applyInternal,
+         (state, viewModel)
+       );
+  {id, log, state, viewModel, watchers};
+};
+
 let reconstruct = log => {
   let {viewModel, state} = make(VentureId.make());
-  let (id, watchers, state, viewModel) =
+  let (id, state, viewModel, watchers) =
     log
     |> EventLog.reduce(
-         ((id, watchers, state, viewModel), {event} as item) => (
+         ((id, state, viewModel, watchers), {event} as item) => (
            switch event {
            | VentureCreated({ventureId}) => ventureId
            | _ => id
            },
-           switch (Watcher.initWatcherFor(item, log)) {
-           | Some(w) => [w, ...watchers]
-           | None => watchers
-           },
            state |> Validation.apply(event),
-           viewModel |> ViewModel.apply(event)
+           viewModel |> ViewModel.apply(event),
+           watchers |> Watchers.apply(~reconstruct=true, item, log)
          ),
-         (VentureId.make(), [], state, viewModel)
+         (VentureId.make(), state, viewModel, [])
        );
-  {id, log, watchers, state, viewModel};
+  {id, log, state, viewModel, watchers};
 };
 
 let persist = ({id, log, state} as venture) => {
@@ -194,9 +168,9 @@ module Synchronize = {
   type result =
     | Ok(t)
     | Error(t, EventLog.item, Validation.result);
-  let exec = (otherLogs, {log} as venture) => {
+  let exec = (otherLogs, {id, log} as venture) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
-    let (venture, error) =
+    let ({log, state, viewModel, watchers}, error) =
       newItems
       |> List.fold_left(
            (
@@ -209,9 +183,9 @@ module Synchronize = {
                switch (item |> Validation.validate(state)) {
                | Ok =>
                  let log = log |> EventLog.appendItem(item);
-                 let watchers = watchers |> updateWatchers(item, log);
                  let state = state |> Validation.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
+                 let watchers = watchers |> Watchers.apply(item, log);
                  ({...venture, log, watchers, state, viewModel}, None);
                | PolicyMissmatch as conflict => (
                    venture,
@@ -238,8 +212,11 @@ module Synchronize = {
              },
            (venture, None)
          );
+    let (log, (state, viewModel), watchers) =
+      watchers
+      |> Watchers.processPending(log, applyInternal, (state, viewModel));
     Js.Promise.(
-      applyWatcherEvents(venture)
+      {id, log, state, viewModel, watchers}
       |> persist
       |> then_(p =>
            (
