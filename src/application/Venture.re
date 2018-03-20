@@ -137,7 +137,7 @@ let load = (~ventureId) =>
   Js.Promise.(
     Blockstack.getFile((ventureId |> VentureId.toString) ++ "/log.json")
     |> then_(nullLog =>
-         switch (Js.Nullable.to_opt(nullLog)) {
+         switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>
            resolve(raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct)
          | None => raise(Not_found)
@@ -153,7 +153,7 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
     )
     |> catch(_error => raise(Not_found))
     |> then_(nullFile =>
-         switch (Js.Nullable.to_opt(nullFile)) {
+         switch (Js.Nullable.toOption(nullFile)) {
          | None => raise(Not_found)
          | Some(raw) =>
            raw
