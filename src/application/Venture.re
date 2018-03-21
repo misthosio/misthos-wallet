@@ -263,10 +263,10 @@ module Cmd = {
     let exec = (session: Session.Data.t, ~prospectId, {state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
       Js.Promise.(
-        UserPublicInfo.read(~blockstackId=prospectId)
+        UserInfo.Public.read(~blockstackId=prospectId)
         |> then_(readResult =>
              switch readResult {
-             | UserPublicInfo.Ok(info) =>
+             | UserInfo.Public.Ok(info) =>
                venture
                |> apply(
                     session.appKeyPair,
@@ -280,7 +280,7 @@ module Cmd = {
                   )
                |> persist
                |> then_(p => resolve(Ok(p)))
-             | UserPublicInfo.NotFound => resolve(NoUserInfo)
+             | UserInfo.Public.NotFound => resolve(NoUserInfo)
              }
            )
       );

@@ -50,7 +50,7 @@ let completeLogIn = () =>
          | Some(sessionData) =>
            let appPubKey =
              sessionData.appKeyPair |> Utils.publicKeyFromKeyPair;
-           UserPublicInfo.persist(~appPubKey)
+           UserInfo.Public.persist(~appPubKey)
            |> then_(() => resolve(LoggedIn(sessionData)));
          }
        )
