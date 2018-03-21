@@ -4,7 +4,8 @@ module Data = {
   type t = {
     userId,
     appKeyPair: Bitcoin.ECPair.t,
-    address: string
+    address: string,
+    chainCode: Node.buffer
   };
   let fromUserData = userData =>
     switch (Js.Nullable.toOption(userData##username)) {
@@ -14,7 +15,8 @@ module Data = {
       Some({
         userId: blockstackId |> UserId.fromString,
         appKeyPair,
-        address: appKeyPair |> Bitcoin.ECPair.getAddress
+        address: appKeyPair |> Bitcoin.ECPair.getAddress,
+        chainCode: Node_buffer.fromString("")
       });
     };
 };
@@ -50,8 +52,10 @@ let completeLogIn = () =>
          | Some(sessionData) =>
            let appPubKey =
              sessionData.appKeyPair |> Utils.publicKeyFromKeyPair;
-           UserInfo.Public.persist(~appPubKey)
-           |> then_(() => resolve(LoggedIn(sessionData)));
+           UserInfo.getOrInit(~appPubKey)
+           |> then_(({chainCode}: UserInfo.Private.t) =>
+                resolve(LoggedIn({...sessionData, chainCode}))
+              );
          }
        )
   );
