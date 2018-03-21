@@ -7,7 +7,7 @@ module Data = {
     address: string
   };
   let fromUserData = userData =>
-    switch (Js.Nullable.to_opt(userData##username)) {
+    switch (Js.Nullable.toOption(userData##username)) {
     | None => None
     | Some(blockstackId) =>
       let appKeyPair = userData##appPrivateKey |> Utils.keyPairFromPrivateKey;

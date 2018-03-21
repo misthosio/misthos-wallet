@@ -33,14 +33,14 @@ let () =
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
       expect(prospectWatcher#processCompleted()) |> toBe(false);
     });
     test("completes when Partner is added", () => {
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         EventLog.append(
           issuer,
@@ -59,7 +59,7 @@ let () =
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         log
         |> EventLog.append(
@@ -100,7 +100,7 @@ let () =
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watcher.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
       let (item, _) =
         log
         |> EventLog.append(
