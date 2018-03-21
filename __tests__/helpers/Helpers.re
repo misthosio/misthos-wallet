@@ -54,9 +54,11 @@ let broadcastTransaction = tx =>
        Js.Promise.resolve(result);
      });
 
-let fundAddress = (address, values, utxos) => {
+let fundAddress = (outputs, utxos) => {
   let totalValues =
-    values |> List.fold_left((n, v) => n |> BTC.plus(v), BTC.zero);
+    outputs
+    |> List.map(snd)
+    |> List.fold_left((n, v) => n |> BTC.plus(v), BTC.zero);
   let (inputs, totalIn) = selectUTXOs(utxos, totalValues);
   if (totalIn < totalValues) {
     raise(FaucetEmpty);
@@ -66,9 +68,11 @@ let fundAddress = (address, values, utxos) => {
   |> List.iter((utxo: utxo) =>
        txB |> TxBuilder.addInput(utxo.txId, utxo.txOutputN) |> ignore
      );
-  values
-  |> List.iter(v =>
-       txB |> TxBuilder.addOutput(address, v |> BTC.toSatoshisFloat) |> ignore
+  outputs
+  |> List.iter(((address, value)) =>
+       txB
+       |> TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat)
+       |> ignore
      );
   let remainder = totalIn |> BTC.minus(totalValues) |> BTC.minus(defaultFee);
   txB
@@ -80,14 +84,16 @@ let fundAddress = (address, values, utxos) => {
   inputs |> List.iteri((i, _utxo) => txB |> TxBuilder.sign(i, faucetKey));
   Js.Promise.(
     broadcastTransaction(txB |> TxBuilder.build)
-    |> then_((_) => BitcoindClient.getUTXOs(bitcoindConfig, address))
+    |> then_((_) =>
+         BitcoindClient.getUTXOs(bitcoindConfig, outputs |> List.map(fst))
+       )
   );
 };
 
-let faucet = (address, values) =>
+let faucet = outputs =>
   Js.Promise.(
-    BitcoindClient.getUTXOs(bitcoindConfig, faucetKey |> ECPair.getAddress)
-    |> then_(fundAddress(address, values))
+    BitcoindClient.getUTXOs(bitcoindConfig, [faucetKey |> ECPair.getAddress])
+    |> then_(fundAddress(outputs))
   );
 
 let rec rangeTo = (x, y) =>

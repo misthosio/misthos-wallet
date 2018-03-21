@@ -50,28 +50,51 @@ type bitcoindUTXO = {
   confirmations: int
 };
 
-let getUTXOs = ({bitcoindUrl} as config, address) => {
+let getUTXOs = ({bitcoindUrl} as config, [first, ...rest] as address) => {
   let jsonRPCImport =
     Json.Encode.(
       object_([
         ("jsonrpc", string("1.0")),
         ("method", string("importaddress")),
-        ("params", list(string, [address]))
+        ("params", list(string, [first]))
       ])
     )
     |> Json.stringify;
-  let jsonRPCUnspent =
-    Json.Encode.(
-      object_([
-        ("jsonrpc", string("1.0")),
-        ("method", string("listunspent")),
-        ("params", tuple3(int, int, list(string), (1, 9999999, [address])))
-      ])
-    )
-    |> Json.stringify;
+  let start = rpcCall(config, jsonRPCImport);
   Js.Promise.(
-    rpcCall(config, jsonRPCImport)
-    |> then_(_response => rpcCall(config, jsonRPCUnspent))
+    rest
+    |> List.fold_left(
+         (p, address) =>
+           p
+           |> then_(_r => {
+                let jsonRPCImport =
+                  Json.Encode.(
+                    object_([
+                      ("jsonrpc", string("1.0")),
+                      ("method", string("importaddress")),
+                      ("params", list(string, [address]))
+                    ])
+                  )
+                  |> Json.stringify;
+                rpcCall(config, jsonRPCImport);
+              }),
+         start
+       )
+    |> then_(imports => {
+         let jsonRPCUnspent =
+           Json.Encode.(
+             object_([
+               ("jsonrpc", string("1.0")),
+               ("method", string("listunspent")),
+               (
+                 "params",
+                 tuple3(int, int, list(string), (1, 9999999, address))
+               )
+             ])
+           )
+           |> Json.stringify;
+         rpcCall(config, jsonRPCUnspent);
+       })
     |> then_(obj =>
          Json.Decode.(
            obj

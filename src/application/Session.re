@@ -5,7 +5,7 @@ module Data = {
     userId,
     appKeyPair: Bitcoin.ECPair.t,
     address: string,
-    chainCode: Node.buffer
+    masterKeyChain: Bitcoin.HDNode.t
   };
   let fromUserData = userData =>
     switch (Js.Nullable.toOption(userData##username)) {
@@ -16,7 +16,13 @@ module Data = {
         userId: blockstackId |> UserId.fromString,
         appKeyPair,
         address: appKeyPair |> Bitcoin.ECPair.getAddress,
-        chainCode: Node_buffer.fromString("")
+        masterKeyChain:
+          Bitcoin.HDNode.make(
+            appKeyPair,
+            Utils.bufFromHex(
+              "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
+            )
+          )
       });
     };
 };
@@ -54,7 +60,13 @@ let completeLogIn = () =>
              sessionData.appKeyPair |> Utils.publicKeyFromKeyPair;
            UserInfo.getOrInit(~appPubKey)
            |> then_(({chainCode}: UserInfo.Private.t) =>
-                resolve(LoggedIn({...sessionData, chainCode}))
+                resolve(
+                  LoggedIn({
+                    ...sessionData,
+                    masterKeyChain:
+                      Bitcoin.HDNode.make(sessionData.appKeyPair, chainCode)
+                  })
+                )
               );
          }
        )

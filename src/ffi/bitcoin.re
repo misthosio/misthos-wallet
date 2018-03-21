@@ -60,6 +60,18 @@ module ECPair = {
   external verify : (Node.buffer, ECSignature.t) => Js.boolean = "";
 };
 
+module HDNode = {
+  type t = {. "keyPair": ECPair.t};
+  [@bs.module "bitcoinjs-lib"] [@bs.new]
+  external make : (ECPair.t, Node.buffer) => t = "HDNode";
+  [@bs.send.pipe : t] external derive : int => t = "";
+  [@bs.send.pipe : t] external deriveHardened : int => t = "";
+  [@bs.send.pipe : t] external derivePath : string => t = "";
+  [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
+  [@bs.send] external neutered : t => t = "";
+  [@bs.send] external toBase58 : t => string = "";
+};
+
 module Transaction = {
   type t;
   [@bs.send] external toBuffer : t => Node.buffer = "";

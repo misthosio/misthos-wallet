@@ -14,14 +14,21 @@ let () = {
     rpcUser: "bitcoin",
     rpcPassword: "bitcoin"
   };
-  let key = ECPair.makeRandomWithNetwork(Networks.testnet);
+  let keyA = ECPair.makeRandomWithNetwork(Networks.testnet);
+  let keyB = ECPair.makeRandomWithNetwork(Networks.testnet);
   let tenSats = BTC.fromSatoshis(10L);
   describe("faucet", () =>
     testPromise("Can fund an address", () =>
       Js.Promise.(
-        Helpers.faucet(key |> ECPair.getAddress, [tenSats, tenSats])
+        Helpers.faucet([
+          (keyA |> ECPair.getAddress, tenSats),
+          (keyB |> ECPair.getAddress, tenSats)
+        ])
         |> then_((_) =>
-             BitcoindClient.getUTXOs(config, key |> ECPair.getAddress)
+             BitcoindClient.getUTXOs(
+               config,
+               [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress]
+             )
            )
         |> then_((utxos: list(BitcoindClient.bitcoindUTXO)) =>
              resolve(

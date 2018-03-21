@@ -54,7 +54,7 @@ let getUTXOs = address =>
 
 let getBalance = ({address}, ~network=Networks.bitcoin) =>
   Js.Promise.(
-    getUTXOs(address)
+    getUTXOs([address])
     |> then_(utxos =>
          utxos
          |> List.fold_left(
@@ -87,7 +87,7 @@ let preparePayoutTx =
        0.
      );
   Js.Promise.(
-    getUTXOs(address)
+    getUTXOs([address])
     |> then_(utxos =>
          {
            inputValues:
@@ -194,4 +194,88 @@ let finalizeTx = ({txHex}, signatures, ~network=Networks.bitcoin) => {
           )
      );
   TxBuilder.build(txB);
+};
+
+module Address = {
+  type t = {
+    path: list(int),
+    witnessScript: string,
+    redeemScript: string,
+    address: string
+  };
+  let make = (path, m, keys) => {
+    open Script;
+    let witnessScript =
+      Multisig.Output.encode(
+        m,
+        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list
+      );
+    let redeemScript =
+      WitnessScriptHash.Output.encode(Crypto.sha256FromBuffer(witnessScript));
+    let outputScript = ScriptHash.Output.encode(Crypto.hash160(redeemScript));
+    let address =
+      Address.fromOutputScript(
+        outputScript,
+        keys |> List.hd |> ECPair.getNetwork
+      );
+    {
+      path,
+      witnessScript: Utils.bufToHex(witnessScript),
+      redeemScript: Utils.bufToHex(redeemScript),
+      address
+    };
+  };
+};
+
+module KeyChain = {
+  type t = {
+    hardenedNodes: list(HDNode.t),
+    nSigs: int
+  };
+  let make = (nSigs, hdNodes) => {
+    hardenedNodes:
+      hdNodes
+      |> List.sort((n1, n2) =>
+           String.compare(
+             n1 |> HDNode.getPublicKeyBuffer |> Utils.bufToHex,
+             n2 |> HDNode.getPublicKeyBuffer |> Utils.bufToHex
+           )
+         ),
+    nSigs
+  };
+  let defaultCosignerIndex = 0;
+  let externalChain = 0;
+  let internalChain = 1;
+  let getAddress = (addressIndex, {hardenedNodes, nSigs}) => {
+    let keys =
+      hardenedNodes
+      |> List.map(node =>
+           node
+           |> HDNode.derive(defaultCosignerIndex)
+           |> HDNode.derive(externalChain)
+           |> HDNode.derive(addressIndex)
+         )
+      |> List.map(node => node##keyPair);
+    Address.make(
+      [defaultCosignerIndex, externalChain, addressIndex],
+      nSigs,
+      keys
+    );
+  };
+  let getChangeAddress = (addressIndex, {hardenedNodes, nSigs}) => {
+    let keys =
+      hardenedNodes
+      |> List.map(node =>
+           node
+           |> HDNode.derive(defaultCosignerIndex)
+           |> HDNode.derive(internalChain)
+           |> HDNode.derive(addressIndex)
+         )
+      |> List.map(node => node##keyPair);
+    Address.make(
+      [defaultCosignerIndex, internalChain, addressIndex],
+      nSigs,
+      keys
+    );
+  };
 };
