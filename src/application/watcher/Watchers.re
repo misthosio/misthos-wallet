@@ -50,7 +50,13 @@ let rec processPending = (log, eventFound, state, watchers) => {
       | Not_found => None
       }
     )
-    |> DoNotFormat.andThenGetEvent;
+    |> (
+      watcher =>
+        switch watcher {
+        | Some(watcher) => watcher#pendingEvent()
+        | None => None
+        }
+    );
   switch nextEvent {
   | None => (log, state, watchers)
   | Some((issuer, event)) =>
