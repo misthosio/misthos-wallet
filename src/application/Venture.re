@@ -34,7 +34,11 @@ let applyInternal = (issuer, event, log, (state, viewModel)) => {
     let viewModel = viewModel |> ViewModel.apply(event);
     (item, log, (state, viewModel));
   /* This should never happen / only incase of an UI input bug!!! */
-  | result => raise(InvalidEvent(result))
+  | result =>
+    Js.log("item issue");
+    Js.log(item.event);
+    Js.log(result);
+    raise(InvalidEvent(result));
   };
 };
 

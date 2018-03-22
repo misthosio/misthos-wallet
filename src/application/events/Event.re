@@ -76,6 +76,25 @@ module Partner = {
   include (val EventTypes.makeProcess("Partner"))(Data);
 };
 
+module Custodian = {
+  module Data = {
+    type t = {
+      partnerId: userId
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("partnerId", UserId.encode(event.partnerId)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        partnerId: raw |> field("partnerId", UserId.decode),
+      };
+  };
+  include (val EventTypes.makeProcess("Custodian"))(Data);
+};
+
 module PartnerLabel = {
   module Data = {
     type t = {
@@ -146,6 +165,9 @@ module LabelDistribution = {
 
 type t =
   | VentureCreated(VentureCreated.t)
+  | CustodianProposed(Custodian.Proposal.t)
+  | CustodianEndorsed(Custodian.Endorsement.t)
+  | CustodianAccepted(Custodian.Acceptance.t)
   | PartnerProposed(Partner.Proposal.t)
   | PartnerEndorsed(Partner.Endorsement.t)
   | PartnerAccepted(Partner.Acceptance.t)
@@ -168,6 +190,14 @@ let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) 
       ~supporterId,
       ~policy,
       ~data=Partner.Data.{id: prospectId, pubKey: prospectPubKey}
+    )
+  );
+let makeCustodianProposed = (~supporterId, ~partnerId, ~policy) =>
+  CustodianProposed(
+    Custodian.Proposal.make(
+      ~supporterId,
+      ~policy,
+      ~data=Custodian.Data.{partnerId: partnerId}
     )
   );
 
@@ -252,6 +282,9 @@ let encode =
   | PartnerProposed(event) => Partner.Proposal.encode(event)
   | PartnerEndorsed(event) => Partner.Endorsement.encode(event)
   | PartnerAccepted(event) => Partner.Acceptance.encode(event)
+  | CustodianProposed(event) => Custodian.Proposal.encode(event)
+  | CustodianEndorsed(event) => Custodian.Endorsement.encode(event)
+  | CustodianAccepted(event) => Custodian.Acceptance.encode(event)
   | PartnerLabelProposed(event) => PartnerLabel.Proposal.encode(event)
   | PartnerLabelEndorsed(event) => PartnerLabel.Endorsement.encode(event)
   | PartnerLabelAccepted(event) => PartnerLabel.Acceptance.encode(event)
@@ -274,6 +307,7 @@ let encode =
 let isSystemEvent =
   fun
   | PartnerAccepted(_)
+  | CustodianAccepted(_)
   | PartnerLabelAccepted(_)
   | ContributionAccepted(_) => true
   | _ => false;
@@ -287,6 +321,9 @@ let decode = raw => {
   | "PartnerProposed" => PartnerProposed(Partner.Proposal.decode(raw))
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsement.decode(raw))
   | "PartnerAccepted" => PartnerAccepted(Partner.Acceptance.decode(raw))
+  | "CustodianProposed" => CustodianProposed(Custodian.Proposal.decode(raw))
+  | "CustodianEndorsed" => CustodianEndorsed(Custodian.Endorsement.decode(raw))
+  | "CustodianAccepted" => CustodianAccepted(Custodian.Acceptance.decode(raw))
   | "PartnerLabelProposed" =>
     PartnerLabelProposed(PartnerLabel.Proposal.decode(raw))
   | "PartnerLabelEndorsed" =>

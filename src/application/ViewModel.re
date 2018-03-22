@@ -161,6 +161,9 @@ let apply = (event: Event.t, state) =>
         state.partnerLabelProcesses
         |> List.filter(((pId, _)) => ProcessId.neq(pId, processId))
     }
+  | CustodianProposed(_)
+  | CustodianEndorsed(_)
+  | CustodianAccepted(_)
   | PartnerDistributionProposed(_)
   | PartnerDistributionEndorsed(_)
   | PartnerDistributionAccepted(_)

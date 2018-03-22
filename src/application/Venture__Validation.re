@@ -15,6 +15,7 @@ type state = {
   partnerAddresses: list(string),
   partnerPubKeys: list((string, userId)),
   partnerData: list((processId, Partner.Data.t)),
+  custodianData: list((processId, Custodian.Data.t)),
   partnerLabelData: list((processId, PartnerLabel.Data.t)),
   contributionData: list((processId, Contribution.Data.t)),
   partnerDistributionData: list((processId, PartnerDistribution.Data.t)),
@@ -32,6 +33,7 @@ let makeState = () => {
   partnerLabelData: [],
   metaPolicy: Policy.absolute,
   partnerData: [],
+  custodianData: [],
   contributionData: [],
   partnerDistributionData: [],
   labelDistributionData: [],
@@ -87,6 +89,7 @@ let apply = (event: Event.t, state) =>
       policies:
         [
           Partner.processName,
+          Custodian.processName,
           PartnerLabel.processName,
           Contribution.processName
         ]
@@ -95,6 +98,10 @@ let apply = (event: Event.t, state) =>
   | PartnerProposed({processId, data} as proposal) => {
       ...addProcess(proposal, state),
       partnerData: [(processId, data), ...state.partnerData]
+    }
+  | CustodianProposed({processId, data} as proposal) => {
+      ...addProcess(proposal, state),
+      custodianData: [(processId, data), ...state.custodianData]
     }
   | PartnerLabelProposed({processId, data} as proposal) => {
       ...addProcess(proposal, state),
@@ -119,6 +126,7 @@ let apply = (event: Event.t, state) =>
       ]
     }
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
+  | CustodianEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerLabelEndorsed(endorsement) => endorseProcess(endorsement, state)
   | ContributionEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerDistributionEndorsed(endorsement) =>
@@ -133,8 +141,11 @@ let apply = (event: Event.t, state) =>
         Utils.addressFromPublicKey(data.pubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
+      partnerPubKeys:
+        [(data.pubKey, data.id), ...state.partnerPubKeys]
+        |> List.sort_uniq((a, b) => UserId.compare(a |> snd, b |> snd))
     }
+  | CustodianAccepted(_)
   | PartnerLabelAccepted(_)
   | ContributionAccepted(_)
   | PartnerDistributionAccepted(_)
@@ -215,6 +226,9 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
+let validateCustodianData = (data: Custodian.Data.t, {partnerIds}) =>
+  partnerIds |> List.mem(data.partnerId) ? Ok : BadData;
+
 let validatePartneLabelData = (data: PartnerLabel.Data.t, {partnerIds}) =>
   partnerIds |> List.mem(data.partnerId) ? Ok : BadData;
 
@@ -223,6 +237,12 @@ let validateEvent =
   | VentureCreated(_) => ((_, _) => Ok)
   | PartnerProposed(proposal) =>
     validateProposal(Partner.processName, proposal)
+  | CustodianProposed(proposal) =>
+    validateProposal(
+      ~validateData=validateCustodianData,
+      Custodian.processName,
+      proposal
+    )
   | PartnerLabelProposed(proposal) =>
     validateProposal(
       ~validateData=validatePartneLabelData,
@@ -236,6 +256,7 @@ let validateEvent =
   | LabelDistributionProposed(proposal) =>
     validateProposal(LabelDistribution.processName, proposal)
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
+  | CustodianEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerLabelEndorsed(endorsement) => validateEndorsement(endorsement)
   | ContributionEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerDistributionEndorsed(endorsement) =>
@@ -243,6 +264,9 @@ let validateEvent =
   | LabelDistributionEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.partnerData, state)
+    )
+  | CustodianAccepted(acceptance) => (
+      state => validateAcceptance(acceptance, state.custodianData, state)
     )
   | PartnerLabelAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.partnerLabelData, state)
