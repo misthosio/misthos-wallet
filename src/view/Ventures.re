@@ -66,7 +66,7 @@ let make = (~session, _children) => {
             switch index {
             | [p, ..._rest] =>
               Js.Promise.(
-                Venture.load(~ventureId=p.id)
+                Venture.load(session, ~ventureId=p.id)
                 |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )
@@ -104,7 +104,7 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Venture.load(~ventureId=id |> VentureId.fromString)
+                Venture.load(session, ~ventureId=id |> VentureId.fromString)
                 |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )

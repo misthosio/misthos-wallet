@@ -9,6 +9,7 @@ module Validation = Venture__Validation;
 exception InvalidEvent(Validation.result);
 
 type t = {
+  session: Session.Data.t,
   id: ventureId,
   log: EventLog.t,
   state: Validation.state,
@@ -16,7 +17,8 @@ type t = {
   watchers: Watchers.t
 };
 
-let make = id => {
+let make = (session, id) => {
+  session,
   id,
   log: EventLog.make(),
   state: Validation.makeState(),
@@ -36,22 +38,23 @@ let applyInternal = (issuer, event, log, (state, viewModel)) => {
   };
 };
 
-let apply = (issuer, event, {id, log, state, viewModel, watchers}) => {
+let apply = (event, {session, id, log, state, viewModel, watchers}) => {
   let (item, log, (state, viewModel)) =
-    applyInternal(issuer, event, log, (state, viewModel));
+    applyInternal(session.appKeyPair, event, log, (state, viewModel));
   let (log, (state, viewModel), watchers) =
     watchers
     |> Watchers.applyAndProcessPending(
+         session,
          item,
          log,
          applyInternal,
          (state, viewModel)
        );
-  {id, log, state, viewModel, watchers};
+  {session, id, log, state, viewModel, watchers};
 };
 
-let reconstruct = log => {
-  let {viewModel, state} = make(VentureId.make());
+let reconstruct = (session, log) => {
+  let {viewModel, state} = make(session, VentureId.make());
   let (id, state, viewModel, watchers) =
     log
     |> EventLog.reduce(
@@ -62,11 +65,11 @@ let reconstruct = log => {
            },
            state |> Validation.apply(event),
            viewModel |> ViewModel.apply(event),
-           watchers |> Watchers.apply(~reconstruct=true, item, log)
+           watchers |> Watchers.apply(~reconstruct=true, session, item, log)
          ),
          (VentureId.make(), state, viewModel, [])
        );
-  {id, log, state, viewModel, watchers};
+  {session, id, log, state, viewModel, watchers};
 };
 
 let persist = ({id, log, state} as venture) => {
@@ -107,13 +110,18 @@ let persist = ({id, log, state} as venture) => {
 
 let defaultPolicy = Policy.absolute;
 
-let load = (~ventureId) =>
+let load = (session: Session.Data.t, ~ventureId) =>
   Js.Promise.(
     Blockstack.getFile((ventureId |> VentureId.toString) ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>
-           resolve(raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct)
+           resolve(
+             raw
+             |> Json.parseOrRaise
+             |> EventLog.decode
+             |> reconstruct(session)
+           )
          | None => raise(Not_found)
          }
        )
@@ -133,7 +141,7 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
            raw
            |> Json.parseOrRaise
            |> EventLog.decode
-           |> reconstruct
+           |> reconstruct(session)
            |> persist
          }
        )
@@ -153,7 +161,7 @@ let getSummary = ({log}) => log |> EventLog.getSummary;
 let getViewModel = ({viewModel}) => viewModel;
 
 module Synchronize = {
-  let getPartnerHistoryUrls = (session: Session.Data.t, {id, state}) =>
+  let getPartnerHistoryUrls = ({session, id, state}) =>
     state.partnerIds
     |> List.filter(partnerId => UserId.neq(partnerId, session.userId))
     |> List.map(partnerId =>
@@ -168,7 +176,7 @@ module Synchronize = {
   type result =
     | Ok(t)
     | Error(t, EventLog.item, Validation.result);
-  let exec = (otherLogs, {id, log} as venture) => {
+  let exec = (otherLogs, {session, log} as venture) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
     let ({log, state, viewModel, watchers}, error) =
       newItems
@@ -185,7 +193,7 @@ module Synchronize = {
                  let log = log |> EventLog.appendItem(item);
                  let state = state |> Validation.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
-                 let watchers = watchers |> Watchers.apply(item, log);
+                 let watchers = watchers |> Watchers.apply(session, item, log);
                  ({...venture, log, watchers, state, viewModel}, None);
                | PolicyMissmatch as conflict => (
                    venture,
@@ -214,9 +222,14 @@ module Synchronize = {
          );
     let (log, (state, viewModel), watchers) =
       watchers
-      |> Watchers.processPending(log, applyInternal, (state, viewModel));
+      |> Watchers.processPending(
+           session,
+           log,
+           applyInternal,
+           (state, viewModel)
+         );
     Js.Promise.(
-      {id, log, state, viewModel, watchers}
+      {...venture, log, state, viewModel, watchers}
       |> persist
       |> then_(p =>
            (
@@ -249,8 +262,8 @@ module Cmd = {
         );
       Js.Promise.all2((
         Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
-        make(ventureCreated.ventureId)
-        |> apply(session.appKeyPair, VentureCreated(ventureCreated))
+        make(session, ventureCreated.ventureId)
+        |> apply(VentureCreated(ventureCreated))
         |> persist
       ));
     };
@@ -260,7 +273,7 @@ module Cmd = {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec = (session: Session.Data.t, ~prospectId, {state} as venture) => {
+    let exec = (~prospectId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
       Js.Promise.(
         UserInfo.Public.read(~blockstackId=prospectId)
@@ -269,7 +282,6 @@ module Cmd = {
              | UserInfo.Public.Ok(info) =>
                venture
                |> apply(
-                    session.appKeyPair,
                     Event.makePartnerProposed(
                       ~supporterId=session.userId,
                       ~prospectId,
@@ -289,12 +301,11 @@ module Cmd = {
   module EndorsePartner = {
     type result =
       | Ok(t);
-    let exec = (session: Session.Data.t, ~processId, venture) => {
+    let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
       Js.Promise.(
         venture
         |> apply(
-             session.appKeyPair,
              Event.makePartnerEndorsed(~processId, ~supporterId=session.userId)
            )
         |> persist
@@ -305,13 +316,11 @@ module Cmd = {
   module ProposePartnerLabel = {
     type result =
       | Ok(t);
-    let exec =
-        (session: Session.Data.t, ~partnerId, ~labelId, {state} as venture) => {
+    let exec = (~partnerId, ~labelId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartnerLabel' command");
       Js.Promise.(
         venture
         |> apply(
-             session.appKeyPair,
              Event.makePartnerLabelProposed(
                ~partnerId,
                ~supporterId=session.userId,
@@ -328,12 +337,11 @@ module Cmd = {
   module EndorsePartnerLabel = {
     type result =
       | Ok(t);
-    let exec = (session: Session.Data.t, ~processId, venture) => {
+    let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'EndorsePartnerLabel' command");
       Js.Promise.(
         venture
         |> apply(
-             session.appKeyPair,
              Event.makePartnerLabelEndorsed(
                ~processId,
                ~supporterId=session.userId
@@ -349,18 +357,16 @@ module Cmd = {
       | Ok(t);
     let exec =
         (
-          session: Session.Data.t,
           ~amountInteger: int,
           ~amountFraction: int,
           ~currency: string,
           ~description: string,
-          {state} as venture
+          {session, state} as venture
         ) => {
       logMessage("Executing 'ProposeContribution' command");
       Js.Promise.(
         venture
         |> apply(
-             session.appKeyPair,
              Event.makeContributionProposed(
                ~supporterId=session.userId,
                ~amountInteger,
@@ -379,12 +385,11 @@ module Cmd = {
   module EndorseContribution = {
     type result =
       | Ok(t);
-    let exec = (session: Session.Data.t, ~processId, venture) => {
+    let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'EndorseContribution' command");
       Js.Promise.(
         venture
         |> apply(
-             session.appKeyPair,
              Event.makeContributionEndorsed(
                ~processId,
                ~supporterId=session.userId

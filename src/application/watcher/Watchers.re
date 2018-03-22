@@ -7,14 +7,17 @@ type watcher = {
 
 type t = list(watcher);
 
+module Initialize = Watcher__Initialize;
+
 module PartnerApproval = Watcher__PartnerApproval;
 
 module PartnerLabelApproval = Watcher__PartnerLabelApproval;
 
 module ContributionApproval = Watcher__ContributionApproval;
 
-let initWatcherFor = ({event}: EventLog.item, log) =>
+let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch event {
+  | VentureCreated(event) => Some(Initialize.make(event, log))
   | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
   | PartnerLabelProposed(proposal) =>
     Some(PartnerLabelApproval.make(proposal, log))
@@ -23,13 +26,13 @@ let initWatcherFor = ({event}: EventLog.item, log) =>
   | _ => None
   };
 
-let apply = (~reconstruct=false, item, log, watchers) => {
+let apply = (~reconstruct=false, session, item, log, watchers) => {
   /* To prevent watchers receiving items twice on reconstruction */
   if (reconstruct == false) {
     watchers |> List.iter(w => w#receive(item));
   };
   (
-    switch (initWatcherFor(item, log)) {
+    switch (initWatcherFor(session, item, log)) {
     | Some(w) => [w, ...watchers]
     | None => watchers
     }
@@ -37,7 +40,7 @@ let apply = (~reconstruct=false, item, log, watchers) => {
   |> List.filter(w => w#processCompleted() == false);
 };
 
-let rec processPending = (log, eventFound, state, watchers) => {
+let rec processPending = (session, log, eventFound, state, watchers) => {
   let nextEvent =
     (
       try (
@@ -61,9 +64,13 @@ let rec processPending = (log, eventFound, state, watchers) => {
   | None => (log, state, watchers)
   | Some((issuer, event)) =>
     let (item, log, state) = state |> eventFound(issuer, event, log);
-    watchers |> apply(item, log) |> processPending(log, eventFound, state);
+    watchers
+    |> apply(session, item, log)
+    |> processPending(session, log, eventFound, state);
   };
 };
 
-let applyAndProcessPending = (item, log, eventFound, state, watchers) =>
-  watchers |> apply(item, log) |> processPending(log, eventFound, state);
+let applyAndProcessPending = (session, item, log, eventFound, state, watchers) =>
+  watchers
+  |> apply(session, item, log)
+  |> processPending(session, log, eventFound, state);

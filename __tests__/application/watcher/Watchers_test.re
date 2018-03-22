@@ -9,6 +9,18 @@ open PrimitiveTypes;
 let () =
   describe("PartnerEndorsement", () => {
     let issuer = Bitcoin.ECPair.makeRandom();
+    let session: Session.Data.t = {
+      userId: UserId.fromString("hello"),
+      appKeyPair: issuer,
+      address: issuer |> Bitcoin.ECPair.getAddress,
+      masterKeyChain:
+        Bitcoin.HDNode.make(
+          issuer,
+          Utils.bufFromHex(
+            "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
+          )
+        )
+    };
     let ventureCreated =
       Event.VentureCreated.make(
         ~ventureName="TheMothers",
@@ -33,14 +45,14 @@ let () =
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(session, item, log) |> Js.Option.getExn;
       expect(prospectWatcher#processCompleted()) |> toBe(false);
     });
     test("completes when Partner is added", () => {
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(session, item, log) |> Js.Option.getExn;
       let (item, _) =
         EventLog.append(
           issuer,
@@ -59,7 +71,7 @@ let () =
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(session, item, log) |> Js.Option.getExn;
       let (item, _) =
         log
         |> EventLog.append(
@@ -100,7 +112,7 @@ let () =
       let (item, log) =
         log |> EventLog.append(issuer, PartnerProposed(partnerProposal));
       let prospectWatcher =
-        Watchers.initWatcherFor(item, log) |> Js.Option.getExn;
+        Watchers.initWatcherFor(session, item, log) |> Js.Option.getExn;
       let (item, _) =
         log
         |> EventLog.append(

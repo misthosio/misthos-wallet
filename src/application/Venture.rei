@@ -28,7 +28,7 @@ let join:
   (Session.Data.t, ~userId: string, ~ventureId: string) =>
   Js.Promise.t((Index.t, t));
 
-let load: (~ventureId: ventureId) => Js.Promise.t(t);
+let load: (Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
 
 let getId: t => string;
 
@@ -37,7 +37,7 @@ let getSummary: t => EventLog.summary;
 /* TODO remove dependency. Move into view Folder */
 let getViewModel: t => ViewModel.t;
 
-let getPartnerHistoryUrls: (Session.Data.t, t) => Js.Promise.t(array(string));
+let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
 
 module Cmd: {
   module Create: {
@@ -56,33 +56,29 @@ module Cmd: {
     type result =
       | Ok(t)
       | NoUserInfo;
-    let exec: (Session.Data.t, ~prospectId: userId, t) => Js.Promise.t(result);
+    let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };
   module EndorsePartner: {
     type result =
       | Ok(t);
-    let exec:
-      (Session.Data.t, ~processId: processId, t) => Js.Promise.t(result);
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ProposePartnerLabel: {
     type result =
       | Ok(t);
     let exec:
-      (Session.Data.t, ~partnerId: userId, ~labelId: labelId, t) =>
-      Js.Promise.t(result);
+      (~partnerId: userId, ~labelId: labelId, t) => Js.Promise.t(result);
   };
   module EndorsePartnerLabel: {
     type result =
       | Ok(t);
-    let exec:
-      (Session.Data.t, ~processId: processId, t) => Js.Promise.t(result);
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ProposeContribution: {
     type result =
       | Ok(t);
     let exec:
       (
-        Session.Data.t,
         ~amountInteger: int,
         ~amountFraction: int,
         ~currency: string,
@@ -94,8 +90,7 @@ module Cmd: {
   module EndorseContribution: {
     type result =
       | Ok(t);
-    let exec:
-      (Session.Data.t, ~processId: processId, t) => Js.Promise.t(result);
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   /* module ProposeOutputDistributionNode: { */
   /*   type result = */

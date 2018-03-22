@@ -53,7 +53,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         let worker =
           Worker.make(~onMessage=message => send(WorkerMessage(message)));
         Js.Promise.(
-          Venture.getPartnerHistoryUrls(session, initialVenture)
+          Venture.getPartnerHistoryUrls(initialVenture)
           |> then_(urls =>
                Worker.Message.RegularlyFetch(
                  urls,
@@ -106,10 +106,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
               Js.Promise.(
                 Cmd.ProposePartner.(
                   state.venture
-                  |> exec(
-                       session,
-                       ~prospectId=prospectId |> UserId.fromString
-                     )
+                  |> exec(~prospectId=prospectId |> UserId.fromString)
                   |> then_(result =>
                        (
                          switch result {
@@ -132,7 +129,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             Js.Promise.(
               Cmd.EndorsePartner.(
                 state.venture
-                |> exec(session, ~processId)
+                |> exec(~processId)
                 |> then_(result =>
                      (
                        switch result {
@@ -153,7 +150,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             Js.Promise.(
               Cmd.ProposePartnerLabel.(
                 state.venture
-                |> exec(session, ~partnerId, ~labelId)
+                |> exec(~partnerId, ~labelId)
                 |> then_(result =>
                      (
                        switch result {
@@ -174,7 +171,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             Js.Promise.(
               Cmd.EndorsePartnerLabel.(
                 state.venture
-                |> exec(session, ~processId)
+                |> exec(~processId)
                 |> then_(result =>
                      (
                        switch result {
@@ -196,7 +193,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
               Cmd.ProposeContribution.(
                 state.venture
                 |> exec(
-                     session,
                      ~amountInteger,
                      ~amountFraction,
                      ~currency,
@@ -222,7 +218,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             Js.Promise.(
               Cmd.EndorseContribution.(
                 state.venture
-                |> exec(session, ~processId)
+                |> exec(~processId)
                 |> then_(result =>
                      (
                        switch result {
@@ -238,7 +234,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       )
     | UpdateVenture(venture) =>
       Js.Promise.(
-        Venture.getPartnerHistoryUrls(session, venture)
+        Venture.getPartnerHistoryUrls(venture)
         |> then_(urls =>
              Worker.Message.RegularlyFetch(urls, Venture.getSummary(venture))
              |> Worker.postMessage(state.worker^)
