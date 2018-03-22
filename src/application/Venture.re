@@ -33,7 +33,7 @@ let applyInternal = (issuer, event, log, (state, viewModel)) => {
     let state = state |> Validation.apply(event);
     let viewModel = viewModel |> ViewModel.apply(event);
     (item, log, (state, viewModel));
-  /* /1* This should never happen / only incase of an UI input bug!!! *1/ */
+  /* This should never happen / only incase of an UI input bug!!! */
   | result => raise(InvalidEvent(result))
   };
 };
@@ -69,6 +69,9 @@ let reconstruct = (session, log) => {
          ),
          (VentureId.make(), state, viewModel, [])
        );
+  let (log, (state, viewModel), watchers) =
+    watchers
+    |> Watchers.processPending(session, log, applyInternal, (state, viewModel));
   {session, id, log, state, viewModel, watchers};
 };
 
@@ -125,6 +128,7 @@ let load = (session: Session.Data.t, ~ventureId) =>
          | None => raise(Not_found)
          }
        )
+    |> then_(persist)
   );
 
 let join = (session: Session.Data.t, ~userId, ~ventureId) =>

@@ -7,7 +7,7 @@ type watcher = {
 
 type t = list(watcher);
 
-module Initialize = Watcher__Initialize;
+module Initialize = Watcher__InitializeVenture;
 
 module PartnerApproval = Watcher__PartnerApproval;
 
@@ -17,7 +17,7 @@ module ContributionApproval = Watcher__ContributionApproval;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch event {
-  | VentureCreated(event) => Some(Initialize.make(event, log))
+  | VentureCreated(event) => Some(Initialize.make(session, event, log))
   | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
   | PartnerLabelProposed(proposal) =>
     Some(PartnerLabelApproval.make(proposal, log))

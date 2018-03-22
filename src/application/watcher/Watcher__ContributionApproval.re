@@ -26,7 +26,6 @@ let make = (proposal: Contribution.Proposal.t, log) => {
           switch event {
           | VentureCreated(event) => {
               ...state^,
-              eligable: [event.creatorId],
               policy: event.metaPolicy,
               systemIssuer: event.systemIssuer
             }

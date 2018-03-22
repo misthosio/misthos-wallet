@@ -39,7 +39,7 @@ let load = () =>
   Js.Promise.(
     Blockstack.getFileDecrypted(indexPath)
     |> then_(nullVentures =>
-         switch (Js.Nullable.to_opt(nullVentures)) {
+         switch (Js.Nullable.toOption(nullVentures)) {
          | None => persist([])
          | Some(index) => resolve(index |> Json.parseOrRaise |> Decode.index)
          }

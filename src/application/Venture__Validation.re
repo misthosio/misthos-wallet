@@ -79,7 +79,9 @@ let apply = (event: Event.t, state) =>
         Utils.addressFromPublicKey(creatorPubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys: [(creatorPubKey, creatorId), ...state.partnerPubKeys],
+      partnerPubKeys:
+        [(creatorPubKey, creatorId), ...state.partnerPubKeys]
+        |> List.sort_uniq((a, b) => UserId.compare(a |> snd, b |> snd)),
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
       policies:
@@ -125,7 +127,8 @@ let apply = (event: Event.t, state) =>
     endorseProcess(endorsement, state)
   | PartnerAccepted({data}) => {
       ...state,
-      partnerIds: [data.id, ...state.partnerIds],
+      partnerIds:
+        [data.id, ...state.partnerIds] |> List.sort_uniq(UserId.compare),
       partnerAddresses: [
         Utils.addressFromPublicKey(data.pubKey),
         ...state.partnerAddresses

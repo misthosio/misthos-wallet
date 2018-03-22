@@ -55,16 +55,9 @@ let make = () => {
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated({
-      ventureName,
-      creatorId,
-      metaPolicy,
-      initialLabelIds,
-      distributionGraph
-    }) => {
+  | VentureCreated({ventureName, metaPolicy, distributionGraph}) => {
       ...state,
       name: ventureName,
-      partners: [{userId: creatorId, labels: initialLabelIds}],
       distributionGraph,
       metaPolicy,
       partnerPolicy: metaPolicy,

@@ -41,7 +41,8 @@ let make = (proposal: Partner.Proposal.t, log) => {
             state^;
           | PartnerAccepted({data}) => {
               ...state^,
-              eligable: [data.id, ...state^.eligable]
+              eligable:
+                [data.id, ...state^.eligable] |> List.sort_uniq(UserId.compare)
             }
           | _ => state^
           }

@@ -4,6 +4,7 @@ module type PrimitiveType = {
   let fromString: string => t;
   let encode: t => Js.Json.t;
   let decode: Js.Json.t => t;
+  let compare: (t, t) => int;
   let eq: (t, t) => bool;
   let neq: (t, t) => bool;
 };
