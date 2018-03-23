@@ -224,6 +224,9 @@ module Synchronize = {
                | DuplicateEndorsement =>
                  logMessage("Duplicate Endorsement detected");
                  (venture, None);
+               | DependencyNotMet =>
+                 logMessage("Dependency Not Met detected");
+                 (venture, None);
                };
              },
            (venture, None)

@@ -189,15 +189,16 @@ let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) 
     Partner.Proposal.make(
       ~supporterId,
       ~policy,
-      ~data=Partner.Data.{id: prospectId, pubKey: prospectPubKey}
+      Partner.Data.{id: prospectId, pubKey: prospectPubKey}
     )
   );
+
 let makeCustodianProposed = (~supporterId, ~partnerId, ~policy) =>
   CustodianProposed(
     Custodian.Proposal.make(
       ~supporterId,
       ~policy,
-      ~data=Custodian.Data.{partnerId: partnerId}
+      Custodian.Data.{partnerId: partnerId}
     )
   );
 
@@ -209,7 +210,7 @@ let makePartnerLabelProposed = (~partnerId, ~labelId, ~supporterId, ~policy) =>
     PartnerLabel.Proposal.make(
       ~supporterId,
       ~policy,
-      ~data=PartnerLabel.Data.{partnerId, labelId}
+      PartnerLabel.Data.{partnerId, labelId}
     )
   );
 
@@ -231,13 +232,7 @@ let makeContributionProposed =
     Contribution.Proposal.make(
       ~supporterId,
       ~policy,
-      ~data=
-        Contribution.Data.{
-          amountInteger,
-          amountFraction,
-          currency,
-          description
-        }
+      Contribution.Data.{amountInteger, amountFraction, currency, description}
     )
   );
 
@@ -252,7 +247,7 @@ let makePartnerDistributionProposed =
     PartnerDistribution.Proposal.make(
       ~supporterId,
       ~policy,
-      ~data={labelId, distribution}
+      {labelId, distribution}
     )
   );
 
@@ -267,7 +262,7 @@ let makeLabelDistributionProposed =
     LabelDistribution.Proposal.make(
       ~supporterId,
       ~policy,
-      ~data={labelId, distribution}
+      {labelId, distribution}
     )
   );
 

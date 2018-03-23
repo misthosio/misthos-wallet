@@ -58,24 +58,14 @@ let make = (proposal: Partner.Proposal.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAccepted(
-              Partner.Acceptance.make(
-                ~processId=proposal.processId,
-                ~data=proposal.data
-              )
-            )
+            PartnerAccepted(Partner.Acceptance.fromProposal(proposal))
           ));
       };
       if (proposal.data.id == state^.creatorId && log |> EventLog.length == 2) {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAccepted(
-              Partner.Acceptance.make(
-                ~processId=proposal.processId,
-                ~data=proposal.data
-              )
-            )
+            PartnerAccepted(Partner.Acceptance.fromProposal(proposal))
           ));
       };
     };

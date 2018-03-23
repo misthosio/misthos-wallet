@@ -56,10 +56,7 @@ let make = (proposal: PartnerLabel.Proposal.t, log) => {
           Some((
             state^.systemIssuer,
             PartnerLabelAccepted(
-              PartnerLabel.Acceptance.make(
-                ~processId=proposal.processId,
-                ~data=proposal.data
-              )
+              PartnerLabel.Acceptance.fromProposal(proposal)
             )
           ));
       };

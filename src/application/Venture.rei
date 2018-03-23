@@ -17,7 +17,8 @@ module Validation: {
     | BadData
     | DuplicateEndorsement
     | PolicyMissmatch
-    | PolicyNotFulfilled;
+    | PolicyNotFulfilled
+    | DependencyNotMet;
 };
 
 exception InvalidEvent(Validation.result);

@@ -55,12 +55,7 @@ let make = (proposal: Custodian.Proposal.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            CustodianAccepted(
-              Custodian.Acceptance.make(
-                ~processId=proposal.processId,
-                ~data=proposal.data
-              )
-            )
+            CustodianAccepted(Custodian.Acceptance.fromProposal(proposal))
           ));
       };
     };

@@ -21,6 +21,7 @@ type state = {
   partnerDistributionData: list((processId, PartnerDistribution.Data.t)),
   labelDistributionData: list((processId, LabelDistribution.Data.t)),
   processes: list((processId, approvalProcess)),
+  completedProcesses: list(processId),
   policies: list((string, Policy.t)),
   creatorData: Partner.Data.t
 };
@@ -39,6 +40,7 @@ let makeState = () => {
   partnerDistributionData: [],
   labelDistributionData: [],
   processes: [],
+  completedProcesses: [],
   policies: [],
   creatorData: {
     id: UserId.fromString(""),
@@ -68,6 +70,12 @@ let endorseProcess =
            ) :
            (pId, process)
        )
+};
+
+let completeProcess =
+    ({processId}: EventTypes.acceptance('a), {completedProcesses} as state) => {
+  ...state,
+  completedProcesses: [processId, ...completedProcesses]
 };
 
 let apply = (event: Event.t, state) =>
@@ -140,11 +148,12 @@ let apply = (event: Event.t, state) =>
       ],
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
-  | CustodianAccepted(_)
-  | PartnerLabelAccepted(_)
-  | ContributionAccepted(_)
-  | PartnerDistributionAccepted(_)
-  | LabelDistributionAccepted(_) => state
+  | CustodianAccepted(acceptance) => completeProcess(acceptance, state)
+  | PartnerLabelAccepted(acceptance) => completeProcess(acceptance, state)
+  | ContributionAccepted(acceptance) => completeProcess(acceptance, state)
+  | PartnerDistributionAccepted(acceptance) =>
+    completeProcess(acceptance, state)
+  | LabelDistributionAccepted(acceptance) => completeProcess(acceptance, state)
   };
 
 type result =
@@ -154,7 +163,8 @@ type result =
   | BadData
   | DuplicateEndorsement
   | PolicyMissmatch
-  | PolicyNotFulfilled;
+  | PolicyNotFulfilled
+  | DependencyNotMet;
 
 let defaultDataValidator = (_, _) => Ok;
 
@@ -162,8 +172,8 @@ let validateProposal =
     (
       ~validateData: ('a, state) => result=defaultDataValidator,
       processName,
-      {policy, supporterId, data}: EventTypes.proposal('a),
-      {policies, partnerPubKeys} as state,
+      {policy, supporterId, data, dependsOn}: EventTypes.proposal('a),
+      {policies, partnerPubKeys, processes} as state,
       issuerPubKey
     ) =>
   if (Policy.neq(policy, policies |> List.assoc(processName))) {
@@ -174,7 +184,12 @@ let validateProposal =
              )) {
     InvalidIssuer;
   } else {
-    validateData(data, state);
+    switch dependsOn {
+    | None => validateData(data, state)
+    | Some(processId) =>
+      processes |> List.mem_assoc(processId) ?
+        validateData(data, state) : DependencyNotMet
+    };
   };
 
 let validateEndorsement =
@@ -198,9 +213,9 @@ let validateEndorsement =
 
 let validateAcceptance =
     (
-      {processId, data}: EventTypes.acceptance('a),
+      {processId, data, dependsOn}: EventTypes.acceptance('a),
       dataList: list((processId, 'a)),
-      {processes, partnerIds},
+      {processes, partnerIds, completedProcesses},
       _issuerPubKey
     ) =>
   try {
@@ -215,7 +230,11 @@ let validateAcceptance =
                == false) {
       PolicyNotFulfilled;
     } else {
-      Ok;
+      switch dependsOn {
+      | None => Ok
+      | Some(processId) =>
+        completedProcesses |> List.mem(processId) ? Ok : DependencyNotMet
+      };
     };
   } {
   | Not_found => UnknownProcessId

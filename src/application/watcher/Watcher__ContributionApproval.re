@@ -56,10 +56,7 @@ let make = (proposal: Contribution.Proposal.t, log) => {
           Some((
             state^.systemIssuer,
             ContributionAccepted(
-              Contribution.Acceptance.make(
-                ~processId=proposal.processId,
-                ~data=proposal.data
-              )
+              Contribution.Acceptance.fromProposal(proposal)
             )
           ));
       };
