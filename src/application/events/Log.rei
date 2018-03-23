@@ -20,6 +20,7 @@ module Make:
     let appendItem: (item, t) => t;
     let reduce: (('s, item) => 's, 's, t) => 's;
     let findNewItems: (list(t), t) => list(item);
+    let length: t => int;
     let encode: t => Js.Json.t;
     let decode: Js.Json.t => t;
     let getSummary: t => summary;

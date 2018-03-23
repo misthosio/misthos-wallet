@@ -21,7 +21,8 @@ type state = {
   partnerDistributionData: list((processId, PartnerDistribution.Data.t)),
   labelDistributionData: list((processId, LabelDistribution.Data.t)),
   processes: list((processId, approvalProcess)),
-  policies: list((string, Policy.t))
+  policies: list((string, Policy.t)),
+  creatorData: Partner.Data.t
 };
 
 let makeState = () => {
@@ -38,7 +39,11 @@ let makeState = () => {
   partnerDistributionData: [],
   labelDistributionData: [],
   processes: [],
-  policies: []
+  policies: [],
+  creatorData: {
+    id: UserId.fromString(""),
+    pubKey: ""
+  }
 };
 
 let addProcess =
@@ -69,21 +74,13 @@ let apply = (event: Event.t, state) =>
   switch event {
   | VentureCreated({
       ventureName,
-      creatorId,
-      creatorPubKey,
       metaPolicy,
-      systemIssuer
+      systemIssuer,
+      creatorId,
+      creatorPubKey
     }) => {
       ...state,
       ventureName,
-      partnerIds: [creatorId, ...state.partnerIds],
-      partnerAddresses: [
-        Utils.addressFromPublicKey(creatorPubKey),
-        ...state.partnerAddresses
-      ],
-      partnerPubKeys:
-        [(creatorPubKey, creatorId), ...state.partnerPubKeys]
-        |> List.sort_uniq((a, b) => UserId.compare(a |> snd, b |> snd)),
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
       policies:
@@ -93,7 +90,8 @@ let apply = (event: Event.t, state) =>
           PartnerLabel.processName,
           Contribution.processName
         ]
-        |> List.map(n => (n, metaPolicy))
+        |> List.map(n => (n, metaPolicy)),
+      creatorData: Partner.Data.{id: creatorId, pubKey: creatorPubKey}
     }
   | PartnerProposed({processId, data} as proposal) => {
       ...addProcess(proposal, state),
@@ -135,15 +133,12 @@ let apply = (event: Event.t, state) =>
     endorseProcess(endorsement, state)
   | PartnerAccepted({data}) => {
       ...state,
-      partnerIds:
-        [data.id, ...state.partnerIds] |> List.sort_uniq(UserId.compare),
+      partnerIds: [data.id, ...state.partnerIds],
       partnerAddresses: [
         Utils.addressFromPublicKey(data.pubKey),
         ...state.partnerAddresses
       ],
-      partnerPubKeys:
-        [(data.pubKey, data.id), ...state.partnerPubKeys]
-        |> List.sort_uniq((a, b) => UserId.compare(a |> snd, b |> snd))
+      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
   | CustodianAccepted(_)
   | PartnerLabelAccepted(_)
@@ -290,7 +285,20 @@ let validate = (state, {event, issuerPubKey}: EventLog.item) =>
     state.partnerPubKeys |> List.mem_assoc(issuerPubKey)
   ) {
   | (VentureCreated(_), _, _) => Ok
+  | (PartnerProposed(event), false, false)
+      when
+        event.data == state.creatorData
+        && issuerPubKey == state.creatorData.pubKey
+        && state.partnerData
+        |> List.length == 0 =>
+    Ok
   | (_, false, false) => InvalidIssuer
   | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
+  | (PartnerAccepted(event), true, false)
+      when
+        event.data == state.creatorData
+        && state.partnerData
+        |> List.length == 1 =>
+    Ok
   | _ => validateEvent(event, state, issuerPubKey)
   };

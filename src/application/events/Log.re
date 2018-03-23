@@ -72,6 +72,7 @@ module Make = (Event: Encodable) => {
          };
        });
   };
+  let length = List.length;
   let getSummary = log => {
     knownItems: log |> List.fold_left((items, {hash}) => [hash, ...items], [])
   };

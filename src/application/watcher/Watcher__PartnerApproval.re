@@ -6,7 +6,8 @@ type state = {
   eligable: list(userId),
   endorsements: list(userId),
   policy: Policy.t,
-  systemIssuer: Bitcoin.ECPair.t
+  systemIssuer: Bitcoin.ECPair.t,
+  creatorId: userId
 };
 
 let make = (proposal: Partner.Proposal.t, log) => {
@@ -16,7 +17,8 @@ let make = (proposal: Partner.Proposal.t, log) => {
         eligable: [],
         endorsements: [proposal.supporterId],
         policy: Policy.absolute,
-        systemIssuer: Bitcoin.ECPair.makeRandom()
+        systemIssuer: Bitcoin.ECPair.makeRandom(),
+        creatorId: UserId.fromString("")
       });
     val completed = ref(false);
     val result = ref(None);
@@ -26,9 +28,9 @@ let make = (proposal: Partner.Proposal.t, log) => {
           switch event {
           | VentureCreated(event) => {
               ...state^,
-              eligable: [event.creatorId],
               policy: event.metaPolicy,
-              systemIssuer: event.systemIssuer
+              systemIssuer: event.systemIssuer,
+              creatorId: event.creatorId
             }
           | PartnerEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
@@ -41,8 +43,7 @@ let make = (proposal: Partner.Proposal.t, log) => {
             state^;
           | PartnerAccepted({data}) => {
               ...state^,
-              eligable:
-                [data.id, ...state^.eligable] |> List.sort_uniq(UserId.compare)
+              eligable: [data.id, ...state^.eligable]
             }
           | _ => state^
           }
@@ -54,6 +55,18 @@ let make = (proposal: Partner.Proposal.t, log) => {
                ~eligable=state^.eligable,
                ~endorsed=state^.endorsements
              )) {
+        result :=
+          Some((
+            state^.systemIssuer,
+            PartnerAccepted(
+              Partner.Acceptance.make(
+                ~processId=proposal.processId,
+                ~data=proposal.data
+              )
+            )
+          ));
+      };
+      if (proposal.data.id == state^.creatorId && log |> EventLog.length == 2) {
         result :=
           Some((
             state^.systemIssuer,
