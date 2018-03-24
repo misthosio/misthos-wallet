@@ -5,8 +5,6 @@ open PrimitiveTypes;
 type state =
   | ProposePartner
   | PartnerProposed(processId)
-  | ProposeLabels(list(labelId))
-  | PartnerLabelProposed(processId, list(labelId))
   | ProposeCustodian
   | CustodianProposed(processId)
   | Complete;
@@ -14,7 +12,7 @@ type state =
 let make =
     (
       {userId, appKeyPair}: Session.Data.t,
-      {creatorId, creatorPubKey, initialLabelIds, metaPolicy}: VentureCreated.t,
+      {creatorId, creatorPubKey, metaPolicy}: VentureCreated.t,
       log
     ) => {
   let process = {
@@ -29,19 +27,7 @@ let make =
             PartnerProposed(event.processId)
           | (PartnerProposed(processId), PartnerAccepted(event))
               when ProcessId.eq(processId, event.processId) =>
-            ProposeLabels(initialLabelIds)
-          | (ProposeLabels(labelIds), PartnerLabelProposed(event))
-              when LabelId.eq(labelIds |> List.hd, event.data.labelId) =>
-            PartnerLabelProposed(event.processId, labelIds |> List.tl)
-          | (
-              PartnerLabelProposed(processId, labelIds),
-              PartnerLabelAccepted(event)
-            )
-              when ProcessId.eq(processId, event.processId) =>
-            switch labelIds {
-            | [] => ProposeCustodian
-            | _ => ProposeLabels(labelIds)
-            }
+            ProposeCustodian
           | (ProposeCustodian, CustodianProposed(event))
               when UserId.eq(event.data.partnerId, creatorId) =>
             CustodianProposed(event.processId)
@@ -61,16 +47,6 @@ let make =
                 ~supporterId=creatorId,
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
-                ~policy=metaPolicy
-              )
-            ))
-          | ProposeLabels(labelIds) =>
-            Some((
-              appKeyPair,
-              Event.makePartnerLabelProposed(
-                ~partnerId=creatorId,
-                ~labelId=labelIds |> List.hd,
-                ~supporterId=creatorId,
                 ~policy=metaPolicy
               )
             ))

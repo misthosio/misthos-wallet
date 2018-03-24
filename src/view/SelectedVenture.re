@@ -16,17 +16,12 @@ type action =
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | ProposePartner
-  | EndorsePartner(ProcessId.t)
-  | ProposePartnerLabel(UserId.t, LabelId.t)
-  | EndorsePartnerLabel(ProcessId.t);
+  | EndorsePartner(ProcessId.t);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
     ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
-
-let proposePartnerLabel = (send, userId, ~labelId) =>
-  send(ProposePartnerLabel(userId, labelId));
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
 
@@ -135,48 +130,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         )
       )
-    | ProposePartnerLabel(partnerId, labelId) =>
-      ReasonReact.SideEffects(
-        (
-          ({send}) =>
-            Js.Promise.(
-              Cmd.ProposePartnerLabel.(
-                state.venture
-                |> exec(~partnerId, ~labelId)
-                |> then_(result =>
-                     (
-                       switch result {
-                       | Ok(venture) => send(UpdateVenture(venture))
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        )
-      )
-    | EndorsePartnerLabel(processId) =>
-      ReasonReact.SideEffects(
-        (
-          ({send}) =>
-            Js.Promise.(
-              Cmd.EndorsePartnerLabel.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch result {
-                       | Ok(venture) => send(UpdateVenture(venture))
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        )
-      )
     | UpdateVenture(venture) =>
       Js.Promise.(
         Venture.getPartnerHistoryUrls(venture)
@@ -200,80 +153,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           ViewModel.getPartners(state.viewModel)
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
-                 <div>
-                   (text(m.userId |> UserId.toString))
-                   (text(" Labels: "))
-                   (
-                     text(
-                       List.fold_left(
-                         (state, label) =>
-                           state ++ LabelId.toString(label) ++ ", ",
-                         "",
-                         m.labels
-                       )
-                     )
-                   )
-                 </div>
-                 <div>
-                   (text("Pending Labels: "))
-                   <ul>
-                     {
-                       let pending =
-                         Array.of_list(
-                           ViewModel.getPendingPartnerLabels(
-                             m.userId,
-                             state.viewModel
-                           )
-                           |> List.map((partnerLabel: ViewModel.partnerLabel) =>
-                                <li
-                                  key=(
-                                    partnerLabel.processId
-                                    |> ProcessId.toString
-                                  )>
-                                  (
-                                    text(
-                                      "'"
-                                      ++ LabelId.toString(
-                                           partnerLabel.labelId
-                                         )
-                                      ++ "' endorsed by: "
-                                      ++ List.fold_left(
-                                           (state, partnerId) =>
-                                             state ++ partnerId ++ " ",
-                                           "",
-                                           partnerLabel.supporters
-                                           |> List.map(UserId.toString)
-                                         )
-                                    )
-                                  )
-                                  (
-                                    if (partnerLabel.supporters
-                                        |> List.mem(session.userId) == false) {
-                                      <button
-                                        onClick=(
-                                          _e =>
-                                            send(
-                                              EndorsePartnerLabel(
-                                                partnerLabel.processId
-                                              )
-                                            )
-                                        )>
-                                        (text("Endorse Partner Label"))
-                                      </button>;
-                                    } else {
-                                      ReasonReact.nullElement;
-                                    }
-                                  )
-                                </li>
-                              )
-                         );
-                       ReasonReact.arrayToElement(pending);
-                     }
-                   </ul>
-                 </div>
-                 <PartnerLabelInput
-                   submit=(proposePartnerLabel(send, m.userId))
-                 />
+                 <div> (text(m.userId |> UserId.toString)) </div>
                </li>
              )
         )
@@ -338,17 +218,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
               "PartnerPolicy - ActivationThreshold "
               ++ string_of_float(
                    state.viewModel.partnerPolicy.thresholdPercent
-                 )
-              ++ "%"
-            )
-          )
-        </div>
-        <div>
-          (
-            text(
-              "PartnerLabelPolicy - ActivationThreshold "
-              ++ string_of_float(
-                   state.viewModel.partnerLabelPolicy.thresholdPercent
                  )
               ++ "%"
             )

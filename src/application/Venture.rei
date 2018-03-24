@@ -43,9 +43,7 @@ let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
 module Cmd: {
   module Create: {
     type result = (Index.t, t);
-    let exec:
-      (Session.Data.t, ~name: string, ~initialLabelIds: list(LabelId.t)) =>
-      Js.Promise.t(result);
+    let exec: (Session.Data.t, ~name: string) => Js.Promise.t(result);
   };
   module Synchronize: {
     type result =
@@ -60,17 +58,6 @@ module Cmd: {
     let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };
   module EndorsePartner: {
-    type result =
-      | Ok(t);
-    let exec: (~processId: processId, t) => Js.Promise.t(result);
-  };
-  module ProposePartnerLabel: {
-    type result =
-      | Ok(t);
-    let exec:
-      (~partnerId: userId, ~labelId: labelId, t) => Js.Promise.t(result);
-  };
-  module EndorsePartnerLabel: {
     type result =
       | Ok(t);
     let exec: (~processId: processId, t) => Js.Promise.t(result);

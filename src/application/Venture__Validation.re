@@ -17,7 +17,6 @@ type state = {
   partnerData: list((processId, Partner.Data.t)),
   custodianData: list((processId, Custodian.Data.t)),
   accountCreationData: list((processId, AccountCreation.Data.t)),
-  partnerLabelData: list((processId, PartnerLabel.Data.t)),
   processes: list((processId, approvalProcess)),
   completedProcesses: list(processId),
   policies: list((string, Policy.t)),
@@ -30,7 +29,6 @@ let makeState = () => {
   partnerIds: [],
   partnerAddresses: [],
   partnerPubKeys: [],
-  partnerLabelData: [],
   metaPolicy: Policy.absolute,
   partnerData: [],
   custodianData: [],
@@ -91,8 +89,7 @@ let apply = (event: Event.t, state) =>
         [
           Partner.processName,
           Custodian.processName,
-          AccountCreation.processName,
-          PartnerLabel.processName
+          AccountCreation.processName
         ]
         |> List.map(n => (n, metaPolicy)),
       creatorData: Partner.Data.{id: creatorId, pubKey: creatorPubKey}
@@ -109,14 +106,9 @@ let apply = (event: Event.t, state) =>
       ...addProcess(proposal, state),
       accountCreationData: [(processId, data), ...state.accountCreationData]
     }
-  | PartnerLabelProposed({processId, data} as proposal) => {
-      ...addProcess(proposal, state),
-      partnerLabelData: [(processId, data), ...state.partnerLabelData]
-    }
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
   | CustodianEndorsed(endorsement) => endorseProcess(endorsement, state)
   | AccountCreationEndorsed(endorsement) => endorseProcess(endorsement, state)
-  | PartnerLabelEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerAccepted({data}) => {
       ...state,
       partnerIds: [data.id, ...state.partnerIds],
@@ -127,7 +119,6 @@ let apply = (event: Event.t, state) =>
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
   | CustodianAccepted(acceptance) => completeProcess(acceptance, state)
-  | PartnerLabelAccepted(acceptance) => completeProcess(acceptance, state)
   };
 
 type result =
@@ -221,9 +212,6 @@ let validateAccountCreationData =
     ({accountIndex}: AccountCreation.Data.t, {accountCreationData}) =>
   accountIndex == (accountCreationData |> List.length) ? Ok : BadData;
 
-let validatePartneLabelData = (data: PartnerLabel.Data.t, {partnerIds}) =>
-  partnerIds |> List.mem(data.partnerId) ? Ok : BadData;
-
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
@@ -241,16 +229,9 @@ let validateEvent =
       AccountCreation.processName,
       proposal
     )
-  | PartnerLabelProposed(proposal) =>
-    validateProposal(
-      ~validateData=validatePartneLabelData,
-      PartnerLabel.processName,
-      proposal
-    )
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | CustodianEndorsed(endorsement) => validateEndorsement(endorsement)
   | AccountCreationEndorsed(endorsement) => validateEndorsement(endorsement)
-  | PartnerLabelEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.partnerData, state)
     )
@@ -259,9 +240,6 @@ let validateEvent =
     )
   | AccountCreationAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.accountCreationData, state)
-    )
-  | PartnerLabelAccepted(acceptance) => (
-      state => validateAcceptance(acceptance, state.partnerLabelData, state)
     );
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>

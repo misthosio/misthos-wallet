@@ -261,7 +261,7 @@ module Cmd = {
   module Create = {
     type result = (Index.t, t);
     let exec =
-        (session: Session.Data.t, ~name as ventureName, ~initialLabelIds) => {
+        (session: Session.Data.t, ~name as ventureName) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
         Event.VentureCreated.make(
@@ -269,7 +269,6 @@ module Cmd = {
           ~creatorId=session.userId,
           ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
           ~metaPolicy=defaultPolicy,
-          ~initialLabelIds
         );
       Js.Promise.all2((
         Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
@@ -318,45 +317,6 @@ module Cmd = {
         venture
         |> apply(
              Event.makePartnerEndorsed(~processId, ~supporterId=session.userId)
-           )
-        |> persist
-        |> then_(p => resolve(Ok(p)))
-      );
-    };
-  };
-  module ProposePartnerLabel = {
-    type result =
-      | Ok(t);
-    let exec = (~partnerId, ~labelId, {session, state} as venture) => {
-      logMessage("Executing 'ProposePartnerLabel' command");
-      Js.Promise.(
-        venture
-        |> apply(
-             Event.makePartnerLabelProposed(
-               ~partnerId,
-               ~supporterId=session.userId,
-               ~labelId,
-               ~policy=
-                 state.policies |> List.assoc(Event.PartnerLabel.processName)
-             )
-           )
-        |> persist
-        |> then_(p => resolve(Ok(p)))
-      );
-    };
-  };
-  module EndorsePartnerLabel = {
-    type result =
-      | Ok(t);
-    let exec = (~processId, {session} as venture) => {
-      logMessage("Executing 'EndorsePartnerLabel' command");
-      Js.Promise.(
-        venture
-        |> apply(
-             Event.makePartnerLabelEndorsed(
-               ~processId,
-               ~supporterId=session.userId
-             )
            )
         |> persist
         |> then_(p => resolve(Ok(p)))

@@ -7,18 +7,15 @@ module VentureCreated = {
     creatorId: userId,
     creatorPubKey: string,
     metaPolicy: Policy.t,
-    systemIssuer: Bitcoin.ECPair.t,
-    initialLabelIds: list(labelId)
+    systemIssuer: Bitcoin.ECPair.t
   };
-  let make =
-      (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~initialLabelIds) => {
+  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
     ventureId: VentureId.make(),
     ventureName,
     creatorId,
     creatorPubKey,
     metaPolicy,
-    systemIssuer: Bitcoin.ECPair.makeRandom(),
-    initialLabelIds
+    systemIssuer: Bitcoin.ECPair.makeRandom()
   };
   let encode = event =>
     Json.Encode.(
@@ -29,8 +26,7 @@ module VentureCreated = {
         ("creatorId", UserId.encode(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
-        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
-        ("initialLabelIds", list(LabelId.encode, event.initialLabelIds))
+        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer)))
       ])
     );
   let decode = raw =>
@@ -41,8 +37,7 @@ module VentureCreated = {
       creatorPubKey: raw |> field("creatorPubKey", string),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
-        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
-      initialLabelIds: raw |> field("initialLabelIds", list(LabelId.decode))
+        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF
     };
 };
 
@@ -79,28 +74,6 @@ module Custodian = {
   include (val EventTypes.makeProcess("Custodian"))(Data);
 };
 
-module PartnerLabel = {
-  module Data = {
-    type t = {
-      partnerId: userId,
-      labelId
-    };
-    let encode = event =>
-      Json.Encode.(
-        object_([
-          ("partnerId", UserId.encode(event.partnerId)),
-          ("labelId", LabelId.encode(event.labelId))
-        ])
-      );
-    let decode = raw =>
-      Json.Decode.{
-        partnerId: raw |> field("partnerId", UserId.decode),
-        labelId: raw |> field("labelId", LabelId.decode)
-      };
-  };
-  include (val EventTypes.makeProcess("PartnerLabel"))(Data);
-};
-
 module AccountCreation = {
   module Data = {
     type t = {
@@ -133,10 +106,7 @@ type t =
   | CustodianAccepted(Custodian.Acceptance.t)
   | AccountCreationProposed(AccountCreation.Proposal.t)
   | AccountCreationEndorsed(AccountCreation.Endorsement.t)
-  | AccountCreationAccepted(AccountCreation.Acceptance.t)
-  | PartnerLabelProposed(PartnerLabel.Proposal.t)
-  | PartnerLabelEndorsed(PartnerLabel.Endorsement.t)
-  | PartnerLabelAccepted(PartnerLabel.Acceptance.t);
+  | AccountCreationAccepted(AccountCreation.Acceptance.t);
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
@@ -159,20 +129,6 @@ let makeCustodianProposed = (~supporterId, ~partnerId, ~policy) =>
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsement.make(~processId, ~supporterId));
 
-let makePartnerLabelProposed = (~partnerId, ~labelId, ~supporterId, ~policy) =>
-  PartnerLabelProposed(
-    PartnerLabel.Proposal.make(
-      ~supporterId,
-      ~policy,
-      PartnerLabel.Data.{partnerId, labelId}
-    )
-  );
-
-let makePartnerLabelEndorsed = (~processId, ~supporterId) =>
-  PartnerLabelEndorsed(
-    PartnerLabel.Endorsement.make(~processId, ~supporterId)
-  );
-
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
@@ -184,17 +140,13 @@ let encode =
   | CustodianAccepted(event) => Custodian.Acceptance.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
-  | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
-  | PartnerLabelProposed(event) => PartnerLabel.Proposal.encode(event)
-  | PartnerLabelEndorsed(event) => PartnerLabel.Endorsement.encode(event)
-  | PartnerLabelAccepted(event) => PartnerLabel.Acceptance.encode(event);
+  | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event);
 
 let isSystemEvent =
   fun
   | PartnerAccepted(_)
   | CustodianAccepted(_)
   | AccountCreationAccepted(_)
-  | PartnerLabelAccepted(_)
   | _ => false;
 
 exception UnknownEvent(Js.Json.t);
@@ -215,12 +167,6 @@ let decode = raw => {
     AccountCreationEndorsed(AccountCreation.Endorsement.decode(raw))
   | "AccountCreationAccepted" =>
     AccountCreationAccepted(AccountCreation.Acceptance.decode(raw))
-  | "PartnerLabelProposed" =>
-    PartnerLabelProposed(PartnerLabel.Proposal.decode(raw))
-  | "PartnerLabelEndorsed" =>
-    PartnerLabelEndorsed(PartnerLabel.Endorsement.decode(raw))
-  | "PartnerLabelAccepted" =>
-    PartnerLabelAccepted(PartnerLabel.Acceptance.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };
