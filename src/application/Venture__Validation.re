@@ -18,8 +18,6 @@ type state = {
   custodianData: list((processId, Custodian.Data.t)),
   accountCreationData: list((processId, AccountCreation.Data.t)),
   partnerLabelData: list((processId, PartnerLabel.Data.t)),
-  partnerDistributionData: list((processId, PartnerDistribution.Data.t)),
-  labelDistributionData: list((processId, LabelDistribution.Data.t)),
   processes: list((processId, approvalProcess)),
   completedProcesses: list(processId),
   policies: list((string, Policy.t)),
@@ -37,8 +35,6 @@ let makeState = () => {
   partnerData: [],
   custodianData: [],
   accountCreationData: [],
-  partnerDistributionData: [],
-  labelDistributionData: [],
   processes: [],
   completedProcesses: [],
   policies: [],
@@ -117,28 +113,10 @@ let apply = (event: Event.t, state) =>
       ...addProcess(proposal, state),
       partnerLabelData: [(processId, data), ...state.partnerLabelData]
     }
-  | PartnerDistributionProposed({processId, data} as proposal) => {
-      ...addProcess(proposal, state),
-      partnerDistributionData: [
-        (processId, data),
-        ...state.partnerDistributionData
-      ]
-    }
-  | LabelDistributionProposed({processId, data} as proposal) => {
-      ...addProcess(proposal, state),
-      labelDistributionData: [
-        (processId, data),
-        ...state.labelDistributionData
-      ]
-    }
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
   | CustodianEndorsed(endorsement) => endorseProcess(endorsement, state)
   | AccountCreationEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerLabelEndorsed(endorsement) => endorseProcess(endorsement, state)
-  | PartnerDistributionEndorsed(endorsement) =>
-    endorseProcess(endorsement, state)
-  | LabelDistributionEndorsed(endorsement) =>
-    endorseProcess(endorsement, state)
   | PartnerAccepted({data}) => {
       ...state,
       partnerIds: [data.id, ...state.partnerIds],
@@ -150,9 +128,6 @@ let apply = (event: Event.t, state) =>
     }
   | CustodianAccepted(acceptance) => completeProcess(acceptance, state)
   | PartnerLabelAccepted(acceptance) => completeProcess(acceptance, state)
-  | PartnerDistributionAccepted(acceptance) =>
-    completeProcess(acceptance, state)
-  | LabelDistributionAccepted(acceptance) => completeProcess(acceptance, state)
   };
 
 type result =
@@ -272,17 +247,10 @@ let validateEvent =
       PartnerLabel.processName,
       proposal
     )
-  | PartnerDistributionProposed(proposal) =>
-    validateProposal(PartnerDistribution.processName, proposal)
-  | LabelDistributionProposed(proposal) =>
-    validateProposal(LabelDistribution.processName, proposal)
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | CustodianEndorsed(endorsement) => validateEndorsement(endorsement)
   | AccountCreationEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerLabelEndorsed(endorsement) => validateEndorsement(endorsement)
-  | PartnerDistributionEndorsed(endorsement) =>
-    validateEndorsement(endorsement)
-  | LabelDistributionEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.partnerData, state)
     )
@@ -294,14 +262,6 @@ let validateEvent =
     )
   | PartnerLabelAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.partnerLabelData, state)
-    )
-  | PartnerDistributionAccepted(acceptance) => (
-      state =>
-        validateAcceptance(acceptance, state.partnerDistributionData, state)
-    )
-  | LabelDistributionAccepted(acceptance) => (
-      state =>
-        validateAcceptance(acceptance, state.labelDistributionData, state)
     );
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>

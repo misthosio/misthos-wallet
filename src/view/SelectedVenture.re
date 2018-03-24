@@ -368,7 +368,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           (text("Propose Partner"))
         </button>
       </div>
-      <DistributionGraphView graph=state.viewModel.distributionGraph />
     </div>;
   }
 };

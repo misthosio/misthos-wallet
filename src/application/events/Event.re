@@ -8,8 +8,7 @@ module VentureCreated = {
     creatorPubKey: string,
     metaPolicy: Policy.t,
     systemIssuer: Bitcoin.ECPair.t,
-    initialLabelIds: list(labelId),
-    distributionGraph: DistributionGraph.t
+    initialLabelIds: list(labelId)
   };
   let make =
       (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~initialLabelIds) => {
@@ -19,8 +18,7 @@ module VentureCreated = {
     creatorPubKey,
     metaPolicy,
     systemIssuer: Bitcoin.ECPair.makeRandom(),
-    initialLabelIds,
-    distributionGraph: DistributionGraph.make(creatorId, initialLabelIds)
+    initialLabelIds
   };
   let encode = event =>
     Json.Encode.(
@@ -32,11 +30,7 @@ module VentureCreated = {
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
         ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
-        ("initialLabelIds", list(LabelId.encode, event.initialLabelIds)),
-        (
-          "distributionGraph",
-          DistributionGraph.encode(event.distributionGraph)
-        )
+        ("initialLabelIds", list(LabelId.encode, event.initialLabelIds))
       ])
     );
   let decode = raw =>
@@ -48,9 +42,7 @@ module VentureCreated = {
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
         raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
-      initialLabelIds: raw |> field("initialLabelIds", list(LabelId.decode)),
-      distributionGraph:
-        raw |> field("distributionGraph", DistributionGraph.decode)
+      initialLabelIds: raw |> field("initialLabelIds", list(LabelId.decode))
     };
 };
 
@@ -131,24 +123,6 @@ module AccountCreation = {
   include (val EventTypes.makeProcess("AccountCreation"))(Data);
 };
 
-module PartnerDistribution = {
-  module Data = {
-    type t = DistributionGraph.PartnerDistribution.t;
-    let encode = DistributionGraph.PartnerDistribution.encode;
-    let decode = DistributionGraph.PartnerDistribution.decode;
-  };
-  include (val EventTypes.makeProcess("PartnerDistribution"))(Data);
-};
-
-module LabelDistribution = {
-  module Data = {
-    type t = DistributionGraph.LabelDistribution.t;
-    let encode = DistributionGraph.LabelDistribution.encode;
-    let decode = DistributionGraph.LabelDistribution.decode;
-  };
-  include (val EventTypes.makeProcess("LabelDistribution"))(Data);
-};
-
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposal.t)
@@ -162,13 +136,7 @@ type t =
   | AccountCreationAccepted(AccountCreation.Acceptance.t)
   | PartnerLabelProposed(PartnerLabel.Proposal.t)
   | PartnerLabelEndorsed(PartnerLabel.Endorsement.t)
-  | PartnerLabelAccepted(PartnerLabel.Acceptance.t)
-  | PartnerDistributionProposed(PartnerDistribution.Proposal.t)
-  | PartnerDistributionEndorsed(PartnerDistribution.Endorsement.t)
-  | PartnerDistributionAccepted(PartnerDistribution.Acceptance.t)
-  | LabelDistributionProposed(LabelDistribution.Proposal.t)
-  | LabelDistributionEndorsed(LabelDistribution.Endorsement.t)
-  | LabelDistributionAccepted(LabelDistribution.Acceptance.t);
+  | PartnerLabelAccepted(PartnerLabel.Acceptance.t);
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
@@ -205,36 +173,6 @@ let makePartnerLabelEndorsed = (~processId, ~supporterId) =>
     PartnerLabel.Endorsement.make(~processId, ~supporterId)
   );
 
-let makePartnerDistributionProposed =
-    (~supporterId, ~policy, ~labelId, ~distribution) =>
-  PartnerDistributionProposed(
-    PartnerDistribution.Proposal.make(
-      ~supporterId,
-      ~policy,
-      {labelId, distribution}
-    )
-  );
-
-let makePartnerDistributionEndorsed = (~processId, ~supporterId) =>
-  PartnerDistributionEndorsed(
-    PartnerDistribution.Endorsement.make(~processId, ~supporterId)
-  );
-
-let makeLabelDistributionProposed =
-    (~supporterId, ~policy, ~labelId, ~distribution) =>
-  LabelDistributionProposed(
-    LabelDistribution.Proposal.make(
-      ~supporterId,
-      ~policy,
-      {labelId, distribution}
-    )
-  );
-
-let makeLabelDistributionEndorsed = (~processId, ~supporterId) =>
-  LabelDistributionEndorsed(
-    LabelDistribution.Endorsement.make(~processId, ~supporterId)
-  );
-
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
@@ -249,19 +187,7 @@ let encode =
   | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
   | PartnerLabelProposed(event) => PartnerLabel.Proposal.encode(event)
   | PartnerLabelEndorsed(event) => PartnerLabel.Endorsement.encode(event)
-  | PartnerLabelAccepted(event) => PartnerLabel.Acceptance.encode(event)
-  | PartnerDistributionProposed(event) =>
-    PartnerDistribution.Proposal.encode(event)
-  | PartnerDistributionEndorsed(event) =>
-    PartnerDistribution.Endorsement.encode(event)
-  | PartnerDistributionAccepted(event) =>
-    PartnerDistribution.Acceptance.encode(event)
-  | LabelDistributionProposed(event) =>
-    LabelDistribution.Proposal.encode(event)
-  | LabelDistributionEndorsed(event) =>
-    LabelDistribution.Endorsement.encode(event)
-  | LabelDistributionAccepted(event) =>
-    LabelDistribution.Acceptance.encode(event);
+  | PartnerLabelAccepted(event) => PartnerLabel.Acceptance.encode(event);
 
 let isSystemEvent =
   fun
@@ -295,18 +221,6 @@ let decode = raw => {
     PartnerLabelEndorsed(PartnerLabel.Endorsement.decode(raw))
   | "PartnerLabelAccepted" =>
     PartnerLabelAccepted(PartnerLabel.Acceptance.decode(raw))
-  | "PartnerDistributionProposed" =>
-    PartnerDistributionProposed(PartnerDistribution.Proposal.decode(raw))
-  | "PartnerDistributionEndorsed" =>
-    PartnerDistributionEndorsed(PartnerDistribution.Endorsement.decode(raw))
-  | "PartnerDistributionAccepted" =>
-    PartnerDistributionAccepted(PartnerDistribution.Acceptance.decode(raw))
-  | "LabelDistributionProposed" =>
-    LabelDistributionProposed(LabelDistribution.Proposal.decode(raw))
-  | "LabelDistributionEndorsed" =>
-    LabelDistributionEndorsed(LabelDistribution.Endorsement.decode(raw))
-  | "LabelDistributionAccepted" =>
-    LabelDistributionAccepted(LabelDistribution.Acceptance.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };
