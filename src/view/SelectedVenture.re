@@ -18,9 +18,7 @@ type action =
   | ProposePartner
   | EndorsePartner(ProcessId.t)
   | ProposePartnerLabel(UserId.t, LabelId.t)
-  | EndorsePartnerLabel(ProcessId.t)
-  | ProposeContribution(int, int, string, string)
-  | EndorseContribution(ProcessId.t);
+  | EndorsePartnerLabel(ProcessId.t);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
@@ -29,12 +27,6 @@ let changeNewPartnerId = event =>
 
 let proposePartnerLabel = (send, userId, ~labelId) =>
   send(ProposePartnerLabel(userId, labelId));
-
-let proposeContribution =
-    (send, ~amountInteger, ~amountFraction, ~currency, ~description) =>
-  send(
-    ProposeContribution(amountInteger, amountFraction, currency, description)
-  );
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
 
@@ -185,53 +177,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         )
       )
-    | ProposeContribution(amountInteger, amountFraction, currency, description) =>
-      ReasonReact.SideEffects(
-        (
-          ({send}) =>
-            Js.Promise.(
-              Cmd.ProposeContribution.(
-                state.venture
-                |> exec(
-                     ~amountInteger,
-                     ~amountFraction,
-                     ~currency,
-                     ~description
-                   )
-                |> then_(result =>
-                     (
-                       switch result {
-                       | Ok(venture) => send(UpdateVenture(venture))
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        )
-      )
-    | EndorseContribution(processId) =>
-      ReasonReact.SideEffects(
-        (
-          ({send}) =>
-            Js.Promise.(
-              Cmd.EndorseContribution.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch result {
-                       | Ok(venture) => send(UpdateVenture(venture))
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        )
-      )
     | UpdateVenture(venture) =>
       Js.Promise.(
         Venture.getPartnerHistoryUrls(venture)
@@ -365,70 +310,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
              )
         )
       );
-    let contributions =
-      ReasonReact.arrayToElement(
-        Array.of_list(
-          ViewModel.getContributions(state.viewModel)
-          |> List.filter((contribution: ViewModel.contribution) =>
-               contribution.accepted == true
-             )
-          |> List.map((contribution: ViewModel.contribution) =>
-               <li key=(contribution.processId |> ProcessId.toString)>
-                 (
-                   text(
-                     "'"
-                     ++ contribution.description
-                     ++ "' endorsed by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          contribution.supporters |> List.map(UserId.toString)
-                        )
-                   )
-                 )
-               </li>
-             )
-        )
-      );
-    let contributionProcesses =
-      ReasonReact.arrayToElement(
-        Array.of_list(
-          ViewModel.getContributions(state.viewModel)
-          |> List.filter((contribution: ViewModel.contribution) =>
-               contribution.accepted == false
-             )
-          |> List.map((contribution: ViewModel.contribution) =>
-               <li key=(contribution.processId |> ProcessId.toString)>
-                 (
-                   text(
-                     "'"
-                     ++ contribution.description
-                     ++ "' endorsed by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          contribution.supporters |> List.map(UserId.toString)
-                        )
-                   )
-                 )
-                 (
-                   if (contribution.supporters
-                       |> List.mem(session.userId) == false) {
-                     <button
-                       onClick=(
-                         _e =>
-                           send(EndorseContribution(contribution.processId))
-                       )>
-                       (text("Endorse Contribution"))
-                     </button>;
-                   } else {
-                     ReasonReact.nullElement;
-                   }
-                 )
-               </li>
-             )
-        )
-      );
     <div>
       <div>
         <h2>
@@ -465,17 +346,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         <div>
           (
             text(
-              "ContributionPolicy - ActivationThreshold "
-              ++ string_of_float(
-                   state.viewModel.contributionPolicy.thresholdPercent
-                 )
-              ++ "%"
-            )
-          )
-        </div>
-        <div>
-          (
-            text(
               "PartnerLabelPolicy - ActivationThreshold "
               ++ string_of_float(
                    state.viewModel.partnerLabelPolicy.thresholdPercent
@@ -484,11 +354,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
           )
         </div>
-        <h3> (text("Contributions:")) </h3>
-        <ul> contributions </ul>
-        <h4> (text("Pending acceptance:")) </h4>
-        <ul> contributionProcesses </ul>
-        <ContributionInput submit=(proposeContribution(send)) />
         <h3> (text("Partners:")) </h3>
         <ul> partners </ul>
         <h4> (text("Prospects:")) </h4>

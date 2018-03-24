@@ -78,19 +78,11 @@ module Partner = {
 
 module Custodian = {
   module Data = {
-    type t = {
-      partnerId: userId
-    };
+    type t = {partnerId: userId};
     let encode = event =>
-      Json.Encode.(
-        object_([
-          ("partnerId", UserId.encode(event.partnerId)),
-        ])
-      );
+      Json.Encode.(object_([("partnerId", UserId.encode(event.partnerId))]));
     let decode = raw =>
-      Json.Decode.{
-        partnerId: raw |> field("partnerId", UserId.decode),
-      };
+      Json.Decode.{partnerId: raw |> field("partnerId", UserId.decode)};
   };
   include (val EventTypes.makeProcess("Custodian"))(Data);
 };
@@ -117,32 +109,26 @@ module PartnerLabel = {
   include (val EventTypes.makeProcess("PartnerLabel"))(Data);
 };
 
-module Contribution = {
+module AccountCreation = {
   module Data = {
     type t = {
-      amountInteger: int,
-      amountFraction: int,
-      currency: string,
-      description: string
+      accountIndex: int,
+      name: string
     };
     let encode = event =>
       Json.Encode.(
         object_([
-          ("amountInteger", int(event.amountInteger)),
-          ("amountFraction", int(event.amountFraction)),
-          ("currency", string(event.currency)),
-          ("description", string(event.description))
+          ("accountIndex", int(event.accountIndex)),
+          ("name", string(event.name))
         ])
       );
     let decode = raw =>
       Json.Decode.{
-        amountInteger: raw |> field("amountInteger", int),
-        amountFraction: raw |> field("amountFraction", int),
-        currency: raw |> field("currency", string),
-        description: raw |> field("description", string)
+        accountIndex: raw |> field("accountIndex", int),
+        name: raw |> field("name", string)
       };
   };
-  include (val EventTypes.makeProcess("Contribution"))(Data);
+  include (val EventTypes.makeProcess("AccountCreation"))(Data);
 };
 
 module PartnerDistribution = {
@@ -165,18 +151,18 @@ module LabelDistribution = {
 
 type t =
   | VentureCreated(VentureCreated.t)
-  | CustodianProposed(Custodian.Proposal.t)
-  | CustodianEndorsed(Custodian.Endorsement.t)
-  | CustodianAccepted(Custodian.Acceptance.t)
   | PartnerProposed(Partner.Proposal.t)
   | PartnerEndorsed(Partner.Endorsement.t)
   | PartnerAccepted(Partner.Acceptance.t)
+  | CustodianProposed(Custodian.Proposal.t)
+  | CustodianEndorsed(Custodian.Endorsement.t)
+  | CustodianAccepted(Custodian.Acceptance.t)
+  | AccountCreationProposed(AccountCreation.Proposal.t)
+  | AccountCreationEndorsed(AccountCreation.Endorsement.t)
+  | AccountCreationAccepted(AccountCreation.Acceptance.t)
   | PartnerLabelProposed(PartnerLabel.Proposal.t)
   | PartnerLabelEndorsed(PartnerLabel.Endorsement.t)
   | PartnerLabelAccepted(PartnerLabel.Acceptance.t)
-  | ContributionProposed(Contribution.Proposal.t)
-  | ContributionEndorsed(Contribution.Endorsement.t)
-  | ContributionAccepted(Contribution.Acceptance.t)
   | PartnerDistributionProposed(PartnerDistribution.Proposal.t)
   | PartnerDistributionEndorsed(PartnerDistribution.Endorsement.t)
   | PartnerDistributionAccepted(PartnerDistribution.Acceptance.t)
@@ -219,28 +205,6 @@ let makePartnerLabelEndorsed = (~processId, ~supporterId) =>
     PartnerLabel.Endorsement.make(~processId, ~supporterId)
   );
 
-let makeContributionProposed =
-    (
-      ~supporterId,
-      ~amountInteger,
-      ~amountFraction,
-      ~currency,
-      ~description,
-      ~policy
-    ) =>
-  ContributionProposed(
-    Contribution.Proposal.make(
-      ~supporterId,
-      ~policy,
-      Contribution.Data.{amountInteger, amountFraction, currency, description}
-    )
-  );
-
-let makeContributionEndorsed = (~processId, ~supporterId) =>
-  ContributionEndorsed(
-    Contribution.Endorsement.make(~processId, ~supporterId)
-  );
-
 let makePartnerDistributionProposed =
     (~supporterId, ~policy, ~labelId, ~distribution) =>
   PartnerDistributionProposed(
@@ -280,12 +244,12 @@ let encode =
   | CustodianProposed(event) => Custodian.Proposal.encode(event)
   | CustodianEndorsed(event) => Custodian.Endorsement.encode(event)
   | CustodianAccepted(event) => Custodian.Acceptance.encode(event)
+  | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
+  | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
+  | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
   | PartnerLabelProposed(event) => PartnerLabel.Proposal.encode(event)
   | PartnerLabelEndorsed(event) => PartnerLabel.Endorsement.encode(event)
   | PartnerLabelAccepted(event) => PartnerLabel.Acceptance.encode(event)
-  | ContributionProposed(event) => Contribution.Proposal.encode(event)
-  | ContributionEndorsed(event) => Contribution.Endorsement.encode(event)
-  | ContributionAccepted(event) => Contribution.Acceptance.encode(event)
   | PartnerDistributionProposed(event) =>
     PartnerDistribution.Proposal.encode(event)
   | PartnerDistributionEndorsed(event) =>
@@ -303,8 +267,8 @@ let isSystemEvent =
   fun
   | PartnerAccepted(_)
   | CustodianAccepted(_)
+  | AccountCreationAccepted(_)
   | PartnerLabelAccepted(_)
-  | ContributionAccepted(_) => true
   | _ => false;
 
 exception UnknownEvent(Js.Json.t);
@@ -319,18 +283,18 @@ let decode = raw => {
   | "CustodianProposed" => CustodianProposed(Custodian.Proposal.decode(raw))
   | "CustodianEndorsed" => CustodianEndorsed(Custodian.Endorsement.decode(raw))
   | "CustodianAccepted" => CustodianAccepted(Custodian.Acceptance.decode(raw))
+  | "AccountCreationProposed" =>
+    AccountCreationProposed(AccountCreation.Proposal.decode(raw))
+  | "AccountCreationEndorsed" =>
+    AccountCreationEndorsed(AccountCreation.Endorsement.decode(raw))
+  | "AccountCreationAccepted" =>
+    AccountCreationAccepted(AccountCreation.Acceptance.decode(raw))
   | "PartnerLabelProposed" =>
     PartnerLabelProposed(PartnerLabel.Proposal.decode(raw))
   | "PartnerLabelEndorsed" =>
     PartnerLabelEndorsed(PartnerLabel.Endorsement.decode(raw))
   | "PartnerLabelAccepted" =>
     PartnerLabelAccepted(PartnerLabel.Acceptance.decode(raw))
-  | "ContributionProposed" =>
-    ContributionProposed(Contribution.Proposal.decode(raw))
-  | "ContributionEndorsed" =>
-    ContributionEndorsed(Contribution.Endorsement.decode(raw))
-  | "ContributionAccepted" =>
-    ContributionAccepted(Contribution.Acceptance.decode(raw))
   | "PartnerDistributionProposed" =>
     PartnerDistributionProposed(PartnerDistribution.Proposal.decode(raw))
   | "PartnerDistributionEndorsed" =>

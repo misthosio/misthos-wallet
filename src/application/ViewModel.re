@@ -18,25 +18,14 @@ type prospect = {
   endorsedBy: list(userId)
 };
 
-type contribution = {
-  processId,
-  amountInteger: int,
-  amountFraction: int,
-  description: string,
-  supporters: list(userId),
-  accepted: bool
-};
-
 type t = {
   name: string,
   partners: list(partner),
   partnerLabelProcesses: list((processId, partnerLabel)),
   prospects: list(prospect),
-  contributions: list(contribution),
   distributionGraph: DistributionGraph.t,
   metaPolicy: Policy.t,
   partnerPolicy: Policy.t,
-  contributionPolicy: Policy.t,
   partnerLabelPolicy: Policy.t
 };
 
@@ -44,12 +33,10 @@ let make = () => {
   name: "",
   partners: [],
   prospects: [],
-  contributions: [],
   partnerLabelProcesses: [],
   distributionGraph: DistributionGraph.make(UserId.fromString(""), []),
   metaPolicy: Policy.absolute,
   partnerPolicy: Policy.absolute,
-  contributionPolicy: Policy.absolute,
   partnerLabelPolicy: Policy.absolute
 };
 
@@ -61,7 +48,6 @@ let apply = (event: Event.t, state) =>
       distributionGraph,
       metaPolicy,
       partnerPolicy: metaPolicy,
-      contributionPolicy: metaPolicy,
       partnerLabelPolicy: metaPolicy
     }
   | PartnerEndorsed({processId, supporterId}) => {
@@ -85,37 +71,6 @@ let apply = (event: Event.t, state) =>
       partners: [{userId: data.id, labels: []}, ...state.partners],
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id))
-    }
-  | ContributionProposed({processId, supporterId, data}) => {
-      ...state,
-      contributions: [
-        {
-          processId,
-          amountInteger: data.amountInteger,
-          amountFraction: data.amountFraction,
-          description: data.description,
-          accepted: false,
-          supporters: [supporterId]
-        },
-        ...state.contributions
-      ]
-    }
-  | ContributionEndorsed({processId, supporterId}) => {
-      ...state,
-      contributions:
-        state.contributions
-        |> List.map(c =>
-             ProcessId.eq(c.processId, processId) ?
-               {...c, supporters: [supporterId, ...c.supporters]} : c
-           )
-    }
-  | ContributionAccepted({processId}) => {
-      ...state,
-      contributions:
-        state.contributions
-        |> List.map(c =>
-             ProcessId.eq(c.processId, processId) ? {...c, accepted: true} : c
-           )
     }
   | PartnerLabelProposed({processId, supporterId, data}) => {
       ...state,
@@ -182,7 +137,5 @@ let getPendingPartnerLabels = (partnerId, state) =>
      );
 
 let getProspects = state => state.prospects;
-
-let getContributions = state => state.contributions;
 
 let ventureName = state => state.name;

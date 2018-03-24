@@ -15,8 +15,6 @@ module CustodianApproval = Watcher__CustodianApproval;
 
 module PartnerLabelApproval = Watcher__PartnerLabelApproval;
 
-module ContributionApproval = Watcher__ContributionApproval;
-
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch event {
   | VentureCreated(event) => Some(Initialize.make(session, event, log))
@@ -24,8 +22,6 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   | CustodianProposed(proposal) => Some(CustodianApproval.make(proposal, log))
   | PartnerLabelProposed(proposal) =>
     Some(PartnerLabelApproval.make(proposal, log))
-  | ContributionProposed(proposal) =>
-    Some(ContributionApproval.make(proposal, log))
   | _ => None
   };
 

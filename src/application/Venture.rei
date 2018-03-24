@@ -75,24 +75,6 @@ module Cmd: {
       | Ok(t);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
-  module ProposeContribution: {
-    type result =
-      | Ok(t);
-    let exec:
-      (
-        ~amountInteger: int,
-        ~amountFraction: int,
-        ~currency: string,
-        ~description: string,
-        t
-      ) =>
-      Js.Promise.t(result);
-  };
-  module EndorseContribution: {
-    type result =
-      | Ok(t);
-    let exec: (~processId: processId, t) => Js.Promise.t(result);
-  };
   /* module ProposeOutputDistributionNode: { */
   /*   type result = */
   /*     | Ok(t); */
