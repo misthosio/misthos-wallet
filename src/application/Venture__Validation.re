@@ -118,6 +118,7 @@ let apply = (event: Event.t, state) =>
       ],
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
+  | AccountCreationAccepted(acceptance) => completeProcess(acceptance, state)
   | CustodianAccepted(acceptance) => completeProcess(acceptance, state)
   };
 

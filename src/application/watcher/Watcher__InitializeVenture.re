@@ -2,9 +2,15 @@ open Event;
 
 open PrimitiveTypes;
 
+let defaultAccountName = "default";
+
+let defaultAccountIndex = 0;
+
 type state =
   | ProposePartner
   | PartnerProposed(processId)
+  | ProposeAccountCreation
+  | AccountCreationProposed(processId)
   | ProposeCustodian
   | CustodianProposed(processId)
   | Complete;
@@ -27,6 +33,15 @@ let make =
             PartnerProposed(event.processId)
           | (PartnerProposed(processId), PartnerAccepted(event))
               when ProcessId.eq(processId, event.processId) =>
+            ProposeAccountCreation
+          | (ProposeAccountCreation, AccountCreationProposed(event))
+              when event.data.accountIndex == defaultAccountIndex =>
+            AccountCreationProposed(event.processId)
+          | (
+              AccountCreationProposed(processId),
+              AccountCreationAccepted(event)
+            )
+              when ProcessId.eq(processId, event.processId) =>
             ProposeCustodian
           | (ProposeCustodian, CustodianProposed(event))
               when UserId.eq(event.data.partnerId, creatorId) =>
@@ -47,6 +62,16 @@ let make =
                 ~supporterId=creatorId,
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
+                ~policy=metaPolicy
+              )
+            ))
+          | ProposeAccountCreation =>
+            Some((
+              appKeyPair,
+              Event.makeAccountCreationProposed(
+                ~supporterId=creatorId,
+                ~name=defaultAccountName,
+                ~accountIndex=defaultAccountIndex,
                 ~policy=metaPolicy
               )
             ))

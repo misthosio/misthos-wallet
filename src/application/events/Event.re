@@ -117,6 +117,15 @@ let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) 
     )
   );
 
+let makeAccountCreationProposed = (~supporterId, ~name, ~accountIndex, ~policy) =>
+  AccountCreationProposed(
+    AccountCreation.Proposal.make(
+      ~supporterId,
+      ~policy,
+      AccountCreation.Data.{accountIndex, name}
+    )
+  );
+
 let makeCustodianProposed = (~supporterId, ~partnerId, ~policy) =>
   CustodianProposed(
     Custodian.Proposal.make(
