@@ -88,8 +88,8 @@ let apply = (event: Event.t, state) =>
       policies:
         [
           Partner.processName,
-          Custodian.processName,
-          AccountCreation.processName
+          AccountCreation.processName,
+          Custodian.processName
         ]
         |> List.map(n => (n, metaPolicy)),
       creatorData: Partner.Data.{id: creatorId, pubKey: creatorPubKey}
