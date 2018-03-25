@@ -1,4 +1,5 @@
 dev:
+	bsb -clean-world
 	yarn start
 test:
 	jest --clearCache
