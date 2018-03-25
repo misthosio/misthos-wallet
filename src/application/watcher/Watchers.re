@@ -11,12 +11,16 @@ module Initialize = Watcher__InitializeVenture;
 
 module PartnerApproval = Watcher__PartnerApproval;
 
+module AccountCreationApproval = Watcher__AccountCreationApproval;
+
 module CustodianApproval = Watcher__CustodianApproval;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch event {
   | VentureCreated(event) => Some(Initialize.make(session, event, log))
   | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
+  | AccountCreationProposed(proposal) =>
+    Some(AccountCreationApproval.make(proposal, log))
   | CustodianProposed(proposal) => Some(CustodianApproval.make(proposal, log))
   | _ => None
   };

@@ -81,6 +81,7 @@ let make =
               Event.makeCustodianProposed(
                 ~partnerId=creatorId,
                 ~supporterId=creatorId,
+                ~accountIndex=defaultAccountIndex,
                 ~policy=metaPolicy
               )
             ))

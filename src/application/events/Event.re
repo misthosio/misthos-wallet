@@ -65,11 +65,22 @@ module Partner = {
 
 module Custodian = {
   module Data = {
-    type t = {partnerId: userId};
+    type t = {
+      partnerId: userId,
+      accountIndex: int
+    };
     let encode = event =>
-      Json.Encode.(object_([("partnerId", UserId.encode(event.partnerId))]));
+      Json.Encode.(
+        object_([
+          ("partnerId", UserId.encode(event.partnerId)),
+          ("accountIndex", int(event.accountIndex))
+        ])
+      );
     let decode = raw =>
-      Json.Decode.{partnerId: raw |> field("partnerId", UserId.decode)};
+      Json.Decode.{
+        partnerId: raw |> field("partnerId", UserId.decode),
+        accountIndex: raw |> field("accountIndex", int)
+      };
   };
   include (val EventTypes.makeProcess("Custodian"))(Data);
 };
@@ -126,12 +137,12 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIndex, ~policy) 
     )
   );
 
-let makeCustodianProposed = (~supporterId, ~partnerId, ~policy) =>
+let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIndex, ~policy) =>
   CustodianProposed(
     Custodian.Proposal.make(
       ~supporterId,
       ~policy,
-      Custodian.Data.{partnerId: partnerId}
+      Custodian.Data.{partnerId, accountIndex}
     )
   );
 
