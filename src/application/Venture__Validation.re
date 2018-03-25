@@ -132,6 +132,17 @@ type result =
   | PolicyNotFulfilled
   | DependencyNotMet;
 
+let resultToString =
+  fun
+  | Ok => "Ok"
+  | InvalidIssuer => "InvalidIssuer"
+  | UnknownProcessId => "UnknownProcessId"
+  | BadData => "BadData"
+  | DuplicateEndorsement => "DuplicateEndorsement"
+  | PolicyMissmatch => "PolicyMissmatch"
+  | PolicyNotFulfilled => "PolicyNotFulfilled"
+  | DependencyNotMet => "DependencyNotMet";
+
 let defaultDataValidator = (_, _) => Ok;
 
 let validateProposal =

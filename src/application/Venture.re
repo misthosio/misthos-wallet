@@ -27,6 +27,8 @@ let make = (session, id) => {
 };
 
 let applyInternal = (issuer, event, log, (state, viewModel)) => {
+  logMessage("Appending event to log:" );
+  logMessage(Event.encode(event)|>Json.stringify);
   let (item, log) = log |> EventLog.append(issuer, event);
   switch (item |> Validation.validate(state)) {
   | Ok =>
@@ -35,9 +37,8 @@ let applyInternal = (issuer, event, log, (state, viewModel)) => {
     (item, log, (state, viewModel));
   /* This should never happen / only incase of an UI input bug!!! */
   | result =>
-    Js.log("item issue");
-    Js.log(item.event);
-    Js.log(result);
+    logMessage("Event was rejected because of:");
+    logMessage(Validation.resultToString(result));
     raise(InvalidEvent(result));
   };
 };
