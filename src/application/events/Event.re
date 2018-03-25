@@ -154,8 +154,8 @@ let encode =
 let isSystemEvent =
   fun
   | PartnerAccepted(_)
-  | CustodianAccepted(_)
   | AccountCreationAccepted(_)
+  | CustodianAccepted(_) => true
   | _ => false;
 
 exception UnknownEvent(Js.Json.t);
