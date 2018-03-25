@@ -15,7 +15,7 @@ let make = (proposal: Custodian.Proposal.t, log) => {
       ref({
         eligable: [],
         endorsements: [proposal.supporterId],
-        policy: Policy.absolute,
+        policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom()
       });
     val completed = ref(false);
@@ -26,7 +26,6 @@ let make = (proposal: Custodian.Proposal.t, log) => {
           switch event {
           | VentureCreated(event) => {
               ...state^,
-              policy: event.metaPolicy,
               systemIssuer: event.systemIssuer
             }
           | PartnerAccepted({data}) => {

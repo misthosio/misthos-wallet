@@ -16,7 +16,7 @@ let make = (proposal: Partner.Proposal.t, log) => {
       ref({
         eligable: [],
         endorsements: [proposal.supporterId],
-        policy: Policy.absolute,
+        policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
         creatorId: UserId.fromString("")
       });
@@ -28,7 +28,6 @@ let make = (proposal: Partner.Proposal.t, log) => {
           switch event {
           | VentureCreated(event) => {
               ...state^,
-              policy: event.metaPolicy,
               systemIssuer: event.systemIssuer,
               creatorId: event.creatorId
             }
