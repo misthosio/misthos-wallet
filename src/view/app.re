@@ -1,7 +1,5 @@
 open PrimitiveTypes;
 
-[%bs.raw {|require('./app.css')|}];
-
 let text = ReasonReact.stringToElement;
 
 type action =
@@ -13,66 +11,82 @@ type state = {session: Session.t};
 
 let component = ReasonReact.reducerComponent("App");
 
-let make = /*~currentUrl: ReasonReact.Router.url,*/ _children => {
+[%mui.withStyles
+  "NavStyles"({
+    flex: ReactDOMRe.Style.make(~flex="1", ())
+  })
+];
+
+let make = _children => {
   ...component,
   initialState: () => {session: Session.getCurrentSession()},
   didMount: ({state}) =>
     switch state.session {
-    | LoginPending =>
-      ReasonReact.SideEffects(
-        (
-          ({send}) =>
-            Js.Promise.(
-              Session.completeLogIn()
-              |> then_(session => send(LoginCompleted(session)) |> resolve)
-              |> ignore
-            )
+      | LoginPending =>
+        ReasonReact.SideEffects(
+          (
+            ({send}) =>
+              Js.Promise.(
+                Session.completeLogIn()
+                |> then_(session => send(LoginCompleted(session)) |> resolve)
+                |> ignore
+              )
+          )
         )
-      )
-    | _ => ReasonReact.NoUpdate
+      | _ => ReasonReact.NoUpdate
     },
   reducer: (action, _state) =>
     switch action {
-    | LoginCompleted(session) => ReasonReact.Update({session: session})
-    | SignIn => ReasonReact.Update({session: Session.signIn()})
-    | SignOut => ReasonReact.Update({session: Session.signOut()})
+      | LoginCompleted(session) => ReasonReact.Update({session: session})
+      | SignIn => ReasonReact.Update({session: Session.signIn()})
+      | SignOut => ReasonReact.Update({session: Session.signOut()})
     },
   render: ({send, state}) =>
-    <div className="wrapper">
-      /* <Sidebar currentUrl /> */
-      /* <div id="main-panel" className="main-panel"> <Header /> </div> */
-
-        <div>
+    <div>
+      MaterialUi.(
+      <AppBar position=`Fixed>
+          <Toolbar>
           {
             let header =
               switch state.session {
-              | NotLoggedIn => "Welcome To Misthos"
-              | LoginPending => "Waiting for login to complete"
-              | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
-              | LoggedIn(data) => "Hello " ++ (data.userId |> UserId.toString)
+                | NotLoggedIn => "Welcome To Misthos"
+                | LoginPending => "Waiting for login to complete"
+                | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
+                | LoggedIn(data) => "Hello " ++ (data.userId |> UserId.toString)
               };
-            <h1> (text(header)) </h1>;
+            <NavStyles
+             render=(
+               classes =>
+                 <Typography variant=`Title className=classes.flex>
+                   (ReasonReact.stringToElement(header))
+                 </Typography>
+             )
+             />
           }
           (
             switch state.session {
-            | NotLoggedIn =>
-              <button onClick=(_e => send(SignIn))>
-                (text("Sign In with Blockstack"))
-              </button>
-            | LoggedIn(_) =>
-              <button onClick=(_e => send(SignOut))>
-                (text("SignOut"))
-              </button>
-            | LoginPending
-            | AnonymousLogin => <div />
+              | NotLoggedIn =>
+                <Button onClick=(_e => send(SignIn))>
+                  "Sign In with Blockstack"
+                </Button>
+              | LoggedIn(_) =>
+                <Button onClick=(_e => send(SignOut))>
+                  "SignOut"
+                </Button>
+              | LoginPending
+              | AnonymousLogin => <div />
             }
           )
-          (
-            switch state.session {
-            | LoggedIn(session) => <Ventures session />
-            | _ => <div />
-            }
-          )
-        </div>
-      </div>
+          </Toolbar>
+      </AppBar>
+    )
+    <div>
+    (
+      switch state.session {
+        | LoggedIn(session) => <Ventures session />
+        | _ => <div />
+      }
+    )
+    </div>
+    </div>
 };
