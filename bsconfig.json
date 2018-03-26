@@ -13,10 +13,11 @@
   "bs-dependencies": [
     "reason-react",
     "bs-json",
-    "bs-fetch"
+    "bs-fetch",
+    "bs-material-ui"
   ],
   "bs-dev-dependencies": [
-    "@glennsl/bs-jest"
+     "@glennsl/bs-jest",
   ],
   "reason": {
     "react-jsx": 2
