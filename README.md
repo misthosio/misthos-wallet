@@ -12,8 +12,6 @@ npm -g install bs-platform
 1.5.1
 brew install bitcoin
 > Bitcoin Core RPC client version v0.16.0.0-g4b4d7eb
-make test
-yarn test
 ```
 
 ### Test
