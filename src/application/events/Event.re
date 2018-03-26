@@ -116,6 +116,7 @@ module CustodianKeyChainUpdated = {
   let encode = event =>
     Json.Encode.(
       object_([
+        ("type", string("CustodianKeyChainUpdated")),
         ("partnerId", UserId.encode(event.partnerId)),
         ("keyChain", CustodianKeyChain.encode(event.keyChain))
       ])
@@ -132,12 +133,13 @@ type t =
   | PartnerProposed(Partner.Proposal.t)
   | PartnerEndorsed(Partner.Endorsement.t)
   | PartnerAccepted(Partner.Acceptance.t)
+  | AccountCreationProposed(AccountCreation.Proposal.t)
+  | AccountCreationEndorsed(AccountCreation.Endorsement.t)
+  | AccountCreationAccepted(AccountCreation.Acceptance.t)
   | CustodianProposed(Custodian.Proposal.t)
   | CustodianEndorsed(Custodian.Endorsement.t)
   | CustodianAccepted(Custodian.Acceptance.t)
-  | AccountCreationProposed(AccountCreation.Proposal.t)
-  | AccountCreationEndorsed(AccountCreation.Endorsement.t)
-  | AccountCreationAccepted(AccountCreation.Acceptance.t);
+  | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t);
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
@@ -180,7 +182,8 @@ let encode =
   | CustodianAccepted(event) => Custodian.Acceptance.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
-  | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event);
+  | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
+  | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event);
 
 let isSystemEvent =
   fun
@@ -207,6 +210,8 @@ let decode = raw => {
     AccountCreationEndorsed(AccountCreation.Endorsement.decode(raw))
   | "AccountCreationAccepted" =>
     AccountCreationAccepted(AccountCreation.Acceptance.decode(raw))
+  | "CustodianKeyChainUpdated" =>
+    CustodianKeyChainUpdated(CustodianKeyChainUpdated.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };

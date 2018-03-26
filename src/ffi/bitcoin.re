@@ -14,13 +14,13 @@ module Crypto = {
 
 module Networks = {
   type t;
-  [@bs.val] [@bs.module "bitcoinjs-lib"] external all : array(t) = "networks";
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
   external bitcoin : t = "";
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
   external testnet : t = "";
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
   external litecoin : t = "";
+  let all = [|bitcoin, testnet, litecoin|];
 };
 
 module Address = {

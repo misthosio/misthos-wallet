@@ -4,13 +4,13 @@ open PrimitiveTypes;
 
 type state = {
   ventureId,
-  pendingEvents: list(CustodianKeyChainUpdated.t),
-  currentkeyChains: list(list((int, CustodianKeyChain.t)))
+  pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
+  nextKeyChainIndex: int
 };
 
 let make =
     (
-      {userId, masterKeyChain}: Session.Data.t,
+      {userId, appKeyPair, masterKeyChain}: Session.Data.t,
       {data}: Custodian.Acceptance.t,
       log
     ) => {
@@ -20,11 +20,10 @@ let make =
     val state =
       ref({
         ventureId: VentureId.fromString(""),
-        pendingEvents: [],
-        currentkeyChains: []
+        pendingEvent: None,
+        nextKeyChainIndex: 0
       });
-    val result = ref(None);
-    pub receive = ({event}: EventLog.item) => {
+    pub receive = ({event}: EventLog.item) =>
       state :=
         (
           switch event {
@@ -32,32 +31,37 @@ let make =
           | AccountCreationAccepted(acceptance)
               when acceptance.data.accountIndex == accountIndex => {
               ...state^,
-              pendingEvents: [
-                CustodianKeyChainUpdated.make(
-                  ~partnerId=custodianId,
-                  ~keyChain=
-                    CustodianKeyChain.make(
-                      ~ventureId=state^.ventureId,
-                      ~accountIndex,
-                      ~keyChainIndex=0,
-                      ~masterKeyChain
+              pendingEvent:
+                Some((
+                  appKeyPair,
+                  CustodianKeyChainUpdated(
+                    CustodianKeyChainUpdated.make(
+                      ~partnerId=custodianId,
+                      ~keyChain=
+                        CustodianKeyChain.make(
+                          ~ventureId=state^.ventureId,
+                          ~accountIndex,
+                          ~keyChainIndex=state^.nextKeyChainIndex,
+                          ~masterKeyChain
+                        )
+                        |> CustodianKeyChain.toPublicKeyChain
                     )
-                    |> CustodianKeyChain.toPublicKeyChain
-                )
-              ]
+                  )
+                ))
+            }
+          | CustodianKeyChainUpdated({partnerId, keyChain})
+              when
+                UserId.eq(partnerId, custodianId)
+                && CustodianKeyChain.getAccountIndex(keyChain) == accountIndex => {
+              ...state^,
+              pendingEvent: None,
+              nextKeyChainIndex: state^.nextKeyChainIndex + 1
             }
           | _ => state^
           }
         );
-      result :=
-        (
-          switch state^ {
-          | _ => None
-          }
-        );
-    };
     pub processCompleted = () => userId != data.partnerId;
-    pub pendingEvent = () => result^
+    pub pendingEvent = () => state^.pendingEvent
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

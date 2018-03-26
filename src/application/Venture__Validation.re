@@ -20,7 +20,9 @@ type state = {
   processes: list((processId, approvalProcess)),
   completedProcesses: list(processId),
   policies: list((string, Policy.t)),
-  creatorData: Partner.Data.t
+  creatorData: Partner.Data.t,
+  custodianKeyChains:
+    list((userId, list((int, list(CustodianKeyChain.public)))))
 };
 
 let makeState = () => {
@@ -39,7 +41,8 @@ let makeState = () => {
   creatorData: {
     id: UserId.fromString(""),
     pubKey: ""
-  }
+  },
+  custodianKeyChains: []
 };
 
 let addProcess =
@@ -119,7 +122,39 @@ let apply = (event: Event.t, state) =>
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
   | AccountCreationAccepted(acceptance) => completeProcess(acceptance, state)
-  | CustodianAccepted(acceptance) => completeProcess(acceptance, state)
+  | CustodianAccepted({data} as acceptance) => {
+      ...completeProcess(acceptance, state),
+      custodianKeyChains: [
+        (data.partnerId, [(data.accountIndex, [])]),
+        ...state.custodianKeyChains
+      ]
+    }
+  | CustodianKeyChainUpdated({partnerId, keyChain}) =>
+    let userChains =
+      try (state.custodianKeyChains |> List.assoc(partnerId)) {
+      | Not_found => []
+      };
+    let accountChains =
+      try (
+        userChains |> List.assoc(CustodianKeyChain.getAccountIndex(keyChain))
+      ) {
+      | Not_found => []
+      };
+    {
+      ...state,
+      custodianKeyChains: [
+        (
+          partnerId,
+          [
+            (
+              CustodianKeyChain.getAccountIndex(keyChain),
+              [keyChain, ...accountChains]
+            )
+          ]
+        ),
+        ...state.custodianKeyChains |> List.remove_assoc(partnerId)
+      ]
+    };
   };
 
 type result =
@@ -224,6 +259,40 @@ let validateAccountCreationData =
     ({accountIndex}: AccountCreation.Data.t, {accountCreationData}) =>
   accountIndex == (accountCreationData |> List.length) ? Ok : BadData;
 
+let validateCustodianKeyChainUpdated =
+    (
+      {partnerId, keyChain}: CustodianKeyChainUpdated.t,
+      {partnerPubKeys, custodianData, completedProcesses, custodianKeyChains},
+      issuerPubKey
+    ) =>
+  if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), partnerId)) {
+    InvalidIssuer;
+  } else {
+    try {
+      let (process, _data) =
+        custodianData
+        |> List.find(((_pId, data: Custodian.Data.t)) =>
+             data.partnerId == partnerId
+             &&
+             data.accountIndex == CustodianKeyChain.getAccountIndex(keyChain)
+           );
+      if (completedProcesses |> List.mem(process)) {
+        if (custodianKeyChains
+            |> List.assoc(partnerId)
+            |> List.assoc(CustodianKeyChain.getAccountIndex(keyChain))
+            |> List.length != CustodianKeyChain.getKeyChainIndex(keyChain)) {
+          BadData;
+        } else {
+          Ok;
+        };
+      } else {
+        BadData;
+      };
+    } {
+    | Not_found => BadData
+    };
+  };
+
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
@@ -252,7 +321,9 @@ let validateEvent =
     )
   | AccountCreationAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.accountCreationData, state)
-    );
+    )
+  | CustodianKeyChainUpdated(update) =>
+    validateCustodianKeyChainUpdated(update);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (
