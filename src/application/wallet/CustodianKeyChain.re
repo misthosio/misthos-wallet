@@ -14,8 +14,10 @@ let getAccountIndex = public => public.accountIndex;
 
 let getKeyChainIndex = public => public.keyChainIndex;
 
-/* m/misthos'/venture'/currency'/account'/keyChain'/bip45'/cosignerIdx/change/address */
+/* m/misthos'/venture'/coin_type'/account'/keyChain'/bip45'/cosignerIdx/change/address */
 let misthosPurposeIndex = 1337;
+
+let coinTypeBitcoin = 0;
 
 let bip45Purpose = 45;
 
@@ -32,6 +34,7 @@ let make = (~ventureId, ~accountIndex, ~keyChainIndex, ~masterKeyChain) => {
     |> HDNode.deriveHardened(
          Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode
        )
+    |> HDNode.deriveHardened(coinTypeBitcoin)
     |> HDNode.deriveHardened(accountIndex)
     |> HDNode.deriveHardened(keyChainIndex)
     |> HDNode.deriveHardened(bip45Purpose);
