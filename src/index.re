@@ -1,5 +1,3 @@
-[%bs.raw {|require('./assets/css/index.css')|}];
-
 /* To access blockstack library from the browser */
 [%bs.raw {|window.blockstack = require('blockstack')|}];
 
