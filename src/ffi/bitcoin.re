@@ -14,6 +14,7 @@ module Crypto = {
 
 module Networks = {
   type t;
+  [@bs.val] [@bs.module "bitcoinjs-lib"] external all : array(t) = "networks";
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
   external bitcoin : t = "";
   [@bs.val] [@bs.module "bitcoinjs-lib"] [@bs.scope "networks"]
@@ -64,6 +65,10 @@ module HDNode = {
   type t = {. "keyPair": ECPair.t};
   [@bs.module "bitcoinjs-lib"] [@bs.new]
   external make : (ECPair.t, Node.buffer) => t = "HDNode";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "HDNode"]
+  external fromBase58WithNetworks : (string, array(Networks.t)) => t =
+    "fromBase58";
+  let fromBase58 = base58 => fromBase58WithNetworks(base58, Networks.all);
   [@bs.send.pipe : t] external derive : int => t = "";
   [@bs.send.pipe : t] external deriveHardened : int => t = "";
   [@bs.send.pipe : t] external derivePath : string => t = "";

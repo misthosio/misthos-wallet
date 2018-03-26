@@ -63,6 +63,28 @@ module Partner = {
   include (val EventTypes.makeProcess("Partner"))(Data);
 };
 
+module AccountCreation = {
+  module Data = {
+    type t = {
+      accountIndex: int,
+      name: string
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("accountIndex", int(event.accountIndex)),
+          ("name", string(event.name))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        accountIndex: raw |> field("accountIndex", int),
+        name: raw |> field("name", string)
+      };
+  };
+  include (val EventTypes.makeProcess("AccountCreation"))(Data);
+};
+
 module Custodian = {
   module Data = {
     type t = {
@@ -85,26 +107,24 @@ module Custodian = {
   include (val EventTypes.makeProcess("Custodian"))(Data);
 };
 
-module AccountCreation = {
-  module Data = {
-    type t = {
-      accountIndex: int,
-      name: string
-    };
-    let encode = event =>
-      Json.Encode.(
-        object_([
-          ("accountIndex", int(event.accountIndex)),
-          ("name", string(event.name))
-        ])
-      );
-    let decode = raw =>
-      Json.Decode.{
-        accountIndex: raw |> field("accountIndex", int),
-        name: raw |> field("name", string)
-      };
+module CustodianKeyChainUpdated = {
+  type t = {
+    partnerId: userId,
+    keyChain: CustodianKeyChain.public
   };
-  include (val EventTypes.makeProcess("AccountCreation"))(Data);
+  let make = (~partnerId, ~keyChain) => {partnerId, keyChain};
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("partnerId", UserId.encode(event.partnerId)),
+        ("keyChain", CustodianKeyChain.encode(event.keyChain))
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      partnerId: raw |> field("partnerId", UserId.decode),
+      keyChain: raw |> field("keyChain", CustodianKeyChain.decode)
+    };
 };
 
 type t =
