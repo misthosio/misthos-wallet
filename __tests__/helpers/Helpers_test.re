@@ -1,6 +1,4 @@
-[%bs.raw
-  {| global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest |}
-];
+Helpers.enableHttpRequests();
 
 open Jest;
 
