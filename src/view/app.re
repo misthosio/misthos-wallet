@@ -12,8 +12,13 @@ type state = {session: Session.t};
 let component = ReasonReact.reducerComponent("App");
 
 [%mui.withStyles
-  "NavStyles"({
-    flex: ReactDOMRe.Style.make(~flex="1", ())
+  "AppStyles"({
+    flex: ReactDOMRe.Style.make(~flex="1", ()),
+    container: ReactDOMRe.Style.make(
+      ~flexGrow="1",
+      ~paddingTop="80px",
+      ()
+    )
   })
 ];
 
@@ -43,9 +48,10 @@ let make = _children => {
     },
   render: ({send, state}) =>
     <div>
+      <MaterialUi.CssBaseline/>
       MaterialUi.(
-      <AppBar position=`Fixed>
-          <Toolbar>
+      <AppBar>
+        <Toolbar>
           {
             let header =
               switch state.session {
@@ -54,7 +60,7 @@ let make = _children => {
                 | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
                 | LoggedIn(data) => "Hello " ++ (data.userId |> UserId.toString)
               };
-            <NavStyles
+            <AppStyles
              render=(
                classes =>
                  <Typography variant=`Title className=classes.flex>
@@ -77,16 +83,30 @@ let make = _children => {
               | AnonymousLogin => <div />
             }
           )
-          </Toolbar>
+        </Toolbar>
       </AppBar>
-    )
-    <div>
-    (
-      switch state.session {
-        | LoggedIn(session) => <Ventures session />
-        | _ => <div />
-      }
-    )
-    </div>
+      )
+      <AppStyles
+       render=(
+         classes =>
+           <div className=classes.container>
+           MaterialUi.(
+             <Grid container=true spacing=V24>
+               (
+                 switch state.session {
+                   | LoggedIn(session) =>
+                     <Grid item=true xs=V12>
+                       <Paper>
+                         <Ventures session />
+                       </Paper>
+                     </Grid>
+                   | _ => <div />
+                 }
+               )
+             </Grid>
+           )
+           </div>
+        )
+      />
     </div>
 };
