@@ -64,6 +64,7 @@ let apply = (event: Event.t, state) =>
   | CustodianEndorsed(_)
   | CustodianAccepted(_) => state
   | CustodianKeyChainUpdated(_) => state
+  | AccountKeyChainUpdated(_) => state
   };
 
 let getPartners = state => state.partners;

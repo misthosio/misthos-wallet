@@ -22,7 +22,8 @@ type state = {
   policies: list((string, Policy.t)),
   creatorData: Partner.Data.t,
   custodianKeyChains:
-    list((userId, list((int, list(CustodianKeyChain.public)))))
+    list((userId, list((int, list(CustodianKeyChain.public))))),
+  accountKeyChains: list((int, list((int, AccountKeyChain.t))))
 };
 
 let makeState = () => {
@@ -42,7 +43,8 @@ let makeState = () => {
     id: UserId.fromString(""),
     pubKey: ""
   },
-  custodianKeyChains: []
+  custodianKeyChains: [],
+  accountKeyChains: []
 };
 
 let addProcess =
@@ -121,7 +123,10 @@ let apply = (event: Event.t, state) =>
       ],
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }
-  | AccountCreationAccepted(acceptance) => completeProcess(acceptance, state)
+  | AccountCreationAccepted({data} as acceptance) => {
+      ...completeProcess(acceptance, state),
+      accountKeyChains: [(data.accountIndex, []), ...state.accountKeyChains]
+    }
   | CustodianAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
       custodianKeyChains: [
@@ -135,9 +140,7 @@ let apply = (event: Event.t, state) =>
       | Not_found => []
       };
     let accountChains =
-      try (
-        userChains |> List.assoc(CustodianKeyChain.getAccountIndex(keyChain))
-      ) {
+      try (userChains |> List.assoc(CustodianKeyChain.accountIndex(keyChain))) {
       | Not_found => []
       };
     {
@@ -147,12 +150,23 @@ let apply = (event: Event.t, state) =>
           partnerId,
           [
             (
-              CustodianKeyChain.getAccountIndex(keyChain),
+              CustodianKeyChain.accountIndex(keyChain),
               [keyChain, ...accountChains]
             )
           ]
         ),
         ...state.custodianKeyChains |> List.remove_assoc(partnerId)
+      ]
+    };
+  | AccountKeyChainUpdated({accountIndex, keyChainIndex, keyChain}) =>
+    let accountChains =
+      try (state.accountKeyChains |> List.assoc(accountIndex)) {
+      | Not_found => []
+      };
+    {
+      ...state,
+      accountKeyChains: [
+        (accountIndex, [(keyChainIndex, keyChain), ...accountChains])
       ]
     };
   };
@@ -161,7 +175,7 @@ type result =
   | Ok
   | InvalidIssuer
   | UnknownProcessId
-  | BadData
+  | BadData(string)
   | DuplicateEndorsement
   | PolicyMissmatch
   | PolicyNotFulfilled
@@ -172,7 +186,7 @@ let resultToString =
   | Ok => "Ok"
   | InvalidIssuer => "InvalidIssuer"
   | UnknownProcessId => "UnknownProcessId"
-  | BadData => "BadData"
+  | BadData(description) => "BadData(" ++ description ++ ")"
   | DuplicateEndorsement => "DuplicateEndorsement"
   | PolicyMissmatch => "PolicyMissmatch"
   | PolicyNotFulfilled => "PolicyNotFulfilled"
@@ -233,7 +247,7 @@ let validateAcceptance =
   try {
     let {policy, supporterIds} = processes |> List.assoc(processId);
     if (data != (dataList |> List.assoc(processId))) {
-      BadData;
+      BadData("Data doesn't match proposal");
     } else if (Policy.fulfilled(
                  ~eligable=partnerIds,
                  ~endorsed=supporterIds,
@@ -253,11 +267,18 @@ let validateAcceptance =
   };
 
 let validateCustodianData = (data: Custodian.Data.t, {partnerIds}) =>
-  partnerIds |> List.mem(data.partnerId) ? Ok : BadData;
+  partnerIds |> List.mem(data.partnerId) ?
+    Ok :
+    BadData(
+      "Partner with Id '"
+      ++ UserId.toString(data.partnerId)
+      ++ "' doesn't exist"
+    );
 
 let validateAccountCreationData =
     ({accountIndex}: AccountCreation.Data.t, {accountCreationData}) =>
-  accountIndex == (accountCreationData |> List.length) ? Ok : BadData;
+  accountIndex == (accountCreationData |> List.length) ?
+    Ok : BadData("Bad Account Index");
 
 let validateCustodianKeyChainUpdated =
     (
@@ -273,24 +294,78 @@ let validateCustodianKeyChainUpdated =
         custodianData
         |> List.find(((_pId, data: Custodian.Data.t)) =>
              data.partnerId == partnerId
-             &&
-             data.accountIndex == CustodianKeyChain.getAccountIndex(keyChain)
+             && data.accountIndex == CustodianKeyChain.accountIndex(keyChain)
            );
       if (completedProcesses |> List.mem(process)) {
         if (custodianKeyChains
             |> List.assoc(partnerId)
-            |> List.assoc(CustodianKeyChain.getAccountIndex(keyChain))
-            |> List.length != CustodianKeyChain.getKeyChainIndex(keyChain)) {
-          BadData;
+            |> List.assoc(CustodianKeyChain.accountIndex(keyChain))
+            |> List.length != CustodianKeyChain.keyChainIndex(keyChain)) {
+          BadData("Bad KeyChainIndex");
         } else {
           Ok;
         };
       } else {
-        BadData;
+        BadData("Custodian isn't accepted yet");
       };
     } {
-    | Not_found => BadData
+    | Not_found => BadData("Custodian doesn't exist")
     };
+  };
+
+let validateAccountKeyChainUpdated =
+    (
+      {accountIndex, keyChainIndex, keyChain}: AccountKeyChainUpdated.t,
+      {
+        accountCreationData,
+        completedProcesses,
+        custodianKeyChains,
+        accountKeyChains
+      },
+      _issuerPubKey
+    ) =>
+  try {
+    let (pId, _) =
+      accountCreationData
+      |> List.find(((_, data: AccountCreation.Data.t)) =>
+           data.accountIndex == accountIndex
+         );
+    if (completedProcesses |> List.mem(pId)) {
+      if (accountKeyChains
+          |> List.assoc(accountIndex)
+          |> List.length != keyChainIndex) {
+        BadData("Bad KeyChainIndex");
+      } else {
+        keyChain
+        |> AccountKeyChain.custodianKeyChains
+        |> List.map(((partnerId, keyChain)) =>
+             try {
+               let latestKeyChain =
+                 custodianKeyChains
+                 /* list((userId, list((int, list(CustodianKeyChain.public))))), */
+                 |> List.assoc(partnerId)
+                 |> List.assoc(accountIndex)
+                 |> List.sort((keysA, keysB) =>
+                      compare(
+                        keysA |> CustodianKeyChain.keyChainIndex,
+                        keysB |> CustodianKeyChain.keyChainIndex
+                      )
+                    )
+                 |> List.rev
+                 |> List.hd;
+               keyChain == latestKeyChain ?
+                 Ok : BadData("Bad CustodianKeyChain");
+             } {
+             | Not_found => BadData("Bad CustodianKeyChain")
+             }
+           )
+        |> List.fold_left((result, test) => test == Ok ? result : test, Ok);
+      };
+    } else {
+      BadData("Account doesn't exist");
+    };
+  } {
+  | Not_found => BadData("Account doesn't exist")
   };
 
 let validateEvent =
@@ -323,7 +398,8 @@ let validateEvent =
       state => validateAcceptance(acceptance, state.accountCreationData, state)
     )
   | CustodianKeyChainUpdated(update) =>
-    validateCustodianKeyChainUpdated(update);
+    validateCustodianKeyChainUpdated(update)
+  | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (

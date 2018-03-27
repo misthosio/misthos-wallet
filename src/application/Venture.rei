@@ -14,7 +14,7 @@ module Validation: {
     | Ok
     | InvalidIssuer
     | UnknownProcessId
-    | BadData
+    | BadData(string)
     | DuplicateEndorsement
     | PolicyMissmatch
     | PolicyNotFulfilled

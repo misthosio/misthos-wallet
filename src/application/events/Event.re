@@ -128,6 +128,34 @@ module CustodianKeyChainUpdated = {
     };
 };
 
+module AccountKeyChainUpdated = {
+  type t = {
+    accountIndex: int,
+    keyChainIndex: int,
+    keyChain: AccountKeyChain.t
+  };
+  let make = (~accountIndex, ~keyChainIndex, ~keyChain) => {
+    accountIndex,
+    keyChainIndex,
+    keyChain
+  };
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("AccountKeyChainUpdated")),
+        ("accountIndex", int(event.accountIndex)),
+        ("keyChainIndex", int(event.keyChainIndex)),
+        ("keyChain", AccountKeyChain.encode(event.keyChain))
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      accountIndex: raw |> field("accountIndex", int),
+      keyChainIndex: raw |> field("keyChainIndex", int),
+      keyChain: raw |> field("keyChain", AccountKeyChain.decode)
+    };
+};
+
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposal.t)
@@ -139,7 +167,8 @@ type t =
   | CustodianProposed(Custodian.Proposal.t)
   | CustodianEndorsed(Custodian.Endorsement.t)
   | CustodianAccepted(Custodian.Acceptance.t)
-  | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t);
+  | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
+  | AccountKeyChainUpdated(AccountKeyChainUpdated.t);
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
@@ -183,13 +212,15 @@ let encode =
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
-  | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event);
+  | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
+  | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event);
 
 let isSystemEvent =
   fun
   | PartnerAccepted(_)
   | AccountCreationAccepted(_)
-  | CustodianAccepted(_) => true
+  | CustodianAccepted(_)
+  | AccountKeyChainUpdated(_) => true
   | _ => false;
 
 exception UnknownEvent(Js.Json.t);
@@ -212,6 +243,8 @@ let decode = raw => {
     AccountCreationAccepted(AccountCreation.Acceptance.decode(raw))
   | "CustodianKeyChainUpdated" =>
     CustodianKeyChainUpdated(CustodianKeyChainUpdated.decode(raw))
+  | "AccountKeyChainUpdated" =>
+    AccountKeyChainUpdated(AccountKeyChainUpdated.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };

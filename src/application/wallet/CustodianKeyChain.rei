@@ -17,9 +17,11 @@ let make:
 
 let toPublicKeyChain: t => public;
 
-let getAccountIndex: public => int;
+let accountIndex: public => int;
 
-let getKeyChainIndex: public => int;
+let keyChainIndex: public => int;
+
+let hdNode: public => HDNode.t;
 
 let encode: public => Js.Json.t;
 

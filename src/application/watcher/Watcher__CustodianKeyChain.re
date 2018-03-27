@@ -52,7 +52,7 @@ let make =
           | CustodianKeyChainUpdated({partnerId, keyChain})
               when
                 UserId.eq(partnerId, custodianId)
-                && CustodianKeyChain.getAccountIndex(keyChain) == accountIndex => {
+                && CustodianKeyChain.accountIndex(keyChain) == accountIndex => {
               ...state^,
               pendingEvent: None,
               nextKeyChainIndex: state^.nextKeyChainIndex + 1

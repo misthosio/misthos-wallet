@@ -27,8 +27,8 @@ let make = (session, id) => {
 };
 
 let applyInternal = (issuer, event, log, (state, viewModel)) => {
-  logMessage("Appending event to log:" );
-  logMessage(Event.encode(event)|>Json.stringify);
+  logMessage("Appending event to log:");
+  logMessage(Event.encode(event) |> Json.stringify);
   let (item, log) = log |> EventLog.append(issuer, event);
   switch (item |> Validation.validate(state)) {
   | Ok =>
@@ -216,8 +216,8 @@ module Synchronize = {
                | InvalidIssuer =>
                  logMessage("Invalid issuer detected");
                  (venture, None);
-               | BadData =>
-                 logMessage("Bad data in event detected");
+               | BadData(msg) =>
+                 logMessage("Bad data in event detected: " ++ msg);
                  (venture, None);
                | UnknownProcessId =>
                  logMessage("Unknown ProcessId detected");
@@ -261,22 +261,27 @@ let getPartnerHistoryUrls = Synchronize.getPartnerHistoryUrls;
 module Cmd = {
   module Create = {
     type result = (Index.t, t);
-    let exec =
-        (session: Session.Data.t, ~name as ventureName) => {
+    let exec = (session: Session.Data.t, ~name as ventureName) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
         Event.VentureCreated.make(
           ~ventureName,
           ~creatorId=session.userId,
           ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
-          ~metaPolicy=defaultPolicy,
+          ~metaPolicy=defaultPolicy
         );
-      Js.Promise.all2((
-        Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
-        make(session, ventureCreated.ventureId)
-        |> apply(VentureCreated(ventureCreated))
-        |> persist
-      ));
+      Js.(
+        Promise.all2((
+          Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
+          Promise.resolve(make(session, ventureCreated.ventureId))
+          |> Promise.(
+               then_(v =>
+                 v |> apply(VentureCreated(ventureCreated)) |> resolve
+               )
+             )
+          |> Promise.then_(persist)
+        ))
+      );
     };
   };
   module Synchronize = Synchronize;

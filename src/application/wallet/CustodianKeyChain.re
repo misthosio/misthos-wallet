@@ -10,9 +10,11 @@ type t = {
 
 type public = t;
 
-let getAccountIndex = public => public.accountIndex;
+let accountIndex = public => public.accountIndex;
 
-let getKeyChainIndex = public => public.keyChainIndex;
+let keyChainIndex = public => public.keyChainIndex;
+
+let hdNode = public => public.hdNode;
 
 /* m/misthos'/venture'/coin_type'/account'/keyChain'/bip45'/cosignerIdx/change/address */
 let misthosPurposeIndex = 1337;
