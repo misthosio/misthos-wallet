@@ -17,7 +17,7 @@ let () =
       AccountKeyChainUpdated.make(
         ~accountIndex=0,
         ~keyChainIndex=0,
-        ~keyChain=AccountKeyChain.make([])
+        ~keyChain=AccountKeyChain.make(0, [])
       );
     let accountProposal =
       AccountCreation.Proposal.make(
@@ -45,13 +45,13 @@ let () =
         AccountKeyChainUpdated.make(
           ~accountIndex=0,
           ~keyChainIndex=1,
-          ~keyChain=AccountKeyChain.make([])
+          ~keyChain=AccountKeyChain.make(0, [])
         );
       let keyChain2 =
         AccountKeyChainUpdated.make(
           ~accountIndex=0,
           ~keyChainIndex=2,
-          ~keyChain=AccountKeyChain.make([])
+          ~keyChain=AccountKeyChain.make(0, [])
         );
       let stateWithAccountAndKeyChain =
         emptyState
@@ -113,13 +113,15 @@ let () =
         AccountKeyChainUpdated.make(
           ~accountIndex=0,
           ~keyChainIndex=0,
-          ~keyChain=AccountKeyChain.make([(custodianId, custodianKeyChain0)])
+          ~keyChain=
+            AccountKeyChain.make(1, [(custodianId, custodianKeyChain0)])
         );
       let keyChain1 =
         AccountKeyChainUpdated.make(
           ~accountIndex=0,
           ~keyChainIndex=0,
-          ~keyChain=AccountKeyChain.make([(custodianId, custodianKeyChain1)])
+          ~keyChain=
+            AccountKeyChain.make(1, [(custodianId, custodianKeyChain1)])
         );
       expect((
         validateWithState(~keyChain, stateWithAccountAndCustodianKeyChain),

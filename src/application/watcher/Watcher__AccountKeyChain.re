@@ -2,6 +2,8 @@ open Event;
 
 open PrimitiveTypes;
 
+let defaultCosignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6|];
+
 type state = {
   systemIssuer: Bitcoin.ECPair.t,
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
@@ -40,7 +42,11 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
                     AccountKeyChainUpdated.make(
                       ~accountIndex,
                       ~keyChainIndex=state^.nextKeyChainIndex,
-                      ~keyChain=AccountKeyChain.make(custodianKeyChains)
+                      ~keyChain=
+                        AccountKeyChain.make(
+                          defaultCosignerList[custodianKeyChains |> List.length],
+                          custodianKeyChains
+                        )
                     )
                   )
                 ))
