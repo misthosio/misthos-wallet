@@ -2,12 +2,14 @@ open Event;
 
 open PrimitiveTypes;
 
+open WalletTypes;
+
 let defaultCosignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6|];
 
 type state = {
   systemIssuer: Bitcoin.ECPair.t,
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
-  nextKeyChainIndex: int,
+  nextKeyChainIndex: accountKeyChainIdx,
   pendingEvent: option((Bitcoin.ECPair.t, Event.t))
 };
 
@@ -17,7 +19,7 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
     val state =
       ref({
         custodianKeyChains: [],
-        nextKeyChainIndex: 0,
+        nextKeyChainIndex: AccountKeyChainIndex.first,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
         pendingEvent: None
       });
@@ -55,7 +57,8 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
               when aIdx == accountIndex => {
               ...state^,
               pendingEvent: None,
-              nextKeyChainIndex: state^.nextKeyChainIndex + 1
+              nextKeyChainIndex:
+                state^.nextKeyChainIndex |> AccountKeyChainIndex.next
             }
           | _ => state^
           }

@@ -4,6 +4,8 @@ open Expect;
 
 open PrimitiveTypes;
 
+open WalletTypes;
+
 open Bitcoin;
 
 let () =
@@ -31,26 +33,27 @@ let () =
       HDNode.make(keyC, chainCode)
     );
     let ventureId = VentureId.fromString("test");
-    let accountIndex = 0;
+    let accountIndex = AccountIndex.default;
+    let keyChainIndex = CustodianKeyChainIndex.first;
     let (cKeyChainA, cKeyChainB, cKeyChainC) = (
       CustodianKeyChain.make(
         ~ventureId,
         ~accountIndex,
-        ~keyChainIndex=0,
+        ~keyChainIndex,
         ~masterKeyChain=masterA
       )
       |> CustodianKeyChain.toPublicKeyChain,
       CustodianKeyChain.make(
         ~ventureId,
         ~accountIndex,
-        ~keyChainIndex=0,
+        ~keyChainIndex,
         ~masterKeyChain=masterB
       )
       |> CustodianKeyChain.toPublicKeyChain,
       CustodianKeyChain.make(
         ~ventureId,
         ~accountIndex,
-        ~keyChainIndex=0,
+        ~keyChainIndex,
         ~masterKeyChain=masterC
       )
       |> CustodianKeyChain.toPublicKeyChain

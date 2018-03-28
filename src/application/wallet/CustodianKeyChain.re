@@ -1,10 +1,12 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 open Bitcoin;
 
 type t = {
-  accountIndex: int,
-  keyChainIndex: int,
+  accountIndex: accountIdx,
+  keyChainIndex: custodianKeyChainIdx,
   hdNode: HDNode.t
 };
 
@@ -37,8 +39,8 @@ let make = (~ventureId, ~accountIndex, ~keyChainIndex, ~masterKeyChain) => {
          Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode
        )
     |> HDNode.deriveHardened(coinTypeBitcoin)
-    |> HDNode.deriveHardened(accountIndex)
-    |> HDNode.deriveHardened(keyChainIndex)
+    |> HDNode.deriveHardened(accountIndex |> AccountIndex.toInt)
+    |> HDNode.deriveHardened(keyChainIndex |> CustodianKeyChainIndex.toInt)
     |> HDNode.deriveHardened(bip45Purpose);
   {accountIndex, keyChainIndex, hdNode: custodianKeyChain};
 };
@@ -51,15 +53,15 @@ let toPublicKeyChain = keyChain => {
 let encode = keyChain =>
   Json.Encode.(
     object_([
-      ("accountIndex", int(keyChain.accountIndex)),
-      ("keyChainIndex", int(keyChain.keyChainIndex)),
+      ("accountIndex", AccountIndex.encode(keyChain.accountIndex)),
+      ("keyChainIndex", CustodianKeyChainIndex.encode(keyChain.keyChainIndex)),
       ("hdNode", string(keyChain.hdNode |> Bitcoin.HDNode.toBase58))
     ])
   );
 
 let decode = raw =>
   Json.Decode.{
-    accountIndex: raw |> field("accountIndex", int),
-    keyChainIndex: raw |> field("keyChainIndex", int),
+    accountIndex: raw |> field("accountIndex", AccountIndex.decode),
+    keyChainIndex: raw |> field("keyChainIndex", CustodianKeyChainIndex.decode),
     hdNode: raw |> field("hdNode", string) |> Bitcoin.HDNode.fromBase58
   };

@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 open Event;
 
 type approvalProcess = {
@@ -22,8 +24,9 @@ type state = {
   policies: list((string, Policy.t)),
   creatorData: Partner.Data.t,
   custodianKeyChains:
-    list((userId, list((int, list(CustodianKeyChain.public))))),
-  accountKeyChains: list((int, list((int, AccountKeyChain.t))))
+    list((userId, list((accountIdx, list(CustodianKeyChain.public))))),
+  accountKeyChains:
+    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t))))
 };
 
 let makeState = () => {
@@ -277,7 +280,7 @@ let validateCustodianData = (data: Custodian.Data.t, {partnerIds}) =>
 
 let validateAccountCreationData =
     ({accountIndex}: AccountCreation.Data.t, {accountCreationData}) =>
-  accountIndex == (accountCreationData |> List.length) ?
+  accountIndex |> AccountIndex.toInt == (accountCreationData |> List.length) ?
     Ok : BadData("Bad Account Index");
 
 let validateCustodianKeyChainUpdated =
@@ -300,7 +303,11 @@ let validateCustodianKeyChainUpdated =
         if (custodianKeyChains
             |> List.assoc(partnerId)
             |> List.assoc(CustodianKeyChain.accountIndex(keyChain))
-            |> List.length != CustodianKeyChain.keyChainIndex(keyChain)) {
+            |>
+            List.length != (
+                             CustodianKeyChain.keyChainIndex(keyChain)
+                             |> CustodianKeyChainIndex.toInt
+                           )) {
           BadData("Bad KeyChainIndex");
         } else {
           Ok;
@@ -333,7 +340,7 @@ let validateAccountKeyChainUpdated =
     if (completedProcesses |> List.mem(pId)) {
       if (accountKeyChains
           |> List.assoc(accountIndex)
-          |> List.length != keyChainIndex) {
+          |> List.length != (keyChainIndex |> AccountKeyChainIndex.toInt)) {
         BadData("Bad KeyChainIndex");
       } else {
         keyChain

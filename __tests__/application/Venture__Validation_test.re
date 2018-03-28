@@ -6,6 +6,8 @@ open Event;
 
 open PrimitiveTypes;
 
+open WalletTypes;
+
 module Validation = Venture__Validation;
 
 let () =
@@ -15,15 +17,18 @@ let () =
     let emptyState = Validation.makeState();
     let keyChain0 =
       AccountKeyChainUpdated.make(
-        ~accountIndex=0,
-        ~keyChainIndex=0,
+        ~accountIndex=AccountIndex.default,
+        ~keyChainIndex=AccountKeyChainIndex.first,
         ~keyChain=AccountKeyChain.make(0, [])
       );
     let accountProposal =
       AccountCreation.Proposal.make(
         ~supporterId,
         ~policy=Policy.absolute,
-        AccountCreation.Data.{accountIndex: 0, name: "Account"}
+        AccountCreation.Data.{
+          accountIndex: AccountIndex.default,
+          name: "Account"
+        }
       );
     let accountCreation =
       AccountCreation.Acceptance.fromProposal(accountProposal);
@@ -43,14 +48,18 @@ let () =
     test("The KeyChainIndex is in order", () => {
       let keyChain1 =
         AccountKeyChainUpdated.make(
-          ~accountIndex=0,
-          ~keyChainIndex=1,
+          ~accountIndex=AccountIndex.default,
+          ~keyChainIndex=
+            AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
           ~keyChain=AccountKeyChain.make(0, [])
         );
       let keyChain2 =
         AccountKeyChainUpdated.make(
-          ~accountIndex=0,
-          ~keyChainIndex=2,
+          ~accountIndex=AccountIndex.default,
+          ~keyChainIndex=
+            AccountKeyChainIndex.first
+            |> AccountKeyChainIndex.next
+            |> AccountKeyChainIndex.next,
           ~keyChain=AccountKeyChain.make(0, [])
         );
       let stateWithAccountAndKeyChain =
@@ -75,16 +84,17 @@ let () =
       let custodianKeyChain0 =
         CustodianKeyChain.make(
           ~ventureId=VentureId.fromString("venture"),
-          ~accountIndex=0,
-          ~keyChainIndex=0,
+          ~accountIndex=AccountIndex.default,
+          ~keyChainIndex=CustodianKeyChainIndex.first,
           ~masterKeyChain
         )
         |> CustodianKeyChain.toPublicKeyChain;
       let custodianKeyChain1 =
         CustodianKeyChain.make(
           ~ventureId=VentureId.fromString("venture"),
-          ~accountIndex=0,
-          ~keyChainIndex=1,
+          ~accountIndex=AccountIndex.default,
+          ~keyChainIndex=
+            CustodianKeyChainIndex.first |> CustodianKeyChainIndex.next,
           ~masterKeyChain
         )
         |> CustodianKeyChain.toPublicKeyChain;
@@ -111,15 +121,15 @@ let () =
            );
       let keyChain =
         AccountKeyChainUpdated.make(
-          ~accountIndex=0,
-          ~keyChainIndex=0,
+          ~accountIndex=AccountIndex.default,
+          ~keyChainIndex=AccountKeyChainIndex.first,
           ~keyChain=
             AccountKeyChain.make(1, [(custodianId, custodianKeyChain0)])
         );
       let keyChain1 =
         AccountKeyChainUpdated.make(
-          ~accountIndex=0,
-          ~keyChainIndex=0,
+          ~accountIndex=AccountIndex.default,
+          ~keyChainIndex=AccountKeyChainIndex.first,
           ~keyChain=
             AccountKeyChain.make(1, [(custodianId, custodianKeyChain1)])
         );

@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 open Bitcoin;
 
 type t;
@@ -9,17 +11,17 @@ type public;
 let make:
   (
     ~ventureId: ventureId,
-    ~accountIndex: int,
-    ~keyChainIndex: int,
+    ~accountIndex: accountIdx,
+    ~keyChainIndex: custodianKeyChainIdx,
     ~masterKeyChain: HDNode.t
   ) =>
   t;
 
 let toPublicKeyChain: t => public;
 
-let accountIndex: public => int;
+let accountIndex: public => accountIdx;
 
-let keyChainIndex: public => int;
+let keyChainIndex: public => custodianKeyChainIdx;
 
 let hdNode: public => HDNode.t;
 

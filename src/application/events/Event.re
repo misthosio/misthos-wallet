@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 module VentureCreated = {
   type t = {
     ventureId,
@@ -66,19 +68,19 @@ module Partner = {
 module AccountCreation = {
   module Data = {
     type t = {
-      accountIndex: int,
+      accountIndex: accountIdx,
       name: string
     };
     let encode = event =>
       Json.Encode.(
         object_([
-          ("accountIndex", int(event.accountIndex)),
+          ("accountIndex", AccountIndex.encode(event.accountIndex)),
           ("name", string(event.name))
         ])
       );
     let decode = raw =>
       Json.Decode.{
-        accountIndex: raw |> field("accountIndex", int),
+        accountIndex: raw |> field("accountIndex", AccountIndex.decode),
         name: raw |> field("name", string)
       };
   };
@@ -89,19 +91,19 @@ module Custodian = {
   module Data = {
     type t = {
       partnerId: userId,
-      accountIndex: int
+      accountIndex: accountIdx
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("partnerId", UserId.encode(event.partnerId)),
-          ("accountIndex", int(event.accountIndex))
+          ("accountIndex", AccountIndex.encode(event.accountIndex))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         partnerId: raw |> field("partnerId", UserId.decode),
-        accountIndex: raw |> field("accountIndex", int)
+        accountIndex: raw |> field("accountIndex", AccountIndex.decode)
       };
   };
   include (val EventTypes.makeProcess("Custodian"))(Data);
@@ -130,8 +132,8 @@ module CustodianKeyChainUpdated = {
 
 module AccountKeyChainUpdated = {
   type t = {
-    accountIndex: int,
-    keyChainIndex: int,
+    accountIndex: accountIdx,
+    keyChainIndex: accountKeyChainIdx,
     keyChain: AccountKeyChain.t
   };
   let make = (~accountIndex, ~keyChainIndex, ~keyChain) => {
@@ -143,17 +145,26 @@ module AccountKeyChainUpdated = {
     Json.Encode.(
       object_([
         ("type", string("AccountKeyChainUpdated")),
-        ("accountIndex", int(event.accountIndex)),
-        ("keyChainIndex", int(event.keyChainIndex)),
+        ("accountIndex", AccountIndex.encode(event.accountIndex)),
+        ("keyChainIndex", AccountKeyChainIndex.encode(event.keyChainIndex)),
         ("keyChain", AccountKeyChain.encode(event.keyChain))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      accountIndex: raw |> field("accountIndex", int),
-      keyChainIndex: raw |> field("keyChainIndex", int),
+      accountIndex: raw |> field("accountIndex", AccountIndex.decode),
+      keyChainIndex: raw |> field("keyChainIndex", AccountKeyChainIndex.decode),
       keyChain: raw |> field("keyChain", AccountKeyChain.decode)
     };
+};
+
+module IncomeAddressExposed = {
+  type t = {
+    accountIndex: int,
+    accountKeyChainIndex: int,
+    addressIndex: int,
+    address: string
+  };
 };
 
 type t =

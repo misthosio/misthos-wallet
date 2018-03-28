@@ -2,9 +2,9 @@ open Event;
 
 open PrimitiveTypes;
 
-let defaultAccountName = "default";
+open WalletTypes;
 
-let defaultAccountIndex = 0;
+let defaultAccountName = "default";
 
 type state =
   | ProposePartner
@@ -35,7 +35,8 @@ let make =
               when ProcessId.eq(processId, event.processId) =>
             ProposeAccountCreation
           | (ProposeAccountCreation, AccountCreationProposed(event))
-              when event.data.accountIndex == defaultAccountIndex =>
+              when
+                AccountIndex.eq(event.data.accountIndex, AccountIndex.default) =>
             AccountCreationProposed(event.processId)
           | (
               AccountCreationProposed(processId),
@@ -71,7 +72,7 @@ let make =
               Event.makeAccountCreationProposed(
                 ~supporterId=creatorId,
                 ~name=defaultAccountName,
-                ~accountIndex=defaultAccountIndex,
+                ~accountIndex=AccountIndex.default,
                 ~policy=metaPolicy
               )
             ))
@@ -81,7 +82,7 @@ let make =
               Event.makeCustodianProposed(
                 ~partnerId=creatorId,
                 ~supporterId=creatorId,
-                ~accountIndex=defaultAccountIndex,
+                ~accountIndex=AccountIndex.default,
                 ~policy=metaPolicy
               )
             ))

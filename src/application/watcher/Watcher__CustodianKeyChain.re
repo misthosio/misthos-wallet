@@ -2,10 +2,12 @@ open Event;
 
 open PrimitiveTypes;
 
+open WalletTypes;
+
 type state = {
   ventureId,
   pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
-  nextKeyChainIndex: int
+  nextKeyChainIndex: custodianKeyChainIdx
 };
 
 let make =
@@ -21,7 +23,7 @@ let make =
       ref({
         ventureId: VentureId.fromString(""),
         pendingEvent: None,
-        nextKeyChainIndex: 0
+        nextKeyChainIndex: CustodianKeyChainIndex.first
       });
     pub receive = ({event}: EventLog.item) =>
       state :=
@@ -55,7 +57,8 @@ let make =
                 && CustodianKeyChain.accountIndex(keyChain) == accountIndex => {
               ...state^,
               pendingEvent: None,
-              nextKeyChainIndex: state^.nextKeyChainIndex + 1
+              nextKeyChainIndex:
+                state^.nextKeyChainIndex |> CustodianKeyChainIndex.next
             }
           | _ => state^
           }
