@@ -51,67 +51,69 @@ let () = {
       expect(addressA) |> toEqual(addressB);
     });
   });
-  /* describe("execute transaction", () => */
-  /*   Bitcoin.( */
-  /*     testPromise( */
-  /*       ~timeout=10000, "Can prepare, sign and finalize a transaction", () => */
-  /*       Js.Promise.( */
-  /*         Helpers.faucet([ */
-  /*           ("2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T", BTC.fromSatoshis(11000L)), */
-  /*           ("2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T", BTC.fromSatoshis(10100L)) */
-  /*         ]) */
-  /*         |> then_(utxos => */
-  /*              Wallet.preparePayoutTx( */
-  /*                address, */
-  /*                [ */
-  /*                  ( */
-  /*                    "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", */
-  /*                    BTC.fromSatoshis(9400L) */
-  /*                  ), */
-  /*                  ( */
-  /*                    "2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T", */
-  /*                    BTC.fromSatoshis(10100L) */
-  /*                  ) */
-  /*                ], */
-  /*                "reference", */
-  /*                keyA, */
-  /*                ~network=Networks.testnet */
-  /*              ) */
-  /*            ) */
-  /*         |> then_((payoutTx: Wallet.payoutTx) => { */
-  /*              let signature = */
-  /*                Wallet.signPayoutTx( */
-  /*                  payoutTx, */
-  /*                  keyC, */
-  /*                  address, */
-  /*                  ~network=Networks.testnet */
-  /*                ); */
-  /*              let tx = */
-  /*                Wallet.finalizeTx( */
-  /*                  payoutTx, */
-  /*                  [signature], */
-  /*                  ~network=Networks.testnet */
-  /*                ); */
-  /*              /1* Helpers.displayTx(Transaction.toHex(tx)); *1/ */
-  /*              Helpers.broadcastTransaction( */
-  /*                Wallet.finalizeTx( */
-  /*                  payoutTx, */
-  /*                  [signature], */
-  /*                  ~network=Networks.testnet */
-  /*                ) */
-  /*              ); */
-  /*            }) */
-  /*         |> then_(result => */
-  /*              Helpers.getUTXOs(["2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T"]) */
-  /*            ) */
-  /*         |> then_((utxos: list(BitcoindClient.bitcoindUTXO)) => */
-  /*              resolve( */
-  /*                expect(List.hd(utxos).amount) */
-  /*                |> toEqual(BTC.fromSatoshis(10100L)) */
-  /*              ) */
-  /*            ) */
-  /*       ) */
-  /*     ) */
-  /*   ) */
-  /* ); */
+  describe("execute transaction", () => {
+    let address =
+      Wallet.makeAddress(~network=Networks.testnet, 2, [keyA, keyB, keyC]);
+    Bitcoin.(
+      testPromise(
+        ~timeout=10000, "Can prepare, sign and finalize a transaction", () =>
+        Js.Promise.(
+          Helpers.faucet([
+            (address.address, BTC.fromSatoshis(11000L)),
+            (address.address, BTC.fromSatoshis(10100L))
+          ])
+          |> then_(utxos =>
+               Wallet.preparePayoutTx(
+                 address,
+                 [
+                   (
+                     "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                     BTC.fromSatoshis(9400L)
+                   ),
+                   (
+                     "2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T",
+                     BTC.fromSatoshis(10100L)
+                   )
+                 ],
+                 "reference",
+                 keyA,
+                 ~network=Networks.testnet
+               )
+             )
+          |> then_((payoutTx: Wallet.payoutTx) => {
+               let signature =
+                 Wallet.signPayoutTx(
+                   payoutTx,
+                   keyC,
+                   address,
+                   ~network=Networks.testnet
+                 );
+               let tx =
+                 Wallet.finalizeTx(
+                   payoutTx,
+                   [signature],
+                   ~network=Networks.testnet
+                 );
+               /* Helpers.displayTx(Transaction.toHex(tx)); */
+               Helpers.broadcastTransaction(
+                 Wallet.finalizeTx(
+                   payoutTx,
+                   [signature],
+                   ~network=Networks.testnet
+                 )
+               );
+             })
+          |> then_(result =>
+               Helpers.getUTXOs(["2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T"])
+             )
+          |> then_((utxos: list(BitcoindClient.utxo)) =>
+               resolve(
+                 expect(List.hd(utxos).amount)
+                 |> toEqual(BTC.fromSatoshis(10100L))
+               )
+             )
+        )
+      )
+    );
+  });
 };

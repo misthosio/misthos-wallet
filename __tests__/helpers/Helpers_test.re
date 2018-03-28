@@ -28,11 +28,25 @@ let () = {
                [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress]
              )
            )
-        |> then_((utxos: list(BitcoindClient.bitcoindUTXO)) =>
+        |> then_((utxos: list(BitcoindClient.utxo)) =>
              resolve(
                expect((List.hd(utxos).amount, List.nth(utxos, 1).amount))
                |> toEqual((tenSats, tenSats))
              )
+           )
+      )
+    )
+  );
+  describe("BitcoindClient", () =>
+    testPromise("listTransactions", () =>
+      Js.Promise.(
+        BitcoindClient.listTransactions(
+          config,
+          [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress],
+          10
+        )
+        |> then_(transactions =>
+             expect(transactions |> List.length) |> toEqual(2) |> resolve
            )
       )
     )

@@ -1,6 +1,6 @@
 open Bitcoin;
 
-type utxo = BitcoindClient.bitcoindUTXO;
+type utxo = BitcoindClient.utxo;
 
 let enableHttpRequests = () => [%bs.raw
   {| global.XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest |}

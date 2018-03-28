@@ -27,22 +27,7 @@ let rpcCall = ({bitcoindUrl} as config, jsonRPC) =>
     |> then_(Fetch.Response.json)
   );
 
-let getBlockHeight = ({bitcoindUrl} as config) => {
-  let jsonRPC =
-    Json.Encode.(
-      object_([
-        ("jsonrpc", string("1.0")),
-        ("method", string("getblockcount"))
-      ])
-    )
-    |> Json.stringify;
-  Js.Promise.(
-    rpcCall(config, jsonRPC)
-    |> then_(obj => resolve(Json.Decode.(field("result", int, obj))))
-  );
-};
-
-type bitcoindUTXO = {
+type utxo = {
   txId: string,
   txOutputN: int,
   address: string,
@@ -50,13 +35,22 @@ type bitcoindUTXO = {
   confirmations: int
 };
 
-let getUTXOs = ({bitcoindUrl} as config, [first, ...rest] as address) => {
+type tx = {
+  txId: string,
+  category: string,
+  txOutputN: int,
+  address: string,
+  amount: BTC.t,
+  confirmations: int
+};
+
+let importAllAs = (config, [first, ...rest], label) => {
   let jsonRPCImport =
     Json.Encode.(
       object_([
         ("jsonrpc", string("1.0")),
         ("method", string("importaddress")),
-        ("params", list(string, [first]))
+        ("params", list(string, [first, label]))
       ])
     )
     |> Json.stringify;
@@ -72,7 +66,7 @@ let getUTXOs = ({bitcoindUrl} as config, [first, ...rest] as address) => {
                     object_([
                       ("jsonrpc", string("1.0")),
                       ("method", string("importaddress")),
-                      ("params", list(string, [address]))
+                      ("params", list(string, [address, label]))
                     ])
                   )
                   |> Json.stringify;
@@ -80,7 +74,13 @@ let getUTXOs = ({bitcoindUrl} as config, [first, ...rest] as address) => {
               }),
          start
        )
-    |> then_(imports => {
+  );
+};
+
+let getUTXOs = (config, address) =>
+  Js.Promise.(
+    importAllAs(config, address, "")
+    |> then_(_imports => {
          let jsonRPCUnspent =
            Json.Encode.(
              object_([
@@ -109,6 +109,49 @@ let getUTXOs = ({bitcoindUrl} as config, [first, ...rest] as address) => {
                       address: utxo |> field("address", string),
                       amount: utxo |> field("amount", float) |> BTC.fromFloat,
                       confirmations: utxo |> field("confirmations", int)
+                    }
+                  )
+                )
+              )
+         )
+         |> resolve
+       )
+  );
+
+let listTransactions = (config, addresses, max) => {
+  let label = Uuid.v4();
+  Js.Promise.(
+    importAllAs(config, addresses, label)
+    |> then_(_imports => {
+         let jsonRPCListTx =
+           Json.Encode.(
+             object_([
+               ("jsonrpc", string("1.0")),
+               ("method", string("listtransactions")),
+               (
+                 "params",
+                 tuple4(string, int, int, bool, (label, max, 0, true))
+               )
+             ])
+           )
+           |> Json.stringify;
+         rpcCall(config, jsonRPCListTx);
+       })
+    |> then_(obj =>
+         Json.Decode.(
+           obj
+           |> field(
+                "result",
+                withDefault(
+                  [],
+                  list(tx =>
+                    {
+                      txId: tx |> field("txid", string),
+                      txOutputN: tx |> field("vout", int),
+                      category: tx |> field("category", string),
+                      address: tx |> field("address", string),
+                      amount: tx |> field("amount", float) |> BTC.fromFloat,
+                      confirmations: tx |> field("confirmations", int)
                     }
                   )
                 )

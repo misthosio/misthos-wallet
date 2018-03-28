@@ -45,7 +45,7 @@ let getUTXOs = address =>
     )
     |> then_(utxos =>
          utxos
-         |> List.filter((utxo: BitcoindClient.bitcoindUTXO) =>
+         |> List.filter((utxo: BitcoindClient.utxo) =>
               utxo.amount |> BTC.gte(minimumUTXOAmount)
             )
          |> resolve
@@ -58,8 +58,7 @@ let getBalance = ({address}, ~network=Networks.bitcoin) =>
     |> then_(utxos =>
          utxos
          |> List.fold_left(
-              (n, utxo: BitcoindClient.bitcoindUTXO) =>
-                n |> BTC.plus(utxo.amount),
+              (n, utxo: BitcoindClient.utxo) => n |> BTC.plus(utxo.amount),
               BTC.zero
             )
          |> resolve
@@ -92,8 +91,7 @@ let preparePayoutTx =
          {
            inputValues:
              utxos
-             |> List.map(
-                  ({txId, txOutputN, amount}: BitcoindClient.bitcoindUTXO) =>
+             |> List.map(({txId, txOutputN, amount}: BitcoindClient.utxo) =>
                   (txB |> TxBuilder.addInput(txId, txOutputN), amount)
                 ),
            txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex
