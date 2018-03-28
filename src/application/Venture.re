@@ -6,6 +6,8 @@ module Index = Venture__Index;
 
 module Validation = Venture__Validation;
 
+module Wallet = Venture__Wallet;
+
 exception InvalidEvent(Validation.result);
 
 type t = {
@@ -13,6 +15,7 @@ type t = {
   id: ventureId,
   log: EventLog.t,
   state: Validation.state,
+  wallet: Wallet.t,
   viewModel: ViewModel.t,
   watchers: Watchers.t
 };
@@ -22,19 +25,21 @@ let make = (session, id) => {
   id,
   log: EventLog.make(),
   state: Validation.makeState(),
+  wallet: Wallet.make(),
   viewModel: ViewModel.make(),
   watchers: []
 };
 
-let applyInternal = (issuer, event, log, (state, viewModel)) => {
+let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
   logMessage("Appending event to log:");
   logMessage(Event.encode(event) |> Json.stringify);
   let (item, log) = log |> EventLog.append(issuer, event);
   switch (item |> Validation.validate(state)) {
   | Ok =>
     let state = state |> Validation.apply(event);
+    let wallet = wallet |> Wallet.apply(event);
     let viewModel = viewModel |> ViewModel.apply(event);
-    (item, log, (state, viewModel));
+    (item, log, (state, wallet, viewModel));
   /* This should never happen / only incase of an UI input bug!!! */
   | result =>
     logMessage("Event was rejected because of:");
@@ -43,41 +48,47 @@ let applyInternal = (issuer, event, log, (state, viewModel)) => {
   };
 };
 
-let apply = (event, {session, id, log, state, viewModel, watchers}) => {
-  let (item, log, (state, viewModel)) =
-    applyInternal(session.appKeyPair, event, log, (state, viewModel));
-  let (log, (state, viewModel), watchers) =
+let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
+  let (item, log, (state, wallet, viewModel)) =
+    applyInternal(session.appKeyPair, event, log, (state, wallet, viewModel));
+  let (log, (state, wallet, viewModel), watchers) =
     watchers
     |> Watchers.applyAndProcessPending(
          session,
          item,
          log,
          applyInternal,
-         (state, viewModel)
+         (state, wallet, viewModel)
        );
-  {session, id, log, state, viewModel, watchers};
+  {session, id, log, state, wallet, viewModel, watchers};
 };
 
 let reconstruct = (session, log) => {
-  let {viewModel, state} = make(session, VentureId.make());
-  let (id, state, viewModel, watchers) =
+  let {viewModel, state, wallet} = make(session, VentureId.make());
+  let (id, state, wallet, viewModel, watchers) =
     log
     |> EventLog.reduce(
-         ((id, state, viewModel, watchers), {event} as item) => (
+         ((id, state, wallet, viewModel, watchers), {event} as item) => (
            switch event {
            | VentureCreated({ventureId}) => ventureId
            | _ => id
            },
            state |> Validation.apply(event),
+           wallet |> Wallet.apply(event),
            viewModel |> ViewModel.apply(event),
            watchers |> Watchers.apply(~reconstruct=true, session, item, log)
          ),
-         (VentureId.make(), state, viewModel, [])
+         (VentureId.make(), state, wallet, viewModel, [])
        );
-  let (log, (state, viewModel), watchers) =
+  let (log, (state, wallet, viewModel), watchers) =
     watchers
-    |> Watchers.processPending(session, log, applyInternal, (state, viewModel));
-  {session, id, log, state, viewModel, watchers};
+    |> Watchers.processPending(
+         session,
+         log,
+         applyInternal,
+         (state, wallet, viewModel)
+       );
+  {session, id, log, state, wallet, viewModel, watchers};
 };
 
 let persist = ({id, log, state} as venture) => {
@@ -187,11 +198,11 @@ module Synchronize = {
     | Error(t, EventLog.item, Validation.result);
   let exec = (otherLogs, {session, log} as venture) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
-    let ({log, state, viewModel, watchers}, error) =
+    let ({log, state, wallet, viewModel, watchers}, error) =
       newItems
       |> List.fold_left(
            (
-             ({log, watchers, state, viewModel} as venture, error),
+             ({log, watchers, state, wallet, viewModel} as venture, error),
              {event} as item: EventLog.item
            ) =>
              if (Js.Option.isSome(error)) {
@@ -201,9 +212,10 @@ module Synchronize = {
                | Ok =>
                  let log = log |> EventLog.appendItem(item);
                  let state = state |> Validation.apply(event);
+                 let wallet = wallet |> Wallet.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
                  let watchers = watchers |> Watchers.apply(session, item, log);
-                 ({...venture, log, watchers, state, viewModel}, None);
+                 ({...venture, log, watchers, state, wallet, viewModel}, None);
                | PolicyMissmatch as conflict => (
                    venture,
                    Some(Error(venture, item, conflict))
@@ -232,16 +244,16 @@ module Synchronize = {
              },
            (venture, None)
          );
-    let (log, (state, viewModel), watchers) =
+    let (log, (state, wallet, viewModel), watchers) =
       watchers
       |> Watchers.processPending(
            session,
            log,
            applyInternal,
-           (state, viewModel)
+           (state, wallet, viewModel)
          );
     Js.Promise.(
-      {...venture, log, state, viewModel, watchers}
+      {...venture, log, state, wallet, viewModel, watchers}
       |> persist
       |> then_(p =>
            (
@@ -329,4 +341,16 @@ module Cmd = {
       );
     };
   };
+  /* module GetIncomeAddress = { */
+  /*   type result = */
+  /*     | Ok(AccountKeyChain.Address.t, t); */
+  /*   let exec = (~accountIndex, venture) => { */
+  /*     logMessage("Executing 'GetIncomeAddress' command"); */
+  /*     Js.Promise.( */
+  /*       venture |> apply( */
+  /*         Event.makeIncomeAddressExposed( */
+  /*         ) |>persist |> then_(p => resolve(Ok(p))) */
+  /*     ); */
+  /*   }; */
+  /* }; */
 };

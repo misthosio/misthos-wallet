@@ -62,4 +62,9 @@ module Cmd: {
       | Ok(t);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
+  /* module GetIncomeAddress: { */
+  /*   type result = */
+  /*     | Ok(AccountKeyChain.Address.t, t); */
+  /*   let exec: (~accountIndex: int, t) => Js.Promise.t(result); */
+  /* }; */
 };
