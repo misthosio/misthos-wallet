@@ -43,7 +43,7 @@ let () = {
         BitcoindClient.listTransactions(
           config,
           [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress],
-          10
+          2
         )
         |> then_(transactions =>
              expect(transactions |> List.length) |> toEqual(2) |> resolve

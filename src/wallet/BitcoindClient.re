@@ -37,7 +37,6 @@ type utxo = {
 
 type tx = {
   txId: string,
-  category: string,
   txOutputN: int,
   address: string,
   amount: BTC.t,
@@ -77,7 +76,7 @@ let importAllAs = (config, [first, ...rest], label) => {
   );
 };
 
-let getUTXOs = (config, address) =>
+let getUTXOs = (config, address) : Js.Promise.t(list(utxo)) =>
   Js.Promise.(
     importAllAs(config, address, "")
     |> then_(_imports => {
@@ -103,13 +102,15 @@ let getUTXOs = (config, address) =>
                 withDefault(
                   [],
                   list(utxo =>
-                    {
-                      txId: utxo |> field("txid", string),
-                      txOutputN: utxo |> field("vout", int),
-                      address: utxo |> field("address", string),
-                      amount: utxo |> field("amount", float) |> BTC.fromFloat,
-                      confirmations: utxo |> field("confirmations", int)
-                    }
+                    (
+                      {
+                        txId: utxo |> field("txid", string),
+                        txOutputN: utxo |> field("vout", int),
+                        address: utxo |> field("address", string),
+                        amount: utxo |> field("amount", float) |> BTC.fromFloat,
+                        confirmations: utxo |> field("confirmations", int)
+                      }: utxo
+                    )
                   )
                 )
               )
@@ -118,7 +119,7 @@ let getUTXOs = (config, address) =>
        )
   );
 
-let listTransactions = (config, addresses, max) => {
+let listTransactions = (config, addresses, max) : Js.Promise.t(list(tx)) => {
   let label = Uuid.v4();
   Js.Promise.(
     importAllAs(config, addresses, label)
@@ -148,7 +149,6 @@ let listTransactions = (config, addresses, max) => {
                     {
                       txId: tx |> field("txid", string),
                       txOutputN: tx |> field("vout", int),
-                      category: tx |> field("category", string),
                       address: tx |> field("address", string),
                       amount: tx |> field("amount", float) |> BTC.fromFloat,
                       confirmations: tx |> field("confirmations", int)
