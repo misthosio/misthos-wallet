@@ -67,6 +67,6 @@ module Cmd: {
   module ExposeIncomeAddress: {
     type result =
       | Ok(string, t);
-    let exec: (~accountIndex: accountIdx, t) => Js.Promise.t(result);
+    let exec: (~accountIdx: accountIdx, t) => Js.Promise.t(result);
   };
 };

@@ -68,19 +68,19 @@ module Partner = {
 module AccountCreation = {
   module Data = {
     type t = {
-      accountIndex: accountIdx,
+      accountIdx,
       name: string
     };
     let encode = event =>
       Json.Encode.(
         object_([
-          ("accountIndex", AccountIndex.encode(event.accountIndex)),
+          ("accountIndex", AccountIndex.encode(event.accountIdx)),
           ("name", string(event.name))
         ])
       );
     let decode = raw =>
       Json.Decode.{
-        accountIndex: raw |> field("accountIndex", AccountIndex.decode),
+        accountIdx: raw |> field("accountIdx", AccountIndex.decode),
         name: raw |> field("name", string)
       };
   };
@@ -91,19 +91,19 @@ module Custodian = {
   module Data = {
     type t = {
       partnerId: userId,
-      accountIndex: accountIdx
+      accountIdx
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("partnerId", UserId.encode(event.partnerId)),
-          ("accountIndex", AccountIndex.encode(event.accountIndex))
+          ("accountIdx", AccountIndex.encode(event.accountIdx))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         partnerId: raw |> field("partnerId", UserId.decode),
-        accountIndex: raw |> field("accountIndex", AccountIndex.decode)
+        accountIdx: raw |> field("accountIdx", AccountIndex.decode)
       };
   };
   include (val EventTypes.makeProcess("Custodian"))(Data);
@@ -132,28 +132,28 @@ module CustodianKeyChainUpdated = {
 
 module AccountKeyChainUpdated = {
   type t = {
-    accountIndex: accountIdx,
-    keyChainIndex: accountKeyChainIdx,
+    accountIdx,
+    keyChainIdx: accountKeyChainIdx,
     keyChain: AccountKeyChain.t
   };
-  let make = (~accountIndex, ~keyChainIndex, ~keyChain) => {
-    accountIndex,
-    keyChainIndex,
+  let make = (~accountIdx, ~keyChainIdx, ~keyChain) => {
+    accountIdx,
+    keyChainIdx,
     keyChain
   };
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("AccountKeyChainUpdated")),
-        ("accountIndex", AccountIndex.encode(event.accountIndex)),
-        ("keyChainIndex", AccountKeyChainIndex.encode(event.keyChainIndex)),
+        ("accountIdx", AccountIndex.encode(event.accountIdx)),
+        ("keyChainIdx", AccountKeyChainIndex.encode(event.keyChainIdx)),
         ("keyChain", AccountKeyChain.encode(event.keyChain))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      accountIndex: raw |> field("accountIndex", AccountIndex.decode),
-      keyChainIndex: raw |> field("keyChainIndex", AccountKeyChainIndex.decode),
+      accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+      keyChainIdx: raw |> field("keyChainIdx", AccountKeyChainIndex.decode),
       keyChain: raw |> field("keyChain", AccountKeyChain.decode)
     };
 };
@@ -203,21 +203,21 @@ let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) 
     )
   );
 
-let makeAccountCreationProposed = (~supporterId, ~name, ~accountIndex, ~policy) =>
+let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(
     AccountCreation.Proposal.make(
       ~supporterId,
       ~policy,
-      AccountCreation.Data.{accountIndex, name}
+      AccountCreation.Data.{accountIdx, name}
     )
   );
 
-let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIndex, ~policy) =>
+let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
   CustodianProposed(
     Custodian.Proposal.make(
       ~supporterId,
       ~policy,
-      Custodian.Data.{partnerId, accountIndex}
+      Custodian.Data.{partnerId, accountIdx}
     )
   );
 

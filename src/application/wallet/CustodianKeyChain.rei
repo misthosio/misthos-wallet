@@ -11,17 +11,17 @@ type public;
 let make:
   (
     ~ventureId: ventureId,
-    ~accountIndex: accountIdx,
-    ~keyChainIndex: custodianKeyChainIdx,
+    ~accountIdx: accountIdx,
+    ~keyChainIdx: custodianKeyChainIdx,
     ~masterKeyChain: HDNode.t
   ) =>
   t;
 
 let toPublicKeyChain: t => public;
 
-let accountIndex: public => accountIdx;
+let accountIdx: public => accountIdx;
 
-let keyChainIndex: public => custodianKeyChainIdx;
+let keyChainIdx: public => custodianKeyChainIdx;
 
 let hdNode: public => HDNode.t;
 

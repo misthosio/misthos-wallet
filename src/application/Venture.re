@@ -344,9 +344,9 @@ module Cmd = {
   module ExposeIncomeAddress = {
     type result =
       | Ok(string, t);
-    let exec = (~accountIndex, {wallet} as venture) => {
+    let exec = (~accountIdx, {wallet} as venture) => {
       logMessage("Executing 'GetIncomeAddress' command");
-      let exposeEvent = wallet |> Wallet.exposeNextIncomeAddress(accountIndex);
+      let exposeEvent = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
       Js.Promise.(
         venture
         |> apply(IncomeAddressExposed(exposeEvent))

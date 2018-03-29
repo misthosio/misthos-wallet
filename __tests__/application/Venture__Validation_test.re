@@ -17,8 +17,8 @@ let () =
     let emptyState = Validation.makeState();
     let keyChain0 =
       AccountKeyChainUpdated.make(
-        ~accountIndex=AccountIndex.default,
-        ~keyChainIndex=AccountKeyChainIndex.first,
+        ~accountIdx=AccountIndex.default,
+        ~keyChainIdx=AccountKeyChainIndex.first,
         ~keyChain=AccountKeyChain.make(0, [])
       );
     let accountProposal =
@@ -26,7 +26,7 @@ let () =
         ~supporterId,
         ~policy=Policy.absolute,
         AccountCreation.Data.{
-          accountIndex: AccountIndex.default,
+          accountIdx: AccountIndex.default,
           name: "Account"
         }
       );
@@ -48,15 +48,14 @@ let () =
     test("The KeyChainIndex is in order", () => {
       let keyChain1 =
         AccountKeyChainUpdated.make(
-          ~accountIndex=AccountIndex.default,
-          ~keyChainIndex=
-            AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
+          ~accountIdx=AccountIndex.default,
+          ~keyChainIdx=AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
           ~keyChain=AccountKeyChain.make(0, [])
         );
       let keyChain2 =
         AccountKeyChainUpdated.make(
-          ~accountIndex=AccountIndex.default,
-          ~keyChainIndex=
+          ~accountIdx=AccountIndex.default,
+          ~keyChainIdx=
             AccountKeyChainIndex.first
             |> AccountKeyChainIndex.next
             |> AccountKeyChainIndex.next,
@@ -84,16 +83,16 @@ let () =
       let custodianKeyChain0 =
         CustodianKeyChain.make(
           ~ventureId=VentureId.fromString("venture"),
-          ~accountIndex=AccountIndex.default,
-          ~keyChainIndex=CustodianKeyChainIndex.first,
+          ~accountIdx=AccountIndex.default,
+          ~keyChainIdx=CustodianKeyChainIndex.first,
           ~masterKeyChain
         )
         |> CustodianKeyChain.toPublicKeyChain;
       let custodianKeyChain1 =
         CustodianKeyChain.make(
           ~ventureId=VentureId.fromString("venture"),
-          ~accountIndex=AccountIndex.default,
-          ~keyChainIndex=
+          ~accountIdx=AccountIndex.default,
+          ~keyChainIdx=
             CustodianKeyChainIndex.first |> CustodianKeyChainIndex.next,
           ~masterKeyChain
         )
@@ -121,15 +120,15 @@ let () =
            );
       let keyChain =
         AccountKeyChainUpdated.make(
-          ~accountIndex=AccountIndex.default,
-          ~keyChainIndex=AccountKeyChainIndex.first,
+          ~accountIdx=AccountIndex.default,
+          ~keyChainIdx=AccountKeyChainIndex.first,
           ~keyChain=
             AccountKeyChain.make(1, [(custodianId, custodianKeyChain0)])
         );
       let keyChain1 =
         AccountKeyChainUpdated.make(
-          ~accountIndex=AccountIndex.default,
-          ~keyChainIndex=AccountKeyChainIndex.first,
+          ~accountIdx=AccountIndex.default,
+          ~keyChainIdx=AccountKeyChainIndex.first,
           ~keyChain=
             AccountKeyChain.make(1, [(custodianId, custodianKeyChain1)])
         );

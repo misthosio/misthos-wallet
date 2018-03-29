@@ -9,17 +9,17 @@ let defaultCosignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6|];
 type state = {
   systemIssuer: Bitcoin.ECPair.t,
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
-  nextKeyChainIndex: accountKeyChainIdx,
+  nextKeyChainIdx: accountKeyChainIdx,
   pendingEvent: option((Bitcoin.ECPair.t, Event.t))
 };
 
 let make = ({data}: AccountCreation.Acceptance.t, log) => {
-  let accountIndex = data.accountIndex;
+  let accountIdx = data.accountIdx;
   let process = {
     val state =
       ref({
         custodianKeyChains: [],
-        nextKeyChainIndex: AccountKeyChainIndex.first,
+        nextKeyChainIdx: AccountKeyChainIndex.first,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
         pendingEvent: None
       });
@@ -29,7 +29,7 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
           switch event {
           | VentureCreated({systemIssuer}) => {...state^, systemIssuer}
           | CustodianKeyChainUpdated({keyChain, partnerId})
-              when CustodianKeyChain.accountIndex(keyChain) == accountIndex =>
+              when CustodianKeyChain.accountIdx(keyChain) == accountIdx =>
             let custodianKeyChains = [
               (partnerId, keyChain),
               ...state^.custodianKeyChains |> List.remove_assoc(partnerId)
@@ -42,8 +42,8 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
                   state^.systemIssuer,
                   AccountKeyChainUpdated(
                     AccountKeyChainUpdated.make(
-                      ~accountIndex,
-                      ~keyChainIndex=state^.nextKeyChainIndex,
+                      ~accountIdx,
+                      ~keyChainIdx=state^.nextKeyChainIdx,
                       ~keyChain=
                         AccountKeyChain.make(
                           defaultCosignerList[custodianKeyChains |> List.length],
@@ -53,12 +53,12 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
                   )
                 ))
             };
-          | AccountKeyChainUpdated({accountIndex as aIdx})
-              when aIdx == accountIndex => {
+          | AccountKeyChainUpdated({accountIdx as aIdx})
+              when aIdx == accountIdx => {
               ...state^,
               pendingEvent: None,
-              nextKeyChainIndex:
-                state^.nextKeyChainIndex |> AccountKeyChainIndex.next
+              nextKeyChainIdx:
+                state^.nextKeyChainIdx |> AccountKeyChainIndex.next
             }
           | _ => state^
           }

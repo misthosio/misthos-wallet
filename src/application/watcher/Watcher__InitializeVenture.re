@@ -35,8 +35,7 @@ let make =
               when ProcessId.eq(processId, event.processId) =>
             ProposeAccountCreation
           | (ProposeAccountCreation, AccountCreationProposed(event))
-              when
-                AccountIndex.eq(event.data.accountIndex, AccountIndex.default) =>
+              when AccountIndex.eq(event.data.accountIdx, AccountIndex.default) =>
             AccountCreationProposed(event.processId)
           | (
               AccountCreationProposed(processId),
@@ -72,7 +71,7 @@ let make =
               Event.makeAccountCreationProposed(
                 ~supporterId=creatorId,
                 ~name=defaultAccountName,
-                ~accountIndex=AccountIndex.default,
+                ~accountIdx=AccountIndex.default,
                 ~policy=metaPolicy
               )
             ))
@@ -82,7 +81,7 @@ let make =
               Event.makeCustodianProposed(
                 ~partnerId=creatorId,
                 ~supporterId=creatorId,
-                ~accountIndex=AccountIndex.default,
+                ~accountIdx=AccountIndex.default,
                 ~policy=metaPolicy
               )
             ))

@@ -7,7 +7,7 @@ open WalletTypes;
 type state = {
   ventureId,
   pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
-  nextKeyChainIndex: custodianKeyChainIdx
+  nextKeyChainIdx: custodianKeyChainIdx
 };
 
 let make =
@@ -17,13 +17,13 @@ let make =
       log
     ) => {
   let custodianId = data.partnerId;
-  let accountIndex = data.accountIndex;
+  let accountIdx = data.accountIdx;
   let process = {
     val state =
       ref({
         ventureId: VentureId.fromString(""),
         pendingEvent: None,
-        nextKeyChainIndex: CustodianKeyChainIndex.first
+        nextKeyChainIdx: CustodianKeyChainIndex.first
       });
     pub receive = ({event}: EventLog.item) =>
       state :=
@@ -31,7 +31,7 @@ let make =
           switch event {
           | VentureCreated({ventureId}) => {...state^, ventureId}
           | AccountCreationAccepted(acceptance)
-              when acceptance.data.accountIndex == accountIndex => {
+              when acceptance.data.accountIdx == accountIdx => {
               ...state^,
               pendingEvent:
                 Some((
@@ -42,8 +42,8 @@ let make =
                       ~keyChain=
                         CustodianKeyChain.make(
                           ~ventureId=state^.ventureId,
-                          ~accountIndex,
-                          ~keyChainIndex=state^.nextKeyChainIndex,
+                          ~accountIdx,
+                          ~keyChainIdx=state^.nextKeyChainIdx,
                           ~masterKeyChain
                         )
                         |> CustodianKeyChain.toPublicKeyChain
@@ -54,11 +54,11 @@ let make =
           | CustodianKeyChainUpdated({partnerId, keyChain})
               when
                 UserId.eq(partnerId, custodianId)
-                && CustodianKeyChain.accountIndex(keyChain) == accountIndex => {
+                && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
               ...state^,
               pendingEvent: None,
-              nextKeyChainIndex:
-                state^.nextKeyChainIndex |> CustodianKeyChainIndex.next
+              nextKeyChainIdx:
+                state^.nextKeyChainIdx |> CustodianKeyChainIndex.next
             }
           | _ => state^
           }

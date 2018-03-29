@@ -33,27 +33,27 @@ let () =
       HDNode.make(keyC, chainCode)
     );
     let ventureId = VentureId.fromString("test");
-    let accountIndex = AccountIndex.default;
-    let keyChainIndex = CustodianKeyChainIndex.first;
+    let accountIdx = AccountIndex.default;
+    let keyChainIdx = CustodianKeyChainIndex.first;
     let (cKeyChainA, cKeyChainB, cKeyChainC) = (
       CustodianKeyChain.make(
         ~ventureId,
-        ~accountIndex,
-        ~keyChainIndex,
+        ~accountIdx,
+        ~keyChainIdx,
         ~masterKeyChain=masterA
       )
       |> CustodianKeyChain.toPublicKeyChain,
       CustodianKeyChain.make(
         ~ventureId,
-        ~accountIndex,
-        ~keyChainIndex,
+        ~accountIdx,
+        ~keyChainIdx,
         ~masterKeyChain=masterB
       )
       |> CustodianKeyChain.toPublicKeyChain,
       CustodianKeyChain.make(
         ~ventureId,
-        ~accountIndex,
-        ~keyChainIndex,
+        ~accountIdx,
+        ~keyChainIdx,
         ~masterKeyChain=masterC
       )
       |> CustodianKeyChain.toPublicKeyChain
@@ -67,7 +67,7 @@ let () =
       expect(accountKeyChain |> AccountKeyChain.getAddress(AddressIndex.first))
       |> toEqual(
            AccountKeyChain.Address.{
-             addressIndex: AddressIndex.first,
+             addressIdx: AddressIndex.first,
              chain: 0,
              witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
              redeemScript: "002027fa0596838478a59b5c0512acf480fdba510cd320def9e3d9e9d27a13b7e72f",

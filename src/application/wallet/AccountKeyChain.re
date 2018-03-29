@@ -16,13 +16,13 @@ let make = (nCoSigners, custodianKeyChains) => {
 
 module Address = {
   type t = {
-    addressIndex: addressIdx,
+    addressIdx,
     chain: int,
     witnessScript: string,
     redeemScript: string,
     address: string
   };
-  let defaultCosignerIndex = 0;
+  let defaultCosignerIdx = 0;
   let externalChain = 0;
   let internalChain = 1;
   /* bip45'/cosignerIdx/change/address */
@@ -38,7 +38,7 @@ module Address = {
          )
       |> List.map(node =>
            node
-           |> HDNode.derive(defaultCosignerIndex)
+           |> HDNode.derive(defaultCosignerIdx)
            |> HDNode.derive(chain)
            |> HDNode.derive(index |> AddressIndex.toInt)
          )
@@ -58,7 +58,7 @@ module Address = {
         keys |> List.hd |> ECPair.getNetwork
       );
     {
-      addressIndex: index,
+      addressIdx: index,
       chain,
       witnessScript: Utils.bufToHex(witnessScript),
       redeemScript: Utils.bufToHex(redeemScript),

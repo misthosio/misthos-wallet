@@ -13,20 +13,20 @@ let make = () => {accountKeyChains: [], nextCoordinates: []};
 let apply = (event: Event.t, state) =>
   switch event {
   | AccountKeyChainUpdated(
-      ({accountIndex, keyChainIndex, keyChain}: AccountKeyChainUpdated.t)
+      ({accountIdx, keyChainIdx, keyChain}: AccountKeyChainUpdated.t)
     ) =>
     let accountKeyChains =
-      try (state.accountKeyChains |> List.assoc(accountIndex)) {
+      try (state.accountKeyChains |> List.assoc(accountIdx)) {
       | Not_found => []
       };
     {
       accountKeyChains: [
-        (accountIndex, [(keyChainIndex, keyChain), ...accountKeyChains]),
-        ...state.accountKeyChains |> List.remove_assoc(accountIndex)
+        (accountIdx, [(keyChainIdx, keyChain), ...accountKeyChains]),
+        ...state.accountKeyChains |> List.remove_assoc(accountIdx)
       ],
       nextCoordinates: [
-        (accountIndex, AddressCoordinates.first(accountIndex, keyChainIndex)),
-        ...state.nextCoordinates |> List.remove_assoc(accountIndex)
+        (accountIdx, AddressCoordinates.first(accountIdx, keyChainIdx)),
+        ...state.nextCoordinates |> List.remove_assoc(accountIdx)
       ]
     };
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
@@ -41,9 +41,10 @@ let apply = (event: Event.t, state) =>
   | _ => state
   };
 
-let exposeNextIncomeAddress =
-    (accountIndex, {nextCoordinates, accountKeyChains}) => {
-  let coordinates = nextCoordinates |> List.assoc(accountIndex);
+let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) => {
+  let coordinates = nextCoordinates |> List.assoc(accountIdx);
   let address = accountKeyChains |> AccountKeyChain.find(coordinates);
   IncomeAddressExposed.make(~coordinates, ~address=address.address);
 };
+
+let preparePayoutTransaction = (destinations, fee, accountIdx) => ();
