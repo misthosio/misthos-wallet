@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 module Index: {
   type item = {
     id: ventureId,
@@ -62,9 +64,9 @@ module Cmd: {
       | Ok(t);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
-  /* module GetIncomeAddress: { */
-  /*   type result = */
-  /*     | Ok(AccountKeyChain.Address.t, t); */
-  /*   let exec: (~accountIndex: int, t) => Js.Promise.t(result); */
-  /* }; */
+  module ExposeIncomeAddress: {
+    type result =
+      | Ok(string, t);
+    let exec: (~accountIndex: accountIdx, t) => Js.Promise.t(result);
+  };
 };
