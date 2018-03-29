@@ -4,10 +4,11 @@ open Event;
 
 type t = {
   accountKeyChains:
-    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t))))
+    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+  nextCoordinates: list((accountIdx, AddressCoordinates.t))
 };
 
-let make = () => {accountKeyChains: []};
+let make = () => {accountKeyChains: [], nextCoordinates: []};
 
 let apply = (event: Event.t, state) =>
   switch event {
@@ -19,27 +20,30 @@ let apply = (event: Event.t, state) =>
       | Not_found => []
       };
     {
-      ...state,
       accountKeyChains: [
         (accountIndex, [(keyChainIndex, keyChain), ...accountKeyChains]),
         ...state.accountKeyChains |> List.remove_assoc(accountIndex)
+      ],
+      nextCoordinates: [
+        (accountIndex, AddressCoordinates.first(accountIndex, keyChainIndex)),
+        ...state.nextCoordinates |> List.remove_assoc(accountIndex)
+      ]
+    };
+  | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
+    let accountIdx = coordinates |> AddressCoordinates.accountIdx;
+    {
+      ...state,
+      nextCoordinates: [
+        (accountIdx, coordinates |> AddressCoordinates.next),
+        ...state.nextCoordinates |> List.remove_assoc(accountIdx)
       ]
     };
   | _ => state
   };
 
-let exposeNextIncomeAddress = (accountIndex, {accountKeyChains}) => {
-  let addressIndex = AddressIndex.first;
-  let (keyChainIndex, keyChain) =
-    accountKeyChains
-    |> List.assoc(accountIndex)
-    |> List.sort((a, b) => AccountKeyChainIndex.compare(a |> fst, b |> fst))
-    |> List.rev
-    |> List.hd;
-  IncomeAddressExposed.make(
-    ~accountIndex,
-    ~keyChainIndex,
-    ~addressIndex,
-    ~address=(keyChain |> AccountKeyChain.getAddress(addressIndex)).address
-  );
+let exposeNextIncomeAddress =
+    (accountIndex, {nextCoordinates, accountKeyChains}) => {
+  let coordinates = nextCoordinates |> List.assoc(accountIndex);
+  let address = accountKeyChains |> AccountKeyChain.find(coordinates);
+  IncomeAddressExposed.make(~coordinates, ~address=address.address);
 };

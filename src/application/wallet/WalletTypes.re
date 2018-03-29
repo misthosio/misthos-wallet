@@ -48,3 +48,37 @@ module AddressIndex = {
 };
 
 type addressIdx = AddressIndex.t;
+
+module AddressCoordinates = {
+  type t = (AccountIndex.t, AccountKeyChainIndex.t, AddressIndex.t);
+  let first = (accountIdx, accountKeyChainIdx) => (
+    accountIdx,
+    accountKeyChainIdx,
+    AccountIndex.first
+  );
+  let next = ((accountIdx, accountKeyChainIdx, addressIdx)) => (
+    accountIdx,
+    accountKeyChainIdx,
+    addressIdx |> AccountIndex.next
+  );
+  let lookupKeyChain =
+      (
+        (accountIdx, accountKeyChainIdx, _addressIdx),
+        accounts: list((accountIdx, list((accountKeyChainIdx, 'a))))
+      ) =>
+    accounts |> List.assoc(accountIdx) |> List.assoc(accountKeyChainIdx);
+  let addressIdx = ((_, _, addressIdx)) => addressIdx;
+  let accountIdx = ((idx, _, _)) => idx;
+  let encode =
+    Json.Encode.tuple3(
+      AccountIndex.encode,
+      AccountKeyChainIndex.encode,
+      AddressIndex.encode
+    );
+  let decode =
+    Json.Decode.tuple3(
+      AccountIndex.decode,
+      AccountKeyChainIndex.decode,
+      AddressIndex.decode
+    );
+};

@@ -99,3 +99,8 @@ let decode = raw =>
          ),
     nCoSigners: raw |> field("nCoSigners", int)
   };
+
+let find = (coordinates, keyChains) =>
+  keyChains
+  |> AddressCoordinates.lookupKeyChain(coordinates)
+  |> getAddress(coordinates |> AddressCoordinates.addressIdx);

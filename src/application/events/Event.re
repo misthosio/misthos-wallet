@@ -160,32 +160,21 @@ module AccountKeyChainUpdated = {
 
 module IncomeAddressExposed = {
   type t = {
-    accountIndex: accountIdx,
-    keyChainIndex: accountKeyChainIdx,
-    addressIndex: addressIdx,
+    coordinates: AddressCoordinates.t,
     address: string
   };
-  let make = (~accountIndex, ~keyChainIndex, ~addressIndex, ~address) => {
-    accountIndex,
-    keyChainIndex,
-    addressIndex,
-    address
-  };
+  let make = (~coordinates, ~address) => {coordinates, address};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("IncomeAddressExposed")),
-        ("accountIndex", AccountIndex.encode(event.accountIndex)),
-        ("keyChainIndex", AccountKeyChainIndex.encode(event.keyChainIndex)),
-        ("addressIndex", AddressIndex.encode(event.addressIndex)),
+        ("coordinates", AddressCoordinates.encode(event.coordinates)),
         ("address", string(event.address))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      accountIndex: raw |> field("accountIndex", AccountIndex.decode),
-      keyChainIndex: raw |> field("keyChainIndex", AccountKeyChainIndex.decode),
-      addressIndex: raw |> field("addressIndex", AddressIndex.decode),
+      coordinates: raw |> field("coordinates", AddressCoordinates.decode),
       address: raw |> field("address", string)
     };
 };

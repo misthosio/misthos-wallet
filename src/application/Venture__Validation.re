@@ -172,6 +172,7 @@ let apply = (event: Event.t, state) =>
         (accountIndex, [(keyChainIndex, keyChain), ...accountChains])
       ]
     };
+  | IncomeAddressExposed(_) => state
   };
 
 type result =
@@ -377,16 +378,13 @@ let validateAccountKeyChainUpdated =
 
 let validateIncomeAddressExposed =
     (
-      {accountIndex, keyChainIndex, addressIndex, address}: IncomeAddressExposed.t,
+      {coordinates, address}: IncomeAddressExposed.t,
       {accountKeyChains},
       _issuerPubKey
     ) =>
   try {
     let generatedAddress =
-      accountKeyChains
-      |> List.assoc(accountIndex)
-      |> List.assoc(keyChainIndex)
-      |> AccountKeyChain.getAddress(addressIndex);
+      accountKeyChains |> AccountKeyChain.find(coordinates);
     if (address == generatedAddress.address) {
       Ok;
     } else {
