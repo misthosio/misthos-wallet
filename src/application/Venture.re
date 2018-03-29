@@ -341,16 +341,18 @@ module Cmd = {
       );
     };
   };
-  /* module GetIncomeAddress = { */
-  /*   type result = */
-  /*     | Ok(AccountKeyChain.Address.t, t); */
-  /*   let exec = (~accountIndex, venture) => { */
-  /*     logMessage("Executing 'GetIncomeAddress' command"); */
-  /*     Js.Promise.( */
-  /*       venture |> apply( */
-  /*         Event.makeIncomeAddressExposed( */
-  /*         ) |>persist |> then_(p => resolve(Ok(p))) */
-  /*     ); */
-  /*   }; */
-  /* }; */
+  module ExposeIncomeAddress = {
+    type result =
+      | Ok(string, t);
+    let exec = (~accountIndex, {wallet} as venture) => {
+      logMessage("Executing 'GetIncomeAddress' command");
+      let exposeEvent = wallet |> Wallet.exposeNextIncomeAddress(accountIndex);
+      Js.Promise.(
+        venture
+        |> apply(IncomeAddressExposed(exposeEvent))
+        |> persist
+        |> then_(p => resolve(Ok(exposeEvent.address, p)))
+      );
+    };
+  };
 };

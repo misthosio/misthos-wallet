@@ -160,11 +160,34 @@ module AccountKeyChainUpdated = {
 
 module IncomeAddressExposed = {
   type t = {
-    accountIndex: int,
-    accountKeyChainIndex: int,
-    addressIndex: int,
+    accountIndex: accountIdx,
+    keyChainIndex: accountKeyChainIdx,
+    addressIndex: addressIdx,
     address: string
   };
+  let make = (~accountIndex, ~keyChainIndex, ~addressIndex, ~address) => {
+    accountIndex,
+    keyChainIndex,
+    addressIndex,
+    address
+  };
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("IncomeAddressExposed")),
+        ("accountIndex", AccountIndex.encode(event.accountIndex)),
+        ("keyChainIndex", AccountKeyChainIndex.encode(event.keyChainIndex)),
+        ("addressIndex", AddressIndex.encode(event.addressIndex)),
+        ("address", string(event.address))
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      accountIndex: raw |> field("accountIndex", AccountIndex.decode),
+      keyChainIndex: raw |> field("keyChainIndex", AccountKeyChainIndex.decode),
+      addressIndex: raw |> field("addressIndex", AddressIndex.decode),
+      address: raw |> field("address", string)
+    };
 };
 
 type t =
@@ -179,7 +202,8 @@ type t =
   | CustodianEndorsed(Custodian.Endorsement.t)
   | CustodianAccepted(Custodian.Acceptance.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
-  | AccountKeyChainUpdated(AccountKeyChainUpdated.t);
+  | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
+  | IncomeAddressExposed(IncomeAddressExposed.t);
 
 let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
@@ -224,7 +248,8 @@ let encode =
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
   | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
-  | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event);
+  | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event)
+  | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event);
 
 let isSystemEvent =
   fun
@@ -256,6 +281,8 @@ let decode = raw => {
     CustodianKeyChainUpdated(CustodianKeyChainUpdated.decode(raw))
   | "AccountKeyChainUpdated" =>
     AccountKeyChainUpdated(AccountKeyChainUpdated.decode(raw))
+  | "IncomeAddressExposed" =>
+    IncomeAddressExposed(IncomeAddressExposed.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };

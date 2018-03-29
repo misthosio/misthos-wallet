@@ -375,6 +375,27 @@ let validateAccountKeyChainUpdated =
   | Not_found => BadData("Account doesn't exist")
   };
 
+let validateIncomeAddressExposed =
+    (
+      {accountIndex, keyChainIndex, addressIndex, address}: IncomeAddressExposed.t,
+      {accountKeyChains},
+      _issuerPubKey
+    ) =>
+  try {
+    let generatedAddress =
+      accountKeyChains
+      |> List.assoc(accountIndex)
+      |> List.assoc(keyChainIndex)
+      |> AccountKeyChain.getAddress(addressIndex);
+    if (address == generatedAddress.address) {
+      Ok;
+    } else {
+      BadData("Unknown Address");
+    };
+  } {
+  | Not_found => BadData("Unknown Address")
+  };
+
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
@@ -406,7 +427,8 @@ let validateEvent =
     )
   | CustodianKeyChainUpdated(update) =>
     validateCustodianKeyChainUpdated(update)
-  | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update);
+  | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
+  | IncomeAddressExposed(event) => validateIncomeAddressExposed(event);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (

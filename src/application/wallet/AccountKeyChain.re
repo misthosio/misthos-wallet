@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 open Bitcoin;
 
 type t = {
@@ -14,7 +16,8 @@ let make = (nCoSigners, custodianKeyChains) => {
 
 module Address = {
   type t = {
-    path: list(int),
+    addressIndex: addressIdx,
+    chain: int,
     witnessScript: string,
     redeemScript: string,
     address: string
@@ -37,7 +40,7 @@ module Address = {
            node
            |> HDNode.derive(defaultCosignerIndex)
            |> HDNode.derive(chain)
-           |> HDNode.derive(index)
+           |> HDNode.derive(index |> AddressIndex.toInt)
          )
       |> List.map(node => node##keyPair);
     open Script;
@@ -55,7 +58,8 @@ module Address = {
         keys |> List.hd |> ECPair.getNetwork
       );
     {
-      path: [defaultCosignerIndex, chain, index],
+      addressIndex: index,
+      chain,
       witnessScript: Utils.bufToHex(witnessScript),
       redeemScript: Utils.bufToHex(redeemScript),
       address
