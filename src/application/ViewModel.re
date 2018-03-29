@@ -57,14 +57,7 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id))
     }
-  | AccountCreationProposed(_)
-  | AccountCreationEndorsed(_)
-  | AccountCreationAccepted(_) => state
-  | CustodianProposed(_)
-  | CustodianEndorsed(_)
-  | CustodianAccepted(_) => state
-  | CustodianKeyChainUpdated(_) => state
-  | AccountKeyChainUpdated(_) => state
+  | _ => state
   };
 
 let getPartners = state => state.partners;
