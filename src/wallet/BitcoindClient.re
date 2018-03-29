@@ -164,11 +164,12 @@ let broadcastTransaction = (config, transaction) => {
       ])
     )
     |> Json.stringify;
-  Js.Promise.(rpcCall(config, jsonRPC));
+  rpcCall(config, jsonRPC);
 };
 
-let make = config : (module WalletTypes.NetworkClient) =>
+let make = (config, network) : (module WalletTypes.NetworkClient) =>
   (module
    {
+     let network = network;
      let getUTXOs = getUTXOs(config);
    });

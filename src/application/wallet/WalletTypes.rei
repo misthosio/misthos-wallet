@@ -7,6 +7,7 @@ type utxo = {
 };
 
 module type NetworkClient = {
+  let network: Bitcoin.Networks.t;
   let getUTXOs: list(string) => Js.Promise.t(list(utxo));
 };
 
