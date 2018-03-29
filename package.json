@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@jsiebern/bs-material-ui": "0.1.326",
     "autoprefixer": "7.1.6",
     "babel-core": "6.26.0",
     "babel-eslint": "7.2.3",
@@ -13,7 +14,6 @@
     "bignumber.js": "^6.0.0",
     "bitcoinjs-lib": "^3.3",
     "blockstack": "^0.16",
-    "bootstrap": "^4.0",
     "bs-fetch": "^0.2.1",
     "bs-json": "^1.0",
     "bs-loader": "^1.8.0",

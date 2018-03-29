@@ -13,14 +13,18 @@
   "bs-dependencies": [
     "reason-react",
     "bs-json",
-    "bs-fetch"
+    "bs-fetch",
+    "@jsiebern/bs-material-ui"
   ],
   "bs-dev-dependencies": [
-    "@glennsl/bs-jest"
+     "@glennsl/bs-jest",
   ],
   "reason": {
     "react-jsx": 2
   },
+  "ppx-flags": [
+      "./node_modules/@jsiebern/bs-material-ui/ppx_withStyles"
+  ],
   "bsc-flags": [
     "-bs-super-errors"
   ],
