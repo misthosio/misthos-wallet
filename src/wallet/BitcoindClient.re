@@ -27,14 +27,6 @@ let rpcCall = ({bitcoindUrl} as config, jsonRPC) =>
     |> then_(Fetch.Response.json)
   );
 
-type utxo = {
-  txId: string,
-  txOutputN: int,
-  address: string,
-  amount: BTC.t,
-  confirmations: int
-};
-
 type tx = {
   txId: string,
   txOutputN: int,
@@ -76,9 +68,9 @@ let importAllAs = (config, [first, ...rest], label) => {
   );
 };
 
-let getUTXOs = (config, address) : Js.Promise.t(list(utxo)) =>
+let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
   Js.Promise.(
-    importAllAs(config, address, "")
+    importAllAs(config, addresses, "")
     |> then_(_imports => {
          let jsonRPCUnspent =
            Json.Encode.(
@@ -87,7 +79,7 @@ let getUTXOs = (config, address) : Js.Promise.t(list(utxo)) =>
                ("method", string("listunspent")),
                (
                  "params",
-                 tuple3(int, int, list(string), (1, 9999999, address))
+                 tuple3(int, int, list(string), (1, 9999999, addresses))
                )
              ])
            )
@@ -109,7 +101,7 @@ let getUTXOs = (config, address) : Js.Promise.t(list(utxo)) =>
                         address: utxo |> field("address", string),
                         amount: utxo |> field("amount", float) |> BTC.fromFloat,
                         confirmations: utxo |> field("confirmations", int)
-                      }: utxo
+                      }: WalletTypes.utxo
                     )
                   )
                 )
@@ -174,3 +166,9 @@ let broadcastTransaction = (config, transaction) => {
     |> Json.stringify;
   Js.Promise.(rpcCall(config, jsonRPC));
 };
+
+let make = config : (module WalletTypes.NetworkClient) =>
+  (module
+   {
+     let getUTXOs = getUTXOs(config);
+   });

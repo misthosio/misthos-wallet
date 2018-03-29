@@ -69,4 +69,16 @@ module Cmd: {
       | Ok(string, t);
     let exec: (~accountIdx: accountIdx, t) => Js.Promise.t(result);
   };
+  module ProposePayout: {
+    type result =
+      | Ok(t);
+    let exec:
+      (
+        ~accountIdx: accountIdx,
+        ~destinations: list((string, BTC.t)),
+        ~fee: BTC.t,
+        t
+      ) =>
+      Js.Promise.t(result);
+  };
 };

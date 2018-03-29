@@ -1,3 +1,15 @@
+type utxo = {
+  txId: string,
+  txOutputN: int,
+  address: string,
+  amount: BTC.t,
+  confirmations: int
+};
+
+module type NetworkClient = {
+  let getUTXOs: list(string) => Js.Promise.t(list(utxo));
+};
+
 module Base = {
   type t = int;
   external toInt : int => 'a = "%identity";

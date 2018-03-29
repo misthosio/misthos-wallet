@@ -355,4 +355,10 @@ module Cmd = {
       );
     };
   };
+  module ProposePayout = {
+    type result =
+      | Ok(t);
+    let exec = (~accountIdx, ~destinations, ~fee, venture) =>
+      Js.Promise.(venture |> persist |> then_(p => resolve(Ok(p))));
+  };
 };

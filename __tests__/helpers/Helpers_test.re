@@ -6,6 +6,8 @@ open Expect;
 
 open Bitcoin;
 
+open WalletTypes;
+
 let () = {
   let config: BitcoindClient.config = {
     bitcoindUrl: "http://localhost:18322",
@@ -28,7 +30,7 @@ let () = {
                [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress]
              )
            )
-        |> then_((utxos: list(BitcoindClient.utxo)) =>
+        |> then_((utxos: list(utxo)) =>
              resolve(
                expect((List.hd(utxos).amount, List.nth(utxos, 1).amount))
                |> toEqual((tenSats, tenSats))

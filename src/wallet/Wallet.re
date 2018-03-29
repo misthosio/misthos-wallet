@@ -1,5 +1,7 @@
 open Bitcoin;
 
+open WalletTypes;
+
 let minimumUTXOAmount = BTC.fromSatoshis(10000L);
 
 type t = {
@@ -45,7 +47,7 @@ let getUTXOs = address =>
     )
     |> then_(utxos =>
          utxos
-         |> List.filter((utxo: BitcoindClient.utxo) =>
+         |> List.filter((utxo: utxo) =>
               utxo.amount |> BTC.gte(minimumUTXOAmount)
             )
          |> resolve
@@ -58,7 +60,7 @@ let getBalance = ({address}, ~network=Networks.bitcoin) =>
     |> then_(utxos =>
          utxos
          |> List.fold_left(
-              (n, utxo: BitcoindClient.utxo) => n |> BTC.plus(utxo.amount),
+              (n, utxo: utxo) => n |> BTC.plus(utxo.amount),
               BTC.zero
             )
          |> resolve
@@ -91,7 +93,7 @@ let preparePayoutTx =
          {
            inputValues:
              utxos
-             |> List.map(({txId, txOutputN, amount}: BitcoindClient.utxo) =>
+             |> List.map(({txId, txOutputN, amount}: utxo) =>
                   (txB |> TxBuilder.addInput(txId, txOutputN), amount)
                 ),
            txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex

@@ -6,6 +6,8 @@ open Expect;
 
 open Bitcoin;
 
+open WalletTypes;
+
 let () = {
   let (keyA, keyB, keyC) = (
     ECPair.fromWIFWithNetwork(
@@ -106,7 +108,7 @@ let () = {
           |> then_(result =>
                Helpers.getUTXOs(["2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T"])
              )
-          |> then_((utxos: list(BitcoindClient.utxo)) =>
+          |> then_((utxos: list(utxo)) =>
                resolve(
                  expect(List.hd(utxos).amount)
                  |> toEqual(BTC.fromSatoshis(10100L))
