@@ -76,7 +76,7 @@ module Fee = {
          + (
            inputs
            |> List.fold_left(
-                (t, i) => t + estimateInputWeight(i.nCoSigners),
+                (t, (_, i)) => t + estimateInputWeight(i.nCoSigners),
                 0
               )
          )
@@ -86,7 +86,59 @@ module Fee = {
 
 type t = {
   txHex: string,
-  usedInputs: list(input)
+  usedInputs: list((int, input))
+};
+
+let signPayout =
+    (
+      ~ventureId,
+      ~session: Session.Data.t,
+      ~accountKeyChains:
+         list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+      ~payout: t,
+      ~network: Bitcoin.Networks.t
+    ) => {
+  open Bitcoin;
+  let txB =
+    TxBuilder.fromTransactionWithNetwork(
+      Transaction.fromHex(payout.txHex),
+      network
+    );
+  payout.usedInputs
+  |> List.iter(((idx, input)) =>
+       try {
+         let custodianPubChain =
+           (
+             accountKeyChains
+             |> AddressCoordinates.lookupKeyChain(input.coordinates)
+           ).
+             custodianKeyChains
+           |> List.assoc(session.userId);
+         let custodianKeyChain =
+           CustodianKeyChain.make(
+             ~ventureId,
+             ~accountIdx=CustodianKeyChain.accountIdx(custodianPubChain),
+             ~keyChainIdx=CustodianKeyChain.keyChainIdx(custodianPubChain),
+             ~masterKeyChain=session.masterKeyChain
+           );
+         let keyPair =
+           custodianKeyChain
+           |> CustodianKeyChain.getSigningKey(input.coordinates);
+         let address: AccountKeyChain.Address.t =
+           accountKeyChains |> AccountKeyChain.find(input.coordinates);
+         txB
+         |> TxBuilder.signSegwit(
+              idx,
+              keyPair,
+              ~redeemScript=address.redeemScript |> Utils.bufFromHex,
+              ~witnessValue=input.value |> BTC.toSatoshisFloat,
+              ~witnessScript=address.witnessScript |> Utils.bufFromHex
+            );
+       } {
+       | Not_found => ()
+       }
+     );
+  {...payout, txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex};
 };
 
 let rec findInput = (inputs, ammountMissing, fee) =>
@@ -157,33 +209,20 @@ let addChangeOutput =
 let build =
     (
       ~mandatoryInputs,
-      ~reservedInputs,
       ~allInputs,
       ~destinations,
-      ~fee,
+      ~satsPerByte,
       ~changeAddress: AccountKeyChain.Address.t,
-      ~addresses,
       ~network
     ) => {
   open Bitcoin;
   let mandatoryInputs =
-    mandatoryInputs |> List.filter(Fee.canPayForItself(fee));
-  let allInputs = allInputs |> List.filter(Fee.canPayForItself(fee));
+    mandatoryInputs |> List.filter(Fee.canPayForItself(satsPerByte));
+  let allInputs = allInputs |> List.filter(Fee.canPayForItself(satsPerByte));
   let txB = TxBuilder.createWithNetwork(network);
   let usedInputs =
     mandatoryInputs
-    |> List.map(i =>
-         if (reservedInputs
-             |>
-             List.mem(r => r.txId == i.txId && r.txOutputN == i.txOutputN) == false) {
-           txB |> TxBuilder.addInput(i.txId, i.txOutputN) |> ignore;
-           Some(i);
-         } else {
-           None;
-         }
-       )
-    |> List.filter(i => i |> Js.Option.isSome)
-    |> List.map(Js.Option.getExn);
+    |> List.map(i => (txB |> TxBuilder.addInput(i.txId, i.txOutputN), i));
   let outTotal =
     destinations
     |> List.fold_left(
@@ -198,48 +237,68 @@ let build =
   let currentInputValue =
     usedInputs
     |> List.fold_left(
-         (total, input) => total |> BTC.plus(input.value),
+         (total, (_, input)) => total |> BTC.plus(input.value),
          BTC.zero
        );
   let currentFee =
-    Fee.estimate(destinations |> List.map(fst), usedInputs, fee, network);
+    Fee.estimate(
+      destinations |> List.map(fst),
+      usedInputs,
+      satsPerByte,
+      network
+    );
   if (currentInputValue |> BTC.gte(outTotal |> BTC.plus(currentFee))) {
     let changeAdded =
       addChangeOutput(
         ~totalInputs=currentInputValue,
+        ~outTotal,
         ~currentFee,
         ~changeAddress,
-        ~fee,
+        ~fee=satsPerByte,
         ~network,
         ~txBuilder=txB
       );
-    (usedInputs, changeAdded);
+    (
+      {
+        usedInputs,
+        txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex
+      },
+      changeAdded
+    );
   } else {
     let (inputs, success) =
-      findInputs(allInputs, outTotal |> BTC.plus(currentFee), fee, []);
+      findInputs(allInputs, outTotal |> BTC.plus(currentFee), satsPerByte, []);
     if (success) {
-      let (currentInputValue, currentFee) =
+      let (currentInputValue, currentFee, usedInputs) =
         inputs
         |> List.fold_left(
-             ((inV, feeV), i) => {
-               txB |> TxBuilder.addInput(i.txId, i.txOutputN) |> ignore;
-               (
-                 inV |> BTC.plus(i.value),
-                 feeV |> BTC.plus(Fee.inputCost(i.nCoSigners, fee))
-               );
-             },
-             (currentInputValue, currentFee)
+             ((inV, feeV, usedInputs), i) => (
+               inV |> BTC.plus(i.value),
+               feeV |> BTC.plus(Fee.inputCost(i.nCoSigners, satsPerByte)),
+               [
+                 (txB |> TxBuilder.addInput(i.txId, i.txOutputN), i),
+                 ...usedInputs
+               ]
+             ),
+             (currentInputValue, currentFee, usedInputs)
            );
       let changeAdded =
         addChangeOutput(
           ~totalInputs=currentInputValue,
+          ~outTotal,
           ~currentFee,
           ~changeAddress,
-          ~fee,
+          ~fee=satsPerByte,
           ~network,
           ~txBuilder=txB
         );
-      (usedInputs, changeAdded);
+      (
+        {
+          usedInputs,
+          txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex
+        },
+        changeAdded
+      );
     } else {
       raise(NotEnoughFunds);
     };

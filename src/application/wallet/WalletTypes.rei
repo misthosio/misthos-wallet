@@ -41,11 +41,13 @@ type addressIdx = AddressIndex.t;
 
 module AddressCoordinates: {
   type t;
-  let first: (accountIdx, accountKeyChainIdx) => t;
+  let firstInternal: (accountIdx, accountKeyChainIdx) => t;
+  let firstExternal: (accountIdx, accountKeyChainIdx) => t;
   let next: t => t;
   let lookupKeyChain:
     (t, list((accountIdx, list((accountKeyChainIdx, 'a))))) => 'a;
   let addressIdx: t => addressIdx;
+  let chainIdx: t => int;
   let accountIdx: t => accountIdx;
   let encode: t => Js.Json.t;
   let decode: Js.Json.t => t;

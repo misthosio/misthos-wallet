@@ -50,6 +50,24 @@ let toPublicKeyChain = keyChain => {
   hdNode: keyChain.hdNode |> HDNode.neutered
 };
 
+let defaultCosignerIdx = 0;
+
+let getSigningKey = (coordinates, keyChain) => (
+                                                 keyChain.hdNode
+                                                 |> HDNode.derive(
+                                                      defaultCosignerIdx
+                                                    )
+                                                 |> HDNode.derive(
+                                                      coordinates
+                                                      |> AddressCoordinates.chainIdx
+                                                    )
+                                                 |> HDNode.derive(
+                                                      coordinates
+                                                      |> AddressCoordinates.addressIdx
+                                                      |> AddressIndex.toInt
+                                                    )
+                                               )##keyPair;
+
 let encode = keyChain =>
   Json.Encode.(
     object_([

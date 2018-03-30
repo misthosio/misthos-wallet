@@ -23,9 +23,6 @@ module Address = {
     redeemScript: string,
     address: string
   };
-  let defaultCosignerIdx = 0;
-  let externalChain = 0;
-  let internalChain = 1;
   /* bip45'/cosignerIdx/change/address */
   let make = (chain, index, {custodianKeyChains, nCoSigners}) => {
     let keys =
@@ -39,7 +36,7 @@ module Address = {
          )
       |> List.map(node =>
            node
-           |> HDNode.derive(defaultCosignerIdx)
+           |> HDNode.derive(CustodianKeyChain.defaultCosignerIdx)
            |> HDNode.derive(chain)
            |> HDNode.derive(index |> AddressIndex.toInt)
          )
@@ -67,13 +64,7 @@ module Address = {
       address
     };
   };
-  let makeExternal = make(externalChain);
-  let makeInternal = make(internalChain);
 };
-
-let getAddress = Address.makeExternal;
-
-let getChangeAddress = Address.makeInternal;
 
 let custodianKeyChains = keyChain => keyChain.custodianKeyChains;
 
@@ -105,4 +96,7 @@ let decode = raw =>
 let find = (coordinates, keyChains) =>
   keyChains
   |> AddressCoordinates.lookupKeyChain(coordinates)
-  |> getAddress(coordinates |> AddressCoordinates.addressIdx);
+  |> Address.make(
+       coordinates |> AddressCoordinates.chainIdx,
+       coordinates |> AddressCoordinates.addressIdx
+     );

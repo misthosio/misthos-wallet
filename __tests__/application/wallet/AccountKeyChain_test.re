@@ -64,7 +64,9 @@ let () =
           1,
           [(UserId.fromString("custodianA"), cKeyChainA)]
         );
-      expect(accountKeyChain |> AccountKeyChain.getAddress(AddressIndex.first))
+      expect(
+        accountKeyChain |> AccountKeyChain.Address.make(0, AddressIndex.first)
+      )
       |> toEqual(
            AccountKeyChain.Address.{
              nCoSigners: 1,

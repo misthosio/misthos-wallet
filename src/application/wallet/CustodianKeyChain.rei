@@ -17,11 +17,15 @@ let make:
   ) =>
   t;
 
+let defaultCosignerIdx: int;
+
 let toPublicKeyChain: t => public;
 
 let accountIdx: public => accountIdx;
 
 let keyChainIdx: public => custodianKeyChainIdx;
+
+let getSigningKey: (AddressCoordinates.t, t) => ECPair.t;
 
 let hdNode: public => HDNode.t;
 
