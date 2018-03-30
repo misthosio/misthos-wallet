@@ -25,6 +25,8 @@ module Networks = {
 
 module Address = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
+  external toOutputScript : (string, Networks.t) => Node.buffer = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "address"]
   external fromOutputScript : (Node.buffer, Networks.t) => string = "";
 };
 
