@@ -16,6 +16,7 @@ let make = (nCoSigners, custodianKeyChains) => {
 
 module Address = {
   type t = {
+    nCoSigners: int,
     addressIdx,
     chain: int,
     witnessScript: string,
@@ -58,6 +59,7 @@ module Address = {
         keys |> List.hd |> ECPair.getNetwork
       );
     {
+      nCoSigners,
       addressIdx: index,
       chain,
       witnessScript: Utils.bufToHex(witnessScript),

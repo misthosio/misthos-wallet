@@ -67,6 +67,7 @@ let () =
       expect(accountKeyChain |> AccountKeyChain.getAddress(AddressIndex.first))
       |> toEqual(
            AccountKeyChain.Address.{
+             nCoSigners: 1,
              addressIdx: AddressIndex.first,
              chain: 0,
              witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
