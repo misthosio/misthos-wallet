@@ -25,7 +25,7 @@ let accountIdx: public => accountIdx;
 
 let keyChainIdx: public => custodianKeyChainIdx;
 
-let getSigningKey: (AddressCoordinates.t, t) => ECPair.t;
+let getSigningKey: (chainIdx, addressIdx, t) => ECPair.t;
 
 let hdNode: public => HDNode.t;
 

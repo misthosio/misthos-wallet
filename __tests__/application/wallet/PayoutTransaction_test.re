@@ -42,9 +42,14 @@ let () =
     let userA = UserId.fromString("userA.id");
     let accountKeyChainIdx = AccountKeyChainIndex.first;
     let accountKeyChain1 =
-      AccountKeyChain.make(1, [(userA, custodianPubKeyChainA)]);
+      AccountKeyChain.make(
+        accountIdx,
+        accountKeyChainIdx,
+        1,
+        [(userA, custodianPubKeyChainA)]
+      );
     let firstAddress =
-      AddressCoordinates.firstExternal(accountIdx, accountKeyChainIdx);
+      AccountKeyChain.Address.Coordinates.firstExternal(accountKeyChain1);
     testPromise("hello", () =>
       expect(true) |> toEqual(true) |> Js.Promise.resolve
     );

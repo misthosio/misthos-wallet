@@ -104,7 +104,7 @@ let signPayout =
          let custodianPubChain =
            (
              accountKeyChains
-             |> AddressCoordinates.lookupKeyChain(input.coordinates)
+             |> AccountKeyChain.lookupKeyChain(input.coordinates)
            ).
              custodianKeyChains
            |> List.assoc(session.userId);
@@ -115,9 +115,13 @@ let signPayout =
              ~keyChainIdx=CustodianKeyChain.keyChainIdx(custodianPubChain),
              ~masterKeyChain=session.masterKeyChain
            );
+         let (chainIdx, addressIdx) = (
+           input.coordinates |> AccountKeyChain.Address.Coordinates.chainIdx,
+           input.coordinates |> AccountKeyChain.Address.Coordinates.addressIdx
+         );
          let keyPair =
            custodianKeyChain
-           |> CustodianKeyChain.getSigningKey(input.coordinates);
+           |> CustodianKeyChain.getSigningKey(chainIdx, addressIdx);
          let address: AccountKeyChain.Address.t =
            accountKeyChains |> AccountKeyChain.find(input.coordinates);
          txB

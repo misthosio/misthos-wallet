@@ -131,36 +131,22 @@ module CustodianKeyChainUpdated = {
 };
 
 module AccountKeyChainUpdated = {
-  type t = {
-    accountIdx,
-    keyChainIdx: accountKeyChainIdx,
-    keyChain: AccountKeyChain.t
-  };
-  let make = (~accountIdx, ~keyChainIdx, ~keyChain) => {
-    accountIdx,
-    keyChainIdx,
-    keyChain
-  };
+  type t = {keyChain: AccountKeyChain.t};
+  let make = (~keyChain) => {keyChain: keyChain};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("AccountKeyChainUpdated")),
-        ("accountIdx", AccountIndex.encode(event.accountIdx)),
-        ("keyChainIdx", AccountKeyChainIndex.encode(event.keyChainIdx)),
         ("keyChain", AccountKeyChain.encode(event.keyChain))
       ])
     );
   let decode = raw =>
-    Json.Decode.{
-      accountIdx: raw |> field("accountIdx", AccountIndex.decode),
-      keyChainIdx: raw |> field("keyChainIdx", AccountKeyChainIndex.decode),
-      keyChain: raw |> field("keyChain", AccountKeyChain.decode)
-    };
+    Json.Decode.{keyChain: raw |> field("keyChain", AccountKeyChain.decode)};
 };
 
 module IncomeAddressExposed = {
   type t = {
-    coordinates: AddressCoordinates.t,
+    coordinates: AccountKeyChain.Address.Coordinates.t,
     address: string
   };
   let make = (~coordinates, ~address) => {coordinates, address};
@@ -168,13 +154,17 @@ module IncomeAddressExposed = {
     Json.Encode.(
       object_([
         ("type", string("IncomeAddressExposed")),
-        ("coordinates", AddressCoordinates.encode(event.coordinates)),
+        (
+          "coordinates",
+          AccountKeyChain.Address.Coordinates.encode(event.coordinates)
+        ),
         ("address", string(event.address))
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      coordinates: raw |> field("coordinates", AddressCoordinates.decode),
+      coordinates:
+        raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode),
       address: raw |> field("address", string)
     };
 };

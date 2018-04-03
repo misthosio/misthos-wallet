@@ -17,9 +17,13 @@ let () =
     let emptyState = Validation.makeState();
     let keyChain0 =
       AccountKeyChainUpdated.make(
-        ~accountIdx=AccountIndex.default,
-        ~keyChainIdx=AccountKeyChainIndex.first,
-        ~keyChain=AccountKeyChain.make(0, [])
+        ~keyChain=
+          AccountKeyChain.make(
+            AccountIndex.first,
+            AccountKeyChainIndex.first,
+            0,
+            []
+          )
       );
     let accountProposal =
       AccountCreation.Proposal.make(
@@ -48,18 +52,25 @@ let () =
     test("The KeyChainIndex is in order", () => {
       let keyChain1 =
         AccountKeyChainUpdated.make(
-          ~accountIdx=AccountIndex.default,
-          ~keyChainIdx=AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
-          ~keyChain=AccountKeyChain.make(0, [])
+          ~keyChain=
+            AccountKeyChain.make(
+              AccountIndex.default,
+              AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
+              0,
+              []
+            )
         );
       let keyChain2 =
         AccountKeyChainUpdated.make(
-          ~accountIdx=AccountIndex.default,
-          ~keyChainIdx=
-            AccountKeyChainIndex.first
-            |> AccountKeyChainIndex.next
-            |> AccountKeyChainIndex.next,
-          ~keyChain=AccountKeyChain.make(0, [])
+          ~keyChain=
+            AccountKeyChain.make(
+              AccountIndex.default,
+              AccountKeyChainIndex.first
+              |> AccountKeyChainIndex.next
+              |> AccountKeyChainIndex.next,
+              0,
+              []
+            )
         );
       let stateWithAccountAndKeyChain =
         emptyState
@@ -120,17 +131,23 @@ let () =
            );
       let keyChain =
         AccountKeyChainUpdated.make(
-          ~accountIdx=AccountIndex.default,
-          ~keyChainIdx=AccountKeyChainIndex.first,
           ~keyChain=
-            AccountKeyChain.make(1, [(custodianId, custodianKeyChain0)])
+            AccountKeyChain.make(
+              AccountIndex.default,
+              AccountKeyChainIndex.first,
+              1,
+              [(custodianId, custodianKeyChain0)]
+            )
         );
       let keyChain1 =
         AccountKeyChainUpdated.make(
-          ~accountIdx=AccountIndex.default,
-          ~keyChainIdx=AccountKeyChainIndex.first,
           ~keyChain=
-            AccountKeyChain.make(1, [(custodianId, custodianKeyChain1)])
+            AccountKeyChain.make(
+              AccountIndex.default,
+              AccountKeyChainIndex.first,
+              1,
+              [(custodianId, custodianKeyChain1)]
+            )
         );
       expect((
         validateWithState(~keyChain, stateWithAccountAndCustodianKeyChain),

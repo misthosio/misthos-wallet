@@ -31,6 +31,14 @@ module CustodianKeyChainIndex: {include WalletType; let first: t;};
 
 type custodianKeyChainIdx = CustodianKeyChainIndex.t;
 
+module ChainIndex: {
+  include WalletType;
+  let externalChain: t;
+  let internalChain: t;
+};
+
+type chainIdx = ChainIndex.t;
+
 module AccountKeyChainIndex: {include WalletType;};
 
 type accountKeyChainIdx = AccountKeyChainIndex.t;
@@ -38,17 +46,3 @@ type accountKeyChainIdx = AccountKeyChainIndex.t;
 module AddressIndex: {include WalletType;};
 
 type addressIdx = AddressIndex.t;
-
-module AddressCoordinates: {
-  type t;
-  let firstInternal: (accountIdx, accountKeyChainIdx) => t;
-  let firstExternal: (accountIdx, accountKeyChainIdx) => t;
-  let next: t => t;
-  let lookupKeyChain:
-    (t, list((accountIdx, list((accountKeyChainIdx, 'a))))) => 'a;
-  let addressIdx: t => addressIdx;
-  let chainIdx: t => int;
-  let accountIdx: t => accountIdx;
-  let encode: t => Js.Json.t;
-  let decode: Js.Json.t => t;
-};

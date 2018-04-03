@@ -61,17 +61,23 @@ let () =
     test("single Custodian", () => {
       let accountKeyChain =
         AccountKeyChain.make(
+          AccountIndex.first,
+          AccountKeyChainIndex.first,
           1,
           [(UserId.fromString("custodianA"), cKeyChainA)]
         );
-      expect(
-        accountKeyChain |> AccountKeyChain.Address.make(0, AddressIndex.first)
-      )
+      let firstCoordinates =
+        accountKeyChain |> AccountKeyChain.Address.Coordinates.firstExternal;
+      expect(accountKeyChain |> AccountKeyChain.Address.make(firstCoordinates))
       |> toEqual(
            AccountKeyChain.Address.{
              nCoSigners: 1,
-             addressIdx: AddressIndex.first,
-             chain: 0,
+             coordinates: (
+               AccountIndex.first,
+               AccountKeyChainIndex.first,
+               ChainIndex.externalChain,
+               AddressIndex.first
+             ),
              witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
              redeemScript: "002027fa0596838478a59b5c0512acf480fdba510cd320def9e3d9e9d27a13b7e72f",
              address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE"

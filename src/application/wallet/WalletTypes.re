@@ -56,60 +56,16 @@ module AccountKeyChainIndex = {
 
 type accountKeyChainIdx = AccountKeyChainIndex.t;
 
+module ChainIndex = {
+  include Base;
+  let externalChain = fromInt(0);
+  let internalChain = fromInt(1);
+};
+
+type chainIdx = ChainIndex.t;
+
 module AddressIndex = {
   include Base;
 };
 
 type addressIdx = AddressIndex.t;
-
-module AddressCoordinates = {
-  type chainIdx = int;
-  let externalChainIdx = 0;
-  let internalChainIdx = 1;
-  type t = (AccountIndex.t, AccountKeyChainIndex.t, chainIdx, AddressIndex.t);
-  let firstExternal = (accountIdx, accountKeyChainIdx) => (
-    accountIdx,
-    accountKeyChainIdx,
-    externalChainIdx,
-    AccountIndex.first
-  );
-  let firstInternal = (accountIdx, accountKeyChainIdx) => (
-    accountIdx,
-    accountKeyChainIdx,
-    internalChainIdx,
-    AccountIndex.first
-  );
-  let next = ((accountIdx, accountKeyChainIdx, chainIdx, addressIdx)) => (
-    accountIdx,
-    accountKeyChainIdx,
-    chainIdx,
-    addressIdx |> AccountIndex.next
-  );
-  let lookupKeyChain =
-      (
-        (accountIdx, accountKeyChainIdx, _chainIdx, _addressIdx),
-        accounts: list((accountIdx, list((accountKeyChainIdx, 'a))))
-      ) =>
-    accounts |> List.assoc(accountIdx) |> List.assoc(accountKeyChainIdx);
-  let addressIdx = ((_, _, _, addressIdx)) => addressIdx;
-  let chainIdx = ((_, _, chainIdx, _)) => chainIdx;
-  let accountIdx = ((idx, _, _, _)) => idx;
-  let encode =
-    Json.Encode.(
-      tuple4(
-        AccountIndex.encode,
-        AccountKeyChainIndex.encode,
-        int,
-        AddressIndex.encode
-      )
-    );
-  let decode =
-    Json.Decode.(
-      tuple4(
-        AccountIndex.decode,
-        AccountKeyChainIndex.decode,
-        int,
-        AddressIndex.decode
-      )
-    );
-};

@@ -52,21 +52,20 @@ let toPublicKeyChain = keyChain => {
 
 let defaultCosignerIdx = 0;
 
-let getSigningKey = (coordinates, keyChain) => (
-                                                 keyChain.hdNode
-                                                 |> HDNode.derive(
-                                                      defaultCosignerIdx
-                                                    )
-                                                 |> HDNode.derive(
-                                                      coordinates
-                                                      |> AddressCoordinates.chainIdx
-                                                    )
-                                                 |> HDNode.derive(
-                                                      coordinates
-                                                      |> AddressCoordinates.addressIdx
-                                                      |> AddressIndex.toInt
-                                                    )
-                                               )##keyPair;
+let getSigningKey = (chainIdx, addressIdx, keyChain) => (
+                                                          keyChain.hdNode
+                                                          |> HDNode.derive(
+                                                               defaultCosignerIdx
+                                                             )
+                                                          |> HDNode.derive(
+                                                               chainIdx
+                                                               |> ChainIndex.toInt
+                                                             )
+                                                          |> HDNode.derive(
+                                                               addressIdx
+                                                               |> AddressIndex.toInt
+                                                             )
+                                                        )##keyPair;
 
 let encode = keyChain =>
   Json.Encode.(

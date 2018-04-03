@@ -7,7 +7,7 @@ type txInput = {
   value: BTC.t,
   nCoSigners: int,
   confirmations: int,
-  coordinates: AddressCoordinates.t
+  coordinates: AccountKeyChain.Address.Coordinates.t
 };
 
 module Make = (Client: NetworkClient) => {

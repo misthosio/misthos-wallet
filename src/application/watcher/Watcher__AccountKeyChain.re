@@ -42,10 +42,10 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
                   state^.systemIssuer,
                   AccountKeyChainUpdated(
                     AccountKeyChainUpdated.make(
-                      ~accountIdx,
-                      ~keyChainIdx=state^.nextKeyChainIdx,
                       ~keyChain=
                         AccountKeyChain.make(
+                          accountIdx,
+                          state^.nextKeyChainIdx,
                           defaultCosignerList[custodianKeyChains |> List.length],
                           custodianKeyChains
                         )
@@ -53,8 +53,8 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
                   )
                 ))
             };
-          | AccountKeyChainUpdated({accountIdx as aIdx})
-              when aIdx == accountIdx => {
+          | AccountKeyChainUpdated({keyChain})
+              when keyChain.accountIdx == accountIdx => {
               ...state^,
               pendingEvent: None,
               nextKeyChainIdx:

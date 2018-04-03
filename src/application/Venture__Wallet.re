@@ -7,8 +7,9 @@ open Bitcoin;
 type t = {
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
-  nextCoordinates: list((accountIdx, AddressCoordinates.t)),
-  exposedCoordinates: list((accountIdx, list(AddressCoordinates.t)))
+  nextCoordinates: list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
+  exposedCoordinates:
+    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t)))
 };
 
 let make = () => {
@@ -19,29 +20,31 @@ let make = () => {
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | AccountKeyChainUpdated(
-      ({accountIdx, keyChainIdx, keyChain}: AccountKeyChainUpdated.t)
-    ) =>
+  | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) =>
     let accountKeyChains =
-      try (state.accountKeyChains |> List.assoc(accountIdx)) {
+      try (state.accountKeyChains |> List.assoc(keyChain.accountIdx)) {
       | Not_found => []
       };
     {
       ...state,
       accountKeyChains: [
-        (accountIdx, [(keyChainIdx, keyChain), ...accountKeyChains]),
-        ...state.accountKeyChains |> List.remove_assoc(accountIdx)
+        (
+          keyChain.accountIdx,
+          [(keyChain.keyChainIdx, keyChain), ...accountKeyChains]
+        ),
+        ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx)
       ],
       nextCoordinates: [
         (
-          accountIdx,
-          AddressCoordinates.firstExternal(accountIdx, keyChainIdx)
+          keyChain.accountIdx,
+          AccountKeyChain.Address.Coordinates.firstExternal(keyChain)
         ),
-        ...state.nextCoordinates |> List.remove_assoc(accountIdx)
+        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx)
       ]
     };
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
-    let accountIdx = coordinates |> AddressCoordinates.accountIdx;
+    let accountIdx =
+      coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
     let previouslyExposed =
       try (state.exposedCoordinates |> List.assoc(accountIdx)) {
       | Not_found => []
@@ -49,7 +52,7 @@ let apply = (event: Event.t, state) =>
     {
       ...state,
       nextCoordinates: [
-        (accountIdx, coordinates |> AddressCoordinates.next),
+        (accountIdx, coordinates |> AccountKeyChain.Address.Coordinates.next),
         ...state.nextCoordinates |> List.remove_assoc(accountIdx)
       ],
       exposedCoordinates: [
