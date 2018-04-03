@@ -2,13 +2,7 @@ open WalletTypes;
 
 exception NotEnoughFunds;
 
-type input = {
-  txId: string,
-  txOutputN: int,
-  value: BTC.t,
-  coordinates: AddressCoordinates.t,
-  nCoSigners: int
-};
+type input = Network.txInput;
 
 module Fee = {
   /* for reference: https://en.bitcoin.it/wiki/Weight_units */
@@ -58,7 +52,7 @@ module Fee = {
   let inputCost = (nCoSigners, fee) =>
     estimateInputWeight(nCoSigners) |> cost(fee);
   let minChange = inputCost;
-  let canPayForItself = (fee, input) =>
+  let canPayForItself = (fee, input: input) =>
     input.value
     |> BTC.gte(
          fee
@@ -76,7 +70,7 @@ module Fee = {
          + (
            inputs
            |> List.fold_left(
-                (t, (_, i)) => t + estimateInputWeight(i.nCoSigners),
+                (t, (_, i: input)) => t + estimateInputWeight(i.nCoSigners),
                 0
               )
          )
@@ -105,7 +99,7 @@ let signPayout =
       network
     );
   payout.usedInputs
-  |> List.iter(((idx, input)) =>
+  |> List.iter(((idx, input: input)) =>
        try {
          let custodianPubChain =
            (
@@ -145,7 +139,7 @@ let rec findInput = (inputs, ammountMissing, fee) =>
   switch inputs {
   | [] => None
   | [i] => Some(i)
-  | [i, ...rest] =>
+  | [(i: input), ...rest] =>
     i.value
     |> BTC.gte(ammountMissing |> BTC.plus(Fee.inputCost(i.nCoSigners, fee))) ?
       Some(i) : findInput(rest, ammountMissing, fee)
@@ -222,7 +216,9 @@ let build =
   let txB = TxBuilder.createWithNetwork(network);
   let usedInputs =
     mandatoryInputs
-    |> List.map(i => (txB |> TxBuilder.addInput(i.txId, i.txOutputN), i));
+    |> List.map((i: input) =>
+         (txB |> TxBuilder.addInput(i.txId, i.txOutputN), i)
+       );
   let outTotal =
     destinations
     |> List.fold_left(
@@ -237,7 +233,7 @@ let build =
   let currentInputValue =
     usedInputs
     |> List.fold_left(
-         (total, (_, input)) => total |> BTC.plus(input.value),
+         (total, (_, input: input)) => total |> BTC.plus(input.value),
          BTC.zero
        );
   let currentFee =
@@ -272,7 +268,7 @@ let build =
       let (currentInputValue, currentFee, usedInputs) =
         inputs
         |> List.fold_left(
-             ((inV, feeV, usedInputs), i) => (
+             ((inV, feeV, usedInputs), i: input) => (
                inV |> BTC.plus(i.value),
                feeV |> BTC.plus(Fee.inputCost(i.nCoSigners, satsPerByte)),
                [
