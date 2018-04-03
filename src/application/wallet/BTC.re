@@ -3,7 +3,10 @@ include BigNumber;
 let fromSatoshis = satoshis =>
   BigNumber.make(`Float(satoshis |> Int64.to_float));
 
-let toSatoshisFloat = BigNumber.toNumber;
+let toSatoshisFloat = btc =>
+  btc
+  |> BigNumber.integerValue(BigNumber.RoundingMode.ceil)
+  |> BigNumber.toNumber;
 
 let zero = BigNumber.make(`Float(0.));
 

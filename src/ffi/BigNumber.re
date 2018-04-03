@@ -1,5 +1,10 @@
 type t;
 
+module RoundingMode = {
+  type t;
+  [@bs.module "bignumber.js"] [@bs.val] external ceil : t = "ROUND_CEIL";
+};
+
 [@bs.module "bignumber.js"] [@bs.new]
 external make : ([@bs.unwrap] [ | `String(string) | `Float(float)]) => t =
   "BigNumber";
@@ -17,6 +22,8 @@ external make : ([@bs.unwrap] [ | `String(string) | `Float(float)]) => t =
 [@bs.send.pipe : t] external minus : t => t = "";
 
 [@bs.send.pipe : t] external comparedTo : t => int = "";
+
+[@bs.send.pipe : t] external integerValue : RoundingMode.t => t = "";
 
 [@bs.send] external toString : t => string = "";
 
