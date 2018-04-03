@@ -2,6 +2,8 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+exception NotEnoughFunds;
+
 type input = Network.txInput;
 
 type t = {
