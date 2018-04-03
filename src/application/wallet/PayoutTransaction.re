@@ -149,6 +149,7 @@ let build =
   let allInputs =
     allInputs
     |> List.filter(Fee.canPayForItself(satsPerByte))
+    |> List.filter(input => mandatoryInputs |> List.mem(input) == false)
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
        );
@@ -202,7 +203,12 @@ let build =
     );
   } else {
     let (inputs, success) =
-      findInputs(allInputs, outTotal |> BTC.plus(currentFee), satsPerByte, []);
+      findInputs(
+        allInputs,
+        outTotal |> BTC.plus(currentFee) |> BTC.minus(currentInputValue),
+        satsPerByte,
+        []
+      );
     if (success) {
       let (currentInputValue, currentFee, usedInputs) =
         inputs
