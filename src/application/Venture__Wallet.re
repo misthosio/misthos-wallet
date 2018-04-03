@@ -2,6 +2,8 @@ open WalletTypes;
 
 open Event;
 
+open Bitcoin;
+
 type t = {
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
@@ -31,7 +33,10 @@ let apply = (event: Event.t, state) =>
         ...state.accountKeyChains |> List.remove_assoc(accountIdx)
       ],
       nextCoordinates: [
-        (accountIdx, AddressCoordinates.first(accountIdx, keyChainIdx)),
+        (
+          accountIdx,
+          AddressCoordinates.firstExternal(accountIdx, keyChainIdx)
+        ),
         ...state.nextCoordinates |> List.remove_assoc(accountIdx)
       ]
     };
@@ -63,13 +68,24 @@ let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) 
 
 let preparePayoutTx =
     (accountIdx, destinations, fee, {exposedCoordinates, accountKeyChains}) => {
+  module Network = Network.Regtest;
   let addressPairs =
     exposedCoordinates
     |> List.assoc(accountIdx)
     |> List.map(c => (c, accountKeyChains |> AccountKeyChain.find(c)));
   let addresses = addressPairs |> List.map(p => snd(p));
+  let addressLookup = addressPairs |> List.map((c, a) => (a.address, c));
   ();
-  /* find all potential input addresses */
+  /* get utxos */
+  /* Js.Promise.( */
+  /*   Network.getUTXOs(addresses) */
+  /*   |> then_((_) => { */
+  /*        let txB = TxBuilder.createWithNetwork(Network.network); */
+  /*        resolve(); */
+  /*      }) */
+  /* ); */
+  /* select from utxos */
+  /* for now use all utxos */
+  /* estimate size */
   /*   build transaction */
-  /*   get utxos */
 };
