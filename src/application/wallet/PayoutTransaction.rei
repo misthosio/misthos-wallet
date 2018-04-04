@@ -33,7 +33,8 @@ type signResult =
 let signPayout:
   (
     ~ventureId: ventureId,
-    ~session: Session.Data.t,
+    ~userId: userId,
+    ~masterKeyChain: Bitcoin.HDNode.t,
     ~accountKeyChains: list(
                          (
                            accountIdx,

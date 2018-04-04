@@ -90,7 +90,7 @@ let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) 
 
 let preparePayoutTx =
     (
-      session: Session.Data.t,
+      {userId, masterKeyChain}: Session.Data.t,
       accountIdx,
       destinations,
       satsPerByte,
@@ -138,7 +138,8 @@ let preparePayoutTx =
            switch (
              PayoutTransaction.signPayout(
                ~ventureId,
-               ~session,
+               ~userId,
+               ~masterKeyChain,
                ~accountKeyChains,
                ~payoutTx,
                ~network=UseNetwork.network
@@ -149,7 +150,7 @@ let preparePayoutTx =
            };
          Event.Payout.(
            Proposal.make(
-             ~supporterId=session.userId,
+             ~supporterId=userId,
              ~policy=payoutPolicy,
              Data.{accountIdx, payoutTx, changeAddressCoordinates}
            )

@@ -33,7 +33,8 @@ type signResult =
 let signPayout =
     (
       ~ventureId,
-      ~session: Session.Data.t,
+      ~userId,
+      ~masterKeyChain: Bitcoin.HDNode.t,
       ~accountKeyChains:
          list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
       ~payoutTx as payout: t,
@@ -56,13 +57,13 @@ let signPayout =
                  |> AccountKeyChain.lookupKeyChain(input.coordinates)
                ).
                  custodianKeyChains
-               |> List.assoc(session.userId);
+               |> List.assoc(userId);
              let custodianKeyChain =
                CustodianKeyChain.make(
                  ~ventureId,
                  ~accountIdx=CustodianKeyChain.accountIdx(custodianPubChain),
                  ~keyChainIdx=CustodianKeyChain.keyChainIdx(custodianPubChain),
-                 ~masterKeyChain=session.masterKeyChain
+                 ~masterKeyChain
                );
              let (chainIdx, addressIdx) = (
                input.coordinates
