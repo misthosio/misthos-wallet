@@ -1,8 +1,12 @@
+open PrimitiveTypes;
+
 open WalletTypes;
 
 open Event;
 
 type t = {
+  ventureId,
+  payoutPolicy: Policy.t,
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
   nextCoordinates: list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
@@ -13,6 +17,8 @@ type t = {
 };
 
 let make = () => {
+  ventureId: VentureId.fromString(""),
+  payoutPolicy: Policy.absolute,
   accountKeyChains: [],
   nextCoordinates: [],
   nextChangeCoordinates: [],
@@ -21,6 +27,11 @@ let make = () => {
 
 let apply = (event: Event.t, state) =>
   switch event {
+  | VentureCreated({ventureId, metaPolicy}) => {
+      ...state,
+      ventureId,
+      payoutPolicy: metaPolicy
+    }
   | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) =>
     let accountKeyChains =
       try (state.accountKeyChains |> List.assoc(keyChain.accountIdx)) {
@@ -79,12 +90,17 @@ let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) 
 
 let preparePayoutTx =
     (
-      ventureId,
       session: Session.Data.t,
       accountIdx,
       destinations,
       satsPerByte,
-      {nextChangeCoordinates, exposedCoordinates, accountKeyChains}
+      {
+        ventureId,
+        payoutPolicy,
+        nextChangeCoordinates,
+        exposedCoordinates,
+        accountKeyChains
+      }
     ) => {
   open AccountKeyChain.Address;
   module UseNetwork = Network.Regtest;
@@ -126,7 +142,7 @@ let preparePayoutTx =
          Event.Payout.(
            Proposal.make(
              ~supporterId=session.userId,
-             ~policy=Policy.absolute,
+             ~policy=payoutPolicy,
              Data.{accountIdx, payoutTx, changeAddressCoordinates}
            )
          )

@@ -30,6 +30,13 @@ let () =
         Networks.testnet
       )
     );
+    let createdEvent =
+      VentureCreated.make(
+        ~ventureName="test",
+        ~creatorId=userA,
+        ~creatorPubKey=keyA |> Utils.publicKeyFromKeyPair,
+        ~metaPolicy=Policy.absolute
+      );
     let chainCode =
       "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
       |> Utils.bufFromHex;
@@ -37,7 +44,7 @@ let () =
       HDNode.make(keyA, chainCode),
       HDNode.make(keyB, chainCode)
     );
-    let ventureId = VentureId.fromString("test");
+    let ventureId = createdEvent.ventureId;
     let accountIdx = AccountIndex.default;
     let keyChainIdx = CustodianKeyChainIndex.first;
     let (cKeyChainA, cKeyChainB) = (
@@ -69,6 +76,7 @@ let () =
           );
         let wallet =
           Wallet.make()
+          |> Wallet.apply(VentureCreated(createdEvent))
           |> Wallet.apply(
                AccountKeyChainUpdated(
                  AccountKeyChainUpdated.make(~keyChain=accountKeyChain)
@@ -86,7 +94,6 @@ let () =
           |> then_((_) =>
                wallet
                |> Wallet.preparePayoutTx(
-                    ventureId,
                     Session.Data.{
                       userId: userA,
                       appKeyPair: keyA,

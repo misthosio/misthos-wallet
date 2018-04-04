@@ -358,18 +358,10 @@ module Cmd = {
   module ProposePayout = {
     type result =
       | Ok(t);
-    let exec =
-        (~accountIdx, ~destinations, ~fee, {id, wallet, session} as venture) => {
+    let exec = (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
-        Wallet.preparePayoutTx(
-          id,
-          session,
-          accountIdx,
-          destinations,
-          fee,
-          wallet
-        )
+        Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
         |> then_(proposal =>
              venture |> apply(PayoutProposed(proposal)) |> persist
            )
