@@ -11,6 +11,10 @@ type t = {
   usedInputs: list((int, input))
 };
 
+type buildResult =
+  | WithChangeAddress(t)
+  | WithoutChangeAddress(t);
+
 let build:
   (
     ~mandatoryInputs: list(input),
@@ -20,7 +24,11 @@ let build:
     ~changeAddress: AccountKeyChain.Address.t,
     ~network: Bitcoin.Networks.t
   ) =>
-  (t, bool);
+  buildResult;
+
+type signResult =
+  | Signed(t)
+  | NotSigned;
 
 let signPayout:
   (
@@ -35,7 +43,7 @@ let signPayout:
     ~payoutTx: t,
     ~network: Bitcoin.Networks.t
   ) =>
-  t;
+  signResult;
 
 let encode: t => Js.Json.t;
 

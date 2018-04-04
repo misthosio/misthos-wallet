@@ -120,25 +120,33 @@ let preparePayoutTx =
               );
          let changeAddress =
            AccountKeyChain.find(nextChangeCoordinates, accountKeyChains);
-         let (payoutTx, changeAddressUsed) =
-           PayoutTransaction.build(
-             ~mandatoryInputs=oldInputs,
-             ~allInputs=inputs,
-             ~destinations,
-             ~satsPerByte,
-             ~changeAddress,
-             ~network=UseNetwork.network
-           );
-         let changeAddressCoordinates =
-           changeAddressUsed ? Some(nextChangeCoordinates) : None;
+         let (payoutTx, changeAddressCoordinates) =
+           switch (
+             PayoutTransaction.build(
+               ~mandatoryInputs=oldInputs,
+               ~allInputs=inputs,
+               ~destinations,
+               ~satsPerByte,
+               ~changeAddress,
+               ~network=UseNetwork.network
+             )
+           ) {
+           | WithChangeAddress(payout) => (payout, Some(nextChangeCoordinates))
+           | WithoutChangeAddress(payout) => (payout, None)
+           };
          let payoutTx =
-           PayoutTransaction.signPayout(
-             ~ventureId,
-             ~session,
-             ~accountKeyChains,
-             ~payoutTx,
-             ~network=UseNetwork.network
-           );
+           switch (
+             PayoutTransaction.signPayout(
+               ~ventureId,
+               ~session,
+               ~accountKeyChains,
+               ~payoutTx,
+               ~network=UseNetwork.network
+             )
+           ) {
+           | Signed(payout) => payout
+           | NotSigned => payoutTx
+           };
          Event.Payout.(
            Proposal.make(
              ~supporterId=session.userId,
