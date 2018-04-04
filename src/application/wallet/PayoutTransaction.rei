@@ -32,7 +32,11 @@ let signPayout:
                            list((accountKeyChainIdx, AccountKeyChain.t))
                          )
                        ),
-    ~payout: t,
+    ~payoutTx: t,
     ~network: Bitcoin.Networks.t
   ) =>
   t;
+
+let encode: t => Js.Json.t;
+
+let decode: Js.Json.t => t;

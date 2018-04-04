@@ -17,3 +17,7 @@ let fromString = btcString =>
 
 let fromFloat = btcFloat =>
   BigNumber.make(`Float(btcFloat)) |> BigNumber.times(satoshisPerBTC);
+
+let encode = toJSON;
+
+let decode = raw => BigNumber.make(`String(Json.Decode.string(raw)));

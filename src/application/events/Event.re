@@ -109,6 +109,42 @@ module Custodian = {
   include (val EventTypes.makeProcess("Custodian"))(Data);
 };
 
+module Payout = {
+  module Data = {
+    type t = {
+      accountIdx,
+      payoutTx: PayoutTransaction.t,
+      changeAddressCoordinates: option(AccountKeyChain.Address.Coordinates.t)
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("accountIdx", AccountIndex.encode(event.accountIdx)),
+          ("payoutTx", PayoutTransaction.encode(event.payoutTx)),
+          (
+            "changeAddressCoordinates",
+            nullable(
+              AccountKeyChain.Address.Coordinates.encode,
+              event.changeAddressCoordinates
+            )
+          )
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+        payoutTx: raw |> field("payoutTx", PayoutTransaction.decode),
+        changeAddressCoordinates:
+          raw
+          |> field(
+               "changeAddressCoordinates",
+               optional(AccountKeyChain.Address.Coordinates.decode)
+             )
+      };
+  };
+  include (val EventTypes.makeProcess("Payout"))(Data);
+};
+
 module CustodianKeyChainUpdated = {
   type t = {
     partnerId: userId,
@@ -180,6 +216,9 @@ type t =
   | CustodianProposed(Custodian.Proposal.t)
   | CustodianEndorsed(Custodian.Endorsement.t)
   | CustodianAccepted(Custodian.Acceptance.t)
+  | PayoutProposed(Payout.Proposal.t)
+  | PayoutEndorsed(Payout.Endorsement.t)
+  | PayoutAccepted(Payout.Acceptance.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t);
@@ -223,6 +262,9 @@ let encode =
   | CustodianProposed(event) => Custodian.Proposal.encode(event)
   | CustodianEndorsed(event) => Custodian.Endorsement.encode(event)
   | CustodianAccepted(event) => Custodian.Acceptance.encode(event)
+  | PayoutProposed(event) => Payout.Proposal.encode(event)
+  | PayoutEndorsed(event) => Payout.Endorsement.encode(event)
+  | PayoutAccepted(event) => Payout.Acceptance.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
@@ -235,6 +277,7 @@ let isSystemEvent =
   | PartnerAccepted(_)
   | AccountCreationAccepted(_)
   | CustodianAccepted(_)
+  | PayoutAccepted(_)
   | AccountKeyChainUpdated(_) => true
   | _ => false;
 
@@ -250,6 +293,9 @@ let decode = raw => {
   | "CustodianProposed" => CustodianProposed(Custodian.Proposal.decode(raw))
   | "CustodianEndorsed" => CustodianEndorsed(Custodian.Endorsement.decode(raw))
   | "CustodianAccepted" => CustodianAccepted(Custodian.Acceptance.decode(raw))
+  | "PayoutProposed" => PayoutProposed(Payout.Proposal.decode(raw))
+  | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsement.decode(raw))
+  | "PayoutAccepted" => PayoutAccepted(Payout.Acceptance.decode(raw))
   | "AccountCreationProposed" =>
     AccountCreationProposed(AccountCreation.Proposal.decode(raw))
   | "AccountCreationEndorsed" =>

@@ -20,7 +20,7 @@ module Make = (Client: NetworkClient) => {
            (address.address, (c, address));
          });
     Js.Promise.(
-      Client.getUTXOs(addresses |> List.map(a => fst(a)))
+      Client.getUTXOs(addresses |> List.map(fst))
       |> then_(utxos =>
            utxos
            |> List.map(
@@ -54,3 +54,31 @@ module Regtest =
           )
     )
   );
+
+let encodeInput = input =>
+  Json.Encode.(
+    object_([
+      ("txId", string(input.txId)),
+      ("txOutputN", int(input.txOutputN)),
+      ("address", string(input.address)),
+      ("value", BTC.encode(input.value)),
+      ("nCoSigners", int(input.nCoSigners)),
+      ("confirmations", int(input.confirmations)),
+      (
+        "coordinates",
+        AccountKeyChain.Address.Coordinates.encode(input.coordinates)
+      )
+    ])
+  );
+
+let decodeInput = raw =>
+  Json.Decode.{
+    txId: raw |> field("txId", string),
+    txOutputN: raw |> field("txOutputN", int),
+    address: raw |> field("address", string),
+    value: raw |> field("value", BTC.decode),
+    nCoSigners: raw |> field("nCoSigners", int),
+    confirmations: raw |> field("confirmations", int),
+    coordinates:
+      raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode)
+  };

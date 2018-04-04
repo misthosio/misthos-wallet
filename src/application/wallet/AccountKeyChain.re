@@ -45,6 +45,7 @@ module Address = {
       addressIdx |> AddressIndex.next
     );
     let addressIdx = ((_, _, _, addressIdx)) => addressIdx;
+    let keyChainIdx = ((_, keyChainIdx, _, _)) => keyChainIdx;
     let chainIdx = ((_, _, chainIdx, _)) => chainIdx;
     let accountIdx = ((idx, _, _, _)) => idx;
     let encode =

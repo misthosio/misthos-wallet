@@ -2,12 +2,12 @@ open WalletTypes;
 
 open Event;
 
-open Bitcoin;
-
 type t = {
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
   nextCoordinates: list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
+  nextChangeCoordinates:
+    list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
   exposedCoordinates:
     list((accountIdx, list(AccountKeyChain.Address.Coordinates.t)))
 };
@@ -15,6 +15,7 @@ type t = {
 let make = () => {
   accountKeyChains: [],
   nextCoordinates: [],
+  nextChangeCoordinates: [],
   exposedCoordinates: []
 };
 
@@ -38,6 +39,13 @@ let apply = (event: Event.t, state) =>
         (
           keyChain.accountIdx,
           AccountKeyChain.Address.Coordinates.firstExternal(keyChain)
+        ),
+        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx)
+      ],
+      nextChangeCoordinates: [
+        (
+          keyChain.accountIdx,
+          AccountKeyChain.Address.Coordinates.firstInternal(keyChain)
         ),
         ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx)
       ]
@@ -70,25 +78,59 @@ let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) 
 };
 
 let preparePayoutTx =
-    (accountIdx, destinations, fee, {exposedCoordinates, accountKeyChains}) => {
-  module Network = Network.Regtest;
-  let addressPairs =
-    exposedCoordinates
-    |> List.assoc(accountIdx)
-    |> List.map(c => (c, accountKeyChains |> AccountKeyChain.find(c)));
-  let addresses = addressPairs |> List.map(p => snd(p));
-  let addressLookup = addressPairs |> List.map((c, a) => (a.address, c));
-  ();
-  /* get utxos */
-  /* Js.Promise.( */
-  /*   Network.getUTXOs(addresses) */
-  /*   |> then_((_) => { */
-  /*        let txB = TxBuilder.createWithNetwork(Network.network); */
-  /*        resolve(); */
-  /*      }) */
-  /* ); */
-  /* select from utxos */
-  /* for now use all utxos */
-  /* estimate size */
-  /*   build transaction */
+    (
+      ventureId,
+      session: Session.Data.t,
+      accountIdx,
+      destinations,
+      satsPerByte,
+      {nextChangeCoordinates, exposedCoordinates, accountKeyChains}
+    ) => {
+  open AccountKeyChain.Address;
+  module UseNetwork = Network.Regtest;
+  let coordinates = exposedCoordinates |> List.assoc(accountIdx);
+  let nextChangeCoordinates = nextChangeCoordinates |> List.assoc(accountIdx);
+  let currentKeyChainIdx = nextChangeCoordinates |> Coordinates.keyChainIdx;
+  Js.Promise.(
+    accountKeyChains
+    |> UseNetwork.getTransactionInputs(coordinates)
+    |> then_(inputs => {
+         let oldInputs =
+           inputs
+           |> List.find_all((i: Network.txInput) =>
+                i.coordinates
+                |> Coordinates.keyChainIdx
+                |> AccountKeyChainIndex.neq(currentKeyChainIdx)
+              );
+         let changeAddress =
+           AccountKeyChain.find(nextChangeCoordinates, accountKeyChains);
+         let (payoutTx, changeAddressUsed) =
+           PayoutTransaction.build(
+             ~mandatoryInputs=oldInputs,
+             ~allInputs=inputs,
+             ~destinations,
+             ~satsPerByte,
+             ~changeAddress,
+             ~network=UseNetwork.network
+           );
+         let changeAddressCoordinates =
+           changeAddressUsed ? Some(nextChangeCoordinates) : None;
+         let payoutTx =
+           PayoutTransaction.signPayout(
+             ~ventureId,
+             ~session,
+             ~accountKeyChains,
+             ~payoutTx,
+             ~network=UseNetwork.network
+           );
+         Event.Payout.(
+           Proposal.make(
+             ~supporterId=session.userId,
+             ~policy=Policy.absolute,
+             Data.{accountIdx, payoutTx, changeAddressCoordinates}
+           )
+         )
+         |> resolve;
+       })
+  );
 };

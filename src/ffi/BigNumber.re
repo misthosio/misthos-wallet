@@ -27,4 +27,6 @@ external make : ([@bs.unwrap] [ | `String(string) | `Float(float)]) => t =
 
 [@bs.send] external toString : t => string = "";
 
+[@bs.send] external toJSON : t => Js.Json.t = "";
+
 [@bs.send] external toNumber : t => float = "";

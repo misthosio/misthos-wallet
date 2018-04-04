@@ -11,13 +11,28 @@ type t = {
   usedInputs: list((int, input))
 };
 
+let encode = payout =>
+  Json.Encode.(
+    object_([
+      ("txHex", string(payout.txHex)),
+      ("usedInputs", list(pair(int, Network.encodeInput), payout.usedInputs))
+    ])
+  );
+
+let decode = raw =>
+  Json.Decode.{
+    txHex: raw |> field("txHex", string),
+    usedInputs:
+      raw |> field("usedInputs", list(pair(int, Network.decodeInput)))
+  };
+
 let signPayout =
     (
       ~ventureId,
       ~session: Session.Data.t,
       ~accountKeyChains:
          list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
-      ~payout: t,
+      ~payoutTx as payout: t,
       ~network: Bitcoin.Networks.t
     ) => {
   open Bitcoin;
