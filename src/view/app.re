@@ -146,8 +146,7 @@ let make = _children => {
                   className=classes.drawer
                   tabIndex=0
                   role="button"
-                  onClick=(_event => send(CloseDrawer))
-                  onKeyDown=(_event => send(CloseDrawer))>
+                  onClick=(_event => send(CloseDrawer))>
                   title
                   <p> (ReasonReact.stringToElement("Venture list")) </p>
                 </div>
