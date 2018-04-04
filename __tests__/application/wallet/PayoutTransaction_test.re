@@ -1,5 +1,3 @@
-Helpers.enableHttpRequests();
-
 open Jest;
 
 open Expect;
@@ -10,7 +8,7 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
-let () = {
+let () =
   describe("build", () => {
     let inputs: list(Network.txInput) = [
       {
@@ -133,87 +131,3 @@ let () = {
       |> toThrow
     );
   });
-  Skip.describe("build2", () => {
-    let (keyA, keyB) = (
-      ECPair.fromWIFWithNetwork(
-        "cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1",
-        Networks.testnet
-      ),
-      ECPair.fromWIFWithNetwork(
-        "cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf",
-        Networks.testnet
-      )
-    );
-    let chainCode =
-      "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
-      |> Utils.bufFromHex;
-    let masterA = HDNode.make(keyA, chainCode);
-    let masterB = HDNode.make(keyB, chainCode);
-    let ventureId = VentureId.fromString("test");
-    let accountIdx = AccountIndex.first;
-    let custodianKeyChainIdx = CustodianKeyChainIndex.first;
-    let custodianKeyChainA =
-      CustodianKeyChain.make(
-        ~ventureId,
-        ~accountIdx,
-        ~keyChainIdx=custodianKeyChainIdx,
-        ~masterKeyChain=masterA
-      );
-    let custodianPubKeyChainA =
-      custodianKeyChainA |> CustodianKeyChain.toPublicKeyChain;
-    let userA = UserId.fromString("userA.id");
-    let accountKeyChainIdx = AccountKeyChainIndex.first;
-    let accountKeyChain1 =
-      AccountKeyChain.make(
-        accountIdx,
-        accountKeyChainIdx,
-        1,
-        [(userA, custodianPubKeyChainA)]
-      );
-    let firstAddressCoordinates =
-      AccountKeyChain.Address.Coordinates.firstExternal(accountKeyChain1);
-    let secondAddressCoordinates =
-      AccountKeyChain.Address.Coordinates.next(firstAddressCoordinates);
-    let firstAddress =
-      AccountKeyChain.Address.make(firstAddressCoordinates, accountKeyChain1);
-    let secondAddress =
-      AccountKeyChain.Address.make(secondAddressCoordinates, accountKeyChain1);
-    let changeAddressCoordinates =
-      AccountKeyChain.Address.Coordinates.firstInternal(accountKeyChain1);
-    let changeAddress =
-      AccountKeyChain.Address.make(changeAddressCoordinates, accountKeyChain1);
-    Skip.testPromise(~timeout=10000, "hello", () =>
-      Js.Promise.(
-        Helpers.faucet([
-          (firstAddress.address, BTC.fromSatoshis(10000L)),
-          (secondAddress.address, BTC.fromSatoshis(10000L))
-        ])
-        |> then_((_) =>
-             Network.Regtest.getTransactionInputs(
-               [firstAddressCoordinates, secondAddressCoordinates],
-               [(accountIdx, [(accountKeyChainIdx, accountKeyChain1)])]
-             )
-           )
-        |> then_(inputs => {
-             let (payoutTx, used) =
-               PayoutTransaction.build(
-                 ~mandatoryInputs=[],
-                 ~allInputs=inputs,
-                 ~destinations=[
-                   (
-                     "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                     BTC.fromSatoshis(9700L)
-                   )
-                 ],
-                 ~satsPerByte=BTC.fromSatoshis(1L),
-                 ~changeAddress,
-                 ~network=Network.Regtest.network
-               );
-             expect((payoutTx.usedInputs |> List.length, used))
-             |> toEqual((1, false))
-             |> resolve;
-           })
-      )
-    );
-  });
-};
