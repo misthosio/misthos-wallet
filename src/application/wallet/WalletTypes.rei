@@ -6,9 +6,15 @@ type utxo = {
   confirmations: int
 };
 
+type broadcastResult =
+  | Ok(string)
+  | Error(string);
+
 module type NetworkClient = {
   let network: Bitcoin.Networks.t;
   let getUTXOs: list(string) => Js.Promise.t(list(utxo));
+  let broadcastTransaction:
+    Bitcoin.Transaction.t => Js.Promise.t(broadcastResult);
 };
 
 module type WalletType = {

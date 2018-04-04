@@ -164,7 +164,23 @@ let broadcastTransaction = (config, transaction) => {
       ])
     )
     |> Json.stringify;
-  rpcCall(config, jsonRPC);
+  Js.Promise.(
+    rpcCall(config, jsonRPC)
+    |> then_(res => {
+         let err =
+           Json.Decode.(
+             res |> field("error", optional(field("message", string)))
+           );
+         (
+           switch err {
+           | Some(err) => WalletTypes.Error(err)
+           | None =>
+             WalletTypes.Ok(Json.Decode.(res |> field("result", string)))
+           }
+         )
+         |> resolve;
+       })
+  );
 };
 
 let make = (config, network) : (module WalletTypes.NetworkClient) =>
@@ -172,4 +188,5 @@ let make = (config, network) : (module WalletTypes.NetworkClient) =>
    {
      let network = network;
      let getUTXOs = getUTXOs(config);
+     let broadcastTransaction = broadcastTransaction(config);
    });

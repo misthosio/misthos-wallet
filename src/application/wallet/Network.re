@@ -39,6 +39,7 @@ module Make = (Client: NetworkClient) => {
          )
     );
   };
+  let broadcastTransaction = Client.broadcastTransaction;
 };
 
 module Regtest =

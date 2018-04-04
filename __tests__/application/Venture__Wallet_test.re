@@ -1,4 +1,5 @@
-/* Helpers.enableHttpRequests(); */
+Helpers.enableHttpRequests();
+
 open Jest;
 
 open Expect;
@@ -14,7 +15,11 @@ open Event;
 module Wallet = Venture__Wallet;
 
 let () =
-  describe("preparePayoutTx", () => {
+  describe("interation", () => {
+    let (userA, userB) = (
+      UserId.fromString("userA"),
+      UserId.fromString("userB")
+    );
     let (keyA, keyB) = (
       ECPair.fromWIFWithNetwork(
         "cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1",
@@ -51,49 +56,70 @@ let () =
       )
       |> CustodianKeyChain.toPublicKeyChain
     );
-    test("", () =>
-      expect(true) |> toBe(true)
+    testPromise(
+      ~timeout=20000,
+      "1 of 2 wallet",
+      () => {
+        let accountKeyChain =
+          AccountKeyChain.make(
+            accountIdx,
+            AccountKeyChainIndex.first,
+            1,
+            [(userA, cKeyChainA), (userB, cKeyChainB)]
+          );
+        let wallet =
+          Wallet.make()
+          |> Wallet.apply(
+               AccountKeyChainUpdated(
+                 AccountKeyChainUpdated.make(~keyChain=accountKeyChain)
+               )
+             );
+        let address1 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+        let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address1));
+        let address2 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+        let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address2));
+        Js.Promise.(
+          Helpers.faucet([
+            (address1.address, BTC.fromSatoshis(10000L)),
+            (address2.address, BTC.fromSatoshis(10000L))
+          ])
+          |> then_((_) =>
+               wallet
+               |> Wallet.preparePayoutTx(
+                    ventureId,
+                    Session.Data.{
+                      userId: userA,
+                      appKeyPair: keyA,
+                      address: keyA |> Bitcoin.ECPair.getAddress,
+                      masterKeyChain: masterA
+                    },
+                    accountIdx,
+                    [
+                      (
+                        "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                        BTC.fromSatoshis(12000L)
+                      )
+                    ],
+                    BTC.fromSatoshis(1L)
+                  )
+             )
+          |> then_(({data}: Event.Payout.Proposal.t) =>
+               TxBuilder.fromTransactionWithNetwork(
+                 data.payoutTx.txHex |> Transaction.fromHex,
+                 Network.Regtest.network
+               )
+               |> TxBuilder.build
+               |> Network.Regtest.broadcastTransaction
+             )
+          |> then_(res => {
+               let completed =
+                 switch res {
+                 | Ok(_) => true
+                 | Error(_) => false
+                 };
+               expect(completed) |> toEqual(true) |> resolve;
+             })
+        );
+      }
     );
   });
-/* testPromise( */
-/*   ~timeout=10000, */
-/*   "wip", */
-/*   () => { */
-/*     let accountKeyChain = */
-/*       AccountKeyChain.make( */
-/*         1, */
-/*         [ */
-/*           (UserId.fromString("custodianA"), cKeyChainA), */
-/*           (UserId.fromString("custodianB"), cKeyChainB) */
-/*         ] */
-/*       ); */
-/*     let wallet = */
-/*       Wallet.make() */
-/*       |> Wallet.apply( */
-/*            AccountKeyChainUpdated( */
-/*              AccountKeyChainUpdated.make( */
-/*                ~accountIdx, */
-/*                ~keyChainIdx=AccountKeyChainIndex.first, */
-/*                ~keyChain=accountKeyChain */
-/*              ) */
-/*            ) */
-/*          ); */
-/*     let address1 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx); */
-/*     Js.log(address1); */
-/*     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address1)); */
-/*     let address2 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx); */
-/*     Js.log(address2); */
-/*     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address2)); */
-/*     Js.Promise.( */
-/*       Helpers.faucet([ */
-/*         (address1.address, BTC.fromSatoshis(10000L)), */
-/*         (address2.address, BTC.fromSatoshis(10000L)) */
-/*       ]) */
-/*       |> then_((_) => wallet |> Wallet.preparePayoutTx(accountIdx, [], 0)) */
-/*       |> then_(utxos => { */
-/*            Js.log(utxos); */
-/*            expect(true) |> toEqual(true) |> resolve; */
-/*          }) */
-/*     ); */
-/*   } */
-/* ); */
