@@ -8,7 +8,7 @@ external toJsUnsafe : t => Js.t({..}) = "%identity";
 let theme = createMuiTheme({
               "palette": {
                 "primary": {
-                  "main": "#02A2B4",
+                  "main": "#BEF6E9",
                 },
               },
             });
