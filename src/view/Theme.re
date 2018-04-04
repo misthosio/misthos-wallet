@@ -1,5 +1,9 @@
+type t;
+
 [@bs.module "material-ui/styles"]
-external createMuiTheme : Js.t({..}) => Js.t({..}) = "createMuiTheme";
+external createMuiTheme : Js.t({..}) => t = "";
+
+external toJsUnsafe : t => Js.t({..}) = "%identity";
 
 let theme = createMuiTheme({
               "palette": {

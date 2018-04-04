@@ -123,7 +123,8 @@ let make = _children => {
       />;
     };
     MaterialUi.(
-      <MuiThemeProvider theme=(`ObjectGeneric(Theme.theme))>
+      <MuiThemeProvider
+        theme=(`ObjectGeneric(Theme.theme |> Theme.toJsUnsafe))>
         <CssBaseline />
         <AppBar>
           <Toolbar>
@@ -137,7 +138,7 @@ let make = _children => {
           render=(
             classes =>
               <Drawer
-                theme=Theme.theme
+                theme=(Theme.theme |> Theme.toJsUnsafe)
                 variant=`Temporary
                 anchor=`Right
                 onClose=(() => send(CloseDrawer))
