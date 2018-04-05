@@ -21,7 +21,7 @@ module AccountKeyChain = Watcher__AccountKeyChain;
 
 module PayoutApproval = Watcher__PayoutApproval;
 
-module SignPayoutTransaction = Watcher__SignPayoutTransaction;
+module SignPayout = Watcher__SignPayout;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch event {
@@ -33,7 +33,7 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
     Some(AccountKeyChain.make(acceptance, log))
   | PayoutProposed(proposal) => Some(PayoutApproval.make(proposal, log))
   | PayoutEndorsed(endorsement) =>
-    Some(SignPayoutTransaction.make(session, endorsement, log))
+    Some(SignPayout.make(session, endorsement, log))
   | CustodianProposed(proposal) => Some(CustodianApproval.make(proposal, log))
   | CustodianAccepted(acceptance) =>
     Some(CustodianKeyChain.make(session, acceptance, log))
