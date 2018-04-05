@@ -60,7 +60,7 @@ let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
          applyInternal,
          (state, wallet, viewModel)
        );
-  {session, id, log, state, wallet, viewModel, watchers};
+  {session, id, log, state, wallet, viewModel, watchers} |> Js.Promise.resolve;
 };
 
 let reconstruct = (session, log) => {
@@ -285,12 +285,8 @@ module Cmd = {
       Js.(
         Promise.all2((
           Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
-          Promise.resolve(make(session, ventureCreated.ventureId))
-          |> Promise.(
-               then_(v =>
-                 v |> apply(VentureCreated(ventureCreated)) |> resolve
-               )
-             )
+          make(session, ventureCreated.ventureId)
+          |> apply(VentureCreated(ventureCreated))
           |> Promise.then_(persist)
         ))
       );
@@ -318,7 +314,7 @@ module Cmd = {
                         state.policies |> List.assoc(Event.Partner.processName)
                     )
                   )
-               |> persist
+               |> then_(persist)
                |> then_(p => resolve(Ok(p)))
              | UserInfo.Public.NotFound => resolve(NoUserInfo)
              }
@@ -336,7 +332,7 @@ module Cmd = {
         |> apply(
              Event.makePartnerEndorsed(~processId, ~supporterId=session.userId)
            )
-        |> persist
+        |> then_(persist)
         |> then_(p => resolve(Ok(p)))
       );
     };
@@ -350,7 +346,7 @@ module Cmd = {
       Js.Promise.(
         venture
         |> apply(IncomeAddressExposed(exposeEvent))
-        |> persist
+        |> then_(persist)
         |> then_(p => resolve(Ok(exposeEvent.address, p)))
       );
     };
@@ -362,9 +358,8 @@ module Cmd = {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
         Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
-        |> then_(proposal =>
-             venture |> apply(PayoutProposed(proposal)) |> persist
-           )
+        |> then_(proposal => venture |> apply(PayoutProposed(proposal)))
+        |> then_(persist)
         |> then_(p => resolve(Ok(p)))
       );
     };
@@ -379,7 +374,7 @@ module Cmd = {
         |> apply(
              Event.makePayoutEndorsed(~processId, ~supporterId=session.userId)
            )
-        |> persist
+        |> then_(persist)
         |> then_(p => resolve(Ok(p)))
       );
     };
