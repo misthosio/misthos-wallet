@@ -369,4 +369,19 @@ module Cmd = {
       );
     };
   };
+  module EndorsePayout = {
+    type result =
+      | Ok(t);
+    let exec = (~processId, {session} as venture) => {
+      logMessage("Executing 'EndorsePayout' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             Event.makePayoutEndorsed(~processId, ~supporterId=session.userId)
+           )
+        |> persist
+        |> then_(p => resolve(Ok(p)))
+      );
+    };
+  };
 };

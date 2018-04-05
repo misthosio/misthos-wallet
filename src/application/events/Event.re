@@ -143,6 +143,33 @@ module Payout = {
       };
   };
   include (val EventTypes.makeProcess("Payout"))(Data);
+  module Signature = {
+    type t = {
+      processId,
+      custodianId: userId,
+      payoutTx: PayoutTransaction.t
+    };
+    let make = (~processId, ~custodianId, ~payoutTx) => {
+      processId,
+      custodianId,
+      payoutTx
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutSigned")),
+          ("processId", ProcessId.encode(event.processId)),
+          ("custodianId", UserId.encode(event.custodianId)),
+          ("payoutTx", PayoutTransaction.encode(event.payoutTx))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        processId: raw |> field("processId", ProcessId.decode),
+        custodianId: raw |> field("custodianId", UserId.decode),
+        payoutTx: raw |> field("payoutTx", PayoutTransaction.decode)
+      };
+  };
 };
 
 module CustodianKeyChainUpdated = {
@@ -219,6 +246,7 @@ type t =
   | PayoutProposed(Payout.Proposal.t)
   | PayoutEndorsed(Payout.Endorsement.t)
   | PayoutAccepted(Payout.Acceptance.t)
+  | PayoutSigned(Payout.Signature.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t);
@@ -253,6 +281,9 @@ let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsement.make(~processId, ~supporterId));
 
+let makePayoutEndorsed = (~processId, ~supporterId) =>
+  PayoutEndorsed(Payout.Endorsement.make(~processId, ~supporterId));
+
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
@@ -265,6 +296,7 @@ let encode =
   | PayoutProposed(event) => Payout.Proposal.encode(event)
   | PayoutEndorsed(event) => Payout.Endorsement.encode(event)
   | PayoutAccepted(event) => Payout.Acceptance.encode(event)
+  | PayoutSigned(event) => Payout.Signature.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
@@ -296,6 +328,7 @@ let decode = raw => {
   | "PayoutProposed" => PayoutProposed(Payout.Proposal.decode(raw))
   | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsement.decode(raw))
   | "PayoutAccepted" => PayoutAccepted(Payout.Acceptance.decode(raw))
+  | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
   | "AccountCreationProposed" =>
     AccountCreationProposed(AccountCreation.Proposal.decode(raw))
   | "AccountCreationEndorsed" =>

@@ -19,6 +19,8 @@ module CustodianKeyChain = Watcher__CustodianKeyChain;
 
 module AccountKeyChain = Watcher__AccountKeyChain;
 
+module SignPayoutTransaction = Watcher__SignPayoutTransaction;
+
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch event {
   | VentureCreated(event) => Some(Initialize.make(session, event, log))
@@ -27,6 +29,8 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
     Some(AccountCreationApproval.make(proposal, log))
   | AccountCreationAccepted(acceptance) =>
     Some(AccountKeyChain.make(acceptance, log))
+  | PayoutEndorsed(endorsement) =>
+    Some(SignPayoutTransaction.make(session, endorsement, log))
   | CustodianProposed(proposal) => Some(CustodianApproval.make(proposal, log))
   | CustodianAccepted(acceptance) =>
     Some(CustodianKeyChain.make(session, acceptance, log))

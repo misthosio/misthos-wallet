@@ -81,4 +81,9 @@ module Cmd: {
       ) =>
       Js.Promise.t(result);
   };
+  module EndorsePayout: {
+    type result =
+      | Ok(t);
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
+  };
 };
