@@ -17,11 +17,6 @@ let make =
       {processId as payoutProcess, supporterId}: Payout.Endorsement.t,
       log
     ) => {
-  let state = {
-    ventureId: VentureId.fromString(""),
-    accountKeyChains: [],
-    payoutTx: None
-  };
   let state =
     log
     |> EventLog.reduce(
@@ -47,11 +42,15 @@ let make =
            | PayoutProposed({processId as proposalProcess, data})
                when ProcessId.eq(proposalProcess, payoutProcess) => {
                ...state,
-               payoutTx: Some(data.payoutTx),
+               payoutTx: Some(data.payoutTx)
              }
            | _ => state
            },
-         state
+         {
+           ventureId: VentureId.fromString(""),
+           accountKeyChains: [],
+           payoutTx: None
+         }
        );
   let signEvent =
     switch (
@@ -91,7 +90,7 @@ let make =
           when
             UserId.eq(custodianId, userId)
             && ProcessId.eq(signingProcess, payoutProcess) =>
-        signPending := false;
+        signPending := false
       | _ => ()
       };
     pub processCompleted = () => signPending^;
