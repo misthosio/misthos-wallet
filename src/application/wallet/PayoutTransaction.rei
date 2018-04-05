@@ -4,6 +4,8 @@ open WalletTypes;
 
 exception NotEnoughFunds;
 
+exception NotEnoughSignatures;
+
 type input = Network.txInput;
 
 type t = {
@@ -45,6 +47,8 @@ let signPayout:
     ~network: Bitcoin.Networks.t
   ) =>
   signResult;
+
+let finalize: (list(t), Bitcoin.Networks.t) => Bitcoin.Transaction.t;
 
 let encode: t => Js.Json.t;
 

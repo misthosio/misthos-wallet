@@ -22,7 +22,7 @@ module Make = (Client: NetworkClient) => {
       Client.getUTXOs(addresses |> List.map(fst))
       |> then_(utxos =>
            utxos
-           |> List.map(({txId, txOutputN, address, amount}: utxo) =>
+           |> List.map(({txId, txOutputN, address, amount} as utxo: utxo) =>
                 {
                   txId,
                   txOutputN,

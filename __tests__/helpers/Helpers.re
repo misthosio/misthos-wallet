@@ -18,7 +18,7 @@ let bitcoindConfig: BitcoindClient.config = {
   rpcPassword: "bitcoin"
 };
 
-let defaultFee = BTC.fromSatoshis(600L);
+let defaultFee = BTC.fromSatoshis(1000L);
 
 let selectUTXOs = (utxos, totalAmount) => {
   let utxos =

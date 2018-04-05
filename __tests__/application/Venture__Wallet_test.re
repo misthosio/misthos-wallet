@@ -63,20 +63,80 @@ let () =
       )
       |> CustodianKeyChain.toPublicKeyChain
     );
+    let accountKeyChain =
+      AccountKeyChain.make(
+        accountIdx,
+        AccountKeyChainIndex.first,
+        1,
+        [(userA, cKeyChainA), (userB, cKeyChainB)]
+      );
+    let wallet =
+      Wallet.make()
+      |> Wallet.apply(VentureCreated(createdEvent))
+      |> Wallet.apply(
+           AccountKeyChainUpdated(
+             AccountKeyChainUpdated.make(~keyChain=accountKeyChain)
+           )
+         );
+    let address1 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+    let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address1));
+    let address2 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+    let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address2));
+    testPromise(~timeout=20000, "1 of 2 wallet", () =>
+      Js.Promise.(
+        Helpers.faucet([
+          (address1.address, BTC.fromSatoshis(10000L)),
+          (address2.address, BTC.fromSatoshis(10000L))
+        ])
+        |> then_((_) =>
+             wallet
+             |> Wallet.preparePayoutTx(
+                  Session.Data.{
+                    userId: userA,
+                    appKeyPair: keyA,
+                    address: keyA |> Bitcoin.ECPair.getAddress,
+                    masterKeyChain: masterA
+                  },
+                  accountIdx,
+                  [
+                    (
+                      "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                      BTC.fromSatoshis(8000L)
+                    )
+                  ],
+                  BTC.fromSatoshis(1L)
+                )
+           )
+        |> then_(({data}: Event.Payout.Proposal.t) =>
+             PayoutTransaction.finalize(
+               [data.payoutTx],
+               Network.Regtest.network
+             )
+             |> Helpers.broadcastTransaction
+           )
+        |> then_(res => {
+             let completed =
+               switch res {
+               | Ok(_) => true
+               | Error(_) => false
+               };
+             expect(completed) |> toEqual(true) |> resolve;
+           })
+      )
+    );
     testPromise(
-      ~timeout=20000,
-      "1 of 2 wallet",
+      ~timeout=60000,
+      "2 of 2 wallet",
       () => {
         let accountKeyChain =
           AccountKeyChain.make(
             accountIdx,
-            AccountKeyChainIndex.first,
-            1,
+            AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
+            2,
             [(userA, cKeyChainA), (userB, cKeyChainB)]
           );
         let wallet =
-          Wallet.make()
-          |> Wallet.apply(VentureCreated(createdEvent))
+          wallet
           |> Wallet.apply(
                AccountKeyChainUpdated(
                  AccountKeyChainUpdated.make(~keyChain=accountKeyChain)
@@ -91,7 +151,7 @@ let () =
             (address1.address, BTC.fromSatoshis(10000L)),
             (address2.address, BTC.fromSatoshis(10000L))
           ])
-          |> then_((_) =>
+          |> then_(res =>
                wallet
                |> Wallet.preparePayoutTx(
                     Session.Data.{
@@ -104,20 +164,28 @@ let () =
                     [
                       (
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                        BTC.fromSatoshis(12000L)
+                        BTC.fromSatoshis(25000L)
                       )
                     ],
                     BTC.fromSatoshis(1L)
                   )
              )
-          |> then_(({data}: Event.Payout.Proposal.t) =>
-               TxBuilder.fromTransactionWithNetwork(
-                 data.payoutTx.txHex |> Transaction.fromHex,
+          |> then_(({data}: Event.Payout.Proposal.t) => {
+               let PayoutTransaction.Signed(payoutTx) =
+                 PayoutTransaction.signPayout(
+                   ~ventureId,
+                   ~userId=userB,
+                   ~masterKeyChain=masterB,
+                   ~accountKeyChains=wallet.accountKeyChains,
+                   ~payoutTx=data.payoutTx,
+                   ~network=Network.Regtest.network
+                 );
+               PayoutTransaction.finalize(
+                 [data.payoutTx, payoutTx],
                  Network.Regtest.network
                )
-               |> TxBuilder.build
-               |> Network.Regtest.broadcastTransaction
-             )
+               |> Helpers.broadcastTransaction;
+             })
           |> then_(res => {
                let completed =
                  switch res {
