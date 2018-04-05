@@ -6,7 +6,6 @@ type txInput = {
   address: string,
   value: BTC.t,
   nCoSigners: int,
-  confirmations: int,
   coordinates: AccountKeyChain.Address.Coordinates.t
 };
 
@@ -23,13 +22,11 @@ module Make = (Client: NetworkClient) => {
       Client.getUTXOs(addresses |> List.map(fst))
       |> then_(utxos =>
            utxos
-           |> List.map(
-                ({txId, txOutputN, address, amount, confirmations}: utxo) =>
+           |> List.map(({txId, txOutputN, address, amount}: utxo) =>
                 {
                   txId,
                   txOutputN,
                   address,
-                  confirmations,
                   nCoSigners: snd(addresses |> List.assoc(address)).nCoSigners,
                   value: amount,
                   coordinates: addresses |> List.assoc(address) |> fst
@@ -64,7 +61,6 @@ let encodeInput = input =>
       ("address", string(input.address)),
       ("value", BTC.encode(input.value)),
       ("nCoSigners", int(input.nCoSigners)),
-      ("confirmations", int(input.confirmations)),
       (
         "coordinates",
         AccountKeyChain.Address.Coordinates.encode(input.coordinates)
@@ -79,7 +75,6 @@ let decodeInput = raw =>
     address: raw |> field("address", string),
     value: raw |> field("value", BTC.decode),
     nCoSigners: raw |> field("nCoSigners", int),
-    confirmations: raw |> field("confirmations", int),
     coordinates:
       raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode)
   };
