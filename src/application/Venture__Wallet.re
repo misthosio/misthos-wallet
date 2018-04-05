@@ -13,7 +13,8 @@ type t = {
   nextChangeCoordinates:
     list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
   exposedCoordinates:
-    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t)))
+    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t))),
+  reservedInputs: list(Network.txInput)
 };
 
 let make = () => {
@@ -22,7 +23,8 @@ let make = () => {
   accountKeyChains: [],
   nextCoordinates: [],
   nextChangeCoordinates: [],
-  exposedCoordinates: []
+  exposedCoordinates: [],
+  reservedInputs: []
 };
 
 let apply = (event: Event.t, state) =>
@@ -79,6 +81,35 @@ let apply = (event: Event.t, state) =>
         ...state.exposedCoordinates
       ]
     };
+  | PayoutProposed({data}) => {
+      ...state,
+      reservedInputs:
+        state.reservedInputs
+        |> List.rev_append(data.payoutTx.usedInputs |> List.map(snd)),
+      exposedCoordinates:
+        switch data.changeAddressCoordinates {
+        | None => state.exposedCoordinates
+        | Some(coordinates) => [
+            (
+              data.accountIdx,
+              [
+                coordinates,
+                ...state.exposedCoordinates |> List.assoc(data.accountIdx)
+              ]
+            ),
+            ...state.exposedCoordinates |> List.remove_assoc(data.accountIdx)
+          ]
+        },
+      nextChangeCoordinates: [
+        (
+          data.accountIdx,
+          state.nextChangeCoordinates
+          |> List.assoc(data.accountIdx)
+          |> AccountKeyChain.Address.Coordinates.next
+        ),
+        ...state.nextCoordinates |> List.remove_assoc(data.accountIdx)
+      ]
+    }
   | _ => state
   };
 
@@ -99,7 +130,8 @@ let preparePayoutTx =
         payoutPolicy,
         nextChangeCoordinates,
         exposedCoordinates,
-        accountKeyChains
+        accountKeyChains,
+        reservedInputs
       }
     ) => {
   open AccountKeyChain.Address;
@@ -111,6 +143,16 @@ let preparePayoutTx =
     accountKeyChains
     |> UseNetwork.getTransactionInputs(coordinates)
     |> then_(inputs => {
+         let inputs =
+           inputs
+           |> List.filter((input: Network.txInput) =>
+                reservedInputs
+                |>
+                List.exists((reservedIn: Network.txInput) =>
+                  reservedIn.txId == input.txId
+                  && reservedIn.txOutputN == input.txOutputN
+                ) == false
+              );
          let oldInputs =
            inputs
            |> List.find_all((i: Network.txInput) =>
@@ -157,5 +199,34 @@ let preparePayoutTx =
          )
          |> resolve;
        })
+  );
+};
+
+let balance =
+    (accountIdx, {exposedCoordinates, accountKeyChains, reservedInputs}) => {
+  module UseNetwork = Network.Regtest;
+  let coordinates = exposedCoordinates |> List.assoc(accountIdx);
+  Js.Promise.(
+    accountKeyChains
+    |> UseNetwork.getTransactionInputs(coordinates)
+    |> then_(inputs =>
+         inputs
+         |> List.fold_left(
+              ((total, reserved), input: Network.txInput) => (
+                total |> BTC.plus(input.value),
+                reserved
+                |> BTC.plus(
+                     reservedInputs
+                     |> List.exists((reservedIn: Network.txInput) =>
+                          reservedIn.txId == input.txId
+                          && reservedIn.txOutputN == input.txOutputN
+                        ) ?
+                       input.value : BTC.zero
+                   )
+              ),
+              (BTC.zero, BTC.zero)
+            )
+         |> resolve
+       )
   );
 };
