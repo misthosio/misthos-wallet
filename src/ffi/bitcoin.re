@@ -55,7 +55,8 @@ module ECPair = {
   [@bs.module "bitcoinjs-lib"] [@bs.new]
   external make : BigInteger.t => t = "ECPair";
   [@bs.module "bitcoinjs-lib"] [@bs.new]
-  external makeWithOptions : (BigInteger.t, {. "network": Networks.t}) => t =
+  external makeWithOptions :
+    (BigInteger.t, [@bs.as {json|null|json}] _, {. "network": Networks.t}) => t =
     "ECPair";
   let makeWithNetwork = (key, network) =>
     makeWithOptions(key, {"network": network});
