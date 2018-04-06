@@ -170,6 +170,46 @@ module Payout = {
         payoutTx: raw |> field("payoutTx", PayoutTransaction.decode)
       };
   };
+  module Broadcast = {
+    type t = {
+      processId,
+      transactionId: string
+    };
+    let make = (~processId, ~transactionId) => {processId, transactionId};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutBroadcast")),
+          ("processId", ProcessId.encode(event.processId)),
+          ("transactionId", string(event.transactionId))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        processId: raw |> field("processId", ProcessId.decode),
+        transactionId: raw |> field("transactionId", string)
+      };
+  };
+  module BroadcastFailure = {
+    type t = {
+      processId,
+      errorMessage: string
+    };
+    let make = (~processId, ~errorMessage) => {processId, errorMessage};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutBroadcastFailed")),
+          ("processId", ProcessId.encode(event.processId)),
+          ("errorMessage", string(event.errorMessage))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        processId: raw |> field("processId", ProcessId.decode),
+        errorMessage: raw |> field("errorMessage", string)
+      };
+  };
 };
 
 module CustodianKeyChainUpdated = {
@@ -247,6 +287,8 @@ type t =
   | PayoutEndorsed(Payout.Endorsement.t)
   | PayoutAccepted(Payout.Acceptance.t)
   | PayoutSigned(Payout.Signature.t)
+  | PayoutBroadcast(Payout.Broadcast.t)
+  | PayoutBroadcastFailed(Payout.BroadcastFailure.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t);
@@ -297,6 +339,8 @@ let encode =
   | PayoutEndorsed(event) => Payout.Endorsement.encode(event)
   | PayoutAccepted(event) => Payout.Acceptance.encode(event)
   | PayoutSigned(event) => Payout.Signature.encode(event)
+  | PayoutBroadcast(event) => Payout.Broadcast.encode(event)
+  | PayoutBroadcastFailed(event) => Payout.BroadcastFailure.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
@@ -329,6 +373,9 @@ let decode = raw => {
   | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsement.decode(raw))
   | "PayoutAccepted" => PayoutAccepted(Payout.Acceptance.decode(raw))
   | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
+  | "PayoutBroadcast" => PayoutBroadcast(Payout.Broadcast.decode(raw))
+  | "PayoutBroadcastFailed" =>
+    PayoutBroadcastFailed(Payout.BroadcastFailure.decode(raw))
   | "AccountCreationProposed" =>
     AccountCreationProposed(AccountCreation.Proposal.decode(raw))
   | "AccountCreationEndorsed" =>
