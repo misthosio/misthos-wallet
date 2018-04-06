@@ -131,7 +131,7 @@ let () =
         |> Wallet.preparePayoutTx(
              Session.Data.{
                userId: userA,
-               appKeyPair: keyA,
+               issuerKeyPair: keyA,
                storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
                masterKeyChain: masterA,
                network: Regtest
@@ -178,7 +178,7 @@ let () =
              Session.Data.{
                network: Regtest,
                userId: userA,
-               appKeyPair: keyA,
+               issuerKeyPair: keyA,
                storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
                masterKeyChain: masterA
              },

@@ -3,7 +3,7 @@ open PrimitiveTypes;
 module Data = {
   type t = {
     userId,
-    appKeyPair: Bitcoin.ECPair.t,
+    issuerKeyPair: Bitcoin.ECPair.t,
     storagePrefix: string,
     masterKeyChain: Bitcoin.HDNode.t,
     network: Network.t
@@ -12,20 +12,22 @@ module Data = {
     switch (Js.Nullable.toOption(userData##username)) {
     | None => None
     | Some(blockstackId) =>
-      let appKeyPair =
+      let issuerKeyPair =
         Utils.keyPairFromPrivateKey(
           Network.Regtest.network,
           userData##appPrivateKey
         );
-      let appPubKey = appKeyPair |> Utils.publicKeyFromKeyPair;
       Some({
         userId: blockstackId |> UserId.fromString,
-        appKeyPair,
+        issuerKeyPair,
         network: Regtest,
-        storagePrefix: UserInfo.storagePrefix(~appPubKey),
+        storagePrefix:
+          UserInfo.storagePrefix(
+            ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair
+          ),
         masterKeyChain:
           Bitcoin.HDNode.make(
-            appKeyPair,
+            issuerKeyPair,
             Utils.bufFromHex(
               "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
             )
@@ -64,14 +66,14 @@ let completeLogIn = () =>
          | None => resolve(AnonymousLogin)
          | Some(sessionData) =>
            let appPubKey =
-             sessionData.appKeyPair |> Utils.publicKeyFromKeyPair;
+             sessionData.issuerKeyPair |> Utils.publicKeyFromKeyPair;
            UserInfo.getOrInit(~appPubKey)
            |> then_(({chainCode}: UserInfo.Private.t) =>
                 resolve(
                   LoggedIn({
                     ...sessionData,
                     masterKeyChain:
-                      Bitcoin.HDNode.make(sessionData.appKeyPair, chainCode)
+                      Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode)
                   })
                 )
               );

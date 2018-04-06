@@ -13,7 +13,7 @@ type state = {
 
 let make =
     (
-      {userId, appKeyPair, masterKeyChain}: Session.Data.t,
+      {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
       {processId as payoutProcess, supporterId}: Payout.Endorsement.t,
       log
     ) => {
@@ -65,7 +65,7 @@ let make =
     ) {
     | Signed(payoutTx) =>
       Some((
-        appKeyPair,
+        issuerKeyPair,
         PayoutSigned(
           Payout.Signature.make(
             ~processId=payoutProcess,

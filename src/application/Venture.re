@@ -50,7 +50,12 @@ let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
 
 let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
   let (item, log, (state, wallet, viewModel)) =
-    applyInternal(session.appKeyPair, event, log, (state, wallet, viewModel));
+    applyInternal(
+      session.issuerKeyPair,
+      event,
+      log,
+      (state, wallet, viewModel)
+    );
   Js.Promise.(
     watchers
     |> Watchers.applyAndProcessPending(
@@ -276,7 +281,7 @@ module Cmd = {
         Event.VentureCreated.make(
           ~ventureName,
           ~creatorId=session.userId,
-          ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
+          ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
           ~metaPolicy=defaultPolicy
         );
       Js.(

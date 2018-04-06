@@ -12,7 +12,7 @@ type state = {
 
 let make =
     (
-      {userId, appKeyPair, masterKeyChain}: Session.Data.t,
+      {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
       {data}: Custodian.Acceptance.t,
       log
     ) => {
@@ -35,7 +35,7 @@ let make =
               ...state^,
               pendingEvent:
                 Some((
-                  appKeyPair,
+                  issuerKeyPair,
                   CustodianKeyChainUpdated(
                     CustodianKeyChainUpdated.make(
                       ~partnerId=custodianId,

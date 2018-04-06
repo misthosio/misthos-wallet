@@ -17,7 +17,7 @@ type state =
 
 let make =
     (
-      {userId, appKeyPair}: Session.Data.t,
+      {userId, issuerKeyPair}: Session.Data.t,
       {creatorId, creatorPubKey, metaPolicy}: VentureCreated.t,
       log
     ) => {
@@ -57,7 +57,7 @@ let make =
           switch state^ {
           | ProposePartner =>
             Some((
-              appKeyPair,
+              issuerKeyPair,
               Event.makePartnerProposed(
                 ~supporterId=creatorId,
                 ~prospectId=creatorId,
@@ -67,7 +67,7 @@ let make =
             ))
           | ProposeAccountCreation =>
             Some((
-              appKeyPair,
+              issuerKeyPair,
               Event.makeAccountCreationProposed(
                 ~supporterId=creatorId,
                 ~name=defaultAccountName,
@@ -77,7 +77,7 @@ let make =
             ))
           | ProposeCustodian =>
             Some((
-              appKeyPair,
+              issuerKeyPair,
               Event.makeCustodianProposed(
                 ~partnerId=creatorId,
                 ~supporterId=creatorId,
