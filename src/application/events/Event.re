@@ -9,15 +9,17 @@ module VentureCreated = {
     creatorId: userId,
     creatorPubKey: string,
     metaPolicy: Policy.t,
-    systemIssuer: Bitcoin.ECPair.t
+    systemIssuer: Bitcoin.ECPair.t,
+    network: Network.t
   };
-  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
+  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~network) => {
     ventureId: VentureId.make(),
     ventureName,
     creatorId,
     creatorPubKey,
     metaPolicy,
-    systemIssuer: Bitcoin.ECPair.makeRandom()
+    systemIssuer: Bitcoin.ECPair.makeRandom(),
+    network
   };
   let encode = event =>
     Json.Encode.(
@@ -28,7 +30,8 @@ module VentureCreated = {
         ("creatorId", UserId.encode(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
-        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer)))
+        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
+        ("network", Network.encode(event.network))
       ])
     );
   let decode = raw =>
@@ -39,7 +42,8 @@ module VentureCreated = {
       creatorPubKey: raw |> field("creatorPubKey", string),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
-        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF
+        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
+      network: raw |> field("network", Network.decode)
     };
 };
 

@@ -6,6 +6,7 @@ open Event;
 
 type t = {
   ventureId,
+  network: Network.t,
   payoutPolicy: Policy.t,
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
@@ -18,6 +19,7 @@ type t = {
 };
 
 let make = () => {
+  network: Network.Regtest,
   ventureId: VentureId.fromString(""),
   payoutPolicy: Policy.absolute,
   accountKeyChains: [],
@@ -29,8 +31,9 @@ let make = () => {
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated({ventureId, metaPolicy}) => {
+  | VentureCreated({ventureId, metaPolicy, network}) => {
       ...state,
+      network,
       ventureId,
       payoutPolicy: metaPolicy
     }
@@ -121,7 +124,7 @@ let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) 
 
 let preparePayoutTx =
     (
-      {userId, masterKeyChain}: Session.Data.t,
+      {userId, masterKeyChain, network}: Session.Data.t,
       accountIdx,
       destinations,
       satsPerByte,
@@ -135,13 +138,12 @@ let preparePayoutTx =
       }
     ) => {
   open AccountKeyChain.Address;
-  module UseNetwork = Network.Regtest;
   let coordinates = exposedCoordinates |> List.assoc(accountIdx);
   let nextChangeCoordinates = nextChangeCoordinates |> List.assoc(accountIdx);
   let currentKeyChainIdx = nextChangeCoordinates |> Coordinates.keyChainIdx;
   Js.Promise.(
     accountKeyChains
-    |> UseNetwork.getTransactionInputs(coordinates)
+    |> Network.transactionInputs(network, coordinates)
     |> then_(inputs => {
          let inputs =
            inputs
@@ -170,7 +172,7 @@ let preparePayoutTx =
                ~destinations,
                ~satsPerByte,
                ~changeAddress,
-               ~network=UseNetwork.network
+               ~network
              )
            ) {
            | WithChangeAddress(payout) => (payout, Some(nextChangeCoordinates))
@@ -184,7 +186,7 @@ let preparePayoutTx =
                ~masterKeyChain,
                ~accountKeyChains,
                ~payoutTx,
-               ~network=UseNetwork.network
+               ~network
              )
            ) {
            | Signed(payout) => payout
@@ -203,12 +205,14 @@ let preparePayoutTx =
 };
 
 let balance =
-    (accountIdx, {exposedCoordinates, accountKeyChains, reservedInputs}) => {
-  module UseNetwork = Network.Regtest;
+    (
+      accountIdx,
+      {exposedCoordinates, accountKeyChains, reservedInputs, network}
+    ) => {
   let coordinates = exposedCoordinates |> List.assoc(accountIdx);
   Js.Promise.(
     accountKeyChains
-    |> UseNetwork.getTransactionInputs(coordinates)
+    |> Network.transactionInputs(network, coordinates)
     |> then_(inputs =>
          inputs
          |> List.fold_left(

@@ -282,7 +282,8 @@ module Cmd = {
           ~ventureName,
           ~creatorId=session.userId,
           ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
-          ~metaPolicy=defaultPolicy
+          ~metaPolicy=defaultPolicy,
+          ~network=session.network
         );
       Js.(
         Promise.all2((

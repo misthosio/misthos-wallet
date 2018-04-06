@@ -5,6 +5,7 @@ open PrimitiveTypes;
 open WalletTypes;
 
 type state = {
+  network: Network.t,
   ventureId,
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
@@ -14,7 +15,7 @@ type state = {
 let make =
     (
       {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
-      {processId as payoutProcess, supporterId}: Payout.Endorsement.t,
+      {processId: payoutProcess, supporterId}: Payout.Endorsement.t,
       log
     ) => {
   let state =
@@ -22,7 +23,11 @@ let make =
     |> EventLog.reduce(
          (state, {event}) =>
            switch event {
-           | VentureCreated({ventureId}) => {...state, ventureId}
+           | VentureCreated({ventureId, network}) => {
+               ...state,
+               ventureId,
+               network
+             }
            | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) =>
              let accountKeyChains =
                try (state.accountKeyChains |> List.assoc(keyChain.accountIdx)) {
@@ -39,42 +44,47 @@ let make =
                     |> List.remove_assoc(keyChain.accountIdx)
                ]
              };
-           | PayoutProposed({processId as proposalProcess, data})
-               when ProcessId.eq(proposalProcess, payoutProcess) => {
+           | PayoutProposed({processId, data})
+               when ProcessId.eq(processId, payoutProcess) => {
                ...state,
                payoutTx: Some(data.payoutTx)
              }
            | _ => state
            },
          {
+           network: Network.Regtest,
            ventureId: VentureId.fromString(""),
            accountKeyChains: [],
            payoutTx: None
          }
        );
   let signEvent =
-    switch (
-      PayoutTransaction.signPayout(
-        ~ventureId=state.ventureId,
-        ~userId,
-        ~masterKeyChain,
-        ~accountKeyChains=state.accountKeyChains,
-        ~payoutTx=state.payoutTx |> Js.Option.getExn,
-        ~network=Network.Regtest.network
-      )
-    ) {
-    | Signed(payoutTx) =>
-      Some((
-        issuerKeyPair,
-        PayoutSigned(
-          Payout.Signature.make(
-            ~processId=payoutProcess,
-            ~custodianId=userId,
-            ~payoutTx
-          )
+    if (UserId.eq(supporterId, userId)) {
+      switch (
+        PayoutTransaction.signPayout(
+          ~ventureId=state.ventureId,
+          ~userId,
+          ~masterKeyChain,
+          ~accountKeyChains=state.accountKeyChains,
+          ~payoutTx=state.payoutTx |> Js.Option.getExn,
+          ~network=state.network
         )
-      ))
-    | NotSigned => None
+      ) {
+      | Signed(payoutTx) =>
+        Some((
+          issuerKeyPair,
+          PayoutSigned(
+            Payout.Signature.make(
+              ~processId=payoutProcess,
+              ~custodianId=userId,
+              ~payoutTx
+            )
+          )
+        ))
+      | NotSigned => None
+      };
+    } else {
+      None;
     };
   let process = {
     val signPending =

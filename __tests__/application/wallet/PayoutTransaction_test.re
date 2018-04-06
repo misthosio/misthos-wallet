@@ -2,10 +2,6 @@ open Jest;
 
 open Expect;
 
-open Bitcoin;
-
-open PrimitiveTypes;
-
 open WalletTypes;
 
 let () =
@@ -62,7 +58,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -82,7 +78,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -102,7 +98,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -122,7 +118,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -142,7 +138,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           ),
         ()
       )

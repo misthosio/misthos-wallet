@@ -42,12 +42,12 @@ let signPayout =
       ~accountKeyChains:
          list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
       ~payoutTx as payout: t,
-      ~network: Networks.t
+      ~network: Network.t
     ) => {
   let txB =
     TxBuilder.fromTransactionWithNetwork(
       Transaction.fromHex(payout.txHex),
-      network
+      network |> Network.bitcoinNetwork
     );
   let signed =
     payout.usedInputs
@@ -148,12 +148,24 @@ let addChangeOutput =
       |> BTC.gte(
            outTotal
            |> BTC.plus(currentFee)
-           |> BTC.plus(Fee.outputCost(changeAddress.address, fee, network))
+           |> BTC.plus(
+                Fee.outputCost(
+                  changeAddress.address,
+                  fee,
+                  network |> Network.bitcoinNetwork
+                )
+              )
            |> BTC.plus(Fee.minChange(changeAddress.nCoSigners))
          )) {
     let currentFee =
       currentFee
-      |> BTC.plus(Fee.outputCost(changeAddress.address, fee, network));
+      |> BTC.plus(
+           Fee.outputCost(
+             changeAddress.address,
+             fee,
+             network |> Network.bitcoinNetwork
+           )
+         );
     txBuilder
     |> TxBuilder.addOutput(
          changeAddress.address,
@@ -190,7 +202,7 @@ let build =
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
        );
-  let txB = TxBuilder.createWithNetwork(network);
+  let txB = TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
     mandatoryInputs
     |> List.map((i: input) =>
@@ -218,7 +230,7 @@ let build =
       destinations |> List.map(fst),
       usedInputs |> List.map(snd),
       satsPerByte,
-      network
+      network |> Network.bitcoinNetwork
     );
   if (currentInputValue |> BTC.gte(outTotal |> BTC.plus(currentFee))) {
     let changeAdded =
@@ -317,7 +329,7 @@ let finalize = (signedTransactions, network) => {
   let txB =
     TxBuilder.fromTransactionWithNetwork(
       txHex |> Transaction.fromHex,
-      network
+      network |> Network.bitcoinNetwork
     );
   let inputs = txB##inputs;
   let otherInputs =
@@ -325,7 +337,7 @@ let finalize = (signedTransactions, network) => {
     |> List.map(({txHex}: t) =>
          TxBuilder.fromTransactionWithNetwork(
            txHex |> Transaction.fromHex,
-           network
+           network |> Network.bitcoinNetwork
          )##inputs
        );
   usedInputs

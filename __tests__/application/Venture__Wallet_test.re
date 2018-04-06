@@ -35,7 +35,8 @@ let () =
         ~ventureName="test",
         ~creatorId=userA,
         ~creatorPubKey=keyA |> Utils.publicKeyFromKeyPair,
-        ~metaPolicy=Policy.absolute
+        ~metaPolicy=Policy.absolute,
+        ~network=Network.Regtest
       );
     let chainCode =
       "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
@@ -82,7 +83,7 @@ let () =
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address1));
     let address2 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address2));
-    let oneKeyChainWallet = wallet;
+    let oneKeyChainWallet = ref(wallet);
     let accountKeyChain =
       AccountKeyChain.make(
         accountIdx,
@@ -117,48 +118,43 @@ let () =
       |> BTC.minus(oneKeyChainSpendAmount)
       |> BTC.minus(oneKeyChainExpectedFee);
     let twoKeyChainSpendAmount = BTC.fromSatoshis(25000L);
-    beforeAllPromise(() =>
-      Helpers.faucet([
-        (address1.address, address1Satoshis),
-        (address2.address, address2Satoshis),
-        (address3.address, address3Satoshis),
-        (address4.address, address4Satoshis)
-      ])
-    );
-    testPromise(~timeout=20000, "1 of 2 wallet", () =>
+    beforeAllPromise(~timeout=20000, () =>
       Js.Promise.(
-        oneKeyChainWallet
-        |> Wallet.preparePayoutTx(
-             Session.Data.{
-               userId: userA,
-               issuerKeyPair: keyA,
-               storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
-               masterKeyChain: masterA,
-               network: Regtest
-             },
-             accountIdx,
-             [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
-             BTC.fromSatoshis(1L)
+        Helpers.faucet([
+          (address1.address, address1Satoshis),
+          (address2.address, address2Satoshis),
+          (address3.address, address3Satoshis),
+          (address4.address, address4Satoshis)
+        ])
+        |> then_((_) =>
+             oneKeyChainWallet^
+             |> Wallet.preparePayoutTx(
+                  Session.Data.{
+                    userId: userA,
+                    issuerKeyPair: keyA,
+                    storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
+                    masterKeyChain: masterA,
+                    network: Regtest
+                  },
+                  accountIdx,
+                  [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
+                  BTC.fromSatoshis(1L)
+                )
            )
         |> then_(({data} as event: Event.Payout.Proposal.t) => {
+             oneKeyChainWallet :=
+               oneKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
              twoKeyChainWallet :=
                twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
-             Js.Promise.(
-               all2((
-                 resolve(
-                   oneKeyChainWallet |> Wallet.apply(PayoutProposed(event))
-                 ),
-                 PayoutTransaction.finalize(
-                   [data.payoutTx],
-                   Network.Regtest.network
-                 )
-                 |> Helpers.broadcastTransaction
-               ))
-             );
+             PayoutTransaction.finalize([data.payoutTx], Network.Regtest)
+             |> Helpers.broadcastTransaction;
            })
-        |> then_(((wallet, _broadcastResult)) =>
-             wallet |> Wallet.balance(accountIdx)
-           )
+      )
+    );
+    testPromise("1 of 2 wallet", () =>
+      Js.Promise.(
+        oneKeyChainWallet^
+        |> Wallet.balance(accountIdx)
         |> then_(((total, reserved)) =>
              expect((total, reserved))
              |> toEqual((
@@ -171,7 +167,7 @@ let () =
            )
       )
     );
-    testPromise(~timeout=60000, "2 of 2 wallet", () =>
+    testPromise(~timeout=80000, "2 of 2 wallet", () =>
       Js.Promise.(
         twoKeyChainWallet^
         |> Wallet.preparePayoutTx(
@@ -194,7 +190,7 @@ let () =
                  ~masterKeyChain=masterB,
                  ~accountKeyChains=wallet.accountKeyChains,
                  ~payoutTx=data.payoutTx,
-                 ~network=Network.Regtest.network
+                 ~network=Network.Regtest
                );
              Js.Promise.(
                all2((
@@ -203,7 +199,7 @@ let () =
                  ),
                  PayoutTransaction.finalize(
                    [data.payoutTx, payoutTx],
-                   Network.Regtest.network
+                   Network.Regtest
                  )
                  |> Helpers.broadcastTransaction
                ))

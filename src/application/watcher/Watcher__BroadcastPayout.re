@@ -3,42 +3,46 @@ open Event;
 open PrimitiveTypes;
 
 let make = ({processId: payoutProcess, data}: Payout.Acceptance.t, log) => {
-  let (broadcast, signedTxs, systemIssuer) =
+  let (broadcast, signedTxs, systemIssuer, network) =
     log
     |> EventLog.reduce(
-         ((broadcast, txs, systemIssuer), {event}) =>
+         ((broadcast, txs, systemIssuer, network), {event}) =>
            switch event {
-           | VentureCreated({systemIssuer}) => (broadcast, txs, systemIssuer)
+           | VentureCreated({systemIssuer, network}) => (
+               broadcast,
+               txs,
+               systemIssuer,
+               network
+             )
            | PayoutSigned({processId, payoutTx})
                when ProcessId.eq(processId, payoutProcess) => (
                broadcast,
                [payoutTx, ...txs],
-               systemIssuer
+               systemIssuer,
+               network
              )
            | PayoutBroadcast({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                true,
                txs,
-               systemIssuer
+               systemIssuer,
+               network
              )
            | PayoutBroadcastFailed({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                true,
                txs,
-               systemIssuer
+               systemIssuer,
+               network
              )
-           | _ => (broadcast, txs, systemIssuer)
+           | _ => (broadcast, txs, systemIssuer, network)
            },
-         (false, [data.payoutTx], Bitcoin.ECPair.makeRandom())
+         (false, [data.payoutTx], Bitcoin.ECPair.makeRandom(), Network.Regtest)
        );
   let process = {
     val finalTransaction =
       ref(
-        broadcast ?
-          Some(
-            PayoutTransaction.finalize(signedTxs, Network.Regtest.network)
-          ) :
-          None
+        broadcast ? Some(PayoutTransaction.finalize(signedTxs, network)) : None
       );
     pub receive = ({event}: EventLog.item) =>
       switch event {
