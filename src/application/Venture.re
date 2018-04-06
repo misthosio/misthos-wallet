@@ -51,7 +51,7 @@ let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
 let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
   let (item, log, (state, wallet, viewModel)) =
     applyInternal(session.appKeyPair, event, log, (state, wallet, viewModel));
-  let (log, (state, wallet, viewModel), watchers) =
+  Js.Promise.(
     watchers
     |> Watchers.applyAndProcessPending(
          session,
@@ -59,8 +59,11 @@ let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
          log,
          applyInternal,
          (state, wallet, viewModel)
-       );
-  {session, id, log, state, wallet, viewModel, watchers} |> Js.Promise.resolve;
+       )
+    |> then_(((log, (state, wallet, viewModel), watchers)) =>
+         {session, id, log, state, wallet, viewModel, watchers} |> resolve
+       )
+  );
 };
 
 let reconstruct = (session, log) => {
@@ -80,15 +83,17 @@ let reconstruct = (session, log) => {
          ),
          (VentureId.make(), state, wallet, viewModel, [])
        );
-  let (log, (state, wallet, viewModel), watchers) =
-    watchers
-    |> Watchers.processPending(
-         session,
-         log,
-         applyInternal,
-         (state, wallet, viewModel)
-       );
-  {session, id, log, state, wallet, viewModel, watchers};
+  watchers
+  |> Watchers.processPending(
+       session,
+       log,
+       applyInternal,
+       (state, wallet, viewModel)
+     )
+  |> Js.Promise.then_(((log, (state, wallet, viewModel), watchers)) =>
+       {session, id, log, state, wallet, viewModel, watchers}
+       |> Js.Promise.resolve
+     );
 };
 
 let persist = ({id, log, state} as venture) => {
@@ -135,12 +140,7 @@ let load = (session: Session.Data.t, ~ventureId) =>
     |> then_(nullLog =>
          switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>
-           resolve(
-             raw
-             |> Json.parseOrRaise
-             |> EventLog.decode
-             |> reconstruct(session)
-           )
+           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
          | None => raise(Not_found)
          }
        )
@@ -158,13 +158,10 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
          switch (Js.Nullable.toOption(nullFile)) {
          | None => raise(Not_found)
          | Some(raw) =>
-           raw
-           |> Json.parseOrRaise
-           |> EventLog.decode
-           |> reconstruct(session)
-           |> persist
+           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
          }
        )
+    |> then_(persist)
     |> then_(venture =>
          Index.add(
            ~ventureId=venture.id,
@@ -244,17 +241,17 @@ module Synchronize = {
              },
            (venture, None)
          );
-    let (log, (state, wallet, viewModel), watchers) =
+    Js.Promise.(
       watchers
       |> Watchers.processPending(
            session,
            log,
            applyInternal,
            (state, wallet, viewModel)
-         );
-    Js.Promise.(
-      {...venture, log, state, wallet, viewModel, watchers}
-      |> persist
+         )
+      |> then_(((log, (state, wallet, viewModel), watchers)) =>
+           {...venture, log, state, wallet, viewModel, watchers} |> persist
+         )
       |> then_(p =>
            (
              switch error {

@@ -64,7 +64,8 @@ let make =
           }
         );
     pub processCompleted = () => userId != data.partnerId;
-    pub pendingEvent = () => state^.pendingEvent
+    pub pendingEvent = () =>
+      state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

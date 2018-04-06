@@ -49,3 +49,8 @@ let printError = (message, error) => {
   Js.log("Error - " ++ message ++ ":");
   Js.log(error);
 };
+
+let mapOption = fn =>
+  fun
+  | Some(a) => Some(fn(a))
+  | None => None;

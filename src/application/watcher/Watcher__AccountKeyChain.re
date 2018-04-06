@@ -64,7 +64,8 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
           }
         );
     pub processCompleted = () => false;
-    pub pendingEvent = () => state^.pendingEvent
+    pub pendingEvent = () =>
+      state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;
