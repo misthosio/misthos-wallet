@@ -74,7 +74,7 @@ module AccountCreation = {
     let encode = event =>
       Json.Encode.(
         object_([
-          ("accountIndex", AccountIndex.encode(event.accountIdx)),
+          ("accountIdx", AccountIndex.encode(event.accountIdx)),
           ("name", string(event.name))
         ])
       );
