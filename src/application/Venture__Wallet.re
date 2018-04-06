@@ -18,6 +18,11 @@ type t = {
   reservedInputs: list(Network.txInput)
 };
 
+type balance = {
+  total: BTC.t,
+  reserved: BTC.t
+};
+
 let make = () => {
   network: Network.Regtest,
   ventureId: VentureId.fromString(""),
@@ -216,19 +221,20 @@ let balance =
     |> then_(inputs =>
          inputs
          |> List.fold_left(
-              ((total, reserved), input: Network.txInput) => (
-                total |> BTC.plus(input.value),
-                reserved
-                |> BTC.plus(
-                     reservedInputs
-                     |> List.exists((reservedIn: Network.txInput) =>
-                          reservedIn.txId == input.txId
-                          && reservedIn.txOutputN == input.txOutputN
-                        ) ?
-                       input.value : BTC.zero
-                   )
-              ),
-              (BTC.zero, BTC.zero)
+              ({total, reserved}, input: Network.txInput) => {
+                total: total |> BTC.plus(input.value),
+                reserved:
+                  reserved
+                  |> BTC.plus(
+                       reservedInputs
+                       |> List.exists((reservedIn: Network.txInput) =>
+                            reservedIn.txId == input.txId
+                            && reservedIn.txOutputN == input.txOutputN
+                          ) ?
+                         input.value : BTC.zero
+                     )
+              },
+              {total: BTC.zero, reserved: BTC.zero}
             )
          |> resolve
        )

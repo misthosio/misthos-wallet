@@ -42,6 +42,14 @@ let getViewModel: t => ViewModel.t;
 
 let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
 
+module Wallet: {
+  type balance = {
+    total: BTC.t,
+    reserved: BTC.t
+  };
+  let balance: t => Js.Promise.t(balance);
+};
+
 module Cmd: {
   module Create: {
     type result = (Index.t, t);

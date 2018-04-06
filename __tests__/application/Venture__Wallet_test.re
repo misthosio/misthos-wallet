@@ -155,7 +155,7 @@ let () =
       Js.Promise.(
         oneKeyChainWallet^
         |> Wallet.balance(accountIdx)
-        |> then_(((total, reserved)) =>
+        |> then_(({total, reserved}: Wallet.balance) =>
              expect((total, reserved))
              |> toEqual((
                   oneKeyChainWalletTotal
@@ -208,7 +208,7 @@ let () =
         |> then_(((wallet, _broadcastResult)) =>
              wallet |> Wallet.balance(accountIdx)
            )
-        |> then_(((total, reserved)) => {
+        |> then_(({total, reserved}: Wallet.balance) => {
              let expectedFee = BTC.fromSatoshis(597L);
              expect((total, reserved))
              |> toEqual((

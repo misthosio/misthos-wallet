@@ -1,12 +1,12 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 let logMessage = msg => Js.log("[Venture] - " ++ msg);
 
 module Index = Venture__Index;
 
 module Validation = Venture__Validation;
-
-module Wallet = Venture__Wallet;
 
 exception InvalidEvent(Validation.result);
 
@@ -15,9 +15,14 @@ type t = {
   id: ventureId,
   log: EventLog.t,
   state: Validation.state,
-  wallet: Wallet.t,
+  wallet: Venture__Wallet.t,
   viewModel: ViewModel.t,
   watchers: Watchers.t
+};
+
+module Wallet = {
+  include Venture__Wallet;
+  let balance = ({wallet}) => balance(AccountIndex.default, wallet);
 };
 
 let make = (session, id) => {
