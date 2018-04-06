@@ -14,7 +14,7 @@ type state = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   partnerIds: list(userId),
-  partnerAddresses: list(string),
+  partnerStoragePrefixes: list(string),
   partnerPubKeys: list((string, userId)),
   partnerData: list((processId, Partner.Data.t)),
   custodianData: list((processId, Custodian.Data.t)),
@@ -33,7 +33,7 @@ let makeState = () => {
   ventureName: "",
   systemPubKey: "",
   partnerIds: [],
-  partnerAddresses: [],
+  partnerStoragePrefixes: [],
   partnerPubKeys: [],
   metaPolicy: Policy.absolute,
   partnerData: [],
@@ -120,9 +120,9 @@ let apply = (event: Event.t, state) =>
   | PartnerAccepted({data}) => {
       ...state,
       partnerIds: [data.id, ...state.partnerIds],
-      partnerAddresses: [
-        Utils.addressFromPublicKey(data.pubKey),
-        ...state.partnerAddresses
+      partnerStoragePrefixes: [
+        UserInfo.storagePrefix(~appPubKey=data.pubKey),
+        ...state.partnerStoragePrefixes
       ],
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
     }

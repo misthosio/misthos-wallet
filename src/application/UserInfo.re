@@ -80,3 +80,9 @@ let getOrInit = (~appPubKey) =>
               )
        )
   );
+
+let storagePrefix = (~appPubKey) =>
+  appPubKey
+  |> Utils.bufFromHex
+  |> Bitcoin.ECPair.fromPublicKeyBuffer
+  |> Bitcoin.ECPair.getAddress;

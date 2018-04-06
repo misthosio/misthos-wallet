@@ -132,8 +132,9 @@ let () =
              Session.Data.{
                userId: userA,
                appKeyPair: keyA,
-               address: keyA |> Bitcoin.ECPair.getAddress,
-               masterKeyChain: masterA
+               storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
+               masterKeyChain: masterA,
+               network: Regtest
              },
              accountIdx,
              [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
@@ -175,9 +176,10 @@ let () =
         twoKeyChainWallet^
         |> Wallet.preparePayoutTx(
              Session.Data.{
+               network: Regtest,
                userId: userA,
                appKeyPair: keyA,
-               address: keyA |> Bitcoin.ECPair.getAddress,
+               storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
                masterKeyChain: masterA
              },
              accountIdx,

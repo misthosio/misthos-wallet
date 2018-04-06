@@ -106,13 +106,13 @@ let persist = ({id, log, state} as venture) => {
       |> then_(() => resolve(venture))
     );
   Js.Promise.(
-    state.partnerAddresses
+    state.partnerStoragePrefixes
     |> List.fold_left(
-         (promise, address) =>
+         (promise, prefix) =>
            promise
            |> then_(() =>
                 Blockstack.putFile(
-                  (id |> VentureId.toString) ++ "/" ++ address ++ "/log.json",
+                  (id |> VentureId.toString) ++ "/" ++ prefix ++ "/log.json",
                   logString
                 )
               )
@@ -120,7 +120,7 @@ let persist = ({id, log, state} as venture) => {
                 Blockstack.putFile(
                   (id |> VentureId.toString)
                   ++ "/"
-                  ++ address
+                  ++ prefix
                   ++ "/summary.json",
                   summaryString
                 )
@@ -150,7 +150,7 @@ let load = (session: Session.Data.t, ~ventureId) =>
 let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
     Blockstack.getFileFromUser(
-      ventureId ++ "/" ++ session.address ++ "/log.json",
+      ventureId ++ "/" ++ session.storagePrefix ++ "/log.json",
       ~username=userId
     )
     |> catch(_error => raise(Not_found))
@@ -183,7 +183,7 @@ module Synchronize = {
     |> List.filter(partnerId => UserId.neq(partnerId, session.userId))
     |> List.map(partnerId =>
          Blockstack.getUserAppFileUrl(
-           ~path=(id |> VentureId.toString) ++ "/" ++ session.address,
+           ~path=(id |> VentureId.toString) ++ "/" ++ session.storagePrefix,
            ~username=partnerId |> UserId.toString,
            ~appOrigin=Location.origin
          )

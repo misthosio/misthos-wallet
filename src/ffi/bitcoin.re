@@ -53,7 +53,12 @@ module ECPair = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIFWithNetwork : (string, Networks.t) => t = "fromWIF";
   [@bs.module "bitcoinjs-lib"] [@bs.new]
-  external create : BigInteger.t => t = "ECPair";
+  external make : BigInteger.t => t = "ECPair";
+  [@bs.module "bitcoinjs-lib"] [@bs.new]
+  external makeWithOptions : (BigInteger.t, {. "network": Networks.t}) => t =
+    "ECPair";
+  let makeWithNetwork = (key, network) =>
+    makeWithOptions(key, {"network": network});
   [@bs.send] external toWIF : t => string = "";
   [@bs.send] external getAddress : t => string = "";
   [@bs.send] external getNetwork : t => Networks.t = "";

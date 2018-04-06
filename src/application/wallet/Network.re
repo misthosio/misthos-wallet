@@ -1,5 +1,10 @@
 open WalletTypes;
 
+type t =
+  | Regtest
+  | Testnet
+  | Mainnet;
+
 type txInput = {
   txId: string,
   txOutputN: int,

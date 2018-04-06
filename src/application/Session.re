@@ -4,18 +4,25 @@ module Data = {
   type t = {
     userId,
     appKeyPair: Bitcoin.ECPair.t,
-    address: string,
-    masterKeyChain: Bitcoin.HDNode.t
+    storagePrefix: string,
+    masterKeyChain: Bitcoin.HDNode.t,
+    network: Network.t
   };
   let fromUserData = userData =>
     switch (Js.Nullable.toOption(userData##username)) {
     | None => None
     | Some(blockstackId) =>
-      let appKeyPair = userData##appPrivateKey |> Utils.keyPairFromPrivateKey;
+      let appKeyPair =
+        Utils.keyPairFromPrivateKey(
+          Network.Regtest.network,
+          userData##appPrivateKey
+        );
+      let appPubKey = appKeyPair |> Utils.publicKeyFromKeyPair;
       Some({
         userId: blockstackId |> UserId.fromString,
         appKeyPair,
-        address: appKeyPair |> Bitcoin.ECPair.getAddress,
+        network: Regtest,
+        storagePrefix: UserInfo.storagePrefix(~appPubKey),
         masterKeyChain:
           Bitcoin.HDNode.make(
             appKeyPair,
