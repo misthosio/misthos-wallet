@@ -1,45 +1,46 @@
-module Link = {
-  let component = ReasonReact.statelessComponent("Router.Link");
-  let make = (~className="", ~href, children) => {
-    let handleClick = e => {
-      ReactEventRe.Mouse.preventDefault(e);
-      ReasonReact.Router.push(href);
+let str = ReasonReact.stringToElement;
+
+open Session;
+
+module RouterConfig = {
+  type route =
+    | Home;
+  let routeFromUrl = (url: ReasonReact.Router.url) =>
+    switch (url.path) {
+    | [] => Home
+    | _ => Home
     };
-    {
-      ...component,
-      render: (_) =>
-        ReasonReact.createDomElement(
-          "a",
-          ~props={
-            "className": className,
-            "href": href,
-            "onClick": handleClick
-          },
-          children
-        )
+  let routeToUrl = (route: route) =>
+    switch (route) {
+    | Home => "/"
     };
-  };
 };
 
-type state = {url: ReasonReact.Router.url};
+module Router = ReRoute.CreateRouter(RouterConfig);
 
-type action =
-  | UpdateUrl(ReasonReact.Router.url);
+let component = ReasonReact.statelessComponent("Router");
 
-let component = ReasonReact.reducerComponent("Router");
-
-let make = renderChildren => {
+let make = (~session, ~updateSession, _children) => {
   ...component,
-  initialState: () => {url: ReasonReact.Router.dangerouslyGetInitialUrl()},
-  subscriptions: ({send}) => [
-    Sub(
-      () => ReasonReact.Router.watchUrl(url => send(UpdateUrl(url))),
-      ReasonReact.Router.unwatchUrl
-    )
-  ],
-  reducer: (action, _state) =>
-    switch action {
-    | UpdateUrl(url) => ReasonReact.Update({url: url})
-    },
-  render: ({state}) => renderChildren(state.url)
+  render: _self => {
+    let drawer = currentRoute =>
+      switch (session, currentRoute) {
+      | (NotLoggedIn | LoginPending | AnonymousLogin, _) => None
+      | (Session.LoggedIn(data), RouterConfig.Home) => Some(<Home data />)
+      };
+    let body = currentRoute =>
+      switch (session, currentRoute) {
+      | (NotLoggedIn | LoginPending | AnonymousLogin, _) =>
+        <PublicHome updateSession />
+      | (Session.LoggedIn(data), RouterConfig.Home) => <Home data />
+      };
+    <Router.Container>
+      ...(
+           (~currentRoute) =>
+             <Layout drawer=(currentRoute |> drawer)>
+               (currentRoute |> body)
+             </Layout>
+         )
+    </Router.Container>;
+  },
 };
