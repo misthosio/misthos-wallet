@@ -1,11 +1,11 @@
 let component = ReasonReact.statelessComponent("PublicHome");
 
-let make = (~updateSession, _children) => {
+let make = (~onSignIn, _children) => {
   ...component,
-  render: _self => {
-    let onClick = _e => updateSession(UserSession.SignIn);
+  render: _self =>
     MaterialUi.(
-      <Button color=`Inherit onClick> "Sign In with Blockstack" </Button>
-    );
-  },
+      <Button color=`Inherit onClick=onSignIn>
+        "Sign In with Blockstack"
+      </Button>
+    ),
 };
