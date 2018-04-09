@@ -42,17 +42,20 @@ let apply = (event: Event.t, state) =>
       ventureId,
       payoutPolicy: metaPolicy
     }
-  | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) =>
-    let accountKeyChains =
-      try (state.accountKeyChains |> List.assoc(keyChain.accountIdx)) {
-      | Not_found => []
-      };
-    {
+  | AccountCreationAccepted({data}) => {
+      ...state,
+      exposedCoordinates: [(data.accountIdx, []), ...state.exposedCoordinates],
+      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains]
+    }
+  | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) => {
       ...state,
       accountKeyChains: [
         (
           keyChain.accountIdx,
-          [(keyChain.keyChainIdx, keyChain), ...accountKeyChains]
+          [
+            (keyChain.keyChainIdx, keyChain),
+            ...state.accountKeyChains |> List.assoc(keyChain.accountIdx)
+          ]
         ),
         ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx)
       ],
@@ -70,7 +73,7 @@ let apply = (event: Event.t, state) =>
         ),
         ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx)
       ]
-    };
+    }
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
     let accountIdx =
       coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
