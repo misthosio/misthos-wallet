@@ -25,6 +25,8 @@ module Validation: {
 
 exception InvalidEvent(Validation.result);
 
+exception CouldNotLoadVenture;
+
 type t;
 
 let join:

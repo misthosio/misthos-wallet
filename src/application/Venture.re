@@ -10,6 +10,8 @@ module Validation = Venture__Validation;
 
 exception InvalidEvent(Validation.result);
 
+exception CouldNotLoadVenture;
+
 type t = {
   session: Session.Data.t,
   id: ventureId,
@@ -144,18 +146,20 @@ let persist = ({id, log, state} as venture) => {
 
 let defaultPolicy = Policy.absolute;
 
-let load = (session: Session.Data.t, ~ventureId) =>
+let load = (session: Session.Data.t, ~ventureId) => {
+  logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
     Blockstack.getFile((ventureId |> VentureId.toString) ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>
            raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
-         | None => raise(Not_found)
+         | None => raise(CouldNotLoadVenture)
          }
        )
     |> then_(persist)
   );
+};
 
 let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
