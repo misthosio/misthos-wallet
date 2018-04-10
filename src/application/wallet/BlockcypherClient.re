@@ -1,28 +1,30 @@
 type config = {network: string};
 
+let decodeUTXO = (address, raw) : WalletTypes.utxo =>
+  Json.Decode.{
+    txId: raw |> field("tx_hash", string),
+    txOutputN: raw |> field("tx_output_n", int),
+    amount: raw |> field("value", float) |> Int64.of_float |> BTC.fromSatoshis,
+    confirmations: raw |> field("confirmations", int),
+    address
+  };
+
 let decodeUTXOs = (address, raw) =>
   Json.Decode.(
     raw
-    |> field(
-         "txrefs",
-         withDefault(
-           [],
-           list(utxo =>
-             (
-               {
-                 txId: utxo |> field("tx_hash", string),
-                 txOutputN: utxo |> field("tx_output_n", int),
-                 amount:
-                   utxo
-                   |> field("value", float)
-                   |> Int64.of_float
-                   |> BTC.fromSatoshis,
-                 confirmations: utxo |> field("confirmations", int),
-                 address
-               }: WalletTypes.utxo
-             )
-           )
-         )
+    |> withDefault(
+         [],
+         field("txrefs", withDefault([], list(decodeUTXO(address))))
+       )
+    |> List.append(
+         raw
+         |> withDefault(
+              [],
+              field(
+                "unconfirmed_txrefs",
+                withDefault([], list(decodeUTXO(address)))
+              )
+            )
        )
   );
 

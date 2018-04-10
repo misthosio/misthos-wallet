@@ -59,6 +59,7 @@ let apply = (event: Event.t, state) =>
         ),
         ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx)
       ],
+      exposedCoordinates: [(keyChain.accountIdx, [])],
       nextCoordinates: [
         (
           keyChain.accountIdx,
@@ -77,10 +78,6 @@ let apply = (event: Event.t, state) =>
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
     let accountIdx =
       coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
-    let previouslyExposed =
-      try (state.exposedCoordinates |> List.assoc(accountIdx)) {
-      | Not_found => []
-      };
     {
       ...state,
       nextCoordinates: [
@@ -88,7 +85,10 @@ let apply = (event: Event.t, state) =>
         ...state.nextCoordinates |> List.remove_assoc(accountIdx)
       ],
       exposedCoordinates: [
-        (accountIdx, [coordinates, ...previouslyExposed]),
+        (
+          accountIdx,
+          [coordinates, ...state.exposedCoordinates |> List.assoc(accountIdx)]
+        ),
         ...state.exposedCoordinates
       ]
     };

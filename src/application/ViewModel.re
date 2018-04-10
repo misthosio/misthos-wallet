@@ -1,4 +1,5 @@
 open PrimitiveTypes;
+open WalletTypes;
 
 
 type partner = {
@@ -17,6 +18,7 @@ type t = {
   prospects: list(prospect),
   metaPolicy: Policy.t,
   partnerPolicy: Policy.t,
+  incomeAddresses: list((WalletTypes.accountIdx,list(string)))
 };
 
 let make = () => {
@@ -25,6 +27,7 @@ let make = () => {
   prospects: [],
   metaPolicy: Policy.absolute,
   partnerPolicy: Policy.absolute,
+  incomeAddresses:[],
 };
 
 let apply = (event: Event.t, state) =>
@@ -57,6 +60,20 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id))
     }
+  | AccountKeyChainUpdated({keyChain}) => {
+    ...state,
+    incomeAddresses: [(keyChain.accountIdx,[])]
+    }
+  | IncomeAddressExposed({address,coordinates}) =>
+    let accountIdx =
+      coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
+    {
+      ...state,
+      incomeAddresses: [
+        (accountIdx, [address, ...state.incomeAddresses |> List.assoc(accountIdx)]),
+        ...state.incomeAddresses
+      ]
+    };
   | _ => state
   };
 
@@ -65,3 +82,5 @@ let getPartners = state => state.partners;
 let getProspects = state => state.prospects;
 
 let ventureName = state => state.name;
+
+let incomeAddresses = state => state.incomeAddresses|>List.assoc(AccountIndex.default);

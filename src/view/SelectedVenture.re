@@ -18,7 +18,8 @@ type action =
   | UpdateVenture(Venture.t)
   | ProposePartner
   | UpdateBalance(Venture.Wallet.balance)
-  | EndorsePartner(ProcessId.t);
+  | EndorsePartner(ProcessId.t)
+  | GetIncomeAddress;
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
@@ -161,6 +162,27 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       });
     | UpdateBalance(balance) =>
       ReasonReact.Update({...state, balance: Some(balance)})
+    | GetIncomeAddress =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.ExposeIncomeAddress.(
+                state.venture
+                |> exec(~accountIdx=WalletTypes.AccountIndex.default)
+                |> then_(result =>
+                     (
+                       switch result {
+                       | Ok(_, venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
     },
   render: ({send, state}) => {
     let partners =
@@ -204,6 +226,13 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                  )
                </li>
              )
+        )
+      );
+    let addresses =
+      ReasonReact.arrayToElement(
+        Array.of_list(
+          ViewModel.incomeAddresses(state.viewModel)
+          |> List.map(address => <li key=address> (text(address)) </li>)
         )
       );
     <div>
@@ -253,19 +282,24 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           (text("Propose Partner"))
         </button>
         <h3> (text("Wallet:")) </h3>
-        (text("blance: "))
+        <h4> (text("blance: ")) </h4>
         (
           switch state.balance {
           | None => text("loading")
           | Some(balance) =>
             text(
               "total: "
-              ++ BTC.toString(balance.total)
+              ++ BTC.format(balance.total)
               ++ " reserved: "
-              ++ BTC.toString(balance.reserved)
+              ++ BTC.format(balance.reserved)
             )
           }
         )
+        <h4> (text("Income Addresses:")) </h4>
+        <ul> addresses </ul>
+        <button onClick=(_e => send(GetIncomeAddress))>
+          (text("Get New Income Address"))
+        </button>
       </div>
     </div>;
   }
