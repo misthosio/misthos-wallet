@@ -14,13 +14,13 @@ module Data = {
     | Some(blockstackId) =>
       let issuerKeyPair =
         Utils.keyPairFromPrivateKey(
-          Network.Regtest.network,
+          Network.Mainnet.network,
           userData##appPrivateKey
         );
       Some({
         userId: blockstackId |> UserId.fromString,
         issuerKeyPair,
-        network: Regtest,
+        network: Testnet,
         storagePrefix:
           UserInfo.storagePrefix(
             ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair

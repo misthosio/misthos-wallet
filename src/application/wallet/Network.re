@@ -99,13 +99,30 @@ module Regtest =
     )
   );
 
-let transactionInputs = (_network, coordinates, accountKeyChains) =>
-  Regtest.transactionInputs(coordinates, accountKeyChains);
+module Testnet =
+  Make(
+    (val BlockcypherClient.make({network: "test3"}, Bitcoin.Networks.testnet))
+  );
 
-let broadcastTransaction = _network => Regtest.broadcastTransaction;
+module Mainnet =
+  Make(
+    (val BlockcypherClient.make({network: "main"}, Bitcoin.Networks.testnet))
+  );
+
+let transactionInputs =
+  fun
+  | Regtest => Regtest.transactionInputs
+  | Testnet => Testnet.transactionInputs
+  | Mainnet => Mainnet.transactionInputs;
+
+let broadcastTransaction =
+  fun
+  | Regtest => Regtest.broadcastTransaction
+  | Testnet => Testnet.broadcastTransaction
+  | Mainnet => Mainnet.broadcastTransaction;
 
 let bitcoinNetwork =
   fun
   | Regtest => Regtest.network
-  | Testnet => Regtest.network
-  | Mainnet => Regtest.network;
+  | Testnet => Testnet.network
+  | Mainnet => Mainnet.network;

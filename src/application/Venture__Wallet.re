@@ -24,7 +24,7 @@ type balance = {
 };
 
 let make = () => {
-  network: Network.Regtest,
+  network: Network.Testnet,
   ventureId: VentureId.fromString(""),
   payoutPolicy: Policy.absolute,
   accountKeyChains: [],

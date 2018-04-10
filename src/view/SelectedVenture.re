@@ -8,6 +8,7 @@ type state = {
   venture: Venture.t,
   viewModel: ViewModel.t,
   prospectId: string,
+  balance: option(Venture.Wallet.balance),
   worker: ref(Worker.t)
 };
 
@@ -16,6 +17,7 @@ type action =
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t)
   | ProposePartner
+  | UpdateBalance(Venture.Wallet.balance)
   | EndorsePartner(ProcessId.t);
 
 let changeNewPartnerId = event =>
@@ -28,6 +30,7 @@ let component = ReasonReact.reducerComponent("SelectedVenture");
 let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => {
   ...component,
   initialState: () => {
+    balance: None,
     venture: initialVenture,
     viewModel: Venture.getViewModel(initialVenture),
     prospectId: "",
@@ -57,6 +60,17 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       Worker.terminate
     )
   ],
+  didMount: _self =>
+    ReasonReact.SideEffects(
+      ({send}) =>
+        Js.Promise.(
+          initialVenture
+          |> Venture.Wallet.balance
+          |> then_(balance => send(UpdateBalance(balance)) |> resolve)
+          |> catch(error => Utils.printError("whoops", error) |> resolve)
+          |> ignore
+        )
+    ),
   reducer: (action, state) =>
     switch action {
     | WorkerMessage(Fetched(eventLogs)) =>
@@ -145,6 +159,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         venture,
         viewModel: Venture.getViewModel(venture)
       });
+    | UpdateBalance(balance) =>
+      ReasonReact.Update({...state, balance: Some(balance)})
     },
   render: ({send, state}) => {
     let partners =
@@ -236,6 +252,20 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         <button onClick=(_e => send(ProposePartner))>
           (text("Propose Partner"))
         </button>
+        <h3> (text("Wallet:")) </h3>
+        (text("blance: "))
+        (
+          switch state.balance {
+          | None => text("loading")
+          | Some(balance) =>
+            text(
+              "total: "
+              ++ BTC.toString(balance.total)
+              ++ " reserved: "
+              ++ BTC.toString(balance.reserved)
+            )
+          }
+        )
       </div>
     </div>;
   }
