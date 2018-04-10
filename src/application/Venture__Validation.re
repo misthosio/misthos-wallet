@@ -19,6 +19,7 @@ type state = {
   partnerData: list((processId, Partner.Data.t)),
   custodianData: list((processId, Custodian.Data.t)),
   accountCreationData: list((processId, AccountCreation.Data.t)),
+  payoutData: list((processId, Payout.Data.t)),
   processes: list((processId, approvalProcess)),
   completedProcesses: list(processId),
   policies: list((string, Policy.t)),
@@ -39,6 +40,7 @@ let makeState = () => {
   partnerData: [],
   custodianData: [],
   accountCreationData: [],
+  payoutData: [],
   processes: [],
   completedProcesses: [],
   policies: [],
@@ -97,7 +99,8 @@ let apply = (event: Event.t, state) =>
         [
           Partner.processName,
           AccountCreation.processName,
-          Custodian.processName
+          Custodian.processName,
+          Payout.processName
         ]
         |> List.map(n => (n, metaPolicy)),
       creatorData: Partner.Data.{id: creatorId, pubKey: creatorPubKey}
@@ -114,9 +117,14 @@ let apply = (event: Event.t, state) =>
       ...addProcess(proposal, state),
       accountCreationData: [(processId, data), ...state.accountCreationData]
     }
+  | PayoutProposed({processId, data} as proposal) => {
+      ...addProcess(proposal, state),
+      payoutData: [(processId, data), ...state.payoutData]
+    }
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
   | CustodianEndorsed(endorsement) => endorseProcess(endorsement, state)
   | AccountCreationEndorsed(endorsement) => endorseProcess(endorsement, state)
+  | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerAccepted({data}) => {
       ...state,
       partnerIds: [data.id, ...state.partnerIds],
@@ -130,6 +138,7 @@ let apply = (event: Event.t, state) =>
       ...completeProcess(acceptance, state),
       accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains]
     }
+  | PayoutAccepted(acceptance) => completeProcess(acceptance, state)
   | CustodianAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
       custodianKeyChains: [
@@ -175,7 +184,9 @@ let apply = (event: Event.t, state) =>
         )
       ]
     };
-  | IncomeAddressExposed(_) => state
+  | IncomeAddressExposed(_)
+  | PayoutBroadcast(_)
+  | PayoutBroadcastFailed(_) => state
   };
 
 type result =
@@ -416,9 +427,11 @@ let validateEvent =
       AccountCreation.processName,
       proposal
     )
+  | PayoutProposed(proposal) => validateProposal(Payout.processName, proposal)
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | CustodianEndorsed(endorsement) => validateEndorsement(endorsement)
   | AccountCreationEndorsed(endorsement) => validateEndorsement(endorsement)
+  | PayoutEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.partnerData, state)
     )
@@ -428,10 +441,15 @@ let validateEvent =
   | AccountCreationAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.accountCreationData, state)
     )
+  | PayoutAccepted(acceptance) => (
+      state => validateAcceptance(acceptance, state.payoutData, state)
+    )
   | CustodianKeyChainUpdated(update) =>
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
-  | IncomeAddressExposed(event) => validateIncomeAddressExposed(event);
+  | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
+  | PayoutBroadcast(_)
+  | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (

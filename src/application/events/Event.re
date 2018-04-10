@@ -358,7 +358,9 @@ let isSystemEvent =
   | AccountCreationAccepted(_)
   | CustodianAccepted(_)
   | PayoutAccepted(_)
-  | AccountKeyChainUpdated(_) => true
+  | AccountKeyChainUpdated(_)
+  | PayoutBroadcast(_)
+  | PayoutBroadcastFailed(_) => true
   | _ => false;
 
 exception UnknownEvent(Js.Json.t);

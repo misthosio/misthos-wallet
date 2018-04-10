@@ -19,7 +19,8 @@ type action =
   | ProposePartner
   | UpdateBalance(Venture.Wallet.balance)
   | EndorsePartner(ProcessId.t)
-  | GetIncomeAddress;
+  | GetIncomeAddress
+  | ProposePayout(list((string, BTC.t)));
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
@@ -183,6 +184,31 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         )
       )
+    | ProposePayout(destinations) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.ProposePayout.(
+                state.venture
+                |> exec(
+                     ~accountIdx=WalletTypes.AccountIndex.default,
+                     ~destinations,
+                     ~fee=BTC.fromSatoshis(1L)
+                   )
+                |> then_(result =>
+                     (
+                       switch result {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        )
+      )
     },
   render: ({send, state}) => {
     let partners =
@@ -300,6 +326,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         <button onClick=(_e => send(GetIncomeAddress))>
           (text("Get New Income Address"))
         </button>
+        <Payout onSend=(destinations => send(ProposePayout(destinations))) />
       </div>
     </div>;
   }

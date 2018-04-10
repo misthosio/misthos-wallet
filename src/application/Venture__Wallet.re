@@ -15,7 +15,8 @@ type t = {
     list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
   exposedCoordinates:
     list((accountIdx, list(AccountKeyChain.Address.Coordinates.t))),
-  reservedInputs: list(Network.txInput)
+  reservedInputs: list(Network.txInput),
+  payoutProcesses: list((ProcessId.t, PayoutTransaction.t))
 };
 
 type balance = {
@@ -31,7 +32,8 @@ let make = () => {
   nextCoordinates: [],
   nextChangeCoordinates: [],
   exposedCoordinates: [],
-  reservedInputs: []
+  reservedInputs: [],
+  payoutProcesses: []
 };
 
 let apply = (event: Event.t, state) =>
@@ -92,7 +94,7 @@ let apply = (event: Event.t, state) =>
         ...state.exposedCoordinates
       ]
     };
-  | PayoutProposed({data}) => {
+  | PayoutProposed({data, processId}) => {
       ...state,
       reservedInputs:
         state.reservedInputs
@@ -119,7 +121,21 @@ let apply = (event: Event.t, state) =>
           |> AccountKeyChain.Address.Coordinates.next
         ),
         ...state.nextCoordinates |> List.remove_assoc(data.accountIdx)
-      ]
+      ],
+      payoutProcesses: [(processId, data.payoutTx), ...state.payoutProcesses]
+    }
+  | PayoutBroadcastFailed({processId}) => {
+      ...state,
+      reservedInputs:
+        state.reservedInputs
+        |> List.filter((input: Network.txInput) =>
+             (state.payoutProcesses |> List.assoc(processId)).usedInputs
+             |> List.map(snd)
+             |>
+             List.exists((i: Network.txInput) =>
+               input.txId == i.txId && input.txOutputN == i.txOutputN
+             ) == false
+           )
     }
   | _ => state
   };

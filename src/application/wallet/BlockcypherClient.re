@@ -58,9 +58,16 @@ let broadcastTransaction = (config, transaction) => {
       )
     )
     |> then_(Fetch.Response.json)
-    |> then_(raw =>
-         WalletTypes.Ok(raw |> Json.Decode.(field("hash", string))) |> resolve
-       )
+    |> then_(res => {
+         let err = Json.Decode.(res |> optional(field("error", string)));
+         (
+           switch err {
+           | Some(err) => WalletTypes.Error(err)
+           | None => WalletTypes.Ok(Json.Decode.(res |> field("hash", string)))
+           }
+         )
+         |> resolve;
+       })
   );
 };
 

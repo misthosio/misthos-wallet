@@ -3,7 +3,7 @@ open Event;
 open PrimitiveTypes;
 
 let make = ({processId: payoutProcess, data}: Payout.Acceptance.t, log) => {
-  let (broadcast, signedTxs, systemIssuer, network) =
+  let (needsBroadcast, signedTxs, systemIssuer, network) =
     log
     |> EventLog.reduce(
          ((broadcast, txs, systemIssuer, network), {event}) =>
@@ -23,26 +23,27 @@ let make = ({processId: payoutProcess, data}: Payout.Acceptance.t, log) => {
              )
            | PayoutBroadcast({processId})
                when ProcessId.eq(processId, payoutProcess) => (
-               true,
+               false,
                txs,
                systemIssuer,
                network
              )
            | PayoutBroadcastFailed({processId})
                when ProcessId.eq(processId, payoutProcess) => (
-               true,
+               false,
                txs,
                systemIssuer,
                network
              )
            | _ => (broadcast, txs, systemIssuer, network)
            },
-         (false, [data.payoutTx], Bitcoin.ECPair.makeRandom(), Network.Regtest)
+         (true, [data.payoutTx], Bitcoin.ECPair.makeRandom(), Network.Regtest)
        );
   let process = {
     val finalTransaction =
       ref(
-        broadcast ? Some(PayoutTransaction.finalize(signedTxs, network)) : None
+        needsBroadcast ?
+          Some(PayoutTransaction.finalize(signedTxs, network)) : None
       );
     pub receive = ({event}: EventLog.item) =>
       switch event {
@@ -60,7 +61,7 @@ let make = ({processId: payoutProcess, data}: Payout.Acceptance.t, log) => {
       |> Utils.mapOption(tx =>
            Js.Promise.(
              tx
-             |> Network.Regtest.broadcastTransaction
+             |> Network.broadcastTransaction(network)
              |> then_(result =>
                   (
                     switch result {
