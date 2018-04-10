@@ -448,7 +448,7 @@ let validateEvent =
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
-  | PayoutBroadcast(_)
+  | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
