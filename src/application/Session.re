@@ -14,7 +14,7 @@ module Data = {
     | Some(blockstackId) =>
       let issuerKeyPair =
         Utils.keyPairFromPrivateKey(
-          Network.Mainnet.network,
+          Network.bitcoinNetwork(Testnet),
           userData##appPrivateKey
         );
       Some({

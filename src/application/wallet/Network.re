@@ -101,12 +101,22 @@ module Regtest =
 
 module Testnet =
   Make(
-    (val BlockcypherClient.make({network: "test3"}, Bitcoin.Networks.testnet))
+    (
+      val SmartbitClient.make(
+            SmartbitClient.testnetConfig,
+            Bitcoin.Networks.testnet
+          )
+    )
   );
 
 module Mainnet =
   Make(
-    (val BlockcypherClient.make({network: "main"}, Bitcoin.Networks.testnet))
+    (
+      val SmartbitClient.make(
+            SmartbitClient.mainnetConfig,
+            Bitcoin.Networks.bitcoin
+          )
+    )
   );
 
 let transactionInputs =

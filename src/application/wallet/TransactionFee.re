@@ -29,6 +29,7 @@ let stackSizeOfItem = 1;
 
 let stackSizeOfSignature = 72;
 
+/* TODO: This is wrong... its actually dependant on the number of pubkeys securing the address */
 let stackSizeOfMultisigScript = 105;
 
 let lockTime = 4 * 4;

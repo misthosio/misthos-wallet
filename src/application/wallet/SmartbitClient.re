@@ -71,17 +71,20 @@ let broadcastTransaction = (config, transaction) => {
       "https://" ++ config.subdomain ++ ".smartbit.com.au/v1/blockchain/pushtx",
       Fetch.RequestInit.make(
         ~method_=Fetch.Post,
-        ~body=Fetch.BodyInit.make({j|{"hex":"$(txHex)"}}|j}),
+        ~body=Fetch.BodyInit.make({j|{"hex":"$(txHex)"}|j}),
         ()
       )
     )
     |> then_(Fetch.Response.json)
     |> then_(res => {
-         let err = Json.Decode.(res |> optional(field("error", string)));
+         let err =
+           Json.Decode.(
+             res |> optional(field("error", field("message", string)))
+           );
          (
            switch err {
            | Some(err) => WalletTypes.Error(err)
-           | None => WalletTypes.Ok(Json.Decode.(res |> field("hash", string)))
+           | None => WalletTypes.Ok(Json.Decode.(res |> field("txid", string)))
            }
          )
          |> resolve;
