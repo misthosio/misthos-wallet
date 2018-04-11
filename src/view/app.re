@@ -3,7 +3,7 @@ open PrimitiveTypes;
 let text = ReasonReact.stringToElement;
 
 type action =
-  | LoginCompleted(Session.t)
+  | UpdateSession(Session.t)
   | SignIn
   | SignOut
   | OpenDrawer
@@ -11,7 +11,7 @@ type action =
 
 type state = {
   session: Session.t,
-  drawer: bool,
+  drawer: bool
 };
 
 let component = ReasonReact.reducerComponent("App");
@@ -20,31 +20,25 @@ let component = ReasonReact.reducerComponent("App");
   "AppStyles"({
     flex: ReactDOMRe.Style.make(~flex="1", ()),
     container: ReactDOMRe.Style.make(~flexGrow="1", ~paddingTop="80px", ()),
-    drawer: ReactDOMRe.Style.make(~width="250px", ~flex="1", ()),
+    drawer: ReactDOMRe.Style.make(~width="250px", ~flex="1", ())
   })
 ];
 
 let make = _children => {
   ...component,
-  initialState: () => {session: Session.getCurrentSession(), drawer: false},
-  didMount: ({state}) =>
-    switch (state.session) {
-    | LoginPending =>
-      ReasonReact.SideEffects(
-        (
-          ({send}) =>
-            Js.Promise.(
-              Session.completeLogIn()
-              |> then_(session => send(LoginCompleted(session)) |> resolve)
-              |> ignore
-            )
-        ),
-      )
-    | _ => ReasonReact.NoUpdate
-    },
+  initialState: () => {session: Session.Unknown, drawer: false},
+  didMount: (_) =>
+    ReasonReact.SideEffects(
+      ({send}) =>
+        Js.Promise.(
+          Session.getCurrentSession()
+          |> then_(session => send(UpdateSession(session)) |> resolve)
+          |> ignore
+        )
+    ),
   reducer: (action, state) =>
-    switch (action) {
-    | LoginCompleted(session) => ReasonReact.Update({...state, session})
+    switch action {
+    | UpdateSession(session) => ReasonReact.Update({...state, session})
     | SignIn => ReasonReact.Update({...state, session: Session.signIn()})
     | SignOut => ReasonReact.Update({...state, session: Session.signOut()})
     | OpenDrawer => ReasonReact.Update({...state, drawer: true})
@@ -61,7 +55,8 @@ let make = _children => {
       );
     let title = {
       let header =
-        switch (state.session) {
+        switch state.session {
+        | Unknown
         | NotLoggedIn => "Welcome To Misthos"
         | LoginPending => "Waiting for login to complete"
         | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
@@ -80,7 +75,7 @@ let make = _children => {
     };
     let loginButton =
       MaterialUi.(
-        switch (state.session) {
+        switch state.session {
         | NotLoggedIn =>
           <Button color=`Inherit onClick=(_e => send(SignIn))>
             "Sign In with Blockstack"
@@ -89,6 +84,7 @@ let make = _children => {
           <Button color=`Inherit onClick=(_e => send(SignOut))>
             "SignOut"
           </Button>
+        | Unknown
         | LoginPending
         | AnonymousLogin => <div />
         }
@@ -111,7 +107,7 @@ let make = _children => {
               <div className=classes.container>
                 <Grid container=true spacing=V24>
                   (
-                    switch (state.session) {
+                    switch state.session {
                     | LoggedIn(session) => ventures(session)
                     | _ => <div />
                     }
@@ -157,5 +153,5 @@ let make = _children => {
         ventures
       </MuiThemeProvider>
     );
-  },
+  }
 };
