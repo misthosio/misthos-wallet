@@ -26,7 +26,8 @@ let make = (~session, ~updateSession, _children) => {
     let drawer = currentRoute =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin, _) => None
-      | (Session.LoggedIn(data), RouterConfig.Home) => Some(<Home data />)
+      | (Session.LoggedIn(data), RouterConfig.Home) =>
+        Some(<VentureList session />)
       };
     let body = currentRoute =>
       switch (session, currentRoute) {
