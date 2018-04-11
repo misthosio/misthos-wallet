@@ -132,8 +132,6 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
   | None => (addedInputs, false)
   };
 
-let minFeeToCalcChangeOutput = BTC.fromSatoshis(1L);
-
 let addChangeOutput =
     (
       ~totalInputs,
@@ -155,7 +153,7 @@ let addChangeOutput =
                   network |> Network.bitcoinNetwork
                 )
               )
-           |> BTC.plus(Fee.minChange(changeAddress.nCoSigners))
+           |> BTC.plus(Fee.minChange(changeAddress.nCoSigners, fee))
          )) {
     let currentFee =
       currentFee

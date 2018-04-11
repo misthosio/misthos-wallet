@@ -69,9 +69,7 @@ let outputCost = (address, fee, network) =>
 let inputCost = (nCoSigners, fee) =>
   estimateInputWeight(nCoSigners) |> cost(fee);
 
-let minFeeToCalcChangeOutput = BTC.fromSatoshis(2L);
-
-let minChange = nCoSigners => inputCost(nCoSigners, minFeeToCalcChangeOutput);
+let minChange = inputCost;
 
 let canPayForItself = (fee, input: Network.txInput) =>
   input.value
