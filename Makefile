@@ -1,6 +1,10 @@
+install:
+	yarn install
+
 dev:
 	bsb -clean-world
 	yarn start
+
 test:
 	jest --clearCache
 	./scripts/start_bitcoind.sh

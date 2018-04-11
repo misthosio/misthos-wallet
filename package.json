@@ -53,14 +53,14 @@
   },
   "devDependencies": {
     "@glennsl/bs-jest": "^0.4.0",
+    "bs-platform": "^2.2.3",
     "reason-react": "^0.3.4",
     "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom",
-    "prepare": "npm link bs-platform"
+    "test": "node scripts/test.js --env=jsdom"
   },
   "jest": {
     "collectCoverageFrom": [

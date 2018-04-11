@@ -1407,6 +1407,10 @@ bs-material-ui-icons@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/bs-material-ui-icons/-/bs-material-ui-icons-0.1.5.tgz#3c778c18694a7962e7c9d332c59c2d46f0ccfe5a"
 
+bs-platform@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-2.2.3.tgz#d905ae10a5f3621e6a739041dfa0b58483a2174f"
+
 bs58@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/bs58/-/bs58-3.1.0.tgz#d4c26388bf4804cac714141b1945aa47e5eb248e"
