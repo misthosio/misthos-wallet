@@ -61,7 +61,6 @@ let apply = (event: Event.t, state) =>
         ),
         ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx)
       ],
-      exposedCoordinates: [(keyChain.accountIdx, [])],
       nextCoordinates: [
         (
           keyChain.accountIdx,
@@ -123,6 +122,19 @@ let apply = (event: Event.t, state) =>
         ...state.nextCoordinates |> List.remove_assoc(data.accountIdx)
       ],
       payoutProcesses: [(processId, data.payoutTx), ...state.payoutProcesses]
+    }
+  | PayoutBroadcast({processId}) => {
+      ...state,
+      reservedInputs:
+        state.reservedInputs
+        |> List.filter((input: Network.txInput) =>
+             (state.payoutProcesses |> List.assoc(processId)).usedInputs
+             |> List.map(snd)
+             |>
+             List.exists((i: Network.txInput) =>
+               input.txId == i.txId && input.txOutputN == i.txOutputN
+             ) == false
+           )
     }
   | PayoutBroadcastFailed({processId}) => {
       ...state,

@@ -75,6 +75,18 @@ let () =
       Wallet.make()
       |> Wallet.apply(VentureCreated(createdEvent))
       |> Wallet.apply(
+           AccountCreationAccepted(
+             AccountCreation.Acceptance.{
+               dependsOn: None,
+               processId: ProcessId.make(),
+               data: {
+                 accountIdx,
+                 name: "default"
+               }
+             }
+           )
+         )
+      |> Wallet.apply(
            AccountKeyChainUpdated(
              AccountKeyChainUpdated.make(~keyChain=accountKeyChain)
            )
