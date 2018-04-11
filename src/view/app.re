@@ -11,18 +11,10 @@ type action =
 
 type state = {
   session: Session.t,
-  drawer: bool
+  drawer: bool,
 };
 
 let component = ReasonReact.reducerComponent("App");
-
-[%mui.withStyles
-  "AppStyles"({
-    flex: ReactDOMRe.Style.make(~flex="1", ()),
-    container: ReactDOMRe.Style.make(~flexGrow="1", ~paddingTop="80px", ()),
-    drawer: ReactDOMRe.Style.make(~width="250px", ~flex="1", ())
-  })
-];
 
 let make = _children => {
   ...component,
@@ -34,10 +26,10 @@ let make = _children => {
           Session.getCurrentSession()
           |> then_(session => send(UpdateSession(session)) |> resolve)
           |> ignore
-        )
+        ),
     ),
   reducer: (action, state) =>
-    switch action {
+    switch (action) {
     | UpdateSession(session) => ReasonReact.Update({...state, session})
     | SignIn => ReasonReact.Update({...state, session: Session.signIn()})
     | SignOut => ReasonReact.Update({...state, session: Session.signOut()})
@@ -55,18 +47,22 @@ let make = _children => {
       );
     let title = {
       let header =
-        switch state.session {
+        switch (state.session) {
         | Unknown
         | NotLoggedIn => "Welcome To Misthos"
         | LoginPending => "Waiting for login to complete"
         | AnonymousLogin => "You must login with a registered blockstack id to use Misthos"
         | LoggedIn(data) => "Hello " ++ (data.userId |> UserId.toString)
         };
-      <AppStyles
+      <MaterialUi.WithStyles
+        classes=[
+          {name: "flex", styles: ReactDOMRe.Style.make(~flex="1", ())},
+        ]
         render=(
           classes =>
             MaterialUi.(
-              <Typography color=`Inherit variant=`Title className=classes.flex>
+              <Typography
+                color=`Inherit variant=`Title className=classes##flex>
                 (ReasonReact.stringToElement(header))
               </Typography>
             )
@@ -75,7 +71,7 @@ let make = _children => {
     };
     let loginButton =
       MaterialUi.(
-        switch state.session {
+        switch (state.session) {
         | NotLoggedIn =>
           <Button color=`Inherit onClick=(_e => send(SignIn))>
             "Sign In with Blockstack"
@@ -100,14 +96,21 @@ let make = _children => {
         MaterialUi.(
           <Grid item=true xs=V12> <Paper> <Ventures session /> </Paper> </Grid>
         );
-      <AppStyles
+      <MaterialUi.WithStyles
+        classes=[
+          {
+            name: "container",
+            styles:
+              ReactDOMRe.Style.make(~flexGrow="1", ~paddingTop="80px", ()),
+          },
+        ]
         render=(
           classes =>
             MaterialUi.(
-              <div className=classes.container>
+              <div className=classes##container>
                 <Grid container=true spacing=V24>
                   (
-                    switch state.session {
+                    switch (state.session) {
                     | LoggedIn(session) => ventures(session)
                     | _ => <div />
                     }
@@ -125,12 +128,23 @@ let make = _children => {
         <AppBar>
           <Toolbar>
             logo
-            <AppStyles render=(classes => <div className=classes.flex />) />
+            <MaterialUi.WithStyles
+              classes=[
+                {name: "flex", styles: ReactDOMRe.Style.make(~flex="1", ())},
+              ]
+              render=(classes => <div className=classes##flex />)
+            />
             loginButton
             drawerButton
           </Toolbar>
         </AppBar>
-        <AppStyles
+        <MaterialUi.WithStyles
+          classes=[
+            {
+              name: "drawer",
+              styles: ReactDOMRe.Style.make(~width="250px", ~flex="1", ()),
+            },
+          ]
           render=(
             classes =>
               <Drawer
@@ -140,7 +154,7 @@ let make = _children => {
                 onClose=(() => send(CloseDrawer))
                 _open=state.drawer>
                 <div
-                  className=classes.drawer
+                  className=classes##drawer
                   tabIndex=0
                   role="button"
                   onClick=(_event => send(CloseDrawer))>
@@ -153,5 +167,5 @@ let make = _children => {
         ventures
       </MuiThemeProvider>
     );
-  }
+  },
 };

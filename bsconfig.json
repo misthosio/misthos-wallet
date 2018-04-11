@@ -23,9 +23,7 @@
   "reason": {
     "react-jsx": 2
   },
-  "ppx-flags": [
-      "./node_modules/@jsiebern/bs-material-ui/ppx_withStyles"
-  ],
+  "ppx-flags": [],
   "bsc-flags": [
     "-bs-super-errors"
   ],
