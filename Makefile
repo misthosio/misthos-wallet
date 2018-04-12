@@ -6,10 +6,18 @@ dev:
 	yarn start
 
 test:
-	jest --clearCache
+	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
 	yarn test --runInBand
 
 bsb:
-	bsb -clean-world
-	bsb -make-world -w
+	node_modules/.bin/bsb -clean-world
+	node_modules/.bin/bsb -make-world -w
+
+ci:
+	node_modules/.bin/jest --clearCache
+	./scripts/start_bitcoind.sh
+	CI=true yarn test --runInBand
+	./scripts/stop_bitcoind.sh
+
+.PHONY: ci

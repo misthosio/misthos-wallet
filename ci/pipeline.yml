@@ -1,0 +1,43 @@
+---
+groups:
+- name: pipeline-image
+  jobs: [build-task-image]
+- name: misthos-web
+  jobs: [test]
+
+jobs:
+- name: test
+  plan:
+  - {get: repo, trigger: true}
+  - task: test
+    file: repo/ci/tasks/test.yml
+- name: build-task-image
+  serial: true
+  plan:
+    - {get: pipeline-ci-image, trigger: true}
+    - put: docker-image-ci
+      params:
+        build: pipeline-ci-image/ci/ci_image
+
+resources:
+- name: repo
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: master
+    private_key: ((github-ssh-key.private_key))
+- name: pipeline-ci-image
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: master
+    paths: [ci/ci_image/*]
+    private_key: ((github-ssh-key.private_key))
+- name: docker-image-ci
+  type: docker-image
+  source:
+    email: ((docker-hub-email))
+    username: ((docker-hub-username))
+    password: ((docker-hub-password))
+    repository: misthosio/misthos-web-pipeline
+
