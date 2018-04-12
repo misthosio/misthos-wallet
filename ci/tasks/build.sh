@@ -1,6 +1,6 @@
-cp -r deps/* repo
-
 #!/bin/bash
+
+cp -r deps/* repo
 
 set -e
 

@@ -1,7 +1,7 @@
 ---
 groups:
 - name: misthos-web
-  jobs: [test,build]
+  jobs: [test,build-and-push-to-staging]
 - name: pipeline-image
   jobs: [build-task-image]
 
@@ -21,7 +21,7 @@ jobs:
       - name: repo
       run:
         path: repo/ci/tasks/run-tests.sh
-- name: build
+- name: build-and-push-to-staging
   plan:
   - {get: repo, trigger: true, passed: [test]}
   - task: build
@@ -30,12 +30,14 @@ jobs:
       image_resource:
         type: docker-image
         source: {repository: misthosio/misthos-web-pipeline}
+      caches:
+      - path: deps
       inputs:
-      - name: repo-with-deps
+      - name: repo
       outputs:
       - name: build
       run:
-        path: repo-with-deps/ci/tasks/build.sh
+        path: repo/ci/tasks/build.sh
   - task: deploy-staging
     config:
       platform: linux
