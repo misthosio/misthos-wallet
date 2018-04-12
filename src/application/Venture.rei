@@ -25,6 +25,8 @@ module Validation: {
 
 exception InvalidEvent(Validation.result);
 
+exception CouldNotLoadVenture;
+
 type t;
 
 let join:
@@ -41,6 +43,14 @@ let getSummary: t => EventLog.summary;
 let getViewModel: t => ViewModel.t;
 
 let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
+
+module Wallet: {
+  type balance = {
+    total: BTC.t,
+    reserved: BTC.t
+  };
+  let balance: t => Js.Promise.t(balance);
+};
 
 module Cmd: {
   module Create: {
@@ -80,5 +90,10 @@ module Cmd: {
         t
       ) =>
       Js.Promise.t(result);
+  };
+  module EndorsePayout: {
+    type result =
+      | Ok(t);
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
 };

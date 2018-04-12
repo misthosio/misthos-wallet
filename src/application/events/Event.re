@@ -9,15 +9,17 @@ module VentureCreated = {
     creatorId: userId,
     creatorPubKey: string,
     metaPolicy: Policy.t,
-    systemIssuer: Bitcoin.ECPair.t
+    systemIssuer: Bitcoin.ECPair.t,
+    network: Network.t
   };
-  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy) => {
+  let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~network) => {
     ventureId: VentureId.make(),
     ventureName,
     creatorId,
     creatorPubKey,
     metaPolicy,
-    systemIssuer: Bitcoin.ECPair.makeRandom()
+    systemIssuer: Bitcoin.ECPair.makeRandom(),
+    network
   };
   let encode = event =>
     Json.Encode.(
@@ -28,7 +30,8 @@ module VentureCreated = {
         ("creatorId", UserId.encode(event.creatorId)),
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
-        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer)))
+        ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
+        ("network", Network.encode(event.network))
       ])
     );
   let decode = raw =>
@@ -39,7 +42,8 @@ module VentureCreated = {
       creatorPubKey: raw |> field("creatorPubKey", string),
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
-        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF
+        raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
+      network: raw |> field("network", Network.decode)
     };
 };
 
@@ -74,7 +78,7 @@ module AccountCreation = {
     let encode = event =>
       Json.Encode.(
         object_([
-          ("accountIndex", AccountIndex.encode(event.accountIdx)),
+          ("accountIdx", AccountIndex.encode(event.accountIdx)),
           ("name", string(event.name))
         ])
       );
@@ -143,6 +147,73 @@ module Payout = {
       };
   };
   include (val EventTypes.makeProcess("Payout"))(Data);
+  module Signature = {
+    type t = {
+      processId,
+      custodianId: userId,
+      payoutTx: PayoutTransaction.t
+    };
+    let make = (~processId, ~custodianId, ~payoutTx) => {
+      processId,
+      custodianId,
+      payoutTx
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutSigned")),
+          ("processId", ProcessId.encode(event.processId)),
+          ("custodianId", UserId.encode(event.custodianId)),
+          ("payoutTx", PayoutTransaction.encode(event.payoutTx))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        processId: raw |> field("processId", ProcessId.decode),
+        custodianId: raw |> field("custodianId", UserId.decode),
+        payoutTx: raw |> field("payoutTx", PayoutTransaction.decode)
+      };
+  };
+  module Broadcast = {
+    type t = {
+      processId,
+      transactionId: string
+    };
+    let make = (~processId, ~transactionId) => {processId, transactionId};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutBroadcast")),
+          ("processId", ProcessId.encode(event.processId)),
+          ("transactionId", string(event.transactionId))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        processId: raw |> field("processId", ProcessId.decode),
+        transactionId: raw |> field("transactionId", string)
+      };
+  };
+  module BroadcastFailure = {
+    type t = {
+      processId,
+      errorMessage: string
+    };
+    let make = (~processId, ~errorMessage) => {processId, errorMessage};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutBroadcastFailed")),
+          ("processId", ProcessId.encode(event.processId)),
+          ("errorMessage", string(event.errorMessage))
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        processId: raw |> field("processId", ProcessId.decode),
+        errorMessage: raw |> field("errorMessage", string)
+      };
+  };
 };
 
 module CustodianKeyChainUpdated = {
@@ -219,6 +290,9 @@ type t =
   | PayoutProposed(Payout.Proposal.t)
   | PayoutEndorsed(Payout.Endorsement.t)
   | PayoutAccepted(Payout.Acceptance.t)
+  | PayoutSigned(Payout.Signature.t)
+  | PayoutBroadcast(Payout.Broadcast.t)
+  | PayoutBroadcastFailed(Payout.BroadcastFailure.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t);
@@ -253,6 +327,9 @@ let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsement.make(~processId, ~supporterId));
 
+let makePayoutEndorsed = (~processId, ~supporterId) =>
+  PayoutEndorsed(Payout.Endorsement.make(~processId, ~supporterId));
+
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
@@ -265,6 +342,9 @@ let encode =
   | PayoutProposed(event) => Payout.Proposal.encode(event)
   | PayoutEndorsed(event) => Payout.Endorsement.encode(event)
   | PayoutAccepted(event) => Payout.Acceptance.encode(event)
+  | PayoutSigned(event) => Payout.Signature.encode(event)
+  | PayoutBroadcast(event) => Payout.Broadcast.encode(event)
+  | PayoutBroadcastFailed(event) => Payout.BroadcastFailure.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
@@ -278,7 +358,9 @@ let isSystemEvent =
   | AccountCreationAccepted(_)
   | CustodianAccepted(_)
   | PayoutAccepted(_)
-  | AccountKeyChainUpdated(_) => true
+  | AccountKeyChainUpdated(_)
+  | PayoutBroadcast(_)
+  | PayoutBroadcastFailed(_) => true
   | _ => false;
 
 exception UnknownEvent(Js.Json.t);
@@ -296,6 +378,10 @@ let decode = raw => {
   | "PayoutProposed" => PayoutProposed(Payout.Proposal.decode(raw))
   | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsement.decode(raw))
   | "PayoutAccepted" => PayoutAccepted(Payout.Acceptance.decode(raw))
+  | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
+  | "PayoutBroadcast" => PayoutBroadcast(Payout.Broadcast.decode(raw))
+  | "PayoutBroadcastFailed" =>
+    PayoutBroadcastFailed(Payout.BroadcastFailure.decode(raw))
   | "AccountCreationProposed" =>
     AccountCreationProposed(AccountCreation.Proposal.decode(raw))
   | "AccountCreationEndorsed" =>

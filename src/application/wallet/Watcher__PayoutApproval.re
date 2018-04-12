@@ -6,19 +6,17 @@ type state = {
   eligable: list(userId),
   endorsements: list(userId),
   policy: Policy.t,
-  systemIssuer: Bitcoin.ECPair.t,
-  creatorId: userId
+  systemIssuer: Bitcoin.ECPair.t
 };
 
-let make = (proposal: Partner.Proposal.t, log) => {
+let make = (proposal: Payout.Proposal.t, log) => {
   let process = {
     val state =
       ref({
         eligable: [],
         endorsements: [proposal.supporterId],
         policy: proposal.policy,
-        systemIssuer: Bitcoin.ECPair.makeRandom(),
-        creatorId: UserId.fromString("")
+        systemIssuer: Bitcoin.ECPair.makeRandom()
       });
     val completed = ref(false);
     val result = ref(None);
@@ -28,22 +26,21 @@ let make = (proposal: Partner.Proposal.t, log) => {
           switch event {
           | VentureCreated(event) => {
               ...state^,
-              systemIssuer: event.systemIssuer,
-              creatorId: event.creatorId
+              systemIssuer: event.systemIssuer
             }
-          | PartnerEndorsed(event)
-              when ProcessId.eq(event.processId, proposal.processId) => {
-              ...state^,
-              endorsements: [event.supporterId, ...state^.endorsements]
-            }
-          | PartnerAccepted(event)
-              when ProcessId.eq(event.processId, proposal.processId) =>
-            completed := true;
-            state^;
           | PartnerAccepted({data}) => {
               ...state^,
               eligable: [data.id, ...state^.eligable]
             }
+          | PayoutEndorsed(event)
+              when ProcessId.eq(event.processId, proposal.processId) => {
+              ...state^,
+              endorsements: [event.supporterId, ...state^.endorsements]
+            }
+          | PayoutAccepted(event)
+              when ProcessId.eq(event.processId, proposal.processId) =>
+            completed := true;
+            state^;
           | _ => state^
           }
         );
@@ -57,14 +54,7 @@ let make = (proposal: Partner.Proposal.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAccepted(Partner.Acceptance.fromProposal(proposal))
-          ));
-      };
-      if (proposal.data.id == state^.creatorId && log |> EventLog.length == 2) {
-        result :=
-          Some((
-            state^.systemIssuer,
-            PartnerAccepted(Partner.Acceptance.fromProposal(proposal))
+            PayoutAccepted(Payout.Acceptance.fromProposal(proposal))
           ));
       };
     };

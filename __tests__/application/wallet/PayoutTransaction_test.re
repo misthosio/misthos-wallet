@@ -2,10 +2,6 @@ open Jest;
 
 open Expect;
 
-open Bitcoin;
-
-open PrimitiveTypes;
-
 open WalletTypes;
 
 let () =
@@ -17,7 +13,6 @@ let () =
         address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
         value: BTC.fromSatoshis(10000L),
         nCoSigners: 1,
-        confirmations: 6,
         coordinates: (
           AccountIndex.first,
           AccountKeyChainIndex.first,
@@ -31,7 +26,6 @@ let () =
         address: "2N3CDv7U6xVYmNqdvNscKBWwUYky7SM6Wdq",
         value: BTC.fromSatoshis(5000L),
         nCoSigners: 1,
-        confirmations: 6,
         coordinates: (
           AccountIndex.first,
           AccountKeyChainIndex.first,
@@ -64,7 +58,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -84,7 +78,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -104,7 +98,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -124,7 +118,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -144,7 +138,7 @@ let () =
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest.network
+            ~network=Network.Regtest
           ),
         ()
       )

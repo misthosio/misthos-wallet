@@ -1,23 +1,30 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 let logMessage = msg => Js.log("[Venture] - " ++ msg);
 
 module Index = Venture__Index;
 
 module Validation = Venture__Validation;
 
-module Wallet = Venture__Wallet;
-
 exception InvalidEvent(Validation.result);
+
+exception CouldNotLoadVenture;
 
 type t = {
   session: Session.Data.t,
   id: ventureId,
   log: EventLog.t,
   state: Validation.state,
-  wallet: Wallet.t,
+  wallet: Venture__Wallet.t,
   viewModel: ViewModel.t,
   watchers: Watchers.t
+};
+
+module Wallet = {
+  include Venture__Wallet;
+  let balance = ({wallet}) => balance(AccountIndex.default, wallet);
 };
 
 let make = (session, id) => {
@@ -50,8 +57,13 @@ let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
 
 let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
   let (item, log, (state, wallet, viewModel)) =
-    applyInternal(session.appKeyPair, event, log, (state, wallet, viewModel));
-  let (log, (state, wallet, viewModel), watchers) =
+    applyInternal(
+      session.issuerKeyPair,
+      event,
+      log,
+      (state, wallet, viewModel)
+    );
+  Js.Promise.(
     watchers
     |> Watchers.applyAndProcessPending(
          session,
@@ -59,8 +71,11 @@ let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
          log,
          applyInternal,
          (state, wallet, viewModel)
-       );
-  {session, id, log, state, wallet, viewModel, watchers};
+       )
+    |> then_(((log, (state, wallet, viewModel), watchers)) =>
+         {session, id, log, state, wallet, viewModel, watchers} |> resolve
+       )
+  );
 };
 
 let reconstruct = (session, log) => {
@@ -80,15 +95,17 @@ let reconstruct = (session, log) => {
          ),
          (VentureId.make(), state, wallet, viewModel, [])
        );
-  let (log, (state, wallet, viewModel), watchers) =
-    watchers
-    |> Watchers.processPending(
-         session,
-         log,
-         applyInternal,
-         (state, wallet, viewModel)
-       );
-  {session, id, log, state, wallet, viewModel, watchers};
+  watchers
+  |> Watchers.processPending(
+       session,
+       log,
+       applyInternal,
+       (state, wallet, viewModel)
+     )
+  |> Js.Promise.then_(((log, (state, wallet, viewModel), watchers)) =>
+       {session, id, log, state, wallet, viewModel, watchers}
+       |> Js.Promise.resolve
+     );
 };
 
 let persist = ({id, log, state} as venture) => {
@@ -101,13 +118,13 @@ let persist = ({id, log, state} as venture) => {
       |> then_(() => resolve(venture))
     );
   Js.Promise.(
-    state.partnerAddresses
+    state.partnerStoragePrefixes
     |> List.fold_left(
-         (promise, address) =>
+         (promise, prefix) =>
            promise
            |> then_(() =>
                 Blockstack.putFile(
-                  (id |> VentureId.toString) ++ "/" ++ address ++ "/log.json",
+                  (id |> VentureId.toString) ++ "/" ++ prefix ++ "/log.json",
                   logString
                 )
               )
@@ -115,7 +132,7 @@ let persist = ({id, log, state} as venture) => {
                 Blockstack.putFile(
                   (id |> VentureId.toString)
                   ++ "/"
-                  ++ address
+                  ++ prefix
                   ++ "/summary.json",
                   summaryString
                 )
@@ -129,28 +146,25 @@ let persist = ({id, log, state} as venture) => {
 
 let defaultPolicy = Policy.absolute;
 
-let load = (session: Session.Data.t, ~ventureId) =>
+let load = (session: Session.Data.t, ~ventureId) => {
+  logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
     Blockstack.getFile((ventureId |> VentureId.toString) ++ "/log.json")
     |> then_(nullLog =>
          switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>
-           resolve(
-             raw
-             |> Json.parseOrRaise
-             |> EventLog.decode
-             |> reconstruct(session)
-           )
-         | None => raise(Not_found)
+           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
+         | None => raise(CouldNotLoadVenture)
          }
        )
     |> then_(persist)
   );
+};
 
 let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
     Blockstack.getFileFromUser(
-      ventureId ++ "/" ++ session.address ++ "/log.json",
+      ventureId ++ "/" ++ session.storagePrefix ++ "/log.json",
       ~username=userId
     )
     |> catch(_error => raise(Not_found))
@@ -158,13 +172,10 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
          switch (Js.Nullable.toOption(nullFile)) {
          | None => raise(Not_found)
          | Some(raw) =>
-           raw
-           |> Json.parseOrRaise
-           |> EventLog.decode
-           |> reconstruct(session)
-           |> persist
+           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
          }
        )
+    |> then_(persist)
     |> then_(venture =>
          Index.add(
            ~ventureId=venture.id,
@@ -186,7 +197,7 @@ module Synchronize = {
     |> List.filter(partnerId => UserId.neq(partnerId, session.userId))
     |> List.map(partnerId =>
          Blockstack.getUserAppFileUrl(
-           ~path=(id |> VentureId.toString) ++ "/" ++ session.address,
+           ~path=(id |> VentureId.toString) ++ "/" ++ session.storagePrefix,
            ~username=partnerId |> UserId.toString,
            ~appOrigin=Location.origin
          )
@@ -244,17 +255,17 @@ module Synchronize = {
              },
            (venture, None)
          );
-    let (log, (state, wallet, viewModel), watchers) =
+    Js.Promise.(
       watchers
       |> Watchers.processPending(
            session,
            log,
            applyInternal,
            (state, wallet, viewModel)
-         );
-    Js.Promise.(
-      {...venture, log, state, wallet, viewModel, watchers}
-      |> persist
+         )
+      |> then_(((log, (state, wallet, viewModel), watchers)) =>
+           {...venture, log, state, wallet, viewModel, watchers} |> persist
+         )
       |> then_(p =>
            (
              switch error {
@@ -279,18 +290,15 @@ module Cmd = {
         Event.VentureCreated.make(
           ~ventureName,
           ~creatorId=session.userId,
-          ~creatorPubKey=session.appKeyPair |> Utils.publicKeyFromKeyPair,
-          ~metaPolicy=defaultPolicy
+          ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
+          ~metaPolicy=defaultPolicy,
+          ~network=session.network
         );
       Js.(
         Promise.all2((
           Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
-          Promise.resolve(make(session, ventureCreated.ventureId))
-          |> Promise.(
-               then_(v =>
-                 v |> apply(VentureCreated(ventureCreated)) |> resolve
-               )
-             )
+          make(session, ventureCreated.ventureId)
+          |> apply(VentureCreated(ventureCreated))
           |> Promise.then_(persist)
         ))
       );
@@ -318,7 +326,7 @@ module Cmd = {
                         state.policies |> List.assoc(Event.Partner.processName)
                     )
                   )
-               |> persist
+               |> then_(persist)
                |> then_(p => resolve(Ok(p)))
              | UserInfo.Public.NotFound => resolve(NoUserInfo)
              }
@@ -336,7 +344,7 @@ module Cmd = {
         |> apply(
              Event.makePartnerEndorsed(~processId, ~supporterId=session.userId)
            )
-        |> persist
+        |> then_(persist)
         |> then_(p => resolve(Ok(p)))
       );
     };
@@ -350,7 +358,7 @@ module Cmd = {
       Js.Promise.(
         venture
         |> apply(IncomeAddressExposed(exposeEvent))
-        |> persist
+        |> then_(persist)
         |> then_(p => resolve(Ok(exposeEvent.address, p)))
       );
     };
@@ -362,9 +370,23 @@ module Cmd = {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
         Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
-        |> then_(proposal =>
-             venture |> apply(PayoutProposed(proposal)) |> persist
+        |> then_(proposal => venture |> apply(PayoutProposed(proposal)))
+        |> then_(persist)
+        |> then_(p => resolve(Ok(p)))
+      );
+    };
+  };
+  module EndorsePayout = {
+    type result =
+      | Ok(t);
+    let exec = (~processId, {session} as venture) => {
+      logMessage("Executing 'EndorsePayout' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             Event.makePayoutEndorsed(~processId, ~supporterId=session.userId)
            )
+        |> then_(persist)
         |> then_(p => resolve(Ok(p)))
       );
     };

@@ -4,20 +4,14 @@ let bufFromHex = BufferExt.fromStringWithEncoding(~encoding="hex");
 
 let hexByteLength = BufferExt.byteLength(~encoding="hex");
 
-let keyPairFromPrivateKey = key =>
-  Bitcoin.(key |> BigInteger.fromHex |> ECPair.create);
+let keyPairFromPrivateKey = (network, key) =>
+  Bitcoin.(ECPair.makeWithNetwork(key |> BigInteger.fromHex, network));
 
 let publicKeyFromKeyPair = pair =>
   Bitcoin.(pair |> ECPair.getPublicKeyBuffer |> bufToHex);
 
 let keyFromPublicKey = key =>
   key |> bufFromHex |> Bitcoin.ECPair.fromPublicKeyBuffer;
-
-let addressFromPublicKey = pubKey =>
-  pubKey
-  |> bufFromHex
-  |> Bitcoin.ECPair.fromPublicKeyBuffer
-  |> Bitcoin.ECPair.getAddress;
 
 let signatureToString = ecSignature =>
   ecSignature |> Bitcoin.ECSignature.toDER |> bufToHex;
@@ -49,3 +43,8 @@ let printError = (message, error) => {
   Js.log("Error - " ++ message ++ ":");
   Js.log(error);
 };
+
+let mapOption = fn =>
+  fun
+  | Some(a) => Some(fn(a))
+  | None => None;

@@ -3,22 +3,31 @@ open PrimitiveTypes;
 module Data = {
   type t = {
     userId,
-    appKeyPair: Bitcoin.ECPair.t,
-    address: string,
-    masterKeyChain: Bitcoin.HDNode.t
+    issuerKeyPair: Bitcoin.ECPair.t,
+    storagePrefix: string,
+    masterKeyChain: Bitcoin.HDNode.t,
+    network: Network.t
   };
   let fromUserData = userData =>
     switch (Js.Nullable.toOption(userData##username)) {
     | None => None
     | Some(blockstackId) =>
-      let appKeyPair = userData##appPrivateKey |> Utils.keyPairFromPrivateKey;
+      let issuerKeyPair =
+        Utils.keyPairFromPrivateKey(
+          Network.bitcoinNetwork(Testnet),
+          userData##appPrivateKey
+        );
       Some({
         userId: blockstackId |> UserId.fromString,
-        appKeyPair,
-        address: appKeyPair |> Bitcoin.ECPair.getAddress,
+        issuerKeyPair,
+        network: Testnet,
+        storagePrefix:
+          UserInfo.storagePrefix(
+            ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair
+          ),
         masterKeyChain:
           Bitcoin.HDNode.make(
-            appKeyPair,
+            issuerKeyPair,
             Utils.bufFromHex(
               "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
             )
@@ -28,26 +37,26 @@ module Data = {
 };
 
 type t =
-  | NotLoggedIn
+  | Unknown
   | LoginPending
+  | NotLoggedIn
   | AnonymousLogin
   | LoggedIn(Data.t);
 
-let getCurrentSession = () =>
-  if (Blockstack.isUserSignedIn()) {
-    switch (Blockstack.loadUserData()) {
-    | None => NotLoggedIn
-    | Some(userData) =>
-      switch (Data.fromUserData(userData)) {
-      | None => AnonymousLogin
-      | Some(sessionData) => LoggedIn(sessionData)
-      }
-    };
-  } else if (Blockstack.isSignInPending()) {
-    LoginPending;
-  } else {
-    NotLoggedIn;
-  };
+let initMasterKey = (sessionData: Data.t) => {
+  let appPubKey = sessionData.issuerKeyPair |> Utils.publicKeyFromKeyPair;
+  Js.Promise.(
+    UserInfo.getOrInit(~appPubKey)
+    |> then_(({chainCode}: UserInfo.Private.t) =>
+         {
+           ...sessionData,
+           masterKeyChain:
+             Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode)
+         }
+         |> resolve
+       )
+  );
+};
 
 let completeLogIn = () =>
   Js.Promise.(
@@ -56,20 +65,30 @@ let completeLogIn = () =>
          switch (Data.fromUserData(userData)) {
          | None => resolve(AnonymousLogin)
          | Some(sessionData) =>
-           let appPubKey =
-             sessionData.appKeyPair |> Utils.publicKeyFromKeyPair;
-           UserInfo.getOrInit(~appPubKey)
-           |> then_(({chainCode}: UserInfo.Private.t) =>
-                resolve(
-                  LoggedIn({
-                    ...sessionData,
-                    masterKeyChain:
-                      Bitcoin.HDNode.make(sessionData.appKeyPair, chainCode)
-                  })
-                )
-              );
+           initMasterKey(sessionData)
+           |> then_(session => LoggedIn(session) |> resolve)
          }
        )
+  );
+
+let getCurrentSession = () =>
+  Js.Promise.(
+    if (Blockstack.isUserSignedIn()) {
+      switch (Blockstack.loadUserData()) {
+      | None => NotLoggedIn |> resolve
+      | Some(userData) =>
+        switch (Data.fromUserData(userData)) {
+        | None => AnonymousLogin |> resolve
+        | Some(sessionData) =>
+          initMasterKey(sessionData)
+          |> then_(session => LoggedIn(session) |> resolve)
+        }
+      };
+    } else if (Blockstack.isSignInPending()) {
+      completeLogIn();
+    } else {
+      NotLoggedIn |> resolve;
+    }
   );
 
 let signIn = () => {

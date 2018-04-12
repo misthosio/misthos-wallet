@@ -35,43 +35,47 @@ type tx = {
   confirmations: int
 };
 
-let importAllAs = (config, [first, ...rest], label) => {
-  let jsonRPCImport =
-    Json.Encode.(
-      object_([
-        ("jsonrpc", string("1.0")),
-        ("method", string("importaddress")),
-        ("params", list(string, [first, label]))
-      ])
-    )
-    |> Json.stringify;
-  let start = rpcCall(config, jsonRPCImport);
-  Js.Promise.(
-    rest
-    |> List.fold_left(
-         (p, address) =>
-           p
-           |> then_(_r => {
-                let jsonRPCImport =
-                  Json.Encode.(
-                    object_([
-                      ("jsonrpc", string("1.0")),
-                      ("method", string("importaddress")),
-                      ("params", list(string, [address, label]))
-                    ])
-                  )
-                  |> Json.stringify;
-                rpcCall(config, jsonRPCImport);
-              }),
-         start
-       )
-  );
-};
+let importAllAs = (config, addresses, label) =>
+  switch addresses {
+  | [] => Js.Promise.resolve()
+  | [first, ...rest] =>
+    let jsonRPCImport =
+      Json.Encode.(
+        object_([
+          ("jsonrpc", string("1.0")),
+          ("method", string("importaddress")),
+          ("params", list(string, [first, label]))
+        ])
+      )
+      |> Json.stringify;
+    let start = rpcCall(config, jsonRPCImport);
+    Js.Promise.(
+      rest
+      |> List.fold_left(
+           (p, address) =>
+             p
+             |> then_(_r => {
+                  let jsonRPCImport =
+                    Json.Encode.(
+                      object_([
+                        ("jsonrpc", string("1.0")),
+                        ("method", string("importaddress")),
+                        ("params", list(string, [address, label]))
+                      ])
+                    )
+                    |> Json.stringify;
+                  rpcCall(config, jsonRPCImport);
+                }),
+           start
+         )
+      |> then_((_) => resolve())
+    );
+  };
 
 let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
   Js.Promise.(
     importAllAs(config, addresses, "")
-    |> then_(_imports => {
+    |> then_((_) => {
          let jsonRPCUnspent =
            Json.Encode.(
              object_([

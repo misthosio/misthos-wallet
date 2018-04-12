@@ -12,13 +12,15 @@ let faucetKey =
     Networks.testnet
   );
 
+let faucetAddress = faucetKey |> ECPair.getAddress;
+
 let bitcoindConfig: BitcoindClient.config = {
   bitcoindUrl: "http://localhost:18322",
   rpcUser: "bitcoin",
   rpcPassword: "bitcoin"
 };
 
-let defaultFee = BTC.fromSatoshis(600L);
+let defaultFee = BTC.fromSatoshis(1000L);
 
 let selectUTXOs = (utxos, totalAmount) => {
   let utxos =

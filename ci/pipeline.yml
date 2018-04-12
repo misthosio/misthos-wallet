@@ -1,0 +1,65 @@
+---
+groups:
+- name: misthos-web
+  jobs: [test]
+- name: pipeline-image
+  jobs: [build-task-image]
+
+jobs:
+- name: test
+  plan:
+  - {get: repo, trigger: true}
+  - task: install-deps
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      caches:
+      - path: deps
+      inputs:
+      - name: repo
+      outputs:
+      - name: repo-with-deps
+      run:
+        path: repo/ci/tasks/install-deps.sh
+  - task: test
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: repo-with-deps
+      run:
+        path: repo-with-deps/ci/tasks/run-tests.sh
+- name: build-task-image
+  serial: true
+  plan:
+    - {get: pipeline-ci-image, trigger: true}
+    - put: docker-image-ci
+      params:
+        build: pipeline-ci-image/ci/ci_image
+
+resources:
+- name: repo
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: master
+    private_key: ((github-ssh-key.private_key))
+- name: pipeline-ci-image
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: master
+    paths: [ci/ci_image/*]
+    private_key: ((github-ssh-key.private_key))
+- name: docker-image-ci
+  type: docker-image
+  source:
+    email: ((docker-hub-email))
+    username: ((docker-hub-username))
+    password: ((docker-hub-password))
+    repository: misthosio/misthos-web-pipeline
+

@@ -61,7 +61,7 @@ let make = (proposal: AccountCreation.Proposal.t, log) => {
       };
     };
     pub processCompleted = () => completed^;
-    pub pendingEvent = () => result^
+    pub pendingEvent = () => result^ |> Utils.mapOption(Js.Promise.resolve)
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

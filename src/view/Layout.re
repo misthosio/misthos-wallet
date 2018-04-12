@@ -8,14 +8,6 @@ type state = {_open: bool};
 
 let component = ReasonReact.reducerComponent("Layout");
 
-[%mui.withStyles
-  "LayoutStyles"({
-    flex: ReactDOMRe.Style.make(~flex="1", ()),
-    container: ReactDOMRe.Style.make(~flexGrow="1", ~paddingTop="80px", ()),
-    drawer: ReactDOMRe.Style.make(~width="250px", ~flex="1", ()),
-  })
-];
-
 let logo =
   <MaterialUi.SvgIcon color=`Inherit viewBox="0 -10 50 50">
     <path
@@ -33,7 +25,19 @@ let make = (~drawer, children) => {
     },
   render: ({send, state}) =>
     MaterialUi.(
-      <LayoutStyles
+      <WithStyles
+        classes=[
+          {name: "flex", styles: ReactDOMRe.Style.make(~flex="1", ())},
+          {
+            name: "container",
+            styles:
+              ReactDOMRe.Style.make(~flexGrow="1", ~paddingTop="80px", ()),
+          },
+          {
+            name: "drawer",
+            styles: ReactDOMRe.Style.make(~width="250px", ~flex="1", ()),
+          },
+        ]
         render=(
           classes =>
             <MuiThemeProvider
@@ -42,7 +46,7 @@ let make = (~drawer, children) => {
               <AppBar>
                 <Toolbar>
                   logo
-                  <div className=classes.flex />
+                  <div className=classes##flex />
                   (
                     switch (drawer) {
                     | None => <div />
@@ -66,7 +70,7 @@ let make = (~drawer, children) => {
                     onClose=(() => send(CloseDrawer))
                     _open=state._open>
                     <div
-                      className=classes.drawer
+                      className=classes##drawer
                       tabIndex=0
                       role="button"
                       onClick=(_event => send(CloseDrawer))>
@@ -75,7 +79,7 @@ let make = (~drawer, children) => {
                   </Drawer>
                 }
               )
-              <div className=classes.container>
+              <div className=classes##container>
                 <Grid container=true spacing=V24> children </Grid>
               </div>
             </MuiThemeProvider>

@@ -6,6 +6,7 @@ open Event;
 
 type t = {
   ventureId,
+  network: Network.t,
   payoutPolicy: Policy.t,
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
@@ -13,36 +14,50 @@ type t = {
   nextChangeCoordinates:
     list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
   exposedCoordinates:
-    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t)))
+    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t))),
+  reservedInputs: list(Network.txInput),
+  payoutProcesses: list((ProcessId.t, PayoutTransaction.t))
+};
+
+type balance = {
+  total: BTC.t,
+  reserved: BTC.t
 };
 
 let make = () => {
+  network: Network.Testnet,
   ventureId: VentureId.fromString(""),
   payoutPolicy: Policy.absolute,
   accountKeyChains: [],
   nextCoordinates: [],
   nextChangeCoordinates: [],
-  exposedCoordinates: []
+  exposedCoordinates: [],
+  reservedInputs: [],
+  payoutProcesses: []
 };
 
 let apply = (event: Event.t, state) =>
   switch event {
-  | VentureCreated({ventureId, metaPolicy}) => {
+  | VentureCreated({ventureId, metaPolicy, network}) => {
       ...state,
+      network,
       ventureId,
       payoutPolicy: metaPolicy
     }
-  | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) =>
-    let accountKeyChains =
-      try (state.accountKeyChains |> List.assoc(keyChain.accountIdx)) {
-      | Not_found => []
-      };
-    {
+  | AccountCreationAccepted({data}) => {
+      ...state,
+      exposedCoordinates: [(data.accountIdx, []), ...state.exposedCoordinates],
+      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains]
+    }
+  | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) => {
       ...state,
       accountKeyChains: [
         (
           keyChain.accountIdx,
-          [(keyChain.keyChainIdx, keyChain), ...accountKeyChains]
+          [
+            (keyChain.keyChainIdx, keyChain),
+            ...state.accountKeyChains |> List.assoc(keyChain.accountIdx)
+          ]
         ),
         ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx)
       ],
@@ -60,14 +75,10 @@ let apply = (event: Event.t, state) =>
         ),
         ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx)
       ]
-    };
+    }
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
     let accountIdx =
       coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
-    let previouslyExposed =
-      try (state.exposedCoordinates |> List.assoc(accountIdx)) {
-      | Not_found => []
-      };
     {
       ...state,
       nextCoordinates: [
@@ -75,10 +86,69 @@ let apply = (event: Event.t, state) =>
         ...state.nextCoordinates |> List.remove_assoc(accountIdx)
       ],
       exposedCoordinates: [
-        (accountIdx, [coordinates, ...previouslyExposed]),
+        (
+          accountIdx,
+          [coordinates, ...state.exposedCoordinates |> List.assoc(accountIdx)]
+        ),
         ...state.exposedCoordinates
       ]
     };
+  | PayoutProposed({data, processId}) => {
+      ...state,
+      reservedInputs:
+        state.reservedInputs
+        |> List.rev_append(data.payoutTx.usedInputs |> List.map(snd)),
+      exposedCoordinates:
+        switch data.changeAddressCoordinates {
+        | None => state.exposedCoordinates
+        | Some(coordinates) => [
+            (
+              data.accountIdx,
+              [
+                coordinates,
+                ...state.exposedCoordinates |> List.assoc(data.accountIdx)
+              ]
+            ),
+            ...state.exposedCoordinates |> List.remove_assoc(data.accountIdx)
+          ]
+        },
+      nextChangeCoordinates: [
+        (
+          data.accountIdx,
+          state.nextChangeCoordinates
+          |> List.assoc(data.accountIdx)
+          |> AccountKeyChain.Address.Coordinates.next
+        ),
+        ...state.nextCoordinates |> List.remove_assoc(data.accountIdx)
+      ],
+      payoutProcesses: [(processId, data.payoutTx), ...state.payoutProcesses]
+    }
+  | PayoutBroadcast({processId}) => {
+      ...state,
+      reservedInputs:
+        state.reservedInputs
+        |> List.filter((input: Network.txInput) =>
+             (state.payoutProcesses |> List.assoc(processId)).usedInputs
+             |> List.map(snd)
+             |>
+             List.exists((i: Network.txInput) =>
+               input.txId == i.txId && input.txOutputN == i.txOutputN
+             ) == false
+           )
+    }
+  | PayoutBroadcastFailed({processId}) => {
+      ...state,
+      reservedInputs:
+        state.reservedInputs
+        |> List.filter((input: Network.txInput) =>
+             (state.payoutProcesses |> List.assoc(processId)).usedInputs
+             |> List.map(snd)
+             |>
+             List.exists((i: Network.txInput) =>
+               input.txId == i.txId && input.txOutputN == i.txOutputN
+             ) == false
+           )
+    }
   | _ => state
   };
 
@@ -90,7 +160,7 @@ let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) 
 
 let preparePayoutTx =
     (
-      {userId, masterKeyChain}: Session.Data.t,
+      {userId, masterKeyChain, network}: Session.Data.t,
       accountIdx,
       destinations,
       satsPerByte,
@@ -99,18 +169,28 @@ let preparePayoutTx =
         payoutPolicy,
         nextChangeCoordinates,
         exposedCoordinates,
-        accountKeyChains
+        accountKeyChains,
+        reservedInputs
       }
     ) => {
   open AccountKeyChain.Address;
-  module UseNetwork = Network.Regtest;
   let coordinates = exposedCoordinates |> List.assoc(accountIdx);
   let nextChangeCoordinates = nextChangeCoordinates |> List.assoc(accountIdx);
   let currentKeyChainIdx = nextChangeCoordinates |> Coordinates.keyChainIdx;
   Js.Promise.(
     accountKeyChains
-    |> UseNetwork.getTransactionInputs(coordinates)
+    |> Network.transactionInputs(network, coordinates)
     |> then_(inputs => {
+         let inputs =
+           inputs
+           |> List.filter((input: Network.txInput) =>
+                reservedInputs
+                |>
+                List.exists((reservedIn: Network.txInput) =>
+                  reservedIn.txId == input.txId
+                  && reservedIn.txOutputN == input.txOutputN
+                ) == false
+              );
          let oldInputs =
            inputs
            |> List.find_all((i: Network.txInput) =>
@@ -128,7 +208,7 @@ let preparePayoutTx =
                ~destinations,
                ~satsPerByte,
                ~changeAddress,
-               ~network=UseNetwork.network
+               ~network
              )
            ) {
            | WithChangeAddress(payout) => (payout, Some(nextChangeCoordinates))
@@ -142,7 +222,7 @@ let preparePayoutTx =
                ~masterKeyChain,
                ~accountKeyChains,
                ~payoutTx,
-               ~network=UseNetwork.network
+               ~network
              )
            ) {
            | Signed(payout) => payout
@@ -157,5 +237,37 @@ let preparePayoutTx =
          )
          |> resolve;
        })
+  );
+};
+
+let balance =
+    (
+      accountIdx,
+      {exposedCoordinates, accountKeyChains, reservedInputs, network}
+    ) => {
+  let coordinates = exposedCoordinates |> List.assoc(accountIdx);
+  Js.Promise.(
+    accountKeyChains
+    |> Network.transactionInputs(network, coordinates)
+    |> then_(inputs =>
+         inputs
+         |> List.fold_left(
+              ({total, reserved}, input: Network.txInput) => {
+                total: total |> BTC.plus(input.value),
+                reserved:
+                  reserved
+                  |> BTC.plus(
+                       reservedInputs
+                       |> List.exists((reservedIn: Network.txInput) =>
+                            reservedIn.txId == input.txId
+                            && reservedIn.txOutputN == input.txOutputN
+                          ) ?
+                         input.value : BTC.zero
+                     )
+              },
+              {total: BTC.zero, reserved: BTC.zero}
+            )
+         |> resolve
+       )
   );
 };

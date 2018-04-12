@@ -1,7 +1,7 @@
 open PrimitiveTypes;
 
 type action =
-  | LoginCompleted(Session.t)
+  | UpdateSession(Session.t)
   | SignIn
   | SignOut;
 
@@ -11,25 +11,19 @@ let component = ReasonReact.reducerComponent("UserSession");
 
 let make = children => {
   ...component,
-  initialState: () => {session: Session.getCurrentSession()},
-  didMount: ({state}) =>
-    switch (state.session) {
-    | LoginPending =>
-      ReasonReact.SideEffects(
-        (
-          ({send}) =>
-            Js.Promise.(
-              Session.completeLogIn()
-              |> then_(session => send(LoginCompleted(session)) |> resolve)
-              |> ignore
-            )
+  initialState: () => {session: Session.Unknown},
+  didMount: (_) =>
+    ReasonReact.SideEffects(
+      ({send}) =>
+        Js.Promise.(
+          Session.getCurrentSession()
+          |> then_(session => send(UpdateSession(session)) |> resolve)
+          |> ignore
         ),
-      )
-    | _ => ReasonReact.NoUpdate
-    },
+    ),
   reducer: (action, state) =>
     switch (action) {
-    | LoginCompleted(session) => ReasonReact.Update({...state, session})
+    | UpdateSession(session) => ReasonReact.Update({...state, session})
     | SignIn => ReasonReact.Update({...state, session: Session.signIn()})
     | SignOut => ReasonReact.Update({...state, session: Session.signOut()})
     },

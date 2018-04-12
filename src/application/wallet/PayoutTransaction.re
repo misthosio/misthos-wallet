@@ -1,6 +1,10 @@
+open Bitcoin;
+
 open WalletTypes;
 
 exception NotEnoughFunds;
+
+exception NotEnoughSignatures;
 
 module Fee = TransactionFee;
 
@@ -34,17 +38,16 @@ let signPayout =
     (
       ~ventureId,
       ~userId,
-      ~masterKeyChain: Bitcoin.HDNode.t,
+      ~masterKeyChain: HDNode.t,
       ~accountKeyChains:
          list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
       ~payoutTx as payout: t,
-      ~network: Bitcoin.Networks.t
+      ~network: Network.t
     ) => {
-  open Bitcoin;
   let txB =
     TxBuilder.fromTransactionWithNetwork(
       Transaction.fromHex(payout.txHex),
-      network
+      network |> Network.bitcoinNetwork
     );
   let signed =
     payout.usedInputs
@@ -129,8 +132,6 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
   | None => (addedInputs, false)
   };
 
-let minFeeToCalcChangeOutput = BTC.fromSatoshis(1L);
-
 let addChangeOutput =
     (
       ~totalInputs,
@@ -145,14 +146,26 @@ let addChangeOutput =
       |> BTC.gte(
            outTotal
            |> BTC.plus(currentFee)
-           |> BTC.plus(Fee.outputCost(changeAddress.address, fee, network))
-           |> BTC.plus(Fee.minChange(changeAddress.nCoSigners))
+           |> BTC.plus(
+                Fee.outputCost(
+                  changeAddress.address,
+                  fee,
+                  network |> Network.bitcoinNetwork
+                )
+              )
+           |> BTC.plus(Fee.minChange(changeAddress.nCoSigners, fee))
          )) {
     let currentFee =
       currentFee
-      |> BTC.plus(Fee.outputCost(changeAddress.address, fee, network));
+      |> BTC.plus(
+           Fee.outputCost(
+             changeAddress.address,
+             fee,
+             network |> Network.bitcoinNetwork
+           )
+         );
     txBuilder
-    |> Bitcoin.TxBuilder.addOutput(
+    |> TxBuilder.addOutput(
          changeAddress.address,
          totalInputs
          |> BTC.minus(outTotal)
@@ -178,7 +191,6 @@ let build =
       ~changeAddress: AccountKeyChain.Address.t,
       ~network
     ) => {
-  open Bitcoin;
   let mandatoryInputs =
     mandatoryInputs |> List.filter(Fee.canPayForItself(satsPerByte));
   let allInputs =
@@ -188,7 +200,7 @@ let build =
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
        );
-  let txB = TxBuilder.createWithNetwork(network);
+  let txB = TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
     mandatoryInputs
     |> List.map((i: input) =>
@@ -216,7 +228,7 @@ let build =
       destinations |> List.map(fst),
       usedInputs |> List.map(snd),
       satsPerByte,
-      network
+      network |> Network.bitcoinNetwork
     );
   if (currentInputValue |> BTC.gte(outTotal |> BTC.plus(currentFee))) {
     let changeAdded =
@@ -275,4 +287,94 @@ let build =
       raise(NotEnoughFunds);
     };
   };
+};
+
+let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>
+  if (needed == 0 || allSigs == []) {
+    foundSigs;
+  } else {
+    let [signatures, ...otherSigs] = allSigs;
+    try {
+      let foundSig =
+        signatures
+        |> Array.mapi((i, sigBuf) => (i, sigBuf))
+        |> Array.to_list
+        |> List.find(((i, signature)) =>
+             Js.Nullable.test(signature) == false
+             && foundSigIdxs
+             |> List.mem(i) == false
+           );
+      let foundSigs = [foundSig, ...foundSigs];
+      if (needed == 1) {
+        foundSigs;
+      } else {
+        findSignatures(
+          allSigs,
+          needed - 1,
+          [fst(foundSig), ...foundSigIdxs],
+          foundSigs,
+          network
+        );
+      };
+    } {
+    | Not_found =>
+      findSignatures(otherSigs, needed, foundSigIdxs, foundSigs, network)
+    };
+  };
+
+let finalize = (signedTransactions, network) => {
+  let [{txHex, usedInputs}, ...moreSignedTransactions] = signedTransactions;
+  let txB =
+    TxBuilder.fromTransactionWithNetwork(
+      txHex |> Transaction.fromHex,
+      network |> Network.bitcoinNetwork
+    );
+  let inputs = txB##inputs;
+  let otherInputs =
+    moreSignedTransactions
+    |> List.map(({txHex}: t) =>
+         TxBuilder.fromTransactionWithNetwork(
+           txHex |> Transaction.fromHex,
+           network |> Network.bitcoinNetwork
+         )##inputs
+       );
+  usedInputs
+  |> List.iter(((inputIdx, {nCoSigners}: input)) => {
+       let input = inputs[inputIdx];
+       let signatures = input##signatures;
+       let existing =
+         signatures
+         |> Array.mapi((i, sigBuf) =>
+              switch (sigBuf |> Js.Nullable.toOption) {
+              | Some(_) => Some(i)
+              | None => None
+              }
+            )
+         |> Array.to_list
+         |> List.filter(Js.Option.isSome)
+         |> List.map(i => Js.Option.getExn(i));
+       let total =
+         findSignatures(
+           otherInputs
+           |> List.map(ins => {
+                let input = ins[inputIdx];
+                input##signatures;
+              }),
+           nCoSigners - (existing |> List.length),
+           existing,
+           [],
+           network
+         )
+         |> List.fold_left(
+              (res, (sigIdx, signature)) => {
+                signatures[sigIdx] = signature;
+                res + 1;
+              },
+              existing |> List.length
+            );
+       if (total != nCoSigners) {
+         raise(NotEnoughSignatures);
+       };
+     });
+  txB |> TxBuilder.build;
 };

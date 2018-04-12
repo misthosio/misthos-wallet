@@ -15,6 +15,9 @@ let satoshisPerBTC = BigNumber.make(`String("1e8"));
 let fromString = btcString =>
   BigNumber.make(`String(btcString)) |> BigNumber.times(satoshisPerBTC);
 
+let format = btc =>
+  btc |> BigNumber.dividedBy(satoshisPerBTC) |> BigNumber.toString;
+
 let fromFloat = btcFloat =>
   BigNumber.make(`Float(btcFloat)) |> BigNumber.times(satoshisPerBTC);
 

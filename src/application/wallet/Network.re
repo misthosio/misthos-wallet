@@ -1,18 +1,63 @@
 open WalletTypes;
 
+type t =
+  | Regtest
+  | Testnet
+  | Mainnet;
+
+let encode =
+  fun
+  | Regtest => Json.Encode.string("regtest")
+  | Testnet => Json.Encode.string("testnet")
+  | Mainnet => Json.Encode.string("mainnet");
+
+let decode = raw => {
+  let name = raw |> Json.Decode.string;
+  switch name {
+  | "regtest" => Regtest
+  | "testnet" => Testnet
+  | "mainnet" => Mainnet
+  };
+};
+
 type txInput = {
   txId: string,
   txOutputN: int,
   address: string,
   value: BTC.t,
   nCoSigners: int,
-  confirmations: int,
   coordinates: AccountKeyChain.Address.Coordinates.t
 };
 
+let encodeInput = input =>
+  Json.Encode.(
+    object_([
+      ("txId", string(input.txId)),
+      ("txOutputN", int(input.txOutputN)),
+      ("address", string(input.address)),
+      ("value", BTC.encode(input.value)),
+      ("nCoSigners", int(input.nCoSigners)),
+      (
+        "coordinates",
+        AccountKeyChain.Address.Coordinates.encode(input.coordinates)
+      )
+    ])
+  );
+
+let decodeInput = raw =>
+  Json.Decode.{
+    txId: raw |> field("txId", string),
+    txOutputN: raw |> field("txOutputN", int),
+    address: raw |> field("address", string),
+    value: raw |> field("value", BTC.decode),
+    nCoSigners: raw |> field("nCoSigners", int),
+    coordinates:
+      raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode)
+  };
+
 module Make = (Client: NetworkClient) => {
   let network = Client.network;
-  let getTransactionInputs = (coordinates, accountKeyChains) => {
+  let transactionInputs = (coordinates, accountKeyChains) => {
     let addresses =
       coordinates
       |> List.map(c => {
@@ -23,13 +68,11 @@ module Make = (Client: NetworkClient) => {
       Client.getUTXOs(addresses |> List.map(fst))
       |> then_(utxos =>
            utxos
-           |> List.map(
-                ({txId, txOutputN, address, amount, confirmations}: utxo) =>
+           |> List.map(({txId, txOutputN, address, amount}: utxo) =>
                 {
                   txId,
                   txOutputN,
                   address,
-                  confirmations,
                   nCoSigners: snd(addresses |> List.assoc(address)).nCoSigners,
                   value: amount,
                   coordinates: addresses |> List.assoc(address) |> fst
@@ -56,30 +99,40 @@ module Regtest =
     )
   );
 
-let encodeInput = input =>
-  Json.Encode.(
-    object_([
-      ("txId", string(input.txId)),
-      ("txOutputN", int(input.txOutputN)),
-      ("address", string(input.address)),
-      ("value", BTC.encode(input.value)),
-      ("nCoSigners", int(input.nCoSigners)),
-      ("confirmations", int(input.confirmations)),
-      (
-        "coordinates",
-        AccountKeyChain.Address.Coordinates.encode(input.coordinates)
-      )
-    ])
+module Testnet =
+  Make(
+    (
+      val SmartbitClient.make(
+            SmartbitClient.testnetConfig,
+            Bitcoin.Networks.testnet
+          )
+    )
   );
 
-let decodeInput = raw =>
-  Json.Decode.{
-    txId: raw |> field("txId", string),
-    txOutputN: raw |> field("txOutputN", int),
-    address: raw |> field("address", string),
-    value: raw |> field("value", BTC.decode),
-    nCoSigners: raw |> field("nCoSigners", int),
-    confirmations: raw |> field("confirmations", int),
-    coordinates:
-      raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode)
-  };
+module Mainnet =
+  Make(
+    (
+      val SmartbitClient.make(
+            SmartbitClient.mainnetConfig,
+            Bitcoin.Networks.bitcoin
+          )
+    )
+  );
+
+let transactionInputs =
+  fun
+  | Regtest => Regtest.transactionInputs
+  | Testnet => Testnet.transactionInputs
+  | Mainnet => Mainnet.transactionInputs;
+
+let broadcastTransaction =
+  fun
+  | Regtest => Regtest.broadcastTransaction
+  | Testnet => Testnet.broadcastTransaction
+  | Mainnet => Mainnet.broadcastTransaction;
+
+let bitcoinNetwork =
+  fun
+  | Regtest => Regtest.network
+  | Testnet => Testnet.network
+  | Mainnet => Mainnet.network;
