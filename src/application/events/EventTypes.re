@@ -5,18 +5,18 @@ type proposal('a) = {
   dependsOn: option(processId),
   supporterId: userId,
   policy: Policy.t,
-  data: 'a
+  data: 'a,
 };
 
 type endorsement = {
   processId,
-  supporterId: userId
+  supporterId: userId,
 };
 
 type acceptance('a) = {
   processId,
   dependsOn: option(processId),
-  data: 'a
+  data: 'a,
 };
 
 module type EventData = {
@@ -51,7 +51,7 @@ let makeProposal = (name: string) : (module ProposalEvent) =>
        dependsOn,
        supporterId,
        policy,
-       data
+       data,
      };
      let encode = (event: t) =>
        Json.Encode.(
@@ -61,7 +61,7 @@ let makeProposal = (name: string) : (module ProposalEvent) =>
            ("dependsOn", nullable(ProcessId.encode, event.dependsOn)),
            ("supporterId", UserId.encode(event.supporterId)),
            ("policy", Policy.encode(event.policy)),
-           ("data", Data.encode(event.data))
+           ("data", Data.encode(event.data)),
          ])
        );
      let decode = raw =>
@@ -70,7 +70,7 @@ let makeProposal = (name: string) : (module ProposalEvent) =>
          dependsOn: raw |> field("dependsOn", optional(ProcessId.decode)),
          supporterId: raw |> field("supporterId", UserId.decode),
          policy: raw |> field("policy", Policy.decode),
-         data: raw |> field("data", Data.decode)
+         data: raw |> field("data", Data.decode),
        };
    });
 
@@ -91,13 +91,13 @@ let makeEndorsement = (name: string) : (module EndorsementEvent) =>
          object_([
            ("type", string(name)),
            ("processId", ProcessId.encode(event.processId)),
-           ("supporterId", UserId.encode(event.supporterId))
+           ("supporterId", UserId.encode(event.supporterId)),
          ])
        );
      let decode = raw =>
        Json.Decode.{
          processId: raw |> field("processId", ProcessId.decode),
-         supporterId: raw |> field("supporterId", UserId.decode)
+         supporterId: raw |> field("supporterId", UserId.decode),
        };
    });
 
@@ -117,7 +117,7 @@ let makeAcceptance = (name: string) : (module AcceptanceEvent) =>
      let fromProposal = ({dependsOn, processId, data}: proposal(Data.t)) => {
        dependsOn,
        processId,
-       data
+       data,
      };
      let encode = (event: t) =>
        Json.Encode.(
@@ -125,14 +125,14 @@ let makeAcceptance = (name: string) : (module AcceptanceEvent) =>
            ("type", string(name)),
            ("processId", ProcessId.encode(event.processId)),
            ("dependsOn", nullable(ProcessId.encode, event.dependsOn)),
-           ("data", Data.encode(event.data))
+           ("data", Data.encode(event.data)),
          ])
        );
      let decode = raw =>
        Json.Decode.{
          processId: raw |> field("processId", ProcessId.decode),
          dependsOn: raw |> field("dependsOn", optional(ProcessId.decode)),
-         data: raw |> field("data", Data.decode)
+         data: raw |> field("data", Data.decode),
        };
    });
 

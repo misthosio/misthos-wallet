@@ -9,7 +9,7 @@ let enableHttpRequests = () => [%bs.raw
 let faucetKey =
   ECPair.fromWIFWithNetwork(
     "92Qba5hnyWSn5Ffcka56yMQauaWY6ZLd91Vzxbi4a9CCetaHtYj",
-    Networks.testnet
+    Networks.testnet,
   );
 
 let faucetAddress = faucetKey |> ECPair.getAddress;
@@ -17,7 +17,7 @@ let faucetAddress = faucetKey |> ECPair.getAddress;
 let bitcoindConfig: BitcoindClient.config = {
   bitcoindUrl: "http://localhost:18322",
   rpcUser: "bitcoin",
-  rpcPassword: "bitcoin"
+  rpcPassword: "bitcoin",
 };
 
 let defaultFee = BTC.fromSatoshis(1000L);
@@ -37,7 +37,7 @@ let selectUTXOs = (utxos, totalAmount) => {
          } else {
            ([utxo, ...result], total |> BTC.plus(utxo.amount));
          },
-       ([], BTC.zero)
+       ([], BTC.zero),
      );
 };
 
@@ -50,7 +50,7 @@ let broadcastTransaction = tx =>
   |> Js.Promise.then_(result => {
        Node.Child_process.execSync(
          "bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate 2",
-         Node.Child_process.option(~encoding="utf8", ())
+         Node.Child_process.option(~encoding="utf8", ()),
        )
        |> ignore;
        Js.Promise.resolve(result);
@@ -80,7 +80,7 @@ let fundAddress = (outputs, utxos) => {
   txB
   |> TxBuilder.addOutput(
        faucetKey |> ECPair.getAddress,
-       remainder |> BTC.toSatoshisFloat
+       remainder |> BTC.toSatoshisFloat,
      )
   |> ignore;
   inputs |> List.iteri((i, _utxo) => txB |> TxBuilder.sign(i, faucetKey));
@@ -153,7 +153,7 @@ let displayTx = txHex => {
            let scriptPos = scriptLengthPos + scriptLengthLength;
            let scriptLength =
              int_of_string(
-               "0x" ++ String.sub(txHex, scriptLengthPos, scriptLengthLength)
+               "0x" ++ String.sub(txHex, scriptLengthPos, scriptLengthLength),
              )
              * 2;
            let output =
@@ -170,7 +170,7 @@ let displayTx = txHex => {
              ++ String.sub(txHex, sequencePos, sequenceLength);
            (sequencePos + sequenceLength, output);
          },
-         (nInputsPos + nInputsLength, "")
+         (nInputsPos + nInputsLength, ""),
        );
   let output = output ++ loopOut;
   let outputCountPos = pos;
@@ -181,7 +181,7 @@ let displayTx = txHex => {
     ++ String.sub(txHex, outputCountPos, outputCountLength);
   let outputCount =
     int_of_string(
-      "0x" ++ String.sub(txHex, outputCountPos, outputCountLength)
+      "0x" ++ String.sub(txHex, outputCountPos, outputCountLength),
     );
   let (pos, loopOut) =
     rangeTo(0, outputCount)
@@ -202,7 +202,7 @@ let displayTx = txHex => {
            let scriptPos = scriptLengthPos + scriptLengthLength;
            let scriptLength =
              int_of_string(
-               "0x" ++ String.sub(txHex, scriptLengthPos, scriptLengthLength)
+               "0x" ++ String.sub(txHex, scriptLengthPos, scriptLengthLength),
              )
              * 2;
            let output =
@@ -213,7 +213,7 @@ let displayTx = txHex => {
              ++ String.sub(txHex, scriptPos, scriptLength);
            (scriptPos + scriptLength, output);
          },
-         (outputCountPos + outputCountLength, "")
+         (outputCountPos + outputCountLength, ""),
        );
   let output = output ++ loopOut;
   let (pos, loopOut) =
@@ -228,7 +228,7 @@ let displayTx = txHex => {
              ++ String.sub(
                   txHex,
                   numberOfStackItemsPos,
-                  numberOfStackItemsLength
+                  numberOfStackItemsLength,
                 );
            let numberOfStackItems =
              int_of_string(
@@ -236,8 +236,8 @@ let displayTx = txHex => {
                ++ String.sub(
                     txHex,
                     numberOfStackItemsPos,
-                    numberOfStackItemsLength
-                  )
+                    numberOfStackItemsLength,
+                  ),
              );
            let (pos, loopOut) =
              rangeTo(0, numberOfStackItems)
@@ -251,7 +251,7 @@ let displayTx = txHex => {
                       ++ String.sub(
                            txHex,
                            stackSizeOfItemPos,
-                           stackSizeOfItemLength
+                           stackSizeOfItemLength,
                          );
                     let stackItemPos =
                       stackSizeOfItemPos + stackSizeOfItemLength;
@@ -261,8 +261,8 @@ let displayTx = txHex => {
                         ++ String.sub(
                              txHex,
                              stackSizeOfItemPos,
-                             stackSizeOfItemLength
-                           )
+                             stackSizeOfItemLength,
+                           ),
                       )
                       * 2;
                     let output =
@@ -273,12 +273,12 @@ let displayTx = txHex => {
                       ++ String.sub(txHex, stackItemPos, stackItemLength);
                     (stackItemPos + stackItemLength, output);
                   },
-                  (numberOfStackItemsPos + numberOfStackItemsLength, "")
+                  (numberOfStackItemsPos + numberOfStackItemsLength, ""),
                 );
            let output = output ++ loopOut;
            (pos, output);
          },
-         (pos, "")
+         (pos, ""),
        );
   let output = output ++ loopOut;
   let lockTimePos = pos;

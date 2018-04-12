@@ -6,7 +6,7 @@ module Data = {
     issuerKeyPair: Bitcoin.ECPair.t,
     storagePrefix: string,
     masterKeyChain: Bitcoin.HDNode.t,
-    network: Network.t
+    network: Network.t,
   };
   let fromUserData = userData =>
     switch (Js.Nullable.toOption(userData##username)) {
@@ -15,7 +15,7 @@ module Data = {
       let issuerKeyPair =
         Utils.keyPairFromPrivateKey(
           Network.bitcoinNetwork(Testnet),
-          userData##appPrivateKey
+          userData##appPrivateKey,
         );
       Some({
         userId: blockstackId |> UserId.fromString,
@@ -23,15 +23,15 @@ module Data = {
         network: Testnet,
         storagePrefix:
           UserInfo.storagePrefix(
-            ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair
+            ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair,
           ),
         masterKeyChain:
           Bitcoin.HDNode.make(
             issuerKeyPair,
             Utils.bufFromHex(
-              "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
-            )
-          )
+              "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb",
+            ),
+          ),
       });
     };
 };
@@ -51,7 +51,7 @@ let initMasterKey = (sessionData: Data.t) => {
          {
            ...sessionData,
            masterKeyChain:
-             Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode)
+             Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode),
          }
          |> resolve
        )
@@ -95,7 +95,7 @@ let signIn = () => {
   Blockstack.redirectToSignIn(
     ~redirectURI=Location.origin ++ "/",
     ~manifestURI=Location.origin ++ "/manifest.json",
-    ~scopes=[|"store_write", "publish_data"|]
+    ~scopes=[|"store_write", "publish_data"|],
   );
   LoginPending;
 };

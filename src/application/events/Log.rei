@@ -13,7 +13,7 @@ module Make:
       event: Event.t,
       hash: string,
       issuerPubKey: string,
-      signature: Bitcoin.ECSignature.t
+      signature: Bitcoin.ECSignature.t,
     };
     let make: unit => t;
     let append: (Bitcoin.ECPair.t, Event.t, t) => (item, t);

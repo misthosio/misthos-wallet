@@ -13,10 +13,10 @@ module Link = {
           ~props={
             "className": className,
             "href": href,
-            "onClick": handleClick
+            "onClick": handleClick,
           },
-          children
-        )
+          children,
+        ),
     };
   };
 };
@@ -34,12 +34,12 @@ let make = renderChildren => {
   subscriptions: ({send}) => [
     Sub(
       () => ReasonReact.Router.watchUrl(url => send(UpdateUrl(url))),
-      ReasonReact.Router.unwatchUrl
-    )
+      ReasonReact.Router.unwatchUrl,
+    ),
   ],
   reducer: (action, _state) =>
-    switch action {
+    switch (action) {
     | UpdateUrl(url) => ReasonReact.Update({url: url})
     },
-  render: ({state}) => renderChildren(state.url)
+  render: ({state}) => renderChildren(state.url),
 };

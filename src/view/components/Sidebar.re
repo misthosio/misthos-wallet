@@ -35,5 +35,5 @@ let make = /*~currentUrl,*/ _children => {
             </li>
           </ul>
       </div>
-    </div>
+    </div>,
 };

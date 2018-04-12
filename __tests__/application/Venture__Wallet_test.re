@@ -18,17 +18,17 @@ let () =
   describe("interation", () => {
     let (userA, userB) = (
       UserId.fromString("userA"),
-      UserId.fromString("userB")
+      UserId.fromString("userB"),
     );
     let (keyA, keyB) = (
       ECPair.fromWIFWithNetwork(
         "cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1",
-        Networks.testnet
+        Networks.testnet,
       ),
       ECPair.fromWIFWithNetwork(
         "cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf",
-        Networks.testnet
-      )
+        Networks.testnet,
+      ),
     );
     let createdEvent =
       VentureCreated.make(
@@ -36,14 +36,14 @@ let () =
         ~creatorId=userA,
         ~creatorPubKey=keyA |> Utils.publicKeyFromKeyPair,
         ~metaPolicy=Policy.absolute,
-        ~network=Network.Regtest
+        ~network=Network.Regtest,
       );
     let chainCode =
       "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
       |> Utils.bufFromHex;
     let (masterA, masterB) = (
       HDNode.make(keyA, chainCode),
-      HDNode.make(keyB, chainCode)
+      HDNode.make(keyB, chainCode),
     );
     let ventureId = createdEvent.ventureId;
     let accountIdx = AccountIndex.default;
@@ -53,23 +53,23 @@ let () =
         ~ventureId,
         ~accountIdx,
         ~keyChainIdx,
-        ~masterKeyChain=masterA
+        ~masterKeyChain=masterA,
       )
       |> CustodianKeyChain.toPublicKeyChain,
       CustodianKeyChain.make(
         ~ventureId,
         ~accountIdx,
         ~keyChainIdx,
-        ~masterKeyChain=masterB
+        ~masterKeyChain=masterB,
       )
-      |> CustodianKeyChain.toPublicKeyChain
+      |> CustodianKeyChain.toPublicKeyChain,
     );
     let accountKeyChain =
       AccountKeyChain.make(
         accountIdx,
         AccountKeyChainIndex.first,
         1,
-        [(userA, cKeyChainA), (userB, cKeyChainB)]
+        [(userA, cKeyChainA), (userB, cKeyChainB)],
       );
     let wallet =
       Wallet.make()
@@ -81,15 +81,15 @@ let () =
                processId: ProcessId.make(),
                data: {
                  accountIdx,
-                 name: "default"
-               }
-             }
-           )
+                 name: "default",
+               },
+             },
+           ),
          )
       |> Wallet.apply(
            AccountKeyChainUpdated(
-             AccountKeyChainUpdated.make(~keyChain=accountKeyChain)
-           )
+             AccountKeyChainUpdated.make(~keyChain=accountKeyChain),
+           ),
          );
     let address1 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address1));
@@ -101,14 +101,14 @@ let () =
         accountIdx,
         AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
         2,
-        [(userA, cKeyChainA), (userB, cKeyChainB)]
+        [(userA, cKeyChainA), (userB, cKeyChainB)],
       );
     let wallet =
       wallet
       |> Wallet.apply(
            AccountKeyChainUpdated(
-             AccountKeyChainUpdated.make(~keyChain=accountKeyChain)
-           )
+             AccountKeyChainUpdated.make(~keyChain=accountKeyChain),
+           ),
          );
     let address3 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address3));
@@ -136,7 +136,7 @@ let () =
           (address1.address, address1Satoshis),
           (address2.address, address2Satoshis),
           (address3.address, address3Satoshis),
-          (address4.address, address4Satoshis)
+          (address4.address, address4Satoshis),
         ])
         |> then_((_) =>
              oneKeyChainWallet^
@@ -146,11 +146,11 @@ let () =
                     issuerKeyPair: keyA,
                     storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
                     masterKeyChain: masterA,
-                    network: Regtest
+                    network: Regtest,
                   },
                   accountIdx,
                   [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
-                  BTC.fromSatoshis(1L)
+                  BTC.fromSatoshis(1L),
                 )
            )
         |> then_(({data} as event: Event.Payout.Proposal.t) => {
@@ -173,7 +173,7 @@ let () =
                   oneKeyChainWalletTotal
                   |> BTC.minus(oneKeyChainSpendAmount)
                   |> BTC.minus(oneKeyChainExpectedFee),
-                  BTC.zero
+                  BTC.zero,
                 ))
              |> resolve
            )
@@ -188,11 +188,11 @@ let () =
                userId: userA,
                issuerKeyPair: keyA,
                storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
-               masterKeyChain: masterA
+               masterKeyChain: masterA,
              },
              accountIdx,
              [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
-             BTC.fromSatoshis(1L)
+             BTC.fromSatoshis(1L),
            )
         |> then_(({data} as event: Event.Payout.Proposal.t) => {
              let PayoutTransaction.Signed(payoutTx) =
@@ -202,18 +202,18 @@ let () =
                  ~masterKeyChain=masterB,
                  ~accountKeyChains=wallet.accountKeyChains,
                  ~payoutTx=data.payoutTx,
-                 ~network=Network.Regtest
+                 ~network=Network.Regtest,
                );
              Js.Promise.(
                all2((
                  resolve(
-                   twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event))
+                   twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event)),
                  ),
                  PayoutTransaction.finalize(
                    [data.payoutTx, payoutTx],
-                   Network.Regtest
+                   Network.Regtest,
                  )
-                 |> Helpers.broadcastTransaction
+                 |> Helpers.broadcastTransaction,
                ))
              );
            })
@@ -227,7 +227,7 @@ let () =
                   twoKeyChainWalletTotal
                   |> BTC.minus(twoKeyChainSpendAmount)
                   |> BTC.minus(expectedFee),
-                  BTC.zero
+                  BTC.zero,
                 ))
              |> resolve;
            })

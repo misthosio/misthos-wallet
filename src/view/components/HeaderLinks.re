@@ -13,5 +13,5 @@ let make = _children => {
           </Router.Link>
         </li>
       </ul>
-    </div>
+    </div>,
 };

@@ -7,7 +7,7 @@ type state = {
   endorsements: list(userId),
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
-  creatorId: userId
+  creatorId: userId,
 };
 
 let make = (proposal: Partner.Proposal.t, log) => {
@@ -18,23 +18,23 @@ let make = (proposal: Partner.Proposal.t, log) => {
         endorsements: [proposal.supporterId],
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
-        creatorId: UserId.fromString("")
+        creatorId: UserId.fromString(""),
       });
     val completed = ref(false);
     val result = ref(None);
     pub receive = ({event}: EventLog.item) => {
       state :=
         (
-          switch event {
+          switch (event) {
           | VentureCreated(event) => {
               ...state^,
               systemIssuer: event.systemIssuer,
-              creatorId: event.creatorId
+              creatorId: event.creatorId,
             }
           | PartnerEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: [event.supporterId, ...state^.endorsements]
+              endorsements: [event.supporterId, ...state^.endorsements],
             }
           | PartnerAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
@@ -42,7 +42,7 @@ let make = (proposal: Partner.Proposal.t, log) => {
             state^;
           | PartnerAccepted({data}) => {
               ...state^,
-              eligable: [data.id, ...state^.eligable]
+              eligable: [data.id, ...state^.eligable],
             }
           | _ => state^
           }
@@ -52,19 +52,19 @@ let make = (proposal: Partner.Proposal.t, log) => {
           && state^.policy
           |> Policy.fulfilled(
                ~eligable=state^.eligable,
-               ~endorsed=state^.endorsements
+               ~endorsed=state^.endorsements,
              )) {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAccepted(Partner.Acceptance.fromProposal(proposal))
+            PartnerAccepted(Partner.Acceptance.fromProposal(proposal)),
           ));
       };
       if (proposal.data.id == state^.creatorId && log |> EventLog.length == 2) {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAccepted(Partner.Acceptance.fromProposal(proposal))
+            PartnerAccepted(Partner.Acceptance.fromProposal(proposal)),
           ));
       };
     };

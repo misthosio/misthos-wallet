@@ -9,24 +9,24 @@ type state = {
   ventureId,
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
-  payoutTx: option(PayoutTransaction.t)
+  payoutTx: option(PayoutTransaction.t),
 };
 
 let make =
     (
       {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
       {processId: payoutProcess, supporterId}: Payout.Endorsement.t,
-      log
+      log,
     ) => {
   let state =
     log
     |> EventLog.reduce(
          (state, {event}) =>
-           switch event {
+           switch (event) {
            | VentureCreated({ventureId, network}) => {
                ...state,
                ventureId,
-               network
+               network,
              }
            | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) =>
              let accountKeyChains =
@@ -38,16 +38,16 @@ let make =
                accountKeyChains: [
                  (
                    keyChain.accountIdx,
-                   [(keyChain.keyChainIdx, keyChain), ...accountKeyChains]
+                   [(keyChain.keyChainIdx, keyChain), ...accountKeyChains],
                  ),
                  ...state.accountKeyChains
-                    |> List.remove_assoc(keyChain.accountIdx)
-               ]
+                    |> List.remove_assoc(keyChain.accountIdx),
+               ],
              };
            | PayoutProposed({processId, data})
                when ProcessId.eq(processId, payoutProcess) => {
                ...state,
-               payoutTx: Some(data.payoutTx)
+               payoutTx: Some(data.payoutTx),
              }
            | _ => state
            },
@@ -55,8 +55,8 @@ let make =
            network: Network.Regtest,
            ventureId: VentureId.fromString(""),
            accountKeyChains: [],
-           payoutTx: None
-         }
+           payoutTx: None,
+         },
        );
   let signEvent =
     if (UserId.eq(supporterId, userId)) {
@@ -67,7 +67,7 @@ let make =
           ~masterKeyChain,
           ~accountKeyChains=state.accountKeyChains,
           ~payoutTx=state.payoutTx |> Js.Option.getExn,
-          ~network=state.network
+          ~network=state.network,
         )
       ) {
       | Signed(payoutTx) =>
@@ -77,9 +77,9 @@ let make =
             Payout.Signature.make(
               ~processId=payoutProcess,
               ~custodianId=userId,
-              ~payoutTx
-            )
-          )
+              ~payoutTx,
+            ),
+          ),
         ))
       | NotSigned => None
       };
@@ -89,13 +89,13 @@ let make =
   let process = {
     val signPending =
       ref(
-        switch signEvent {
+        switch (signEvent) {
         | Some(_) => true
         | None => false
-        }
+        },
       );
     pub receive = ({event}: EventLog.item) =>
-      switch event {
+      switch (event) {
       | PayoutSigned({custodianId, processId as signingProcess})
           when
             UserId.eq(custodianId, userId)

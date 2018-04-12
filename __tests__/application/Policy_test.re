@@ -12,8 +12,8 @@ let () =
         p
         |> Policy.fulfilled(
              ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
-             ~endorsed=["a" |> UserId.fromString, "b" |> UserId.fromString]
-           )
+             ~endorsed=["a" |> UserId.fromString, "b" |> UserId.fromString],
+           ),
       )
       |> toBe(true);
     });
@@ -23,8 +23,8 @@ let () =
         p
         |> Policy.fulfilled(
              ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
-             ~endorsed=["a" |> UserId.fromString, "c" |> UserId.fromString]
-           )
+             ~endorsed=["a" |> UserId.fromString, "c" |> UserId.fromString],
+           ),
       )
       |> toBe(false);
     });

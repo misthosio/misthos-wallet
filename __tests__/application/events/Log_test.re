@@ -34,7 +34,10 @@ let () = {
       let result =
         log
         |> TestLog.findNewItems([otherLog, anotherLog])
-        |> List.fold_left((state, {event}: TestLog.item) => state ++ event, "");
+        |> List.fold_left(
+             (state, {event}: TestLog.item) => state ++ event,
+             "",
+           );
       expect(result) |> toEqual(" and don't you eat that yellow snow");
     })
   );

@@ -11,7 +11,7 @@ let decodeUTXO = (address, raw) : WalletTypes.utxo =>
     amount:
       raw |> field("value_int", float) |> Int64.of_float |> BTC.fromSatoshis,
     confirmations: raw |> field("confirmations", int),
-    address
+    address,
   };
 
 let decodeUTXOs = (address, raw) =>
@@ -19,16 +19,18 @@ let decodeUTXOs = (address, raw) =>
     raw
     |> withDefault(
          [],
-         field("unspent", withDefault([], list(decodeUTXO(address))))
+         field("unspent", withDefault([], list(decodeUTXO(address)))),
        )
   );
 
 let decodeNextLink = raw =>
-  Json.Decode.(raw |> optional(field("paging", field("next_link", string))));
+  Json.Decode.(
+    raw |> optional(field("paging", field("next_link", string)))
+  );
 
 let rec fetchAll = (address, link, utxos) =>
   Js.Promise.(
-    switch link {
+    switch (link) {
     | Some(link) =>
       Fetch.fetch(link)
       |> then_(Fetch.Response.json)
@@ -36,7 +38,7 @@ let rec fetchAll = (address, link, utxos) =>
            fetchAll(
              address,
              decodeNextLink(res),
-             utxos |> List.append(decodeUTXOs(address, res))
+             utxos |> List.append(decodeUTXOs(address, res)),
            )
          )
     | None => resolve(utxos)
@@ -54,9 +56,9 @@ let getUTXOs = (config, addresses) =>
              ++ config.subdomain
              ++ ".smartbit.com.au/v1/blockchain/address/"
              ++ address
-             ++ "/unspent?limit=1000"
+             ++ "/unspent?limit=1000",
            ),
-           []
+           [],
          )
        )
     |> Array.of_list
@@ -72,8 +74,8 @@ let broadcastTransaction = (config, transaction) => {
       Fetch.RequestInit.make(
         ~method_=Fetch.Post,
         ~body=Fetch.BodyInit.make({j|{"hex":"$(txHex)"}|j}),
-        ()
-      )
+        (),
+      ),
     )
     |> then_(Fetch.Response.json)
     |> then_(res => {
@@ -82,9 +84,10 @@ let broadcastTransaction = (config, transaction) => {
              res |> optional(field("error", field("message", string)))
            );
          (
-           switch err {
+           switch (err) {
            | Some(err) => WalletTypes.Error(err)
-           | None => WalletTypes.Ok(Json.Decode.(res |> field("txid", string)))
+           | None =>
+             WalletTypes.Ok(Json.Decode.(res |> field("txid", string)))
            }
          )
          |> resolve;
