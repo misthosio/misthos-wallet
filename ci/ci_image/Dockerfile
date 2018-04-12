@@ -19,4 +19,4 @@ RUN mkdir /root/.npm-global && \
 RUN CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
       echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-      apt-get update && sudo apt-get -y install google-cloud-sdk && apt-get clean
+      apt-get update && apt-get -y install google-cloud-sdk && apt-get clean
