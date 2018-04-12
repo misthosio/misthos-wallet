@@ -48,7 +48,7 @@ jobs:
       - name: repo
       - name: build
       params:
-          GCP_SERIVCE_ACCOUNT: ((gcp-service-account))
+          GCP_SERVICE_ACCOUNT: ((gcp-service-account))
       run:
         path: repo/ci/tasks/deploy-staging.sh
 - name: build-task-image
