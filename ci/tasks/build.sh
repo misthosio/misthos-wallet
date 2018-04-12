@@ -1,9 +1,16 @@
+cp -r deps/* repo
+
 #!/bin/bash
 
 set -e
 
-cd repo-with-deps
+pushd repo
+
+make install
 make build
-cd ..
-cp -r repo-with-deps/build build
+
+popd
+
+cp -r repo/node_modules deps
+cp -r repo/build build
 

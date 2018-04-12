@@ -9,47 +9,21 @@ jobs:
 - name: test
   plan:
   - {get: repo, trigger: true}
-  - task: install-deps
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source: {repository: misthosio/misthos-web-pipeline}
-      caches:
-      - path: deps
-      inputs:
-      - name: repo
-      outputs:
-      - name: repo-with-deps
-      run:
-        path: repo/ci/tasks/install-deps.sh
   - task: test
     config:
       platform: linux
       image_resource:
         type: docker-image
         source: {repository: misthosio/misthos-web-pipeline}
-      inputs:
-      - name: repo-with-deps
-      run:
-        path: repo-with-deps/ci/tasks/run-tests.sh
-- name: build
-  plan:
-  - {get: repo, trigger: true, passed: [test]}
-  - task: install-deps
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source: {repository: misthosio/misthos-web-pipeline}
       caches:
       - path: deps
       inputs:
       - name: repo
-      outputs:
-      - name: repo-with-deps
       run:
-        path: repo/ci/tasks/install-deps.sh
+        path: repo/ci/tasks/run-tests.sh
+- name: build
+  plan:
+  - {get: repo, trigger: true, passed: [test]}
   - task: build
     config:
       platform: linux
