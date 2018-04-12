@@ -3,7 +3,7 @@ let satoshisPerBTC = 1e8;
 type config = {
   bitcoindUrl: string,
   rpcUser: string,
-  rpcPassword: string,
+  rpcPassword: string
 };
 
 let makeAuthHeaders = ({rpcUser, rpcPassword}) => {
@@ -21,8 +21,8 @@ let rpcCall = ({bitcoindUrl} as config, jsonRPC) =>
         ~method_=Fetch.Post,
         ~headers=makeAuthHeaders(config),
         ~body=Fetch.BodyInit.make(jsonRPC),
-        (),
-      ),
+        ()
+      )
     )
     |> then_(Fetch.Response.json)
   );
@@ -32,11 +32,11 @@ type tx = {
   txOutputN: int,
   address: string,
   amount: BTC.t,
-  confirmations: int,
+  confirmations: int
 };
 
 let importAllAs = (config, addresses, label) =>
-  switch (addresses) {
+  switch addresses {
   | [] => Js.Promise.resolve()
   | [first, ...rest] =>
     let jsonRPCImport =
@@ -44,7 +44,7 @@ let importAllAs = (config, addresses, label) =>
         object_([
           ("jsonrpc", string("1.0")),
           ("method", string("importaddress")),
-          ("params", list(string, [first, label])),
+          ("params", list(string, [first, label]))
         ])
       )
       |> Json.stringify;
@@ -60,13 +60,13 @@ let importAllAs = (config, addresses, label) =>
                       object_([
                         ("jsonrpc", string("1.0")),
                         ("method", string("importaddress")),
-                        ("params", list(string, [address, label])),
+                        ("params", list(string, [address, label]))
                       ])
                     )
                     |> Json.stringify;
                   rpcCall(config, jsonRPCImport);
                 }),
-           start,
+           start
          )
       |> then_((_) => resolve())
     );
@@ -83,8 +83,8 @@ let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
                ("method", string("listunspent")),
                (
                  "params",
-                 tuple3(int, int, list(string), (1, 9999999, addresses)),
-               ),
+                 tuple3(int, int, list(string), (1, 9999999, addresses))
+               )
              ])
            )
            |> Json.stringify;
@@ -103,13 +103,12 @@ let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
                         txId: utxo |> field("txid", string),
                         txOutputN: utxo |> field("vout", int),
                         address: utxo |> field("address", string),
-                        amount:
-                          utxo |> field("amount", float) |> BTC.fromFloat,
-                        confirmations: utxo |> field("confirmations", int),
+                        amount: utxo |> field("amount", float) |> BTC.fromFloat,
+                        confirmations: utxo |> field("confirmations", int)
                       }: WalletTypes.utxo
                     )
-                  ),
-                ),
+                  )
+                )
               )
          )
          |> resolve
@@ -128,8 +127,8 @@ let listTransactions = (config, addresses, max) : Js.Promise.t(list(tx)) => {
                ("method", string("listtransactions")),
                (
                  "params",
-                 tuple4(string, int, int, bool, (label, max, 0, true)),
-               ),
+                 tuple4(string, int, int, bool, (label, max, 0, true))
+               )
              ])
            )
            |> Json.stringify;
@@ -148,10 +147,10 @@ let listTransactions = (config, addresses, max) : Js.Promise.t(list(tx)) => {
                       txOutputN: tx |> field("vout", int),
                       address: tx |> field("address", string),
                       amount: tx |> field("amount", float) |> BTC.fromFloat,
-                      confirmations: tx |> field("confirmations", int),
+                      confirmations: tx |> field("confirmations", int)
                     }
-                  ),
-                ),
+                  )
+                )
               )
          )
          |> resolve
@@ -165,10 +164,7 @@ let broadcastTransaction = (config, transaction) => {
       object_([
         ("jsonrpc", string("1.0")),
         ("method", string("sendrawtransaction")),
-        (
-          "params",
-          list(string, [transaction |> Bitcoin.Transaction.toHex]),
-        ),
+        ("params", list(string, [transaction |> Bitcoin.Transaction.toHex]))
       ])
     )
     |> Json.stringify;
@@ -180,7 +176,7 @@ let broadcastTransaction = (config, transaction) => {
              res |> field("error", optional(field("message", string)))
            );
          (
-           switch (err) {
+           switch err {
            | Some(err) => WalletTypes.Error(err)
            | None =>
              WalletTypes.Ok(Json.Decode.(res |> field("result", string)))

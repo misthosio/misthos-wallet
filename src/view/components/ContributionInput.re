@@ -17,16 +17,16 @@ type state = {
       ~currency: string,
       ~description: string
     ) =>
-    unit,
+    unit
 };
 
 let extractAmount = event =>
   int_of_string(
-    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value,
+    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
 let extractDescription = event => ReactDOMRe.domElementToObj(
-                                    ReactEventRe.Form.target(event),
+                                    ReactEventRe.Form.target(event)
                                   )##value;
 
 let component = ReasonReact.reducerComponent("ContributionInput");
@@ -37,10 +37,10 @@ let make = (~submit, _children) => {
     amountInteger: 0,
     amountFraction: 0,
     description: "",
-    submit,
+    submit
   },
   reducer: (action, state) =>
-    switch (action) {
+    switch action {
     | ChangeAmountInteger(amountInteger) =>
       ReasonReact.Update({...state, amountInteger})
     | ChangeAmountFraction(amountFraction) =>
@@ -56,9 +56,9 @@ let make = (~submit, _children) => {
               ~amountInteger=state.amountInteger,
               ~amountFraction=state.amountFraction,
               ~currency="USD",
-              ~description=state.description,
+              ~description=state.description
             )
-        ),
+        )
       )
     },
   render: ({send, state}) =>
@@ -83,5 +83,5 @@ let make = (~submit, _children) => {
       <button onClick=(_e => send(Submit))>
         (text("Propose Contribution"))
       </button>
-    </div>,
+    </div>
 };

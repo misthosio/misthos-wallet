@@ -32,7 +32,7 @@ let hashCode = s =>
            let h = h lsl 5 - h + (c.[0] |> Char.code);
            h land h;
          },
-         0,
+         0
        )
   )
   land 0x7fffffff;

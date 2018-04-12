@@ -2,7 +2,7 @@ type watcher = {
   .
   receive: EventLog.item => unit,
   pendingEvent: unit => option(Js.Promise.t((Bitcoin.ECPair.t, Event.t))),
-  processCompleted: unit => bool,
+  processCompleted: unit => bool
 };
 
 type t = list(watcher);
@@ -26,7 +26,7 @@ module SignPayout = Watcher__SignPayout;
 module BroadcastPayout = Watcher__BroadcastPayout;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
-  switch (event) {
+  switch event {
   | VentureCreated(event) => Some(Initialize.make(session, event, log))
   | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
   | AccountCreationProposed(proposal) =>
@@ -36,10 +36,8 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   | PayoutProposed(proposal) => Some(PayoutApproval.make(proposal, log))
   | PayoutEndorsed(endorsement) =>
     Some(SignPayout.make(session, endorsement, log))
-  | PayoutAccepted(acceptance) =>
-    Some(BroadcastPayout.make(acceptance, log))
-  | CustodianProposed(proposal) =>
-    Some(CustodianApproval.make(proposal, log))
+  | PayoutAccepted(acceptance) => Some(BroadcastPayout.make(acceptance, log))
+  | CustodianProposed(proposal) => Some(CustodianApproval.make(proposal, log))
   | CustodianAccepted(acceptance) =>
     Some(CustodianKeyChain.make(session, acceptance, log))
   | _ => None
@@ -69,14 +67,14 @@ let rec processPendingPromise = (session, eventFound, promise) =>
                Some(
                  watchers
                  |> List.rev
-                 |> List.find(w => w#pendingEvent() |> Js.Option.isSome),
+                 |> List.find(w => w#pendingEvent() |> Js.Option.isSome)
                )
              ) {
              | Not_found => None
              }
            )
            |> Utils.mapOption(w => w#pendingEvent() |> Js.Option.getExn);
-         switch (nextEvent) {
+         switch nextEvent {
          | None => (log, state, watchers) |> resolve
          | Some(eventPromise) =>
            processPendingPromise(
@@ -88,7 +86,7 @@ let rec processPendingPromise = (session, eventFound, promise) =>
                     state |> eventFound(issuer, event, log);
                   (log, state, watchers |> apply(session, item, log))
                   |> resolve;
-                }),
+                })
            )
          };
        })
@@ -98,7 +96,7 @@ let processPending = (session, log, eventFound, state, watchers) =>
   processPendingPromise(
     session,
     eventFound,
-    (log, state, watchers) |> Js.Promise.resolve,
+    (log, state, watchers) |> Js.Promise.resolve
   );
 
 let applyAndProcessPending = (session, item, log, eventFound, state, watchers) =>

@@ -7,7 +7,7 @@ module Message = {
     fun
     | RegularlyFetch(links, summary) => {
         "links": links,
-        "summary": EventLog.encodeSummary(summary),
+        "summary": EventLog.encodeSummary(summary)
       };
   let _decodeToReceived = message =>
     Fetched([message##data |> Json.parseOrRaise |> EventLog.decode]);

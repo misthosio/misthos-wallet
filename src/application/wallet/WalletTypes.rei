@@ -3,7 +3,7 @@ type utxo = {
   txOutputN: int,
   address: string,
   amount: BTC.t,
-  confirmations: int,
+  confirmations: int
 };
 
 type broadcastResult =

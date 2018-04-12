@@ -9,7 +9,7 @@ type state = {
   viewModel: ViewModel.t,
   prospectId: string,
   balance: option(Venture.Wallet.balance),
-  worker: ref(Worker.t),
+  worker: ref(Worker.t)
 };
 
 type action =
@@ -24,7 +24,7 @@ type action =
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
-    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value,
+    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value
   );
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
@@ -36,7 +36,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
     venture: initialVenture,
     viewModel: Venture.getViewModel(initialVenture),
     prospectId: "",
-    worker: ref(Worker.make(~onMessage=Js.log)),
+    worker: ref(Worker.make(~onMessage=Js.log))
   },
   subscriptions: ({send, state}) => [
     Sub(
@@ -49,7 +49,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           |> then_(urls =>
                Worker.Message.RegularlyFetch(
                  urls,
-                 Venture.getSummary(initialVenture),
+                 Venture.getSummary(initialVenture)
                )
                |> Worker.postMessage(worker)
                |> resolve
@@ -59,8 +59,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         state.worker := worker;
         worker;
       },
-      Worker.terminate,
-    ),
+      Worker.terminate
+    )
   ],
   didMount: _self =>
     ReasonReact.SideEffects(
@@ -71,10 +71,10 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           |> then_(balance => send(UpdateBalance(balance)) |> resolve)
           |> catch(error => Utils.printError("whoops", error) |> resolve)
           |> ignore
-        ),
+        )
     ),
   reducer: (action, state) =>
-    switch (action) {
+    switch action {
     | WorkerMessage(Fetched(eventLogs)) =>
       ReasonReact.SideEffects(
         (
@@ -85,18 +85,17 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> exec(eventLogs)
                 |> then_(
                      fun
-                     | Ok(venture) =>
-                       send(UpdateVenture(venture)) |> resolve
+                     | Ok(venture) => send(UpdateVenture(venture)) |> resolve
                      | Error(venture, _item, result) => {
                          Js.log("An error occured while synchronizing");
                          Js.log(result);
                          send(UpdateVenture(venture)) |> resolve;
-                       },
+                       }
                    )
                 |> ignore
               )
             )
-        ),
+        )
       )
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({...state, prospectId: text})
@@ -113,7 +112,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                   |> exec(~prospectId=prospectId |> UserId.fromString)
                   |> then_(result =>
                        (
-                         switch (result) {
+                         switch result {
                          | Ok(venture) => send(UpdateVenture(venture))
                          | NoUserInfo => Js.log("NoUserInfo")
                          }
@@ -123,7 +122,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                   |> ignore
                 )
               )
-          ),
+          )
         )
       }
     | EndorsePartner(processId) =>
@@ -136,7 +135,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> exec(~processId)
                 |> then_(result =>
                      (
-                       switch (result) {
+                       switch result {
                        | Ok(venture) => send(UpdateVenture(venture))
                        }
                      )
@@ -145,7 +144,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> ignore
               )
             )
-        ),
+        )
       )
     | UpdateVenture(venture) =>
       Js.Promise.(
@@ -160,7 +159,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       ReasonReact.Update({
         ...state,
         venture,
-        viewModel: Venture.getViewModel(venture),
+        viewModel: Venture.getViewModel(venture)
       });
     | UpdateBalance(balance) =>
       ReasonReact.Update({...state, balance: Some(balance)})
@@ -174,7 +173,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> exec(~accountIdx=WalletTypes.AccountIndex.default)
                 |> then_(result =>
                      (
-                       switch (result) {
+                       switch result {
                        | Ok(_, venture) => send(UpdateVenture(venture))
                        }
                      )
@@ -183,7 +182,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> ignore
               )
             )
-        ),
+        )
       )
     | ProposePayout(destinations) =>
       ReasonReact.SideEffects(
@@ -195,11 +194,11 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> exec(
                      ~accountIdx=WalletTypes.AccountIndex.default,
                      ~destinations,
-                     ~fee=BTC.fromSatoshis(1L),
+                     ~fee=BTC.fromSatoshis(1L)
                    )
                 |> then_(result =>
                      (
-                       switch (result) {
+                       switch result {
                        | Ok(venture) => send(UpdateVenture(venture))
                        }
                      )
@@ -208,7 +207,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> ignore
               )
             )
-        ),
+        )
       )
     },
   render: ({send, state}) => {
@@ -220,8 +219,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                <li key=(m.userId |> UserId.toString)>
                  <div> (text(m.userId |> UserId.toString)) </div>
                </li>
-             ),
-        ),
+             )
+        )
       );
     let prospects =
       ReasonReact.arrayToElement(
@@ -237,16 +236,14 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
-                          prospect.endorsedBy |> List.map(UserId.toString),
-                        ),
+                          prospect.endorsedBy |> List.map(UserId.toString)
+                        )
                    )
                  )
                  (
                    if (prospect.endorsedBy |> List.mem(session.userId) == false) {
                      <button
-                       onClick=(
-                         _e => send(EndorsePartner(prospect.processId))
-                       )>
+                       onClick=(_e => send(EndorsePartner(prospect.processId)))>
                        (text("Endorse Partner"))
                      </button>;
                    } else {
@@ -254,15 +251,15 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                    }
                  )
                </li>
-             ),
-        ),
+             )
+        )
       );
     let addresses =
       ReasonReact.arrayToElement(
         Array.of_list(
           ViewModel.incomeAddresses(state.viewModel)
-          |> List.map(address => <li key=address> (text(address)) </li>),
-        ),
+          |> List.map(address => <li key=address> (text(address)) </li>)
+        )
       );
     <div>
       <div>
@@ -272,7 +269,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
               ViewModel.ventureName(state.viewModel)
               ++ " ("
               ++ Venture.getId(initialVenture)
-              ++ ")",
+              ++ ")"
             )
           )
         </h2>
@@ -282,7 +279,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             text(
               "MetaPolicy - ActivationThreshold "
               ++ string_of_float(state.viewModel.metaPolicy.thresholdPercent)
-              ++ "%",
+              ++ "%"
             )
           )
         </div>
@@ -291,9 +288,9 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             text(
               "PartnerPolicy - ActivationThreshold "
               ++ string_of_float(
-                   state.viewModel.partnerPolicy.thresholdPercent,
+                   state.viewModel.partnerPolicy.thresholdPercent
                  )
-              ++ "%",
+              ++ "%"
             )
           )
         </div>
@@ -313,14 +310,14 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         <h3> (text("Wallet:")) </h3>
         <h4> (text("blance: ")) </h4>
         (
-          switch (state.balance) {
+          switch state.balance {
           | None => text("loading")
           | Some(balance) =>
             text(
               "total: "
               ++ BTC.format(balance.total)
               ++ " reserved: "
-              ++ BTC.format(balance.reserved),
+              ++ BTC.format(balance.reserved)
             )
           }
         )
@@ -332,5 +329,5 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         <Payout onSend=(destinations => send(ProposePayout(destinations))) />
       </div>
     </div>;
-  },
+  }
 };

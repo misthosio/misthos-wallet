@@ -15,7 +15,7 @@ let make = _children => {
         </button>
         <div className="collapse navbar-collapse"> <HeaderLinks /> </div>
       </div>
-    </nav>,
+    </nav>
   /* <Navbar.Toggle onClick=this.mobileSidebarToggle /> */
   /* </Navbar.Header> */
   /* <Navbar.Collapse> <HeaderLinks /> </Navbar.Collapse> */

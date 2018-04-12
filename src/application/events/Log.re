@@ -9,7 +9,7 @@ module Make = (Event: Encodable) => {
     event: Event.t,
     hash: string,
     issuerPubKey: string,
-    signature: Bitcoin.ECSignature.t,
+    signature: Bitcoin.ECSignature.t
   };
   type t = list(item);
   type summary = {knownItems: list(string)};
@@ -30,7 +30,7 @@ module Make = (Event: Encodable) => {
       event,
       hash: hashBuffer |> Utils.bufToHex,
       issuerPubKey,
-      signature: issuerKeyPair |> Bitcoin.ECPair.sign(hashBuffer),
+      signature: issuerKeyPair |> Bitcoin.ECPair.sign(hashBuffer)
     };
   };
   let append = (issuer, event, log) => {
@@ -56,9 +56,9 @@ module Make = (Event: Encodable) => {
                   } else {
                     [(hash, item), ...found];
                   },
-                found,
+                found
               ),
-         [],
+         []
        )
     |> List.rev_map(((_, item)) => item)
     |> List.find_all(({issuerPubKey, event, hash, signature}) => {
@@ -74,13 +74,10 @@ module Make = (Event: Encodable) => {
   };
   let length = List.length;
   let getSummary = log => {
-    knownItems:
-      log |> List.fold_left((items, {hash}) => [hash, ...items], []),
+    knownItems: log |> List.fold_left((items, {hash}) => [hash, ...items], [])
   };
   let encodeSummary = summary =>
-    Json.Encode.(
-      object_([("knownItems", list(string, summary.knownItems))])
-    );
+    Json.Encode.(object_([("knownItems", list(string, summary.knownItems))]));
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let item = item =>
@@ -89,7 +86,7 @@ module Make = (Event: Encodable) => {
           ("event", Event.encode(item.event)),
           ("issuerPubKey", string(item.issuerPubKey)),
           ("hash", string(item.hash)),
-          ("signature", ecSig(item.signature)),
+          ("signature", ecSig(item.signature))
         ])
       );
     let log = Json.Encode.(list(item));
@@ -103,7 +100,7 @@ module Make = (Event: Encodable) => {
         event: item |> field("event", Event.decode),
         hash: item |> field("hash", string),
         issuerPubKey: item |> field("issuerPubKey", string),
-        signature: item |> field("signature", ecSig),
+        signature: item |> field("signature", ecSig)
       };
     let log = Json.Decode.(list(item));
   };

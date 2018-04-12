@@ -13,7 +13,7 @@ let encode =
 
 let decode = raw => {
   let name = raw |> Json.Decode.string;
-  switch (name) {
+  switch name {
   | "regtest" => Regtest
   | "testnet" => Testnet
   | "mainnet" => Mainnet
@@ -26,7 +26,7 @@ type txInput = {
   address: string,
   value: BTC.t,
   nCoSigners: int,
-  coordinates: AccountKeyChain.Address.Coordinates.t,
+  coordinates: AccountKeyChain.Address.Coordinates.t
 };
 
 let encodeInput = input =>
@@ -39,8 +39,8 @@ let encodeInput = input =>
       ("nCoSigners", int(input.nCoSigners)),
       (
         "coordinates",
-        AccountKeyChain.Address.Coordinates.encode(input.coordinates),
-      ),
+        AccountKeyChain.Address.Coordinates.encode(input.coordinates)
+      )
     ])
   );
 
@@ -52,7 +52,7 @@ let decodeInput = raw =>
     value: raw |> field("value", BTC.decode),
     nCoSigners: raw |> field("nCoSigners", int),
     coordinates:
-      raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode),
+      raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode)
   };
 
 module Make = (Client: NetworkClient) => {
@@ -73,10 +73,9 @@ module Make = (Client: NetworkClient) => {
                   txId,
                   txOutputN,
                   address,
-                  nCoSigners:
-                    snd(addresses |> List.assoc(address)).nCoSigners,
+                  nCoSigners: snd(addresses |> List.assoc(address)).nCoSigners,
                   value: amount,
-                  coordinates: addresses |> List.assoc(address) |> fst,
+                  coordinates: addresses |> List.assoc(address) |> fst
                 }
               )
            |> resolve
@@ -93,11 +92,11 @@ module Regtest =
             {
               bitcoindUrl: "http://localhost:18322",
               rpcUser: "bitcoin",
-              rpcPassword: "bitcoin",
+              rpcPassword: "bitcoin"
             }: BitcoindClient.config,
-            Bitcoin.Networks.testnet,
+            Bitcoin.Networks.testnet
           )
-    ),
+    )
   );
 
 module Testnet =
@@ -105,9 +104,9 @@ module Testnet =
     (
       val SmartbitClient.make(
             SmartbitClient.testnetConfig,
-            Bitcoin.Networks.testnet,
+            Bitcoin.Networks.testnet
           )
-    ),
+    )
   );
 
 module Mainnet =
@@ -115,9 +114,9 @@ module Mainnet =
     (
       val SmartbitClient.make(
             SmartbitClient.mainnetConfig,
-            Bitcoin.Networks.bitcoin,
+            Bitcoin.Networks.bitcoin
           )
-    ),
+    )
   );
 
 let transactionInputs =

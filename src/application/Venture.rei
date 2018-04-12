@@ -5,7 +5,7 @@ open WalletTypes;
 module Index: {
   type item = {
     id: ventureId,
-    name: string,
+    name: string
   };
   type t = list(item);
   let load: unit => Js.Promise.t(t);
@@ -47,7 +47,7 @@ let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
 module Wallet: {
   type balance = {
     total: BTC.t,
-    reserved: BTC.t,
+    reserved: BTC.t
   };
   let balance: t => Js.Promise.t(balance);
 };

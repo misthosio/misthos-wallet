@@ -16,12 +16,12 @@ type t = {
   exposedCoordinates:
     list((accountIdx, list(AccountKeyChain.Address.Coordinates.t))),
   reservedInputs: list(Network.txInput),
-  payoutProcesses: list((ProcessId.t, PayoutTransaction.t)),
+  payoutProcesses: list((ProcessId.t, PayoutTransaction.t))
 };
 
 type balance = {
   total: BTC.t,
-  reserved: BTC.t,
+  reserved: BTC.t
 };
 
 let make = () => {
@@ -33,24 +33,21 @@ let make = () => {
   nextChangeCoordinates: [],
   exposedCoordinates: [],
   reservedInputs: [],
-  payoutProcesses: [],
+  payoutProcesses: []
 };
 
 let apply = (event: Event.t, state) =>
-  switch (event) {
+  switch event {
   | VentureCreated({ventureId, metaPolicy, network}) => {
       ...state,
       network,
       ventureId,
-      payoutPolicy: metaPolicy,
+      payoutPolicy: metaPolicy
     }
   | AccountCreationAccepted({data}) => {
       ...state,
-      exposedCoordinates: [
-        (data.accountIdx, []),
-        ...state.exposedCoordinates,
-      ],
-      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
+      exposedCoordinates: [(data.accountIdx, []), ...state.exposedCoordinates],
+      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains]
     }
   | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) => {
       ...state,
@@ -59,25 +56,25 @@ let apply = (event: Event.t, state) =>
           keyChain.accountIdx,
           [
             (keyChain.keyChainIdx, keyChain),
-            ...state.accountKeyChains |> List.assoc(keyChain.accountIdx),
-          ],
+            ...state.accountKeyChains |> List.assoc(keyChain.accountIdx)
+          ]
         ),
-        ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx),
+        ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx)
       ],
       nextCoordinates: [
         (
           keyChain.accountIdx,
-          AccountKeyChain.Address.Coordinates.firstExternal(keyChain),
+          AccountKeyChain.Address.Coordinates.firstExternal(keyChain)
         ),
-        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx),
+        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx)
       ],
       nextChangeCoordinates: [
         (
           keyChain.accountIdx,
-          AccountKeyChain.Address.Coordinates.firstInternal(keyChain),
+          AccountKeyChain.Address.Coordinates.firstInternal(keyChain)
         ),
-        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx),
-      ],
+        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx)
+      ]
     }
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
     let accountIdx =
@@ -86,18 +83,15 @@ let apply = (event: Event.t, state) =>
       ...state,
       nextCoordinates: [
         (accountIdx, coordinates |> AccountKeyChain.Address.Coordinates.next),
-        ...state.nextCoordinates |> List.remove_assoc(accountIdx),
+        ...state.nextCoordinates |> List.remove_assoc(accountIdx)
       ],
       exposedCoordinates: [
         (
           accountIdx,
-          [
-            coordinates,
-            ...state.exposedCoordinates |> List.assoc(accountIdx),
-          ],
+          [coordinates, ...state.exposedCoordinates |> List.assoc(accountIdx)]
         ),
-        ...state.exposedCoordinates,
-      ],
+        ...state.exposedCoordinates
+      ]
     };
   | PayoutProposed({data, processId}) => {
       ...state,
@@ -105,17 +99,17 @@ let apply = (event: Event.t, state) =>
         state.reservedInputs
         |> List.rev_append(data.payoutTx.usedInputs |> List.map(snd)),
       exposedCoordinates:
-        switch (data.changeAddressCoordinates) {
+        switch data.changeAddressCoordinates {
         | None => state.exposedCoordinates
         | Some(coordinates) => [
             (
               data.accountIdx,
               [
                 coordinates,
-                ...state.exposedCoordinates |> List.assoc(data.accountIdx),
-              ],
+                ...state.exposedCoordinates |> List.assoc(data.accountIdx)
+              ]
             ),
-            ...state.exposedCoordinates |> List.remove_assoc(data.accountIdx),
+            ...state.exposedCoordinates |> List.remove_assoc(data.accountIdx)
           ]
         },
       nextChangeCoordinates: [
@@ -123,14 +117,11 @@ let apply = (event: Event.t, state) =>
           data.accountIdx,
           state.nextChangeCoordinates
           |> List.assoc(data.accountIdx)
-          |> AccountKeyChain.Address.Coordinates.next,
+          |> AccountKeyChain.Address.Coordinates.next
         ),
-        ...state.nextCoordinates |> List.remove_assoc(data.accountIdx),
+        ...state.nextCoordinates |> List.remove_assoc(data.accountIdx)
       ],
-      payoutProcesses: [
-        (processId, data.payoutTx),
-        ...state.payoutProcesses,
-      ],
+      payoutProcesses: [(processId, data.payoutTx), ...state.payoutProcesses]
     }
   | PayoutBroadcast({processId}) => {
       ...state,
@@ -143,7 +134,7 @@ let apply = (event: Event.t, state) =>
              List.exists((i: Network.txInput) =>
                input.txId == i.txId && input.txOutputN == i.txOutputN
              ) == false
-           ),
+           )
     }
   | PayoutBroadcastFailed({processId}) => {
       ...state,
@@ -156,13 +147,12 @@ let apply = (event: Event.t, state) =>
              List.exists((i: Network.txInput) =>
                input.txId == i.txId && input.txOutputN == i.txOutputN
              ) == false
-           ),
+           )
     }
   | _ => state
   };
 
-let exposeNextIncomeAddress =
-    (accountIdx, {nextCoordinates, accountKeyChains}) => {
+let exposeNextIncomeAddress = (accountIdx, {nextCoordinates, accountKeyChains}) => {
   let coordinates = nextCoordinates |> List.assoc(accountIdx);
   let address = accountKeyChains |> AccountKeyChain.find(coordinates);
   IncomeAddressExposed.make(~coordinates, ~address=address.address);
@@ -180,8 +170,8 @@ let preparePayoutTx =
         nextChangeCoordinates,
         exposedCoordinates,
         accountKeyChains,
-        reservedInputs,
-      },
+        reservedInputs
+      }
     ) => {
   open AccountKeyChain.Address;
   let coordinates = exposedCoordinates |> List.assoc(accountIdx);
@@ -218,13 +208,10 @@ let preparePayoutTx =
                ~destinations,
                ~satsPerByte,
                ~changeAddress,
-               ~network,
+               ~network
              )
            ) {
-           | WithChangeAddress(payout) => (
-               payout,
-               Some(nextChangeCoordinates),
-             )
+           | WithChangeAddress(payout) => (payout, Some(nextChangeCoordinates))
            | WithoutChangeAddress(payout) => (payout, None)
            };
          let payoutTx =
@@ -235,7 +222,7 @@ let preparePayoutTx =
                ~masterKeyChain,
                ~accountKeyChains,
                ~payoutTx,
-               ~network,
+               ~network
              )
            ) {
            | Signed(payout) => payout
@@ -245,7 +232,7 @@ let preparePayoutTx =
            Proposal.make(
              ~supporterId=userId,
              ~policy=payoutPolicy,
-             Data.{accountIdx, payoutTx, changeAddressCoordinates},
+             Data.{accountIdx, payoutTx, changeAddressCoordinates}
            )
          )
          |> resolve;
@@ -256,7 +243,7 @@ let preparePayoutTx =
 let balance =
     (
       accountIdx,
-      {exposedCoordinates, accountKeyChains, reservedInputs, network},
+      {exposedCoordinates, accountKeyChains, reservedInputs, network}
     ) => {
   let coordinates = exposedCoordinates |> List.assoc(accountIdx);
   Js.Promise.(
@@ -275,10 +262,10 @@ let balance =
                             reservedIn.txId == input.txId
                             && reservedIn.txOutputN == input.txOutputN
                           ) ?
-                         input.value : BTC.zero,
-                     ),
+                         input.value : BTC.zero
+                     )
               },
-              {total: BTC.zero, reserved: BTC.zero},
+              {total: BTC.zero, reserved: BTC.zero}
             )
          |> resolve
        )

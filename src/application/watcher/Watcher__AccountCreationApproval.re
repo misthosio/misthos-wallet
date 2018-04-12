@@ -6,7 +6,7 @@ type state = {
   eligable: list(userId),
   endorsements: list(userId),
   policy: Policy.t,
-  systemIssuer: Bitcoin.ECPair.t,
+  systemIssuer: Bitcoin.ECPair.t
 };
 
 let make = (proposal: AccountCreation.Proposal.t, log) => {
@@ -16,26 +16,26 @@ let make = (proposal: AccountCreation.Proposal.t, log) => {
         eligable: [],
         endorsements: [proposal.supporterId],
         policy: proposal.policy,
-        systemIssuer: Bitcoin.ECPair.makeRandom(),
+        systemIssuer: Bitcoin.ECPair.makeRandom()
       });
     val completed = ref(false);
     val result = ref(None);
     pub receive = ({event}: EventLog.item) => {
       state :=
         (
-          switch (event) {
+          switch event {
           | VentureCreated(event) => {
               ...state^,
-              systemIssuer: event.systemIssuer,
+              systemIssuer: event.systemIssuer
             }
           | PartnerAccepted({data}) => {
               ...state^,
-              eligable: [data.id, ...state^.eligable],
+              eligable: [data.id, ...state^.eligable]
             }
           | AccountCreationEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: [event.supporterId, ...state^.endorsements],
+              endorsements: [event.supporterId, ...state^.endorsements]
             }
           | AccountCreationAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
@@ -49,14 +49,14 @@ let make = (proposal: AccountCreation.Proposal.t, log) => {
           && state^.policy
           |> Policy.fulfilled(
                ~eligable=state^.eligable,
-               ~endorsed=state^.endorsements,
+               ~endorsed=state^.endorsements
              )) {
         result :=
           Some((
             state^.systemIssuer,
             AccountCreationAccepted(
-              AccountCreation.Acceptance.fromProposal(proposal),
-            ),
+              AccountCreation.Acceptance.fromProposal(proposal)
+            )
           ));
       };
     };

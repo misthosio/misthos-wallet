@@ -8,7 +8,7 @@ module Public = {
   let persist = (~appPubKey) =>
     Blockstack.putFile(
       infoFileName,
-      encode({appPubKey: appPubKey}) |> Json.stringify,
+      encode({appPubKey: appPubKey}) |> Json.stringify
     );
   type readResult =
     | NotFound
@@ -38,13 +38,13 @@ module Private = {
     );
   let decode = raw =>
     Json.Decode.{
-      chainCode: raw |> field("chainCode", string) |> Utils.bufFromHex,
+      chainCode: raw |> field("chainCode", string) |> Utils.bufFromHex
     };
   let persist = (~chainCode) =>
     Js.Promise.(
       Blockstack.putFileEncrypted(
         infoFileName,
-        encode({chainCode: chainCode}) |> Json.stringify,
+        encode({chainCode: chainCode}) |> Json.stringify
       )
       |> then_(_result => resolve({chainCode: chainCode}))
     );
@@ -77,7 +77,7 @@ let getOrInit = (~appPubKey) =>
            Public.persist(~appPubKey)
            |> then_(_result =>
                 Private.persist(~chainCode=Crypto.randomBytes(32))
-              ),
+              )
        )
   );
 

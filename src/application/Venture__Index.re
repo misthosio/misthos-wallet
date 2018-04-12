@@ -2,7 +2,7 @@ open PrimitiveTypes;
 
 type item = {
   id: ventureId,
-  name: string,
+  name: string
 };
 
 type t = list(item);
@@ -10,10 +10,7 @@ type t = list(item);
 module Encode = {
   let item = item =>
     Json.Encode.(
-      object_([
-        ("name", string(item.name)),
-        ("id", VentureId.encode(item.id)),
-      ])
+      object_([("name", string(item.name)), ("id", VentureId.encode(item.id))])
     );
   let index = Json.Encode.list(item);
 };
@@ -22,7 +19,7 @@ module Decode = {
   let item = json =>
     Json.Decode.{
       name: json |> field("name", string),
-      id: json |> field("id", VentureId.decode),
+      id: json |> field("id", VentureId.decode)
     };
   let index = Json.Decode.list(item);
 };
@@ -33,7 +30,7 @@ let persist = index =>
   Js.Promise.(
     Blockstack.putFileEncrypted(
       indexPath,
-      Encode.index(index) |> Json.stringify,
+      Encode.index(index) |> Json.stringify
     )
     |> then_(() => resolve(index))
   );

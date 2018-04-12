@@ -10,7 +10,7 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t,
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
   nextKeyChainIdx: accountKeyChainIdx,
-  pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
+  pendingEvent: option((Bitcoin.ECPair.t, Event.t))
 };
 
 let make = ({data}: AccountCreation.Acceptance.t, log) => {
@@ -21,18 +21,18 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
         custodianKeyChains: [],
         nextKeyChainIdx: AccountKeyChainIndex.first,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
-        pendingEvent: None,
+        pendingEvent: None
       });
     pub receive = ({event}: EventLog.item) =>
       state :=
         (
-          switch (event) {
+          switch event {
           | VentureCreated({systemIssuer}) => {...state^, systemIssuer}
           | CustodianKeyChainUpdated({keyChain, partnerId})
               when CustodianKeyChain.accountIdx(keyChain) == accountIdx =>
             let custodianKeyChains = [
               (partnerId, keyChain),
-              ...state^.custodianKeyChains |> List.remove_assoc(partnerId),
+              ...state^.custodianKeyChains |> List.remove_assoc(partnerId)
             ];
             {
               ...state^,
@@ -47,18 +47,18 @@ let make = ({data}: AccountCreation.Acceptance.t, log) => {
                           accountIdx,
                           state^.nextKeyChainIdx,
                           defaultCosignerList[custodianKeyChains |> List.length],
-                          custodianKeyChains,
-                        ),
-                    ),
-                  ),
-                )),
+                          custodianKeyChains
+                        )
+                    )
+                  )
+                ))
             };
           | AccountKeyChainUpdated({keyChain})
               when keyChain.accountIdx == accountIdx => {
               ...state^,
               pendingEvent: None,
               nextKeyChainIdx:
-                state^.nextKeyChainIdx |> AccountKeyChainIndex.next,
+                state^.nextKeyChainIdx |> AccountKeyChainIndex.next
             }
           | _ => state^
           }

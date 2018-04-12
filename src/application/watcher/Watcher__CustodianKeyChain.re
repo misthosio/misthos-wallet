@@ -7,14 +7,14 @@ open WalletTypes;
 type state = {
   ventureId,
   pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
-  nextKeyChainIdx: custodianKeyChainIdx,
+  nextKeyChainIdx: custodianKeyChainIdx
 };
 
 let make =
     (
       {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
       {data}: Custodian.Acceptance.t,
-      log,
+      log
     ) => {
   let custodianId = data.partnerId;
   let accountIdx = data.accountIdx;
@@ -23,12 +23,12 @@ let make =
       ref({
         ventureId: VentureId.fromString(""),
         pendingEvent: None,
-        nextKeyChainIdx: CustodianKeyChainIndex.first,
+        nextKeyChainIdx: CustodianKeyChainIndex.first
       });
     pub receive = ({event}: EventLog.item) =>
       state :=
         (
-          switch (event) {
+          switch event {
           | VentureCreated({ventureId}) => {...state^, ventureId}
           | AccountCreationAccepted(acceptance)
               when acceptance.data.accountIdx == accountIdx => {
@@ -44,12 +44,12 @@ let make =
                           ~ventureId=state^.ventureId,
                           ~accountIdx,
                           ~keyChainIdx=state^.nextKeyChainIdx,
-                          ~masterKeyChain,
+                          ~masterKeyChain
                         )
-                        |> CustodianKeyChain.toPublicKeyChain,
-                    ),
-                  ),
-                )),
+                        |> CustodianKeyChain.toPublicKeyChain
+                    )
+                  )
+                ))
             }
           | CustodianKeyChainUpdated({partnerId, keyChain})
               when
@@ -58,7 +58,7 @@ let make =
               ...state^,
               pendingEvent: None,
               nextKeyChainIdx:
-                state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
+                state^.nextKeyChainIdx |> CustodianKeyChainIndex.next
             }
           | _ => state^
           }

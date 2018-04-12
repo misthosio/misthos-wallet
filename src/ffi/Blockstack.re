@@ -5,7 +5,7 @@
 type userData = {
   .
   "username": Js.nullable(string),
-  "appPrivateKey": string,
+  "appPrivateKey": string
 };
 
 [@bs.module "blockstack"] [@bs.return nullable]

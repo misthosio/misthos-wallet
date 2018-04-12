@@ -7,51 +7,46 @@ let make = ({processId: payoutProcess, data}: Payout.Acceptance.t, log) => {
     log
     |> EventLog.reduce(
          ((broadcast, txs, systemIssuer, network), {event}) =>
-           switch (event) {
+           switch event {
            | VentureCreated({systemIssuer, network}) => (
                broadcast,
                txs,
                systemIssuer,
-               network,
+               network
              )
            | PayoutSigned({processId, payoutTx})
                when ProcessId.eq(processId, payoutProcess) => (
                broadcast,
                [payoutTx, ...txs],
                systemIssuer,
-               network,
+               network
              )
            | PayoutBroadcast({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                false,
                txs,
                systemIssuer,
-               network,
+               network
              )
            | PayoutBroadcastFailed({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                false,
                txs,
                systemIssuer,
-               network,
+               network
              )
            | _ => (broadcast, txs, systemIssuer, network)
            },
-         (
-           true,
-           [data.payoutTx],
-           Bitcoin.ECPair.makeRandom(),
-           Network.Regtest,
-         ),
+         (true, [data.payoutTx], Bitcoin.ECPair.makeRandom(), Network.Regtest)
        );
   let process = {
     val finalTransaction =
       ref(
         needsBroadcast ?
-          Some(PayoutTransaction.finalize(signedTxs, network)) : None,
+          Some(PayoutTransaction.finalize(signedTxs, network)) : None
       );
     pub receive = ({event}: EventLog.item) =>
-      switch (event) {
+      switch event {
       | PayoutBroadcast({processId})
           when ProcessId.eq(processId, payoutProcess) =>
         finalTransaction := None
@@ -69,29 +64,29 @@ let make = ({processId: payoutProcess, data}: Payout.Acceptance.t, log) => {
              |> Network.broadcastTransaction(network)
              |> then_(result =>
                   (
-                    switch (result) {
+                    switch result {
                     | WalletTypes.Ok(transactionId) => (
                         systemIssuer,
                         PayoutBroadcast(
                           Payout.Broadcast.make(
                             ~processId=payoutProcess,
-                            ~transactionId,
-                          ),
-                        ),
+                            ~transactionId
+                          )
+                        )
                       )
                     | WalletTypes.Error(errorMessage) =>
                       Utils.printError(
                         "Broadcasting transaction failed",
-                        errorMessage,
+                        errorMessage
                       );
                       (
                         systemIssuer,
                         PayoutBroadcastFailed(
                           Payout.BroadcastFailure.make(
                             ~processId=payoutProcess,
-                            ~errorMessage,
-                          ),
-                        ),
+                            ~errorMessage
+                          )
+                        )
                       );
                     }
                   )

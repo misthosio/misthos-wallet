@@ -13,7 +13,7 @@ type state = {
   index: Venture.Index.t,
   newVenture: string,
   joinVentureId: string,
-  joinVentureUserId: string,
+  joinVentureUserId: string
 };
 
 type action =
@@ -31,13 +31,11 @@ type action =
 let component = ReasonReact.reducerComponent("Ventures");
 
 let formText = event => ReactDOMRe.domElementToObj(
-                          ReactEventRe.Form.target(event),
+                          ReactEventRe.Form.target(event)
                         )##value;
 
 let selectVenture = e =>
-  SelectVenture(
-    ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id,
-  );
+  SelectVenture(ReactDOMRe.domElementToObj(ReactEventRe.Mouse.target(e))##id);
 
 let make = (~session, _children) => {
   ...component,
@@ -47,7 +45,7 @@ let make = (~session, _children) => {
     joinVentureUserId: "",
     status: LoadingIndex,
     index: [],
-    selected: None,
+    selected: None
   },
   didMount: _self =>
     ReasonReact.SideEffects(
@@ -56,16 +54,16 @@ let make = (~session, _children) => {
           Venture.Index.load()
           |> then_(index => send(IndexLoaded(index)) |> resolve)
           |> ignore
-        ),
+        )
     ),
   reducer: (action, state) =>
-    switch (action) {
+    switch action {
     | IndexLoaded(index) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, status: None, index},
         (
           ({send}) =>
-            switch (index) {
+            switch index {
             | [p, ..._rest] =>
               Js.Promise.(
                 Venture.load(session, ~ventureId=p.id)
@@ -74,7 +72,7 @@ let make = (~session, _children) => {
               )
             | _ => ()
             }
-        ),
+        )
       )
     | VentureLoaded(venture) =>
       ReasonReact.Update({...state, status: None, selected: Some(venture)})
@@ -84,7 +82,7 @@ let make = (~session, _children) => {
         ...state,
         status: None,
         index,
-        selected: Some(selected),
+        selected: Some(selected)
       })
     | ChangeNewVenture(text) =>
       ReasonReact.Update({...state, newVenture: text})
@@ -95,7 +93,7 @@ let make = (~session, _children) => {
     | SelectVenture(id) =>
       Js.log("SelectVenture(" ++ id ++ ")");
       let selectedId =
-        switch (state.selected) {
+        switch state.selected {
         | Some(venture) => Venture.getId(venture)
         | None => ""
         };
@@ -110,7 +108,7 @@ let make = (~session, _children) => {
                 |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )
-          ),
+          )
         );
     | CreateVenture =>
       switch (String.trim(state.newVenture)) {
@@ -121,7 +119,7 @@ let make = (~session, _children) => {
             ...state,
             status: CreatingVenture(name),
             selected: None,
-            newVenture: "",
+            newVenture: ""
           },
           (
             ({send}) =>
@@ -132,13 +130,13 @@ let make = (~session, _children) => {
                    )
                 |> ignore
               )
-          ),
+          )
         )
       }
     | JoinVenture =>
       switch (
         String.trim(state.joinVentureUserId),
-        String.trim(state.joinVentureId),
+        String.trim(state.joinVentureId)
       ) {
       | ("", _) => ReasonReact.NoUpdate
       | (_, "") => ReasonReact.NoUpdate
@@ -149,7 +147,7 @@ let make = (~session, _children) => {
             status: JoiningVenture,
             selected: None,
             joinVentureUserId: "",
-            joinVentureId: "",
+            joinVentureId: ""
           },
           (
             ({send}) =>
@@ -160,7 +158,7 @@ let make = (~session, _children) => {
                    )
                 |> ignore
               )
-          ),
+          )
         )
       }
     },
@@ -175,14 +173,14 @@ let make = (~session, _children) => {
       ReasonReact.arrayToElement(
         Array.of_list(
           Venture.Index.(
-            switch (state.status) {
+            switch state.status {
             | LoadingIndex => []
             | CreatingVenture(newVenture) => [
                 (newVenture, "new"),
                 ...state.index
                    |> List.map(({name, id}) =>
                         (name, id |> VentureId.toString)
-                      ),
+                      )
               ]
             | _ =>
               state.index
@@ -197,18 +195,18 @@ let make = (~session, _children) => {
                  onClick=(e => send(selectVenture(e)))>
                  (ReasonReact.stringToElement(name))
                </li>
-             ),
-        ),
+             )
+        )
       );
     let status =
-      switch (state.status) {
+      switch state.status {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
       | CreatingVenture(newVenture) =>
         ReasonReact.stringToElement("Creating venture '" ++ newVenture ++ "'")
       | _ => ReasonReact.stringToElement("ventures:")
       };
     let venture =
-      switch (state.selected) {
+      switch state.selected {
       | Some(venture) => <SelectedVenture venture session />
       | None => <div> (ReasonReact.stringToElement("Loading Venture")) </div>
       };
@@ -245,5 +243,5 @@ let make = (~session, _children) => {
       </div>
       venture
     </div>;
-  },
+  }
 };

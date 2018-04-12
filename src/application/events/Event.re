@@ -10,7 +10,7 @@ module VentureCreated = {
     creatorPubKey: string,
     metaPolicy: Policy.t,
     systemIssuer: Bitcoin.ECPair.t,
-    network: Network.t,
+    network: Network.t
   };
   let make = (~ventureName, ~creatorId, ~creatorPubKey, ~metaPolicy, ~network) => {
     ventureId: VentureId.make(),
@@ -19,7 +19,7 @@ module VentureCreated = {
     creatorPubKey,
     metaPolicy,
     systemIssuer: Bitcoin.ECPair.makeRandom(),
-    network,
+    network
   };
   let encode = event =>
     Json.Encode.(
@@ -31,7 +31,7 @@ module VentureCreated = {
         ("creatorPubKey", string(event.creatorPubKey)),
         ("metaPolicy", Policy.encode(event.metaPolicy)),
         ("systemIssuer", string(Bitcoin.ECPair.toWIF(event.systemIssuer))),
-        ("network", Network.encode(event.network)),
+        ("network", Network.encode(event.network))
       ])
     );
   let decode = raw =>
@@ -43,7 +43,7 @@ module VentureCreated = {
       metaPolicy: raw |> field("metaPolicy", Policy.decode),
       systemIssuer:
         raw |> field("systemIssuer", string) |> Bitcoin.ECPair.fromWIF,
-      network: raw |> field("network", Network.decode),
+      network: raw |> field("network", Network.decode)
     };
 };
 
@@ -51,19 +51,19 @@ module Partner = {
   module Data = {
     type t = {
       id: userId,
-      pubKey: string,
+      pubKey: string
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("id", UserId.encode(event.id)),
-          ("pubKey", string(event.pubKey)),
+          ("pubKey", string(event.pubKey))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         id: raw |> field("id", UserId.decode),
-        pubKey: raw |> field("pubKey", string),
+        pubKey: raw |> field("pubKey", string)
       };
   };
   include (val EventTypes.makeProcess("Partner"))(Data);
@@ -73,19 +73,19 @@ module AccountCreation = {
   module Data = {
     type t = {
       accountIdx,
-      name: string,
+      name: string
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
-          ("name", string(event.name)),
+          ("name", string(event.name))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
-        name: raw |> field("name", string),
+        name: raw |> field("name", string)
       };
   };
   include (val EventTypes.makeProcess("AccountCreation"))(Data);
@@ -95,19 +95,19 @@ module Custodian = {
   module Data = {
     type t = {
       partnerId: userId,
-      accountIdx,
+      accountIdx
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("partnerId", UserId.encode(event.partnerId)),
-          ("accountIdx", AccountIndex.encode(event.accountIdx)),
+          ("accountIdx", AccountIndex.encode(event.accountIdx))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         partnerId: raw |> field("partnerId", UserId.decode),
-        accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+        accountIdx: raw |> field("accountIdx", AccountIndex.decode)
       };
   };
   include (val EventTypes.makeProcess("Custodian"))(Data);
@@ -118,7 +118,7 @@ module Payout = {
     type t = {
       accountIdx,
       payoutTx: PayoutTransaction.t,
-      changeAddressCoordinates: option(AccountKeyChain.Address.Coordinates.t),
+      changeAddressCoordinates: option(AccountKeyChain.Address.Coordinates.t)
     };
     let encode = event =>
       Json.Encode.(
@@ -129,9 +129,9 @@ module Payout = {
             "changeAddressCoordinates",
             nullable(
               AccountKeyChain.Address.Coordinates.encode,
-              event.changeAddressCoordinates,
-            ),
-          ),
+              event.changeAddressCoordinates
+            )
+          )
         ])
       );
     let decode = raw =>
@@ -142,8 +142,8 @@ module Payout = {
           raw
           |> field(
                "changeAddressCoordinates",
-               optional(AccountKeyChain.Address.Coordinates.decode),
-             ),
+               optional(AccountKeyChain.Address.Coordinates.decode)
+             )
       };
   };
   include (val EventTypes.makeProcess("Payout"))(Data);
@@ -151,12 +151,12 @@ module Payout = {
     type t = {
       processId,
       custodianId: userId,
-      payoutTx: PayoutTransaction.t,
+      payoutTx: PayoutTransaction.t
     };
     let make = (~processId, ~custodianId, ~payoutTx) => {
       processId,
       custodianId,
-      payoutTx,
+      payoutTx
     };
     let encode = event =>
       Json.Encode.(
@@ -164,20 +164,20 @@ module Payout = {
           ("type", string("PayoutSigned")),
           ("processId", ProcessId.encode(event.processId)),
           ("custodianId", UserId.encode(event.custodianId)),
-          ("payoutTx", PayoutTransaction.encode(event.payoutTx)),
+          ("payoutTx", PayoutTransaction.encode(event.payoutTx))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         processId: raw |> field("processId", ProcessId.decode),
         custodianId: raw |> field("custodianId", UserId.decode),
-        payoutTx: raw |> field("payoutTx", PayoutTransaction.decode),
+        payoutTx: raw |> field("payoutTx", PayoutTransaction.decode)
       };
   };
   module Broadcast = {
     type t = {
       processId,
-      transactionId: string,
+      transactionId: string
     };
     let make = (~processId, ~transactionId) => {processId, transactionId};
     let encode = event =>
@@ -185,19 +185,19 @@ module Payout = {
         object_([
           ("type", string("PayoutBroadcast")),
           ("processId", ProcessId.encode(event.processId)),
-          ("transactionId", string(event.transactionId)),
+          ("transactionId", string(event.transactionId))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         processId: raw |> field("processId", ProcessId.decode),
-        transactionId: raw |> field("transactionId", string),
+        transactionId: raw |> field("transactionId", string)
       };
   };
   module BroadcastFailure = {
     type t = {
       processId,
-      errorMessage: string,
+      errorMessage: string
     };
     let make = (~processId, ~errorMessage) => {processId, errorMessage};
     let encode = event =>
@@ -205,13 +205,13 @@ module Payout = {
         object_([
           ("type", string("PayoutBroadcastFailed")),
           ("processId", ProcessId.encode(event.processId)),
-          ("errorMessage", string(event.errorMessage)),
+          ("errorMessage", string(event.errorMessage))
         ])
       );
     let decode = raw =>
       Json.Decode.{
         processId: raw |> field("processId", ProcessId.decode),
-        errorMessage: raw |> field("errorMessage", string),
+        errorMessage: raw |> field("errorMessage", string)
       };
   };
 };
@@ -219,7 +219,7 @@ module Payout = {
 module CustodianKeyChainUpdated = {
   type t = {
     partnerId: userId,
-    keyChain: CustodianKeyChain.public,
+    keyChain: CustodianKeyChain.public
   };
   let make = (~partnerId, ~keyChain) => {partnerId, keyChain};
   let encode = event =>
@@ -227,13 +227,13 @@ module CustodianKeyChainUpdated = {
       object_([
         ("type", string("CustodianKeyChainUpdated")),
         ("partnerId", UserId.encode(event.partnerId)),
-        ("keyChain", CustodianKeyChain.encode(event.keyChain)),
+        ("keyChain", CustodianKeyChain.encode(event.keyChain))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       partnerId: raw |> field("partnerId", UserId.decode),
-      keyChain: raw |> field("keyChain", CustodianKeyChain.decode),
+      keyChain: raw |> field("keyChain", CustodianKeyChain.decode)
     };
 };
 
@@ -244,7 +244,7 @@ module AccountKeyChainUpdated = {
     Json.Encode.(
       object_([
         ("type", string("AccountKeyChainUpdated")),
-        ("keyChain", AccountKeyChain.encode(event.keyChain)),
+        ("keyChain", AccountKeyChain.encode(event.keyChain))
       ])
     );
   let decode = raw =>
@@ -254,7 +254,7 @@ module AccountKeyChainUpdated = {
 module IncomeAddressExposed = {
   type t = {
     coordinates: AccountKeyChain.Address.Coordinates.t,
-    address: string,
+    address: string
   };
   let make = (~coordinates, ~address) => {coordinates, address};
   let encode = event =>
@@ -263,17 +263,16 @@ module IncomeAddressExposed = {
         ("type", string("IncomeAddressExposed")),
         (
           "coordinates",
-          AccountKeyChain.Address.Coordinates.encode(event.coordinates),
+          AccountKeyChain.Address.Coordinates.encode(event.coordinates)
         ),
-        ("address", string(event.address)),
+        ("address", string(event.address))
       ])
     );
   let decode = raw =>
     Json.Decode.{
       coordinates:
-        raw
-        |> field("coordinates", AccountKeyChain.Address.Coordinates.decode),
-      address: raw |> field("address", string),
+        raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode),
+      address: raw |> field("address", string)
     };
 };
 
@@ -298,14 +297,13 @@ type t =
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t);
 
-let makePartnerProposed =
-    (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
+let makePartnerProposed = (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
     Partner.Proposal.make(
       ~supporterId,
       ~policy,
-      Partner.Data.{id: prospectId, pubKey: prospectPubKey},
-    ),
+      Partner.Data.{id: prospectId, pubKey: prospectPubKey}
+    )
   );
 
 let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
@@ -313,8 +311,8 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
     AccountCreation.Proposal.make(
       ~supporterId,
       ~policy,
-      AccountCreation.Data.{accountIdx, name},
-    ),
+      AccountCreation.Data.{accountIdx, name}
+    )
   );
 
 let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
@@ -322,8 +320,8 @@ let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
     Custodian.Proposal.make(
       ~supporterId,
       ~policy,
-      Custodian.Data.{partnerId, accountIdx},
-    ),
+      Custodian.Data.{partnerId, accountIdx}
+    )
   );
 
 let makePartnerEndorsed = (~processId, ~supporterId) =>
@@ -348,10 +346,8 @@ let encode =
   | PayoutBroadcast(event) => Payout.Broadcast.encode(event)
   | PayoutBroadcastFailed(event) => Payout.BroadcastFailure.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
-  | AccountCreationEndorsed(event) =>
-    AccountCreation.Endorsement.encode(event)
-  | AccountCreationAccepted(event) =>
-    AccountCreation.Acceptance.encode(event)
+  | AccountCreationEndorsed(event) => AccountCreation.Endorsement.encode(event)
+  | AccountCreationAccepted(event) => AccountCreation.Acceptance.encode(event)
   | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
   | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event)
   | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event);
@@ -371,16 +367,14 @@ exception UnknownEvent(Js.Json.t);
 
 let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
-  switch (type_) {
+  switch type_ {
   | "VentureCreated" => VentureCreated(VentureCreated.decode(raw))
   | "PartnerProposed" => PartnerProposed(Partner.Proposal.decode(raw))
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsement.decode(raw))
   | "PartnerAccepted" => PartnerAccepted(Partner.Acceptance.decode(raw))
   | "CustodianProposed" => CustodianProposed(Custodian.Proposal.decode(raw))
-  | "CustodianEndorsed" =>
-    CustodianEndorsed(Custodian.Endorsement.decode(raw))
-  | "CustodianAccepted" =>
-    CustodianAccepted(Custodian.Acceptance.decode(raw))
+  | "CustodianEndorsed" => CustodianEndorsed(Custodian.Endorsement.decode(raw))
+  | "CustodianAccepted" => CustodianAccepted(Custodian.Acceptance.decode(raw))
   | "PayoutProposed" => PayoutProposed(Payout.Proposal.decode(raw))
   | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsement.decode(raw))
   | "PayoutAccepted" => PayoutAccepted(Payout.Acceptance.decode(raw))
