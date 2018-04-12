@@ -13,7 +13,7 @@
     "babel-runtime": "6.26.0",
     "bignumber.js": "^6.0.0",
     "bitcoinjs-lib": "^3.3",
-    "blockstack": "^0.16",
+    "blockstack": "^0.17",
     "bs-fetch": "^0.2.1",
     "bs-json": "^1.0",
     "bs-loader": "^1.8.0",
