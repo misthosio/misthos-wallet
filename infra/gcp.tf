@@ -13,8 +13,8 @@ resource "google_storage_bucket" "misthos-web-staging" {
     main_page_suffix = "index.html"
   }
   cors {
-    origin = ["localhost"]
-    method = ["GET"]
+    origin = ["*"]
+    method = ["GET","OPTIONS"]
     response_header = ["content-type"]
   }
 }
@@ -35,8 +35,8 @@ resource "google_storage_bucket" "misthos-web-prod" {
     main_page_suffix = "index.html"
   }
   cors {
-    origin = ["localhost"]
-    method = ["GET"]
+    origin = ["*"]
+    method = ["GET","OPTIONS"]
     response_header = ["content-type"]
   }
 }
