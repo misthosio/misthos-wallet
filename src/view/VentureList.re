@@ -26,10 +26,7 @@ let selectVenture = e =>
 
 let make = (~session, ~selected=?, _children) => {
   ...component,
-  initialState: () => {
-    Js.log(selected);
-    {status: LoadingIndex, index: [], selected};
-  },
+  initialState: () => {status: LoadingIndex, index: [], selected},
   didMount: _self =>
     ReasonReact.SideEffects(
       ({send}) =>
