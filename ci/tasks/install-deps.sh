@@ -1,8 +1,9 @@
 #!/bin/bash
+
+cp -r deps/* repo
+
 set -e
 
-ls
-cp -r deps/* repo
 cd repo
 make install
 cd ../
