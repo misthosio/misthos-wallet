@@ -1,45 +1,20 @@
-module Link = {
-  let component = ReasonReact.statelessComponent("Router.Link");
-  let make = (~className="", ~href, children) => {
-    let handleClick = e => {
-      ReactEventRe.Mouse.preventDefault(e);
-      ReasonReact.Router.push(href);
+open PrimitiveTypes;
+
+module Config = {
+  type route =
+    | Home
+    | Venture(ventureId);
+  let routeFromUrl = (url: ReasonReact.Router.url) =>
+    switch (url.path) {
+    | ["ventures", id] => Venture(id |> VentureId.fromString)
+    | [] => Home
+    | _ => Home
     };
-    {
-      ...component,
-      render: (_) =>
-        ReasonReact.createDomElement(
-          "a",
-          ~props={
-            "className": className,
-            "href": href,
-            "onClick": handleClick
-          },
-          children
-        )
+  let routeToUrl = (route: route) =>
+    switch (route) {
+    | Venture(id) => "/ventures/" ++ (id |> VentureId.toString)
+    | Home => "/"
     };
-  };
 };
 
-type state = {url: ReasonReact.Router.url};
-
-type action =
-  | UpdateUrl(ReasonReact.Router.url);
-
-let component = ReasonReact.reducerComponent("Router");
-
-let make = renderChildren => {
-  ...component,
-  initialState: () => {url: ReasonReact.Router.dangerouslyGetInitialUrl()},
-  subscriptions: ({send}) => [
-    Sub(
-      () => ReasonReact.Router.watchUrl(url => send(UpdateUrl(url))),
-      ReasonReact.Router.unwatchUrl
-    )
-  ],
-  reducer: (action, _state) =>
-    switch action {
-    | UpdateUrl(url) => ReasonReact.Update({url: url})
-    },
-  render: ({state}) => renderChildren(state.url)
-};
+include ReRoute.CreateRouter(Config);
