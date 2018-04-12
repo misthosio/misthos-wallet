@@ -4,7 +4,7 @@
 /* external register_service_worker : unit => unit = "default" [@@bs.module "./registerServiceWorker"]; */
 ReactDOMRe.renderToElementWithId(
   <UserSession>
-    ...((~session, ~updateSession) => <Router session updateSession />)
+    ...((~session, ~updateSession) => <App session updateSession />)
   </UserSession>,
   "root",
 );

@@ -1,47 +1,21 @@
-let str = ReasonReact.stringToElement;
+open PrimitiveTypes;
 
-open Session;
-
-module RouterConfig = {
+module Config = {
   type route =
-    | Home;
+    | Home
+    | Venture(ventureId);
   let routeFromUrl = (url: ReasonReact.Router.url) =>
     switch (url.path) {
+    | ["ventures", id] => Home
+    /* Venture(id |> VentureId.fromString) */
     | [] => Home
     | _ => Home
     };
   let routeToUrl = (route: route) =>
     switch (route) {
+    | Venture(id) => "/ventures/" ++ (id |> VentureId.toString)
     | Home => "/"
     };
 };
 
-module Router = ReRoute.CreateRouter(RouterConfig);
-
-let component = ReasonReact.statelessComponent("Router");
-
-let make = (~session, ~updateSession, _children) => {
-  ...component,
-  render: _self => {
-    let drawer = currentRoute =>
-      switch (session, currentRoute) {
-      | (NotLoggedIn | LoginPending | AnonymousLogin, _) => None
-      | (Session.LoggedIn(data), RouterConfig.Home) =>
-        Some(<VentureList session />)
-      };
-    let body = currentRoute =>
-      switch (session, currentRoute) {
-      | (NotLoggedIn | LoginPending | AnonymousLogin, _) =>
-        <PublicHome onSignIn=(_e => updateSession(UserSession.SignIn)) />
-      | (Session.LoggedIn(data), RouterConfig.Home) => <Home data />
-      };
-    <Router.Container>
-      ...(
-           (~currentRoute) =>
-             <Layout drawer=(currentRoute |> drawer)>
-               (currentRoute |> body)
-             </Layout>
-         )
-    </Router.Container>;
-  },
-};
+include ReRoute.CreateRouter(Config);
