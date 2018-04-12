@@ -7,7 +7,7 @@ type action =
 
 type state = {session: Session.t};
 
-let component = ReasonReact.reducerComponent("UserSession");
+let component = ReasonReact.reducerComponent("SessionStore");
 
 let make = children => {
   ...component,

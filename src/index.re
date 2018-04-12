@@ -3,8 +3,8 @@
 
 /* external register_service_worker : unit => unit = "default" [@@bs.module "./registerServiceWorker"]; */
 ReactDOMRe.renderToElementWithId(
-  <UserSession>
+  <SessionStore>
     ...((~session, ~updateSession) => <App session updateSession />)
-  </UserSession>,
+  </SessionStore>,
   "root",
 );

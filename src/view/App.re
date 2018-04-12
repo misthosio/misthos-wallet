@@ -15,7 +15,7 @@ let make = (~session, ~updateSession, _children) => {
     let body = (currentRoute: Router.Config.route) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin, _) =>
-        <PublicHome onSignIn=(_e => updateSession(UserSession.SignIn)) />
+        <PublicHome onSignIn=(_e => updateSession(SessionStore.SignIn)) />
       | (Session.LoggedIn(session), Home) => <Home session />
       | (Session.LoggedIn(session), _) => <Home session />
       };
