@@ -24,4 +24,4 @@ ci:
 	CI=true yarn test --runInBand
 	./scripts/stop_bitcoind.sh
 
-.PHONY: ci
+.PHONY: ci build
