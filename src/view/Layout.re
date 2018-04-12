@@ -26,10 +26,10 @@ let logo =
 let make = (~drawer, children) => {
   ...component,
   initialState: () => {_open: false},
-  reducer: (action, state) =>
+  reducer: (action, _state) =>
     switch (action) {
-    | OpenDrawer => ReasonReact.Update({...state, _open: true})
-    | CloseDrawer => ReasonReact.Update({...state, _open: false})
+    | OpenDrawer => ReasonReact.Update({_open: true})
+    | CloseDrawer => ReasonReact.Update({_open: false})
     },
   render: ({send, state}) =>
     MaterialUi.(
