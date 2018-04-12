@@ -1,7 +1,7 @@
 #!/bin/bash
-
 set -e
 
 cd repo
 make install
-make ci
+cd ../
+cp -r repo/* repo-with-deps/
