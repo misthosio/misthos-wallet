@@ -30,7 +30,7 @@ jobs:
       inputs:
       - name: repo-with-deps
       run:
-        path: repo-with-deps/ci/tasks/test.sh
+        path: repo-with-deps/ci/tasks/run-tests.sh
 - name: build-task-image
   serial: true
   plan:
