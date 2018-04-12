@@ -13,16 +13,16 @@ let () =
     let (keyA, keyB, keyC) = (
       ECPair.fromWIFWithNetwork(
         "cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1",
-        Networks.testnet
+        Networks.testnet,
       ),
       ECPair.fromWIFWithNetwork(
         "cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf",
-        Networks.testnet
+        Networks.testnet,
       ),
       ECPair.fromWIFWithNetwork(
         "cPMRPo3fXGehCmFC5QsSFcZmYivsFtLVexxWi22CFwocvndXLqP1",
-        Networks.testnet
-      )
+        Networks.testnet,
+      ),
     );
     let chainCode =
       "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
@@ -30,7 +30,7 @@ let () =
     let (masterA, masterB, masterC) = (
       HDNode.make(keyA, chainCode),
       HDNode.make(keyB, chainCode),
-      HDNode.make(keyC, chainCode)
+      HDNode.make(keyC, chainCode),
     );
     let ventureId = VentureId.fromString("test");
     let accountIdx = AccountIndex.default;
@@ -40,23 +40,23 @@ let () =
         ~ventureId,
         ~accountIdx,
         ~keyChainIdx,
-        ~masterKeyChain=masterA
+        ~masterKeyChain=masterA,
       )
       |> CustodianKeyChain.toPublicKeyChain,
       CustodianKeyChain.make(
         ~ventureId,
         ~accountIdx,
         ~keyChainIdx,
-        ~masterKeyChain=masterB
+        ~masterKeyChain=masterB,
       )
       |> CustodianKeyChain.toPublicKeyChain,
       CustodianKeyChain.make(
         ~ventureId,
         ~accountIdx,
         ~keyChainIdx,
-        ~masterKeyChain=masterC
+        ~masterKeyChain=masterC,
       )
-      |> CustodianKeyChain.toPublicKeyChain
+      |> CustodianKeyChain.toPublicKeyChain,
     );
     test("single Custodian", () => {
       let accountKeyChain =
@@ -64,11 +64,13 @@ let () =
           AccountIndex.first,
           AccountKeyChainIndex.first,
           1,
-          [(UserId.fromString("custodianA"), cKeyChainA)]
+          [(UserId.fromString("custodianA"), cKeyChainA)],
         );
       let firstCoordinates =
         accountKeyChain |> AccountKeyChain.Address.Coordinates.firstExternal;
-      expect(accountKeyChain |> AccountKeyChain.Address.make(firstCoordinates))
+      expect(
+        accountKeyChain |> AccountKeyChain.Address.make(firstCoordinates),
+      )
       |> toEqual(
            AccountKeyChain.Address.{
              nCoSigners: 1,
@@ -76,12 +78,12 @@ let () =
                AccountIndex.first,
                AccountKeyChainIndex.first,
                ChainIndex.externalChain,
-               AddressIndex.first
+               AddressIndex.first,
              ),
              witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
              redeemScript: "002027fa0596838478a59b5c0512acf480fdba510cd320def9e3d9e9d27a13b7e72f",
-             address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE"
-           }
+             address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
+           },
          );
     });
   });

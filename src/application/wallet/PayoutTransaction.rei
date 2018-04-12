@@ -10,7 +10,7 @@ type input = Network.txInput;
 
 type t = {
   txHex: string,
-  usedInputs: list((int, input))
+  usedInputs: list((int, input)),
 };
 
 type buildResult =
@@ -40,8 +40,8 @@ let signPayout:
     ~accountKeyChains: list(
                          (
                            accountIdx,
-                           list((accountKeyChainIdx, AccountKeyChain.t))
-                         )
+                           list((accountKeyChainIdx, AccountKeyChain.t)),
+                         ),
                        ),
     ~payoutTx: t,
     ~network: Network.t

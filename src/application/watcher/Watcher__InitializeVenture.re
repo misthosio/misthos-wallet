@@ -19,10 +19,11 @@ let make =
     (
       {userId, issuerKeyPair}: Session.Data.t,
       {creatorId, creatorPubKey, metaPolicy}: VentureCreated.t,
-      log
+      log,
     ) => {
   let process = {
-    val state = ref(UserId.eq(userId, creatorId) ? ProposePartner : Complete);
+    val state =
+      ref(UserId.eq(userId, creatorId) ? ProposePartner : Complete);
     val result = ref(None);
     pub receive = ({event}: EventLog.item) => {
       state :=
@@ -35,11 +36,12 @@ let make =
               when ProcessId.eq(processId, event.processId) =>
             ProposeAccountCreation
           | (ProposeAccountCreation, AccountCreationProposed(event))
-              when AccountIndex.eq(event.data.accountIdx, AccountIndex.default) =>
+              when
+                AccountIndex.eq(event.data.accountIdx, AccountIndex.default) =>
             AccountCreationProposed(event.processId)
           | (
               AccountCreationProposed(processId),
-              AccountCreationAccepted(event)
+              AccountCreationAccepted(event),
             )
               when ProcessId.eq(processId, event.processId) =>
             ProposeCustodian
@@ -54,7 +56,7 @@ let make =
         );
       result :=
         (
-          switch state^ {
+          switch (state^) {
           | ProposePartner =>
             Some((
               issuerKeyPair,
@@ -62,8 +64,8 @@ let make =
                 ~supporterId=creatorId,
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
-                ~policy=metaPolicy
-              )
+                ~policy=metaPolicy,
+              ),
             ))
           | ProposeAccountCreation =>
             Some((
@@ -72,8 +74,8 @@ let make =
                 ~supporterId=creatorId,
                 ~name=defaultAccountName,
                 ~accountIdx=AccountIndex.default,
-                ~policy=metaPolicy
-              )
+                ~policy=metaPolicy,
+              ),
             ))
           | ProposeCustodian =>
             Some((
@@ -82,8 +84,8 @@ let make =
                 ~partnerId=creatorId,
                 ~supporterId=creatorId,
                 ~accountIdx=AccountIndex.default,
-                ~policy=metaPolicy
-              )
+                ~policy=metaPolicy,
+              ),
             ))
           | _ => None
           }

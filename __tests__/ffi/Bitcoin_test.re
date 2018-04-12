@@ -7,9 +7,11 @@ open Bitcoin;
 let () = {
   describe("Crypto", () =>
     test("sha256", () =>
-      expect(Crypto.sha256("hello") |> BufferExt.toStringWithEncoding("hex"))
+      expect(
+        Crypto.sha256("hello") |> BufferExt.toStringWithEncoding("hex"),
+      )
       |> toBe(
-           "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+           "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
          )
     )
   );
@@ -32,7 +34,7 @@ let () = {
         |> BufferExt.toStringWithEncoding("hex");
       let signature =
         ECSignature.fromDER(
-          BufferExt.fromStringWithEncoding(der, ~encoding="hex")
+          BufferExt.fromStringWithEncoding(der, ~encoding="hex"),
         );
       let verified =
         keyPair |> ECPair.verify(Crypto.sha256("hello"), signature);
@@ -52,7 +54,8 @@ let () = {
       |> ignore;
       tx |> TxBuilder.sign(0, keyPair);
       let hex = tx |> TxBuilder.build |> Transaction.toHex;
-      expect(hex) |> toMatch("0100000001313eb630b128102b60241ca895f1d0ffca21");
+      expect(hex)
+      |> toMatch("0100000001313eb630b128102b60241ca895f1d0ffca21");
     })
   );
 };

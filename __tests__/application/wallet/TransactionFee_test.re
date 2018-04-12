@@ -10,7 +10,9 @@ let () = {
       |> toEqual(BTC.fromSatoshis(121L))
     );
     test("2 cosigners", () =>
-      expect(TransactionFee.inputCost(2, oneSatPerByte) |> BTC.toSatoshisFloat)
+      expect(
+        TransactionFee.inputCost(2, oneSatPerByte) |> BTC.toSatoshisFloat,
+      )
       |> toEqual(140.)
     );
   });
@@ -20,8 +22,8 @@ let () = {
         TransactionFee.outputCost(
           "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
           oneSatPerByte,
-          Bitcoin.Networks.testnet
-        )
+          Bitcoin.Networks.testnet,
+        ),
       )
       |> toEqual(BTC.fromSatoshis(34L))
     );
@@ -30,8 +32,8 @@ let () = {
         TransactionFee.outputCost(
           "2N8qFbjFX4ZA1jTatE17kYZnS849NB9bN2T",
           oneSatPerByte,
-          Bitcoin.Networks.testnet
-        )
+          Bitcoin.Networks.testnet,
+        ),
       )
       |> toEqual(BTC.fromSatoshis(32L))
     );

@@ -7,7 +7,7 @@ open Bitcoin;
 type t = {
   accountIdx,
   keyChainIdx: custodianKeyChainIdx,
-  hdNode: HDNode.t
+  hdNode: HDNode.t,
 };
 
 type public = t;
@@ -36,7 +36,7 @@ let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
   let custodianKeyChain =
     misthosKeyChain
     |> HDNode.deriveHardened(
-         Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode
+         Utils.hash(VentureId.toString(ventureId) ++ salt) |> Utils.hashCode,
        )
     |> HDNode.deriveHardened(coinTypeBitcoin)
     |> HDNode.deriveHardened(accountIdx |> AccountIndex.toInt)
@@ -47,32 +47,32 @@ let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
 
 let toPublicKeyChain = keyChain => {
   ...keyChain,
-  hdNode: keyChain.hdNode |> HDNode.neutered
+  hdNode: keyChain.hdNode |> HDNode.neutered,
 };
 
 let defaultCosignerIdx = 0;
 
 let getSigningKey = (chainIdx, addressIdx, keyChain) => (
-                                                          keyChain.hdNode
-                                                          |> HDNode.derive(
-                                                               defaultCosignerIdx
-                                                             )
-                                                          |> HDNode.derive(
-                                                               chainIdx
-                                                               |> ChainIndex.toInt
-                                                             )
-                                                          |> HDNode.derive(
-                                                               addressIdx
-                                                               |> AddressIndex.toInt
-                                                             )
-                                                        )##keyPair;
+                                                           keyChain.hdNode
+                                                           |> HDNode.derive(
+                                                                defaultCosignerIdx,
+                                                              )
+                                                           |> HDNode.derive(
+                                                                chainIdx
+                                                                |> ChainIndex.toInt,
+                                                              )
+                                                           |> HDNode.derive(
+                                                                addressIdx
+                                                                |> AddressIndex.toInt,
+                                                              )
+                                                         )##keyPair;
 
 let encode = keyChain =>
   Json.Encode.(
     object_([
       ("accountIndex", AccountIndex.encode(keyChain.accountIdx)),
       ("keyChainIndex", CustodianKeyChainIndex.encode(keyChain.keyChainIdx)),
-      ("hdNode", string(keyChain.hdNode |> Bitcoin.HDNode.toBase58))
+      ("hdNode", string(keyChain.hdNode |> Bitcoin.HDNode.toBase58)),
     ])
   );
 
@@ -80,5 +80,5 @@ let decode = raw =>
   Json.Decode.{
     accountIdx: raw |> field("accountIndex", AccountIndex.decode),
     keyChainIdx: raw |> field("keyChainIndex", CustodianKeyChainIndex.decode),
-    hdNode: raw |> field("hdNode", string) |> Bitcoin.HDNode.fromBase58
+    hdNode: raw |> field("hdNode", string) |> Bitcoin.HDNode.fromBase58,
   };

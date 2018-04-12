@@ -6,7 +6,7 @@ external fromStringWithEncoding : (Js.String.t, ~encoding: Js.String.t) => t =
 
 [@bs.send] external toString : t => Js.String.t = "";
 
-[@bs.send.pipe : t]
+[@bs.send.pipe: t]
 external toStringWithEncoding : Js.String.t => Js.String.t = "toString";
 
 [@bs.val] external concat : array(t) => t = "Buffer.concat";

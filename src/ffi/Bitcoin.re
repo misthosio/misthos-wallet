@@ -56,7 +56,8 @@ module ECPair = {
   external make : BigInteger.t => t = "ECPair";
   [@bs.module "bitcoinjs-lib"] [@bs.new]
   external makeWithOptions :
-    (BigInteger.t, [@bs.as {json|null|json}] _, {. "network": Networks.t}) => t =
+    (BigInteger.t, [@bs.as {json|null|json}] _, {. "network": Networks.t}) =>
+    t =
     "ECPair";
   let makeWithNetwork = (key, network) =>
     makeWithOptions(key, {"network": network});
@@ -64,8 +65,8 @@ module ECPair = {
   [@bs.send] external getAddress : t => string = "";
   [@bs.send] external getNetwork : t => Networks.t = "";
   [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
-  [@bs.send.pipe : t] external sign : Node.buffer => ECSignature.t = "";
-  [@bs.send.pipe : t]
+  [@bs.send.pipe: t] external sign : Node.buffer => ECSignature.t = "";
+  [@bs.send.pipe: t]
   external verify : (Node.buffer, ECSignature.t) => Js.boolean = "";
 };
 
@@ -77,9 +78,9 @@ module HDNode = {
   external fromBase58WithNetworks : (string, array(Networks.t)) => t =
     "fromBase58";
   let fromBase58 = base58 => fromBase58WithNetworks(base58, Networks.all);
-  [@bs.send.pipe : t] external derive : int => t = "";
-  [@bs.send.pipe : t] external deriveHardened : int => t = "";
-  [@bs.send.pipe : t] external derivePath : string => t = "";
+  [@bs.send.pipe: t] external derive : int => t = "";
+  [@bs.send.pipe: t] external deriveHardened : int => t = "";
+  [@bs.send.pipe: t] external derivePath : string => t = "";
   [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
   [@bs.send] external neutered : t => t = "";
   [@bs.send] external toBase58 : t => string = "";
@@ -106,10 +107,10 @@ module TxBuilder = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "TransactionBuilder"]
   external fromTransactionWithNetwork : (Transaction.t, Networks.t) => t =
     "fromTransaction";
-  [@bs.send.pipe : t] external addInput : (string, int) => int = "";
-  [@bs.send.pipe : t] external addOutput : (string, float) => int = "";
-  [@bs.send.pipe : t] external sign : (int, ECPair.t) => unit = "";
-  [@bs.send.pipe : t]
+  [@bs.send.pipe: t] external addInput : (string, int) => int = "";
+  [@bs.send.pipe: t] external addOutput : (string, float) => int = "";
+  [@bs.send.pipe: t] external sign : (int, ECPair.t) => unit = "";
+  [@bs.send.pipe: t]
   external signSegwit :
     (
       int,
@@ -128,7 +129,8 @@ module TxBuilder = {
 module Script = {
   module Multisig = {
     module Output = {
-      [@bs.module "bitcoinjs-lib"] [@bs.scope ("script", "multisig", "output")]
+      [@bs.module "bitcoinjs-lib"]
+      [@bs.scope ("script", "multisig", "output")]
       external encode : (int, array(Node.buffer)) => Node.buffer = "";
     };
   };
@@ -148,7 +150,8 @@ module Script = {
   };
   module NullData = {
     module Output = {
-      [@bs.module "bitcoinjs-lib"] [@bs.scope ("script", "nullData", "output")]
+      [@bs.module "bitcoinjs-lib"]
+      [@bs.scope ("script", "nullData", "output")]
       external encode : Node.buffer => string = "";
     };
   };

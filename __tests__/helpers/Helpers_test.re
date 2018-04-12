@@ -12,7 +12,7 @@ let () = {
   let config: BitcoindClient.config = {
     bitcoindUrl: "http://localhost:18322",
     rpcUser: "bitcoin",
-    rpcPassword: "bitcoin"
+    rpcPassword: "bitcoin",
   };
   let keyA = ECPair.makeRandomWithNetwork(Networks.testnet);
   let keyB = ECPair.makeRandomWithNetwork(Networks.testnet);
@@ -22,18 +22,18 @@ let () = {
       Js.Promise.(
         Helpers.faucet([
           (keyA |> ECPair.getAddress, tenSats),
-          (keyB |> ECPair.getAddress, tenSats)
+          (keyB |> ECPair.getAddress, tenSats),
         ])
         |> then_((_) =>
              BitcoindClient.getUTXOs(
                config,
-               [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress]
+               [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress],
              )
            )
         |> then_((utxos: list(utxo)) =>
              resolve(
                expect((List.hd(utxos).amount, List.nth(utxos, 1).amount))
-               |> toEqual((tenSats, tenSats))
+               |> toEqual((tenSats, tenSats)),
              )
            )
       )
@@ -45,7 +45,7 @@ let () = {
         BitcoindClient.listTransactions(
           config,
           [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress],
-          2
+          2,
         )
         |> then_(transactions =>
              expect(transactions |> List.length) |> toEqual(2) |> resolve

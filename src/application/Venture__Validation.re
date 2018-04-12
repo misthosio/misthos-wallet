@@ -6,7 +6,7 @@ open Event;
 
 type approvalProcess = {
   supporterIds: list(userId),
-  policy: Policy.t
+  policy: Policy.t,
 };
 
 type state = {
@@ -27,7 +27,7 @@ type state = {
   custodianKeyChains:
     list((userId, list((accountIdx, list(CustodianKeyChain.public))))),
   accountKeyChains:
-    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t))))
+    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
 };
 
 let makeState = () => {
@@ -46,19 +46,22 @@ let makeState = () => {
   policies: [],
   creatorData: {
     id: UserId.fromString(""),
-    pubKey: ""
+    pubKey: "",
   },
   custodianKeyChains: [],
-  accountKeyChains: []
+  accountKeyChains: [],
 };
 
 let addProcess =
     (
       {processId, policy, supporterId}: EventTypes.proposal('a),
-      {processes} as state
+      {processes} as state,
     ) => {
   ...state,
-  processes: [(processId, {policy, supporterIds: [supporterId]}), ...processes]
+  processes: [
+    (processId, {policy, supporterIds: [supporterId]}),
+    ...processes,
+  ],
 };
 
 let endorseProcess =
@@ -70,26 +73,29 @@ let endorseProcess =
          ProcessId.eq(pId, processId) ?
            (
              pId,
-             {...process, supporterIds: [supporterId, ...process.supporterIds]}
+             {
+               ...process,
+               supporterIds: [supporterId, ...process.supporterIds],
+             },
            ) :
            (pId, process)
-       )
+       ),
 };
 
 let completeProcess =
     ({processId}: EventTypes.acceptance('a), {completedProcesses} as state) => {
   ...state,
-  completedProcesses: [processId, ...completedProcesses]
+  completedProcesses: [processId, ...completedProcesses],
 };
 
 let apply = (event: Event.t, state) =>
-  switch event {
+  switch (event) {
   | VentureCreated({
       ventureName,
       metaPolicy,
       systemIssuer,
       creatorId,
-      creatorPubKey
+      creatorPubKey,
     }) => {
       ...state,
       ventureName,
@@ -100,51 +106,52 @@ let apply = (event: Event.t, state) =>
           Partner.processName,
           AccountCreation.processName,
           Custodian.processName,
-          Payout.processName
+          Payout.processName,
         ]
         |> List.map(n => (n, metaPolicy)),
-      creatorData: Partner.Data.{id: creatorId, pubKey: creatorPubKey}
+      creatorData: Partner.Data.{id: creatorId, pubKey: creatorPubKey},
     }
   | PartnerProposed({processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      partnerData: [(processId, data), ...state.partnerData]
+      partnerData: [(processId, data), ...state.partnerData],
     }
   | CustodianProposed({processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      custodianData: [(processId, data), ...state.custodianData]
+      custodianData: [(processId, data), ...state.custodianData],
     }
   | AccountCreationProposed({processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      accountCreationData: [(processId, data), ...state.accountCreationData]
+      accountCreationData: [(processId, data), ...state.accountCreationData],
     }
   | PayoutProposed({processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      payoutData: [(processId, data), ...state.payoutData]
+      payoutData: [(processId, data), ...state.payoutData],
     }
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
   | CustodianEndorsed(endorsement) => endorseProcess(endorsement, state)
-  | AccountCreationEndorsed(endorsement) => endorseProcess(endorsement, state)
+  | AccountCreationEndorsed(endorsement) =>
+    endorseProcess(endorsement, state)
   | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerAccepted({data}) => {
       ...state,
       partnerIds: [data.id, ...state.partnerIds],
       partnerStoragePrefixes: [
         UserInfo.storagePrefix(~appPubKey=data.pubKey),
-        ...state.partnerStoragePrefixes
+        ...state.partnerStoragePrefixes,
       ],
-      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys]
+      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys],
     }
   | AccountCreationAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
-      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains]
+      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
     }
   | PayoutAccepted(acceptance) => completeProcess(acceptance, state)
   | CustodianAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
       custodianKeyChains: [
         (data.partnerId, [(data.accountIdx, [])]),
-        ...state.custodianKeyChains
-      ]
+        ...state.custodianKeyChains,
+      ],
     }
   | CustodianKeyChainUpdated({partnerId, keyChain}) =>
     let userChains =
@@ -163,12 +170,12 @@ let apply = (event: Event.t, state) =>
           [
             (
               CustodianKeyChain.accountIdx(keyChain),
-              [keyChain, ...accountChains]
-            )
-          ]
+              [keyChain, ...accountChains],
+            ),
+          ],
         ),
-        ...state.custodianKeyChains |> List.remove_assoc(partnerId)
-      ]
+        ...state.custodianKeyChains |> List.remove_assoc(partnerId),
+      ],
     };
   | AccountKeyChainUpdated({keyChain}) =>
     let accountChains =
@@ -180,9 +187,9 @@ let apply = (event: Event.t, state) =>
       accountKeyChains: [
         (
           keyChain.accountIdx,
-          [(keyChain.keyChainIdx, keyChain), ...accountChains]
-        )
-      ]
+          [(keyChain.keyChainIdx, keyChain), ...accountChains],
+        ),
+      ],
     };
   | IncomeAddressExposed(_)
   | PayoutBroadcast(_)
@@ -218,17 +225,17 @@ let validateProposal =
       processName,
       {policy, supporterId, data, dependsOn}: EventTypes.proposal('a),
       {policies, partnerPubKeys, processes} as state,
-      issuerPubKey
+      issuerPubKey,
     ) =>
   if (Policy.neq(policy, policies |> List.assoc(processName))) {
     PolicyMissmatch;
   } else if (UserId.neq(
                partnerPubKeys |> List.assoc(issuerPubKey),
-               supporterId
+               supporterId,
              )) {
     InvalidIssuer;
   } else {
-    switch dependsOn {
+    switch (dependsOn) {
     | None => validateData(data, state)
     | Some(processId) =>
       processes |> List.mem_assoc(processId) ?
@@ -240,18 +247,20 @@ let validateEndorsement =
     (
       {processId, supporterId}: EventTypes.endorsement,
       {processes, partnerPubKeys},
-      issuerPubKey
+      issuerPubKey,
     ) =>
-  try {
-    let {supporterIds} = processes |> List.assoc(processId);
-    if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
-      InvalidIssuer;
-    } else if (supporterIds |> List.mem(supporterId)) {
-      DuplicateEndorsement;
-    } else {
-      Ok;
-    };
-  } {
+  try (
+    {
+      let {supporterIds} = processes |> List.assoc(processId);
+      if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
+        InvalidIssuer;
+      } else if (supporterIds |> List.mem(supporterId)) {
+        DuplicateEndorsement;
+      } else {
+        Ok;
+      };
+    }
+  ) {
   | Not_found => UnknownProcessId
   };
 
@@ -260,27 +269,29 @@ let validateAcceptance =
       {processId, data, dependsOn}: EventTypes.acceptance('a),
       dataList: list((processId, 'a)),
       {processes, partnerIds, completedProcesses},
-      _issuerPubKey
+      _issuerPubKey,
     ) =>
-  try {
-    let {policy, supporterIds} = processes |> List.assoc(processId);
-    if (data != (dataList |> List.assoc(processId))) {
-      BadData("Data doesn't match proposal");
-    } else if (Policy.fulfilled(
-                 ~eligable=partnerIds,
-                 ~endorsed=supporterIds,
-                 policy
-               )
-               == false) {
-      PolicyNotFulfilled;
-    } else {
-      switch dependsOn {
-      | None => Ok
-      | Some(processId) =>
-        completedProcesses |> List.mem(processId) ? Ok : DependencyNotMet
+  try (
+    {
+      let {policy, supporterIds} = processes |> List.assoc(processId);
+      if (data != (dataList |> List.assoc(processId))) {
+        BadData("Data doesn't match proposal");
+      } else if (Policy.fulfilled(
+                   ~eligable=partnerIds,
+                   ~endorsed=supporterIds,
+                   policy,
+                 )
+                 == false) {
+        PolicyNotFulfilled;
+      } else {
+        switch (dependsOn) {
+        | None => Ok
+        | Some(processId) =>
+          completedProcesses |> List.mem(processId) ? Ok : DependencyNotMet
+        };
       };
-    };
-  } {
+    }
+  ) {
   | Not_found => UnknownProcessId
   };
 
@@ -290,7 +301,7 @@ let validateCustodianData = (data: Custodian.Data.t, {partnerIds}) =>
     BadData(
       "Partner with Id '"
       ++ UserId.toString(data.partnerId)
-      ++ "' doesn't exist"
+      ++ "' doesn't exist",
     );
 
 let validateAccountCreationData =
@@ -302,35 +313,37 @@ let validateCustodianKeyChainUpdated =
     (
       {partnerId, keyChain}: CustodianKeyChainUpdated.t,
       {partnerPubKeys, custodianData, completedProcesses, custodianKeyChains},
-      issuerPubKey
+      issuerPubKey,
     ) =>
   if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), partnerId)) {
     InvalidIssuer;
   } else {
-    try {
-      let (process, _data) =
-        custodianData
-        |> List.find(((_pId, data: Custodian.Data.t)) =>
-             data.partnerId == partnerId
-             && data.accountIdx == CustodianKeyChain.accountIdx(keyChain)
-           );
-      if (completedProcesses |> List.mem(process)) {
-        if (custodianKeyChains
-            |> List.assoc(partnerId)
-            |> List.assoc(CustodianKeyChain.accountIdx(keyChain))
-            |>
-            List.length != (
-                             CustodianKeyChain.keyChainIdx(keyChain)
-                             |> CustodianKeyChainIndex.toInt
-                           )) {
-          BadData("Bad KeyChainIndex");
+    try (
+      {
+        let (process, _data) =
+          custodianData
+          |> List.find(((_pId, data: Custodian.Data.t)) =>
+               data.partnerId == partnerId
+               && data.accountIdx == CustodianKeyChain.accountIdx(keyChain)
+             );
+        if (completedProcesses |> List.mem(process)) {
+          if (custodianKeyChains
+              |> List.assoc(partnerId)
+              |> List.assoc(CustodianKeyChain.accountIdx(keyChain))
+              |>
+              List.length != (
+                               CustodianKeyChain.keyChainIdx(keyChain)
+                               |> CustodianKeyChainIndex.toInt
+                             )) {
+            BadData("Bad KeyChainIndex");
+          } else {
+            Ok;
+          };
         } else {
-          Ok;
+          BadData("Custodian isn't accepted yet");
         };
-      } else {
-        BadData("Custodian isn't accepted yet");
-      };
-    } {
+      }
+    ) {
     | Not_found => BadData("Custodian doesn't exist")
     };
   };
@@ -342,53 +355,57 @@ let validateAccountKeyChainUpdated =
         accountCreationData,
         completedProcesses,
         custodianKeyChains,
-        accountKeyChains
+        accountKeyChains,
       },
-      _issuerPubKey
+      _issuerPubKey,
     ) =>
-  try {
-    let (pId, _) =
-      accountCreationData
-      |> List.find(((_, data: AccountCreation.Data.t)) =>
-           data.accountIdx == keyChain.accountIdx
-         );
-    if (completedProcesses |> List.mem(pId)) {
-      if (accountKeyChains
-          |> List.assoc(keyChain.accountIdx)
-          |>
-          List.length != (keyChain.keyChainIdx |> AccountKeyChainIndex.toInt)) {
-        BadData("Bad KeyChainIndex");
+  try (
+    {
+      let (pId, _) =
+        accountCreationData
+        |> List.find(((_, data: AccountCreation.Data.t)) =>
+             data.accountIdx == keyChain.accountIdx
+           );
+      if (completedProcesses |> List.mem(pId)) {
+        if (accountKeyChains
+            |> List.assoc(keyChain.accountIdx)
+            |>
+            List.length != (keyChain.keyChainIdx |> AccountKeyChainIndex.toInt)) {
+          BadData("Bad KeyChainIndex");
+        } else {
+          let accountIdx = keyChain.accountIdx;
+          keyChain
+          |> AccountKeyChain.custodianKeyChains
+          |> List.map(((partnerId, keyChain)) =>
+               try (
+                 {
+                   let latestKeyChain =
+                     custodianKeyChains
+                     /* list((userId, list((int, list(CustodianKeyChain.public))))), */
+                     |> List.assoc(partnerId)
+                     |> List.assoc(accountIdx)
+                     |> List.sort((keysA, keysB) =>
+                          compare(
+                            keysA |> CustodianKeyChain.keyChainIdx,
+                            keysB |> CustodianKeyChain.keyChainIdx,
+                          )
+                        )
+                     |> List.rev
+                     |> List.hd;
+                   keyChain == latestKeyChain ?
+                     Ok : BadData("Bad CustodianKeyChain");
+                 }
+               ) {
+               | Not_found => BadData("Bad CustodianKeyChain")
+               }
+             )
+          |> List.fold_left((result, test) => test == Ok ? result : test, Ok);
+        };
       } else {
-        let accountIdx = keyChain.accountIdx;
-        keyChain
-        |> AccountKeyChain.custodianKeyChains
-        |> List.map(((partnerId, keyChain)) =>
-             try {
-               let latestKeyChain =
-                 custodianKeyChains
-                 /* list((userId, list((int, list(CustodianKeyChain.public))))), */
-                 |> List.assoc(partnerId)
-                 |> List.assoc(accountIdx)
-                 |> List.sort((keysA, keysB) =>
-                      compare(
-                        keysA |> CustodianKeyChain.keyChainIdx,
-                        keysB |> CustodianKeyChain.keyChainIdx
-                      )
-                    )
-                 |> List.rev
-                 |> List.hd;
-               keyChain == latestKeyChain ?
-                 Ok : BadData("Bad CustodianKeyChain");
-             } {
-             | Not_found => BadData("Bad CustodianKeyChain")
-             }
-           )
-        |> List.fold_left((result, test) => test == Ok ? result : test, Ok);
+        BadData("Account doesn't exist");
       };
-    } else {
-      BadData("Account doesn't exist");
-    };
-  } {
+    }
+  ) {
   | Not_found => BadData("Account doesn't exist")
   };
 
@@ -396,17 +413,19 @@ let validateIncomeAddressExposed =
     (
       {coordinates, address}: IncomeAddressExposed.t,
       {accountKeyChains},
-      _issuerPubKey
+      _issuerPubKey,
     ) =>
-  try {
-    let generatedAddress =
-      accountKeyChains |> AccountKeyChain.find(coordinates);
-    if (address == generatedAddress.address) {
-      Ok;
-    } else {
-      BadData("Unknown Address");
-    };
-  } {
+  try (
+    {
+      let generatedAddress =
+        accountKeyChains |> AccountKeyChain.find(coordinates);
+      if (address == generatedAddress.address) {
+        Ok;
+      } else {
+        BadData("Unknown Address");
+      };
+    }
+  ) {
   | Not_found => BadData("Unknown Address")
   };
 
@@ -419,15 +438,16 @@ let validateEvent =
     validateProposal(
       ~validateData=validateCustodianData,
       Custodian.processName,
-      proposal
+      proposal,
     )
   | AccountCreationProposed(proposal) =>
     validateProposal(
       ~validateData=validateAccountCreationData,
       AccountCreation.processName,
-      proposal
+      proposal,
     )
-  | PayoutProposed(proposal) => validateProposal(Payout.processName, proposal)
+  | PayoutProposed(proposal) =>
+    validateProposal(Payout.processName, proposal)
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | CustodianEndorsed(endorsement) => validateEndorsement(endorsement)
   | AccountCreationEndorsed(endorsement) => validateEndorsement(endorsement)
@@ -439,7 +459,8 @@ let validateEvent =
       state => validateAcceptance(acceptance, state.custodianData, state)
     )
   | AccountCreationAccepted(acceptance) => (
-      state => validateAcceptance(acceptance, state.accountCreationData, state)
+      state =>
+        validateAcceptance(acceptance, state.accountCreationData, state)
     )
   | PayoutAccepted(acceptance) => (
       state => validateAcceptance(acceptance, state.payoutData, state)
@@ -455,7 +476,7 @@ let validate = (state, {event, issuerPubKey}: EventLog.item) =>
   switch (
     event,
     Event.isSystemEvent(event),
-    state.partnerPubKeys |> List.mem_assoc(issuerPubKey)
+    state.partnerPubKeys |> List.mem_assoc(issuerPubKey),
   ) {
   | (VentureCreated(_), _, _) => Ok
   | (PartnerProposed(event), false, false)

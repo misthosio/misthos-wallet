@@ -17,8 +17,8 @@ let () =
           AccountIndex.first,
           AccountKeyChainIndex.first,
           ChainIndex.externalChain,
-          AddressIndex.first
-        )
+          AddressIndex.first,
+        ),
       },
       {
         txId: "d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
@@ -30,9 +30,9 @@ let () =
           AccountIndex.first,
           AccountKeyChainIndex.first,
           ChainIndex.externalChain,
-          AddressIndex.first |> AddressIndex.next
-        )
-      }
+          AddressIndex.first |> AddressIndex.next,
+        ),
+      },
     ];
     let changeAddress =
       AccountKeyChain.Address.{
@@ -41,11 +41,11 @@ let () =
           AccountIndex.first,
           AccountKeyChainIndex.first,
           ChainIndex.externalChain,
-          AddressIndex.first
+          AddressIndex.first,
         ),
         witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
         redeemScript: "002027fa0596838478a59b5c0512acf480fdba510cd320def9e3d9e9d27a13b7e72f",
-        address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE"
+        address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
       };
     test("uses as many inputs as necessary", () => {
       let (payoutTx, changeUsed) =
@@ -54,11 +54,14 @@ let () =
             ~mandatoryInputs=[],
             ~allInputs=inputs,
             ~destinations=[
-              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(10000L))
+              (
+                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                BTC.fromSatoshis(10000L),
+              ),
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest
+            ~network=Network.Regtest,
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -74,11 +77,14 @@ let () =
             ~mandatoryInputs=[],
             ~allInputs=inputs,
             ~destinations=[
-              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(4000L))
+              (
+                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                BTC.fromSatoshis(4000L),
+              ),
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest
+            ~network=Network.Regtest,
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -94,11 +100,14 @@ let () =
             ~mandatoryInputs=[],
             ~allInputs=inputs,
             ~destinations=[
-              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L))
+              (
+                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                BTC.fromSatoshis(9800L),
+              ),
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest
+            ~network=Network.Regtest,
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -114,11 +123,14 @@ let () =
             ~mandatoryInputs=[List.nth(inputs, 1)],
             ~allInputs=inputs,
             ~destinations=[
-              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(6000L))
+              (
+                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                BTC.fromSatoshis(6000L),
+              ),
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest
+            ~network=Network.Regtest,
           )
         ) {
         | WithChangeAddress(payout) => (payout, true)
@@ -134,13 +146,16 @@ let () =
             ~mandatoryInputs=[],
             ~allInputs=inputs,
             ~destinations=[
-              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(15000L))
+              (
+                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                BTC.fromSatoshis(15000L),
+              ),
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
-            ~network=Network.Regtest
+            ~network=Network.Regtest,
           ),
-        ()
+        (),
       )
       |> toThrow
     );

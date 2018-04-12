@@ -22,5 +22,5 @@ let encode = p =>
 
 let decode = raw =>
   Json.Decode.{
-    thresholdPercent: raw |> field("thresholdPercent", Json.Decode.float)
+    thresholdPercent: raw |> field("thresholdPercent", Json.Decode.float),
   };

@@ -76,8 +76,8 @@ let canPayForItself = (fee, input: Network.txInput) =>
   |> BTC.gte(
        fee
        |> BTC.timesFloat(
-            estimateInputWeight(input.nCoSigners) |> weightToVSize
-          )
+            estimateInputWeight(input.nCoSigners) |> weightToVSize,
+          ),
      );
 
 let estimate = (outputs, inputs, fee, network) =>
@@ -85,14 +85,16 @@ let estimate = (outputs, inputs, fee, network) =>
   |> BTC.timesFloat(
        baseWeight
        + (
-         outputs |> List.fold_left((t, o) => t + outputWeight(o, network), 0)
+         outputs
+         |> List.fold_left((t, o) => t + outputWeight(o, network), 0)
        )
        + (
          inputs
          |> List.fold_left(
-              (t, i: Network.txInput) => t + estimateInputWeight(i.nCoSigners),
-              0
+              (t, i: Network.txInput) =>
+                t + estimateInputWeight(i.nCoSigners),
+              0,
             )
        )
-       |> weightToVSize
+       |> weightToVSize,
      );

@@ -19,7 +19,7 @@ type t = {
   state: Validation.state,
   wallet: Venture__Wallet.t,
   viewModel: ViewModel.t,
-  watchers: Watchers.t
+  watchers: Watchers.t,
 };
 
 module Wallet = {
@@ -34,7 +34,7 @@ let make = (session, id) => {
   state: Validation.makeState(),
   wallet: Wallet.make(),
   viewModel: ViewModel.make(),
-  watchers: []
+  watchers: [],
 };
 
 let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
@@ -61,7 +61,7 @@ let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
       session.issuerKeyPair,
       event,
       log,
-      (state, wallet, viewModel)
+      (state, wallet, viewModel),
     );
   Js.Promise.(
     watchers
@@ -70,7 +70,7 @@ let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
          item,
          log,
          applyInternal,
-         (state, wallet, viewModel)
+         (state, wallet, viewModel),
        )
     |> then_(((log, (state, wallet, viewModel), watchers)) =>
          {session, id, log, state, wallet, viewModel, watchers} |> resolve
@@ -84,23 +84,23 @@ let reconstruct = (session, log) => {
     log
     |> EventLog.reduce(
          ((id, state, wallet, viewModel, watchers), {event} as item) => (
-           switch event {
+           switch (event) {
            | VentureCreated({ventureId}) => ventureId
            | _ => id
            },
            state |> Validation.apply(event),
            wallet |> Wallet.apply(event),
            viewModel |> ViewModel.apply(event),
-           watchers |> Watchers.apply(~reconstruct=true, session, item, log)
+           watchers |> Watchers.apply(~reconstruct=true, session, item, log),
          ),
-         (VentureId.make(), state, wallet, viewModel, [])
+         (VentureId.make(), state, wallet, viewModel, []),
        );
   watchers
   |> Watchers.processPending(
        session,
        log,
        applyInternal,
-       (state, wallet, viewModel)
+       (state, wallet, viewModel),
      )
   |> Js.Promise.then_(((log, (state, wallet, viewModel), watchers)) =>
        {session, id, log, state, wallet, viewModel, watchers}
@@ -125,7 +125,7 @@ let persist = ({id, log, state} as venture) => {
            |> then_(() =>
                 Blockstack.putFile(
                   (id |> VentureId.toString) ++ "/" ++ prefix ++ "/log.json",
-                  logString
+                  logString,
                 )
               )
            |> then_(() =>
@@ -134,10 +134,10 @@ let persist = ({id, log, state} as venture) => {
                   ++ "/"
                   ++ prefix
                   ++ "/summary.json",
-                  summaryString
+                  summaryString,
                 )
               ),
-         resolve()
+         resolve(),
        )
     |> ignore
   );
@@ -165,7 +165,7 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
     Blockstack.getFileFromUser(
       ventureId ++ "/" ++ session.storagePrefix ++ "/log.json",
-      ~username=userId
+      ~username=userId,
     )
     |> catch(_error => raise(Not_found))
     |> then_(nullFile =>
@@ -179,7 +179,7 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
     |> then_(venture =>
          Index.add(
            ~ventureId=venture.id,
-           ~ventureName=venture.state.ventureName
+           ~ventureName=venture.state.ventureName,
          )
          |> then_(index => resolve((index, venture)))
        )
@@ -199,7 +199,7 @@ module Synchronize = {
          Blockstack.getUserAppFileUrl(
            ~path=(id |> VentureId.toString) ++ "/" ++ session.storagePrefix,
            ~username=partnerId |> UserId.toString,
-           ~appOrigin=Location.origin
+           ~appOrigin=Location.origin,
          )
        )
     |> Array.of_list
@@ -214,7 +214,7 @@ module Synchronize = {
       |> List.fold_left(
            (
              ({log, watchers, state, wallet, viewModel} as venture, error),
-             {event} as item: EventLog.item
+             {event} as item: EventLog.item,
            ) =>
              if (Js.Option.isSome(error)) {
                (venture, error);
@@ -225,15 +225,19 @@ module Synchronize = {
                  let state = state |> Validation.apply(event);
                  let wallet = wallet |> Wallet.apply(event);
                  let viewModel = viewModel |> ViewModel.apply(event);
-                 let watchers = watchers |> Watchers.apply(session, item, log);
-                 ({...venture, log, watchers, state, wallet, viewModel}, None);
+                 let watchers =
+                   watchers |> Watchers.apply(session, item, log);
+                 (
+                   {...venture, log, watchers, state, wallet, viewModel},
+                   None,
+                 );
                | PolicyMissmatch as conflict => (
                    venture,
-                   Some(Error(venture, item, conflict))
+                   Some(Error(venture, item, conflict)),
                  )
                | PolicyNotFulfilled as conflict => (
                    venture,
-                   Some(Error(venture, item, conflict))
+                   Some(Error(venture, item, conflict)),
                  )
                /* Ignored validation issues */
                | InvalidIssuer =>
@@ -253,7 +257,7 @@ module Synchronize = {
                  (venture, None);
                };
              },
-           (venture, None)
+           (venture, None),
          );
     Js.Promise.(
       watchers
@@ -261,14 +265,14 @@ module Synchronize = {
            session,
            log,
            applyInternal,
-           (state, wallet, viewModel)
+           (state, wallet, viewModel),
          )
       |> then_(((log, (state, wallet, viewModel), watchers)) =>
            {...venture, log, state, wallet, viewModel, watchers} |> persist
          )
       |> then_(p =>
            (
-             switch error {
+             switch (error) {
              | None => Ok(p)
              | Some(e) => e
              }
@@ -292,14 +296,14 @@ module Cmd = {
           ~creatorId=session.userId,
           ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
           ~metaPolicy=defaultPolicy,
-          ~network=session.network
+          ~network=session.network,
         );
       Js.(
         Promise.all2((
           Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
           make(session, ventureCreated.ventureId)
           |> apply(VentureCreated(ventureCreated))
-          |> Promise.then_(persist)
+          |> Promise.then_(persist),
         ))
       );
     };
@@ -314,7 +318,7 @@ module Cmd = {
       Js.Promise.(
         UserInfo.Public.read(~blockstackId=prospectId)
         |> then_(readResult =>
-             switch readResult {
+             switch (readResult) {
              | UserInfo.Public.Ok(info) =>
                venture
                |> apply(
@@ -323,8 +327,9 @@ module Cmd = {
                       ~prospectId,
                       ~prospectPubKey=info.appPubKey,
                       ~policy=
-                        state.policies |> List.assoc(Event.Partner.processName)
-                    )
+                        state.policies
+                        |> List.assoc(Event.Partner.processName),
+                    ),
                   )
                |> then_(persist)
                |> then_(p => resolve(Ok(p)))
@@ -342,7 +347,10 @@ module Cmd = {
       Js.Promise.(
         venture
         |> apply(
-             Event.makePartnerEndorsed(~processId, ~supporterId=session.userId)
+             Event.makePartnerEndorsed(
+               ~processId,
+               ~supporterId=session.userId,
+             ),
            )
         |> then_(persist)
         |> then_(p => resolve(Ok(p)))
@@ -366,7 +374,8 @@ module Cmd = {
   module ProposePayout = {
     type result =
       | Ok(t);
-    let exec = (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
+    let exec =
+        (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
         Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
@@ -384,7 +393,10 @@ module Cmd = {
       Js.Promise.(
         venture
         |> apply(
-             Event.makePayoutEndorsed(~processId, ~supporterId=session.userId)
+             Event.makePayoutEndorsed(
+               ~processId,
+               ~supporterId=session.userId,
+             ),
            )
         |> then_(persist)
         |> then_(p => resolve(Ok(p)))
