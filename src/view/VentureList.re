@@ -12,7 +12,7 @@ type state = {
 
 type action =
   | IndexLoaded(Venture.Index.t)
-  | SelectVenture(int);
+  | SelectVenture(ventureId);
 
 let component = ReasonReact.reducerComponent("VentureList");
 
@@ -20,7 +20,8 @@ let selectVenture = e =>
   SelectVenture(
     ReactDOMRe.domElementToObj(ReactEventRe.Mouse.currentTarget(e))##getAttribute(
       "value",
-    ),
+    )
+    |> VentureId.fromString,
   );
 
 let make = (~session, _children) => {
@@ -39,12 +40,10 @@ let make = (~session, _children) => {
     switch (action) {
     | IndexLoaded(index) =>
       ReasonReact.Update({...state, status: None, index})
-    | SelectVenture(i) =>
-      Js.log(i);
-      let ventureId = List.nth(state.index, i).id;
-      Js.log("SelectVenture(" ++ (ventureId |> VentureId.toString) ++ ")");
-      Some(ventureId) == state.selected ?
-        ReasonReact.NoUpdate : ReasonReact.NoUpdate;
+    | SelectVenture(id) =>
+      Some(id) == state.selected ?
+        ReasonReact.NoUpdate :
+        ReasonReact.Update({...state, selected: Some(id)})
     /* ReasonReact.UpdateWithSideEffects( */
     /*   {...state, status: LoadingVenture, selected: None}, */
     /*   ( */
@@ -71,16 +70,41 @@ let make = (~session, _children) => {
                Venture.Index.(
                  ({name, id}) =>
                    MaterialUi.(
-                     <ListItem
+                     <WithStyles
                        key=(id |> VentureId.toString)
-                       button=false
-                       value=(`String(id |> VentureId.toString))
-                       onClick=(e => send(selectVenture(e)))
-                       component=(`String("li"))>
-                       <ListItemText
-                         primary=(ReasonReact.stringToElement(name))
-                       />
-                     </ListItem>
+                       classes=[
+                         {
+                           name: "selected",
+                           styles:
+                             ReactDOMRe.Style.make(
+                               ~backgroundColor="gray",
+                               (),
+                             ),
+                         },
+                       ]
+                       render={
+                                let ids = id |> VentureId.toString;
+                                classes =>
+                                  <ListItem
+                                    key=ids
+                                    button=false
+                                    value=(`String(ids))
+                                    className=(
+                                      Some(id) == state.selected ?
+                                        classes##selected : ""
+                                    )
+                                    onClick=(e => send(selectVenture(e)))
+                                    component=(`String("li"))>
+                                    <ListItemText
+                                      primary={
+                                        <Router.Link route=(Venture(id))>
+                                          (name |> ReasonReact.stringToElement)
+                                        </Router.Link>
+                                      }
+                                    />
+                                  </ListItem>;
+                              }
+                     />
                    )
                ),
              ),
