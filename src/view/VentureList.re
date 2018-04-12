@@ -44,17 +44,6 @@ let make = (~session, ~selected=?, _children) => {
       Some(id) == state.selected ?
         ReasonReact.NoUpdate :
         ReasonReact.Update({...state, selected: Some(id)})
-    /* ReasonReact.UpdateWithSideEffects( */
-    /*   {...state, status: LoadingVenture, selected: None}, */
-    /*   ( */
-    /*     ({send}) => */
-    /*       Js.Promise.( */
-    /*         Venture.load(session, ~ventureId=id |> VentureId.fromString) */
-    /*         |> then_(venture => send(VentureLoaded(venture)) |> resolve) */
-    /*         |> ignore */
-    /*       ) */
-    /*   ), */
-    /* ); */
     },
   render: ({send, state}) => {
     let ventureList =
