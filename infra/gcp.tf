@@ -17,8 +17,8 @@ resource "google_storage_bucket" "misthos-web-staging" {
 resource "google_storage_bucket_acl" "staging-acl" {
   bucket = "${google_storage_bucket.misthos-web-staging.name}"
 
-  predefined_acl  = "publicread"
-  default_acl = "publicread"
+  predefined_acl = "publicread"
+  default_acl    = "publicread"
 }
 
 resource "google_storage_bucket" "misthos-web-prod" {
@@ -35,5 +35,5 @@ resource "google_storage_bucket_acl" "prod-acl" {
   bucket = "${google_storage_bucket.misthos-web-prod.name}"
 
   predefined_acl = "publicread"
-  default_acl = "publicread"
+  default_acl    = "publicread"
 }
