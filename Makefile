@@ -14,6 +14,10 @@ bsb:
 	node_modules/.bin/bsb -clean-world
 	node_modules/.bin/bsb -make-world -w
 
+build:
+	rm -rf ./node_modules/uri-js/dist/esnext
+	yarn build
+
 ci:
 	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
