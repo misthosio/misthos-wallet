@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+ls
 cp -r deps/* repo
 cd repo
 make install
