@@ -12,6 +12,11 @@ resource "google_storage_bucket" "misthos-web-staging" {
   website {
     main_page_suffix = "index.html"
   }
+  cors {
+    origin = ["localhost"]
+    method = ["GET"]
+    response_header = ["content-type"]
+  }
 }
 
 resource "google_storage_bucket_acl" "staging-acl" {
@@ -28,6 +33,11 @@ resource "google_storage_bucket" "misthos-web-prod" {
 
   website {
     main_page_suffix = "index.html"
+  }
+  cors {
+    origin = ["localhost"]
+    method = ["GET"]
+    response_header = ["content-type"]
   }
 }
 
