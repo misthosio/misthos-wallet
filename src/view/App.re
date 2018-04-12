@@ -8,16 +8,16 @@ let make = (~session, ~updateSession, _children) => {
     let drawer = (currentRoute: Router.Config.route) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
-      | (Session.LoggedIn(data), Home) => Some(<VentureList session />)
-      | (Session.LoggedIn(data), Venture(selected)) =>
+      | (LoggedIn(data), Home) => Some(<VentureList session />)
+      | (LoggedIn(data), Venture(selected)) =>
         Some(<VentureList selected session />)
       };
     let body = (currentRoute: Router.Config.route) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) =>
         <PublicHome onSignIn=(_e => updateSession(SessionStore.SignIn)) />
-      | (Session.LoggedIn(session), Home) => <Home session />
-      | (Session.LoggedIn(session), _) => <Home session />
+      | (LoggedIn(session), Home) => <Home session />
+      | (LoggedIn(session), _) => <Home session />
       };
     <Router.Container>
       ...(
