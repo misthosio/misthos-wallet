@@ -9,4 +9,4 @@ EOF
 
 gcloud auth activate-service-account --key-file ./account.json
 
-gsutil cp build/* gs://test.misthos.io
+gsutil cp -r build/* gs://test.misthos.io
