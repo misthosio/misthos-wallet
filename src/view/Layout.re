@@ -4,7 +4,7 @@ type action =
   | OpenDrawer
   | CloseDrawer;
 
-type state = {_open: bool};
+type state = {open_: bool};
 
 let component = ReasonReact.reducerComponent("Layout");
 
@@ -17,11 +17,11 @@ let logo =
 
 let make = (~drawer, children) => {
   ...component,
-  initialState: () => {_open: false},
+  initialState: () => {open_: false},
   reducer: (action, _state) =>
     switch (action) {
-    | OpenDrawer => ReasonReact.Update({_open: true})
-    | CloseDrawer => ReasonReact.Update({_open: false})
+    | OpenDrawer => ReasonReact.Update({open_: true})
+    | CloseDrawer => ReasonReact.Update({open_: false})
     },
   render: ({send, state}) =>
     MaterialUi.(
@@ -68,7 +68,7 @@ let make = (~drawer, children) => {
                     variant=`Temporary
                     anchor=`Right
                     onClose=(() => send(CloseDrawer))
-                    _open=state._open>
+                    _open=state.open_>
                     <div
                       className=classes##drawer
                       tabIndex=0
