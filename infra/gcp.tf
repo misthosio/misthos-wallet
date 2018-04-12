@@ -25,6 +25,11 @@ resource "google_storage_bucket_acl" "staging-acl" {
   predefined_acl = "publicread"
   default_acl    = "publicread"
 }
+resource "google_storage_bucket_iam_member" "member" {
+  bucket = "${google_storage_bucket.misthos-web-staging.name}"
+  role        = "roles/storage.objectAdmin"
+  member      = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
+}
 
 resource "google_storage_bucket" "misthos-web-prod" {
   name          = "app.misthos.io"
