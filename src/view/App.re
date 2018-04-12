@@ -9,12 +9,15 @@ let make = (~session, ~updateSession, _children) => {
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin, _) => None
       | (Session.LoggedIn(data), Home) => Some(<VentureList session />)
+      | (Session.LoggedIn(data), Venture(selected)) =>
+        Some(<VentureList selected session />)
       };
     let body = (currentRoute: Router.Config.route) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin, _) =>
         <PublicHome onSignIn=(_e => updateSession(UserSession.SignIn)) />
       | (Session.LoggedIn(data), Home) => <Home data />
+      | (Session.LoggedIn(data), _) => <Home data />
       };
     <Router.Container>
       ...(

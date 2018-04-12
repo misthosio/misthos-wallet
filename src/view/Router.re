@@ -6,8 +6,7 @@ module Config = {
     | Venture(ventureId);
   let routeFromUrl = (url: ReasonReact.Router.url) =>
     switch (url.path) {
-    | ["ventures", id] => Home
-    /* Venture(id |> VentureId.fromString) */
+    | ["ventures", id] => Venture(id |> VentureId.fromString)
     | [] => Home
     | _ => Home
     };

@@ -24,9 +24,12 @@ let selectVenture = e =>
     |> VentureId.fromString,
   );
 
-let make = (~session, _children) => {
+let make = (~session, ~selected=?, _children) => {
   ...component,
-  initialState: () => {status: LoadingIndex, index: [], selected: None},
+  initialState: () => {
+    Js.log(selected);
+    {status: LoadingIndex, index: [], selected};
+  },
   didMount: _self =>
     ReasonReact.SideEffects(
       ({send}) =>
@@ -81,6 +84,15 @@ let make = (~session, _children) => {
                                (),
                              ),
                          },
+                         {
+                           name: "link",
+                           styles:
+                             ReactDOMRe.Style.make(
+                               ~display="block",
+                               ~width="100%",
+                               (),
+                             ),
+                         },
                        ]
                        render={
                                 let ids = id |> VentureId.toString;
@@ -97,9 +109,11 @@ let make = (~session, _children) => {
                                     component=(`String("li"))>
                                     <ListItemText
                                       primary={
-                                        <Router.Link route=(Venture(id))>
+                                        <Link
+                                          className=classes##link
+                                          route=(Venture(id))>
                                           (name |> ReasonReact.stringToElement)
-                                        </Router.Link>
+                                        </Link>
                                       }
                                     />
                                   </ListItem>;
