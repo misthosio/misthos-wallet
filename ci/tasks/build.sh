@@ -12,5 +12,5 @@ make build
 popd
 
 cp -r repo/node_modules deps
-cp -r repo/build build
+cp -r repo/build/* build
 
