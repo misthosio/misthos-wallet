@@ -32,6 +32,8 @@ type signResult =
   | Signed(t)
   | NotSigned;
 
+let getSignedExn: signResult => t;
+
 let signPayout:
   (
     ~ventureId: ventureId,

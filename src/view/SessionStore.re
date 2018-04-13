@@ -1,5 +1,3 @@
-open PrimitiveTypes;
-
 type action =
   | UpdateSession(Session.t)
   | SignIn
@@ -21,12 +19,12 @@ let make = children => {
           |> ignore
         ),
     ),
-  reducer: (action, state) =>
+  reducer: (action, _state) =>
     switch (action) {
-    | UpdateSession(session) => ReasonReact.Update({...state, session})
-    | SignIn => ReasonReact.Update({...state, session: Session.signIn()})
-    | SignOut => ReasonReact.Update({...state, session: Session.signOut()})
+    | UpdateSession(session) => ReasonReact.Update({session: session})
+    | SignIn => ReasonReact.Update({session: Session.signIn()})
+    | SignOut => ReasonReact.Update({session: Session.signOut()})
     },
-  render: ({state, send, handle}) =>
+  render: ({state, send}) =>
     children(~session=state.session, ~updateSession=send),
 };

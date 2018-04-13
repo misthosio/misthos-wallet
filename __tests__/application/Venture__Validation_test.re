@@ -23,13 +23,14 @@ let () = {
         ~metaPolicy=Policy.absolute,
         ~network=Network.Regtest,
       );
-    let Event.PartnerProposed(partnerProposal) =
+    let partnerProposal =
       Event.makePartnerProposed(
         ~supporterId=creatorId,
         ~prospectId=creatorId,
         ~prospectPubKey=creatorPubKey,
         ~policy=Policy.absolute,
-      );
+      )
+      |> Event.getPartnerProposedExn;
     let state =
       Validation.makeState()
       |> Validation.apply(Event.VentureCreated(createdEvent))
@@ -37,11 +38,10 @@ let () = {
       |> Validation.apply(
            PartnerAccepted(Partner.Accepted.fromProposal(partnerProposal)),
          );
-    let policy = Policy.absolute;
     let accountIdx = AccountIndex.default;
     let custodianId = UserId.fromString("custodian.id");
     let custodianKeyPair = Bitcoin.ECPair.makeRandom();
-    let custodianPubKey = creatorKeyPair |> Utils.publicKeyFromKeyPair;
+    let custodianPubKey = custodianKeyPair |> Utils.publicKeyFromKeyPair;
     test("Fails if partner doesn't exist", () =>
       state
       |> Validation.validateCustodianData(
@@ -53,13 +53,14 @@ let () = {
            Validation.BadData("Partner with Id 'custodian.id' doesn't exist"),
          )
     );
-    let Event.PartnerProposed(custodianPartnerProposal) =
+    let custodianPartnerProposal =
       Event.makePartnerProposed(
         ~supporterId=creatorId,
         ~prospectId=custodianId,
         ~prospectPubKey=custodianPubKey,
         ~policy=Policy.absolute,
-      );
+      )
+      |> Event.getPartnerProposedExn;
     test("Fails if partner was proposed", () =>
       state
       |> Validation.apply(Event.PartnerProposed(custodianPartnerProposal))

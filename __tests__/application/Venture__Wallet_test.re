@@ -75,16 +75,14 @@ let () =
       Wallet.make()
       |> Wallet.apply(VentureCreated(createdEvent))
       |> Wallet.apply(
-           AccountCreationAccepted(
-             AccountCreation.Accepted.{
-               dependsOn: None,
-               processId: ProcessId.make(),
-               data: {
-                 accountIdx,
-                 name: "default",
-               },
+           AccountCreationAccepted({
+             dependsOn: None,
+             processId: ProcessId.make(),
+             data: {
+               accountIdx,
+               name: "default",
              },
-           ),
+           }),
          )
       |> Wallet.apply(
            AccountKeyChainUpdated(
@@ -195,7 +193,7 @@ let () =
              BTC.fromSatoshis(1L),
            )
         |> then_(({data} as event: Event.Payout.Proposed.t) => {
-             let PayoutTransaction.Signed(payoutTx) =
+             let payoutTx =
                PayoutTransaction.signPayout(
                  ~ventureId,
                  ~userId=userB,
@@ -203,19 +201,18 @@ let () =
                  ~accountKeyChains=wallet.accountKeyChains,
                  ~payoutTx=data.payoutTx,
                  ~network=Network.Regtest,
-               );
-             Js.Promise.(
-               all2((
-                 resolve(
-                   twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event)),
-                 ),
-                 PayoutTransaction.finalize(
-                   [data.payoutTx, payoutTx],
-                   Network.Regtest,
-                 )
-                 |> Helpers.broadcastTransaction,
-               ))
-             );
+               )
+               |> PayoutTransaction.getSignedExn;
+             Js.Promise.all2((
+               resolve(
+                 twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event)),
+               ),
+               PayoutTransaction.finalize(
+                 [data.payoutTx, payoutTx],
+                 Network.Regtest,
+               )
+               |> Helpers.broadcastTransaction,
+             ));
            })
         |> then_(((wallet, _broadcastResult)) =>
              wallet |> Wallet.balance(accountIdx)

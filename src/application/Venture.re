@@ -325,15 +325,16 @@ module Cmd = {
         |> then_(
              fun
              | UserInfo.Public.Ok(info) => {
-                 let Event.PartnerProposed(partnerProposal) =
+                 let partnerProposal =
                    Event.makePartnerProposed(
                      ~supporterId=session.userId,
                      ~prospectId,
                      ~prospectPubKey=info.appPubKey,
                      ~policy=
                        state.policies |> List.assoc(Event.Partner.processName),
-                   );
-                 let Event.CustodianProposed(custodianProposal) =
+                   )
+                   |> Event.getPartnerProposedExn;
+                 let custodianProposal =
                    Event.makeCustodianProposed(
                      ~dependsOn=Some(partnerProposal.processId),
                      ~supporterId=session.userId,
@@ -342,7 +343,8 @@ module Cmd = {
                      ~policy=
                        state.policies
                        |> List.assoc(Event.Custodian.processName),
-                   );
+                   )
+                   |> Event.getCustodianProposedExn;
                  venture
                  |> apply(Event.PartnerProposed(partnerProposal))
                  |> then_(

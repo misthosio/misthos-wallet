@@ -192,6 +192,7 @@ let apply = (event: Event.t, state) =>
       ],
     };
   | IncomeAddressExposed(_)
+  | PayoutSigned(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastFailed(_) => state
   };
@@ -479,6 +480,7 @@ let validateEvent =
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
+  | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 

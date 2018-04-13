@@ -96,7 +96,7 @@ let make =
       );
     pub receive = ({event}: EventLog.item) =>
       switch (event) {
-      | PayoutSigned({custodianId, processId as signingProcess})
+      | PayoutSigned({custodianId, processId: signingProcess})
           when
             UserId.eq(custodianId, userId)
             && ProcessId.eq(signingProcess, payoutProcess) =>

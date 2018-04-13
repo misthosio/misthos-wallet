@@ -37,6 +37,13 @@ type signResult =
   | Signed(t)
   | NotSigned;
 
+let getSignedExn = result =>
+  switch (result) {
+  | Signed(unwrapped) => unwrapped
+  | _ => %assert
+         "signResult"
+  };
+
 let signPayout =
     (
       ~ventureId,
@@ -297,10 +304,10 @@ let build =
 };
 
 let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>
-  if (needed == 0 || allSigs == []) {
-    foundSigs;
-  } else {
-    let [signatures, ...otherSigs] = allSigs;
+  switch (needed, allSigs) {
+  | (0, _)
+  | (_, []) => foundSigs
+  | (_, [signatures, ...otherSigs]) =>
     try (
       {
         let foundSig =
@@ -328,62 +335,65 @@ let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>
     ) {
     | Not_found =>
       findSignatures(otherSigs, needed, foundSigIdxs, foundSigs, network)
-    };
+    }
   };
 
-let finalize = (signedTransactions, network) => {
-  let [{txHex, usedInputs}, ...moreSignedTransactions] = signedTransactions;
-  let txB =
-    TxBuilder.fromTransactionWithNetwork(
-      txHex |> Transaction.fromHex,
-      network |> Network.bitcoinNetwork,
-    );
-  let inputs = txB##inputs;
-  let otherInputs =
-    moreSignedTransactions
-    |> List.map(({txHex}: t) =>
-         TxBuilder.fromTransactionWithNetwork(
-           txHex |> Transaction.fromHex,
-           network |> Network.bitcoinNetwork,
-         )##inputs
-       );
-  usedInputs
-  |> List.iter(((inputIdx, {nCoSigners}: input)) => {
-       let input = inputs[inputIdx];
-       let signatures = input##signatures;
-       let existing =
-         signatures
-         |> Array.mapi((i, sigBuf) =>
-              switch (sigBuf |> Js.Nullable.toOption) {
-              | Some(_) => Some(i)
-              | None => None
-              }
-            )
-         |> Array.to_list
-         |> List.filter(Js.Option.isSome)
-         |> List.map(i => Js.Option.getExn(i));
-       let total =
-         findSignatures(
-           otherInputs
-           |> List.map(ins => {
-                let input = ins[inputIdx];
-                input##signatures;
-              }),
-           nCoSigners - (existing |> List.length),
-           existing,
-           [],
-           network,
-         )
-         |> List.fold_left(
-              (res, (sigIdx, signature)) => {
-                signatures[sigIdx] = signature;
-                res + 1;
-              },
-              existing |> List.length,
-            );
-       if (total != nCoSigners) {
-         raise(NotEnoughSignatures);
-       };
-     });
-  txB |> TxBuilder.build;
-};
+let finalize = (signedTransactions, network) =>
+  switch (signedTransactions) {
+  | [{txHex, usedInputs}, ...moreSignedTransactions] =>
+    let txB =
+      TxBuilder.fromTransactionWithNetwork(
+        txHex |> Transaction.fromHex,
+        network |> Network.bitcoinNetwork,
+      );
+    let inputs = txB##inputs;
+    let otherInputs =
+      moreSignedTransactions
+      |> List.map(({txHex}: t) =>
+           TxBuilder.fromTransactionWithNetwork(
+             txHex |> Transaction.fromHex,
+             network |> Network.bitcoinNetwork,
+           )##inputs
+         );
+    usedInputs
+    |> List.iter(((inputIdx, {nCoSigners}: input)) => {
+         let input = inputs[inputIdx];
+         let signatures = input##signatures;
+         let existing =
+           signatures
+           |> Array.mapi((i, sigBuf) =>
+                switch (sigBuf |> Js.Nullable.toOption) {
+                | Some(_) => Some(i)
+                | None => None
+                }
+              )
+           |> Array.to_list
+           |> List.filter(Js.Option.isSome)
+           |> List.map(i => Js.Option.getExn(i));
+         let total =
+           findSignatures(
+             otherInputs
+             |> List.map(ins => {
+                  let input = ins[inputIdx];
+                  input##signatures;
+                }),
+             nCoSigners - (existing |> List.length),
+             existing,
+             [],
+             network,
+           )
+           |> List.fold_left(
+                (res, (sigIdx, signature)) => {
+                  signatures[sigIdx] = signature;
+                  res + 1;
+                },
+                existing |> List.length,
+              );
+         if (total != nCoSigners) {
+           raise(NotEnoughSignatures);
+         };
+       });
+    txB |> TxBuilder.build;
+  | _ => %assert
+         "finalize"
+  };

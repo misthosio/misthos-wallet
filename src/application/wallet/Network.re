@@ -17,6 +17,8 @@ let decode = raw => {
   | "regtest" => Regtest
   | "testnet" => Testnet
   | "mainnet" => Mainnet
+  | _ => %assert
+         "Network.decode"
   };
 };
 

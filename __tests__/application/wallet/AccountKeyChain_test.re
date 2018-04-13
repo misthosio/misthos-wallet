@@ -35,7 +35,7 @@ let () =
     let ventureId = VentureId.fromString("test");
     let accountIdx = AccountIndex.default;
     let keyChainIdx = CustodianKeyChainIndex.first;
-    let (cKeyChainA, cKeyChainB, cKeyChainC) = (
+    let (cKeyChainA, _cKeyChainB, _cKeyChainC) = (
       CustodianKeyChain.make(
         ~ventureId,
         ~accountIdx,
@@ -72,7 +72,7 @@ let () =
         accountKeyChain |> AccountKeyChain.Address.make(firstCoordinates),
       )
       |> toEqual(
-           AccountKeyChain.Address.{
+           {
              nCoSigners: 1,
              coordinates: (
                AccountIndex.first,
@@ -83,7 +83,7 @@ let () =
              witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
              redeemScript: "002027fa0596838478a59b5c0512acf480fdba510cd320def9e3d9e9d27a13b7e72f",
              address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
-           },
+           }: AccountKeyChain.Address.t,
          );
     });
   });

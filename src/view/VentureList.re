@@ -24,7 +24,7 @@ let selectVenture = e =>
     |> VentureId.fromString,
   );
 
-let make = (~session, ~selected=?, _children) => {
+let make = (~selected=?, _children) => {
   ...component,
   initialState: () => {status: LoadingIndex, index: [], selected},
   didMount: _self =>
