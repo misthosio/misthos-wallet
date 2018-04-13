@@ -280,20 +280,7 @@ module.exports = {
         // https://github.com/mishoo/UglifyJS2/issues/2011
         comparisons: false,
       },
-      mangle: {
-        safari10: true,
-        reserved: [
-          'Buffer',
-          'BigInteger',
-          'Point',
-          'ECPubKey',
-          'ECKey',
-          'sha512_asm',
-          'asm',
-          'ECPair',
-          'HDNode'
-        ]
-      },
+      mangle: false,
       output: {
         comments: false,
         // Turned on because emoji and regex is not minified properly using default
