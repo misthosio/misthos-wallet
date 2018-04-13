@@ -215,7 +215,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
     let partners =
       ReasonReact.arrayToElement(
         Array.of_list(
-          ViewModel.getPartners(state.viewModel)
+          ViewModel.partners(state.viewModel)
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
                  <div> (text(m.userId |> UserId.toString)) </div>
@@ -226,7 +226,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
     let prospects =
       ReasonReact.arrayToElement(
         Array.of_list(
-          ViewModel.getProspects(state.viewModel)
+          ViewModel.prospects(state.viewModel)
           |> List.map((prospect: ViewModel.prospect) =>
                <li key=(prospect.userId |> UserId.toString)>
                  (

@@ -78,9 +78,9 @@ let apply = (event: Event.t, state) =>
   | _ => state
   };
 
-let getPartners = state => state.partners;
+let partners = state => state.partners;
 
-let getProspects = state => state.prospects;
+let prospects = state => state.prospects;
 
 let ventureName = state => state.name;
 
