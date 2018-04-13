@@ -8,8 +8,9 @@ groups:
 jobs:
 - name: test
   plan:
-  - {get: repo, trigger: true}
-  - {get: pipeline-tasks}
+  - aggregate:
+    - {get: repo, trigger: true}
+    - {get: pipeline-tasks}
   - task: test
     config:
       platform: linux
@@ -19,13 +20,15 @@ jobs:
       caches:
       - path: deps
       inputs:
+      - name: pipeline-tasks
       - name: repo
       run:
         path: pipeline-tasks/ci/tasks/run-tests.sh
 - name: build-and-push-to-staging
   plan:
-  - {get: repo, trigger: true, passed: [test]}
-  - {get: pipeline-tasks}
+  - aggregate:
+    - {get: repo, trigger: true, passed: [test]}
+    - {get: pipeline-tasks}
   - task: build
     config:
       platform: linux
@@ -35,6 +38,7 @@ jobs:
       caches:
       - path: deps
       inputs:
+      - name: pipeline-tasks
       - name: repo
       outputs:
       - name: build
@@ -47,6 +51,7 @@ jobs:
         type: docker-image
         source: {repository: misthosio/misthos-web-pipeline}
       inputs:
+      - name: pipeline-tasks
       - name: repo
       - name: build
       params:
