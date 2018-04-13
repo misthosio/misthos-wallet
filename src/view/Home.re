@@ -5,7 +5,7 @@ let make = (~session, _children) => {
   render: _self =>
     <MaterialUi.WithStyles
       render=(
-        classes =>
+        _classes =>
           MaterialUi.(
             <Grid item=true xs=V12>
               <Paper> <Ventures session /> </Paper>

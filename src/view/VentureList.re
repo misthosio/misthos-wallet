@@ -110,7 +110,7 @@ let make = (~session, ~selected=?, _children) => {
              ),
         ),
       );
-    let status =
+    let _status =
       switch (state.status) {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
       | _ => ReasonReact.stringToElement("ventures:")

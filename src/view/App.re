@@ -8,8 +8,8 @@ let make = (~session, ~updateSession, _children) => {
     let drawer = (currentRoute: Router.Config.route) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
-      | (LoggedIn(data), Home) => Some(<VentureList session />)
-      | (LoggedIn(data), Venture(selected)) =>
+      | (LoggedIn(_data), Home) => Some(<VentureList session />)
+      | (LoggedIn(_data), Venture(selected)) =>
         Some(<VentureList selected session />)
       };
     let body = (currentRoute: Router.Config.route) =>
