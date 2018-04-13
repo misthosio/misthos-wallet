@@ -132,8 +132,8 @@ let apply = (event: Event.t, state) =>
   | AccountCreationEndorsed(endorsement) =>
     endorseProcess(endorsement, state)
   | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
-  | PartnerAccepted({data}) => {
-      ...state,
+  | PartnerAccepted({data} as acceptance) => {
+      ...completeProcess(acceptance, state),
       partnerIds: [data.id, ...state.partnerIds],
       partnerStoragePrefixes: [
         UserInfo.storagePrefix(~appPubKey=data.pubKey),

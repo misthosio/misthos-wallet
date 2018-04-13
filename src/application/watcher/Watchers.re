@@ -15,6 +15,8 @@ module AccountCreationApproval = Watcher__AccountCreationApproval;
 
 module CustodianApproval = Watcher__CustodianApproval;
 
+module AutoEndorseCustodianSelf = Watcher__AutoEndorseCustodianSelf;
+
 module CustodianKeyChain = Watcher__CustodianKeyChain;
 
 module AccountKeyChain = Watcher__AccountKeyChain;
@@ -29,6 +31,8 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch (event) {
   | VentureCreated(event) => Some(Initialize.make(session, event, log))
   | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
+  | PartnerAccepted(acceptance) =>
+    Some(AutoEndorseCustodianSelf.make(session, acceptance, log))
   | AccountCreationProposed(proposal) =>
     Some(AccountCreationApproval.make(proposal, log))
   | AccountCreationAccepted(acceptance) =>
