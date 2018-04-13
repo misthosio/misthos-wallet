@@ -317,9 +317,11 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
     ),
   );
 
-let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
+let makeCustodianProposed =
+    (~dependsOn, ~supporterId, ~partnerId, ~accountIdx, ~policy) =>
   CustodianProposed(
     Custodian.Proposed.make(
+      ~dependsOn,
       ~supporterId,
       ~policy,
       Custodian.Data.{partnerId, accountIdx},

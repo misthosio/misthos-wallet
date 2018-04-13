@@ -322,24 +322,36 @@ module Cmd = {
       logMessage("Executing 'ProposePartner' command");
       Js.Promise.(
         UserInfo.Public.read(~blockstackId=prospectId)
-        |> then_(readResult =>
-             switch (readResult) {
-             | UserInfo.Public.Ok(info) =>
-               venture
-               |> apply(
-                    Event.makePartnerProposed(
-                      ~supporterId=session.userId,
-                      ~prospectId,
-                      ~prospectPubKey=info.appPubKey,
-                      ~policy=
-                        state.policies
-                        |> List.assoc(Event.Partner.processName),
-                    ),
-                  )
-               |> then_(persist)
-               |> then_(p => resolve(Ok(p)))
-             | UserInfo.Public.NotFound => resolve(NoUserInfo)
-             }
+        |> then_(
+             fun
+             | UserInfo.Public.Ok(info) => {
+                 let Event.PartnerProposed(partnerProposal) =
+                   Event.makePartnerProposed(
+                     ~supporterId=session.userId,
+                     ~prospectId,
+                     ~prospectPubKey=info.appPubKey,
+                     ~policy=
+                       state.policies |> List.assoc(Event.Partner.processName),
+                   );
+                 let Event.CustodianProposed(custodianProposal) =
+                   Event.makeCustodianProposed(
+                     ~dependsOn=Some(partnerProposal.processId),
+                     ~supporterId=session.userId,
+                     ~partnerId=prospectId,
+                     ~accountIdx=AccountIndex.default,
+                     ~policy=
+                       state.policies
+                       |> List.assoc(Event.Custodian.processName),
+                   );
+                 venture
+                 |> apply(Event.PartnerProposed(partnerProposal))
+                 |> then_(
+                      apply(Event.CustodianProposed(custodianProposal)),
+                    )
+                 |> then_(persist)
+                 |> then_(p => resolve(Ok(p)));
+               }
+             | UserInfo.Public.NotFound => resolve(NoUserInfo),
            )
       );
     };

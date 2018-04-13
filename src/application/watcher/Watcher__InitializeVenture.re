@@ -81,6 +81,7 @@ let make =
             Some((
               issuerKeyPair,
               Event.makeCustodianProposed(
+                ~dependsOn=None,
                 ~partnerId=creatorId,
                 ~supporterId=creatorId,
                 ~accountIdx=AccountIndex.default,
