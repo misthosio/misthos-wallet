@@ -63,6 +63,7 @@ resources:
 - name: repo
   type: git
   source:
+    ignore_paths: [infra/*, ci/*]
     uri: git@github.com:misthosio/misthos.git
     branch: master
     private_key: ((github-ssh-key.private_key))
