@@ -114,7 +114,10 @@ let persist = ({id, log, state} as venture) => {
     log |> EventLog.getSummary |> EventLog.encodeSummary |> Json.stringify;
   let returnPromise =
     Js.Promise.(
-      Blockstack.putFile((id |> VentureId.toString) ++ "/log.json", logString)
+      Blockstack.putFileNotEncrypted(
+        (id |> VentureId.toString) ++ "/log.json",
+        logString,
+      )
       |> then_(() => resolve(venture))
     );
   Js.Promise.(
@@ -123,13 +126,13 @@ let persist = ({id, log, state} as venture) => {
          (promise, prefix) =>
            promise
            |> then_(() =>
-                Blockstack.putFile(
+                Blockstack.putFileNotEncrypted(
                   (id |> VentureId.toString) ++ "/" ++ prefix ++ "/log.json",
                   logString,
                 )
               )
            |> then_(() =>
-                Blockstack.putFile(
+                Blockstack.putFileNotEncrypted(
                   (id |> VentureId.toString)
                   ++ "/"
                   ++ prefix
@@ -149,7 +152,9 @@ let defaultPolicy = Policy.absolute;
 let load = (session: Session.Data.t, ~ventureId) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
-    Blockstack.getFile((ventureId |> VentureId.toString) ++ "/log.json")
+    Blockstack.getFileNotDecrypted(
+      (ventureId |> VentureId.toString) ++ "/log.json",
+    )
     |> then_(nullLog =>
          switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>

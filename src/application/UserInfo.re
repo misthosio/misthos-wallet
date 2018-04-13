@@ -6,7 +6,7 @@ module Public = {
   let decode = raw =>
     Json.Decode.{appPubKey: raw |> field("appPubKey", string)};
   let persist = (~appPubKey) =>
-    Blockstack.putFile(
+    Blockstack.putFileNotEncrypted(
       infoFileName,
       encode({appPubKey: appPubKey}) |> Json.stringify,
     );

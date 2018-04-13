@@ -22,11 +22,12 @@ external redirectToSignIn :
 external handlePendingSignIn : unit => Js.Promise.t(userData) = "";
 
 [@bs.module "blockstack"]
-external getFile : string => Js.Promise.t(Js.nullable(string)) = "";
+external getFileDecrypted : string => Js.Promise.t(Js.nullable(string)) =
+  "getFile";
 
 [@bs.module "blockstack"]
-external getFileDecrypted :
-  (string, [@bs.as {json| {"decrypt": true} |json}] _) =>
+external getFileNotDecrypted :
+  (string, [@bs.as {json| {"decrypt": false} |json}] _) =>
   Js.Promise.t(Js.nullable(string)) =
   "getFile";
 
@@ -36,14 +37,15 @@ external getFileWithJsOpts :
   "getFile";
 
 let getFileFromUser = (file, ~username) =>
-  getFileWithJsOpts(file, {"username": username});
+  getFileWithJsOpts(file, {"username": username, "decrypt": false});
 
 [@bs.module "blockstack"]
-external putFile : (string, string) => Js.Promise.t(unit) = "";
+external putFileEncrypted : (string, string) => Js.Promise.t(unit) =
+  "putFile";
 
 [@bs.module "blockstack"]
-external putFileEncrypted :
-  (string, string, [@bs.as {json| {"encrypt": true} |json}] _) =>
+external putFileNotEncrypted :
+  (string, string, [@bs.as {json| {"encrypt": false} |json}] _) =>
   Js.Promise.t(unit) =
   "putFile";
 
