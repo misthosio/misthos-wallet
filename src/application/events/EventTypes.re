@@ -25,7 +25,7 @@ module type EventData = {
   let decode: Js.Json.t => t;
 };
 
-module type ProposalEvent =
+module type ProposedEvent =
   (Data: EventData) =>
   {
     type t = proposal(Data.t);
@@ -41,7 +41,7 @@ module type ProposalEvent =
     let decode: Js.Json.t => t;
   };
 
-let makeProposal = (name: string) : (module ProposalEvent) =>
+let makeProposal = (name: string) : (module ProposedEvent) =>
   (module
    (Data: EventData) => {
      type t = proposal(Data.t);
@@ -74,14 +74,14 @@ let makeProposal = (name: string) : (module ProposalEvent) =>
        };
    });
 
-module type EndorsementEvent = {
+module type EndorsedEvent = {
   type t = endorsement;
   let make: (~processId: processId, ~supporterId: userId) => t;
   let encode: t => Js.Json.t;
   let decode: Js.Json.t => t;
 };
 
-let makeEndorsement = (name: string) : (module EndorsementEvent) =>
+let makeEndorsement = (name: string) : (module EndorsedEvent) =>
   (module
    {
      type t = endorsement;
@@ -101,7 +101,7 @@ let makeEndorsement = (name: string) : (module EndorsementEvent) =>
        };
    });
 
-module type AcceptanceEvent =
+module type AcceptedEvent =
   (Data: EventData) =>
   {
     type t = acceptance(Data.t);
@@ -110,7 +110,7 @@ module type AcceptanceEvent =
     let decode: Js.Json.t => t;
   };
 
-let makeAcceptance = (name: string) : (module AcceptanceEvent) =>
+let makeAcceptance = (name: string) : (module AcceptedEvent) =>
   (module
    (Data: EventData) => {
      type t = acceptance(Data.t);
@@ -140,7 +140,7 @@ module type Process =
   (Data: EventData) =>
   {
     let processName: string;
-    module Proposal: {
+    module Proposed: {
       type t = proposal(Data.t);
       let make:
         (
@@ -153,13 +153,13 @@ module type Process =
       let encode: t => Js.Json.t;
       let decode: Js.Json.t => t;
     };
-    module Endorsement: {
+    module Endorsed: {
       type t = endorsement;
       let make: (~processId: processId, ~supporterId: userId) => t;
       let encode: t => Js.Json.t;
       let decode: Js.Json.t => t;
     };
-    module Acceptance: {
+    module Accepted: {
       type t = acceptance(Data.t);
       let fromProposal: proposal(Data.t) => t;
       let encode: t => Js.Json.t;
@@ -171,7 +171,7 @@ let makeProcess = (name: string) : (module Process) =>
   (module
    (Data: EventData) => {
      let processName = name ++ "ApprovalProcess";
-     module Proposal = (val makeProposal(name ++ "Proposed"))(Data);
-     module Endorsement = (val makeEndorsement(name ++ "Endorsed"));
-     module Acceptance = (val makeAcceptance(name ++ "Accepted"))(Data);
+     module Proposed = (val makeProposal(name ++ "Proposed"))(Data);
+     module Endorsed = (val makeEndorsement(name ++ "Endorsed"));
+     module Accepted = (val makeAcceptance(name ++ "Accepted"))(Data);
    });

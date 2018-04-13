@@ -10,7 +10,7 @@ type state = {
   creatorId: userId,
 };
 
-let make = (proposal: Partner.Proposal.t, log) => {
+let make = (proposal: Partner.Proposed.t, log) => {
   let process = {
     val state =
       ref({
@@ -57,14 +57,14 @@ let make = (proposal: Partner.Proposal.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAccepted(Partner.Acceptance.fromProposal(proposal)),
+            PartnerAccepted(Partner.Accepted.fromProposal(proposal)),
           ));
       };
       if (proposal.data.id == state^.creatorId && log |> EventLog.length == 2) {
         result :=
           Some((
             state^.systemIssuer,
-            PartnerAccepted(Partner.Acceptance.fromProposal(proposal)),
+            PartnerAccepted(Partner.Accepted.fromProposal(proposal)),
           ));
       };
     };

@@ -25,8 +25,8 @@ let () =
             [],
           ),
       );
-    let accountProposal =
-      AccountCreation.Proposal.make(
+    let accountProposed =
+      AccountCreation.Proposed.make(
         ~supporterId,
         ~policy=Policy.absolute,
         AccountCreation.Data.{
@@ -35,7 +35,7 @@ let () =
         },
       );
     let accountCreation =
-      AccountCreation.Acceptance.fromProposal(accountProposal);
+      AccountCreation.Accepted.fromProposal(accountProposed);
     let validateWithState = (~keyChain=keyChain0, state) =>
       Validation.validateAccountKeyChainUpdated(
         keyChain,
@@ -47,7 +47,7 @@ let () =
         validateWithState(emptyState),
         validateWithState(
           emptyState
-          |> Validation.apply(AccountCreationProposed(accountProposal))
+          |> Validation.apply(AccountCreationProposed(accountProposed))
           |> Validation.apply(AccountCreationAccepted(accountCreation)),
         ),
       ))
@@ -81,7 +81,7 @@ let () =
         );
       let stateWithAccountAndKeyChain =
         emptyState
-        |> Validation.apply(AccountCreationProposed(accountProposal))
+        |> Validation.apply(AccountCreationProposed(accountProposed))
         |> Validation.apply(AccountCreationAccepted(accountCreation))
         |> Validation.apply(AccountKeyChainUpdated(keyChain0));
       expect((
@@ -118,7 +118,7 @@ let () =
       let custodianId = UserId.fromString("custodian");
       let stateWithAccountAndCustodianKeyChain =
         emptyState
-        |> Validation.apply(AccountCreationProposed(accountProposal))
+        |> Validation.apply(AccountCreationProposed(accountProposed))
         |> Validation.apply(AccountCreationAccepted(accountCreation))
         |> Validation.apply(
              CustodianKeyChainUpdated(

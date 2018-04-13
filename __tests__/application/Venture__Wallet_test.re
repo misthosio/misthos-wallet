@@ -76,7 +76,7 @@ let () =
       |> Wallet.apply(VentureCreated(createdEvent))
       |> Wallet.apply(
            AccountCreationAccepted(
-             AccountCreation.Acceptance.{
+             AccountCreation.Accepted.{
                dependsOn: None,
                processId: ProcessId.make(),
                data: {
@@ -153,7 +153,7 @@ let () =
                   BTC.fromSatoshis(1L),
                 )
            )
-        |> then_(({data} as event: Event.Payout.Proposal.t) => {
+        |> then_(({data} as event: Event.Payout.Proposed.t) => {
              oneKeyChainWallet :=
                oneKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
              twoKeyChainWallet :=
@@ -194,7 +194,7 @@ let () =
              [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
              BTC.fromSatoshis(1L),
            )
-        |> then_(({data} as event: Event.Payout.Proposal.t) => {
+        |> then_(({data} as event: Event.Payout.Proposed.t) => {
              let PayoutTransaction.Signed(payoutTx) =
                PayoutTransaction.signPayout(
                  ~ventureId,

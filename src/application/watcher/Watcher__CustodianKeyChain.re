@@ -13,7 +13,7 @@ type state = {
 let make =
     (
       {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
-      {data}: Custodian.Acceptance.t,
+      {data}: Custodian.Accepted.t,
       log,
     ) => {
   let custodianId = data.partnerId;

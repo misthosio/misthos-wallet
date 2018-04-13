@@ -242,7 +242,7 @@ let preparePayoutTx =
            | NotSigned => payoutTx
            };
          Event.Payout.(
-           Proposal.make(
+           Proposed.make(
              ~supporterId=userId,
              ~policy=payoutPolicy,
              Data.{accountIdx, payoutTx, changeAddressCoordinates},

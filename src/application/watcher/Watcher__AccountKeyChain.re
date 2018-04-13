@@ -13,7 +13,7 @@ type state = {
   pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
 };
 
-let make = ({data}: AccountCreation.Acceptance.t, log) => {
+let make = ({data}: AccountCreation.Accepted.t, log) => {
   let accountIdx = data.accountIdx;
   let process = {
     val state =

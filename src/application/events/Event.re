@@ -279,18 +279,18 @@ module IncomeAddressExposed = {
 
 type t =
   | VentureCreated(VentureCreated.t)
-  | PartnerProposed(Partner.Proposal.t)
-  | PartnerEndorsed(Partner.Endorsement.t)
-  | PartnerAccepted(Partner.Acceptance.t)
-  | AccountCreationProposed(AccountCreation.Proposal.t)
-  | AccountCreationEndorsed(AccountCreation.Endorsement.t)
-  | AccountCreationAccepted(AccountCreation.Acceptance.t)
-  | CustodianProposed(Custodian.Proposal.t)
-  | CustodianEndorsed(Custodian.Endorsement.t)
-  | CustodianAccepted(Custodian.Acceptance.t)
-  | PayoutProposed(Payout.Proposal.t)
-  | PayoutEndorsed(Payout.Endorsement.t)
-  | PayoutAccepted(Payout.Acceptance.t)
+  | PartnerProposed(Partner.Proposed.t)
+  | PartnerEndorsed(Partner.Endorsed.t)
+  | PartnerAccepted(Partner.Accepted.t)
+  | AccountCreationProposed(AccountCreation.Proposed.t)
+  | AccountCreationEndorsed(AccountCreation.Endorsed.t)
+  | AccountCreationAccepted(AccountCreation.Accepted.t)
+  | CustodianProposed(Custodian.Proposed.t)
+  | CustodianEndorsed(Custodian.Endorsed.t)
+  | CustodianAccepted(Custodian.Accepted.t)
+  | PayoutProposed(Payout.Proposed.t)
+  | PayoutEndorsed(Payout.Endorsed.t)
+  | PayoutAccepted(Payout.Accepted.t)
   | PayoutSigned(Payout.Signature.t)
   | PayoutBroadcast(Payout.Broadcast.t)
   | PayoutBroadcastFailed(Payout.BroadcastFailure.t)
@@ -301,7 +301,7 @@ type t =
 let makePartnerProposed =
     (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
   PartnerProposed(
-    Partner.Proposal.make(
+    Partner.Proposed.make(
       ~supporterId,
       ~policy,
       Partner.Data.{id: prospectId, pubKey: prospectPubKey},
@@ -310,7 +310,7 @@ let makePartnerProposed =
 
 let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(
-    AccountCreation.Proposal.make(
+    AccountCreation.Proposed.make(
       ~supporterId,
       ~policy,
       AccountCreation.Data.{accountIdx, name},
@@ -319,7 +319,7 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
 
 let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
   CustodianProposed(
-    Custodian.Proposal.make(
+    Custodian.Proposed.make(
       ~supporterId,
       ~policy,
       Custodian.Data.{partnerId, accountIdx},
@@ -327,31 +327,29 @@ let makeCustodianProposed = (~supporterId, ~partnerId, ~accountIdx, ~policy) =>
   );
 
 let makePartnerEndorsed = (~processId, ~supporterId) =>
-  PartnerEndorsed(Partner.Endorsement.make(~processId, ~supporterId));
+  PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
 
 let makePayoutEndorsed = (~processId, ~supporterId) =>
-  PayoutEndorsed(Payout.Endorsement.make(~processId, ~supporterId));
+  PayoutEndorsed(Payout.Endorsed.make(~processId, ~supporterId));
 
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
-  | PartnerProposed(event) => Partner.Proposal.encode(event)
-  | PartnerEndorsed(event) => Partner.Endorsement.encode(event)
-  | PartnerAccepted(event) => Partner.Acceptance.encode(event)
-  | CustodianProposed(event) => Custodian.Proposal.encode(event)
-  | CustodianEndorsed(event) => Custodian.Endorsement.encode(event)
-  | CustodianAccepted(event) => Custodian.Acceptance.encode(event)
-  | PayoutProposed(event) => Payout.Proposal.encode(event)
-  | PayoutEndorsed(event) => Payout.Endorsement.encode(event)
-  | PayoutAccepted(event) => Payout.Acceptance.encode(event)
+  | PartnerProposed(event) => Partner.Proposed.encode(event)
+  | PartnerEndorsed(event) => Partner.Endorsed.encode(event)
+  | PartnerAccepted(event) => Partner.Accepted.encode(event)
+  | CustodianProposed(event) => Custodian.Proposed.encode(event)
+  | CustodianEndorsed(event) => Custodian.Endorsed.encode(event)
+  | CustodianAccepted(event) => Custodian.Accepted.encode(event)
+  | PayoutProposed(event) => Payout.Proposed.encode(event)
+  | PayoutEndorsed(event) => Payout.Endorsed.encode(event)
+  | PayoutAccepted(event) => Payout.Accepted.encode(event)
   | PayoutSigned(event) => Payout.Signature.encode(event)
   | PayoutBroadcast(event) => Payout.Broadcast.encode(event)
   | PayoutBroadcastFailed(event) => Payout.BroadcastFailure.encode(event)
-  | AccountCreationProposed(event) => AccountCreation.Proposal.encode(event)
-  | AccountCreationEndorsed(event) =>
-    AccountCreation.Endorsement.encode(event)
-  | AccountCreationAccepted(event) =>
-    AccountCreation.Acceptance.encode(event)
+  | AccountCreationProposed(event) => AccountCreation.Proposed.encode(event)
+  | AccountCreationEndorsed(event) => AccountCreation.Endorsed.encode(event)
+  | AccountCreationAccepted(event) => AccountCreation.Accepted.encode(event)
   | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
   | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event)
   | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event);
@@ -373,27 +371,25 @@ let decode = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
   | "VentureCreated" => VentureCreated(VentureCreated.decode(raw))
-  | "PartnerProposed" => PartnerProposed(Partner.Proposal.decode(raw))
-  | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsement.decode(raw))
-  | "PartnerAccepted" => PartnerAccepted(Partner.Acceptance.decode(raw))
-  | "CustodianProposed" => CustodianProposed(Custodian.Proposal.decode(raw))
-  | "CustodianEndorsed" =>
-    CustodianEndorsed(Custodian.Endorsement.decode(raw))
-  | "CustodianAccepted" =>
-    CustodianAccepted(Custodian.Acceptance.decode(raw))
-  | "PayoutProposed" => PayoutProposed(Payout.Proposal.decode(raw))
-  | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsement.decode(raw))
-  | "PayoutAccepted" => PayoutAccepted(Payout.Acceptance.decode(raw))
+  | "PartnerProposed" => PartnerProposed(Partner.Proposed.decode(raw))
+  | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsed.decode(raw))
+  | "PartnerAccepted" => PartnerAccepted(Partner.Accepted.decode(raw))
+  | "CustodianProposed" => CustodianProposed(Custodian.Proposed.decode(raw))
+  | "CustodianEndorsed" => CustodianEndorsed(Custodian.Endorsed.decode(raw))
+  | "CustodianAccepted" => CustodianAccepted(Custodian.Accepted.decode(raw))
+  | "PayoutProposed" => PayoutProposed(Payout.Proposed.decode(raw))
+  | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsed.decode(raw))
+  | "PayoutAccepted" => PayoutAccepted(Payout.Accepted.decode(raw))
   | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
   | "PayoutBroadcast" => PayoutBroadcast(Payout.Broadcast.decode(raw))
   | "PayoutBroadcastFailed" =>
     PayoutBroadcastFailed(Payout.BroadcastFailure.decode(raw))
   | "AccountCreationProposed" =>
-    AccountCreationProposed(AccountCreation.Proposal.decode(raw))
+    AccountCreationProposed(AccountCreation.Proposed.decode(raw))
   | "AccountCreationEndorsed" =>
-    AccountCreationEndorsed(AccountCreation.Endorsement.decode(raw))
+    AccountCreationEndorsed(AccountCreation.Endorsed.decode(raw))
   | "AccountCreationAccepted" =>
-    AccountCreationAccepted(AccountCreation.Acceptance.decode(raw))
+    AccountCreationAccepted(AccountCreation.Accepted.decode(raw))
   | "CustodianKeyChainUpdated" =>
     CustodianKeyChainUpdated(CustodianKeyChainUpdated.decode(raw))
   | "AccountKeyChainUpdated" =>

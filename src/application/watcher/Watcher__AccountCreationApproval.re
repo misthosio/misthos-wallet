@@ -9,7 +9,7 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t,
 };
 
-let make = (proposal: AccountCreation.Proposal.t, log) => {
+let make = (proposal: AccountCreation.Proposed.t, log) => {
   let process = {
     val state =
       ref({
@@ -55,7 +55,7 @@ let make = (proposal: AccountCreation.Proposal.t, log) => {
           Some((
             state^.systemIssuer,
             AccountCreationAccepted(
-              AccountCreation.Acceptance.fromProposal(proposal),
+              AccountCreation.Accepted.fromProposal(proposal),
             ),
           ));
       };

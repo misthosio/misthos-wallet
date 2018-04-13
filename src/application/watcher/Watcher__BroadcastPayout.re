@@ -2,7 +2,7 @@ open Event;
 
 open PrimitiveTypes;
 
-let make = ({processId: payoutProcess, data}: Payout.Acceptance.t, log) => {
+let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
   let (needsBroadcast, signedTxs, systemIssuer, network) =
     log
     |> EventLog.reduce(
