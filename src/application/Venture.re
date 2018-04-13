@@ -359,14 +359,29 @@ module Cmd = {
   module EndorsePartner = {
     type result =
       | Ok(t);
-    let exec = (~processId, {session} as venture) => {
+    let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
+      let {id: partnerId}: Event.Partner.Data.t =
+        state.partnerData |> List.assoc(processId);
+      let (custodianProcessId, _) =
+        state.custodianData
+        |> List.find(((_, data: Event.Custodian.Data.t)) =>
+             data.partnerId == partnerId
+           );
       Js.Promise.(
         venture
         |> apply(
              Event.makePartnerEndorsed(
                ~processId,
                ~supporterId=session.userId,
+             ),
+           )
+        |> then_(
+             apply(
+               Event.makeCustodianEndorsed(
+                 ~processId=custodianProcessId,
+                 ~supporterId=session.userId,
+               ),
              ),
            )
         |> then_(persist)

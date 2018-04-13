@@ -331,6 +331,9 @@ let makeCustodianProposed =
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
 
+let makeCustodianEndorsed = (~processId, ~supporterId) =>
+  PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
+
 let makePayoutEndorsed = (~processId, ~supporterId) =>
   PayoutEndorsed(Payout.Endorsed.make(~processId, ~supporterId));
 
