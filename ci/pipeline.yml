@@ -9,6 +9,7 @@ jobs:
 - name: test
   plan:
   - {get: repo, trigger: true}
+  - {get: pipeline-tasks}
   - task: test
     config:
       platform: linux
@@ -20,10 +21,11 @@ jobs:
       inputs:
       - name: repo
       run:
-        path: repo/ci/tasks/run-tests.sh
+        path: pipeline-tasks/ci/tasks/run-tests.sh
 - name: build-and-push-to-staging
   plan:
   - {get: repo, trigger: true, passed: [test]}
+  - {get: pipeline-tasks}
   - task: build
     config:
       platform: linux
@@ -37,7 +39,7 @@ jobs:
       outputs:
       - name: build
       run:
-        path: repo/ci/tasks/build.sh
+        path: pipeline-tasks/ci/tasks/build.sh
   - task: deploy-staging
     config:
       platform: linux
@@ -50,7 +52,7 @@ jobs:
       params:
           GCP_SERVICE_ACCOUNT: ((gcp-service-account))
       run:
-        path: repo/ci/tasks/deploy-staging.sh
+        path: pipeline-tasks/ci/tasks/deploy-staging.sh
 - name: build-task-image
   serial: true
   plan:
@@ -73,6 +75,13 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: master
     paths: [ci/ci_image/*]
+    private_key: ((github-ssh-key.private_key))
+- name: pipeline-tasks
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: master
+    paths: [ci/tasks/*]
     private_key: ((github-ssh-key.private_key))
 - name: docker-image-ci
   type: docker-image
