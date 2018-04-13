@@ -5,7 +5,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "misthos-web-staging" {
-  name          = "test.misthos.io"
+  name          = "testnet.misthos.io"
   location      = "EU"
   storage_class = "MULTI_REGIONAL"
 
