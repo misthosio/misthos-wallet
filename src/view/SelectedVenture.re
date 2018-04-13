@@ -20,7 +20,8 @@ type action =
   | UpdateBalance(Venture.Wallet.balance)
   | EndorsePartner(ProcessId.t)
   | GetIncomeAddress
-  | ProposePayout(list((string, BTC.t)));
+  | ProposePayout(list((string, BTC.t)))
+  | EndorsePayout(ProcessId.t);
 
 let changeNewPartnerId = event =>
   ChangeNewPartnerId(
@@ -210,6 +211,27 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         ),
       )
+    | EndorsePayout(processId) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.EndorsePayout.(
+                state.venture
+                |> exec(~processId)
+                |> then_(result =>
+                     (
+                       switch (result) {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        ),
+      )
     },
   render: ({send, state}) => {
     let partners =
@@ -262,6 +284,39 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         Array.of_list(
           ViewModel.incomeAddresses(state.viewModel)
           |> List.map(address => <li key=address> (text(address)) </li>),
+        ),
+      );
+    let payouts =
+      ReasonReact.arrayToElement(
+        Array.of_list(
+          state.viewModel
+          |> ViewModel.pendingPayouts
+          |> List.map((payout: ViewModel.payout) =>
+               <li key=(payout.processId |> ProcessId.toString)>
+                 (
+                   text(
+                     "'"
+                     ++ (payout.processId |> ProcessId.toString)
+                     ++ "' endorsed by: "
+                     ++ List.fold_left(
+                          (state, partnerId) => state ++ partnerId ++ " ",
+                          "",
+                          payout.endorsedBy |> List.map(UserId.toString),
+                        ),
+                   )
+                 )
+                 (
+                   if (payout.endorsedBy |> List.mem(session.userId) == false) {
+                     <button
+                       onClick=(_e => send(EndorsePayout(payout.processId)))>
+                       (text("Endorse Payout"))
+                     </button>;
+                   } else {
+                     ReasonReact.nullElement;
+                   }
+                 )
+               </li>
+             ),
         ),
       );
     <div>
@@ -330,6 +385,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           (text("Get New Income Address"))
         </button>
         <Payout onSend=(destinations => send(ProposePayout(destinations))) />
+        <h4> (text("Payouts:")) </h4>
+        <ul> payouts </ul>
       </div>
     </div>;
   },
