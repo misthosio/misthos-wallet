@@ -10,7 +10,88 @@ open WalletTypes;
 
 module Validation = Venture__Validation;
 
-let () =
+let () = {
+  describe("Validate CustodianData", () => {
+    let creatorId = UserId.fromString("creator.id");
+    let creatorKeyPair = Bitcoin.ECPair.makeRandom();
+    let creatorPubKey = creatorKeyPair |> Utils.publicKeyFromKeyPair;
+    let createdEvent =
+      VentureCreated.make(
+        ~ventureName="test",
+        ~creatorId,
+        ~creatorPubKey,
+        ~metaPolicy=Policy.absolute,
+        ~network=Network.Regtest,
+      );
+    let Event.PartnerProposed(partnerProposal) =
+      Event.makePartnerProposed(
+        ~supporterId=creatorId,
+        ~prospectId=creatorId,
+        ~prospectPubKey=creatorPubKey,
+        ~policy=Policy.absolute,
+      );
+    let state =
+      Validation.makeState()
+      |> Validation.apply(Event.VentureCreated(createdEvent))
+      |> Validation.apply(Event.PartnerProposed(partnerProposal))
+      |> Validation.apply(
+           PartnerAccepted(Partner.Accepted.fromProposal(partnerProposal)),
+         );
+    let policy = Policy.absolute;
+    let accountIdx = AccountIndex.default;
+    let custodianId = UserId.fromString("custodian.id");
+    let custodianKeyPair = Bitcoin.ECPair.makeRandom();
+    let custodianPubKey = creatorKeyPair |> Utils.publicKeyFromKeyPair;
+    test("Fails if partner doesn't exist", () =>
+      state
+      |> Validation.validateCustodianData(
+           {partnerId: custodianId, accountIdx},
+           None,
+         )
+      |> expect
+      |> toEqual(
+           Validation.BadData("Partner with Id 'custodian.id' doesn't exist"),
+         )
+    );
+    let Event.PartnerProposed(custodianPartnerProposal) =
+      Event.makePartnerProposed(
+        ~supporterId=creatorId,
+        ~prospectId=custodianId,
+        ~prospectPubKey=custodianPubKey,
+        ~policy=Policy.absolute,
+      );
+    test("Fails if partner was proposed", () =>
+      state
+      |> Validation.apply(Event.PartnerProposed(custodianPartnerProposal))
+      |> Validation.validateCustodianData(
+           {partnerId: custodianId, accountIdx},
+           None,
+         )
+      |> expect
+      |> toEqual(
+           Validation.BadData("Partner with Id 'custodian.id' doesn't exist"),
+         )
+    );
+    test("Fails if dependent process doesn't exist", () =>
+      state
+      |> Validation.validateCustodianData(
+           {partnerId: custodianId, accountIdx},
+           Some(custodianPartnerProposal.processId),
+         )
+      |> expect
+      |> toEqual(Validation.DependencyNotMet)
+    );
+    test("Succeeds if partner was proposed and dependency is declared", () =>
+      state
+      |> Validation.apply(Event.PartnerProposed(custodianPartnerProposal))
+      |> Validation.validateCustodianData(
+           {partnerId: custodianId, accountIdx},
+           Some(custodianPartnerProposal.processId),
+         )
+      |> expect
+      |> toEqual(Validation.Ok)
+    );
+  });
   describe("Validate AccountKeyChainUpdated", () => {
     let supporterId = UserId.fromString("supporter");
     let systemIssuer = Bitcoin.ECPair.makeRandom();
@@ -169,3 +250,4 @@ let () =
          ));
     });
   });
+};

@@ -217,11 +217,11 @@ let resultToString =
   | PolicyNotFulfilled => "PolicyNotFulfilled"
   | DependencyNotMet => "DependencyNotMet";
 
-let defaultDataValidator = (_, _) => Ok;
+let defaultDataValidator = (_, _, _) => Ok;
 
 let validateProposal =
     (
-      ~validateData: ('a, state) => result=defaultDataValidator,
+      ~validateData: ('a, option(processId), state) => result=defaultDataValidator,
       processName,
       {policy, supporterId, data, dependsOn}: EventTypes.proposal('a),
       {policies, partnerPubKeys, processes} as state,
@@ -236,10 +236,10 @@ let validateProposal =
     InvalidIssuer;
   } else {
     switch (dependsOn) {
-    | None => validateData(data, state)
+    | None => validateData(data, None, state)
     | Some(processId) =>
       processes |> List.mem_assoc(processId) ?
-        validateData(data, state) : DependencyNotMet
+        validateData(data, Some(processId), state) : DependencyNotMet
     };
   };
 
@@ -295,17 +295,27 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
-let validateCustodianData = (data: Custodian.Data.t, {partnerIds}) =>
-  partnerIds |> List.mem(data.partnerId) ?
-    Ok :
-    BadData(
-      "Partner with Id '"
-      ++ UserId.toString(data.partnerId)
-      ++ "' doesn't exist",
-    );
+let validateCustodianData =
+    (data: Custodian.Data.t, dependsOn, {partnerIds, partnerData}) =>
+  switch (dependsOn) {
+  | None =>
+    partnerIds |> List.mem(data.partnerId) ?
+      Ok :
+      BadData(
+        "Partner with Id '"
+        ++ UserId.toString(data.partnerId)
+        ++ "' doesn't exist",
+      )
+  | Some(processId) =>
+    partnerData |> List.mem_assoc(processId) ? Ok : DependencyNotMet
+  };
 
 let validateAccountCreationData =
-    ({accountIdx}: AccountCreation.Data.t, {accountCreationData}) =>
+    (
+      {accountIdx}: AccountCreation.Data.t,
+      _dependsOn,
+      {accountCreationData},
+    ) =>
   accountIdx |> AccountIndex.toInt == (accountCreationData |> List.length) ?
     Ok : BadData("Bad Account Index");
 
