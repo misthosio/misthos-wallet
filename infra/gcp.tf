@@ -12,21 +12,24 @@ resource "google_storage_bucket" "misthos-web-staging" {
   website {
     main_page_suffix = "index.html"
   }
+
   cors {
-    origin = ["*"]
-    method = ["GET","OPTIONS"]
+    origin          = ["*"]
+    method          = ["GET", "OPTIONS"]
     response_header = ["content-type"]
   }
 }
+
 resource "google_storage_bucket_iam_member" "staging-concourse" {
   bucket = "${google_storage_bucket.misthos-web-staging.name}"
-  role        = "roles/storage.objectAdmin"
-  member      = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
 }
+
 resource "google_storage_bucket_iam_member" "staging-public" {
   bucket = "${google_storage_bucket.misthos-web-staging.name}"
-  role        = "roles/storage.objectViewer"
-  member      = "allUsers"
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
 }
 
 resource "google_storage_bucket" "misthos-web-prod" {
@@ -37,19 +40,22 @@ resource "google_storage_bucket" "misthos-web-prod" {
   website {
     main_page_suffix = "index.html"
   }
+
   cors {
-    origin = ["*"]
-    method = ["GET","OPTIONS"]
+    origin          = ["*"]
+    method          = ["GET", "OPTIONS"]
     response_header = ["content-type"]
   }
 }
+
 resource "google_storage_bucket_iam_member" "prod-concourse" {
   bucket = "${google_storage_bucket.misthos-web-prod.name}"
-  role        = "roles/storage.objectAdmin"
-  member      = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
 }
+
 resource "google_storage_bucket_iam_member" "prod-public" {
   bucket = "${google_storage_bucket.misthos-web-prod.name}"
-  role        = "roles/storage.objectViewer"
-  member      = "allUsers"
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
 }
