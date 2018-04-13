@@ -58,9 +58,9 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id)),
     }
-  | AccountKeyChainUpdated({keyChain}) => {
+  | AccountCreationAccepted({data}) => {
       ...state,
-      incomeAddresses: [(keyChain.accountIdx, [])],
+      incomeAddresses: [(data.accountIdx, [])],
     }
   | IncomeAddressExposed({address, coordinates}) =>
     let accountIdx =
