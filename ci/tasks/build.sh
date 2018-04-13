@@ -7,6 +7,8 @@ set -e
 pushd repo
 
 make install
+
+export GENERATE_SOURCEMAP='false'
 make build
 
 popd
