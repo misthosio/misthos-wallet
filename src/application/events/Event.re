@@ -194,7 +194,7 @@ module Payout = {
         transactionId: raw |> field("transactionId", string),
       };
   };
-  module BroadcastFailure = {
+  module BroadcastFailed = {
     type t = {
       processId,
       errorMessage: string,
@@ -293,10 +293,124 @@ type t =
   | PayoutAccepted(Payout.Accepted.t)
   | PayoutSigned(Payout.Signature.t)
   | PayoutBroadcast(Payout.Broadcast.t)
-  | PayoutBroadcastFailed(Payout.BroadcastFailure.t)
+  | PayoutBroadcastFailed(Payout.BroadcastFailed.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t);
+
+let getIncomeAddressExposedExn = event =>
+  switch (event) {
+  | IncomeAddressExposed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getAccountKeyChainUpdatedExn = event =>
+  switch (event) {
+  | AccountKeyChainUpdated(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getCustodianKeyChainUpdatedExn = event =>
+  switch (event) {
+  | CustodianKeyChainUpdated(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPayoutBroadcastFailedExn = event =>
+  switch (event) {
+  | PayoutBroadcastFailed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPayoutBroadcastExn = event =>
+  switch (event) {
+  | PayoutBroadcast(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPayoutSignedExn = event =>
+  switch (event) {
+  | PayoutSigned(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPayoutAcceptedExn = event =>
+  switch (event) {
+  | PayoutAccepted(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPayoutEndorsedExn = event =>
+  switch (event) {
+  | PayoutEndorsed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPayoutProposedExn = event =>
+  switch (event) {
+  | PayoutProposed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getCustodianAcceptedExn = event =>
+  switch (event) {
+  | CustodianAccepted(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getCustodianEndorsedExn = event =>
+  switch (event) {
+  | CustodianEndorsed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getCustodianProposedExn = event =>
+  switch (event) {
+  | CustodianProposed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getAccountCreationAcceptedExn = event =>
+  switch (event) {
+  | AccountCreationAccepted(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getAccountCreationEndorsedExn = event =>
+  switch (event) {
+  | AccountCreationEndorsed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getAccountCreationProposedExn = event =>
+  switch (event) {
+  | AccountCreationProposed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPartnerAcceptedExn = event =>
+  switch (event) {
+  | PartnerAccepted(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPartnerEndorsedExn = event =>
+  switch (event) {
+  | PartnerEndorsed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getPartnerProposedExn = event =>
+  switch (event) {
+  | PartnerProposed(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
+
+let getVentureCreatedExn = event =>
+  switch (event) {
+  | VentureCreated(unwrapped) => unwrapped
+  | _ => raise(Not_found)
+  };
 
 let makePartnerProposed =
     (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
@@ -351,7 +465,7 @@ let encode =
   | PayoutAccepted(event) => Payout.Accepted.encode(event)
   | PayoutSigned(event) => Payout.Signature.encode(event)
   | PayoutBroadcast(event) => Payout.Broadcast.encode(event)
-  | PayoutBroadcastFailed(event) => Payout.BroadcastFailure.encode(event)
+  | PayoutBroadcastFailed(event) => Payout.BroadcastFailed.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposed.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsed.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Accepted.encode(event)
@@ -388,7 +502,7 @@ let decode = raw => {
   | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
   | "PayoutBroadcast" => PayoutBroadcast(Payout.Broadcast.decode(raw))
   | "PayoutBroadcastFailed" =>
-    PayoutBroadcastFailed(Payout.BroadcastFailure.decode(raw))
+    PayoutBroadcastFailed(Payout.BroadcastFailed.decode(raw))
   | "AccountCreationProposed" =>
     AccountCreationProposed(AccountCreation.Proposed.decode(raw))
   | "AccountCreationEndorsed" =>

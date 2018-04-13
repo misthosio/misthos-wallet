@@ -87,7 +87,7 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
                       (
                         systemIssuer,
                         PayoutBroadcastFailed(
-                          Payout.BroadcastFailure.make(
+                          Payout.BroadcastFailed.make(
                             ~processId=payoutProcess,
                             ~errorMessage,
                           ),
