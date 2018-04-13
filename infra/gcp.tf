@@ -18,17 +18,15 @@ resource "google_storage_bucket" "misthos-web-staging" {
     response_header = ["content-type"]
   }
 }
-
-resource "google_storage_bucket_acl" "staging-acl" {
-  bucket = "${google_storage_bucket.misthos-web-staging.name}"
-
-  predefined_acl = "publicread"
-  default_acl    = "publicread"
-}
-resource "google_storage_bucket_iam_member" "member" {
+resource "google_storage_bucket_iam_member" "staging-concourse" {
   bucket = "${google_storage_bucket.misthos-web-staging.name}"
   role        = "roles/storage.objectAdmin"
   member      = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
+}
+resource "google_storage_bucket_iam_member" "staging-public" {
+  bucket = "${google_storage_bucket.misthos-web-staging.name}"
+  role        = "roles/storage.objectViewer"
+  member      = "allUsers"
 }
 
 resource "google_storage_bucket" "misthos-web-prod" {
@@ -45,10 +43,13 @@ resource "google_storage_bucket" "misthos-web-prod" {
     response_header = ["content-type"]
   }
 }
-
-resource "google_storage_bucket_acl" "prod-acl" {
+resource "google_storage_bucket_iam_member" "prod-concourse" {
   bucket = "${google_storage_bucket.misthos-web-prod.name}"
-
-  predefined_acl = "publicread"
-  default_acl    = "publicread"
+  role        = "roles/storage.objectAdmin"
+  member      = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
+}
+resource "google_storage_bucket_iam_member" "prod-public" {
+  bucket = "${google_storage_bucket.misthos-web-prod.name}"
+  role        = "roles/storage.objectViewer"
+  member      = "allUsers"
 }
