@@ -31,8 +31,10 @@ type t = _worker;
 let postMessage = (worker, message) =>
   message |> Message._encodeToSend |> _postMessage(worker);
 
+let workerPath = "/worker.js";
+
 let make = (~onMessage) => {
-  let worker = _makeWorker("worker.js");
+  let worker = _makeWorker(workerPath);
   _onmessage(worker, Utils.(Message._decodeToReceived >> onMessage));
   worker;
 };
