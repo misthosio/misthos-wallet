@@ -26,6 +26,7 @@ let make =
       ref(UserId.eq(userId, creatorId) ? ProposePartner : Complete);
     val result = ref(None);
     pub receive = ({event}: EventLog.item) => {
+      let _ignoreThisWarning = this;
       state :=
         (
           switch (state^, event) {

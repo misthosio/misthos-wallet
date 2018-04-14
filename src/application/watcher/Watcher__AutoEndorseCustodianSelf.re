@@ -22,7 +22,8 @@ let make =
         completed: false,
         custodianProcessId: ProcessId.make(),
       });
-    pub receive = ({event}: EventLog.item) =>
+    pub receive = ({event}: EventLog.item) => {
+      let _ignoreThisWarning = this;
       state :=
         (
           switch (event, UserId.eq(acceptedPartnerId, userId)) {
@@ -55,6 +56,7 @@ let make =
           | _ => state^
           }
         );
+    };
     pub processCompleted = () => state^.completed;
     pub pendingEvent = () =>
       state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)

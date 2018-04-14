@@ -50,7 +50,8 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
         needsBroadcast ?
           Some(PayoutTransaction.finalize(signedTxs, network)) : None,
       );
-    pub receive = ({event}: EventLog.item) =>
+    pub receive = ({event}: EventLog.item) => {
+      let _ignoreThisWarning = this;
       switch (event) {
       | PayoutBroadcast({processId})
           when ProcessId.eq(processId, payoutProcess) =>
@@ -60,6 +61,7 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
         finalTransaction := None
       | _ => ()
       };
+    };
     pub processCompleted = () => finalTransaction^ |> Js.Option.isNone;
     pub pendingEvent = () =>
       finalTransaction^

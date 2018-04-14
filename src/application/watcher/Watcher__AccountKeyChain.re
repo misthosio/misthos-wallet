@@ -23,7 +23,8 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
         systemIssuer: Bitcoin.ECPair.makeRandom(),
         pendingEvent: None,
       });
-    pub receive = ({event}: EventLog.item) =>
+    pub receive = ({event}: EventLog.item) => {
+      let _ignoreThisWarning = this;
       state :=
         (
           switch (event) {
@@ -63,6 +64,7 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
           | _ => state^
           }
         );
+    };
     pub processCompleted = () => false;
     pub pendingEvent = () =>
       state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)

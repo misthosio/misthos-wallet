@@ -94,7 +94,8 @@ let make =
         | None => false
         },
       );
-    pub receive = ({event}: EventLog.item) =>
+    pub receive = ({event}: EventLog.item) => {
+      let _ignoreThisWarning = this;
       switch (event) {
       | PayoutSigned({custodianId, processId: signingProcess})
           when
@@ -103,6 +104,7 @@ let make =
         signPending := false
       | _ => ()
       };
+    };
     pub processCompleted = () => signPending^;
     pub pendingEvent = () =>
       signPending^ ? signEvent |> Utils.mapOption(Js.Promise.resolve) : None

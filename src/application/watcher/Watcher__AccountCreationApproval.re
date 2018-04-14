@@ -21,6 +21,7 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
     val completed = ref(false);
     val result = ref(None);
     pub receive = ({event}: EventLog.item) => {
+      let _ignoreThisWarning = this;
       state :=
         (
           switch (event) {

@@ -2,7 +2,7 @@ let component = ReasonReact.statelessComponent("Link");
 
 let make = (~route, ~className=?, children) => {
   ...component,
-  render: self => {
+  render: _self => {
     let href = Router.Config.routeToUrl(route);
     <a
       href

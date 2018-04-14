@@ -1,5 +1,7 @@
 let satoshisPerBTC = 1e8;
 
+let float_ = Json.Decode.float;
+
 type config = {
   bitcoindUrl: string,
   rpcUser: string,
@@ -104,7 +106,7 @@ let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
                         txOutputN: utxo |> field("vout", int),
                         address: utxo |> field("address", string),
                         amount:
-                          utxo |> field("amount", float) |> BTC.fromFloat,
+                          utxo |> field("amount", float_) |> BTC.fromFloat,
                         confirmations: utxo |> field("confirmations", int),
                       }: WalletTypes.utxo
                     )
@@ -147,7 +149,7 @@ let listTransactions = (config, addresses, max) : Js.Promise.t(list(tx)) => {
                       txId: tx |> field("txid", string),
                       txOutputN: tx |> field("vout", int),
                       address: tx |> field("address", string),
-                      amount: tx |> field("amount", float) |> BTC.fromFloat,
+                      amount: tx |> field("amount", float_) |> BTC.fromFloat,
                       confirmations: tx |> field("confirmations", int),
                     }
                   ),

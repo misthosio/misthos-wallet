@@ -25,7 +25,8 @@ let make =
         pendingEvent: None,
         nextKeyChainIdx: CustodianKeyChainIndex.first,
       });
-    pub receive = ({event}: EventLog.item) =>
+    pub receive = ({event}: EventLog.item) => {
+      let _ignoreThisWarning = this;
       state :=
         (
           switch (event) {
@@ -63,6 +64,7 @@ let make =
           | _ => state^
           }
         );
+    };
     pub processCompleted = () => userId != data.partnerId;
     pub pendingEvent = () =>
       state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)

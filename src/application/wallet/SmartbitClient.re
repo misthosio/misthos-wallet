@@ -4,12 +4,14 @@ let testnetConfig = {subdomain: "testnet-api"};
 
 let mainnetConfig = {subdomain: "api"};
 
+let float_ = Json.Decode.float;
+
 let decodeUTXO = (address, raw) : WalletTypes.utxo =>
   Json.Decode.{
     txId: raw |> field("txid", string),
     txOutputN: raw |> field("n", int),
     amount:
-      raw |> field("value_int", float) |> Int64.of_float |> BTC.fromSatoshis,
+      raw |> field("value_int", float_) |> Int64.of_float |> BTC.fromSatoshis,
     confirmations: raw |> field("confirmations", int),
     address,
   };
