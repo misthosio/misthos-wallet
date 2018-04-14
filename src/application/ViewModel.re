@@ -140,20 +140,4 @@ let ventureName = state => state.name;
 let incomeAddresses = state =>
   state.incomeAddresses |> List.assoc(AccountIndex.default);
 
-let pendingPayouts = state =>
-  state.payouts
-  |> List.filter(p =>
-       switch (p.status) {
-       | PayoutPending => true
-       | _ => false
-       }
-     );
-
-let completedPayouts = state =>
-  state.payouts
-  |> List.filter(p =>
-       switch (p.status) {
-       | PayoutPending => false
-       | _ => true
-       }
-     );
+let payouts = state => state.payouts;

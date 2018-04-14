@@ -290,14 +290,24 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       ReasonReact.arrayToElement(
         Array.of_list(
           state.viewModel
-          |> ViewModel.pendingPayouts
+          |> ViewModel.payouts
           |> List.map((payout: ViewModel.payout) =>
                <li key=(payout.processId |> ProcessId.toString)>
                  (
                    text(
                      "'"
                      ++ (payout.processId |> ProcessId.toString)
-                     ++ "' endorsed by: "
+                     ++ "' status: "
+                     ++ (
+                       switch (payout.status) {
+                       | PayoutPending => "pending"
+                       | PayoutCompleted(id) =>
+                         "completed (txId: " ++ id ++ ")"
+                       | PayoutFailed(reason) =>
+                         "failed (error: '" ++ reason ++ "')"
+                       }
+                     )
+                     ++ " endorsed by: "
                      ++ List.fold_left(
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
