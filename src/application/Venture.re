@@ -12,13 +12,16 @@ exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
 
-type t = {
+type listener('a) = (Event.t, 'a) => 'a;
+
+type t('a) = {
   session: Session.Data.t,
   id: ventureId,
   log: EventLog.t,
   state: Validation.state,
   wallet: Venture__Wallet.t,
-  viewModel: ViewModel.t,
+  listener: listener('a),
+  listenerState: 'a,
   watchers: Watchers.t,
 };
 
@@ -27,17 +30,19 @@ module Wallet = {
   let balance = ({wallet}) => balance(AccountIndex.default, wallet);
 };
 
-let make = (session, id) => {
+let make = (session, id, listenerState, listener) => {
   session,
   id,
   log: EventLog.make(),
   state: Validation.makeState(),
   wallet: Wallet.make(),
-  viewModel: ViewModel.make(),
+  listener,
+  listenerState,
   watchers: [],
 };
 
-let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
+let applyInternal =
+    (issuer, event, log, (state, wallet, (listenerState, listener))) => {
   logMessage("Appending event to log:");
   logMessage(Event.encode(event) |> Json.stringify);
   let (item, log) = log |> EventLog.append(issuer, event);
@@ -45,8 +50,8 @@ let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
   | Ok =>
     let state = state |> Validation.apply(event);
     let wallet = wallet |> Wallet.apply(event);
-    let viewModel = viewModel |> ViewModel.apply(event);
-    (item, log, (state, wallet, viewModel));
+    let listenerState = listenerState |> listener(event);
+    (item, log, (state, wallet, (listenerState, listener)));
   /* This should never happen / only incase of an UI input bug!!! */
   | result =>
     logMessage("Event was rejected because of:");
@@ -55,13 +60,17 @@ let applyInternal = (issuer, event, log, (state, wallet, viewModel)) => {
   };
 };
 
-let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
-  let (item, log, (state, wallet, viewModel)) =
+let apply =
+    (
+      event,
+      {session, id, log, state, wallet, listenerState, listener, watchers},
+    ) => {
+  let (item, log, (state, wallet, (listenerState, listener))) =
     applyInternal(
       session.issuerKeyPair,
       event,
       log,
-      (state, wallet, viewModel),
+      (state, wallet, (listenerState, listener)),
     );
   Js.Promise.(
     watchers
@@ -70,40 +79,46 @@ let apply = (event, {session, id, log, state, wallet, viewModel, watchers}) => {
          item,
          log,
          applyInternal,
-         (state, wallet, viewModel),
+         (state, wallet, (listenerState, listener)),
        )
-    |> then_(((log, (state, wallet, viewModel), watchers)) =>
-         {session, id, log, state, wallet, viewModel, watchers} |> resolve
+    |> then_(((log, (state, wallet, (listenerState, listener)), watchers)) =>
+         {session, id, log, state, wallet, listenerState, listener, watchers}
+         |> resolve
        )
   );
 };
 
-let reconstruct = (session, log) => {
-  let {viewModel, state, wallet} = make(session, VentureId.make());
-  let (id, state, wallet, viewModel, watchers) =
+let reconstruct = (session, listenerState, listener, log) => {
+  let {state, wallet} =
+    make(session, VentureId.make(), listenerState, listener);
+  let (id, state, wallet, (listenerState, listener), watchers) =
     log
     |> EventLog.reduce(
-         ((id, state, wallet, viewModel, watchers), {event} as item) => (
+         (
+           (id, state, wallet, (listenerState, listener), watchers),
+           {event} as item,
+         ) => (
            switch (event) {
            | VentureCreated({ventureId}) => ventureId
            | _ => id
            },
            state |> Validation.apply(event),
            wallet |> Wallet.apply(event),
-           viewModel |> ViewModel.apply(event),
+           (listenerState |> listener(event), listener),
            watchers |> Watchers.apply(~reconstruct=true, session, item, log),
          ),
-         (VentureId.make(), state, wallet, viewModel, []),
+         (VentureId.make(), state, wallet, (listenerState, listener), []),
        );
   watchers
   |> Watchers.processPending(
        session,
        log,
        applyInternal,
-       (state, wallet, viewModel),
+       (state, wallet, (listenerState, listener)),
      )
-  |> Js.Promise.then_(((log, (state, wallet, viewModel), watchers)) =>
-       {session, id, log, state, wallet, viewModel, watchers}
+  |> Js.Promise.then_(
+       ((log, (state, wallet, (listenerState, listener)), watchers)) =>
+       {session, id, log, state, wallet, listenerState, listener, watchers}
        |> Js.Promise.resolve
      );
 };
@@ -149,7 +164,7 @@ let persist = ({id, log, state} as venture) => {
 
 let defaultPolicy = Policy.absolute;
 
-let load = (session: Session.Data.t, ~ventureId) => {
+let load = (session: Session.Data.t, ~ventureId, ~listenerState, ~listener) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
     Blockstack.getFileNotDecrypted(
@@ -158,7 +173,10 @@ let load = (session: Session.Data.t, ~ventureId) => {
     |> then_(nullLog =>
          switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>
-           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
+           raw
+           |> Json.parseOrRaise
+           |> EventLog.decode
+           |> reconstruct(session, listenerState, listener)
          | None => raise(CouldNotLoadVenture)
          }
        )
@@ -166,7 +184,14 @@ let load = (session: Session.Data.t, ~ventureId) => {
   );
 };
 
-let join = (session: Session.Data.t, ~userId, ~ventureId) =>
+let join =
+    (
+      session: Session.Data.t,
+      ~userId: string,
+      ~ventureId,
+      ~listenerState,
+      ~listener,
+    ) =>
   Js.Promise.(
     Blockstack.getFileFromUser(
       ventureId ++ "/" ++ session.storagePrefix ++ "/log.json",
@@ -177,7 +202,10 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
          switch (Js.Nullable.toOption(nullFile)) {
          | None => raise(Not_found)
          | Some(raw) =>
-           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
+           raw
+           |> Json.parseOrRaise
+           |> EventLog.decode
+           |> reconstruct(session, listenerState, listener)
          }
        )
     |> then_(persist)
@@ -194,7 +222,7 @@ let getId = ({id}) => id |> VentureId.toString;
 
 let getSummary = ({log}) => log |> EventLog.getSummary;
 
-let getViewModel = ({viewModel}) => viewModel;
+let getListenerState = ({listenerState}) => listenerState;
 
 module Synchronize = {
   let getPartnerHistoryUrls = ({session, id, state}) =>
@@ -209,16 +237,19 @@ module Synchronize = {
        )
     |> Array.of_list
     |> Js.Promise.all;
-  type result =
-    | Ok(t)
-    | Error(t, EventLog.item, Validation.result);
+  type result('a) =
+    | Ok(t('a))
+    | Error(t('a), EventLog.item, Validation.result);
   let exec = (otherLogs, {session, log} as venture) => {
     let newItems = log |> EventLog.findNewItems(otherLogs);
-    let ({log, state, wallet, viewModel, watchers}, error) =
+    let ({log, state, wallet, listenerState, listener, watchers}, error) =
       newItems
       |> List.fold_left(
            (
-             ({log, watchers, state, wallet, viewModel} as venture, error),
+             (
+               {log, watchers, state, wallet, listenerState, listener} as venture,
+               error,
+             ),
              {event} as item: EventLog.item,
            ) =>
              if (Js.Option.isSome(error)) {
@@ -229,11 +260,11 @@ module Synchronize = {
                  let log = log |> EventLog.appendItem(item);
                  let state = state |> Validation.apply(event);
                  let wallet = wallet |> Wallet.apply(event);
-                 let viewModel = viewModel |> ViewModel.apply(event);
+                 let listenerState = listenerState |> listener(event);
                  let watchers =
                    watchers |> Watchers.apply(session, item, log);
                  (
-                   {...venture, log, watchers, state, wallet, viewModel},
+                   {...venture, log, watchers, state, wallet, listenerState},
                    None,
                  );
                | PolicyMissmatch as conflict => (
@@ -270,10 +301,12 @@ module Synchronize = {
            session,
            log,
            applyInternal,
-           (state, wallet, viewModel),
+           (state, wallet, (listenerState, listener)),
          )
-      |> then_(((log, (state, wallet, viewModel), watchers)) =>
-           {...venture, log, state, wallet, viewModel, watchers} |> persist
+      |> then_(
+           ((log, (state, wallet, (listenerState, listener)), watchers)) =>
+           {...venture, log, state, wallet, listener, listenerState, watchers}
+           |> persist
          )
       |> then_(p =>
            (
@@ -292,8 +325,14 @@ let getPartnerHistoryUrls = Synchronize.getPartnerHistoryUrls;
 
 module Cmd = {
   module Create = {
-    type result = (Index.t, t);
-    let exec = (session: Session.Data.t, ~name as ventureName) => {
+    type result('a) = (Index.t, t('a));
+    let exec =
+        (
+          session: Session.Data.t,
+          ~name as ventureName,
+          ~listenerState,
+          ~listener,
+        ) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
         Event.VentureCreated.make(
@@ -306,7 +345,7 @@ module Cmd = {
       Js.(
         Promise.all2((
           Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
-          make(session, ventureCreated.ventureId)
+          make(session, ventureCreated.ventureId, listenerState, listener)
           |> apply(VentureCreated(ventureCreated))
           |> Promise.then_(persist),
         ))
@@ -315,8 +354,8 @@ module Cmd = {
   };
   module Synchronize = Synchronize;
   module ProposePartner = {
-    type result =
-      | Ok(t)
+    type result('a) =
+      | Ok(t('a))
       | NoUserInfo;
     let exec = (~prospectId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
@@ -359,8 +398,8 @@ module Cmd = {
     };
   };
   module EndorsePartner = {
-    type result =
-      | Ok(t);
+    type result('a) =
+      | Ok(t('a));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
       let {id: partnerId}: Event.Partner.Data.t =
@@ -392,8 +431,8 @@ module Cmd = {
     };
   };
   module ExposeIncomeAddress = {
-    type result =
-      | Ok(string, t);
+    type result('a) =
+      | Ok(string, t('a));
     let exec = (~accountIdx, {wallet} as venture) => {
       logMessage("Executing 'GetIncomeAddress' command");
       let exposeEvent = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
@@ -406,8 +445,8 @@ module Cmd = {
     };
   };
   module ProposePayout = {
-    type result =
-      | Ok(t);
+    type result('a) =
+      | Ok(t('a));
     let exec =
         (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
       logMessage("Executing 'ProposePayout' command");
@@ -420,8 +459,8 @@ module Cmd = {
     };
   };
   module EndorsePayout = {
-    type result =
-      | Ok(t);
+    type result('a) =
+      | Ok(t('a));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'EndorsePayout' command");
       Js.Promise.(

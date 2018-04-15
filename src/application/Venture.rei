@@ -27,73 +27,94 @@ exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
 
-type t;
+type listener('a) = (Event.t, 'a) => 'a;
+
+type t('a);
 
 let join:
-  (Session.Data.t, ~userId: string, ~ventureId: string) =>
-  Js.Promise.t((Index.t, t));
+  (
+    Session.Data.t,
+    ~userId: string,
+    ~ventureId: string,
+    ~listenerState: 'a,
+    ~listener: listener('a)
+  ) =>
+  Js.Promise.t((Index.t, t('a)));
 
-let load: (Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
+let load:
+  (
+    Session.Data.t,
+    ~ventureId: ventureId,
+    ~listenerState: 'a,
+    ~listener: listener('a)
+  ) =>
+  Js.Promise.t(t('a));
 
-let getId: t => string;
+let getId: t('a) => string;
 
-let getSummary: t => EventLog.summary;
+let getSummary: t('a) => EventLog.summary;
 
-/* TODO remove dependency. Move into view Folder */
-let getViewModel: t => ViewModel.t;
+let getListenerState: t('a) => 'a;
 
-let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
+let getPartnerHistoryUrls: t('a) => Js.Promise.t(array(string));
 
 module Wallet: {
   type balance = {
     total: BTC.t,
     reserved: BTC.t,
   };
-  let balance: t => Js.Promise.t(balance);
+  let balance: t('a) => Js.Promise.t(balance);
 };
 
 module Cmd: {
   module Create: {
-    type result = (Index.t, t);
-    let exec: (Session.Data.t, ~name: string) => Js.Promise.t(result);
+    type result('a) = (Index.t, t('a));
+    let exec:
+      (
+        Session.Data.t,
+        ~name: string,
+        ~listenerState: 'a,
+        ~listener: listener('a)
+      ) =>
+      Js.Promise.t(result('a));
   };
   module Synchronize: {
-    type result =
-      | Ok(t)
-      | Error(t, EventLog.item, Validation.result);
-    let exec: (list(EventLog.t), t) => Js.Promise.t(result);
+    type result('a) =
+      | Ok(t('a))
+      | Error(t('a), EventLog.item, Validation.result);
+    let exec: (list(EventLog.t), t('a)) => Js.Promise.t(result('a));
   };
   module ProposePartner: {
-    type result =
-      | Ok(t)
+    type result('a) =
+      | Ok(t('a))
       | NoUserInfo;
-    let exec: (~prospectId: userId, t) => Js.Promise.t(result);
+    let exec: (~prospectId: userId, t('a)) => Js.Promise.t(result('a));
   };
   module EndorsePartner: {
-    type result =
-      | Ok(t);
-    let exec: (~processId: processId, t) => Js.Promise.t(result);
+    type result('a) =
+      | Ok(t('a));
+    let exec: (~processId: processId, t('a)) => Js.Promise.t(result('a));
   };
   module ExposeIncomeAddress: {
-    type result =
-      | Ok(string, t);
-    let exec: (~accountIdx: accountIdx, t) => Js.Promise.t(result);
+    type result('a) =
+      | Ok(string, t('a));
+    let exec: (~accountIdx: accountIdx, t('a)) => Js.Promise.t(result('a));
   };
   module ProposePayout: {
-    type result =
-      | Ok(t);
+    type result('a) =
+      | Ok(t('a));
     let exec:
       (
         ~accountIdx: accountIdx,
         ~destinations: list((string, BTC.t)),
         ~fee: BTC.t,
-        t
+        t('a)
       ) =>
-      Js.Promise.t(result);
+      Js.Promise.t(result('a));
   };
   module EndorsePayout: {
-    type result =
-      | Ok(t);
-    let exec: (~processId: processId, t) => Js.Promise.t(result);
+    type result('a) =
+      | Ok(t('a));
+    let exec: (~processId: processId, t('a)) => Js.Promise.t(result('a));
   };
 };
