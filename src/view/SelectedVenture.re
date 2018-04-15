@@ -5,7 +5,7 @@ open PrimitiveTypes;
 let text = ReasonReact.stringToElement;
 
 type state = {
-  venture: Venture.t,
+  venture: Venture.t(ViewModel.t),
   viewModel: ViewModel.t,
   prospectId: string,
   balance: option(Venture.Wallet.balance),
@@ -15,7 +15,7 @@ type state = {
 type action =
   | WorkerMessage(Worker.Message.receive)
   | ChangeNewPartnerId(string)
-  | UpdateVenture(Venture.t)
+  | UpdateVenture(Venture.t(ViewModel.t))
   | ProposePartner
   | UpdateBalance(Venture.Wallet.balance)
   | EndorsePartner(ProcessId.t)
@@ -35,7 +35,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
   initialState: () => {
     balance: None,
     venture: initialVenture,
-    viewModel: Venture.getViewModel(initialVenture),
+    viewModel: Venture.getListenerState(initialVenture),
     prospectId: "",
     worker: ref(Worker.make(~onMessage=Js.log)),
   },
@@ -161,7 +161,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       ReasonReact.Update({
         ...state,
         venture,
-        viewModel: Venture.getViewModel(venture),
+        viewModel: Venture.getListenerState(venture),
       });
     | UpdateBalance(balance) =>
       ReasonReact.Update({...state, balance: Some(balance)})

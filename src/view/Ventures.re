@@ -9,7 +9,7 @@ type status =
 
 type state = {
   status,
-  selected: option(Venture.t),
+  selected: option(Venture.t(ViewModel.t)),
   index: Venture.Index.t,
   newVenture: string,
   joinVentureId: string,
@@ -18,15 +18,15 @@ type state = {
 
 type action =
   | IndexLoaded(Venture.Index.t)
-  | VentureLoaded(Venture.t)
+  | VentureLoaded(Venture.t(ViewModel.t))
   | ChangeNewVenture(string)
   | ChangeJoinVentureUserId(string)
   | ChangeJoinVentureId(string)
   | SelectVenture(string)
   | JoinVenture
   | CreateVenture
-  | VentureCreated(Venture.Index.t, Venture.t)
-  | VentureJoined(Venture.Index.t, Venture.t);
+  | VentureCreated(Venture.Index.t, Venture.t(ViewModel.t))
+  | VentureJoined(Venture.Index.t, Venture.t(ViewModel.t));
 
 let component = ReasonReact.reducerComponent("Ventures");
 
@@ -68,7 +68,12 @@ let make = (~session, _children) => {
             switch (index) {
             | [p, ..._rest] =>
               Js.Promise.(
-                Venture.load(session, ~ventureId=p.id)
+                Venture.load(
+                  session,
+                  ~ventureId=p.id,
+                  ~listenerState=ViewModel.make(),
+                  ~listener=ViewModel.apply,
+                )
                 |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )
@@ -106,7 +111,12 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Venture.load(session, ~ventureId=id |> VentureId.fromString)
+                Venture.load(
+                  session,
+                  ~ventureId=id |> VentureId.fromString,
+                  ~listenerState=ViewModel.make(),
+                  ~listener=ViewModel.apply,
+                )
                 |> then_(venture => send(VentureLoaded(venture)) |> resolve)
                 |> ignore
               )
@@ -126,7 +136,12 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Venture.Cmd.Create.exec(session, ~name)
+                Venture.Cmd.Create.exec(
+                  session,
+                  ~name,
+                  ~listenerState=ViewModel.make(),
+                  ~listener=ViewModel.apply,
+                )
                 |> then_(((newIndex, venture)) =>
                      send(VentureCreated(newIndex, venture)) |> resolve
                    )
@@ -154,7 +169,13 @@ let make = (~session, _children) => {
           (
             ({send}) =>
               Js.Promise.(
-                Venture.join(session, ~userId, ~ventureId)
+                Venture.join(
+                  session,
+                  ~userId,
+                  ~ventureId,
+                  ~listenerState=ViewModel.make(),
+                  ~listener=ViewModel.apply,
+                )
                 |> then_(((newIndex, venture)) =>
                      send(VentureJoined(newIndex, venture)) |> resolve
                    )
