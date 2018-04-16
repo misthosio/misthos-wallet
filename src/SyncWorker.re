@@ -31,7 +31,7 @@ type t = _worker;
 let postMessage = (worker, message) =>
   message |> Message._encodeToSend |> _postMessage(worker);
 
-let workerPath = "/worker.js";
+let workerPath = "/syncWorker.js";
 
 let make = (~onMessage) => {
   let worker = _makeWorker(workerPath);

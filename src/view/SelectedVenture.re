@@ -9,11 +9,11 @@ type state = {
   viewModel: ViewModel.t,
   prospectId: string,
   balance: option(Venture.Wallet.balance),
-  worker: ref(Worker.t),
+  syncWorker: ref(SyncWorker.t),
 };
 
 type action =
-  | WorkerMessage(Worker.Message.receive)
+  | WorkerMessage(SyncWorker.Message.receive)
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t(ViewModel.t))
   | ProposePartner
@@ -37,30 +37,32 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
     venture: initialVenture,
     viewModel: Venture.getListenerState(initialVenture),
     prospectId: "",
-    worker: ref(Worker.make(~onMessage=Js.log)),
+    syncWorker: ref(SyncWorker.make(~onMessage=Js.log)),
   },
   subscriptions: ({send, state}) => [
     Sub(
       () => {
-        Worker.terminate(state.worker^);
+        SyncWorker.terminate(state.syncWorker^);
         let worker =
-          Worker.make(~onMessage=message => send(WorkerMessage(message)));
+          SyncWorker.make(~onMessage=message =>
+            send(WorkerMessage(message))
+          );
         Js.Promise.(
           Venture.getPartnerHistoryUrls(initialVenture)
           |> then_(urls =>
-               Worker.Message.RegularlyFetch(
+               SyncWorker.Message.RegularlyFetch(
                  urls,
                  Venture.getSummary(initialVenture),
                )
-               |> Worker.postMessage(worker)
+               |> SyncWorker.postMessage(worker)
                |> resolve
              )
           |> ignore
         );
-        state.worker := worker;
+        state.syncWorker := worker;
         worker;
       },
-      Worker.terminate,
+      SyncWorker.terminate,
     ),
   ],
   didMount: _self =>
@@ -152,8 +154,11 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       Js.Promise.(
         Venture.getPartnerHistoryUrls(venture)
         |> then_(urls =>
-             Worker.Message.RegularlyFetch(urls, Venture.getSummary(venture))
-             |> Worker.postMessage(state.worker^)
+             SyncWorker.Message.RegularlyFetch(
+               urls,
+               Venture.getSummary(venture),
+             )
+             |> SyncWorker.postMessage(state.syncWorker^)
              |> resolve
            )
         |> ignore
