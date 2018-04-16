@@ -26,14 +26,14 @@ let theme =
       },
       "title": {
         "fontFamily": oswald,
-        "color": "#ffffff",
         "textTransform": "uppercase",
-        "fontSize": "30px",
-        "fontWeight": "bold",
-        "fontStyle": "normal",
-        "fontStretch": "normal",
-        "lineHeight": "1",
-        "letterSpacing": "0.7px",
+        "fontSize": "1.875rem",
+        "color": "#ffffff",
+      },
+      "subheading": {
+        "fontFamily": oswald,
+        "textTransform": "uppercase",
+        "fontSize": "1.125rem",
       },
       "button": {
         "fontFamily": oswald,

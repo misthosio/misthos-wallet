@@ -63,10 +63,12 @@ let make = (~selected=?, _children) => {
                        key=(id |> VentureId.toString)
                        classes=[
                          {
-                           name: "selected",
+                           name: "linkSelected",
                            styles:
                              ReactDOMRe.Style.make(
-                               ~backgroundColor="gray",
+                               ~display="block",
+                               ~width="100%",
+                               ~color="#02a2b4",
                                (),
                              ),
                          },
@@ -76,6 +78,7 @@ let make = (~selected=?, _children) => {
                              ReactDOMRe.Style.make(
                                ~display="block",
                                ~width="100%",
+                               ~color="inherit",
                                (),
                              ),
                          },
@@ -87,16 +90,16 @@ let make = (~selected=?, _children) => {
                                     key=ids
                                     button=false
                                     value=(`String(ids))
-                                    className=(
-                                      Some(id) == state.selected ?
-                                        classes##selected : ""
-                                    )
                                     onClick=(e => send(selectVenture(e)))
                                     component=(`String("li"))>
                                     <ListItemText
                                       primary={
                                         <Link
-                                          className=classes##link
+                                          className=(
+                                            Some(id) == state.selected ?
+                                              classes##linkSelected :
+                                              classes##link
+                                          )
                                           route=(Venture(id))>
                                           (name |> ReasonReact.stringToElement)
                                         </Link>
@@ -135,6 +138,9 @@ let make = (~selected=?, _children) => {
           )
         />
       );
-    <div> title <MaterialUi.List> ventureList </MaterialUi.List> </div>;
+    <div>
+      title
+      <MaterialUi.List dense=true> ventureList </MaterialUi.List>
+    </div>;
   },
 };
