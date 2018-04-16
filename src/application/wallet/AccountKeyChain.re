@@ -11,6 +11,8 @@ type t = {
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
 };
 
+let defaultCosignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6|];
+
 let make = (accountIdx, keyChainIdx, nCoSigners, custodianKeyChains) => {
   accountIdx,
   keyChainIdx,
