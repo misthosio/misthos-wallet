@@ -277,6 +277,30 @@ module IncomeAddressExposed = {
     };
 };
 
+module IncomeDetected = {
+  type t = {
+    address: string,
+    txId: string,
+    amount: BTC.t,
+  };
+  let make = (~address, ~txId, ~amount) => {address, txId, amount};
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("IncomeDetected")),
+        ("address", string(event.address)),
+        ("txId", string(event.txId)),
+        ("amount", BTC.encode(event.amount)),
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      address: raw |> field("address", string),
+      txId: raw |> field("txId", string),
+      amount: raw |> field("amount", BTC.decode),
+    };
+};
+
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposed.t)
@@ -296,7 +320,8 @@ type t =
   | PayoutBroadcastFailed(Payout.BroadcastFailed.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
-  | IncomeAddressExposed(IncomeAddressExposed.t);
+  | IncomeAddressExposed(IncomeAddressExposed.t)
+  | IncomeDetected(IncomeDetected.t);
 
 let getIncomeAddressExposedExn = event =>
   switch (event) {
@@ -490,7 +515,8 @@ let encode =
   | AccountCreationAccepted(event) => AccountCreation.Accepted.encode(event)
   | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
   | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event)
-  | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event);
+  | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event)
+  | IncomeDetected(event) => IncomeDetected.encode(event);
 
 let isSystemEvent =
   fun
@@ -499,6 +525,7 @@ let isSystemEvent =
   | CustodianAccepted(_)
   | PayoutAccepted(_)
   | AccountKeyChainUpdated(_)
+  | IncomeDetected(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastFailed(_) => true
   | _ => false;
@@ -534,6 +561,7 @@ let decode = raw => {
     AccountKeyChainUpdated(AccountKeyChainUpdated.decode(raw))
   | "IncomeAddressExposed" =>
     IncomeAddressExposed(IncomeAddressExposed.decode(raw))
+  | "IncomeDetected" => IncomeDetected(IncomeDetected.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };

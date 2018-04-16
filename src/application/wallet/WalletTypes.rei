@@ -6,6 +6,16 @@ type utxo = {
   confirmations: int,
 };
 
+type output = {
+  address: string,
+  amount: BTC.t,
+};
+
+type transaction = {
+  txId: string,
+  outputs: list(output),
+};
+
 type broadcastResult =
   | Ok(string)
   | Error(string);

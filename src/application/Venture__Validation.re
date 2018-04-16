@@ -11,6 +11,7 @@ type approvalProcess = {
 
 type state = {
   ventureName: string,
+  systemIssuer: Bitcoin.ECPair.t,
   systemPubKey: string,
   metaPolicy: Policy.t,
   partnerIds: list(userId),
@@ -32,6 +33,7 @@ type state = {
 
 let makeState = () => {
   ventureName: "",
+  systemIssuer: Bitcoin.ECPair.makeRandom(),
   systemPubKey: "",
   partnerIds: [],
   partnerStoragePrefixes: [],
@@ -99,6 +101,7 @@ let apply = (event: Event.t, state) =>
     }) => {
       ...state,
       ventureName,
+      systemIssuer,
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
       policies:
@@ -192,6 +195,7 @@ let apply = (event: Event.t, state) =>
       ],
     };
   | IncomeAddressExposed(_)
+  | IncomeDetected(_)
   | PayoutSigned(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastFailed(_) => state
@@ -480,6 +484,7 @@ let validateEvent =
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
+  | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);

@@ -11,7 +11,16 @@ type input = Network.txInput;
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
+  withChange: bool,
 };
+
+type summary = {
+  reserved: BTC.t,
+  spent: BTC.t,
+  fee: BTC.t,
+};
+
+let summary: t => summary;
 
 type buildResult =
   | WithChangeAddress(t)

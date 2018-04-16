@@ -13,6 +13,36 @@ type input = Network.txInput;
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
+  withChange: bool,
+};
+
+type summary = {
+  reserved: BTC.t,
+  spent: BTC.t,
+  fee: BTC.t,
+};
+
+let summary = ({withChange, usedInputs, txHex}) => {
+  let totalIn =
+    usedInputs
+    |> List.fold_left(
+         (total, input) => total |> BTC.plus((snd(input): input).value),
+         BTC.zero,
+       );
+  let tx = txHex |> Transaction.fromHex;
+  let outs =
+    tx##outs
+    |> Array.to_list
+    |> List.map(o => o##value |> Int64.of_float |> BTC.fromSatoshis);
+  let totalOut =
+    outs |> List.fold_left((total, out) => total |> BTC.plus(out), BTC.zero);
+  let fee = totalIn |> BTC.minus(totalOut);
+  let changeOut = withChange ? outs |> List.rev |> List.hd : BTC.zero;
+  {
+    reserved: totalIn,
+    spent: totalOut |> BTC.plus(fee) |> BTC.minus(changeOut),
+    fee,
+  };
 };
 
 let encode = payout =>
@@ -23,6 +53,7 @@ let encode = payout =>
         "usedInputs",
         list(pair(int, Network.encodeInput), payout.usedInputs),
       ),
+      ("withChange", bool(payout.withChange)),
     ])
   );
 
@@ -31,6 +62,7 @@ let decode = raw =>
     txHex: raw |> field("txHex", string),
     usedInputs:
       raw |> field("usedInputs", list(pair(int, Network.decodeInput))),
+    withChange: raw |> field("withChange", bool),
   };
 
 type signResult =
@@ -245,7 +277,7 @@ let build =
       network |> Network.bitcoinNetwork,
     );
   if (currentInputValue |> BTC.gte(outTotal |> BTC.plus(currentFee))) {
-    let changeAdded =
+    let withChange =
       addChangeOutput(
         ~totalInputs=currentInputValue,
         ~outTotal,
@@ -258,8 +290,9 @@ let build =
     let result = {
       usedInputs,
       txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex,
+      withChange,
     };
-    changeAdded ? WithChangeAddress(result) : WithoutChangeAddress(result);
+    withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
   } else {
     let (inputs, success) =
       findInputs(
@@ -282,7 +315,7 @@ let build =
              ),
              (currentInputValue, currentFee, usedInputs),
            );
-      let changeAdded =
+      let withChange =
         addChangeOutput(
           ~totalInputs=currentInputValue,
           ~outTotal,
@@ -295,8 +328,9 @@ let build =
       let result = {
         usedInputs,
         txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex,
+        withChange,
       };
-      changeAdded ? WithChangeAddress(result) : WithoutChangeAddress(result);
+      withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
     } else {
       raise(NotEnoughFunds);
     };

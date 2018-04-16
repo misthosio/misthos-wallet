@@ -60,10 +60,13 @@ let getPartnerHistoryUrls: t('a) => Js.Promise.t(array(string));
 
 module Wallet: {
   type balance = {
-    total: BTC.t,
+    income: BTC.t,
+    spent: BTC.t,
     reserved: BTC.t,
   };
-  let balance: t('a) => Js.Promise.t(balance);
+  let balance: t('a) => balance;
+  let getExposedAddresses: t('a) => array(string);
+  let getKnownTransactionIds: t('a) => array(string);
 };
 
 module Cmd: {
@@ -78,11 +81,17 @@ module Cmd: {
       ) =>
       Js.Promise.t(result('a));
   };
-  module Synchronize: {
+  module SynchronizeLogs: {
     type result('a) =
       | Ok(t('a))
       | Error(t('a), EventLog.item, Validation.result);
     let exec: (list(EventLog.t), t('a)) => Js.Promise.t(result('a));
+  };
+  module SynchronizeWallet: {
+    type result('a) =
+      | Ok(t('a));
+    let exec:
+      (list(WalletTypes.transaction), t('a)) => Js.Promise.t(result('a));
   };
   module ProposePartner: {
     type result('a) =

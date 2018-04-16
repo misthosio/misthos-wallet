@@ -28,6 +28,10 @@ type t('a) = {
 module Wallet = {
   include Venture__Wallet;
   let balance = ({wallet}) => balance(AccountIndex.default, wallet);
+  let getExposedAddresses = ({wallet}) =>
+    getExposedAddresses(wallet) |> Array.of_list;
+  let getKnownTransactionIds = ({wallet}) =>
+    getKnownTransactionIds(wallet) |> Array.of_list;
 };
 
 let make = (session, id, listenerState, listener) => {
@@ -62,12 +66,13 @@ let applyInternal =
 
 let apply =
     (
+      ~systemEvent=false,
       event,
       {session, id, log, state, wallet, listenerState, listener, watchers},
     ) => {
   let (item, log, (state, wallet, (listenerState, listener))) =
     applyInternal(
-      session.issuerKeyPair,
+      systemEvent ? state.systemIssuer : session.issuerKeyPair,
       event,
       log,
       (state, wallet, (listenerState, listener)),
@@ -224,7 +229,7 @@ let getSummary = ({log}) => log |> EventLog.getSummary;
 
 let getListenerState = ({listenerState}) => listenerState;
 
-module Synchronize = {
+module SynchronizeLogs = {
   let getPartnerHistoryUrls = ({session, id, state}) =>
     state.partnerIds
     |> List.filter(partnerId => UserId.neq(partnerId, session.userId))
@@ -321,7 +326,7 @@ module Synchronize = {
   };
 };
 
-let getPartnerHistoryUrls = Synchronize.getPartnerHistoryUrls;
+let getPartnerHistoryUrls = SynchronizeLogs.getPartnerHistoryUrls;
 
 module Cmd = {
   module Create = {
@@ -352,7 +357,27 @@ module Cmd = {
       );
     };
   };
-  module Synchronize = Synchronize;
+  module SynchronizeLogs = SynchronizeLogs;
+  module SynchronizeWallet = {
+    type result('a) =
+      | Ok(t('a));
+    let exec = (newTransactions: list(transaction), {wallet} as venture) => {
+      let events =
+        newTransactions
+        |> List.map(tx => wallet |> Wallet.registerIncomeTransaction(tx))
+        |> List.flatten;
+      Js.Promise.(
+        events
+        |> List.fold_left(
+             (p, event) =>
+               p |> then_(v => v |> apply(~systemEvent=true, event)),
+             venture |> resolve,
+           )
+        |> then_(persist)
+        |> then_(venture => Ok(venture) |> resolve)
+      );
+    };
+  };
   module ProposePartner = {
     type result('a) =
       | Ok(t('a))
