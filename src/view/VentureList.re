@@ -115,13 +115,26 @@ let make = (~selected=?, _children) => {
       | LoadingIndex => ReasonReact.stringToElement("Loading Index")
       | _ => ReasonReact.stringToElement("ventures:")
       };
-    MaterialUi.(
-      <div>
-        <Typography variant=`Title>
-          (ReasonReact.stringToElement("My Ventures"))
-        </Typography>
-        <List> ventureList </List>
-      </div>
-    );
+    let title =
+      MaterialUi.(
+        <WithStyles
+          key="ventures-title"
+          classes=[
+            {
+              name: "title",
+              styles: ReactDOMRe.Style.make(~padding="7px 20px", ()),
+            },
+          ]
+          render=(
+            classes =>
+              <TitleBar>
+                <Typography className=classes##title variant=`Title>
+                  (ReasonReact.stringToElement("My Ventures"))
+                </Typography>
+              </TitleBar>
+          )
+        />
+      );
+    <div> title <MaterialUi.List> ventureList </MaterialUi.List> </div>;
   },
 };
