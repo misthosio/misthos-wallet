@@ -128,7 +128,7 @@ let () =
       |> BTC.minus(oneKeyChainSpendAmount)
       |> BTC.minus(oneKeyChainExpectedFee);
     let twoKeyChainSpendAmount = BTC.fromSatoshis(25000L);
-    beforeAllPromise(~timeout=20000, () =>
+    beforeAllPromise(~timeout=40000, () =>
       Js.Promise.(
         Helpers.faucet([
           (address1.address, address1Satoshis),
@@ -151,28 +151,54 @@ let () =
                   BTC.fromSatoshis(1L),
                 )
            )
-        |> then_(({data} as event: Event.Payout.Proposed.t) => {
+        |> then_(({data, processId} as event: Event.Payout.Proposed.t) => {
              oneKeyChainWallet :=
                oneKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
              twoKeyChainWallet :=
                twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
-             PayoutTransaction.finalize([data.payoutTx], Network.Regtest)
-             |> Helpers.broadcastTransaction;
+             all2((
+               processId |> resolve,
+               PayoutTransaction.finalize([data.payoutTx], Network.Regtest)
+               |> Helpers.broadcastTransaction,
+             ));
+           })
+        |> then_(((processId, txId)) => {
+             oneKeyChainWallet :=
+               oneKeyChainWallet^
+               |> Wallet.apply(
+                    PayoutBroadcast(
+                      Payout.Broadcast.make(~processId, ~transactionId=txId),
+                    ),
+                  );
+             twoKeyChainWallet :=
+               twoKeyChainWallet^
+               |> Wallet.apply(
+                    PayoutBroadcast(
+                      Payout.Broadcast.make(~processId, ~transactionId=txId),
+                    ),
+                  );
+             resolve();
            })
       )
     );
     testPromise("1 of 2 wallet", () =>
       Js.Promise.(
         oneKeyChainWallet^
-        |> Wallet.balance(accountIdx)
-        |> then_(({total, reserved}: Wallet.balance) =>
-             expect((total, reserved))
-             |> toEqual((
+        |> Wallet.getExposedAddresses(~includeChangeAddresses=true)
+        |> Helpers.getUTXOs
+        |> then_(utxos =>
+             utxos
+             |> List.fold_left(
+                  (total, utxo: WalletTypes.utxo) =>
+                    total |> BTC.plus(utxo.amount),
+                  BTC.zero,
+                )
+             |> expect
+             |> toEqual(
                   oneKeyChainWalletTotal
                   |> BTC.minus(oneKeyChainSpendAmount)
                   |> BTC.minus(oneKeyChainExpectedFee),
-                  BTC.zero,
-                ))
+                )
              |> resolve
            )
       )
@@ -214,19 +240,26 @@ let () =
                |> Helpers.broadcastTransaction,
              ));
            })
-        |> then_(((wallet, _broadcastResult)) =>
-             wallet |> Wallet.balance(accountIdx)
-           )
-        |> then_(({total, reserved}: Wallet.balance) => {
+        |> then_(((wallet, _broadcastResult)) => {
              let expectedFee = BTC.fromSatoshis(597L);
-             expect((total, reserved))
-             |> toEqual((
-                  twoKeyChainWalletTotal
-                  |> BTC.minus(twoKeyChainSpendAmount)
-                  |> BTC.minus(expectedFee),
-                  BTC.zero,
-                ))
-             |> resolve;
+             wallet
+             |> Wallet.getExposedAddresses(~includeChangeAddresses=true)
+             |> Helpers.getUTXOs
+             |> then_(utxos =>
+                  utxos
+                  |> List.fold_left(
+                       (total, utxo: WalletTypes.utxo) =>
+                         total |> BTC.plus(utxo.amount),
+                       BTC.zero,
+                     )
+                  |> expect
+                  |> toEqual(
+                       twoKeyChainWalletTotal
+                       |> BTC.minus(twoKeyChainSpendAmount)
+                       |> BTC.minus(expectedFee),
+                     )
+                  |> resolve
+                );
            })
       )
     );

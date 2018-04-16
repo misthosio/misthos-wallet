@@ -43,7 +43,7 @@ let selectUTXOs = (utxos, totalAmount) => {
 
 exception FaucetEmpty;
 
-let getUTXOs = address => BitcoindClient.getUTXOs(bitcoindConfig, address);
+let getUTXOs = BitcoindClient.getUTXOs(bitcoindConfig);
 
 let broadcastTransaction = tx =>
   BitcoindClient.broadcastTransaction(bitcoindConfig, tx)
@@ -53,7 +53,11 @@ let broadcastTransaction = tx =>
          Node.Child_process.option(~encoding="utf8", ()),
        )
        |> ignore;
-       Js.Promise.resolve(result);
+       switch (result) {
+       | WalletTypes.Ok(txId) => txId |> Js.Promise.resolve
+       | _ => %assert
+              "helper transaction failed"
+       };
      });
 
 let fundAddress = (outputs, utxos) => {
@@ -88,6 +92,16 @@ let fundAddress = (outputs, utxos) => {
     broadcastTransaction(txB |> TxBuilder.build)
     |> then_((_) =>
          BitcoindClient.getUTXOs(bitcoindConfig, outputs |> List.map(fst))
+       )
+    |> then_(utxos =>
+         utxos
+         |> List.map((utxo: WalletTypes.utxo) =>
+              {
+                txId: utxo.txId,
+                outputs: [{address: utxo.address, amount: utxo.amount}],
+              }
+            )
+         |> resolve
        )
   );
 };

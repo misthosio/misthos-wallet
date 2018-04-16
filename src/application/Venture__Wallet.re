@@ -4,6 +4,12 @@ open WalletTypes;
 
 open Event;
 
+type balance = {
+  income: BTC.t,
+  spent: BTC.t,
+  reserved: BTC.t,
+};
+
 type t = {
   ventureId,
   network: Network.t,
@@ -14,14 +20,13 @@ type t = {
   nextChangeCoordinates:
     list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
   exposedCoordinates:
-    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t))),
+    list(
+      (accountIdx, list((AccountKeyChain.Address.Coordinates.t, bool))),
+    ),
   reservedInputs: list(Network.txInput),
-  payoutProcesses: list((ProcessId.t, PayoutTransaction.t)),
-};
-
-type balance = {
-  total: BTC.t,
-  reserved: BTC.t,
+  payoutProcesses: list((ProcessId.t, (accountIdx, PayoutTransaction.t))),
+  knownIncomeTxIds: list(string),
+  balance: list((accountIdx, balance)),
 };
 
 let make = () => {
@@ -34,7 +39,37 @@ let make = () => {
   exposedCoordinates: [],
   reservedInputs: [],
   payoutProcesses: [],
+  knownIncomeTxIds: [],
+  balance: [],
 };
+
+let getExposedAddresses =
+    (~includeChangeAddresses=false, {exposedCoordinates, accountKeyChains}) =>
+  exposedCoordinates
+  |> List.map(((_idx, coordinates)) =>
+       coordinates
+       |> List.filter(c => snd(c) || includeChangeAddresses)
+       |> List.map(fst)
+       |> List.map(c => accountKeyChains |> AccountKeyChain.find(c))
+     )
+  |> List.flatten
+  |> List.map((a: AccountKeyChain.Address.t) => a.address);
+
+let getAccountIndexOfAddress =
+    (address, {accountKeyChains, exposedCoordinates}) =>
+  exposedCoordinates
+  |> List.map(((idx, coordinates)) =>
+       (
+         idx,
+         coordinates
+         |> List.filter(c => snd(c))
+         |> List.map(fst)
+         |> List.map(c => accountKeyChains |> AccountKeyChain.find(c))
+         |> List.map((a: AccountKeyChain.Address.t) => a.address),
+       )
+     )
+  |> List.find(((_idx, addresses)) => addresses |> List.mem(address))
+  |> fst;
 
 let apply = (event: Event.t, state) =>
   switch (event) {
@@ -51,6 +86,13 @@ let apply = (event: Event.t, state) =>
         ...state.exposedCoordinates,
       ],
       accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
+      balance: [
+        (
+          data.accountIdx,
+          {income: BTC.zero, spent: BTC.zero, reserved: BTC.zero},
+        ),
+        ...state.balance,
+      ],
     }
   | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) => {
       ...state,
@@ -92,14 +134,30 @@ let apply = (event: Event.t, state) =>
         (
           accountIdx,
           [
-            coordinates,
+            (coordinates, true),
             ...state.exposedCoordinates |> List.assoc(accountIdx),
           ],
         ),
-        ...state.exposedCoordinates,
+        ...state.exposedCoordinates |> List.remove_assoc(accountIdx),
       ],
     };
-  | PayoutProposed({data, processId}) => {
+  | IncomeDetected({txId, amount, address}) =>
+    let accountIdx = state |> getAccountIndexOfAddress(address);
+    let balance = state.balance |> List.assoc(accountIdx);
+    {
+      ...state,
+      knownIncomeTxIds: [txId, ...state.knownIncomeTxIds],
+      balance: [
+        (
+          accountIdx,
+          {...balance, income: balance.income |> BTC.plus(amount)},
+        ),
+        ...state.balance |> List.remove_assoc(accountIdx),
+      ],
+    };
+  | PayoutProposed({data, processId}) =>
+    let balance = state.balance |> List.assoc(data.accountIdx);
+    {
       ...state,
       reservedInputs:
         state.reservedInputs
@@ -111,7 +169,7 @@ let apply = (event: Event.t, state) =>
             (
               data.accountIdx,
               [
-                coordinates,
+                (coordinates, false),
                 ...state.exposedCoordinates |> List.assoc(data.accountIdx),
               ],
             ),
@@ -128,38 +186,85 @@ let apply = (event: Event.t, state) =>
         ...state.nextCoordinates |> List.remove_assoc(data.accountIdx),
       ],
       payoutProcesses: [
-        (processId, data.payoutTx),
+        (processId, (data.accountIdx, data.payoutTx)),
         ...state.payoutProcesses,
       ],
-    }
-  | PayoutBroadcast({processId}) => {
+      balance: [
+        (
+          data.accountIdx,
+          {
+            ...balance,
+            reserved:
+              balance.reserved
+              |> BTC.plus(
+                   (data.payoutTx |> PayoutTransaction.summary).reserved,
+                 ),
+          },
+        ),
+        ...state.balance |> List.remove_assoc(data.accountIdx),
+      ],
+    };
+  | PayoutBroadcast({processId}) =>
+    let (accountIdx, payoutTx) =
+      state.payoutProcesses |> List.assoc(processId);
+    let balance = state.balance |> List.assoc(accountIdx);
+    let payoutSummary = payoutTx |> PayoutTransaction.summary;
+    {
       ...state,
       reservedInputs:
         state.reservedInputs
         |> List.filter((input: Network.txInput) =>
-             (state.payoutProcesses |> List.assoc(processId)).usedInputs
+             payoutTx.usedInputs
              |> List.map(snd)
              |>
              List.exists((i: Network.txInput) =>
                input.txId == i.txId && input.txOutputN == i.txOutputN
              ) == false
            ),
-    }
-  | PayoutBroadcastFailed({processId}) => {
+      balance: [
+        (
+          accountIdx,
+          {
+            ...balance,
+            spent: balance.spent |> BTC.plus(payoutSummary.spent),
+            reserved: balance.reserved |> BTC.minus(payoutSummary.reserved),
+          },
+        ),
+        ...state.balance |> List.remove_assoc(accountIdx),
+      ],
+    };
+  | PayoutBroadcastFailed({processId}) =>
+    let (accountIdx, payoutTx) =
+      state.payoutProcesses |> List.assoc(processId);
+    let balance = state.balance |> List.assoc(accountIdx);
+    let payoutSummary = payoutTx |> PayoutTransaction.summary;
+    {
       ...state,
       reservedInputs:
         state.reservedInputs
         |> List.filter((input: Network.txInput) =>
-             (state.payoutProcesses |> List.assoc(processId)).usedInputs
+             payoutTx.usedInputs
              |> List.map(snd)
              |>
              List.exists((i: Network.txInput) =>
                input.txId == i.txId && input.txOutputN == i.txOutputN
              ) == false
            ),
-    }
+      balance: [
+        (
+          accountIdx,
+          {
+            ...balance,
+            reserved: balance.reserved |> BTC.minus(payoutSummary.reserved),
+          },
+        ),
+        ...state.balance |> List.remove_assoc(accountIdx),
+      ],
+    };
   | _ => state
   };
+
+let getKnownTransactionIds = ({knownIncomeTxIds}) => knownIncomeTxIds;
 
 let exposeNextIncomeAddress =
     (accountIdx, {nextCoordinates, accountKeyChains}) => {
@@ -189,7 +294,7 @@ let preparePayoutTx =
   let currentKeyChainIdx = nextChangeCoordinates |> Coordinates.keyChainIdx;
   Js.Promise.(
     accountKeyChains
-    |> Network.transactionInputs(network, coordinates)
+    |> Network.transactionInputs(network, coordinates |> List.map(fst))
     |> then_(inputs => {
          let inputs =
            inputs
@@ -253,34 +358,22 @@ let preparePayoutTx =
   );
 };
 
-let balance =
-    (
-      accountIdx,
-      {exposedCoordinates, accountKeyChains, reservedInputs, network},
-    ) => {
-  let coordinates = exposedCoordinates |> List.assoc(accountIdx);
-  Js.Promise.(
-    accountKeyChains
-    |> Network.transactionInputs(network, coordinates)
-    |> then_(inputs =>
-         inputs
-         |> List.fold_left(
-              ({total, reserved}, input: Network.txInput) => {
-                total: total |> BTC.plus(input.value),
-                reserved:
-                  reserved
-                  |> BTC.plus(
-                       reservedInputs
-                       |> List.exists((reservedIn: Network.txInput) =>
-                            reservedIn.txId == input.txId
-                            && reservedIn.txOutputN == input.txOutputN
-                          ) ?
-                         input.value : BTC.zero,
-                     ),
-              },
-              {total: BTC.zero, reserved: BTC.zero},
-            )
-         |> resolve
-       )
-  );
-};
+let balance = (accountIdx, {balance}) => balance |> List.assoc(accountIdx);
+
+let registerIncomeTransaction = (tx, {knownIncomeTxIds} as state) =>
+  if (knownIncomeTxIds |> List.mem(tx.txId)) {
+    [];
+  } else {
+    let exposedAddresses = state |> getExposedAddresses;
+    tx.outputs
+    |> List.filter(o => exposedAddresses |> List.mem(o.address))
+    |> List.map(out =>
+         IncomeDetected(
+           IncomeDetected.make(
+             ~address=out.address,
+             ~txId=tx.txId,
+             ~amount=out.amount,
+           ),
+         )
+       );
+  };

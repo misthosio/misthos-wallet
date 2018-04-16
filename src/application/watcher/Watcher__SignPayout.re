@@ -10,6 +10,7 @@ type state = {
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
   payoutTx: option(PayoutTransaction.t),
+  complete: bool,
 };
 
 let make =
@@ -49,6 +50,13 @@ let make =
                ...state,
                payoutTx: Some(data.payoutTx),
              }
+           | PayoutSigned({custodianId, processId: signingProcess})
+               when
+                 UserId.eq(custodianId, userId)
+                 && ProcessId.eq(signingProcess, payoutProcess) => {
+               ...state,
+               complete: true,
+             }
            | _ => state
            },
          {
@@ -56,10 +64,11 @@ let make =
            ventureId: VentureId.fromString(""),
            accountKeyChains: [],
            payoutTx: None,
+           complete: false,
          },
        );
   let signEvent =
-    if (UserId.eq(supporterId, userId)) {
+    if (UserId.eq(supporterId, userId) && state.complete == false) {
       switch (
         PayoutTransaction.signPayout(
           ~ventureId=state.ventureId,

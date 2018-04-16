@@ -29,14 +29,6 @@ let rpcCall = ({bitcoindUrl} as config, jsonRPC) =>
     |> then_(Fetch.Response.json)
   );
 
-type tx = {
-  txId: string,
-  txOutputN: int,
-  address: string,
-  amount: BTC.t,
-  confirmations: int,
-};
-
 let importAllAs = (config, addresses, label) =>
   switch (addresses) {
   | [] => Js.Promise.resolve()
@@ -118,7 +110,9 @@ let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
        )
   );
 
-let listTransactions = (config, addresses, max) : Js.Promise.t(list(tx)) => {
+let listTransactions =
+    (config, addresses, max)
+    : Js.Promise.t(list(WalletTypes.transaction)) => {
   let label = Uuid.v4();
   Js.Promise.(
     importAllAs(config, addresses, label)
@@ -145,13 +139,18 @@ let listTransactions = (config, addresses, max) : Js.Promise.t(list(tx)) => {
                 withDefault(
                   [],
                   list(tx =>
-                    {
-                      txId: tx |> field("txid", string),
-                      txOutputN: tx |> field("vout", int),
-                      address: tx |> field("address", string),
-                      amount: tx |> field("amount", float_) |> BTC.fromFloat,
-                      confirmations: tx |> field("confirmations", int),
-                    }
+                    (
+                      {
+                        txId: tx |> field("txid", string),
+                        outputs: [
+                          {
+                            address: tx |> field("address", string),
+                            amount:
+                              tx |> field("amount", float_) |> BTC.fromFloat,
+                          },
+                        ],
+                      }: WalletTypes.transaction
+                    )
                   ),
                 ),
               )

@@ -8,16 +8,17 @@ type state = {
   venture: Venture.t(ViewModel.t),
   viewModel: ViewModel.t,
   prospectId: string,
-  balance: option(Venture.Wallet.balance),
+  balance: Venture.Wallet.balance,
   syncWorker: ref(SyncWorker.t),
+  incomeWorker: ref(IncomeWorker.t),
 };
 
 type action =
-  | WorkerMessage(SyncWorker.Message.receive)
+  | SyncWorkerMessage(SyncWorker.Message.receive)
+  | IncomeWorkerMessage(IncomeWorker.Message.receive)
   | ChangeNewPartnerId(string)
   | UpdateVenture(Venture.t(ViewModel.t))
   | ProposePartner
-  | UpdateBalance(Venture.Wallet.balance)
   | EndorsePartner(ProcessId.t)
   | GetIncomeAddress
   | ProposePayout(list((string, BTC.t)))
@@ -33,11 +34,12 @@ let component = ReasonReact.reducerComponent("SelectedVenture");
 let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => {
   ...component,
   initialState: () => {
-    balance: None,
+    balance: initialVenture |> Venture.Wallet.balance,
     venture: initialVenture,
     viewModel: Venture.getListenerState(initialVenture),
     prospectId: "",
     syncWorker: ref(SyncWorker.make(~onMessage=Js.log)),
+    incomeWorker: ref(IncomeWorker.make(~onMessage=Js.log)),
   },
   subscriptions: ({send, state}) => [
     Sub(
@@ -45,7 +47,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         SyncWorker.terminate(state.syncWorker^);
         let worker =
           SyncWorker.make(~onMessage=message =>
-            send(WorkerMessage(message))
+            send(SyncWorkerMessage(message))
           );
         Js.Promise.(
           Venture.getPartnerHistoryUrls(initialVenture)
@@ -64,26 +66,33 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       },
       SyncWorker.terminate,
     ),
-  ],
-  didMount: _self =>
-    ReasonReact.SideEffects(
-      ({send}) =>
-        Js.Promise.(
-          initialVenture
-          |> Venture.Wallet.balance
-          |> then_(balance => send(UpdateBalance(balance)) |> resolve)
-          |> catch(error => Utils.printError("whoops", error) |> resolve)
-          |> ignore
-        ),
+    Sub(
+      () => {
+        IncomeWorker.terminate(state.incomeWorker^);
+        let worker =
+          IncomeWorker.make(~onMessage=message =>
+            send(IncomeWorkerMessage(message))
+          );
+        IncomeWorker.Message.MonitorAddresses(
+          initialVenture |> Venture.Wallet.getExposedAddresses,
+          initialVenture |> Venture.Wallet.getKnownTransactionIds,
+        )
+        |> IncomeWorker.postMessage(worker)
+        |> ignore;
+        state.incomeWorker := worker;
+        worker;
+      },
+      IncomeWorker.terminate,
     ),
+  ],
   reducer: (action, state) =>
     switch (action) {
-    | WorkerMessage(Fetched(eventLogs)) =>
+    | SyncWorkerMessage(Fetched(eventLogs)) =>
       ReasonReact.SideEffects(
         (
           ({send, state}) =>
             Js.Promise.(
-              Cmd.Synchronize.(
+              Cmd.SynchronizeLogs.(
                 state.venture
                 |> exec(eventLogs)
                 |> then_(
@@ -101,6 +110,27 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         ),
       )
+    | IncomeWorkerMessage(msg) =>
+      switch (msg) {
+      | NewTransactionsDetected(txs) =>
+        ReasonReact.SideEffects(
+          (
+            ({send, state}) =>
+              Js.Promise.(
+                Cmd.SynchronizeWallet.(
+                  state.venture
+                  |> exec(txs)
+                  |> then_(
+                       fun
+                       | Ok(venture) =>
+                         send(UpdateVenture(venture)) |> resolve,
+                     )
+                  |> ignore
+                )
+              )
+          ),
+        )
+      }
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({...state, prospectId: text})
     | ProposePartner =>
@@ -163,13 +193,18 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
            )
         |> ignore
       );
+      IncomeWorker.Message.MonitorAddresses(
+        venture |> Venture.Wallet.getExposedAddresses,
+        venture |> Venture.Wallet.getKnownTransactionIds,
+      )
+      |> IncomeWorker.postMessage(state.incomeWorker^)
+      |> ignore;
       ReasonReact.Update({
         ...state,
         venture,
-        viewModel: Venture.getListenerState(venture),
+        viewModel: venture |> Venture.getListenerState,
+        balance: venture |> Venture.Wallet.balance,
       });
-    | UpdateBalance(balance) =>
-      ReasonReact.Update({...state, balance: Some(balance)})
     | GetIncomeAddress =>
       ReasonReact.SideEffects(
         (
@@ -383,16 +418,14 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         <h3> (text("Wallet:")) </h3>
         <h4> (text("blance: ")) </h4>
         (
-          switch (state.balance) {
-          | None => text("loading")
-          | Some(balance) =>
-            text(
-              "total: "
-              ++ BTC.format(balance.total)
-              ++ " reserved: "
-              ++ BTC.format(balance.reserved),
-            )
-          }
+          text(
+            "income: "
+            ++ BTC.format(state.balance.income)
+            ++ " spent: "
+            ++ BTC.format(state.balance.spent)
+            ++ " reserved: "
+            ++ BTC.format(state.balance.reserved),
+          )
         )
         <h4> (text("Income Addresses:")) </h4>
         <ul> addresses </ul>

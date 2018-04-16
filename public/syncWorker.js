@@ -26,6 +26,7 @@ function fetchHistory(link) {
 
 intervalId = -1;
 links = [];
+knownItems = [];
 tenSecondsInMilliseconds = 10000;
 syncInterval = tenSecondsInMilliseconds;
 

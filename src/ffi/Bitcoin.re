@@ -87,7 +87,8 @@ module HDNode = {
 };
 
 module Transaction = {
-  type t;
+  type out = {. "value": float};
+  type t = {. "outs": array(out)};
   [@bs.send] external toBuffer : t => Node.buffer = "";
   [@bs.send] external toHex : t => string = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
