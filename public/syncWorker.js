@@ -1,5 +1,5 @@
 function logMessage(msg) {
-  console.log("[Background Worker] - " + msg);
+  console.log("[Sync Worker] - " + msg);
 };
 
 function fetchSummary(link) {
