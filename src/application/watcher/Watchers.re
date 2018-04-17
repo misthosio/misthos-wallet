@@ -72,7 +72,6 @@ let rec processPendingPromise = (session, eventFound, promise) =>
              try (
                Some(
                  watchers
-                 |> List.rev
                  |> List.find(w => w#pendingEvent() |> Js.Option.isSome),
                )
              ) {

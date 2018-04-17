@@ -28,6 +28,7 @@ type txInput = {
   address: string,
   value: BTC.t,
   nCoSigners: int,
+  nPubKeys: int,
   coordinates: AccountKeyChain.Address.Coordinates.t,
 };
 
@@ -39,6 +40,7 @@ let encodeInput = input =>
       ("address", string(input.address)),
       ("value", BTC.encode(input.value)),
       ("nCoSigners", int(input.nCoSigners)),
+      ("nPubKeys", int(input.nPubKeys)),
       (
         "coordinates",
         AccountKeyChain.Address.Coordinates.encode(input.coordinates),
@@ -53,6 +55,7 @@ let decodeInput = raw =>
     address: raw |> field("address", string),
     value: raw |> field("value", BTC.decode),
     nCoSigners: raw |> field("nCoSigners", int),
+    nPubKeys: raw |> field("nPubKeys", int),
     coordinates:
       raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode),
   };
@@ -77,6 +80,7 @@ module Make = (Client: NetworkClient) => {
                   address,
                   nCoSigners:
                     snd(addresses |> List.assoc(address)).nCoSigners,
+                  nPubKeys: snd(addresses |> List.assoc(address)).nPubKeys,
                   value: amount,
                   coordinates: addresses |> List.assoc(address) |> fst,
                 }

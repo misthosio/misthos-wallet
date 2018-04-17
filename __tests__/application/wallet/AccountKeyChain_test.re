@@ -74,6 +74,7 @@ let () =
       |> toEqual(
            {
              nCoSigners: 1,
+             nPubKeys: 1,
              coordinates: (
                AccountIndex.first,
                AccountKeyChainIndex.first,

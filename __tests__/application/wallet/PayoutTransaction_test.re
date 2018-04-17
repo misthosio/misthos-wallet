@@ -13,6 +13,7 @@ let () =
         address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
         value: BTC.fromSatoshis(10000L),
         nCoSigners: 1,
+        nPubKeys: 1,
         coordinates: (
           AccountIndex.first,
           AccountKeyChainIndex.first,
@@ -23,6 +24,7 @@ let () =
       {
         txId: "d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
         txOutputN: 1,
+        nPubKeys: 1,
         address: "2N3CDv7U6xVYmNqdvNscKBWwUYky7SM6Wdq",
         value: BTC.fromSatoshis(5000L),
         nCoSigners: 1,
@@ -36,6 +38,7 @@ let () =
     ];
     let changeAddress: AccountKeyChain.Address.t = {
       nCoSigners: 1,
+      nPubKeys: 1,
       coordinates: (
         AccountIndex.first,
         AccountKeyChainIndex.first,

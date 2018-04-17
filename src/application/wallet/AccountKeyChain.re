@@ -71,6 +71,7 @@ module Address = {
   };
   type t = {
     nCoSigners: int,
+    nPubKeys: int,
     coordinates: Coordinates.t,
     witnessScript: string,
     redeemScript: string,
@@ -118,6 +119,7 @@ module Address = {
     {
       nCoSigners,
       coordinates,
+      nPubKeys: custodianKeyChains |> List.length,
       witnessScript: Utils.bufToHex(witnessScript),
       redeemScript: Utils.bufToHex(redeemScript),
       address,

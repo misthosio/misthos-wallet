@@ -341,7 +341,9 @@ let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>
   switch (needed, allSigs) {
   | (0, _)
   | (_, []) => foundSigs
-  | (_, [signatures, ...otherSigs]) =>
+  | (_, [None, ...otherSigs]) =>
+    findSignatures(otherSigs, needed, foundSigIdxs, foundSigs, network)
+  | (_, [Some(signatures), ...otherSigs]) =>
     try (
       {
         let foundSig =
@@ -390,9 +392,13 @@ let finalize = (signedTransactions, network) =>
            )##inputs
          );
     usedInputs
-    |> List.iter(((inputIdx, {nCoSigners}: input)) => {
+    |> List.iter(((inputIdx, {nPubKeys, nCoSigners}: input)) => {
          let input = inputs[inputIdx];
-         let signatures = input##signatures;
+         let signatures =
+           switch (input##signatures |> Js.Nullable.toOption) {
+           | Some(signatures) => signatures
+           | None => Array.make(nPubKeys, Js.Nullable.null)
+           };
          let existing =
            signatures
            |> Array.mapi((i, sigBuf) =>
@@ -409,7 +415,7 @@ let finalize = (signedTransactions, network) =>
              otherInputs
              |> List.map(ins => {
                   let input = ins[inputIdx];
-                  input##signatures;
+                  input##signatures |> Js.Nullable.toOption;
                 }),
              nCoSigners - (existing |> List.length),
              existing,
@@ -423,6 +429,12 @@ let finalize = (signedTransactions, network) =>
                 },
                 existing |> List.length,
               );
+         input##signatures#=(
+                              Js.Nullable.return(signatures):
+                                Js.Nullable.t(
+                                  array(Bitcoin.TxBuilder.signature),
+                                )
+                            );
          if (total != nCoSigners) {
            raise(NotEnoughSignatures);
          };
