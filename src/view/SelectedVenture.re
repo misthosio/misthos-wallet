@@ -236,7 +236,7 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                 |> exec(
                      ~accountIdx=WalletTypes.AccountIndex.default,
                      ~destinations,
-                     ~fee=BTC.fromSatoshis(1L),
+                     ~fee=BTC.fromSatoshis(5L),
                    )
                 |> then_(result =>
                      (
