@@ -94,49 +94,67 @@ let signPayout =
   let signed =
     payout.usedInputs
     |> List.fold_left(
-         (signed, (idx, input: input)) =>
-           try (
-             {
-               let custodianPubChain =
-                 (
-                   accountKeyChains
-                   |> AccountKeyChain.lookupKeyChain(input.coordinates)
-                 ).
-                   custodianKeyChains
-                 |> List.assoc(userId);
-               let custodianKeyChain =
-                 CustodianKeyChain.make(
-                   ~ventureId,
-                   ~accountIdx=
-                     CustodianKeyChain.accountIdx(custodianPubChain),
-                   ~keyChainIdx=
-                     CustodianKeyChain.keyChainIdx(custodianPubChain),
-                   ~masterKeyChain,
+         (signed, (idx, input: input)) => {
+           let inputs = txB##inputs;
+           let txBInput = inputs[idx];
+           let needsSigning =
+             switch (txBInput##signatures |> Js.Nullable.toOption) {
+             | Some(signatures) =>
+               signatures
+               |> Array.to_list
+               |> List.filter(s =>
+                    s |> Js.Nullable.toOption |> Js.Option.isSome
+                  )
+               |> List.length < input.nCoSigners
+             | None => true
+             };
+           if (needsSigning) {
+             try (
+               {
+                 let custodianPubChain =
+                   (
+                     accountKeyChains
+                     |> AccountKeyChain.lookupKeyChain(input.coordinates)
+                   ).
+                     custodianKeyChains
+                   |> List.assoc(userId);
+                 let custodianKeyChain =
+                   CustodianKeyChain.make(
+                     ~ventureId,
+                     ~accountIdx=
+                       CustodianKeyChain.accountIdx(custodianPubChain),
+                     ~keyChainIdx=
+                       CustodianKeyChain.keyChainIdx(custodianPubChain),
+                     ~masterKeyChain,
+                   );
+                 let (chainIdx, addressIdx) = (
+                   input.coordinates
+                   |> AccountKeyChain.Address.Coordinates.chainIdx,
+                   input.coordinates
+                   |> AccountKeyChain.Address.Coordinates.addressIdx,
                  );
-               let (chainIdx, addressIdx) = (
-                 input.coordinates
-                 |> AccountKeyChain.Address.Coordinates.chainIdx,
-                 input.coordinates
-                 |> AccountKeyChain.Address.Coordinates.addressIdx,
-               );
-               let keyPair =
-                 custodianKeyChain
-                 |> CustodianKeyChain.getSigningKey(chainIdx, addressIdx);
-               let address: AccountKeyChain.Address.t =
-                 accountKeyChains |> AccountKeyChain.find(input.coordinates);
-               txB
-               |> TxBuilder.signSegwit(
-                    idx,
-                    keyPair,
-                    ~redeemScript=address.redeemScript |> Utils.bufFromHex,
-                    ~witnessValue=input.value |> BTC.toSatoshisFloat,
-                    ~witnessScript=address.witnessScript |> Utils.bufFromHex,
-                  );
-               true;
-             }
-           ) {
-           | Not_found => signed
-           },
+                 let keyPair =
+                   custodianKeyChain
+                   |> CustodianKeyChain.getSigningKey(chainIdx, addressIdx);
+                 let address: AccountKeyChain.Address.t =
+                   accountKeyChains |> AccountKeyChain.find(input.coordinates);
+                 txB
+                 |> TxBuilder.signSegwit(
+                      idx,
+                      keyPair,
+                      ~redeemScript=address.redeemScript |> Utils.bufFromHex,
+                      ~witnessValue=input.value |> BTC.toSatoshisFloat,
+                      ~witnessScript=address.witnessScript |> Utils.bufFromHex,
+                    );
+                 true;
+               }
+             ) {
+             | Not_found => signed
+             };
+           } else {
+             signed;
+           };
+         },
          false,
        );
   signed ?
