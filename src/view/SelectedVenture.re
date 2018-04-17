@@ -371,16 +371,16 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
       );
     <div>
       <div>
-        <h2>
-          (
-            text(
-              ViewModel.ventureName(state.viewModel)
-              ++ " ("
-              ++ Venture.getId(initialVenture)
-              ++ ")",
-            )
+        <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
+        (
+          text(
+            "Join Venture url: "
+            ++ Location.origin
+            ++ Router.Config.routeToUrl(
+                 JoinVenture(initialVenture |> Venture.getId, session.userId),
+               ),
           )
-        </h2>
+        )
         <h3> (text("Policies:")) </h3>
         <div>
           (
