@@ -47,8 +47,10 @@ let make =
                 )),
               custodianProcessId: processId,
             }
-          | (CustodianEndorsed({processId}), true)
-              when ProcessId.eq(processId, state^.custodianProcessId) => {
+          | (CustodianEndorsed({processId, supporterId}), true)
+              when
+                ProcessId.eq(processId, state^.custodianProcessId)
+                && UserId.eq(supporterId, userId) => {
               ...state^,
               pendingEvent: None,
               completed: true,
