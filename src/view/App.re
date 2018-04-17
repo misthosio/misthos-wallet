@@ -7,26 +7,43 @@ let make = (~session, ~updateSession, _children) => {
   render: _self => {
     let onSignIn = _e => updateSession(SessionStore.SignIn);
     let onSignOut = _e => updateSession(SessionStore.SignOut);
-    let drawer = (currentRoute: Router.Config.route) =>
+    let drawer = (index, currentRoute: Router.Config.route) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
-      | (LoggedIn(_data), Home) => Some(<Drawer onSignOut />)
+      | (LoggedIn(_data), Home) => Some(<Drawer onSignOut index />)
       | (LoggedIn(_data), Venture(selected)) =>
-        Some(<Drawer onSignOut selected />)
+        Some(<Drawer onSignOut selected index />)
+      | (LoggedIn(_data), JoinVenture(selected, _)) =>
+        Some(<Drawer onSignOut selected index />)
       };
-    let body = (currentRoute: Router.Config.route) =>
+    let body =
+        (
+          selectedVenture,
+          updateVentureStore,
+          currentRoute: Router.Config.route,
+        ) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) =>
         <PublicHome onSignIn />
-      | (LoggedIn(session), Home) => <Home session />
-      | (LoggedIn(session), _) => <Home session />
+      | (LoggedIn(session), Home) =>
+        <Home session selectedVenture updateVentureStore />
+      | (LoggedIn(session), _) =>
+        <Home session selectedVenture updateVentureStore />
       };
     <Router.Container>
       ...(
            (~currentRoute) =>
-             <Layout drawer=(currentRoute |> drawer)>
-               (currentRoute |> body)
-             </Layout>
+             <VentureStore currentRoute session>
+               ...(
+                    (~index, ~selectedVenture, ~updateVentureStore) =>
+                      <Layout drawer=(currentRoute |> drawer(index))>
+                        (
+                          currentRoute
+                          |> body(selectedVenture, updateVentureStore)
+                        )
+                      </Layout>
+                  )
+             </VentureStore>
          )
     </Router.Container>;
   },

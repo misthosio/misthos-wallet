@@ -34,8 +34,8 @@ type t('a);
 let join:
   (
     Session.Data.t,
-    ~userId: string,
-    ~ventureId: string,
+    ~userId: userId,
+    ~ventureId: ventureId,
     ~listenerState: 'a,
     ~listener: listener('a)
   ) =>
@@ -50,7 +50,7 @@ let load:
   ) =>
   Js.Promise.t(t('a));
 
-let getId: t('a) => string;
+let getId: t('a) => ventureId;
 
 let getSummary: t('a) => EventLog.summary;
 

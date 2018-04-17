@@ -1,6 +1,6 @@
 let component = ReasonReact.statelessComponent("Drawer");
 
-let make = (~onSignOut, ~selected=?, _children) => {
+let make = (~onSignOut, ~index, ~selected=?, _children) => {
   ...component,
   render: _self =>
     MaterialUi.(
@@ -20,7 +20,7 @@ let make = (~onSignOut, ~selected=?, _children) => {
         render=(
           classes =>
             <div className=classes##container>
-              <VentureList ?selected />
+              <VentureList ?selected index />
               <div className=classes##flex />
               <Button color=`Inherit onClick=onSignOut> "Sign Out" </Button>
             </div>

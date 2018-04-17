@@ -192,17 +192,14 @@ let load = (session: Session.Data.t, ~ventureId, ~listenerState, ~listener) => {
 };
 
 let join =
-    (
-      session: Session.Data.t,
-      ~userId: string,
-      ~ventureId,
-      ~listenerState,
-      ~listener,
-    ) =>
+    (session: Session.Data.t, ~userId, ~ventureId, ~listenerState, ~listener) =>
   Js.Promise.(
     Blockstack.getFileFromUserAndDecrypt(
-      ventureId ++ "/" ++ session.storagePrefix ++ "/log.json",
-      ~username=userId,
+      (ventureId |> VentureId.toString)
+      ++ "/"
+      ++ session.storagePrefix
+      ++ "/log.json",
+      ~username=userId |> UserId.toString,
     )
     |> catch(_error => raise(Not_found))
     |> then_(nullFile =>
@@ -225,7 +222,7 @@ let join =
        )
   );
 
-let getId = ({id}) => id |> VentureId.toString;
+let getId = ({id}) => id;
 
 let getSummary = ({log}) => log |> EventLog.getSummary;
 

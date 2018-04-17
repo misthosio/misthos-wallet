@@ -1,60 +1,14 @@
 open PrimitiveTypes;
 
-type status =
-  | None
-  | LoadingIndex;
+let component = ReasonReact.statelessComponent("VentureList");
 
-type state = {
-  status,
-  selected: option(ventureId),
-  index: Venture.Index.t,
-};
-
-type action =
-  | IndexLoaded(Venture.Index.t)
-  | SelectVenture(ventureId);
-
-let component = ReasonReact.reducerComponent("VentureList");
-
-let selectVenture = e =>
-  SelectVenture(
-    ReactDOMRe.domElementToObj(ReactEventRe.Mouse.currentTarget(e))##getAttribute(
-      "value",
-    )
-    |> VentureId.fromString,
-  );
-
-let make = (~selected=?, _children) => {
+let make = (~selected=?, ~index, _children) => {
   ...component,
-  initialState: () => {status: LoadingIndex, index: [], selected},
-  didMount: _self =>
-    ReasonReact.SideEffects(
-      ({send}) =>
-        Js.Promise.(
-          Venture.Index.load()
-          |> then_(index => send(IndexLoaded(index)) |> resolve)
-          |> ignore
-        ),
-    ),
-  reducer: (action, state) =>
-    switch (action) {
-    | IndexLoaded(index) =>
-      ReasonReact.Update({...state, status: None, index})
-    | SelectVenture(id) =>
-      Some(id) == state.selected ?
-        ReasonReact.NoUpdate :
-        ReasonReact.Update({...state, selected: Some(id)})
-    },
-  render: ({send, state}) => {
+  render: _self => {
     let ventureList =
       ReasonReact.arrayToElement(
         Array.of_list(
-          (
-            switch (state.status) {
-            | LoadingIndex => []
-            | _ => state.index
-            }
-          )
+          index
           |> List.map(
                Venture.Index.(
                  ({name, id}) =>
@@ -90,13 +44,12 @@ let make = (~selected=?, _children) => {
                                     key=ids
                                     button=false
                                     value=(`String(ids))
-                                    onClick=(e => send(selectVenture(e)))
                                     component=(`String("li"))>
                                     <ListItemText
                                       primary={
                                         <Link
                                           className=(
-                                            Some(id) == state.selected ?
+                                            Some(id) == selected ?
                                               classes##linkSelected :
                                               classes##link
                                           )
@@ -113,11 +66,7 @@ let make = (~selected=?, _children) => {
              ),
         ),
       );
-    let _status =
-      switch (state.status) {
-      | LoadingIndex => ReasonReact.stringToElement("Loading Index")
-      | _ => ReasonReact.stringToElement("ventures:")
-      };
+    let _status = ReasonReact.stringToElement("ventures:");
     let title =
       MaterialUi.(
         <WithStyles
