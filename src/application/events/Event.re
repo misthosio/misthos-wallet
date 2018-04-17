@@ -525,6 +525,7 @@ let isSystemEvent =
   | CustodianAccepted(_)
   | PayoutAccepted(_)
   | AccountKeyChainUpdated(_)
+  | IncomeAddressExposed(_)
   | IncomeDetected(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastFailed(_) => true

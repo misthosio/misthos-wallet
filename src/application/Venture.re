@@ -377,14 +377,18 @@ module Cmd = {
         |> List.map(tx => wallet |> Wallet.registerIncomeTransaction(tx))
         |> List.flatten;
       Js.Promise.(
-        events
-        |> List.fold_left(
-             (p, event) =>
-               p |> then_(v => v |> apply(~systemEvent=true, event)),
-             venture |> resolve,
-           )
-        |> then_(persist)
-        |> then_(venture => Ok(venture) |> resolve)
+        switch (events) {
+        | [] => Ok(venture) |> resolve
+        | eventsList =>
+          eventsList
+          |> List.fold_left(
+               (p, event) =>
+                 p |> then_(v => v |> apply(~systemEvent=true, event)),
+               venture |> resolve,
+             )
+          |> then_(persist)
+          |> then_(venture => Ok(venture) |> resolve)
+        }
       );
     };
   };
@@ -473,7 +477,7 @@ module Cmd = {
       let exposeEvent = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
       Js.Promise.(
         venture
-        |> apply(IncomeAddressExposed(exposeEvent))
+        |> apply(~systemEvent=true, IncomeAddressExposed(exposeEvent))
         |> then_(persist)
         |> then_(p => resolve(Ok(exposeEvent.address, p)))
       );
