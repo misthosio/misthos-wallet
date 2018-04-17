@@ -15,7 +15,7 @@ type state = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   partnerIds: list(userId),
-  partnerStoragePrefixes: list(string),
+  partnerStoragePrefixes: list((string, string)),
   partnerPubKeys: list((string, userId)),
   partnerData: list((processId, Partner.Data.t)),
   custodianData: list((processId, Custodian.Data.t)),
@@ -139,7 +139,7 @@ let apply = (event: Event.t, state) =>
       ...completeProcess(acceptance, state),
       partnerIds: [data.id, ...state.partnerIds],
       partnerStoragePrefixes: [
-        UserInfo.storagePrefix(~appPubKey=data.pubKey),
+        (data.pubKey, UserInfo.storagePrefix(~appPubKey=data.pubKey)),
         ...state.partnerStoragePrefixes,
       ],
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys],

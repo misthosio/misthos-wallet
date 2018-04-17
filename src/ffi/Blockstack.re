@@ -39,6 +39,9 @@ external getFileWithJsOpts :
 let getFileFromUser = (file, ~username) =>
   getFileWithJsOpts(file, {"username": username, "decrypt": false});
 
+let getFileFromUserAndDecrypt = (file, ~username) =>
+  getFileWithJsOpts(file, {"username": username, "decrypt": true});
+
 [@bs.module "blockstack"]
 external putFileEncrypted : (string, string) => Js.Promise.t(unit) =
   "putFile";
@@ -54,3 +57,9 @@ external getUserAppFileUrl :
   (~path: string, ~username: string, ~appOrigin: string) =>
   Js.Promise.t(string) =
   "";
+
+[@bs.module "blockstack/lib/encryption.js"]
+external encryptECIES : (~publicKey: string, string) => Js.Json.t = "";
+
+[@bs.module "blockstack/lib/encryption.js"]
+external decryptECIES : (~privateKey: string, Js.Json.t) => string = "";

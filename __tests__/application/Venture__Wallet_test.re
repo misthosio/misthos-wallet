@@ -140,6 +140,7 @@ let () =
              oneKeyChainWallet^
              |> Wallet.preparePayoutTx(
                   Session.Data.{
+                    appPrivateKey: "",
                     userId: userA,
                     issuerKeyPair: keyA,
                     storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
@@ -208,6 +209,7 @@ let () =
         twoKeyChainWallet^
         |> Wallet.preparePayoutTx(
              Session.Data.{
+               appPrivateKey: "",
                network: Regtest,
                userId: userA,
                issuerKeyPair: keyA,

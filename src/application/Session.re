@@ -3,6 +3,7 @@ open PrimitiveTypes;
 module Data = {
   type t = {
     userId,
+    appPrivateKey: string,
     issuerKeyPair: Bitcoin.ECPair.t,
     storagePrefix: string,
     masterKeyChain: Bitcoin.HDNode.t,
@@ -18,6 +19,7 @@ module Data = {
           userData##appPrivateKey,
         );
       Some({
+        appPrivateKey: userData##appPrivateKey,
         userId: blockstackId |> UserId.fromString,
         issuerKeyPair,
         network: Testnet,

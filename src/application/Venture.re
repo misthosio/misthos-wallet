@@ -134,7 +134,7 @@ let persist = ({id, log, state} as venture) => {
     log |> EventLog.getSummary |> EventLog.encodeSummary |> Json.stringify;
   let returnPromise =
     Js.Promise.(
-      Blockstack.putFileNotEncrypted(
+      Blockstack.putFileEncrypted(
         (id |> VentureId.toString) ++ "/log.json",
         logString,
       )
@@ -143,12 +143,14 @@ let persist = ({id, log, state} as venture) => {
   Js.Promise.(
     state.partnerStoragePrefixes
     |> List.fold_left(
-         (promise, prefix) =>
+         (promise, (pubKey, prefix)) =>
            promise
            |> then_(() =>
                 Blockstack.putFileNotEncrypted(
                   (id |> VentureId.toString) ++ "/" ++ prefix ++ "/log.json",
-                  logString,
+                  logString
+                  |> Blockstack.encryptECIES(~publicKey=pubKey)
+                  |> Json.stringify,
                 )
               )
            |> then_(() =>
@@ -172,7 +174,7 @@ let defaultPolicy = Policy.absolute;
 let load = (session: Session.Data.t, ~ventureId, ~listenerState, ~listener) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
-    Blockstack.getFileNotDecrypted(
+    Blockstack.getFileDecrypted(
       (ventureId |> VentureId.toString) ++ "/log.json",
     )
     |> then_(nullLog =>
@@ -198,7 +200,7 @@ let join =
       ~listener,
     ) =>
   Js.Promise.(
-    Blockstack.getFileFromUser(
+    Blockstack.getFileFromUserAndDecrypt(
       ventureId ++ "/" ++ session.storagePrefix ++ "/log.json",
       ~username=userId,
     )
@@ -246,6 +248,14 @@ module SynchronizeLogs = {
     | Ok(t('a))
     | Error(t('a), EventLog.item, Validation.result);
   let exec = (otherLogs, {session, log} as venture) => {
+    let otherLogs =
+      otherLogs
+      |> List.map(encryptedLog =>
+           encryptedLog
+           |> Blockstack.decryptECIES(~privateKey=session.appPrivateKey)
+           |> Json.parseOrRaise
+           |> EventLog.decode
+         );
     let newItems = log |> EventLog.findNewItems(otherLogs);
     let ({log, state, wallet, listenerState, listener, watchers}, error) =
       newItems

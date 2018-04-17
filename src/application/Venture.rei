@@ -85,7 +85,7 @@ module Cmd: {
     type result('a) =
       | Ok(t('a))
       | Error(t('a), EventLog.item, Validation.result);
-    let exec: (list(EventLog.t), t('a)) => Js.Promise.t(result('a));
+    let exec: (list(Js.Json.t), t('a)) => Js.Promise.t(result('a));
   };
   module SynchronizeWallet: {
     type result('a) =
