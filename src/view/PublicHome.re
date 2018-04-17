@@ -43,24 +43,28 @@ let make = (~onSignIn, _children) => {
                     ("with misthos." |> text)
                   </Typography>
                 </Grid>
-                <Grid xs=V10 container=true justify=`Space_Between>
-                  <Grid item=true xs=V8>
-                    <Typography variant=`Display1>
-                      (
-                        "Misthos is the only multi-sig Bitcoin wallet that lets you change co-singers in a fast and friction-less way."
-                        |> text
-                      )
-                    </Typography>
-                    <br />
-                    <Typography variant=`Display1>
-                      ("Use if for projects. Use if for payments." |> text)
-                    </Typography>
-                  </Grid>
-                  <Grid container=true direction=`Column xs=V4>
-                    <div className=classes##flex />
-                    <Button color=`Inherit onClick=onSignIn>
-                      "Sign In with Blockstack"
-                    </Button>
+                <Grid item=true xs=V10>
+                  <Grid container=true justify=`Space_Between>
+                    <Grid item=true xs=V8>
+                      <Typography variant=`Display1>
+                        (
+                          "Misthos is the only multi-sig Bitcoin wallet that lets you change co-singers in a fast and friction-less way."
+                          |> text
+                        )
+                      </Typography>
+                      <br />
+                      <Typography variant=`Display1>
+                        ("Use if for projects. Use if for payments." |> text)
+                      </Typography>
+                    </Grid>
+                    <Grid item=true xs=V4>
+                      <Grid container=true direction=`Column>
+                        <div className=classes##flex />
+                        <Button color=`Inherit onClick=onSignIn>
+                          "Sign In with Blockstack"
+                        </Button>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
