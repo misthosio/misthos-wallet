@@ -10,7 +10,10 @@ let make = (~onSignIn, _children) => {
     MaterialUi.(
       <WithStyles
         classes=[
-          {name: "flex", styles: ReactDOMRe.Style.make(~flex="1", ())},
+          {
+            name: "fullHeight",
+            styles: ReactDOMRe.Style.make(~height="100%", ()),
+          },
           {
             name: "display4",
             styles: ReactDOMRe.Style.make(~paddingBottom="1.5vw", ()),
@@ -57,12 +60,14 @@ let make = (~onSignIn, _children) => {
                         ("Use if for projects. Use if for payments." |> text)
                       </Typography>
                     </Grid>
-                    <Grid item=true xs=V4>
-                      <Grid container=true direction=`Column>
-                        <div className=classes##flex />
-                        <Button color=`Inherit onClick=onSignIn>
+                    <Grid item=true xs=V3>
+                      <Grid
+                        container=true
+                        className=classes##fullHeight
+                        alignItems=`Flex_End>
+                        <MButton color=`Inherit onClick=onSignIn>
                           "Sign In with Blockstack"
-                        </Button>
+                        </MButton>
                       </Grid>
                     </Grid>
                   </Grid>

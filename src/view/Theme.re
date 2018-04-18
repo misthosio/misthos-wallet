@@ -48,6 +48,7 @@ let theme =
       },
       "button": {
         "fontFamily": oswald,
+        "fontSize": "1.2vw",
       },
     },
   });
