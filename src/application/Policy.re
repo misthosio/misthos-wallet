@@ -16,7 +16,8 @@ module UnanimousMinusOne = {
     let endorsed = filterUsers(~eligable, ~endorsed);
     endorsed |> List.length >= List.length(eligable) - 1;
   };
-  let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
+  let encode = _p =>
+    Json.Encode.(object_([("type", string("UnanimousMinusOne"))]));
 };
 
 type t =
