@@ -31,11 +31,9 @@ let make = (~session, ~updateSession, _children) => {
         />
       | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
       | (LoggedIn(session), Home) =>
-        Js.log(session);
-        <Home session selectedVenture updateVentureStore />;
+        <Home session selectedVenture updateVentureStore />
       | (LoggedIn(session), _) =>
-        Js.log(session);
-        <Home session selectedVenture updateVentureStore />;
+        <Home session selectedVenture updateVentureStore />
       };
     <Router.Container>
       ...(
