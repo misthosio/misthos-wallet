@@ -23,12 +23,19 @@ let make = (~session, ~updateSession, _children) => {
           currentRoute: Router.Config.route,
         ) =>
       switch (session, currentRoute) {
-      | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) =>
-        <PublicHome onSignIn />
+      | (NotLoggedIn, _) => <PublicHome onSignIn />
+      | (Unknown, _) => <Spinner text="Loading" />
+      | (AnonymousLogin, _) =>
+        <Spinner
+          text="Missing BlockStack session, upgrade BlockStack client, close all Misthos tabs and try again"
+        />
+      | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
       | (LoggedIn(session), Home) =>
-        <Home session selectedVenture updateVentureStore />
+        Js.log(session);
+        <Home session selectedVenture updateVentureStore />;
       | (LoggedIn(session), _) =>
-        <Home session selectedVenture updateVentureStore />
+        Js.log(session);
+        <Home session selectedVenture updateVentureStore />;
       };
     <Router.Container>
       ...(
