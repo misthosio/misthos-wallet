@@ -20,6 +20,17 @@ let theme =
       "fontFamily": sourceSansPro,
       "display4": {
         "fontFamily": oswald,
+        "textTransform": "uppercase",
+        "fontSize": "8.8vw",
+        "color": "#000000",
+        "letterSpacing": "normal",
+        "lineHeight": "0.9",
+      },
+      "display1": {
+        "fontSize": "1.7vw",
+        "fontWeight": 600,
+        "lineHeight": 1.33,
+        "color": "#000000",
       },
       "headline": {
         "fontFamily": oswald,
