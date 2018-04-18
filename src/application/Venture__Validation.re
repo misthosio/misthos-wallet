@@ -198,6 +198,7 @@ let apply = (event: Event.t, state) =>
   | IncomeDetected(_)
   | PayoutSigned(_)
   | PayoutBroadcast(_)
+  | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_) => state
   };
 
@@ -487,6 +488,7 @@ let validateEvent =
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
+  | PayoutBroadcastDuplicate(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>

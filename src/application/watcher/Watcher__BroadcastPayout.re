@@ -81,6 +81,14 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
                           ),
                         ),
                       )
+                    | WalletTypes.AlreadyInBlockchain => (
+                        systemIssuer,
+                        PayoutBroadcastDuplicate(
+                          Payout.BroadcastDuplicate.make(
+                            ~processId=payoutProcess,
+                          ),
+                        ),
+                      )
                     | WalletTypes.Error(errorMessage) =>
                       Utils.printError(
                         "Broadcasting transaction failed",

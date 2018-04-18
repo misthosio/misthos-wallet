@@ -18,6 +18,7 @@ type transaction = {
 
 type broadcastResult =
   | Ok(string)
+  | AlreadyInBlockchain
   | Error(string);
 
 module type NetworkClient = {

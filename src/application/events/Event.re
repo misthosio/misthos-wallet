@@ -194,6 +194,19 @@ module Payout = {
         transactionId: raw |> field("transactionId", string),
       };
   };
+  module BroadcastDuplicate = {
+    type t = {processId};
+    let make = (~processId) => {processId: processId};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutBroadcastDuplicate")),
+          ("processId", ProcessId.encode(event.processId)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{processId: raw |> field("processId", ProcessId.decode)};
+  };
   module BroadcastFailed = {
     type t = {
       processId,
@@ -317,6 +330,7 @@ type t =
   | PayoutAccepted(Payout.Accepted.t)
   | PayoutSigned(Payout.Signature.t)
   | PayoutBroadcast(Payout.Broadcast.t)
+  | PayoutBroadcastDuplicate(Payout.BroadcastDuplicate.t)
   | PayoutBroadcastFailed(Payout.BroadcastFailed.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
@@ -509,6 +523,8 @@ let encode =
   | PayoutAccepted(event) => Payout.Accepted.encode(event)
   | PayoutSigned(event) => Payout.Signature.encode(event)
   | PayoutBroadcast(event) => Payout.Broadcast.encode(event)
+  | PayoutBroadcastDuplicate(event) =>
+    Payout.BroadcastDuplicate.encode(event)
   | PayoutBroadcastFailed(event) => Payout.BroadcastFailed.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposed.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsed.encode(event)
@@ -528,6 +544,7 @@ let isSystemEvent =
   | IncomeAddressExposed(_)
   | IncomeDetected(_)
   | PayoutBroadcast(_)
+  | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_) => true
   | _ => false;
 
@@ -548,6 +565,8 @@ let decode = raw => {
   | "PayoutAccepted" => PayoutAccepted(Payout.Accepted.decode(raw))
   | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
   | "PayoutBroadcast" => PayoutBroadcast(Payout.Broadcast.decode(raw))
+  | "PayoutBroadcastDuplicate" =>
+    PayoutBroadcastDuplicate(Payout.BroadcastDuplicate.decode(raw))
   | "PayoutBroadcastFailed" =>
     PayoutBroadcastFailed(Payout.BroadcastFailed.decode(raw))
   | "AccountCreationProposed" =>

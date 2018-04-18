@@ -89,7 +89,12 @@ let broadcastTransaction = (config, transaction) => {
            );
          (
            switch (err) {
-           | Some(err) => WalletTypes.Error(err)
+           | Some(err) =>
+             if (Js.Re.test(err, [%re "/transaction already in block chain/"])) {
+               WalletTypes.AlreadyInBlockchain;
+             } else {
+               WalletTypes.Error(err);
+             }
            | None =>
              WalletTypes.Ok(Json.Decode.(res |> field("txid", string)))
            }
