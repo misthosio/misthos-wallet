@@ -33,6 +33,10 @@ let make = (proposal: Payout.Proposed.t, log) => {
               ...state^,
               eligable: [data.id, ...state^.eligable],
             }
+          | PartnerRemovalAccepted({data: {id}}) => {
+              ...state^,
+              eligable: state^.eligable |> List.filter(UserId.neq(id)),
+            }
           | PayoutEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,

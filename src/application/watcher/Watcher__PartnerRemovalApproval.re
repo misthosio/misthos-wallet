@@ -7,9 +7,10 @@ type state = {
   endorsements: list(userId),
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
+  creatorId: userId,
 };
 
-let make = (proposal: AccountCreation.Proposed.t, log) => {
+let make = (proposal: PartnerRemoval.Proposed.t, log) => {
   let process = {
     val state =
       ref({
@@ -17,6 +18,7 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
         endorsements: [proposal.supporterId],
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
+        creatorId: UserId.fromString(""),
       });
     val completed = ref(false);
     val result = ref(None);
@@ -28,24 +30,25 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
           | VentureCreated(event) => {
               ...state^,
               systemIssuer: event.systemIssuer,
+              creatorId: event.creatorId,
             }
-          | PartnerAccepted({data}) => {
+          | PartnerAccepted({data: {id}}) => {
               ...state^,
-              eligable: [data.id, ...state^.eligable],
+              eligable: [id, ...state^.eligable],
             }
-          | PartnerRemovalAccepted({data: {id}}) => {
-              ...state^,
-              eligable: state^.eligable |> List.filter(UserId.neq(id)),
-            }
-          | AccountCreationEndorsed(event)
+          | PartnerRemovalEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
               endorsements: [event.supporterId, ...state^.endorsements],
             }
-          | AccountCreationAccepted(event)
+          | PartnerRemovalAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;
             state^;
+          | PartnerRemovalAccepted({data: {id}}) => {
+              ...state^,
+              eligable: state^.eligable |> List.filter(UserId.neq(id)),
+            }
           | _ => state^
           }
         );
@@ -59,8 +62,8 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            AccountCreationAccepted(
-              AccountCreation.Accepted.fromProposal(proposal),
+            PartnerRemovalAccepted(
+              PartnerRemoval.Accepted.fromProposal(proposal),
             ),
           ));
       };

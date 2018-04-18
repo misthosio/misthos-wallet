@@ -7,6 +7,7 @@ open WalletTypes;
 type state = {
   ventureId,
   pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
+  selfRemoved: bool,
   nextKeyChainIdx: custodianKeyChainIdx,
 };
 
@@ -23,6 +24,7 @@ let make =
       ref({
         ventureId: VentureId.fromString(""),
         pendingEvent: None,
+        selfRemoved: false,
         nextKeyChainIdx: CustodianKeyChainIndex.first,
       });
     pub receive = ({event}: EventLog.item) => {
@@ -33,6 +35,40 @@ let make =
           | VentureCreated({ventureId}) => {...state^, ventureId}
           | AccountCreationAccepted(acceptance)
               when acceptance.data.accountIdx == accountIdx => {
+              ...state^,
+              pendingEvent:
+                Some((
+                  issuerKeyPair,
+                  CustodianKeyChainUpdated(
+                    CustodianKeyChainUpdated.make(
+                      ~partnerId=custodianId,
+                      ~keyChain=
+                        CustodianKeyChain.make(
+                          ~ventureId=state^.ventureId,
+                          ~accountIdx,
+                          ~keyChainIdx=state^.nextKeyChainIdx,
+                          ~masterKeyChain,
+                        )
+                        |> CustodianKeyChain.toPublicKeyChain,
+                    ),
+                  ),
+                )),
+            }
+          | CustodianRemovalAccepted({
+              data: {custodianId as removedId, accountIdx as fromAccount},
+            })
+              when
+                UserId.eq(removedId, custodianId)
+                && AccountIndex.eq(fromAccount, accountIdx) => {
+              ...state^,
+              selfRemoved: true,
+            }
+          | CustodianRemovalAccepted({
+              data: {custodianId as removedId, accountIdx as fromAccount},
+            })
+              when
+                UserId.neq(removedId, custodianId)
+                && AccountIndex.eq(fromAccount, accountIdx) => {
               ...state^,
               pendingEvent:
                 Some((
@@ -65,7 +101,8 @@ let make =
           }
         );
     };
-    pub processCompleted = () => userId != data.partnerId;
+    pub processCompleted = () =>
+      userId != data.partnerId || state^.selfRemoved;
     pub pendingEvent = () =>
       state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)
   };

@@ -9,7 +9,7 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t,
 };
 
-let make = (proposal: AccountCreation.Proposed.t, log) => {
+let make = (proposal: CustodianRemoval.Proposed.t, log) => {
   let process = {
     val state =
       ref({
@@ -37,12 +37,12 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
               ...state^,
               eligable: state^.eligable |> List.filter(UserId.neq(id)),
             }
-          | AccountCreationEndorsed(event)
+          | CustodianRemovalEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
               endorsements: [event.supporterId, ...state^.endorsements],
             }
-          | AccountCreationAccepted(event)
+          | CustodianRemovalAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;
             state^;
@@ -59,8 +59,8 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
         result :=
           Some((
             state^.systemIssuer,
-            AccountCreationAccepted(
-              AccountCreation.Accepted.fromProposal(proposal),
+            CustodianRemovalAccepted(
+              CustodianRemoval.Accepted.fromProposal(proposal),
             ),
           ));
       };

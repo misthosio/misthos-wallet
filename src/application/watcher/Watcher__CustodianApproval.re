@@ -33,6 +33,10 @@ let make = (proposal: Custodian.Proposed.t, log) => {
               ...state^,
               eligable: [data.id, ...state^.eligable],
             }
+          | PartnerRemovalAccepted({data: {id}}) => {
+              ...state^,
+              eligable: state^.eligable |> List.filter(UserId.neq(id)),
+            }
           | CustodianEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,

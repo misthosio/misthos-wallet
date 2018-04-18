@@ -11,9 +11,13 @@ module Initialize = Watcher__InitializeVenture;
 
 module PartnerApproval = Watcher__PartnerApproval;
 
+module PartnerRemovalApproval = Watcher__PartnerRemovalApproval;
+
 module AccountCreationApproval = Watcher__AccountCreationApproval;
 
 module CustodianApproval = Watcher__CustodianApproval;
+
+module CustodianRemovalApproval = Watcher__CustodianRemovalApproval;
 
 module AutoEndorseCustodianSelf = Watcher__AutoEndorseCustodianSelf;
 
@@ -31,6 +35,8 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch (event) {
   | VentureCreated(event) => Some(Initialize.make(session, event, log))
   | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
+  | PartnerRemovalProposed(proposal) =>
+    Some(PartnerRemovalApproval.make(proposal, log))
   | PartnerAccepted(acceptance) =>
     Some(AutoEndorseCustodianSelf.make(session, acceptance, log))
   | AccountCreationProposed(proposal) =>
@@ -44,6 +50,8 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
     Some(BroadcastPayout.make(acceptance, log))
   | CustodianProposed(proposal) =>
     Some(CustodianApproval.make(proposal, log))
+  | CustodianRemovalProposed(proposal) =>
+    Some(CustodianRemovalApproval.make(proposal, log))
   | CustodianAccepted(acceptance) =>
     Some(CustodianKeyChain.make(session, acceptance, log))
   | _ => None
