@@ -358,13 +358,16 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                    )
                  )
                  (
-                   if (payout.endorsedBy |> List.mem(session.userId) == false) {
+                   switch (
+                     payout.status,
+                     payout.endorsedBy |> List.mem(session.userId),
+                   ) {
+                   | (PayoutPending, false) =>
                      <button
                        onClick=(_e => send(EndorsePayout(payout.processId)))>
                        (text("Endorse Payout"))
-                     </button>;
-                   } else {
-                     ReasonReact.nullElement;
+                     </button>
+                   | _ => ReasonReact.nullElement
                    }
                  )
                </li>
