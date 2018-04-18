@@ -105,6 +105,17 @@ module Cmd: {
       | Ok(t('a));
     let exec: (~processId: processId, t('a)) => Js.Promise.t(result('a));
   };
+  module ProposePartnerRemoval: {
+    type result('a) =
+      | Ok(t('a))
+      | PartnerDoesNotExist;
+    let exec: (~partnerId: userId, t('a)) => Js.Promise.t(result('a));
+  };
+  module EndorsePartnerRemoval: {
+    type result('a) =
+      | Ok(t('a));
+    let exec: (~processId: processId, t('a)) => Js.Promise.t(result('a));
+  };
   module ExposeIncomeAddress: {
     type result('a) =
       | Ok(string, t('a));

@@ -189,16 +189,18 @@ let apply = (event: Event.t, state) =>
         ...state.custodianKeyChains,
       ],
     }
-  | CustodianRemovalAccepted({data: {partnerId, accountIdx}} as acceptance) => {
+  | CustodianRemovalAccepted(
+      {data: {custodianId, accountIdx}} as acceptance,
+    ) => {
       ...completeProcess(acceptance, state),
       custodianKeyChains: [
         (
-          partnerId,
+          custodianId,
           state.custodianKeyChains
-          |> List.assoc(partnerId)
+          |> List.assoc(custodianId)
           |> List.remove_assoc(accountIdx),
         ),
-        ...state.custodianKeyChains |> List.remove_assoc(partnerId),
+        ...state.custodianKeyChains |> List.remove_assoc(custodianId),
       ],
     }
   | CustodianKeyChainUpdated({partnerId, keyChain}) =>
@@ -369,14 +371,14 @@ let validateCustodianData =
 
 let validateCustodianRemovalData =
     (
-      {partnerId, accountIdx}: CustodianRemoval.Data.t,
+      {custodianId, accountIdx}: CustodianRemoval.Data.t,
       _dependsOn,
       {custodianKeyChains},
     ) =>
   try (
     {
       custodianKeyChains
-      |> List.assoc(partnerId)
+      |> List.assoc(custodianId)
       |> List.assoc(accountIdx)
       |> ignore;
       Ok;
@@ -385,7 +387,7 @@ let validateCustodianRemovalData =
   | Not_found =>
     BadData(
       "Partner with Id '"
-      ++ UserId.toString(partnerId)
+      ++ UserId.toString(custodianId)
       ++ "' is not a custodian of account with index "
       ++ string_of_int(AccountIndex.toInt(accountIdx)),
     )

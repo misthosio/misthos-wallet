@@ -471,6 +471,77 @@ module Cmd = {
       );
     };
   };
+  module ProposePartnerRemoval = {
+    type result('a) =
+      | Ok(t('a))
+      | PartnerDoesNotExist;
+    let exec = (~partnerId, {state, session} as venture) => {
+      logMessage("Executing 'ProposePartnerRemoval' command");
+      if (state.partnerIds |> List.mem(partnerId) == false) {
+        PartnerDoesNotExist |> Js.Promise.resolve;
+      } else {
+        Js.Promise.(
+          venture
+          |> apply(
+               Event.makeCustodianRemovalProposed(
+                 ~supporterId=session.userId,
+                 ~custodianId=partnerId,
+                 ~accountIdx=AccountIndex.default,
+                 ~policy=
+                   state.policies
+                   |> List.assoc(Event.CustodianRemoval.processName),
+               ),
+             )
+          |> then_(
+               apply(
+                 Event.makePartnerRemovalProposed(
+                   ~supporterId=session.userId,
+                   ~partnerId,
+                   ~policy=
+                     state.policies
+                     |> List.assoc(Event.PartnerRemoval.processName),
+                 ),
+               ),
+             )
+          |> then_(persist)
+          |> then_(p => resolve(Ok(p)))
+        );
+      };
+    };
+  };
+  module EndorsePartnerRemoval = {
+    type result('a) =
+      | Ok(t('a));
+    let exec = (~processId, {state, session} as venture) => {
+      logMessage("Executing 'EndorsePartnerRemoval' command");
+      let {id: partnerId}: Event.PartnerRemoval.Data.t =
+        state.partnerRemovalData |> List.assoc(processId);
+      let (custodianProcessId, _) =
+        state.custodianRemovalData
+        |> List.find(((_, {custodianId}: Event.CustodianRemoval.Data.t)) =>
+             custodianId == partnerId
+           );
+      Js.Promise.(
+        venture
+        |> apply(
+             Event.makeCustodianRemovalEndorsed(
+               ~processId=custodianProcessId,
+               ~supporterId=session.userId,
+             ),
+           )
+        |> then_(
+             apply(
+               Event.makePartnerRemovalEndorsed(
+                 ~processId,
+                 ~supporterId=session.userId,
+               ),
+             ),
+           )
+        |> then_(persist)
+        |> then_(p => resolve(Ok(p)))
+      );
+    };
+  };
   module ExposeIncomeAddress = {
     type result('a) =
       | Ok(string, t('a));

@@ -126,19 +126,19 @@ module Custodian = {
 module CustodianRemoval = {
   module Data = {
     type t = {
-      partnerId: userId,
+      custodianId: userId,
       accountIdx,
     };
     let encode = event =>
       Json.Encode.(
         object_([
-          ("partnerId", UserId.encode(event.partnerId)),
+          ("custodianId", UserId.encode(event.custodianId)),
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
-        partnerId: raw |> field("partnerId", UserId.decode),
+        custodianId: raw |> field("custodianId", UserId.decode),
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
       };
   };
@@ -385,6 +385,15 @@ let makePartnerProposed =
     ),
   );
 
+let makePartnerRemovalProposed = (~supporterId, ~partnerId, ~policy) =>
+  PartnerRemovalProposed(
+    PartnerRemoval.Proposed.make(
+      ~supporterId,
+      ~policy,
+      PartnerRemoval.Data.{id: partnerId},
+    ),
+  );
+
 let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(
     AccountCreation.Proposed.make(
@@ -405,11 +414,29 @@ let makeCustodianProposed =
     ),
   );
 
+let makeCustodianRemovalProposed =
+    (~supporterId, ~custodianId, ~accountIdx, ~policy) =>
+  CustodianRemovalProposed(
+    CustodianRemoval.Proposed.make(
+      ~supporterId,
+      ~policy,
+      CustodianRemoval.Data.{custodianId, accountIdx},
+    ),
+  );
+
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
 
+let makePartnerRemovalEndorsed = (~processId, ~supporterId) =>
+  PartnerEndorsed(PartnerRemoval.Endorsed.make(~processId, ~supporterId));
+
 let makeCustodianEndorsed = (~processId, ~supporterId) =>
   CustodianEndorsed(Custodian.Endorsed.make(~processId, ~supporterId));
+
+let makeCustodianRemovalEndorsed = (~processId, ~supporterId) =>
+  CustodianRemovalEndorsed(
+    CustodianRemoval.Endorsed.make(~processId, ~supporterId),
+  );
 
 let makePayoutEndorsed = (~processId, ~supporterId) =>
   PayoutEndorsed(Payout.Endorsed.make(~processId, ~supporterId));
