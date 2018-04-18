@@ -59,46 +59,47 @@ let make = (~drawer, children) => {
           classes =>
             <MuiThemeProvider
               theme=(`ObjectGeneric(Theme.theme |> Theme.toJsUnsafe))>
-              <CssBaseline />
-              (
-                switch (drawer) {
-                | None => <div />
-                | Some(drawer) =>
-                  <AppBar>
-                    <Toolbar>
-                      logo
-                      <div className=classes##flex />
-                      <IconButton
-                        color=`Inherit onClick=(_e => send(OpenDrawer))>
-                        <MaterialUIIcons.Menu />
-                      </IconButton>
-                    </Toolbar>
-                    <Drawer
-                      theme=(Theme.theme |> Theme.toJsUnsafe)
-                      variant=`Temporary
-                      anchor=`Right
-                      onClose=(() => send(CloseDrawer))
-                      _open=state.open_>
-                      <div
-                        className=classes##drawer
-                        tabIndex=0
-                        role="button"
-                        onClick=(_event => send(CloseDrawer))>
-                        drawer
-                      </div>
-                    </Drawer>
-                  </AppBar>
-                }
-              )
-              <div className=classes##container>
-                <Grid
-                  className=classes##grid
-                  container=true
-                  spacing=V24
-                  direction=`Row>
-                  children
-                </Grid>
-              </div>
+              <CssBaseline>
+                <div className=classes##container>
+                  (
+                    switch (drawer) {
+                    | None => <div />
+                    | Some(drawer) =>
+                      <AppBar position=`Static>
+                        <Toolbar>
+                          logo
+                          <div className=classes##flex />
+                          <IconButton
+                            color=`Inherit onClick=(_e => send(OpenDrawer))>
+                            <MaterialUIIcons.Menu />
+                          </IconButton>
+                        </Toolbar>
+                        <Drawer
+                          theme=(Theme.theme |> Theme.toJsUnsafe)
+                          variant=`Temporary
+                          anchor=`Right
+                          onClose=(() => send(CloseDrawer))
+                          _open=state.open_>
+                          <div
+                            className=classes##drawer
+                            tabIndex=0
+                            role="button"
+                            onClick=(_event => send(CloseDrawer))>
+                            drawer
+                          </div>
+                        </Drawer>
+                      </AppBar>
+                    }
+                  )
+                  <Grid
+                    className=classes##grid
+                    container=true
+                    spacing=V24
+                    direction=`Row>
+                    children
+                  </Grid>
+                </div>
+              </CssBaseline>
             </MuiThemeProvider>
         )
       />

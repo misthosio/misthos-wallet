@@ -42,10 +42,10 @@ let make = (~session, ~updateSession, _children) => {
                ...(
                     (~index, ~selectedVenture, ~updateVentureStore) =>
                       <Layout drawer=(currentRoute |> drawer(index))>
-                        (
-                          currentRoute
-                          |> body(selectedVenture, updateVentureStore)
-                        )
+                        ...(
+                             currentRoute
+                             |> body(selectedVenture, updateVentureStore)
+                           )
                       </Layout>
                   )
              </VentureStore>
