@@ -105,18 +105,25 @@ module Custodian = {
   module Data = {
     type t = {
       partnerId: userId,
+      partnerApprovalProcess: processId,
       accountIdx,
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("partnerId", UserId.encode(event.partnerId)),
+          (
+            "partnerApprovalProcess",
+            ProcessId.encode(event.partnerApprovalProcess),
+          ),
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         partnerId: raw |> field("partnerId", UserId.decode),
+        partnerApprovalProcess:
+          raw |> field("partnerApprovalProcess", ProcessId.decode),
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
       };
   };
@@ -263,20 +270,31 @@ module Payout = {
 
 module CustodianKeyChainUpdated = {
   type t = {
+    custodianApprovalProcess: processId,
     partnerId: userId,
     keyChain: CustodianKeyChain.public,
   };
-  let make = (~partnerId, ~keyChain) => {partnerId, keyChain};
+  let make = (~custodianApprovalProcess, ~partnerId, ~keyChain) => {
+    custodianApprovalProcess,
+    partnerId,
+    keyChain,
+  };
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("CustodianKeyChainUpdated")),
+        (
+          "custodianApprovalProcess",
+          ProcessId.encode(event.custodianApprovalProcess),
+        ),
         ("partnerId", UserId.encode(event.partnerId)),
         ("keyChain", CustodianKeyChain.encode(event.keyChain)),
       ])
     );
   let decode = raw =>
     Json.Decode.{
+      custodianApprovalProcess:
+        raw |> field("custodianApprovalProcess", ProcessId.decode),
       partnerId: raw |> field("partnerId", UserId.decode),
       keyChain: raw |> field("keyChain", CustodianKeyChain.decode),
     };
@@ -404,13 +422,13 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   );
 
 let makeCustodianProposed =
-    (~dependsOn, ~supporterId, ~partnerId, ~accountIdx, ~policy) =>
+    (~partnerApprovalProcess, ~supporterId, ~partnerId, ~accountIdx, ~policy) =>
   CustodianProposed(
     Custodian.Proposed.make(
-      ~dependsOn,
+      ~dependsOn=Some(partnerApprovalProcess),
       ~supporterId,
       ~policy,
-      Custodian.Data.{partnerId, accountIdx},
+      Custodian.Data.{partnerApprovalProcess, partnerId, accountIdx},
     ),
   );
 

@@ -27,6 +27,38 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
         (
           switch (event) {
           | VentureCreated({systemIssuer}) => {...state^, systemIssuer}
+          | CustodianRemovalAccepted({
+              data: {custodianId, accountIdx as removedAccount},
+            })
+              when AccountIndex.eq(removedAccount, accountIdx) =>
+            try (
+              {
+                let custodianKeyChains =
+                  state^.custodianKeyChains |> List.remove_assoc(custodianId);
+                {
+                  ...state^,
+                  custodianKeyChains,
+                  pendingEvent:
+                    Some((
+                      state^.systemIssuer,
+                      AccountKeyChainUpdated(
+                        AccountKeyChainUpdated.make(
+                          ~keyChain=
+                            AccountKeyChain.make(
+                              accountIdx,
+                              state^.nextKeyChainIdx,
+                              AccountKeyChain.defaultCosignerList[custodianKeyChains
+                                                                  |> List.length],
+                              custodianKeyChains,
+                            ),
+                        ),
+                      ),
+                    )),
+                };
+              }
+            ) {
+            | Not_found => state^
+            }
           | CustodianKeyChainUpdated({keyChain, partnerId})
               when CustodianKeyChain.accountIdx(keyChain) == accountIdx =>
             let custodianKeyChains = [

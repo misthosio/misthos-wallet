@@ -14,7 +14,7 @@ type state = {
 let make =
     (
       {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
-      {data}: Custodian.Accepted.t,
+      {data, processId: custodianApprovalProcess}: Custodian.Accepted.t,
       log,
     ) => {
   let custodianId = data.partnerId;
@@ -41,6 +41,7 @@ let make =
                   issuerKeyPair,
                   CustodianKeyChainUpdated(
                     CustodianKeyChainUpdated.make(
+                      ~custodianApprovalProcess,
                       ~partnerId=custodianId,
                       ~keyChain=
                         CustodianKeyChain.make(
@@ -55,16 +56,21 @@ let make =
                 )),
             }
           | CustodianRemovalAccepted({
-              data: {custodianId as removedId, accountIdx as fromAccount},
+              dependsOn,
+              data: {custodianId: removedId, accountIdx: fromAccount},
             })
               when
                 UserId.eq(removedId, custodianId)
+                && ProcessId.eq(
+                     dependsOn |> Js.Option.getExn,
+                     custodianApprovalProcess,
+                   )
                 && AccountIndex.eq(fromAccount, accountIdx) => {
               ...state^,
               selfRemoved: true,
             }
           | CustodianRemovalAccepted({
-              data: {custodianId as removedId, accountIdx as fromAccount},
+              data: {custodianId: removedId, accountIdx: fromAccount},
             })
               when
                 UserId.neq(removedId, custodianId)
@@ -75,6 +81,7 @@ let make =
                   issuerKeyPair,
                   CustodianKeyChainUpdated(
                     CustodianKeyChainUpdated.make(
+                      ~custodianApprovalProcess,
                       ~partnerId=custodianId,
                       ~keyChain=
                         CustodianKeyChain.make(
@@ -88,12 +95,43 @@ let make =
                   ),
                 )),
             }
+          | CustodianKeyChainUpdated({
+              custodianApprovalProcess: processId,
+              partnerId,
+              keyChain,
+            })
+              when
+                UserId.eq(partnerId, custodianId)
+                && ProcessId.eq(custodianApprovalProcess, processId)
+                && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
+              ...state^,
+              pendingEvent: None,
+              nextKeyChainIdx:
+                state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
+            }
           | CustodianKeyChainUpdated({partnerId, keyChain})
               when
                 UserId.eq(partnerId, custodianId)
                 && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
               ...state^,
-              pendingEvent: None,
+              pendingEvent:
+                state^.pendingEvent |> Utils.mapOption(_=>((
+                  issuerKeyPair,
+                  CustodianKeyChainUpdated(
+                    CustodianKeyChainUpdated.make(
+                      ~custodianApprovalProcess,
+                      ~partnerId=custodianId,
+                      ~keyChain=
+                        CustodianKeyChain.make(
+                          ~ventureId=state^.ventureId,
+                          ~accountIdx,
+                          ~keyChainIdx=state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
+                          ~masterKeyChain,
+                        )
+                        |> CustodianKeyChain.toPublicKeyChain,
+                    ),
+                  ),
+                ))),
               nextKeyChainIdx:
                 state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
             }

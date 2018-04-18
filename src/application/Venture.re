@@ -417,7 +417,7 @@ module Cmd = {
                      |> Event.getPartnerProposedExn;
                    let custodianProposal =
                      Event.makeCustodianProposed(
-                       ~dependsOn=Some(partnerProposal.processId),
+                       ~partnerApprovalProcess=partnerProposal.processId,
                        ~supporterId=session.userId,
                        ~partnerId=prospectId,
                        ~accountIdx=AccountIndex.default,
