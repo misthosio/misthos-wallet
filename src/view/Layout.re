@@ -45,8 +45,9 @@ let make = (~drawer, children) => {
             styles:
               ReactDOMRe.Style.make(
                 ~width="100%",
-                ~height="100%",
+                ~height="calc(100% - (64px))",
                 ~margin="0",
+                ~overflowY="auto",
                 (),
               ),
           },
