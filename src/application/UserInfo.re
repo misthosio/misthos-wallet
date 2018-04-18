@@ -76,7 +76,10 @@ let getOrInit = (~appPubKey) =>
          | Private.NotFound =>
            Public.persist(~appPubKey)
            |> then_(_result =>
-                Private.persist(~chainCode=Crypto.randomBytes(32))
+                Private.persist(
+                  ~chainCode=
+                    appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
+                )
               ),
        )
   );
