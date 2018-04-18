@@ -6,6 +6,8 @@ exception NotEnoughFunds;
 
 exception NotEnoughSignatures;
 
+exception NoSignaturesForInput;
+
 module Fee = TransactionFee;
 
 type input = Network.txInput;
@@ -422,13 +424,30 @@ let finalize = (signedTransactions, network) =>
            )##inputs
          );
     usedInputs
-    |> List.iter(((inputIdx, {nPubKeys, nCoSigners}: input)) => {
+    |> List.iter(((inputIdx, {nCoSigners}: input)) => {
+         let testInput = inputs[inputIdx];
+         inputs[inputIdx] = (
+           switch (testInput##signatures |> Js.Nullable.toOption) {
+           | Some(_) => inputs[inputIdx]
+           | None =>
+             let inputs =
+               try (
+                 otherInputs
+                 |> List.find(ins => {
+                      let input = ins[inputIdx];
+                      input##signatures
+                      |> Js.Nullable.toOption
+                      |> Js.Option.isSome;
+                    })
+               ) {
+               | Not_found => raise(NoSignaturesForInput)
+               };
+             inputs[inputIdx];
+           }
+         );
          let input = inputs[inputIdx];
          let signatures =
-           switch (input##signatures |> Js.Nullable.toOption) {
-           | Some(signatures) => signatures
-           | None => Array.make(nPubKeys, Js.Nullable.null)
-           };
+           input##signatures |> Js.Nullable.toOption |> Js.Option.getExn;
          let existing =
            signatures
            |> Array.mapi((i, sigBuf) =>
@@ -459,12 +478,6 @@ let finalize = (signedTransactions, network) =>
                 },
                 existing |> List.length,
               );
-         input##signatures#=(
-                              Js.Nullable.return(signatures):
-                                Js.Nullable.t(
-                                  array(Bitcoin.TxBuilder.signature),
-                                )
-                            );
          if (total != nCoSigners) {
            raise(NotEnoughSignatures);
          };

@@ -6,6 +6,8 @@ exception NotEnoughFunds;
 
 exception NotEnoughSignatures;
 
+exception NoSignaturesForInput;
+
 type input = Network.txInput;
 
 type t = {
