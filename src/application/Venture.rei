@@ -14,6 +14,7 @@ module Index: {
 module Validation: {
   type result =
     | Ok
+    | Ignore
     | InvalidIssuer
     | UnknownProcessId
     | BadData(string)

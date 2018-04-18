@@ -56,6 +56,7 @@ let applyInternal =
     let wallet = wallet |> Wallet.apply(event);
     let listenerState = listenerState |> listener(event);
     (item, log, (state, wallet, (listenerState, listener)));
+  | Ignore => (item, log, (state, wallet, (listenerState, listener)))
   /* This should never happen / only incase of an UI input bug!!! */
   | result =>
     logMessage("Event was rejected because of:");
@@ -288,6 +289,7 @@ module SynchronizeLogs = {
                    Some(Error(venture, item, conflict)),
                  )
                /* Ignored validation issues */
+               | Ignore => (venture, None)
                | InvalidIssuer =>
                  logMessage("Invalid issuer detected");
                  (venture, None);

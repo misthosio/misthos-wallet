@@ -204,6 +204,7 @@ let apply = (event: Event.t, state) =>
 
 type result =
   | Ok
+  | Ignore
   | InvalidIssuer
   | UnknownProcessId
   | BadData(string)
@@ -488,7 +489,7 @@ let validateEvent =
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
-  | PayoutBroadcastDuplicate(_) => ((_state, _pubKey) => Ok)
+  | PayoutBroadcastDuplicate(_) => ((_state, _pubKey) => Ignore)
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 
 let validate = (state, {event, issuerPubKey}: EventLog.item) =>
