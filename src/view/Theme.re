@@ -15,6 +15,9 @@ let theme =
       "primary": {
         "main": "#BEF6E9",
       },
+      "background": {
+        "default": "#FFFFFF",
+      },
     },
     "typography": {
       "fontFamily": sourceSansPro,
