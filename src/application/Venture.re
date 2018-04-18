@@ -299,9 +299,6 @@ module SynchronizeLogs = {
                | UnknownProcessId =>
                  logMessage("Unknown ProcessId detected");
                  (venture, None);
-               | DuplicateEndorsement =>
-                 logMessage("Duplicate Endorsement detected");
-                 (venture, None);
                | DependencyNotMet =>
                  logMessage("Dependency Not Met detected");
                  (venture, None);

@@ -18,7 +18,6 @@ module Validation: {
     | InvalidIssuer
     | UnknownProcessId
     | BadData(string)
-    | DuplicateEndorsement
     | PolicyMissmatch
     | PolicyNotFulfilled
     | DependencyNotMet;

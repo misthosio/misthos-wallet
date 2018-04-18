@@ -208,7 +208,6 @@ type result =
   | InvalidIssuer
   | UnknownProcessId
   | BadData(string)
-  | DuplicateEndorsement
   | PolicyMissmatch
   | PolicyNotFulfilled
   | DependencyNotMet;
@@ -220,7 +219,6 @@ let resultToString =
   | InvalidIssuer => "InvalidIssuer"
   | UnknownProcessId => "UnknownProcessId"
   | BadData(description) => "BadData(" ++ description ++ ")"
-  | DuplicateEndorsement => "DuplicateEndorsement"
   | PolicyMissmatch => "PolicyMissmatch"
   | PolicyNotFulfilled => "PolicyNotFulfilled"
   | DependencyNotMet => "DependencyNotMet";
@@ -263,7 +261,7 @@ let validateEndorsement =
       if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
         InvalidIssuer;
       } else if (supporterIds |> List.mem(supporterId)) {
-        DuplicateEndorsement;
+        Ignore;
       } else {
         Ok;
       };
