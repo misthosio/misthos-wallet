@@ -391,45 +391,51 @@ module Cmd = {
   module ProposePartner = {
     type result('a) =
       | Ok(t('a))
+      | PartnerAlreadyExists
       | NoUserInfo;
     let exec = (~prospectId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
-      Js.Promise.(
-        UserInfo.Public.read(~blockstackId=prospectId)
-        |> then_(
-             fun
-             | UserInfo.Public.Ok(info) => {
-                 let partnerProposal =
-                   Event.makePartnerProposed(
-                     ~supporterId=session.userId,
-                     ~prospectId,
-                     ~prospectPubKey=info.appPubKey,
-                     ~policy=
-                       state.policies |> List.assoc(Event.Partner.processName),
-                   )
-                   |> Event.getPartnerProposedExn;
-                 let custodianProposal =
-                   Event.makeCustodianProposed(
-                     ~dependsOn=Some(partnerProposal.processId),
-                     ~supporterId=session.userId,
-                     ~partnerId=prospectId,
-                     ~accountIdx=AccountIndex.default,
-                     ~policy=
-                       state.policies
-                       |> List.assoc(Event.Custodian.processName),
-                   )
-                   |> Event.getCustodianProposedExn;
-                 venture
-                 |> apply(Event.PartnerProposed(partnerProposal))
-                 |> then_(
-                      apply(Event.CustodianProposed(custodianProposal)),
-                    )
-                 |> then_(persist)
-                 |> then_(p => resolve(Ok(p)));
-               }
-             | UserInfo.Public.NotFound => resolve(NoUserInfo),
-           )
-      );
+      if (state.partnerIds |> List.mem(prospectId)) {
+        PartnerAlreadyExists |> Js.Promise.resolve;
+      } else {
+        Js.Promise.(
+          UserInfo.Public.read(~blockstackId=prospectId)
+          |> then_(
+               fun
+               | UserInfo.Public.Ok(info) => {
+                   let partnerProposal =
+                     Event.makePartnerProposed(
+                       ~supporterId=session.userId,
+                       ~prospectId,
+                       ~prospectPubKey=info.appPubKey,
+                       ~policy=
+                         state.policies
+                         |> List.assoc(Event.Partner.processName),
+                     )
+                     |> Event.getPartnerProposedExn;
+                   let custodianProposal =
+                     Event.makeCustodianProposed(
+                       ~dependsOn=Some(partnerProposal.processId),
+                       ~supporterId=session.userId,
+                       ~partnerId=prospectId,
+                       ~accountIdx=AccountIndex.default,
+                       ~policy=
+                         state.policies
+                         |> List.assoc(Event.Custodian.processName),
+                     )
+                     |> Event.getCustodianProposedExn;
+                   venture
+                   |> apply(Event.PartnerProposed(partnerProposal))
+                   |> then_(
+                        apply(Event.CustodianProposed(custodianProposal)),
+                      )
+                   |> then_(persist)
+                   |> then_(p => resolve(Ok(p)));
+                 }
+               | UserInfo.Public.NotFound => resolve(NoUserInfo),
+             )
+        );
+      };
     };
   };
   module EndorsePartner = {

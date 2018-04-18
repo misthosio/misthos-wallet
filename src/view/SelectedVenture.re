@@ -148,6 +148,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                        (
                          switch (result) {
                          | Ok(venture) => send(UpdateVenture(venture))
+                         | PartnerAlreadyExists =>
+                           Js.log("PartnerAlreadyExists")
                          | NoUserInfo => Js.log("NoUserInfo")
                          }
                        )

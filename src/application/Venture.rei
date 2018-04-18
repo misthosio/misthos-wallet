@@ -96,6 +96,7 @@ module Cmd: {
   module ProposePartner: {
     type result('a) =
       | Ok(t('a))
+      | PartnerAlreadyExists
       | NoUserInfo;
     let exec: (~prospectId: userId, t('a)) => Js.Promise.t(result('a));
   };
