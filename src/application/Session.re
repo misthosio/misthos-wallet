@@ -93,16 +93,17 @@ let getCurrentSession = () =>
     }
   );
 
+let signOut = () => {
+  Blockstack.signUserOut();
+  NotLoggedIn;
+};
+
 let signIn = () => {
+  signOut() |> ignore;
   Blockstack.redirectToSignIn(
     ~redirectURI=Location.origin ++ "/",
     ~manifestURI=Location.origin ++ "/manifest.json",
     ~scopes=[|"store_write", "publish_data"|],
   );
   LoginPending;
-};
-
-let signOut = () => {
-  Blockstack.signUserOut();
-  NotLoggedIn;
 };
