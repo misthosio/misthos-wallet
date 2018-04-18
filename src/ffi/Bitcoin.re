@@ -91,6 +91,7 @@ module Transaction = {
   type t = {. "outs": array(out)};
   [@bs.send] external toBuffer : t => Node.buffer = "";
   [@bs.send] external toHex : t => string = "";
+  [@bs.send] external virtualSize : t => float = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
   external fromHex : string => t = "";
 };

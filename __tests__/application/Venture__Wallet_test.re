@@ -116,11 +116,11 @@ let () =
     let address1Satoshis = BTC.fromSatoshis(10000L);
     let address2Satoshis = BTC.fromSatoshis(10000L);
     let address3Satoshis = BTC.fromSatoshis(10000L);
-    let address4Satoshis = BTC.fromSatoshis(10000L);
+    let address4Satoshis = BTC.fromSatoshis(15000L);
     let oneKeyChainWalletTotal =
       address1Satoshis |> BTC.plus(address2Satoshis);
-    let oneKeyChainSpendAmount = BTC.fromSatoshis(8000L);
-    let oneKeyChainExpectedFee = BTC.fromSatoshis(197L);
+    let oneKeyChainSpendAmount = BTC.fromSatoshis(6000L);
+    let oneKeyChainExpectedFee = BTC.fromSatoshis(1892L);
     let twoKeyChainWalletTotal =
       oneKeyChainWalletTotal
       |> BTC.plus(address3Satoshis)
@@ -149,7 +149,7 @@ let () =
                   },
                   accountIdx,
                   [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
-                  BTC.fromSatoshis(1L),
+                  BTC.fromSatoshis(10L),
                 )
            )
         |> then_(({data, processId} as event: Event.Payout.Proposed.t) => {
@@ -218,7 +218,7 @@ let () =
              },
              accountIdx,
              [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
-             BTC.fromSatoshis(1L),
+             BTC.fromSatoshis(10L),
            )
         |> then_(({data} as event: Event.Payout.Proposed.t) => {
              let payoutTx =
@@ -243,7 +243,7 @@ let () =
              ));
            })
         |> then_(((wallet, _broadcastResult)) => {
-             let expectedFee = BTC.fromSatoshis(597L);
+             let expectedFee = BTC.fromSatoshis(5640L);
              wallet
              |> Wallet.getExposedAddresses(~includeChangeAddresses=true)
              |> Helpers.getUTXOs

@@ -6,12 +6,14 @@ let () = {
   let oneSatPerByte = BTC.fromSatoshis(1L);
   describe("inputCost", () => {
     test("1 cosigner", () =>
-      expect(TransactionFee.inputCost(1, oneSatPerByte))
-      |> toEqual(BTC.fromSatoshis(121L))
+      expect(
+        TransactionFee.inputCost(1, 2, oneSatPerByte) |> BTC.toSatoshisFloat,
+      )
+      |> toEqual(113.)
     );
     test("2 cosigners", () =>
       expect(
-        TransactionFee.inputCost(2, oneSatPerByte) |> BTC.toSatoshisFloat,
+        TransactionFee.inputCost(2, 3, oneSatPerByte) |> BTC.toSatoshisFloat,
       )
       |> toEqual(140.)
     );

@@ -55,8 +55,10 @@ let broadcastTransaction = tx =>
        |> ignore;
        switch (result) {
        | WalletTypes.Ok(txId) => txId |> Js.Promise.resolve
-       | _ => %assert
-              "helper transaction failed"
+       | result =>
+         Js.log(result);
+         %assert
+         "helper transaction failed";
        };
      });
 

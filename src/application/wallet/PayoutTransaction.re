@@ -171,7 +171,10 @@ let rec findInput = (inputs, ammountMissing, fee) =>
   | [i] => Some(i)
   | [(i: input), ...rest] =>
     i.value
-    |> BTC.gte(ammountMissing |> BTC.plus(Fee.inputCost(i.nCoSigners, fee))) ?
+    |> BTC.gte(
+         ammountMissing
+         |> BTC.plus(Fee.inputCost(i.nCoSigners, i.nPubKeys, fee)),
+       ) ?
       Some(i) : findInput(rest, ammountMissing, fee)
   };
 
@@ -181,7 +184,7 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
     let addedInputs = [i, ...addedInputs];
     let ammountMissing =
       ammountMissing
-      |> BTC.plus(Fee.inputCost(i.nCoSigners, fee))
+      |> BTC.plus(Fee.inputCost(i.nCoSigners, i.nPubKeys, fee))
       |> BTC.minus(i.value);
     if (BTC.zero |> BTC.gte(ammountMissing)) {
       (addedInputs, true);
@@ -217,7 +220,13 @@ let addChangeOutput =
                   network |> Network.bitcoinNetwork,
                 ),
               )
-           |> BTC.plus(Fee.minChange(changeAddress.nCoSigners, fee)),
+           |> BTC.plus(
+                Fee.minChange(
+                  changeAddress.nCoSigners,
+                  changeAddress.nPubKeys,
+                  fee,
+                ),
+              ),
          )) {
     let currentFee =
       currentFee
@@ -325,7 +334,10 @@ let build =
         |> List.fold_left(
              ((inV, feeV, usedInputs), i: input) => (
                inV |> BTC.plus(i.value),
-               feeV |> BTC.plus(Fee.inputCost(i.nCoSigners, satsPerByte)),
+               feeV
+               |> BTC.plus(
+                    Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
+                  ),
                [
                  (txB |> TxBuilder.addInput(i.txId, i.txOutputN), i),
                  ...usedInputs,

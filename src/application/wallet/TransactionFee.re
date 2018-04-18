@@ -29,12 +29,13 @@ let stackSizeOfItem = 1;
 
 let stackSizeOfSignature = 72;
 
-/* TODO: This is wrong... its actually dependant on the number of pubkeys securing the address */
-let stackSizeOfMultisigScript = 105;
+let stackSizeOfPubKey = 34;
+
+let stackSizeOfMultisigScript = 3;
 
 let lockTime = 4 * 4;
 
-let estimateInputWeight = nCoSigners =>
+let estimateInputWeight = (nCoSigners, nPubKeys) =>
   previousOutputHash
   + previousOutputIndex
   + scriptLength
@@ -42,9 +43,12 @@ let estimateInputWeight = nCoSigners =>
   + sequence
   + numOfStackItems
   + stackSizeOfItem
-  + stackSizeOfMultisigScript
-  + (stackSizeOfItem + stackSizeOfSignature)
-  * nCoSigners;
+  + nCoSigners
+  * (stackSizeOfItem + stackSizeOfSignature)
+  + stackSizeOfItem
+  + nPubKeys
+  * stackSizeOfPubKey
+  + stackSizeOfMultisigScript;
 
 let outputWeight = (address, network) =>
   outputValue
@@ -66,8 +70,8 @@ let cost = (fee, weight) => fee |> BTC.timesFloat(weight |> weightToVSize);
 let outputCost = (address, fee, network) =>
   outputWeight(address, network) |> cost(fee);
 
-let inputCost = (nCoSigners, fee) =>
-  estimateInputWeight(nCoSigners) |> cost(fee);
+let inputCost = (nCoSigners, nPubKeys, fee) =>
+  estimateInputWeight(nCoSigners, nPubKeys) |> cost(fee);
 
 let minChange = inputCost;
 
@@ -76,7 +80,8 @@ let canPayForItself = (fee, input: Network.txInput) =>
   |> BTC.gte(
        fee
        |> BTC.timesFloat(
-            estimateInputWeight(input.nCoSigners) |> weightToVSize,
+            estimateInputWeight(input.nCoSigners, input.nPubKeys)
+            |> weightToVSize,
           ),
      );
 
@@ -92,7 +97,7 @@ let estimate = (outputs, inputs, fee, network) =>
          inputs
          |> List.fold_left(
               (t, i: Network.txInput) =>
-                t + estimateInputWeight(i.nCoSigners),
+                t + estimateInputWeight(i.nCoSigners, i.nPubKeys),
               0,
             )
        )
