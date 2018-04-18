@@ -20,6 +20,7 @@ type action =
   | UpdateVenture(Venture.t(ViewModel.t))
   | ProposePartner
   | EndorsePartner(ProcessId.t)
+  | RemovePartner(UserId.t)
   | GetIncomeAddress
   | ProposePayout(list((string, BTC.t)))
   | EndorsePayout(ProcessId.t);
@@ -99,9 +100,14 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                      fun
                      | Ok(venture) =>
                        send(UpdateVenture(venture)) |> resolve
-                     | Error(venture, _item, result) => {
+                     | Error(venture, {event}, result) => {
                          Js.log("An error occured while synchronizing");
-                         Js.log(result);
+                         Js.log("Adding event: ");
+                         Js.log(Event.encode(event));
+                         Js.log2(
+                           "failed because: ",
+                           Venture.Validation.resultToString(result),
+                         );
                          send(UpdateVenture(venture)) |> resolve;
                        },
                    )
@@ -173,6 +179,28 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                      (
                        switch (result) {
                        | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        ),
+      )
+    | RemovePartner(partnerId) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.ProposePartnerRemoval.(
+                state.venture
+                |> exec(~partnerId)
+                |> then_(result =>
+                     (
+                       switch (result) {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       | PartnerDoesNotExist => Js.log("PartnerDoesNotExist")
                        }
                      )
                      |> resolve
@@ -282,7 +310,12 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
           ViewModel.partners(state.viewModel)
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
-                 <div> (text(m.userId |> UserId.toString)) </div>
+                 <div>
+                   (text(m.userId |> UserId.toString))
+                   <button onClick=(_e => send(RemovePartner(m.userId)))>
+                     (text("Propose Removal"))
+                   </button>
+                 </div>
                </li>
              ),
         ),

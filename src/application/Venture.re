@@ -480,10 +480,17 @@ module Cmd = {
       if (state.partnerIds |> List.mem(partnerId) == false) {
         PartnerDoesNotExist |> Js.Promise.resolve;
       } else {
+        let (custodianProcess, _) =
+          state.custodianData
+          |> List.find(
+               ((_pId, {partnerId: custodianId}: Event.Custodian.Data.t)) =>
+               UserId.eq(partnerId, custodianId)
+             );
         Js.Promise.(
           venture
           |> apply(
                Event.makeCustodianRemovalProposed(
+                 ~dependsOn=Some(custodianProcess),
                  ~supporterId=session.userId,
                  ~custodianId=partnerId,
                  ~accountIdx=AccountIndex.default,

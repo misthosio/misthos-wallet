@@ -372,25 +372,27 @@ let validateCustodianData =
 let validateCustodianRemovalData =
     (
       {custodianId, accountIdx}: CustodianRemoval.Data.t,
-      _dependsOn,
-      {custodianKeyChains},
+      dependsOn,
+      {custodianData},
     ) =>
-  try (
-    {
-      custodianKeyChains
-      |> List.assoc(custodianId)
-      |> List.assoc(accountIdx)
-      |> ignore;
-      Ok;
+  switch (dependsOn) {
+  | Some(processId) =>
+    try (
+      {
+        let {partnerId}: Custodian.Data.t =
+          custodianData |> List.assoc(processId);
+        UserId.eq(partnerId, custodianId) ? Ok : raise(Not_found);
+      }
+    ) {
+    | Not_found =>
+      BadData(
+        "Partner with Id '"
+        ++ UserId.toString(custodianId)
+        ++ "' is not a custodian of account with index "
+        ++ string_of_int(AccountIndex.toInt(accountIdx)),
+      )
     }
-  ) {
-  | Not_found =>
-    BadData(
-      "Partner with Id '"
-      ++ UserId.toString(custodianId)
-      ++ "' is not a custodian of account with index "
-      ++ string_of_int(AccountIndex.toInt(accountIdx)),
-    )
+  | None => DependencyNotMet
   };
 
 let validateAccountCreationData =

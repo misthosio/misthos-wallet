@@ -3,6 +3,7 @@ open Event;
 open PrimitiveTypes;
 
 type state = {
+  dependencyMet: bool,
   eligable: list(userId),
   endorsements: list(userId),
   policy: Policy.t,
@@ -13,6 +14,7 @@ let make = (proposal: CustodianRemoval.Proposed.t, log) => {
   let process = {
     val state =
       ref({
+        dependencyMet: false,
         eligable: [],
         endorsements: [proposal.supporterId],
         policy: proposal.policy,
@@ -37,6 +39,15 @@ let make = (proposal: CustodianRemoval.Proposed.t, log) => {
               ...state^,
               eligable: state^.eligable |> List.filter(UserId.neq(id)),
             }
+          | CustodianAccepted({processId})
+              when
+                ProcessId.eq(
+                  processId,
+                  proposal.dependsOn |> Js.Option.getExn,
+                ) => {
+              ...state^,
+              dependencyMet: true,
+            }
           | CustodianRemovalEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
@@ -51,6 +62,7 @@ let make = (proposal: CustodianRemoval.Proposed.t, log) => {
         );
       result := None;
       if (completed^ == false
+          && state^.dependencyMet == true
           && state^.policy
           |> Policy.fulfilled(
                ~eligable=state^.eligable,

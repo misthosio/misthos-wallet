@@ -415,9 +415,10 @@ let makeCustodianProposed =
   );
 
 let makeCustodianRemovalProposed =
-    (~supporterId, ~custodianId, ~accountIdx, ~policy) =>
+    (~dependsOn, ~supporterId, ~custodianId, ~accountIdx, ~policy) =>
   CustodianRemovalProposed(
     CustodianRemoval.Proposed.make(
+      ~dependsOn,
       ~supporterId,
       ~policy,
       CustodianRemoval.Data.{custodianId, accountIdx},

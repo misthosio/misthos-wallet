@@ -21,6 +21,7 @@ module Validation: {
     | PolicyMissmatch
     | PolicyNotFulfilled
     | DependencyNotMet;
+  let resultToString: result => string;
 };
 
 exception InvalidEvent(Validation.result);

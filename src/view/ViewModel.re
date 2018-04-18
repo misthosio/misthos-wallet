@@ -72,6 +72,12 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id)),
     }
+  | PartnerRemovalAccepted({data}) => {
+      ...state,
+      partners:
+        state.partners
+        |> List.filter((p: partner) => UserId.neq(p.userId, data.id)),
+    }
   | AccountCreationAccepted({data}) => {
       ...state,
       incomeAddresses: [(data.accountIdx, [])],
