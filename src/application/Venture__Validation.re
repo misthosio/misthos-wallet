@@ -216,6 +216,7 @@ type result =
 let resultToString =
   fun
   | Ok => "Ok"
+  | Ignore => "Ignore"
   | InvalidIssuer => "InvalidIssuer"
   | UnknownProcessId => "UnknownProcessId"
   | BadData(description) => "BadData(" ++ description ++ ")"
