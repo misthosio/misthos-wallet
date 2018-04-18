@@ -270,6 +270,8 @@ module SynchronizeLogs = {
              } else {
                switch (item |> Validation.validate(state)) {
                | Ok =>
+                 logMessage("Appending synced event to log:");
+                 logMessage(Event.encode(event) |> Json.stringify);
                  let log = log |> EventLog.appendItem(item);
                  let state = state |> Validation.apply(event);
                  let wallet = wallet |> Wallet.apply(event);
