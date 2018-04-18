@@ -28,6 +28,13 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
                systemIssuer,
                network,
              )
+           | PayoutBroadcastDuplicate({processId})
+               when ProcessId.eq(processId, payoutProcess) => (
+               false,
+               txs,
+               systemIssuer,
+               network,
+             )
            | PayoutBroadcastFailed({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                false,
@@ -50,6 +57,7 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
         needsBroadcast ?
           Some(PayoutTransaction.finalize(signedTxs, network)) : None,
       );
+    val delivered = ref(false);
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
       switch (event) {
@@ -62,14 +70,16 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
       | _ => ()
       };
     };
-    pub processCompleted = () => finalTransaction^ |> Js.Option.isNone;
+    pub processCompleted = () =>
+      delivered^ || finalTransaction^ |> Js.Option.isNone;
     pub pendingEvent = () =>
       finalTransaction^
       |> Utils.mapOption(tx =>
            Js.Promise.(
              tx
              |> Network.broadcastTransaction(network)
-             |> then_(result =>
+             |> then_(result => {
+                  delivered := true;
                   (
                     switch (result) {
                     | WalletTypes.Ok(transactionId) => (
@@ -105,8 +115,8 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
                       );
                     }
                   )
-                  |> resolve
-                )
+                  |> resolve;
+                })
            )
          )
   };
