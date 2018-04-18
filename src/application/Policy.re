@@ -1,26 +1,54 @@
 open PrimitiveTypes;
 
-type t = {thresholdPercent: float};
+let filterUsers = (~eligable, ~endorsed) =>
+  endorsed |> List.filter(user => eligable |> List.mem(user));
 
-let absolute = {thresholdPercent: 100.0};
-
-let fulfilled = (~eligable: list(userId), ~endorsed: list(userId), policy) => {
-  let endorsed = endorsed |> List.filter(id => eligable |> List.mem(id));
-  let nVoters = float(List.length(eligable));
-  let nEndorsers = float(List.length(endorsed));
-  nEndorsers /. nVoters *. 100.0 >= policy.thresholdPercent;
+module Unanimous = {
+  let fulfilled = (~eligable: list(userId), ~endorsed: list(userId)) => {
+    let endorsed = filterUsers(~eligable, ~endorsed);
+    eligable |> List.length == (endorsed |> List.length);
+  };
+  let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
 };
 
-let eq = (p1, p2) => p1.thresholdPercent == p2.thresholdPercent;
-
-let neq = (p1, p2) => p1.thresholdPercent != p2.thresholdPercent;
-
-let encode = p =>
-  Json.Encode.(
-    object_([("thresholdPercent", Json.Encode.float(p.thresholdPercent))])
-  );
-
-let decode = raw =>
-  Json.Decode.{
-    thresholdPercent: raw |> field("thresholdPercent", Json.Decode.float),
+module UnanimousMinusOne = {
+  let fulfilled = (~eligable: list(userId), ~endorsed: list(userId)) => {
+    let endorsed = filterUsers(~eligable, ~endorsed);
+    endorsed |> List.length >= List.length(eligable) - 1;
   };
+  let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
+};
+
+type t =
+  | Unanimous
+  | UnanimousMinusOne;
+
+let absolute = Unanimous;
+
+let absoluteMinusOne = UnanimousMinusOne;
+
+let fulfilled =
+  fun
+  | Unanimous => Unanimous.fulfilled
+  | UnanimousMinusOne => UnanimousMinusOne.fulfilled;
+
+let eq = (p1, p2) => p1 == p2;
+
+let neq = (p1, p2) => p1 != p2;
+
+let encode = policy =>
+  switch (policy) {
+  | Unanimous => Unanimous.encode(policy)
+  | UnanimousMinusOne => UnanimousMinusOne.encode(policy)
+  };
+
+exception UnknownPolicy(Js.Json.t);
+
+let decode = raw => {
+  let type_ = raw |> Json.Decode.(field("type", string));
+  switch (type_) {
+  | "Unanimous" => Unanimous
+  | "UnanimousMinusOne" => UnanimousMinusOne
+  | _ => raise(UnknownPolicy(raw))
+  };
+};

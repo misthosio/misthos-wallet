@@ -381,27 +381,6 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                ),
           )
         )
-        <h3> (text("Policies:")) </h3>
-        <div>
-          (
-            text(
-              "MetaPolicy - ActivationThreshold "
-              ++ string_of_float(state.viewModel.metaPolicy.thresholdPercent)
-              ++ "%",
-            )
-          )
-        </div>
-        <div>
-          (
-            text(
-              "PartnerPolicy - ActivationThreshold "
-              ++ string_of_float(
-                   state.viewModel.partnerPolicy.thresholdPercent,
-                 )
-              ++ "%",
-            )
-          )
-        </div>
         <h3> (text("Partners:")) </h3>
         <ul> partners </ul>
         <h4> (text("Prospects:")) </h4>
