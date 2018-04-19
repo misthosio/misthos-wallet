@@ -46,17 +46,20 @@ let make = (session, id, listenerState, listener) => {
 };
 
 let applyInternal =
-    (issuer, event, log, (state, wallet, (listenerState, listener))) => {
-  logMessage("Appending event to log:");
-  logMessage(Event.encode(event) |> Json.stringify);
-  let (item, log) = log |> EventLog.append(issuer, event);
+    (issuer, event, oldLog, (state, wallet, (listenerState, listener))) => {
+  let (item, log) = oldLog |> EventLog.append(issuer, event);
   switch (item |> Validation.validate(state)) {
   | Ok =>
+    logMessage("Appended event to log:");
+    logMessage(Event.encode(event) |> Json.stringify);
     let state = state |> Validation.apply(event);
     let wallet = wallet |> Wallet.apply(event);
     let listenerState = listenerState |> listener(event);
-    (item, log, (state, wallet, (listenerState, listener)));
-  | Ignore => (item, log, (state, wallet, (listenerState, listener)))
+    (Some(item), log, (state, wallet, (listenerState, listener)));
+  | Ignore =>
+    logMessage("Ignoring event:");
+    logMessage(Event.encode(event) |> Json.stringify);
+    (None, oldLog, (state, wallet, (listenerState, listener)));
   /* This should never happen / only incase of an UI input bug!!! */
   | result =>
     logMessage("Event was rejected because of:");
@@ -111,7 +114,8 @@ let reconstruct = (session, listenerState, listener, log) => {
            state |> Validation.apply(event),
            wallet |> Wallet.apply(event),
            (listenerState |> listener(event), listener),
-           watchers |> Watchers.apply(~reconstruct=true, session, item, log),
+           watchers
+           |> Watchers.apply(~reconstruct=true, session, Some(item), log),
          ),
          (VentureId.make(), state, wallet, (listenerState, listener), []),
        );
@@ -277,7 +281,7 @@ module SynchronizeLogs = {
                  let wallet = wallet |> Wallet.apply(event);
                  let listenerState = listenerState |> listener(event);
                  let watchers =
-                   watchers |> Watchers.apply(session, item, log);
+                   watchers |> Watchers.apply(session, Some(item), log);
                  (
                    {...venture, log, watchers, state, wallet, listenerState},
                    None,
@@ -498,7 +502,7 @@ module Cmd = {
                  ~accountIdx=AccountIndex.default,
                  ~policy=
                    state.policies
-                   |> List.assoc(Event.CustodianRemoval.processName),
+                   |> List.assoc(Event.Custodian.Removal.processName),
                ),
              )
           |> then_(
@@ -508,7 +512,7 @@ module Cmd = {
                    ~partnerId,
                    ~policy=
                      state.policies
-                     |> List.assoc(Event.PartnerRemoval.processName),
+                     |> List.assoc(Event.Partner.Removal.processName),
                  ),
                ),
              )
@@ -523,11 +527,11 @@ module Cmd = {
       | Ok(t('a));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartnerRemoval' command");
-      let {id: partnerId}: Event.PartnerRemoval.Data.t =
+      let {id: partnerId}: Event.Partner.Removal.Data.t =
         state.partnerRemovalData |> List.assoc(processId);
       let (custodianProcessId, _) =
         state.custodianRemovalData
-        |> List.find(((_, {custodianId}: Event.CustodianRemoval.Data.t)) =>
+        |> List.find(((_, {custodianId}: Event.Custodian.Removal.Data.t)) =>
              custodianId == partnerId
            );
       Js.Promise.(

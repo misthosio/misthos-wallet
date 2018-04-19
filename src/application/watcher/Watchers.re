@@ -57,19 +57,22 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   | _ => None
   };
 
-let apply = (~reconstruct=false, session, item, log, watchers) => {
-  /* To prevent watchers receiving items twice on reconstruction */
-  if (reconstruct == false) {
-    watchers |> List.iter(w => w#receive(item));
+let apply = (~reconstruct=false, session, item, log, watchers) =>
+  switch (item) {
+  | Some(item) =>
+    /* To prevent watchers receiving items twice on reconstruction */
+    if (reconstruct == false) {
+      watchers |> List.iter(w => w#receive(item));
+    };
+    (
+      switch (initWatcherFor(session, item, log)) {
+      | Some(w) => [w, ...watchers]
+      | None => watchers
+      }
+    )
+    |> List.filter(w => w#processCompleted() == false);
+  | None => watchers
   };
-  (
-    switch (initWatcherFor(session, item, log)) {
-    | Some(w) => [w, ...watchers]
-    | None => watchers
-    }
-  )
-  |> List.filter(w => w#processCompleted() == false);
-};
 
 let rec processPendingPromise = (session, eventFound, promise) =>
   Js.Promise.(

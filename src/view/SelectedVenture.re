@@ -21,6 +21,7 @@ type action =
   | ProposePartner
   | EndorsePartner(ProcessId.t)
   | RemovePartner(UserId.t)
+  | EndorsePartnerRemoval(ProcessId.t)
   | GetIncomeAddress
   | ProposePayout(list((string, BTC.t)))
   | EndorsePayout(ProcessId.t);
@@ -210,6 +211,27 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
             )
         ),
       )
+    | EndorsePartnerRemoval(processId) =>
+      ReasonReact.SideEffects(
+        (
+          ({send}) =>
+            Js.Promise.(
+              Cmd.EndorsePartnerRemoval.(
+                state.venture
+                |> exec(~processId)
+                |> then_(result =>
+                     (
+                       switch (result) {
+                       | Ok(venture) => send(UpdateVenture(venture))
+                       }
+                     )
+                     |> resolve
+                   )
+                |> ignore
+              )
+            )
+        ),
+      )
     | UpdateVenture(venture) =>
       Js.Promise.(
         Venture.getPartnerHistoryUrls(venture)
@@ -312,9 +334,21 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                <li key=(m.userId |> UserId.toString)>
                  <div>
                    (text(m.userId |> UserId.toString))
-                   <button onClick=(_e => send(RemovePartner(m.userId)))>
-                     (text("Propose Removal"))
-                   </button>
+                   (
+                     switch (
+                       m.userId |> UserId.eq(session.userId),
+                       ViewModel.removalProspects(state.viewModel)
+                       |> List.exists((p: ViewModel.prospect) =>
+                            UserId.eq(p.userId, m.userId)
+                          ),
+                     ) {
+                     | (false, false) =>
+                       <button onClick=(_e => send(RemovePartner(m.userId)))>
+                         (text("Propose Removal"))
+                       </button>
+                     | _ => ReasonReact.nullElement
+                     }
+                   )
                  </div>
                </li>
              ),
@@ -345,6 +379,41 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                          _e => send(EndorsePartner(prospect.processId))
                        )>
                        (text("Endorse Partner"))
+                     </button>;
+                   } else {
+                     ReasonReact.nullElement;
+                   }
+                 )
+               </li>
+             ),
+        ),
+      );
+    let removalProspects =
+      ReasonReact.arrayToElement(
+        Array.of_list(
+          ViewModel.removalProspects(state.viewModel)
+          |> List.map((prospect: ViewModel.prospect) =>
+               <li key=(prospect.userId |> UserId.toString)>
+                 (
+                   text(
+                     "'"
+                     ++ (prospect.userId |> UserId.toString)
+                     ++ "' endorsed by: "
+                     ++ List.fold_left(
+                          (state, partnerId) => state ++ partnerId ++ " ",
+                          "",
+                          prospect.endorsedBy |> List.map(UserId.toString),
+                        ),
+                   )
+                 )
+                 (
+                   if (prospect.endorsedBy |> List.mem(session.userId) == false) {
+                     <button
+                       onClick=(
+                         _e =>
+                           send(EndorsePartnerRemoval(prospect.processId))
+                       )>
+                       (text("Endorse Removal"))
                      </button>;
                    } else {
                      ReasonReact.nullElement;
@@ -423,6 +492,8 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
         <ul> partners </ul>
         <h4> (text("Prospects:")) </h4>
         <ul> prospects </ul>
+        <h4> (text("To be removed:")) </h4>
+        <ul> removalProspects </ul>
         <input
           placeholder="BlockstackId"
           value=state.prospectId

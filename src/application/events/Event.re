@@ -67,16 +67,16 @@ module Partner = {
       };
   };
   include (val EventTypes.makeProcess("Partner"))(Data);
-};
-
-module PartnerRemoval = {
-  module Data = {
-    type t = {id: userId};
-    let encode = event =>
-      Json.Encode.(object_([("id", UserId.encode(event.id))]));
-    let decode = raw => Json.Decode.{id: raw |> field("id", UserId.decode)};
+  module Removal = {
+    module Data = {
+      type t = {id: userId};
+      let encode = event =>
+        Json.Encode.(object_([("id", UserId.encode(event.id))]));
+      let decode = raw =>
+        Json.Decode.{id: raw |> field("id", UserId.decode)};
+    };
+    include (val EventTypes.makeProcess("PartnerRemoval"))(Data);
   };
-  include (val EventTypes.makeProcess("PartnerRemoval"))(Data);
 };
 
 module AccountCreation = {
@@ -128,28 +128,27 @@ module Custodian = {
       };
   };
   include (val EventTypes.makeProcess("Custodian"))(Data);
-};
-
-module CustodianRemoval = {
-  module Data = {
-    type t = {
-      custodianId: userId,
-      accountIdx,
-    };
-    let encode = event =>
-      Json.Encode.(
-        object_([
-          ("custodianId", UserId.encode(event.custodianId)),
-          ("accountIdx", AccountIndex.encode(event.accountIdx)),
-        ])
-      );
-    let decode = raw =>
-      Json.Decode.{
-        custodianId: raw |> field("custodianId", UserId.decode),
-        accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+  module Removal = {
+    module Data = {
+      type t = {
+        custodianId: userId,
+        accountIdx,
       };
+      let encode = event =>
+        Json.Encode.(
+          object_([
+            ("custodianId", UserId.encode(event.custodianId)),
+            ("accountIdx", AccountIndex.encode(event.accountIdx)),
+          ])
+        );
+      let decode = raw =>
+        Json.Decode.{
+          custodianId: raw |> field("custodianId", UserId.decode),
+          accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+        };
+    };
+    include (val EventTypes.makeProcess("CustodianRemoval"))(Data);
   };
-  include (val EventTypes.makeProcess("CustodianRemoval"))(Data);
 };
 
 module Payout = {
@@ -369,18 +368,18 @@ type t =
   | PartnerProposed(Partner.Proposed.t)
   | PartnerEndorsed(Partner.Endorsed.t)
   | PartnerAccepted(Partner.Accepted.t)
-  | PartnerRemovalProposed(PartnerRemoval.Proposed.t)
-  | PartnerRemovalEndorsed(PartnerRemoval.Endorsed.t)
-  | PartnerRemovalAccepted(PartnerRemoval.Accepted.t)
+  | PartnerRemovalProposed(Partner.Removal.Proposed.t)
+  | PartnerRemovalEndorsed(Partner.Removal.Endorsed.t)
+  | PartnerRemovalAccepted(Partner.Removal.Accepted.t)
   | AccountCreationProposed(AccountCreation.Proposed.t)
   | AccountCreationEndorsed(AccountCreation.Endorsed.t)
   | AccountCreationAccepted(AccountCreation.Accepted.t)
   | CustodianProposed(Custodian.Proposed.t)
   | CustodianEndorsed(Custodian.Endorsed.t)
   | CustodianAccepted(Custodian.Accepted.t)
-  | CustodianRemovalProposed(CustodianRemoval.Proposed.t)
-  | CustodianRemovalEndorsed(CustodianRemoval.Endorsed.t)
-  | CustodianRemovalAccepted(CustodianRemoval.Accepted.t)
+  | CustodianRemovalProposed(Custodian.Removal.Proposed.t)
+  | CustodianRemovalEndorsed(Custodian.Removal.Endorsed.t)
+  | CustodianRemovalAccepted(Custodian.Removal.Accepted.t)
   | PayoutProposed(Payout.Proposed.t)
   | PayoutEndorsed(Payout.Endorsed.t)
   | PayoutAccepted(Payout.Accepted.t)
@@ -405,10 +404,10 @@ let makePartnerProposed =
 
 let makePartnerRemovalProposed = (~supporterId, ~partnerId, ~policy) =>
   PartnerRemovalProposed(
-    PartnerRemoval.Proposed.make(
+    Partner.Removal.Proposed.make(
       ~supporterId,
       ~policy,
-      PartnerRemoval.Data.{id: partnerId},
+      Partner.Removal.Data.{id: partnerId},
     ),
   );
 
@@ -435,11 +434,11 @@ let makeCustodianProposed =
 let makeCustodianRemovalProposed =
     (~dependsOn, ~supporterId, ~custodianId, ~accountIdx, ~policy) =>
   CustodianRemovalProposed(
-    CustodianRemoval.Proposed.make(
+    Custodian.Removal.Proposed.make(
       ~dependsOn,
       ~supporterId,
       ~policy,
-      CustodianRemoval.Data.{custodianId, accountIdx},
+      Custodian.Removal.Data.{custodianId, accountIdx},
     ),
   );
 
@@ -447,14 +446,16 @@ let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
 
 let makePartnerRemovalEndorsed = (~processId, ~supporterId) =>
-  PartnerEndorsed(PartnerRemoval.Endorsed.make(~processId, ~supporterId));
+  PartnerRemovalEndorsed(
+    Partner.Removal.Endorsed.make(~processId, ~supporterId),
+  );
 
 let makeCustodianEndorsed = (~processId, ~supporterId) =>
   CustodianEndorsed(Custodian.Endorsed.make(~processId, ~supporterId));
 
 let makeCustodianRemovalEndorsed = (~processId, ~supporterId) =>
   CustodianRemovalEndorsed(
-    CustodianRemoval.Endorsed.make(~processId, ~supporterId),
+    Custodian.Removal.Endorsed.make(~processId, ~supporterId),
   );
 
 let makePayoutEndorsed = (~processId, ~supporterId) =>
@@ -466,18 +467,18 @@ let encode =
   | PartnerProposed(event) => Partner.Proposed.encode(event)
   | PartnerEndorsed(event) => Partner.Endorsed.encode(event)
   | PartnerAccepted(event) => Partner.Accepted.encode(event)
-  | PartnerRemovalProposed(event) => PartnerRemoval.Proposed.encode(event)
-  | PartnerRemovalEndorsed(event) => PartnerRemoval.Endorsed.encode(event)
-  | PartnerRemovalAccepted(event) => PartnerRemoval.Accepted.encode(event)
+  | PartnerRemovalProposed(event) => Partner.Removal.Proposed.encode(event)
+  | PartnerRemovalEndorsed(event) => Partner.Removal.Endorsed.encode(event)
+  | PartnerRemovalAccepted(event) => Partner.Removal.Accepted.encode(event)
   | CustodianProposed(event) => Custodian.Proposed.encode(event)
   | CustodianEndorsed(event) => Custodian.Endorsed.encode(event)
   | CustodianAccepted(event) => Custodian.Accepted.encode(event)
   | CustodianRemovalProposed(event) =>
-    CustodianRemoval.Proposed.encode(event)
+    Custodian.Removal.Proposed.encode(event)
   | CustodianRemovalEndorsed(event) =>
-    CustodianRemoval.Endorsed.encode(event)
+    Custodian.Removal.Endorsed.encode(event)
   | CustodianRemovalAccepted(event) =>
-    CustodianRemoval.Accepted.encode(event)
+    Custodian.Removal.Accepted.encode(event)
   | PayoutProposed(event) => Payout.Proposed.encode(event)
   | PayoutEndorsed(event) => Payout.Endorsed.encode(event)
   | PayoutAccepted(event) => Payout.Accepted.encode(event)
@@ -520,20 +521,20 @@ let decode = raw => {
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsed.decode(raw))
   | "PartnerAccepted" => PartnerAccepted(Partner.Accepted.decode(raw))
   | "PartnerRemovalProposed" =>
-    PartnerRemovalProposed(PartnerRemoval.Proposed.decode(raw))
+    PartnerRemovalProposed(Partner.Removal.Proposed.decode(raw))
   | "PartnerRemovalEndorsed" =>
-    PartnerRemovalEndorsed(PartnerRemoval.Endorsed.decode(raw))
+    PartnerRemovalEndorsed(Partner.Removal.Endorsed.decode(raw))
   | "PartnerRemovalAccepted" =>
-    PartnerRemovalAccepted(PartnerRemoval.Accepted.decode(raw))
+    PartnerRemovalAccepted(Partner.Removal.Accepted.decode(raw))
   | "CustodianProposed" => CustodianProposed(Custodian.Proposed.decode(raw))
   | "CustodianEndorsed" => CustodianEndorsed(Custodian.Endorsed.decode(raw))
   | "CustodianAccepted" => CustodianAccepted(Custodian.Accepted.decode(raw))
   | "CustodianRemovalProposed" =>
-    CustodianRemovalProposed(CustodianRemoval.Proposed.decode(raw))
+    CustodianRemovalProposed(Custodian.Removal.Proposed.decode(raw))
   | "CustodianRemovalEndorsed" =>
-    CustodianRemovalEndorsed(CustodianRemoval.Endorsed.decode(raw))
+    CustodianRemovalEndorsed(Custodian.Removal.Endorsed.decode(raw))
   | "CustodianRemovalAccepted" =>
-    CustodianRemovalAccepted(CustodianRemoval.Accepted.decode(raw))
+    CustodianRemovalAccepted(Custodian.Removal.Accepted.decode(raw))
   | "PayoutProposed" => PayoutProposed(Payout.Proposed.decode(raw))
   | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsed.decode(raw))
   | "PayoutAccepted" => PayoutAccepted(Payout.Accepted.decode(raw))
