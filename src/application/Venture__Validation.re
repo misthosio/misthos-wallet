@@ -182,27 +182,24 @@ let apply = (event: Event.t, state) =>
       accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
     }
   | PayoutAccepted(acceptance) => completeProcess(acceptance, state)
-  | CustodianAccepted({data: {partnerId, accountIdx}} as acceptance) => {
+  | CustodianAccepted({data: {partnerId, accountIdx}} as acceptance) =>
+    let userChains =
+      try (state.custodianKeyChains |> List.assoc(partnerId)) {
+      | Not_found => []
+      };
+    let accountChains =
+      try (userChains |> List.assoc(accountIdx)) {
+      | Not_found => []
+      };
+    {
       ...completeProcess(acceptance, state),
       custodianKeyChains: [
-        (partnerId, [(accountIdx, [])]),
-        ...state.custodianKeyChains,
+        (partnerId, [(accountIdx, accountChains)]),
+        ...state.custodianKeyChains |> List.remove_assoc(partnerId),
       ],
-    }
-  | CustodianRemovalAccepted(
-      {data: {custodianId, accountIdx}} as acceptance,
-    ) => {
-      ...completeProcess(acceptance, state),
-      custodianKeyChains: [
-        (
-          custodianId,
-          state.custodianKeyChains
-          |> List.assoc(custodianId)
-          |> List.remove_assoc(accountIdx),
-        ),
-        ...state.custodianKeyChains |> List.remove_assoc(custodianId),
-      ],
-    }
+    };
+  | CustodianRemovalAccepted(acceptance) =>
+    completeProcess(acceptance, state)
   | CustodianKeyChainUpdated({partnerId, keyChain}) =>
     let userChains =
       try (state.custodianKeyChains |> List.assoc(partnerId)) {
@@ -270,11 +267,11 @@ let resultToString =
   | PolicyNotFulfilled => "PolicyNotFulfilled"
   | DependencyNotMet => "DependencyNotMet";
 
-let defaultDataValidator = (_, _, _) => Ok;
+let defaultDataValidator = (_, _) => Ok;
 
 let validateProposal =
     (
-      ~validateData: ('a, option(processId), state) => result=defaultDataValidator,
+      ~validateData: ('a, state) => result=defaultDataValidator,
       processName,
       {policy, supporterId, data, dependsOn}: EventTypes.proposal('a),
       {policies, partnerPubKeys, processes} as state,
@@ -289,10 +286,10 @@ let validateProposal =
     InvalidIssuer;
   } else {
     switch (dependsOn) {
-    | None => validateData(data, None, state)
+    | None => validateData(data, state)
     | Some(processId) =>
       processes |> List.mem_assoc(processId) ?
-        validateData(data, Some(processId), state) : DependencyNotMet
+        validateData(data, state) : DependencyNotMet
     };
   };
 
@@ -348,59 +345,44 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
-let validatePartnerRemovalData =
-    ({id}: PartnerRemoval.Data.t, _dependsOn, {partnerIds}) =>
+let validatePartnerRemovalData = ({id}: PartnerRemoval.Data.t, {partnerIds}) =>
   partnerIds |> List.mem(id) ?
     Ok :
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
 
 let validateCustodianData =
-    (data: Custodian.Data.t, dependsOn, {partnerIds, partnerData}) =>
-  switch (dependsOn) {
-  | None =>
-    partnerIds |> List.mem(data.partnerId) ?
-      Ok :
-      BadData(
-        "Partner with Id '"
-        ++ UserId.toString(data.partnerId)
-        ++ "' doesn't exist",
-      )
-  | Some(processId) =>
-    partnerData |> List.mem_assoc(processId) ? Ok : DependencyNotMet
+    ({partnerApprovalProcess, partnerId}: Custodian.Data.t, {partnerData}) =>
+  try (
+    {
+      let pData = partnerData |> List.assoc(partnerApprovalProcess);
+      UserId.eq(pData.id, partnerId) ?
+        Ok : BadData("Partner with Id 'custodian.id' doesn't exist");
+    }
+  ) {
+  | Not_found => BadData("Partner with Id 'custodian.id' doesn't exist")
   };
 
 let validateCustodianRemovalData =
-    (
-      {custodianId, accountIdx}: CustodianRemoval.Data.t,
-      dependsOn,
-      {custodianData},
-    ) =>
-  switch (dependsOn) {
-  | Some(processId) =>
-    try (
-      {
-        let {partnerId}: Custodian.Data.t =
-          custodianData |> List.assoc(processId);
-        UserId.eq(partnerId, custodianId) ? Ok : raise(Not_found);
-      }
-    ) {
-    | Not_found =>
-      BadData(
-        "Partner with Id '"
-        ++ UserId.toString(custodianId)
-        ++ "' is not a custodian of account with index "
-        ++ string_of_int(AccountIndex.toInt(accountIdx)),
-      )
-    }
-  | None => DependencyNotMet
+    ({custodianId, accountIdx}: CustodianRemoval.Data.t, {custodianData}) =>
+  try (
+    custodianData
+    |> List.exists(((_processId, data: Custodian.Data.t)) =>
+         UserId.eq(data.partnerId, custodianId)
+         && AccountIndex.eq(accountIdx, data.accountIdx)
+       ) ?
+      Ok : raise(Not_found)
+  ) {
+  | Not_found =>
+    BadData(
+      "Partner with Id '"
+      ++ UserId.toString(custodianId)
+      ++ "' is not a custodian of account with index "
+      ++ string_of_int(AccountIndex.toInt(accountIdx)),
+    )
   };
 
 let validateAccountCreationData =
-    (
-      {accountIdx}: AccountCreation.Data.t,
-      _dependsOn,
-      {accountCreationData},
-    ) =>
+    ({accountIdx}: AccountCreation.Data.t, {accountCreationData}) =>
   accountIdx |> AccountIndex.toInt == (accountCreationData |> List.length) ?
     Ok : BadData("Bad Account Index");
 

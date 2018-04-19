@@ -9,9 +9,9 @@ let defaultAccountName = "default";
 type state =
   | ProposePartner
   | PartnerProposed(processId)
-  | ProposeAccountCreation
-  | AccountCreationProposed(processId)
-  | ProposeCustodian
+  | ProposeAccountCreation(processId)
+  | AccountCreationProposed(processId, processId)
+  | ProposeCustodian(processId)
   | CustodianProposed(processId)
   | Complete;
 
@@ -35,18 +35,21 @@ let make =
             PartnerProposed(event.processId)
           | (PartnerProposed(processId), PartnerAccepted(event))
               when ProcessId.eq(processId, event.processId) =>
-            ProposeAccountCreation
-          | (ProposeAccountCreation, AccountCreationProposed(event))
+            ProposeAccountCreation(processId)
+          | (
+              ProposeAccountCreation(partnerProcess),
+              AccountCreationProposed(event),
+            )
               when
                 AccountIndex.eq(event.data.accountIdx, AccountIndex.default) =>
-            AccountCreationProposed(event.processId)
+            AccountCreationProposed(event.processId, partnerProcess)
           | (
-              AccountCreationProposed(processId),
+              AccountCreationProposed(processId, partnerProcess),
               AccountCreationAccepted(event),
             )
               when ProcessId.eq(processId, event.processId) =>
-            ProposeCustodian
-          | (ProposeCustodian, CustodianProposed(event))
+            ProposeCustodian(partnerProcess)
+          | (ProposeCustodian(_), CustodianProposed(event))
               when UserId.eq(event.data.partnerId, creatorId) =>
             CustodianProposed(event.processId)
           | (CustodianProposed(processId), CustodianAccepted(event))
@@ -68,7 +71,7 @@ let make =
                 ~policy=metaPolicy,
               ),
             ))
-          | ProposeAccountCreation =>
+          | ProposeAccountCreation(_) =>
             Some((
               issuerKeyPair,
               Event.makeAccountCreationProposed(
@@ -78,11 +81,11 @@ let make =
                 ~policy=metaPolicy,
               ),
             ))
-          | ProposeCustodian =>
+          | ProposeCustodian(partnerProcess) =>
             Some((
               issuerKeyPair,
               Event.makeCustodianProposed(
-                ~dependsOn=None,
+                ~partnerApprovalProcess=partnerProcess,
                 ~partnerId=creatorId,
                 ~supporterId=creatorId,
                 ~accountIdx=AccountIndex.default,

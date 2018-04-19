@@ -22,6 +22,10 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
             <div className=classes##container>
               <VentureList ?selected index />
               <div className=classes##flex />
+              <LinkButton route=CreateVenture>
+                ("Create a Venture" |> ReasonReact.stringToElement)
+              </LinkButton>
+              <div className=classes##flex />
               <Button color=`Inherit onClick=onSignOut> "Sign Out" </Button>
             </div>
         )

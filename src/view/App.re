@@ -7,10 +7,13 @@ let make = (~session, ~updateSession, _children) => {
   render: _self => {
     let onSignIn = _e => updateSession(SessionStore.SignIn);
     let onSignOut = _e => updateSession(SessionStore.SignOut);
+    let onCreateVenture = (updateVentureStore, session, name) =>
+      updateVentureStore(VentureStore.CreateVenture(session, name));
     let drawer = (index, currentRoute: Router.Config.route) =>
       switch (session, currentRoute) {
       | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
       | (LoggedIn(_data), Home) => Some(<Drawer onSignOut index />)
+      | (LoggedIn(_data), CreateVenture) => Some(<Drawer onSignOut index />)
       | (LoggedIn(_data), Venture(selected)) =>
         Some(<Drawer onSignOut selected index />)
       | (LoggedIn(_data), JoinVenture(selected, _)) =>
@@ -30,10 +33,12 @@ let make = (~session, ~updateSession, _children) => {
           text="Missing BlockStack session, upgrade BlockStack client, close all Misthos tabs and try again"
         />
       | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
-      | (LoggedIn(session), Home) =>
-        <Home session selectedVenture updateVentureStore />
-      | (LoggedIn(session), _) =>
-        <Home session selectedVenture updateVentureStore />
+      | (LoggedIn(session), Home) => <Home session selectedVenture />
+      | (LoggedIn(session), CreateVenture) =>
+        <CreateVenture
+          onCreateVenture=(onCreateVenture(updateVentureStore, session))
+        />
+      | (LoggedIn(session), _) => <Home session selectedVenture />
       };
     <Router.Container>
       ...(

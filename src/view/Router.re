@@ -4,9 +4,11 @@ module Config = {
   type route =
     | Home
     | Venture(ventureId)
-    | JoinVenture(ventureId, userId);
+    | JoinVenture(ventureId, userId)
+    | CreateVenture;
   let routeFromUrl = (url: ReasonReact.Router.url) =>
     switch (url.path) {
+    | ["ventures", "new"] => CreateVenture
     | ["ventures", id] => Venture(id |> VentureId.fromString)
     | ["ventures", id, "joinvia", userId] =>
       JoinVenture(id |> VentureId.fromString, userId |> UserId.fromString)
@@ -15,6 +17,7 @@ module Config = {
     };
   let routeToUrl = (route: route) =>
     switch (route) {
+    | CreateVenture => "/ventures/new"
     | Venture(id) => "/ventures/" ++ (id |> VentureId.toString)
     | JoinVenture(id, userId) =>
       "/ventures/"

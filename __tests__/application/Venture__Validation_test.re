@@ -44,10 +44,11 @@ let () = {
     let custodianPubKey = custodianKeyPair |> Utils.publicKeyFromKeyPair;
     test("Fails if partner doesn't exist", () =>
       state
-      |> Validation.validateCustodianData(
-           {partnerId: custodianId, accountIdx},
-           None,
-         )
+      |> Validation.validateCustodianData({
+           partnerId: custodianId,
+           accountIdx,
+           partnerApprovalProcess: ProcessId.make(),
+         })
       |> expect
       |> toEqual(
            Validation.BadData("Partner with Id 'custodian.id' doesn't exist"),
@@ -61,34 +62,14 @@ let () = {
         ~policy=Policy.absolute,
       )
       |> Event.getPartnerProposedExn;
-    test("Fails if partner was proposed", () =>
+    test("Succeeds if partner was proposed", () =>
       state
       |> Validation.apply(Event.PartnerProposed(custodianPartnerProposal))
-      |> Validation.validateCustodianData(
-           {partnerId: custodianId, accountIdx},
-           None,
-         )
-      |> expect
-      |> toEqual(
-           Validation.BadData("Partner with Id 'custodian.id' doesn't exist"),
-         )
-    );
-    test("Fails if dependent process doesn't exist", () =>
-      state
-      |> Validation.validateCustodianData(
-           {partnerId: custodianId, accountIdx},
-           Some(custodianPartnerProposal.processId),
-         )
-      |> expect
-      |> toEqual(Validation.DependencyNotMet)
-    );
-    test("Succeeds if partner was proposed and dependency is declared", () =>
-      state
-      |> Validation.apply(Event.PartnerProposed(custodianPartnerProposal))
-      |> Validation.validateCustodianData(
-           {partnerId: custodianId, accountIdx},
-           Some(custodianPartnerProposal.processId),
-         )
+      |> Validation.validateCustodianData({
+           partnerId: custodianId,
+           accountIdx,
+           partnerApprovalProcess: custodianPartnerProposal.processId,
+         })
       |> expect
       |> toEqual(Validation.Ok)
     );
@@ -205,6 +186,7 @@ let () = {
         |> Validation.apply(
              CustodianKeyChainUpdated(
                CustodianKeyChainUpdated.make(
+                 ~custodianApprovalProcess=ProcessId.make(),
                  ~partnerId=custodianId,
                  ~keyChain=custodianKeyChain0,
                ),
@@ -213,6 +195,7 @@ let () = {
         |> Validation.apply(
              CustodianKeyChainUpdated(
                CustodianKeyChainUpdated.make(
+                 ~custodianApprovalProcess=ProcessId.make(),
                  ~partnerId=custodianId,
                  ~keyChain=custodianKeyChain1,
                ),

@@ -270,6 +270,8 @@ module SynchronizeLogs = {
              } else {
                switch (item |> Validation.validate(state)) {
                | Ok =>
+                 logMessage("Appending synced event to log:");
+                 logMessage(Event.encode(event) |> Json.stringify);
                  let log = log |> EventLog.appendItem(item);
                  let state = state |> Validation.apply(event);
                  let wallet = wallet |> Wallet.apply(event);
@@ -415,7 +417,7 @@ module Cmd = {
                      |> Event.getPartnerProposedExn;
                    let custodianProposal =
                      Event.makeCustodianProposed(
-                       ~dependsOn=Some(partnerProposal.processId),
+                       ~partnerApprovalProcess=partnerProposal.processId,
                        ~supporterId=session.userId,
                        ~partnerId=prospectId,
                        ~accountIdx=AccountIndex.default,
