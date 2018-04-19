@@ -52,6 +52,13 @@ let apply = (event: Event.t, state) =>
       metaPolicy,
       partnerPolicy: metaPolicy,
     }
+  | PartnerProposed({processId, supporterId, data}) => {
+      ...state,
+      prospects: [
+        {processId, userId: data.id, endorsedBy: [supporterId]},
+        ...state.prospects,
+      ],
+    }
   | PartnerEndorsed({processId, supporterId}) => {
       ...state,
       prospects:
@@ -60,13 +67,6 @@ let apply = (event: Event.t, state) =>
              ProcessId.eq(p.processId, processId) ?
                {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
            ),
-    }
-  | PartnerProposed({processId, supporterId, data}) => {
-      ...state,
-      prospects: [
-        {processId, userId: data.id, endorsedBy: [supporterId]},
-        ...state.prospects,
-      ],
     }
   | PartnerAccepted({data}) => {
       ...state,
@@ -80,6 +80,15 @@ let apply = (event: Event.t, state) =>
         {processId, userId: data.id, endorsedBy: [supporterId]},
         ...state.removalProspects,
       ],
+    }
+  | PartnerRemovalEndorsed({processId, supporterId}) => {
+      ...state,
+      removalProspects:
+        state.removalProspects
+        |> List.map((p: prospect) =>
+             ProcessId.eq(p.processId, processId) ?
+               {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
+           ),
     }
   | PartnerRemovalAccepted({processId, data: {id}}) => {
       ...state,

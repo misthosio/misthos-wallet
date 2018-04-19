@@ -446,7 +446,9 @@ let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
 
 let makePartnerRemovalEndorsed = (~processId, ~supporterId) =>
-  PartnerEndorsed(Partner.Removal.Endorsed.make(~processId, ~supporterId));
+  PartnerRemovalEndorsed(
+    Partner.Removal.Endorsed.make(~processId, ~supporterId),
+  );
 
 let makeCustodianEndorsed = (~processId, ~supporterId) =>
   CustodianEndorsed(Custodian.Endorsed.make(~processId, ~supporterId));

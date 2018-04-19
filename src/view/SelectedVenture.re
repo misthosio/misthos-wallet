@@ -335,12 +335,18 @@ let make = (~venture as initialVenture, ~session: Session.Data.t, _children) => 
                  <div>
                    (text(m.userId |> UserId.toString))
                    (
-                     if (m.userId |> UserId.neq(session.userId)) {
+                     switch (
+                       m.userId |> UserId.eq(session.userId),
+                       ViewModel.removalProspects(state.viewModel)
+                       |> List.exists((p: ViewModel.prospect) =>
+                            UserId.eq(p.userId, m.userId)
+                          ),
+                     ) {
+                     | (false, false) =>
                        <button onClick=(_e => send(RemovePartner(m.userId)))>
                          (text("Propose Removal"))
-                       </button>;
-                     } else {
-                       ReasonReact.nullElement;
+                       </button>
+                     | _ => ReasonReact.nullElement
                      }
                    )
                  </div>
