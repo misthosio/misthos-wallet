@@ -4,7 +4,7 @@ let make = (~route, ~className=?, children) => {
   ...component,
   render: _self => {
     let href = Router.Config.routeToUrl(route);
-    <a
+    <MaterialUi.Button
       href
       ?className
       onClick=(
@@ -14,6 +14,6 @@ let make = (~route, ~className=?, children) => {
         }
       )>
       (ReasonReact.arrayToElement(children))
-    </a>;
+    </MaterialUi.Button>;
   },
 };
