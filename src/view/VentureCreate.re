@@ -24,9 +24,13 @@ let make = (~onCreateVenture, _children) => {
       switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
       | name =>
-        ReasonReact.UpdateWithSideEffects(
-          {newVenture: ""},
-          ((_) => onCreateVenture(name)),
+        ReasonReact.SideEffects(
+          (
+            ({send}) => {
+              onCreateVenture(name);
+              send(ChangeNewVenture(""));
+            }
+          ),
         )
       }
     },

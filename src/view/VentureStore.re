@@ -254,13 +254,12 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                   )
                   |> then_(((newIndex, venture)) => {
                        send(UpdateVenture(VentureLoaded(venture)));
-                       send(UpdateIndex(newIndex));
                        ReasonReact.Router.push(
                          Router.Config.routeToUrl(
                            Router.Config.Venture(venture |> Venture.getId),
                          ),
-                       )
-                       |> resolve;
+                       );
+                       send(UpdateIndex(newIndex)) |> resolve;
                      })
                   |> ignore
                 ),
