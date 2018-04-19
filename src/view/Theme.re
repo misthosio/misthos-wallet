@@ -98,7 +98,6 @@ let theme =
         "color": "#000000",
         "letterSpacing": "0.0547vw",
         "fontWeight": 700,
-        "fontSize": "1.2vw",
       },
     },
   });
