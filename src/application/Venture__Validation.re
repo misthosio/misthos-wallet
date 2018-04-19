@@ -194,7 +194,13 @@ let apply = (event: Event.t, state) =>
     {
       ...completeProcess(acceptance, state),
       custodianKeyChains: [
-        (partnerId, [(accountIdx, accountChains)]),
+        (
+          partnerId,
+          [
+            (accountIdx, accountChains),
+            ...userChains |> List.remove_assoc(accountIdx),
+          ],
+        ),
         ...state.custodianKeyChains |> List.remove_assoc(partnerId),
       ],
     };
