@@ -243,25 +243,30 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         {...state, ventureState: CreatingVenture},
         (
           ({send}) =>
-            Js.Promise.(
-              Venture.Cmd.Create.exec(
-                session,
-                ~name,
-                ~listenerState=ViewModel.make(),
-                ~listener=ViewModel.apply,
-              )
-              |> then_(((newIndex, venture)) => {
-                   send(UpdateVenture(VentureLoaded(venture)));
-                   send(UpdateIndex(newIndex));
-                   ReasonReact.Router.push(
-                     Router.Config.routeToUrl(
-                       Router.Config.Venture(venture |> Venture.getId),
-                     ),
-                   )
-                   |> resolve;
-                 })
-              |> ignore
+            Js.Global.setTimeout(
+              () =>
+                Js.Promise.(
+                  Venture.Cmd.Create.exec(
+                    session,
+                    ~name,
+                    ~listenerState=ViewModel.make(),
+                    ~listener=ViewModel.apply,
+                  )
+                  |> then_(((newIndex, venture)) => {
+                       send(UpdateVenture(VentureLoaded(venture)));
+                       send(UpdateIndex(newIndex));
+                       ReasonReact.Router.push(
+                         Router.Config.routeToUrl(
+                           Router.Config.Venture(venture |> Venture.getId),
+                         ),
+                       )
+                       |> resolve;
+                     })
+                  |> ignore
+                ),
+              1,
             )
+            |> ignore
         ),
       )
     },
