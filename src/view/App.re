@@ -36,7 +36,7 @@ let make = (~session, ~updateSession, _children) => {
         updateVenture=(updateVentureState(updateVentureStore))
       />
     | (LoggedIn(session), CreateVenture) =>
-      <CreateVenture
+      <VentureCreate
         onCreateVenture=(onCreateVenture(updateVentureStore, session))
       />
     | (LoggedIn(session), _) =>
