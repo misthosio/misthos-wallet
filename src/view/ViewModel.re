@@ -26,6 +26,7 @@ type t = {
   name: string,
   partners: list(partner),
   prospects: list(prospect),
+  removalProspects: list(prospect),
   metaPolicy: Policy.t,
   partnerPolicy: Policy.t,
   incomeAddresses: list((accountIdx, list(string))),
@@ -36,6 +37,7 @@ let make = () => {
   name: "",
   partners: [],
   prospects: [],
+  removalProspects: [],
   metaPolicy: Policy.absolute,
   partnerPolicy: Policy.absolute,
   incomeAddresses: [],
@@ -72,11 +74,23 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id)),
     }
-  | PartnerRemovalAccepted({data}) => {
+  | PartnerRemovalProposed({processId, supporterId, data}) => {
+      ...state,
+      removalProspects: [
+        {processId, userId: data.id, endorsedBy: [supporterId]},
+        ...state.removalProspects,
+      ],
+    }
+  | PartnerRemovalAccepted({processId, data: {id}}) => {
       ...state,
       partners:
         state.partners
-        |> List.filter((p: partner) => UserId.neq(p.userId, data.id)),
+        |> List.filter((p: partner) => UserId.neq(p.userId, id)),
+      removalProspects:
+        state.removalProspects
+        |> List.filter((p: prospect) =>
+             ProcessId.neq(p.processId, processId)
+           ),
     }
   | AccountCreationAccepted({data}) => {
       ...state,
@@ -140,6 +154,8 @@ let apply = (event: Event.t, state) =>
 let partners = state => state.partners;
 
 let prospects = state => state.prospects;
+
+let removalProspects = state => state.removalProspects;
 
 let ventureName = state => state.name;
 
