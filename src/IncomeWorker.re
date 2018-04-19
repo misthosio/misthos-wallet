@@ -2,12 +2,15 @@ module Message = {
   type exposedAddresses = array(string);
   type txIds = array(string);
   type send =
+    | Wait
     | MonitorAddresses(exposedAddresses, txIds);
   type receive =
     | NewTransactionsDetected(list(WalletTypes.transaction));
   let _encodeToSend =
     fun
+    | Wait => {"type": "Wait", "toMonitor": [||], "knownTxIds": [||]}
     | MonitorAddresses(addresses, txIds) => {
+        "type": "MonitorAddresses",
         "toMonitor": addresses,
         "knownTxIds": txIds,
       };

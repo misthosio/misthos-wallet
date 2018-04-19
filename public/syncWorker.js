@@ -31,31 +31,16 @@ tenSecondsInMilliseconds = 10000;
 syncInterval = tenSecondsInMilliseconds;
 
 self.onmessage = ({data}) => {
-  logMessage("Message received");
+  logMessage("Received message '" + data.type + "'");
 
   if (intervalId != -1) {
     clearInterval(intervalId);
   }
+  if (data.type == "RegularlyFetch") {
 
-  links = data.links.sort();
-  knownItems = data.summary.knownItems.sort();
+    links = data.links.sort();
+    knownItems = data.summary.knownItems.sort();
 
-  links.forEach(link =>
-    fetchSummary(link).then(summary => {
-      if (summary != null) {
-        otherItems = summary.knownItems.filter(i =>
-          knownItems.includes(i) == false);
-        if (otherItems.length > 0) {
-          fetchHistory(link).then(history => {
-            if (history != null) {
-              postMessage(history)
-            }
-          })
-        }
-      }
-    })
-  );
-  intervalId = setInterval(function(){
     links.forEach(link =>
       fetchSummary(link).then(summary => {
         if (summary != null) {
@@ -71,5 +56,22 @@ self.onmessage = ({data}) => {
         }
       })
     );
-  }, syncInterval);
+    intervalId = setInterval(function(){
+      links.forEach(link =>
+        fetchSummary(link).then(summary => {
+          if (summary != null) {
+            otherItems = summary.knownItems.filter(i =>
+              knownItems.includes(i) == false);
+            if (otherItems.length > 0) {
+              fetchHistory(link).then(history => {
+                if (history != null) {
+                  postMessage(history)
+                }
+              })
+            }
+          }
+        })
+      );
+    }, syncInterval);
+  }
 };

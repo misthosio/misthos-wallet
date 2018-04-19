@@ -33,28 +33,17 @@ tenSecondsInMilliseconds = 10000;
 syncInterval = tenSecondsInMilliseconds;
 
 self.onmessage = ({data}) => {
-  logMessage("Message received");
-
-  addresses = data.toMonitor;
-  knownTxIds = data.knownTxIds;
-
-  logMessage("Scanning transactions");
-  addresses.forEach(address => {
-    fetchTransactionsForAddress(address).then(txs => {
-      newTransactions = transactionsContainingOutput(txs, address).filter(tx => {
-        return knownTxIds.includes(tx.txid) == false
-      });
-      if (newTransactions.length > 0) {
-        postMessage(newTransactions);
-      }
-    })
-  })
+  logMessage("Received message '" + data.type + "'");
 
   if (intervalId != -1) {
     clearInterval(intervalId);
   }
 
-  intervalId = setInterval(function(){
+  if (data.type == "MonitorAddresses") {
+
+    addresses = data.toMonitor;
+    knownTxIds = data.knownTxIds;
+
     logMessage("Scanning transactions");
     addresses.forEach(address => {
       fetchTransactionsForAddress(address).then(txs => {
@@ -65,6 +54,20 @@ self.onmessage = ({data}) => {
           postMessage(newTransactions);
         }
       })
-    });
-  }, syncInterval);
+    })
+
+    intervalId = setInterval(function(){
+      logMessage("Scanning transactions");
+      addresses.forEach(address => {
+        fetchTransactionsForAddress(address).then(txs => {
+          newTransactions = transactionsContainingOutput(txs, address).filter(tx => {
+            return knownTxIds.includes(tx.txid) == false
+          });
+          if (newTransactions.length > 0) {
+            postMessage(newTransactions);
+          }
+        })
+      });
+    }, syncInterval);
+  }
 };
