@@ -1,11 +1,14 @@
 module Message = {
   type send =
+    | Wait
     | RegularlyFetch(array(string), EventLog.summary);
   type receive =
     | Fetched(list(Js.Json.t));
   let _encodeToSend =
     fun
+    | Wait => {"type": "Wait", "links": [||], "summary": Js.Json.null}
     | RegularlyFetch(links, summary) => {
+        "type": "RegularlyFetch",
         "links": links,
         "summary": EventLog.encodeSummary(summary),
       };
