@@ -201,32 +201,43 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       }
     | UpdateIndex(index) => ReasonReact.Update({...state, index})
     | UpdateVenture(ventureState) =>
-      switch (ventureState) {
-      | VentureLoaded(venture) =>
-        Js.Promise.(
-          Venture.getPartnerHistoryUrls(venture)
-          |> then_(urls =>
-               SyncWorker.Message.RegularlyFetch(
-                 urls,
-                 Venture.getSummary(venture),
-               )
-               |> SyncWorker.postMessage(state.syncWorker^)
-               |> resolve
-             )
-          |> ignore
-        );
-        IncomeWorker.Message.MonitorAddresses(
-          venture |> Venture.Wallet.getExposedAddresses,
-          venture |> Venture.Wallet.getKnownTransactionIds,
-        )
-        |> IncomeWorker.postMessage(state.incomeWorker^)
-        |> ignore;
-      | _ =>
-        SyncWorker.Message.Wait |> SyncWorker.postMessage(state.syncWorker^);
-        IncomeWorker.Message.Wait
-        |> IncomeWorker.postMessage(state.incomeWorker^);
-      };
-      ReasonReact.Update({...state, ventureState});
+      ReasonReact.UpdateWithSideEffects(
+        {...state, ventureState},
+        (
+          (_) =>
+            Js.Global.setTimeout(
+              () =>
+                switch (ventureState) {
+                | VentureLoaded(venture) =>
+                  Js.Promise.(
+                    Venture.getPartnerHistoryUrls(venture)
+                    |> then_(urls =>
+                         SyncWorker.Message.RegularlyFetch(
+                           urls,
+                           Venture.getSummary(venture),
+                         )
+                         |> SyncWorker.postMessage(state.syncWorker^)
+                         |> resolve
+                       )
+                    |> ignore
+                  );
+                  IncomeWorker.Message.MonitorAddresses(
+                    venture |> Venture.Wallet.getExposedAddresses,
+                    venture |> Venture.Wallet.getKnownTransactionIds,
+                  )
+                  |> IncomeWorker.postMessage(state.incomeWorker^)
+                  |> ignore;
+                | _ =>
+                  SyncWorker.Message.Wait
+                  |> SyncWorker.postMessage(state.syncWorker^);
+                  IncomeWorker.Message.Wait
+                  |> IncomeWorker.postMessage(state.incomeWorker^);
+                },
+              1,
+            )
+            |> ignore
+        ),
+      )
     | CreateVenture(session, name) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, ventureState: CreatingVenture},

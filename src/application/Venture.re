@@ -151,21 +151,38 @@ let persist = ({id, log, state} as venture) => {
          (promise, (pubKey, prefix)) =>
            promise
            |> then_(() =>
-                Blockstack.putFileNotEncrypted(
-                  (id |> VentureId.toString) ++ "/" ++ prefix ++ "/log.json",
-                  logString
-                  |> Blockstack.encryptECIES(~publicKey=pubKey)
-                  |> Json.stringify,
+                Js.Global.setTimeout(
+                  () =>
+                    Blockstack.putFileNotEncrypted(
+                      (id |> VentureId.toString)
+                      ++ "/"
+                      ++ prefix
+                      ++ "/log.json",
+                      logString
+                      |> Blockstack.encryptECIES(~publicKey=pubKey)
+                      |> Json.stringify,
+                    )
+                    |> ignore,
+                  1,
                 )
+                |> ignore
+                |> resolve
               )
            |> then_(() =>
-                Blockstack.putFileNotEncrypted(
-                  (id |> VentureId.toString)
-                  ++ "/"
-                  ++ prefix
-                  ++ "/summary.json",
-                  summaryString,
+                Js.Global.setTimeout(
+                  () =>
+                    Blockstack.putFileNotEncrypted(
+                      (id |> VentureId.toString)
+                      ++ "/"
+                      ++ prefix
+                      ++ "/summary.json",
+                      summaryString,
+                    )
+                    |> ignore,
+                  1,
                 )
+                |> ignore
+                |> resolve
               ),
          resolve(),
        )
