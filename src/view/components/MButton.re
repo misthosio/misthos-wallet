@@ -1,6 +1,6 @@
 let component = ReasonReact.statelessComponent("MButton");
 
-let make = (~color=?, ~onClick=?, children) => {
+let make = (~color=?, ~onClick=?, ~fullWidth=false, children) => {
   ...component,
   render: _self =>
     MaterialUi.(
@@ -15,6 +15,7 @@ let make = (~color=?, ~onClick=?, children) => {
                 ~margin="1.5px",
                 ~paddingLeft="25px",
                 ~paddingRight="25px",
+                ~width=fullWidth ? "100%" : "auto",
                 (),
               ),
           },

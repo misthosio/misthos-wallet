@@ -22,12 +22,12 @@ let make = children => {
       ]
       render=(
         classes =>
-          <div>
-            <div className=classes##title>
+          MaterialUi.(
+            <Grid className=classes##title item=true xs=V12>
               (ReasonReact.arrayToElement(children))
-            </div>
-            <div className=classes##gradient />
-          </div>
+              <div className=classes##gradient />
+            </Grid>
+          )
       )
     />,
 };
