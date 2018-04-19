@@ -1,8 +1,6 @@
-open PrimitiveTypes;
-
 let component = ReasonReact.statelessComponent("Home");
 
-let make = (~session, ~selectedVenture, _children) => {
+let make = (~session, ~selectedVenture, ~updateVenture, _children) => {
   ...component,
   render: _self =>
     <MaterialUi.WithStyles
@@ -13,11 +11,7 @@ let make = (~session, ~selectedVenture, _children) => {
               (
                 switch ((selectedVenture: VentureStore.ventureState)) {
                 | VentureLoaded(venture) =>
-                  <SelectedVenture
-                    key=(venture |> Venture.getId |> VentureId.toString)
-                    venture
-                    session
-                  />
+                  <SelectedVenture venture updateVenture session />
                 | JoiningVenture =>
                   ReasonReact.stringToElement("Joining venture")
                 | LoadingVenture =>
