@@ -47,20 +47,15 @@ let make = (~selected=?, ~index, _children) => {
                                     component=(`String("li"))>
                                     <ListItemText
                                       primary={
-                                        <Typography variant=`Title>
-                                          <Link
-                                            className=(
-                                              Some(id) == selected ?
-                                                classes##linkSelected :
-                                                classes##link
-                                            )
-                                            route=(Venture(id))>
-                                            (
-                                              name
-                                              |> ReasonReact.stringToElement
-                                            )
-                                          </Link>
-                                        </Typography>
+                                        <Link
+                                          className=(
+                                            Some(id) == selected ?
+                                              classes##linkSelected :
+                                              classes##link
+                                          )
+                                          route=(Venture(id))>
+                                          (name |> ReasonReact.stringToElement)
+                                        </Link>
                                       }
                                     />
                                   </ListItem>;
