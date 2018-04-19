@@ -93,15 +93,12 @@ let theme =
       },
       "button": {
         "fontFamily": oswald,
-<<<<<<< HEAD
         "textTransform": "uppercase",
         "fontSize": "1.406vw",
         "color": "#000000",
         "letterSpacing": "0.0547vw",
         "fontWeight": 700,
-=======
         "fontSize": "1.2vw",
->>>>>>> 0a175698ee95c830d3b39410ac2e8aafba2138cb
       },
     },
   });
