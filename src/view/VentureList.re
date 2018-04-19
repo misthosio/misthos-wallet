@@ -47,15 +47,20 @@ let make = (~selected=?, ~index, _children) => {
                                     component=(`String("li"))>
                                     <ListItemText
                                       primary={
-                                        <Link
-                                          className=(
-                                            Some(id) == selected ?
-                                              classes##linkSelected :
-                                              classes##link
-                                          )
-                                          route=(Venture(id))>
-                                          (name |> ReasonReact.stringToElement)
-                                        </Link>
+                                        <Typography variant=`Title>
+                                          <Link
+                                            className=(
+                                              Some(id) == selected ?
+                                                classes##linkSelected :
+                                                classes##link
+                                            )
+                                            route=(Venture(id))>
+                                            (
+                                              name
+                                              |> ReasonReact.stringToElement
+                                            )
+                                          </Link>
+                                        </Typography>
                                       }
                                     />
                                   </ListItem>;
@@ -80,7 +85,7 @@ let make = (~selected=?, ~index, _children) => {
           render=(
             classes =>
               <TitleBar>
-                <Typography className=classes##title variant=`Title>
+                <Typography className=classes##title variant=`Headline>
                   (ReasonReact.stringToElement("My Ventures"))
                 </Typography>
               </TitleBar>
