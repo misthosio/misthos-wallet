@@ -44,6 +44,7 @@ let make =
   },
   willReceiveProps: ({state}) => {
     ...state,
+    balance: initialVenture |> Venture.Wallet.balance,
     viewModel: initialVenture |> Venture.getListenerState,
     venture: initialVenture,
   },
