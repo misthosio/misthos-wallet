@@ -5,13 +5,15 @@ module Config = {
     | Home
     | Venture(ventureId)
     | JoinVenture(ventureId, userId)
-    | CreateVenture;
+    | CreateVenture
+    | TypographyStack;
   let routeFromUrl = (url: ReasonReact.Router.url) =>
     switch (url.path) {
     | ["ventures", "new"] => CreateVenture
     | ["ventures", id] => Venture(id |> VentureId.fromString)
     | ["ventures", id, "joinvia", userId] =>
       JoinVenture(id |> VentureId.fromString, userId |> UserId.fromString)
+    | ["typographystack"] => TypographyStack
     | [] => Home
     | _ => Home
     };
@@ -24,6 +26,7 @@ module Config = {
       ++ (id |> VentureId.toString)
       ++ "/joinvia/"
       ++ (userId |> UserId.toString)
+    | TypographyStack => "/typographystack"
     | Home => "/"
     };
 };

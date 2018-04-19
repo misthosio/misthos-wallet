@@ -12,6 +12,7 @@ let make = (~session, ~updateSession, _children) => {
   let drawer = (index, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
     | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
+    | (_, TypographyStack) => None
     | (LoggedIn(_data), Home) => Some(<Drawer onSignOut index />)
     | (LoggedIn(_data), CreateVenture) => Some(<Drawer onSignOut index />)
     | (LoggedIn(_data), Venture(selected)) =>
@@ -23,6 +24,7 @@ let make = (~session, ~updateSession, _children) => {
       (selectedVenture, updateVentureStore, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
     | (NotLoggedIn, _) => <PublicHome onSignIn />
+    | (_, TypographyStack) => <TypographyStack />
     | (Unknown, _) => <Spinner text="Loading" />
     | (AnonymousLogin, _) =>
       <Spinner
