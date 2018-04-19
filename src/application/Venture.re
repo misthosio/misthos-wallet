@@ -498,7 +498,7 @@ module Cmd = {
                  ~accountIdx=AccountIndex.default,
                  ~policy=
                    state.policies
-                   |> List.assoc(Event.CustodianRemoval.processName),
+                   |> List.assoc(Event.Custodian.Removal.processName),
                ),
              )
           |> then_(
@@ -508,7 +508,7 @@ module Cmd = {
                    ~partnerId,
                    ~policy=
                      state.policies
-                     |> List.assoc(Event.PartnerRemoval.processName),
+                     |> List.assoc(Event.Partner.Removal.processName),
                  ),
                ),
              )
@@ -523,11 +523,11 @@ module Cmd = {
       | Ok(t('a));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartnerRemoval' command");
-      let {id: partnerId}: Event.PartnerRemoval.Data.t =
+      let {id: partnerId}: Event.Partner.Removal.Data.t =
         state.partnerRemovalData |> List.assoc(processId);
       let (custodianProcessId, _) =
         state.custodianRemovalData
-        |> List.find(((_, {custodianId}: Event.CustodianRemoval.Data.t)) =>
+        |> List.find(((_, {custodianId}: Event.Custodian.Removal.Data.t)) =>
              custodianId == partnerId
            );
       Js.Promise.(

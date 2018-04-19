@@ -10,7 +10,7 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t,
 };
 
-let make = (proposal: CustodianRemoval.Proposed.t, log) => {
+let make = (proposal: Custodian.Removal.Proposed.t, log) => {
   let process = {
     val state =
       ref({
@@ -72,7 +72,7 @@ let make = (proposal: CustodianRemoval.Proposed.t, log) => {
           Some((
             state^.systemIssuer,
             CustodianRemovalAccepted(
-              CustodianRemoval.Accepted.fromProposal(proposal),
+              Custodian.Removal.Accepted.fromProposal(proposal),
             ),
           ));
       };

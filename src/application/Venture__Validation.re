@@ -18,9 +18,9 @@ type state = {
   partnerStoragePrefixes: list((string, string)),
   partnerPubKeys: list((string, userId)),
   partnerData: list((processId, Partner.Data.t)),
-  partnerRemovalData: list((processId, PartnerRemoval.Data.t)),
+  partnerRemovalData: list((processId, Partner.Removal.Data.t)),
   custodianData: list((processId, Custodian.Data.t)),
-  custodianRemovalData: list((processId, CustodianRemoval.Data.t)),
+  custodianRemovalData: list((processId, Custodian.Removal.Data.t)),
   accountCreationData: list((processId, AccountCreation.Data.t)),
   payoutData: list((processId, Payout.Data.t)),
   processes: list((processId, approvalProcess)),
@@ -109,8 +109,8 @@ let apply = (event: Event.t, state) =>
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
       policies: [
-        (PartnerRemoval.processName, Policy.UnanimousMinusOne),
-        (CustodianRemoval.processName, Policy.UnanimousMinusOne),
+        (Partner.Removal.processName, Policy.UnanimousMinusOne),
+        (Custodian.Removal.processName, Policy.UnanimousMinusOne),
         ...[
              Partner.processName,
              AccountCreation.processName,
@@ -345,7 +345,8 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
-let validatePartnerRemovalData = ({id}: PartnerRemoval.Data.t, {partnerIds}) =>
+let validatePartnerRemovalData =
+    ({id}: Partner.Removal.Data.t, {partnerIds}) =>
   partnerIds |> List.mem(id) ?
     Ok :
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
@@ -363,7 +364,7 @@ let validateCustodianData =
   };
 
 let validateCustodianRemovalData =
-    ({custodianId, accountIdx}: CustodianRemoval.Data.t, {custodianData}) =>
+    ({custodianId, accountIdx}: Custodian.Removal.Data.t, {custodianData}) =>
   try (
     custodianData
     |> List.exists(((_processId, data: Custodian.Data.t)) =>
@@ -514,7 +515,7 @@ let validateEvent =
   | PartnerRemovalProposed(proposal) =>
     validateProposal(
       ~validateData=validatePartnerRemovalData,
-      PartnerRemoval.processName,
+      Partner.Removal.processName,
       proposal,
     )
   | CustodianProposed(proposal) =>
@@ -526,7 +527,7 @@ let validateEvent =
   | CustodianRemovalProposed(proposal) =>
     validateProposal(
       ~validateData=validateCustodianRemovalData,
-      CustodianRemoval.processName,
+      Custodian.Removal.processName,
       proposal,
     )
   | AccountCreationProposed(proposal) =>
