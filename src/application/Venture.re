@@ -46,7 +46,13 @@ let make = (session, id, listenerState, listener) => {
 };
 
 let applyInternal =
-    (issuer, event, oldLog, (state, wallet, (listenerState, listener))) => {
+    (
+      ~syncing=false,
+      issuer,
+      event,
+      oldLog,
+      (state, wallet, (listenerState, listener)),
+    ) => {
   let (item, log) = oldLog |> EventLog.append(issuer, event);
   switch (item |> Validation.validate(state)) {
   | Ok =>
@@ -64,7 +70,9 @@ let applyInternal =
   | result =>
     logMessage("Event was rejected because of:");
     logMessage(Validation.resultToString(result));
-    raise(InvalidEvent(result));
+    syncing ?
+      (None, oldLog, (state, wallet, (listenerState, listener))) :
+      raise(InvalidEvent(result));
   };
 };
 
@@ -334,7 +342,7 @@ module SynchronizeLogs = {
       |> Watchers.processPending(
            session,
            log,
-           applyInternal,
+           applyInternal(~syncing=true),
            (state, wallet, (listenerState, listener)),
          )
       |> then_(
