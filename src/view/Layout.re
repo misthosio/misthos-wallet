@@ -59,7 +59,7 @@ let make = (~drawer, children) => {
           },
           {
             name: "drawer",
-            styles: ReactDOMRe.Style.make(~width="250px", ~flex="1", ()),
+            styles: ReactDOMRe.Style.make(~width="20vw", ~flex="1", ()),
           },
         ]
         render=(
