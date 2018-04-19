@@ -33,56 +33,70 @@ let loadVentureAndIndex =
   switch (session, currentRoute: Router.Config.route, ventureState) {
   | (LoggedIn(sessionData), Venture(id), VentureLoaded(venture))
       when id != (venture |> Venture.getId) =>
-    Js.Promise.(
-      Venture.load(
-        sessionData,
-        ~ventureId=id,
-        ~listenerState=ViewModel.make(),
-        ~listener=ViewModel.apply,
-      )
-      |> then_(venture =>
-           send(UpdateVenture(VentureLoaded(venture))) |> resolve
-         )
-      |> ignore
-    );
+    Js.Global.setTimeout(
+      () =>
+        Js.Promise.(
+          Venture.load(
+            sessionData,
+            ~ventureId=id,
+            ~listenerState=ViewModel.make(),
+            ~listener=ViewModel.apply,
+          )
+          |> then_(venture =>
+               send(UpdateVenture(VentureLoaded(venture))) |> resolve
+             )
+          |> ignore
+        ),
+      1,
+    )
+    |> ignore;
     LoadingVenture;
   | (LoggedIn(_), Venture(id), VentureLoaded(venture))
       when id == (venture |> Venture.getId) => ventureState
   | (LoggedIn(sessionData), Venture(id), _) =>
-    Js.Promise.(
-      Venture.load(
-        sessionData,
-        ~ventureId=id,
-        ~listenerState=ViewModel.make(),
-        ~listener=ViewModel.apply,
-      )
-      |> then_(venture =>
-           send(UpdateVenture(VentureLoaded(venture))) |> resolve
-         )
-      |> ignore
-    );
+    Js.Global.setTimeout(
+      () =>
+        Js.Promise.(
+          Venture.load(
+            sessionData,
+            ~ventureId=id,
+            ~listenerState=ViewModel.make(),
+            ~listener=ViewModel.apply,
+          )
+          |> then_(venture =>
+               send(UpdateVenture(VentureLoaded(venture))) |> resolve
+             )
+          |> ignore
+        ),
+      1,
+    )
+    |> ignore;
     LoadingVenture;
   | (LoggedIn(sessionData), JoinVenture(ventureId, userId), _) =>
-    Js.Promise.(
-      Venture.join(
-        sessionData,
-        ~userId,
-        ~ventureId,
-        ~listenerState=ViewModel.make(),
-        ~listener=ViewModel.apply,
-      )
-      |> then_(((index, venture)) => {
-           send(UpdateIndex(index));
-           send(UpdateVenture(VentureLoaded(venture)));
-           ReasonReact.Router.push(
-             Router.Config.routeToUrl(
-               Router.Config.Venture(venture |> Venture.getId),
-             ),
-           )
-           |> resolve;
-         })
-      |> ignore
-    );
+    Js.Global.setTimeout(
+      () =>
+        Js.Promise.(
+          Venture.join(
+            sessionData,
+            ~userId,
+            ~ventureId,
+            ~listenerState=ViewModel.make(),
+            ~listener=ViewModel.apply,
+          )
+          |> then_(((index, venture)) => {
+               send(UpdateVenture(VentureLoaded(venture)));
+               ReasonReact.Router.push(
+                 Router.Config.routeToUrl(
+                   Router.Config.Venture(venture |> Venture.getId),
+                 ),
+               );
+               send(UpdateIndex(index)) |> resolve;
+             })
+          |> ignore
+        ),
+      1,
+    )
+    |> ignore;
     JoiningVenture;
   | _ => None
   };
