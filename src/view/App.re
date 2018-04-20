@@ -28,7 +28,7 @@ let make = (~session, ~updateSession, _children) => {
     | (Unknown, _) => <Spinner text="Loading" />
     | (AnonymousLogin, _) =>
       <Spinner
-        text="Missing BlockStack session, upgrade BlockStack client, close all Misthos tabs and try again"
+        text="You have signed in with a blockstack user that doesn't have a registered blockstack.id, make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id."
       />
     | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
     | (LoggedIn(session), Home) =>
