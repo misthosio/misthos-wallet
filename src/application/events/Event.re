@@ -687,6 +687,27 @@ let getPartnerProposedExn = event =>
          "getPartnerProposedExn"
   };
 
+let getPartnerRemovalAcceptedExn = event =>
+  switch (event) {
+  | PartnerRemovalAccepted(unwrapped) => unwrapped
+  | _ => %assert
+         "getPartnerRemovalAcceptedExn"
+  };
+
+let getPartnerRemovalEndorsedExn = event =>
+  switch (event) {
+  | PartnerRemovalEndorsed(unwrapped) => unwrapped
+  | _ => %assert
+         "getPartnerRemovalEndorsedExn"
+  };
+
+let getPartnerRemovalProposedExn = event =>
+  switch (event) {
+  | PartnerRemovalProposed(unwrapped) => unwrapped
+  | _ => %assert
+         "getPartnerRemovalProposedExn"
+  };
+
 let getVentureCreatedExn = event =>
   switch (event) {
   | VentureCreated(unwrapped) => unwrapped
