@@ -13,9 +13,6 @@ module L = G.Log;
 open WatcherHelpers;
 
 let () = {
-  /* acceptes when endorsed */
-  /* completes when accepted */
-  /* handles removals */
   describe("With 1 partner and a proposal", () => {
     let (user1, user2) = G.twoUserSessions();
     let log =
