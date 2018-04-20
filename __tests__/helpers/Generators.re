@@ -109,11 +109,6 @@ module Log = {
          );
     {systemIssuer: ventureCreated.systemIssuer, lastItem, log};
   };
-  let withFirstPartner = (session: Session.Data.t) =>
-    appendEvent(
-      session.issuerKeyPair,
-      PartnerProposed(Event.partnerProposed(session, session)),
-    );
   let withPartnerProposed = (~supporter: Session.Data.t, ~prospect) =>
     appendEvent(
       supporter.issuerKeyPair,
@@ -141,6 +136,7 @@ module Log = {
     | _ => %assert
            "withPartner"
     };
+  let withFirstPartner = user => withPartner(user, ~supporters=[user]);
   let withPartnerRemovalProposed = (~supporter: Session.Data.t, ~toBeRemoved) =>
     appendEvent(
       supporter.issuerKeyPair,
