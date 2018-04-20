@@ -1,6 +1,6 @@
-open Jest;
+open PrimitiveTypes;
 
-open Expect;
+open Jest;
 
 module PartnerApproval = Watcher__PartnerApproval;
 
@@ -13,6 +13,24 @@ module L = G.Log;
 open WatcherHelpers;
 
 let () = {
+  describe("Will approve the creator", () => {
+    let user1 = G.userSession("creator.id" |> UserId.fromString);
+    let log =
+      L.(
+        createVenture(user1)
+        |> withPartnerProposed(~supporter=user1, ~prospect=user1)
+      );
+    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+    let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
+    testWatcherHasEventPending(
+      "PartnerAccepted",
+      watcher,
+      log |> L.systemIssuer,
+      fun
+      | PartnerAccepted({data}) => data == proposal.data
+      | _ => false,
+    );
+  });
   describe("With 1 partner and a proposal", () => {
     let (user1, user2) = G.twoUserSessions();
     let log =

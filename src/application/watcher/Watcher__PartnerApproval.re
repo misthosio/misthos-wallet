@@ -48,6 +48,8 @@ let make = (proposal: Partner.Proposed.t, log) => {
           | PartnerRemovalAccepted({data: {id}}) => {
               ...state^,
               eligable: state^.eligable |> List.filter(UserId.neq(id)),
+              endorsements:
+                state^.endorsements |> List.filter(UserId.neq(id)),
             }
           | _ => state^
           }

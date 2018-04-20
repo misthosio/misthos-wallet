@@ -28,6 +28,11 @@ let () = {
       )
       |> toBe(false);
     });
+    test("at least one eligable", () => {
+      let p = Policy.absolute;
+      expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
+      |> toBe(false);
+    });
   });
   describe("UnanimousMinusOne", () => {
     test("fulfilled", () => {
@@ -65,6 +70,11 @@ let () = {
              ~endorsed=["a" |> UserId.fromString],
            ),
       )
+      |> toBe(false);
+    });
+    test("at least one eligable", () => {
+      let p = Policy.absoluteMinusOne;
+      expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
       |> toBe(false);
     });
   });
