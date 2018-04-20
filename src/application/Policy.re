@@ -6,7 +6,10 @@ let filterUsers = (~eligable, ~endorsed) =>
 module Unanimous = {
   let fulfilled = (~eligable: list(userId), ~endorsed: list(userId)) => {
     let endorsed = filterUsers(~eligable, ~endorsed);
-    eligable |> List.length == (endorsed |> List.length);
+    eligable
+    |> List.length == (endorsed |> List.length)
+    && eligable
+    |> List.length > 0;
   };
   let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
 };
@@ -14,7 +17,11 @@ module Unanimous = {
 module UnanimousMinusOne = {
   let fulfilled = (~eligable: list(userId), ~endorsed: list(userId)) => {
     let endorsed = filterUsers(~eligable, ~endorsed);
-    endorsed |> List.length >= List.length(eligable) - 1;
+    endorsed
+    |> List.length >= List.length(eligable)
+    - 1
+    && eligable
+    |> List.length > 0;
   };
   let encode = _p =>
     Json.Encode.(object_([("type", string("UnanimousMinusOne"))]));
