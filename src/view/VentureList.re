@@ -2,6 +2,19 @@ open PrimitiveTypes;
 
 let component = ReasonReact.statelessComponent("VentureList");
 
+module Styles = {
+  open Css;
+  let linkSelected =
+    style([
+      display(block),
+      width(`percent(100.0)),
+      color(Colors.misthosTeal),
+    ]);
+  let link =
+    style([display(block), width(`percent(100.0)), color(`currentColor)]);
+  let title = style([padding2(~v=px(7), ~h=px(20))]);
+};
+
 let make = (~selected=?, ~index, _children) => {
   ...component,
   render: _self => {
@@ -11,57 +24,28 @@ let make = (~selected=?, ~index, _children) => {
           index
           |> List.map(
                Venture.Index.(
-                 ({name, id}) =>
-                   MaterialUi.(
-                     <WithStyles
-                       key=(id |> VentureId.toString)
-                       classes=[
-                         {
-                           name: "linkSelected",
-                           styles:
-                             ReactDOMRe.Style.make(
-                               ~display="block",
-                               ~width="100%",
-                               ~color="#02a2b4",
-                               (),
-                             ),
-                         },
-                         {
-                           name: "link",
-                           styles:
-                             ReactDOMRe.Style.make(
-                               ~display="block",
-                               ~width="100%",
-                               ~color="inherit",
-                               (),
-                             ),
-                         },
-                       ]
-                       render={
-                                let ids = id |> VentureId.toString;
-                                classes =>
-                                  <ListItem
-                                    key=ids
-                                    button=false
-                                    value=(`String(ids))
-                                    component=(`String("li"))>
-                                    <ListItemText
-                                      primary={
-                                        <Link
-                                          className=(
-                                            Some(id) == selected ?
-                                              classes##linkSelected :
-                                              classes##link
-                                          )
-                                          route=(Venture(id))>
-                                          (name |> ReasonReact.stringToElement)
-                                        </Link>
-                                      }
-                                    />
-                                  </ListItem>;
-                              }
+                 ({name, id}) => {
+                   open MaterialUi;
+                   let ids = id |> VentureId.toString;
+                   <ListItem
+                     key=ids
+                     button=false
+                     value=(`String(ids))
+                     component=(`String("li"))>
+                     <ListItemText
+                       primary={
+                         <Link
+                           className=(
+                             Some(id) == selected ?
+                               Styles.linkSelected : Styles.link
+                           )
+                           route=(Venture(id))>
+                           (name |> ReasonReact.stringToElement)
+                         </Link>
+                       }
                      />
-                   )
+                   </ListItem>;
+                 }
                ),
              ),
         ),
@@ -69,23 +53,11 @@ let make = (~selected=?, ~index, _children) => {
     let _status = ReasonReact.stringToElement("ventures:");
     let title =
       MaterialUi.(
-        <WithStyles
-          key="ventures-title"
-          classes=[
-            {
-              name: "title",
-              styles: ReactDOMRe.Style.make(~padding="7px 20px", ()),
-            },
-          ]
-          render=(
-            classes =>
-              <TitleBar>
-                <Typography className=classes##title variant=`Headline>
-                  (ReasonReact.stringToElement("My Ventures"))
-                </Typography>
-              </TitleBar>
-          )
-        />
+        <TitleBar>
+          <Typography key="titleBar" className=Styles.title variant=`Headline>
+            ("My Ventures" |> Utils.text)
+          </Typography>
+        </TitleBar>
       );
     <div>
       title

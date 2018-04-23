@@ -16,8 +16,7 @@ module Styles = {
 let make = (~color=?, ~onClick=?, ~fullWidth=false, children) => {
   ...component,
   render: _self =>
-    <MaterialUi.Button
-      classes=[Root(Styles.button(fullWidth))] ?color ?onClick>
+    <MaterialUi.Button className=(Styles.button(fullWidth)) ?color ?onClick>
       children
     </MaterialUi.Button>,
 };

@@ -7,8 +7,7 @@ external jss : unit => Js.t({..}) = "default";
 [@bs.module "material-ui/styles"]
 external createGenerateClassName : unit => Js.t({..}) = "";
 
-let make = children => {
-  Js.log(jss);
+let make = children =>
   ReasonReact.wrapJsForReason(
     ~reactClass,
     ~props={
@@ -17,4 +16,3 @@ let make = children => {
     },
     children,
   );
-};
