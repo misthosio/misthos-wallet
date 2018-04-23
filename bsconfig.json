@@ -16,7 +16,8 @@
     "bs-fetch",
     "@jsiebern/bs-material-ui",
     "bs-material-ui-icons",
-    "reason-reroute"
+    "reason-reroute",
+    "bs-css"
   ],
   "bs-dev-dependencies": [
      "@glennsl/bs-jest",

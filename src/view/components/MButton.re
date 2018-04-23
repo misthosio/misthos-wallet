@@ -1,31 +1,23 @@
 let component = ReasonReact.statelessComponent("MButton");
 
+module Styles = {
+  open Css;
+  let button = fullWidth =>
+    style([
+      borderRadius(px(25)),
+      border(px(2), `solid, black),
+      margin(px(2)),
+      paddingLeft(px(25)),
+      paddingRight(px(25)),
+      width(fullWidth ? `percent(100.0) : auto),
+    ]);
+};
+
 let make = (~color=?, ~onClick=?, ~fullWidth=false, children) => {
   ...component,
   render: _self =>
-    MaterialUi.(
-      <WithStyles
-        classes=[
-          {
-            name: "button",
-            styles:
-              ReactDOMRe.Style.make(
-                ~borderRadius="25px",
-                ~border="solid 1.5px #000000",
-                ~margin="1.5px",
-                ~paddingLeft="25px",
-                ~paddingRight="25px",
-                ~width=fullWidth ? "100%" : "auto",
-                (),
-              ),
-          },
-        ]
-        render=(
-          classes =>
-            <Button className=classes##button ?color ?onClick>
-              children
-            </Button>
-        )
-      />
-    ),
+    <MaterialUi.Button
+      classes=[Root(Styles.button(fullWidth))] ?color ?onClick>
+      children
+    </MaterialUi.Button>,
 };
