@@ -1400,13 +1400,6 @@ bs-json@^1.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/bs-json/-/bs-json-1.0.1.tgz#0e25ed5ba7164ab131e494669b755da9844cc37e"
 
-bs-loader@^1.8.0:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/bs-loader/-/bs-loader-1.8.2.tgz#efd19d56b14d8e0c8bb18283045e7f04427d6cab"
-  dependencies:
-    loader-utils "^1.1.0"
-    read-bsconfig "^1.0.1"
-
 bs-material-ui-icons@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/bs-material-ui-icons/-/bs-material-ui-icons-0.1.5.tgz#3c778c18694a7962e7c9d332c59c2d46f0ccfe5a"
@@ -6332,12 +6325,6 @@ react-transition-group@^2.2.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.0"
-
-read-bsconfig@^1.0.1:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/read-bsconfig/-/read-bsconfig-1.0.4.tgz#3dabf6b1c08451a6939274cb5e178733bcbb1bdf"
-  dependencies:
-    json5 "^0.5.1"
 
 read-pkg-up@^1.0.1:
   version "1.0.1"
