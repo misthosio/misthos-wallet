@@ -129,6 +129,15 @@ module.exports = {
         include: paths.appSrc,
       },
       {
+        test: /\_worker\.bs\.js$/,
+        use: {
+          loader: 'worker-loader',
+          options: {
+            name: 'static/js/[hash].worker.js'
+          }
+        }
+      },
+      {
         // "oneOf" will traverse all following loaders until one will
         // match the requirements. When no loader matches it will fall
         // back to the "file" loader at the end of the loader list.
