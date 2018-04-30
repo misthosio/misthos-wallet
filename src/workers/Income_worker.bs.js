@@ -71,6 +71,7 @@ function handleMsg(msg) {
     logMessage("Scanning transactions");
     scanTransactions(exposedAddresses, txIds);
     interval[0] = /* Some */[setInterval((function () {
+              logMessage("Scanning transactions");
               return scanTransactions(exposedAddresses, txIds);
             }), 10000)];
     return /* () */0;

@@ -92,7 +92,10 @@ let handleMsg = msg => {
     interval :=
       Some(
         Js.Global.setInterval(
-          () => scanTransactions(exposedAddresses, txIds),
+          () => {
+            logMessage("Scanning transactions");
+            scanTransactions(exposedAddresses, txIds);
+          },
           syncInterval,
         ),
       );
