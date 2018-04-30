@@ -1,4 +1,4 @@
-let text = ReasonReact.stringToElement;
+let text = Utils.text;
 
 type action =
   | ChangeAmountInteger(int)

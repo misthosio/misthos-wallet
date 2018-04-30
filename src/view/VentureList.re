@@ -19,7 +19,7 @@ let make = (~selected=?, ~index, _children) => {
   ...component,
   render: _self => {
     let ventureList =
-      ReasonReact.arrayToElement(
+      ReasonReact.array(
         Array.of_list(
           index
           |> List.map(
@@ -40,7 +40,7 @@ let make = (~selected=?, ~index, _children) => {
                                Styles.linkSelected : Styles.link
                            )
                            route=(Venture(id))>
-                           (name |> ReasonReact.stringToElement)
+                           (name |> Utils.text)
                          </Link>
                        }
                      />
@@ -50,7 +50,7 @@ let make = (~selected=?, ~index, _children) => {
              ),
         ),
       );
-    let _status = ReasonReact.stringToElement("ventures:");
+    let _status = Utils.text("ventures:");
     let title =
       MaterialUi.(
         <TitleBar>

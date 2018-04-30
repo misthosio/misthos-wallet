@@ -10,14 +10,11 @@ let component = ReasonReact.reducerComponent("SessionStore");
 let make = children => {
   ...component,
   initialState: () => {session: Session.Unknown},
-  didMount: (_) =>
-    ReasonReact.SideEffects(
-      ({send}) =>
-        Js.Promise.(
-          Session.getCurrentSession()
-          |> then_(session => send(UpdateSession(session)) |> resolve)
-          |> ignore
-        ),
+  didMount: ({send}) =>
+    Js.Promise.(
+      Session.getCurrentSession()
+      |> then_(session => send(UpdateSession(session)) |> resolve)
+      |> ignore
     ),
   reducer: (action, _state) =>
     switch (action) {

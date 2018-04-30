@@ -52,7 +52,7 @@ let make = (~onCreateVenture, _children) => {
             justify=`Center>
             <Grid item=true xs=V8>
               <Typography variant=`Headline>
-                (ReasonReact.stringToElement("Create a Venture"))
+                (Utils.text("Create a Venture"))
               </Typography>
             </Grid>
           </Grid>

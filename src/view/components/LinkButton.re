@@ -11,7 +11,7 @@ let make = (~route, children) => {
           ReasonReact.Router.push(href);
         }
       )>
-      (ReasonReact.arrayToElement(children))
+      (ReasonReact.array(children))
     </MButton>;
   },
 };

@@ -2,7 +2,7 @@ open Venture;
 
 open PrimitiveTypes;
 
-let text = ReasonReact.stringToElement;
+let text = Utils.text;
 
 type state = {
   venture: Venture.t(ViewModel.t),
@@ -214,7 +214,7 @@ let make =
     },
   render: ({send, state}) => {
     let partners =
-      ReasonReact.arrayToElement(
+      ReasonReact.array(
         Array.of_list(
           ViewModel.partners(state.viewModel)
           |> List.map((m: ViewModel.partner) =>
@@ -233,7 +233,7 @@ let make =
                        <button onClick=(_e => send(RemovePartner(m.userId)))>
                          (text("Propose Removal"))
                        </button>
-                     | _ => ReasonReact.nullElement
+                     | _ => ReasonReact.null
                      }
                    )
                  </div>
@@ -242,7 +242,7 @@ let make =
         ),
       );
     let prospects =
-      ReasonReact.arrayToElement(
+      ReasonReact.array(
         Array.of_list(
           ViewModel.prospects(state.viewModel)
           |> List.map((prospect: ViewModel.prospect) =>
@@ -268,7 +268,7 @@ let make =
                        (text("Endorse Partner"))
                      </button>;
                    } else {
-                     ReasonReact.nullElement;
+                     ReasonReact.null;
                    }
                  )
                </li>
@@ -276,7 +276,7 @@ let make =
         ),
       );
     let removalProspects =
-      ReasonReact.arrayToElement(
+      ReasonReact.array(
         Array.of_list(
           ViewModel.removalProspects(state.viewModel)
           |> List.map((prospect: ViewModel.prospect) =>
@@ -303,7 +303,7 @@ let make =
                        (text("Endorse Removal"))
                      </button>;
                    } else {
-                     ReasonReact.nullElement;
+                     ReasonReact.null;
                    }
                  )
                </li>
@@ -311,14 +311,14 @@ let make =
         ),
       );
     let addresses =
-      ReasonReact.arrayToElement(
+      ReasonReact.array(
         Array.of_list(
           ViewModel.incomeAddresses(state.viewModel)
           |> List.map(address => <li key=address> (text(address)) </li>),
         ),
       );
     let payouts =
-      ReasonReact.arrayToElement(
+      ReasonReact.array(
         Array.of_list(
           state.viewModel
           |> ViewModel.payouts
@@ -356,7 +356,7 @@ let make =
                        onClick=(_e => send(EndorsePayout(payout.processId)))>
                        (text("Endorse Payout"))
                      </button>
-                   | _ => ReasonReact.nullElement
+                   | _ => ReasonReact.null
                    }
                  )
                </li>
@@ -385,7 +385,7 @@ let make =
           placeholder="BlockstackId"
           value=state.prospectId
           onChange=(e => send(changeNewPartnerId(e)))
-          autoFocus=Js.false_
+          autoFocus=false
         />
         <button onClick=(_e => send(ProposePartner))>
           (text("Propose Partner"))

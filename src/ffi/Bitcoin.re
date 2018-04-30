@@ -67,7 +67,7 @@ module ECPair = {
   [@bs.send] external getPublicKeyBuffer : t => Node.buffer = "";
   [@bs.send.pipe: t] external sign : Node.buffer => ECSignature.t = "";
   [@bs.send.pipe: t]
-  external verify : (Node.buffer, ECSignature.t) => Js.boolean = "";
+  external verify : (Node.buffer, ECSignature.t) => bool = "";
 };
 
 module HDNode = {

@@ -11,7 +11,7 @@ let make = children => {
   render: _self =>
     MaterialUi.(
       <Grid className=Styles.title item=true xs=V12>
-        (ReasonReact.arrayToElement(children))
+        (ReasonReact.array(children))
         <div className=Styles.gradient />
       </Grid>
     ),

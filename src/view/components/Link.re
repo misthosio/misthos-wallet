@@ -13,7 +13,7 @@ let make = (~route, ~className=?, children) => {
           ReasonReact.Router.push(href);
         }
       )>
-      (ReasonReact.arrayToElement(children))
+      (ReasonReact.array(children))
     </MaterialUi.Button>;
   },
 };
