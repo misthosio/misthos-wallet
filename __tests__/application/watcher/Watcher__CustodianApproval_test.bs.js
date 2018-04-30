@@ -87,7 +87,7 @@ describe("With 2 users and a removal and a proposal", (function () {
                     }));
       }));
 
-describe.only("With 2 users and a proposal and a removal", (function () {
+describe("With 2 users and a proposal and a removal", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];

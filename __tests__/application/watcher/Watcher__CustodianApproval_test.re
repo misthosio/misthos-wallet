@@ -101,7 +101,7 @@ let () = {
       | _ => false,
     );
   });
-  Only.describe("With 2 users and a proposal and a removal", () => {
+  describe("With 2 users and a proposal and a removal", () => {
     let (user1, user2) = G.twoUserSessions();
     let log =
       L.(
