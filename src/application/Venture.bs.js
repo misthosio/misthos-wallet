@@ -39,11 +39,11 @@ function balance(param) {
 }
 
 function getExposedAddresses(param) {
-  return $$Array.of_list(Venture__Wallet.getExposedAddresses(/* None */0, param[/* wallet */4]));
+  return Venture__Wallet.getExposedAddresses(/* None */0, param[/* wallet */4]);
 }
 
 function getKnownTransactionIds(param) {
-  return $$Array.of_list(Venture__Wallet.getKnownTransactionIds(param[/* wallet */4]));
+  return Venture__Wallet.getKnownTransactionIds(param[/* wallet */4]);
 }
 
 function make(session, id, listenerState, listener) {

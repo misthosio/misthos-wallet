@@ -10,7 +10,8 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var ViewModel = require("./ViewModel.bs.js");
 var SyncWorker = require("../SyncWorker.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var IncomeWorker = require("../IncomeWorker.bs.js");
+var IncomeWorkerClient = require("../workers/IncomeWorkerClient.bs.js");
+var IncomeWorkerMessage = require("../workers/IncomeWorkerMessage.bs.js");
 
 function loadVentureAndIndex(send, session, currentRoute, param) {
   var ventureState = param[/* ventureState */1];
@@ -114,7 +115,7 @@ function make(currentRoute, session, children) {
                                 console.log(prim);
                                 return /* () */0;
                               }))],
-                      /* incomeWorker */[IncomeWorker.make((function (prim) {
+                      /* incomeWorker */[Curry._1(IncomeWorkerClient.make, (function (prim) {
                                 console.log(prim);
                                 return /* () */0;
                               }))]
@@ -143,7 +144,8 @@ function make(currentRoute, session, children) {
                                   setTimeout((function () {
                                           if (typeof ventureState === "number") {
                                             SyncWorker.postMessage(state[/* syncWorker */2][0], /* Wait */0);
-                                            return IncomeWorker.postMessage(state[/* incomeWorker */3][0], /* Wait */0);
+                                            state[/* incomeWorker */3][0].postMessage(/* Wait */0);
+                                            return /* () */0;
                                           } else {
                                             var venture = ventureState[0];
                                             Venture.getPartnerHistoryUrls(venture).then((function (urls) {
@@ -152,7 +154,7 @@ function make(currentRoute, session, children) {
                                                                     Venture.getSummary(venture)
                                                                   ]));
                                                   }));
-                                            IncomeWorker.postMessage(state[/* incomeWorker */3][0], /* MonitorAddresses */[
+                                            state[/* incomeWorker */3][0].postMessage(/* MonitorAddresses */[
                                                   Venture.Wallet[/* getExposedAddresses */1](venture),
                                                   Venture.Wallet[/* getKnownTransactionIds */2](venture)
                                                 ]);
@@ -216,9 +218,10 @@ function make(currentRoute, session, children) {
                                   var state = param[/* state */2];
                                   var match = state[/* ventureState */1];
                                   if (typeof match === "number") {
-                                    return IncomeWorker.postMessage(state[/* incomeWorker */3][0], /* Wait */0);
+                                    state[/* incomeWorker */3][0].postMessage(/* Wait */0);
+                                    return /* () */0;
                                   } else {
-                                    Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], txs, match[0]).then((function (param) {
+                                    Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], IncomeWorkerMessage.decodeTransactions(txs), match[0]).then((function (param) {
                                             return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[param[0]]])));
                                           }));
                                     return /* () */0;
@@ -249,7 +252,7 @@ function make(currentRoute, session, children) {
                         /* Sub */[
                           (function () {
                               state[/* incomeWorker */3][0].terminate();
-                              var worker = IncomeWorker.make((function (message) {
+                              var worker = Curry._1(IncomeWorkerClient.make, (function (message) {
                                       return Curry._1(send, /* IncomeWorkerMessage */Block.__(4, [message]));
                                     }));
                               state[/* incomeWorker */3][0] = worker;

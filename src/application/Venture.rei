@@ -66,8 +66,8 @@ module Wallet: {
     reserved: BTC.t,
   };
   let balance: t('a) => balance;
-  let getExposedAddresses: t('a) => array(string);
-  let getKnownTransactionIds: t('a) => array(string);
+  let getExposedAddresses: t('a) => list(string);
+  let getKnownTransactionIds: t('a) => list(string);
 };
 
 module Cmd: {
