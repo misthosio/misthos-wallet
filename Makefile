@@ -14,6 +14,8 @@ bsb:
 	node_modules/.bin/bsb -make-world -w
 
 build:
+	node_modules/.bin/bsb -clean-world
+	node_modules/.bin/bsb -make-world
 	rm -rf ./node_modules/uri-js/dist/esnext
 	rm -rf build
 	yarn build
