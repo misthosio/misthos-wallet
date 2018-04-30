@@ -11,7 +11,9 @@ external onMessage :
   (self, [@bs.uncurry] ({. "data": Message.send} => unit)) => unit =
   "onmessage";
 
-[@bs.val] external postMessage : Message.receive => unit = "postMessage";
+[@bs.val] external _postMessage : Js.Json.t => unit = "postMessage";
+
+let postMessage = receive => receive |> Message.encodeReceive |> _postMessage;
 
 let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
 
@@ -67,26 +69,7 @@ let scanTransactions = (addresses, txIds) =>
               (
                 if (newTransactions |> List.length > 0) {
                   postMessage(
-                    NewTransactionsDetected(
-                      newTransactions
-                      |> List.map(tx =>
-                           (
-                             {
-                               txId: tx.txId,
-                               outputs:
-                                 tx.outputs
-                                 |> List.map(o =>
-                                      (
-                                        {
-                                          address: o.address,
-                                          amount: o.amount |> BTC.encode,
-                                        }: Message.output
-                                      )
-                                    ),
-                             }: Message.transaction
-                           )
-                         ),
-                    ),
+                    Message.NewTransactionsDetected(newTransactions),
                   );
                 }
               )

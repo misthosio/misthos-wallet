@@ -5,9 +5,9 @@ var Curry = require("bs-platform/lib/js/curry.js");
 
 function MakeClient(Config) {
   var make = function (onMessage) {
-    var worker = Curry._1(Config[/* instance */0], /* () */0);
+    var worker = Curry._1(Config[/* instance */1], /* () */0);
     worker.onmessage = (function (msg) {
-        return Curry._1(onMessage, msg.data);
+        return Curry._1(onMessage, Curry._1(Config[/* decodeReceive */0], msg.data));
       });
     return worker;
   };
