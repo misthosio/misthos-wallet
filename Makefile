@@ -20,7 +20,7 @@ build:
 
 ci:
 	node_modules/.bin/bsb -clean-world
-	node_modules/.bin/bsb -make-world -w
+	node_modules/.bin/bsb -make-world
 	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
 	CI=true yarn test --runInBand
