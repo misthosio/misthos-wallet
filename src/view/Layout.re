@@ -1,5 +1,3 @@
-let text = ReasonReact.stringToElement;
-
 [@bs.module] external logo : string = "../assets/img/logo-solid.svg";
 
 [@bs.module] external menu : string = "../assets/img/menu.svg";

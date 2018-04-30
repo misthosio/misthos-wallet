@@ -113,10 +113,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
   },
   didMount: ({send, state}) =>
-    ReasonReact.Update({
-      ...state,
-      ventureState: loadVentureAndIndex(send, session, currentRoute, state),
-    }),
+    loadVentureAndIndex(send, session, currentRoute, state) |> ignore,
   willReceiveProps: ({send, state}) => {
     ...state,
     ventureState: loadVentureAndIndex(send, session, currentRoute, state),

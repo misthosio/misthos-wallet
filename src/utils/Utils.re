@@ -49,4 +49,4 @@ let mapOption = fn =>
   | Some(a) => Some(fn(a))
   | None => None;
 
-let text = ReasonReact.stringToElement;
+let text = ReasonReact.string;

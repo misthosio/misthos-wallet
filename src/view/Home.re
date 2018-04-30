@@ -11,6 +11,6 @@ let make = (~session, ~selectedVenture, ~updateVenture, _children) => {
     | JoiningVenture => <Spinner text="Joining venture" />
     | LoadingVenture => <Spinner text="Loading venture" />
     | CreatingVenture => <Spinner text="Creating venture" />
-    | None => ReasonReact.stringToElement("Not selected")
+    | None => Utils.text("Not selected")
     },
 };

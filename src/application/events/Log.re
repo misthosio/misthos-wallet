@@ -67,8 +67,7 @@ module Make = (Event: Encodable) => {
            false;
          } else {
            Utils.keyFromPublicKey(issuerPubKey)
-           |> Bitcoin.ECPair.verify(hashCheck, signature)
-           |> Js.to_bool;
+           |> Bitcoin.ECPair.verify(hashCheck, signature);
          };
        });
   };
