@@ -196,7 +196,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                   switch (state.ventureState) {
                   | VentureLoaded(venture) =>
                     venture
-                    |> exec(txs |> IncomeWorkerMessage.decodeTransactions)
+                    |> exec(txs)
                     |> then_(
                          fun
                          | Ok(venture) =>

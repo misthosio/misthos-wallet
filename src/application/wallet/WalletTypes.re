@@ -16,6 +16,41 @@ type transaction = {
   outputs: list(output),
 };
 
+let encodeTransaction = transaction =>
+  Json.Encode.(
+    object_([
+      ("txId", string(transaction.txId)),
+      (
+        "outputs",
+        array(
+          output =>
+            object_([
+              ("address", string(output.address)),
+              ("amount", BTC.encode(output.amount)),
+            ]),
+          transaction.outputs |> Array.of_list,
+        ),
+      ),
+    ])
+  );
+
+let decodeTransaction = raw =>
+  Json.Decode.{
+    txId: raw |> field("txid", string),
+    outputs:
+      raw
+      |> field(
+           "outputs",
+           array(output =>
+             {
+               address: output |> field("address", string),
+               amount: output |> field("value", string) |> BTC.fromString,
+             }
+           ),
+         )
+      |> Array.to_list,
+  };
+
 type broadcastResult =
   | Ok(string)
   | AlreadyInBlockchain

@@ -7,12 +7,16 @@ var Income_workerBsJs = require("./Income_worker.bs.js");
 
 var Config = /* module */[
   /* msgType */IncomeWorkerMessage.msgType,
-  /* decodeTransactions */IncomeWorkerMessage.decodeTransactions
+  /* encodeReceive */IncomeWorkerMessage.encodeReceive,
+  /* decodeReceive */IncomeWorkerMessage.decodeReceive
 ];
 
-var include = WebWorker.MakeClient([(function () {
+var include = WebWorker.MakeClient([
+      IncomeWorkerMessage.decodeReceive,
+      (function () {
           return new Income_workerBsJs();
-        })]);
+        })
+    ]);
 
 var make = include[0];
 

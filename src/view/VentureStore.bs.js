@@ -11,7 +11,6 @@ var ViewModel = require("./ViewModel.bs.js");
 var SyncWorker = require("../SyncWorker.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var IncomeWorkerClient = require("../workers/IncomeWorkerClient.bs.js");
-var IncomeWorkerMessage = require("../workers/IncomeWorkerMessage.bs.js");
 
 function loadVentureAndIndex(send, session, currentRoute, param) {
   var ventureState = param[/* ventureState */1];
@@ -221,7 +220,7 @@ function make(currentRoute, session, children) {
                                     state[/* incomeWorker */3][0].postMessage(/* Wait */0);
                                     return /* () */0;
                                   } else {
-                                    Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], IncomeWorkerMessage.decodeTransactions(txs), match[0]).then((function (param) {
+                                    Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], txs, match[0]).then((function (param) {
                                             return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[param[0]]])));
                                           }));
                                     return /* () */0;

@@ -1,3 +1,5 @@
+open WalletTypes;
+
 type exposedAddresses = list(string);
 
 type txIds = list(string);
@@ -11,32 +13,15 @@ let msgType =
   | Wait => "Wait"
   | MonitorAddresses(_, _) => "MonitorAddresses";
 
-type output = {
-  address: string,
-  amount: Js.Json.t,
-};
-
-type transaction = {
-  txId: string,
-  outputs: list(output),
-};
-
 type receive =
   | NewTransactionsDetected(list(transaction));
 
-let decodeTransactions = (transactions: list(transaction)) =>
-  transactions
-  |> List.map(tx =>
-       (
-         {
-           txId: tx.txId,
-           outputs:
-             tx.outputs
-             |> List.map((o: output) =>
-                  (
-                    {address: o.address, amount: o.amount |> BTC.decode}: WalletTypes.output
-                  )
-                ),
-         }: WalletTypes.transaction
-       )
-     );
+let encodeReceive =
+  fun
+  | NewTransactionsDetected(transactions) =>
+    Json.Encode.list(WalletTypes.encodeTransaction, transactions);
+
+let decodeReceive = raw =>
+  NewTransactionsDetected(
+    raw |> Json.Decode.list(WalletTypes.decodeTransaction),
+  );
