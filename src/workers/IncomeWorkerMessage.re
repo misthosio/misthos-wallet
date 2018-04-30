@@ -33,10 +33,9 @@ let decodeTransactions = (transactions: list(transaction)) =>
            outputs:
              tx.outputs
              |> List.map((o: output) =>
-                  WalletTypes.{
-                    address: o.address,
-                    amount: o.amount |> BTC.decode,
-                  }
+                  (
+                    {address: o.address, amount: o.amount |> BTC.decode}: WalletTypes.output
+                  )
                 ),
          }: WalletTypes.transaction
        )
