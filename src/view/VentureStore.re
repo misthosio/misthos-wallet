@@ -10,13 +10,13 @@ type action =
   | UpdateVenture(ventureState)
   | CreateVenture(Session.Data.t, string)
   | SyncWorkerMessage(SyncWorker.Message.receive)
-  | IncomeWorkerMessage(IncomeWorker.Message.receive);
+  | IncomeWorkerMessage(IncomeWorkerMessage.receive);
 
 type state = {
   index: Venture.Index.t,
   ventureState,
   syncWorker: ref(SyncWorker.t),
-  incomeWorker: ref(IncomeWorker.t),
+  incomeWorker: ref(IncomeWorkerClient.t),
 };
 
 let loadVentureAndIndex =
@@ -110,7 +110,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     index: [],
     ventureState: None,
     syncWorker: ref(SyncWorker.make(~onMessage=Js.log)),
-    incomeWorker: ref(IncomeWorker.make(~onMessage=Js.log)),
+    incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
   },
   didMount: ({send, state}) =>
     ReasonReact.Update({
@@ -136,15 +136,15 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     ),
     Sub(
       () => {
-        IncomeWorker.terminate(state.incomeWorker^);
+        IncomeWorkerClient.terminate(state.incomeWorker^);
         let worker =
-          IncomeWorker.make(~onMessage=message =>
+          IncomeWorkerClient.make(~onMessage=message =>
             send(IncomeWorkerMessage(message))
           );
         state.incomeWorker := worker;
         worker;
       },
-      IncomeWorker.terminate,
+      IncomeWorkerClient.terminate,
     ),
   ],
   reducer: (action, state) =>
@@ -196,7 +196,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                   switch (state.ventureState) {
                   | VentureLoaded(venture) =>
                     venture
-                    |> exec(txs)
+                    |> exec(txs |> IncomeWorkerMessage.decodeTransactions)
                     |> then_(
                          fun
                          | Ok(venture) =>
@@ -205,8 +205,8 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                        )
                     |> ignore
                   | _ =>
-                    IncomeWorker.Message.Wait
-                    |> IncomeWorker.postMessage(state.incomeWorker^)
+                    IncomeWorkerMessage.Wait
+                    |> IncomeWorkerClient.postMessage(state.incomeWorker^)
                   }
                 )
               )
@@ -235,17 +235,17 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                        )
                     |> ignore
                   );
-                  IncomeWorker.Message.MonitorAddresses(
+                  IncomeWorkerMessage.MonitorAddresses(
                     venture |> Venture.Wallet.getExposedAddresses,
                     venture |> Venture.Wallet.getKnownTransactionIds,
                   )
-                  |> IncomeWorker.postMessage(state.incomeWorker^)
+                  |> IncomeWorkerClient.postMessage(state.incomeWorker^)
                   |> ignore;
                 | _ =>
                   SyncWorker.Message.Wait
                   |> SyncWorker.postMessage(state.syncWorker^);
-                  IncomeWorker.Message.Wait
-                  |> IncomeWorker.postMessage(state.incomeWorker^);
+                  IncomeWorkerMessage.Wait
+                  |> IncomeWorkerClient.postMessage(state.incomeWorker^);
                 },
               1,
             )

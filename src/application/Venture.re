@@ -28,10 +28,8 @@ type t('a) = {
 module Wallet = {
   include Venture__Wallet;
   let balance = ({wallet}) => balance(AccountIndex.default, wallet);
-  let getExposedAddresses = ({wallet}) =>
-    getExposedAddresses(wallet) |> Array.of_list;
-  let getKnownTransactionIds = ({wallet}) =>
-    getKnownTransactionIds(wallet) |> Array.of_list;
+  let getExposedAddresses = ({wallet}) => getExposedAddresses(wallet);
+  let getKnownTransactionIds = ({wallet}) => getKnownTransactionIds(wallet);
 };
 
 let make = (session, id, listenerState, listener) => {
