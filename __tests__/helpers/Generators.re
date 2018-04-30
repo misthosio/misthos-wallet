@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 module AppEvent = Event;
 
 let userSession = id : Session.Data.t => {
@@ -81,6 +83,15 @@ module Event = {
     )
     |> AppEvent.getPartnerRemovalEndorsedExn;
   let partnerRemovalAccepted = AppEvent.Partner.Removal.Accepted.fromProposal;
+  let accountCreationProposed = ({userId}: Session.Data.t) =>
+    AppEvent.makeAccountCreationProposed(
+      ~supporterId=userId,
+      ~name="test",
+      ~accountIdx=AccountIndex.default,
+      ~policy=Policy.absolute,
+    )
+    |> AppEvent.getAccountCreationProposedExn;
+  let accountCreationAccepted = AppEvent.AccountCreation.Accepted.fromProposal;
 };
 
 module Log = {
@@ -171,4 +182,13 @@ module Log = {
     | _ => %assert
            "withPartner"
     };
+  let withAccountCreationProposed = (~supporter: Session.Data.t) =>
+    appendEvent(
+      supporter.issuerKeyPair,
+      AccountCreationProposed(Event.accountCreationProposed(supporter)),
+    );
+  let withAccountCreationAccepted = proposal =>
+    appendSystemEvent(
+      AccountCreationAccepted(Event.accountCreationAccepted(proposal)),
+    );
 };
