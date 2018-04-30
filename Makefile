@@ -2,7 +2,6 @@ install:
 	yarn install
 
 dev:
-	bsb -clean-world
 	yarn start
 
 test:
