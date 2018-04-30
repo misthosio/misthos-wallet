@@ -16,6 +16,7 @@ var UserInfo = require("../../src/application/UserInfo.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function userSession(id) {
   var appPrivateKey = Utils.bufToHex(Crypto.randomBytes(32));
@@ -76,6 +77,16 @@ function accountCreationProposed(param) {
 
 var accountCreationAccepted = Event.AccountCreation[/* Accepted */4][/* fromProposal */0];
 
+function custodianProposed(param, partnerProposal) {
+  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], param[/* userId */0], partnerProposal[/* data */4][/* id */0], WalletTypes.AccountIndex[/* default */8], Policy.absolute));
+}
+
+function custodianEndorsed(supporter, param) {
+  return Event.getCustodianEndorsedExn(Event.makeCustodianEndorsed(param[/* processId */0], supporter[/* userId */0]));
+}
+
+var custodianAccepted = Event.Custodian[/* Accepted */4][/* fromProposal */0];
+
 var Event$1 = /* module */[
   /* createVenture */createVenture,
   /* partnerProposed */partnerProposed,
@@ -85,7 +96,10 @@ var Event$1 = /* module */[
   /* partnerRemovalEndorsed */partnerRemovalEndorsed,
   /* partnerRemovalAccepted */partnerRemovalAccepted,
   /* accountCreationProposed */accountCreationProposed,
-  /* accountCreationAccepted */accountCreationAccepted
+  /* accountCreationAccepted */accountCreationAccepted,
+  /* custodianProposed */custodianProposed,
+  /* custodianEndorsed */custodianEndorsed,
+  /* custodianAccepted */custodianAccepted
 ];
 
 function systemIssuer(param) {
@@ -222,6 +236,44 @@ function withAccountCreationAccepted(proposal) {
     });
 }
 
+function withCustodianProposed(supporter, custodian, l) {
+  var partnerProposed = Curry._3(EventLog.reduce, (function (partnerProposal, param) {
+          var $$event = param[/* event */0];
+          if (partnerProposal) {
+            return /* Some */[partnerProposal[0]];
+          } else if ($$event.tag === 1) {
+            var proposal = $$event[0];
+            if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */4][/* id */0], custodian[/* userId */0])) {
+              return /* Some */[proposal];
+            } else {
+              return partnerProposal;
+            }
+          } else {
+            return partnerProposal;
+          }
+        }), /* None */0, l[/* log */2]);
+  if (partnerProposed) {
+    return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianProposed */Block.__(10, [custodianProposed(supporter, partnerProposed[0])]), l);
+  } else {
+    throw Caml_builtin_exceptions.not_found;
+  }
+}
+
+function withCustodianEndorsed(supporter, proposal) {
+  var partial_arg = /* CustodianEndorsed */Block.__(11, [custodianEndorsed(supporter, proposal)]);
+  var partial_arg$1 = supporter[/* issuerKeyPair */2];
+  return (function (param) {
+      return appendEvent(partial_arg$1, partial_arg, param);
+    });
+}
+
+function withCustodianAccepted(proposal) {
+  var partial_arg = /* CustodianAccepted */Block.__(12, [Curry._1(custodianAccepted, proposal)]);
+  return (function (param) {
+      return appendSystemEvent(partial_arg, param);
+    });
+}
+
 var Log = /* module */[
   /* systemIssuer */systemIssuer,
   /* lastItem */lastItem,
@@ -240,7 +292,10 @@ var Log = /* module */[
   /* withPartnerRemovalAccepted */withPartnerRemovalAccepted,
   /* withPartnerRemoved */withPartnerRemoved,
   /* withAccountCreationProposed */withAccountCreationProposed,
-  /* withAccountCreationAccepted */withAccountCreationAccepted
+  /* withAccountCreationAccepted */withAccountCreationAccepted,
+  /* withCustodianProposed */withCustodianProposed,
+  /* withCustodianEndorsed */withCustodianEndorsed,
+  /* withCustodianAccepted */withCustodianAccepted
 ];
 
 var AppEvent = 0;

@@ -92,6 +92,24 @@ module Event = {
     )
     |> AppEvent.getAccountCreationProposedExn;
   let accountCreationAccepted = AppEvent.AccountCreation.Accepted.fromProposal;
+  let custodianProposed =
+      (
+        {userId}: Session.Data.t,
+        partnerProposal: AppEvent.Partner.Proposed.t,
+      ) =>
+    Event.makeCustodianProposed(
+      ~partnerApprovalProcess=partnerProposal.processId,
+      ~supporterId=userId,
+      ~partnerId=partnerProposal.data.id,
+      ~accountIdx=AccountIndex.default,
+      ~policy=Policy.absolute,
+    )
+    |> Event.getCustodianProposedExn;
+  let custodianEndorsed =
+      (supporter: Session.Data.t, {processId}: AppEvent.Custodian.Proposed.t) =>
+    AppEvent.makeCustodianEndorsed(~processId, ~supporterId=supporter.userId)
+    |> AppEvent.getCustodianEndorsedExn;
+  let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
 };
 
 module Log = {
@@ -191,4 +209,36 @@ module Log = {
     appendSystemEvent(
       AccountCreationAccepted(Event.accountCreationAccepted(proposal)),
     );
+  let withCustodianProposed =
+      (~supporter: Session.Data.t, ~custodian: Session.Data.t, {log} as l) => {
+    let partnerProposed =
+      log
+      |> EventLog.reduce(
+           (partnerProposal, {event}) =>
+             switch (partnerProposal, event) {
+             | (Some(p), _) => Some(p)
+             | (_, PartnerProposed(proposal))
+                 when UserId.eq(proposal.data.id, custodian.userId) =>
+               Some(proposal)
+             | _ => partnerProposal
+             },
+           None,
+         );
+    switch (partnerProposed) {
+    | Some(proposal) =>
+      appendEvent(
+        supporter.issuerKeyPair,
+        CustodianProposed(Event.custodianProposed(supporter, proposal)),
+        l,
+      )
+    | None => raise(Not_found)
+    };
+  };
+  let withCustodianEndorsed = (supporter: Session.Data.t, proposal) =>
+    appendEvent(
+      supporter.issuerKeyPair,
+      CustodianEndorsed(Event.custodianEndorsed(supporter, proposal)),
+    );
+  let withCustodianAccepted = proposal =>
+    appendSystemEvent(CustodianAccepted(Event.custodianAccepted(proposal)));
 };
