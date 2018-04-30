@@ -13,6 +13,7 @@ var Crypto = require("crypto");
 var Network = require("../../src/application/wallet/Network.bs.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
+var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 
@@ -69,6 +70,12 @@ function partnerRemovalEndorsed(supporter, param) {
 
 var partnerRemovalAccepted = Event.Partner[/* Removal */5][/* Accepted */4][/* fromProposal */0];
 
+function accountCreationProposed(param) {
+  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */8], Policy.absolute));
+}
+
+var accountCreationAccepted = Event.AccountCreation[/* Accepted */4][/* fromProposal */0];
+
 var Event$1 = /* module */[
   /* createVenture */createVenture,
   /* partnerProposed */partnerProposed,
@@ -76,7 +83,9 @@ var Event$1 = /* module */[
   /* partnerAccepted */partnerAccepted,
   /* partnerRemovalProposed */partnerRemovalProposed,
   /* partnerRemovalEndorsed */partnerRemovalEndorsed,
-  /* partnerRemovalAccepted */partnerRemovalAccepted
+  /* partnerRemovalAccepted */partnerRemovalAccepted,
+  /* accountCreationProposed */accountCreationProposed,
+  /* accountCreationAccepted */accountCreationAccepted
 ];
 
 function systemIssuer(param) {
@@ -198,6 +207,21 @@ function withPartnerRemoved(user, supporters, log) {
   }
 }
 
+function withAccountCreationProposed(supporter) {
+  var partial_arg = /* AccountCreationProposed */Block.__(7, [accountCreationProposed(supporter)]);
+  var partial_arg$1 = supporter[/* issuerKeyPair */2];
+  return (function (param) {
+      return appendEvent(partial_arg$1, partial_arg, param);
+    });
+}
+
+function withAccountCreationAccepted(proposal) {
+  var partial_arg = /* AccountCreationAccepted */Block.__(9, [Curry._1(accountCreationAccepted, proposal)]);
+  return (function (param) {
+      return appendSystemEvent(partial_arg, param);
+    });
+}
+
 var Log = /* module */[
   /* systemIssuer */systemIssuer,
   /* lastItem */lastItem,
@@ -214,7 +238,9 @@ var Log = /* module */[
   /* withPartnerRemovalProposed */withPartnerRemovalProposed,
   /* withPartnerRemovalEndorsed */withPartnerRemovalEndorsed,
   /* withPartnerRemovalAccepted */withPartnerRemovalAccepted,
-  /* withPartnerRemoved */withPartnerRemoved
+  /* withPartnerRemoved */withPartnerRemoved,
+  /* withAccountCreationProposed */withAccountCreationProposed,
+  /* withAccountCreationAccepted */withAccountCreationAccepted
 ];
 
 var AppEvent = 0;
