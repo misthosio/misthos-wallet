@@ -66,7 +66,54 @@ let () = {
         Validation.Ok,
       );
     });
-    describe("when proposing a partner that already exists", () => {
+    describe("with the wrong policy", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~policy=Policy.unanimousMinusOne,
+               ~supporter=user1,
+               ~prospect=user2,
+             )
+          |> lastItem
+        ),
+        Validation.PolicyMissmatch,
+      );
+    });
+    describe("when the supporter is a non-partner", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the supporter is not the signer", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~issuer=user1.issuerKeyPair,
+               ~supporter=user2,
+               ~prospect=user3,
+             )
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the prospect already exists", () => {
       let user1 = G.userSession("user1" |> UserId.fromString);
       let log = L.(createVenture(user1) |> withFirstPartner(user1));
       testValidationResult(
@@ -91,6 +138,25 @@ let () = {
         L.(
           log
           |> withPartnerProposed(~supporter=user1, ~prospect=user1)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when proposing a partner that was removed", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerRemoved(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
           |> lastItem
         ),
         Validation.Ok,
