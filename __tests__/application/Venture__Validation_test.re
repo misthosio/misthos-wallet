@@ -128,11 +128,7 @@ let () = {
           |> withPartnerProposed(~supporter=user1, ~prospect=user2)
           |> lastItem
         ),
-        Validation.BadData(
-          "Partner with Id '"
-          ++ UserId.toString(user2.userId)
-          ++ "' already exists",
-        ),
+        Validation.Ignore,
       );
     });
     describe("when the prospect was already proposed", () => {

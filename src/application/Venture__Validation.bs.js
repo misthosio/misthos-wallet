@@ -751,10 +751,9 @@ function validateAcceptance(param, dataList, param$1, _) {
 }
 
 function validatePartnerData(param, param$1) {
-  var id = param[/* id */0];
-  var match = List.mem(id, param$1[/* partnerIds */4]);
+  var match = List.mem(param[/* id */0], param$1[/* partnerIds */4]);
   if (match) {
-    return /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](id) + "' already exists")];
+    return /* Ignore */1;
   } else {
     return /* Ok */0;
   }

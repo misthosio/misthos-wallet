@@ -100,7 +100,7 @@ describe("PartnerProposal", (function () {
                 var func = Generators.Log[/* withPartnerProposed */8];
                 return testValidationResult(constructState(log), Generators.Log[/* lastItem */2](Curry._1((function (param, param$1) {
                                         return Curry._4(func, param, param$1, user1, user2);
-                                      })(/* None */0, /* None */0), log)), /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](user2[/* userId */0]) + "' already exists")]);
+                                      })(/* None */0, /* None */0), log)), /* Ignore */1);
               }));
         describe("when the prospect was already proposed", (function () {
                 var match = Generators.threeUserSessions(/* () */0);

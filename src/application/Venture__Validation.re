@@ -344,11 +344,7 @@ let validateAcceptance =
   };
 
 let validatePartnerData = ({id}: Partner.Data.t, {partnerIds}) =>
-  partnerIds |> List.mem(id) ?
-    BadData(
-      "Partner with Id '" ++ UserId.toString(id) ++ "' already exists",
-    ) :
-    Ok;
+  partnerIds |> List.mem(id) ? Ignore : Ok;
 
 let validatePartnerRemovalData =
     ({id}: Partner.Removal.Data.t, {partnerIds}) =>
