@@ -27,7 +27,7 @@ describe("Unanimous", (function () {
                 ];
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
-                                  })(Policy.absolute)));
+                                  })(Policy.unanimous)));
               }));
         Jest.test("not fulfilled", (function () {
                 var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
@@ -50,12 +50,12 @@ describe("Unanimous", (function () {
                 ];
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
-                                  })(Policy.absolute)));
+                                  })(Policy.unanimous)));
               }));
         return Jest.test("at least one eligable", (function () {
                       return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                           return Policy.fulfilled(param)(/* [] */0, /* [] */0);
-                                        })(Policy.absolute)));
+                                        })(Policy.unanimous)));
                     }));
       }));
 
@@ -81,7 +81,7 @@ describe("UnanimousMinusOne", (function () {
                 ];
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
-                                  })(Policy.absoluteMinusOne)));
+                                  })(Policy.unanimousMinusOne)));
               }));
         Jest.test("fullfilled with minus 1 votes", (function () {
                 var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
@@ -104,7 +104,7 @@ describe("UnanimousMinusOne", (function () {
                 ];
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
-                                  })(Policy.absoluteMinusOne)));
+                                  })(Policy.unanimousMinusOne)));
               }));
         Jest.test("not fullfilled", (function () {
                 var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
@@ -126,12 +126,12 @@ describe("UnanimousMinusOne", (function () {
                 ];
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
-                                  })(Policy.absoluteMinusOne)));
+                                  })(Policy.unanimousMinusOne)));
               }));
         return Jest.test("at least one eligable", (function () {
                       return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                           return Policy.fulfilled(param)(/* [] */0, /* [] */0);
-                                        })(Policy.absoluteMinusOne)));
+                                        })(Policy.unanimousMinusOne)));
                     }));
       }));
 

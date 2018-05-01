@@ -32,7 +32,7 @@ type t = {
 let make = () => {
   network: Network.Testnet,
   ventureId: VentureId.fromString(""),
-  payoutPolicy: Policy.absolute,
+  payoutPolicy: Policy.unanimous,
   accountKeyChains: [],
   nextCoordinates: [],
   nextChangeCoordinates: [],

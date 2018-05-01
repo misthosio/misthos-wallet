@@ -18,8 +18,8 @@ describe("Validate CustodianData", (function () {
         var creatorId = PrimitiveTypes.UserId[/* fromString */1]("creator.id");
         var creatorKeyPair = BitcoinjsLib.ECPair.makeRandom();
         var creatorPubKey = Utils.publicKeyFromKeyPair(creatorKeyPair);
-        var createdEvent = Event.VentureCreated[/* make */0]("test", creatorId, creatorPubKey, Policy.absolute, /* Regtest */0);
-        var partnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(creatorId, creatorId, creatorPubKey, Policy.absolute));
+        var createdEvent = Event.VentureCreated[/* make */0]("test", creatorId, creatorPubKey, Policy.unanimous, /* Regtest */0);
+        var partnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(creatorId, creatorId, creatorPubKey, Policy.unanimous));
         var state = Venture__Validation.apply(/* PartnerAccepted */Block.__(3, [Curry._1(Event.Partner[/* Accepted */4][/* fromProposal */0], partnerProposal)]), Venture__Validation.apply(/* PartnerProposed */Block.__(1, [partnerProposal]), Venture__Validation.apply(/* VentureCreated */Block.__(0, [createdEvent]), Venture__Validation.makeState(/* () */0))));
         var accountIdx = WalletTypes.AccountIndex[/* default */8];
         var custodianId = PrimitiveTypes.UserId[/* fromString */1]("custodian.id");
@@ -32,7 +32,7 @@ describe("Validate CustodianData", (function () {
                                     /* accountIdx */accountIdx
                                   ], state)));
               }));
-        var custodianPartnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(creatorId, custodianId, custodianPubKey, Policy.absolute));
+        var custodianPartnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(creatorId, custodianId, custodianPubKey, Policy.unanimous));
         return Jest.test("Succeeds if partner was proposed", (function () {
                       return Jest.Expect[/* toEqual */12](/* Ok */0, Jest.Expect[/* expect */0](Venture__Validation.validateCustodianData(/* record */[
                                           /* partnerId */custodianId,
@@ -47,7 +47,7 @@ describe("Validate AccountKeyChainUpdated", (function () {
         var systemIssuer = BitcoinjsLib.ECPair.makeRandom();
         var emptyState = Venture__Validation.makeState(/* () */0);
         var keyChain0 = Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(WalletTypes.AccountIndex[/* first */1], WalletTypes.AccountKeyChainIndex[/* first */1], 0, /* [] */0));
-        var accountProposed = Curry._4(Event.AccountCreation[/* Proposed */2][/* make */0], /* None */0, supporterId, Policy.absolute, /* record */[
+        var accountProposed = Curry._4(Event.AccountCreation[/* Proposed */2][/* make */0], /* None */0, supporterId, Policy.unanimous, /* record */[
               /* accountIdx */WalletTypes.AccountIndex[/* default */8],
               /* name */"Account"
             ]);

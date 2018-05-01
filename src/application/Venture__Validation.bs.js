@@ -20,7 +20,7 @@ function makeState() {
           /* ventureName */"",
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* systemPubKey */"",
-          /* metaPolicy */Policy.absolute,
+          /* metaPolicy */Policy.unanimous,
           /* partnerIds : [] */0,
           /* partnerStoragePrefixes : [] */0,
           /* partnerPubKeys : [] */0,

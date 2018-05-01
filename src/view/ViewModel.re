@@ -38,8 +38,8 @@ let make = () => {
   partners: [],
   prospects: [],
   removalProspects: [],
-  metaPolicy: Policy.absolute,
-  partnerPolicy: Policy.absolute,
+  metaPolicy: Policy.unanimous,
+  partnerPolicy: Policy.unanimous,
   incomeAddresses: [],
   payouts: [],
 };

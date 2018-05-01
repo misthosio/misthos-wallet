@@ -31,9 +31,9 @@ type t =
   | Unanimous
   | UnanimousMinusOne;
 
-let absolute = Unanimous;
+let unanimous = Unanimous;
 
-let absoluteMinusOne = UnanimousMinusOne;
+let unanimousMinusOne = UnanimousMinusOne;
 
 let fulfilled =
   fun

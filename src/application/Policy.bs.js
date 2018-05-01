@@ -98,15 +98,15 @@ function decode(raw) {
   }
 }
 
-var absolute = /* Unanimous */0;
+var unanimous = /* Unanimous */0;
 
-var absoluteMinusOne = /* UnanimousMinusOne */1;
+var unanimousMinusOne = /* UnanimousMinusOne */1;
 
 exports.filterUsers = filterUsers;
 exports.Unanimous = Unanimous;
 exports.UnanimousMinusOne = UnanimousMinusOne;
-exports.absolute = absolute;
-exports.absoluteMinusOne = absoluteMinusOne;
+exports.unanimous = unanimous;
+exports.unanimousMinusOne = unanimousMinusOne;
 exports.fulfilled = fulfilled$2;
 exports.eq = eq;
 exports.neq = neq;

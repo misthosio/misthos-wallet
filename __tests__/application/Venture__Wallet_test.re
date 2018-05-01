@@ -35,7 +35,7 @@ let () =
         ~ventureName="test",
         ~creatorId=userA,
         ~creatorPubKey=keyA |> Utils.publicKeyFromKeyPair,
-        ~metaPolicy=Policy.absolute,
+        ~metaPolicy=Policy.unanimous,
         ~network=Network.Regtest,
       );
     let chainCode =

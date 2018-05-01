@@ -197,7 +197,7 @@ let persist = ({id, log, state} as venture) => {
   returnPromise;
 };
 
-let defaultPolicy = Policy.absolute;
+let defaultPolicy = Policy.unanimous;
 
 let load = (session: Session.Data.t, ~ventureId, ~listenerState, ~listener) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");

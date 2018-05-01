@@ -17,7 +17,7 @@ function make() {
   return /* record */[
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* network : Testnet */1,
-          /* payoutPolicy */Policy.absolute,
+          /* payoutPolicy */Policy.unanimous,
           /* accountKeyChains : [] */0,
           /* nextCoordinates : [] */0,
           /* nextChangeCoordinates : [] */0,

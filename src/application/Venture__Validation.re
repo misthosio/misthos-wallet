@@ -40,7 +40,7 @@ let makeState = () => {
   partnerIds: [],
   partnerStoragePrefixes: [],
   partnerPubKeys: [],
-  metaPolicy: Policy.absolute,
+  metaPolicy: Policy.unanimous,
   partnerData: [],
   partnerRemovalData: [],
   custodianData: [],

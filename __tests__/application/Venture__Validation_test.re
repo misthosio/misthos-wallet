@@ -20,7 +20,7 @@ let () = {
         ~ventureName="test",
         ~creatorId,
         ~creatorPubKey,
-        ~metaPolicy=Policy.absolute,
+        ~metaPolicy=Policy.unanimous,
         ~network=Network.Regtest,
       );
     let partnerProposal =
@@ -28,7 +28,7 @@ let () = {
         ~supporterId=creatorId,
         ~prospectId=creatorId,
         ~prospectPubKey=creatorPubKey,
-        ~policy=Policy.absolute,
+        ~policy=Policy.unanimous,
       )
       |> Event.getPartnerProposedExn;
     let state =
@@ -59,7 +59,7 @@ let () = {
         ~supporterId=creatorId,
         ~prospectId=custodianId,
         ~prospectPubKey=custodianPubKey,
-        ~policy=Policy.absolute,
+        ~policy=Policy.unanimous,
       )
       |> Event.getPartnerProposedExn;
     test("Succeeds if partner was proposed", () =>
@@ -91,7 +91,7 @@ let () = {
     let accountProposed =
       AccountCreation.Proposed.make(
         ~supporterId,
-        ~policy=Policy.absolute,
+        ~policy=Policy.unanimous,
         AccountCreation.Data.{
           accountIdx: AccountIndex.default,
           name: "Account",

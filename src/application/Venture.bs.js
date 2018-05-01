@@ -441,7 +441,7 @@ function exec(otherLogs, venture) {
 
 function exec$1(session, ventureName, listenerState, listener) {
   logMessage("Executing 'Create' command");
-  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.absolute, session[/* network */5]);
+  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
   return Promise.all(/* tuple */[
               Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
               apply(/* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0], listenerState, listener)).then(persist)
