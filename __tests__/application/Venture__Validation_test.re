@@ -114,20 +114,44 @@ let () = {
       );
     });
     describe("when the prospect already exists", () => {
-      let user1 = G.userSession("user1" |> UserId.fromString);
-      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+        );
       testValidationResult(
         log |> constructState,
         L.(
           log
-          |> withPartnerProposed(~supporter=user1, ~prospect=user1)
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
           |> lastItem
         ),
         Validation.BadData(
           "Partner with Id '"
-          ++ UserId.toString(user1.userId)
+          ++ UserId.toString(user2.userId)
           ++ "' already exists",
         ),
+      );
+    });
+    describe("when the prospect was already proposed", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.Ok,
       );
     });
     describe("when the creator proposes themselves", () => {
