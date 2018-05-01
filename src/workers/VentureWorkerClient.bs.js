@@ -26,9 +26,15 @@ function updateSession(worker) {
   return /* () */0;
 }
 
+function create(name, worker) {
+  worker.postMessage(/* Create */Block.__(1, [name]));
+  return /* () */0;
+}
+
 var make = include[0];
 
 exports.Config = Config;
 exports.make = make;
 exports.updateSession = updateSession;
+exports.create = create;
 /* include Not a pure module */

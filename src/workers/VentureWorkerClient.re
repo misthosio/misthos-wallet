@@ -14,3 +14,6 @@ let updateSession = worker =>
          WorkerLocalStorage.readBlockstackItemsFromStorage(),
        ),
      );
+
+let create = (~name, worker) =>
+  worker |. postMessage(VentureWorkerMessage.Create(name));

@@ -13,7 +13,8 @@ type action =
   | CreateVenture(Session.Data.t, string)
   | SyncWorkerMessage(SyncWorker.Message.receive)
   | IncomeWorkerMessage(IncomeWorkerMessage.receive)
-  | PersistWorkerMessage(PersistWorkerMessage.receive);
+  | PersistWorkerMessage(PersistWorkerMessage.receive)
+  | VentureWorkerMessage(VentureWorkerMessage.receive);
 
 type state = {
   index: Venture.Index.t,
@@ -21,13 +22,20 @@ type state = {
   syncWorker: ref(SyncWorker.t),
   incomeWorker: ref(IncomeWorkerClient.t),
   persistWorker: ref(PersistWorkerClient.t),
+  ventureWorker: ref(VentureWorkerClient.t),
 };
 
 let loadVentureAndIndex =
-    (send, session: Session.t, currentRoute, {ventureState, persistWorker}) => {
+    (
+      send,
+      session: Session.t,
+      currentRoute,
+      {ventureState, persistWorker, ventureWorker},
+    ) => {
   switch (session) {
   | LoggedIn({userId}) =>
     persistWorker^ |> PersistWorkerClient.updateSession(userId);
+    ventureWorker^ |> VentureWorkerClient.updateSession;
     Js.Promise.(
       Venture.Index.load()
       |> then_(index => send(UpdateIndex(index)) |> resolve)
@@ -117,6 +125,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     syncWorker: ref(SyncWorker.make(~onMessage=Js.log)),
     incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
+    ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
   didMount: ({send, state}) =>
     loadVentureAndIndex(send, session, currentRoute, state) |> ignore,
@@ -160,6 +169,18 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         worker;
       },
       PersistWorkerClient.terminate,
+    ),
+    Sub(
+      () => {
+        VentureWorkerClient.terminate(state.ventureWorker^);
+        let worker =
+          VentureWorkerClient.make(~onMessage=message =>
+            send(VentureWorkerMessage(message))
+          );
+        state.ventureWorker := worker;
+        worker;
+      },
+      VentureWorkerClient.terminate,
     ),
   ],
   reducer: (action, state) =>
@@ -231,6 +252,12 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     | PersistWorkerMessage(VenturePersisted(id)) =>
       Js.log("Venture '" ++ VentureId.toString(id) ++ "' persisted");
       ReasonReact.NoUpdate;
+    | VentureWorkerMessage(msg) =>
+      switch (msg) {
+      | UpdateIndex(_index) => Js.log("received msg - Update index")
+      | NewEvents(_ventureId, _events) => Js.log("received msg - new events")
+      };
+      ReasonReact.NoUpdate;
     | UpdateIndex(index) => ReasonReact.Update({...state, index})
     | UpdateVenture(ventureState) =>
       ReasonReact.UpdateWithSideEffects(
@@ -275,6 +302,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         ),
       )
     | CreateVenture(session, name) =>
+      state.ventureWorker^ |> VentureWorkerClient.create(~name);
       ReasonReact.UpdateWithSideEffects(
         {...state, ventureState: CreatingVenture},
         (
@@ -303,7 +331,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             )
             |> ignore
         ),
-      )
+      );
     },
   render: ({state: {index, ventureState}, send}) =>
     children(~index, ~selectedVenture=ventureState, ~updateVentureStore=send),

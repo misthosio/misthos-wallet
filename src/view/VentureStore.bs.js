@@ -13,11 +13,13 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var IncomeWorkerClient = require("../workers/IncomeWorkerClient.bs.js");
 var PersistWorkerClient = require("../workers/PersistWorkerClient.bs.js");
+var VentureWorkerClient = require("../workers/VentureWorkerClient.bs.js");
 
 function loadVentureAndIndex(send, session, currentRoute, param) {
   var ventureState = param[/* ventureState */1];
   if (typeof session !== "number") {
     PersistWorkerClient.updateSession(session[0][/* userId */0], param[/* persistWorker */4][0]);
+    VentureWorkerClient.updateSession(param[/* ventureWorker */5][0]);
     Venture.Index[/* load */0](/* () */0).then((function (index) {
             return Promise.resolve(Curry._1(send, /* UpdateIndex */Block.__(0, [index])));
           }));
@@ -90,7 +92,8 @@ function make(currentRoute, session, children) {
                       /* ventureState */loadVentureAndIndex(param[/* send */3], session, currentRoute, state),
                       /* syncWorker */state[/* syncWorker */2],
                       /* incomeWorker */state[/* incomeWorker */3],
-                      /* persistWorker */state[/* persistWorker */4]
+                      /* persistWorker */state[/* persistWorker */4],
+                      /* ventureWorker */state[/* ventureWorker */5]
                     ];
             }),
           /* didMount */(function (param) {
@@ -120,6 +123,10 @@ function make(currentRoute, session, children) {
                       /* persistWorker */[Curry._1(PersistWorkerClient.make, (function (prim) {
                                 console.log(prim);
                                 return /* () */0;
+                              }))],
+                      /* ventureWorker */[Curry._1(VentureWorkerClient.make, (function (prim) {
+                                console.log(prim);
+                                return /* () */0;
                               }))]
                     ];
             }),
@@ -132,7 +139,8 @@ function make(currentRoute, session, children) {
                                 /* ventureState */state[/* ventureState */1],
                                 /* syncWorker */state[/* syncWorker */2],
                                 /* incomeWorker */state[/* incomeWorker */3],
-                                /* persistWorker */state[/* persistWorker */4]
+                                /* persistWorker */state[/* persistWorker */4],
+                                /* ventureWorker */state[/* ventureWorker */5]
                               ]]);
                 case 1 : 
                     var ventureState = action[0];
@@ -142,7 +150,8 @@ function make(currentRoute, session, children) {
                                 /* ventureState */ventureState,
                                 /* syncWorker */state[/* syncWorker */2],
                                 /* incomeWorker */state[/* incomeWorker */3],
-                                /* persistWorker */state[/* persistWorker */4]
+                                /* persistWorker */state[/* persistWorker */4],
+                                /* ventureWorker */state[/* ventureWorker */5]
                               ],
                               (function () {
                                   setTimeout((function () {
@@ -172,13 +181,15 @@ function make(currentRoute, session, children) {
                 case 2 : 
                     var name = action[1];
                     var session = action[0];
+                    VentureWorkerClient.create(name, state[/* ventureWorker */5][0]);
                     return /* UpdateWithSideEffects */Block.__(2, [
                               /* record */[
                                 /* index */state[/* index */0],
                                 /* ventureState : CreatingVenture */1,
                                 /* syncWorker */state[/* syncWorker */2],
                                 /* incomeWorker */state[/* incomeWorker */3],
-                                /* persistWorker */state[/* persistWorker */4]
+                                /* persistWorker */state[/* persistWorker */4],
+                                /* ventureWorker */state[/* ventureWorker */5]
                               ],
                               (function (param) {
                                   var send = param[/* send */3];
@@ -236,6 +247,13 @@ function make(currentRoute, session, children) {
                 case 5 : 
                     console.log("Venture '" + (PrimitiveTypes.VentureId[/* toString */0](action[0][0]) + "' persisted"));
                     return /* NoUpdate */0;
+                case 6 : 
+                    if (action[0].tag) {
+                      console.log("received msg - new events");
+                    } else {
+                      console.log("received msg - Update index");
+                    }
+                    return /* NoUpdate */0;
                 
               }
             }),
@@ -287,7 +305,23 @@ function make(currentRoute, session, children) {
                                 return /* () */0;
                               })
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* Sub */[
+                              (function () {
+                                  state[/* ventureWorker */5][0].terminate();
+                                  var worker = Curry._1(VentureWorkerClient.make, (function (message) {
+                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(6, [message]));
+                                        }));
+                                  state[/* ventureWorker */5][0] = worker;
+                                  return worker;
+                                }),
+                              (function (prim) {
+                                  prim.terminate();
+                                  return /* () */0;
+                                })
+                            ],
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ];
