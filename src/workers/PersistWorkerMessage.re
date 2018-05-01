@@ -3,7 +3,7 @@ open WorkerLocalStorage;
 open PrimitiveTypes;
 
 type send =
-  | InitializeLocalStorage(blockstackItems)
+  | InitializeLocalStorage(userId, blockstackItems)
   | PersistVenture(ventureId);
 
 type receive =

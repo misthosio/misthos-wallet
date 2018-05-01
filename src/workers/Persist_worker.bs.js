@@ -6,6 +6,7 @@ var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Blockstack = require("blockstack");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -33,24 +34,30 @@ function loadVenture(ventureId) {
               }));
 }
 
-var determinPartnerKeys = Curry._2(EventLog.reduce, (function (keys, param) {
-        var $$event = param[/* event */0];
-        switch ($$event.tag | 0) {
-          case 3 : 
-              var data = $$event[0][/* data */2];
-              return /* :: */[
-                      /* tuple */[
-                        data[/* id */0],
-                        data[/* pubKey */1]
-                      ],
-                      keys
-                    ];
-          case 6 : 
-              return List.remove_assoc($$event[0][/* data */2][/* id */0], keys);
-          default:
-            return keys;
-        }
-      }), /* [] */0);
+function determinPartnerKeys(localUserId) {
+  return Curry._2(EventLog.reduce, (function (keys, param) {
+                var $$event = param[/* event */0];
+                switch ($$event.tag | 0) {
+                  case 3 : 
+                      var data = $$event[0][/* data */2];
+                      if (PrimitiveTypes.UserId[/* neq */6](data[/* id */0], localUserId)) {
+                        return /* :: */[
+                                /* tuple */[
+                                  data[/* id */0],
+                                  data[/* pubKey */1]
+                                ],
+                                keys
+                              ];
+                      } else {
+                        return keys;
+                      }
+                  case 6 : 
+                      return List.remove_assoc($$event[0][/* data */2][/* id */0], keys);
+                  default:
+                    return keys;
+                }
+              }), /* [] */0);
+}
 
 function persist(ventureId, eventLog, keys) {
   var logString = Json.stringify(Curry._1(EventLog.encode, eventLog));
@@ -72,12 +79,13 @@ function handleMessage(param) {
     var id = param[0];
     logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](id) + "'"));
     loadVenture(id).then((function (eventLog) {
-            return persist(id, eventLog, Curry._1(determinPartnerKeys, eventLog));
+            return persist(id, eventLog, Curry._1(determinPartnerKeys(PrimitiveTypes.UserId[/* fromString */1](Js_option.getExn(WorkerLocalStorage.getItem("localUserId")))), eventLog));
           }));
     return /* () */0;
   } else {
     logMessage("Initializing localStorage");
-    return WorkerLocalStorage.setBlockstackItems(param[0]);
+    WorkerLocalStorage.setBlockstackItems(param[1]);
+    return WorkerLocalStorage.setItem("localUserId", PrimitiveTypes.UserId[/* toString */0](param[0]));
   }
 }
 

@@ -2,7 +2,8 @@ type t;
 
 [@bs.val] external _localStorage : t = "localStorage";
 
-[@bs.send] external _getItem : (t, string) => option(string) = "getItem";
+[@bs.send] [@bs.return nullable]
+external _getItem : (t, string) => option(string) = "getItem";
 
 let getItem = key => _getItem(_localStorage, key);
 

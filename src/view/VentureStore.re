@@ -24,14 +24,21 @@ type state = {
 };
 
 let loadVentureAndIndex =
-    (send, session: Session.t, currentRoute, {ventureState}) => {
+    (send, session: Session.t, currentRoute, {ventureState, persistWorker}) => {
   switch (session) {
-  | LoggedIn(_) =>
+  | LoggedIn({userId}) =>
+    persistWorker^
+    |. PersistWorkerClient.postMessage(
+         PersistWorkerMessage.InitializeLocalStorage(
+           userId,
+           WorkerLocalStorage.readBlockstackItemsFromStorage(),
+         ),
+       );
     Js.Promise.(
       Venture.Index.load()
       |> then_(index => send(UpdateIndex(index)) |> resolve)
       |> ignore
-    )
+    );
   | _ => ()
   };
   switch (session, currentRoute: Router.Config.route, ventureState) {

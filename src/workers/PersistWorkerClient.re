@@ -6,14 +6,3 @@ module Config = {
 };
 
 include WebWorker.MakeClient(Config);
-
-let make = (~onMessage) => {
-  let worker = make(~onMessage);
-  worker
-  |. postMessage(
-       PersistWorkerMessage.InitializeLocalStorage(
-         WorkerLocalStorage.readBlockstackItemsFromStorage(),
-       ),
-     );
-  worker;
-};

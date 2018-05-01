@@ -5,7 +5,7 @@ var Utils = require("../utils/Utils.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 
 function getItem(key) {
-  return localStorage.getItem(key);
+  return Js_primitive.null_undefined_to_opt(localStorage.getItem(key));
 }
 
 function setItem(key, value) {

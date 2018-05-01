@@ -36,11 +36,14 @@ let loadVenture = ventureId =>
        )
   );
 
-let determinPartnerKeys =
+let determinPartnerKeys = localUserId =>
   EventLog.reduce(
     (keys, {event}) =>
       switch (event) {
-      | PartnerAccepted({data}) => [(data.id, data.pubKey), ...keys]
+      | PartnerAccepted({data}) when UserId.neq(data.id, localUserId) => [
+          (data.id, data.pubKey),
+          ...keys,
+        ]
       | PartnerRemovalAccepted({data}) => keys |> List.remove_assoc(data.id)
       | _ => keys
       },
@@ -84,16 +87,26 @@ let persist = (ventureId, eventLog, keys) => {
 
 let handleMessage =
   fun
-  | Message.InitializeLocalStorage(items) => {
+  | Message.InitializeLocalStorage(localUserId, items) => {
       logMessage("Initializing localStorage");
       items |> WorkerLocalStorage.setBlockstackItems;
+      WorkerLocalStorage.setItem(
+        "localUserId",
+        localUserId |> UserId.toString,
+      );
     }
   | PersistVenture(id) => {
       logMessage("Persisting venture '" ++ VentureId.toString(id) ++ "'");
       Js.Promise.(
         loadVenture(id)
         |> then_(eventLog =>
-             eventLog |> determinPartnerKeys |> persist(id, eventLog)
+             eventLog
+             |> determinPartnerKeys(
+                  WorkerLocalStorage.getItem("localUserId")
+                  |> Js.Option.getExn
+                  |> UserId.fromString,
+                )
+             |> persist(id, eventLog)
            )
       )
       |> ignore;
