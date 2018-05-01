@@ -83,7 +83,7 @@ function handleMessage(param) {
           }));
     return /* () */0;
   } else {
-    logMessage("Initializing localStorage");
+    logMessage("Updating session in localStorage");
     WorkerLocalStorage.setBlockstackItems(param[1]);
     return WorkerLocalStorage.setItem("localUserId", PrimitiveTypes.UserId[/* toString */0](param[0]));
   }

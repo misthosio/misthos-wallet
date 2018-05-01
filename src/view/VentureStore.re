@@ -27,13 +27,7 @@ let loadVentureAndIndex =
     (send, session: Session.t, currentRoute, {ventureState, persistWorker}) => {
   switch (session) {
   | LoggedIn({userId}) =>
-    persistWorker^
-    |. PersistWorkerClient.postMessage(
-         PersistWorkerMessage.InitializeLocalStorage(
-           userId,
-           WorkerLocalStorage.readBlockstackItemsFromStorage(),
-         ),
-       );
+    persistWorker^ |> PersistWorkerClient.updateSession(userId);
     Js.Promise.(
       Venture.Index.load()
       |> then_(index => send(UpdateIndex(index)) |> resolve)
@@ -247,11 +241,10 @@ let make = (~currentRoute, ~session: Session.t, children) => {
               () =>
                 switch (ventureState) {
                 | VentureLoaded(venture) =>
-                  PersistWorkerMessage.PersistVenture(
+                  PersistWorkerClient.persistVenture(
                     venture |> Venture.getId,
-                  )
-                  |> PersistWorkerClient.postMessage(state.persistWorker^)
-                  |> ignore;
+                    state.persistWorker^,
+                  );
                   Js.Promise.(
                     Venture.getPartnerHistoryUrls(venture)
                     |> then_(urls =>

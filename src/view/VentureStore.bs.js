@@ -12,16 +12,12 @@ var SyncWorker = require("../SyncWorker.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var IncomeWorkerClient = require("../workers/IncomeWorkerClient.bs.js");
-var WorkerLocalStorage = require("../workers/WorkerLocalStorage.bs.js");
 var PersistWorkerClient = require("../workers/PersistWorkerClient.bs.js");
 
 function loadVentureAndIndex(send, session, currentRoute, param) {
   var ventureState = param[/* ventureState */1];
   if (typeof session !== "number") {
-    param[/* persistWorker */4][0].postMessage(/* InitializeLocalStorage */Block.__(0, [
-            session[0][/* userId */0],
-            WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)
-          ]));
+    PersistWorkerClient.updateSession(session[0][/* userId */0], param[/* persistWorker */4][0]);
     Venture.Index[/* load */0](/* () */0).then((function (index) {
             return Promise.resolve(Curry._1(send, /* UpdateIndex */Block.__(0, [index])));
           }));
@@ -156,7 +152,7 @@ function make(currentRoute, session, children) {
                                             return /* () */0;
                                           } else {
                                             var venture = ventureState[0];
-                                            state[/* persistWorker */4][0].postMessage(/* PersistVenture */Block.__(1, [Venture.getId(venture)]));
+                                            PersistWorkerClient.persistVenture(Venture.getId(venture), state[/* persistWorker */4][0]);
                                             Venture.getPartnerHistoryUrls(venture).then((function (urls) {
                                                     return Promise.resolve(SyncWorker.postMessage(state[/* syncWorker */2][0], /* RegularlyFetch */[
                                                                     urls,

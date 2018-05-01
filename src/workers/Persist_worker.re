@@ -87,8 +87,8 @@ let persist = (ventureId, eventLog, keys) => {
 
 let handleMessage =
   fun
-  | Message.InitializeLocalStorage(localUserId, items) => {
-      logMessage("Initializing localStorage");
+  | Message.UpdateSession(localUserId, items) => {
+      logMessage("Updating session in localStorage");
       items |> WorkerLocalStorage.setBlockstackItems;
       WorkerLocalStorage.setItem(
         "localUserId",
