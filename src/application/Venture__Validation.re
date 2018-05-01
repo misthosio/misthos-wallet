@@ -343,6 +343,13 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
+let validatePartnerData = ({id}: Partner.Data.t, {partnerIds}) =>
+  partnerIds |> List.mem(id) ?
+    BadData(
+      "Partner with Id '" ++ UserId.toString(id) ++ "' already exists",
+    ) :
+    Ok;
+
 let validatePartnerRemovalData =
     ({id}: Partner.Removal.Data.t, {partnerIds}) =>
   partnerIds |> List.mem(id) ?
@@ -509,7 +516,11 @@ let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
   | PartnerProposed(proposal) =>
-    validateProposal(Partner.processName, proposal)
+    validateProposal(
+      ~validateData=validatePartnerData,
+      Partner.processName,
+      proposal,
+    )
   | PartnerRemovalProposed(proposal) =>
     validateProposal(
       ~validateData=validatePartnerRemovalData,
@@ -578,7 +589,9 @@ let validate = (state, {event, issuerPubKey}: EventLog.item) =>
     Event.isSystemEvent(event),
     state.partnerPubKeys |> List.mem_assoc(issuerPubKey),
   ) {
-  | (VentureCreated(_), _, _) => Ok
+  | (VentureCreated(_), _, _) =>
+    UserId.eq(state.creatorData.id, UserId.fromString("")) ?
+      Ok : BadData("Venture is already created")
   | (PartnerProposed(event), false, false)
       when
         event.data == state.creatorData

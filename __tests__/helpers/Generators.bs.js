@@ -102,6 +102,10 @@ var Event$1 = /* module */[
   /* custodianAccepted */custodianAccepted
 ];
 
+function reduce(f, s, param) {
+  return Curry._3(EventLog.reduce, f, s, param[/* log */2]);
+}
+
 function systemIssuer(param) {
   return param[/* systemIssuer */0];
 }
@@ -275,6 +279,7 @@ function withCustodianAccepted(proposal) {
 }
 
 var Log = /* module */[
+  /* reduce */reduce,
   /* systemIssuer */systemIssuer,
   /* lastItem */lastItem,
   /* lastEvent */lastEvent,

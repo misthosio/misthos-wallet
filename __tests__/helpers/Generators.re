@@ -118,6 +118,7 @@ module Log = {
     lastItem: EventLog.item,
     log: EventLog.t,
   };
+  let reduce = (f, s, {log}) => EventLog.reduce(f, s, log);
   let systemIssuer = ({systemIssuer}) => systemIssuer;
   let lastItem = ({lastItem}) => lastItem;
   let lastEvent = ({lastItem: {event}}) => event;
