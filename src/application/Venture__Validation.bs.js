@@ -531,6 +531,13 @@ function apply($$event, state) {
                 /* custodianKeyChains */init$9[/* custodianKeyChains */16],
                 /* accountKeyChains */init$9[/* accountKeyChains */17]
               ];
+    case 2 : 
+    case 5 : 
+    case 8 : 
+    case 11 : 
+    case 14 : 
+    case 17 : 
+        return endorseProcess($$event[0], state);
     case 15 : 
     case 18 : 
         return completeProcess($$event[0], state);
@@ -640,15 +647,8 @@ function apply($$event, state) {
                   /* [] */0
                 ]
               ];
-    case 19 : 
-    case 20 : 
-    case 21 : 
-    case 22 : 
-    case 25 : 
-    case 26 : 
-        return state;
     default:
-      return endorseProcess($$event[0], state);
+      return state;
   }
 }
 
@@ -747,6 +747,16 @@ function validateAcceptance(param, dataList, param$1, _) {
     } else {
       throw exn;
     }
+  }
+}
+
+function validatePartnerData(param, param$1) {
+  var id = param[/* id */0];
+  var match = List.mem(id, param$1[/* partnerIds */4]);
+  if (match) {
+    return /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](id) + "' already exists")];
+  } else {
+    return /* Ok */0;
   }
 }
 
@@ -930,8 +940,9 @@ function validateEvent(param) {
     case 1 : 
         var proposal = param[0];
         var partial_arg = Event.Partner[/* processName */1];
+        var partial_arg$1 = /* Some */[validatePartnerData];
         return (function (param, param$1) {
-            return validateProposal(/* None */0, partial_arg, proposal, param, param$1);
+            return validateProposal(partial_arg$1, partial_arg, proposal, param, param$1);
           });
     case 3 : 
         var acceptance = param[0];
@@ -943,10 +954,10 @@ function validateEvent(param) {
           });
     case 4 : 
         var proposal$1 = param[0];
-        var partial_arg$1 = Event.Partner[/* Removal */5][/* processName */1];
-        var partial_arg$2 = /* Some */[validatePartnerRemovalData];
+        var partial_arg$2 = Event.Partner[/* Removal */5][/* processName */1];
+        var partial_arg$3 = /* Some */[validatePartnerRemovalData];
         return (function (param, param$1) {
-            return validateProposal(partial_arg$2, partial_arg$1, proposal$1, param, param$1);
+            return validateProposal(partial_arg$3, partial_arg$2, proposal$1, param, param$1);
           });
     case 6 : 
         var acceptance$1 = param[0];
@@ -958,10 +969,10 @@ function validateEvent(param) {
           });
     case 7 : 
         var proposal$2 = param[0];
-        var partial_arg$3 = Event.AccountCreation[/* processName */1];
-        var partial_arg$4 = /* Some */[validateAccountCreationData];
+        var partial_arg$4 = Event.AccountCreation[/* processName */1];
+        var partial_arg$5 = /* Some */[validateAccountCreationData];
         return (function (param, param$1) {
-            return validateProposal(partial_arg$4, partial_arg$3, proposal$2, param, param$1);
+            return validateProposal(partial_arg$5, partial_arg$4, proposal$2, param, param$1);
           });
     case 9 : 
         var acceptance$2 = param[0];
@@ -973,10 +984,10 @@ function validateEvent(param) {
           });
     case 10 : 
         var proposal$3 = param[0];
-        var partial_arg$5 = Event.Custodian[/* processName */1];
-        var partial_arg$6 = /* Some */[validateCustodianData];
+        var partial_arg$6 = Event.Custodian[/* processName */1];
+        var partial_arg$7 = /* Some */[validateCustodianData];
         return (function (param, param$1) {
-            return validateProposal(partial_arg$6, partial_arg$5, proposal$3, param, param$1);
+            return validateProposal(partial_arg$7, partial_arg$6, proposal$3, param, param$1);
           });
     case 12 : 
         var acceptance$3 = param[0];
@@ -988,10 +999,10 @@ function validateEvent(param) {
           });
     case 13 : 
         var proposal$4 = param[0];
-        var partial_arg$7 = Event.Custodian[/* Removal */5][/* processName */1];
-        var partial_arg$8 = /* Some */[validateCustodianRemovalData];
+        var partial_arg$8 = Event.Custodian[/* Removal */5][/* processName */1];
+        var partial_arg$9 = /* Some */[validateCustodianRemovalData];
         return (function (param, param$1) {
-            return validateProposal(partial_arg$8, partial_arg$7, proposal$4, param, param$1);
+            return validateProposal(partial_arg$9, partial_arg$8, proposal$4, param, param$1);
           });
     case 15 : 
         var acceptance$4 = param[0];
@@ -1003,9 +1014,9 @@ function validateEvent(param) {
           });
     case 16 : 
         var proposal$5 = param[0];
-        var partial_arg$9 = Event.Payout[/* processName */1];
+        var partial_arg$10 = Event.Payout[/* processName */1];
         return (function (param, param$1) {
-            return validateProposal(/* None */0, partial_arg$9, proposal$5, param, param$1);
+            return validateProposal(/* None */0, partial_arg$10, proposal$5, param, param$1);
           });
     case 18 : 
         var acceptance$5 = param[0];
@@ -1032,28 +1043,28 @@ function validateEvent(param) {
             return /* Ok */0;
           });
     case 23 : 
-        var partial_arg$10 = param[0];
-        return (function (param, param$1) {
-            return validateCustodianKeyChainUpdated(partial_arg$10, param, param$1);
-          });
-    case 24 : 
         var partial_arg$11 = param[0];
         return (function (param, param$1) {
-            return validateAccountKeyChainUpdated(partial_arg$11, param, param$1);
+            return validateCustodianKeyChainUpdated(partial_arg$11, param, param$1);
           });
-    case 25 : 
+    case 24 : 
         var partial_arg$12 = param[0];
         return (function (param, param$1) {
-            return validateIncomeAddressExposed(partial_arg$12, param, param$1);
+            return validateAccountKeyChainUpdated(partial_arg$12, param, param$1);
+          });
+    case 25 : 
+        var partial_arg$13 = param[0];
+        return (function (param, param$1) {
+            return validateIncomeAddressExposed(partial_arg$13, param, param$1);
           });
     case 26 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });
     default:
-      var partial_arg$13 = param[0];
+      var partial_arg$14 = param[0];
       return (function (param, param$1) {
-          return validateEndorsement(partial_arg$13, param, param$1);
+          return validateEndorsement(partial_arg$14, param, param$1);
         });
   }
 }
@@ -1066,7 +1077,12 @@ function validate(state, param) {
   var exit = 0;
   switch ($$event.tag | 0) {
     case 0 : 
-        return /* Ok */0;
+        var match$2 = PrimitiveTypes.UserId[/* eq */5](state[/* creatorData */15][/* id */0], PrimitiveTypes.UserId[/* fromString */1](""));
+        if (match$2) {
+          return /* Ok */0;
+        } else {
+          return /* BadData */["Venture is already created"];
+        }
     case 1 : 
         if (match) {
           exit = 1;
@@ -1109,6 +1125,7 @@ exports.defaultDataValidator = defaultDataValidator;
 exports.validateProposal = validateProposal;
 exports.validateEndorsement = validateEndorsement;
 exports.validateAcceptance = validateAcceptance;
+exports.validatePartnerData = validatePartnerData;
 exports.validatePartnerRemovalData = validatePartnerRemovalData;
 exports.validateCustodianData = validateCustodianData;
 exports.validateCustodianRemovalData = validateCustodianRemovalData;

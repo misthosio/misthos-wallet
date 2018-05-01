@@ -51,8 +51,9 @@ function createVenture(session) {
   return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
 }
 
-function partnerProposed(supporterSession, prospectSession) {
-  return Event.getPartnerProposedExn(Event.makePartnerProposed(supporterSession[/* userId */0], prospectSession[/* userId */0], Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2]), Policy.unanimous));
+function partnerProposed($staropt$star, supporterSession, prospectSession) {
+  var policy = $staropt$star ? $staropt$star[0] : Policy.unanimous;
+  return Event.getPartnerProposedExn(Event.makePartnerProposed(supporterSession[/* userId */0], prospectSession[/* userId */0], Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2]), policy));
 }
 
 function partnerEndorsed(supporter, param) {
@@ -102,6 +103,10 @@ var Event$1 = /* module */[
   /* custodianAccepted */custodianAccepted
 ];
 
+function reduce(f, s, param) {
+  return Curry._3(EventLog.reduce, f, s, param[/* log */2]);
+}
+
 function systemIssuer(param) {
   return param[/* systemIssuer */0];
 }
@@ -141,11 +146,12 @@ function createVenture$1(session) {
         ];
 }
 
-function withPartnerProposed(supporter, prospect) {
-  var partial_arg = /* PartnerProposed */Block.__(1, [partnerProposed(supporter, prospect)]);
-  var partial_arg$1 = supporter[/* issuerKeyPair */2];
+function withPartnerProposed(issuer, $staropt$star, supporter, prospect) {
+  var policy = $staropt$star ? $staropt$star[0] : Policy.unanimous;
+  var issuer$1 = issuer ? issuer[0] : supporter[/* issuerKeyPair */2];
+  var partial_arg = /* PartnerProposed */Block.__(1, [partnerProposed(/* Some */[policy], supporter, prospect)]);
   return (function (param) {
-      return appendEvent(partial_arg$1, partial_arg, param);
+      return appendEvent(issuer$1, partial_arg, param);
     });
 }
 
@@ -166,7 +172,7 @@ function withPartnerAccepted(proposal) {
 
 function withPartner(user, supporters, log) {
   if (supporters) {
-    var log$1 = withPartnerProposed(supporters[0], user)(log);
+    var log$1 = withPartnerProposed(/* None */0, /* None */0, supporters[0], user)(log);
     var proposal = Event.getPartnerProposedExn(lastEvent(log$1));
     return withPartnerAccepted(proposal)(List.fold_left((function (log, supporter) {
                       return withPartnerEndorsed(supporter, proposal)(log);
@@ -275,6 +281,7 @@ function withCustodianAccepted(proposal) {
 }
 
 var Log = /* module */[
+  /* reduce */reduce,
   /* systemIssuer */systemIssuer,
   /* lastItem */lastItem,
   /* lastEvent */lastEvent,

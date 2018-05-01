@@ -8,9 +8,185 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+module G = Generators;
+
+module E = G.Event;
+
+module L = G.Log;
+
 module Validation = Venture__Validation;
 
+let constructState = log =>
+  log
+  |> L.reduce(
+       (s, {event}) => s |> Validation.apply(event),
+       Validation.makeState(),
+     );
+
+let testValidationResult = (state, item, expected) => {
+  let description = expected |> Validation.resultToString;
+  test("valdation should return '" ++ description ++ "'", () =>
+    expect(item |> Validation.validate(state) |> Validation.resultToString)
+    |> toEqual(description)
+  );
+};
+
 let () = {
+  describe("CreateVenture", () => {
+    describe("as first event", () => {
+      let user1 = G.userSession("user1" |> UserId.fromString);
+      let log = L.createVenture(user1);
+      testValidationResult(
+        Validation.makeState(),
+        log |> L.lastItem,
+        Validation.Ok,
+      );
+    });
+    describe("not as first event", () => {
+      let user1 = G.userSession("user1" |> UserId.fromString);
+      let log = L.createVenture(user1);
+      testValidationResult(
+        log |> constructState,
+        log |> L.lastItem,
+        Validation.BadData("Venture is already created"),
+      );
+    });
+  });
+  describe("PartnerProposal", () => {
+    describe("when proposing another partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("with the wrong policy", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~policy=Policy.unanimousMinusOne,
+               ~supporter=user1,
+               ~prospect=user2,
+             )
+          |> lastItem
+        ),
+        Validation.PolicyMissmatch,
+      );
+    });
+    describe("when the supporter is a non-partner", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the supporter is not the signer", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~issuer=user1.issuerKeyPair,
+               ~supporter=user2,
+               ~prospect=user3,
+             )
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the prospect already exists", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.BadData(
+          "Partner with Id '"
+          ++ UserId.toString(user2.userId)
+          ++ "' already exists",
+        ),
+      );
+    });
+    describe("when the prospect was already proposed", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when the creator proposes themselves", () => {
+      let user1 = G.userSession("user1" |> UserId.fromString);
+      let log = L.createVenture(user1);
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user1)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when proposing a partner that was removed", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerRemoved(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+  });
   describe("Validate CustodianData", () => {
     let creatorId = UserId.fromString("creator.id");
     let creatorKeyPair = Bitcoin.ECPair.makeRandom();

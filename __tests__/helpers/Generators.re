@@ -50,13 +50,17 @@ module Event = {
       ~network=session.network,
     );
   let partnerProposed =
-      (supporterSession: Session.Data.t, prospectSession: Session.Data.t) =>
+      (
+        ~policy=Policy.unanimous,
+        supporterSession: Session.Data.t,
+        prospectSession: Session.Data.t,
+      ) =>
     AppEvent.makePartnerProposed(
       ~supporterId=supporterSession.userId,
       ~prospectId=prospectSession.userId,
       ~prospectPubKey=
         prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
-      ~policy=Policy.unanimous,
+      ~policy,
     )
     |> AppEvent.getPartnerProposedExn;
   let partnerEndorsed =
@@ -118,6 +122,7 @@ module Log = {
     lastItem: EventLog.item,
     log: EventLog.t,
   };
+  let reduce = (f, s, {log}) => EventLog.reduce(f, s, log);
   let systemIssuer = ({systemIssuer}) => systemIssuer;
   let lastItem = ({lastItem}) => lastItem;
   let lastEvent = ({lastItem: {event}}) => event;
@@ -138,11 +143,23 @@ module Log = {
          );
     {systemIssuer: ventureCreated.systemIssuer, lastItem, log};
   };
-  let withPartnerProposed = (~supporter: Session.Data.t, ~prospect) =>
+  let withPartnerProposed =
+      (
+        ~issuer=?,
+        ~policy=Policy.unanimous,
+        ~supporter: Session.Data.t,
+        ~prospect,
+      ) => {
+    let issuer =
+      switch (issuer) {
+      | None => supporter.issuerKeyPair
+      | Some(key) => key
+      };
     appendEvent(
-      supporter.issuerKeyPair,
-      PartnerProposed(Event.partnerProposed(supporter, prospect)),
+      issuer,
+      PartnerProposed(Event.partnerProposed(~policy, supporter, prospect)),
     );
+  };
   let withPartnerEndorsed = (supporter: Session.Data.t, proposal) =>
     appendEvent(
       supporter.issuerKeyPair,
