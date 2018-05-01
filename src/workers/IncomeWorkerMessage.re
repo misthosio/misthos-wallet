@@ -16,6 +16,8 @@ let msgType =
 type receive =
   | NewTransactionsDetected(list(transaction));
 
+type encodedReceive = Js.Json.t;
+
 let encodeReceive =
   fun
   | NewTransactionsDetected(transactions) =>

@@ -139,63 +139,14 @@ let reconstruct = (session, listenerState, listener, log) => {
      );
 };
 
-let persist = ({id, log, state} as venture) => {
-  let logString = log |> EventLog.encode |> Json.stringify;
-  let summaryString =
-    log |> EventLog.getSummary |> EventLog.encodeSummary |> Json.stringify;
-  let returnPromise =
-    Js.Promise.(
-      Blockstack.putFileEncrypted(
-        (id |> VentureId.toString) ++ "/log.json",
-        logString,
-      )
-      |> then_(() => resolve(venture))
-    );
+let persist = ({id, log} as venture) =>
   Js.Promise.(
-    state.partnerStoragePrefixes
-    |> List.fold_left(
-         (promise, (pubKey, prefix)) =>
-           promise
-           |> then_(() =>
-                Js.Global.setTimeout(
-                  () =>
-                    Blockstack.putFileNotEncrypted(
-                      (id |> VentureId.toString)
-                      ++ "/"
-                      ++ prefix
-                      ++ "/log.json",
-                      logString
-                      |> Blockstack.encryptECIES(~publicKey=pubKey)
-                      |> Json.stringify,
-                    )
-                    |> ignore,
-                  1,
-                )
-                |> ignore
-                |> resolve
-              )
-           |> then_(() =>
-                Js.Global.setTimeout(
-                  () =>
-                    Blockstack.putFileNotEncrypted(
-                      (id |> VentureId.toString)
-                      ++ "/"
-                      ++ prefix
-                      ++ "/summary.json",
-                      summaryString,
-                    )
-                    |> ignore,
-                  1,
-                )
-                |> ignore
-                |> resolve
-              ),
-         resolve(),
-       )
-    |> ignore
+    Blockstack.putFileEncrypted(
+      (id |> VentureId.toString) ++ "/log.json",
+      log |> EventLog.encode |> Json.stringify,
+    )
+    |> then_(() => resolve(venture))
   );
-  returnPromise;
-};
 
 let defaultPolicy = Policy.unanimous;
 

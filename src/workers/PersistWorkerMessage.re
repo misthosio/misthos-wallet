@@ -4,10 +4,11 @@ open PrimitiveTypes;
 
 type send =
   | InitializeLocalStorage(blockstackItems)
-  | LoadVenture(ventureId)
-  | VentureUpdated(ventureId);
+  | PersistVenture(ventureId);
 
 type receive =
-  | None;
+  | VenturePersisted(ventureId);
 
-let decodeReceive = (_) => None;
+type encodedReceive = receive;
+
+let decodeReceive = receive => receive;

@@ -15,7 +15,6 @@ type state = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   partnerIds: list(userId),
-  partnerStoragePrefixes: list((string, string)),
   partnerPubKeys: list((string, userId)),
   partnerData: list((processId, Partner.Data.t)),
   partnerRemovalData: list((processId, Partner.Removal.Data.t)),
@@ -38,7 +37,6 @@ let makeState = () => {
   systemIssuer: Bitcoin.ECPair.makeRandom(),
   systemPubKey: "",
   partnerIds: [],
-  partnerStoragePrefixes: [],
   partnerPubKeys: [],
   metaPolicy: Policy.unanimous,
   partnerData: [],
@@ -159,10 +157,6 @@ let apply = (event: Event.t, state) =>
   | PartnerAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
       partnerIds: [data.id, ...state.partnerIds],
-      partnerStoragePrefixes: [
-        (data.pubKey, UserInfo.storagePrefix(~appPubKey=data.pubKey)),
-        ...state.partnerStoragePrefixes,
-      ],
       partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys],
     }
   | PartnerRemovalAccepted({data: {id}} as acceptance) =>
@@ -173,8 +167,6 @@ let apply = (event: Event.t, state) =>
     {
       ...completeProcess(acceptance, state),
       partnerIds: state.partnerIds |> List.filter(UserId.neq(id)),
-      partnerStoragePrefixes:
-        state.partnerStoragePrefixes |> List.remove_assoc(pubKey),
       partnerPubKeys: state.partnerPubKeys |> List.remove_assoc(pubKey),
     };
   | AccountCreationAccepted({data} as acceptance) => {

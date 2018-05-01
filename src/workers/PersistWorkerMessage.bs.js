@@ -2,8 +2,8 @@
 'use strict';
 
 
-function decodeReceive() {
-  return /* None */0;
+function decodeReceive(receive) {
+  return receive;
 }
 
 exports.decodeReceive = decodeReceive;

@@ -1,3 +1,5 @@
+open PrimitiveTypes;
+
 type ventureState =
   | None
   | CreatingVenture
@@ -10,13 +12,15 @@ type action =
   | UpdateVenture(ventureState)
   | CreateVenture(Session.Data.t, string)
   | SyncWorkerMessage(SyncWorker.Message.receive)
-  | IncomeWorkerMessage(IncomeWorkerMessage.receive);
+  | IncomeWorkerMessage(IncomeWorkerMessage.receive)
+  | PersistWorkerMessage(PersistWorkerMessage.receive);
 
 type state = {
   index: Venture.Index.t,
   ventureState,
   syncWorker: ref(SyncWorker.t),
   incomeWorker: ref(IncomeWorkerClient.t),
+  persistWorker: ref(PersistWorkerClient.t),
 };
 
 let loadVentureAndIndex =
@@ -111,6 +115,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     ventureState: None,
     syncWorker: ref(SyncWorker.make(~onMessage=Js.log)),
     incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
+    persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
   },
   didMount: ({send, state}) =>
     loadVentureAndIndex(send, session, currentRoute, state) |> ignore,
@@ -142,6 +147,18 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         worker;
       },
       IncomeWorkerClient.terminate,
+    ),
+    Sub(
+      () => {
+        PersistWorkerClient.terminate(state.persistWorker^);
+        let worker =
+          PersistWorkerClient.make(~onMessage=message =>
+            send(PersistWorkerMessage(message))
+          );
+        state.persistWorker := worker;
+        worker;
+      },
+      PersistWorkerClient.terminate,
     ),
   ],
   reducer: (action, state) =>
@@ -210,6 +227,9 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           ),
         )
       }
+    | PersistWorkerMessage(VenturePersisted(id)) =>
+      Js.log("Venture '" ++ VentureId.toString(id) ++ "' persisted");
+      ReasonReact.NoUpdate;
     | UpdateIndex(index) => ReasonReact.Update({...state, index})
     | UpdateVenture(ventureState) =>
       ReasonReact.UpdateWithSideEffects(
@@ -220,6 +240,11 @@ let make = (~currentRoute, ~session: Session.t, children) => {
               () =>
                 switch (ventureState) {
                 | VentureLoaded(venture) =>
+                  PersistWorkerMessage.PersistVenture(
+                    venture |> Venture.getId,
+                  )
+                  |> PersistWorkerClient.postMessage(state.persistWorker^)
+                  |> ignore;
                   Js.Promise.(
                     Venture.getPartnerHistoryUrls(venture)
                     |> then_(urls =>
