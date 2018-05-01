@@ -7,7 +7,6 @@ var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var UserInfo = require("./UserInfo.bs.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
@@ -22,7 +21,6 @@ function makeState() {
           /* systemPubKey */"",
           /* metaPolicy */Policy.unanimous,
           /* partnerIds : [] */0,
-          /* partnerStoragePrefixes : [] */0,
           /* partnerPubKeys : [] */0,
           /* partnerData : [] */0,
           /* partnerRemovalData : [] */0,
@@ -49,14 +47,13 @@ function addProcess(param, state) {
           /* systemPubKey */state[/* systemPubKey */2],
           /* metaPolicy */state[/* metaPolicy */3],
           /* partnerIds */state[/* partnerIds */4],
-          /* partnerStoragePrefixes */state[/* partnerStoragePrefixes */5],
-          /* partnerPubKeys */state[/* partnerPubKeys */6],
-          /* partnerData */state[/* partnerData */7],
-          /* partnerRemovalData */state[/* partnerRemovalData */8],
-          /* custodianData */state[/* custodianData */9],
-          /* custodianRemovalData */state[/* custodianRemovalData */10],
-          /* accountCreationData */state[/* accountCreationData */11],
-          /* payoutData */state[/* payoutData */12],
+          /* partnerPubKeys */state[/* partnerPubKeys */5],
+          /* partnerData */state[/* partnerData */6],
+          /* partnerRemovalData */state[/* partnerRemovalData */7],
+          /* custodianData */state[/* custodianData */8],
+          /* custodianRemovalData */state[/* custodianRemovalData */9],
+          /* accountCreationData */state[/* accountCreationData */10],
+          /* payoutData */state[/* payoutData */11],
           /* processes : :: */[
             /* tuple */[
               param[/* processId */0],
@@ -68,13 +65,13 @@ function addProcess(param, state) {
                 /* policy */param[/* policy */3]
               ]
             ],
-            state[/* processes */13]
+            state[/* processes */12]
           ],
-          /* completedProcesses */state[/* completedProcesses */14],
-          /* policies */state[/* policies */15],
-          /* creatorData */state[/* creatorData */16],
-          /* custodianKeyChains */state[/* custodianKeyChains */17],
-          /* accountKeyChains */state[/* accountKeyChains */18]
+          /* completedProcesses */state[/* completedProcesses */13],
+          /* policies */state[/* policies */14],
+          /* creatorData */state[/* creatorData */15],
+          /* custodianKeyChains */state[/* custodianKeyChains */16],
+          /* accountKeyChains */state[/* accountKeyChains */17]
         ];
 }
 
@@ -87,14 +84,13 @@ function endorseProcess(param, state) {
           /* systemPubKey */state[/* systemPubKey */2],
           /* metaPolicy */state[/* metaPolicy */3],
           /* partnerIds */state[/* partnerIds */4],
-          /* partnerStoragePrefixes */state[/* partnerStoragePrefixes */5],
-          /* partnerPubKeys */state[/* partnerPubKeys */6],
-          /* partnerData */state[/* partnerData */7],
-          /* partnerRemovalData */state[/* partnerRemovalData */8],
-          /* custodianData */state[/* custodianData */9],
-          /* custodianRemovalData */state[/* custodianRemovalData */10],
-          /* accountCreationData */state[/* accountCreationData */11],
-          /* payoutData */state[/* payoutData */12],
+          /* partnerPubKeys */state[/* partnerPubKeys */5],
+          /* partnerData */state[/* partnerData */6],
+          /* partnerRemovalData */state[/* partnerRemovalData */7],
+          /* custodianData */state[/* custodianData */8],
+          /* custodianRemovalData */state[/* custodianRemovalData */9],
+          /* accountCreationData */state[/* accountCreationData */10],
+          /* payoutData */state[/* payoutData */11],
           /* processes */List.map((function (param) {
                   var $$process = param[1];
                   var pId = param[0];
@@ -116,12 +112,12 @@ function endorseProcess(param, state) {
                             $$process
                           ];
                   }
-                }), state[/* processes */13]),
-          /* completedProcesses */state[/* completedProcesses */14],
-          /* policies */state[/* policies */15],
-          /* creatorData */state[/* creatorData */16],
-          /* custodianKeyChains */state[/* custodianKeyChains */17],
-          /* accountKeyChains */state[/* accountKeyChains */18]
+                }), state[/* processes */12]),
+          /* completedProcesses */state[/* completedProcesses */13],
+          /* policies */state[/* policies */14],
+          /* creatorData */state[/* creatorData */15],
+          /* custodianKeyChains */state[/* custodianKeyChains */16],
+          /* accountKeyChains */state[/* accountKeyChains */17]
         ];
 }
 
@@ -132,23 +128,22 @@ function completeProcess(param, state) {
           /* systemPubKey */state[/* systemPubKey */2],
           /* metaPolicy */state[/* metaPolicy */3],
           /* partnerIds */state[/* partnerIds */4],
-          /* partnerStoragePrefixes */state[/* partnerStoragePrefixes */5],
-          /* partnerPubKeys */state[/* partnerPubKeys */6],
-          /* partnerData */state[/* partnerData */7],
-          /* partnerRemovalData */state[/* partnerRemovalData */8],
-          /* custodianData */state[/* custodianData */9],
-          /* custodianRemovalData */state[/* custodianRemovalData */10],
-          /* accountCreationData */state[/* accountCreationData */11],
-          /* payoutData */state[/* payoutData */12],
-          /* processes */state[/* processes */13],
+          /* partnerPubKeys */state[/* partnerPubKeys */5],
+          /* partnerData */state[/* partnerData */6],
+          /* partnerRemovalData */state[/* partnerRemovalData */7],
+          /* custodianData */state[/* custodianData */8],
+          /* custodianRemovalData */state[/* custodianRemovalData */9],
+          /* accountCreationData */state[/* accountCreationData */10],
+          /* payoutData */state[/* payoutData */11],
+          /* processes */state[/* processes */12],
           /* completedProcesses : :: */[
             param[/* processId */0],
-            state[/* completedProcesses */14]
+            state[/* completedProcesses */13]
           ],
-          /* policies */state[/* policies */15],
-          /* creatorData */state[/* creatorData */16],
-          /* custodianKeyChains */state[/* custodianKeyChains */17],
-          /* accountKeyChains */state[/* accountKeyChains */18]
+          /* policies */state[/* policies */14],
+          /* creatorData */state[/* creatorData */15],
+          /* custodianKeyChains */state[/* custodianKeyChains */16],
+          /* accountKeyChains */state[/* accountKeyChains */17]
         ];
 }
 
@@ -164,16 +159,15 @@ function apply($$event, state) {
                 /* systemPubKey */Utils.publicKeyFromKeyPair(systemIssuer),
                 /* metaPolicy */metaPolicy,
                 /* partnerIds */state[/* partnerIds */4],
-                /* partnerStoragePrefixes */state[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */state[/* partnerPubKeys */6],
-                /* partnerData */state[/* partnerData */7],
-                /* partnerRemovalData */state[/* partnerRemovalData */8],
-                /* custodianData */state[/* custodianData */9],
-                /* custodianRemovalData */state[/* custodianRemovalData */10],
-                /* accountCreationData */state[/* accountCreationData */11],
-                /* payoutData */state[/* payoutData */12],
-                /* processes */state[/* processes */13],
-                /* completedProcesses */state[/* completedProcesses */14],
+                /* partnerPubKeys */state[/* partnerPubKeys */5],
+                /* partnerData */state[/* partnerData */6],
+                /* partnerRemovalData */state[/* partnerRemovalData */7],
+                /* custodianData */state[/* custodianData */8],
+                /* custodianRemovalData */state[/* custodianRemovalData */9],
+                /* accountCreationData */state[/* accountCreationData */10],
+                /* payoutData */state[/* payoutData */11],
+                /* processes */state[/* processes */12],
+                /* completedProcesses */state[/* completedProcesses */13],
                 /* policies : :: */[
                   /* tuple */[
                     Event.Partner[/* Removal */5][/* processName */1],
@@ -208,8 +202,8 @@ function apply($$event, state) {
                   /* id */match[/* creatorId */2],
                   /* pubKey */match[/* creatorPubKey */3]
                 ],
-                /* custodianKeyChains */state[/* custodianKeyChains */17],
-                /* accountKeyChains */state[/* accountKeyChains */18]
+                /* custodianKeyChains */state[/* custodianKeyChains */16],
+                /* accountKeyChains */state[/* accountKeyChains */17]
               ];
     case 1 : 
         var proposal = $$event[0];
@@ -220,26 +214,25 @@ function apply($$event, state) {
                 /* systemPubKey */init[/* systemPubKey */2],
                 /* metaPolicy */init[/* metaPolicy */3],
                 /* partnerIds */init[/* partnerIds */4],
-                /* partnerStoragePrefixes */init[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init[/* partnerPubKeys */6],
+                /* partnerPubKeys */init[/* partnerPubKeys */5],
                 /* partnerData : :: */[
                   /* tuple */[
                     proposal[/* processId */0],
                     proposal[/* data */4]
                   ],
-                  state[/* partnerData */7]
+                  state[/* partnerData */6]
                 ],
-                /* partnerRemovalData */init[/* partnerRemovalData */8],
-                /* custodianData */init[/* custodianData */9],
-                /* custodianRemovalData */init[/* custodianRemovalData */10],
-                /* accountCreationData */init[/* accountCreationData */11],
-                /* payoutData */init[/* payoutData */12],
-                /* processes */init[/* processes */13],
-                /* completedProcesses */init[/* completedProcesses */14],
-                /* policies */init[/* policies */15],
-                /* creatorData */init[/* creatorData */16],
-                /* custodianKeyChains */init[/* custodianKeyChains */17],
-                /* accountKeyChains */init[/* accountKeyChains */18]
+                /* partnerRemovalData */init[/* partnerRemovalData */7],
+                /* custodianData */init[/* custodianData */8],
+                /* custodianRemovalData */init[/* custodianRemovalData */9],
+                /* accountCreationData */init[/* accountCreationData */10],
+                /* payoutData */init[/* payoutData */11],
+                /* processes */init[/* processes */12],
+                /* completedProcesses */init[/* completedProcesses */13],
+                /* policies */init[/* policies */14],
+                /* creatorData */init[/* creatorData */15],
+                /* custodianKeyChains */init[/* custodianKeyChains */16],
+                /* accountKeyChains */init[/* accountKeyChains */17]
               ];
     case 3 : 
         var acceptance = $$event[0];
@@ -254,32 +247,25 @@ function apply($$event, state) {
                   data[/* id */0],
                   state[/* partnerIds */4]
                 ],
-                /* partnerStoragePrefixes : :: */[
-                  /* tuple */[
-                    data[/* pubKey */1],
-                    UserInfo.storagePrefix(data[/* pubKey */1])
-                  ],
-                  state[/* partnerStoragePrefixes */5]
-                ],
                 /* partnerPubKeys : :: */[
                   /* tuple */[
                     data[/* pubKey */1],
                     data[/* id */0]
                   ],
-                  state[/* partnerPubKeys */6]
+                  state[/* partnerPubKeys */5]
                 ],
-                /* partnerData */init$1[/* partnerData */7],
-                /* partnerRemovalData */init$1[/* partnerRemovalData */8],
-                /* custodianData */init$1[/* custodianData */9],
-                /* custodianRemovalData */init$1[/* custodianRemovalData */10],
-                /* accountCreationData */init$1[/* accountCreationData */11],
-                /* payoutData */init$1[/* payoutData */12],
-                /* processes */init$1[/* processes */13],
-                /* completedProcesses */init$1[/* completedProcesses */14],
-                /* policies */init$1[/* policies */15],
-                /* creatorData */init$1[/* creatorData */16],
-                /* custodianKeyChains */init$1[/* custodianKeyChains */17],
-                /* accountKeyChains */init$1[/* accountKeyChains */18]
+                /* partnerData */init$1[/* partnerData */6],
+                /* partnerRemovalData */init$1[/* partnerRemovalData */7],
+                /* custodianData */init$1[/* custodianData */8],
+                /* custodianRemovalData */init$1[/* custodianRemovalData */9],
+                /* accountCreationData */init$1[/* accountCreationData */10],
+                /* payoutData */init$1[/* payoutData */11],
+                /* processes */init$1[/* processes */12],
+                /* completedProcesses */init$1[/* completedProcesses */13],
+                /* policies */init$1[/* policies */14],
+                /* creatorData */init$1[/* creatorData */15],
+                /* custodianKeyChains */init$1[/* custodianKeyChains */16],
+                /* accountKeyChains */init$1[/* accountKeyChains */17]
               ];
     case 4 : 
         var proposal$1 = $$event[0];
@@ -290,33 +276,32 @@ function apply($$event, state) {
                 /* systemPubKey */init$2[/* systemPubKey */2],
                 /* metaPolicy */init$2[/* metaPolicy */3],
                 /* partnerIds */init$2[/* partnerIds */4],
-                /* partnerStoragePrefixes */init$2[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init$2[/* partnerPubKeys */6],
-                /* partnerData */init$2[/* partnerData */7],
+                /* partnerPubKeys */init$2[/* partnerPubKeys */5],
+                /* partnerData */init$2[/* partnerData */6],
                 /* partnerRemovalData : :: */[
                   /* tuple */[
                     proposal$1[/* processId */0],
                     proposal$1[/* data */4]
                   ],
-                  state[/* partnerRemovalData */8]
+                  state[/* partnerRemovalData */7]
                 ],
-                /* custodianData */init$2[/* custodianData */9],
-                /* custodianRemovalData */init$2[/* custodianRemovalData */10],
-                /* accountCreationData */init$2[/* accountCreationData */11],
-                /* payoutData */init$2[/* payoutData */12],
-                /* processes */init$2[/* processes */13],
-                /* completedProcesses */init$2[/* completedProcesses */14],
-                /* policies */init$2[/* policies */15],
-                /* creatorData */init$2[/* creatorData */16],
-                /* custodianKeyChains */init$2[/* custodianKeyChains */17],
-                /* accountKeyChains */init$2[/* accountKeyChains */18]
+                /* custodianData */init$2[/* custodianData */8],
+                /* custodianRemovalData */init$2[/* custodianRemovalData */9],
+                /* accountCreationData */init$2[/* accountCreationData */10],
+                /* payoutData */init$2[/* payoutData */11],
+                /* processes */init$2[/* processes */12],
+                /* completedProcesses */init$2[/* completedProcesses */13],
+                /* policies */init$2[/* policies */14],
+                /* creatorData */init$2[/* creatorData */15],
+                /* custodianKeyChains */init$2[/* custodianKeyChains */16],
+                /* accountKeyChains */init$2[/* accountKeyChains */17]
               ];
     case 6 : 
         var acceptance$1 = $$event[0];
         var id = acceptance$1[/* data */2][/* id */0];
         var pubKey = List.find((function (param) {
                   return PrimitiveTypes.UserId[/* eq */5](param[1], id);
-                }), state[/* partnerPubKeys */6])[0];
+                }), state[/* partnerPubKeys */5])[0];
         var init$3 = completeProcess(acceptance$1, state);
         var partial_arg = PrimitiveTypes.UserId[/* neq */6];
         return /* record */[
@@ -327,20 +312,19 @@ function apply($$event, state) {
                 /* partnerIds */List.filter((function (param) {
                           return partial_arg(id, param);
                         }))(state[/* partnerIds */4]),
-                /* partnerStoragePrefixes */List.remove_assoc(pubKey, state[/* partnerStoragePrefixes */5]),
-                /* partnerPubKeys */List.remove_assoc(pubKey, state[/* partnerPubKeys */6]),
-                /* partnerData */init$3[/* partnerData */7],
-                /* partnerRemovalData */init$3[/* partnerRemovalData */8],
-                /* custodianData */init$3[/* custodianData */9],
-                /* custodianRemovalData */init$3[/* custodianRemovalData */10],
-                /* accountCreationData */init$3[/* accountCreationData */11],
-                /* payoutData */init$3[/* payoutData */12],
-                /* processes */init$3[/* processes */13],
-                /* completedProcesses */init$3[/* completedProcesses */14],
-                /* policies */init$3[/* policies */15],
-                /* creatorData */init$3[/* creatorData */16],
-                /* custodianKeyChains */init$3[/* custodianKeyChains */17],
-                /* accountKeyChains */init$3[/* accountKeyChains */18]
+                /* partnerPubKeys */List.remove_assoc(pubKey, state[/* partnerPubKeys */5]),
+                /* partnerData */init$3[/* partnerData */6],
+                /* partnerRemovalData */init$3[/* partnerRemovalData */7],
+                /* custodianData */init$3[/* custodianData */8],
+                /* custodianRemovalData */init$3[/* custodianRemovalData */9],
+                /* accountCreationData */init$3[/* accountCreationData */10],
+                /* payoutData */init$3[/* payoutData */11],
+                /* processes */init$3[/* processes */12],
+                /* completedProcesses */init$3[/* completedProcesses */13],
+                /* policies */init$3[/* policies */14],
+                /* creatorData */init$3[/* creatorData */15],
+                /* custodianKeyChains */init$3[/* custodianKeyChains */16],
+                /* accountKeyChains */init$3[/* accountKeyChains */17]
               ];
     case 7 : 
         var proposal$2 = $$event[0];
@@ -351,26 +335,25 @@ function apply($$event, state) {
                 /* systemPubKey */init$4[/* systemPubKey */2],
                 /* metaPolicy */init$4[/* metaPolicy */3],
                 /* partnerIds */init$4[/* partnerIds */4],
-                /* partnerStoragePrefixes */init$4[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init$4[/* partnerPubKeys */6],
-                /* partnerData */init$4[/* partnerData */7],
-                /* partnerRemovalData */init$4[/* partnerRemovalData */8],
-                /* custodianData */init$4[/* custodianData */9],
-                /* custodianRemovalData */init$4[/* custodianRemovalData */10],
+                /* partnerPubKeys */init$4[/* partnerPubKeys */5],
+                /* partnerData */init$4[/* partnerData */6],
+                /* partnerRemovalData */init$4[/* partnerRemovalData */7],
+                /* custodianData */init$4[/* custodianData */8],
+                /* custodianRemovalData */init$4[/* custodianRemovalData */9],
                 /* accountCreationData : :: */[
                   /* tuple */[
                     proposal$2[/* processId */0],
                     proposal$2[/* data */4]
                   ],
-                  state[/* accountCreationData */11]
+                  state[/* accountCreationData */10]
                 ],
-                /* payoutData */init$4[/* payoutData */12],
-                /* processes */init$4[/* processes */13],
-                /* completedProcesses */init$4[/* completedProcesses */14],
-                /* policies */init$4[/* policies */15],
-                /* creatorData */init$4[/* creatorData */16],
-                /* custodianKeyChains */init$4[/* custodianKeyChains */17],
-                /* accountKeyChains */init$4[/* accountKeyChains */18]
+                /* payoutData */init$4[/* payoutData */11],
+                /* processes */init$4[/* processes */12],
+                /* completedProcesses */init$4[/* completedProcesses */13],
+                /* policies */init$4[/* policies */14],
+                /* creatorData */init$4[/* creatorData */15],
+                /* custodianKeyChains */init$4[/* custodianKeyChains */16],
+                /* accountKeyChains */init$4[/* accountKeyChains */17]
               ];
     case 9 : 
         var acceptance$2 = $$event[0];
@@ -381,25 +364,24 @@ function apply($$event, state) {
                 /* systemPubKey */init$5[/* systemPubKey */2],
                 /* metaPolicy */init$5[/* metaPolicy */3],
                 /* partnerIds */init$5[/* partnerIds */4],
-                /* partnerStoragePrefixes */init$5[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init$5[/* partnerPubKeys */6],
-                /* partnerData */init$5[/* partnerData */7],
-                /* partnerRemovalData */init$5[/* partnerRemovalData */8],
-                /* custodianData */init$5[/* custodianData */9],
-                /* custodianRemovalData */init$5[/* custodianRemovalData */10],
-                /* accountCreationData */init$5[/* accountCreationData */11],
-                /* payoutData */init$5[/* payoutData */12],
-                /* processes */init$5[/* processes */13],
-                /* completedProcesses */init$5[/* completedProcesses */14],
-                /* policies */init$5[/* policies */15],
-                /* creatorData */init$5[/* creatorData */16],
-                /* custodianKeyChains */init$5[/* custodianKeyChains */17],
+                /* partnerPubKeys */init$5[/* partnerPubKeys */5],
+                /* partnerData */init$5[/* partnerData */6],
+                /* partnerRemovalData */init$5[/* partnerRemovalData */7],
+                /* custodianData */init$5[/* custodianData */8],
+                /* custodianRemovalData */init$5[/* custodianRemovalData */9],
+                /* accountCreationData */init$5[/* accountCreationData */10],
+                /* payoutData */init$5[/* payoutData */11],
+                /* processes */init$5[/* processes */12],
+                /* completedProcesses */init$5[/* completedProcesses */13],
+                /* policies */init$5[/* policies */14],
+                /* creatorData */init$5[/* creatorData */15],
+                /* custodianKeyChains */init$5[/* custodianKeyChains */16],
                 /* accountKeyChains : :: */[
                   /* tuple */[
                     acceptance$2[/* data */2][/* accountIdx */0],
                     /* [] */0
                   ],
-                  state[/* accountKeyChains */18]
+                  state[/* accountKeyChains */17]
                 ]
               ];
     case 10 : 
@@ -411,26 +393,25 @@ function apply($$event, state) {
                 /* systemPubKey */init$6[/* systemPubKey */2],
                 /* metaPolicy */init$6[/* metaPolicy */3],
                 /* partnerIds */init$6[/* partnerIds */4],
-                /* partnerStoragePrefixes */init$6[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init$6[/* partnerPubKeys */6],
-                /* partnerData */init$6[/* partnerData */7],
-                /* partnerRemovalData */init$6[/* partnerRemovalData */8],
+                /* partnerPubKeys */init$6[/* partnerPubKeys */5],
+                /* partnerData */init$6[/* partnerData */6],
+                /* partnerRemovalData */init$6[/* partnerRemovalData */7],
                 /* custodianData : :: */[
                   /* tuple */[
                     proposal$3[/* processId */0],
                     proposal$3[/* data */4]
                   ],
-                  state[/* custodianData */9]
+                  state[/* custodianData */8]
                 ],
-                /* custodianRemovalData */init$6[/* custodianRemovalData */10],
-                /* accountCreationData */init$6[/* accountCreationData */11],
-                /* payoutData */init$6[/* payoutData */12],
-                /* processes */init$6[/* processes */13],
-                /* completedProcesses */init$6[/* completedProcesses */14],
-                /* policies */init$6[/* policies */15],
-                /* creatorData */init$6[/* creatorData */16],
-                /* custodianKeyChains */init$6[/* custodianKeyChains */17],
-                /* accountKeyChains */init$6[/* accountKeyChains */18]
+                /* custodianRemovalData */init$6[/* custodianRemovalData */9],
+                /* accountCreationData */init$6[/* accountCreationData */10],
+                /* payoutData */init$6[/* payoutData */11],
+                /* processes */init$6[/* processes */12],
+                /* completedProcesses */init$6[/* completedProcesses */13],
+                /* policies */init$6[/* policies */14],
+                /* creatorData */init$6[/* creatorData */15],
+                /* custodianKeyChains */init$6[/* custodianKeyChains */16],
+                /* accountKeyChains */init$6[/* accountKeyChains */17]
               ];
     case 12 : 
         var acceptance$3 = $$event[0];
@@ -439,7 +420,7 @@ function apply($$event, state) {
         var partnerId = match$1[/* partnerId */0];
         var userChains;
         try {
-          userChains = List.assoc(partnerId, state[/* custodianKeyChains */17]);
+          userChains = List.assoc(partnerId, state[/* custodianKeyChains */16]);
         }
         catch (exn){
           if (exn === Caml_builtin_exceptions.not_found) {
@@ -466,18 +447,17 @@ function apply($$event, state) {
                 /* systemPubKey */init$7[/* systemPubKey */2],
                 /* metaPolicy */init$7[/* metaPolicy */3],
                 /* partnerIds */init$7[/* partnerIds */4],
-                /* partnerStoragePrefixes */init$7[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init$7[/* partnerPubKeys */6],
-                /* partnerData */init$7[/* partnerData */7],
-                /* partnerRemovalData */init$7[/* partnerRemovalData */8],
-                /* custodianData */init$7[/* custodianData */9],
-                /* custodianRemovalData */init$7[/* custodianRemovalData */10],
-                /* accountCreationData */init$7[/* accountCreationData */11],
-                /* payoutData */init$7[/* payoutData */12],
-                /* processes */init$7[/* processes */13],
-                /* completedProcesses */init$7[/* completedProcesses */14],
-                /* policies */init$7[/* policies */15],
-                /* creatorData */init$7[/* creatorData */16],
+                /* partnerPubKeys */init$7[/* partnerPubKeys */5],
+                /* partnerData */init$7[/* partnerData */6],
+                /* partnerRemovalData */init$7[/* partnerRemovalData */7],
+                /* custodianData */init$7[/* custodianData */8],
+                /* custodianRemovalData */init$7[/* custodianRemovalData */9],
+                /* accountCreationData */init$7[/* accountCreationData */10],
+                /* payoutData */init$7[/* payoutData */11],
+                /* processes */init$7[/* processes */12],
+                /* completedProcesses */init$7[/* completedProcesses */13],
+                /* policies */init$7[/* policies */14],
+                /* creatorData */init$7[/* creatorData */15],
                 /* custodianKeyChains : :: */[
                   /* tuple */[
                     partnerId,
@@ -489,9 +469,9 @@ function apply($$event, state) {
                       List.remove_assoc(accountIdx, userChains)
                     ]
                   ],
-                  List.remove_assoc(partnerId, state[/* custodianKeyChains */17])
+                  List.remove_assoc(partnerId, state[/* custodianKeyChains */16])
                 ],
-                /* accountKeyChains */init$7[/* accountKeyChains */18]
+                /* accountKeyChains */init$7[/* accountKeyChains */17]
               ];
     case 13 : 
         var proposal$4 = $$event[0];
@@ -502,26 +482,25 @@ function apply($$event, state) {
                 /* systemPubKey */init$8[/* systemPubKey */2],
                 /* metaPolicy */init$8[/* metaPolicy */3],
                 /* partnerIds */init$8[/* partnerIds */4],
-                /* partnerStoragePrefixes */init$8[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init$8[/* partnerPubKeys */6],
-                /* partnerData */init$8[/* partnerData */7],
-                /* partnerRemovalData */init$8[/* partnerRemovalData */8],
-                /* custodianData */init$8[/* custodianData */9],
+                /* partnerPubKeys */init$8[/* partnerPubKeys */5],
+                /* partnerData */init$8[/* partnerData */6],
+                /* partnerRemovalData */init$8[/* partnerRemovalData */7],
+                /* custodianData */init$8[/* custodianData */8],
                 /* custodianRemovalData : :: */[
                   /* tuple */[
                     proposal$4[/* processId */0],
                     proposal$4[/* data */4]
                   ],
-                  state[/* custodianRemovalData */10]
+                  state[/* custodianRemovalData */9]
                 ],
-                /* accountCreationData */init$8[/* accountCreationData */11],
-                /* payoutData */init$8[/* payoutData */12],
-                /* processes */init$8[/* processes */13],
-                /* completedProcesses */init$8[/* completedProcesses */14],
-                /* policies */init$8[/* policies */15],
-                /* creatorData */init$8[/* creatorData */16],
-                /* custodianKeyChains */init$8[/* custodianKeyChains */17],
-                /* accountKeyChains */init$8[/* accountKeyChains */18]
+                /* accountCreationData */init$8[/* accountCreationData */10],
+                /* payoutData */init$8[/* payoutData */11],
+                /* processes */init$8[/* processes */12],
+                /* completedProcesses */init$8[/* completedProcesses */13],
+                /* policies */init$8[/* policies */14],
+                /* creatorData */init$8[/* creatorData */15],
+                /* custodianKeyChains */init$8[/* custodianKeyChains */16],
+                /* accountKeyChains */init$8[/* accountKeyChains */17]
               ];
     case 16 : 
         var proposal$5 = $$event[0];
@@ -532,26 +511,25 @@ function apply($$event, state) {
                 /* systemPubKey */init$9[/* systemPubKey */2],
                 /* metaPolicy */init$9[/* metaPolicy */3],
                 /* partnerIds */init$9[/* partnerIds */4],
-                /* partnerStoragePrefixes */init$9[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */init$9[/* partnerPubKeys */6],
-                /* partnerData */init$9[/* partnerData */7],
-                /* partnerRemovalData */init$9[/* partnerRemovalData */8],
-                /* custodianData */init$9[/* custodianData */9],
-                /* custodianRemovalData */init$9[/* custodianRemovalData */10],
-                /* accountCreationData */init$9[/* accountCreationData */11],
+                /* partnerPubKeys */init$9[/* partnerPubKeys */5],
+                /* partnerData */init$9[/* partnerData */6],
+                /* partnerRemovalData */init$9[/* partnerRemovalData */7],
+                /* custodianData */init$9[/* custodianData */8],
+                /* custodianRemovalData */init$9[/* custodianRemovalData */9],
+                /* accountCreationData */init$9[/* accountCreationData */10],
                 /* payoutData : :: */[
                   /* tuple */[
                     proposal$5[/* processId */0],
                     proposal$5[/* data */4]
                   ],
-                  state[/* payoutData */12]
+                  state[/* payoutData */11]
                 ],
-                /* processes */init$9[/* processes */13],
-                /* completedProcesses */init$9[/* completedProcesses */14],
-                /* policies */init$9[/* policies */15],
-                /* creatorData */init$9[/* creatorData */16],
-                /* custodianKeyChains */init$9[/* custodianKeyChains */17],
-                /* accountKeyChains */init$9[/* accountKeyChains */18]
+                /* processes */init$9[/* processes */12],
+                /* completedProcesses */init$9[/* completedProcesses */13],
+                /* policies */init$9[/* policies */14],
+                /* creatorData */init$9[/* creatorData */15],
+                /* custodianKeyChains */init$9[/* custodianKeyChains */16],
+                /* accountKeyChains */init$9[/* accountKeyChains */17]
               ];
     case 15 : 
     case 18 : 
@@ -562,7 +540,7 @@ function apply($$event, state) {
         var partnerId$1 = match$2[/* partnerId */1];
         var userChains$1;
         try {
-          userChains$1 = List.assoc(partnerId$1, state[/* custodianKeyChains */17]);
+          userChains$1 = List.assoc(partnerId$1, state[/* custodianKeyChains */16]);
         }
         catch (exn$2){
           if (exn$2 === Caml_builtin_exceptions.not_found) {
@@ -588,18 +566,17 @@ function apply($$event, state) {
                 /* systemPubKey */state[/* systemPubKey */2],
                 /* metaPolicy */state[/* metaPolicy */3],
                 /* partnerIds */state[/* partnerIds */4],
-                /* partnerStoragePrefixes */state[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */state[/* partnerPubKeys */6],
-                /* partnerData */state[/* partnerData */7],
-                /* partnerRemovalData */state[/* partnerRemovalData */8],
-                /* custodianData */state[/* custodianData */9],
-                /* custodianRemovalData */state[/* custodianRemovalData */10],
-                /* accountCreationData */state[/* accountCreationData */11],
-                /* payoutData */state[/* payoutData */12],
-                /* processes */state[/* processes */13],
-                /* completedProcesses */state[/* completedProcesses */14],
-                /* policies */state[/* policies */15],
-                /* creatorData */state[/* creatorData */16],
+                /* partnerPubKeys */state[/* partnerPubKeys */5],
+                /* partnerData */state[/* partnerData */6],
+                /* partnerRemovalData */state[/* partnerRemovalData */7],
+                /* custodianData */state[/* custodianData */8],
+                /* custodianRemovalData */state[/* custodianRemovalData */9],
+                /* accountCreationData */state[/* accountCreationData */10],
+                /* payoutData */state[/* payoutData */11],
+                /* processes */state[/* processes */12],
+                /* completedProcesses */state[/* completedProcesses */13],
+                /* policies */state[/* policies */14],
+                /* creatorData */state[/* creatorData */15],
                 /* custodianKeyChains : :: */[
                   /* tuple */[
                     partnerId$1,
@@ -614,15 +591,15 @@ function apply($$event, state) {
                       /* [] */0
                     ]
                   ],
-                  List.remove_assoc(partnerId$1, state[/* custodianKeyChains */17])
+                  List.remove_assoc(partnerId$1, state[/* custodianKeyChains */16])
                 ],
-                /* accountKeyChains */state[/* accountKeyChains */18]
+                /* accountKeyChains */state[/* accountKeyChains */17]
               ];
     case 24 : 
         var keyChain$1 = $$event[0][/* keyChain */0];
         var accountChains$2;
         try {
-          accountChains$2 = List.assoc(keyChain$1[/* accountIdx */0], state[/* accountKeyChains */18]);
+          accountChains$2 = List.assoc(keyChain$1[/* accountIdx */0], state[/* accountKeyChains */17]);
         }
         catch (exn$4){
           if (exn$4 === Caml_builtin_exceptions.not_found) {
@@ -637,19 +614,18 @@ function apply($$event, state) {
                 /* systemPubKey */state[/* systemPubKey */2],
                 /* metaPolicy */state[/* metaPolicy */3],
                 /* partnerIds */state[/* partnerIds */4],
-                /* partnerStoragePrefixes */state[/* partnerStoragePrefixes */5],
-                /* partnerPubKeys */state[/* partnerPubKeys */6],
-                /* partnerData */state[/* partnerData */7],
-                /* partnerRemovalData */state[/* partnerRemovalData */8],
-                /* custodianData */state[/* custodianData */9],
-                /* custodianRemovalData */state[/* custodianRemovalData */10],
-                /* accountCreationData */state[/* accountCreationData */11],
-                /* payoutData */state[/* payoutData */12],
-                /* processes */state[/* processes */13],
-                /* completedProcesses */state[/* completedProcesses */14],
-                /* policies */state[/* policies */15],
-                /* creatorData */state[/* creatorData */16],
-                /* custodianKeyChains */state[/* custodianKeyChains */17],
+                /* partnerPubKeys */state[/* partnerPubKeys */5],
+                /* partnerData */state[/* partnerData */6],
+                /* partnerRemovalData */state[/* partnerRemovalData */7],
+                /* custodianData */state[/* custodianData */8],
+                /* custodianRemovalData */state[/* custodianRemovalData */9],
+                /* accountCreationData */state[/* accountCreationData */10],
+                /* payoutData */state[/* payoutData */11],
+                /* processes */state[/* processes */12],
+                /* completedProcesses */state[/* completedProcesses */13],
+                /* policies */state[/* policies */14],
+                /* creatorData */state[/* creatorData */15],
+                /* custodianKeyChains */state[/* custodianKeyChains */16],
                 /* accountKeyChains : :: */[
                   /* tuple */[
                     keyChain$1[/* accountIdx */0],
@@ -708,12 +684,12 @@ function validateProposal($staropt$star, processName, param, state, issuerPubKey
   var data = param[/* data */4];
   var dependsOn = param[/* dependsOn */1];
   var validateData = $staropt$star ? $staropt$star[0] : defaultDataValidator;
-  if (Policy.neq(param[/* policy */3], List.assoc(processName, state[/* policies */15]))) {
+  if (Policy.neq(param[/* policy */3], List.assoc(processName, state[/* policies */14]))) {
     return /* PolicyMissmatch */4;
-  } else if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, state[/* partnerPubKeys */6]), param[/* supporterId */2])) {
+  } else if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, state[/* partnerPubKeys */5]), param[/* supporterId */2])) {
     return /* InvalidIssuer */2;
   } else if (dependsOn) {
-    var match = List.mem_assoc(dependsOn[0], state[/* processes */13]);
+    var match = List.mem_assoc(dependsOn[0], state[/* processes */12]);
     if (match) {
       return Curry._2(validateData, data, state);
     } else {
@@ -727,8 +703,8 @@ function validateProposal($staropt$star, processName, param, state, issuerPubKey
 function validateEndorsement(param, param$1, issuerPubKey) {
   var supporterId = param[/* supporterId */1];
   try {
-    var match = List.assoc(param[/* processId */0], param$1[/* processes */13]);
-    if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$1[/* partnerPubKeys */6]), supporterId)) {
+    var match = List.assoc(param[/* processId */0], param$1[/* processes */12]);
+    if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$1[/* partnerPubKeys */5]), supporterId)) {
       return /* InvalidIssuer */2;
     } else if (List.mem(supporterId, match[/* supporterIds */0])) {
       return /* Ignore */1;
@@ -749,13 +725,13 @@ function validateAcceptance(param, dataList, param$1, _) {
   var dependsOn = param[/* dependsOn */1];
   var processId = param[/* processId */0];
   try {
-    var match = List.assoc(processId, param$1[/* processes */13]);
+    var match = List.assoc(processId, param$1[/* processes */12]);
     if (Caml_obj.caml_notequal(param[/* data */2], List.assoc(processId, dataList))) {
       return /* BadData */["Data doesn't match proposal"];
     } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* partnerIds */4], match[/* supporterIds */0]) === false) {
       return /* PolicyNotFulfilled */5;
     } else if (dependsOn) {
-      var match$1 = List.mem(dependsOn[0], param$1[/* completedProcesses */14]);
+      var match$1 = List.mem(dependsOn[0], param$1[/* completedProcesses */13]);
       if (match$1) {
         return /* Ok */0;
       } else {
@@ -786,7 +762,7 @@ function validatePartnerRemovalData(param, param$1) {
 
 function validateCustodianData(param, param$1) {
   try {
-    var pData = List.assoc(param[/* partnerApprovalProcess */1], param$1[/* partnerData */7]);
+    var pData = List.assoc(param[/* partnerApprovalProcess */1], param$1[/* partnerData */6]);
     var match = PrimitiveTypes.UserId[/* eq */5](pData[/* id */0], param[/* partnerId */0]);
     if (match) {
       return /* Ok */0;
@@ -814,7 +790,7 @@ function validateCustodianRemovalData(param, param$1) {
             } else {
               return false;
             }
-          }), param$1[/* custodianData */9]);
+          }), param$1[/* custodianData */8]);
     if (match) {
       return /* Ok */0;
     } else {
@@ -831,7 +807,7 @@ function validateCustodianRemovalData(param, param$1) {
 }
 
 function validateAccountCreationData(param, param$1) {
-  var match = WalletTypes.AccountIndex[/* toInt */0](param[/* accountIdx */0]) === List.length(param$1[/* accountCreationData */11]);
+  var match = WalletTypes.AccountIndex[/* toInt */0](param[/* accountIdx */0]) === List.length(param$1[/* accountCreationData */10]);
   if (match) {
     return /* Ok */0;
   } else {
@@ -842,7 +818,7 @@ function validateAccountCreationData(param, param$1) {
 function validateCustodianKeyChainUpdated(param, param$1, issuerPubKey) {
   var keyChain = param[/* keyChain */2];
   var partnerId = param[/* partnerId */1];
-  if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$1[/* partnerPubKeys */6]), partnerId)) {
+  if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$1[/* partnerPubKeys */5]), partnerId)) {
     return /* InvalidIssuer */2;
   } else {
     try {
@@ -853,9 +829,9 @@ function validateCustodianKeyChainUpdated(param, param$1, issuerPubKey) {
               } else {
                 return false;
               }
-            }), param$1[/* custodianData */9]);
-      if (List.mem(match[0], param$1[/* completedProcesses */14])) {
-        if (List.length(List.assoc(CustodianKeyChain.accountIdx(keyChain), List.assoc(partnerId, param$1[/* custodianKeyChains */17]))) !== WalletTypes.CustodianKeyChainIndex[/* toInt */0](CustodianKeyChain.keyChainIdx(keyChain))) {
+            }), param$1[/* custodianData */8]);
+      if (List.mem(match[0], param$1[/* completedProcesses */13])) {
+        if (List.length(List.assoc(CustodianKeyChain.accountIdx(keyChain), List.assoc(partnerId, param$1[/* custodianKeyChains */16]))) !== WalletTypes.CustodianKeyChainIndex[/* toInt */0](CustodianKeyChain.keyChainIdx(keyChain))) {
           return /* BadData */["Bad KeyChainIndex"];
         } else {
           return /* Ok */0;
@@ -875,14 +851,14 @@ function validateCustodianKeyChainUpdated(param, param$1, issuerPubKey) {
 }
 
 function validateAccountKeyChainUpdated(param, param$1, _) {
-  var custodianKeyChains = param$1[/* custodianKeyChains */17];
+  var custodianKeyChains = param$1[/* custodianKeyChains */16];
   var keyChain = param[/* keyChain */0];
   try {
     var match = List.find((function (param) {
             return Caml_obj.caml_equal(param[1][/* accountIdx */0], keyChain[/* accountIdx */0]);
-          }), param$1[/* accountCreationData */11]);
-    if (List.mem(match[0], param$1[/* completedProcesses */14])) {
-      if (List.length(List.assoc(keyChain[/* accountIdx */0], param$1[/* accountKeyChains */18])) !== WalletTypes.AccountKeyChainIndex[/* toInt */0](keyChain[/* keyChainIdx */1])) {
+          }), param$1[/* accountCreationData */10]);
+    if (List.mem(match[0], param$1[/* completedProcesses */13])) {
+      if (List.length(List.assoc(keyChain[/* accountIdx */0], param$1[/* accountKeyChains */17])) !== WalletTypes.AccountKeyChainIndex[/* toInt */0](keyChain[/* keyChainIdx */1])) {
         return /* BadData */["Bad KeyChainIndex"];
       } else {
         var accountIdx = keyChain[/* accountIdx */0];
@@ -929,7 +905,7 @@ function validateAccountKeyChainUpdated(param, param$1, _) {
 
 function validateIncomeAddressExposed(param, param$1, _) {
   try {
-    var generatedAddress = AccountKeyChain.find(param[/* coordinates */0], param$1[/* accountKeyChains */18]);
+    var generatedAddress = AccountKeyChain.find(param[/* coordinates */0], param$1[/* accountKeyChains */17]);
     if (param[/* address */1] === generatedAddress[/* address */5]) {
       return /* Ok */0;
     } else {
@@ -960,7 +936,7 @@ function validateEvent(param) {
     case 3 : 
         var acceptance = param[0];
         return (function (state) {
-            var partial_arg = state[/* partnerData */7];
+            var partial_arg = state[/* partnerData */6];
             return (function (param) {
                 return validateAcceptance(acceptance, partial_arg, state, param);
               });
@@ -975,7 +951,7 @@ function validateEvent(param) {
     case 6 : 
         var acceptance$1 = param[0];
         return (function (state) {
-            var partial_arg = state[/* partnerRemovalData */8];
+            var partial_arg = state[/* partnerRemovalData */7];
             return (function (param) {
                 return validateAcceptance(acceptance$1, partial_arg, state, param);
               });
@@ -990,7 +966,7 @@ function validateEvent(param) {
     case 9 : 
         var acceptance$2 = param[0];
         return (function (state) {
-            var partial_arg = state[/* accountCreationData */11];
+            var partial_arg = state[/* accountCreationData */10];
             return (function (param) {
                 return validateAcceptance(acceptance$2, partial_arg, state, param);
               });
@@ -1005,7 +981,7 @@ function validateEvent(param) {
     case 12 : 
         var acceptance$3 = param[0];
         return (function (state) {
-            var partial_arg = state[/* custodianData */9];
+            var partial_arg = state[/* custodianData */8];
             return (function (param) {
                 return validateAcceptance(acceptance$3, partial_arg, state, param);
               });
@@ -1020,7 +996,7 @@ function validateEvent(param) {
     case 15 : 
         var acceptance$4 = param[0];
         return (function (state) {
-            var partial_arg = state[/* custodianRemovalData */10];
+            var partial_arg = state[/* custodianRemovalData */9];
             return (function (param) {
                 return validateAcceptance(acceptance$4, partial_arg, state, param);
               });
@@ -1034,7 +1010,7 @@ function validateEvent(param) {
     case 18 : 
         var acceptance$5 = param[0];
         return (function (state) {
-            var partial_arg = state[/* payoutData */12];
+            var partial_arg = state[/* payoutData */11];
             return (function (param) {
                 return validateAcceptance(acceptance$5, partial_arg, state, param);
               });
@@ -1086,7 +1062,7 @@ function validate(state, param) {
   var issuerPubKey = param[/* issuerPubKey */2];
   var $$event = param[/* event */0];
   var match = Event.isSystemEvent($$event);
-  var match$1 = List.mem_assoc(issuerPubKey, state[/* partnerPubKeys */6]);
+  var match$1 = List.mem_assoc(issuerPubKey, state[/* partnerPubKeys */5]);
   var exit = 0;
   switch ($$event.tag | 0) {
     case 0 : 
@@ -1096,7 +1072,7 @@ function validate(state, param) {
           exit = 1;
         } else if (match$1) {
           return Curry._2(validateEvent($$event), state, issuerPubKey);
-        } else if (Caml_obj.caml_equal($$event[0][/* data */4], state[/* creatorData */16]) && issuerPubKey === state[/* creatorData */16][/* pubKey */1] && List.length(state[/* partnerData */7]) === 0) {
+        } else if (Caml_obj.caml_equal($$event[0][/* data */4], state[/* creatorData */15]) && issuerPubKey === state[/* creatorData */15][/* pubKey */1] && List.length(state[/* partnerData */6]) === 0) {
           return /* Ok */0;
         } else {
           exit = 1;
@@ -1109,7 +1085,7 @@ function validate(state, param) {
     if (match) {
       if (issuerPubKey !== state[/* systemPubKey */2]) {
         return /* InvalidIssuer */2;
-      } else if ($$event.tag === 3 && !(match$1 || !(Caml_obj.caml_equal($$event[0][/* data */2], state[/* creatorData */16]) && List.length(state[/* partnerData */7]) === 1))) {
+      } else if ($$event.tag === 3 && !(match$1 || !(Caml_obj.caml_equal($$event[0][/* data */2], state[/* creatorData */15]) && List.length(state[/* partnerData */6]) === 1))) {
         return /* Ok */0;
       } else {
         return Curry._2(validateEvent($$event), state, issuerPubKey);
