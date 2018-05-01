@@ -79,8 +79,14 @@ function add(id, name) {
               }));
 }
 
+var encode = index;
+
+var decode = index$1;
+
 exports.Encode = Encode;
 exports.Decode = Decode;
+exports.encode = encode;
+exports.decode = decode;
 exports.indexPath = indexPath;
 exports.persist = persist;
 exports.load = load;

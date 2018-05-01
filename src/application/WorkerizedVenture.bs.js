@@ -26,7 +26,7 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 var EncryptionJs = require("blockstack/lib/encryption.js");
 
 function logMessage(msg) {
-  console.log("[Venture] - " + msg);
+  console.log("[Workerized Venture] - " + msg);
   return /* () */0;
 }
 
@@ -583,7 +583,11 @@ function exec$9(processId, venture) {
 
 var EndorsePayout = /* module */[/* exec */exec$9];
 
-var Index = [Venture__Index.load];
+var Index = [
+  Venture__Index.load,
+  Venture__Index.encode,
+  Venture__Index.decode
+];
 
 var Validation = [Venture__Validation.resultToString];
 

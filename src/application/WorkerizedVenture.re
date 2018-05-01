@@ -2,7 +2,7 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
-let logMessage = msg => Js.log("[Venture] - " ++ msg);
+let logMessage = msg => Js.log("[Workerized Venture] - " ++ msg);
 
 module Index = Venture__Index;
 

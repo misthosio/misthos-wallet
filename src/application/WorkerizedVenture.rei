@@ -9,6 +9,8 @@ module Index: {
   };
   type t = list(item);
   let load: unit => Js.Promise.t(t);
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
 };
 
 module Validation: {
