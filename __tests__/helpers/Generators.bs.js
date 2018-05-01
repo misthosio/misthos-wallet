@@ -48,11 +48,11 @@ function threeUserSessions() {
 }
 
 function createVenture(session) {
-  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.absolute, session[/* network */5]);
+  return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
 }
 
 function partnerProposed(supporterSession, prospectSession) {
-  return Event.getPartnerProposedExn(Event.makePartnerProposed(supporterSession[/* userId */0], prospectSession[/* userId */0], Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2]), Policy.absolute));
+  return Event.getPartnerProposedExn(Event.makePartnerProposed(supporterSession[/* userId */0], prospectSession[/* userId */0], Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2]), Policy.unanimous));
 }
 
 function partnerEndorsed(supporter, param) {
@@ -62,7 +62,7 @@ function partnerEndorsed(supporter, param) {
 var partnerAccepted = Event.Partner[/* Accepted */4][/* fromProposal */0];
 
 function partnerRemovalProposed(supporterSession, toBeRemoved) {
-  return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(supporterSession[/* userId */0], toBeRemoved[/* userId */0], Policy.absoluteMinusOne));
+  return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(supporterSession[/* userId */0], toBeRemoved[/* userId */0], Policy.unanimousMinusOne));
 }
 
 function partnerRemovalEndorsed(supporter, param) {
@@ -72,13 +72,13 @@ function partnerRemovalEndorsed(supporter, param) {
 var partnerRemovalAccepted = Event.Partner[/* Removal */5][/* Accepted */4][/* fromProposal */0];
 
 function accountCreationProposed(param) {
-  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */8], Policy.absolute));
+  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */8], Policy.unanimous));
 }
 
 var accountCreationAccepted = Event.AccountCreation[/* Accepted */4][/* fromProposal */0];
 
 function custodianProposed(param, partnerProposal) {
-  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], param[/* userId */0], partnerProposal[/* data */4][/* id */0], WalletTypes.AccountIndex[/* default */8], Policy.absolute));
+  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], param[/* userId */0], partnerProposal[/* data */4][/* id */0], WalletTypes.AccountIndex[/* default */8], Policy.unanimous));
 }
 
 function custodianEndorsed(supporter, param) {

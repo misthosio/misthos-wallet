@@ -25,7 +25,7 @@ describe("interation", (function () {
         var userB = PrimitiveTypes.UserId[/* fromString */1]("userB");
         var keyA = BitcoinjsLib.ECPair.fromWIF("cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1", BitcoinjsLib.networks.testnet);
         var keyB = BitcoinjsLib.ECPair.fromWIF("cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf", BitcoinjsLib.networks.testnet);
-        var createdEvent = Event.VentureCreated[/* make */0]("test", userA, Utils.publicKeyFromKeyPair(keyA), Policy.absolute, /* Regtest */0);
+        var createdEvent = Event.VentureCreated[/* make */0]("test", userA, Utils.publicKeyFromKeyPair(keyA), Policy.unanimous, /* Regtest */0);
         var chainCode = Utils.bufFromHex("c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb");
         var masterA = new BitcoinjsLib.HDNode(keyA, chainCode);
         var masterB = new BitcoinjsLib.HDNode(keyB, chainCode);

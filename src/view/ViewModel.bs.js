@@ -15,8 +15,8 @@ function make() {
           /* partners : [] */0,
           /* prospects : [] */0,
           /* removalProspects : [] */0,
-          /* metaPolicy */Policy.absolute,
-          /* partnerPolicy */Policy.absolute,
+          /* metaPolicy */Policy.unanimous,
+          /* partnerPolicy */Policy.unanimous,
           /* incomeAddresses : [] */0,
           /* payouts : [] */0
         ];

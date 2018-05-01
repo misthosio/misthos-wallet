@@ -46,7 +46,7 @@ module Event = {
       ~ventureName=UserId.toString(session.userId) ++ "-testventure",
       ~creatorId=session.userId,
       ~creatorPubKey=session.issuerKeyPair |> Utils.publicKeyFromKeyPair,
-      ~metaPolicy=Policy.absolute,
+      ~metaPolicy=Policy.unanimous,
       ~network=session.network,
     );
   let partnerProposed =
@@ -56,7 +56,7 @@ module Event = {
       ~prospectId=prospectSession.userId,
       ~prospectPubKey=
         prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
-      ~policy=Policy.absolute,
+      ~policy=Policy.unanimous,
     )
     |> AppEvent.getPartnerProposedExn;
   let partnerEndorsed =
@@ -69,7 +69,7 @@ module Event = {
     AppEvent.makePartnerRemovalProposed(
       ~supporterId=supporterSession.userId,
       ~partnerId=toBeRemoved.userId,
-      ~policy=Policy.absoluteMinusOne,
+      ~policy=Policy.unanimousMinusOne,
     )
     |> AppEvent.getPartnerRemovalProposedExn;
   let partnerRemovalEndorsed =
@@ -88,7 +88,7 @@ module Event = {
       ~supporterId=userId,
       ~name="test",
       ~accountIdx=AccountIndex.default,
-      ~policy=Policy.absolute,
+      ~policy=Policy.unanimous,
     )
     |> AppEvent.getAccountCreationProposedExn;
   let accountCreationAccepted = AppEvent.AccountCreation.Accepted.fromProposal;
@@ -102,7 +102,7 @@ module Event = {
       ~supporterId=userId,
       ~partnerId=partnerProposal.data.id,
       ~accountIdx=AccountIndex.default,
-      ~policy=Policy.absolute,
+      ~policy=Policy.unanimous,
     )
     |> Event.getCustodianProposedExn;
   let custodianEndorsed =

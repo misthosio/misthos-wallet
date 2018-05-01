@@ -7,7 +7,7 @@ open PrimitiveTypes;
 let () = {
   describe("Unanimous", () => {
     test("fulfilled", () => {
-      let p = Policy.absolute;
+      let p = Policy.unanimous;
       expect(
         p
         |> Policy.fulfilled(
@@ -18,7 +18,7 @@ let () = {
       |> toBe(true);
     });
     test("not fulfilled", () => {
-      let p = Policy.absolute;
+      let p = Policy.unanimous;
       expect(
         p
         |> Policy.fulfilled(
@@ -29,14 +29,14 @@ let () = {
       |> toBe(false);
     });
     test("at least one eligable", () => {
-      let p = Policy.absolute;
+      let p = Policy.unanimous;
       expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
       |> toBe(false);
     });
   });
   describe("UnanimousMinusOne", () => {
     test("fulfilled", () => {
-      let p = Policy.absoluteMinusOne;
+      let p = Policy.unanimousMinusOne;
       expect(
         p
         |> Policy.fulfilled(
@@ -47,7 +47,7 @@ let () = {
       |> toBe(true);
     });
     test("fullfilled with minus 1 votes", () => {
-      let p = Policy.absoluteMinusOne;
+      let p = Policy.unanimousMinusOne;
       expect(
         p
         |> Policy.fulfilled(
@@ -58,7 +58,7 @@ let () = {
       |> toBe(true);
     });
     test("not fullfilled", () => {
-      let p = Policy.absoluteMinusOne;
+      let p = Policy.unanimousMinusOne;
       expect(
         p
         |> Policy.fulfilled(
@@ -73,7 +73,7 @@ let () = {
       |> toBe(false);
     });
     test("at least one eligable", () => {
-      let p = Policy.absoluteMinusOne;
+      let p = Policy.unanimousMinusOne;
       expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
       |> toBe(false);
     });
