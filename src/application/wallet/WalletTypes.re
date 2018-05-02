@@ -36,7 +36,7 @@ let encodeTransaction = transaction =>
 
 let decodeTransaction = raw =>
   Json.Decode.{
-    txId: raw |> field("txid", string),
+    txId: raw |> field("txId", string),
     outputs:
       raw
       |> field(
@@ -44,7 +44,7 @@ let decodeTransaction = raw =>
            array(output =>
              {
                address: output |> field("address", string),
-               amount: output |> field("value", string) |> BTC.fromString,
+               amount: output |> field("amount", BTC.decode),
              }
            ),
          )

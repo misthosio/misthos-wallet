@@ -39,12 +39,12 @@ function encodeTransaction(transaction) {
 
 function decodeTransaction(raw) {
   return /* record */[
-          /* txId */Json_decode.field("txid", Json_decode.string, raw),
+          /* txId */Json_decode.field("txId", Json_decode.string, raw),
           /* outputs */$$Array.to_list(Json_decode.field("outputs", (function (param) {
                       return Json_decode.array((function (output) {
                                     return /* record */[
                                             /* address */Json_decode.field("address", Json_decode.string, output),
-                                            /* amount */BTC.fromString(Json_decode.field("value", Json_decode.string, output))
+                                            /* amount */Json_decode.field("amount", BTC.decode, output)
                                           ];
                                   }), param);
                     }), raw))
