@@ -162,6 +162,97 @@ module Handle = {
       )
     );
   };
+  let endorsePartner = (ventureId, processId) => {
+    logMessage("Handing 'EndorsePartner'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.EndorsePartner.(
+          venture
+          |> exec(~processId)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
+  let proposePartnerRemoval = (ventureId, partnerId) => {
+    logMessage("Handing 'ProposePartnerRemoval'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.ProposePartnerRemoval.(
+          venture
+          |> exec(~partnerId)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 }
+               | _ => venture |> resolve,
+             )
+        )
+      )
+    );
+  };
+  let endorsePartnerRemoval = (ventureId, processId) => {
+    logMessage("Handing 'EndorsePartnerRemoval'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.EndorsePartnerRemoval.(
+          venture
+          |> exec(~processId)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
+  let proposePayout = (ventureId, accountIdx, destinations, fee) => {
+    logMessage("Handing 'ProposePayout'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.ProposePayout.(
+          venture
+          |> exec(~accountIdx, ~destinations, ~fee)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
+  let endorsePayout = (ventureId, processId) => {
+    logMessage("Handing 'EndorsePayout'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.EndorsePayout.(
+          venture
+          |> exec(~processId)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
 };
 
 let handleMessage =
@@ -170,7 +261,22 @@ let handleMessage =
   | Message.Load(ventureId) => Handle.load(ventureId)
   | Message.Create(name) => Handle.create(name)
   | Message.ProposePartner(ventureId, userId) =>
-    Handle.proposePartner(ventureId, userId);
+    Handle.proposePartner(ventureId, userId)
+  | Message.EndorsePartner(ventureId, processId) =>
+    Handle.endorsePartner(ventureId, processId)
+  | Message.ProposePartnerRemoval(ventureId, userId) =>
+    Handle.proposePartnerRemoval(ventureId, userId)
+  | Message.EndorsePartnerRemoval(ventureId, processId) =>
+    Handle.endorsePartnerRemoval(ventureId, processId)
+  | Message.ProposePayout(ventureId, accountIdx, destinations, fee) =>
+    Handle.proposePayout(
+      ventureId,
+      accountIdx,
+      destinations |> List.map(((a, btc)) => (a, btc |> BTC.decode)),
+      fee |> BTC.decode,
+    )
+  | Message.EndorsePayout(ventureId, processId) =>
+    Handle.endorsePayout(ventureId, processId);
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 

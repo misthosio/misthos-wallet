@@ -29,22 +29,43 @@ let proposePartner = (worker, ventureId, ~prospectId) =>
   worker
   |. postMessage(VentureWorkerMessage.ProposePartner(ventureId, prospectId));
 
-let endorsePartner = (worker, ~processId: processId) => ();
+let endorsePartner = (worker, ventureId, ~processId: processId) =>
+  worker
+  |. postMessage(VentureWorkerMessage.EndorsePartner(ventureId, processId));
 
-let proposePartnerRemoval = (worker, ~partnerId: userId) => ();
+let proposePartnerRemoval = (worker, ventureId, ~partnerId: userId) =>
+  worker
+  |. postMessage(
+       VentureWorkerMessage.ProposePartnerRemoval(ventureId, partnerId),
+     );
 
-let endorsePartnerRemoval = (worker, ~processId: processId) => ();
+let endorsePartnerRemoval = (worker, ventureId, ~processId: processId) =>
+  worker
+  |. postMessage(
+       VentureWorkerMessage.EndorsePartnerRemoval(ventureId, processId),
+     );
 
 let proposePayout =
     (
       worker,
+      ventureId,
       ~accountIdx: accountIdx,
       ~destinations: list((string, BTC.t)),
       ~fee: BTC.t,
     ) =>
-  ();
+  worker
+  |. postMessage(
+       VentureWorkerMessage.ProposePayout(
+         ventureId,
+         accountIdx,
+         destinations |> List.map(((a, btc)) => (a, btc |> BTC.encode)),
+         fee |> BTC.encode,
+       ),
+     );
 
-let endorsePayout = (worker, ~processId: processId) => ();
+let endorsePayout = (worker, ventureId, ~processId: processId) =>
+  worker
+  |. postMessage(VentureWorkerMessage.EndorsePayout(ventureId, processId));
 
 module Cmd = {
   type t = {
@@ -63,10 +84,10 @@ module Cmd = {
   };
   let make = (worker, ventureId) => {
     proposePartner: proposePartner(worker, ventureId),
-    endorsePartner: endorsePartner(worker),
-    proposePartnerRemoval: proposePartnerRemoval(worker),
-    endorsePartnerRemoval: endorsePartnerRemoval(worker),
-    proposePayout: proposePayout(worker),
-    endorsePayout: endorsePayout(worker),
+    endorsePartner: endorsePartner(worker, ventureId),
+    proposePartnerRemoval: proposePartnerRemoval(worker, ventureId),
+    endorsePartnerRemoval: endorsePartnerRemoval(worker, ventureId),
+    proposePayout: proposePayout(worker, ventureId),
+    endorsePayout: endorsePayout(worker, ventureId),
   };
 };

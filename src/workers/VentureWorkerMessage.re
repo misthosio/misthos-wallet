@@ -2,16 +2,25 @@ open WorkerLocalStorage;
 
 open PrimitiveTypes;
 
+open WalletTypes;
+
 module Venture = WorkerizedVenture;
 
 type send =
   | UpdateSession(blockstackItems)
+  | Create(string)
+  | Load(ventureId)
   | ProposePartner(ventureId, userId)
   | EndorsePartner(ventureId, processId)
   | ProposePartnerRemoval(ventureId, userId)
   | EndorsePartnerRemoval(ventureId, processId)
-  | Create(string)
-  | Load(ventureId);
+  | ProposePayout(
+      ventureId,
+      accountIdx,
+      list((string, Js.Json.t)),
+      Js.Json.t,
+    )
+  | EndorsePayout(ventureId, processId);
 
 type receive =
   | UpdateIndex(Venture.Index.t)
