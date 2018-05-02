@@ -26,7 +26,7 @@ let make = (~selected=?, ~index, _children) => {
           Array.of_list(
             index
             |> List.map(
-                 WorkerizedVenture.Index.(
+                 Venture.Index.(
                    ({name, id}) => {
                      open MaterialUi;
                      let ids = id |> VentureId.toString;

@@ -3,11 +3,11 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Event = require("../application/events/Event.bs.js");
+var Venture = require("../application/Venture.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
-var WorkerizedVenture = require("../application/WorkerizedVenture.bs.js");
 
 function encodeReceive(param) {
   switch (param.tag | 0) {
@@ -20,7 +20,7 @@ function encodeReceive(param) {
                     /* :: */[
                       /* tuple */[
                         "index",
-                        WorkerizedVenture.Index[/* encode */1](param[0])
+                        Venture.Index[/* encode */1](param[0])
                       ],
                       /* [] */0
                     ]
@@ -104,7 +104,7 @@ function decodeReceive(raw) {
                   events
                 ]);
     case "UpdateIndex" : 
-        return /* UpdateIndex */Block.__(0, [Json_decode.field("index", WorkerizedVenture.Index[/* decode */2], raw)]);
+        return /* UpdateIndex */Block.__(0, [Json_decode.field("index", Venture.Index[/* decode */2], raw)]);
     case "VentureCreated" : 
         var ventureId$1 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var events$1 = Json_decode.field("events", (function (param) {
@@ -131,9 +131,6 @@ function decodeReceive(raw) {
   }
 }
 
-var Venture = 0;
-
-exports.Venture = Venture;
 exports.encodeReceive = encodeReceive;
 exports.UnknownMessage = UnknownMessage;
 exports.decodeReceive = decodeReceive;

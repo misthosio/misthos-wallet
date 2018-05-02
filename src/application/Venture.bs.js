@@ -46,28 +46,24 @@ function getKnownTransactionIds(param) {
   return Venture__Wallet.getKnownTransactionIds(param[/* wallet */4]);
 }
 
-function make(session, id, listenerState, listener) {
+function make(session, id) {
   return /* record */[
           /* session */session,
           /* id */id,
           /* log */Curry._1(EventLog.make, /* () */0),
           /* state */Venture__Validation.makeState(/* () */0),
           /* wallet */Venture__Wallet.make(/* () */0),
-          /* listener */listener,
-          /* listenerState */listenerState,
           /* watchers : [] */0
         ];
 }
 
 function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
-  var match = param[2];
-  var listener = match[1];
-  var listenerState = match[0];
+  var collector = param[2];
   var wallet = param[1];
   var state = param[0];
   var syncing = $staropt$star ? $staropt$star[0] : false;
-  var match$1 = Curry._3(EventLog.append, issuer, $$event, oldLog);
-  var item = match$1[0];
+  var match = Curry._3(EventLog.append, issuer, $$event, oldLog);
+  var item = match[0];
   var result = Venture__Validation.validate(state, item);
   var exit = 0;
   if (typeof result === "number") {
@@ -79,17 +75,17 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
         logMessage(Json.stringify(Event.encode($$event)));
         var state$1 = Venture__Validation.apply($$event, state);
         var wallet$1 = Venture__Wallet.apply($$event, wallet);
-        var listenerState$1 = Curry._2(listener, $$event, listenerState);
+        var collector$1 = /* :: */[
+          $$event,
+          collector
+        ];
         return /* tuple */[
                 /* Some */[item],
-                match$1[1],
+                match[1],
                 /* tuple */[
                   state$1,
                   wallet$1,
-                  /* tuple */[
-                    listenerState$1,
-                    listener
-                  ]
+                  collector$1
                 ]
               ];
       }
@@ -102,10 +98,7 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
               /* tuple */[
                 state,
                 wallet,
-                /* tuple */[
-                  listenerState,
-                  listener
-                ]
+                collector
               ]
             ];
     }
@@ -122,10 +115,7 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
               /* tuple */[
                 state,
                 wallet,
-                /* tuple */[
-                  listenerState,
-                  listener
-                ]
+                collector
               ]
             ];
     } else {
@@ -138,21 +128,18 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
   
 }
 
-function apply($staropt$star, $$event, param) {
+function apply($staropt$star, $staropt$star$1, $$event, param) {
   var state = param[/* state */3];
   var id = param[/* id */1];
   var session = param[/* session */0];
   var systemEvent = $staropt$star ? $staropt$star[0] : false;
+  var collector = $staropt$star$1 ? $staropt$star$1[0] : /* [] */0;
   var match = applyInternal(/* None */0, systemEvent ? state[/* systemIssuer */1] : session[/* issuerKeyPair */2], $$event, param[/* log */2], /* tuple */[
         state,
         param[/* wallet */4],
-        /* tuple */[
-          param[/* listenerState */6],
-          param[/* listener */5]
-        ]
+        collector
       ]);
   var match$1 = match[2];
-  var match$2 = match$1[2];
   return Watchers.applyAndProcessPending(session, match[0], match[1], (function (eta) {
                   return (function (param, param$1, param$2) {
                       return applyInternal(/* None */0, eta, param, param$1, param$2);
@@ -160,41 +147,36 @@ function apply($staropt$star, $$event, param) {
                 }), /* tuple */[
                 match$1[0],
                 match$1[1],
-                /* tuple */[
-                  match$2[0],
-                  match$2[1]
-                ]
-              ], param[/* watchers */7]).then((function (param) {
+                match$1[2]
+              ], param[/* watchers */5]).then((function (param) {
                 var match = param[1];
-                var match$1 = match[2];
-                return Promise.resolve(/* record */[
-                            /* session */session,
-                            /* id */id,
-                            /* log */param[0],
-                            /* state */match[0],
-                            /* wallet */match[1],
-                            /* listener */match$1[1],
-                            /* listenerState */match$1[0],
-                            /* watchers */param[2]
+                return Promise.resolve(/* tuple */[
+                            /* record */[
+                              /* session */session,
+                              /* id */id,
+                              /* log */param[0],
+                              /* state */match[0],
+                              /* wallet */match[1],
+                              /* watchers */param[2]
+                            ],
+                            match[2]
                           ]);
               }));
 }
 
-function reconstruct(session, listenerState, listener, log) {
-  var match = make(session, PrimitiveTypes.VentureId[/* make */7](/* () */0), listenerState, listener);
+function reconstruct(session, log) {
+  var match = make(session, PrimitiveTypes.VentureId[/* make */7](/* () */0));
   var match$1 = Curry._3(EventLog.reduce, (function (param, item) {
           var $$event = item[/* event */0];
-          var match = param[3];
-          var listener = match[1];
           var tmp;
           tmp = $$event.tag ? param[0] : $$event[0][/* ventureId */0];
           return /* tuple */[
                   tmp,
                   Venture__Validation.apply($$event, param[1]),
                   Venture__Wallet.apply($$event, param[2]),
-                  /* tuple */[
-                    Curry._2(listener, $$event, match[0]),
-                    listener
+                  /* :: */[
+                    $$event,
+                    param[3]
                   ],
                   Watchers.apply(/* Some */[true], session, /* Some */[item], log, param[4])
                 ];
@@ -202,13 +184,9 @@ function reconstruct(session, listenerState, listener, log) {
         PrimitiveTypes.VentureId[/* make */7](/* () */0),
         match[/* state */3],
         match[/* wallet */4],
-        /* tuple */[
-          listenerState,
-          listener
-        ],
+        /* [] */0,
         /* [] */0
       ], log);
-  var match$2 = match$1[3];
   var id = match$1[0];
   return Watchers.processPending(session, log, (function (eta) {
                   return (function (param, param$1, param$2) {
@@ -217,57 +195,64 @@ function reconstruct(session, listenerState, listener, log) {
                 }), /* tuple */[
                 match$1[1],
                 match$1[2],
-                /* tuple */[
-                  match$2[0],
-                  match$2[1]
-                ]
+                match$1[3]
               ], match$1[4]).then((function (param) {
                 var match = param[1];
-                var match$1 = match[2];
-                return Promise.resolve(/* record */[
-                            /* session */session,
-                            /* id */id,
-                            /* log */param[0],
-                            /* state */match[0],
-                            /* wallet */match[1],
-                            /* listener */match$1[1],
-                            /* listenerState */match$1[0],
-                            /* watchers */param[2]
+                return Promise.resolve(/* tuple */[
+                            /* record */[
+                              /* session */session,
+                              /* id */id,
+                              /* log */param[0],
+                              /* state */match[0],
+                              /* wallet */match[1],
+                              /* watchers */param[2]
+                            ],
+                            match[2]
                           ]);
               }));
 }
 
-function persist(venture) {
+function persist(param) {
+  var collector = param[1];
+  var venture = param[0];
   return Blockstack$1.putFile(PrimitiveTypes.VentureId[/* toString */0](venture[/* id */1]) + "/log.json", Json.stringify(Curry._1(EventLog.encode, venture[/* log */2]))).then((function () {
-                return Promise.resolve(venture);
+                return Promise.resolve(/* tuple */[
+                            venture,
+                            collector
+                          ]);
               }));
 }
 
-function load(session, ventureId, listenerState, listener) {
+function load(session, ventureId) {
   logMessage("Loading venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return Blockstack$1.getFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + "/log.json").then((function (nullLog) {
-                  if (nullLog == null) {
-                    throw CouldNotLoadVenture;
-                  } else {
-                    return reconstruct(session, listenerState, listener, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
-                  }
-                })).then(persist);
+                    if (nullLog == null) {
+                      throw CouldNotLoadVenture;
+                    } else {
+                      return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
+                    }
+                  })).then(persist).then((function (param) {
+                return Promise.resolve(param[0]);
+              }));
 }
 
-function join(session, userId, ventureId, listenerState, listener) {
+function join(session, userId, ventureId) {
   return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).catch((function () {
                       throw Caml_builtin_exceptions.not_found;
                     })).then((function (nullFile) {
                     if (nullFile == null) {
                       throw Caml_builtin_exceptions.not_found;
                     } else {
-                      return reconstruct(session, listenerState, listener, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
+                      return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
                     }
-                  })).then(persist).then((function (venture) {
+                  })).then(persist).then((function (param) {
+                var collector = param[1];
+                var venture = param[0];
                 return Venture__Index.add(venture[/* id */1], venture[/* state */3][/* ventureName */0]).then((function (index) {
                               return Promise.resolve(/* tuple */[
                                           index,
-                                          venture
+                                          venture,
+                                          collector
                                         ]);
                             }));
               }));
@@ -281,8 +266,13 @@ function getSummary(param) {
   return Curry._1(EventLog.getSummary, param[/* log */2]);
 }
 
-function getListenerState(param) {
-  return param[/* listenerState */6];
+function getAllEvents(param) {
+  return Curry._3(EventLog.reduce, (function (l, param) {
+                return /* :: */[
+                        param[/* event */0],
+                        l
+                      ];
+              }), /* [] */0, param[/* log */2]);
 }
 
 function getPartnerHistoryUrls(param) {
@@ -303,12 +293,14 @@ function exec(otherLogs, venture) {
   var newItems = Curry._2(EventLog.findNewItems, otherLogs$1, venture[/* log */2]);
   var match = List.fold_left((function (param, item) {
           var $$event = item[/* event */0];
-          var error = param[1];
+          var error = param[2];
+          var collector = param[1];
           var venture = param[0];
           var state = venture[/* state */3];
           if (Js_option.isSome(error)) {
             return /* tuple */[
                     venture,
+                    collector,
                     error
                   ];
           } else {
@@ -322,8 +314,11 @@ function exec(otherLogs, venture) {
                     var log = Curry._2(EventLog.appendItem, item, venture[/* log */2]);
                     var state$1 = Venture__Validation.apply($$event, state);
                     var wallet = Venture__Wallet.apply($$event, venture[/* wallet */4]);
-                    var listenerState = Curry._2(venture[/* listener */5], $$event, venture[/* listenerState */6]);
-                    var watchers = Watchers.apply(/* None */0, session, /* Some */[item], log, venture[/* watchers */7]);
+                    var collector$1 = /* :: */[
+                      $$event,
+                      collector
+                    ];
+                    var watchers = Watchers.apply(/* None */0, session, /* Some */[item], log, venture[/* watchers */5]);
                     return /* tuple */[
                             /* record */[
                               /* session */venture[/* session */0],
@@ -331,27 +326,29 @@ function exec(otherLogs, venture) {
                               /* log */log,
                               /* state */state$1,
                               /* wallet */wallet,
-                              /* listener */venture[/* listener */5],
-                              /* listenerState */listenerState,
                               /* watchers */watchers
                             ],
+                            collector$1,
                             /* None */0
                           ];
                 case 1 : 
                     return /* tuple */[
                             venture,
+                            collector,
                             /* None */0
                           ];
                 case 2 : 
                     logMessage("Invalid issuer detected");
                     return /* tuple */[
                             venture,
+                            collector,
                             /* None */0
                           ];
                 case 3 : 
                     logMessage("Unknown ProcessId detected");
                     return /* tuple */[
                             venture,
+                            collector,
                             /* None */0
                           ];
                 case 4 : 
@@ -362,6 +359,7 @@ function exec(otherLogs, venture) {
                     logMessage("Dependency Not Met detected");
                     return /* tuple */[
                             venture,
+                            collector,
                             /* None */0
                           ];
                 
@@ -369,6 +367,7 @@ function exec(otherLogs, venture) {
               if (exit === 1) {
                 return /* tuple */[
                         venture,
+                        collector,
                         /* Some */[/* Error */Block.__(1, [
                               venture,
                               item,
@@ -381,15 +380,17 @@ function exec(otherLogs, venture) {
               logMessage("Bad data in event detected: " + conflict[0]);
               return /* tuple */[
                       venture,
+                      collector,
                       /* None */0
                     ];
             }
           }
         }), /* tuple */[
         venture,
+        /* [] */0,
         /* None */0
       ], newItems);
-  var error = match[1];
+  var error = match[2];
   var match$1 = match[0];
   var partial_arg = /* Some */[true];
   return Watchers.processPending(session, match$1[/* log */2], (function (param, param$1, param$2, param$3) {
@@ -397,35 +398,40 @@ function exec(otherLogs, venture) {
                   }), /* tuple */[
                   match$1[/* state */3],
                   match$1[/* wallet */4],
-                  /* tuple */[
-                    match$1[/* listenerState */6],
-                    match$1[/* listener */5]
-                  ]
-                ], match$1[/* watchers */7]).then((function (param) {
+                  match[1]
+                ], match$1[/* watchers */5]).then((function (param) {
                   var match = param[1];
-                  var match$1 = match[2];
-                  return persist(/* record */[
-                              /* session */venture[/* session */0],
-                              /* id */venture[/* id */1],
-                              /* log */param[0],
-                              /* state */match[0],
-                              /* wallet */match[1],
-                              /* listener */match$1[1],
-                              /* listenerState */match$1[0],
-                              /* watchers */param[2]
+                  return persist(/* tuple */[
+                              /* record */[
+                                /* session */venture[/* session */0],
+                                /* id */venture[/* id */1],
+                                /* log */param[0],
+                                /* state */match[0],
+                                /* wallet */match[1],
+                                /* watchers */param[2]
+                              ],
+                              match[2]
                             ]);
-                })).then((function (p) {
-                return Promise.resolve(error ? error[0] : /* Ok */Block.__(0, [p]));
+                })).then((function (param) {
+                return Promise.resolve(error ? error[0] : /* Ok */Block.__(0, [
+                                param[0],
+                                param[1]
+                              ]));
               }));
 }
 
-function exec$1(session, ventureName, listenerState, listener) {
+function exec$1(session, ventureName) {
   logMessage("Executing 'Create' command");
   var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
-  return Promise.all(/* tuple */[
-              Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
-              apply(/* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0], listenerState, listener)).then(persist)
-            ]);
+  return /* tuple */[
+          ventureCreated[/* ventureId */0],
+          Promise.all(/* tuple */[
+                Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
+                apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then(persist).then((function (param) {
+                        return Promise.resolve(param[0]);
+                      }))
+              ])
+        ];
 }
 
 var Create = /* module */[/* exec */exec$1];
@@ -437,14 +443,23 @@ function exec$2(newTransactions, venture) {
             }), newTransactions));
   if (events) {
     return List.fold_left((function (p, $$event) {
-                      return p.then((function (v) {
-                                    return apply(/* Some */[true], $$event, v);
+                      return p.then((function (param) {
+                                    return apply(/* Some */[true], /* Some */[param[1]], $$event, param[0]);
                                   }));
-                    }), Promise.resolve(venture), events).then(persist).then((function (venture) {
-                  return Promise.resolve(/* Ok */[venture]);
+                    }), Promise.resolve(/* tuple */[
+                        venture,
+                        /* [] */0
+                      ]), events).then(persist).then((function (param) {
+                  return Promise.resolve(/* Ok */[
+                              param[0],
+                              param[1]
+                            ]);
                 }));
   } else {
-    return Promise.resolve(/* Ok */[venture]);
+    return Promise.resolve(/* Ok */[
+                venture,
+                /* [] */0
+              ]);
   }
 }
 
@@ -461,11 +476,13 @@ function exec$3(prospectId, venture) {
                   if (param) {
                     var partnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(session[/* userId */0], prospectId, param[0][/* appPubKey */0], List.assoc(Event.Partner[/* processName */1], state[/* policies */14])));
                     var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], session[/* userId */0], prospectId, WalletTypes.AccountIndex[/* default */8], List.assoc(Event.Custodian[/* processName */1], state[/* policies */14])));
-                    var partial_arg = /* CustodianProposed */Block.__(10, [custodianProposal]);
-                    return apply(/* None */0, /* PartnerProposed */Block.__(1, [partnerProposal]), venture).then((function (param) {
-                                      return apply(/* None */0, partial_arg, param);
-                                    })).then(persist).then((function (p) {
-                                  return Promise.resolve(/* Ok */[p]);
+                    return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposal]), venture).then((function (param) {
+                                      return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(10, [custodianProposal]), param[0]);
+                                    })).then(persist).then((function (param) {
+                                  return Promise.resolve(/* Ok */[
+                                              param[0],
+                                              param[1]
+                                            ]);
                                 }));
                   } else {
                     return Promise.resolve(/* NoUserInfo */1);
@@ -485,11 +502,14 @@ function exec$4(processId, venture) {
   var match$1 = List.find((function (param) {
           return Caml_obj.caml_equal(param[1][/* partnerId */0], partnerId);
         }), state[/* custodianData */8]);
-  var partial_arg = Event.makeCustodianEndorsed(match$1[0], session[/* userId */0]);
-  return apply(/* None */0, Event.makePartnerEndorsed(processId, session[/* userId */0]), venture).then((function (param) {
-                    return apply(/* None */0, partial_arg, param);
-                  })).then(persist).then((function (p) {
-                return Promise.resolve(/* Ok */[p]);
+  var custodianProcessId = match$1[0];
+  return apply(/* None */0, /* None */0, Event.makePartnerEndorsed(processId, session[/* userId */0]), venture).then((function (param) {
+                    return apply(/* None */0, /* Some */[param[1]], Event.makeCustodianEndorsed(custodianProcessId, session[/* userId */0]), param[0]);
+                  })).then(persist).then((function (param) {
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
               }));
 }
 
@@ -505,11 +525,13 @@ function exec$5(partnerId, venture) {
     var match = List.find((function (param) {
             return PrimitiveTypes.UserId[/* eq */5](partnerId, param[1][/* partnerId */0]);
           }), state[/* custodianData */8]);
-    var partial_arg = Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, List.assoc(Event.Partner[/* Removal */5][/* processName */1], state[/* policies */14]));
-    return apply(/* None */0, Event.makeCustodianRemovalProposed(/* Some */[match[0]], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], List.assoc(Event.Custodian[/* Removal */5][/* processName */1], state[/* policies */14])), venture).then((function (param) {
-                      return apply(/* None */0, partial_arg, param);
-                    })).then(persist).then((function (p) {
-                  return Promise.resolve(/* Ok */[p]);
+    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(/* Some */[match[0]], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], List.assoc(Event.Custodian[/* Removal */5][/* processName */1], state[/* policies */14])), venture).then((function (param) {
+                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, List.assoc(Event.Partner[/* Removal */5][/* processName */1], state[/* policies */14])), param[0]);
+                    })).then(persist).then((function (param) {
+                  return Promise.resolve(/* Ok */[
+                              param[0],
+                              param[1]
+                            ]);
                 }));
   }
 }
@@ -525,11 +547,13 @@ function exec$6(processId, venture) {
   var match$1 = List.find((function (param) {
           return Caml_obj.caml_equal(param[1][/* custodianId */0], partnerId);
         }), state[/* custodianRemovalData */9]);
-  var partial_arg = Event.makePartnerRemovalEndorsed(processId, session[/* userId */0]);
-  return apply(/* None */0, Event.makeCustodianRemovalEndorsed(match$1[0], session[/* userId */0]), venture).then((function (param) {
-                    return apply(/* None */0, partial_arg, param);
-                  })).then(persist).then((function (p) {
-                return Promise.resolve(/* Ok */[p]);
+  return apply(/* None */0, /* None */0, Event.makeCustodianRemovalEndorsed(match$1[0], session[/* userId */0]), venture).then((function (param) {
+                    return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalEndorsed(processId, session[/* userId */0]), param[0]);
+                  })).then(persist).then((function (param) {
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
               }));
 }
 
@@ -538,10 +562,11 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$6];
 function exec$7(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(accountIdx, venture[/* wallet */4]);
-  return apply(/* Some */[true], /* IncomeAddressExposed */Block.__(25, [exposeEvent]), venture).then(persist).then((function (p) {
+  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(25, [exposeEvent]), venture).then(persist).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             exposeEvent[/* address */1],
-                            p
+                            param[0],
+                            param[1]
                           ]);
               }));
 }
@@ -551,9 +576,12 @@ var ExposeIncomeAddress = /* module */[/* exec */exec$7];
 function exec$8(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
   return Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */4]).then((function (proposal) {
-                    return apply(/* None */0, /* PayoutProposed */Block.__(16, [proposal]), venture);
-                  })).then(persist).then((function (p) {
-                return Promise.resolve(/* Ok */[p]);
+                    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(16, [proposal]), venture);
+                  })).then(persist).then((function (param) {
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
               }));
 }
 
@@ -561,14 +589,21 @@ var ProposePayout = /* module */[/* exec */exec$8];
 
 function exec$9(processId, venture) {
   logMessage("Executing 'EndorsePayout' command");
-  return apply(/* None */0, Event.makePayoutEndorsed(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (p) {
-                return Promise.resolve(/* Ok */[p]);
+  return apply(/* None */0, /* None */0, Event.makePayoutEndorsed(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
               }));
 }
 
 var EndorsePayout = /* module */[/* exec */exec$9];
 
-var Index = [Venture__Index.load];
+var Index = [
+  Venture__Index.load,
+  Venture__Index.encode,
+  Venture__Index.decode
+];
 
 var Validation = [Venture__Validation.resultToString];
 
@@ -600,8 +635,8 @@ exports.CouldNotLoadVenture = CouldNotLoadVenture;
 exports.join = join;
 exports.load = load;
 exports.getId = getId;
+exports.getAllEvents = getAllEvents;
 exports.getSummary = getSummary;
-exports.getListenerState = getListenerState;
 exports.getPartnerHistoryUrls = getPartnerHistoryUrls;
 exports.Wallet = Wallet;
 exports.Cmd = Cmd;

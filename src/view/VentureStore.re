@@ -15,7 +15,7 @@ type action =
   | VentureWorkerMessage(VentureWorkerMessage.receive);
 
 type state = {
-  index: option(WorkerizedVenture.Index.t),
+  index: option(Venture.Index.t),
   selectedVenture,
   syncWorker: ref(SyncWorker.t),
   incomeWorker: ref(IncomeWorkerClient.t),

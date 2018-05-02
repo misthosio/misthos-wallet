@@ -23,8 +23,6 @@ external _postMessage : Message.encodedReceive => unit = "postMessage";
 
 open PrimitiveTypes;
 
-module Venture = WorkerizedVenture;
-
 let postMessage = msg => msg |> Message.encodeReceive |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);

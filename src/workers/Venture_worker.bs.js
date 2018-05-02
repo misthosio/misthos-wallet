@@ -7,8 +7,8 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
+var Venture = require("../application/Venture.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var WorkerizedVenture = require("../application/WorkerizedVenture.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -78,7 +78,7 @@ function withVenture($staropt$star, $staropt$star$1, f, param) {
                             var data = param[0];
                             var match;
                             if (create !== "") {
-                              var match$1 = Curry._2(WorkerizedVenture.Cmd[/* Create */0][/* exec */0], data, create);
+                              var match$1 = Curry._2(Venture.Cmd[/* Create */0][/* exec */0], data, create);
                               match = /* tuple */[
                                 match$1[0],
                                 match$1[1].then((function (param) {
@@ -97,7 +97,7 @@ function withVenture($staropt$star, $staropt$star$1, f, param) {
                                 if (exn === Caml_builtin_exceptions.not_found) {
                                   match = /* tuple */[
                                     ventureId,
-                                    WorkerizedVenture.load(data, ventureId)
+                                    Venture.load(data, ventureId)
                                   ];
                                 } else {
                                   throw exn;
@@ -153,7 +153,7 @@ function updateSession(items, state) {
                       exit = 1;
                     }
                     if (exit === 1) {
-                      WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
+                      Venture.Index[/* load */0](/* () */0).then((function (index) {
                               return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
                             }));
                       return Promise.resolve(/* Some */[/* tuple */[
@@ -173,7 +173,7 @@ function load(ventureId) {
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, WorkerizedVenture.getAllEvents(venture));
+                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -184,7 +184,7 @@ function create(name) {
   var partial_arg = /* Some */[name];
   return (function (param) {
       return withVenture(partial_arg, /* None */0, (function (venture) {
-                    ventureCreated(WorkerizedVenture.getId(venture), WorkerizedVenture.getAllEvents(venture));
+                    ventureCreated(Venture.getId(venture), Venture.getAllEvents(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -195,7 +195,7 @@ function proposePartner(ventureId, prospectId) {
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    return Curry._2(WorkerizedVenture.Cmd[/* ProposePartner */3][/* exec */0], prospectId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* ProposePartner */3][/* exec */0], prospectId, venture).then((function (param) {
                                   if (typeof param === "number") {
                                     return Promise.resolve(venture);
                                   } else {
@@ -212,7 +212,7 @@ function endorsePartner(ventureId, processId) {
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    return Curry._2(WorkerizedVenture.Cmd[/* EndorsePartner */4][/* exec */0], processId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* EndorsePartner */4][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -225,7 +225,7 @@ function proposePartnerRemoval(ventureId, partnerId) {
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    return Curry._2(WorkerizedVenture.Cmd[/* ProposePartnerRemoval */5][/* exec */0], partnerId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* ProposePartnerRemoval */5][/* exec */0], partnerId, venture).then((function (param) {
                                   if (param) {
                                     newEvents(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
@@ -242,7 +242,7 @@ function endorsePartnerRemoval(ventureId, processId) {
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    return Curry._2(WorkerizedVenture.Cmd[/* EndorsePartnerRemoval */6][/* exec */0], processId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */6][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -255,7 +255,7 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    return Curry._4(WorkerizedVenture.Cmd[/* ProposePayout */8][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
+                    return Curry._4(Venture.Cmd[/* ProposePayout */8][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -268,7 +268,7 @@ function endorsePayout(ventureId, processId) {
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    return Curry._2(WorkerizedVenture.Cmd[/* EndorsePayout */9][/* exec */0], processId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* EndorsePayout */9][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -332,10 +332,7 @@ self.onmessage = (function (msg) {
 
 var Message = 0;
 
-var Venture = 0;
-
 exports.Message = Message;
-exports.Venture = Venture;
 exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.Notify = Notify;

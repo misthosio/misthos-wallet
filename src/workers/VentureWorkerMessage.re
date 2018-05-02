@@ -4,8 +4,6 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
-module Venture = WorkerizedVenture;
-
 type send =
   | UpdateSession(blockstackItems)
   | Create(string)
