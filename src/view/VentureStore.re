@@ -157,7 +157,20 @@ let make = (~currentRoute, ~session: Session.t, children) => {
               VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
             ),
         })
-      | (NewEvents(_ventureId, _events), _) => ReasonReact.NoUpdate
+      | (
+          NewEvents(ventureId, newEvents),
+          VentureLoaded(loadedId, viewModel, cmd),
+        )
+          when VentureId.eq(ventureId, loadedId) =>
+        ReasonReact.Update({
+          ...state,
+          selectedVenture:
+            VentureLoaded(
+              ventureId,
+              viewModel |> ViewModel.applyAll(newEvents),
+              cmd,
+            ),
+        })
       | _ => ReasonReact.NoUpdate
       }
     | SyncWorkerMessage(Fetched(_eventLogs)) => ReasonReact.NoUpdate

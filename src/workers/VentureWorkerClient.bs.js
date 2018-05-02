@@ -36,7 +36,11 @@ function load(ventureId, worker) {
   return /* () */0;
 }
 
-function proposePartner(_, _$1) {
+function proposePartner(worker, ventureId, prospectId) {
+  worker.postMessage(/* ProposePartner */Block.__(1, [
+          ventureId,
+          prospectId
+        ]));
   return /* () */0;
 }
 
@@ -60,10 +64,10 @@ function endorsePayout(_, _$1) {
   return /* () */0;
 }
 
-function make(_, _$1) {
+function make(worker, ventureId) {
   return /* record */[
-          /* proposePartner */(function () {
-              return /* () */0;
+          /* proposePartner */(function (param) {
+              return proposePartner(worker, ventureId, param);
             }),
           /* endorsePartner */(function () {
               return /* () */0;

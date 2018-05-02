@@ -51,10 +51,21 @@ function ventureCreated(id, events) {
   return /* () */0;
 }
 
+function newEvents(id, events) {
+  var msg_001 = List.rev(events);
+  var msg = /* NewEvents */Block.__(3, [
+      id,
+      msg_001
+    ]);
+  postMessage(VentureWorkerMessage.encodeReceive(msg));
+  return /* () */0;
+}
+
 var Notify = /* module */[
   /* indexUpdated */indexUpdated,
   /* ventureLoaded */ventureLoaded,
-  /* ventureCreated */ventureCreated
+  /* ventureCreated */ventureCreated,
+  /* newEvents */newEvents
 ];
 
 function withVenture($staropt$star, $staropt$star$1, f, param) {
@@ -98,9 +109,7 @@ function withVenture($staropt$star, $staropt$star$1, f, param) {
                                     /* :: */[
                                       /* tuple */[
                                         ventureId$1,
-                                        match[1].then((function (venture) {
-                                                return Curry._2(f, data, venture);
-                                              }))
+                                        match[1].then(Curry.__1(f))
                                       ],
                                       List.remove_assoc(ventureId$1, ventures)
                                     ]
@@ -162,7 +171,7 @@ function load(ventureId) {
   logMessage("Handling 'Load'");
   var partial_arg = /* Some */[ventureId];
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (_, venture) {
+      return withVenture(/* None */0, partial_arg, (function (venture) {
                     ventureLoaded(ventureId, WorkerizedVenture.getAllEvents(venture));
                     return Promise.resolve(venture);
                   }), param);
@@ -173,9 +182,26 @@ function create(name) {
   logMessage("Handling 'Create'");
   var partial_arg = /* Some */[name];
   return (function (param) {
-      return withVenture(partial_arg, /* None */0, (function (_, venture) {
+      return withVenture(partial_arg, /* None */0, (function (venture) {
                     ventureCreated(WorkerizedVenture.getId(venture), WorkerizedVenture.getAllEvents(venture));
                     return Promise.resolve(venture);
+                  }), param);
+    });
+}
+
+function proposePartner(ventureId, prospectId) {
+  logMessage("Handing 'ProposePartner'");
+  var partial_arg = /* Some */[ventureId];
+  return (function (param) {
+      return withVenture(/* None */0, partial_arg, (function (venture) {
+                    return Curry._2(WorkerizedVenture.Cmd[/* ProposePartner */3][/* exec */0], prospectId, venture).then((function (param) {
+                                  if (typeof param === "number") {
+                                    return Promise.resolve(venture);
+                                  } else {
+                                    newEvents(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
+                                }));
                   }), param);
     });
 }
@@ -184,7 +210,8 @@ var Handle = /* module */[
   /* withVenture */withVenture,
   /* updateSession */updateSession,
   /* load */load,
-  /* create */create
+  /* create */create,
+  /* proposePartner */proposePartner
 ];
 
 function handleMessage(param) {
@@ -194,6 +221,8 @@ function handleMessage(param) {
         return (function (param) {
             return updateSession(partial_arg, param);
           });
+    case 1 : 
+        return proposePartner(param[0], param[1]);
     case 5 : 
         return create(param[0]);
     case 6 : 
@@ -203,7 +232,7 @@ function handleMessage(param) {
             Caml_builtin_exceptions.match_failure,
             [
               "Venture_worker.re",
-              150,
+              168,
               2
             ]
           ];

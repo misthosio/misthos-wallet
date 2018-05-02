@@ -135,9 +135,11 @@ function make(initialViewModel, session, commands, _) {
                   if (prospectId === "") {
                     return /* NoUpdate */0;
                   } else {
-                    return /* SideEffects */Block.__(1, [(function () {
-                                  return Curry._1(commands[/* proposePartner */0], prospectId);
-                                })]);
+                    Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
+                    return /* Update */Block.__(0, [/* record */[
+                                /* viewModel */state[/* viewModel */0],
+                                /* prospectId */""
+                              ]]);
                   }
                 } else {
                   return /* SideEffects */Block.__(1, [(function () {

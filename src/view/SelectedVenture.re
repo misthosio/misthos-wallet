@@ -1,5 +1,3 @@
-open Venture;
-
 open PrimitiveTypes;
 
 let text = Utils.text;
@@ -44,9 +42,8 @@ let make =
       switch (String.trim(state.prospectId)) {
       | "" => ReasonReact.NoUpdate
       | prospectId =>
-        ReasonReact.SideEffects(
-          ((_) => commands.proposePartner(~prospectId)),
-        )
+        commands.proposePartner(~prospectId=prospectId |> UserId.fromString);
+        ReasonReact.Update({...state, prospectId: ""});
       }
     | EndorsePartner(processId) =>
       ReasonReact.SideEffects(((_) => commands.endorsePartner(~processId)))

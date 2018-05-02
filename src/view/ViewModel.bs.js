@@ -342,6 +342,12 @@ function init(param) {
               }), partial_arg, param);
 }
 
+function applyAll(events, model) {
+  return List.fold_left((function (m, e) {
+                return apply(e, m);
+              }), model, events);
+}
+
 function partners(state) {
   return state[/* partners */2];
 }
@@ -369,6 +375,7 @@ function payouts(state) {
 exports.make = make;
 exports.apply = apply;
 exports.init = init;
+exports.applyAll = applyAll;
 exports.partners = partners;
 exports.prospects = prospects;
 exports.removalProspects = removalProspects;

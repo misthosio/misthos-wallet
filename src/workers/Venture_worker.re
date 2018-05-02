@@ -35,6 +35,8 @@ module Notify = {
     postMessage(VentureLoaded(id, events |> List.rev));
   let ventureCreated = (id, events) =>
     postMessage(VentureCreated(id, events |> List.rev));
+  let newEvents = (id, events) =>
+    postMessage(NewEvents(id, events |> List.rev));
 };
 
 type state = {
@@ -78,10 +80,7 @@ module Handle = {
                   (
                     data,
                     [
-                      (
-                        ventureId,
-                        ventureThread |> then_(venture => f(data, venture)),
-                      ),
+                      (ventureId, ventureThread |> then_(f)),
                       ...ventures |> List.remove_assoc(ventureId),
                     ],
                   );
@@ -125,7 +124,7 @@ module Handle = {
     logMessage("Handling 'Load'");
     withVenture(
       ~ventureId,
-      (_session, venture) => {
+      venture => {
         Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
         Js.Promise.resolve(venture);
       },
@@ -135,7 +134,7 @@ module Handle = {
     logMessage("Handling 'Create'");
     withVenture(
       ~create=name,
-      (_session, venture) => {
+      venture => {
         Notify.ventureCreated(
           venture |> Venture.getId,
           venture |> Venture.getAllEvents,
@@ -144,13 +143,34 @@ module Handle = {
       },
     );
   };
+  let proposePartner = (ventureId, prospectId) => {
+    logMessage("Handing 'ProposePartner'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.ProposePartner.(
+          venture
+          |> exec(~prospectId)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 }
+               | _ => venture |> resolve,
+             )
+        )
+      )
+    );
+  };
 };
 
 let handleMessage =
   fun
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
-  | Message.Create(name) => Handle.create(name);
+  | Message.Create(name) => Handle.create(name)
+  | Message.ProposePartner(ventureId, userId) =>
+    Handle.proposePartner(ventureId, userId);
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 

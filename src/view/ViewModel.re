@@ -165,6 +165,9 @@ let apply = (event: Event.t, state) =>
 
 let init = List.fold_left((m, e) => m |> apply(e), make());
 
+let applyAll = (events, model) =>
+  events |> List.fold_left((m, e) => m |> apply(e), model);
+
 let partners = state => state.partners;
 
 let prospects = state => state.prospects;

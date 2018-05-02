@@ -25,7 +25,9 @@ let create = (~name, worker) =>
 let load = (~ventureId, worker) =>
   worker |. postMessage(VentureWorkerMessage.Load(ventureId));
 
-let proposePartner = (worker, ~prospectId) => ();
+let proposePartner = (worker, ventureId, ~prospectId) =>
+  worker
+  |. postMessage(VentureWorkerMessage.ProposePartner(ventureId, prospectId));
 
 let endorsePartner = (worker, ~processId: processId) => ();
 
@@ -46,7 +48,7 @@ let endorsePayout = (worker, ~processId: processId) => ();
 
 module Cmd = {
   type t = {
-    proposePartner: (~prospectId: string) => unit,
+    proposePartner: (~prospectId: userId) => unit,
     endorsePartner: (~processId: processId) => unit,
     proposePartnerRemoval: (~partnerId: userId) => unit,
     endorsePartnerRemoval: (~processId: processId) => unit,
@@ -59,8 +61,8 @@ module Cmd = {
       unit,
     endorsePayout: (~processId: processId) => unit,
   };
-  let make = (worker, _ventureId) => {
-    proposePartner: proposePartner(worker),
+  let make = (worker, ventureId) => {
+    proposePartner: proposePartner(worker, ventureId),
     endorsePartner: endorsePartner(worker),
     proposePartnerRemoval: proposePartnerRemoval(worker),
     endorsePartnerRemoval: endorsePartnerRemoval(worker),

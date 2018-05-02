@@ -176,7 +176,27 @@ function make(currentRoute, session, children) {
                                       })
                                   ]);
                       case 3 : 
-                          return /* NoUpdate */0;
+                          if (typeof match === "number" || match.tag !== 1) {
+                            return /* NoUpdate */0;
+                          } else {
+                            var ventureId$2 = msg[0];
+                            if (PrimitiveTypes.VentureId[/* eq */5](ventureId$2, match[0])) {
+                              return /* Update */Block.__(0, [/* record */[
+                                          /* index */state[/* index */0],
+                                          /* selectedVenture : VentureLoaded */Block.__(1, [
+                                              ventureId$2,
+                                              ViewModel.applyAll(msg[1], match[1]),
+                                              match[2]
+                                            ]),
+                                          /* syncWorker */state[/* syncWorker */2],
+                                          /* incomeWorker */state[/* incomeWorker */3],
+                                          /* persistWorker */state[/* persistWorker */4],
+                                          /* ventureWorker */state[/* ventureWorker */5]
+                                        ]]);
+                            } else {
+                              return /* NoUpdate */0;
+                            }
+                          }
                       
                     }
                 
