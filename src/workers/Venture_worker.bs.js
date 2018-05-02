@@ -37,62 +37,54 @@ var cleanState = /* record */[
   /* ventures : [] */0
 ];
 
-var state = [cleanState];
-
-function withSessionData(f) {
-  var match = state[0][/* sessionData */0];
+function withSessionData(f, state) {
+  var match = state[/* sessionData */0];
   if (match) {
-    return Curry._1(f, match[0]);
+    return Curry._2(f, match[0], state);
   } else {
-    return logMessage("Not logged in");
+    return Promise.resolve(state);
   }
 }
 
-function updateVentureInState(venture) {
-  var init = state[0];
-  state[0] = /* record */[
-    /* sessionData */init[/* sessionData */0],
-    /* ventures : :: */[
-      /* tuple */[
-        WorkerizedVenture.getId(venture),
-        venture
-      ],
-      List.remove_assoc(WorkerizedVenture.getId(venture), state[0][/* ventures */1])
-    ]
-  ];
-  return /* () */0;
+function updateVentureInState(state, venture) {
+  return /* record */[
+          /* sessionData */state[/* sessionData */0],
+          /* ventures : :: */[
+            /* tuple */[
+              WorkerizedVenture.getId(venture),
+              venture
+            ],
+            List.remove_assoc(WorkerizedVenture.getId(venture), state[/* ventures */1])
+          ]
+        ];
 }
 
-function updateSession(state, items, updateState) {
-  logMessage("Updating session in localStorage");
+function updateSession(items, state) {
   WorkerLocalStorage.setBlockstackItems(items);
-  Session.getCurrentSession(/* () */0).then((function (param) {
-          if (typeof param === "number") {
-            Curry._1(updateState, cleanState);
-            return Promise.resolve(/* () */0);
-          } else {
-            var data = param[0];
-            var oldData = state[/* sessionData */0];
-            Curry._1(updateState, /* record */[
-                  /* sessionData : Some */[data],
-                  /* ventures */state[/* ventures */1]
-                ]);
-            if (oldData) {
-              if (PrimitiveTypes.UserId[/* neq */6](oldData[0][/* userId */0], data[/* userId */0])) {
-                WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
-                        return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
-                      }));
-              }
-              
-            } else {
-              WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
-                      return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
-                    }));
-            }
-            return Promise.resolve(/* () */0);
-          }
-        }));
-  return /* () */0;
+  return Session.getCurrentSession(/* () */0).then((function (param) {
+                if (typeof param === "number") {
+                  return Promise.resolve(cleanState);
+                } else {
+                  var data = param[0];
+                  var oldData = state[/* sessionData */0];
+                  if (oldData) {
+                    if (PrimitiveTypes.UserId[/* neq */6](oldData[0][/* userId */0], data[/* userId */0])) {
+                      WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
+                              return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                            }));
+                    }
+                    
+                  } else {
+                    WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
+                            return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                          }));
+                  }
+                  return Promise.resolve(/* record */[
+                              /* sessionData : Some */[data],
+                              /* ventures */state[/* ventures */1]
+                            ]);
+                }
+              }));
 }
 
 var Handle = /* module */[/* updateSession */updateSession];
@@ -100,42 +92,50 @@ var Handle = /* module */[/* updateSession */updateSession];
 function handleMessage(param) {
   switch (param.tag | 0) {
     case 0 : 
-        return updateSession(state[0], param[0], (function (newState) {
-                      state[0] = newState;
-                      return /* () */0;
-                    }));
+        var partial_arg = param[0];
+        return (function (param) {
+            return updateSession(partial_arg, param);
+          });
     case 5 : 
         var name = param[0];
-        return withSessionData((function (data) {
-                      Curry._2(WorkerizedVenture.Cmd[/* Create */0][/* exec */0], data, name).then((function (param) {
-                              var match = param[1];
-                              var venture = match[0];
-                              updateVentureInState(venture);
-                              var msg_000 = WorkerizedVenture.getId(venture);
-                              var msg_001 = match[1];
-                              var msg = /* NewEvents */Block.__(1, [
-                                  msg_000,
-                                  msg_001
-                                ]);
-                              postMessage(VentureWorkerMessage.encodeReceive(msg));
-                              return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [param[0]]))), /* () */0));
-                            }));
-                      return /* () */0;
-                    }));
+        return (function (param) {
+            return withSessionData((function (data, state) {
+                          return Curry._2(WorkerizedVenture.Cmd[/* Create */0][/* exec */0], data, name).then((function (param) {
+                                        var match = param[1];
+                                        var venture = match[0];
+                                        var newState = updateVentureInState(state, venture);
+                                        var msg_000 = WorkerizedVenture.getId(venture);
+                                        var msg_001 = match[1];
+                                        var msg = /* NewEvents */Block.__(1, [
+                                            msg_000,
+                                            msg_001
+                                          ]);
+                                        postMessage(VentureWorkerMessage.encodeReceive(msg));
+                                        postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [param[0]])));
+                                        return Promise.resolve(newState);
+                                      }));
+                        }), param);
+          });
     default:
       throw [
             Caml_builtin_exceptions.match_failure,
             [
               "Venture_worker.re",
-              93,
+              85,
               2
             ]
           ];
   }
 }
 
+var workerState = [cleanState];
+
 self.onmessage = (function (msg) {
-    return handleMessage(msg.data);
+    handleMessage(msg.data)(workerState[0]).then((function (newState) {
+            workerState[0] = newState;
+            return Promise.resolve(/* () */0);
+          }));
+    return /* () */0;
   });
 
 var Message = 0;
@@ -148,9 +148,9 @@ exports.Venture = Venture;
 exports.Notify = Notify;
 exports.logMessage = logMessage;
 exports.cleanState = cleanState;
-exports.state = state;
 exports.withSessionData = withSessionData;
 exports.updateVentureInState = updateVentureInState;
 exports.Handle = Handle;
 exports.handleMessage = handleMessage;
+exports.workerState = workerState;
 /*  Not a pure module */
