@@ -94,28 +94,13 @@ module Handle = {
     items |> WorkerLocalStorage.setBlockstackItems;
     let sessionThread =
       Js.Promise.(
-        make((~resolve as resolveSession, ~reject as _rejectSession) =>
-          Session.getCurrentSession()
-          |> then_(
-               fun
-               | Session.LoggedIn(data) =>
-                 resolveSession(. Some(data)) |> resolve
-               | _ => resolveSession(. None) |> resolve,
-             )
-          |> ignore
-        )
+        Session.getCurrentSession()
+        |> then_(
+             fun
+             | Session.LoggedIn(data) => Some(data) |> resolve
+             | _ => None |> resolve,
+           )
       );
-    Js.Promise.(
-      sessionThread
-      |> then_(
-           fun
-           | Some(_) =>
-             Venture.Index.load()
-             |> then_(index => index |> Notify.indexUpdated |> resolve)
-           | None => resolve(),
-         )
-    )
-    |> ignore;
     Js.Promise.{
       venturesThread:
         all2((sessionThread, state.venturesThread))
@@ -124,7 +109,11 @@ module Handle = {
              | (Some(data), Some((oldData: Session.Data.t, threads)))
                  when UserId.eq(data.userId, oldData.userId) =>
                resolve(Some((data, threads)))
-             | (Some(data), _) => resolve(Some((data, [])))
+             | (Some(data), _) =>
+               Venture.Index.load()
+               |> then_(index => index |> Notify.indexUpdated |> resolve)
+               |> ignore;
+               resolve(Some((data, [])));
              | _ => resolve(None)
              }
            ),

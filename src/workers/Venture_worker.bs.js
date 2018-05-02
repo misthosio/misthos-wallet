@@ -95,23 +95,11 @@ function withVenture(ventureId, f, param) {
 function updateSession(items, state) {
   logMessage("Handling 'UpdateSession'");
   WorkerLocalStorage.setBlockstackItems(items);
-  var sessionThread = new Promise((function (resolveSession, _) {
-          Session.getCurrentSession(/* () */0).then((function (param) {
-                  if (typeof param === "number") {
-                    return Promise.resolve(resolveSession(/* None */0));
-                  } else {
-                    return Promise.resolve(resolveSession(/* Some */[param[0]]));
-                  }
-                }));
-          return /* () */0;
-        }));
-  sessionThread.then((function (param) {
-          if (param) {
-            return WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
-                          return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
-                        }));
+  var sessionThread = Session.getCurrentSession(/* () */0).then((function (param) {
+          if (typeof param === "number") {
+            return Promise.resolve(/* None */0);
           } else {
-            return Promise.resolve(/* () */0);
+            return Promise.resolve(/* Some */[param[0]]);
           }
         }));
   return /* record */[/* venturesThread */Promise.all(/* tuple */[
@@ -122,6 +110,7 @@ function updateSession(items, state) {
                   var session = param[0];
                   if (session) {
                     var data = session[0];
+                    var exit = 0;
                     if (venturesThread) {
                       var match = venturesThread[0];
                       if (PrimitiveTypes.UserId[/* eq */5](data[/* userId */0], match[0][/* userId */0])) {
@@ -130,17 +119,21 @@ function updateSession(items, state) {
                                       match[1]
                                     ]]);
                       } else {
-                        return Promise.resolve(/* Some */[/* tuple */[
-                                      data,
-                                      /* [] */0
-                                    ]]);
+                        exit = 1;
                       }
                     } else {
+                      exit = 1;
+                    }
+                    if (exit === 1) {
+                      WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
+                              return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                            }));
                       return Promise.resolve(/* Some */[/* tuple */[
                                     data,
                                     /* [] */0
                                   ]]);
                     }
+                    
                   } else {
                     return Promise.resolve(/* None */0);
                   }
@@ -178,7 +171,7 @@ function handleMessage(param) {
             Caml_builtin_exceptions.match_failure,
             [
               "Venture_worker.re",
-              146,
+              135,
               2
             ]
           ];
