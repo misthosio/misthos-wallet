@@ -28,13 +28,6 @@ function toWorkerized(state, worker) {
 
 function loadVentureAndIndex(send, session, currentRoute, param) {
   var ventureState = param[/* ventureState */1];
-  if (typeof session !== "number") {
-    PersistWorkerClient.updateSession(session[0][/* userId */0], param[/* persistWorker */5][0]);
-    VentureWorkerClient.updateSession(param[/* ventureWorker */6][0]);
-    Venture.Index[/* load */0](/* () */0).then((function (index) {
-            return Promise.resolve(Curry._1(send, /* UpdateIndex */Block.__(0, [index])));
-          }));
-  }
   if (typeof session === "number") {
     return /* None */0;
   } else {
@@ -42,17 +35,6 @@ function loadVentureAndIndex(send, session, currentRoute, param) {
     if (typeof currentRoute === "number") {
       return /* None */0;
     } else if (currentRoute.tag) {
-      var userId = currentRoute[1];
-      var ventureId = currentRoute[0];
-      setTimeout((function () {
-              Venture.join(sessionData, userId, ventureId, ViewModel.make(/* () */0), ViewModel.apply).then((function (param) {
-                      var venture = param[1];
-                      Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[venture]]));
-                      ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [Venture.getId(venture)])));
-                      return Promise.resolve(Curry._1(send, /* UpdateIndex */Block.__(0, [param[0]])));
-                    }));
-              return /* () */0;
-            }), 1);
       return /* JoiningVenture */2;
     } else {
       var id = currentRoute[0];
@@ -64,7 +46,7 @@ function loadVentureAndIndex(send, session, currentRoute, param) {
         if (Caml_obj.caml_notequal(id, Venture.getId(venture))) {
           setTimeout((function () {
                   Venture.load(sessionData, id, ViewModel.make(/* () */0), ViewModel.apply).then((function (venture) {
-                          return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[venture]])));
+                          return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[venture]])));
                         }));
                   return /* () */0;
                 }), 1);
@@ -78,7 +60,7 @@ function loadVentureAndIndex(send, session, currentRoute, param) {
       if (exit === 1) {
         setTimeout((function () {
                 Venture.load(sessionData, id, ViewModel.make(/* () */0), ViewModel.apply).then((function (venture) {
-                        return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[venture]])));
+                        return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[venture]])));
                       }));
                 return /* () */0;
               }), 1);
@@ -98,6 +80,10 @@ function make(currentRoute, session, children) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
               var state = param[/* state */1];
+              VentureWorkerClient.updateSession(state[/* ventureWorker */6][0]);
+              if (typeof session !== "number") {
+                PersistWorkerClient.updateSession(session[0][/* userId */0], state[/* persistWorker */5][0]);
+              }
               var ventureState = loadVentureAndIndex(param[/* send */3], session, currentRoute, state);
               return /* record */[
                       /* index */state[/* index */0],
@@ -110,7 +96,12 @@ function make(currentRoute, session, children) {
                     ];
             }),
           /* didMount */(function (param) {
-              loadVentureAndIndex(param[/* send */3], session, currentRoute, param[/* state */1]);
+              var state = param[/* state */1];
+              VentureWorkerClient.updateSession(state[/* ventureWorker */6][0]);
+              if (typeof session !== "number") {
+                PersistWorkerClient.updateSession(session[0][/* userId */0], state[/* persistWorker */5][0]);
+              }
+              loadVentureAndIndex(param[/* send */3], session, currentRoute, state);
               return /* () */0;
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -123,7 +114,7 @@ function make(currentRoute, session, children) {
             }),
           /* initialState */(function () {
               return /* record */[
-                      /* index : [] */0,
+                      /* index : None */0,
                       /* ventureState : None */0,
                       /* selectedVentureState : None */0,
                       /* syncWorker */[SyncWorker.make((function (prim) {
@@ -148,16 +139,6 @@ function make(currentRoute, session, children) {
           /* reducer */(function (action, state) {
               switch (action.tag | 0) {
                 case 0 : 
-                    return /* Update */Block.__(0, [/* record */[
-                                /* index */action[0],
-                                /* ventureState */state[/* ventureState */1],
-                                /* selectedVentureState */state[/* selectedVentureState */2],
-                                /* syncWorker */state[/* syncWorker */3],
-                                /* incomeWorker */state[/* incomeWorker */4],
-                                /* persistWorker */state[/* persistWorker */5],
-                                /* ventureWorker */state[/* ventureWorker */6]
-                              ]]);
-                case 1 : 
                     var ventureState = action[0];
                     return /* UpdateWithSideEffects */Block.__(2, [
                               /* record */[
@@ -194,7 +175,7 @@ function make(currentRoute, session, children) {
                                   return /* () */0;
                                 })
                             ]);
-                case 2 : 
+                case 1 : 
                     var name = action[1];
                     var session = action[0];
                     VentureWorkerClient.create(name, state[/* ventureWorker */6][0]);
@@ -213,16 +194,15 @@ function make(currentRoute, session, children) {
                                   setTimeout((function () {
                                           Curry._4(Venture.Cmd[/* Create */0][/* exec */0], session, name, ViewModel.make(/* () */0), ViewModel.apply).then((function (param) {
                                                   var venture = param[1];
-                                                  Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[venture]]));
-                                                  ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [Venture.getId(venture)])));
-                                                  return Promise.resolve(Curry._1(send, /* UpdateIndex */Block.__(0, [param[0]])));
+                                                  Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[venture]]));
+                                                  return Promise.resolve(ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [Venture.getId(venture)]))));
                                                 }));
                                           return /* () */0;
                                         }), 1);
                                   return /* () */0;
                                 })
                             ]);
-                case 3 : 
+                case 2 : 
                     var eventLogs = action[0][0];
                     return /* SideEffects */Block.__(1, [(function (param) {
                                   var send = param[/* send */3];
@@ -237,15 +217,15 @@ function make(currentRoute, session, children) {
                                               console.log("Adding event: ");
                                               console.log(Event.encode(param[1][/* event */0]));
                                               console.log("failed because: ", Venture.Validation[/* resultToString */0](param[2]));
-                                              return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[param[0]]])));
+                                              return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[param[0]]])));
                                             } else {
-                                              return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[param[0]]])));
+                                              return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[param[0]]])));
                                             }
                                           }));
                                     return /* () */0;
                                   }
                                 })]);
-                case 4 : 
+                case 3 : 
                     var txs = action[0][0];
                     return /* SideEffects */Block.__(1, [(function (param) {
                                   var send = param[/* send */3];
@@ -256,21 +236,29 @@ function make(currentRoute, session, children) {
                                     return /* () */0;
                                   } else {
                                     Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], txs, match[0]).then((function (param) {
-                                            return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[param[0]]])));
+                                            return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[param[0]]])));
                                           }));
                                     return /* () */0;
                                   }
                                 })]);
-                case 5 : 
+                case 4 : 
                     console.log("Venture '" + (PrimitiveTypes.VentureId[/* toString */0](action[0][0]) + "' persisted"));
                     return /* NoUpdate */0;
-                case 6 : 
-                    if (action[0].tag) {
-                      console.log("received msg - new events");
+                case 5 : 
+                    var msg = action[0];
+                    if (msg.tag) {
+                      return /* NoUpdate */0;
                     } else {
-                      console.log("received msg - Update index");
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* index : Some */[msg[0]],
+                                  /* ventureState */state[/* ventureState */1],
+                                  /* selectedVentureState */state[/* selectedVentureState */2],
+                                  /* syncWorker */state[/* syncWorker */3],
+                                  /* incomeWorker */state[/* incomeWorker */4],
+                                  /* persistWorker */state[/* persistWorker */5],
+                                  /* ventureWorker */state[/* ventureWorker */6]
+                                ]]);
                     }
-                    return /* NoUpdate */0;
                 
               }
             }),
@@ -282,7 +270,7 @@ function make(currentRoute, session, children) {
                         (function () {
                             state[/* syncWorker */3][0].terminate();
                             var worker = SyncWorker.make((function (message) {
-                                    return Curry._1(send, /* SyncWorkerMessage */Block.__(3, [message]));
+                                    return Curry._1(send, /* SyncWorkerMessage */Block.__(2, [message]));
                                   }));
                             state[/* syncWorker */3][0] = worker;
                             return worker;
@@ -297,7 +285,7 @@ function make(currentRoute, session, children) {
                           (function () {
                               state[/* incomeWorker */4][0].terminate();
                               var worker = Curry._1(IncomeWorkerClient.make, (function (message) {
-                                      return Curry._1(send, /* IncomeWorkerMessage */Block.__(4, [message]));
+                                      return Curry._1(send, /* IncomeWorkerMessage */Block.__(3, [message]));
                                     }));
                               state[/* incomeWorker */4][0] = worker;
                               return worker;
@@ -312,7 +300,7 @@ function make(currentRoute, session, children) {
                             (function () {
                                 state[/* persistWorker */5][0].terminate();
                                 var worker = Curry._1(PersistWorkerClient.make, (function (message) {
-                                        return Curry._1(send, /* PersistWorkerMessage */Block.__(5, [message]));
+                                        return Curry._1(send, /* PersistWorkerMessage */Block.__(4, [message]));
                                       }));
                                 state[/* persistWorker */5][0] = worker;
                                 return worker;
@@ -327,7 +315,7 @@ function make(currentRoute, session, children) {
                               (function () {
                                   state[/* ventureWorker */6][0].terminate();
                                   var worker = Curry._1(VentureWorkerClient.make, (function (message) {
-                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(6, [message]));
+                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(5, [message]));
                                         }));
                                   state[/* ventureWorker */6][0] = worker;
                                   return worker;

@@ -28,7 +28,6 @@ let toWorkerized = (state: ventureState, worker) =>
   };
 
 type action =
-  | UpdateIndex(Venture.Index.t)
   | UpdateVenture(ventureState)
   | CreateVenture(Session.Data.t, string)
   | SyncWorkerMessage(SyncWorker.Message.receive)
@@ -37,7 +36,7 @@ type action =
   | VentureWorkerMessage(VentureWorkerMessage.receive);
 
 type state = {
-  index: Venture.Index.t,
+  index: option(WorkerizedVenture.Index.t),
   ventureState,
   selectedVentureState: workerizedVentureState,
   syncWorker: ref(SyncWorker.t),
@@ -47,24 +46,8 @@ type state = {
 };
 
 let loadVentureAndIndex =
-    (
-      send,
-      session: Session.t,
-      currentRoute,
-      {ventureState, persistWorker, ventureWorker},
-    )
-    : ventureState => {
-  switch (session) {
-  | LoggedIn({userId}) =>
-    persistWorker^ |> PersistWorkerClient.updateSession(userId);
-    ventureWorker^ |> VentureWorkerClient.updateSession;
-    Js.Promise.(
-      Venture.Index.load()
-      |> then_(index => send(UpdateIndex(index)) |> resolve)
-      |> ignore
-    );
-  | _ => ()
-  };
+    (send, session: Session.t, currentRoute, {ventureState})
+    : ventureState =>
   switch (session, currentRoute: Router.Config.route, ventureState) {
   | (LoggedIn(sessionData), Venture(id), VentureLoaded(venture))
       when id != (venture |> Venture.getId) =>
@@ -108,41 +91,16 @@ let loadVentureAndIndex =
     |> ignore;
     LoadingVenture;
   | (LoggedIn(sessionData), JoinVenture(ventureId, userId), _) =>
-    Js.Global.setTimeout(
-      () =>
-        Js.Promise.(
-          Venture.join(
-            sessionData,
-            ~userId,
-            ~ventureId,
-            ~listenerState=ViewModel.make(),
-            ~listener=ViewModel.apply,
-          )
-          |> then_(((index, venture)) => {
-               send(UpdateVenture(VentureLoaded(venture)));
-               ReasonReact.Router.push(
-                 Router.Config.routeToUrl(
-                   Router.Config.Venture(venture |> Venture.getId),
-                 ),
-               );
-               send(UpdateIndex(index)) |> resolve;
-             })
-          |> ignore
-        ),
-      1,
-    )
-    |> ignore;
-    JoiningVenture;
+    JoiningVenture
   | _ => None
   };
-};
 
 let component = ReasonReact.reducerComponent("VentureStore");
 
 let make = (~currentRoute, ~session: Session.t, children) => {
   ...component,
   initialState: () => {
-    index: [],
+    index: None,
     ventureState: None,
     selectedVentureState: None,
     syncWorker: ref(SyncWorker.make(~onMessage=Js.log)),
@@ -150,9 +108,22 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
-  didMount: ({send, state}) =>
-    loadVentureAndIndex(send, session, currentRoute, state) |> ignore,
+  didMount: ({send, state}) => {
+    state.ventureWorker^ |> VentureWorkerClient.updateSession;
+    switch (session) {
+    | LoggedIn({userId}) =>
+      state.persistWorker^ |> PersistWorkerClient.updateSession(userId)
+    | _ => ()
+    };
+    loadVentureAndIndex(send, session, currentRoute, state) |> ignore;
+  },
   willReceiveProps: ({send, state}) => {
+    state.ventureWorker^ |> VentureWorkerClient.updateSession;
+    switch (session) {
+    | LoggedIn({userId}) =>
+      state.persistWorker^ |> PersistWorkerClient.updateSession(userId)
+    | _ => ()
+    };
     let ventureState =
       loadVentureAndIndex(send, session, currentRoute, state);
     {
@@ -282,11 +253,10 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       ReasonReact.NoUpdate;
     | VentureWorkerMessage(msg) =>
       switch (msg) {
-      | UpdateIndex(_index) => Js.log("received msg - Update index")
-      | NewEvents(_ventureId, _events) => Js.log("received msg - new events")
-      };
-      ReasonReact.NoUpdate;
-    | UpdateIndex(index) => ReasonReact.Update({...state, index})
+      | UpdateIndex(index) =>
+        ReasonReact.Update({...state, index: Some(index)})
+      | NewEvents(_ventureId, _events) => ReasonReact.NoUpdate
+      }
     | UpdateVenture(ventureState) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, ventureState},
@@ -344,14 +314,14 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                     ~listenerState=ViewModel.make(),
                     ~listener=ViewModel.apply,
                   )
-                  |> then_(((newIndex, venture)) => {
+                  |> then_(((_newIndex, venture)) => {
                        send(UpdateVenture(VentureLoaded(venture)));
                        ReasonReact.Router.push(
                          Router.Config.routeToUrl(
                            Router.Config.Venture(venture |> Venture.getId),
                          ),
-                       );
-                       send(UpdateIndex(newIndex)) |> resolve;
+                       )
+                       |> resolve;
                      })
                   |> ignore
                 ),

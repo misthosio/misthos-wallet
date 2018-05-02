@@ -24,6 +24,10 @@ open PrimitiveTypes;
 
 module Venture = WorkerizedVenture;
 
+module Notify = {
+  let indexUpdated = index => postMessage(UpdateIndex(index));
+};
+
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
 type state = {
@@ -31,7 +35,9 @@ type state = {
   ventures: list((ventureId, Venture.t)),
 };
 
-let state = ref({sessionData: None, ventures: []});
+let cleanState = {sessionData: None, ventures: []};
+
+let state = ref(cleanState);
 
 let withSessionData = f =>
   switch (state^.sessionData) {
@@ -49,27 +55,44 @@ let updateVentureInState = venture =>
       ],
     };
 
+module Handle = {
+  let updateSession = (state, items, updateState) => {
+    logMessage("Updating session in localStorage");
+    items |> WorkerLocalStorage.setBlockstackItems;
+    Js.Promise.(
+      Session.getCurrentSession()
+      |> then_(
+           fun
+           | Session.LoggedIn(data) => {
+               let oldData = state.sessionData;
+               updateState({...state, sessionData: Some(data)});
+               switch (oldData) {
+               | None =>
+                 Venture.Index.load()
+                 |> then_(index => index |> Notify.indexUpdated |> resolve)
+                 |> ignore
+               | Some(oldData) when UserId.neq(oldData.userId, data.userId) =>
+                 Venture.Index.load()
+                 |> then_(index => index |> Notify.indexUpdated |> resolve)
+                 |> ignore
+               | _ => ()
+               };
+               resolve();
+             }
+           | _ => {
+               updateState(cleanState);
+               resolve();
+             },
+         )
+    )
+    |> ignore;
+  };
+};
+
 let handleMessage =
   fun
-  | Message.UpdateSession(items) => {
-      logMessage("Updating session in localStorage");
-      items |> WorkerLocalStorage.setBlockstackItems;
-      Js.Promise.(
-        Session.getCurrentSession()
-        |> then_(
-             fun
-             | Session.LoggedIn(data) => {
-                 state := {...state^, sessionData: Some(data)};
-                 resolve();
-               }
-             | _ => {
-                 state := {sessionData: None, ventures: []};
-                 resolve();
-               },
-           )
-      )
-      |> ignore;
-    }
+  | Message.UpdateSession(items) =>
+    Handle.updateSession(state^, items, newState => state := newState)
   | Message.Create(name) =>
     Js.Promise.(
       withSessionData(data =>
@@ -77,7 +100,7 @@ let handleMessage =
         |> then_(((index, (venture, events))) => {
              updateVentureInState(venture);
              postMessage(NewEvents(venture |> Venture.getId, events));
-             postMessage(UpdateIndex(index)) |> resolve;
+             index |> Notify.indexUpdated |> resolve;
            })
         |> ignore
       )

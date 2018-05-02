@@ -5,6 +5,7 @@ var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Session = require("../application/Session.bs.js");
+var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerizedVenture = require("../application/WorkerizedVenture.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
@@ -19,15 +20,24 @@ function postMessage$1(msg) {
   return /* () */0;
 }
 
+function indexUpdated(index) {
+  postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index])));
+  return /* () */0;
+}
+
+var Notify = /* module */[/* indexUpdated */indexUpdated];
+
 function logMessage(msg) {
   console.log("[Venture Worker] - " + msg);
   return /* () */0;
 }
 
-var state = [/* record */[
-    /* sessionData : None */0,
-    /* ventures : [] */0
-  ]];
+var cleanState = /* record */[
+  /* sessionData : None */0,
+  /* ventures : [] */0
+];
+
+var state = [cleanState];
 
 function withSessionData(f) {
   var match = state[0][/* sessionData */0];
@@ -53,28 +63,47 @@ function updateVentureInState(venture) {
   return /* () */0;
 }
 
+function updateSession(state, items, updateState) {
+  logMessage("Updating session in localStorage");
+  WorkerLocalStorage.setBlockstackItems(items);
+  Session.getCurrentSession(/* () */0).then((function (param) {
+          if (typeof param === "number") {
+            Curry._1(updateState, cleanState);
+            return Promise.resolve(/* () */0);
+          } else {
+            var data = param[0];
+            var oldData = state[/* sessionData */0];
+            Curry._1(updateState, /* record */[
+                  /* sessionData : Some */[data],
+                  /* ventures */state[/* ventures */1]
+                ]);
+            if (oldData) {
+              if (PrimitiveTypes.UserId[/* neq */6](oldData[0][/* userId */0], data[/* userId */0])) {
+                WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
+                        return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                      }));
+              }
+              
+            } else {
+              WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
+                      return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                    }));
+            }
+            return Promise.resolve(/* () */0);
+          }
+        }));
+  return /* () */0;
+}
+
+var Handle = /* module */[/* updateSession */updateSession];
+
 function handleMessage(param) {
   switch (param.tag | 0) {
     case 0 : 
-        logMessage("Updating session in localStorage");
-        WorkerLocalStorage.setBlockstackItems(param[0]);
-        Session.getCurrentSession(/* () */0).then((function (param) {
-                if (typeof param === "number") {
-                  state[0] = /* record */[
-                    /* sessionData : None */0,
-                    /* ventures : [] */0
-                  ];
-                  return Promise.resolve(/* () */0);
-                } else {
-                  var init = state[0];
-                  state[0] = /* record */[
-                    /* sessionData : Some */[param[0]],
-                    /* ventures */init[/* ventures */1]
-                  ];
-                  return Promise.resolve(/* () */0);
-                }
-              }));
-        return /* () */0;
+        return updateSession(state[0], param[0], (function (newState) {
+                      state[0] = newState;
+                      return /* () */0;
+                    }));
     case 5 : 
         var name = param[0];
         return withSessionData((function (data) {
@@ -98,7 +127,7 @@ function handleMessage(param) {
             Caml_builtin_exceptions.match_failure,
             [
               "Venture_worker.re",
-              53,
+              93,
               2
             ]
           ];
@@ -116,9 +145,12 @@ var Venture = 0;
 exports.Message = Message;
 exports.postMessage = postMessage$1;
 exports.Venture = Venture;
+exports.Notify = Notify;
 exports.logMessage = logMessage;
+exports.cleanState = cleanState;
 exports.state = state;
 exports.withSessionData = withSessionData;
 exports.updateVentureInState = updateVentureInState;
+exports.Handle = Handle;
 exports.handleMessage = handleMessage;
 /*  Not a pure module */
