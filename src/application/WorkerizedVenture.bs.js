@@ -226,12 +226,14 @@ function persist(param) {
 function load(session, ventureId) {
   logMessage("Loading venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return Blockstack$1.getFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + "/log.json").then((function (nullLog) {
-                  if (nullLog == null) {
-                    throw CouldNotLoadVenture;
-                  } else {
-                    return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
-                  }
-                })).then(persist);
+                    if (nullLog == null) {
+                      throw CouldNotLoadVenture;
+                    } else {
+                      return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
+                    }
+                  })).then(persist).then((function (param) {
+                return Promise.resolve(param[0]);
+              }));
 }
 
 function join(session, userId, ventureId) {
@@ -262,6 +264,15 @@ function getId(param) {
 
 function getSummary(param) {
   return Curry._1(EventLog.getSummary, param[/* log */2]);
+}
+
+function getAllEvents(param) {
+  return Curry._3(EventLog.reduce, (function (l, param) {
+                return /* :: */[
+                        param[/* event */0],
+                        l
+                      ];
+              }), /* [] */0, param[/* log */2]);
 }
 
 function getPartnerHistoryUrls(param) {
@@ -619,6 +630,7 @@ exports.CouldNotLoadVenture = CouldNotLoadVenture;
 exports.join = join;
 exports.load = load;
 exports.getId = getId;
+exports.getAllEvents = getAllEvents;
 exports.getSummary = getSummary;
 exports.getPartnerHistoryUrls = getPartnerHistoryUrls;
 exports.Wallet = Wallet;

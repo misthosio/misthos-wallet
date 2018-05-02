@@ -4,6 +4,7 @@
 var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerizedVenture = require("../application/WorkerizedVenture.bs.js");
@@ -45,26 +46,6 @@ function logMessage(msg) {
   return /* () */0;
 }
 
-var cleanState_000 = /* lastLoggedInUser */PrimitiveTypes.UserId[/* fromString */1]("");
-
-var cleanState = /* record */[
-  cleanState_000,
-  /* ventures : [] */0
-];
-
-function updateVentureInState(state, venture) {
-  return /* record */[
-          /* lastLoggedInUser */state[/* lastLoggedInUser */0],
-          /* ventures : :: */[
-            /* tuple */[
-              WorkerizedVenture.getId(venture),
-              venture
-            ],
-            List.remove_assoc(WorkerizedVenture.getId(venture), state[/* ventures */1])
-          ]
-        ];
-}
-
 function waitForSession(resolvePromise, sessionPromise) {
   sessionPromise.then((function (param) {
           if (typeof param === "number") {
@@ -78,59 +59,107 @@ function waitForSession(resolvePromise, sessionPromise) {
   return /* () */0;
 }
 
-function makeSessionPromise() {
-  return new Promise((function (resolve, _) {
-                return waitForSession(resolve, Promise.resolve(/* NotLoggedIn */2));
-              }));
-}
-
-var sessionPromise = [makeSessionPromise(/* () */0)];
-
-function withSessionData(f, state) {
-  return sessionPromise[0].then((function (data) {
-                return Curry._2(f, data, state);
-              }));
+function withVenture(ventureId, f, param) {
+  var venturesThread = param[/* venturesThread */0].then((function (threads) {
+          return Promise.resolve(Utils.mapOption((function (param) {
+                            var ventures = param[1];
+                            var data = param[0];
+                            var ventureThread;
+                            try {
+                              ventureThread = List.assoc(ventureId, ventures);
+                            }
+                            catch (exn){
+                              if (exn === Caml_builtin_exceptions.not_found) {
+                                ventureThread = WorkerizedVenture.load(data, ventureId);
+                              } else {
+                                throw exn;
+                              }
+                            }
+                            return /* tuple */[
+                                    data,
+                                    /* :: */[
+                                      /* tuple */[
+                                        ventureId,
+                                        ventureThread.then((function (venture) {
+                                                return Curry._2(f, data, venture);
+                                              }))
+                                      ],
+                                      List.remove_assoc(ventureId, ventures)
+                                    ]
+                                  ];
+                          }), threads));
+        }));
+  return /* record */[/* venturesThread */venturesThread];
 }
 
 function updateSession(items, state) {
   logMessage("Handling 'UpdateSession'");
   WorkerLocalStorage.setBlockstackItems(items);
-  sessionPromise[0] = makeSessionPromise(/* () */0);
-  return Session.getCurrentSession(/* () */0).then((function (param) {
-                if (typeof param === "number") {
-                  return Promise.resolve(cleanState);
-                } else {
-                  var data = param[0];
-                  if (PrimitiveTypes.UserId[/* neq */6](state[/* lastLoggedInUser */0], data[/* userId */0])) {
-                    WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
-                            return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
-                          }));
+  var sessionThread = new Promise((function (resolveSession, _) {
+          Session.getCurrentSession(/* () */0).then((function (param) {
+                  if (typeof param === "number") {
+                    return Promise.resolve(resolveSession(/* None */0));
+                  } else {
+                    return Promise.resolve(resolveSession(/* Some */[param[0]]));
                   }
-                  return Promise.resolve(/* record */[
-                              /* lastLoggedInUser */data[/* userId */0],
-                              /* ventures */state[/* ventures */1]
-                            ]);
-                }
-              }));
+                }));
+          return /* () */0;
+        }));
+  sessionThread.then((function (param) {
+          if (param) {
+            return WorkerizedVenture.Index[/* load */0](/* () */0).then((function (index) {
+                          return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                        }));
+          } else {
+            return Promise.resolve(/* () */0);
+          }
+        }));
+  return /* record */[/* venturesThread */Promise.all(/* tuple */[
+                  sessionThread,
+                  state[/* venturesThread */0]
+                ]).then((function (param) {
+                  var venturesThread = param[1];
+                  var session = param[0];
+                  if (session) {
+                    var data = session[0];
+                    if (venturesThread) {
+                      var match = venturesThread[0];
+                      if (PrimitiveTypes.UserId[/* eq */5](data[/* userId */0], match[0][/* userId */0])) {
+                        return Promise.resolve(/* Some */[/* tuple */[
+                                      data,
+                                      match[1]
+                                    ]]);
+                      } else {
+                        return Promise.resolve(/* Some */[/* tuple */[
+                                      data,
+                                      /* [] */0
+                                    ]]);
+                      }
+                    } else {
+                      return Promise.resolve(/* Some */[/* tuple */[
+                                    data,
+                                    /* [] */0
+                                  ]]);
+                    }
+                  } else {
+                    return Promise.resolve(/* None */0);
+                  }
+                }))];
 }
 
 function load(ventureId) {
   logMessage("Handling 'Load'");
   return (function (param) {
-      return withSessionData((function (data, state) {
-                    return WorkerizedVenture.load(data, ventureId).then((function (param) {
-                                  ventureLoaded(ventureId, param[1]);
-                                  return Promise.resolve(updateVentureInState(state, param[0]));
-                                }));
+      return withVenture(ventureId, (function (_, venture) {
+                    ventureLoaded(ventureId, WorkerizedVenture.getAllEvents(venture));
+                    return Promise.resolve(venture);
                   }), param);
     });
 }
 
 var Handle = /* module */[
   /* waitForSession */waitForSession,
-  /* makeSessionPromise */makeSessionPromise,
-  /* sessionPromise */sessionPromise,
-  /* withSessionData */withSessionData,
+  /* withVenture */withVenture,
   /* updateSession */updateSession,
   /* load */load
 ];
@@ -149,22 +178,19 @@ function handleMessage(param) {
             Caml_builtin_exceptions.match_failure,
             [
               "Venture_worker.re",
-              110,
+              146,
               2
             ]
           ];
   }
 }
 
+var cleanState = /* record */[/* venturesThread */Promise.resolve(/* None */0)];
+
 var workerState = [cleanState];
 
 self.onmessage = (function (msg) {
-    Promise.resolve(/* () */0).then((function () {
-            return handleMessage(msg.data)(workerState[0]).then((function (newState) {
-                          workerState[0] = newState;
-                          return Promise.resolve(/* () */0);
-                        }));
-          }));
+    workerState[0] = handleMessage(msg.data)(workerState[0]);
     return /* () */0;
   });
 
@@ -177,9 +203,8 @@ exports.postMessage = postMessage$1;
 exports.Venture = Venture;
 exports.Notify = Notify;
 exports.logMessage = logMessage;
-exports.cleanState = cleanState;
-exports.updateVentureInState = updateVentureInState;
 exports.Handle = Handle;
 exports.handleMessage = handleMessage;
+exports.cleanState = cleanState;
 exports.workerState = workerState;
 /*  Not a pure module */

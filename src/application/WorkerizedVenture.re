@@ -147,6 +147,7 @@ let load = (session: Session.Data.t, ~ventureId) => {
          }
        )
     |> then_(persist)
+    |> then_(((v, _)) => v |> resolve)
   );
 };
 
@@ -180,6 +181,9 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
 let getId = ({id}) => id;
 
 let getSummary = ({log}) => log |> EventLog.getSummary;
+
+let getAllEvents = ({log}) =>
+  log |> EventLog.reduce((l, {event}) => [event, ...l], []);
 
 module SynchronizeLogs = {
   let getPartnerHistoryUrls = ({session, id, state}) =>

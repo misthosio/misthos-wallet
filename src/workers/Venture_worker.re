@@ -15,6 +15,9 @@ external onMessage :
   (self, [@bs.uncurry] ({. "data": Message.send} => unit)) => unit =
   "onmessage";
 
+[@bs.set]
+external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
+
 [@bs.val]
 external _postMessage : Message.encodedReceive => unit = "postMessage";
 
@@ -33,18 +36,12 @@ module Notify = {
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
 type state = {
-  lastLoggedInUser: userId,
-  ventures: list((ventureId, Venture.t)),
-};
-
-let cleanState = {lastLoggedInUser: UserId.fromString(""), ventures: []};
-
-let updateVentureInState = (state, venture) => {
-  ...state,
-  ventures: [
-    (venture |> Venture.getId, venture),
-    ...state.ventures |> List.remove_assoc(venture |> Venture.getId),
-  ],
+  venturesThread:
+    Js.Promise.t(
+      option(
+        (Session.Data.t, list((ventureId, Js.Promise.t(Venture.t)))),
+      ),
+    ),
 };
 
 module Handle = {
@@ -65,43 +62,82 @@ module Handle = {
          )
     )
     |> ignore;
-  let makeSessionPromise = () =>
-    Js.Promise.make((~resolve, ~reject as _) =>
-      waitForSession(resolve, Js.Promise.resolve(Session.NotLoggedIn))
-    );
-  let sessionPromise = ref(makeSessionPromise());
-  let withSessionData = (f, state) =>
-    sessionPromise^ |> Js.Promise.then_(data => f(data, state));
+  let withVenture = (ventureId, f, {venturesThread}) => {
+    let venturesThread =
+      Js.Promise.(
+        venturesThread
+        |> then_(threads =>
+             threads
+             |> Utils.mapOption(((data, ventures)) => {
+                  let ventureThread =
+                    try (ventures |> List.assoc(ventureId)) {
+                    | Not_found => Venture.load(data, ~ventureId)
+                    };
+                  (
+                    data,
+                    [
+                      (
+                        ventureId,
+                        ventureThread |> then_(venture => f(data, venture)),
+                      ),
+                      ...ventures |> List.remove_assoc(ventureId),
+                    ],
+                  );
+                })
+             |> resolve
+           )
+      );
+    {venturesThread: venturesThread};
+  };
   let updateSession = (items, state) => {
     logMessage("Handling 'UpdateSession'");
     items |> WorkerLocalStorage.setBlockstackItems;
-    sessionPromise := makeSessionPromise();
+    let sessionThread =
+      Js.Promise.(
+        make((~resolve as resolveSession, ~reject as _rejectSession) =>
+          Session.getCurrentSession()
+          |> then_(
+               fun
+               | Session.LoggedIn(data) =>
+                 resolveSession(. Some(data)) |> resolve
+               | _ => resolveSession(. None) |> resolve,
+             )
+          |> ignore
+        )
+      );
     Js.Promise.(
-      Session.getCurrentSession()
+      sessionThread
       |> then_(
            fun
-           | Session.LoggedIn(data) => {
-               if (UserId.neq(state.lastLoggedInUser, data.userId)) {
-                 Venture.Index.load()
-                 |> then_(index => index |> Notify.indexUpdated |> resolve)
-                 |> ignore;
-               };
-               resolve({...state, lastLoggedInUser: data.userId});
-             }
-           | _ => resolve(cleanState),
+           | Some(_) =>
+             Venture.Index.load()
+             |> then_(index => index |> Notify.indexUpdated |> resolve)
+           | None => resolve(),
          )
-    );
+    )
+    |> ignore;
+    Js.Promise.{
+      venturesThread:
+        all2((sessionThread, state.venturesThread))
+        |> then_(((session: option(Session.Data.t), venturesThread)) =>
+             switch (session, venturesThread) {
+             | (Some(data), Some((oldData: Session.Data.t, threads)))
+                 when UserId.eq(data.userId, oldData.userId) =>
+               resolve(Some((data, threads)))
+             | (Some(data), _) => resolve(Some((data, [])))
+             | _ => resolve(None)
+             }
+           ),
+    };
   };
   let load = ventureId => {
     logMessage("Handling 'Load'");
-    Js.Promise.(
-      withSessionData((data, state) =>
-        Venture.load(data, ~ventureId)
-        |> then_(((venture, events)) => {
-             Notify.ventureLoaded(ventureId, events);
-             updateVentureInState(state, venture) |> resolve;
-           })
-      )
+    withVenture(
+      ventureId,
+      (_session, venture) => {
+        Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
+        Js.Promise.resolve(venture);
+      },
     );
   };
 };
@@ -123,19 +159,10 @@ let handleMessage =
 /*          }) */
 /*     ) */
 /*   ); */
+let cleanState = {venturesThread: Js.Promise.resolve(None)};
+
 let workerState = ref(cleanState);
 
 onMessage(self, msg =>
-  Js.Promise.(
-    resolve()
-    |> then_(() =>
-         workerState^
-         |> handleMessage(msg##data)
-         |> then_(newState => {
-              workerState := newState;
-              resolve();
-            })
-       )
-  )
-  |> ignore
+  workerState := workerState^ |> handleMessage(msg##data)
 );

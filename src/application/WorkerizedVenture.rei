@@ -36,11 +36,11 @@ let join:
   (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
   Js.Promise.t((Index.t, t, list(Event.t)));
 
-let load:
-  (Session.Data.t, ~ventureId: ventureId) =>
-  Js.Promise.t((t, list(Event.t)));
+let load: (Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
 
 let getId: t => ventureId;
+
+let getAllEvents: t => list(Event.t);
 
 let getSummary: t => EventLog.summary;
 
