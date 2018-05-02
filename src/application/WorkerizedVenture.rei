@@ -59,8 +59,9 @@ module Wallet: {
 
 module Cmd: {
   module Create: {
-    type result = (Index.t, (t, list(Event.t)));
-    let exec: (Session.Data.t, ~name: string) => Js.Promise.t(result);
+    type result = (Index.t, t);
+    let exec:
+      (Session.Data.t, ~name: string) => (ventureId, Js.Promise.t(result));
   };
   module SynchronizeLogs: {
     type result =

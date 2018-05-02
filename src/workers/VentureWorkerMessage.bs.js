@@ -49,6 +49,26 @@ function encodeReceive(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
+                      "VentureCreated"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "ventureId",
+                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "events",
+                          Json_encode.list(Event.encode, param[1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    case 3 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
                       "NewEvents"
                     ],
                     /* :: */[
@@ -79,20 +99,29 @@ function decodeReceive(raw) {
         var events = Json_decode.field("events", (function (param) {
                 return Json_decode.list(Event.decode, param);
               }), raw);
-        return /* NewEvents */Block.__(2, [
+        return /* NewEvents */Block.__(3, [
                   ventureId,
                   events
                 ]);
     case "UpdateIndex" : 
         return /* UpdateIndex */Block.__(0, [Json_decode.field("index", WorkerizedVenture.Index[/* decode */2], raw)]);
-    case "VentureLoaded" : 
+    case "VentureCreated" : 
         var ventureId$1 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var events$1 = Json_decode.field("events", (function (param) {
                 return Json_decode.list(Event.decode, param);
               }), raw);
-        return /* VentureLoaded */Block.__(1, [
+        return /* VentureCreated */Block.__(2, [
                   ventureId$1,
                   events$1
+                ]);
+    case "VentureLoaded" : 
+        var ventureId$2 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var events$2 = Json_decode.field("events", (function (param) {
+                return Json_decode.list(Event.decode, param);
+              }), raw);
+        return /* VentureLoaded */Block.__(1, [
+                  ventureId$2,
+                  events$2
                 ]);
     default:
       throw [

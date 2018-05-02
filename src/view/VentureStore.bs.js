@@ -3,6 +3,7 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Router = require("./Router.bs.js");
 var ViewModel = require("./ViewModel.bs.js");
 var SyncWorker = require("../SyncWorker.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -10,7 +11,6 @@ var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var IncomeWorkerClient = require("../workers/IncomeWorkerClient.bs.js");
 var PersistWorkerClient = require("../workers/PersistWorkerClient.bs.js");
 var VentureWorkerClient = require("../workers/VentureWorkerClient.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function loadVentureAndIndex(session, currentRoute, param) {
   var ventureWorker = param[/* ventureWorker */5];
@@ -74,8 +74,11 @@ function make(currentRoute, session, children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
+              var send = param[/* send */3];
               var match = param[/* state */1];
-              return Curry._3(children, match[/* index */0], match[/* selectedVenture */1], param[/* send */3]);
+              return Curry._3(children, match[/* index */0], match[/* selectedVenture */1], (function (name) {
+                            return Curry._1(send, /* CreateVenture */Block.__(0, [name]));
+                          }));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -103,14 +106,15 @@ function make(currentRoute, session, children) {
           /* reducer */(function (action, state) {
               switch (action.tag | 0) {
                 case 0 : 
-                    throw [
-                          Caml_builtin_exceptions.match_failure,
-                          [
-                            "VentureStore.re",
-                            123,
-                            4
-                          ]
-                        ];
+                    VentureWorkerClient.create(action[0], state[/* ventureWorker */5][0]);
+                    return /* Update */Block.__(0, [/* record */[
+                                /* index */state[/* index */0],
+                                /* selectedVenture : CreatingVenture */1,
+                                /* syncWorker */state[/* syncWorker */2],
+                                /* incomeWorker */state[/* incomeWorker */3],
+                                /* persistWorker */state[/* persistWorker */4],
+                                /* ventureWorker */state[/* ventureWorker */5]
+                              ]]);
                 case 1 : 
                 case 2 : 
                     return /* NoUpdate */0;
@@ -153,6 +157,25 @@ function make(currentRoute, session, children) {
                             }
                           }
                       case 2 : 
+                          var ventureId$1 = msg[0];
+                          return /* UpdateWithSideEffects */Block.__(2, [
+                                    /* record */[
+                                      /* index */state[/* index */0],
+                                      /* selectedVenture : VentureLoaded */Block.__(1, [
+                                          ventureId$1,
+                                          ViewModel.init(msg[1]),
+                                          VentureWorkerClient.Cmd[/* make */0](state[/* ventureWorker */5][0], ventureId$1)
+                                        ]),
+                                      /* syncWorker */state[/* syncWorker */2],
+                                      /* incomeWorker */state[/* incomeWorker */3],
+                                      /* persistWorker */state[/* persistWorker */4],
+                                      /* ventureWorker */state[/* ventureWorker */5]
+                                    ],
+                                    (function () {
+                                        return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [ventureId$1])));
+                                      })
+                                  ]);
+                      case 3 : 
                           return /* NoUpdate */0;
                       
                     }

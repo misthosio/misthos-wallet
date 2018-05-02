@@ -292,7 +292,7 @@ let getPartnerHistoryUrls = SynchronizeLogs.getPartnerHistoryUrls;
 
 module Cmd = {
   module Create = {
-    type result = (Index.t, (t, list(Event.t)));
+    type result = (Index.t, t);
     let exec = (session: Session.Data.t, ~name as ventureName) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
@@ -304,12 +304,14 @@ module Cmd = {
           ~network=session.network,
         );
       Js.(
+        ventureCreated.ventureId,
         Promise.all2((
           Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
           make(session, ventureCreated.ventureId)
           |> apply(VentureCreated(ventureCreated))
-          |> Promise.then_(persist),
-        ))
+          |> Promise.then_(persist)
+          |> Promise.then_(((v, _)) => v |> Promise.resolve),
+        )),
       );
     };
   };

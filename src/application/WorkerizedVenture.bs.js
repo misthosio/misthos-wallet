@@ -423,10 +423,15 @@ function exec(otherLogs, venture) {
 function exec$1(session, ventureName) {
   logMessage("Executing 'Create' command");
   var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
-  return Promise.all(/* tuple */[
-              Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
-              apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then(persist)
-            ]);
+  return /* tuple */[
+          ventureCreated[/* ventureId */0],
+          Promise.all(/* tuple */[
+                Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
+                apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then(persist).then((function (param) {
+                        return Promise.resolve(param[0]);
+                      }))
+              ])
+        ];
 }
 
 var Create = /* module */[/* exec */exec$1];

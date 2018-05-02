@@ -8,7 +8,7 @@ type selectedVenture =
   | VentureLoaded(ventureId, ViewModel.t, VentureWorkerClient.Cmd.t);
 
 type action =
-  | CreateVenture(Session.Data.t, string)
+  | CreateVenture(string)
   | SyncWorkerMessage(SyncWorker.Message.receive)
   | IncomeWorkerMessage(IncomeWorkerMessage.receive)
   | PersistWorkerMessage(PersistWorkerMessage.receive)
@@ -121,6 +121,45 @@ let make = (~currentRoute, ~session: Session.t, children) => {
   ],
   reducer: (action, state) =>
     switch (action) {
+    | CreateVenture(name) =>
+      state.ventureWorker^ |> VentureWorkerClient.create(~name);
+      ReasonReact.Update({...state, selectedVenture: CreatingVenture});
+    | VentureWorkerMessage(msg) =>
+      switch (msg, state.selectedVenture) {
+      | (UpdateIndex(index), _) =>
+        ReasonReact.Update({...state, index: Some(index)})
+      | (VentureCreated(ventureId, events), _) =>
+        ReasonReact.UpdateWithSideEffects(
+          {
+            ...state,
+            selectedVenture:
+              VentureLoaded(
+                ventureId,
+                ViewModel.init(events),
+                VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
+              ),
+          },
+          (
+            (_) =>
+              ReasonReact.Router.push(
+                Router.Config.routeToUrl(Router.Config.Venture(ventureId)),
+              )
+          ),
+        )
+      | (VentureLoaded(ventureId, events), LoadingVenture(loadingId))
+          when VentureId.eq(ventureId, loadingId) =>
+        ReasonReact.Update({
+          ...state,
+          selectedVenture:
+            VentureLoaded(
+              ventureId,
+              ViewModel.init(events),
+              VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
+            ),
+        })
+      | (NewEvents(_ventureId, _events), _) => ReasonReact.NoUpdate
+      | _ => ReasonReact.NoUpdate
+      }
     | SyncWorkerMessage(Fetched(_eventLogs)) => ReasonReact.NoUpdate
     /* ReasonReact.SideEffects( */
     /*   ( */
@@ -188,24 +227,6 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     | PersistWorkerMessage(VenturePersisted(id)) =>
       Js.log("Venture '" ++ VentureId.toString(id) ++ "' persisted");
       ReasonReact.NoUpdate;
-    | VentureWorkerMessage(msg) =>
-      switch (msg, state.selectedVenture) {
-      | (UpdateIndex(index), _) =>
-        ReasonReact.Update({...state, index: Some(index)})
-      | (VentureLoaded(ventureId, events), LoadingVenture(loadingId))
-          when VentureId.eq(ventureId, loadingId) =>
-        ReasonReact.Update({
-          ...state,
-          selectedVenture:
-            VentureLoaded(
-              ventureId,
-              ViewModel.init(events),
-              VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
-            ),
-        })
-      | (NewEvents(_ventureId, _events), _) => ReasonReact.NoUpdate
-      | _ => ReasonReact.NoUpdate
-      }
     /* state.ventureWorker^ |> VentureWorkerClient.create(~name); */
     /* ReasonReact.UpdateWithSideEffects( */
     /*   {...state, ventureState: CreatingVenture}, */
@@ -238,5 +259,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     /* ); */
     },
   render: ({state: {index, selectedVenture}, send}) =>
-    children(~index, ~selectedVenture, ~updateVentureStore=send),
+    children(~index, ~selectedVenture, ~createVenture=name =>
+      send(CreateVenture(name))
+    ),
 };

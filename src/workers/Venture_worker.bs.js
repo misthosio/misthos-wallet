@@ -21,6 +21,11 @@ function postMessage$1(msg) {
   return /* () */0;
 }
 
+function logMessage(msg) {
+  console.log("[Venture Worker] - " + msg);
+  return /* () */0;
+}
+
 function indexUpdated(index) {
   postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index])));
   return /* () */0;
@@ -36,55 +41,68 @@ function ventureLoaded(id, events) {
   return /* () */0;
 }
 
+function ventureCreated(id, events) {
+  var msg_001 = List.rev(events);
+  var msg = /* VentureCreated */Block.__(2, [
+      id,
+      msg_001
+    ]);
+  postMessage(VentureWorkerMessage.encodeReceive(msg));
+  return /* () */0;
+}
+
 var Notify = /* module */[
   /* indexUpdated */indexUpdated,
-  /* ventureLoaded */ventureLoaded
+  /* ventureLoaded */ventureLoaded,
+  /* ventureCreated */ventureCreated
 ];
 
-function logMessage(msg) {
-  console.log("[Venture Worker] - " + msg);
-  return /* () */0;
-}
-
-function waitForSession(resolvePromise, sessionPromise) {
-  sessionPromise.then((function (param) {
-          if (typeof param === "number") {
-            return Promise.resolve((setTimeout((function () {
-                                return waitForSession(resolvePromise, Session.getCurrentSession(/* () */0));
-                              }), 200), /* () */0));
-          } else {
-            return Promise.resolve(resolvePromise(param[0]));
-          }
-        }));
-  return /* () */0;
-}
-
-function withVenture(ventureId, f, param) {
+function withVenture($staropt$star, $staropt$star$1, f, param) {
+  var create = $staropt$star ? $staropt$star[0] : "";
+  var ventureId = $staropt$star$1 ? $staropt$star$1[0] : PrimitiveTypes.VentureId[/* fromString */1]("");
   var venturesThread = param[/* venturesThread */0].then((function (threads) {
           return Promise.resolve(Utils.mapOption((function (param) {
                             var ventures = param[1];
                             var data = param[0];
-                            var ventureThread;
-                            try {
-                              ventureThread = List.assoc(ventureId, ventures);
-                            }
-                            catch (exn){
-                              if (exn === Caml_builtin_exceptions.not_found) {
-                                ventureThread = WorkerizedVenture.load(data, ventureId);
-                              } else {
-                                throw exn;
+                            var match;
+                            if (create !== "") {
+                              var match$1 = Curry._2(WorkerizedVenture.Cmd[/* Create */0][/* exec */0], data, create);
+                              match = /* tuple */[
+                                match$1[0],
+                                match$1[1].then((function (param) {
+                                        postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [param[0]])));
+                                        return Promise.resolve(param[1]);
+                                      }))
+                              ];
+                            } else {
+                              try {
+                                match = /* tuple */[
+                                  ventureId,
+                                  List.assoc(ventureId, ventures)
+                                ];
+                              }
+                              catch (exn){
+                                if (exn === Caml_builtin_exceptions.not_found) {
+                                  match = /* tuple */[
+                                    ventureId,
+                                    WorkerizedVenture.load(data, ventureId)
+                                  ];
+                                } else {
+                                  throw exn;
+                                }
                               }
                             }
+                            var ventureId$1 = match[0];
                             return /* tuple */[
                                     data,
                                     /* :: */[
                                       /* tuple */[
-                                        ventureId,
-                                        ventureThread.then((function (venture) {
+                                        ventureId$1,
+                                        match[1].then((function (venture) {
                                                 return Curry._2(f, data, venture);
                                               }))
                                       ],
-                                      List.remove_assoc(ventureId, ventures)
+                                      List.remove_assoc(ventureId$1, ventures)
                                     ]
                                   ];
                           }), threads));
@@ -142,19 +160,31 @@ function updateSession(items, state) {
 
 function load(ventureId) {
   logMessage("Handling 'Load'");
+  var partial_arg = /* Some */[ventureId];
   return (function (param) {
-      return withVenture(ventureId, (function (_, venture) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     ventureLoaded(ventureId, WorkerizedVenture.getAllEvents(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
 }
 
+function create(name) {
+  logMessage("Handling 'Create'");
+  var partial_arg = /* Some */[name];
+  return (function (param) {
+      return withVenture(partial_arg, /* None */0, (function (_, venture) {
+                    ventureCreated(WorkerizedVenture.getId(venture), WorkerizedVenture.getAllEvents(venture));
+                    return Promise.resolve(venture);
+                  }), param);
+    });
+}
+
 var Handle = /* module */[
-  /* waitForSession */waitForSession,
   /* withVenture */withVenture,
   /* updateSession */updateSession,
-  /* load */load
+  /* load */load,
+  /* create */create
 ];
 
 function handleMessage(param) {
@@ -164,6 +194,8 @@ function handleMessage(param) {
         return (function (param) {
             return updateSession(partial_arg, param);
           });
+    case 5 : 
+        return create(param[0]);
     case 6 : 
         return load(param[0]);
     default:
@@ -171,7 +203,7 @@ function handleMessage(param) {
             Caml_builtin_exceptions.match_failure,
             [
               "Venture_worker.re",
-              135,
+              150,
               2
             ]
           ];
@@ -192,10 +224,10 @@ var Message = 0;
 var Venture = 0;
 
 exports.Message = Message;
-exports.postMessage = postMessage$1;
 exports.Venture = Venture;
-exports.Notify = Notify;
+exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
+exports.Notify = Notify;
 exports.Handle = Handle;
 exports.handleMessage = handleMessage;
 exports.cleanState = cleanState;

@@ -21,19 +21,21 @@ external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
 [@bs.val]
 external _postMessage : Message.encodedReceive => unit = "postMessage";
 
-let postMessage = msg => msg |> Message.encodeReceive |> _postMessage;
-
 open PrimitiveTypes;
 
 module Venture = WorkerizedVenture;
+
+let postMessage = msg => msg |> Message.encodeReceive |> _postMessage;
+
+let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
 module Notify = {
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, events) =>
     postMessage(VentureLoaded(id, events |> List.rev));
+  let ventureCreated = (id, events) =>
+    postMessage(VentureCreated(id, events |> List.rev));
 };
-
-let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
 type state = {
   venturesThread:
@@ -45,33 +47,33 @@ type state = {
 };
 
 module Handle = {
-  let rec waitForSession = (resolvePromise: (. 'a) => unit, sessionPromise) =>
-    Js.Promise.(
-      sessionPromise
-      |> then_(
-           fun
-           | Session.LoggedIn(data) => resolvePromise(. data) |> resolve
-           | _ =>
-             Js.Global.setTimeout(
-               () =>
-                 waitForSession(resolvePromise, Session.getCurrentSession()),
-               200,
-             )
-             |> ignore
-             |> resolve,
-         )
-    )
-    |> ignore;
-  let withVenture = (ventureId, f, {venturesThread}) => {
+  let withVenture =
+      (~create="", ~ventureId=VentureId.fromString(""), f, {venturesThread}) => {
     let venturesThread =
       Js.Promise.(
         venturesThread
         |> then_(threads =>
              threads
              |> Utils.mapOption(((data, ventures)) => {
-                  let ventureThread =
-                    try (ventures |> List.assoc(ventureId)) {
-                    | Not_found => Venture.load(data, ~ventureId)
+                  let (ventureId, ventureThread) =
+                    if (create != "") {
+                      let (ventureId, venturePromise) =
+                        Venture.Cmd.Create.exec(data, ~name=create);
+                      (
+                        ventureId,
+                        venturePromise
+                        |> then_(((index, venture)) => {
+                             Notify.indexUpdated(index);
+                             venture |> resolve;
+                           }),
+                      );
+                    } else {
+                      try (ventureId, ventures |> List.assoc(ventureId)) {
+                      | Not_found => (
+                          ventureId,
+                          Venture.load(data, ~ventureId),
+                        )
+                      };
                     };
                   (
                     data,
@@ -122,9 +124,22 @@ module Handle = {
   let load = ventureId => {
     logMessage("Handling 'Load'");
     withVenture(
-      ventureId,
+      ~ventureId,
       (_session, venture) => {
         Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
+        Js.Promise.resolve(venture);
+      },
+    );
+  };
+  let create = name => {
+    logMessage("Handling 'Create'");
+    withVenture(
+      ~create=name,
+      (_session, venture) => {
+        Notify.ventureCreated(
+          venture |> Venture.getId,
+          venture |> Venture.getAllEvents,
+        );
         Js.Promise.resolve(venture);
       },
     );
@@ -134,20 +149,9 @@ module Handle = {
 let handleMessage =
   fun
   | Message.UpdateSession(items) => Handle.updateSession(items)
-  | Message.Load(ventureId) => Handle.load(ventureId);
+  | Message.Load(ventureId) => Handle.load(ventureId)
+  | Message.Create(name) => Handle.create(name);
 
-/* | Message.Create(name) => */
-/*   Js.Promise.( */
-/*     withSessionData((data, state) => */
-/*       Venture.Cmd.Create.exec(data, ~name) */
-/*       |> then_(((index, (venture, events))) => { */
-/*            let newState = updateVentureInState(state, venture); */
-/*            postMessage(NewEvents(venture |> Venture.getId, events)); */
-/*            index |> Notify.indexUpdated; */
-/*            newState |> resolve; */
-/*          }) */
-/*     ) */
-/*   ); */
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 
 let workerState = ref(cleanState);

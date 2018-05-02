@@ -93,10 +93,8 @@ function make(onCreateVenture, _) {
                 if (name === "") {
                   return /* NoUpdate */0;
                 } else {
-                  return /* SideEffects */Block.__(1, [(function (param) {
-                                Curry._1(onCreateVenture, name);
-                                return Curry._1(param[/* send */3], /* ChangeNewVenture */[""]);
-                              })]);
+                  Curry._1(onCreateVenture, name);
+                  return /* Update */Block.__(0, [/* record */[/* newVenture */""]]);
                 }
               }
             }),
