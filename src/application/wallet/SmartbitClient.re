@@ -96,7 +96,7 @@ let broadcastTransaction = (config, transaction) => {
                WalletTypes.Error(err);
              }
            | None =>
-             WalletTypes.Ok(Json.Decode.(res |> field("txid", string)))
+             WalletTypes.Ok(Json.Decode.(res |> field("txId", string)))
            }
          )
          |> resolve;
