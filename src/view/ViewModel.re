@@ -163,6 +163,8 @@ let apply = (event: Event.t, state) =>
   | _ => state
   };
 
+let init = List.fold_left((m, e) => m |> apply(e), make());
+
 let partners = state => state.partners;
 
 let prospects = state => state.prospects;

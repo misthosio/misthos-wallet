@@ -10,40 +10,62 @@ var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerizedVenture = require("../application/WorkerizedVenture.bs.js");
 
 function encodeReceive(param) {
-  if (param.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "NewEvents"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "ventureId",
-                    PrimitiveTypes.VentureId[/* encode */2](param[0])
-                  ],
-                  /* :: */[
+  switch (param.tag | 0) {
+    case 0 : 
+        return Json_encode.object_(/* :: */[
                     /* tuple */[
-                      "events",
-                      Json_encode.list(Event.encode, param[1])
+                      "type",
+                      "UpdateIndex"
                     ],
-                    /* [] */0
-                  ]
-                ]
-              ]);
-  } else {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "UpdateIndex"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "index",
-                    WorkerizedVenture.Index[/* encode */1](param[0])
-                  ],
-                  /* [] */0
-                ]
-              ]);
+                    /* :: */[
+                      /* tuple */[
+                        "index",
+                        WorkerizedVenture.Index[/* encode */1](param[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 1 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "VentureLoaded"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "ventureId",
+                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "events",
+                          Json_encode.list(Event.encode, param[1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "NewEvents"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "ventureId",
+                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "events",
+                          Json_encode.list(Event.encode, param[1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    
   }
 }
 
@@ -57,12 +79,21 @@ function decodeReceive(raw) {
         var events = Json_decode.field("events", (function (param) {
                 return Json_decode.list(Event.decode, param);
               }), raw);
-        return /* NewEvents */Block.__(1, [
+        return /* NewEvents */Block.__(2, [
                   ventureId,
                   events
                 ]);
     case "UpdateIndex" : 
         return /* UpdateIndex */Block.__(0, [Json_decode.field("index", WorkerizedVenture.Index[/* decode */2], raw)]);
+    case "VentureLoaded" : 
+        var ventureId$1 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var events$1 = Json_decode.field("events", (function (param) {
+                return Json_decode.list(Event.decode, param);
+              }), raw);
+        return /* VentureLoaded */Block.__(1, [
+                  ventureId$1,
+                  events$1
+                ]);
     default:
       throw [
             UnknownMessage,

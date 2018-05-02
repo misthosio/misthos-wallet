@@ -22,6 +22,9 @@ let updateSession = worker =>
 let create = (~name, worker) =>
   worker |. postMessage(VentureWorkerMessage.Create(name));
 
+let load = (~ventureId, worker) =>
+  worker |. postMessage(VentureWorkerMessage.Load(ventureId));
+
 let proposePartner = (worker, ~prospectId) => ();
 
 let endorsePartner = (worker, ~processId: processId) => ();
@@ -56,7 +59,7 @@ module Cmd = {
       unit,
     endorsePayout: (~processId: processId) => unit,
   };
-  let make = worker => {
+  let make = (worker, _ventureId) => {
     proposePartner: proposePartner(worker),
     endorsePartner: endorsePartner(worker),
     proposePartnerRemoval: proposePartnerRemoval(worker),

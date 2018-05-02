@@ -29,12 +29,12 @@ function make(session, selectedVenture, _) {
                       return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* array */[]));
                   case 2 : 
                       return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* array */[]));
-                  case 3 : 
-                      return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* array */[]));
                   
                 }
+              } else if (selectedVenture.tag) {
+                return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V12 */13], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[1], session, selectedVenture[2], /* array */[]))]));
               } else {
-                return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V12 */13], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[0], session, selectedVenture[1], /* array */[]))]));
+                return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* array */[]));
               }
             }),
           /* initialState */component[/* initialState */10],

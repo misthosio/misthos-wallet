@@ -3,10 +3,6 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Event = require("../application/events/Event.bs.js");
-var Router = require("./Router.bs.js");
-var Venture = require("../application/Venture.bs.js");
-var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var ViewModel = require("./ViewModel.bs.js");
 var SyncWorker = require("../SyncWorker.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -14,60 +10,40 @@ var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var IncomeWorkerClient = require("../workers/IncomeWorkerClient.bs.js");
 var PersistWorkerClient = require("../workers/PersistWorkerClient.bs.js");
 var VentureWorkerClient = require("../workers/VentureWorkerClient.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
-function toWorkerized(state, worker) {
-  if (typeof state === "number") {
-    return state;
-  } else {
-    return /* VentureLoaded */[
-            Venture.getListenerState(state[0]),
-            VentureWorkerClient.Cmd[/* make */0](worker)
-          ];
+function loadVentureAndIndex(session, currentRoute, param) {
+  var ventureWorker = param[/* ventureWorker */5];
+  var selectedVenture = param[/* selectedVenture */1];
+  VentureWorkerClient.updateSession(ventureWorker[0]);
+  if (typeof session !== "number") {
+    PersistWorkerClient.updateSession(session[0][/* userId */0], param[/* persistWorker */4][0]);
   }
-}
-
-function loadVentureAndIndex(send, session, currentRoute, param) {
-  var ventureState = param[/* ventureState */1];
-  if (typeof session === "number") {
+  if (typeof session === "number" || typeof currentRoute === "number") {
     return /* None */0;
+  } else if (currentRoute.tag) {
+    return /* JoiningVenture */2;
   } else {
-    var sessionData = session[0];
-    if (typeof currentRoute === "number") {
-      return /* None */0;
-    } else if (currentRoute.tag) {
-      return /* JoiningVenture */2;
+    var ventureId = currentRoute[0];
+    var exit = 0;
+    if (typeof selectedVenture === "number" || selectedVenture.tag !== 1) {
+      exit = 1;
     } else {
-      var id = currentRoute[0];
-      var exit = 0;
-      if (typeof ventureState === "number") {
-        exit = 1;
+      var loadedId = selectedVenture[0];
+      if (PrimitiveTypes.VentureId[/* eq */5](ventureId, loadedId)) {
+        return selectedVenture;
+      } else if (PrimitiveTypes.VentureId[/* neq */6](ventureId, loadedId)) {
+        VentureWorkerClient.load(ventureId, ventureWorker[0]);
+        return /* LoadingVenture */Block.__(0, [ventureId]);
       } else {
-        var venture = ventureState[0];
-        if (Caml_obj.caml_notequal(id, Venture.getId(venture))) {
-          setTimeout((function () {
-                  Venture.load(sessionData, id, ViewModel.make(/* () */0), ViewModel.apply).then((function (venture) {
-                          return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[venture]])));
-                        }));
-                  return /* () */0;
-                }), 1);
-          return /* LoadingVenture */3;
-        } else if (Caml_obj.caml_equal(id, Venture.getId(venture))) {
-          return ventureState;
-        } else {
-          exit = 1;
-        }
+        exit = 1;
       }
-      if (exit === 1) {
-        setTimeout((function () {
-                Venture.load(sessionData, id, ViewModel.make(/* () */0), ViewModel.apply).then((function (venture) {
-                        return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[venture]])));
-                      }));
-                return /* () */0;
-              }), 1);
-        return /* LoadingVenture */3;
-      }
-      
     }
+    if (exit === 1) {
+      VentureWorkerClient.load(ventureId, ventureWorker[0]);
+      return /* LoadingVenture */Block.__(0, [ventureId]);
+    }
+    
   }
 }
 
@@ -80,28 +56,17 @@ function make(currentRoute, session, children) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
               var state = param[/* state */1];
-              VentureWorkerClient.updateSession(state[/* ventureWorker */6][0]);
-              if (typeof session !== "number") {
-                PersistWorkerClient.updateSession(session[0][/* userId */0], state[/* persistWorker */5][0]);
-              }
-              var ventureState = loadVentureAndIndex(param[/* send */3], session, currentRoute, state);
               return /* record */[
                       /* index */state[/* index */0],
-                      /* ventureState */ventureState,
-                      /* selectedVentureState */toWorkerized(ventureState, state[/* ventureWorker */6][0]),
-                      /* syncWorker */state[/* syncWorker */3],
-                      /* incomeWorker */state[/* incomeWorker */4],
-                      /* persistWorker */state[/* persistWorker */5],
-                      /* ventureWorker */state[/* ventureWorker */6]
+                      /* selectedVenture */loadVentureAndIndex(session, currentRoute, state),
+                      /* syncWorker */state[/* syncWorker */2],
+                      /* incomeWorker */state[/* incomeWorker */3],
+                      /* persistWorker */state[/* persistWorker */4],
+                      /* ventureWorker */state[/* ventureWorker */5]
                     ];
             }),
           /* didMount */(function (param) {
-              var state = param[/* state */1];
-              VentureWorkerClient.updateSession(state[/* ventureWorker */6][0]);
-              if (typeof session !== "number") {
-                PersistWorkerClient.updateSession(session[0][/* userId */0], state[/* persistWorker */5][0]);
-              }
-              loadVentureAndIndex(param[/* send */3], session, currentRoute, state);
+              loadVentureAndIndex(session, currentRoute, param[/* state */1]);
               return /* () */0;
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -110,13 +75,12 @@ function make(currentRoute, session, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var match = param[/* state */1];
-              return Curry._3(children, match[/* index */0], match[/* selectedVentureState */2], param[/* send */3]);
+              return Curry._3(children, match[/* index */0], match[/* selectedVenture */1], param[/* send */3]);
             }),
           /* initialState */(function () {
               return /* record */[
                       /* index : None */0,
-                      /* ventureState : None */0,
-                      /* selectedVentureState : None */0,
+                      /* selectedVenture : None */0,
                       /* syncWorker */[SyncWorker.make((function (prim) {
                                 console.log(prim);
                                 return /* () */0;
@@ -139,125 +103,58 @@ function make(currentRoute, session, children) {
           /* reducer */(function (action, state) {
               switch (action.tag | 0) {
                 case 0 : 
-                    var ventureState = action[0];
-                    return /* UpdateWithSideEffects */Block.__(2, [
-                              /* record */[
-                                /* index */state[/* index */0],
-                                /* ventureState */ventureState,
-                                /* selectedVentureState */state[/* selectedVentureState */2],
-                                /* syncWorker */state[/* syncWorker */3],
-                                /* incomeWorker */state[/* incomeWorker */4],
-                                /* persistWorker */state[/* persistWorker */5],
-                                /* ventureWorker */state[/* ventureWorker */6]
-                              ],
-                              (function () {
-                                  setTimeout((function () {
-                                          if (typeof ventureState === "number") {
-                                            SyncWorker.postMessage(state[/* syncWorker */3][0], /* Wait */0);
-                                            state[/* incomeWorker */4][0].postMessage(/* Wait */0);
-                                            return /* () */0;
-                                          } else {
-                                            var venture = ventureState[0];
-                                            PersistWorkerClient.persistVenture(Venture.getId(venture), state[/* persistWorker */5][0]);
-                                            Venture.getPartnerHistoryUrls(venture).then((function (urls) {
-                                                    return Promise.resolve(SyncWorker.postMessage(state[/* syncWorker */3][0], /* RegularlyFetch */[
-                                                                    urls,
-                                                                    Venture.getSummary(venture)
-                                                                  ]));
-                                                  }));
-                                            state[/* incomeWorker */4][0].postMessage(/* MonitorAddresses */[
-                                                  Venture.Wallet[/* getExposedAddresses */1](venture),
-                                                  Venture.Wallet[/* getKnownTransactionIds */2](venture)
-                                                ]);
-                                            return /* () */0;
-                                          }
-                                        }), 1);
-                                  return /* () */0;
-                                })
-                            ]);
+                    throw [
+                          Caml_builtin_exceptions.match_failure,
+                          [
+                            "VentureStore.re",
+                            123,
+                            4
+                          ]
+                        ];
                 case 1 : 
-                    var name = action[1];
-                    var session = action[0];
-                    VentureWorkerClient.create(name, state[/* ventureWorker */6][0]);
-                    return /* UpdateWithSideEffects */Block.__(2, [
-                              /* record */[
-                                /* index */state[/* index */0],
-                                /* ventureState : CreatingVenture */1,
-                                /* selectedVentureState */state[/* selectedVentureState */2],
-                                /* syncWorker */state[/* syncWorker */3],
-                                /* incomeWorker */state[/* incomeWorker */4],
-                                /* persistWorker */state[/* persistWorker */5],
-                                /* ventureWorker */state[/* ventureWorker */6]
-                              ],
-                              (function (param) {
-                                  var send = param[/* send */3];
-                                  setTimeout((function () {
-                                          Curry._4(Venture.Cmd[/* Create */0][/* exec */0], session, name, ViewModel.make(/* () */0), ViewModel.apply).then((function (param) {
-                                                  var venture = param[1];
-                                                  Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[venture]]));
-                                                  return Promise.resolve(ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [Venture.getId(venture)]))));
-                                                }));
-                                          return /* () */0;
-                                        }), 1);
-                                  return /* () */0;
-                                })
-                            ]);
                 case 2 : 
-                    var eventLogs = action[0][0];
-                    return /* SideEffects */Block.__(1, [(function (param) {
-                                  var send = param[/* send */3];
-                                  var state = param[/* state */1];
-                                  var match = state[/* ventureState */1];
-                                  if (typeof match === "number") {
-                                    return SyncWorker.postMessage(state[/* syncWorker */3][0], /* Wait */0);
-                                  } else {
-                                    Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], eventLogs, match[0]).then((function (param) {
-                                            if (param.tag) {
-                                              console.log("An error occured while synchronizing");
-                                              console.log("Adding event: ");
-                                              console.log(Event.encode(param[1][/* event */0]));
-                                              console.log("failed because: ", Venture.Validation[/* resultToString */0](param[2]));
-                                              return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[param[0]]])));
-                                            } else {
-                                              return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[param[0]]])));
-                                            }
-                                          }));
-                                    return /* () */0;
-                                  }
-                                })]);
+                    return /* NoUpdate */0;
                 case 3 : 
-                    var txs = action[0][0];
-                    return /* SideEffects */Block.__(1, [(function (param) {
-                                  var send = param[/* send */3];
-                                  var state = param[/* state */1];
-                                  var match = state[/* ventureState */1];
-                                  if (typeof match === "number") {
-                                    state[/* incomeWorker */4][0].postMessage(/* Wait */0);
-                                    return /* () */0;
-                                  } else {
-                                    Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], txs, match[0]).then((function (param) {
-                                            return Promise.resolve(Curry._1(send, /* UpdateVenture */Block.__(0, [/* VentureLoaded */[param[0]]])));
-                                          }));
-                                    return /* () */0;
-                                  }
-                                })]);
-                case 4 : 
                     console.log("Venture '" + (PrimitiveTypes.VentureId[/* toString */0](action[0][0]) + "' persisted"));
                     return /* NoUpdate */0;
-                case 5 : 
+                case 4 : 
                     var msg = action[0];
-                    if (msg.tag) {
-                      return /* NoUpdate */0;
-                    } else {
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* index : Some */[msg[0]],
-                                  /* ventureState */state[/* ventureState */1],
-                                  /* selectedVentureState */state[/* selectedVentureState */2],
-                                  /* syncWorker */state[/* syncWorker */3],
-                                  /* incomeWorker */state[/* incomeWorker */4],
-                                  /* persistWorker */state[/* persistWorker */5],
-                                  /* ventureWorker */state[/* ventureWorker */6]
-                                ]]);
+                    var match = state[/* selectedVenture */1];
+                    switch (msg.tag | 0) {
+                      case 0 : 
+                          return /* Update */Block.__(0, [/* record */[
+                                      /* index : Some */[msg[0]],
+                                      /* selectedVenture */state[/* selectedVenture */1],
+                                      /* syncWorker */state[/* syncWorker */2],
+                                      /* incomeWorker */state[/* incomeWorker */3],
+                                      /* persistWorker */state[/* persistWorker */4],
+                                      /* ventureWorker */state[/* ventureWorker */5]
+                                    ]]);
+                      case 1 : 
+                          if (typeof match === "number" || match.tag) {
+                            return /* NoUpdate */0;
+                          } else {
+                            var ventureId = msg[0];
+                            if (PrimitiveTypes.VentureId[/* eq */5](ventureId, match[0])) {
+                              return /* Update */Block.__(0, [/* record */[
+                                          /* index */state[/* index */0],
+                                          /* selectedVenture : VentureLoaded */Block.__(1, [
+                                              ventureId,
+                                              ViewModel.init(msg[1]),
+                                              VentureWorkerClient.Cmd[/* make */0](state[/* ventureWorker */5][0], ventureId)
+                                            ]),
+                                          /* syncWorker */state[/* syncWorker */2],
+                                          /* incomeWorker */state[/* incomeWorker */3],
+                                          /* persistWorker */state[/* persistWorker */4],
+                                          /* ventureWorker */state[/* ventureWorker */5]
+                                        ]]);
+                            } else {
+                              return /* NoUpdate */0;
+                            }
+                          }
+                      case 2 : 
+                          return /* NoUpdate */0;
+                      
                     }
                 
               }
@@ -268,11 +165,11 @@ function make(currentRoute, session, children) {
               return /* :: */[
                       /* Sub */[
                         (function () {
-                            state[/* syncWorker */3][0].terminate();
+                            state[/* syncWorker */2][0].terminate();
                             var worker = SyncWorker.make((function (message) {
-                                    return Curry._1(send, /* SyncWorkerMessage */Block.__(2, [message]));
+                                    return Curry._1(send, /* SyncWorkerMessage */Block.__(1, [message]));
                                   }));
-                            state[/* syncWorker */3][0] = worker;
+                            state[/* syncWorker */2][0] = worker;
                             return worker;
                           }),
                         (function (prim) {
@@ -283,11 +180,11 @@ function make(currentRoute, session, children) {
                       /* :: */[
                         /* Sub */[
                           (function () {
-                              state[/* incomeWorker */4][0].terminate();
+                              state[/* incomeWorker */3][0].terminate();
                               var worker = Curry._1(IncomeWorkerClient.make, (function (message) {
-                                      return Curry._1(send, /* IncomeWorkerMessage */Block.__(3, [message]));
+                                      return Curry._1(send, /* IncomeWorkerMessage */Block.__(2, [message]));
                                     }));
-                              state[/* incomeWorker */4][0] = worker;
+                              state[/* incomeWorker */3][0] = worker;
                               return worker;
                             }),
                           (function (prim) {
@@ -298,11 +195,11 @@ function make(currentRoute, session, children) {
                         /* :: */[
                           /* Sub */[
                             (function () {
-                                state[/* persistWorker */5][0].terminate();
+                                state[/* persistWorker */4][0].terminate();
                                 var worker = Curry._1(PersistWorkerClient.make, (function (message) {
-                                        return Curry._1(send, /* PersistWorkerMessage */Block.__(4, [message]));
+                                        return Curry._1(send, /* PersistWorkerMessage */Block.__(3, [message]));
                                       }));
-                                state[/* persistWorker */5][0] = worker;
+                                state[/* persistWorker */4][0] = worker;
                                 return worker;
                               }),
                             (function (prim) {
@@ -313,11 +210,11 @@ function make(currentRoute, session, children) {
                           /* :: */[
                             /* Sub */[
                               (function () {
-                                  state[/* ventureWorker */6][0].terminate();
+                                  state[/* ventureWorker */5][0].terminate();
                                   var worker = Curry._1(VentureWorkerClient.make, (function (message) {
-                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(5, [message]));
+                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(4, [message]));
                                         }));
-                                  state[/* ventureWorker */6][0] = worker;
+                                  state[/* ventureWorker */5][0] = worker;
                                   return worker;
                                 }),
                               (function (prim) {
@@ -335,7 +232,6 @@ function make(currentRoute, session, children) {
         ];
 }
 
-exports.toWorkerized = toWorkerized;
 exports.loadVentureAndIndex = loadVentureAndIndex;
 exports.component = component;
 exports.make = make;

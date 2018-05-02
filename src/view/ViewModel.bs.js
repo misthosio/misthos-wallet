@@ -334,6 +334,14 @@ function apply($$event, state) {
   }
 }
 
+var partial_arg = make(/* () */0);
+
+function init(param) {
+  return List.fold_left((function (m, e) {
+                return apply(e, m);
+              }), partial_arg, param);
+}
+
 function partners(state) {
   return state[/* partners */2];
 }
@@ -360,10 +368,11 @@ function payouts(state) {
 
 exports.make = make;
 exports.apply = apply;
+exports.init = init;
 exports.partners = partners;
 exports.prospects = prospects;
 exports.removalProspects = removalProspects;
 exports.ventureName = ventureName;
 exports.incomeAddresses = incomeAddresses;
 exports.payouts = payouts;
-/* Policy Not a pure module */
+/* partial_arg Not a pure module */

@@ -31,6 +31,11 @@ function create(name, worker) {
   return /* () */0;
 }
 
+function load(ventureId, worker) {
+  worker.postMessage(/* Load */Block.__(6, [ventureId]));
+  return /* () */0;
+}
+
 function proposePartner(_, _$1) {
   return /* () */0;
 }
@@ -55,7 +60,7 @@ function endorsePayout(_, _$1) {
   return /* () */0;
 }
 
-function make() {
+function make(_, _$1) {
   return /* record */[
           /* proposePartner */(function () {
               return /* () */0;
@@ -86,6 +91,7 @@ exports.Config = Config;
 exports.make = make$1;
 exports.updateSession = updateSession;
 exports.create = create;
+exports.load = load;
 exports.proposePartner = proposePartner;
 exports.endorsePartner = endorsePartner;
 exports.proposePartnerRemoval = proposePartnerRemoval;

@@ -57,7 +57,7 @@ function make(session, updateSession, _) {
             return ReasonReact.element(/* None */0, /* None */0, Home.make(session$1, selectedVenture, /* array */[]));
         case 1 : 
             return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make((function (param) {
-                              return Curry._1(updateVentureStore, /* CreateVenture */Block.__(1, [
+                              return Curry._1(updateVentureStore, /* CreateVenture */Block.__(0, [
                                             session$1,
                                             param
                                           ]));
