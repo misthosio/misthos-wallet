@@ -9,7 +9,7 @@ var SelectedVenture = require("./SelectedVenture.bs.js");
 
 var component = ReasonReact.statelessComponent("Home");
 
-function make(session, selectedVenture, updateVenture, _) {
+function make(session, selectedVenture, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -34,7 +34,7 @@ function make(session, selectedVenture, updateVenture, _) {
                   
                 }
               } else {
-                return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V12 */13], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[0], updateVenture, session, /* array */[]))]));
+                return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V12 */13], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[0], session, selectedVenture[1], /* array */[]))]));
               }
             }),
           /* initialState */component[/* initialState */10],

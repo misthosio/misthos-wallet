@@ -7,6 +7,26 @@ type ventureState =
   | LoadingVenture
   | VentureLoaded(Venture.t(ViewModel.t));
 
+type workerizedVentureState =
+  | None
+  | CreatingVenture
+  | JoiningVenture
+  | LoadingVenture
+  | VentureLoaded(ViewModel.t, VentureWorkerClient.Cmd.t);
+
+let toWorkerized = (state: ventureState, worker) =>
+  switch (state) {
+  | None => None
+  | CreatingVenture => CreatingVenture
+  | JoiningVenture => JoiningVenture
+  | LoadingVenture => LoadingVenture
+  | VentureLoaded(venture) =>
+    VentureLoaded(
+      venture |> Venture.getListenerState,
+      VentureWorkerClient.Cmd.make(worker),
+    )
+  };
+
 type action =
   | UpdateIndex(Venture.Index.t)
   | UpdateVenture(ventureState)
@@ -19,6 +39,7 @@ type action =
 type state = {
   index: Venture.Index.t,
   ventureState,
+  selectedVentureState: workerizedVentureState,
   syncWorker: ref(SyncWorker.t),
   incomeWorker: ref(IncomeWorkerClient.t),
   persistWorker: ref(PersistWorkerClient.t),
@@ -31,7 +52,8 @@ let loadVentureAndIndex =
       session: Session.t,
       currentRoute,
       {ventureState, persistWorker, ventureWorker},
-    ) => {
+    )
+    : ventureState => {
   switch (session) {
   | LoggedIn({userId}) =>
     persistWorker^ |> PersistWorkerClient.updateSession(userId);
@@ -122,6 +144,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
   initialState: () => {
     index: [],
     ventureState: None,
+    selectedVentureState: None,
     syncWorker: ref(SyncWorker.make(~onMessage=Js.log)),
     incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
@@ -130,8 +153,13 @@ let make = (~currentRoute, ~session: Session.t, children) => {
   didMount: ({send, state}) =>
     loadVentureAndIndex(send, session, currentRoute, state) |> ignore,
   willReceiveProps: ({send, state}) => {
-    ...state,
-    ventureState: loadVentureAndIndex(send, session, currentRoute, state),
+    let ventureState =
+      loadVentureAndIndex(send, session, currentRoute, state);
+    {
+      ...state,
+      ventureState,
+      selectedVentureState: toWorkerized(ventureState, state.ventureWorker^),
+    };
   },
   subscriptions: ({send, state}) => [
     Sub(
@@ -333,6 +361,10 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         ),
       );
     },
-  render: ({state: {index, ventureState}, send}) =>
-    children(~index, ~selectedVenture=ventureState, ~updateVentureStore=send),
+  render: ({state: {index, selectedVentureState}, send}) =>
+    children(
+      ~index,
+      ~selectedVenture=selectedVentureState,
+      ~updateVentureStore=send,
+    ),
 };

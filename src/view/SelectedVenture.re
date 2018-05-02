@@ -5,10 +5,8 @@ open PrimitiveTypes;
 let text = Utils.text;
 
 type state = {
-  venture: Venture.t(ViewModel.t),
   viewModel: ViewModel.t,
   prospectId: string,
-  balance: Venture.Wallet.balance,
 };
 
 type action =
@@ -30,24 +28,14 @@ let component = ReasonReact.reducerComponent("SelectedVenture");
 
 let make =
     (
-      ~venture as initialVenture,
-      ~updateVenture,
+      ~venture as initialViewModel,
       ~session: Session.Data.t,
+      ~commands: VentureWorkerClient.Cmd.t,
       _children,
     ) => {
   ...component,
-  initialState: () => {
-    balance: initialVenture |> Venture.Wallet.balance,
-    venture: initialVenture,
-    viewModel: Venture.getListenerState(initialVenture),
-    prospectId: "",
-  },
-  willReceiveProps: ({state}) => {
-    ...state,
-    balance: initialVenture |> Venture.Wallet.balance,
-    viewModel: initialVenture |> Venture.getListenerState,
-    venture: initialVenture,
-  },
+  initialState: () => {viewModel: initialViewModel, prospectId: ""},
+  willReceiveProps: ({state}) => {...state, viewModel: initialViewModel},
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
@@ -57,160 +45,54 @@ let make =
       | "" => ReasonReact.NoUpdate
       | prospectId =>
         ReasonReact.SideEffects(
-          (
-            (_) =>
-              Js.Promise.(
-                Cmd.ProposePartner.(
-                  state.venture
-                  |> exec(~prospectId=prospectId |> UserId.fromString)
-                  |> then_(result =>
-                       (
-                         switch (result) {
-                         | Ok(venture) => updateVenture(venture)
-                         | PartnerAlreadyExists =>
-                           Js.log("PartnerAlreadyExists")
-                         | NoUserInfo => Js.log("NoUserInfo")
-                         }
-                       )
-                       |> resolve
-                     )
-                  |> ignore
-                )
-              )
-          ),
+          ((_) => commands.proposePartner(~prospectId)),
         )
       }
     | EndorsePartner(processId) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.EndorsePartner.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      ReasonReact.SideEffects(((_) => commands.endorsePartner(~processId)))
     | RemovePartner(partnerId) =>
       ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.ProposePartnerRemoval.(
-                state.venture
-                |> exec(~partnerId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       | PartnerDoesNotExist => Js.log("PartnerDoesNotExist")
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
+        ((_) => commands.proposePartnerRemoval(~partnerId)),
       )
     | EndorsePartnerRemoval(processId) =>
       ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.EndorsePartnerRemoval.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
+        ((_) => commands.endorsePartnerRemoval(~processId)),
       )
     | GetIncomeAddress =>
       ReasonReact.SideEffects(
         (
           (_) =>
-            Js.Promise.(
-              Cmd.ExposeIncomeAddress.(
-                state.venture
-                |> exec(~accountIdx=WalletTypes.AccountIndex.default)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(_, venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
+            ()
+            /* Js.Promise.( */
+            /*   Cmd.ExposeIncomeAddress.( */
+            /*     state.venture */
+            /*     |> exec(~accountIdx=WalletTypes.AccountIndex.default) */
+            /*     |> then_(result => */
+            /*          ( */
+            /*            switch (result) { */
+            /*            | Ok(_, venture) => updateVenture(venture) */
+            /*            } */
+            /*          ) */
+            /*          |> resolve */
+            /*        ) */
+            /*     |> ignore */
+            /*   ) */
+            /* ) */
         ),
       )
     | ProposePayout(destinations) =>
       ReasonReact.SideEffects(
         (
           (_) =>
-            Js.Promise.(
-              Cmd.ProposePayout.(
-                state.venture
-                |> exec(
-                     ~accountIdx=WalletTypes.AccountIndex.default,
-                     ~destinations,
-                     ~fee=BTC.fromSatoshis(5L),
-                   )
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
+            commands.proposePayout(
+              ~accountIdx=WalletTypes.AccountIndex.default,
+              ~destinations,
+              ~fee=BTC.fromSatoshis(5L),
             )
         ),
       )
     | EndorsePayout(processId) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.EndorsePayout.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      ReasonReact.SideEffects(((_) => commands.endorsePayout(~processId)))
     },
   render: ({send, state}) => {
     let partners =
@@ -371,7 +253,7 @@ let make =
             "Join Venture url: "
             ++ Location.origin
             ++ Router.Config.routeToUrl(
-                 JoinVenture(initialVenture |> Venture.getId, session.userId),
+                 JoinVenture(initialViewModel.ventureId, session.userId),
                ),
           )
         )
@@ -394,12 +276,12 @@ let make =
         <h4> (text("blance: ")) </h4>
         (
           text(
-            "income: "
-            ++ BTC.format(state.balance.income)
-            ++ " spent: "
-            ++ BTC.format(state.balance.spent)
-            ++ " reserved: "
-            ++ BTC.format(state.balance.reserved),
+            "income: ",
+            /* ++ BTC.format(state.balance.income) */
+            /* ++ " spent: " */
+            /* ++ BTC.format(state.balance.spent) */
+            /* ++ " reserved: " */
+            /* ++ BTC.format(state.balance.reserved), */
           )
         )
         <h4> (text("Income Addresses:")) </h4>

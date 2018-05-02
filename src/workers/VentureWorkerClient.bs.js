@@ -27,14 +27,70 @@ function updateSession(worker) {
 }
 
 function create(name, worker) {
-  worker.postMessage(/* Create */Block.__(1, [name]));
+  worker.postMessage(/* Create */Block.__(5, [name]));
   return /* () */0;
 }
 
-var make = include[0];
+function proposePartner(_, _$1) {
+  return /* () */0;
+}
+
+function endorsePartner(_, _$1) {
+  return /* () */0;
+}
+
+function proposePartnerRemoval(_, _$1) {
+  return /* () */0;
+}
+
+function endorsePartnerRemoval(_, _$1) {
+  return /* () */0;
+}
+
+function proposePayout(_, _$1, _$2, _$3) {
+  return /* () */0;
+}
+
+function endorsePayout(_, _$1) {
+  return /* () */0;
+}
+
+function make() {
+  return /* record */[
+          /* proposePartner */(function () {
+              return /* () */0;
+            }),
+          /* endorsePartner */(function () {
+              return /* () */0;
+            }),
+          /* proposePartnerRemoval */(function () {
+              return /* () */0;
+            }),
+          /* endorsePartnerRemoval */(function () {
+              return /* () */0;
+            }),
+          /* proposePayout */(function (_, _$1, _$2) {
+              return /* () */0;
+            }),
+          /* endorsePayout */(function () {
+              return /* () */0;
+            })
+        ];
+}
+
+var Cmd = /* module */[/* make */make];
+
+var make$1 = include[0];
 
 exports.Config = Config;
-exports.make = make;
+exports.make = make$1;
 exports.updateSession = updateSession;
 exports.create = create;
+exports.proposePartner = proposePartner;
+exports.endorsePartner = endorsePartner;
+exports.proposePartnerRemoval = proposePartnerRemoval;
+exports.endorsePartnerRemoval = endorsePartnerRemoval;
+exports.proposePayout = proposePayout;
+exports.endorsePayout = endorsePayout;
+exports.Cmd = Cmd;
 /* include Not a pure module */

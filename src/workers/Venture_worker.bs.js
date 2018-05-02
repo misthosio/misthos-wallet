@@ -8,6 +8,7 @@ var Session = require("../application/Session.bs.js");
 var WorkerizedVenture = require("../application/WorkerizedVenture.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
 
@@ -53,44 +54,54 @@ function updateVentureInState(venture) {
 }
 
 function handleMessage(param) {
-  if (param.tag) {
-    var name = param[0];
-    return withSessionData((function (data) {
-                  Curry._2(WorkerizedVenture.Cmd[/* Create */0][/* exec */0], data, name).then((function (param) {
-                          var match = param[1];
-                          var venture = match[0];
-                          updateVentureInState(venture);
-                          var msg_000 = WorkerizedVenture.getId(venture);
-                          var msg_001 = match[1];
-                          var msg = /* NewEvents */Block.__(1, [
-                              msg_000,
-                              msg_001
-                            ]);
-                          postMessage(VentureWorkerMessage.encodeReceive(msg));
-                          return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [param[0]]))), /* () */0));
-                        }));
-                  return /* () */0;
-                }));
-  } else {
-    logMessage("Updating session in localStorage");
-    WorkerLocalStorage.setBlockstackItems(param[0]);
-    Session.getCurrentSession(/* () */0).then((function (param) {
-            if (typeof param === "number") {
-              state[0] = /* record */[
-                /* sessionData : None */0,
-                /* ventures : [] */0
-              ];
-              return Promise.resolve(/* () */0);
-            } else {
-              var init = state[0];
-              state[0] = /* record */[
-                /* sessionData : Some */[param[0]],
-                /* ventures */init[/* ventures */1]
-              ];
-              return Promise.resolve(/* () */0);
-            }
-          }));
-    return /* () */0;
+  switch (param.tag | 0) {
+    case 0 : 
+        logMessage("Updating session in localStorage");
+        WorkerLocalStorage.setBlockstackItems(param[0]);
+        Session.getCurrentSession(/* () */0).then((function (param) {
+                if (typeof param === "number") {
+                  state[0] = /* record */[
+                    /* sessionData : None */0,
+                    /* ventures : [] */0
+                  ];
+                  return Promise.resolve(/* () */0);
+                } else {
+                  var init = state[0];
+                  state[0] = /* record */[
+                    /* sessionData : Some */[param[0]],
+                    /* ventures */init[/* ventures */1]
+                  ];
+                  return Promise.resolve(/* () */0);
+                }
+              }));
+        return /* () */0;
+    case 5 : 
+        var name = param[0];
+        return withSessionData((function (data) {
+                      Curry._2(WorkerizedVenture.Cmd[/* Create */0][/* exec */0], data, name).then((function (param) {
+                              var match = param[1];
+                              var venture = match[0];
+                              updateVentureInState(venture);
+                              var msg_000 = WorkerizedVenture.getId(venture);
+                              var msg_001 = match[1];
+                              var msg = /* NewEvents */Block.__(1, [
+                                  msg_000,
+                                  msg_001
+                                ]);
+                              postMessage(VentureWorkerMessage.encodeReceive(msg));
+                              return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [param[0]]))), /* () */0));
+                            }));
+                      return /* () */0;
+                    }));
+    default:
+      throw [
+            Caml_builtin_exceptions.match_failure,
+            [
+              "Venture_worker.re",
+              53,
+              2
+            ]
+          ];
   }
 }
 

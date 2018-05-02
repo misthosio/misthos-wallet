@@ -15,11 +15,22 @@ var IncomeWorkerClient = require("../workers/IncomeWorkerClient.bs.js");
 var PersistWorkerClient = require("../workers/PersistWorkerClient.bs.js");
 var VentureWorkerClient = require("../workers/VentureWorkerClient.bs.js");
 
+function toWorkerized(state, worker) {
+  if (typeof state === "number") {
+    return state;
+  } else {
+    return /* VentureLoaded */[
+            Venture.getListenerState(state[0]),
+            VentureWorkerClient.Cmd[/* make */0](worker)
+          ];
+  }
+}
+
 function loadVentureAndIndex(send, session, currentRoute, param) {
   var ventureState = param[/* ventureState */1];
   if (typeof session !== "number") {
-    PersistWorkerClient.updateSession(session[0][/* userId */0], param[/* persistWorker */4][0]);
-    VentureWorkerClient.updateSession(param[/* ventureWorker */5][0]);
+    PersistWorkerClient.updateSession(session[0][/* userId */0], param[/* persistWorker */5][0]);
+    VentureWorkerClient.updateSession(param[/* ventureWorker */6][0]);
     Venture.Index[/* load */0](/* () */0).then((function (index) {
             return Promise.resolve(Curry._1(send, /* UpdateIndex */Block.__(0, [index])));
           }));
@@ -87,13 +98,15 @@ function make(currentRoute, session, children) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
               var state = param[/* state */1];
+              var ventureState = loadVentureAndIndex(param[/* send */3], session, currentRoute, state);
               return /* record */[
                       /* index */state[/* index */0],
-                      /* ventureState */loadVentureAndIndex(param[/* send */3], session, currentRoute, state),
-                      /* syncWorker */state[/* syncWorker */2],
-                      /* incomeWorker */state[/* incomeWorker */3],
-                      /* persistWorker */state[/* persistWorker */4],
-                      /* ventureWorker */state[/* ventureWorker */5]
+                      /* ventureState */ventureState,
+                      /* selectedVentureState */toWorkerized(ventureState, state[/* ventureWorker */6][0]),
+                      /* syncWorker */state[/* syncWorker */3],
+                      /* incomeWorker */state[/* incomeWorker */4],
+                      /* persistWorker */state[/* persistWorker */5],
+                      /* ventureWorker */state[/* ventureWorker */6]
                     ];
             }),
           /* didMount */(function (param) {
@@ -106,12 +119,13 @@ function make(currentRoute, session, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var match = param[/* state */1];
-              return Curry._3(children, match[/* index */0], match[/* ventureState */1], param[/* send */3]);
+              return Curry._3(children, match[/* index */0], match[/* selectedVentureState */2], param[/* send */3]);
             }),
           /* initialState */(function () {
               return /* record */[
                       /* index : [] */0,
                       /* ventureState : None */0,
+                      /* selectedVentureState : None */0,
                       /* syncWorker */[SyncWorker.make((function (prim) {
                                 console.log(prim);
                                 return /* () */0;
@@ -137,10 +151,11 @@ function make(currentRoute, session, children) {
                     return /* Update */Block.__(0, [/* record */[
                                 /* index */action[0],
                                 /* ventureState */state[/* ventureState */1],
-                                /* syncWorker */state[/* syncWorker */2],
-                                /* incomeWorker */state[/* incomeWorker */3],
-                                /* persistWorker */state[/* persistWorker */4],
-                                /* ventureWorker */state[/* ventureWorker */5]
+                                /* selectedVentureState */state[/* selectedVentureState */2],
+                                /* syncWorker */state[/* syncWorker */3],
+                                /* incomeWorker */state[/* incomeWorker */4],
+                                /* persistWorker */state[/* persistWorker */5],
+                                /* ventureWorker */state[/* ventureWorker */6]
                               ]]);
                 case 1 : 
                     var ventureState = action[0];
@@ -148,27 +163,28 @@ function make(currentRoute, session, children) {
                               /* record */[
                                 /* index */state[/* index */0],
                                 /* ventureState */ventureState,
-                                /* syncWorker */state[/* syncWorker */2],
-                                /* incomeWorker */state[/* incomeWorker */3],
-                                /* persistWorker */state[/* persistWorker */4],
-                                /* ventureWorker */state[/* ventureWorker */5]
+                                /* selectedVentureState */state[/* selectedVentureState */2],
+                                /* syncWorker */state[/* syncWorker */3],
+                                /* incomeWorker */state[/* incomeWorker */4],
+                                /* persistWorker */state[/* persistWorker */5],
+                                /* ventureWorker */state[/* ventureWorker */6]
                               ],
                               (function () {
                                   setTimeout((function () {
                                           if (typeof ventureState === "number") {
-                                            SyncWorker.postMessage(state[/* syncWorker */2][0], /* Wait */0);
-                                            state[/* incomeWorker */3][0].postMessage(/* Wait */0);
+                                            SyncWorker.postMessage(state[/* syncWorker */3][0], /* Wait */0);
+                                            state[/* incomeWorker */4][0].postMessage(/* Wait */0);
                                             return /* () */0;
                                           } else {
                                             var venture = ventureState[0];
-                                            PersistWorkerClient.persistVenture(Venture.getId(venture), state[/* persistWorker */4][0]);
+                                            PersistWorkerClient.persistVenture(Venture.getId(venture), state[/* persistWorker */5][0]);
                                             Venture.getPartnerHistoryUrls(venture).then((function (urls) {
-                                                    return Promise.resolve(SyncWorker.postMessage(state[/* syncWorker */2][0], /* RegularlyFetch */[
+                                                    return Promise.resolve(SyncWorker.postMessage(state[/* syncWorker */3][0], /* RegularlyFetch */[
                                                                     urls,
                                                                     Venture.getSummary(venture)
                                                                   ]));
                                                   }));
-                                            state[/* incomeWorker */3][0].postMessage(/* MonitorAddresses */[
+                                            state[/* incomeWorker */4][0].postMessage(/* MonitorAddresses */[
                                                   Venture.Wallet[/* getExposedAddresses */1](venture),
                                                   Venture.Wallet[/* getKnownTransactionIds */2](venture)
                                                 ]);
@@ -181,15 +197,16 @@ function make(currentRoute, session, children) {
                 case 2 : 
                     var name = action[1];
                     var session = action[0];
-                    VentureWorkerClient.create(name, state[/* ventureWorker */5][0]);
+                    VentureWorkerClient.create(name, state[/* ventureWorker */6][0]);
                     return /* UpdateWithSideEffects */Block.__(2, [
                               /* record */[
                                 /* index */state[/* index */0],
                                 /* ventureState : CreatingVenture */1,
-                                /* syncWorker */state[/* syncWorker */2],
-                                /* incomeWorker */state[/* incomeWorker */3],
-                                /* persistWorker */state[/* persistWorker */4],
-                                /* ventureWorker */state[/* ventureWorker */5]
+                                /* selectedVentureState */state[/* selectedVentureState */2],
+                                /* syncWorker */state[/* syncWorker */3],
+                                /* incomeWorker */state[/* incomeWorker */4],
+                                /* persistWorker */state[/* persistWorker */5],
+                                /* ventureWorker */state[/* ventureWorker */6]
                               ],
                               (function (param) {
                                   var send = param[/* send */3];
@@ -212,7 +229,7 @@ function make(currentRoute, session, children) {
                                   var state = param[/* state */1];
                                   var match = state[/* ventureState */1];
                                   if (typeof match === "number") {
-                                    return SyncWorker.postMessage(state[/* syncWorker */2][0], /* Wait */0);
+                                    return SyncWorker.postMessage(state[/* syncWorker */3][0], /* Wait */0);
                                   } else {
                                     Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], eventLogs, match[0]).then((function (param) {
                                             if (param.tag) {
@@ -235,7 +252,7 @@ function make(currentRoute, session, children) {
                                   var state = param[/* state */1];
                                   var match = state[/* ventureState */1];
                                   if (typeof match === "number") {
-                                    state[/* incomeWorker */3][0].postMessage(/* Wait */0);
+                                    state[/* incomeWorker */4][0].postMessage(/* Wait */0);
                                     return /* () */0;
                                   } else {
                                     Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], txs, match[0]).then((function (param) {
@@ -263,11 +280,11 @@ function make(currentRoute, session, children) {
               return /* :: */[
                       /* Sub */[
                         (function () {
-                            state[/* syncWorker */2][0].terminate();
+                            state[/* syncWorker */3][0].terminate();
                             var worker = SyncWorker.make((function (message) {
                                     return Curry._1(send, /* SyncWorkerMessage */Block.__(3, [message]));
                                   }));
-                            state[/* syncWorker */2][0] = worker;
+                            state[/* syncWorker */3][0] = worker;
                             return worker;
                           }),
                         (function (prim) {
@@ -278,11 +295,11 @@ function make(currentRoute, session, children) {
                       /* :: */[
                         /* Sub */[
                           (function () {
-                              state[/* incomeWorker */3][0].terminate();
+                              state[/* incomeWorker */4][0].terminate();
                               var worker = Curry._1(IncomeWorkerClient.make, (function (message) {
                                       return Curry._1(send, /* IncomeWorkerMessage */Block.__(4, [message]));
                                     }));
-                              state[/* incomeWorker */3][0] = worker;
+                              state[/* incomeWorker */4][0] = worker;
                               return worker;
                             }),
                           (function (prim) {
@@ -293,11 +310,11 @@ function make(currentRoute, session, children) {
                         /* :: */[
                           /* Sub */[
                             (function () {
-                                state[/* persistWorker */4][0].terminate();
+                                state[/* persistWorker */5][0].terminate();
                                 var worker = Curry._1(PersistWorkerClient.make, (function (message) {
                                         return Curry._1(send, /* PersistWorkerMessage */Block.__(5, [message]));
                                       }));
-                                state[/* persistWorker */4][0] = worker;
+                                state[/* persistWorker */5][0] = worker;
                                 return worker;
                               }),
                             (function (prim) {
@@ -308,11 +325,11 @@ function make(currentRoute, session, children) {
                           /* :: */[
                             /* Sub */[
                               (function () {
-                                  state[/* ventureWorker */5][0].terminate();
+                                  state[/* ventureWorker */6][0].terminate();
                                   var worker = Curry._1(VentureWorkerClient.make, (function (message) {
                                           return Curry._1(send, /* VentureWorkerMessage */Block.__(6, [message]));
                                         }));
-                                  state[/* ventureWorker */5][0] = worker;
+                                  state[/* ventureWorker */6][0] = worker;
                                   return worker;
                                 }),
                               (function (prim) {
@@ -330,6 +347,7 @@ function make(currentRoute, session, children) {
         ];
 }
 
+exports.toWorkerized = toWorkerized;
 exports.loadVentureAndIndex = loadVentureAndIndex;
 exports.component = component;
 exports.make = make;

@@ -7,8 +7,6 @@ let make = (~session, ~updateSession, _children) => {
   let onSignOut = _e => updateSession(SessionStore.SignOut);
   let onCreateVenture = (updateVentureStore, session, name) =>
     updateVentureStore(VentureStore.CreateVenture(session, name));
-  let updateVentureState = (updateVentureStore, venture) =>
-    updateVentureStore(VentureStore.UpdateVenture(VentureLoaded(venture)));
   let drawer = (index, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
     | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
@@ -31,22 +29,12 @@ let make = (~session, ~updateSession, _children) => {
         text="You have signed in with a blockstack user that doesn't have a registered blockstack.id, make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id."
       />
     | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
-    | (LoggedIn(session), Home) =>
-      <Home
-        session
-        selectedVenture
-        updateVenture=(updateVentureState(updateVentureStore))
-      />
+    | (LoggedIn(session), Home) => <Home session selectedVenture />
     | (LoggedIn(session), CreateVenture) =>
       <VentureCreate
         onCreateVenture=(onCreateVenture(updateVentureStore, session))
       />
-    | (LoggedIn(session), _) =>
-      <Home
-        session
-        selectedVenture
-        updateVenture=(updateVentureState(updateVentureStore))
-      />
+    | (LoggedIn(session), _) => <Home session selectedVenture />
     };
   {
     ...component,

@@ -6,6 +6,10 @@ module Venture = WorkerizedVenture;
 
 type send =
   | UpdateSession(blockstackItems)
+  | ProposePartner(ventureId, userId)
+  | EndorsePartner(ventureId, processId)
+  | ProposePartnerRemoval(ventureId, userId)
+  | EndorsePartnerRemoval(ventureId, processId)
   | Create(string);
 
 type receive =

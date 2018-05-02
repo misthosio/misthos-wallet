@@ -1,3 +1,7 @@
+open PrimitiveTypes;
+
+open WalletTypes;
+
 module Config = {
   include VentureWorkerMessage;
   type t;
@@ -17,3 +21,47 @@ let updateSession = worker =>
 
 let create = (~name, worker) =>
   worker |. postMessage(VentureWorkerMessage.Create(name));
+
+let proposePartner = (worker, ~prospectId) => ();
+
+let endorsePartner = (worker, ~processId: processId) => ();
+
+let proposePartnerRemoval = (worker, ~partnerId: userId) => ();
+
+let endorsePartnerRemoval = (worker, ~processId: processId) => ();
+
+let proposePayout =
+    (
+      worker,
+      ~accountIdx: accountIdx,
+      ~destinations: list((string, BTC.t)),
+      ~fee: BTC.t,
+    ) =>
+  ();
+
+let endorsePayout = (worker, ~processId: processId) => ();
+
+module Cmd = {
+  type t = {
+    proposePartner: (~prospectId: string) => unit,
+    endorsePartner: (~processId: processId) => unit,
+    proposePartnerRemoval: (~partnerId: userId) => unit,
+    endorsePartnerRemoval: (~processId: processId) => unit,
+    proposePayout:
+      (
+        ~accountIdx: accountIdx,
+        ~destinations: list((string, BTC.t)),
+        ~fee: BTC.t
+      ) =>
+      unit,
+    endorsePayout: (~processId: processId) => unit,
+  };
+  let make = worker => {
+    proposePartner: proposePartner(worker),
+    endorsePartner: endorsePartner(worker),
+    proposePartnerRemoval: proposePartnerRemoval(worker),
+    endorsePartnerRemoval: endorsePartnerRemoval(worker),
+    proposePayout: proposePayout(worker),
+    endorsePayout: endorsePayout(worker),
+  };
+};

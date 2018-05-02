@@ -23,6 +23,7 @@ type payout = {
 };
 
 type t = {
+  ventureId,
   name: string,
   partners: list(partner),
   prospects: list(prospect),
@@ -35,6 +36,7 @@ type t = {
 
 let make = () => {
   name: "",
+  ventureId: VentureId.fromString(""),
   partners: [],
   prospects: [],
   removalProspects: [],
@@ -46,8 +48,9 @@ let make = () => {
 
 let apply = (event: Event.t, state) =>
   switch (event) {
-  | VentureCreated({ventureName, metaPolicy}) => {
+  | VentureCreated({ventureName, metaPolicy, ventureId}) => {
       ...state,
+      ventureId,
       name: ventureName,
       metaPolicy,
       partnerPolicy: metaPolicy,
