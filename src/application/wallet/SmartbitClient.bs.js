@@ -75,7 +75,7 @@ function broadcastTransaction(config, transaction) {
                   var err$1 = err[0];
                   tmp = (/transaction already in block chain/).test(err$1) ? /* AlreadyInBlockchain */0 : /* Error */Block.__(1, [err$1]);
                 } else {
-                  tmp = /* Ok */Block.__(0, [Json_decode.field("txId", Json_decode.string, res)]);
+                  tmp = /* Ok */Block.__(0, [Json_decode.field("txid", Json_decode.string, res)]);
                 }
                 return Promise.resolve(tmp);
               }));
