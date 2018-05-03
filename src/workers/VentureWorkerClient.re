@@ -25,6 +25,9 @@ let create = (~name, worker) =>
 let load = (~ventureId, worker) =>
   worker |. postMessage(VentureWorkerMessage.Load(ventureId));
 
+let joinVia = (~ventureId, ~userId, worker) =>
+  worker |. postMessage(VentureWorkerMessage.JoinVia(ventureId, userId));
+
 let proposePartner = (worker, ventureId, ~prospectId) =>
   worker
   |. postMessage(VentureWorkerMessage.ProposePartner(ventureId, prospectId));

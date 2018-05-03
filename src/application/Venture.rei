@@ -34,7 +34,7 @@ type t;
 
 let join:
   (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
-  Js.Promise.t((Index.t, t, list(Event.t)));
+  Js.Promise.t((Index.t, t));
 
 let load: (Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
 

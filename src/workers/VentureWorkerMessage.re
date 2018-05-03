@@ -8,6 +8,7 @@ type incoming =
   | UpdateSession(blockstackItems)
   | Create(string)
   | Load(ventureId)
+  | JoinVia(ventureId, userId)
   | ProposePartner(ventureId, userId)
   | EndorsePartner(ventureId, processId)
   | ProposePartnerRemoval(ventureId, userId)

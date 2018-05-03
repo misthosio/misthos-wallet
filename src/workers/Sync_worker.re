@@ -27,26 +27,27 @@ let tenSecondsInMilliseconds = 10000;
 
 let syncInterval = tenSecondsInMilliseconds;
 
-let determinPartnerKeys = localUserId =>
+let determinPartnerIds = localUserId =>
   EventLog.reduce(
-    (keys, {event}) =>
+    (ids, {event}) =>
       switch (event) {
       | PartnerAccepted({data}) when UserId.neq(data.id, localUserId) => [
-          (data.id, data.pubKey),
-          ...keys,
+          data.id,
+          ...ids,
         ]
-      | PartnerRemovalAccepted({data}) => keys |> List.remove_assoc(data.id)
-      | _ => keys
+      | PartnerRemovalAccepted({data}) =>
+        ids |> List.filter(id => UserId.neq(id, data.id))
+      | _ => ids
       },
     [],
   );
 
-let getSummaryFromUser = (ventureId, userId, pubKey) =>
+let getSummaryFromUser = (ventureId, userId, storagePrefix) =>
   Js.Promise.(
     Blockstack.getFileFromUserAndDecrypt(
       (ventureId |> VentureId.toString)
       ++ "/"
-      ++ UserInfo.storagePrefix(~appPubKey=pubKey)
+      ++ storagePrefix
       ++ "/summary.json",
       ~username=userId |> UserId.toString,
     )
@@ -60,14 +61,15 @@ let getSummaryFromUser = (ventureId, userId, pubKey) =>
        )
   );
 
-let syncEventsFromPartner = (ventureId, summary, (userId, pubKey)) =>
+let syncEventsFromPartner = (storagePrefix, ventureId, summary, userId) =>
   Js.Promise.(
-    getSummaryFromUser(ventureId, userId, pubKey)
+    getSummaryFromUser(ventureId, userId, storagePrefix)
     |> then_(summary => Js.log2("got summary", summary) |> resolve)
+    |> catch(_error => resolve())
   )
   |> ignore;
 
-let syncEventsFromVenture = (ventureId, localUserId) => {
+let syncEventsFromVenture = (ventureId, localUserId, storagePrefix) => {
   logMessage(
     "Finding new events for venture '" ++ VentureId.toString(ventureId) ++ "'",
   );
@@ -75,8 +77,11 @@ let syncEventsFromVenture = (ventureId, localUserId) => {
     WorkerUtils.loadVenture(ventureId)
     |> then_(eventLog => {
          let summary = eventLog |> EventLog.getSummary;
-         let partnerKeys = eventLog |> determinPartnerKeys(localUserId);
-         partnerKeys |> List.iter(syncEventsFromPartner(ventureId, summary));
+         let partnerKeys = eventLog |> determinPartnerIds(localUserId);
+         partnerKeys
+         |> List.iter(
+              syncEventsFromPartner(storagePrefix, ventureId, summary),
+            );
          resolve();
        })
   );
@@ -88,12 +93,13 @@ let findNewEventsForAll = () => {
     Session.getCurrentSession()
     |> then_(
          fun
-         | Session.LoggedIn({userId}) =>
+         | Session.LoggedIn({userId, storagePrefix}) =>
            Venture.Index.load()
            |> then_(index =>
                 index
                 |> List.iter(({id}: Venture.Index.item) =>
-                     syncEventsFromVenture(id, userId) |> ignore
+                     syncEventsFromVenture(id, userId, storagePrefix)
+                     |> ignore
                    )
                 |> resolve
               )

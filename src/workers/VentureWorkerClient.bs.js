@@ -37,8 +37,16 @@ function load(ventureId, worker) {
   return /* () */0;
 }
 
+function joinVia(ventureId, userId, worker) {
+  worker.postMessage(/* JoinVia */Block.__(3, [
+          ventureId,
+          userId
+        ]));
+  return /* () */0;
+}
+
 function proposePartner(worker, ventureId, prospectId) {
-  worker.postMessage(/* ProposePartner */Block.__(3, [
+  worker.postMessage(/* ProposePartner */Block.__(4, [
           ventureId,
           prospectId
         ]));
@@ -46,7 +54,7 @@ function proposePartner(worker, ventureId, prospectId) {
 }
 
 function endorsePartner(worker, ventureId, processId) {
-  worker.postMessage(/* EndorsePartner */Block.__(4, [
+  worker.postMessage(/* EndorsePartner */Block.__(5, [
           ventureId,
           processId
         ]));
@@ -54,7 +62,7 @@ function endorsePartner(worker, ventureId, processId) {
 }
 
 function proposePartnerRemoval(worker, ventureId, partnerId) {
-  worker.postMessage(/* ProposePartnerRemoval */Block.__(5, [
+  worker.postMessage(/* ProposePartnerRemoval */Block.__(6, [
           ventureId,
           partnerId
         ]));
@@ -62,7 +70,7 @@ function proposePartnerRemoval(worker, ventureId, partnerId) {
 }
 
 function endorsePartnerRemoval(worker, ventureId, processId) {
-  worker.postMessage(/* EndorsePartnerRemoval */Block.__(6, [
+  worker.postMessage(/* EndorsePartnerRemoval */Block.__(7, [
           ventureId,
           processId
         ]));
@@ -70,7 +78,7 @@ function endorsePartnerRemoval(worker, ventureId, processId) {
 }
 
 function proposePayout(worker, ventureId, accountIdx, destinations, fee) {
-  worker.postMessage(/* ProposePayout */Block.__(7, [
+  worker.postMessage(/* ProposePayout */Block.__(8, [
           ventureId,
           accountIdx,
           List.map((function (param) {
@@ -85,7 +93,7 @@ function proposePayout(worker, ventureId, accountIdx, destinations, fee) {
 }
 
 function endorsePayout(worker, ventureId, processId) {
-  worker.postMessage(/* EndorsePayout */Block.__(8, [
+  worker.postMessage(/* EndorsePayout */Block.__(9, [
           ventureId,
           processId
         ]));
@@ -93,7 +101,7 @@ function endorsePayout(worker, ventureId, processId) {
 }
 
 function exposeIncomeAddress(worker, ventureId, accountIdx) {
-  worker.postMessage(/* ExposeIncomeAddress */Block.__(9, [
+  worker.postMessage(/* ExposeIncomeAddress */Block.__(10, [
           ventureId,
           accountIdx
         ]));
@@ -135,6 +143,7 @@ exports.make = make$1;
 exports.updateSession = updateSession;
 exports.create = create;
 exports.load = load;
+exports.joinVia = joinVia;
 exports.proposePartner = proposePartner;
 exports.endorsePartner = endorsePartner;
 exports.proposePartnerRemoval = proposePartnerRemoval;

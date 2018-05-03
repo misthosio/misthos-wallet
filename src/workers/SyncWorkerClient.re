@@ -1,8 +1,7 @@
 module Config = {
   include SyncWorkerMessage;
   type t;
-  [@bs.module] [@bs.new]
-  external instance : unit => t = "./Income_worker.bs.js";
+  [@bs.module] [@bs.new] external instance : unit => t = "./Sync_worker.bs.js";
 };
 
 include WebWorker.MakeClient(Config);

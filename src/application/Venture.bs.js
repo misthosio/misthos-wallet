@@ -225,23 +225,28 @@ function load(session, ventureId) {
 }
 
 function join(session, userId, ventureId) {
-  return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).catch((function () {
-                      throw Caml_builtin_exceptions.not_found;
-                    })).then((function (nullFile) {
-                    if (nullFile == null) {
-                      throw Caml_builtin_exceptions.not_found;
-                    } else {
-                      return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
-                    }
-                  })).then(persist).then((function (param) {
-                var collector = param[1];
-                var venture = param[0];
-                return Venture__Index.add(venture[/* id */1], venture[/* state */3][/* ventureName */0]).then((function (index) {
-                              return Promise.resolve(/* tuple */[
-                                          index,
-                                          venture,
-                                          collector
-                                        ]);
+  return load(session, ventureId).then((function (venture) {
+                  return Promise.all(/* tuple */[
+                              Venture__Index.load(/* () */0),
+                              Promise.resolve(venture)
+                            ]);
+                })).catch((function () {
+                return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).catch((function () {
+                                    throw Caml_builtin_exceptions.not_found;
+                                  })).then((function (nullFile) {
+                                  if (nullFile == null) {
+                                    throw Caml_builtin_exceptions.not_found;
+                                  } else {
+                                    return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
+                                  }
+                                })).then(persist).then((function (param) {
+                              var venture = param[0];
+                              return Venture__Index.add(venture[/* id */1], venture[/* state */3][/* ventureName */0]).then((function (index) {
+                                            return Promise.resolve(/* tuple */[
+                                                        index,
+                                                        venture
+                                                      ]);
+                                          }));
                             }));
               }));
 }

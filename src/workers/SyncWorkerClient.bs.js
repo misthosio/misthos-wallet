@@ -4,14 +4,14 @@
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var SyncWorkerMessage = require("./SyncWorkerMessage.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
-var Income_workerBsJs = require("./Income_worker.bs.js");
+var Sync_workerBsJs = require("./Sync_worker.bs.js");
 
 var Config = /* module */[/* decodeOutgoing */SyncWorkerMessage.decodeOutgoing];
 
 var include = WebWorker.MakeClient([
       SyncWorkerMessage.decodeOutgoing,
       (function () {
-          return new Income_workerBsJs();
+          return new Sync_workerBsJs();
         })
     ]);
 

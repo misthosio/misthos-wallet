@@ -47,8 +47,11 @@ type state = {
 };
 
 module Handle = {
-  let withVenture =
-      (~create="", ~ventureId=VentureId.fromString(""), f, {venturesThread}) => {
+  type ventureAction =
+    | Create(string)
+    | Load(ventureId)
+    | JoinVia(ventureId, userId);
+  let withVenture = (ventureAction, f, {venturesThread}) => {
     let venturesThread =
       Js.Promise.(
         venturesThread
@@ -56,9 +59,10 @@ module Handle = {
              threads
              |> Utils.mapOption(((data, ventures)) => {
                   let (ventureId, ventureThread) =
-                    if (create != "") {
+                    switch (ventureAction) {
+                    | Create(name) =>
                       let (ventureId, venturePromise) =
-                        Venture.Cmd.Create.exec(data, ~name=create);
+                        Venture.Cmd.Create.exec(data, ~name);
                       (
                         ventureId,
                         venturePromise
@@ -67,13 +71,21 @@ module Handle = {
                              venture |> resolve;
                            }),
                       );
-                    } else {
+                    | Load(ventureId) =>
                       try (ventureId, ventures |> List.assoc(ventureId)) {
                       | Not_found => (
                           ventureId,
                           Venture.load(data, ~ventureId),
                         )
-                      };
+                      }
+                    | JoinVia(ventureId, userId) => (
+                        ventureId,
+                        Venture.join(data, ~userId, ~ventureId)
+                        |> then_(((index, venture)) => {
+                             Notify.indexUpdated(index);
+                             venture |> resolve;
+                           }),
+                      )
                     };
                   (
                     data,
@@ -121,7 +133,17 @@ module Handle = {
   let load = ventureId => {
     logMessage("Handling 'Load'");
     withVenture(
-      ~ventureId,
+      Load(ventureId),
+      venture => {
+        Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
+        Js.Promise.resolve(venture);
+      },
+    );
+  };
+  let joinVia = (ventureId, userId) => {
+    logMessage("Handling 'JoinVia'");
+    withVenture(
+      JoinVia(ventureId, userId),
       venture => {
         Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
         Js.Promise.resolve(venture);
@@ -131,7 +153,7 @@ module Handle = {
   let create = name => {
     logMessage("Handling 'Create'");
     withVenture(
-      ~create=name,
+      Create(name),
       venture => {
         Notify.ventureCreated(
           venture |> Venture.getId,
@@ -143,7 +165,7 @@ module Handle = {
   };
   let proposePartner = (ventureId, prospectId) => {
     logMessage("Handing 'ProposePartner'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ProposePartner.(
           venture
@@ -162,7 +184,7 @@ module Handle = {
   };
   let endorsePartner = (ventureId, processId) => {
     logMessage("Handing 'EndorsePartner'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.EndorsePartner.(
           venture
@@ -180,7 +202,7 @@ module Handle = {
   };
   let proposePartnerRemoval = (ventureId, partnerId) => {
     logMessage("Handing 'ProposePartnerRemoval'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ProposePartnerRemoval.(
           venture
@@ -199,7 +221,7 @@ module Handle = {
   };
   let endorsePartnerRemoval = (ventureId, processId) => {
     logMessage("Handing 'EndorsePartnerRemoval'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.EndorsePartnerRemoval.(
           venture
@@ -217,7 +239,7 @@ module Handle = {
   };
   let proposePayout = (ventureId, accountIdx, destinations, fee) => {
     logMessage("Handing 'ProposePayout'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ProposePayout.(
           venture
@@ -235,7 +257,7 @@ module Handle = {
   };
   let endorsePayout = (ventureId, processId) => {
     logMessage("Handing 'EndorsePayout'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.EndorsePayout.(
           venture
@@ -253,7 +275,7 @@ module Handle = {
   };
   let exposeIncomeAddress = (ventureId, accountIdx) => {
     logMessage("Handing 'ExposeIncomeAddress'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ExposeIncomeAddress.(
           venture
@@ -271,7 +293,7 @@ module Handle = {
   };
   let transactionDetected = (ventureId, events) => {
     logMessage("Handing 'ExposeIncomeAddress'");
-    withVenture(~ventureId, venture =>
+    withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.SynchronizeWallet.(
           venture
@@ -294,6 +316,7 @@ let handleMessage =
   fun
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
+  | Message.JoinVia(ventureId, userId) => Handle.joinVia(ventureId, userId)
   | Message.Create(name) => Handle.create(name)
   | Message.ProposePartner(ventureId, userId) =>
     Handle.proposePartner(ventureId, userId)

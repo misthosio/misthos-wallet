@@ -22,19 +22,21 @@ function make(session, selectedVenture, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               if (typeof selectedVenture === "number") {
-                switch (selectedVenture) {
+                if (selectedVenture === 0) {
+                  return Utils.text("Not selected");
+                } else {
+                  return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* array */[]));
+                }
+              } else {
+                switch (selectedVenture.tag | 0) {
                   case 0 : 
-                      return Utils.text("Not selected");
-                  case 1 : 
-                      return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* array */[]));
-                  case 2 : 
                       return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* array */[]));
+                  case 1 : 
+                      return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* array */[]));
+                  case 2 : 
+                      return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V12 */13], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[1], session, selectedVenture[2], /* array */[]))]));
                   
                 }
-              } else if (selectedVenture.tag) {
-                return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V12 */13], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[1], session, selectedVenture[2], /* array */[]))]));
-              } else {
-                return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* array */[]));
               }
             }),
           /* initialState */component[/* initialState */10],

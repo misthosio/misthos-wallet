@@ -148,28 +148,35 @@ let load = (session: Session.Data.t, ~ventureId) => {
 
 let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
-    Blockstack.getFileFromUserAndDecrypt(
-      (ventureId |> VentureId.toString)
-      ++ "/"
-      ++ session.storagePrefix
-      ++ "/log.json",
-      ~username=userId |> UserId.toString,
-    )
-    |> catch(_error => raise(Not_found))
-    |> then_(nullFile =>
-         switch (Js.Nullable.toOption(nullFile)) {
-         | None => raise(Not_found)
-         | Some(raw) =>
-           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
-         }
-       )
-    |> then_(persist)
-    |> then_(((venture, collector)) =>
-         Index.add(
-           ~ventureId=venture.id,
-           ~ventureName=venture.state.ventureName,
+    load(session, ~ventureId)
+    |> then_(venture => all2((Index.load(), venture |> resolve)))
+    |> catch(_error =>
+         Blockstack.getFileFromUserAndDecrypt(
+           (ventureId |> VentureId.toString)
+           ++ "/"
+           ++ session.storagePrefix
+           ++ "/log.json",
+           ~username=userId |> UserId.toString,
          )
-         |> then_(index => resolve((index, venture, collector)))
+         |> catch(_error => raise(Not_found))
+         |> then_(nullFile =>
+              switch (Js.Nullable.toOption(nullFile)) {
+              | None => raise(Not_found)
+              | Some(raw) =>
+                raw
+                |> Json.parseOrRaise
+                |> EventLog.decode
+                |> reconstruct(session)
+              }
+            )
+         |> then_(persist)
+         |> then_(((venture, _)) =>
+              Index.add(
+                ~ventureId=venture.id,
+                ~ventureName=venture.state.ventureName,
+              )
+              |> then_(index => resolve((index, venture)))
+            )
        )
   );
 

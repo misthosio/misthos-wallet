@@ -70,50 +70,63 @@ var Notify = /* module */[
   /* newEvents */newEvents
 ];
 
-function withVenture($staropt$star, $staropt$star$1, f, param) {
-  var create = $staropt$star ? $staropt$star[0] : "";
-  var ventureId = $staropt$star$1 ? $staropt$star$1[0] : PrimitiveTypes.VentureId[/* fromString */1]("");
+function withVenture(ventureAction, f, param) {
   var venturesThread = param[/* venturesThread */0].then((function (threads) {
           return Promise.resolve(Utils.mapOption((function (param) {
                             var ventures = param[1];
                             var data = param[0];
                             var match;
-                            if (create !== "") {
-                              var match$1 = Curry._2(Venture.Cmd[/* Create */0][/* exec */0], data, create);
-                              match = /* tuple */[
-                                match$1[0],
-                                match$1[1].then((function (param) {
-                                        postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
-                                        return Promise.resolve(param[1]);
-                                      }))
-                              ];
-                            } else {
-                              try {
-                                match = /* tuple */[
-                                  ventureId,
-                                  List.assoc(ventureId, ventures)
-                                ];
-                              }
-                              catch (exn){
-                                if (exn === Caml_builtin_exceptions.not_found) {
+                            switch (ventureAction.tag | 0) {
+                              case 0 : 
+                                  var match$1 = Curry._2(Venture.Cmd[/* Create */0][/* exec */0], data, ventureAction[0]);
                                   match = /* tuple */[
-                                    ventureId,
-                                    Venture.load(data, ventureId)
+                                    match$1[0],
+                                    match$1[1].then((function (param) {
+                                            postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                            return Promise.resolve(param[1]);
+                                          }))
                                   ];
-                                } else {
-                                  throw exn;
-                                }
-                              }
+                                  break;
+                              case 1 : 
+                                  var ventureId = ventureAction[0];
+                                  try {
+                                    match = /* tuple */[
+                                      ventureId,
+                                      List.assoc(ventureId, ventures)
+                                    ];
+                                  }
+                                  catch (exn){
+                                    if (exn === Caml_builtin_exceptions.not_found) {
+                                      match = /* tuple */[
+                                        ventureId,
+                                        Venture.load(data, ventureId)
+                                      ];
+                                    } else {
+                                      throw exn;
+                                    }
+                                  }
+                                  break;
+                              case 2 : 
+                                  var ventureId$1 = ventureAction[0];
+                                  match = /* tuple */[
+                                    ventureId$1,
+                                    Venture.join(data, ventureAction[1], ventureId$1).then((function (param) {
+                                            postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                            return Promise.resolve(param[1]);
+                                          }))
+                                  ];
+                                  break;
+                              
                             }
-                            var ventureId$1 = match[0];
+                            var ventureId$2 = match[0];
                             return /* tuple */[
                                     data,
                                     /* :: */[
                                       /* tuple */[
-                                        ventureId$1,
+                                        ventureId$2,
                                         match[1].then(Curry.__1(f))
                                       ],
-                                      List.remove_assoc(ventureId$1, ventures)
+                                      List.remove_assoc(ventureId$2, ventures)
                                     ]
                                   ];
                           }), threads));
@@ -171,9 +184,23 @@ function updateSession(items, state) {
 
 function load(ventureId) {
   logMessage("Handling 'Load'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
+                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
+                    return Promise.resolve(venture);
+                  }), param);
+    });
+}
+
+function joinVia(ventureId, userId) {
+  logMessage("Handling 'JoinVia'");
+  var partial_arg = /* JoinVia */Block.__(2, [
+      ventureId,
+      userId
+    ]);
+  return (function (param) {
+      return withVenture(partial_arg, (function (venture) {
                     ventureLoaded(ventureId, Venture.getAllEvents(venture));
                     return Promise.resolve(venture);
                   }), param);
@@ -182,9 +209,9 @@ function load(ventureId) {
 
 function create(name) {
   logMessage("Handling 'Create'");
-  var partial_arg = /* Some */[name];
+  var partial_arg = /* Create */Block.__(0, [name]);
   return (function (param) {
-      return withVenture(partial_arg, /* None */0, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     ventureCreated(Venture.getId(venture), Venture.getAllEvents(venture));
                     return Promise.resolve(venture);
                   }), param);
@@ -193,9 +220,9 @@ function create(name) {
 
 function proposePartner(ventureId, prospectId) {
   logMessage("Handing 'ProposePartner'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* ProposePartner */3][/* exec */0], prospectId, venture).then((function (param) {
                                   if (typeof param === "number") {
                                     return Promise.resolve(venture);
@@ -210,9 +237,9 @@ function proposePartner(ventureId, prospectId) {
 
 function endorsePartner(ventureId, processId) {
   logMessage("Handing 'EndorsePartner'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartner */4][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
@@ -223,9 +250,9 @@ function endorsePartner(ventureId, processId) {
 
 function proposePartnerRemoval(ventureId, partnerId) {
   logMessage("Handing 'ProposePartnerRemoval'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* ProposePartnerRemoval */5][/* exec */0], partnerId, venture).then((function (param) {
                                   if (param) {
                                     newEvents(ventureId, param[1]);
@@ -240,9 +267,9 @@ function proposePartnerRemoval(ventureId, partnerId) {
 
 function endorsePartnerRemoval(ventureId, processId) {
   logMessage("Handing 'EndorsePartnerRemoval'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */6][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
@@ -253,9 +280,9 @@ function endorsePartnerRemoval(ventureId, processId) {
 
 function proposePayout(ventureId, accountIdx, destinations, fee) {
   logMessage("Handing 'ProposePayout'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._4(Venture.Cmd[/* ProposePayout */8][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
@@ -266,9 +293,9 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
 
 function endorsePayout(ventureId, processId) {
   logMessage("Handing 'EndorsePayout'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePayout */9][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
@@ -279,9 +306,9 @@ function endorsePayout(ventureId, processId) {
 
 function exposeIncomeAddress(ventureId, accountIdx) {
   logMessage("Handing 'ExposeIncomeAddress'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */7][/* exec */0], accountIdx, venture).then((function (param) {
                                   newEvents(ventureId, param[2]);
                                   return Promise.resolve(param[1]);
@@ -292,9 +319,9 @@ function exposeIncomeAddress(ventureId, accountIdx) {
 
 function transactionDetected(ventureId, events) {
   logMessage("Handing 'ExposeIncomeAddress'");
-  var partial_arg = /* Some */[ventureId];
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+      return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, venture).then((function (param) {
                                   if (param) {
                                     newEvents(ventureId, param[1]);
@@ -311,6 +338,7 @@ var Handle = /* module */[
   /* withVenture */withVenture,
   /* updateSession */updateSession,
   /* load */load,
+  /* joinVia */joinVia,
   /* create */create,
   /* proposePartner */proposePartner,
   /* endorsePartner */endorsePartner,
@@ -334,25 +362,27 @@ function handleMessage(param) {
     case 2 : 
         return load(param[0]);
     case 3 : 
-        return proposePartner(param[0], param[1]);
+        return joinVia(param[0], param[1]);
     case 4 : 
-        return endorsePartner(param[0], param[1]);
+        return proposePartner(param[0], param[1]);
     case 5 : 
-        return proposePartnerRemoval(param[0], param[1]);
+        return endorsePartner(param[0], param[1]);
     case 6 : 
-        return endorsePartnerRemoval(param[0], param[1]);
+        return proposePartnerRemoval(param[0], param[1]);
     case 7 : 
+        return endorsePartnerRemoval(param[0], param[1]);
+    case 8 : 
         return proposePayout(param[0], param[1], List.map((function (param) {
                           return /* tuple */[
                                   param[0],
                                   BTC.decode(param[1])
                                 ];
                         }), param[2]), BTC.decode(param[3]));
-    case 8 : 
-        return endorsePayout(param[0], param[1]);
     case 9 : 
-        return exposeIncomeAddress(param[0], param[1]);
+        return endorsePayout(param[0], param[1]);
     case 10 : 
+        return exposeIncomeAddress(param[0], param[1]);
+    case 11 : 
         return transactionDetected(param[0], List.map(Event.IncomeDetected[/* decode */2], param[1]));
     
   }
