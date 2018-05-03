@@ -54,7 +54,7 @@ function make(session, updateSession, _) {
         case 0 : 
             return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, /* array */[]));
         case 1 : 
-            return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(createVenture, /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
         case 2 : 
             exit$1 = 2;
             break;

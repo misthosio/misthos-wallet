@@ -21,7 +21,12 @@ module Styles = {
     style([height(`calc((`sub, `vh(60.0), `px(120))))]);
 };
 
-let make = (~onCreateVenture, _children) => {
+let make =
+    (
+      ~selectedVenture: VentureStore.selectedVenture,
+      ~onCreateVenture,
+      _children,
+    ) => {
   ...component,
   initialState: () => {newVenture: ""},
   reducer: (action, state) =>
@@ -51,61 +56,69 @@ let make = (~onCreateVenture, _children) => {
             </Grid>
           </Grid>
         </TitleBar>
-        <Grid
-          container=true
-          className=Styles.remainingHeight
-          alignItems=`Flex_Start
-          justify=`Center>
-          <Grid className=Styles.fullHeight item=true xs=V8>
+        (
+          switch (selectedVenture) {
+          | CreatingVenture => <Spinner text="Creating venture" />
+          | _ =>
             <Grid
-              className=Styles.fullHeight
               container=true
-              justify=`Space_Between>
-              <Grid className=Styles.fullHeight item=true xs=V5>
+              className=Styles.remainingHeight
+              alignItems=`Flex_Start
+              justify=`Center>
+              <Grid className=Styles.fullHeight item=true xs=V8>
                 <Grid
                   className=Styles.fullHeight
                   container=true
-                  direction=`Column
-                  justify=`Space_Between
-                  alignItems=`Stretch>
-                  <Grid item=true>
-                    <Typography variant=`Body1>
-                      (
-                        "Set up a new venture wallet with yourself as the initial partner. You can add and remove partners once the venture is established."
-                        |> Utils.text
-                      )
-                    </Typography>
+                  justify=`Space_Between>
+                  <Grid className=Styles.fullHeight item=true xs=V5>
+                    <Grid
+                      className=Styles.fullHeight
+                      container=true
+                      direction=`Column
+                      justify=`Space_Between
+                      alignItems=`Stretch>
+                      <Grid item=true>
+                        <Typography variant=`Body1>
+                          (
+                            "Set up a new venture wallet with yourself as the initial partner. You can add and remove partners once the venture is established."
+                            |> Utils.text
+                          )
+                        </Typography>
+                      </Grid>
+                      <Grid item=true>
+                        <Typography variant=`Title>
+                          ("Venture Name" |> Utils.text)
+                        </Typography>
+                      </Grid>
+                      <Grid item=true>
+                        <Input
+                          placeholder="Enter a Venture Name"
+                          value=(`String(state.newVenture))
+                          onChange=(
+                            e => send(ChangeNewVenture(formText(e)))
+                          )
+                          autoFocus=true
+                          fullWidth=true
+                        />
+                      </Grid>
+                      <Grid item=true>
+                        <MButton
+                          fullWidth=true onClick=(_e => send(CreateVenture))>
+                          ("create venture" |> Utils.text)
+                        </MButton>
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Grid item=true>
+                  <Grid item=true xs=V5>
                     <Typography variant=`Title>
-                      ("Venture Name" |> Utils.text)
+                      ("What can you do with a venture?" |> Utils.text)
                     </Typography>
-                  </Grid>
-                  <Grid item=true>
-                    <Input
-                      placeholder="Enter a Venture Name"
-                      value=(`String(state.newVenture))
-                      onChange=(e => send(ChangeNewVenture(formText(e))))
-                      autoFocus=true
-                      fullWidth=true
-                    />
-                  </Grid>
-                  <Grid item=true>
-                    <MButton
-                      fullWidth=true onClick=(_e => send(CreateVenture))>
-                      ("create venture" |> Utils.text)
-                    </MButton>
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item=true xs=V5>
-                <Typography variant=`Title>
-                  ("What can you do with a venture?" |> Utils.text)
-                </Typography>
-              </Grid>
             </Grid>
-          </Grid>
-        </Grid>
+          }
+        )
       </Grid>
     ),
 };

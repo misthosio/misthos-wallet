@@ -29,7 +29,7 @@ let make = (~session, ~updateSession, _children) => {
     | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
     | (LoggedIn(session), Home) => <Home session selectedVenture />
     | (LoggedIn(_), CreateVenture) =>
-      <VentureCreate onCreateVenture=createVenture />
+      <VentureCreate selectedVenture onCreateVenture=createVenture />
     | (LoggedIn(session), _) => <Home session selectedVenture />
     };
   {
