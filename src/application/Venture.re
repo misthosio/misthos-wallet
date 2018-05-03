@@ -188,18 +188,6 @@ let getAllEvents = ({log}) =>
   log |> EventLog.reduce((l, {event}) => [event, ...l], []);
 
 module SynchronizeLogs = {
-  let getPartnerHistoryUrls = ({session, id, state}) =>
-    state.partnerIds
-    |> List.filter(partnerId => UserId.neq(partnerId, session.userId))
-    |> List.map(partnerId =>
-         Blockstack.getUserAppFileUrl(
-           ~path=(id |> VentureId.toString) ++ "/" ++ session.storagePrefix,
-           ~username=partnerId |> UserId.toString,
-           ~appOrigin=Location.origin,
-         )
-       )
-    |> Array.of_list
-    |> Js.Promise.all;
   type result =
     | Ok(t, list(Event.t))
     | Error(t, EventLog.item, Validation.result);
@@ -280,8 +268,6 @@ module SynchronizeLogs = {
     );
   };
 };
-
-let getPartnerHistoryUrls = SynchronizeLogs.getPartnerHistoryUrls;
 
 module Cmd = {
   module Create = {

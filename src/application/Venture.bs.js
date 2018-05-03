@@ -3,7 +3,6 @@
 
 var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
@@ -267,16 +266,6 @@ function getAllEvents(param) {
               }), /* [] */0, param[/* log */2]);
 }
 
-function getPartnerHistoryUrls(param) {
-  var id = param[/* id */1];
-  var session = param[/* session */0];
-  return Promise.all($$Array.of_list(List.map((function (partnerId) {
-                        return Blockstack$1.getUserAppFileUrl(PrimitiveTypes.VentureId[/* toString */0](id) + ("/" + session[/* storagePrefix */3]), PrimitiveTypes.UserId[/* toString */0](partnerId), window.location.origin);
-                      }), List.filter((function (partnerId) {
-                              return PrimitiveTypes.UserId[/* neq */6](partnerId, session[/* userId */0]);
-                            }))(param[/* state */3][/* partnerIds */4]))));
-}
-
 function exec(newItems, venture) {
   var session = venture[/* session */0];
   var match = List.fold_left((function (param, item) {
@@ -407,6 +396,8 @@ function exec(newItems, venture) {
                               ]));
               }));
 }
+
+var SynchronizeLogs = /* module */[/* exec */exec];
 
 function exec$1(session, ventureName) {
   logMessage("Executing 'Create' command");
@@ -586,11 +577,9 @@ var Index = [
 
 var Validation = [Venture__Validation.resultToString];
 
-var Cmd_001 = [exec];
-
 var Cmd = [
   Create,
-  Cmd_001,
+  SynchronizeLogs,
   SynchronizeWallet,
   ProposePartner,
   EndorsePartner,
@@ -610,6 +599,5 @@ exports.load = load;
 exports.getId = getId;
 exports.getAllEvents = getAllEvents;
 exports.getSummary = getSummary;
-exports.getPartnerHistoryUrls = getPartnerHistoryUrls;
 exports.Cmd = Cmd;
 /* Event Not a pure module */

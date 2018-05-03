@@ -44,8 +44,6 @@ let getAllEvents: t => list(Event.t);
 
 let getSummary: t => EventLog.summary;
 
-let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
-
 module Cmd: {
   module Create: {
     type result = (Index.t, t);
