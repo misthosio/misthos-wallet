@@ -131,7 +131,6 @@ function detectIncomeFromVenture(ventureId) {
 }
 
 function detectIncomeFromAll() {
-  logMessage("Detecting income");
   return Session.getCurrentSession(/* () */0).then((function (param) {
                 if (typeof param === "number") {
                   return Promise.resolve(/* () */0);

@@ -145,8 +145,7 @@ let syncEventsFromVenture = (ventureId, localUserId, storagePrefix) => {
   );
 };
 
-let findNewEventsForAll = () => {
-  logMessage("Finding new events");
+let findNewEventsForAll = () =>
   Js.Promise.(
     Session.getCurrentSession()
     |> then_(
@@ -164,7 +163,6 @@ let findNewEventsForAll = () => {
          | _ => resolve(),
        )
   );
-};
 
 let handleMsg =
   fun

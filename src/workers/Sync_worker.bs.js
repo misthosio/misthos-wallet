@@ -111,7 +111,6 @@ function syncEventsFromVenture(ventureId, localUserId, storagePrefix) {
 }
 
 function findNewEventsForAll() {
-  logMessage("Finding new events");
   return Session.getCurrentSession(/* () */0).then((function (param) {
                 if (typeof param === "number") {
                   return Promise.resolve(/* () */0);

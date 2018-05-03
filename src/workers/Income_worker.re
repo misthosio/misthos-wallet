@@ -124,8 +124,7 @@ let detectIncomeFromVenture = ventureId => {
   );
 };
 
-let detectIncomeFromAll = () => {
-  logMessage("Detecting income");
+let detectIncomeFromAll = () =>
   Js.Promise.(
     Session.getCurrentSession()
     |> then_(
@@ -142,7 +141,6 @@ let detectIncomeFromAll = () => {
          | _ => resolve(),
        )
   );
-};
 
 let tenSecondsInMilliseconds = 10000;
 
