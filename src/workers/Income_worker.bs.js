@@ -137,12 +137,10 @@ function detectIncomeFromAll() {
                   return Promise.resolve(/* () */0);
                 } else {
                   return Venture.Index[/* load */0](/* () */0).then((function (index) {
-                                return List.fold_left((function (p, param) {
-                                              var id = param[/* id */0];
-                                              return p.then((function () {
-                                                            return detectIncomeFromVenture(id);
-                                                          }));
-                                            }), Promise.resolve(/* () */0), index);
+                                return Promise.resolve(List.iter((function (param) {
+                                                  detectIncomeFromVenture(param[/* id */0]);
+                                                  return /* () */0;
+                                                }), index));
                               }));
                 }
               }));

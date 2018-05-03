@@ -134,11 +134,10 @@ let detectIncomeFromAll = () => {
            Venture.Index.load()
            |> then_(index =>
                 index
-                |> List.fold_left(
-                     (p, {id}: Venture.Index.item) =>
-                       p |> then_(() => detectIncomeFromVenture(id)),
-                     resolve(),
+                |> List.iter(({id}: Venture.Index.item) =>
+                     detectIncomeFromVenture(id) |> ignore
                    )
+                |> resolve
               )
          | _ => resolve(),
        )
