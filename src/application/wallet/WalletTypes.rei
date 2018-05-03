@@ -16,10 +16,6 @@ type transaction = {
   outputs: list(output),
 };
 
-let encodeTransaction: transaction => Js.Json.t;
-
-let decodeTransaction: Js.Json.t => transaction;
-
 type broadcastResult =
   | Ok(string)
   | AlreadyInBlockchain
