@@ -15,8 +15,8 @@ type incoming =
   | ProposePayout(
       ventureId,
       accountIdx,
-      list((string, Js.Json.t)),
-      Js.Json.t,
+      list((string, BTC.encoded)),
+      BTC.encoded,
     )
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx);
