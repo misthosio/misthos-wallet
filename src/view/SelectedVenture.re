@@ -48,35 +48,27 @@ let make =
         ReasonReact.Update({...state, prospectId: ""});
       }
     | EndorsePartner(processId) =>
-      ReasonReact.SideEffects(((_) => commands.endorsePartner(~processId)))
+      commands.endorsePartner(~processId);
+      ReasonReact.NoUpdate;
     | RemovePartner(partnerId) =>
-      ReasonReact.SideEffects(
-        ((_) => commands.proposePartnerRemoval(~partnerId)),
-      )
+      commands.proposePartnerRemoval(~partnerId);
+      ReasonReact.NoUpdate;
     | EndorsePartnerRemoval(processId) =>
-      ReasonReact.SideEffects(
-        ((_) => commands.endorsePartnerRemoval(~processId)),
-      )
+      commands.endorsePartnerRemoval(~processId);
+      ReasonReact.NoUpdate;
     | GetIncomeAddress =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            commands.exposeIncomeAddress(~accountIdx=AccountIndex.default)
-        ),
-      )
+      commands.exposeIncomeAddress(~accountIdx=AccountIndex.default);
+      ReasonReact.NoUpdate;
     | ProposePayout(destinations) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            commands.proposePayout(
-              ~accountIdx=WalletTypes.AccountIndex.default,
-              ~destinations,
-              ~fee=BTC.fromSatoshis(5L),
-            )
-        ),
-      )
+      commands.proposePayout(
+        ~accountIdx=WalletTypes.AccountIndex.default,
+        ~destinations,
+        ~fee=BTC.fromSatoshis(5L),
+      );
+      ReasonReact.NoUpdate;
     | EndorsePayout(processId) =>
-      ReasonReact.SideEffects(((_) => commands.endorsePayout(~processId)))
+      commands.endorsePayout(~processId);
+      ReasonReact.NoUpdate;
     },
   render: ({send, state}) => {
     let partners =

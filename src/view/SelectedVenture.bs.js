@@ -142,9 +142,8 @@ function make(initialViewModel, session, commands, _) {
                               ]]);
                   }
                 } else {
-                  return /* SideEffects */Block.__(1, [(function () {
-                                return Curry._1(commands[/* exposeIncomeAddress */6], WalletTypes.AccountIndex[/* default */8]);
-                              })]);
+                  Curry._1(commands[/* exposeIncomeAddress */6], WalletTypes.AccountIndex[/* default */8]);
+                  return /* NoUpdate */0;
                 }
               } else {
                 switch (action.tag | 0) {
@@ -154,33 +153,23 @@ function make(initialViewModel, session, commands, _) {
                                   /* prospectId */action[0]
                                 ]]);
                   case 1 : 
-                      var processId = action[0];
-                      return /* SideEffects */Block.__(1, [(function () {
-                                    return Curry._1(commands[/* endorsePartner */1], processId);
-                                  })]);
+                      Curry._1(commands[/* endorsePartner */1], action[0]);
+                      return /* NoUpdate */0;
                   case 2 : 
-                      var partnerId = action[0];
-                      return /* SideEffects */Block.__(1, [(function () {
-                                    return Curry._1(commands[/* proposePartnerRemoval */2], partnerId);
-                                  })]);
+                      Curry._1(commands[/* proposePartnerRemoval */2], action[0]);
+                      return /* NoUpdate */0;
                   case 3 : 
-                      var processId$1 = action[0];
-                      return /* SideEffects */Block.__(1, [(function () {
-                                    return Curry._1(commands[/* endorsePartnerRemoval */3], processId$1);
-                                  })]);
+                      Curry._1(commands[/* endorsePartnerRemoval */3], action[0]);
+                      return /* NoUpdate */0;
                   case 4 : 
-                      var destinations = action[0];
-                      return /* SideEffects */Block.__(1, [(function () {
-                                    return Curry._3(commands[/* proposePayout */4], WalletTypes.AccountIndex[/* default */8], destinations, BTC.fromSatoshis(/* int64 */[
-                                                    /* hi */0,
-                                                    /* lo */5
-                                                  ]));
-                                  })]);
+                      Curry._3(commands[/* proposePayout */4], WalletTypes.AccountIndex[/* default */8], action[0], BTC.fromSatoshis(/* int64 */[
+                                /* hi */0,
+                                /* lo */5
+                              ]));
+                      return /* NoUpdate */0;
                   case 5 : 
-                      var processId$2 = action[0];
-                      return /* SideEffects */Block.__(1, [(function () {
-                                    return Curry._1(commands[/* endorsePayout */5], processId$2);
-                                  })]);
+                      Curry._1(commands[/* endorsePayout */5], action[0]);
+                      return /* NoUpdate */0;
                   
                 }
               }
