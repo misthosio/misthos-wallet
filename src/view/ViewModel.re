@@ -51,7 +51,6 @@ let make = () => {
 };
 
 let apply = (event: Event.t, state) => {
-  Js.log("apply in ViewModel");
   let state = {...state, wallet: state.wallet |> Wallet.apply(event)};
   switch (event) {
   | VentureCreated({ventureName, metaPolicy, ventureId}) => {

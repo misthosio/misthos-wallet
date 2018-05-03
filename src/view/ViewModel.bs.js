@@ -26,7 +26,6 @@ function make() {
 }
 
 function apply($$event, state) {
-  console.log("apply in ViewModel");
   var state_000 = /* ventureId */state[/* ventureId */0];
   var state_001 = /* name */state[/* name */1];
   var state_002 = /* partners */state[/* partners */2];
