@@ -425,6 +425,7 @@ function exec$1(session, ventureName) {
 var Create = /* module */[/* exec */exec$1];
 
 function exec$2(incomeEvents, venture) {
+  logMessage("Synchronizing wallet");
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
                                   return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(26, [$$event]), param[0]);

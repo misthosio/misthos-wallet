@@ -4,6 +4,8 @@
   {| self.window = { localStorage: self.localStorage , location: { origin: self.origin } } |}
 ];
 
+open PrimitiveTypes;
+
 open WalletTypes;
 
 module Message = IncomeWorkerMessage;
@@ -101,7 +103,10 @@ let detectIncomeFromTransaction = addresses =>
        )
   );
 
-let detectIncomeFromVenture = ventureId =>
+let detectIncomeFromVenture = ventureId => {
+  logMessage(
+    "Detecting income for venture '" ++ VentureId.toString(ventureId) ++ "'",
+  );
   Js.Promise.(
     WorkerUtils.loadVenture(ventureId)
     |> then_(eventLog =>
@@ -117,8 +122,8 @@ let detectIncomeFromVenture = ventureId =>
          |> resolve
        )
   );
+};
 
-/* |> then_(transactions => transactions |> detectIncome) */
 let detectIncomeFromAll = () => {
   logMessage("Detecting income");
   Js.Promise.(

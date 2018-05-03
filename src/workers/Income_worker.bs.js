@@ -13,6 +13,7 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
+var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var SmartbitClient = require("../application/wallet/SmartbitClient.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 
@@ -115,6 +116,7 @@ function detectIncomeFromTransaction(addresses) {
 }
 
 function detectIncomeFromVenture(ventureId) {
+  logMessage("Detecting income for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
                   return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
                 })).then((function (param) {

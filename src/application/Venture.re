@@ -315,7 +315,8 @@ module Cmd = {
     type result =
       | Ok(t, list(Event.t))
       | AlreadyUpToDate;
-    let exec = (incomeEvents, venture) =>
+    let exec = (incomeEvents, venture) => {
+      logMessage("Synchronizing wallet");
       Js.Promise.(
         incomeEvents
         |> List.fold_left(
@@ -342,6 +343,7 @@ module Cmd = {
              |> resolve
            )
       );
+    };
   };
   module ProposePartner = {
     type result =

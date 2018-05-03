@@ -126,11 +126,7 @@ function make(initialViewModel, session, commands, _) {
               return /* record */[
                       /* viewModel */initialViewModel,
                       /* prospectId */"",
-                      /* balance : record */[
-                        /* income */BTC.zero,
-                        /* spent */BTC.zero,
-                        /* reserved */BTC.zero
-                      ]
+                      /* balance */ViewModel.balance(initialViewModel)
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],

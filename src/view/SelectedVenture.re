@@ -38,11 +38,7 @@ let make =
   initialState: () => {
     viewModel: initialViewModel,
     prospectId: "",
-    balance: {
-      income: BTC.zero,
-      spent: BTC.zero,
-      reserved: BTC.zero,
-    },
+    balance: initialViewModel |> ViewModel.balance,
   },
   willReceiveProps: ({state}) => {
     ...state,
