@@ -4,10 +4,6 @@
   {| self.window = { localStorage: self.localStorage , location: { origin: self.origin } } |}
 ];
 
-open PrimitiveTypes;
-
-open WalletTypes;
-
 module Message = IncomeWorkerMessage;
 
 type self;
@@ -20,6 +16,10 @@ external onMessage :
   "onmessage";
 
 [@bs.val] external postMessage : Message.outgoing => unit = "postMessage";
+
+open PrimitiveTypes;
+
+open WalletTypes;
 
 let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
 

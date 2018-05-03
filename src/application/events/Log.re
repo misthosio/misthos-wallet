@@ -80,6 +80,8 @@ module Make = (Event: Encodable) => {
     Json.Encode.(
       object_([("knownItems", list(string, summary.knownItems))])
     );
+  let decodeSummary = raw =>
+    Json.Decode.{knownItems: raw |> field("knownItems", list(string))};
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let item = item =>

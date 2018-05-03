@@ -25,4 +25,5 @@ module Make:
     let decode: Js.Json.t => t;
     let getSummary: t => summary;
     let encodeSummary: summary => Js.Json.t;
+    let decodeSummary: Js.Json.t => summary;
   };

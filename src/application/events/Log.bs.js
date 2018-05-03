@@ -100,6 +100,11 @@ function Make(funarg) {
                 /* [] */0
               ]);
   };
+  var decodeSummary = function (raw) {
+    return /* record */[/* knownItems */Json_decode.field("knownItems", (function (param) {
+                    return Json_decode.list(Json_decode.string, param);
+                  }), raw)];
+  };
   var item = function (item$1) {
     return Json_encode.object_(/* :: */[
                 /* tuple */[
@@ -154,7 +159,8 @@ function Make(funarg) {
           log,
           log$1,
           getSummary,
-          encodeSummary
+          encodeSummary,
+          decodeSummary
         ];
 }
 

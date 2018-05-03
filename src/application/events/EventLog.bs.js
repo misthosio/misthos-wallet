@@ -29,6 +29,8 @@ var getSummary = include[8];
 
 var encodeSummary = include[9];
 
+var decodeSummary = include[10];
+
 exports.make = make;
 exports.append = append;
 exports.appendItem = appendItem;
@@ -39,4 +41,5 @@ exports.encode = encode;
 exports.decode = decode;
 exports.getSummary = getSummary;
 exports.encodeSummary = encodeSummary;
+exports.decodeSummary = decodeSummary;
 /* include Not a pure module */
