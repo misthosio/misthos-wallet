@@ -21,10 +21,7 @@ type t = {
   watchers: Watchers.t,
 };
 
-module Wallet = {
-  include Venture__Wallet;
-  let balance = ({wallet}) => balance(AccountIndex.default, wallet);
-};
+module Wallet = Venture__Wallet;
 
 let make = (session, id) => {
   session,

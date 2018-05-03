@@ -30,7 +30,8 @@ function make(initialViewModel, session, commands, _) {
           /* willReceiveProps */(function (param) {
               return /* record */[
                       /* viewModel */initialViewModel,
-                      /* prospectId */param[/* state */1][/* prospectId */1]
+                      /* prospectId */param[/* state */1][/* prospectId */1],
+                      /* balance */ViewModel.balance(initialViewModel)
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -113,7 +114,7 @@ function make(initialViewModel, session, commands, _) {
                                   onClick: (function () {
                                       return Curry._1(send, /* ProposePartner */0);
                                     })
-                                }, Utils.text("Propose Partner")), React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("blance: ")), Utils.text("income: "), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
+                                }, Utils.text("Propose Partner")), React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("blance: ")), Utils.text("income: " + (BTC.format(state[/* balance */2][/* income */0]) + (" spent: " + (BTC.format(state[/* balance */2][/* spent */1]) + (" reserved: " + BTC.format(state[/* balance */2][/* reserved */2])))))), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
                                   onClick: (function () {
                                       return Curry._1(send, /* GetIncomeAddress */1);
                                     })
@@ -124,7 +125,12 @@ function make(initialViewModel, session, commands, _) {
           /* initialState */(function () {
               return /* record */[
                       /* viewModel */initialViewModel,
-                      /* prospectId */""
+                      /* prospectId */"",
+                      /* balance : record */[
+                        /* income */BTC.zero,
+                        /* spent */BTC.zero,
+                        /* reserved */BTC.zero
+                      ]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -138,7 +144,8 @@ function make(initialViewModel, session, commands, _) {
                     Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
                     return /* Update */Block.__(0, [/* record */[
                                 /* viewModel */state[/* viewModel */0],
-                                /* prospectId */""
+                                /* prospectId */"",
+                                /* balance */state[/* balance */2]
                               ]]);
                   }
                 } else {
@@ -150,7 +157,8 @@ function make(initialViewModel, session, commands, _) {
                   case 0 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewModel */state[/* viewModel */0],
-                                  /* prospectId */action[0]
+                                  /* prospectId */action[0],
+                                  /* balance */state[/* balance */2]
                                 ]]);
                   case 1 : 
                       Curry._1(commands[/* endorsePartner */1], action[0]);

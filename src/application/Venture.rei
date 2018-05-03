@@ -46,15 +46,6 @@ let getSummary: t => EventLog.summary;
 
 let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
 
-module Wallet: {
-  type balance = {
-    income: BTC.t,
-    spent: BTC.t,
-    reserved: BTC.t,
-  };
-  let balance: t => balance;
-};
-
 module Cmd: {
   module Create: {
     type result = (Index.t, t);

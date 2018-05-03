@@ -7,6 +7,7 @@ let text = Utils.text;
 type state = {
   viewModel: ViewModel.t,
   prospectId: string,
+  balance: ViewModel.Wallet.balance,
 };
 
 type action =
@@ -34,8 +35,20 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => {viewModel: initialViewModel, prospectId: ""},
-  willReceiveProps: ({state}) => {...state, viewModel: initialViewModel},
+  initialState: () => {
+    viewModel: initialViewModel,
+    prospectId: "",
+    balance: {
+      income: BTC.zero,
+      spent: BTC.zero,
+      reserved: BTC.zero,
+    },
+  },
+  willReceiveProps: ({state}) => {
+    ...state,
+    viewModel: initialViewModel,
+    balance: initialViewModel |> ViewModel.balance,
+  },
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
@@ -252,12 +265,12 @@ let make =
         <h4> (text("blance: ")) </h4>
         (
           text(
-            "income: ",
-            /* ++ BTC.format(state.balance.income) */
-            /* ++ " spent: " */
-            /* ++ BTC.format(state.balance.spent) */
-            /* ++ " reserved: " */
-            /* ++ BTC.format(state.balance.reserved), */
+            "income: "
+            ++ BTC.format(state.balance.income)
+            ++ " spent: "
+            ++ BTC.format(state.balance.spent)
+            ++ " reserved: "
+            ++ BTC.format(state.balance.reserved),
           )
         )
         <h4> (text("Income Addresses:")) </h4>

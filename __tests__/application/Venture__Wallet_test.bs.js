@@ -171,7 +171,7 @@ describe("interation", (function () {
                             }));
               }));
         Jest.testPromise(/* None */0, "1 of 2 wallet", (function () {
-                return Helpers.getUTXOs(Venture__Wallet.getExposedAddresses(/* Some */[true], oneKeyChainWallet[0])).then((function (utxos) {
+                return Helpers.getUTXOs(Venture__Wallet.getExposedAddresses(oneKeyChainWallet[0])).then((function (utxos) {
                               return Promise.resolve(Jest.Expect[/* toEqual */12](oneKeyChainWalletTotal.minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                         return total.plus(utxo[/* amount */3]);
                                                       }), BTC.zero, utxos))));
@@ -212,7 +212,7 @@ describe("interation", (function () {
                                           /* hi */0,
                                           /* lo */5640
                                         ]);
-                                    return Helpers.getUTXOs(Venture__Wallet.getExposedAddresses(/* Some */[true], param[0])).then((function (utxos) {
+                                    return Helpers.getUTXOs(Venture__Wallet.getExposedAddresses(param[0])).then((function (utxos) {
                                                   return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                                             return total.plus(utxo[/* amount */3]);
                                                                           }), BTC.zero, utxos))));

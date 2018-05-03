@@ -34,10 +34,6 @@ var InvalidEvent = Caml_exceptions.create("Venture.InvalidEvent");
 
 var CouldNotLoadVenture = Caml_exceptions.create("Venture.CouldNotLoadVenture");
 
-function balance(param) {
-  return Venture__Wallet.balance(WalletTypes.AccountIndex[/* default */8], param[/* wallet */4]);
-}
-
 function make(session, id) {
   return /* record */[
           /* session */session,
@@ -589,8 +585,6 @@ var Index = [
 
 var Validation = [Venture__Validation.resultToString];
 
-var Wallet = [balance];
-
 var Cmd_001 = [exec];
 
 var Cmd = [
@@ -616,6 +610,5 @@ exports.getId = getId;
 exports.getAllEvents = getAllEvents;
 exports.getSummary = getSummary;
 exports.getPartnerHistoryUrls = getPartnerHistoryUrls;
-exports.Wallet = Wallet;
 exports.Cmd = Cmd;
 /* Event Not a pure module */
