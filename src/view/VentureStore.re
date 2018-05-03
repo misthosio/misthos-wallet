@@ -11,7 +11,6 @@ type action =
   | CreateVenture(string)
   | SyncWorkerMessage(SyncWorker.Message.receive)
   | IncomeWorkerMessage(IncomeWorkerMessage.receive)
-  | PersistWorkerMessage(PersistWorkerMessage.receive)
   | VentureWorkerMessage(VentureWorkerMessage.receive);
 
 type state = {
@@ -94,18 +93,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       },
       IncomeWorkerClient.terminate,
     ),
-    Sub(
-      () => {
-        PersistWorkerClient.terminate(state.persistWorker^);
-        let worker =
-          PersistWorkerClient.make(~onMessage=message =>
-            send(PersistWorkerMessage(message))
-          );
-        state.persistWorker := worker;
-        worker;
-      },
-      PersistWorkerClient.terminate,
-    ),
+    Sub(() => state.persistWorker^, PersistWorkerClient.terminate),
     Sub(
       () => {
         VentureWorkerClient.terminate(state.ventureWorker^);
@@ -125,6 +113,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       state.ventureWorker^ |> VentureWorkerClient.create(~name);
       ReasonReact.Update({...state, selectedVenture: CreatingVenture});
     | VentureWorkerMessage(msg) =>
+      state.persistWorker^ |> PersistWorkerClient.ventureMessage(msg);
       switch (msg, state.selectedVenture) {
       | (UpdateIndex(index), _) =>
         ReasonReact.Update({...state, index: Some(index)})
@@ -167,104 +156,9 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             ),
         })
       | _ => ReasonReact.NoUpdate
-      }
+      };
     | SyncWorkerMessage(Fetched(_eventLogs)) => ReasonReact.NoUpdate
-    /* ReasonReact.SideEffects( */
-    /*   ( */
-    /*     ({send, state}) => */
-    /*       Js.Promise.( */
-    /*         Venture.Cmd.SynchronizeLogs.( */
-    /*           switch (state.ventureState) { */
-    /*           | VentureLoaded(venture) => */
-    /*             venture */
-    /*             |> exec(eventLogs) */
-    /*             |> then_( */
-    /*                  fun */
-    /*                  | Ok(venture) => */
-    /*                    send(UpdateVenture(VentureLoaded(venture))) */
-    /*                    |> resolve */
-    /*                  | Error(venture, {event}, result) => { */
-    /*                      Js.log("An error occured while synchronizing"); */
-    /*                      Js.log("Adding event: "); */
-    /*                      Js.log(Event.encode(event)); */
-    /*                      Js.log2( */
-    /*                        "failed because: ", */
-    /*                        Venture.Validation.resultToString(result), */
-    /*                      ); */
-    /*                      send(UpdateVenture(VentureLoaded(venture))) */
-    /*                      |> resolve; */
-    /*                    }, */
-    /*                ) */
-    /*             |> ignore */
-    /*           | _ => */
-    /*             SyncWorker.Message.Wait */
-    /*             |> SyncWorker.postMessage(state.syncWorker^) */
-    /*           } */
-    /*         ) */
-    /*       ) */
-    /*   ), */
-    /* ) */
     | IncomeWorkerMessage(_msg) => ReasonReact.NoUpdate
-    /* switch (msg) { */
-    /* | NewTransactionsDetected(txs) => */
-    /*   ReasonReact.SideEffects( */
-    /*     ( */
-    /*       ({send, state}) => */
-    /*         Js.Promise.( */
-    /*           Venture.Cmd.SynchronizeWallet.( */
-    /*             switch (state.ventureState) { */
-    /*             | VentureLoaded(venture) => */
-    /*               venture */
-    /*               |> exec(txs) */
-    /*               |> then_( */
-    /*                    fun */
-    /*                    | Ok(venture) => */
-    /*                      send(UpdateVenture(VentureLoaded(venture))) */
-    /*                      |> resolve, */
-    /*                  ) */
-    /*               |> ignore */
-    /*             | _ => */
-    /*               IncomeWorkerMessage.Wait */
-    /*               |> IncomeWorkerClient.postMessage(state.incomeWorker^) */
-    /*             } */
-    /*           ) */
-    /*         ) */
-    /*     ), */
-    /*   ) */
-    /* } */
-    | PersistWorkerMessage(VenturePersisted(id)) =>
-      Js.log("Venture '" ++ VentureId.toString(id) ++ "' persisted");
-      ReasonReact.NoUpdate;
-    /* state.ventureWorker^ |> VentureWorkerClient.create(~name); */
-    /* ReasonReact.UpdateWithSideEffects( */
-    /*   {...state, ventureState: CreatingVenture}, */
-    /*   ( */
-    /*     ({send}) => */
-    /*       Js.Global.setTimeout( */
-    /*         () => */
-    /*           Js.Promise.( */
-    /*             Venture.Cmd.Create.exec( */
-    /*               session, */
-    /*               ~name, */
-    /*               ~listenerState=ViewModel.make(), */
-    /*               ~listener=ViewModel.apply, */
-    /*             ) */
-    /*             |> then_(((_newIndex, venture)) => { */
-    /*                  send(UpdateVenture(VentureLoaded(venture))); */
-    /*                  ReasonReact.Router.push( */
-    /*                    Router.Config.routeToUrl( */
-    /*                      Router.Config.Venture(venture |> Venture.getId), */
-    /*                    ), */
-    /*                  ) */
-    /*                  |> resolve; */
-    /*                }) */
-    /*             |> ignore */
-    /*           ), */
-    /*         1, */
-    /*       ) */
-    /*       |> ignore */
-    /*   ), */
-    /* ); */
     },
   render: ({state: {index, selectedVenture}, send}) =>
     children(~index, ~selectedVenture, ~createVenture=name =>

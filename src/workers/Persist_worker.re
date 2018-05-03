@@ -81,8 +81,24 @@ let persist = (ventureId, eventLog, keys) => {
               ),
          resolve(),
        )
-    |> then_(() => postMessage(VenturePersisted(ventureId)) |> resolve)
   );
+};
+
+let persistVenture = ventureId => {
+  logMessage("Persisting venture '" ++ VentureId.toString(ventureId) ++ "'");
+  Js.Promise.(
+    loadVenture(ventureId)
+    |> then_(eventLog =>
+         eventLog
+         |> determinPartnerKeys(
+              WorkerLocalStorage.getItem("localUserId")
+              |> Js.Option.getExn
+              |> UserId.fromString,
+            )
+         |> persist(ventureId, eventLog)
+       )
+  )
+  |> ignore;
 };
 
 let handleMessage =
@@ -95,21 +111,12 @@ let handleMessage =
         localUserId |> UserId.toString,
       );
     }
-  | PersistVenture(id) => {
-      logMessage("Persisting venture '" ++ VentureId.toString(id) ++ "'");
-      Js.Promise.(
-        loadVenture(id)
-        |> then_(eventLog =>
-             eventLog
-             |> determinPartnerKeys(
-                  WorkerLocalStorage.getItem("localUserId")
-                  |> Js.Option.getExn
-                  |> UserId.fromString,
-                )
-             |> persist(id, eventLog)
-           )
-      )
-      |> ignore;
+  | VentureWorkerMessage(raw) =>
+    switch (raw |> VentureWorkerMessage.decodeReceive) {
+    | VentureLoaded(ventureId, _) => persistVenture(ventureId)
+    | VentureCreated(ventureId, _) => persistVenture(ventureId)
+    | NewEvents(ventureId, _) => persistVenture(ventureId)
+    | UpdateIndex(_) => ()
     };
 
 onMessage(self, msg => handleMessage(msg##data));

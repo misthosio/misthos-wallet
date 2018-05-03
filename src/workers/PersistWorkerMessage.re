@@ -4,10 +4,9 @@ open PrimitiveTypes;
 
 type send =
   | UpdateSession(userId, blockstackItems)
-  | PersistVenture(ventureId);
+  | VentureWorkerMessage(Js.Json.t);
 
-type receive =
-  | VenturePersisted(ventureId);
+type receive = unit;
 
 type encodedReceive = receive;
 

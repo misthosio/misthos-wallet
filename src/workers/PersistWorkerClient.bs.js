@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var PersistWorkerMessage = require("./PersistWorkerMessage.bs.js");
+var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Persist_workerBsJs = require("./Persist_worker.bs.js");
 
 var Config = /* module */[/* decodeReceive */PersistWorkerMessage.decodeReceive];
@@ -24,8 +25,8 @@ function updateSession(userId, worker) {
   return /* () */0;
 }
 
-function persistVenture(ventureId, worker) {
-  worker.postMessage(/* PersistVenture */Block.__(1, [ventureId]));
+function ventureMessage(msg, worker) {
+  worker.postMessage(/* VentureWorkerMessage */Block.__(1, [VentureWorkerMessage.encodeReceive(msg)]));
   return /* () */0;
 }
 
@@ -34,5 +35,5 @@ var make = include[0];
 exports.Config = Config;
 exports.make = make;
 exports.updateSession = updateSession;
-exports.persistVenture = persistVenture;
+exports.ventureMessage = ventureMessage;
 /* include Not a pure module */

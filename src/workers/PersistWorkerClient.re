@@ -16,5 +16,8 @@ let updateSession = (userId, worker) =>
        ),
      );
 
-let persistVenture = (ventureId, worker) =>
-  PersistWorkerMessage.PersistVenture(ventureId) |> postMessage(worker);
+let ventureMessage = (msg, worker) =>
+  PersistWorkerMessage.VentureWorkerMessage(
+    msg |> VentureWorkerMessage.encodeReceive,
+  )
+  |> postMessage(worker);

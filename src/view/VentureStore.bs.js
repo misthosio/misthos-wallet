@@ -119,10 +119,8 @@ function make(currentRoute, session, children) {
                 case 2 : 
                     return /* NoUpdate */0;
                 case 3 : 
-                    console.log("Venture '" + (PrimitiveTypes.VentureId[/* toString */0](action[0][0]) + "' persisted"));
-                    return /* NoUpdate */0;
-                case 4 : 
                     var msg = action[0];
+                    PersistWorkerClient.ventureMessage(msg, state[/* persistWorker */4][0]);
                     var match = state[/* selectedVenture */1];
                     switch (msg.tag | 0) {
                       case 0 : 
@@ -238,12 +236,7 @@ function make(currentRoute, session, children) {
                         /* :: */[
                           /* Sub */[
                             (function () {
-                                state[/* persistWorker */4][0].terminate();
-                                var worker = Curry._1(PersistWorkerClient.make, (function (message) {
-                                        return Curry._1(send, /* PersistWorkerMessage */Block.__(3, [message]));
-                                      }));
-                                state[/* persistWorker */4][0] = worker;
-                                return worker;
+                                return state[/* persistWorker */4][0];
                               }),
                             (function (prim) {
                                 prim.terminate();
@@ -255,7 +248,7 @@ function make(currentRoute, session, children) {
                               (function () {
                                   state[/* ventureWorker */5][0].terminate();
                                   var worker = Curry._1(VentureWorkerClient.make, (function (message) {
-                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(4, [message]));
+                                          return Curry._1(send, /* VentureWorkerMessage */Block.__(3, [message]));
                                         }));
                                   state[/* ventureWorker */5][0] = worker;
                                   return worker;

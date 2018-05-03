@@ -11,6 +11,7 @@ var Blockstack = require("blockstack");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
+var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var EncryptionJs = require("blockstack/lib/encryption.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
@@ -63,25 +64,31 @@ function persist(ventureId, eventLog, keys) {
   var logString = Json.stringify(Curry._1(EventLog.encode, eventLog));
   var summaryString = Json.stringify(Curry._1(EventLog.encodeSummary, Curry._1(EventLog.getSummary, eventLog)));
   return List.fold_left((function (promise, param) {
-                  var pubKey = param[1];
-                  return promise.then((function () {
-                                  return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/log.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, logString)), ( {"encrypt": false} ));
-                                })).then((function () {
-                                return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), summaryString, ( {"encrypt": false} ));
-                              }));
-                }), Promise.resolve(/* () */0), keys).then((function () {
-                return Promise.resolve((postMessage(/* VenturePersisted */[ventureId]), /* () */0));
-              }));
+                var pubKey = param[1];
+                return promise.then((function () {
+                                return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/log.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, logString)), ( {"encrypt": false} ));
+                              })).then((function () {
+                              return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), summaryString, ( {"encrypt": false} ));
+                            }));
+              }), Promise.resolve(/* () */0), keys);
+}
+
+function persistVenture(ventureId) {
+  logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
+  loadVenture(ventureId).then((function (eventLog) {
+          return persist(ventureId, eventLog, Curry._1(determinPartnerKeys(PrimitiveTypes.UserId[/* fromString */1](Js_option.getExn(WorkerLocalStorage.getItem("localUserId")))), eventLog));
+        }));
+  return /* () */0;
 }
 
 function handleMessage(param) {
   if (param.tag) {
-    var id = param[0];
-    logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](id) + "'"));
-    loadVenture(id).then((function (eventLog) {
-            return persist(id, eventLog, Curry._1(determinPartnerKeys(PrimitiveTypes.UserId[/* fromString */1](Js_option.getExn(WorkerLocalStorage.getItem("localUserId")))), eventLog));
-          }));
-    return /* () */0;
+    var match = VentureWorkerMessage.decodeReceive(param[0]);
+    if (match.tag) {
+      return persistVenture(match[0]);
+    } else {
+      return /* () */0;
+    }
   } else {
     logMessage("Updating session in localStorage");
     WorkerLocalStorage.setBlockstackItems(param[1]);
@@ -101,5 +108,6 @@ exports.CouldNotLoadVenture = CouldNotLoadVenture;
 exports.loadVenture = loadVenture;
 exports.determinPartnerKeys = determinPartnerKeys;
 exports.persist = persist;
+exports.persistVenture = persistVenture;
 exports.handleMessage = handleMessage;
 /*  Not a pure module */
