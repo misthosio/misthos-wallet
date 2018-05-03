@@ -139,12 +139,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
               ),
           },
-          (
-            (_) =>
-              ReasonReact.Router.push(
-                Router.Config.routeToUrl(Router.Config.Venture(ventureId)),
-              )
-          ),
+          ((_) => Router.goTo(Router.Config.Venture(ventureId))),
         )
       | (VentureLoaded(ventureId, events), LoadingVenture(loadingId))
           when VentureId.eq(ventureId, loadingId) =>

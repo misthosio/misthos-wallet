@@ -172,7 +172,7 @@ function make(currentRoute, session, children) {
                                       /* ventureWorker */state[/* ventureWorker */5]
                                     ],
                                     (function () {
-                                        return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [ventureId$1])));
+                                        return Router.goTo(/* Venture */Block.__(0, [ventureId$1]));
                                       })
                                   ]);
                       case 3 : 
