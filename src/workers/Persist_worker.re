@@ -12,10 +12,10 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.send} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
   "onmessage";
 
-[@bs.val] external postMessage : Message.receive => unit = "postMessage";
+[@bs.val] external postMessage : Message.outgoing => unit = "postMessage";
 
 open PrimitiveTypes;
 
@@ -112,7 +112,7 @@ let handleMessage =
       );
     }
   | VentureWorkerMessage(raw) =>
-    switch (raw |> VentureWorkerMessage.decodeReceive) {
+    switch (raw |> VentureWorkerMessage.decodeOutgoing) {
     | VentureLoaded(ventureId, _) => persistVenture(ventureId)
     | VentureCreated(ventureId, _) => persistVenture(ventureId)
     | NewEvents(ventureId, _) => persistVenture(ventureId)

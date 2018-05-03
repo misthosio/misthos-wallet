@@ -9,7 +9,7 @@ var Json_encode = require("bs-json/src/Json_encode.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
-function encodeReceive(param) {
+function encodeOutgoing(param) {
   switch (param.tag | 0) {
     case 0 : 
         return Json_encode.object_(/* :: */[
@@ -91,7 +91,7 @@ function encodeReceive(param) {
 
 var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage");
 
-function decodeReceive(raw) {
+function decodeOutgoing(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "NewEvents" : 
@@ -131,7 +131,7 @@ function decodeReceive(raw) {
   }
 }
 
-exports.encodeReceive = encodeReceive;
+exports.encodeOutgoing = encodeOutgoing;
 exports.UnknownMessage = UnknownMessage;
-exports.decodeReceive = decodeReceive;
+exports.decodeOutgoing = decodeOutgoing;
 /* Event Not a pure module */

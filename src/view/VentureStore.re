@@ -10,8 +10,8 @@ type selectedVenture =
 type action =
   | CreateVenture(string)
   | SyncWorkerMessage(SyncWorker.Message.receive)
-  | IncomeWorkerMessage(IncomeWorkerMessage.receive)
-  | VentureWorkerMessage(VentureWorkerMessage.receive);
+  | IncomeWorkerMessage(IncomeWorkerMessage.outgoing)
+  | VentureWorkerMessage(VentureWorkerMessage.outgoing);
 
 type state = {
   index: option(Venture.Index.t),

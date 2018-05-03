@@ -12,18 +12,18 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.send} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
   "onmessage";
 
 [@bs.set]
 external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
 
 [@bs.val]
-external _postMessage : Message.encodedReceive => unit = "postMessage";
+external _postMessage : Message.encodedOutgoing => unit = "postMessage";
 
 open PrimitiveTypes;
 
-let postMessage = msg => msg |> Message.encodeReceive |> _postMessage;
+let postMessage = msg => msg |> Message.encodeOutgoing |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 

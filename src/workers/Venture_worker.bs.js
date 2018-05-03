@@ -18,7 +18,7 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
 function postMessage$1(msg) {
-  postMessage(VentureWorkerMessage.encodeReceive(msg));
+  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
   return /* () */0;
 }
 
@@ -28,7 +28,7 @@ function logMessage(msg) {
 }
 
 function indexUpdated(index) {
-  postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index])));
+  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [index])));
   return /* () */0;
 }
 
@@ -38,7 +38,7 @@ function ventureLoaded(id, events) {
       id,
       msg_001
     ]);
-  postMessage(VentureWorkerMessage.encodeReceive(msg));
+  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
   return /* () */0;
 }
 
@@ -48,7 +48,7 @@ function ventureCreated(id, events) {
       id,
       msg_001
     ]);
-  postMessage(VentureWorkerMessage.encodeReceive(msg));
+  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
   return /* () */0;
 }
 
@@ -58,7 +58,7 @@ function newEvents(id, events) {
       id,
       msg_001
     ]);
-  postMessage(VentureWorkerMessage.encodeReceive(msg));
+  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
   return /* () */0;
 }
 
@@ -82,7 +82,7 @@ function withVenture($staropt$star, $staropt$star$1, f, param) {
                               match = /* tuple */[
                                 match$1[0],
                                 match$1[1].then((function (param) {
-                                        postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [param[0]])));
+                                        postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
                                         return Promise.resolve(param[1]);
                                       }))
                               ];
@@ -154,7 +154,7 @@ function updateSession(items, state) {
                     }
                     if (exit === 1) {
                       Venture.Index[/* load */0](/* () */0).then((function (index) {
-                              return Promise.resolve((postMessage(VentureWorkerMessage.encodeReceive(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                              return Promise.resolve((postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
                             }));
                       return Promise.resolve(/* Some */[/* tuple */[
                                     data,

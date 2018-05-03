@@ -4,7 +4,7 @@ type exposedAddresses = list(string);
 
 type txIds = list(string);
 
-type send =
+type incoming =
   | Wait
   | MonitorAddresses(exposedAddresses, txIds);
 
@@ -13,17 +13,17 @@ let msgType =
   | Wait => "Wait"
   | MonitorAddresses(_, _) => "MonitorAddresses";
 
-type receive =
+type outgoing =
   | NewTransactionsDetected(list(transaction));
 
-type encodedReceive = Js.Json.t;
+type encodedOutgoing = Js.Json.t;
 
-let encodeReceive =
+let encodeOutgoing =
   fun
   | NewTransactionsDetected(transactions) =>
     Json.Encode.list(WalletTypes.encodeTransaction, transactions);
 
-let decodeReceive = raw =>
+let decodeOutgoing = raw =>
   NewTransactionsDetected(
     raw |> Json.Decode.list(WalletTypes.decodeTransaction),
   );

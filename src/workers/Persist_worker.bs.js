@@ -83,7 +83,7 @@ function persistVenture(ventureId) {
 
 function handleMessage(param) {
   if (param.tag) {
-    var match = VentureWorkerMessage.decodeReceive(param[0]);
+    var match = VentureWorkerMessage.decodeOutgoing(param[0]);
     if (match.tag) {
       return persistVenture(match[0]);
     } else {

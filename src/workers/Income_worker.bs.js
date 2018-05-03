@@ -8,7 +8,7 @@ var SmartbitClient = require("../application/wallet/SmartbitClient.bs.js");
 var IncomeWorkerMessage = require("./IncomeWorkerMessage.bs.js");
 
 function postMessage$1(receive) {
-  postMessage(IncomeWorkerMessage.encodeReceive(receive));
+  postMessage(IncomeWorkerMessage.encodeOutgoing(receive));
   return /* () */0;
 }
 
@@ -53,7 +53,7 @@ function scanTransactions(addresses, txIds) {
                                                     return o[/* address */0] === address;
                                                   }), tx[/* outputs */1]);
                                     }))(txs));
-                        return Promise.resolve(List.length(newTransactions) > 0 ? (postMessage(IncomeWorkerMessage.encodeReceive(/* NewTransactionsDetected */[newTransactions])), /* () */0) : 0);
+                        return Promise.resolve(List.length(newTransactions) > 0 ? (postMessage(IncomeWorkerMessage.encodeOutgoing(/* NewTransactionsDetected */[newTransactions])), /* () */0) : 0);
                       }));
                 return /* () */0;
               }), addresses);

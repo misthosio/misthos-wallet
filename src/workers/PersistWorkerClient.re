@@ -18,6 +18,6 @@ let updateSession = (userId, worker) =>
 
 let ventureMessage = (msg, worker) =>
   PersistWorkerMessage.VentureWorkerMessage(
-    msg |> VentureWorkerMessage.encodeReceive,
+    msg |> VentureWorkerMessage.encodeOutgoing,
   )
   |> postMessage(worker);

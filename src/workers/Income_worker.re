@@ -8,12 +8,12 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.send} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
   "onmessage";
 
 [@bs.val] external _postMessage : Js.Json.t => unit = "postMessage";
 
-let postMessage = receive => receive |> Message.encodeReceive |> _postMessage;
+let postMessage = receive => receive |> Message.encodeOutgoing |> _postMessage;
 
 let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
 

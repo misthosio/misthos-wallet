@@ -4,7 +4,7 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
-type send =
+type incoming =
   | UpdateSession(blockstackItems)
   | Create(string)
   | Load(ventureId)
@@ -21,15 +21,15 @@ type send =
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx);
 
-type receive =
+type outgoing =
   | UpdateIndex(Venture.Index.t)
   | VentureLoaded(ventureId, list(Event.t))
   | VentureCreated(ventureId, list(Event.t))
   | NewEvents(ventureId, list(Event.t));
 
-type encodedReceive = Js.Json.t;
+type encodedOutgoing = Js.Json.t;
 
-let encodeReceive =
+let encodeOutgoing =
   fun
   | UpdateIndex(index) =>
     Json.Encode.(
@@ -65,7 +65,7 @@ let encodeReceive =
 
 exception UnknownMessage(Js.Json.t);
 
-let decodeReceive = raw => {
+let decodeOutgoing = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
   | "VentureCreated" =>

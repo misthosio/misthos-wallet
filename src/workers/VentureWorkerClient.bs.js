@@ -10,13 +10,13 @@ var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Venture_workerBsJs = require("./Venture_worker.bs.js");
 
 var Config = /* module */[
-  /* encodeReceive */VentureWorkerMessage.encodeReceive,
+  /* encodeOutgoing */VentureWorkerMessage.encodeOutgoing,
   /* UnknownMessage */VentureWorkerMessage.UnknownMessage,
-  /* decodeReceive */VentureWorkerMessage.decodeReceive
+  /* decodeOutgoing */VentureWorkerMessage.decodeOutgoing
 ];
 
 var include = WebWorker.MakeClient([
-      VentureWorkerMessage.decodeReceive,
+      VentureWorkerMessage.decodeOutgoing,
       (function () {
           return new Venture_workerBsJs();
         })

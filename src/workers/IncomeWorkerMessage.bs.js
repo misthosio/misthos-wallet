@@ -13,15 +13,15 @@ function msgType(param) {
   }
 }
 
-function encodeReceive(param) {
+function encodeOutgoing(param) {
   return Json_encode.list(WalletTypes.encodeTransaction, param[0]);
 }
 
-function decodeReceive(raw) {
+function decodeOutgoing(raw) {
   return /* NewTransactionsDetected */[Json_decode.list(WalletTypes.decodeTransaction, raw)];
 }
 
 exports.msgType = msgType;
-exports.encodeReceive = encodeReceive;
-exports.decodeReceive = decodeReceive;
+exports.encodeOutgoing = encodeOutgoing;
+exports.decodeOutgoing = decodeOutgoing;
 /* Json_encode Not a pure module */

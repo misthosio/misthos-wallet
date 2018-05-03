@@ -8,10 +8,10 @@ var PersistWorkerMessage = require("./PersistWorkerMessage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Persist_workerBsJs = require("./Persist_worker.bs.js");
 
-var Config = /* module */[/* decodeReceive */PersistWorkerMessage.decodeReceive];
+var Config = /* module */[/* decodeOutgoing */PersistWorkerMessage.decodeOutgoing];
 
 var include = WebWorker.MakeClient([
-      PersistWorkerMessage.decodeReceive,
+      PersistWorkerMessage.decodeOutgoing,
       (function () {
           return new Persist_workerBsJs();
         })
@@ -26,7 +26,7 @@ function updateSession(userId, worker) {
 }
 
 function ventureMessage(msg, worker) {
-  worker.postMessage(/* VentureWorkerMessage */Block.__(1, [VentureWorkerMessage.encodeReceive(msg)]));
+  worker.postMessage(/* VentureWorkerMessage */Block.__(1, [VentureWorkerMessage.encodeOutgoing(msg)]));
   return /* () */0;
 }
 
