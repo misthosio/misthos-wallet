@@ -67,6 +67,12 @@ let endorsePayout = (worker, ventureId, ~processId: processId) =>
   worker
   |. postMessage(VentureWorkerMessage.EndorsePayout(ventureId, processId));
 
+let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
+  worker
+  |. postMessage(
+       VentureWorkerMessage.ExposeIncomeAddress(ventureId, accountIdx),
+     );
+
 module Cmd = {
   type t = {
     proposePartner: (~prospectId: userId) => unit,
@@ -81,6 +87,7 @@ module Cmd = {
       ) =>
       unit,
     endorsePayout: (~processId: processId) => unit,
+    exposeIncomeAddress: (~accountIdx: accountIdx) => unit,
   };
   let make = (worker, ventureId) => {
     proposePartner: proposePartner(worker, ventureId),
@@ -89,5 +96,6 @@ module Cmd = {
     endorsePartnerRemoval: endorsePartnerRemoval(worker, ventureId),
     proposePayout: proposePayout(worker, ventureId),
     endorsePayout: endorsePayout(worker, ventureId),
+    exposeIncomeAddress: exposeIncomeAddress(worker, ventureId),
   };
 };

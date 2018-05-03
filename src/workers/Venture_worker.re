@@ -251,6 +251,24 @@ module Handle = {
       )
     );
   };
+  let exposeIncomeAddress = (ventureId, accountIdx) => {
+    logMessage("Handing 'ExposeIncomeAddress'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.ExposeIncomeAddress.(
+          venture
+          |> exec(~accountIdx)
+          |> then_(
+               fun
+               | Ok(_address, venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
 };
 
 let handleMessage =
@@ -274,7 +292,9 @@ let handleMessage =
       fee |> BTC.decode,
     )
   | Message.EndorsePayout(ventureId, processId) =>
-    Handle.endorsePayout(ventureId, processId);
+    Handle.endorsePayout(ventureId, processId)
+  | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
+    Handle.exposeIncomeAddress(ventureId, accountIdx);
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 

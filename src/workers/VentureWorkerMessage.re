@@ -18,7 +18,8 @@ type send =
       list((string, Js.Json.t)),
       Js.Json.t,
     )
-  | EndorsePayout(ventureId, processId);
+  | EndorsePayout(ventureId, processId)
+  | ExposeIncomeAddress(ventureId, accountIdx);
 
 type receive =
   | UpdateIndex(Venture.Index.t)

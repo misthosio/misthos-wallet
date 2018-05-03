@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open WalletTypes;
+
 let text = Utils.text;
 
 type state = {
@@ -59,22 +61,7 @@ let make =
       ReasonReact.SideEffects(
         (
           (_) =>
-            ()
-            /* Js.Promise.( */
-            /*   Cmd.ExposeIncomeAddress.( */
-            /*     state.venture */
-            /*     |> exec(~accountIdx=WalletTypes.AccountIndex.default) */
-            /*     |> then_(result => */
-            /*          ( */
-            /*            switch (result) { */
-            /*            | Ok(_, venture) => updateVenture(venture) */
-            /*            } */
-            /*          ) */
-            /*          |> resolve */
-            /*        ) */
-            /*     |> ignore */
-            /*   ) */
-            /* ) */
+            commands.exposeIncomeAddress(~accountIdx=AccountIndex.default)
         ),
       )
     | ProposePayout(destinations) =>

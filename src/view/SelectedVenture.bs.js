@@ -143,7 +143,7 @@ function make(initialViewModel, session, commands, _) {
                   }
                 } else {
                   return /* SideEffects */Block.__(1, [(function () {
-                                return /* () */0;
+                                return Curry._1(commands[/* exposeIncomeAddress */6], WalletTypes.AccountIndex[/* default */8]);
                               })]);
                 }
               } else {

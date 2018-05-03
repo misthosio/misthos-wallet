@@ -276,6 +276,19 @@ function endorsePayout(ventureId, processId) {
     });
 }
 
+function exposeIncomeAddress(ventureId, accountIdx) {
+  logMessage("Handing 'ExposeIncomeAddress'");
+  var partial_arg = /* Some */[ventureId];
+  return (function (param) {
+      return withVenture(/* None */0, partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */7][/* exec */0], accountIdx, venture).then((function (param) {
+                                  newEvents(ventureId, param[2]);
+                                  return Promise.resolve(param[1]);
+                                }));
+                  }), param);
+    });
+}
+
 var Handle = /* module */[
   /* withVenture */withVenture,
   /* updateSession */updateSession,
@@ -286,7 +299,8 @@ var Handle = /* module */[
   /* proposePartnerRemoval */proposePartnerRemoval,
   /* endorsePartnerRemoval */endorsePartnerRemoval,
   /* proposePayout */proposePayout,
-  /* endorsePayout */endorsePayout
+  /* endorsePayout */endorsePayout,
+  /* exposeIncomeAddress */exposeIncomeAddress
 ];
 
 function handleMessage(param) {
@@ -317,6 +331,8 @@ function handleMessage(param) {
                         }), param[2]), BTC.decode(param[3]));
     case 8 : 
         return endorsePayout(param[0], param[1]);
+    case 9 : 
+        return exposeIncomeAddress(param[0], param[1]);
     
   }
 }

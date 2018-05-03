@@ -92,6 +92,14 @@ function endorsePayout(worker, ventureId, processId) {
   return /* () */0;
 }
 
+function exposeIncomeAddress(worker, ventureId, accountIdx) {
+  worker.postMessage(/* ExposeIncomeAddress */Block.__(9, [
+          ventureId,
+          accountIdx
+        ]));
+  return /* () */0;
+}
+
 function make(worker, ventureId) {
   return /* record */[
           /* proposePartner */(function (param) {
@@ -111,6 +119,9 @@ function make(worker, ventureId) {
             }),
           /* endorsePayout */(function (param) {
               return endorsePayout(worker, ventureId, param);
+            }),
+          /* exposeIncomeAddress */(function (param) {
+              return exposeIncomeAddress(worker, ventureId, param);
             })
         ];
 }
@@ -130,5 +141,6 @@ exports.proposePartnerRemoval = proposePartnerRemoval;
 exports.endorsePartnerRemoval = endorsePartnerRemoval;
 exports.proposePayout = proposePayout;
 exports.endorsePayout = endorsePayout;
+exports.exposeIncomeAddress = exposeIncomeAddress;
 exports.Cmd = Cmd;
 /* include Not a pure module */
