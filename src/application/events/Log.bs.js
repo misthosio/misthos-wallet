@@ -50,7 +50,7 @@ function Make(funarg) {
   var reduce = function (reducer, start, log) {
     return List.fold_left(reducer, start, List.rev(log));
   };
-  var findNewItems = function (others, log) {
+  var findNewItems = function (other, log) {
     var existingHashes = List.rev_map((function (param) {
             return param[/* hash */1];
           }), log);
@@ -64,22 +64,20 @@ function Make(funarg) {
                     }
                   }))(List.rev_map((function (param) {
                       return param[1];
-                    }), List.fold_left((function (found, other) {
-                          return List.fold_left((function (found, item) {
-                                        var hash = item[/* hash */1];
-                                        if (List.mem_assoc(hash, found) || List.mem(hash, existingHashes)) {
-                                          return found;
-                                        } else {
-                                          return /* :: */[
-                                                  /* tuple */[
-                                                    hash,
-                                                    item
-                                                  ],
-                                                  found
-                                                ];
-                                        }
-                                      }), found, List.rev(other));
-                        }), /* [] */0, others)));
+                    }), List.fold_left((function (found, item) {
+                          var hash = item[/* hash */1];
+                          if (List.mem_assoc(hash, found) || List.mem(hash, existingHashes)) {
+                            return found;
+                          } else {
+                            return /* :: */[
+                                    /* tuple */[
+                                      hash,
+                                      item
+                                    ],
+                                    found
+                                  ];
+                          }
+                        }), /* [] */0, List.rev(other))));
   };
   var getSummary = function (log) {
     return /* record */[/* knownItems */List.fold_left((function (items, param) {
@@ -158,6 +156,8 @@ function Make(funarg) {
           List.length,
           log,
           log$1,
+          item,
+          item$1,
           getSummary,
           encodeSummary,
           decodeSummary

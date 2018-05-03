@@ -203,16 +203,7 @@ module SynchronizeLogs = {
   type result =
     | Ok(t, list(Event.t))
     | Error(t, EventLog.item, Validation.result);
-  let exec = (otherLogs, {session, log} as venture) => {
-    let otherLogs =
-      otherLogs
-      |> List.map(encryptedLog =>
-           encryptedLog
-           |> Blockstack.decryptECIES(~privateKey=session.appPrivateKey)
-           |> Json.parseOrRaise
-           |> EventLog.decode
-         );
-    let newItems = log |> EventLog.findNewItems(otherLogs);
+  let exec = (newItems, {session} as venture) => {
     let ({log, state, wallet, watchers}, collector, error) =
       newItems
       |> List.fold_left(

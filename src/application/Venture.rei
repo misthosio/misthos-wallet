@@ -56,7 +56,7 @@ module Cmd: {
     type result =
       | Ok(t, list(Event.t))
       | Error(t, EventLog.item, Validation.result);
-    let exec: (list(Js.Json.t), t) => Js.Promise.t(result);
+    let exec: (list(EventLog.item), t) => Js.Promise.t(result);
   };
   module SynchronizeWallet: {
     type result =

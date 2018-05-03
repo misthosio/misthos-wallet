@@ -19,21 +19,17 @@ let () = {
         |> snd
         |> TestLog.append(keyPair, " the huskies go,")
         |> snd;
-      let otherLog =
+      let other =
         log
         |> TestLog.append(keyPair, " and don't you")
         |> snd
-        |> TestLog.append(keyPair, " eat")
-        |> snd;
-      let anotherLog =
-        log
         |> TestLog.append(keyPair, " eat")
         |> snd
         |> TestLog.append(keyPair, " that yellow snow")
         |> snd;
       let result =
         log
-        |> TestLog.findNewItems([otherLog, anotherLog])
+        |> TestLog.findNewItems(~other)
         |> List.fold_left(
              (state, {event}: TestLog.item) => state ++ event,
              "",

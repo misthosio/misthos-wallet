@@ -23,7 +23,6 @@ var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var Venture__Wallet = require("./Venture__Wallet.bs.js");
 var Venture__Validation = require("./Venture__Validation.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
-var EncryptionJs = require("blockstack/lib/encryption.js");
 
 function logMessage(msg) {
   console.log("[Venture] - " + msg);
@@ -278,12 +277,8 @@ function getPartnerHistoryUrls(param) {
                             }))(param[/* state */3][/* partnerIds */4]))));
 }
 
-function exec(otherLogs, venture) {
+function exec(newItems, venture) {
   var session = venture[/* session */0];
-  var otherLogs$1 = List.map((function (encryptedLog) {
-          return Curry._1(EventLog.decode, Json.parseOrRaise(EncryptionJs.decryptECIES(session[/* appPrivateKey */1], encryptedLog)));
-        }), otherLogs);
-  var newItems = Curry._2(EventLog.findNewItems, otherLogs$1, venture[/* log */2]);
   var match = List.fold_left((function (param, item) {
           var $$event = item[/* event */0];
           var error = param[2];

@@ -61,10 +61,63 @@ let getSummaryFromUser = (ventureId, userId, storagePrefix) =>
        )
   );
 
-let syncEventsFromPartner = (storagePrefix, ventureId, summary, userId) =>
+let getLogFromUser = (ventureId, userId, storagePrefix) =>
+  Js.Promise.(
+    Blockstack.getFileFromUserAndDecrypt(
+      (ventureId |> VentureId.toString) ++ "/" ++ storagePrefix ++ "/log.json",
+      ~username=userId |> UserId.toString,
+    )
+    |> catch(_error => raise(Not_found))
+    |> then_(nullFile =>
+         switch (Js.Nullable.toOption(nullFile)) {
+         | None => raise(Not_found)
+         | Some(raw) => raw |> Json.parseOrRaise |> EventLog.decode |> resolve
+         }
+       )
+  );
+
+let findNewItemsFromPartner = (ventureId, userId, storagePrefix, eventLog) =>
+  Js.Promise.(
+    getLogFromUser(ventureId, userId, storagePrefix)
+    |> then_(other =>
+         (
+           switch (eventLog |> EventLog.findNewItems(~other)) {
+           | [] => ()
+           | items =>
+             postMessage(
+               NewItemsDetected(
+                 ventureId,
+                 items |> List.map(EventLog.encodeItem),
+               ),
+             )
+           }
+         )
+         |> resolve
+       )
+  )
+  |> ignore;
+
+let syncEventsFromPartner =
+    (storagePrefix, ventureId, summary: EventLog.summary, eventLog, userId) =>
   Js.Promise.(
     getSummaryFromUser(ventureId, userId, storagePrefix)
-    |> then_(summary => Js.log2("got summary", summary) |> resolve)
+    |> then_((otherSummary: EventLog.summary) =>
+         (
+           if (otherSummary.knownItems
+               |> List.filter(item =>
+                    summary.knownItems |> List.mem(item) == false
+                  )
+               |> List.length > 0) {
+             findNewItemsFromPartner(
+               ventureId,
+               userId,
+               storagePrefix,
+               eventLog,
+             );
+           }
+         )
+         |> resolve
+       )
     |> catch(_error => resolve())
   )
   |> ignore;
@@ -80,7 +133,12 @@ let syncEventsFromVenture = (ventureId, localUserId, storagePrefix) => {
          let partnerKeys = eventLog |> determinPartnerIds(localUserId);
          partnerKeys
          |> List.iter(
-              syncEventsFromPartner(storagePrefix, ventureId, summary),
+              syncEventsFromPartner(
+                storagePrefix,
+                ventureId,
+                summary,
+                eventLog,
+              ),
             );
          resolve();
        })

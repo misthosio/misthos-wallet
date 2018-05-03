@@ -9,6 +9,7 @@ var Event = require("../application/events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
+var EventLog = require("../application/events/EventLog.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
@@ -318,7 +319,7 @@ function exposeIncomeAddress(ventureId, accountIdx) {
 }
 
 function transactionDetected(ventureId, events) {
-  logMessage("Handing 'ExposeIncomeAddress'");
+  logMessage("Handing 'TransactionDetected'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -328,6 +329,23 @@ function transactionDetected(ventureId, events) {
                                     return Promise.resolve(param[0]);
                                   } else {
                                     return Promise.resolve(venture);
+                                  }
+                                }));
+                  }), param);
+    });
+}
+
+function newItemsDetected(ventureId, items) {
+  logMessage("Handing 'NewItemsDetected'");
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
+  return (function (param) {
+      return withVenture(partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
+                                  if (param.tag) {
+                                    return Promise.resolve(venture);
+                                  } else {
+                                    newEvents(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   }
                                 }));
                   }), param);
@@ -347,7 +365,8 @@ var Handle = /* module */[
   /* proposePayout */proposePayout,
   /* endorsePayout */endorsePayout,
   /* exposeIncomeAddress */exposeIncomeAddress,
-  /* transactionDetected */transactionDetected
+  /* transactionDetected */transactionDetected,
+  /* newItemsDetected */newItemsDetected
 ];
 
 function handleMessage(param) {
@@ -384,6 +403,8 @@ function handleMessage(param) {
         return exposeIncomeAddress(param[0], param[1]);
     case 11 : 
         return transactionDetected(param[0], List.map(Event.IncomeDetected[/* decode */2], param[1]));
+    case 12 : 
+        return newItemsDetected(param[0], List.map(EventLog.decodeItem, param[1]));
     
   }
 }

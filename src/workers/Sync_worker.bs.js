@@ -3,6 +3,7 @@
 
 var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
@@ -63,9 +64,34 @@ function getSummaryFromUser(ventureId, userId, storagePrefix) {
               }));
 }
 
-function syncEventsFromPartner(storagePrefix, ventureId, _, userId) {
-  getSummaryFromUser(ventureId, userId, storagePrefix).then((function (summary) {
-            return Promise.resolve((console.log("got summary", summary), /* () */0));
+function getLogFromUser(ventureId, userId, storagePrefix) {
+  return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (storagePrefix + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).catch((function () {
+                  throw Caml_builtin_exceptions.not_found;
+                })).then((function (nullFile) {
+                if (nullFile == null) {
+                  throw Caml_builtin_exceptions.not_found;
+                } else {
+                  return Promise.resolve(Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
+                }
+              }));
+}
+
+function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
+  getLogFromUser(ventureId, userId, storagePrefix).then((function (other) {
+          var items = Curry._2(EventLog.findNewItems, other, eventLog);
+          return Promise.resolve(items ? (postMessage(/* NewItemsDetected */Block.__(12, [
+                                ventureId,
+                                List.map(EventLog.encodeItem, items)
+                              ])), /* () */0) : /* () */0);
+        }));
+  return /* () */0;
+}
+
+function syncEventsFromPartner(storagePrefix, ventureId, summary, eventLog, userId) {
+  getSummaryFromUser(ventureId, userId, storagePrefix).then((function (otherSummary) {
+            return Promise.resolve(List.length(List.filter((function (item) {
+                                    return List.mem(item, summary[/* knownItems */0]) === false;
+                                  }))(otherSummary[/* knownItems */0])) > 0 ? findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) : 0);
           })).catch((function () {
           return Promise.resolve(/* () */0);
         }));
@@ -78,7 +104,7 @@ function syncEventsFromVenture(ventureId, localUserId, storagePrefix) {
                 var summary = Curry._1(EventLog.getSummary, eventLog);
                 var partnerKeys = Curry._1(determinPartnerIds(localUserId), eventLog);
                 List.iter((function (param) {
-                        return syncEventsFromPartner(storagePrefix, ventureId, summary, param);
+                        return syncEventsFromPartner(storagePrefix, ventureId, summary, eventLog, param);
                       }), partnerKeys);
                 return Promise.resolve(/* () */0);
               }));
@@ -140,6 +166,8 @@ exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
 exports.syncInterval = syncInterval;
 exports.determinPartnerIds = determinPartnerIds;
 exports.getSummaryFromUser = getSummaryFromUser;
+exports.getLogFromUser = getLogFromUser;
+exports.findNewItemsFromPartner = findNewItemsFromPartner;
 exports.syncEventsFromPartner = syncEventsFromPartner;
 exports.syncEventsFromVenture = syncEventsFromVenture;
 exports.findNewEventsForAll = findNewEventsForAll;

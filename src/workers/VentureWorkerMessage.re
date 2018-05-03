@@ -21,7 +21,8 @@ type incoming =
     )
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
-  | TransactionDetected(ventureId, list(Js.Json.t));
+  | TransactionDetected(ventureId, list(Js.Json.t))
+  | NewItemsDetected(ventureId, list(Js.Json.t));
 
 type outgoing =
   | UpdateIndex(Venture.Index.t)

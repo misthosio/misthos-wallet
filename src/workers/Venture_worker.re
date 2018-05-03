@@ -292,7 +292,7 @@ module Handle = {
     );
   };
   let transactionDetected = (ventureId, events) => {
-    logMessage("Handing 'ExposeIncomeAddress'");
+    logMessage("Handing 'TransactionDetected'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.SynchronizeWallet.(
@@ -305,6 +305,25 @@ module Handle = {
                    venture |> resolve;
                  }
                | AlreadyUpToDate => venture |> resolve,
+             )
+        )
+      )
+    );
+  };
+  let newItemsDetected = (ventureId, items) => {
+    logMessage("Handing 'NewItemsDetected'");
+    withVenture(Load(ventureId), venture =>
+      Js.Promise.(
+        Venture.Cmd.SynchronizeLogs.(
+          venture
+          |> exec(items)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 }
+               | Error(_, _, _) => venture |> resolve,
              )
         )
       )
@@ -341,6 +360,11 @@ let handleMessage =
     Handle.transactionDetected(
       ventureId,
       events |> List.map(Event.IncomeDetected.decode),
+    )
+  | NewItemsDetected(ventureId, items) =>
+    Handle.newItemsDetected(
+      ventureId,
+      items |> List.map(EventLog.decodeItem),
     );
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
