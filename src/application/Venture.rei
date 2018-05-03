@@ -9,6 +9,8 @@ module Index: {
   };
   type t = list(item);
   let load: unit => Js.Promise.t(t);
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
 };
 
 module Validation: {
@@ -28,115 +30,83 @@ exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
 
-type listener('a) = (Event.t, 'a) => 'a;
-
-type t('a);
+type t;
 
 let join:
-  (
-    Session.Data.t,
-    ~userId: userId,
-    ~ventureId: ventureId,
-    ~listenerState: 'a,
-    ~listener: listener('a)
-  ) =>
-  Js.Promise.t((Index.t, t('a)));
+  (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
+  Js.Promise.t((Index.t, t));
 
-let load:
-  (
-    Session.Data.t,
-    ~ventureId: ventureId,
-    ~listenerState: 'a,
-    ~listener: listener('a)
-  ) =>
-  Js.Promise.t(t('a));
+let load: (Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
 
-let getId: t('a) => ventureId;
+let getId: t => ventureId;
 
-let getSummary: t('a) => EventLog.summary;
+let getAllEvents: t => list(Event.t);
 
-let getListenerState: t('a) => 'a;
+let getSummary: t => EventLog.summary;
 
-let getPartnerHistoryUrls: t('a) => Js.Promise.t(array(string));
-
-module Wallet: {
-  type balance = {
-    income: BTC.t,
-    spent: BTC.t,
-    reserved: BTC.t,
-  };
-  let balance: t('a) => balance;
-  let getExposedAddresses: t('a) => list(string);
-  let getKnownTransactionIds: t('a) => list(string);
-};
+let getPartnerHistoryUrls: t => Js.Promise.t(array(string));
 
 module Cmd: {
   module Create: {
-    type result('a) = (Index.t, t('a));
+    type result = (Index.t, t);
     let exec:
-      (
-        Session.Data.t,
-        ~name: string,
-        ~listenerState: 'a,
-        ~listener: listener('a)
-      ) =>
-      Js.Promise.t(result('a));
+      (Session.Data.t, ~name: string) => (ventureId, Js.Promise.t(result));
   };
   module SynchronizeLogs: {
-    type result('a) =
-      | Ok(t('a))
-      | Error(t('a), EventLog.item, Validation.result);
-    let exec: (list(Js.Json.t), t('a)) => Js.Promise.t(result('a));
+    type result =
+      | Ok(t, list(Event.t))
+      | Error(t, EventLog.item, Validation.result);
+    let exec: (list(EventLog.item), t) => Js.Promise.t(result);
   };
   module SynchronizeWallet: {
-    type result('a) =
-      | Ok(t('a));
-    let exec:
-      (list(WalletTypes.transaction), t('a)) => Js.Promise.t(result('a));
+    type result =
+      | Ok(t, list(Event.t))
+      | AlreadyUpToDate;
+    let exec: (list(Event.IncomeDetected.t), t) => Js.Promise.t(result);
   };
   module ProposePartner: {
-    type result('a) =
-      | Ok(t('a))
+    type result =
+      | Ok(t, list(Event.t))
       | PartnerAlreadyExists
       | NoUserInfo;
-    let exec: (~prospectId: userId, t('a)) => Js.Promise.t(result('a));
+    let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };
   module EndorsePartner: {
-    type result('a) =
-      | Ok(t('a));
-    let exec: (~processId: processId, t('a)) => Js.Promise.t(result('a));
+    type result =
+      | Ok(t, list(Event.t));
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ProposePartnerRemoval: {
-    type result('a) =
-      | Ok(t('a))
+    type result =
+      | Ok(t, list(Event.t))
       | PartnerDoesNotExist;
-    let exec: (~partnerId: userId, t('a)) => Js.Promise.t(result('a));
+    let exec: (~partnerId: userId, t) => Js.Promise.t(result);
   };
   module EndorsePartnerRemoval: {
-    type result('a) =
-      | Ok(t('a));
-    let exec: (~processId: processId, t('a)) => Js.Promise.t(result('a));
+    type result =
+      | Ok(t, list(Event.t));
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ExposeIncomeAddress: {
-    type result('a) =
-      | Ok(string, t('a));
-    let exec: (~accountIdx: accountIdx, t('a)) => Js.Promise.t(result('a));
+    type result =
+      | Ok(string, t, list(Event.t));
+    let exec: (~accountIdx: accountIdx, t) => Js.Promise.t(result);
   };
   module ProposePayout: {
-    type result('a) =
-      | Ok(t('a));
+    type result =
+      | Ok(t, list(Event.t));
     let exec:
       (
         ~accountIdx: accountIdx,
         ~destinations: list((string, BTC.t)),
         ~fee: BTC.t,
-        t('a)
+        t
       ) =>
-      Js.Promise.t(result('a));
+      Js.Promise.t(result);
   };
   module EndorsePayout: {
-    type result('a) =
-      | Ok(t('a));
-    let exec: (~processId: processId, t('a)) => Js.Promise.t(result('a));
+    type result =
+      | Ok(t, list(Event.t));
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
 };

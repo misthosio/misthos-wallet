@@ -25,9 +25,15 @@ var encode = include[6];
 
 var decode = include[7];
 
-var getSummary = include[8];
+var encodeItem = include[8];
 
-var encodeSummary = include[9];
+var decodeItem = include[9];
+
+var getSummary = include[10];
+
+var encodeSummary = include[11];
+
+var decodeSummary = include[12];
 
 exports.make = make;
 exports.append = append;
@@ -37,6 +43,9 @@ exports.findNewItems = findNewItems;
 exports.length = length;
 exports.encode = encode;
 exports.decode = decode;
+exports.encodeItem = encodeItem;
+exports.decodeItem = decodeItem;
 exports.getSummary = getSummary;
 exports.encodeSummary = encodeSummary;
+exports.decodeSummary = decodeSummary;
 /* include Not a pure module */

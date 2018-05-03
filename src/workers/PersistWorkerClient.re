@@ -7,14 +7,16 @@ module Config = {
 
 include WebWorker.MakeClient(Config);
 
-let updateSession = (userId, worker) =>
+let updateSession = worker =>
   worker
   |. postMessage(
        PersistWorkerMessage.UpdateSession(
-         userId,
          WorkerLocalStorage.readBlockstackItemsFromStorage(),
        ),
      );
 
-let persistVenture = (ventureId, worker) =>
-  PersistWorkerMessage.PersistVenture(ventureId) |> postMessage(worker);
+let ventureMessage = (msg, worker) =>
+  PersistWorkerMessage.VentureWorkerMessage(
+    msg |> VentureWorkerMessage.encodeOutgoing,
+  )
+  |> postMessage(worker);

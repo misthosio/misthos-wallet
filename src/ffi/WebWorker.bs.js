@@ -7,7 +7,7 @@ function MakeClient(Config) {
   var make = function (onMessage) {
     var worker = Curry._1(Config[/* instance */1], /* () */0);
     worker.onmessage = (function (msg) {
-        return Curry._1(onMessage, Curry._1(Config[/* decodeReceive */0], msg.data));
+        return Curry._1(onMessage, Curry._1(Config[/* decodeOutgoing */0], msg.data));
       });
     return worker;
   };

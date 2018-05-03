@@ -9,6 +9,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
+var Spinner = require("./components/Spinner.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var TitleBar = require("./components/TitleBar.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
@@ -68,18 +69,18 @@ function make(selected, index, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var ventureList = $$Array.of_list(List.map((function (param) {
-                          var id = param[/* id */0];
-                          var ids = PrimitiveTypes.VentureId[/* toString */0](id);
-                          var match = Caml_obj.caml_equal(/* Some */[id], selected);
-                          return ReasonReact.element(/* Some */[ids], /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[false], /* None */0, /* Some */[/* `String */[
-                                            -976970511,
-                                            "li"
-                                          ]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
-                                            -976970511,
-                                            ids
-                                          ]], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, Link.make(/* Venture */Block.__(0, [id]), /* Some */[match ? linkSelected : link], /* array */[Utils.text(param[/* name */1])]))], /* None */0, /* None */0, /* array */[]))]));
-                        }), index));
+              var ventureList = index ? $$Array.of_list(List.map((function (param) {
+                            var id = param[/* id */0];
+                            var ids = PrimitiveTypes.VentureId[/* toString */0](id);
+                            var match = Caml_obj.caml_equal(/* Some */[id], selected);
+                            return ReasonReact.element(/* Some */[ids], /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[false], /* None */0, /* Some */[/* `String */[
+                                              -976970511,
+                                              "li"
+                                            ]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
+                                              -976970511,
+                                              ids
+                                            ]], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, Link.make(/* Venture */Block.__(0, [id]), /* Some */[match ? linkSelected : link], /* array */[Utils.text(param[/* name */1])]))], /* None */0, /* None */0, /* array */[]))]));
+                          }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* array */[]));
               Utils.text("ventures:");
               var title$1 = ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* array */[ReasonReact.element(/* Some */["titleBar"], /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* Some */[title], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* array */[Utils.text("My Ventures")]))]));
               return React.createElement("div", undefined, title$1, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));

@@ -2,9 +2,9 @@
 'use strict';
 
 
-function decodeReceive(receive) {
-  return receive;
+function decodeOutgoing(outgoing) {
+  return outgoing;
 }
 
-exports.decodeReceive = decodeReceive;
+exports.decodeOutgoing = decodeOutgoing;
 /* No side effect */

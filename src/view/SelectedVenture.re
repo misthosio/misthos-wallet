@@ -1,14 +1,13 @@
-open Venture;
-
 open PrimitiveTypes;
+
+open WalletTypes;
 
 let text = Utils.text;
 
 type state = {
-  venture: Venture.t(ViewModel.t),
   viewModel: ViewModel.t,
   prospectId: string,
-  balance: Venture.Wallet.balance,
+  balance: ViewModel.Wallet.balance,
 };
 
 type action =
@@ -30,23 +29,21 @@ let component = ReasonReact.reducerComponent("SelectedVenture");
 
 let make =
     (
-      ~venture as initialVenture,
-      ~updateVenture,
+      ~venture as initialViewModel,
       ~session: Session.Data.t,
+      ~commands: VentureWorkerClient.Cmd.t,
       _children,
     ) => {
   ...component,
   initialState: () => {
-    balance: initialVenture |> Venture.Wallet.balance,
-    venture: initialVenture,
-    viewModel: Venture.getListenerState(initialVenture),
+    viewModel: initialViewModel,
     prospectId: "",
+    balance: initialViewModel |> ViewModel.balance,
   },
   willReceiveProps: ({state}) => {
     ...state,
-    balance: initialVenture |> Venture.Wallet.balance,
-    viewModel: initialVenture |> Venture.getListenerState,
-    venture: initialVenture,
+    viewModel: initialViewModel,
+    balance: initialViewModel |> ViewModel.balance,
   },
   reducer: (action, state) =>
     switch (action) {
@@ -56,161 +53,31 @@ let make =
       switch (String.trim(state.prospectId)) {
       | "" => ReasonReact.NoUpdate
       | prospectId =>
-        ReasonReact.SideEffects(
-          (
-            (_) =>
-              Js.Promise.(
-                Cmd.ProposePartner.(
-                  state.venture
-                  |> exec(~prospectId=prospectId |> UserId.fromString)
-                  |> then_(result =>
-                       (
-                         switch (result) {
-                         | Ok(venture) => updateVenture(venture)
-                         | PartnerAlreadyExists =>
-                           Js.log("PartnerAlreadyExists")
-                         | NoUserInfo => Js.log("NoUserInfo")
-                         }
-                       )
-                       |> resolve
-                     )
-                  |> ignore
-                )
-              )
-          ),
-        )
+        commands.proposePartner(~prospectId=prospectId |> UserId.fromString);
+        ReasonReact.Update({...state, prospectId: ""});
       }
     | EndorsePartner(processId) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.EndorsePartner.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      commands.endorsePartner(~processId);
+      ReasonReact.NoUpdate;
     | RemovePartner(partnerId) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.ProposePartnerRemoval.(
-                state.venture
-                |> exec(~partnerId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       | PartnerDoesNotExist => Js.log("PartnerDoesNotExist")
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      commands.proposePartnerRemoval(~partnerId);
+      ReasonReact.NoUpdate;
     | EndorsePartnerRemoval(processId) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.EndorsePartnerRemoval.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      commands.endorsePartnerRemoval(~processId);
+      ReasonReact.NoUpdate;
     | GetIncomeAddress =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.ExposeIncomeAddress.(
-                state.venture
-                |> exec(~accountIdx=WalletTypes.AccountIndex.default)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(_, venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      commands.exposeIncomeAddress(~accountIdx=AccountIndex.default);
+      ReasonReact.NoUpdate;
     | ProposePayout(destinations) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.ProposePayout.(
-                state.venture
-                |> exec(
-                     ~accountIdx=WalletTypes.AccountIndex.default,
-                     ~destinations,
-                     ~fee=BTC.fromSatoshis(5L),
-                   )
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      commands.proposePayout(
+        ~accountIdx=WalletTypes.AccountIndex.default,
+        ~destinations,
+        ~fee=BTC.fromSatoshis(5L),
+      );
+      ReasonReact.NoUpdate;
     | EndorsePayout(processId) =>
-      ReasonReact.SideEffects(
-        (
-          (_) =>
-            Js.Promise.(
-              Cmd.EndorsePayout.(
-                state.venture
-                |> exec(~processId)
-                |> then_(result =>
-                     (
-                       switch (result) {
-                       | Ok(venture) => updateVenture(venture)
-                       }
-                     )
-                     |> resolve
-                   )
-                |> ignore
-              )
-            )
-        ),
-      )
+      commands.endorsePayout(~processId);
+      ReasonReact.NoUpdate;
     },
   render: ({send, state}) => {
     let partners =
@@ -371,7 +238,7 @@ let make =
             "Join Venture url: "
             ++ Location.origin
             ++ Router.Config.routeToUrl(
-                 JoinVenture(initialVenture |> Venture.getId, session.userId),
+                 JoinVenture(initialViewModel.ventureId, session.userId),
                ),
           )
         )

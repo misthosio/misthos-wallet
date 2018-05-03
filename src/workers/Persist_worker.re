@@ -12,29 +12,14 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.send} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
   "onmessage";
 
-[@bs.val] external postMessage : Message.receive => unit = "postMessage";
+[@bs.val] external postMessage : Message.outgoing => unit = "postMessage";
 
 open PrimitiveTypes;
 
 let logMessage = msg => Js.log("[Persist Worker] - " ++ msg);
-
-exception CouldNotLoadVenture;
-
-let loadVenture = ventureId =>
-  Js.Promise.(
-    Blockstack.getFileDecrypted(
-      (ventureId |> VentureId.toString) ++ "/log.json",
-    )
-    |> then_(nullLog =>
-         switch (Js.Nullable.toOption(nullLog)) {
-         | Some(raw) => raw |> Json.parseOrRaise |> EventLog.decode |> resolve
-         | None => raise(CouldNotLoadVenture)
-         }
-       )
-  );
 
 let determinPartnerKeys = localUserId =>
   EventLog.reduce(
@@ -76,40 +61,47 @@ let persist = (ventureId, eventLog, keys) => {
                   ++ "/"
                   ++ UserInfo.storagePrefix(~appPubKey=pubKey)
                   ++ "/summary.json",
-                  summaryString,
+                  summaryString
+                  |> Blockstack.encryptECIES(~publicKey=pubKey)
+                  |> Json.stringify,
                 )
               ),
          resolve(),
        )
-    |> then_(() => postMessage(VenturePersisted(ventureId)) |> resolve)
   );
+};
+
+let persistVenture = ventureId => {
+  logMessage("Persisting venture '" ++ VentureId.toString(ventureId) ++ "'");
+  Js.Promise.(
+    Session.getCurrentSession()
+    |> then_(
+         fun
+         | Session.LoggedIn({userId}) =>
+           WorkerUtils.loadVenture(ventureId)
+           |> then_(eventLog =>
+                eventLog
+                |> determinPartnerKeys(userId)
+                |> persist(ventureId, eventLog)
+              )
+         | _ => resolve(),
+       )
+  )
+  |> ignore;
 };
 
 let handleMessage =
   fun
-  | Message.UpdateSession(localUserId, items) => {
-      logMessage("Updating session in localStorage");
+  | Message.UpdateSession(items) => {
+      logMessage("Handling 'UpdateSession'");
       items |> WorkerLocalStorage.setBlockstackItems;
-      WorkerLocalStorage.setItem(
-        "localUserId",
-        localUserId |> UserId.toString,
-      );
     }
-  | PersistVenture(id) => {
-      logMessage("Persisting venture '" ++ VentureId.toString(id) ++ "'");
-      Js.Promise.(
-        loadVenture(id)
-        |> then_(eventLog =>
-             eventLog
-             |> determinPartnerKeys(
-                  WorkerLocalStorage.getItem("localUserId")
-                  |> Js.Option.getExn
-                  |> UserId.fromString,
-                )
-             |> persist(id, eventLog)
-           )
-      )
-      |> ignore;
+  | VentureWorkerMessage(raw) =>
+    switch (raw |> VentureWorkerMessage.decodeOutgoing) {
+    | VentureLoaded(ventureId, _) => persistVenture(ventureId)
+    | VentureCreated(ventureId, _) => persistVenture(ventureId)
+    | NewEvents(ventureId, _) => persistVenture(ventureId)
+    | UpdateIndex(_) => ()
     };
 
 onMessage(self, msg => handleMessage(msg##data));

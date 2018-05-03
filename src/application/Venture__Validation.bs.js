@@ -36,7 +36,8 @@ function makeState() {
             /* pubKey */""
           ],
           /* custodianKeyChains : [] */0,
-          /* accountKeyChains : [] */0
+          /* accountKeyChains : [] */0,
+          /* detectedIncome : [] */0
         ];
 }
 
@@ -71,7 +72,8 @@ function addProcess(param, state) {
           /* policies */state[/* policies */14],
           /* creatorData */state[/* creatorData */15],
           /* custodianKeyChains */state[/* custodianKeyChains */16],
-          /* accountKeyChains */state[/* accountKeyChains */17]
+          /* accountKeyChains */state[/* accountKeyChains */17],
+          /* detectedIncome */state[/* detectedIncome */18]
         ];
 }
 
@@ -117,7 +119,8 @@ function endorseProcess(param, state) {
           /* policies */state[/* policies */14],
           /* creatorData */state[/* creatorData */15],
           /* custodianKeyChains */state[/* custodianKeyChains */16],
-          /* accountKeyChains */state[/* accountKeyChains */17]
+          /* accountKeyChains */state[/* accountKeyChains */17],
+          /* detectedIncome */state[/* detectedIncome */18]
         ];
 }
 
@@ -143,7 +146,8 @@ function completeProcess(param, state) {
           /* policies */state[/* policies */14],
           /* creatorData */state[/* creatorData */15],
           /* custodianKeyChains */state[/* custodianKeyChains */16],
-          /* accountKeyChains */state[/* accountKeyChains */17]
+          /* accountKeyChains */state[/* accountKeyChains */17],
+          /* detectedIncome */state[/* detectedIncome */18]
         ];
 }
 
@@ -203,7 +207,8 @@ function apply($$event, state) {
                   /* pubKey */match[/* creatorPubKey */3]
                 ],
                 /* custodianKeyChains */state[/* custodianKeyChains */16],
-                /* accountKeyChains */state[/* accountKeyChains */17]
+                /* accountKeyChains */state[/* accountKeyChains */17],
+                /* detectedIncome */state[/* detectedIncome */18]
               ];
     case 1 : 
         var proposal = $$event[0];
@@ -232,7 +237,8 @@ function apply($$event, state) {
                 /* policies */init[/* policies */14],
                 /* creatorData */init[/* creatorData */15],
                 /* custodianKeyChains */init[/* custodianKeyChains */16],
-                /* accountKeyChains */init[/* accountKeyChains */17]
+                /* accountKeyChains */init[/* accountKeyChains */17],
+                /* detectedIncome */init[/* detectedIncome */18]
               ];
     case 3 : 
         var acceptance = $$event[0];
@@ -265,7 +271,8 @@ function apply($$event, state) {
                 /* policies */init$1[/* policies */14],
                 /* creatorData */init$1[/* creatorData */15],
                 /* custodianKeyChains */init$1[/* custodianKeyChains */16],
-                /* accountKeyChains */init$1[/* accountKeyChains */17]
+                /* accountKeyChains */init$1[/* accountKeyChains */17],
+                /* detectedIncome */init$1[/* detectedIncome */18]
               ];
     case 4 : 
         var proposal$1 = $$event[0];
@@ -294,7 +301,8 @@ function apply($$event, state) {
                 /* policies */init$2[/* policies */14],
                 /* creatorData */init$2[/* creatorData */15],
                 /* custodianKeyChains */init$2[/* custodianKeyChains */16],
-                /* accountKeyChains */init$2[/* accountKeyChains */17]
+                /* accountKeyChains */init$2[/* accountKeyChains */17],
+                /* detectedIncome */init$2[/* detectedIncome */18]
               ];
     case 6 : 
         var acceptance$1 = $$event[0];
@@ -324,7 +332,8 @@ function apply($$event, state) {
                 /* policies */init$3[/* policies */14],
                 /* creatorData */init$3[/* creatorData */15],
                 /* custodianKeyChains */init$3[/* custodianKeyChains */16],
-                /* accountKeyChains */init$3[/* accountKeyChains */17]
+                /* accountKeyChains */init$3[/* accountKeyChains */17],
+                /* detectedIncome */init$3[/* detectedIncome */18]
               ];
     case 7 : 
         var proposal$2 = $$event[0];
@@ -353,7 +362,8 @@ function apply($$event, state) {
                 /* policies */init$4[/* policies */14],
                 /* creatorData */init$4[/* creatorData */15],
                 /* custodianKeyChains */init$4[/* custodianKeyChains */16],
-                /* accountKeyChains */init$4[/* accountKeyChains */17]
+                /* accountKeyChains */init$4[/* accountKeyChains */17],
+                /* detectedIncome */init$4[/* detectedIncome */18]
               ];
     case 9 : 
         var acceptance$2 = $$event[0];
@@ -382,7 +392,8 @@ function apply($$event, state) {
                     /* [] */0
                   ],
                   state[/* accountKeyChains */17]
-                ]
+                ],
+                /* detectedIncome */init$5[/* detectedIncome */18]
               ];
     case 10 : 
         var proposal$3 = $$event[0];
@@ -411,7 +422,8 @@ function apply($$event, state) {
                 /* policies */init$6[/* policies */14],
                 /* creatorData */init$6[/* creatorData */15],
                 /* custodianKeyChains */init$6[/* custodianKeyChains */16],
-                /* accountKeyChains */init$6[/* accountKeyChains */17]
+                /* accountKeyChains */init$6[/* accountKeyChains */17],
+                /* detectedIncome */init$6[/* detectedIncome */18]
               ];
     case 12 : 
         var acceptance$3 = $$event[0];
@@ -471,7 +483,8 @@ function apply($$event, state) {
                   ],
                   List.remove_assoc(partnerId, state[/* custodianKeyChains */16])
                 ],
-                /* accountKeyChains */init$7[/* accountKeyChains */17]
+                /* accountKeyChains */init$7[/* accountKeyChains */17],
+                /* detectedIncome */init$7[/* detectedIncome */18]
               ];
     case 13 : 
         var proposal$4 = $$event[0];
@@ -500,7 +513,8 @@ function apply($$event, state) {
                 /* policies */init$8[/* policies */14],
                 /* creatorData */init$8[/* creatorData */15],
                 /* custodianKeyChains */init$8[/* custodianKeyChains */16],
-                /* accountKeyChains */init$8[/* accountKeyChains */17]
+                /* accountKeyChains */init$8[/* accountKeyChains */17],
+                /* detectedIncome */init$8[/* detectedIncome */18]
               ];
     case 16 : 
         var proposal$5 = $$event[0];
@@ -529,15 +543,9 @@ function apply($$event, state) {
                 /* policies */init$9[/* policies */14],
                 /* creatorData */init$9[/* creatorData */15],
                 /* custodianKeyChains */init$9[/* custodianKeyChains */16],
-                /* accountKeyChains */init$9[/* accountKeyChains */17]
+                /* accountKeyChains */init$9[/* accountKeyChains */17],
+                /* detectedIncome */init$9[/* detectedIncome */18]
               ];
-    case 2 : 
-    case 5 : 
-    case 8 : 
-    case 11 : 
-    case 14 : 
-    case 17 : 
-        return endorseProcess($$event[0], state);
     case 15 : 
     case 18 : 
         return completeProcess($$event[0], state);
@@ -600,7 +608,8 @@ function apply($$event, state) {
                   ],
                   List.remove_assoc(partnerId$1, state[/* custodianKeyChains */16])
                 ],
-                /* accountKeyChains */state[/* accountKeyChains */17]
+                /* accountKeyChains */state[/* accountKeyChains */17],
+                /* detectedIncome */state[/* detectedIncome */18]
               ];
     case 24 : 
         var keyChain$1 = $$event[0][/* keyChain */0];
@@ -645,10 +654,42 @@ function apply($$event, state) {
                     ]
                   ],
                   /* [] */0
+                ],
+                /* detectedIncome */state[/* detectedIncome */18]
+              ];
+    case 19 : 
+    case 20 : 
+    case 21 : 
+    case 22 : 
+    case 25 : 
+        return state;
+    case 26 : 
+        return /* record */[
+                /* ventureName */state[/* ventureName */0],
+                /* systemIssuer */state[/* systemIssuer */1],
+                /* systemPubKey */state[/* systemPubKey */2],
+                /* metaPolicy */state[/* metaPolicy */3],
+                /* partnerIds */state[/* partnerIds */4],
+                /* partnerPubKeys */state[/* partnerPubKeys */5],
+                /* partnerData */state[/* partnerData */6],
+                /* partnerRemovalData */state[/* partnerRemovalData */7],
+                /* custodianData */state[/* custodianData */8],
+                /* custodianRemovalData */state[/* custodianRemovalData */9],
+                /* accountCreationData */state[/* accountCreationData */10],
+                /* payoutData */state[/* payoutData */11],
+                /* processes */state[/* processes */12],
+                /* completedProcesses */state[/* completedProcesses */13],
+                /* policies */state[/* policies */14],
+                /* creatorData */state[/* creatorData */15],
+                /* custodianKeyChains */state[/* custodianKeyChains */16],
+                /* accountKeyChains */state[/* accountKeyChains */17],
+                /* detectedIncome : :: */[
+                  $$event[0],
+                  state[/* detectedIncome */18]
                 ]
               ];
     default:
-      return state;
+      return endorseProcess($$event[0], state);
   }
 }
 
@@ -930,6 +971,24 @@ function validateIncomeAddressExposed(param, param$1, _) {
   }
 }
 
+function validateIncomeDetected(param, param$1, _) {
+  var am = param[/* amount */2];
+  var id = param[/* txId */1];
+  var a = param[/* address */0];
+  var match = List.exists((function (param) {
+          if (param[/* address */0] === a && param[/* amount */2].comparedTo(am) === 0) {
+            return id === param[/* txId */1];
+          } else {
+            return false;
+          }
+        }), param$1[/* detectedIncome */18]);
+  if (match) {
+    return /* Ignore */1;
+  } else {
+    return /* Ok */0;
+  }
+}
+
 function validateEvent(param) {
   switch (param.tag | 0) {
     case 0 : 
@@ -1057,13 +1116,14 @@ function validateEvent(param) {
             return validateIncomeAddressExposed(partial_arg$13, param, param$1);
           });
     case 26 : 
-        return (function (_, _$1) {
-            return /* Ok */0;
+        var partial_arg$14 = param[0];
+        return (function (param, param$1) {
+            return validateIncomeDetected(partial_arg$14, param, param$1);
           });
     default:
-      var partial_arg$14 = param[0];
+      var partial_arg$15 = param[0];
       return (function (param, param$1) {
-          return validateEndorsement(partial_arg$14, param, param$1);
+          return validateEndorsement(partial_arg$15, param, param$1);
         });
   }
 }
@@ -1132,6 +1192,7 @@ exports.validateAccountCreationData = validateAccountCreationData;
 exports.validateCustodianKeyChainUpdated = validateCustodianKeyChainUpdated;
 exports.validateAccountKeyChainUpdated = validateAccountKeyChainUpdated;
 exports.validateIncomeAddressExposed = validateIncomeAddressExposed;
+exports.validateIncomeDetected = validateIncomeDetected;
 exports.validateEvent = validateEvent;
 exports.validate = validate;
 /* Event Not a pure module */

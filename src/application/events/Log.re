@@ -40,24 +40,19 @@ module Make = (Event: Encodable) => {
   let appendItem = (item, log) => [item, ...log];
   let reduce = (reducer, start, log) =>
     log |> List.rev |> List.fold_left(reducer, start);
-  let findNewItems = (others, log) => {
+  let findNewItems = (~other, log) => {
     let existingHashes = log |> List.rev_map(({hash}) => hash);
-    others
+    other
+    |> List.rev
     |> List.fold_left(
-         (found, other) =>
-           other
-           |> List.rev
-           |> List.fold_left(
-                (found, {hash} as item) =>
-                  if (found |> List.mem_assoc(hash)) {
-                    found;
-                  } else if (existingHashes |> List.mem(hash)) {
-                    found;
-                  } else {
-                    [(hash, item), ...found];
-                  },
-                found,
-              ),
+         (found, {hash} as item) =>
+           if (found |> List.mem_assoc(hash)) {
+             found;
+           } else if (existingHashes |> List.mem(hash)) {
+             found;
+           } else {
+             [(hash, item), ...found];
+           },
          [],
        )
     |> List.rev_map(((_, item)) => item)
@@ -80,6 +75,8 @@ module Make = (Event: Encodable) => {
     Json.Encode.(
       object_([("knownItems", list(string, summary.knownItems))])
     );
+  let decodeSummary = raw =>
+    Json.Decode.{knownItems: raw |> field("knownItems", list(string))};
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let item = item =>
@@ -93,6 +90,7 @@ module Make = (Event: Encodable) => {
       );
     let log = Json.Encode.(list(item));
   };
+  let encodeItem = Encode.item;
   let encode = Encode.log;
   module Decode = {
     let ecSig = ecSig =>
@@ -106,5 +104,6 @@ module Make = (Event: Encodable) => {
       };
     let log = Json.Decode.(list(item));
   };
+  let decodeItem = Decode.item;
   let decode = Decode.log;
 };

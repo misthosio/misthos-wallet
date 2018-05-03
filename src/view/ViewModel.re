@@ -2,6 +2,8 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+module Wallet = ViewModel__WalletState;
+
 type partner = {userId};
 
 type prospect = {
@@ -23,6 +25,7 @@ type payout = {
 };
 
 type t = {
+  ventureId,
   name: string,
   partners: list(partner),
   prospects: list(prospect),
@@ -31,10 +34,12 @@ type t = {
   partnerPolicy: Policy.t,
   incomeAddresses: list((accountIdx, list(string))),
   payouts: list(payout),
+  wallet: Wallet.t,
 };
 
 let make = () => {
   name: "",
+  ventureId: VentureId.fromString(""),
   partners: [],
   prospects: [],
   removalProspects: [],
@@ -42,12 +47,15 @@ let make = () => {
   partnerPolicy: Policy.unanimous,
   incomeAddresses: [],
   payouts: [],
+  wallet: Wallet.make(),
 };
 
-let apply = (event: Event.t, state) =>
+let apply = (event: Event.t, state) => {
+  let state = {...state, wallet: state.wallet |> Wallet.apply(event)};
   switch (event) {
-  | VentureCreated({ventureName, metaPolicy}) => {
+  | VentureCreated({ventureName, metaPolicy, ventureId}) => {
       ...state,
+      ventureId,
       name: ventureName,
       metaPolicy,
       partnerPolicy: metaPolicy,
@@ -159,6 +167,12 @@ let apply = (event: Event.t, state) =>
     }
   | _ => state
   };
+};
+
+let init = List.fold_left((m, e) => m |> apply(e), make());
+
+let applyAll = (events, model) =>
+  events |> List.fold_left((m, e) => m |> apply(e), model);
 
 let partners = state => state.partners;
 
@@ -172,3 +186,6 @@ let incomeAddresses = state =>
   state.incomeAddresses |> List.assoc(AccountIndex.default);
 
 let payouts = state => state.payouts;
+
+let balance = state =>
+  state.wallet.balance |> List.assoc(AccountIndex.default);

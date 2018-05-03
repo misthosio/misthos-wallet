@@ -1,8 +1,7 @@
 module Config = {
-  include IncomeWorkerMessage;
+  include SyncWorkerMessage;
   type t;
-  [@bs.module] [@bs.new]
-  external instance : unit => t = "./Income_worker.bs.js";
+  [@bs.module] [@bs.new] external instance : unit => t = "./Sync_worker.bs.js";
 };
 
 include WebWorker.MakeClient(Config);
@@ -10,7 +9,7 @@ include WebWorker.MakeClient(Config);
 let updateSession = worker =>
   worker
   |. postMessage(
-       IncomeWorkerMessage.UpdateSession(
+       SyncWorkerMessage.UpdateSession(
          WorkerLocalStorage.readBlockstackItemsFromStorage(),
        ),
      );

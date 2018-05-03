@@ -27,6 +27,10 @@ module Decode = {
   let index = Json.Decode.list(item);
 };
 
+let encode = Encode.index;
+
+let decode = Decode.index;
+
 let indexPath = "index.json";
 
 let persist = index =>

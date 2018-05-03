@@ -1,14 +1,11 @@
 open WorkerLocalStorage;
 
-open PrimitiveTypes;
+type incoming =
+  | UpdateSession(blockstackItems)
+  | VentureWorkerMessage(Js.Json.t);
 
-type send =
-  | UpdateSession(userId, blockstackItems)
-  | PersistVenture(ventureId);
+type outgoing = unit;
 
-type receive =
-  | VenturePersisted(ventureId);
+type encodedOutgoing = outgoing;
 
-type encodedReceive = receive;
-
-let decodeReceive = receive => receive;
+let decodeOutgoing = outgoing => outgoing;

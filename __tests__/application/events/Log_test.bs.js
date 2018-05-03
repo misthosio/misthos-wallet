@@ -27,17 +27,10 @@ var keyPair = BitcoinjsLib.ECPair.makeRandom();
 describe("findNewItems", (function () {
         return Jest.test("preserve order", (function () {
                       var log = Curry._3(TestLog[/* append */1], keyPair, " the huskies go,", Curry._3(TestLog[/* append */1], keyPair, "Watch out where", Curry._1(TestLog[/* make */0], /* () */0))[1])[1];
-                      var otherLog = Curry._3(TestLog[/* append */1], keyPair, " eat", Curry._3(TestLog[/* append */1], keyPair, " and don't you", log)[1])[1];
-                      var anotherLog = Curry._3(TestLog[/* append */1], keyPair, " that yellow snow", Curry._3(TestLog[/* append */1], keyPair, " eat", log)[1])[1];
+                      var other = Curry._3(TestLog[/* append */1], keyPair, " that yellow snow", Curry._3(TestLog[/* append */1], keyPair, " eat", Curry._3(TestLog[/* append */1], keyPair, " and don't you", log)[1])[1])[1];
                       var result = List.fold_left((function (state, param) {
                               return state + param[/* event */0];
-                            }), "", Curry._2(TestLog[/* findNewItems */4], /* :: */[
-                                otherLog,
-                                /* :: */[
-                                  anotherLog,
-                                  /* [] */0
-                                ]
-                              ], log));
+                            }), "", Curry._2(TestLog[/* findNewItems */4], other, log));
                       return Jest.Expect[/* toEqual */12](" and don't you eat that yellow snow", Jest.Expect[/* expect */0](result));
                     }));
       }));

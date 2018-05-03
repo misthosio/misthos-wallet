@@ -2,7 +2,6 @@
 'use strict';
 
 var Home = require("./Home.bs.js");
-var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Drawer = require("./Drawer.bs.js");
 var Layout = require("./Layout.bs.js");
@@ -41,7 +40,7 @@ function make(session, updateSession, _) {
     }
     
   };
-  var body = function (selectedVenture, updateVentureStore, currentRoute) {
+  var body = function (selectedVenture, createVenture, currentRoute) {
     var exit = 0;
     var exit$1 = 0;
     if (typeof session === "number") {
@@ -51,19 +50,11 @@ function make(session, updateSession, _) {
         return ReasonReact.element(/* None */0, /* None */0, PublicHome.make(onSignIn, /* array */[]));
       }
     } else if (typeof currentRoute === "number") {
-      var session$1 = session[0];
       switch (currentRoute) {
         case 0 : 
-            return ReasonReact.element(/* None */0, /* None */0, Home.make(session$1, selectedVenture, (function (param) {
-                              return Curry._1(updateVentureStore, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[param]]));
-                            }), /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, /* array */[]));
         case 1 : 
-            return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make((function (param) {
-                              return Curry._1(updateVentureStore, /* CreateVenture */Block.__(2, [
-                                            session$1,
-                                            param
-                                          ]));
-                            }), /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
         case 2 : 
             exit$1 = 2;
             break;
@@ -91,9 +82,7 @@ function make(session, updateSession, _) {
           return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Waiting for BlockStack session", /* array */[]));
         }
       } else {
-        return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, (function (param) {
-                          return Curry._1(updateVentureStore, /* UpdateVenture */Block.__(1, [/* VentureLoaded */[param]]));
-                        }), /* array */[]));
+        return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, /* array */[]));
       }
     }
     
@@ -110,8 +99,8 @@ function make(session, updateSession, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Curry._1(Router.Container[/* make */1], (function (currentRoute) {
-                                return ReasonReact.element(/* None */0, /* None */0, VentureStore.make(currentRoute, session, (function (index, selectedVenture, updateVentureStore) {
-                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), body(selectedVenture, updateVentureStore, currentRoute)));
+                                return ReasonReact.element(/* None */0, /* None */0, VentureStore.make(currentRoute, session, (function (index, selectedVenture, createVenture) {
+                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), body(selectedVenture, createVenture, currentRoute)));
                                                 })));
                               })));
             }),

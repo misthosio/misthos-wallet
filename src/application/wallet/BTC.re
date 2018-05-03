@@ -1,5 +1,7 @@
 include BigNumber;
 
+type encoded = Js.Json.t;
+
 let fromSatoshis = satoshis =>
   BigNumber.make(`Float(satoshis |> Int64.to_float));
 

@@ -3,6 +3,7 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var ReRoute = require("reason-reroute/src/ReRoute.js");
+var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
 function routeFromUrl(url) {
@@ -83,6 +84,10 @@ var Config = /* module */[
 
 var include = ReRoute.CreateRouter(Config);
 
+function goTo(route) {
+  return ReasonReact.Router[/* push */0](routeToUrl(route));
+}
+
 var Container = include[0];
 
 var Link = include[1];
@@ -90,4 +95,5 @@ var Link = include[1];
 exports.Config = Config;
 exports.Container = Container;
 exports.Link = Link;
+exports.goTo = goTo;
 /* include Not a pure module */

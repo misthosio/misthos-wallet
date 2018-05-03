@@ -185,7 +185,7 @@ let () =
     testPromise("1 of 2 wallet", () =>
       Js.Promise.(
         oneKeyChainWallet^
-        |> Wallet.getExposedAddresses(~includeChangeAddresses=true)
+        |> Wallet.getExposedAddresses
         |> Helpers.getUTXOs
         |> then_(utxos =>
              utxos
@@ -245,7 +245,7 @@ let () =
         |> then_(((wallet, _broadcastResult)) => {
              let expectedFee = BTC.fromSatoshis(5640L);
              wallet
-             |> Wallet.getExposedAddresses(~includeChangeAddresses=true)
+             |> Wallet.getExposedAddresses
              |> Helpers.getUTXOs
              |> then_(utxos =>
                   utxos
