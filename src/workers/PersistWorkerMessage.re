@@ -1,9 +1,7 @@
 open WorkerLocalStorage;
 
-open PrimitiveTypes;
-
 type incoming =
-  | UpdateSession(userId, blockstackItems)
+  | UpdateSession(blockstackItems)
   | VentureWorkerMessage(Js.Json.t);
 
 type outgoing = unit;

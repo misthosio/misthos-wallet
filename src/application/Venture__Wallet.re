@@ -25,7 +25,6 @@ type t = {
     ),
   reservedInputs: list(Network.txInput),
   payoutProcesses: list((ProcessId.t, (accountIdx, PayoutTransaction.t))),
-  knownIncomeTxIds: list(string),
   balance: list((accountIdx, balance)),
 };
 
@@ -39,7 +38,6 @@ let make = () => {
   exposedCoordinates: [],
   reservedInputs: [],
   payoutProcesses: [],
-  knownIncomeTxIds: [],
   balance: [],
 };
 
@@ -141,12 +139,11 @@ let apply = (event: Event.t, state) =>
         ...state.exposedCoordinates |> List.remove_assoc(accountIdx),
       ],
     };
-  | IncomeDetected({txId, amount, address}) =>
+  | IncomeDetected({amount, address}) =>
     let accountIdx = state |> getAccountIndexOfAddress(address);
     let balance = state.balance |> List.assoc(accountIdx);
     {
       ...state,
-      knownIncomeTxIds: [txId, ...state.knownIncomeTxIds],
       balance: [
         (
           accountIdx,
@@ -264,8 +261,6 @@ let apply = (event: Event.t, state) =>
   | _ => state
   };
 
-let getKnownTransactionIds = ({knownIncomeTxIds}) => knownIncomeTxIds;
-
 let exposeNextIncomeAddress =
     (accountIdx, {nextCoordinates, accountKeyChains}) => {
   let coordinates = nextCoordinates |> List.assoc(accountIdx);
@@ -359,21 +354,3 @@ let preparePayoutTx =
 };
 
 let balance = (accountIdx, {balance}) => balance |> List.assoc(accountIdx);
-
-let registerIncomeTransaction = (tx, {knownIncomeTxIds} as state) =>
-  if (knownIncomeTxIds |> List.mem(tx.txId)) {
-    [];
-  } else {
-    let exposedAddresses = state |> getExposedAddresses;
-    tx.outputs
-    |> List.filter(o => exposedAddresses |> List.mem(o.address))
-    |> List.map(out =>
-         IncomeDetected(
-           IncomeDetected.make(
-             ~address=out.address,
-             ~txId=tx.txId,
-             ~amount=out.amount,
-           ),
-         )
-       );
-  };

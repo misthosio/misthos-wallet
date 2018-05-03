@@ -38,14 +38,6 @@ function balance(param) {
   return Venture__Wallet.balance(WalletTypes.AccountIndex[/* default */8], param[/* wallet */4]);
 }
 
-function getExposedAddresses(param) {
-  return Venture__Wallet.getExposedAddresses(/* None */0, param[/* wallet */4]);
-}
-
-function getKnownTransactionIds(param) {
-  return Venture__Wallet.getKnownTransactionIds(param[/* wallet */4]);
-}
-
 function make(session, id) {
   return /* record */[
           /* session */session,
@@ -436,31 +428,21 @@ function exec$1(session, ventureName) {
 
 var Create = /* module */[/* exec */exec$1];
 
-function exec$2(newTransactions, venture) {
-  var wallet = venture[/* wallet */4];
-  var events = List.flatten(List.map((function (tx) {
-              return Venture__Wallet.registerIncomeTransaction(tx, wallet);
-            }), newTransactions));
-  if (events) {
-    return List.fold_left((function (p, $$event) {
-                      return p.then((function (param) {
-                                    return apply(/* Some */[true], /* Some */[param[1]], $$event, param[0]);
-                                  }));
-                    }), Promise.resolve(/* tuple */[
-                        venture,
-                        /* [] */0
-                      ]), events).then(persist).then((function (param) {
-                  return Promise.resolve(/* Ok */[
+function exec$2(incomeEvents, venture) {
+  return List.fold_left((function (p, $$event) {
+                    return p.then((function (param) {
+                                  return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(26, [$$event]), param[0]);
+                                }));
+                  }), Promise.resolve(/* tuple */[
+                      venture,
+                      /* [] */0
+                    ]), incomeEvents).then(persist).then((function (param) {
+                var collector = param[1];
+                return Promise.resolve(collector ? /* Ok */[
                               param[0],
-                              param[1]
-                            ]);
-                }));
-  } else {
-    return Promise.resolve(/* Ok */[
-                venture,
-                /* [] */0
-              ]);
-  }
+                              collector
+                            ] : /* AlreadyUpToDate */0);
+              }));
 }
 
 var SynchronizeWallet = /* module */[/* exec */exec$2];
@@ -607,11 +589,7 @@ var Index = [
 
 var Validation = [Venture__Validation.resultToString];
 
-var Wallet = [
-  balance,
-  getExposedAddresses,
-  getKnownTransactionIds
-];
+var Wallet = [balance];
 
 var Cmd_001 = [exec];
 

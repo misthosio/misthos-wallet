@@ -19,7 +19,8 @@ type incoming =
       BTC.encoded,
     )
   | EndorsePayout(ventureId, processId)
-  | ExposeIncomeAddress(ventureId, accountIdx);
+  | ExposeIncomeAddress(ventureId, accountIdx)
+  | TransactionDetected(ventureId, list(Js.Json.t));
 
 type outgoing =
   | UpdateIndex(Venture.Index.t)

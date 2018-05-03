@@ -6,3 +6,11 @@ module Config = {
 };
 
 include WebWorker.MakeClient(Config);
+
+let updateSession = worker =>
+  worker
+  |. postMessage(
+       IncomeWorkerMessage.UpdateSession(
+         WorkerLocalStorage.readBlockstackItemsFromStorage(),
+       ),
+     );

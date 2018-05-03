@@ -53,8 +53,6 @@ module Wallet: {
     reserved: BTC.t,
   };
   let balance: t => balance;
-  let getExposedAddresses: t => list(string);
-  let getKnownTransactionIds: t => list(string);
 };
 
 module Cmd: {
@@ -71,8 +69,9 @@ module Cmd: {
   };
   module SynchronizeWallet: {
     type result =
-      | Ok(t, list(Event.t));
-    let exec: (list(WalletTypes.transaction), t) => Js.Promise.t(result);
+      | Ok(t, list(Event.t))
+      | AlreadyUpToDate;
+    let exec: (list(Event.IncomeDetected.t), t) => Js.Promise.t(result);
   };
   module ProposePartner: {
     type result =

@@ -17,11 +17,8 @@ var include = WebWorker.MakeClient([
         })
     ]);
 
-function updateSession(userId, worker) {
-  worker.postMessage(/* UpdateSession */Block.__(0, [
-          userId,
-          WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)
-        ]));
+function updateSession(worker) {
+  worker.postMessage(/* UpdateSession */Block.__(0, [WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]));
   return /* () */0;
 }
 

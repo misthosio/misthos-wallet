@@ -4,12 +4,12 @@
 var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Session = require("../application/Session.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var Blockstack = require("blockstack");
+var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var EncryptionJs = require("blockstack/lib/encryption.js");
@@ -21,18 +21,6 @@ var EncryptionJs = require("blockstack/lib/encryption.js");
 function logMessage(msg) {
   console.log("[Persist Worker] - " + msg);
   return /* () */0;
-}
-
-var CouldNotLoadVenture = Caml_exceptions.create("Persist_worker.CouldNotLoadVenture");
-
-function loadVenture(ventureId) {
-  return Blockstack.getFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + "/log.json").then((function (nullLog) {
-                if (nullLog == null) {
-                  throw CouldNotLoadVenture;
-                } else {
-                  return Promise.resolve(Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
-                }
-              }));
 }
 
 function determinPartnerKeys(localUserId) {
@@ -68,15 +56,22 @@ function persist(ventureId, eventLog, keys) {
                 return promise.then((function () {
                                 return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/log.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, logString)), ( {"encrypt": false} ));
                               })).then((function () {
-                              return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), summaryString, ( {"encrypt": false} ));
+                              return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, summaryString)), ( {"encrypt": false} ));
                             }));
               }), Promise.resolve(/* () */0), keys);
 }
 
 function persistVenture(ventureId) {
   logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  loadVenture(ventureId).then((function (eventLog) {
-          return persist(ventureId, eventLog, Curry._1(determinPartnerKeys(PrimitiveTypes.UserId[/* fromString */1](Js_option.getExn(WorkerLocalStorage.getItem("localUserId")))), eventLog));
+  Session.getCurrentSession(/* () */0).then((function (param) {
+          if (typeof param === "number") {
+            return Promise.resolve(/* () */0);
+          } else {
+            var userId = param[0][/* userId */0];
+            return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
+                          return persist(ventureId, eventLog, Curry._1(determinPartnerKeys(userId), eventLog));
+                        }));
+          }
         }));
   return /* () */0;
 }
@@ -90,9 +85,8 @@ function handleMessage(param) {
       return /* () */0;
     }
   } else {
-    logMessage("Updating session in localStorage");
-    WorkerLocalStorage.setBlockstackItems(param[1]);
-    return WorkerLocalStorage.setItem("localUserId", PrimitiveTypes.UserId[/* toString */0](param[0]));
+    logMessage("Handling 'UpdateSession'");
+    return WorkerLocalStorage.setBlockstackItems(param[0]);
   }
 }
 
@@ -104,8 +98,6 @@ var Message = 0;
 
 exports.Message = Message;
 exports.logMessage = logMessage;
-exports.CouldNotLoadVenture = CouldNotLoadVenture;
-exports.loadVenture = loadVenture;
 exports.determinPartnerKeys = determinPartnerKeys;
 exports.persist = persist;
 exports.persistVenture = persistVenture;

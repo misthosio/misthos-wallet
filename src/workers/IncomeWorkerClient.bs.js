@@ -2,14 +2,11 @@
 'use strict';
 
 var WebWorker = require("../ffi/WebWorker.bs.js");
+var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var IncomeWorkerMessage = require("./IncomeWorkerMessage.bs.js");
 var Income_workerBsJs = require("./Income_worker.bs.js");
 
-var Config = /* module */[
-  /* msgType */IncomeWorkerMessage.msgType,
-  /* encodeOutgoing */IncomeWorkerMessage.encodeOutgoing,
-  /* decodeOutgoing */IncomeWorkerMessage.decodeOutgoing
-];
+var Config = /* module */[/* decodeOutgoing */IncomeWorkerMessage.decodeOutgoing];
 
 var include = WebWorker.MakeClient([
       IncomeWorkerMessage.decodeOutgoing,
@@ -18,8 +15,14 @@ var include = WebWorker.MakeClient([
         })
     ]);
 
+function updateSession(worker) {
+  worker.postMessage(/* UpdateSession */[WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]);
+  return /* () */0;
+}
+
 var make = include[0];
 
 exports.Config = Config;
 exports.make = make;
+exports.updateSession = updateSession;
 /* include Not a pure module */

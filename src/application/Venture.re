@@ -24,8 +24,6 @@ type t = {
 module Wallet = {
   include Venture__Wallet;
   let balance = ({wallet}) => balance(AccountIndex.default, wallet);
-  let getExposedAddresses = ({wallet}) => getExposedAddresses(wallet);
-  let getKnownTransactionIds = ({wallet}) => getKnownTransactionIds(wallet);
 };
 
 let make = (session, id) => {
@@ -318,32 +316,35 @@ module Cmd = {
   module SynchronizeLogs = SynchronizeLogs;
   module SynchronizeWallet = {
     type result =
-      | Ok(t, list(Event.t));
-    let exec = (newTransactions: list(transaction), {wallet} as venture) => {
-      let events =
-        newTransactions
-        |> List.map(tx => wallet |> Wallet.registerIncomeTransaction(tx))
-        |> List.flatten;
+      | Ok(t, list(Event.t))
+      | AlreadyUpToDate;
+    let exec = (incomeEvents, venture) =>
       Js.Promise.(
-        switch (events) {
-        | [] => Ok(venture, []) |> resolve
-        | eventsList =>
-          eventsList
-          |> List.fold_left(
-               (p, event) =>
-                 p
-                 |> then_(((v, collector)) =>
-                      v |> apply(~systemEvent=true, ~collector, event)
-                    ),
-               (venture, []) |> resolve,
+        incomeEvents
+        |> List.fold_left(
+             (p, event) =>
+               p
+               |> then_(((v, collector)) =>
+                    v
+                    |> apply(
+                         ~systemEvent=true,
+                         ~collector,
+                         IncomeDetected(event),
+                       )
+                  ),
+             (venture, []) |> resolve,
+           )
+        |> then_(persist)
+        |> then_(((venture, collector)) =>
+             (
+               switch (collector) {
+               | [] => AlreadyUpToDate
+               | _ => Ok(venture, collector)
+               }
              )
-          |> then_(persist)
-          |> then_(((venture, collector)) =>
-               Ok(venture, collector) |> resolve
-             )
-        }
+             |> resolve
+           )
       );
-    };
   };
   module ProposePartner = {
     type result =

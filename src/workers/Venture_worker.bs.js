@@ -5,6 +5,7 @@ var BTC = require("../application/wallet/BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Event = require("../application/events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
@@ -289,6 +290,23 @@ function exposeIncomeAddress(ventureId, accountIdx) {
     });
 }
 
+function transactionDetected(ventureId, events) {
+  logMessage("Handing 'ExposeIncomeAddress'");
+  var partial_arg = /* Some */[ventureId];
+  return (function (param) {
+      return withVenture(/* None */0, partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, venture).then((function (param) {
+                                  if (param) {
+                                    newEvents(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  } else {
+                                    return Promise.resolve(venture);
+                                  }
+                                }));
+                  }), param);
+    });
+}
+
 var Handle = /* module */[
   /* withVenture */withVenture,
   /* updateSession */updateSession,
@@ -300,7 +318,8 @@ var Handle = /* module */[
   /* endorsePartnerRemoval */endorsePartnerRemoval,
   /* proposePayout */proposePayout,
   /* endorsePayout */endorsePayout,
-  /* exposeIncomeAddress */exposeIncomeAddress
+  /* exposeIncomeAddress */exposeIncomeAddress,
+  /* transactionDetected */transactionDetected
 ];
 
 function handleMessage(param) {
@@ -333,6 +352,8 @@ function handleMessage(param) {
         return endorsePayout(param[0], param[1]);
     case 9 : 
         return exposeIncomeAddress(param[0], param[1]);
+    case 10 : 
+        return transactionDetected(param[0], List.map(Event.IncomeDetected[/* decode */2], param[1]));
     
   }
 }

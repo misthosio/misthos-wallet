@@ -3,21 +3,27 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
+var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
+var Event = require("../application/events/Event.bs.js");
+var Utils = require("../utils/Utils.bs.js");
+var Session = require("../application/Session.bs.js");
+var Venture = require("../application/Venture.bs.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var EventLog = require("../application/events/EventLog.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
+var WorkerUtils = require("./WorkerUtils.bs.js");
 var SmartbitClient = require("../application/wallet/SmartbitClient.bs.js");
-var IncomeWorkerMessage = require("./IncomeWorkerMessage.bs.js");
+var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 
-function postMessage$1(receive) {
-  postMessage(IncomeWorkerMessage.encodeOutgoing(receive));
-  return /* () */0;
-}
+(( self.localStorage = require("./fakeLocalStorage").localStorage ));
+
+(( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
 function logMessage(msg) {
   console.log("[Income Worker] - " + msg);
   return /* () */0;
 }
-
-var interval = [/* None */0];
 
 var testnetApiEndpoint = "https://testnet-api.smartbit.com.au/v1/blockchain/address";
 
@@ -43,51 +49,127 @@ function fetchTransactionsForAddress(address) {
               }));
 }
 
-function scanTransactions(addresses, txIds) {
-  return List.iter((function (address) {
-                fetchTransactionsForAddress(address).then((function (txs) {
-                        var newTransactions = List.filter((function (tx) {
-                                  return List.mem(tx[/* txId */0], txIds) === false;
-                                }))(List.filter((function (tx) {
-                                      return List.exists((function (o) {
-                                                    return o[/* address */0] === address;
-                                                  }), tx[/* outputs */1]);
-                                    }))(txs));
-                        return Promise.resolve(List.length(newTransactions) > 0 ? (postMessage(IncomeWorkerMessage.encodeOutgoing(/* NewTransactionsDetected */[newTransactions])), /* () */0) : 0);
-                      }));
-                return /* () */0;
-              }), addresses);
+function scanTransactions(param) {
+  var txIds = param[1];
+  var addresses = param[0];
+  return Promise.all($$Array.of_list(List.map((function (address) {
+                          return fetchTransactionsForAddress(address).then((function (txs) {
+                                        return Promise.resolve(List.filter((function (tx) {
+                                                            return List.mem(tx[/* txId */0], txIds) === false;
+                                                          }))(List.filter((function (tx) {
+                                                                return List.exists((function (o) {
+                                                                              return o[/* address */0] === address;
+                                                                            }), tx[/* outputs */1]);
+                                                              }))(txs)));
+                                      }));
+                        }), addresses))).then((function (txs) {
+                return Promise.resolve(/* tuple */[
+                            addresses,
+                            List.flatten($$Array.to_list(txs))
+                          ]);
+              }));
 }
 
-function handleMsg(msg) {
-  logMessage("Received message '" + (IncomeWorkerMessage.msgType(msg) + "'"));
-  var match = interval[0];
-  if (match) {
-    clearInterval(match[0]);
-  }
-  if (msg) {
-    var txIds = msg[1];
-    var exposedAddresses = msg[0];
-    logMessage("Scanning transactions");
-    scanTransactions(exposedAddresses, txIds);
-    interval[0] = /* Some */[setInterval((function () {
-              logMessage("Scanning transactions");
-              return scanTransactions(exposedAddresses, txIds);
-            }), 10000)];
-    return /* () */0;
-  } else {
-    var match$1 = interval[0];
-    if (match$1) {
-      clearInterval(match$1[0]);
-      return /* () */0;
-    } else {
-      return /* () */0;
-    }
-  }
+var findAddressesAndTxIds = Curry._2(EventLog.reduce, (function (param, param$1) {
+        var $$event = param$1[/* event */0];
+        var txIds = param[1];
+        var addresses = param[0];
+        switch ($$event.tag | 0) {
+          case 25 : 
+              return /* tuple */[
+                      /* :: */[
+                        $$event[0][/* address */1],
+                        addresses
+                      ],
+                      txIds
+                    ];
+          case 26 : 
+              return /* tuple */[
+                      addresses,
+                      /* :: */[
+                        $$event[0][/* txId */1],
+                        txIds
+                      ]
+                    ];
+          default:
+            return /* tuple */[
+                    addresses,
+                    txIds
+                  ];
+        }
+      }), /* tuple */[
+      /* [] */0,
+      /* [] */0
+    ]);
+
+function detectIncomeFromTransaction(addresses) {
+  return (function (param) {
+      return List.map((function (tx) {
+                    return List.map((function (out) {
+                                  return Event.IncomeDetected[/* encode */1](Event.IncomeDetected[/* make */0](out[/* address */0], tx[/* txId */0], out[/* amount */1]));
+                                }), List.filter((function (o) {
+                                        return List.mem(o[/* address */0], addresses);
+                                      }))(tx[/* outputs */1]));
+                  }), param);
+    });
 }
+
+function detectIncomeFromVenture(ventureId) {
+  return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
+                  return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
+                })).then((function (param) {
+                return Promise.resolve((List.map((function (events) {
+                                    postMessage(/* TransactionDetected */Block.__(10, [
+                                            ventureId,
+                                            events
+                                          ]));
+                                    return /* () */0;
+                                  }), detectIncomeFromTransaction(param[0])(param[1])), /* () */0));
+              }));
+}
+
+function detectIncomeFromAll() {
+  logMessage("Detecting income");
+  return Session.getCurrentSession(/* () */0).then((function (param) {
+                if (typeof param === "number") {
+                  return Promise.resolve(/* () */0);
+                } else {
+                  return Venture.Index[/* load */0](/* () */0).then((function (index) {
+                                return List.fold_left((function (p, param) {
+                                              var id = param[/* id */0];
+                                              return p.then((function () {
+                                                            return detectIncomeFromVenture(id);
+                                                          }));
+                                            }), Promise.resolve(/* () */0), index);
+                              }));
+                }
+              }));
+}
+
+function handleMsg(param) {
+  logMessage("Handling 'UpdateSession'");
+  WorkerLocalStorage.setBlockstackItems(param[0]);
+  detectIncomeFromAll(/* () */0);
+  return setInterval((function () {
+                detectIncomeFromAll(/* () */0);
+                return /* () */0;
+              }), 10000);
+}
+
+var intervalId = [/* None */0];
 
 self.onmessage = (function (msg) {
-    return handleMsg(msg.data);
+    var newIntervalid = handleMsg(msg.data);
+    Utils.mapOption((function (id) {
+            if (Caml_obj.caml_notequal(newIntervalid, id)) {
+              clearInterval(id);
+              return /* () */0;
+            } else {
+              return 0;
+            }
+          }), intervalId[0]);
+    intervalId[0] = /* Some */[newIntervalid];
+    return /* () */0;
   });
 
 var Message = 0;
@@ -97,14 +179,17 @@ var tenSecondsInMilliseconds = 10000;
 var syncInterval = 10000;
 
 exports.Message = Message;
-exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
-exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
-exports.syncInterval = syncInterval;
-exports.interval = interval;
 exports.testnetApiEndpoint = testnetApiEndpoint;
 exports.decodeResponse = decodeResponse;
 exports.fetchTransactionsForAddress = fetchTransactionsForAddress;
 exports.scanTransactions = scanTransactions;
+exports.findAddressesAndTxIds = findAddressesAndTxIds;
+exports.detectIncomeFromTransaction = detectIncomeFromTransaction;
+exports.detectIncomeFromVenture = detectIncomeFromVenture;
+exports.detectIncomeFromAll = detectIncomeFromAll;
+exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
+exports.syncInterval = syncInterval;
 exports.handleMsg = handleMsg;
+exports.intervalId = intervalId;
 /*  Not a pure module */

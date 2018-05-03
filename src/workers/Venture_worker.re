@@ -269,6 +269,25 @@ module Handle = {
       )
     );
   };
+  let transactionDetected = (ventureId, events) => {
+    logMessage("Handing 'ExposeIncomeAddress'");
+    withVenture(~ventureId, venture =>
+      Js.Promise.(
+        Venture.Cmd.SynchronizeWallet.(
+          venture
+          |> exec(events)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 }
+               | AlreadyUpToDate => venture |> resolve,
+             )
+        )
+      )
+    );
+  };
 };
 
 let handleMessage =
@@ -294,7 +313,12 @@ let handleMessage =
   | Message.EndorsePayout(ventureId, processId) =>
     Handle.endorsePayout(ventureId, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
-    Handle.exposeIncomeAddress(ventureId, accountIdx);
+    Handle.exposeIncomeAddress(ventureId, accountIdx)
+  | TransactionDetected(ventureId, events) =>
+    Handle.transactionDetected(
+      ventureId,
+      events |> List.map(Event.IncomeDetected.decode),
+    );
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 

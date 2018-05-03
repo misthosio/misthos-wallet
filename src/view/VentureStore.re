@@ -26,14 +26,11 @@ let loadVentureAndIndex =
     (
       session: Session.t,
       currentRoute,
-      {selectedVenture, ventureWorker, persistWorker},
+      {selectedVenture, ventureWorker, persistWorker, incomeWorker},
     ) => {
   ventureWorker^ |> VentureWorkerClient.updateSession;
-  switch (session) {
-  | LoggedIn({userId}) =>
-    persistWorker^ |> PersistWorkerClient.updateSession(userId)
-  | _ => ()
-  };
+  incomeWorker^ |> IncomeWorkerClient.updateSession;
+  persistWorker^ |> PersistWorkerClient.updateSession;
   switch (session, currentRoute: Router.Config.route, selectedVenture) {
   | (LoggedIn(_), Venture(ventureId), VentureLoaded(loadedId, _, _))
       when VentureId.eq(ventureId, loadedId) => selectedVenture
@@ -158,7 +155,9 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       | _ => ReasonReact.NoUpdate
       };
     | SyncWorkerMessage(Fetched(_eventLogs)) => ReasonReact.NoUpdate
-    | IncomeWorkerMessage(_msg) => ReasonReact.NoUpdate
+    | IncomeWorkerMessage(msg) =>
+      state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
+      ReasonReact.NoUpdate;
     },
   render: ({state: {index, selectedVenture}, send}) =>
     children(~index, ~selectedVenture, ~createVenture=name =>

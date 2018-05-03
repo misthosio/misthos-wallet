@@ -16,9 +16,8 @@ function loadVentureAndIndex(session, currentRoute, param) {
   var ventureWorker = param[/* ventureWorker */5];
   var selectedVenture = param[/* selectedVenture */1];
   VentureWorkerClient.updateSession(ventureWorker[0]);
-  if (typeof session !== "number") {
-    PersistWorkerClient.updateSession(session[0][/* userId */0], param[/* persistWorker */4][0]);
-  }
+  IncomeWorkerClient.updateSession(param[/* incomeWorker */3][0]);
+  PersistWorkerClient.updateSession(param[/* persistWorker */4][0]);
   if (typeof session === "number" || typeof currentRoute === "number") {
     return /* None */0;
   } else if (currentRoute.tag) {
@@ -116,7 +115,9 @@ function make(currentRoute, session, children) {
                                 /* ventureWorker */state[/* ventureWorker */5]
                               ]]);
                 case 1 : 
+                    return /* NoUpdate */0;
                 case 2 : 
+                    state[/* ventureWorker */5][0].postMessage(action[0]);
                     return /* NoUpdate */0;
                 case 3 : 
                     var msg = action[0];

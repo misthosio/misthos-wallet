@@ -1,29 +1,14 @@
-open WalletTypes;
+open WorkerLocalStorage;
 
 type exposedAddresses = list(string);
 
 type txIds = list(string);
 
 type incoming =
-  | Wait
-  | MonitorAddresses(exposedAddresses, txIds);
+  | UpdateSession(blockstackItems);
 
-let msgType =
-  fun
-  | Wait => "Wait"
-  | MonitorAddresses(_, _) => "MonitorAddresses";
+type outgoing = VentureWorkerMessage.incoming;
 
-type outgoing =
-  | NewTransactionsDetected(list(transaction));
+type encodedOutgoing = outgoing;
 
-type encodedOutgoing = Js.Json.t;
-
-let encodeOutgoing =
-  fun
-  | NewTransactionsDetected(transactions) =>
-    Json.Encode.list(WalletTypes.encodeTransaction, transactions);
-
-let decodeOutgoing = raw =>
-  NewTransactionsDetected(
-    raw |> Json.Decode.list(WalletTypes.decodeTransaction),
-  );
+let decodeOutgoing = a => a;

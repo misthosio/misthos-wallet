@@ -7,11 +7,10 @@ module Config = {
 
 include WebWorker.MakeClient(Config);
 
-let updateSession = (userId, worker) =>
+let updateSession = worker =>
   worker
   |. postMessage(
        PersistWorkerMessage.UpdateSession(
-         userId,
          WorkerLocalStorage.readBlockstackItemsFromStorage(),
        ),
      );

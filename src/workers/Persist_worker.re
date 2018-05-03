@@ -21,21 +21,6 @@ open PrimitiveTypes;
 
 let logMessage = msg => Js.log("[Persist Worker] - " ++ msg);
 
-exception CouldNotLoadVenture;
-
-let loadVenture = ventureId =>
-  Js.Promise.(
-    Blockstack.getFileDecrypted(
-      (ventureId |> VentureId.toString) ++ "/log.json",
-    )
-    |> then_(nullLog =>
-         switch (Js.Nullable.toOption(nullLog)) {
-         | Some(raw) => raw |> Json.parseOrRaise |> EventLog.decode |> resolve
-         | None => raise(CouldNotLoadVenture)
-         }
-       )
-  );
-
 let determinPartnerKeys = localUserId =>
   EventLog.reduce(
     (keys, {event}) =>
@@ -76,7 +61,9 @@ let persist = (ventureId, eventLog, keys) => {
                   ++ "/"
                   ++ UserInfo.storagePrefix(~appPubKey=pubKey)
                   ++ "/summary.json",
-                  summaryString,
+                  summaryString
+                  |> Blockstack.encryptECIES(~publicKey=pubKey)
+                  |> Json.stringify,
                 )
               ),
          resolve(),
@@ -87,15 +74,17 @@ let persist = (ventureId, eventLog, keys) => {
 let persistVenture = ventureId => {
   logMessage("Persisting venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
-    loadVenture(ventureId)
-    |> then_(eventLog =>
-         eventLog
-         |> determinPartnerKeys(
-              WorkerLocalStorage.getItem("localUserId")
-              |> Js.Option.getExn
-              |> UserId.fromString,
-            )
-         |> persist(ventureId, eventLog)
+    Session.getCurrentSession()
+    |> then_(
+         fun
+         | Session.LoggedIn({userId}) =>
+           WorkerUtils.loadVenture(ventureId)
+           |> then_(eventLog =>
+                eventLog
+                |> determinPartnerKeys(userId)
+                |> persist(ventureId, eventLog)
+              )
+         | _ => resolve(),
        )
   )
   |> ignore;
@@ -103,13 +92,9 @@ let persistVenture = ventureId => {
 
 let handleMessage =
   fun
-  | Message.UpdateSession(localUserId, items) => {
-      logMessage("Updating session in localStorage");
+  | Message.UpdateSession(items) => {
+      logMessage("Handling 'UpdateSession'");
       items |> WorkerLocalStorage.setBlockstackItems;
-      WorkerLocalStorage.setItem(
-        "localUserId",
-        localUserId |> UserId.toString,
-      );
     }
   | VentureWorkerMessage(raw) =>
     switch (raw |> VentureWorkerMessage.decodeOutgoing) {

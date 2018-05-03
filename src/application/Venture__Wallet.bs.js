@@ -3,7 +3,6 @@
 
 var BTC = require("./wallet/BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
-var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Policy = require("./Policy.bs.js");
@@ -24,7 +23,6 @@ function make() {
           /* exposedCoordinates : [] */0,
           /* reservedInputs : [] */0,
           /* payoutProcesses : [] */0,
-          /* knownIncomeTxIds : [] */0,
           /* balance : [] */0
         ];
 }
@@ -83,8 +81,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
                 /* reservedInputs */state[/* reservedInputs */7],
                 /* payoutProcesses */state[/* payoutProcesses */8],
-                /* knownIncomeTxIds */state[/* knownIncomeTxIds */9],
-                /* balance */state[/* balance */10]
+                /* balance */state[/* balance */9]
               ];
     case 9 : 
         var data = $$event[0][/* data */2];
@@ -110,7 +107,6 @@ function apply($$event, state) {
                 ],
                 /* reservedInputs */state[/* reservedInputs */7],
                 /* payoutProcesses */state[/* payoutProcesses */8],
-                /* knownIncomeTxIds */state[/* knownIncomeTxIds */9],
                 /* balance : :: */[
                   /* tuple */[
                     data[/* accountIdx */0],
@@ -120,13 +116,13 @@ function apply($$event, state) {
                       /* reserved */BTC.zero
                     ]
                   ],
-                  state[/* balance */10]
+                  state[/* balance */9]
                 ]
               ];
     case 16 : 
         var match$1 = $$event[0];
         var data$1 = match$1[/* data */4];
-        var balance = List.assoc(data$1[/* accountIdx */0], state[/* balance */10]);
+        var balance = List.assoc(data$1[/* accountIdx */0], state[/* balance */9]);
         var match$2 = data$1[/* changeAddressCoordinates */2];
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
@@ -167,7 +163,6 @@ function apply($$event, state) {
                   ],
                   state[/* payoutProcesses */8]
                 ],
-                /* knownIncomeTxIds */state[/* knownIncomeTxIds */9],
                 /* balance : :: */[
                   /* tuple */[
                     data$1[/* accountIdx */0],
@@ -177,14 +172,14 @@ function apply($$event, state) {
                       /* reserved */balance[/* reserved */2].plus(PayoutTransaction.summary(data$1[/* payoutTx */1])[/* reserved */0])
                     ]
                   ],
-                  List.remove_assoc(data$1[/* accountIdx */0], state[/* balance */10])
+                  List.remove_assoc(data$1[/* accountIdx */0], state[/* balance */9])
                 ]
               ];
     case 20 : 
         var match$3 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */8]);
         var payoutTx = match$3[1];
         var accountIdx = match$3[0];
-        var balance$1 = List.assoc(accountIdx, state[/* balance */10]);
+        var balance$1 = List.assoc(accountIdx, state[/* balance */9]);
         var payoutSummary = PayoutTransaction.summary(payoutTx);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
@@ -206,7 +201,6 @@ function apply($$event, state) {
                                           }), payoutTx[/* usedInputs */1])) === false;
                         }))(state[/* reservedInputs */7]),
                 /* payoutProcesses */state[/* payoutProcesses */8],
-                /* knownIncomeTxIds */state[/* knownIncomeTxIds */9],
                 /* balance : :: */[
                   /* tuple */[
                     accountIdx,
@@ -216,14 +210,14 @@ function apply($$event, state) {
                       /* reserved */balance$1[/* reserved */2].minus(payoutSummary[/* reserved */0])
                     ]
                   ],
-                  List.remove_assoc(accountIdx, state[/* balance */10])
+                  List.remove_assoc(accountIdx, state[/* balance */9])
                 ]
               ];
     case 22 : 
         var match$4 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */8]);
         var payoutTx$1 = match$4[1];
         var accountIdx$1 = match$4[0];
-        var balance$2 = List.assoc(accountIdx$1, state[/* balance */10]);
+        var balance$2 = List.assoc(accountIdx$1, state[/* balance */9]);
         var payoutSummary$1 = PayoutTransaction.summary(payoutTx$1);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
@@ -245,7 +239,6 @@ function apply($$event, state) {
                                           }), payoutTx$1[/* usedInputs */1])) === false;
                         }))(state[/* reservedInputs */7]),
                 /* payoutProcesses */state[/* payoutProcesses */8],
-                /* knownIncomeTxIds */state[/* knownIncomeTxIds */9],
                 /* balance : :: */[
                   /* tuple */[
                     accountIdx$1,
@@ -255,7 +248,7 @@ function apply($$event, state) {
                       /* reserved */balance$2[/* reserved */2].minus(payoutSummary$1[/* reserved */0])
                     ]
                   ],
-                  List.remove_assoc(accountIdx$1, state[/* balance */10])
+                  List.remove_assoc(accountIdx$1, state[/* balance */9])
                 ]
               ];
     case 24 : 
@@ -294,8 +287,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
                 /* reservedInputs */state[/* reservedInputs */7],
                 /* payoutProcesses */state[/* payoutProcesses */8],
-                /* knownIncomeTxIds */state[/* knownIncomeTxIds */9],
-                /* balance */state[/* balance */10]
+                /* balance */state[/* balance */9]
               ];
     case 25 : 
         var coordinates = $$event[0][/* coordinates */0];
@@ -328,13 +320,12 @@ function apply($$event, state) {
                 ],
                 /* reservedInputs */state[/* reservedInputs */7],
                 /* payoutProcesses */state[/* payoutProcesses */8],
-                /* knownIncomeTxIds */state[/* knownIncomeTxIds */9],
-                /* balance */state[/* balance */10]
+                /* balance */state[/* balance */9]
               ];
     case 26 : 
         var match$5 = $$event[0];
         var accountIdx$3 = getAccountIndexOfAddress(match$5[/* address */0], state);
-        var balance$3 = List.assoc(accountIdx$3, state[/* balance */10]);
+        var balance$3 = List.assoc(accountIdx$3, state[/* balance */9]);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
@@ -345,10 +336,6 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
                 /* reservedInputs */state[/* reservedInputs */7],
                 /* payoutProcesses */state[/* payoutProcesses */8],
-                /* knownIncomeTxIds : :: */[
-                  match$5[/* txId */1],
-                  state[/* knownIncomeTxIds */9]
-                ],
                 /* balance : :: */[
                   /* tuple */[
                     accountIdx$3,
@@ -358,16 +345,12 @@ function apply($$event, state) {
                       /* reserved */balance$3[/* reserved */2]
                     ]
                   ],
-                  List.remove_assoc(accountIdx$3, state[/* balance */10])
+                  List.remove_assoc(accountIdx$3, state[/* balance */9])
                 ]
               ];
     default:
       return state;
   }
-}
-
-function getKnownTransactionIds(param) {
-  return param[/* knownIncomeTxIds */9];
 }
 
 function exposeNextIncomeAddress(accountIdx, param) {
@@ -424,29 +407,14 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
 }
 
 function balance(accountIdx, param) {
-  return List.assoc(accountIdx, param[/* balance */10]);
-}
-
-function registerIncomeTransaction(tx, state) {
-  if (List.mem(tx[/* txId */0], state[/* knownIncomeTxIds */9])) {
-    return /* [] */0;
-  } else {
-    var exposedAddresses = getExposedAddresses(/* None */0, state);
-    return List.map((function (out) {
-                  return /* IncomeDetected */Block.__(26, [Event.IncomeDetected[/* make */0](out[/* address */0], tx[/* txId */0], out[/* amount */1])]);
-                }), List.filter((function (o) {
-                        return List.mem(o[/* address */0], exposedAddresses);
-                      }))(tx[/* outputs */1]));
-  }
+  return List.assoc(accountIdx, param[/* balance */9]);
 }
 
 exports.make = make;
 exports.getExposedAddresses = getExposedAddresses;
 exports.getAccountIndexOfAddress = getAccountIndexOfAddress;
 exports.apply = apply;
-exports.getKnownTransactionIds = getKnownTransactionIds;
 exports.exposeNextIncomeAddress = exposeNextIncomeAddress;
 exports.preparePayoutTx = preparePayoutTx;
 exports.balance = balance;
-exports.registerIncomeTransaction = registerIncomeTransaction;
 /* BTC Not a pure module */

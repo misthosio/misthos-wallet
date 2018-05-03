@@ -30,6 +30,7 @@ type state = {
     list((userId, list((accountIdx, list(CustodianKeyChain.public))))),
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+  detectedIncome: list(IncomeDetected.t),
 };
 
 let makeState = () => {
@@ -54,6 +55,7 @@ let makeState = () => {
   },
   custodianKeyChains: [],
   accountKeyChains: [],
+  detectedIncome: [],
 };
 
 let addProcess =
@@ -236,8 +238,11 @@ let apply = (event: Event.t, state) =>
         ),
       ],
     };
+  | IncomeDetected(event) => {
+      ...state,
+      detectedIncome: [event, ...state.detectedIncome],
+    }
   | IncomeAddressExposed(_)
-  | IncomeDetected(_)
   | PayoutSigned(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
@@ -508,6 +513,18 @@ let validateIncomeAddressExposed =
   | Not_found => BadData("Unknown Address")
   };
 
+let validateIncomeDetected =
+    (
+      {address: a, amount: am, txId: id}: IncomeDetected.t,
+      {detectedIncome},
+      _issuerPubKey,
+    ) =>
+  detectedIncome
+  |> List.exists(({address, amount, txId}: IncomeDetected.t) =>
+       address == a && BTC.comparedTo(am, amount) == 0 && id == txId
+     ) ?
+    Ignore : Ok;
+
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
@@ -573,7 +590,7 @@ let validateEvent =
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
-  | IncomeDetected(_) => ((_state, _pubKey) => Ok)
+  | IncomeDetected(event) => validateIncomeDetected(event)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastDuplicate(_) => ((_state, _pubKey) => Ignore)

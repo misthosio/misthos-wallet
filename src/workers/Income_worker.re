@@ -1,3 +1,9 @@
+[%bs.raw {| self.localStorage = require("./fakeLocalStorage").localStorage |}];
+
+[%bs.raw
+  {| self.window = { localStorage: self.localStorage , location: { origin: self.origin } } |}
+];
+
 open WalletTypes;
 
 module Message = IncomeWorkerMessage;
@@ -11,17 +17,9 @@ external onMessage :
   (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
   "onmessage";
 
-[@bs.val] external _postMessage : Js.Json.t => unit = "postMessage";
-
-let postMessage = receive => receive |> Message.encodeOutgoing |> _postMessage;
+[@bs.val] external postMessage : Message.outgoing => unit = "postMessage";
 
 let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
-
-let tenSecondsInMilliseconds = 10000;
-
-let syncInterval = tenSecondsInMilliseconds;
-
-let interval = ref(None);
 
 let testnetApiEndpoint = "https://testnet-api.smartbit.com.au/v1/blockchain/address";
 
@@ -54,57 +52,123 @@ let fetchTransactionsForAddress = address =>
     )
   );
 
-let scanTransactions = (addresses, txIds) =>
-  addresses
-  |> List.iter(address =>
-       Js.Promise.(
+let scanTransactions = ((addresses, txIds)) =>
+  Js.Promise.(
+    addresses
+    |> List.map(address =>
          fetchTransactionsForAddress(address)
-         |> then_(txs => {
-              let newTransactions =
-                txs
-                |> List.filter(tx =>
-                     tx.outputs |> List.exists(o => o.address == address)
-                   )
-                |> List.filter(tx => txIds |> List.mem(tx.txId) == false);
-              (
-                if (newTransactions |> List.length > 0) {
-                  postMessage(
-                    Message.NewTransactionsDetected(newTransactions),
-                  );
-                }
-              )
-              |> resolve;
-            })
+         |> then_(txs =>
+              txs
+              |> List.filter(tx =>
+                   tx.outputs |> List.exists(o => o.address == address)
+                 )
+              |> List.filter(tx => txIds |> List.mem(tx.txId) == false)
+              |> resolve
+            )
        )
-       |> ignore
-     );
+    |> Array.of_list
+    |> all
+    |> then_(txs =>
+         (addresses, txs |> Array.to_list |> List.flatten) |> resolve
+       )
+  );
 
-let handleMsg = msg => {
-  logMessage("Received message '" ++ Message.msgType(msg) ++ "'");
-  switch (interval^) {
-  | Some(id) => Js.Global.clearInterval(id)
-  | None => ()
-  };
-  switch (msg) {
-  | MonitorAddresses(exposedAddresses, txIds) =>
-    logMessage("Scanning transactions");
-    scanTransactions(exposedAddresses, txIds);
-    interval :=
-      Some(
-        Js.Global.setInterval(
-          () => {
-            logMessage("Scanning transactions");
-            scanTransactions(exposedAddresses, txIds);
-          },
-          syncInterval,
-        ),
-      );
-  | Wait =>
-    switch (interval^) {
-    | Some(id) => Js.Global.clearInterval(id)
-    | None => ()
-    }
-  };
+let findAddressesAndTxIds =
+  EventLog.reduce(
+    ((addresses, txIds), {event}: EventLog.item) =>
+      switch (event) {
+      | Event.IncomeDetected({txId}) => (addresses, [txId, ...txIds])
+      | Event.IncomeAddressExposed({address}) => (
+          [address, ...addresses],
+          txIds,
+        )
+      | _ => (addresses, txIds)
+      },
+    ([], []),
+  );
+
+let detectIncomeFromTransaction = addresses =>
+  List.map(tx =>
+    tx.outputs
+    |> List.filter(o => addresses |> List.mem(o.address))
+    |> List.map(out =>
+         Event.IncomeDetected.make(
+           ~address=out.address,
+           ~txId=tx.txId,
+           ~amount=out.amount,
+         )
+         |> Event.IncomeDetected.encode
+       )
+  );
+
+let detectIncomeFromVenture = ventureId =>
+  Js.Promise.(
+    WorkerUtils.loadVenture(ventureId)
+    |> then_(eventLog =>
+         eventLog |> findAddressesAndTxIds |> scanTransactions
+       )
+    |> then_(((addresses, transactions)) =>
+         transactions
+         |> detectIncomeFromTransaction(addresses)
+         |> List.map(events =>
+              postMessage(TransactionDetected(ventureId, events))
+            )
+         |> ignore
+         |> resolve
+       )
+  );
+
+/* |> then_(transactions => transactions |> detectIncome) */
+let detectIncomeFromAll = () => {
+  logMessage("Detecting income");
+  Js.Promise.(
+    Session.getCurrentSession()
+    |> then_(
+         fun
+         | Session.LoggedIn(_data) =>
+           Venture.Index.load()
+           |> then_(index =>
+                index
+                |> List.fold_left(
+                     (p, {id}: Venture.Index.item) =>
+                       p |> then_(() => detectIncomeFromVenture(id)),
+                     resolve(),
+                   )
+              )
+         | _ => resolve(),
+       )
+  );
 };
 
-onMessage(self, msg => handleMsg(msg##data));
+let tenSecondsInMilliseconds = 10000;
+
+let syncInterval = tenSecondsInMilliseconds;
+
+let handleMsg =
+  fun
+  | Message.UpdateSession(items) => {
+      logMessage("Handling 'UpdateSession'");
+      items |> WorkerLocalStorage.setBlockstackItems;
+      detectIncomeFromAll() |> ignore;
+      Js.Global.setInterval(
+        () => detectIncomeFromAll() |> ignore,
+        syncInterval,
+      );
+    };
+
+let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
+
+onMessage(
+  self,
+  msg => {
+    let newIntervalid = handleMsg(msg##data);
+    intervalId^
+    |> Utils.mapOption(id =>
+         if (newIntervalid != id) {
+           Js.Global.clearInterval(id);
+         }
+       )
+    |> ignore;
+    intervalId := Some(newIntervalid);
+  },
+);
