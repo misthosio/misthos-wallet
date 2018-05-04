@@ -13,6 +13,7 @@ var Crypto = require("crypto");
 var Network = require("../../src/application/wallet/Network.bs.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
@@ -88,6 +89,10 @@ function custodianEndorsed(supporter, param) {
 
 var custodianAccepted = Event.Custodian[/* Accepted */4][/* fromProposal */0];
 
+function custodianRemovalProposed(custodianApprovalProcess, supporterSession, toBeRemoved) {
+  return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(custodianApprovalProcess, supporterSession[/* userId */0], toBeRemoved[/* userId */0], WalletTypes.AccountIndex[/* default */8], Policy.unanimousMinusOne));
+}
+
 var Event$1 = /* module */[
   /* createVenture */createVenture,
   /* partnerProposed */partnerProposed,
@@ -100,7 +105,8 @@ var Event$1 = /* module */[
   /* accountCreationAccepted */accountCreationAccepted,
   /* custodianProposed */custodianProposed,
   /* custodianEndorsed */custodianEndorsed,
-  /* custodianAccepted */custodianAccepted
+  /* custodianAccepted */custodianAccepted,
+  /* custodianRemovalProposed */custodianRemovalProposed
 ];
 
 function reduce(f, s, param) {
@@ -281,6 +287,30 @@ function withCustodianAccepted(proposal) {
     });
 }
 
+function withCustodian(user, supporters, log) {
+  if (supporters) {
+    var log$1 = withCustodianProposed(supporters[0], user, log);
+    var proposal = Event.getCustodianProposedExn(lastEvent(log$1));
+    return withCustodianAccepted(proposal)(List.fold_left((function (log, supporter) {
+                      return withCustodianEndorsed(supporter, proposal)(log);
+                    }), log$1, supporters[1]));
+  } else {
+    return Js_exn.raiseError("withPartner");
+  }
+}
+
+function withCustodianRemovalProposed(supporter, toBeRemoved, l) {
+  var custodianApprovalProcess = Js_option.getExn(Curry._3(EventLog.reduce, (function (res, param) {
+              var $$event = param[/* event */0];
+              if ($$event.tag === 12) {
+                return /* Some */[$$event[0][/* processId */0]];
+              } else {
+                return res;
+              }
+            }), /* None */0, l[/* log */2]));
+  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianRemovalProposed */Block.__(13, [custodianRemovalProposed(custodianApprovalProcess, supporter, toBeRemoved)]), l);
+}
+
 var Log = /* module */[
   /* reduce */reduce,
   /* systemIssuer */systemIssuer,
@@ -303,7 +333,9 @@ var Log = /* module */[
   /* withAccountCreationAccepted */withAccountCreationAccepted,
   /* withCustodianProposed */withCustodianProposed,
   /* withCustodianEndorsed */withCustodianEndorsed,
-  /* withCustodianAccepted */withCustodianAccepted
+  /* withCustodianAccepted */withCustodianAccepted,
+  /* withCustodian */withCustodian,
+  /* withCustodianRemovalProposed */withCustodianRemovalProposed
 ];
 
 var AppEvent = 0;

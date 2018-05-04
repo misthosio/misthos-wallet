@@ -504,7 +504,7 @@ function exec$5(partnerId, venture) {
     return Promise.resolve(/* PartnerDoesNotExist */0);
   } else {
     var custodianProcess = Venture__State.custodianProcessForPartner(partnerId, state);
-    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(/* Some */[custodianProcess], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture).then((function (param) {
+    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(custodianProcess, session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture).then((function (param) {
                       return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */5][/* processName */1], state)), param[0]);
                     })).then(persist).then((function (param) {
                   return Promise.resolve(/* Ok */[

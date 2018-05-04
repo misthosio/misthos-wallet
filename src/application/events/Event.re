@@ -440,10 +440,16 @@ let makeCustodianProposed =
   );
 
 let makeCustodianRemovalProposed =
-    (~dependsOn, ~supporterId, ~custodianId, ~accountIdx, ~policy) =>
+    (
+      ~custodianApprovalProcess,
+      ~supporterId,
+      ~custodianId,
+      ~accountIdx,
+      ~policy,
+    ) =>
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOn,
+      ~dependsOn=Some(custodianApprovalProcess),
       ~supporterId,
       ~policy,
       Custodian.Removal.Data.{custodianId, accountIdx},
@@ -714,6 +720,13 @@ let getPartnerRemovalProposedExn = event =>
   | PartnerRemovalProposed(unwrapped) => unwrapped
   | _ => %assert
          "getPartnerRemovalProposedExn"
+  };
+
+let getCustodianRemovalProposedExn = event =>
+  switch (event) {
+  | CustodianRemovalProposed(unwrapped) => unwrapped
+  | _ => %assert
+         "getCustodianRemovalProposedExn"
   };
 
 let getVentureCreatedExn = event =>

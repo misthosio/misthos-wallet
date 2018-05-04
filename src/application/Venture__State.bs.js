@@ -110,6 +110,20 @@ function apply($$event, state) {
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
                 /* completedPartnerRemovalProcesses */state[/* completedPartnerRemovalProcesses */7]
               ];
+    case 3 : 
+        return /* record */[
+                /* ventureName */state[/* ventureName */0],
+                /* systemIssuer */state[/* systemIssuer */1],
+                /* policies */state[/* policies */2],
+                /* partnerIds : :: */[
+                  $$event[0][/* data */2][/* id */1],
+                  state[/* partnerIds */3]
+                ],
+                /* custodianProcesses */state[/* custodianProcesses */4],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
+                /* completedPartnerRemovalProcesses */state[/* completedPartnerRemovalProcesses */7]
+              ];
     case 4 : 
         var match$1 = $$event[0];
         return /* record */[
@@ -130,17 +144,21 @@ function apply($$event, state) {
               ];
     case 6 : 
         var match$2 = $$event[0];
+        var id = match$2[/* data */2][/* id */0];
+        var partial_arg = PrimitiveTypes.UserId[/* neq */6];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds */state[/* partnerIds */3],
+                /* partnerIds */List.filter((function (param) {
+                          return partial_arg(id, param);
+                        }))(state[/* partnerIds */3]),
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
                 /* completedPartnerRemovalProcesses : :: */[
                   /* tuple */[
-                    match$2[/* data */2][/* id */0],
+                    id,
                     match$2[/* processId */0]
                   ],
                   state[/* completedPartnerRemovalProcesses */7]

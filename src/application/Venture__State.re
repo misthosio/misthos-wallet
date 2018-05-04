@@ -77,6 +77,10 @@ let apply = (event, state) =>
            |> List.map(n => (n, metaPolicy)),
       ],
     }
+  | PartnerAccepted({data: {id}}) => {
+      ...state,
+      partnerIds: [id, ...state.partnerIds],
+    }
   | CustodianProposed({processId, data: {partnerApprovalProcess, partnerId}}) => {
       ...state,
       custodianProcesses: [
@@ -100,6 +104,7 @@ let apply = (event, state) =>
     }
   | PartnerRemovalAccepted({processId, data: {id}}) => {
       ...state,
+      partnerIds: state.partnerIds |> List.filter(UserId.neq(id)),
       completedPartnerRemovalProcesses: [
         (id, processId),
         ...state.completedPartnerRemovalProcesses,

@@ -464,7 +464,7 @@ module Cmd = {
           venture
           |> apply(
                Event.makeCustodianRemovalProposed(
-                 ~dependsOn=Some(custodianProcess),
+                 ~custodianApprovalProcess=custodianProcess,
                  ~supporterId=session.userId,
                  ~custodianId=partnerId,
                  ~accountIdx=AccountIndex.default,

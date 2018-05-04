@@ -763,8 +763,8 @@ function makeCustodianProposed(partnerApprovalProcess, supporterId, partnerId, a
                 ])]);
 }
 
-function makeCustodianRemovalProposed(dependsOn, supporterId, custodianId, accountIdx, policy) {
-  return /* CustodianRemovalProposed */Block.__(13, [Curry._4(Proposed$4[/* make */0], /* Some */[dependsOn], supporterId, policy, /* record */[
+function makeCustodianRemovalProposed(custodianApprovalProcess, supporterId, custodianId, accountIdx, policy) {
+  return /* CustodianRemovalProposed */Block.__(13, [Curry._4(Proposed$4[/* make */0], /* Some */[/* Some */[custodianApprovalProcess]], supporterId, policy, /* record */[
                   /* custodianId */custodianId,
                   /* accountIdx */accountIdx
                 ])]);
@@ -1105,6 +1105,14 @@ function getPartnerRemovalProposedExn($$event) {
   }
 }
 
+function getCustodianRemovalProposedExn($$event) {
+  if ($$event.tag === 13) {
+    return $$event[0];
+  } else {
+    return Js_exn.raiseError("getCustodianRemovalProposedExn");
+  }
+}
+
 function getVentureCreatedExn($$event) {
   if ($$event.tag) {
     return Js_exn.raiseError("getVentureCreatedExn");
@@ -1157,5 +1165,6 @@ exports.getPartnerProposedExn = getPartnerProposedExn;
 exports.getPartnerRemovalAcceptedExn = getPartnerRemovalAcceptedExn;
 exports.getPartnerRemovalEndorsedExn = getPartnerRemovalEndorsedExn;
 exports.getPartnerRemovalProposedExn = getPartnerRemovalProposedExn;
+exports.getCustodianRemovalProposedExn = getCustodianRemovalProposedExn;
 exports.getVentureCreatedExn = getVentureCreatedExn;
 /* include Not a pure module */

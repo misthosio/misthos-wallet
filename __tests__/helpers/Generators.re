@@ -116,6 +116,20 @@ module Event = {
     AppEvent.makeCustodianEndorsed(~processId, ~supporterId=supporter.userId)
     |> AppEvent.getCustodianEndorsedExn;
   let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
+  let custodianRemovalProposed =
+      (
+        ~custodianApprovalProcess,
+        supporterSession: Session.Data.t,
+        toBeRemoved: Session.Data.t,
+      ) =>
+    AppEvent.makeCustodianRemovalProposed(
+      ~custodianApprovalProcess,
+      ~supporterId=supporterSession.userId,
+      ~custodianId=toBeRemoved.userId,
+      ~accountIdx=AccountIndex.default,
+      ~policy=Policy.unanimousMinusOne,
+    )
+    |> AppEvent.getCustodianRemovalProposedExn;
 };
 
 module Log = {
@@ -268,4 +282,45 @@ module Log = {
     );
   let withCustodianAccepted = proposal =>
     appendSystemEvent(CustodianAccepted(Event.custodianAccepted(proposal)));
+  let withCustodian = (user, ~supporters, log) =>
+    switch (supporters) {
+    | [first, ...rest] =>
+      let log =
+        log |> withCustodianProposed(~supporter=first, ~custodian=user);
+      let proposal = log |> lastEvent |> AppEvent.getCustodianProposedExn;
+      rest
+      |> List.fold_left(
+           (log, supporter) =>
+             log |> withCustodianEndorsed(supporter, proposal),
+           log,
+         )
+      |> withCustodianAccepted(proposal);
+    | _ => %assert
+           "withPartner"
+    };
+  let withCustodianRemovalProposed =
+      (~supporter: Session.Data.t, ~toBeRemoved, {log} as l) => {
+    let custodianApprovalProcess =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | CustodianAccepted({processId}) => Some(processId)
+             | _ => res
+             },
+           None,
+         )
+      |> Js.Option.getExn;
+    l
+    |> appendEvent(
+         supporter.issuerKeyPair,
+         CustodianRemovalProposed(
+           Event.custodianRemovalProposed(
+             ~custodianApprovalProcess,
+             supporter,
+             toBeRemoved,
+           ),
+         ),
+       );
+  };
 };
