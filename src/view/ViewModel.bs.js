@@ -8,7 +8,7 @@ var Policy = require("../application/Policy.bs.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../application/wallet/AccountKeyChain.bs.js");
-var ViewModel__WalletState = require("../ViewModel__WalletState.bs.js");
+var ViewModel__WalletState = require("./ViewModel__WalletState.bs.js");
 
 function make() {
   return /* record */[
