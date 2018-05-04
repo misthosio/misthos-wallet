@@ -39,7 +39,7 @@ function isPartner(id, param) {
 
 function custodianProcessForPartnerProcess(processId, param) {
   return List.find((function (param) {
-                  return PrimitiveTypes.ProcessId[/* eq */5](processId, param[1][1]);
+                  return PrimitiveTypes.ProcessId[/* eq */5](processId, param[1]);
                 }), param[/* custodianProcesses */4])[0];
 }
 
@@ -169,7 +169,6 @@ function apply($$event, state) {
               ];
     case 10 : 
         var match$2 = $$event[0];
-        var match$3 = match$2[/* data */5];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
@@ -178,10 +177,7 @@ function apply($$event, state) {
                 /* custodianProcesses : :: */[
                   /* tuple */[
                     match$2[/* processId */0],
-                    /* tuple */[
-                      match$3[/* partnerId */0],
-                      match$3[/* partnerApprovalProcess */1]
-                    ]
+                    match$2[/* data */5][/* partnerApprovalProcess */1]
                   ],
                   state[/* custodianProcesses */4]
                 ],
@@ -210,7 +206,7 @@ function apply($$event, state) {
                 /* partnerRemovals */state[/* partnerRemovals */8]
               ];
     case 13 : 
-        var match$4 = $$event[0];
+        var match$3 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
@@ -220,8 +216,8 @@ function apply($$event, state) {
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses : :: */[
                   /* tuple */[
-                    match$4[/* data */5][/* custodianId */0],
-                    match$4[/* processId */0]
+                    match$3[/* data */5][/* custodianId */0],
+                    match$3[/* processId */0]
                   ],
                   state[/* custodianRemovalProcesses */6]
                 ],

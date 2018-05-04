@@ -7,7 +7,7 @@ type t = {
   systemIssuer: Bitcoin.ECPair.t,
   policies: list((string, Policy.t)),
   partnerIds: list(userId),
-  custodianProcesses: list((processId, (userId, processId))),
+  custodianProcesses: list((processId, processId)),
   partnerRemovalProcesses: list((processId, userId)),
   custodianRemovalProcesses: list((userId, processId)),
   custodianAccepted: list((userId, Custodian.Accepted.t)),
@@ -37,7 +37,7 @@ let isPartner = (id, {partnerIds}) => partnerIds |> List.mem(id);
 
 let custodianProcessForPartnerProcess = (processId, {custodianProcesses}) =>
   custodianProcesses
-  |> List.find(((_, (_, partnerProcess))) =>
+  |> List.find(((_, partnerProcess)) =>
        ProcessId.eq(processId, partnerProcess)
      )
   |> fst;
@@ -78,10 +78,10 @@ let apply = (event, state) =>
       ...state,
       partnerIds: [id, ...state.partnerIds],
     }
-  | CustodianProposed({processId, data: {partnerApprovalProcess, partnerId}}) => {
+  | CustodianProposed({processId, data: {partnerApprovalProcess}}) => {
       ...state,
       custodianProcesses: [
-        (processId, (partnerId, partnerApprovalProcess)),
+        (processId, partnerApprovalProcess),
         ...state.custodianProcesses,
       ],
     }
