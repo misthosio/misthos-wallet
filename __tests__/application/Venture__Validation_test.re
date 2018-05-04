@@ -134,6 +134,25 @@ let () = {
         Validation.BadData("This proposal already exists"),
       );
     });
+    describe("when the same proposal was already made by another partner", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
   });
   describe("PartnerProposal", () => {
     describe("when proposing another partner", () => {
@@ -222,25 +241,6 @@ let () = {
           |> lastItem
         ),
         Validation.BadData("Last removal doesn't match"),
-      );
-    });
-    describe("when the prospect was already proposed by another user", () => {
-      let (user1, user2, user3) = G.threeUserSessions();
-      let log =
-        L.(
-          createVenture(user1)
-          |> withFirstPartner(user1)
-          |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-        );
-      testValidationResult(
-        log |> constructState,
-        L.(
-          log
-          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
-          |> lastItem
-        ),
-        Validation.Ok,
       );
     });
   });

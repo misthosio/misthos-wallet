@@ -97,6 +97,24 @@ describe("Any proposal type", (function () {
                                         return Curry._5(func$1, param, param$1, param$2, user1, user2);
                                       })(/* None */0, /* None */0, /* None */0), log)), /* BadData */["This proposal already exists"]);
               }));
+        describe("when the same proposal was already made by another partner", (function () {
+                var match = Generators.threeUserSessions(/* () */0);
+                var user3 = match[2];
+                var user2 = match[1];
+                var user1 = match[0];
+                var eta = Generators.Log[/* withPartner */11](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1)));
+                var func = Generators.Log[/* withPartnerProposed */8];
+                var log = Curry._1((function (param, param$1, param$2) {
+                          return Curry._5(func, param, param$1, param$2, user1, user3);
+                        })(/* None */0, /* None */0, /* None */0), eta);
+                var func$1 = Generators.Log[/* withPartnerProposed */8];
+                return testValidationResult(constructState(log), Generators.Log[/* lastItem */2](Curry._1((function (param, param$1, param$2) {
+                                        return Curry._5(func$1, param, param$1, param$2, user2, user3);
+                                      })(/* None */0, /* None */0, /* None */0), log)), /* Ok */0);
+              }));
         return /* () */0;
       }));
 
@@ -176,24 +194,6 @@ describe("PartnerProposal", (function () {
                 return testValidationResult(constructState(log), Generators.Log[/* lastItem */2]((function (eta) {
                                     return Curry._1(arg(/* None */0, /* None */0), eta);
                                   })(log)), /* BadData */["Last removal doesn't match"]);
-              }));
-        describe("when the prospect was already proposed by another user", (function () {
-                var match = Generators.threeUserSessions(/* () */0);
-                var user3 = match[2];
-                var user2 = match[1];
-                var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */11](user2, /* :: */[
-                      user1,
-                      /* [] */0
-                    ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1)));
-                var func = Generators.Log[/* withPartnerProposed */8];
-                var log = Curry._1((function (param, param$1, param$2) {
-                          return Curry._5(func, param, param$1, param$2, user1, user3);
-                        })(/* None */0, /* None */0, /* None */0), eta);
-                var func$1 = Generators.Log[/* withPartnerProposed */8];
-                return testValidationResult(constructState(log), Generators.Log[/* lastItem */2](Curry._1((function (param, param$1, param$2) {
-                                        return Curry._5(func$1, param, param$1, param$2, user2, user3);
-                                      })(/* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
         return /* () */0;
       }));
