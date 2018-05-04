@@ -59,7 +59,7 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
       } else {
         logMessage("Appended event to log:");
         logMessage(Json.stringify(Event.encode($$event)));
-        var state$1 = Venture__Validation.apply($$event, state);
+        var state$1 = Venture__Validation.apply(item, state);
         var wallet$1 = Venture__Wallet.apply($$event, wallet);
         var collector$1 = /* :: */[
           $$event,
@@ -158,7 +158,7 @@ function reconstruct(session, log) {
           tmp = $$event.tag ? param[0] : $$event[0][/* ventureId */0];
           return /* tuple */[
                   tmp,
-                  Venture__Validation.apply($$event, param[1]),
+                  Venture__Validation.apply(item, param[1]),
                   Venture__Wallet.apply($$event, param[2]),
                   /* :: */[
                     $$event,
@@ -289,7 +289,7 @@ function exec(newItems, venture) {
                     logMessage("Appending synced event to log:");
                     logMessage(Json.stringify(Event.encode($$event)));
                     var log = Curry._2(EventLog.appendItem, item, venture[/* log */2]);
-                    var state$1 = Venture__Validation.apply($$event, state);
+                    var state$1 = Venture__Validation.apply(item, state);
                     var wallet = Venture__Wallet.apply($$event, venture[/* wallet */4]);
                     var collector$1 = /* :: */[
                       $$event,
@@ -439,13 +439,13 @@ function exec$3(prospectId, venture) {
   var state = venture[/* state */3];
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePartner' command");
-  if (List.mem(prospectId, state[/* partnerIds */4])) {
+  if (List.mem(prospectId, state[/* partnerIds */5])) {
     return Promise.resolve(/* PartnerAlreadyExists */0);
   } else {
     return UserInfo.Public[/* read */4](prospectId).then((function (param) {
                   if (param) {
-                    var partnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(session[/* userId */0], prospectId, param[0][/* appPubKey */0], List.assoc(Event.Partner[/* processName */1], state[/* policies */14])));
-                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], session[/* userId */0], prospectId, WalletTypes.AccountIndex[/* default */8], List.assoc(Event.Custodian[/* processName */1], state[/* policies */14])));
+                    var partnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(session[/* userId */0], prospectId, param[0][/* appPubKey */0], List.assoc(Event.Partner[/* processName */1], state[/* policies */15])));
+                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], session[/* userId */0], prospectId, WalletTypes.AccountIndex[/* default */8], List.assoc(Event.Custodian[/* processName */1], state[/* policies */15])));
                     return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposal]), venture).then((function (param) {
                                       return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(10, [custodianProposal]), param[0]);
                                     })).then(persist).then((function (param) {
@@ -467,11 +467,11 @@ function exec$4(processId, venture) {
   var state = venture[/* state */3];
   var session = venture[/* session */0];
   logMessage("Executing 'EndorsePartner' command");
-  var match = List.assoc(processId, state[/* partnerData */6]);
+  var match = List.assoc(processId, state[/* partnerData */7]);
   var partnerId = match[/* id */0];
   var match$1 = List.find((function (param) {
           return Caml_obj.caml_equal(param[1][/* partnerId */0], partnerId);
-        }), state[/* custodianData */8]);
+        }), state[/* custodianData */9]);
   var custodianProcessId = match$1[0];
   return apply(/* None */0, /* None */0, Event.makePartnerEndorsed(processId, session[/* userId */0]), venture).then((function (param) {
                     return apply(/* None */0, /* Some */[param[1]], Event.makeCustodianEndorsed(custodianProcessId, session[/* userId */0]), param[0]);
@@ -489,14 +489,14 @@ function exec$5(partnerId, venture) {
   var state = venture[/* state */3];
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePartnerRemoval' command");
-  if (List.mem(partnerId, state[/* partnerIds */4]) === false) {
+  if (List.mem(partnerId, state[/* partnerIds */5]) === false) {
     return Promise.resolve(/* PartnerDoesNotExist */0);
   } else {
     var match = List.find((function (param) {
             return PrimitiveTypes.UserId[/* eq */5](partnerId, param[1][/* partnerId */0]);
-          }), state[/* custodianData */8]);
-    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(/* Some */[match[0]], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], List.assoc(Event.Custodian[/* Removal */5][/* processName */1], state[/* policies */14])), venture).then((function (param) {
-                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, List.assoc(Event.Partner[/* Removal */5][/* processName */1], state[/* policies */14])), param[0]);
+          }), state[/* custodianData */9]);
+    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(/* Some */[match[0]], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], List.assoc(Event.Custodian[/* Removal */5][/* processName */1], state[/* policies */15])), venture).then((function (param) {
+                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, List.assoc(Event.Partner[/* Removal */5][/* processName */1], state[/* policies */15])), param[0]);
                     })).then(persist).then((function (param) {
                   return Promise.resolve(/* Ok */[
                               param[0],
@@ -512,11 +512,11 @@ function exec$6(processId, venture) {
   var state = venture[/* state */3];
   var session = venture[/* session */0];
   logMessage("Executing 'EndorsePartnerRemoval' command");
-  var match = List.assoc(processId, state[/* partnerRemovalData */7]);
+  var match = List.assoc(processId, state[/* partnerRemovalData */8]);
   var partnerId = match[/* id */0];
   var match$1 = List.find((function (param) {
           return Caml_obj.caml_equal(param[1][/* custodianId */0], partnerId);
-        }), state[/* custodianRemovalData */9]);
+        }), state[/* custodianRemovalData */10]);
   return apply(/* None */0, /* None */0, Event.makeCustodianRemovalEndorsed(match$1[0], session[/* userId */0]), venture).then((function (param) {
                     return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalEndorsed(processId, session[/* userId */0]), param[0]);
                   })).then(persist).then((function (param) {

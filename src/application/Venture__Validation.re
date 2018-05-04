@@ -14,6 +14,7 @@ type state = {
   systemIssuer: Bitcoin.ECPair.t,
   systemPubKey: string,
   metaPolicy: Policy.t,
+  knownItems: list(string),
   partnerIds: list(userId),
   partnerPubKeys: list((string, userId)),
   partnerData: list((processId, Partner.Data.t)),
@@ -30,13 +31,13 @@ type state = {
     list((userId, list((accountIdx, list(CustodianKeyChain.public))))),
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
-  detectedIncome: list(IncomeDetected.t),
 };
 
 let makeState = () => {
   ventureName: "",
   systemIssuer: Bitcoin.ECPair.makeRandom(),
   systemPubKey: "",
+  knownItems: [],
   partnerIds: [],
   partnerPubKeys: [],
   metaPolicy: Policy.unanimous,
@@ -55,7 +56,6 @@ let makeState = () => {
   },
   custodianKeyChains: [],
   accountKeyChains: [],
-  detectedIncome: [],
 };
 
 let addProcess =
@@ -94,7 +94,8 @@ let completeProcess =
   completedProcesses: [processId, ...completedProcesses],
 };
 
-let apply = (event: Event.t, state) =>
+let apply = ({hash, event}: EventLog.item, state) => {
+  let state = {...state, knownItems: [hash, ...state.knownItems]};
   switch (event) {
   | VentureCreated({
       ventureName,
@@ -238,16 +239,14 @@ let apply = (event: Event.t, state) =>
         ),
       ],
     };
-  | IncomeDetected(event) => {
-      ...state,
-      detectedIncome: [event, ...state.detectedIncome],
-    }
+  | IncomeDetected(_)
   | IncomeAddressExposed(_)
   | PayoutSigned(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_) => state
   };
+};
 
 type result =
   | Ok
@@ -513,18 +512,6 @@ let validateIncomeAddressExposed =
   | Not_found => BadData("Unknown Address")
   };
 
-let validateIncomeDetected =
-    (
-      {address: a, amount: am, txId: id}: IncomeDetected.t,
-      {detectedIncome},
-      _issuerPubKey,
-    ) =>
-  detectedIncome
-  |> List.exists(({address, amount, txId}: IncomeDetected.t) =>
-       address == a && BTC.comparedTo(am, amount) == 0 && id == txId
-     ) ?
-    Ignore : Ok;
-
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
@@ -590,35 +577,40 @@ let validateEvent =
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
-  | IncomeDetected(event) => validateIncomeDetected(event)
+  | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastDuplicate(_) => ((_state, _pubKey) => Ignore)
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 
-let validate = (state, {event, issuerPubKey}: EventLog.item) =>
-  switch (
-    event,
-    Event.isSystemEvent(event),
-    state.partnerPubKeys |> List.mem_assoc(issuerPubKey),
-  ) {
-  | (VentureCreated(_), _, _) =>
-    UserId.eq(state.creatorData.id, UserId.fromString("")) ?
-      Ok : BadData("Venture is already created")
-  | (PartnerProposed(event), false, false)
-      when
-        event.data == state.creatorData
-        && issuerPubKey == state.creatorData.pubKey
-        && state.partnerData
-        |> List.length == 0 =>
-    Ok
-  | (_, false, false) => InvalidIssuer
-  | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
-  | (PartnerAccepted(event), true, false)
-      when
-        event.data == state.creatorData
-        && state.partnerData
-        |> List.length == 1 =>
-    Ok
-  | _ => validateEvent(event, state, issuerPubKey)
+let validate =
+    ({knownItems} as state, {hash, event, issuerPubKey}: EventLog.item) =>
+  if (knownItems |> List.mem(hash)) {
+    Ignore;
+  } else {
+    switch (
+      event,
+      Event.isSystemEvent(event),
+      state.partnerPubKeys |> List.mem_assoc(issuerPubKey),
+    ) {
+    | (VentureCreated(_), _, _) =>
+      UserId.eq(state.creatorData.id, UserId.fromString("")) ?
+        Ok : BadData("Venture is already created")
+    | (PartnerProposed(event), false, false)
+        when
+          event.data == state.creatorData
+          && issuerPubKey == state.creatorData.pubKey
+          && state.partnerData
+          |> List.length == 0 =>
+      Ok
+    | (_, false, false) => InvalidIssuer
+    | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
+    | (PartnerAccepted(event), true, false)
+        when
+          event.data == state.creatorData
+          && state.partnerData
+          |> List.length == 1 =>
+      Ok
+    | _ => validateEvent(event, state, issuerPubKey)
+    };
   };

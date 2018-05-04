@@ -39,7 +39,7 @@ let applyInternal =
   | Ok =>
     logMessage("Appended event to log:");
     logMessage(Event.encode(event) |> Json.stringify);
-    let state = state |> Validation.apply(event);
+    let state = state |> Validation.apply(item);
     let wallet = wallet |> Wallet.apply(event);
     let collector = [event, ...collector];
     (Some(item), log, (state, wallet, collector));
@@ -96,7 +96,7 @@ let reconstruct = (session, log) => {
            | VentureCreated({ventureId}) => ventureId
            | _ => id
            },
-           state |> Validation.apply(event),
+           state |> Validation.apply(item),
            wallet |> Wallet.apply(event),
            [event, ...collector],
            watchers
@@ -207,7 +207,7 @@ module SynchronizeLogs = {
                  logMessage("Appending synced event to log:");
                  logMessage(Event.encode(event) |> Json.stringify);
                  let log = log |> EventLog.appendItem(item);
-                 let state = state |> Validation.apply(event);
+                 let state = state |> Validation.apply(item);
                  let wallet = wallet |> Wallet.apply(event);
                  let collector = [event, ...collector];
                  let watchers =
