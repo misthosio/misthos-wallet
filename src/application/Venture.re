@@ -415,13 +415,6 @@ module Cmd = {
       | Ok(t, list(Event.t));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
-      /* let {id: partnerId}: Event.Partner.Data.t = */
-      /*   state.partnerData |> List.assoc(processId) |> snd; */
-      /* let (custodianProcessId, _) = */
-      /*   state.custodianData */
-      /*   |> List.find(((_, (_, data: Event.Custodian.Data.t))) => */
-      /*        data.partnerId == partnerId */
-      /*      ); */
       let custodianProcessId =
         state |> State.custodianProcessForPartnerProcess(processId);
       Js.Promise.(
