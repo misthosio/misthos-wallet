@@ -108,9 +108,9 @@ describe("ProcessMapping", (function () {
         var user1 = match[0];
         var eta = Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1));
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._1((function (param, param$1) {
-                  return Curry._4(func, param, param$1, user1, user2);
-                })(/* None */0, /* None */0), eta);
+        var log = Curry._1((function (param, param$1, param$2) {
+                  return Curry._5(func, param, param$1, param$2, user1, user2);
+                })(/* None */0, /* None */0, /* None */0), eta);
         var match$1 = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         var partnerProcess = match$1[/* processId */0];
         var log$1 = Generators.Log[/* withCustodianProposed */19](user1, user2, log);

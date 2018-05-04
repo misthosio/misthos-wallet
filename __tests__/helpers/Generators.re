@@ -160,6 +160,7 @@ module Log = {
   };
   let withPartnerProposed =
       (
+        ~withLastRemoval=true,
         ~issuer=?,
         ~policy=Policy.unanimous,
         ~supporter: Session.Data.t,
@@ -172,17 +173,19 @@ module Log = {
       | Some(key) => key
       };
     let lastRemovalAccepted =
-      log
-      |> EventLog.reduce(
-           (res, {event}) =>
-             switch (event) {
-             | PartnerRemovalAccepted({data: {id}} as event)
-                 when UserId.eq(id, prospect.userId) =>
-               Some(event)
-             | _ => res
-             },
-           None,
-         );
+      withLastRemoval ?
+        log
+        |> EventLog.reduce(
+             (res, {event}) =>
+               switch (event) {
+               | PartnerRemovalAccepted({data: {id}} as event)
+                   when UserId.eq(id, prospect.userId) =>
+                 Some(event)
+               | _ => res
+               },
+             None,
+           ) :
+        None;
     appendEvent(
       issuer,
       PartnerProposed(

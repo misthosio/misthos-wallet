@@ -17,6 +17,7 @@ type t = {
   currentPartnerPubKeys: list((string, userId)),
   partnerData: list((processId, (userId, Partner.Data.t))),
   partnerRemovalData: list((processId, (userId, Partner.Removal.Data.t))),
+  partnerRemovals: list((userId, processId)),
   custodianData: list((processId, (userId, Custodian.Data.t))),
   custodianRemovalData:
     list((processId, (userId, Custodian.Removal.Data.t))),
@@ -40,6 +41,7 @@ let make = () => {
   metaPolicy: Policy.unanimous,
   partnerData: [],
   partnerRemovalData: [],
+  partnerRemovals: [],
   custodianData: [],
   custodianRemovalData: [],
   accountCreationData: [],
@@ -169,7 +171,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
         ...state.currentPartnerPubKeys,
       ],
     }
-  | PartnerRemovalAccepted({data: {id}} as acceptance) =>
+  | PartnerRemovalAccepted({processId, data: {id}} as acceptance) =>
     let pubKey =
       state.currentPartnerPubKeys
       |> List.find(((_key, pId)) => UserId.eq(pId, id))
@@ -179,6 +181,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       currentPartners: state.currentPartners |> List.filter(UserId.neq(id)),
       currentPartnerPubKeys:
         state.currentPartnerPubKeys |> List.remove_assoc(pubKey),
+      partnerRemovals: [(id, processId), ...state.partnerRemovals],
     };
   | AccountCreationAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
@@ -385,8 +388,21 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
-let validatePartnerData = ({id}: Partner.Data.t, {currentPartners}) =>
-  currentPartners |> List.mem(id) ? Ignore : Ok;
+let validatePartnerData =
+    ({id, lastRemoval}: Partner.Data.t, {partnerRemovals, currentPartners}) =>
+  if (currentPartners |> List.mem(id)) {
+    BadData("Partner already exists");
+  } else {
+    let partnerRemovalProcess =
+      try (Some(partnerRemovals |> List.assoc(id))) {
+      | Not_found => None
+      };
+    if (partnerRemovalProcess != lastRemoval) {
+      BadData("Last removal doesn't match");
+    } else {
+      Ok;
+    };
+  };
 
 let validatePartnerRemovalData =
     ({id}: Partner.Removal.Data.t, {currentPartners}) =>
