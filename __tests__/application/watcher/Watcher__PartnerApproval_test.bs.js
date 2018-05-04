@@ -14,9 +14,9 @@ describe("Will approve the creator", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("creator.id"));
         var eta = Generators.Log[/* createVenture */7](user1);
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._2((function (param, param$1) {
+        var log = Curry._1((function (param, param$1) {
                   return Curry._4(func, param, param$1, user1, user1);
-                })(/* None */0, /* None */0), /* None */0, eta);
+                })(/* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
@@ -34,9 +34,9 @@ describe("With 1 partner and a proposal", (function () {
         var user1 = match[0];
         var eta = Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1));
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._2((function (param, param$1) {
+        var log = Curry._1((function (param, param$1) {
                   return Curry._4(func, param, param$1, user1, user2);
-                })(/* None */0, /* None */0), /* None */0, eta);
+                })(/* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
@@ -54,9 +54,9 @@ describe("Completes when the partner is accepted", (function () {
         var user1 = match[0];
         var eta = Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1));
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._2((function (param, param$1) {
+        var log = Curry._1((function (param, param$1) {
                   return Curry._4(func, param, param$1, user1, user2);
-                })(/* None */0, /* None */0), /* None */0, eta);
+                })(/* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         var log$1 = Generators.Log[/* withPartnerAccepted */10](proposal)(log);
@@ -73,9 +73,9 @@ describe("With 2 users and a proposal", (function () {
               /* [] */0
             ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1)));
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._2((function (param, param$1) {
+        var log = Curry._1((function (param, param$1) {
                   return Curry._4(func, param, param$1, user1, user3);
-                })(/* None */0, /* None */0), /* None */0, eta);
+                })(/* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         return WatcherHelpers.testWatcherHasNoEventPending(Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log)));
       }));
@@ -90,9 +90,9 @@ describe("With 2 users and a proposal and endorsement", (function () {
               /* [] */0
             ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1)));
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._2((function (param, param$1) {
+        var log = Curry._1((function (param, param$1) {
                   return Curry._4(func, param, param$1, user1, user3);
-                })(/* None */0, /* None */0), /* None */0, eta);
+                })(/* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         var log$1 = Generators.Log[/* withPartnerEndorsed */9](user2, proposal)(log);
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log$1));
@@ -118,9 +118,9 @@ describe("With 2 users and a removal and a proposal", (function () {
                   /* [] */0
                 ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1))));
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._2((function (param, param$1) {
+        var log = Curry._1((function (param, param$1) {
                   return Curry._4(func, param, param$1, user1, user3);
-                })(/* None */0, /* None */0), /* None */0, eta);
+                })(/* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {

@@ -85,9 +85,22 @@ let () = {
       )
       |> toEqual(custodianProcess)
     );
-    test("maps a partnerId to a custodianProcess", () =>
-      expect(state |> State.custodianProcessForPartner(user2.userId))
-      |> toEqual(custodianProcess)
+  });
+  describe("ProcessMapping", () => {
+    let (user1, user2) = G.twoUserSessions();
+    let log =
+      L.(
+        createVenture(user1)
+        |> withFirstPartner(user1)
+        |> withPartner(user2, ~supporters=[user1])
+        |> withCustodian(user2, ~supporters=[user1, user2])
+      );
+    let custodianAccepted =
+      log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+    let state = log |> constructState;
+    test("Remembers the latest CustodianAccepted events", () =>
+      expect(state |> State.custodianAcceptedFor(user2.userId))
+      |> toEqual(custodianAccepted)
     );
   });
   describe("RemovalProcessMapping", () => {

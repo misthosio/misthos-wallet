@@ -370,7 +370,7 @@ module Cmd = {
           |> then_(
                fun
                | UserInfo.Public.Ok(info) => {
-                   let partnerProposal =
+                   let partnerProposed =
                      Event.makePartnerProposed(
                        ~supporterId=session.userId,
                        ~prospectId,
@@ -378,16 +378,14 @@ module Cmd = {
                        ~policy=
                          state
                          |> State.currentPolicy(Event.Partner.processName),
-                       ~lastRemovalProcess=
-                         state
-                         |> State.lastRemovalProcessOfPartner(prospectId),
+                       ~lastRemovalAccepted=
+                         state |> State.lastRemovalOfPartner(prospectId),
                      )
                      |> Event.getPartnerProposedExn;
                    let custodianProposal =
                      Event.makeCustodianProposed(
-                       ~partnerApprovalProcess=partnerProposal.processId,
+                       ~partnerProposed,
                        ~supporterId=session.userId,
-                       ~partnerId=prospectId,
                        ~accountIdx=AccountIndex.default,
                        ~policy=
                          state
@@ -395,7 +393,7 @@ module Cmd = {
                      )
                      |> Event.getCustodianProposedExn;
                    venture
-                   |> apply(Event.PartnerProposed(partnerProposal))
+                   |> apply(Event.PartnerProposed(partnerProposed))
                    |> then_(((v, c)) =>
                         v
                         |> apply(
@@ -458,13 +456,13 @@ module Cmd = {
       if (state |> State.isPartner(partnerId) == false) {
         PartnerDoesNotExist |> Js.Promise.resolve;
       } else {
-        let custodianProcess =
-          state |> State.custodianProcessForPartner(partnerId);
+        let custodianAccepted =
+          state |> State.custodianAcceptedFor(partnerId);
         Js.Promise.(
           venture
           |> apply(
                Event.makeCustodianRemovalProposed(
-                 ~custodianApprovalProcess=custodianProcess,
+                 ~custodianAccepted,
                  ~supporterId=session.userId,
                  ~custodianId=partnerId,
                  ~accountIdx=AccountIndex.default,

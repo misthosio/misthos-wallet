@@ -10,7 +10,8 @@ type t = {
   custodianProcesses: list((processId, (userId, processId))),
   partnerRemovalProcesses: list((processId, userId)),
   custodianRemovalProcesses: list((userId, processId)),
-  completedPartnerRemovalProcesses: list((userId, processId)),
+  custodianAccepted: list((userId, Custodian.Accepted.t)),
+  partnerRemovals: list((userId, Partner.Removal.Accepted.t)),
 };
 
 let make = () => {
@@ -21,7 +22,8 @@ let make = () => {
   custodianProcesses: [],
   partnerRemovalProcesses: [],
   custodianRemovalProcesses: [],
-  completedPartnerRemovalProcesses: [],
+  custodianAccepted: [],
+  partnerRemovals: [],
 };
 
 let systemIssuer = ({systemIssuer}) => systemIssuer;
@@ -40,12 +42,8 @@ let custodianProcessForPartnerProcess = (processId, {custodianProcesses}) =>
      )
   |> fst;
 
-let custodianProcessForPartner = (partnerId, {custodianProcesses}) =>
-  custodianProcesses
-  |> List.find(((_, (custodianId, _))) =>
-       UserId.eq(partnerId, custodianId)
-     )
-  |> fst;
+let custodianAcceptedFor = (partnerId, {custodianAccepted}) =>
+  custodianAccepted |> List.assoc(partnerId);
 
 let custodianRemovalProcessForPartnerRemovalProcess =
     (processId, {custodianRemovalProcesses, partnerRemovalProcesses}) => {
@@ -53,9 +51,8 @@ let custodianRemovalProcessForPartnerRemovalProcess =
   custodianRemovalProcesses |> List.assoc(custodianId);
 };
 
-let lastRemovalProcessOfPartner =
-    (partnerId, {completedPartnerRemovalProcesses}) =>
-  try (Some(completedPartnerRemovalProcesses |> List.assoc(partnerId))) {
+let lastRemovalOfPartner = (partnerId, {partnerRemovals}) =>
+  try (Some(partnerRemovals |> List.assoc(partnerId))) {
   | Not_found => None
   };
 
@@ -88,6 +85,10 @@ let apply = (event, state) =>
         ...state.custodianProcesses,
       ],
     }
+  | CustodianAccepted({data: {partnerId}} as event) => {
+      ...state,
+      custodianAccepted: [(partnerId, event), ...state.custodianAccepted],
+    }
   | PartnerRemovalProposed({processId, data: {id}}) => {
       ...state,
       partnerRemovalProcesses: [
@@ -102,13 +103,10 @@ let apply = (event, state) =>
         ...state.custodianRemovalProcesses,
       ],
     }
-  | PartnerRemovalAccepted({processId, data: {id}}) => {
+  | PartnerRemovalAccepted({data: {id}} as event) => {
       ...state,
       partnerIds: state.partnerIds |> List.filter(UserId.neq(id)),
-      completedPartnerRemovalProcesses: [
-        (id, processId),
-        ...state.completedPartnerRemovalProcesses,
-      ],
+      partnerRemovals: [(id, event), ...state.partnerRemovals],
     }
   | _ => state
   };

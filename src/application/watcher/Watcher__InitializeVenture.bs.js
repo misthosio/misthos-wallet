@@ -51,7 +51,7 @@ function make(param, param$1, log) {
               if (typeof match === "number") {
                 if (match === 0 && $$event.tag === 1) {
                   var $$event$1 = $$event[0];
-                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */4][/* id */1], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1[/* processId */0]]) : self$1[state][0];
+                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */4][/* id */1], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1]) : self$1[state][0];
                 } else {
                   tmp = self$1[state][0];
                 }
@@ -59,8 +59,8 @@ function make(param, param$1, log) {
                 switch (match.tag | 0) {
                   case 0 : 
                       if ($$event.tag === 3) {
-                        var processId = match[0];
-                        tmp = PrimitiveTypes.ProcessId[/* eq */5](processId, $$event[0][/* processId */0]) ? /* ProposeAccountCreation */Block.__(1, [processId]) : self$1[state][0];
+                        var partnerProposedEvent = match[0];
+                        tmp = PrimitiveTypes.ProcessId[/* eq */5](partnerProposedEvent[/* processId */0], $$event[0][/* processId */0]) ? /* ProposeAccountCreation */Block.__(1, [partnerProposedEvent]) : self$1[state][0];
                       } else {
                         tmp = self$1[state][0];
                       }
@@ -112,7 +112,7 @@ function make(param, param$1, log) {
                   case 3 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeCustodianProposed(match$1[0], env$1[1], env$1[1], WalletTypes.AccountIndex[/* default */8], env$1[3])
+                          Event.makeCustodianProposed(match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */8], env$1[3])
                         ]];
                       break;
                   default:

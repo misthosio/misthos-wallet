@@ -395,8 +395,29 @@ type t =
   | IncomeAddressExposed(IncomeAddressExposed.t)
   | IncomeDetected(IncomeDetected.t);
 
+exception BadData(string);
+
 let makePartnerProposed =
-    (~supporterId, ~prospectId, ~prospectPubKey, ~lastRemovalProcess, ~policy) =>
+    (
+      ~supporterId,
+      ~prospectId,
+      ~prospectPubKey,
+      ~lastRemovalAccepted,
+      ~policy,
+    ) => {
+  let lastRemovalProcess =
+    lastRemovalAccepted
+    |> Utils.mapOption(
+         ({data: {id}, processId}: Partner.Removal.Accepted.t) => {
+         if (UserId.neq(id, prospectId)) {
+           raise(
+             BadData(
+               "The provided PartnerRemovalAccepted wasn't for the same partner",
+             ),
+           );
+         };
+         processId;
+       });
   PartnerProposed(
     Partner.Proposed.make(
       ~dependsOn=lastRemovalProcess,
@@ -409,6 +430,7 @@ let makePartnerProposed =
       },
     ),
   );
+};
 
 let makePartnerRemovalProposed = (~supporterId, ~partnerId, ~policy) =>
   PartnerRemovalProposed(
@@ -429,19 +451,25 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   );
 
 let makeCustodianProposed =
-    (~partnerApprovalProcess, ~supporterId, ~partnerId, ~accountIdx, ~policy) =>
+    (~partnerProposed: Partner.Proposed.t, ~supporterId, ~accountIdx, ~policy) => {
+  let partnerApprovalProcess = partnerProposed.processId;
   CustodianProposed(
     Custodian.Proposed.make(
       ~dependsOn=Some(partnerApprovalProcess),
       ~supporterId,
       ~policy,
-      Custodian.Data.{partnerApprovalProcess, partnerId, accountIdx},
+      Custodian.Data.{
+        partnerApprovalProcess,
+        partnerId: partnerProposed.data.id,
+        accountIdx,
+      },
     ),
   );
+};
 
 let makeCustodianRemovalProposed =
     (
-      ~custodianApprovalProcess,
+      ~custodianAccepted: Custodian.Accepted.t,
       ~supporterId,
       ~custodianId,
       ~accountIdx,
@@ -449,7 +477,7 @@ let makeCustodianRemovalProposed =
     ) =>
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOn=Some(custodianApprovalProcess),
+      ~dependsOn=Some(custodianAccepted.processId),
       ~supporterId,
       ~policy,
       Custodian.Removal.Data.{custodianId, accountIdx},

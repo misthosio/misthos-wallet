@@ -169,17 +169,11 @@ let () = {
           |> withPartner(user2, ~supporters=[user1])
           |> withPartnerRemoved(user2, ~supporters=[user1])
         );
-      let lastProcess =
-        L.(log |> lastEvent |> Event.getPartnerRemovalAcceptedExn).processId;
       testValidationResult(
         log |> constructState,
         L.(
           log
-          |> withPartnerProposed(
-               ~lastRemovalProcess=Some(lastProcess),
-               ~supporter=user1,
-               ~prospect=user2,
-             )
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
           |> lastItem
         ),
         Validation.Ok,

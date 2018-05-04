@@ -461,9 +461,9 @@ function exec$3(prospectId, venture) {
   } else {
     return UserInfo.Public[/* read */4](prospectId).then((function (param) {
                   if (param) {
-                    var partnerProposal = Event.getPartnerProposedExn(Event.makePartnerProposed(session[/* userId */0], prospectId, param[0][/* appPubKey */0], Venture__State.lastRemovalProcessOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state)));
-                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], session[/* userId */0], prospectId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
-                    return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposal]), venture).then((function (param) {
+                    var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(session[/* userId */0], prospectId, param[0][/* appPubKey */0], Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state)));
+                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
+                    return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposed]), venture).then((function (param) {
                                       return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(10, [custodianProposal]), param[0]);
                                     })).then(persist).then((function (param) {
                                   return Promise.resolve(/* Ok */[
@@ -503,8 +503,8 @@ function exec$5(partnerId, venture) {
   if (Venture__State.isPartner(partnerId, state) === false) {
     return Promise.resolve(/* PartnerDoesNotExist */0);
   } else {
-    var custodianProcess = Venture__State.custodianProcessForPartner(partnerId, state);
-    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(custodianProcess, session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture).then((function (param) {
+    var custodianAccepted = Venture__State.custodianAcceptedFor(partnerId, state);
+    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(custodianAccepted, session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture).then((function (param) {
                       return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */5][/* processName */1], state)), param[0]);
                     })).then(persist).then((function (param) {
                   return Promise.resolve(/* Ok */[

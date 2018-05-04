@@ -1,5 +1,7 @@
 open PrimitiveTypes;
 
+open Event;
+
 type t;
 
 let make: unit => t;
@@ -14,11 +16,11 @@ let isPartner: (userId, t) => bool;
 
 let custodianProcessForPartnerProcess: (processId, t) => processId;
 
-let custodianProcessForPartner: (userId, t) => processId;
+let custodianAcceptedFor: (userId, t) => Custodian.Accepted.t;
 
 let custodianRemovalProcessForPartnerRemovalProcess:
   (processId, t) => processId;
 
-let lastRemovalProcessOfPartner: (userId, t) => option(processId);
+let lastRemovalOfPartner: (userId, t) => option(Partner.Removal.Accepted.t);
 
 let apply: (Event.t, t) => t;

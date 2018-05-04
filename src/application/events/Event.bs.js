@@ -4,6 +4,7 @@
 var BTC = require("../wallet/BTC.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../../utils/Utils.bs.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Policy = require("../Policy.bs.js");
 var Network = require("../wallet/Network.bs.js");
@@ -736,7 +737,18 @@ var IncomeDetected = /* module */[
   /* decode */decode$14
 ];
 
-function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalProcess, policy) {
+var BadData = Caml_exceptions.create("Event.BadData");
+
+function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
+  var lastRemovalProcess = Utils.mapOption((function (param) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* id */0], prospectId)) {
+            throw [
+                  BadData,
+                  "The provided PartnerRemovalAccepted wasn't for the same partner"
+                ];
+          }
+          return param[/* processId */0];
+        }), lastRemovalAccepted);
   return /* PartnerProposed */Block.__(1, [Curry._4(Proposed[/* make */0], /* Some */[lastRemovalProcess], supporterId, policy, /* record */[
                   /* lastRemoval */lastRemovalProcess,
                   /* id */prospectId,
@@ -755,16 +767,17 @@ function makeAccountCreationProposed(supporterId, name, accountIdx, policy) {
                 ])]);
 }
 
-function makeCustodianProposed(partnerApprovalProcess, supporterId, partnerId, accountIdx, policy) {
+function makeCustodianProposed(partnerProposed, supporterId, accountIdx, policy) {
+  var partnerApprovalProcess = partnerProposed[/* processId */0];
   return /* CustodianProposed */Block.__(10, [Curry._4(Proposed$3[/* make */0], /* Some */[/* Some */[partnerApprovalProcess]], supporterId, policy, /* record */[
-                  /* partnerId */partnerId,
+                  /* partnerId */partnerProposed[/* data */4][/* id */1],
                   /* partnerApprovalProcess */partnerApprovalProcess,
                   /* accountIdx */accountIdx
                 ])]);
 }
 
-function makeCustodianRemovalProposed(custodianApprovalProcess, supporterId, custodianId, accountIdx, policy) {
-  return /* CustodianRemovalProposed */Block.__(13, [Curry._4(Proposed$4[/* make */0], /* Some */[/* Some */[custodianApprovalProcess]], supporterId, policy, /* record */[
+function makeCustodianRemovalProposed(custodianAccepted, supporterId, custodianId, accountIdx, policy) {
+  return /* CustodianRemovalProposed */Block.__(13, [Curry._4(Proposed$4[/* make */0], /* Some */[/* Some */[custodianAccepted[/* processId */0]]], supporterId, policy, /* record */[
                   /* custodianId */custodianId,
                   /* accountIdx */accountIdx
                 ])]);
@@ -1130,6 +1143,7 @@ exports.CustodianKeyChainUpdated = CustodianKeyChainUpdated;
 exports.AccountKeyChainUpdated = AccountKeyChainUpdated;
 exports.IncomeAddressExposed = IncomeAddressExposed;
 exports.IncomeDetected = IncomeDetected;
+exports.BadData = BadData;
 exports.makePartnerProposed = makePartnerProposed;
 exports.makePartnerRemovalProposed = makePartnerRemovalProposed;
 exports.makeAccountCreationProposed = makeAccountCreationProposed;

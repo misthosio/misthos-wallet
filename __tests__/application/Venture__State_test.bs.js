@@ -108,20 +108,38 @@ describe("ProcessMapping", (function () {
         var user1 = match[0];
         var eta = Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1));
         var func = Generators.Log[/* withPartnerProposed */8];
-        var log = Curry._2((function (param, param$1) {
+        var log = Curry._1((function (param, param$1) {
                   return Curry._4(func, param, param$1, user1, user2);
-                })(/* None */0, /* None */0), /* None */0, eta);
+                })(/* None */0, /* None */0), eta);
         var match$1 = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
         var partnerProcess = match$1[/* processId */0];
         var log$1 = Generators.Log[/* withCustodianProposed */19](user1, user2, log);
         var match$2 = Event.getCustodianProposedExn(Generators.Log[/* lastEvent */3](log$1));
         var custodianProcess = match$2[/* processId */0];
         var state = constructState(log$1);
-        Jest.test("maps a partnerProcess to a custodianProcess", (function () {
-                return Jest.Expect[/* toEqual */12](custodianProcess, Jest.Expect[/* expect */0](Venture__State.custodianProcessForPartnerProcess(partnerProcess, state)));
-              }));
-        return Jest.test("maps a partnerId to a custodianProcess", (function () {
-                      return Jest.Expect[/* toEqual */12](custodianProcess, Jest.Expect[/* expect */0](Venture__State.custodianProcessForPartner(user2[/* userId */0], state)));
+        return Jest.test("maps a partnerProcess to a custodianProcess", (function () {
+                      return Jest.Expect[/* toEqual */12](custodianProcess, Jest.Expect[/* expect */0](Venture__State.custodianProcessForPartnerProcess(partnerProcess, state)));
+                    }));
+      }));
+
+describe("ProcessMapping", (function () {
+        var match = Generators.twoUserSessions(/* () */0);
+        var user2 = match[1];
+        var user1 = match[0];
+        var log = Generators.Log[/* withCustodian */22](user2, /* :: */[
+              user1,
+              /* :: */[
+                user2,
+                /* [] */0
+              ]
+            ], Generators.Log[/* withPartner */11](user2, /* :: */[
+                  user1,
+                  /* [] */0
+                ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1))));
+        var custodianAccepted = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */3](log));
+        var state = constructState(log);
+        return Jest.test("Remembers the latest CustodianAccepted events", (function () {
+                      return Jest.Expect[/* toEqual */12](custodianAccepted, Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state)));
                     }));
       }));
 
