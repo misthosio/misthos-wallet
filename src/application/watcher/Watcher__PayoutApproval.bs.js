@@ -147,10 +147,10 @@ function make(proposal, log) {
       self[state] = [/* record */[
           /* eligable : [] */0,
           /* endorsements : :: */[
-            env$1[1][/* supporterId */2],
+            env$1[1][/* supporterId */3],
             /* [] */0
           ],
-          /* policy */env$1[1][/* policy */3],
+          /* policy */env$1[1][/* policy */4],
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom()
         ]];
       self[completed] = [false];

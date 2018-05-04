@@ -56,13 +56,13 @@ let make =
                 )),
             }
           | CustodianRemovalAccepted({
-              dependsOn,
+              dependsOnCompletions,
               data: {custodianId: removedId, accountIdx: fromAccount},
             })
               when
                 UserId.eq(removedId, custodianId)
                 && ProcessId.eq(
-                     dependsOn |> Js.Option.getExn,
+                     dependsOnCompletions |> List.hd,
                      custodianApprovalProcess,
                    )
                 && AccountIndex.eq(fromAccount, accountIdx) => {

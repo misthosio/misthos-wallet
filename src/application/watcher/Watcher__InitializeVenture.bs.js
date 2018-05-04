@@ -51,7 +51,7 @@ function make(param, param$1, log) {
               if (typeof match === "number") {
                 if (match === 0 && $$event.tag === 1) {
                   var $$event$1 = $$event[0];
-                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */4][/* id */1], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1]) : self$1[state][0];
+                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */5][/* id */1], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1]) : self$1[state][0];
                 } else {
                   tmp = self$1[state][0];
                 }
@@ -68,7 +68,7 @@ function make(param, param$1, log) {
                   case 1 : 
                       if ($$event.tag === 7) {
                         var $$event$2 = $$event[0];
-                        tmp = WalletTypes.AccountIndex[/* eq */6]($$event$2[/* data */4][/* accountIdx */0], WalletTypes.AccountIndex[/* default */8]) ? /* AccountCreationProposed */Block.__(2, [
+                        tmp = WalletTypes.AccountIndex[/* eq */6]($$event$2[/* data */5][/* accountIdx */0], WalletTypes.AccountIndex[/* default */8]) ? /* AccountCreationProposed */Block.__(2, [
                               $$event$2[/* processId */0],
                               match[0]
                             ]) : self$1[state][0];
@@ -82,7 +82,7 @@ function make(param, param$1, log) {
                   case 3 : 
                       if ($$event.tag === 10) {
                         var $$event$3 = $$event[0];
-                        tmp = PrimitiveTypes.UserId[/* eq */5]($$event$3[/* data */4][/* partnerId */0], env$1[1]) ? /* CustodianProposed */Block.__(4, [$$event$3[/* processId */0]]) : self$1[state][0];
+                        tmp = PrimitiveTypes.UserId[/* eq */5]($$event$3[/* data */5][/* partnerId */0], env$1[1]) ? /* CustodianProposed */Block.__(4, [$$event$3[/* processId */0]]) : self$1[state][0];
                       } else {
                         tmp = self$1[state][0];
                       }

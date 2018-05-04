@@ -57,10 +57,10 @@ function addProcess(param, state) {
               param[/* processId */0],
               /* record */[
                 /* supporterIds : :: */[
-                  param[/* supporterId */2],
+                  param[/* supporterId */3],
                   /* [] */0
                 ],
-                /* policy */param[/* policy */3]
+                /* policy */param[/* policy */4]
               ]
             ],
             state[/* processes */11]
@@ -208,8 +208,8 @@ function apply(param, state) {
                   /* tuple */[
                     proposal[/* processId */0],
                     /* tuple */[
-                      proposal[/* supporterId */2],
-                      proposal[/* data */4]
+                      proposal[/* supporterId */3],
+                      proposal[/* data */5]
                     ]
                   ],
                   state_005
@@ -272,8 +272,8 @@ function apply(param, state) {
                   /* tuple */[
                     proposal$1[/* processId */0],
                     /* tuple */[
-                      proposal$1[/* supporterId */2],
-                      proposal$1[/* data */4]
+                      proposal$1[/* supporterId */3],
+                      proposal$1[/* data */5]
                     ]
                   ],
                   state_006
@@ -335,8 +335,8 @@ function apply(param, state) {
                   /* tuple */[
                     proposal$2[/* processId */0],
                     /* tuple */[
-                      proposal$2[/* supporterId */2],
-                      proposal$2[/* data */4]
+                      proposal$2[/* supporterId */3],
+                      proposal$2[/* data */5]
                     ]
                   ],
                   state_009
@@ -392,8 +392,8 @@ function apply(param, state) {
                   /* tuple */[
                     proposal$3[/* processId */0],
                     /* tuple */[
-                      proposal$3[/* supporterId */2],
-                      proposal$3[/* data */4]
+                      proposal$3[/* supporterId */3],
+                      proposal$3[/* data */5]
                     ]
                   ],
                   state_007
@@ -483,8 +483,8 @@ function apply(param, state) {
                   /* tuple */[
                     proposal$4[/* processId */0],
                     /* tuple */[
-                      proposal$4[/* supporterId */2],
-                      proposal$4[/* data */4]
+                      proposal$4[/* supporterId */3],
+                      proposal$4[/* data */5]
                     ]
                   ],
                   state_008
@@ -516,8 +516,8 @@ function apply(param, state) {
                   /* tuple */[
                     proposal$5[/* processId */0],
                     /* tuple */[
-                      proposal$5[/* supporterId */2],
-                      proposal$5[/* data */4]
+                      proposal$5[/* supporterId */3],
+                      proposal$5[/* data */5]
                     ]
                   ],
                   state_010
@@ -720,9 +720,10 @@ function defaultDataValidator(_, _$1) {
 }
 
 function validateProposal($staropt$star, processName, dataList, param, state, issuerPubKey) {
-  var data = param[/* data */4];
-  var supporterId = param[/* supporterId */2];
-  var dependsOn = param[/* dependsOn */1];
+  var completedProcesses = state[/* completedProcesses */12];
+  var processes = state[/* processes */11];
+  var data = param[/* data */5];
+  var supporterId = param[/* supporterId */3];
   var validateData = $staropt$star ? $staropt$star[0] : defaultDataValidator;
   if (List.exists((function (param) {
             var match = param[1];
@@ -733,25 +734,35 @@ function validateProposal($staropt$star, processName, dataList, param, state, is
             }
           }), dataList)) {
     return /* BadData */["This proposal already exists"];
-  } else if (Policy.neq(param[/* policy */3], List.assoc(processName, state[/* policies */13]))) {
+  } else if (Policy.neq(param[/* policy */4], List.assoc(processName, state[/* policies */13]))) {
     return /* PolicyMissmatch */4;
   } else if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, state[/* currentPartnerPubKeys */4]), supporterId)) {
     return /* InvalidIssuer */2;
-  } else if (dependsOn) {
-    var processId = dependsOn[0];
-    var match = List.mem(processId, state[/* completedProcesses */12]) || List.mem_assoc(processId, state[/* processes */11]);
-    if (match) {
+  } else {
+    var proposalsThere = List.fold_left((function (res, processId) {
+            if (List.mem(processId, completedProcesses) || List.mem_assoc(processId, processes)) {
+              return res;
+            } else {
+              return false;
+            }
+          }), true, param[/* dependsOnProposals */1]);
+    var completionsThere = List.fold_left((function (res, processId) {
+            if (List.mem(processId, completedProcesses)) {
+              return res;
+            } else {
+              return false;
+            }
+          }), true, param[/* dependsOnCompletions */2]);
+    if (proposalsThere && completionsThere) {
       return Curry._2(validateData, data, state);
     } else {
       return /* DependencyNotMet */6;
     }
-  } else {
-    return Curry._2(validateData, data, state);
   }
 }
 
 function validateAcceptance(param, dataList, param$1, _) {
-  var dependsOn = param[/* dependsOn */1];
+  var completedProcesses = param$1[/* completedProcesses */12];
   var processId = param[/* processId */0];
   try {
     var match = List.assoc(processId, param$1[/* processes */11]);
@@ -759,15 +770,19 @@ function validateAcceptance(param, dataList, param$1, _) {
       return /* BadData */["Data doesn't match proposal"];
     } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* currentPartners */3], match[/* supporterIds */0]) === false) {
       return /* PolicyNotFulfilled */5;
-    } else if (dependsOn) {
-      var match$1 = List.mem(dependsOn[0], param$1[/* completedProcesses */12]);
+    } else {
+      var match$1 = List.fold_left((function (res, processId) {
+              if (List.mem(processId, completedProcesses)) {
+                return res;
+              } else {
+                return false;
+              }
+            }), true, param[/* dependsOnCompletions */1]);
       if (match$1) {
         return /* Ok */0;
       } else {
         return /* DependencyNotMet */6;
       }
-    } else {
-      return /* Ok */0;
     }
   }
   catch (exn){
@@ -1152,7 +1167,7 @@ function validate(state, param) {
             exit = 1;
           } else if (match$1) {
             return Curry._2(validateEvent($$event), state, issuerPubKey);
-          } else if (Caml_obj.caml_equal($$event[0][/* data */4], state[/* creatorData */14]) && issuerPubKey === state[/* creatorData */14][/* pubKey */2] && List.length(state[/* partnerData */5]) === 0) {
+          } else if (Caml_obj.caml_equal($$event[0][/* data */5], state[/* creatorData */14]) && issuerPubKey === state[/* creatorData */14][/* pubKey */2] && List.length(state[/* partnerData */5]) === 0) {
             return /* Ok */0;
           } else {
             exit = 1;

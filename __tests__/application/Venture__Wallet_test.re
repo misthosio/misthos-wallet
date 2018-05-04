@@ -76,7 +76,7 @@ let () =
       |> Wallet.apply(VentureCreated(createdEvent))
       |> Wallet.apply(
            AccountCreationAccepted({
-             dependsOn: None,
+             dependsOnCompletions: [],
              processId: ProcessId.make(),
              data: {
                accountIdx,

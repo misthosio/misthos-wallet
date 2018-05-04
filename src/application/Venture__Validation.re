@@ -284,7 +284,8 @@ let validateProposal =
       ~validateData: ('a, t) => result=defaultDataValidator,
       processName,
       dataList: list((processId, (userId, 'a))),
-      {policy, supporterId, data, dependsOn}: EventTypes.proposal('a),
+      {policy, supporterId, data, dependsOnProposals, dependsOnCompletions}:
+        EventTypes.proposal('a),
       {policies, currentPartnerPubKeys, completedProcesses, processes} as state,
       issuerPubKey,
     ) =>
@@ -301,14 +302,29 @@ let validateProposal =
              )) {
     InvalidIssuer;
   } else {
-    switch (dependsOn) {
-    | None => validateData(data, state)
-    | Some(processId) =>
-      completedProcesses
-      |> List.mem(processId)
-      || processes
-      |> List.mem_assoc(processId) ?
-        validateData(data, state) : DependencyNotMet
+    let proposalsThere =
+      dependsOnProposals
+      |> List.fold_left(
+           (res, processId) =>
+             (
+               completedProcesses
+               |> List.mem(processId)
+               || processes
+               |> List.mem_assoc(processId)
+             )
+             && res,
+           true,
+         );
+    let completionsThere =
+      dependsOnCompletions
+      |> List.fold_left(
+           (res, processId) =>
+             completedProcesses |> List.mem(processId) && res,
+           true,
+         );
+    switch (proposalsThere, completionsThere) {
+    | (true, true) => validateData(data, state)
+    | _ => DependencyNotMet
     };
   };
 
@@ -338,7 +354,7 @@ let validateEndorsement =
 
 let validateAcceptance =
     (
-      {processId, data, dependsOn}: EventTypes.acceptance('a),
+      {processId, data, dependsOnCompletions}: EventTypes.acceptance('a),
       dataList: list((processId, (userId, 'a))),
       {processes, currentPartners, completedProcesses},
       _issuerPubKey,
@@ -356,11 +372,13 @@ let validateAcceptance =
                  == false) {
         PolicyNotFulfilled;
       } else {
-        switch (dependsOn) {
-        | None => Ok
-        | Some(processId) =>
-          completedProcesses |> List.mem(processId) ? Ok : DependencyNotMet
-        };
+        dependsOnCompletions
+        |> List.fold_left(
+             (res, processId) =>
+               completedProcesses |> List.mem(processId) && res,
+             true,
+           ) ?
+          Ok : DependencyNotMet;
       };
     }
   ) {

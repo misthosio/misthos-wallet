@@ -73,9 +73,9 @@ function apply($$event, state) {
                 /* prospects : :: */[
                   /* record */[
                     /* processId */match$1[/* processId */0],
-                    /* userId */match$1[/* data */4][/* id */1],
+                    /* userId */match$1[/* data */5][/* id */1],
                     /* endorsedBy : :: */[
-                      match$1[/* supporterId */2],
+                      match$1[/* supporterId */3],
                       /* [] */0
                     ]
                   ],
@@ -147,9 +147,9 @@ function apply($$event, state) {
                 /* removalProspects : :: */[
                   /* record */[
                     /* processId */match$3[/* processId */0],
-                    /* userId */match$3[/* data */4][/* id */0],
+                    /* userId */match$3[/* data */5][/* id */0],
                     /* endorsedBy : :: */[
-                      match$3[/* supporterId */2],
+                      match$3[/* supporterId */3],
                       /* [] */0
                     ]
                   ],
@@ -244,9 +244,9 @@ function apply($$event, state) {
                 /* payouts : :: */[
                   /* record */[
                     /* processId */match$6[/* processId */0],
-                    /* payoutTx */match$6[/* data */4][/* payoutTx */1],
+                    /* payoutTx */match$6[/* data */5][/* payoutTx */1],
                     /* endorsedBy : :: */[
-                      match$6[/* supporterId */2],
+                      match$6[/* supporterId */3],
                       /* [] */0
                     ],
                     /* status : PayoutPending */0

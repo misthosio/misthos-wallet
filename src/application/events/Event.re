@@ -420,7 +420,6 @@ let makePartnerProposed =
        });
   PartnerProposed(
     Partner.Proposed.make(
-      ~dependsOn=lastRemovalProcess,
       ~supporterId,
       ~policy,
       Partner.Data.{
@@ -455,7 +454,7 @@ let makeCustodianProposed =
   let partnerApprovalProcess = partnerProposed.processId;
   CustodianProposed(
     Custodian.Proposed.make(
-      ~dependsOn=Some(partnerApprovalProcess),
+      ~dependsOnProposals=[partnerApprovalProcess],
       ~supporterId,
       ~policy,
       Custodian.Data.{
@@ -477,7 +476,7 @@ let makeCustodianRemovalProposed =
     ) =>
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOn=Some(custodianAccepted.processId),
+      ~dependsOnCompletions=[custodianAccepted.processId],
       ~supporterId,
       ~policy,
       Custodian.Removal.Data.{custodianId, accountIdx},

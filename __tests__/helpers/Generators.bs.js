@@ -265,7 +265,7 @@ function withCustodianProposed(supporter, custodian, l) {
             return /* Some */[partnerProposal[0]];
           } else if ($$event.tag === 1) {
             var proposal = $$event[0];
-            if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */4][/* id */1], custodian[/* userId */0])) {
+            if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */5][/* id */1], custodian[/* userId */0])) {
               return /* Some */[proposal];
             } else {
               return partnerProposal;

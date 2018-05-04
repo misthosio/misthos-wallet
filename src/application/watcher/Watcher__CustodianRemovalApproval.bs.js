@@ -8,7 +8,6 @@ var Event = require("../events/Event.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Policy = require("../Policy.bs.js");
 var EventLog = require("../events/EventLog.bs.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
@@ -88,7 +87,7 @@ function make(proposal, log) {
                     ];
                     break;
                 case 12 : 
-                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], Js_option.getExn(env$1[0][/* dependsOn */1]))) {
+                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], List.hd(env$1[0][/* dependsOnCompletions */2]))) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[
                         /* dependencyMet */true,
@@ -171,10 +170,10 @@ function make(proposal, log) {
           /* dependencyMet */false,
           /* eligable : [] */0,
           /* endorsements : :: */[
-            env$1[1][/* supporterId */2],
+            env$1[1][/* supporterId */3],
             /* [] */0
           ],
-          /* policy */env$1[1][/* policy */3],
+          /* policy */env$1[1][/* policy */4],
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom()
         ]];
       self[completed] = [false];

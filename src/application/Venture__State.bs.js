@@ -136,7 +136,7 @@ function apply($$event, state) {
                 /* partnerRemovalProcesses : :: */[
                   /* tuple */[
                     match$1[/* processId */0],
-                    match$1[/* data */4][/* id */0]
+                    match$1[/* data */5][/* id */0]
                   ],
                   state[/* partnerRemovalProcesses */5]
                 ],
@@ -169,7 +169,7 @@ function apply($$event, state) {
               ];
     case 10 : 
         var match$2 = $$event[0];
-        var match$3 = match$2[/* data */4];
+        var match$3 = match$2[/* data */5];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
@@ -220,7 +220,7 @@ function apply($$event, state) {
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses : :: */[
                   /* tuple */[
-                    match$4[/* data */4][/* custodianId */0],
+                    match$4[/* data */5][/* custodianId */0],
                     match$4[/* processId */0]
                   ],
                   state[/* custodianRemovalProcesses */6]

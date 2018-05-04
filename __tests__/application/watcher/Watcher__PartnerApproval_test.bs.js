@@ -21,7 +21,7 @@ describe("Will approve the creator", (function () {
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
                       if (param.tag === 3) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }
@@ -41,7 +41,7 @@ describe("With 1 partner and a proposal", (function () {
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
                       if (param.tag === 3) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }
@@ -98,7 +98,7 @@ describe("With 2 users and a proposal and endorsement", (function () {
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log$1));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log$1), (function (param) {
                       if (param.tag === 3) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }
@@ -125,7 +125,7 @@ describe("With 2 users and a removal and a proposal", (function () {
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
                       if (param.tag === 3) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }
