@@ -73,7 +73,7 @@ function apply($$event, state) {
                 /* prospects : :: */[
                   /* record */[
                     /* processId */match$1[/* processId */0],
-                    /* userId */match$1[/* data */4][/* id */0],
+                    /* userId */match$1[/* data */4][/* id */1],
                     /* endorsedBy : :: */[
                       match$1[/* supporterId */2],
                       /* [] */0
@@ -124,11 +124,11 @@ function apply($$event, state) {
                 state_000,
                 state_001,
                 /* partners : :: */[
-                  /* record */[/* userId */data[/* id */0]],
+                  /* record */[/* userId */data[/* id */1]],
                   state_002
                 ],
                 /* prospects */List.filter((function (p) {
-                          return PrimitiveTypes.UserId[/* neq */6](p[/* userId */1], data[/* id */0]);
+                          return PrimitiveTypes.UserId[/* neq */6](p[/* userId */1], data[/* id */1]);
                         }))(state_003),
                 state_004,
                 state_005,

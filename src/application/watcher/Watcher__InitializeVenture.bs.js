@@ -51,7 +51,7 @@ function make(param, param$1, log) {
               if (typeof match === "number") {
                 if (match === 0 && $$event.tag === 1) {
                   var $$event$1 = $$event[0];
-                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */4][/* id */0], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1[/* processId */0]]) : self$1[state][0];
+                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */4][/* id */1], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1[/* processId */0]]) : self$1[state][0];
                 } else {
                   tmp = self$1[state][0];
                 }
@@ -99,7 +99,7 @@ function make(param, param$1, log) {
               if (typeof match$1 === "number") {
                 tmp$1 = match$1 === 0 ? /* Some */[/* tuple */[
                       env$1[0],
-                      Event.makePartnerProposed(env$1[1], env$1[1], env$1[2], env$1[3])
+                      Event.makePartnerProposed(env$1[1], env$1[1], env$1[2], /* None */0, env$1[3])
                     ]] : /* None */0;
               } else {
                 switch (match$1.tag | 0) {

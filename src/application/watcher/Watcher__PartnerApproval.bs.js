@@ -88,7 +88,7 @@ function make(proposal, log) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
                         /* eligable : :: */[
-                          $$event$3[/* data */2][/* id */0],
+                          $$event$3[/* data */2][/* id */1],
                           self$1[state][0][/* eligable */0]
                         ],
                         /* endorsements */init$2[/* endorsements */1],
@@ -134,7 +134,7 @@ function make(proposal, log) {
                     /* PartnerAccepted */Block.__(3, [Curry._1(Event.Partner[/* Accepted */4][/* fromProposal */0], env$1[0])])
                   ]];
               }
-              if (Caml_obj.caml_equal(env$1[0][/* data */4][/* id */0], self$1[state][0][/* creatorId */4]) && Curry._1(EventLog.length, env$1[1]) === 2) {
+              if (Caml_obj.caml_equal(env$1[0][/* data */4][/* id */1], self$1[state][0][/* creatorId */4]) && Curry._1(EventLog.length, env$1[1]) === 2) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */3],
                     /* PartnerAccepted */Block.__(3, [Curry._1(Event.Partner[/* Accepted */4][/* fromProposal */0], env$1[0])])

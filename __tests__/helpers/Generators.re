@@ -52,6 +52,7 @@ module Event = {
   let partnerProposed =
       (
         ~policy=Policy.unanimous,
+        ~lastRemovalProcess,
         supporterSession: Session.Data.t,
         prospectSession: Session.Data.t,
       ) =>
@@ -61,6 +62,7 @@ module Event = {
       ~prospectPubKey=
         prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
       ~policy,
+      ~lastRemovalProcess,
     )
     |> AppEvent.getPartnerProposedExn;
   let partnerEndorsed =
@@ -149,6 +151,7 @@ module Log = {
         ~policy=Policy.unanimous,
         ~supporter: Session.Data.t,
         ~prospect,
+        ~lastRemovalProcess=None,
       ) => {
     let issuer =
       switch (issuer) {
@@ -157,7 +160,14 @@ module Log = {
       };
     appendEvent(
       issuer,
-      PartnerProposed(Event.partnerProposed(~policy, supporter, prospect)),
+      PartnerProposed(
+        Event.partnerProposed(
+          ~policy,
+          ~lastRemovalProcess,
+          supporter,
+          prospect,
+        ),
+      ),
     );
   };
   let withPartnerEndorsed = (supporter: Session.Data.t, proposal) =>

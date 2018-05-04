@@ -6,8 +6,6 @@ open Event;
 
 open PrimitiveTypes;
 
-open WalletTypes;
-
 module G = Generators;
 
 module E = G.Event;
@@ -18,10 +16,7 @@ module Validation = Venture__Validation;
 
 let constructState = log =>
   log
-  |> L.reduce(
-       (s, item) => s |> Validation.apply(item),
-       Validation.makeState(),
-     );
+  |> L.reduce((s, item) => s |> Validation.apply(item), Validation.make());
 
 let testValidationResult = (state, item, expected) => {
   let description = expected |> Validation.resultToString;
@@ -32,16 +27,12 @@ let testValidationResult = (state, item, expected) => {
 };
 
 let () = {
-  /* Only.describe("IncomeDetected", () => { */
-  /*   describe("Accepted if the address has been exposed", () => { */
-  /*   }); */
-  /* }); */
   describe("CreateVenture", () => {
     describe("as first event", () => {
       let user1 = G.userSession("user1" |> UserId.fromString);
       let log = L.createVenture(user1);
       testValidationResult(
-        Validation.makeState(),
+        Validation.make(),
         log |> L.lastItem,
         Validation.Ok,
       );
@@ -138,7 +129,7 @@ let () = {
         Validation.InvalidIssuer,
       );
     });
-    describe("when the prospect already exists", () => {
+    describe("when the prospect is already a partner", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
         L.(
@@ -150,29 +141,10 @@ let () = {
         log |> constructState,
         L.(
           log
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> withPartnerProposed(~supporter=user2, ~prospect=user1)
           |> lastItem
         ),
         Validation.Ignore,
-      );
-    });
-    describe("when the prospect was already proposed", () => {
-      let (user1, user2, user3) = G.threeUserSessions();
-      let log =
-        L.(
-          createVenture(user1)
-          |> withFirstPartner(user1)
-          |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-        );
-      testValidationResult(
-        log |> constructState,
-        L.(
-          log
-          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
-          |> lastItem
-        ),
-        Validation.Ok,
       );
     });
     describe("when the creator proposes themselves", () => {
@@ -197,6 +169,49 @@ let () = {
           |> withPartner(user2, ~supporters=[user1])
           |> withPartnerRemoved(user2, ~supporters=[user1])
         );
+      let lastProcess =
+        L.(log |> lastEvent |> Event.getPartnerRemovalAcceptedExn).processId;
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~lastRemovalProcess=Some(lastProcess),
+               ~supporter=user1,
+               ~prospect=user2,
+             )
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when the prospect was already proposed by another user", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when the prospect was already proposed by the same user", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+        );
       testValidationResult(
         log |> constructState,
         L.(
@@ -204,7 +219,7 @@ let () = {
           |> withPartnerProposed(~supporter=user1, ~prospect=user2)
           |> lastItem
         ),
-        Validation.Ok,
+        Validation.BadData("This proposal already exists"),
       );
     });
   });

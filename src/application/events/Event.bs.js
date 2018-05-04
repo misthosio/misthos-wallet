@@ -104,20 +104,30 @@ function encode$1($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "id",
-                PrimitiveTypes.UserId[/* encode */2]($$event[/* id */0])
+                PrimitiveTypes.UserId[/* encode */2]($$event[/* id */1])
               ],
               /* :: */[
                 /* tuple */[
                   "pubKey",
-                  $$event[/* pubKey */1]
+                  $$event[/* pubKey */2]
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "lastRemoval",
+                    Json_encode.nullable(PrimitiveTypes.ProcessId[/* encode */2], $$event[/* lastRemoval */0])
+                  ],
+                  /* [] */0
+                ]
               ]
             ]);
 }
 
 function decode$1(raw) {
+  var partial_arg = PrimitiveTypes.ProcessId[/* decode */3];
   return /* record */[
+          /* lastRemoval */Json_decode.field("lastRemoval", (function (param) {
+                  return Json_decode.optional(partial_arg, param);
+                }), raw),
           /* id */Json_decode.field("id", PrimitiveTypes.UserId[/* decode */3], raw),
           /* pubKey */Json_decode.field("pubKey", Json_decode.string, raw)
         ];
@@ -726,8 +736,9 @@ var IncomeDetected = /* module */[
   /* decode */decode$14
 ];
 
-function makePartnerProposed(supporterId, prospectId, prospectPubKey, policy) {
-  return /* PartnerProposed */Block.__(1, [Curry._4(Proposed[/* make */0], /* None */0, supporterId, policy, /* record */[
+function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalProcess, policy) {
+  return /* PartnerProposed */Block.__(1, [Curry._4(Proposed[/* make */0], /* Some */[lastRemovalProcess], supporterId, policy, /* record */[
+                  /* lastRemoval */lastRemovalProcess,
                   /* id */prospectId,
                   /* pubKey */prospectPubKey
                 ])]);

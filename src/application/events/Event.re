@@ -50,6 +50,7 @@ module VentureCreated = {
 module Partner = {
   module Data = {
     type t = {
+      lastRemoval: option(processId),
       id: userId,
       pubKey: string,
     };
@@ -58,12 +59,14 @@ module Partner = {
         object_([
           ("id", UserId.encode(event.id)),
           ("pubKey", string(event.pubKey)),
+          ("lastRemoval", nullable(ProcessId.encode, event.lastRemoval)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         id: raw |> field("id", UserId.decode),
         pubKey: raw |> field("pubKey", string),
+        lastRemoval: raw |> field("lastRemoval", optional(ProcessId.decode)),
       };
   };
   include (val EventTypes.makeProcess("Partner"))(Data);
@@ -393,12 +396,17 @@ type t =
   | IncomeDetected(IncomeDetected.t);
 
 let makePartnerProposed =
-    (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
+    (~supporterId, ~prospectId, ~prospectPubKey, ~lastRemovalProcess, ~policy) =>
   PartnerProposed(
     Partner.Proposed.make(
+      ~dependsOn=lastRemovalProcess,
       ~supporterId,
       ~policy,
-      Partner.Data.{id: prospectId, pubKey: prospectPubKey},
+      Partner.Data.{
+        id: prospectId,
+        pubKey: prospectPubKey,
+        lastRemoval: lastRemovalProcess,
+      },
     ),
   );
 

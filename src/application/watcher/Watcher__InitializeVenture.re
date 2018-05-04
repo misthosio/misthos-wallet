@@ -69,6 +69,7 @@ let make =
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
                 ~policy=metaPolicy,
+                ~lastRemovalProcess=None,
               ),
             ))
           | ProposeAccountCreation(_) =>

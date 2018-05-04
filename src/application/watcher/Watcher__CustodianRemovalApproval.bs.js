@@ -65,7 +65,7 @@ function make(proposal, log) {
                     tmp = /* record */[
                       /* dependencyMet */init$1[/* dependencyMet */0],
                       /* eligable : :: */[
-                        $$event[0][/* data */2][/* id */0],
+                        $$event[0][/* data */2][/* id */1],
                         self$1[state][0][/* eligable */1]
                       ],
                       /* endorsements */init$1[/* endorsements */2],

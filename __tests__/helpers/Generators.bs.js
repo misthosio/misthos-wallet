@@ -51,9 +51,9 @@ function createVenture(session) {
   return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
 }
 
-function partnerProposed($staropt$star, supporterSession, prospectSession) {
+function partnerProposed($staropt$star, lastRemovalProcess, supporterSession, prospectSession) {
   var policy = $staropt$star ? $staropt$star[0] : Policy.unanimous;
-  return Event.getPartnerProposedExn(Event.makePartnerProposed(supporterSession[/* userId */0], prospectSession[/* userId */0], Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2]), policy));
+  return Event.getPartnerProposedExn(Event.makePartnerProposed(supporterSession[/* userId */0], prospectSession[/* userId */0], Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2]), lastRemovalProcess, policy));
 }
 
 function partnerEndorsed(supporter, param) {
@@ -79,7 +79,7 @@ function accountCreationProposed(param) {
 var accountCreationAccepted = Event.AccountCreation[/* Accepted */4][/* fromProposal */0];
 
 function custodianProposed(param, partnerProposal) {
-  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], param[/* userId */0], partnerProposal[/* data */4][/* id */0], WalletTypes.AccountIndex[/* default */8], Policy.unanimous));
+  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal[/* processId */0], param[/* userId */0], partnerProposal[/* data */4][/* id */1], WalletTypes.AccountIndex[/* default */8], Policy.unanimous));
 }
 
 function custodianEndorsed(supporter, param) {
@@ -146,10 +146,11 @@ function createVenture$1(session) {
         ];
 }
 
-function withPartnerProposed(issuer, $staropt$star, supporter, prospect) {
+function withPartnerProposed(issuer, $staropt$star, supporter, prospect, $staropt$star$1) {
   var policy = $staropt$star ? $staropt$star[0] : Policy.unanimous;
+  var lastRemovalProcess = $staropt$star$1 ? $staropt$star$1[0] : /* None */0;
   var issuer$1 = issuer ? issuer[0] : supporter[/* issuerKeyPair */2];
-  var partial_arg = /* PartnerProposed */Block.__(1, [partnerProposed(/* Some */[policy], supporter, prospect)]);
+  var partial_arg = /* PartnerProposed */Block.__(1, [partnerProposed(/* Some */[policy], lastRemovalProcess, supporter, prospect)]);
   return (function (param) {
       return appendEvent(issuer$1, partial_arg, param);
     });
@@ -172,7 +173,7 @@ function withPartnerAccepted(proposal) {
 
 function withPartner(user, supporters, log) {
   if (supporters) {
-    var log$1 = withPartnerProposed(/* None */0, /* None */0, supporters[0], user)(log);
+    var log$1 = Curry._1(withPartnerProposed(/* None */0, /* None */0, supporters[0], user, /* None */0), log);
     var proposal = Event.getPartnerProposedExn(lastEvent(log$1));
     return withPartnerAccepted(proposal)(List.fold_left((function (log, supporter) {
                       return withPartnerEndorsed(supporter, proposal)(log);
@@ -249,7 +250,7 @@ function withCustodianProposed(supporter, custodian, l) {
             return /* Some */[partnerProposal[0]];
           } else if ($$event.tag === 1) {
             var proposal = $$event[0];
-            if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */4][/* id */0], custodian[/* userId */0])) {
+            if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */4][/* id */1], custodian[/* userId */0])) {
               return /* Some */[proposal];
             } else {
               return partnerProposal;

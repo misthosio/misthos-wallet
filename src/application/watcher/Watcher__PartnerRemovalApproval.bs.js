@@ -64,7 +64,7 @@ function make(proposal, log) {
                     var init$1 = self$1[state][0];
                     tmp = /* record */[
                       /* eligable : :: */[
-                        $$event[0][/* data */2][/* id */0],
+                        $$event[0][/* data */2][/* id */1],
                         self$1[state][0][/* eligable */0]
                       ],
                       /* endorsements */init$1[/* endorsements */1],

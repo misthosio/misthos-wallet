@@ -9,20 +9,19 @@ type approvalProcess = {
   policy: Policy.t,
 };
 
-type state = {
-  ventureName: string,
-  systemIssuer: Bitcoin.ECPair.t,
+type t = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   knownItems: list(string),
-  partnerIds: list(userId),
-  partnerPubKeys: list((string, userId)),
-  partnerData: list((processId, Partner.Data.t)),
-  partnerRemovalData: list((processId, Partner.Removal.Data.t)),
-  custodianData: list((processId, Custodian.Data.t)),
-  custodianRemovalData: list((processId, Custodian.Removal.Data.t)),
-  accountCreationData: list((processId, AccountCreation.Data.t)),
-  payoutData: list((processId, Payout.Data.t)),
+  currentPartners: list(userId),
+  currentPartnerPubKeys: list((string, userId)),
+  partnerData: list((processId, (userId, Partner.Data.t))),
+  partnerRemovalData: list((processId, (userId, Partner.Removal.Data.t))),
+  custodianData: list((processId, (userId, Custodian.Data.t))),
+  custodianRemovalData:
+    list((processId, (userId, Custodian.Removal.Data.t))),
+  accountCreationData: list((processId, (userId, AccountCreation.Data.t))),
+  payoutData: list((processId, (userId, Payout.Data.t))),
   processes: list((processId, approvalProcess)),
   completedProcesses: list(processId),
   policies: list((string, Policy.t)),
@@ -33,13 +32,11 @@ type state = {
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
 };
 
-let makeState = () => {
-  ventureName: "",
-  systemIssuer: Bitcoin.ECPair.makeRandom(),
+let make = () => {
   systemPubKey: "",
   knownItems: [],
-  partnerIds: [],
-  partnerPubKeys: [],
+  currentPartners: [],
+  currentPartnerPubKeys: [],
   metaPolicy: Policy.unanimous,
   partnerData: [],
   partnerRemovalData: [],
@@ -53,6 +50,7 @@ let makeState = () => {
   creatorData: {
     id: UserId.fromString(""),
     pubKey: "",
+    lastRemoval: None,
   },
   custodianKeyChains: [],
   accountKeyChains: [],
@@ -97,16 +95,8 @@ let completeProcess =
 let apply = ({hash, event}: EventLog.item, state) => {
   let state = {...state, knownItems: [hash, ...state.knownItems]};
   switch (event) {
-  | VentureCreated({
-      ventureName,
-      metaPolicy,
-      systemIssuer,
-      creatorId,
-      creatorPubKey,
-    }) => {
+  | VentureCreated({metaPolicy, systemIssuer, creatorId, creatorPubKey}) => {
       ...state,
-      ventureName,
-      systemIssuer,
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
       metaPolicy,
       policies: [
@@ -120,34 +110,48 @@ let apply = ({hash, event}: EventLog.item, state) => {
            ]
            |> List.map(n => (n, metaPolicy)),
       ],
-      creatorData: Partner.Data.{id: creatorId, pubKey: creatorPubKey},
+      creatorData:
+        Partner.Data.{
+          id: creatorId,
+          pubKey: creatorPubKey,
+          lastRemoval: None,
+        },
     }
-  | PartnerProposed({processId, data} as proposal) => {
+  | PartnerProposed({supporterId, processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      partnerData: [(processId, data), ...state.partnerData],
+      partnerData: [(processId, (supporterId, data)), ...state.partnerData],
     }
-  | PartnerRemovalProposed({processId, data} as proposal) => {
+  | PartnerRemovalProposed({supporterId, processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      partnerRemovalData: [(processId, data), ...state.partnerRemovalData],
+      partnerRemovalData: [
+        (processId, (supporterId, data)),
+        ...state.partnerRemovalData,
+      ],
     }
-  | CustodianProposed({processId, data} as proposal) => {
+  | CustodianProposed({supporterId, processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      custodianData: [(processId, data), ...state.custodianData],
+      custodianData: [
+        (processId, (supporterId, data)),
+        ...state.custodianData,
+      ],
     }
-  | CustodianRemovalProposed({processId, data} as proposal) => {
+  | CustodianRemovalProposed({supporterId, processId, data} as proposal) => {
       ...addProcess(proposal, state),
       custodianRemovalData: [
-        (processId, data),
+        (processId, (supporterId, data)),
         ...state.custodianRemovalData,
       ],
     }
-  | AccountCreationProposed({processId, data} as proposal) => {
+  | AccountCreationProposed({supporterId, processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      accountCreationData: [(processId, data), ...state.accountCreationData],
+      accountCreationData: [
+        (processId, (supporterId, data)),
+        ...state.accountCreationData,
+      ],
     }
-  | PayoutProposed({processId, data} as proposal) => {
+  | PayoutProposed({supporterId, processId, data} as proposal) => {
       ...addProcess(proposal, state),
-      payoutData: [(processId, data), ...state.payoutData],
+      payoutData: [(processId, (supporterId, data)), ...state.payoutData],
     }
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerRemovalEndorsed(endorsement) => endorseProcess(endorsement, state)
@@ -159,18 +163,22 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
-      partnerIds: [data.id, ...state.partnerIds],
-      partnerPubKeys: [(data.pubKey, data.id), ...state.partnerPubKeys],
+      currentPartners: [data.id, ...state.currentPartners],
+      currentPartnerPubKeys: [
+        (data.pubKey, data.id),
+        ...state.currentPartnerPubKeys,
+      ],
     }
   | PartnerRemovalAccepted({data: {id}} as acceptance) =>
     let pubKey =
-      state.partnerPubKeys
+      state.currentPartnerPubKeys
       |> List.find(((_key, pId)) => UserId.eq(pId, id))
       |> fst;
     {
       ...completeProcess(acceptance, state),
-      partnerIds: state.partnerIds |> List.filter(UserId.neq(id)),
-      partnerPubKeys: state.partnerPubKeys |> List.remove_assoc(pubKey),
+      currentPartners: state.currentPartners |> List.filter(UserId.neq(id)),
+      currentPartnerPubKeys:
+        state.currentPartnerPubKeys |> List.remove_assoc(pubKey),
     };
   | AccountCreationAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
@@ -273,16 +281,22 @@ let defaultDataValidator = (_, _) => Ok;
 
 let validateProposal =
     (
-      ~validateData: ('a, state) => result=defaultDataValidator,
+      ~validateData: ('a, t) => result=defaultDataValidator,
       processName,
+      dataList: list((processId, (userId, 'a))),
       {policy, supporterId, data, dependsOn}: EventTypes.proposal('a),
-      {policies, partnerPubKeys, processes} as state,
+      {policies, currentPartnerPubKeys, completedProcesses, processes} as state,
       issuerPubKey,
     ) =>
-  if (Policy.neq(policy, policies |> List.assoc(processName))) {
+  if (dataList
+      |> List.exists(((_, (previousSupporter, previousData))) =>
+           UserId.eq(previousSupporter, supporterId) && previousData == data
+         )) {
+    BadData("This proposal already exists");
+  } else if (Policy.neq(policy, policies |> List.assoc(processName))) {
     PolicyMissmatch;
   } else if (UserId.neq(
-               partnerPubKeys |> List.assoc(issuerPubKey),
+               currentPartnerPubKeys |> List.assoc(issuerPubKey),
                supporterId,
              )) {
     InvalidIssuer;
@@ -290,7 +304,10 @@ let validateProposal =
     switch (dependsOn) {
     | None => validateData(data, state)
     | Some(processId) =>
-      processes |> List.mem_assoc(processId) ?
+      completedProcesses
+      |> List.mem(processId)
+      || processes
+      |> List.mem_assoc(processId) ?
         validateData(data, state) : DependencyNotMet
     };
   };
@@ -298,13 +315,16 @@ let validateProposal =
 let validateEndorsement =
     (
       {processId, supporterId}: EventTypes.endorsement,
-      {processes, partnerPubKeys},
+      {processes, currentPartnerPubKeys},
       issuerPubKey,
     ) =>
   try (
     {
       let {supporterIds} = processes |> List.assoc(processId);
-      if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), supporterId)) {
+      if (UserId.neq(
+            currentPartnerPubKeys |> List.assoc(issuerPubKey),
+            supporterId,
+          )) {
         InvalidIssuer;
       } else if (supporterIds |> List.mem(supporterId)) {
         Ignore;
@@ -319,17 +339,17 @@ let validateEndorsement =
 let validateAcceptance =
     (
       {processId, data, dependsOn}: EventTypes.acceptance('a),
-      dataList: list((processId, 'a)),
-      {processes, partnerIds, completedProcesses},
+      dataList: list((processId, (userId, 'a))),
+      {processes, currentPartners, completedProcesses},
       _issuerPubKey,
     ) =>
   try (
     {
       let {policy, supporterIds} = processes |> List.assoc(processId);
-      if (data != (dataList |> List.assoc(processId))) {
+      if (data != (dataList |> List.assoc(processId) |> snd)) {
         BadData("Data doesn't match proposal");
       } else if (Policy.fulfilled(
-                   ~eligable=partnerIds,
+                   ~eligable=currentPartners,
                    ~endorsed=supporterIds,
                    policy,
                  )
@@ -347,12 +367,12 @@ let validateAcceptance =
   | Not_found => UnknownProcessId
   };
 
-let validatePartnerData = ({id}: Partner.Data.t, {partnerIds}) =>
-  partnerIds |> List.mem(id) ? Ignore : Ok;
+let validatePartnerData = ({id}: Partner.Data.t, {currentPartners}) =>
+  currentPartners |> List.mem(id) ? Ignore : Ok;
 
 let validatePartnerRemovalData =
-    ({id}: Partner.Removal.Data.t, {partnerIds}) =>
-  partnerIds |> List.mem(id) ?
+    ({id}: Partner.Removal.Data.t, {currentPartners}) =>
+  currentPartners |> List.mem(id) ?
     Ok :
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
 
@@ -360,7 +380,7 @@ let validateCustodianData =
     ({partnerApprovalProcess, partnerId}: Custodian.Data.t, {partnerData}) =>
   try (
     {
-      let pData = partnerData |> List.assoc(partnerApprovalProcess);
+      let pData = partnerData |> List.assoc(partnerApprovalProcess) |> snd;
       UserId.eq(pData.id, partnerId) ?
         Ok : BadData("Partner with Id 'custodian.id' doesn't exist");
     }
@@ -372,7 +392,7 @@ let validateCustodianRemovalData =
     ({custodianId, accountIdx}: Custodian.Removal.Data.t, {custodianData}) =>
   try (
     custodianData
-    |> List.exists(((_processId, data: Custodian.Data.t)) =>
+    |> List.exists(((_processId, (_, data: Custodian.Data.t))) =>
          UserId.eq(data.partnerId, custodianId)
          && AccountIndex.eq(accountIdx, data.accountIdx)
        ) ?
@@ -395,17 +415,25 @@ let validateAccountCreationData =
 let validateCustodianKeyChainUpdated =
     (
       {partnerId, keyChain}: CustodianKeyChainUpdated.t,
-      {partnerPubKeys, custodianData, completedProcesses, custodianKeyChains},
+      {
+        currentPartnerPubKeys,
+        custodianData,
+        completedProcesses,
+        custodianKeyChains,
+      },
       issuerPubKey,
     ) =>
-  if (UserId.neq(partnerPubKeys |> List.assoc(issuerPubKey), partnerId)) {
+  if (UserId.neq(
+        currentPartnerPubKeys |> List.assoc(issuerPubKey),
+        partnerId,
+      )) {
     InvalidIssuer;
   } else {
     try (
       {
         let (process, _data) =
           custodianData
-          |> List.find(((_pId, data: Custodian.Data.t)) =>
+          |> List.find(((_pId, (_, data: Custodian.Data.t))) =>
                data.partnerId == partnerId
                && data.accountIdx == CustodianKeyChain.accountIdx(keyChain)
              );
@@ -446,7 +474,7 @@ let validateAccountKeyChainUpdated =
     {
       let (pId, _) =
         accountCreationData
-        |> List.find(((_, data: AccountCreation.Data.t)) =>
+        |> List.find(((_, (_, data: AccountCreation.Data.t))) =>
              data.accountIdx == keyChain.accountIdx
            );
       if (completedProcesses |> List.mem(pId)) {
@@ -515,38 +543,65 @@ let validateIncomeAddressExposed =
 let validateEvent =
   fun
   | VentureCreated(_) => ((_, _) => Ok)
-  | PartnerProposed(proposal) =>
-    validateProposal(
-      ~validateData=validatePartnerData,
-      Partner.processName,
-      proposal,
+  | PartnerProposed(proposal) => (
+      state =>
+        validateProposal(
+          ~validateData=validatePartnerData,
+          Partner.processName,
+          state.partnerData,
+          proposal,
+          state,
+        )
     )
-  | PartnerRemovalProposed(proposal) =>
-    validateProposal(
-      ~validateData=validatePartnerRemovalData,
-      Partner.Removal.processName,
-      proposal,
+  | PartnerRemovalProposed(proposal) => (
+      state =>
+        validateProposal(
+          ~validateData=validatePartnerRemovalData,
+          Partner.Removal.processName,
+          state.partnerRemovalData,
+          proposal,
+          state,
+        )
     )
-  | CustodianProposed(proposal) =>
-    validateProposal(
-      ~validateData=validateCustodianData,
-      Custodian.processName,
-      proposal,
+  | CustodianProposed(proposal) => (
+      state =>
+        validateProposal(
+          ~validateData=validateCustodianData,
+          Custodian.processName,
+          state.custodianData,
+          proposal,
+          state,
+        )
     )
-  | CustodianRemovalProposed(proposal) =>
-    validateProposal(
-      ~validateData=validateCustodianRemovalData,
-      Custodian.Removal.processName,
-      proposal,
+  | CustodianRemovalProposed(proposal) => (
+      state =>
+        validateProposal(
+          ~validateData=validateCustodianRemovalData,
+          Custodian.Removal.processName,
+          state.custodianRemovalData,
+          proposal,
+          state,
+        )
     )
-  | AccountCreationProposed(proposal) =>
-    validateProposal(
-      ~validateData=validateAccountCreationData,
-      AccountCreation.processName,
-      proposal,
+  | AccountCreationProposed(proposal) => (
+      state =>
+        validateProposal(
+          ~validateData=validateAccountCreationData,
+          AccountCreation.processName,
+          state.accountCreationData,
+          proposal,
+          state,
+        )
     )
-  | PayoutProposed(proposal) =>
-    validateProposal(Payout.processName, proposal)
+  | PayoutProposed(proposal) => (
+      state =>
+        validateProposal(
+          Payout.processName,
+          state.payoutData,
+          proposal,
+          state,
+        )
+    )
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerRemovalEndorsed(endorsement) => validateEndorsement(endorsement)
   | CustodianEndorsed(endorsement) => validateEndorsement(endorsement)
@@ -591,7 +646,7 @@ let validate =
     switch (
       event,
       Event.isSystemEvent(event),
-      state.partnerPubKeys |> List.mem_assoc(issuerPubKey),
+      state.currentPartnerPubKeys |> List.mem_assoc(issuerPubKey),
     ) {
     | (VentureCreated(_), _, _) =>
       UserId.eq(state.creatorData.id, UserId.fromString("")) ?

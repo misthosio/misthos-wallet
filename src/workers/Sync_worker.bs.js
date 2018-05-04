@@ -33,9 +33,9 @@ function determinPartnerIds(localUserId) {
                 switch ($$event.tag | 0) {
                   case 3 : 
                       var data = $$event[0][/* data */2];
-                      if (PrimitiveTypes.UserId[/* neq */6](data[/* id */0], localUserId)) {
+                      if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
                         return /* :: */[
-                                data[/* id */0],
+                                data[/* id */1],
                                 ids
                               ];
                       } else {
