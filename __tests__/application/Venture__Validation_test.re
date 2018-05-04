@@ -54,20 +54,7 @@ let () = {
       );
     });
   });
-  describe("PartnerProposal", () => {
-    describe("when proposing another partner", () => {
-      let (user1, user2) = G.twoUserSessions();
-      let log = L.(createVenture(user1) |> withFirstPartner(user1));
-      testValidationResult(
-        log |> constructState,
-        L.(
-          log
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-          |> lastItem
-        ),
-        Validation.Ok,
-      );
-    });
+  describe("Any proposal type", () => {
     describe("when submitting the identical proposal twice", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
@@ -129,6 +116,39 @@ let () = {
         Validation.InvalidIssuer,
       );
     });
+    describe("when the proposal was already submitted by this partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.BadData("This proposal already exists"),
+      );
+    });
+  });
+  describe("PartnerProposal", () => {
+    describe("when proposing another partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
     describe("when the prospect is already a partner", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
@@ -144,7 +164,7 @@ let () = {
           |> withPartnerProposed(~supporter=user2, ~prospect=user1)
           |> lastItem
         ),
-        Validation.Ignore,
+        Validation.BadData("Partner already exists"),
       );
     });
     describe("when the creator proposes themselves", () => {
@@ -179,6 +199,31 @@ let () = {
         Validation.Ok,
       );
     });
+    describe(
+      "when the partner was removed but the proposal doesn't show it", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withPartnerRemoved(user2, ~supporters=[user1, user3])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~withLastRemoval=false,
+               ~supporter=user3,
+               ~prospect=user2,
+             )
+          |> lastItem
+        ),
+        Validation.BadData("Last removal doesn't match"),
+      );
+    });
     describe("when the prospect was already proposed by another user", () => {
       let (user1, user2, user3) = G.threeUserSessions();
       let log =
@@ -196,24 +241,6 @@ let () = {
           |> lastItem
         ),
         Validation.Ok,
-      );
-    });
-    describe("when the prospect was already proposed by the same user", () => {
-      let (user1, user2) = G.twoUserSessions();
-      let log =
-        L.(
-          createVenture(user1)
-          |> withFirstPartner(user1)
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-        );
-      testValidationResult(
-        log |> constructState,
-        L.(
-          log
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-          |> lastItem
-        ),
-        Validation.BadData("This proposal already exists"),
       );
     });
   });

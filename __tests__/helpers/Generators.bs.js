@@ -152,22 +152,23 @@ function createVenture$1(session) {
         ];
 }
 
-function withPartnerProposed(issuer, $staropt$star, supporter, prospect, l) {
-  var policy = $staropt$star ? $staropt$star[0] : Policy.unanimous;
+function withPartnerProposed($staropt$star, issuer, $staropt$star$1, supporter, prospect, l) {
+  var withLastRemoval = $staropt$star ? $staropt$star[0] : true;
+  var policy = $staropt$star$1 ? $staropt$star$1[0] : Policy.unanimous;
   var issuer$1 = issuer ? issuer[0] : supporter[/* issuerKeyPair */2];
-  var lastRemovalAccepted = Curry._3(EventLog.reduce, (function (res, param) {
-          var $$event = param[/* event */0];
-          if ($$event.tag === 6) {
-            var $$event$1 = $$event[0];
-            if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* id */0], prospect[/* userId */0])) {
-              return /* Some */[$$event$1];
+  var lastRemovalAccepted = withLastRemoval ? Curry._3(EventLog.reduce, (function (res, param) {
+            var $$event = param[/* event */0];
+            if ($$event.tag === 6) {
+              var $$event$1 = $$event[0];
+              if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* id */0], prospect[/* userId */0])) {
+                return /* Some */[$$event$1];
+              } else {
+                return res;
+              }
             } else {
               return res;
             }
-          } else {
-            return res;
-          }
-        }), /* None */0, l[/* log */2]);
+          }), /* None */0, l[/* log */2]) : /* None */0;
   return appendEvent(issuer$1, /* PartnerProposed */Block.__(1, [partnerProposed(/* Some */[policy], lastRemovalAccepted, supporter, prospect)]), l);
 }
 
@@ -188,7 +189,7 @@ function withPartnerAccepted(proposal) {
 
 function withPartner(user, supporters, log) {
   if (supporters) {
-    var log$1 = withPartnerProposed(/* None */0, /* None */0, supporters[0], user, log);
+    var log$1 = withPartnerProposed(/* None */0, /* None */0, /* None */0, supporters[0], user, log);
     var proposal = Event.getPartnerProposedExn(lastEvent(log$1));
     return withPartnerAccepted(proposal)(List.fold_left((function (log, supporter) {
                       return withPartnerEndorsed(supporter, proposal)(log);
