@@ -43,7 +43,7 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
               when
                 ProcessId.eq(
                   processId,
-                  proposal.dependsOn |> Js.Option.getExn,
+                  proposal.dependsOnCompletions |> List.hd,
                 ) => {
               ...state^,
               dependencyMet: true,

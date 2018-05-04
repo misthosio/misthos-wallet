@@ -16,7 +16,7 @@ var class_tables = [
 ];
 
 function make(param, param$1, log) {
-  var acceptedPartnerId = param$1[/* data */2][/* id */0];
+  var acceptedPartnerId = param$1[/* data */2][/* id */1];
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",
@@ -44,9 +44,9 @@ function make(param, param$1, log) {
                 switch ($$event.tag | 0) {
                   case 10 : 
                       var match$1 = $$event[0];
-                      var data = match$1[/* data */4];
+                      var data = match$1[/* data */5];
                       var processId = match$1[/* processId */0];
-                      if (PrimitiveTypes.UserId[/* eq */5](match$1[/* supporterId */2], env$1[0])) {
+                      if (PrimitiveTypes.UserId[/* eq */5](match$1[/* supporterId */3], env$1[0])) {
                         var init = self$1[state][0];
                         tmp = /* record */[
                           /* pendingEvent */init[/* pendingEvent */0],

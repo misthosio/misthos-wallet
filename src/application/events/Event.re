@@ -50,6 +50,7 @@ module VentureCreated = {
 module Partner = {
   module Data = {
     type t = {
+      lastRemoval: option(processId),
       id: userId,
       pubKey: string,
     };
@@ -58,12 +59,14 @@ module Partner = {
         object_([
           ("id", UserId.encode(event.id)),
           ("pubKey", string(event.pubKey)),
+          ("lastRemoval", nullable(ProcessId.encode, event.lastRemoval)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         id: raw |> field("id", UserId.decode),
         pubKey: raw |> field("pubKey", string),
+        lastRemoval: raw |> field("lastRemoval", optional(ProcessId.decode)),
       };
   };
   include (val EventTypes.makeProcess("Partner"))(Data);
@@ -392,15 +395,41 @@ type t =
   | IncomeAddressExposed(IncomeAddressExposed.t)
   | IncomeDetected(IncomeDetected.t);
 
+exception BadData(string);
+
 let makePartnerProposed =
-    (~supporterId, ~prospectId, ~prospectPubKey, ~policy) =>
+    (
+      ~supporterId,
+      ~prospectId,
+      ~prospectPubKey,
+      ~lastRemovalAccepted,
+      ~policy,
+    ) => {
+  let lastRemovalProcess =
+    lastRemovalAccepted
+    |> Utils.mapOption(
+         ({data: {id}, processId}: Partner.Removal.Accepted.t) => {
+         if (UserId.neq(id, prospectId)) {
+           raise(
+             BadData(
+               "The provided PartnerRemovalAccepted wasn't for the same partner",
+             ),
+           );
+         };
+         processId;
+       });
   PartnerProposed(
     Partner.Proposed.make(
       ~supporterId,
       ~policy,
-      Partner.Data.{id: prospectId, pubKey: prospectPubKey},
+      Partner.Data.{
+        id: prospectId,
+        pubKey: prospectPubKey,
+        lastRemoval: lastRemovalProcess,
+      },
     ),
   );
+};
 
 let makePartnerRemovalProposed = (~supporterId, ~partnerId, ~policy) =>
   PartnerRemovalProposed(
@@ -421,21 +450,33 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   );
 
 let makeCustodianProposed =
-    (~partnerApprovalProcess, ~supporterId, ~partnerId, ~accountIdx, ~policy) =>
+    (~partnerProposed: Partner.Proposed.t, ~supporterId, ~accountIdx, ~policy) => {
+  let partnerApprovalProcess = partnerProposed.processId;
   CustodianProposed(
     Custodian.Proposed.make(
-      ~dependsOn=Some(partnerApprovalProcess),
+      ~dependsOnProposals=[partnerApprovalProcess],
       ~supporterId,
       ~policy,
-      Custodian.Data.{partnerApprovalProcess, partnerId, accountIdx},
+      Custodian.Data.{
+        partnerApprovalProcess,
+        partnerId: partnerProposed.data.id,
+        accountIdx,
+      },
     ),
   );
+};
 
 let makeCustodianRemovalProposed =
-    (~dependsOn, ~supporterId, ~custodianId, ~accountIdx, ~policy) =>
+    (
+      ~custodianAccepted: Custodian.Accepted.t,
+      ~supporterId,
+      ~custodianId,
+      ~accountIdx,
+      ~policy,
+    ) =>
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOn,
+      ~dependsOnCompletions=[custodianAccepted.processId],
       ~supporterId,
       ~policy,
       Custodian.Removal.Data.{custodianId, accountIdx},
@@ -706,6 +747,13 @@ let getPartnerRemovalProposedExn = event =>
   | PartnerRemovalProposed(unwrapped) => unwrapped
   | _ => %assert
          "getPartnerRemovalProposedExn"
+  };
+
+let getCustodianRemovalProposedExn = event =>
+  switch (event) {
+  | CustodianRemovalProposed(unwrapped) => unwrapped
+  | _ => %assert
+         "getCustodianRemovalProposedExn"
   };
 
 let getVentureCreatedExn = event =>

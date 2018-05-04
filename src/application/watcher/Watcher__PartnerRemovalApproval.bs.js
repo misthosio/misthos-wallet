@@ -64,7 +64,7 @@ function make(proposal, log) {
                     var init$1 = self$1[state][0];
                     tmp = /* record */[
                       /* eligable : :: */[
-                        $$event[0][/* data */2][/* id */0],
+                        $$event[0][/* data */2][/* id */1],
                         self$1[state][0][/* eligable */0]
                       ],
                       /* endorsements */init$1[/* endorsements */1],
@@ -150,10 +150,10 @@ function make(proposal, log) {
       self[state] = [/* record */[
           /* eligable : [] */0,
           /* endorsements : :: */[
-            env$1[1][/* supporterId */2],
+            env$1[1][/* supporterId */3],
             /* [] */0
           ],
-          /* policy */env$1[1][/* policy */3],
+          /* policy */env$1[1][/* policy */4],
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* creatorId */PrimitiveTypes.UserId[/* fromString */1]("")
         ]];

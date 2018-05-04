@@ -49,7 +49,7 @@ describe("interation", (function () {
             ]);
         var wallet = Venture__Wallet.apply(/* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](accountKeyChain)]), Venture__Wallet.apply(/* AccountCreationAccepted */Block.__(9, [/* record */[
                       /* processId */PrimitiveTypes.ProcessId[/* make */7](/* () */0),
-                      /* dependsOn : None */0,
+                      /* dependsOnCompletions : [] */0,
                       /* data : record */[
                         /* accountIdx */accountIdx,
                         /* name */"default"
@@ -158,7 +158,7 @@ describe("interation", (function () {
                                 return Promise.all(/* tuple */[
                                             Promise.resolve($$event[/* processId */0]),
                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
-                                                      $$event[/* data */4][/* payoutTx */1],
+                                                      $$event[/* data */5][/* payoutTx */1],
                                                       /* [] */0
                                                     ], /* Regtest */0))
                                           ]);
@@ -195,7 +195,7 @@ describe("interation", (function () {
                                           /* hi */0,
                                           /* lo */10
                                         ]), twoKeyChainWallet[0]).then((function ($$event) {
-                                      var data = $$event[/* data */4];
+                                      var data = $$event[/* data */5];
                                       var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB, masterB, wallet$5[/* accountKeyChains */3], data[/* payoutTx */1], /* Regtest */0));
                                       return Promise.all(/* tuple */[
                                                   Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(16, [$$event]), twoKeyChainWallet[0])),

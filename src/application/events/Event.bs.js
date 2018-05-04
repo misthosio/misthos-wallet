@@ -4,6 +4,7 @@
 var BTC = require("../wallet/BTC.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../../utils/Utils.bs.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Policy = require("../Policy.bs.js");
 var Network = require("../wallet/Network.bs.js");
@@ -104,20 +105,30 @@ function encode$1($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "id",
-                PrimitiveTypes.UserId[/* encode */2]($$event[/* id */0])
+                PrimitiveTypes.UserId[/* encode */2]($$event[/* id */1])
               ],
               /* :: */[
                 /* tuple */[
                   "pubKey",
-                  $$event[/* pubKey */1]
+                  $$event[/* pubKey */2]
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "lastRemoval",
+                    Json_encode.nullable(PrimitiveTypes.ProcessId[/* encode */2], $$event[/* lastRemoval */0])
+                  ],
+                  /* [] */0
+                ]
               ]
             ]);
 }
 
 function decode$1(raw) {
+  var partial_arg = PrimitiveTypes.ProcessId[/* decode */3];
   return /* record */[
+          /* lastRemoval */Json_decode.field("lastRemoval", (function (param) {
+                  return Json_decode.optional(partial_arg, param);
+                }), raw),
           /* id */Json_decode.field("id", PrimitiveTypes.UserId[/* decode */3], raw),
           /* pubKey */Json_decode.field("pubKey", Json_decode.string, raw)
         ];
@@ -726,34 +737,53 @@ var IncomeDetected = /* module */[
   /* decode */decode$14
 ];
 
-function makePartnerProposed(supporterId, prospectId, prospectPubKey, policy) {
-  return /* PartnerProposed */Block.__(1, [Curry._4(Proposed[/* make */0], /* None */0, supporterId, policy, /* record */[
+var BadData = Caml_exceptions.create("Event.BadData");
+
+function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
+  var lastRemovalProcess = Utils.mapOption((function (param) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* id */0], prospectId)) {
+            throw [
+                  BadData,
+                  "The provided PartnerRemovalAccepted wasn't for the same partner"
+                ];
+          }
+          return param[/* processId */0];
+        }), lastRemovalAccepted);
+  return /* PartnerProposed */Block.__(1, [Curry._5(Proposed[/* make */0], /* None */0, /* None */0, supporterId, policy, /* record */[
+                  /* lastRemoval */lastRemovalProcess,
                   /* id */prospectId,
                   /* pubKey */prospectPubKey
                 ])]);
 }
 
 function makePartnerRemovalProposed(supporterId, partnerId, policy) {
-  return /* PartnerRemovalProposed */Block.__(4, [Curry._4(Proposed$1[/* make */0], /* None */0, supporterId, policy, /* record */[/* id */partnerId])]);
+  return /* PartnerRemovalProposed */Block.__(4, [Curry._5(Proposed$1[/* make */0], /* None */0, /* None */0, supporterId, policy, /* record */[/* id */partnerId])]);
 }
 
 function makeAccountCreationProposed(supporterId, name, accountIdx, policy) {
-  return /* AccountCreationProposed */Block.__(7, [Curry._4(Proposed$2[/* make */0], /* None */0, supporterId, policy, /* record */[
+  return /* AccountCreationProposed */Block.__(7, [Curry._5(Proposed$2[/* make */0], /* None */0, /* None */0, supporterId, policy, /* record */[
                   /* accountIdx */accountIdx,
                   /* name */name
                 ])]);
 }
 
-function makeCustodianProposed(partnerApprovalProcess, supporterId, partnerId, accountIdx, policy) {
-  return /* CustodianProposed */Block.__(10, [Curry._4(Proposed$3[/* make */0], /* Some */[/* Some */[partnerApprovalProcess]], supporterId, policy, /* record */[
-                  /* partnerId */partnerId,
+function makeCustodianProposed(partnerProposed, supporterId, accountIdx, policy) {
+  var partnerApprovalProcess = partnerProposed[/* processId */0];
+  return /* CustodianProposed */Block.__(10, [Curry._5(Proposed$3[/* make */0], /* Some */[/* :: */[
+                    partnerApprovalProcess,
+                    /* [] */0
+                  ]], /* None */0, supporterId, policy, /* record */[
+                  /* partnerId */partnerProposed[/* data */5][/* id */1],
                   /* partnerApprovalProcess */partnerApprovalProcess,
                   /* accountIdx */accountIdx
                 ])]);
 }
 
-function makeCustodianRemovalProposed(dependsOn, supporterId, custodianId, accountIdx, policy) {
-  return /* CustodianRemovalProposed */Block.__(13, [Curry._4(Proposed$4[/* make */0], /* Some */[dependsOn], supporterId, policy, /* record */[
+function makeCustodianRemovalProposed(custodianAccepted, supporterId, custodianId, accountIdx, policy) {
+  return /* CustodianRemovalProposed */Block.__(13, [Curry._5(Proposed$4[/* make */0], /* None */0, /* Some */[/* :: */[
+                    custodianAccepted[/* processId */0],
+                    /* [] */0
+                  ]], supporterId, policy, /* record */[
                   /* custodianId */custodianId,
                   /* accountIdx */accountIdx
                 ])]);
@@ -1094,6 +1124,14 @@ function getPartnerRemovalProposedExn($$event) {
   }
 }
 
+function getCustodianRemovalProposedExn($$event) {
+  if ($$event.tag === 13) {
+    return $$event[0];
+  } else {
+    return Js_exn.raiseError("getCustodianRemovalProposedExn");
+  }
+}
+
 function getVentureCreatedExn($$event) {
   if ($$event.tag) {
     return Js_exn.raiseError("getVentureCreatedExn");
@@ -1111,6 +1149,7 @@ exports.CustodianKeyChainUpdated = CustodianKeyChainUpdated;
 exports.AccountKeyChainUpdated = AccountKeyChainUpdated;
 exports.IncomeAddressExposed = IncomeAddressExposed;
 exports.IncomeDetected = IncomeDetected;
+exports.BadData = BadData;
 exports.makePartnerProposed = makePartnerProposed;
 exports.makePartnerRemovalProposed = makePartnerRemovalProposed;
 exports.makeAccountCreationProposed = makeAccountCreationProposed;
@@ -1146,5 +1185,6 @@ exports.getPartnerProposedExn = getPartnerProposedExn;
 exports.getPartnerRemovalAcceptedExn = getPartnerRemovalAcceptedExn;
 exports.getPartnerRemovalEndorsedExn = getPartnerRemovalEndorsedExn;
 exports.getPartnerRemovalProposedExn = getPartnerRemovalProposedExn;
+exports.getCustodianRemovalProposedExn = getCustodianRemovalProposedExn;
 exports.getVentureCreatedExn = getVentureCreatedExn;
 /* include Not a pure module */

@@ -41,7 +41,7 @@ function make(param, param$1, log) {
                           /* network */state[/* network */0],
                           /* ventureId */state[/* ventureId */1],
                           /* accountKeyChains */state[/* accountKeyChains */2],
-                          /* payoutTx : Some */[match$1[/* data */4][/* payoutTx */1]],
+                          /* payoutTx : Some */[match$1[/* data */5][/* payoutTx */1]],
                           /* complete */state[/* complete */4]
                         ];
                 } else {

@@ -16,7 +16,7 @@ describe("With 1 partner and a proposal", (function () {
         var watcher = Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
                       if (param.tag === 12) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }
@@ -58,7 +58,7 @@ describe("With 2 users and a proposal and endorsement", (function () {
         var watcher = Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */4](log$1));
         return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */1](log$1), (function (param) {
                       if (param.tag === 12) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }
@@ -80,7 +80,7 @@ describe("With 2 users and a removal and a proposal", (function () {
         var watcher = Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */4](log));
         return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
                       if (param.tag === 12) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }
@@ -104,7 +104,7 @@ describe("With 2 users and a proposal and a removal", (function () {
         Caml_oo_curry.js2(710435299, 2, watcher, Generators.Log[/* lastItem */2](log$1));
         return WatcherHelpers.testWatcherHasEventPending("CustodianAccepted", watcher, Generators.Log[/* systemIssuer */1](log$1), (function (param) {
                       if (param.tag === 12) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */4]);
+                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
                         return false;
                       }

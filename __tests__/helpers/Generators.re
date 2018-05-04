@@ -52,6 +52,7 @@ module Event = {
   let partnerProposed =
       (
         ~policy=Policy.unanimous,
+        ~lastRemovalAccepted,
         supporterSession: Session.Data.t,
         prospectSession: Session.Data.t,
       ) =>
@@ -61,6 +62,7 @@ module Event = {
       ~prospectPubKey=
         prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
       ~policy,
+      ~lastRemovalAccepted,
     )
     |> AppEvent.getPartnerProposedExn;
   let partnerEndorsed =
@@ -102,9 +104,8 @@ module Event = {
         partnerProposal: AppEvent.Partner.Proposed.t,
       ) =>
     Event.makeCustodianProposed(
-      ~partnerApprovalProcess=partnerProposal.processId,
+      ~partnerProposed=partnerProposal,
       ~supporterId=userId,
-      ~partnerId=partnerProposal.data.id,
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimous,
     )
@@ -114,6 +115,20 @@ module Event = {
     AppEvent.makeCustodianEndorsed(~processId, ~supporterId=supporter.userId)
     |> AppEvent.getCustodianEndorsedExn;
   let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
+  let custodianRemovalProposed =
+      (
+        ~custodianAccepted,
+        supporterSession: Session.Data.t,
+        toBeRemoved: Session.Data.t,
+      ) =>
+    AppEvent.makeCustodianRemovalProposed(
+      ~custodianAccepted,
+      ~supporterId=supporterSession.userId,
+      ~custodianId=toBeRemoved.userId,
+      ~accountIdx=AccountIndex.default,
+      ~policy=Policy.unanimousMinusOne,
+    )
+    |> AppEvent.getCustodianRemovalProposedExn;
 };
 
 module Log = {
@@ -148,16 +163,37 @@ module Log = {
         ~issuer=?,
         ~policy=Policy.unanimous,
         ~supporter: Session.Data.t,
-        ~prospect,
+        ~prospect: Session.Data.t,
+        {log} as l,
       ) => {
     let issuer =
       switch (issuer) {
       | None => supporter.issuerKeyPair
       | Some(key) => key
       };
+    let lastRemovalAccepted =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | PartnerRemovalAccepted({data: {id}} as event)
+                 when UserId.eq(id, prospect.userId) =>
+               Some(event)
+             | _ => res
+             },
+           None,
+         );
     appendEvent(
       issuer,
-      PartnerProposed(Event.partnerProposed(~policy, supporter, prospect)),
+      PartnerProposed(
+        Event.partnerProposed(
+          ~policy,
+          ~lastRemovalAccepted,
+          supporter,
+          prospect,
+        ),
+      ),
+      l,
     );
   };
   let withPartnerEndorsed = (supporter: Session.Data.t, proposal) =>
@@ -258,4 +294,47 @@ module Log = {
     );
   let withCustodianAccepted = proposal =>
     appendSystemEvent(CustodianAccepted(Event.custodianAccepted(proposal)));
+  let withCustodian = (user, ~supporters, log) =>
+    switch (supporters) {
+    | [first, ...rest] =>
+      let log =
+        log |> withCustodianProposed(~supporter=first, ~custodian=user);
+      let proposal = log |> lastEvent |> AppEvent.getCustodianProposedExn;
+      rest
+      |> List.fold_left(
+           (log, supporter) =>
+             log |> withCustodianEndorsed(supporter, proposal),
+           log,
+         )
+      |> withCustodianAccepted(proposal);
+    | _ => %assert
+           "withPartner"
+    };
+  let withCustodianRemovalProposed =
+      (~supporter: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
+    let custodianAccepted =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | CustodianAccepted({data: {partnerId}} as event)
+                 when UserId.eq(partnerId, toBeRemoved.userId) =>
+               Some(event)
+             | _ => res
+             },
+           None,
+         )
+      |> Js.Option.getExn;
+    l
+    |> appendEvent(
+         supporter.issuerKeyPair,
+         CustodianRemovalProposed(
+           Event.custodianRemovalProposed(
+             ~custodianAccepted,
+             supporter,
+             toBeRemoved,
+           ),
+         ),
+       );
+  };
 };

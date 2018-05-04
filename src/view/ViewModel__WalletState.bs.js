@@ -66,7 +66,7 @@ function apply($$event, state) {
               ];
     case 16 : 
         var match = $$event[0];
-        var data$1 = match[/* data */4];
+        var data$1 = match[/* data */5];
         var balance = List.assoc(data$1[/* accountIdx */0], state[/* balance */1]);
         var match$1 = data$1[/* changeAddressCoordinates */2];
         return /* record */[

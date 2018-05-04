@@ -78,7 +78,7 @@ function apply($$event, state) {
               ];
     case 16 : 
         var match$1 = $$event[0];
-        var data$1 = match$1[/* data */4];
+        var data$1 = match$1[/* data */5];
         var match$2 = data$1[/* changeAddressCoordinates */2];
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
@@ -274,7 +274,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                 var payoutTx = match$1[0];
                 var match$2 = PayoutTransaction.signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payoutTx, network);
                 var payoutTx$1 = match$2 ? match$2[0] : payoutTx;
-                return Promise.resolve(Curry._4(Event.Payout[/* Proposed */2][/* make */0], /* None */0, userId, payoutPolicy, /* record */[
+                return Promise.resolve(Curry._5(Event.Payout[/* Proposed */2][/* make */0], /* None */0, /* None */0, userId, payoutPolicy, /* record */[
                                 /* accountIdx */accountIdx,
                                 /* payoutTx */payoutTx$1,
                                 /* changeAddressCoordinates */match$1[1]

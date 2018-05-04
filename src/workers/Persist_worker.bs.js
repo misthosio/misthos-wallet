@@ -29,11 +29,11 @@ function determinPartnerKeys(localUserId) {
                 switch ($$event.tag | 0) {
                   case 3 : 
                       var data = $$event[0][/* data */2];
-                      if (PrimitiveTypes.UserId[/* neq */6](data[/* id */0], localUserId)) {
+                      if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
                         return /* :: */[
                                 /* tuple */[
-                                  data[/* id */0],
-                                  data[/* pubKey */1]
+                                  data[/* id */1],
+                                  data[/* pubKey */2]
                                 ],
                                 keys
                               ];

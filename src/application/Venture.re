@@ -8,6 +8,8 @@ module Index = Venture__Index;
 
 module Validation = Venture__Validation;
 
+module State = Venture__State;
+
 exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
@@ -16,7 +18,8 @@ type t = {
   session: Session.Data.t,
   id: ventureId,
   log: EventLog.t,
-  state: Validation.state,
+  state: State.t,
+  validation: Validation.t,
   wallet: Venture__Wallet.t,
   watchers: Watchers.t,
 };
@@ -27,32 +30,40 @@ let make = (session, id) => {
   session,
   id,
   log: EventLog.make(),
-  state: Validation.makeState(),
+  state: State.make(),
+  validation: Validation.make(),
   wallet: Wallet.make(),
   watchers: [],
 };
 
 let applyInternal =
-    (~syncing=false, issuer, event, oldLog, (state, wallet, collector)) => {
+    (
+      ~syncing=false,
+      issuer,
+      event,
+      oldLog,
+      (validation, state, wallet, collector),
+    ) => {
   let (item, log) = oldLog |> EventLog.append(issuer, event);
-  switch (item |> Validation.validate(state)) {
+  switch (item |> Validation.validate(validation)) {
   | Ok =>
     logMessage("Appended event to log:");
     logMessage(Event.encode(event) |> Json.stringify);
-    let state = state |> Validation.apply(event);
+    let validation = validation |> Validation.apply(item);
+    let state = state |> State.apply(event);
     let wallet = wallet |> Wallet.apply(event);
     let collector = [event, ...collector];
-    (Some(item), log, (state, wallet, collector));
+    (Some(item), log, (validation, state, wallet, collector));
   | Ignore =>
     logMessage("Ignoring event:");
     logMessage(Event.encode(event) |> Json.stringify);
-    (None, oldLog, (state, wallet, collector));
+    (None, oldLog, (validation, state, wallet, collector));
   /* This should never happen / only incase of an UI input bug!!! */
   | result =>
     logMessage("Event was rejected because of:");
     logMessage(Validation.resultToString(result));
     syncing ?
-      (None, oldLog, (state, wallet, collector)) :
+      (None, oldLog, (validation, state, wallet, collector)) :
       raise(InvalidEvent(result));
   };
 };
@@ -62,14 +73,14 @@ let apply =
       ~systemEvent=false,
       ~collector=[],
       event,
-      {session, id, log, state, wallet, watchers},
+      {session, id, log, validation, state, wallet, watchers},
     ) => {
-  let (item, log, (state, wallet, collector)) =
+  let (item, log, (validation, state, wallet, collector)) =
     applyInternal(
-      systemEvent ? state.systemIssuer : session.issuerKeyPair,
+      systemEvent ? state |> State.systemIssuer : session.issuerKeyPair,
       event,
       log,
-      (state, wallet, collector),
+      (validation, state, wallet, collector),
     );
   Js.Promise.(
     watchers
@@ -78,41 +89,47 @@ let apply =
          item,
          log,
          applyInternal,
-         (state, wallet, collector),
+         (validation, state, wallet, collector),
        )
-    |> then_(((log, (state, wallet, collector), watchers)) =>
-         ({session, id, log, state, wallet, watchers}, collector) |> resolve
+    |> then_(((log, (validation, state, wallet, collector), watchers)) =>
+         ({validation, session, id, log, state, wallet, watchers}, collector)
+         |> resolve
        )
   );
 };
 
 let reconstruct = (session, log) => {
-  let {state, wallet} = make(session, VentureId.make());
-  let (id, state, wallet, collector, watchers) =
+  let {validation, state, wallet} = make(session, VentureId.make());
+  let (id, validation, state, wallet, collector, watchers) =
     log
     |> EventLog.reduce(
-         ((id, state, wallet, collector, watchers), {event} as item) => (
+         (
+           (id, validation, state, wallet, collector, watchers),
+           {event} as item,
+         ) => (
            switch (event) {
            | VentureCreated({ventureId}) => ventureId
            | _ => id
            },
-           state |> Validation.apply(event),
+           validation |> Validation.apply(item),
+           state |> State.apply(event),
            wallet |> Wallet.apply(event),
            [event, ...collector],
            watchers
            |> Watchers.apply(~reconstruct=true, session, Some(item), log),
          ),
-         (VentureId.make(), state, wallet, [], []),
+         (VentureId.make(), validation, state, wallet, [], []),
        );
   watchers
   |> Watchers.processPending(
        session,
        log,
        applyInternal,
-       (state, wallet, collector),
+       (validation, state, wallet, collector),
      )
-  |> Js.Promise.then_(((log, (state, wallet, collector), watchers)) =>
-       ({session, id, log, state, wallet, watchers}, collector)
+  |> Js.Promise.then_(
+       ((log, (validation, state, wallet, collector), watchers)) =>
+       ({validation, session, id, log, state, wallet, watchers}, collector)
        |> Js.Promise.resolve
      );
 };
@@ -173,7 +190,7 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
          |> then_(((venture, _)) =>
               Index.add(
                 ~ventureId=venture.id,
-                ~ventureName=venture.state.ventureName,
+                ~ventureName=venture.state |> State.ventureName,
               )
               |> then_(index => resolve((index, venture)))
             )
@@ -192,28 +209,33 @@ module SynchronizeLogs = {
     | Ok(t, list(Event.t))
     | Error(t, EventLog.item, Validation.result);
   let exec = (newItems, {session} as venture) => {
-    let ({log, state, wallet, watchers}, collector, error) =
+    let ({log, validation, state, wallet, watchers}, collector, error) =
       newItems
       |> List.fold_left(
            (
-             ({log, watchers, state, wallet} as venture, collector, error),
+             (
+               {log, watchers, validation, state, wallet} as venture,
+               collector,
+               error,
+             ),
              {event} as item: EventLog.item,
            ) =>
              if (Js.Option.isSome(error)) {
                (venture, collector, error);
              } else {
-               switch (item |> Validation.validate(state)) {
+               switch (item |> Validation.validate(validation)) {
                | Ok =>
                  logMessage("Appending synced event to log:");
                  logMessage(Event.encode(event) |> Json.stringify);
                  let log = log |> EventLog.appendItem(item);
-                 let state = state |> Validation.apply(event);
+                 let validation = validation |> Validation.apply(item);
+                 let state = state |> State.apply(event);
                  let wallet = wallet |> Wallet.apply(event);
                  let collector = [event, ...collector];
                  let watchers =
                    watchers |> Watchers.apply(session, Some(item), log);
                  (
-                   {...venture, log, watchers, state, wallet},
+                   {...venture, log, watchers, validation, state, wallet},
                    collector,
                    None,
                  );
@@ -251,10 +273,14 @@ module SynchronizeLogs = {
            session,
            log,
            applyInternal(~syncing=true),
-           (state, wallet, collector),
+           (validation, state, wallet, collector),
          )
-      |> then_(((log, (state, wallet, collector), watchers)) =>
-           ({...venture, log, state, wallet, watchers}, collector) |> persist
+      |> then_(((log, (validation, state, wallet, collector), watchers)) =>
+           (
+             {...venture, log, validation, state, wallet, watchers},
+             collector,
+           )
+           |> persist
          )
       |> then_(((venture, collector)) =>
            (
@@ -336,7 +362,7 @@ module Cmd = {
       | NoUserInfo;
     let exec = (~prospectId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
-      if (state.partnerIds |> List.mem(prospectId)) {
+      if (state |> State.isPartner(prospectId)) {
         PartnerAlreadyExists |> Js.Promise.resolve;
       } else {
         Js.Promise.(
@@ -344,29 +370,30 @@ module Cmd = {
           |> then_(
                fun
                | UserInfo.Public.Ok(info) => {
-                   let partnerProposal =
+                   let partnerProposed =
                      Event.makePartnerProposed(
                        ~supporterId=session.userId,
                        ~prospectId,
                        ~prospectPubKey=info.appPubKey,
                        ~policy=
-                         state.policies
-                         |> List.assoc(Event.Partner.processName),
+                         state
+                         |> State.currentPolicy(Event.Partner.processName),
+                       ~lastRemovalAccepted=
+                         state |> State.lastRemovalOfPartner(prospectId),
                      )
                      |> Event.getPartnerProposedExn;
                    let custodianProposal =
                      Event.makeCustodianProposed(
-                       ~partnerApprovalProcess=partnerProposal.processId,
+                       ~partnerProposed,
                        ~supporterId=session.userId,
-                       ~partnerId=prospectId,
                        ~accountIdx=AccountIndex.default,
                        ~policy=
-                         state.policies
-                         |> List.assoc(Event.Custodian.processName),
+                         state
+                         |> State.currentPolicy(Event.Custodian.processName),
                      )
                      |> Event.getCustodianProposedExn;
                    venture
-                   |> apply(Event.PartnerProposed(partnerProposal))
+                   |> apply(Event.PartnerProposed(partnerProposed))
                    |> then_(((v, c)) =>
                         v
                         |> apply(
@@ -388,13 +415,8 @@ module Cmd = {
       | Ok(t, list(Event.t));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
-      let {id: partnerId}: Event.Partner.Data.t =
-        state.partnerData |> List.assoc(processId);
-      let (custodianProcessId, _) =
-        state.custodianData
-        |> List.find(((_, data: Event.Custodian.Data.t)) =>
-             data.partnerId == partnerId
-           );
+      let custodianProcessId =
+        state |> State.custodianProcessForPartnerProcess(processId);
       Js.Promise.(
         venture
         |> apply(
@@ -424,26 +446,22 @@ module Cmd = {
       | PartnerDoesNotExist;
     let exec = (~partnerId, {state, session} as venture) => {
       logMessage("Executing 'ProposePartnerRemoval' command");
-      if (state.partnerIds |> List.mem(partnerId) == false) {
+      if (state |> State.isPartner(partnerId) == false) {
         PartnerDoesNotExist |> Js.Promise.resolve;
       } else {
-        let (custodianProcess, _) =
-          state.custodianData
-          |> List.find(
-               ((_pId, {partnerId: custodianId}: Event.Custodian.Data.t)) =>
-               UserId.eq(partnerId, custodianId)
-             );
+        let custodianAccepted =
+          state |> State.custodianAcceptedFor(partnerId);
         Js.Promise.(
           venture
           |> apply(
                Event.makeCustodianRemovalProposed(
-                 ~dependsOn=Some(custodianProcess),
+                 ~custodianAccepted,
                  ~supporterId=session.userId,
                  ~custodianId=partnerId,
                  ~accountIdx=AccountIndex.default,
                  ~policy=
-                   state.policies
-                   |> List.assoc(Event.Custodian.Removal.processName),
+                   state
+                   |> State.currentPolicy(Event.Custodian.Removal.processName),
                ),
              )
           |> then_(((v, c)) =>
@@ -454,8 +472,10 @@ module Cmd = {
                       ~supporterId=session.userId,
                       ~partnerId,
                       ~policy=
-                        state.policies
-                        |> List.assoc(Event.Partner.Removal.processName),
+                        state
+                        |> State.currentPolicy(
+                             Event.Partner.Removal.processName,
+                           ),
                     ),
                   )
              )
@@ -470,18 +490,14 @@ module Cmd = {
       | Ok(t, list(Event.t));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartnerRemoval' command");
-      let {id: partnerId}: Event.Partner.Removal.Data.t =
-        state.partnerRemovalData |> List.assoc(processId);
-      let (custodianProcessId, _) =
-        state.custodianRemovalData
-        |> List.find(((_, {custodianId}: Event.Custodian.Removal.Data.t)) =>
-             custodianId == partnerId
-           );
+      let custodianRemovalProcessId =
+        state
+        |> State.custodianRemovalProcessForPartnerRemovalProcess(processId);
       Js.Promise.(
         venture
         |> apply(
              Event.makeCustodianRemovalEndorsed(
-               ~processId=custodianProcessId,
+               ~processId=custodianRemovalProcessId,
                ~supporterId=session.userId,
              ),
            )
