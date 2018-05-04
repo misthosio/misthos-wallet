@@ -238,9 +238,9 @@ exports.systemIssuer = systemIssuer;
 exports.ventureName = ventureName;
 exports.currentPolicy = currentPolicy;
 exports.isPartner = isPartner;
-exports.custodianProcessForPartnerProcess = custodianProcessForPartnerProcess;
 exports.custodianAcceptedFor = custodianAcceptedFor;
-exports.custodianRemovalProcessForPartnerRemovalProcess = custodianRemovalProcessForPartnerRemovalProcess;
 exports.lastRemovalOfPartner = lastRemovalOfPartner;
+exports.custodianProcessForPartnerProcess = custodianProcessForPartnerProcess;
+exports.custodianRemovalProcessForPartnerRemovalProcess = custodianRemovalProcessForPartnerRemovalProcess;
 exports.apply = apply;
 /* Event Not a pure module */
