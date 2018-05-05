@@ -55,13 +55,17 @@ function ventureCreated(id, events) {
 }
 
 function newEvents(id, events) {
-  var msg_001 = List.rev(events);
-  var msg = /* NewEvents */Block.__(3, [
-      id,
-      msg_001
-    ]);
-  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
-  return /* () */0;
+  if (events) {
+    var msg_001 = List.rev(events);
+    var msg = /* NewEvents */Block.__(3, [
+        id,
+        msg_001
+      ]);
+    postMessage(VentureWorkerMessage.encodeOutgoing(msg));
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
 }
 
 var Notify = /* module */[
@@ -324,14 +328,8 @@ function transactionDetected(ventureId, events) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, venture).then((function (param) {
-                                  var newEvents$1 = param[1];
-                                  var venture = param[0];
-                                  if (newEvents$1) {
-                                    newEvents(ventureId, newEvents$1);
-                                    return Promise.resolve(venture);
-                                  } else {
-                                    return Promise.resolve(venture);
-                                  }
+                                  newEvents(ventureId, param[1]);
+                                  return Promise.resolve(param[0]);
                                 }));
                   }), param);
     });
@@ -344,19 +342,12 @@ function newItemsDetected(ventureId, items) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
-                                    var newEvents$1 = param[1];
-                                    var venture = param[0];
                                     logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
-                                    return Promise.resolve(newEvents$1 ? (newEvents(ventureId, newEvents$1), venture) : venture);
+                                    newEvents(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   } else {
-                                    var newEvents$2 = param[1];
-                                    var venture$1 = param[0];
-                                    if (newEvents$2) {
-                                      newEvents(ventureId, newEvents$2);
-                                      return Promise.resolve(venture$1);
-                                    } else {
-                                      return Promise.resolve(venture$1);
-                                    }
+                                    newEvents(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   }
                                 }));
                   }), param);

@@ -34,7 +34,10 @@ module Notify = {
   let ventureCreated = (id, events) =>
     postMessage(VentureCreated(id, events |> List.rev));
   let newEvents = (id, events) =>
-    postMessage(NewEvents(id, events |> List.rev));
+    switch (events) {
+    | [] => ()
+    | events => postMessage(NewEvents(id, events |> List.rev))
+    };
 };
 
 type state = {
@@ -300,7 +303,6 @@ module Handle = {
           |> exec(events)
           |> then_(
                fun
-               | Ok(venture, []) => venture |> resolve
                | Ok(venture, newEvents) => {
                    Notify.newEvents(ventureId, newEvents);
                    venture |> resolve;
@@ -319,7 +321,6 @@ module Handle = {
           |> exec(items)
           |> then_(
                fun
-               | Ok(venture, []) => venture |> resolve
                | Ok(venture, newEvents) => {
                    Notify.newEvents(ventureId, newEvents);
                    venture |> resolve;
@@ -330,15 +331,8 @@ module Handle = {
                      ++ (conflicts |> List.length |> string_of_int)
                      ++ " conflicts while syncing",
                    );
-                   (
-                     switch (newEvents) {
-                     | [] => venture
-                     | newEvents =>
-                       Notify.newEvents(ventureId, newEvents);
-                       venture;
-                     }
-                   )
-                   |> resolve;
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
                  },
              )
         )
