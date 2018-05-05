@@ -342,10 +342,19 @@ function newItemsDetected(ventureId, items) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
-                                    return Promise.resolve(venture);
+                                    var newEvents$1 = param[1];
+                                    var venture = param[0];
+                                    logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
+                                    return Promise.resolve(newEvents$1 ? (newEvents(ventureId, newEvents$1), venture) : venture);
                                   } else {
-                                    newEvents(ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
+                                    var newEvents$2 = param[1];
+                                    var venture$1 = param[0];
+                                    if (newEvents$2) {
+                                      newEvents(ventureId, newEvents$2);
+                                      return Promise.resolve(venture$1);
+                                    } else {
+                                      return Promise.resolve(venture$1);
+                                    }
                                   }
                                 }));
                   }), param);

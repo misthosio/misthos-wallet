@@ -319,11 +319,27 @@ module Handle = {
           |> exec(items)
           |> then_(
                fun
+               | Ok(venture, []) => venture |> resolve
                | Ok(venture, newEvents) => {
                    Notify.newEvents(ventureId, newEvents);
                    venture |> resolve;
                  }
-               | Error(_, _, _) => venture |> resolve,
+               | WithConflicts(venture, newEvents, conflicts) => {
+                   logMessage(
+                     "There were "
+                     ++ (conflicts |> List.length |> string_of_int)
+                     ++ " conflicts while syncing",
+                   );
+                   (
+                     switch (newEvents) {
+                     | [] => venture
+                     | newEvents =>
+                       Notify.newEvents(ventureId, newEvents);
+                       venture;
+                     }
+                   )
+                   |> resolve;
+                 },
              )
         )
       )

@@ -53,7 +53,11 @@ module Cmd: {
   module SynchronizeLogs: {
     type result =
       | Ok(t, list(Event.t))
-      | Error(t, EventLog.item, Validation.result);
+      | WithConflicts(
+          t,
+          list(Event.t),
+          list((EventLog.item, Validation.result)),
+        );
     let exec: (list(EventLog.item), t) => Js.Promise.t(result);
   };
   module SynchronizeWallet: {

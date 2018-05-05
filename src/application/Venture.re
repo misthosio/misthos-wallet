@@ -59,7 +59,9 @@ let applyInternal =
     logMessage(Event.encode(event) |> Json.stringify);
     (None, oldLog, (validation, state, wallet, collector));
   | result =>
-    logMessage("Event was rejected because of:");
+    logMessage("Event:");
+    logMessage(Event.encode(event) |> Json.stringify);
+    logMessage("was rejected because of:");
     logMessage(Validation.resultToString(result));
     syncing ?
       (None, oldLog, (validation, state, wallet, collector)) :
@@ -232,65 +234,46 @@ module Cmd = {
   module SynchronizeLogs = {
     type result =
       | Ok(t, list(Event.t))
-      | Error(t, EventLog.item, Validation.result);
+      | WithConflicts(
+          t,
+          list(Event.t),
+          list((EventLog.item, Validation.result)),
+        );
     let exec = (newItems, {session} as venture) => {
-      let ({log, validation, state, wallet, watchers}, collector, error) =
+      let ({log, validation, state, wallet, watchers}, collector, conflicts) =
         newItems
         |> List.fold_left(
              (
                (
                  {log, watchers, validation, state, wallet} as venture,
                  collector,
-                 error,
+                 conflicts,
                ),
                {event} as item: EventLog.item,
              ) =>
-               if (Js.Option.isSome(error)) {
-                 (venture, collector, error);
-               } else {
-                 switch (item |> Validation.validate(validation)) {
-                 | Ok =>
-                   logMessage("Appending synced event to log:");
-                   logMessage(Event.encode(event) |> Json.stringify);
-                   let log = log |> EventLog.appendItem(item);
-                   let validation = validation |> Validation.apply(item);
-                   let state = state |> State.apply(event);
-                   let wallet = wallet |> Wallet.apply(event);
-                   let collector = [event, ...collector];
-                   let watchers =
-                     watchers |> Watchers.apply(session, Some(item), log);
-                   (
-                     {...venture, log, watchers, validation, state, wallet},
-                     collector,
-                     None,
-                   );
-                 | PolicyMissmatch as conflict => (
-                     venture,
-                     collector,
-                     Some(Error(venture, item, conflict)),
-                   )
-                 | PolicyNotFulfilled as conflict => (
-                     venture,
-                     collector,
-                     Some(Error(venture, item, conflict)),
-                   )
-                 /* Ignored validation issues */
-                 | Ignore => (venture, collector, None)
-                 | InvalidIssuer =>
-                   logMessage("Invalid issuer detected");
-                   (venture, collector, None);
-                 | BadData(msg) =>
-                   logMessage("Bad data in event detected: " ++ msg);
-                   (venture, collector, None);
-                 | UnknownProcessId =>
-                   logMessage("Unknown ProcessId detected");
-                   (venture, collector, None);
-                 | DependencyNotMet =>
-                   logMessage("Dependency Not Met detected");
-                   (venture, collector, None);
-                 };
+               switch (item |> Validation.validate(validation)) {
+               | Ok =>
+                 logMessage("Appending synced event to log:");
+                 logMessage(Event.encode(event) |> Json.stringify);
+                 let log = log |> EventLog.appendItem(item);
+                 let validation = validation |> Validation.apply(item);
+                 let state = state |> State.apply(event);
+                 let wallet = wallet |> Wallet.apply(event);
+                 let collector = [event, ...collector];
+                 let watchers =
+                   watchers |> Watchers.apply(session, Some(item), log);
+                 (
+                   {...venture, log, watchers, validation, state, wallet},
+                   collector,
+                   conflicts,
+                 );
+               | conflict => (
+                   venture,
+                   collector,
+                   [(item, conflict), ...conflicts],
+                 )
                },
-             (venture, [], None),
+             (venture, [], []),
            );
       Js.Promise.(
         watchers
@@ -309,9 +292,9 @@ module Cmd = {
            )
         |> then_(((venture, collector)) =>
              (
-               switch (error) {
-               | None => Ok(venture, collector)
-               | Some(e) => e
+               switch (conflicts) {
+               | [] => Ok(venture, collector)
+               | conflicts => WithConflicts(venture, collector, conflicts)
                }
              )
              |> resolve

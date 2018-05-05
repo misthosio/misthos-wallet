@@ -11,7 +11,6 @@ var Policy = require("./Policy.bs.js");
 var EventLog = require("./events/EventLog.bs.js");
 var UserInfo = require("./UserInfo.bs.js");
 var Watchers = require("./watcher/Watchers.bs.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var Blockstack$1 = require("blockstack");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
@@ -97,7 +96,9 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
     exit = 1;
   }
   if (exit === 1) {
-    logMessage("Event was rejected because of:");
+    logMessage("Event:");
+    logMessage(Json.stringify(Event.encode($$event)));
+    logMessage("was rejected because of:");
     logMessage(Venture__Validation.resultToString(result));
     if (syncing) {
       return /* tuple */[
@@ -299,106 +300,60 @@ function exec$1(newItems, venture) {
   var session = venture[/* session */0];
   var match = List.fold_left((function (param, item) {
           var $$event = item[/* event */0];
-          var error = param[2];
+          var conflicts = param[2];
           var collector = param[1];
           var venture = param[0];
           var validation = venture[/* validation */4];
-          if (Js_option.isSome(error)) {
+          var conflict = Venture__Validation.validate(validation, item);
+          var exit = 0;
+          if (typeof conflict === "number" && conflict === 0) {
+            logMessage("Appending synced event to log:");
+            logMessage(Json.stringify(Event.encode($$event)));
+            var log = Curry._2(EventLog.appendItem, item, venture[/* log */2]);
+            var validation$1 = Venture__Validation.apply(item, validation);
+            var state = Venture__State.apply($$event, venture[/* state */3]);
+            var wallet = Venture__Wallet.apply($$event, venture[/* wallet */5]);
+            var collector$1 = /* :: */[
+              $$event,
+              collector
+            ];
+            var watchers = Watchers.apply(/* None */0, session, /* Some */[item], log, venture[/* watchers */6]);
+            return /* tuple */[
+                    /* record */[
+                      /* session */venture[/* session */0],
+                      /* id */venture[/* id */1],
+                      /* log */log,
+                      /* state */state,
+                      /* validation */validation$1,
+                      /* wallet */wallet,
+                      /* watchers */watchers
+                    ],
+                    collector$1,
+                    conflicts
+                  ];
+          } else {
+            exit = 1;
+          }
+          if (exit === 1) {
             return /* tuple */[
                     venture,
                     collector,
-                    error
+                    /* :: */[
+                      /* tuple */[
+                        item,
+                        conflict
+                      ],
+                      conflicts
+                    ]
                   ];
-          } else {
-            var conflict = Venture__Validation.validate(validation, item);
-            if (typeof conflict === "number") {
-              var exit = 0;
-              switch (conflict) {
-                case 0 : 
-                    logMessage("Appending synced event to log:");
-                    logMessage(Json.stringify(Event.encode($$event)));
-                    var log = Curry._2(EventLog.appendItem, item, venture[/* log */2]);
-                    var validation$1 = Venture__Validation.apply(item, validation);
-                    var state = Venture__State.apply($$event, venture[/* state */3]);
-                    var wallet = Venture__Wallet.apply($$event, venture[/* wallet */5]);
-                    var collector$1 = /* :: */[
-                      $$event,
-                      collector
-                    ];
-                    var watchers = Watchers.apply(/* None */0, session, /* Some */[item], log, venture[/* watchers */6]);
-                    return /* tuple */[
-                            /* record */[
-                              /* session */venture[/* session */0],
-                              /* id */venture[/* id */1],
-                              /* log */log,
-                              /* state */state,
-                              /* validation */validation$1,
-                              /* wallet */wallet,
-                              /* watchers */watchers
-                            ],
-                            collector$1,
-                            /* None */0
-                          ];
-                case 1 : 
-                    return /* tuple */[
-                            venture,
-                            collector,
-                            /* None */0
-                          ];
-                case 2 : 
-                    logMessage("Invalid issuer detected");
-                    return /* tuple */[
-                            venture,
-                            collector,
-                            /* None */0
-                          ];
-                case 3 : 
-                    logMessage("Unknown ProcessId detected");
-                    return /* tuple */[
-                            venture,
-                            collector,
-                            /* None */0
-                          ];
-                case 4 : 
-                case 5 : 
-                    exit = 1;
-                    break;
-                case 6 : 
-                    logMessage("Dependency Not Met detected");
-                    return /* tuple */[
-                            venture,
-                            collector,
-                            /* None */0
-                          ];
-                
-              }
-              if (exit === 1) {
-                return /* tuple */[
-                        venture,
-                        collector,
-                        /* Some */[/* Error */Block.__(1, [
-                              venture,
-                              item,
-                              conflict
-                            ])]
-                      ];
-              }
-              
-            } else {
-              logMessage("Bad data in event detected: " + conflict[0]);
-              return /* tuple */[
-                      venture,
-                      collector,
-                      /* None */0
-                    ];
-            }
           }
+          
         }), /* tuple */[
         venture,
         /* [] */0,
-        /* None */0
+        /* [] */0
       ], newItems);
-  var error = match[2];
+  var conflicts = match[2];
   var match$1 = match[0];
   var partial_arg = /* Some */[true];
   return Watchers.processPending(session, match$1[/* log */2], (function (param, param$1, param$2, param$3) {
@@ -423,9 +378,15 @@ function exec$1(newItems, venture) {
                               match[3]
                             ]);
                 })).then((function (param) {
-                return Promise.resolve(error ? error[0] : /* Ok */Block.__(0, [
-                                param[0],
-                                param[1]
+                var collector = param[1];
+                var venture = param[0];
+                return Promise.resolve(conflicts ? /* WithConflicts */Block.__(1, [
+                                venture,
+                                collector,
+                                conflicts
+                              ]) : /* Ok */Block.__(0, [
+                                venture,
+                                collector
                               ]));
               }));
 }
