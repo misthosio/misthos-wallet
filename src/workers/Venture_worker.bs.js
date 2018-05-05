@@ -324,9 +324,11 @@ function transactionDetected(ventureId, events) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, venture).then((function (param) {
-                                  if (param) {
-                                    newEvents(ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
+                                  var newEvents$1 = param[1];
+                                  var venture = param[0];
+                                  if (newEvents$1) {
+                                    newEvents(ventureId, newEvents$1);
+                                    return Promise.resolve(venture);
                                   } else {
                                     return Promise.resolve(venture);
                                   }

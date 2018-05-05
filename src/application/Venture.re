@@ -304,8 +304,7 @@ module Cmd = {
   };
   module SynchronizeWallet = {
     type result =
-      | Ok(t, list(Event.t))
-      | AlreadyUpToDate;
+      | Ok(t, list(Event.t));
     let exec = (incomeEvents, venture) => {
       logMessage("Synchronizing wallet");
       Js.Promise.(
@@ -325,13 +324,7 @@ module Cmd = {
            )
         |> then_(persist)
         |> then_(((venture, collector)) =>
-             (
-               switch (collector) {
-               | [] => AlreadyUpToDate
-               | _ => Ok(venture, collector)
-               }
-             )
-             |> resolve
+             Ok(venture, collector) |> resolve
            )
       );
     };

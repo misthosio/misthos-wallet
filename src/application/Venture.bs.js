@@ -403,11 +403,10 @@ function exec$2(incomeEvents, venture) {
                       venture,
                       /* [] */0
                     ]), incomeEvents).then(persist).then((function (param) {
-                var collector = param[1];
-                return Promise.resolve(collector ? /* Ok */[
-                              param[0],
-                              collector
-                            ] : /* AlreadyUpToDate */0);
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
               }));
 }
 

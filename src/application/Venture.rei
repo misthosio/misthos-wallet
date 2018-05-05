@@ -62,8 +62,7 @@ module Cmd: {
   };
   module SynchronizeWallet: {
     type result =
-      | Ok(t, list(Event.t))
-      | AlreadyUpToDate;
+      | Ok(t, list(Event.t));
     let exec: (list(Event.IncomeDetected.t), t) => Js.Promise.t(result);
   };
   module ProposePartner: {

@@ -300,11 +300,11 @@ module Handle = {
           |> exec(events)
           |> then_(
                fun
+               | Ok(venture, []) => venture |> resolve
                | Ok(venture, newEvents) => {
                    Notify.newEvents(ventureId, newEvents);
                    venture |> resolve;
-                 }
-               | AlreadyUpToDate => venture |> resolve,
+                 },
              )
         )
       )
