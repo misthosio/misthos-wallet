@@ -279,7 +279,23 @@ function getAllEvents(param) {
               }), /* [] */0, param[/* log */2]);
 }
 
-function exec(newItems, venture) {
+function exec(session, ventureName) {
+  logMessage("Executing 'Create' command");
+  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
+  return /* tuple */[
+          ventureCreated[/* ventureId */0],
+          Promise.all(/* tuple */[
+                Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
+                apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then(persist).then((function (param) {
+                        return Promise.resolve(param[0]);
+                      }))
+              ])
+        ];
+}
+
+var Create = /* module */[/* exec */exec];
+
+function exec$1(newItems, venture) {
   var session = venture[/* session */0];
   var match = List.fold_left((function (param, item) {
           var $$event = item[/* event */0];
@@ -414,23 +430,7 @@ function exec(newItems, venture) {
               }));
 }
 
-var SynchronizeLogs = /* module */[/* exec */exec];
-
-function exec$1(session, ventureName) {
-  logMessage("Executing 'Create' command");
-  var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
-  return /* tuple */[
-          ventureCreated[/* ventureId */0],
-          Promise.all(/* tuple */[
-                Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
-                apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then(persist).then((function (param) {
-                        return Promise.resolve(param[0]);
-                      }))
-              ])
-        ];
-}
-
-var Create = /* module */[/* exec */exec$1];
+var SynchronizeLogs = /* module */[/* exec */exec$1];
 
 function exec$2(incomeEvents, venture) {
   logMessage("Synchronizing wallet");
@@ -573,6 +573,19 @@ function exec$9(processId, venture) {
 
 var EndorsePayout = /* module */[/* exec */exec$9];
 
+var Cmd = /* module */[
+  /* Create */Create,
+  /* SynchronizeLogs */SynchronizeLogs,
+  /* SynchronizeWallet */SynchronizeWallet,
+  /* ProposePartner */ProposePartner,
+  /* EndorsePartner */EndorsePartner,
+  /* ProposePartnerRemoval */ProposePartnerRemoval,
+  /* EndorsePartnerRemoval */EndorsePartnerRemoval,
+  /* ExposeIncomeAddress */ExposeIncomeAddress,
+  /* ProposePayout */ProposePayout,
+  /* EndorsePayout */EndorsePayout
+];
+
 var Index = [
   Venture__Index.load,
   Venture__Index.encode,
@@ -580,19 +593,6 @@ var Index = [
 ];
 
 var Validation = [Venture__Validation.resultToString];
-
-var Cmd = [
-  Create,
-  SynchronizeLogs,
-  SynchronizeWallet,
-  ProposePartner,
-  EndorsePartner,
-  ProposePartnerRemoval,
-  EndorsePartnerRemoval,
-  ExposeIncomeAddress,
-  ProposePayout,
-  EndorsePayout
-];
 
 exports.Index = Index;
 exports.Validation = Validation;
