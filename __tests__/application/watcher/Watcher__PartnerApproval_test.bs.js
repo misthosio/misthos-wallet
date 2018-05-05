@@ -94,7 +94,7 @@ describe("With 2 users and a proposal and endorsement", (function () {
                   return Curry._5(func, param, param$1, param$2, user1, user3);
                 })(/* None */0, /* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
-        var log$1 = Generators.Log[/* withPartnerEndorsed */9](user2, proposal)(log);
+        var log$1 = Generators.Log[/* withPartnerEndorsed */9](/* None */0, user2, proposal)(log);
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log$1));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log$1), (function (param) {
                       if (param.tag === 3) {

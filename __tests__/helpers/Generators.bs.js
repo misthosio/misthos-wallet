@@ -48,6 +48,15 @@ function threeUserSessions() {
         ];
 }
 
+function fourUserSessions() {
+  return /* tuple */[
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user1")),
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user2")),
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user3")),
+          userSession(PrimitiveTypes.UserId[/* fromString */1]("user4"))
+        ];
+}
+
 function createVenture(session) {
   return Event.VentureCreated[/* make */0](PrimitiveTypes.UserId[/* toString */0](session[/* userId */0]) + "-testventure", session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
 }
@@ -172,11 +181,11 @@ function withPartnerProposed($staropt$star, issuer, $staropt$star$1, supporter, 
   return appendEvent(issuer$1, /* PartnerProposed */Block.__(1, [partnerProposed(/* Some */[policy], lastRemovalAccepted, supporter, prospect)]), l);
 }
 
-function withPartnerEndorsed(supporter, proposal) {
+function withPartnerEndorsed(issuer, supporter, proposal) {
+  var issuer$1 = issuer ? issuer[0] : supporter[/* issuerKeyPair */2];
   var partial_arg = /* PartnerEndorsed */Block.__(2, [partnerEndorsed(supporter, proposal)]);
-  var partial_arg$1 = supporter[/* issuerKeyPair */2];
   return (function (param) {
-      return appendEvent(partial_arg$1, partial_arg, param);
+      return appendEvent(issuer$1, partial_arg, param);
     });
 }
 
@@ -192,7 +201,7 @@ function withPartner(user, supporters, log) {
     var log$1 = withPartnerProposed(/* None */0, /* None */0, /* None */0, supporters[0], user, log);
     var proposal = Event.getPartnerProposedExn(lastEvent(log$1));
     return withPartnerAccepted(proposal)(List.fold_left((function (log, supporter) {
-                      return withPartnerEndorsed(supporter, proposal)(log);
+                      return withPartnerEndorsed(/* None */0, supporter, proposal)(log);
                     }), log$1, supporters[1]));
   } else {
     return Js_exn.raiseError("withPartner");
@@ -359,6 +368,7 @@ exports.AppEvent = AppEvent;
 exports.userSession = userSession;
 exports.twoUserSessions = twoUserSessions;
 exports.threeUserSessions = threeUserSessions;
+exports.fourUserSessions = fourUserSessions;
 exports.Event = Event$1;
 exports.Log = Log;
 /* Event Not a pure module */

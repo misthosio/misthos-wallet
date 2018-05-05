@@ -40,6 +40,13 @@ let threeUserSessions = () => (
   userSession("user3" |> UserId.fromString),
 );
 
+let fourUserSessions = () => (
+  userSession("user1" |> UserId.fromString),
+  userSession("user2" |> UserId.fromString),
+  userSession("user3" |> UserId.fromString),
+  userSession("user4" |> UserId.fromString),
+);
+
 module Event = {
   let createVenture = (session: Session.Data.t) =>
     AppEvent.VentureCreated.make(
@@ -199,11 +206,17 @@ module Log = {
       l,
     );
   };
-  let withPartnerEndorsed = (supporter: Session.Data.t, proposal) =>
+  let withPartnerEndorsed = (~issuer=?, supporter: Session.Data.t, proposal) => {
+    let issuer =
+      switch (issuer) {
+      | None => supporter.issuerKeyPair
+      | Some(key) => key
+      };
     appendEvent(
-      supporter.issuerKeyPair,
+      issuer,
       PartnerEndorsed(Event.partnerEndorsed(supporter, proposal)),
     );
+  };
   let withPartnerAccepted = proposal =>
     appendSystemEvent(PartnerAccepted(Event.partnerAccepted(proposal)));
   let withPartner = (user, ~supporters, log) =>
