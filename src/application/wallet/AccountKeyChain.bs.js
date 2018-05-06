@@ -119,15 +119,17 @@ var Coordinates = /* module */[
 function make$1(coordinates, param) {
   var custodianKeyChains = param[/* custodianKeyChains */3];
   var nCoSigners = param[/* nCoSigners */2];
-  var keys = List.map((function (node) {
-          return node.keyPair;
+  var keys = List.sort((function (pairA, pairB) {
+          return Caml_primitive.caml_string_compare(Utils.bufToHex(pairA.getPublicKeyBuffer()), Utils.bufToHex(pairB.getPublicKeyBuffer()));
         }), List.map((function (node) {
-              return node.derive(CustodianKeyChain.defaultCosignerIdx).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx(coordinates))).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx(coordinates)));
-            }), List.sort((function (chainA, chainB) {
-                  return Caml_primitive.caml_string_compare(Utils.bufToHex(chainA.getPublicKeyBuffer()), Utils.bufToHex(chainB.getPublicKeyBuffer()));
-                }), List.map((function (chain) {
-                      return CustodianKeyChain.hdNode(chain[1]);
-                    }), custodianKeyChains))));
+              return node.keyPair;
+            }), List.map((function (node) {
+                  return node.derive(CustodianKeyChain.defaultCosignerIdx).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx(coordinates))).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx(coordinates)));
+                }), List.sort((function (chainA, chainB) {
+                      return Caml_primitive.caml_string_compare(Utils.bufToHex(chainA.getPublicKeyBuffer()), Utils.bufToHex(chainB.getPublicKeyBuffer()));
+                    }), List.map((function (chain) {
+                          return CustodianKeyChain.hdNode(chain[1]);
+                        }), custodianKeyChains)))));
   var witnessScript = BitcoinjsLib.script.multisig.output.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
                   return prim.getPublicKeyBuffer();
                 }), keys)));

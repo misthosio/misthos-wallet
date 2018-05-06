@@ -21,7 +21,7 @@ function hdNode($$public) {
 }
 
 function make(ventureId, accountIdx, keyChainIdx, masterKeyChain) {
-  var misthosKeyChain = masterKeyChain.deriveHardened(1337);
+  var misthosKeyChain = masterKeyChain.deriveHardened(0);
   var salt = Utils.hash(Utils.bufToHex(misthosKeyChain.getPublicKeyBuffer()));
   var custodianKeyChain = misthosKeyChain.deriveHardened(Utils.hashCode(Utils.hash(PrimitiveTypes.VentureId[/* toString */0](ventureId) + salt))).deriveHardened(0).deriveHardened(WalletTypes.AccountIndex[/* toInt */0](accountIdx)).deriveHardened(WalletTypes.CustodianKeyChainIndex[/* toInt */0](keyChainIdx)).deriveHardened(45);
   return /* record */[

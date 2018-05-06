@@ -18,8 +18,8 @@ let keyChainIdx = public => public.keyChainIdx;
 
 let hdNode = public => public.hdNode;
 
-/* m/misthos'/venture'/coin_type'/account'/keyChain'/bip45'/cosignerIdx/change/address */
-let misthosPurposeIdx = 1337;
+/* m/misthosPurpose' /venture'/coin_type'/account'/keyChain'/bip45'/cosignerIdx/change/address */
+let misthosWalletPurposeIdx = 0;
 
 let coinTypeBitcoin = 0;
 
@@ -27,7 +27,7 @@ let bip45Purpose = 45;
 
 let make = (~ventureId, ~accountIdx, ~keyChainIdx, ~masterKeyChain) => {
   let misthosKeyChain =
-    masterKeyChain |> HDNode.deriveHardened(misthosPurposeIdx);
+    masterKeyChain |> HDNode.deriveHardened(misthosWalletPurposeIdx);
   let salt =
     misthosKeyChain
     |> HDNode.getPublicKeyBuffer

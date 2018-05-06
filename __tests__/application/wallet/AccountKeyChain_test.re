@@ -81,9 +81,9 @@ let () =
                ChainIndex.externalChain,
                AddressIndex.first,
              ),
-             witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
-             redeemScript: "002027fa0596838478a59b5c0512acf480fdba510cd320def9e3d9e9d27a13b7e72f",
-             address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
+             witnessScript: "512103331e2cc5405b722e54b4c64ce11e149906a8af27f6126eb2ded2f0a780a1406c51ae",
+             redeemScript: "002097eab88cae50436c7588ce328aa33b139edcf8dd833cdf4cf8e80fbc31b8a0f3",
+             address: "2NCzQPvZTdvtyu3pkqyMKGNgoTNBvFHNL3n",
            }: AccountKeyChain.Address.t,
          );
     });

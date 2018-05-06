@@ -98,7 +98,13 @@ module Address = {
                 Coordinates.addressIdx(coordinates) |> AddressIndex.toInt,
               )
          )
-      |> List.map(node => node##keyPair);
+      |> List.map(node => node##keyPair)
+      |> List.sort((pairA, pairB) =>
+           compare(
+             pairA |> ECPair.getPublicKeyBuffer |> Utils.bufToHex,
+             pairB |> ECPair.getPublicKeyBuffer |> Utils.bufToHex,
+           )
+         );
     open Script;
     let witnessScript =
       Multisig.Output.encode(
