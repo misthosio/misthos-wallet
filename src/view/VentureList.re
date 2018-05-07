@@ -12,7 +12,6 @@ module Styles = {
     ]);
   let link =
     style([display(block), width(`percent(100.0)), color(`currentColor)]);
-  let title = style([padding2(~v=px(7), ~h=px(20))]);
 };
 
 let make = (~selected=?, ~index, _children) => {
@@ -58,7 +57,7 @@ let make = (~selected=?, ~index, _children) => {
     let title =
       MaterialUi.(
         <TitleBar>
-          <Typography key="titleBar" className=Styles.title variant=`Headline>
+          <Typography variant=`Headline>
             ("My Ventures" |> Utils.text)
           </Typography>
         </TitleBar>

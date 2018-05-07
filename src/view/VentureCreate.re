@@ -44,17 +44,9 @@ let make =
     MaterialUi.(
       <Grid container=true alignItems=`Flex_Start justify=`Center>
         <TitleBar>
-          <Grid
-            key="titleBar"
-            container=true
-            alignItems=`Flex_Start
-            justify=`Center>
-            <Grid item=true xs=V8>
-              <Typography variant=`Headline>
-                (Utils.text("Create a Venture"))
-              </Typography>
-            </Grid>
-          </Grid>
+          <Typography variant=`Headline>
+            (Utils.text("Create a Venture"))
+          </Typography>
         </TitleBar>
         (
           switch (selectedVenture) {
