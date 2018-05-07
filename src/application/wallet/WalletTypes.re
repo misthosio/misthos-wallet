@@ -73,6 +73,12 @@ module AccountKeyChainIndex = {
 
 type accountKeyChainIdx = AccountKeyChainIndex.t;
 
+module CoSignerIndex = {
+  include Base;
+};
+
+type coSignerIdx = CoSignerIndex.t;
+
 module ChainIndex = {
   include Base;
   let externalChain = fromInt(0);
