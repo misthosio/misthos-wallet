@@ -5,7 +5,7 @@ var BTC = require("../../src/application/wallet/BTC.bs.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var List = require("bs-platform/lib/js/list.js");
 var Bitcoin = require("../../src/ffi/Bitcoin.bs.js");
-var Helpers = require("./Helpers.bs.js");
+var Helpers = require("../helpers/Helpers.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var BitcoindClient = require("../../src/application/wallet/BitcoindClient.bs.js");
 

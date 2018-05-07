@@ -4,7 +4,11 @@ install:
 dev:
 	yarn start
 
-test:
+test-unit:
+	node_modules/.bin/jest --clearCache
+	yarn test --testPathIgnorePatterns "/integration/"
+
+test-all:
 	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
 	yarn test --runInBand
