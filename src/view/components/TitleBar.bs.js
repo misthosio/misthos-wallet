@@ -6,6 +6,7 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
 var Glamor = require("glamor");
+var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("TitleBar");
@@ -55,7 +56,8 @@ var Styles = /* module */[
   /* gradientGrid */gradientGrid
 ];
 
-function make(children) {
+function make($staropt$star, children) {
+  var className = $staropt$star ? $staropt$star[0] : "";
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -68,13 +70,11 @@ function make(children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return React.createElement("div", {
-                          className: title + (" " + titleGrid)
+                          className: title + (" " + (titleGrid + (" " + className)))
                         }, React.createElement("div", {
                               className: container
                             }, $$Array.mapi((function (i, child) {
-                                    return React.createElement("div", {
-                                                key: String(i)
-                                              }, child);
+                                    return ReasonReact.element(/* Some */[String(i)], /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* array */[child]));
                                   }), children)), React.createElement("div", {
                               className: gradient + (" " + gradientGrid)
                             }));

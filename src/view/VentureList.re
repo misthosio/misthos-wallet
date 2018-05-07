@@ -54,16 +54,8 @@ let make = (~selected=?, ~index, _children) => {
         )
       };
     let _status = Utils.text("ventures:");
-    let title =
-      MaterialUi.(
-        <TitleBar>
-          <Typography variant=`Headline>
-            ("My Ventures" |> Utils.text)
-          </Typography>
-        </TitleBar>
-      );
     <div>
-      title
+      <TitleBar> ("My Ventures" |> Utils.text) </TitleBar>
       <MaterialUi.List dense=true> ventureList </MaterialUi.List>
     </div>;
   },

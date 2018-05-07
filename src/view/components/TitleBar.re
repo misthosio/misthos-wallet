@@ -26,15 +26,19 @@ module Styles = {
   let gradientGrid = cssUnsafe({"gridColumn": "1 / 4", "gridRow": "2"});
 };
 
-let make = children => {
+let make = (~className="", children) => {
   ...component,
   render: _self =>
-    <div className=(Styles.title ++ " " ++ Styles.titleGrid)>
+    <div
+      className=(Styles.title ++ " " ++ Styles.titleGrid ++ " " ++ className)>
       <div className=Styles.container>
         (
           children
           |> Array.mapi((i, child) =>
-               <div key=(i |> string_of_int)> child </div>
+               <MaterialUi.Typography
+                 key=(i |> string_of_int) variant=`Headline>
+                 child
+               </MaterialUi.Typography>
              )
           |> ReasonReact.array
         )
