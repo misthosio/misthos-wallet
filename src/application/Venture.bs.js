@@ -335,6 +335,8 @@ function exec$1(newItems, venture) {
             exit = 1;
           }
           if (exit === 1) {
+            logMessage("Encountered '" + (Venture__Validation.resultToString(conflict) + "'. Ignoring event:"));
+            logMessage(Json.stringify(Event.encode($$event)));
             return /* tuple */[
                     venture,
                     collector,
@@ -463,8 +465,13 @@ function exec$5(partnerId, venture) {
   if (Venture__State.isPartner(partnerId, state) === false) {
     return Promise.resolve(/* PartnerDoesNotExist */0);
   } else {
-    var custodianAccepted = Venture__State.custodianAcceptedFor(partnerId, state);
-    return apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(custodianAccepted, session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture).then((function (param) {
+    var match = Venture__State.custodianAcceptedFor(partnerId, state);
+    return (
+                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(match[0], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
+                          venture,
+                          /* [] */0
+                        ])
+                ).then((function (param) {
                       return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */5][/* processName */1], state)), param[0]);
                     })).then(persist).then((function (param) {
                   return Promise.resolve(/* Ok */[
@@ -480,8 +487,13 @@ var ProposePartnerRemoval = /* module */[/* exec */exec$5];
 function exec$6(processId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'EndorsePartnerRemoval' command");
-  var custodianRemovalProcessId = Venture__State.custodianRemovalProcessForPartnerRemovalProcess(processId, venture[/* state */3]);
-  return apply(/* None */0, /* None */0, Event.makeCustodianRemovalEndorsed(custodianRemovalProcessId, session[/* userId */0]), venture).then((function (param) {
+  var match = Venture__State.custodianRemovalProcessForPartnerRemovalProcess(processId, venture[/* state */3]);
+  return (
+                match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalEndorsed(match[0], session[/* userId */0]), venture) : Promise.resolve(/* tuple */[
+                        venture,
+                        /* [] */0
+                      ])
+              ).then((function (param) {
                     return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalEndorsed(processId, session[/* userId */0]), param[0]);
                   })).then(persist).then((function (param) {
                 return Promise.resolve(/* Ok */[
@@ -495,7 +507,7 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$6];
 
 function exec$7(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
-  var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(accountIdx, venture[/* wallet */5]);
+  var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
   return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(25, [exposeEvent]), venture).then(persist).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             exposeEvent[/* address */1],

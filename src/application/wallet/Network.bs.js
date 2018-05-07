@@ -5,12 +5,12 @@ var BTC = require("./BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
+var Address = require("./Address.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var BitcoindClient = require("./BitcoindClient.bs.js");
 var SmartbitClient = require("./SmartbitClient.bs.js");
-var AccountKeyChain = require("./AccountKeyChain.bs.js");
 
 function encode(param) {
   switch (param) {
@@ -72,7 +72,7 @@ function encodeInput(input) {
                         /* :: */[
                           /* tuple */[
                             "coordinates",
-                            Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* encode */7], input[/* coordinates */6])
+                            Address.Coordinates[/* encode */9](input[/* coordinates */6])
                           ],
                           /* [] */0
                         ]
@@ -92,7 +92,7 @@ function decodeInput(raw) {
           /* value */Json_decode.field("value", BTC.decode, raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
           /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw),
-          /* coordinates */Json_decode.field("coordinates", AccountKeyChain.Address[/* Coordinates */0][/* decode */8], raw)
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw)
         ];
 }
 
@@ -100,7 +100,7 @@ function Make(Client) {
   var network = Client[/* network */0];
   var transactionInputs = function (coordinates, accountKeyChains) {
     var addresses = List.map((function (c) {
-            var address = AccountKeyChain.find(c, accountKeyChains);
+            var address = Address.find(c, accountKeyChains);
             return /* tuple */[
                     address[/* address */5],
                     /* tuple */[
@@ -144,7 +144,7 @@ var network = Client[/* network */0];
 
 function transactionInputs(coordinates, accountKeyChains) {
   var addresses = List.map((function (c) {
-          var address = AccountKeyChain.find(c, accountKeyChains);
+          var address = Address.find(c, accountKeyChains);
           return /* tuple */[
                   address[/* address */5],
                   /* tuple */[
@@ -185,7 +185,7 @@ var network$1 = Client$1[/* network */0];
 
 function transactionInputs$1(coordinates, accountKeyChains) {
   var addresses = List.map((function (c) {
-          var address = AccountKeyChain.find(c, accountKeyChains);
+          var address = Address.find(c, accountKeyChains);
           return /* tuple */[
                   address[/* address */5],
                   /* tuple */[
@@ -226,7 +226,7 @@ var network$2 = Client$2[/* network */0];
 
 function transactionInputs$2(coordinates, accountKeyChains) {
   var addresses = List.map((function (c) {
-          var address = AccountKeyChain.find(c, accountKeyChains);
+          var address = Address.find(c, accountKeyChains);
           return /* tuple */[
                   address[/* address */5],
                   /* tuple */[

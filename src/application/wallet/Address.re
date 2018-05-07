@@ -67,6 +67,8 @@ module Coordinates = {
   let coSignerIdx = ((_, _, coSignerIdx, _, _)) => coSignerIdx;
   let chainIdx = ((_, _, _, chainIdx, _)) => chainIdx;
   let addressIdx = ((_, _, _, _, addressIdx)) => addressIdx;
+  let allForAccount = aIdx =>
+    List.filter(c => AccountIndex.eq(c |> accountIdx, aIdx));
   let encode = ((a, b, c, d, e)) =>
     Json.Encode.(
       ((a, b), (c, d, e))
@@ -151,3 +153,11 @@ let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) =>
     address,
   };
 };
+
+let find = (coordinates, keyChains) =>
+  AccountKeyChain.Collection.lookup(
+    coordinates |> Coordinates.accountIdx,
+    coordinates |> Coordinates.keyChainIdx,
+    keyChains,
+  )
+  |> make(coordinates);

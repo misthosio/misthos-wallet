@@ -34,7 +34,7 @@ describe("interation", (function () {
         var keyChainIdx = WalletTypes.CustodianKeyChainIndex[/* first */7];
         var cKeyChainA = CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterA));
         var cKeyChainB = CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterB));
-        var accountKeyChain = AccountKeyChain.make(accountIdx, WalletTypes.AccountKeyChainIndex[/* first */1], 1, /* :: */[
+        var accountKeyChain = AccountKeyChain.make(accountIdx, WalletTypes.AccountKeyChainIndex[/* first */1], /* :: */[
               /* tuple */[
                 userA,
                 cKeyChainA
@@ -55,12 +55,12 @@ describe("interation", (function () {
                         /* name */"default"
                       ]
                     ]]), Venture__Wallet.apply(/* VentureCreated */Block.__(0, [createdEvent]), Venture__Wallet.make(/* () */0))));
-        var address1 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet);
+        var address1 = Venture__Wallet.exposeNextIncomeAddress(userA, accountIdx, wallet);
         var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address1]), wallet);
-        var address2 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet$1);
+        var address2 = Venture__Wallet.exposeNextIncomeAddress(userA, accountIdx, wallet$1);
         var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address2]), wallet$1);
         var oneKeyChainWallet = [wallet$2];
-        var accountKeyChain$1 = AccountKeyChain.make(accountIdx, WalletTypes.AccountKeyChainIndex[/* next */2](WalletTypes.AccountKeyChainIndex[/* first */1]), 2, /* :: */[
+        var accountKeyChain$1 = AccountKeyChain.make(accountIdx, WalletTypes.AccountKeyChainIndex[/* next */2](WalletTypes.AccountKeyChainIndex[/* first */1]), /* :: */[
               /* tuple */[
                 userA,
                 cKeyChainA
@@ -74,9 +74,9 @@ describe("interation", (function () {
               ]
             ]);
         var wallet$3 = Venture__Wallet.apply(/* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](accountKeyChain$1)]), wallet$2);
-        var address3 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet$3);
+        var address3 = Venture__Wallet.exposeNextIncomeAddress(userA, accountIdx, wallet$3);
         var wallet$4 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address3]), wallet$3);
-        var address4 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet$4);
+        var address4 = Venture__Wallet.exposeNextIncomeAddress(userA, accountIdx, wallet$4);
         var wallet$5 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address4]), wallet$4);
         var twoKeyChainWallet = [wallet$5];
         var address1Satoshis = BTC.fromSatoshis(/* int64 */[

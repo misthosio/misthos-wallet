@@ -14,8 +14,7 @@ type t = {
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
   balance: list((accountIdx, balance)),
-  exposedCoordinates:
-    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t))),
+  exposedCoordinates: list((accountIdx, list(Address.Coordinates.t))),
   payoutProcesses: list((ProcessId.t, (accountIdx, PayoutTransaction.t))),
 };
 
@@ -33,8 +32,8 @@ let getAccountIndexOfAddress =
        (
          idx,
          coordinates
-         |> List.map(c => accountKeyChains |> AccountKeyChain.find(c))
-         |> List.map((a: AccountKeyChain.Address.t) => a.address),
+         |> List.map(c => accountKeyChains |> Address.find(c))
+         |> List.map((a: Address.t) => a.address),
        )
      )
   |> List.find(((_idx, addresses)) => addresses |> List.mem(address))
@@ -71,8 +70,7 @@ let apply = (event: Event.t, state) =>
       ],
     }
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
-    let accountIdx =
-      coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
+    let accountIdx = coordinates |> Address.Coordinates.accountIdx;
     {
       ...state,
       exposedCoordinates: [

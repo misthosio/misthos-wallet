@@ -100,7 +100,7 @@ let () = {
     let state = log |> constructState;
     test("Remembers the latest CustodianAccepted events", () =>
       expect(state |> State.custodianAcceptedFor(user2.userId))
-      |> toEqual(custodianAccepted)
+      |> toEqual(Some(custodianAccepted))
     );
   });
   describe("RemovalProcessMapping", () => {
@@ -130,7 +130,7 @@ let () = {
              partnerRemovalProcess,
            ),
       )
-      |> toEqual(custodianRemovalProcess)
+      |> toEqual(Some(custodianRemovalProcess))
     );
   });
 };

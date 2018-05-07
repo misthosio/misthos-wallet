@@ -20,130 +20,32 @@ let make = (accountIdx, keyChainIdx, custodianKeyChains) => {
   nCoSigners: defaultCoSignerList[custodianKeyChains |> List.length],
 };
 
-module Address = {
-  module Coordinates = {
-    type t = (
-      AccountIndex.t,
-      AccountKeyChainIndex.t,
-      ChainIndex.t,
-      AddressIndex.t,
-    );
-    let firstExternal = ({accountIdx, keyChainIdx}) => (
-      accountIdx,
-      keyChainIdx,
-      ChainIndex.externalChain,
-      AddressIndex.first,
-    );
-    let firstInternal = ({accountIdx, keyChainIdx}) => (
-      accountIdx,
-      keyChainIdx,
-      ChainIndex.internalChain,
-      AddressIndex.first,
-    );
-    let next = ((accountIdx, accountKeyChainIdx, chainIdx, addressIdx)) => (
-      accountIdx,
-      accountKeyChainIdx,
-      chainIdx,
-      addressIdx |> AddressIndex.next,
-    );
-    let addressIdx = ((_, _, _, addressIdx)) => addressIdx;
-    let keyChainIdx = ((_, keyChainIdx, _, _)) => keyChainIdx;
-    let chainIdx = ((_, _, chainIdx, _)) => chainIdx;
-    let accountIdx = ((idx, _, _, _)) => idx;
-    let encode =
-      Json.Encode.(
-        tuple4(
-          AccountIndex.encode,
-          AccountKeyChainIndex.encode,
-          ChainIndex.encode,
-          AddressIndex.encode,
-        )
-      );
-    let decode =
-      Json.Decode.(
-        tuple4(
-          AccountIndex.decode,
-          AccountKeyChainIndex.decode,
-          ChainIndex.decode,
-          AddressIndex.decode,
-        )
-      );
+module Collection = {
+  type collection = list((accountIdx, list((accountKeyChainIdx, t))));
+  type t = collection;
+  let make = () => [];
+  let add = ({accountIdx, keyChainIdx} as keyChain, collection) => {
+    let keyChains =
+      try (collection |> List.assoc(accountIdx)) {
+      | Not_found => []
+      };
+    [
+      (accountIdx, [(keyChainIdx, keyChain), ...keyChains]),
+      ...collection |> List.remove_assoc(accountIdx),
+    ];
   };
-  type t = {
-    nCoSigners: int,
-    nPubKeys: int,
-    coordinates: Coordinates.t,
-    witnessScript: string,
-    redeemScript: string,
-    address: string,
-  };
-  /* bip45'/cosignerIdx/change/address */
-  let make = (coordinates, {custodianKeyChains, nCoSigners}) => {
-    let keys =
-      custodianKeyChains
-      |> List.map(chain => chain |> snd |> CustodianKeyChain.hdNode)
-      |> List.sort((chainA, chainB) =>
-           compare(
-             chainA |> Bitcoin.HDNode.getPublicKeyBuffer |> Utils.bufToHex,
-             chainB |> Bitcoin.HDNode.getPublicKeyBuffer |> Utils.bufToHex,
-           )
-         )
-      |> List.map(node =>
-           node
-           |> HDNode.derive(CustodianKeyChain.defaultCosignerIdx)
-           |> HDNode.derive(
-                Coordinates.chainIdx(coordinates) |> ChainIndex.toInt,
-              )
-           |> HDNode.derive(
-                Coordinates.addressIdx(coordinates) |> AddressIndex.toInt,
-              )
-         )
-      |> List.map(node => node##keyPair)
-      |> List.sort((pairA, pairB) =>
-           compare(
-             pairA |> ECPair.getPublicKeyBuffer |> Utils.bufToHex,
-             pairB |> ECPair.getPublicKeyBuffer |> Utils.bufToHex,
-           )
-         );
-    open Script;
-    let witnessScript =
-      Multisig.Output.encode(
-        nCoSigners,
-        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
-      );
-    let redeemScript =
-      WitnessScriptHash.Output.encode(
-        Crypto.sha256FromBuffer(witnessScript),
-      );
-    let outputScript =
-      ScriptHash.Output.encode(Crypto.hash160(redeemScript));
-    let address =
-      Address.fromOutputScript(
-        outputScript,
-        keys |> List.hd |> ECPair.getNetwork,
-      );
-    {
-      nCoSigners,
-      coordinates,
-      nPubKeys: custodianKeyChains |> List.length,
-      witnessScript: Utils.bufToHex(witnessScript),
-      redeemScript: Utils.bufToHex(redeemScript),
-      address,
-    };
-  };
+  let lookup = (accountIdx, accountKeyChainIdx, accounts: t) =>
+    accounts |> List.assoc(accountIdx) |> List.assoc(accountKeyChainIdx);
+  let latest = (accountIdx, accounts: t) =>
+    accounts
+    |> List.assoc(accountIdx)
+    |> List.fold_left(
+         (res, (keyChainIdx, keyChain)) =>
+           AccountKeyChainIndex.compare(keyChainIdx, res.keyChainIdx) > 0 ?
+             keyChain : res,
+         accounts |> List.assoc(accountIdx) |> List.hd |> snd,
+       );
 };
-
-let custodianKeyChains = keyChain => keyChain.custodianKeyChains;
-
-let lookupKeyChain =
-    (
-      (accountIdx, accountKeyChainIdx, _chainIdx, _addressIdx),
-      accounts: list((accountIdx, list((accountKeyChainIdx, t)))),
-    ) =>
-  accounts |> List.assoc(accountIdx) |> List.assoc(accountKeyChainIdx);
-
-let find = (coordinates, keyChains) =>
-  keyChains |> lookupKeyChain(coordinates) |> Address.make(coordinates);
 
 let encode = keyChain =>
   Json.Encode.(

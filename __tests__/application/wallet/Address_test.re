@@ -6,8 +6,6 @@ module G = Generators;
 
 module E = G.Event;
 
-module Address = NewAddress;
-
 open WalletTypes;
 
 let testCoordinates =

@@ -139,7 +139,7 @@ describe("ProcessMapping", (function () {
         var custodianAccepted = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */3](log));
         var state = constructState(log);
         return Jest.test("Remembers the latest CustodianAccepted events", (function () {
-                      return Jest.Expect[/* toEqual */12](custodianAccepted, Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state)));
+                      return Jest.Expect[/* toEqual */12](/* Some */[custodianAccepted], Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state)));
                     }));
       }));
 
@@ -164,7 +164,7 @@ describe("RemovalProcessMapping", (function () {
         var partnerRemovalProcess = match$2[/* processId */0];
         var state = constructState(log$1);
         return Jest.test("maps a partnerRemovalProcess to a custodianRemovalProcess", (function () {
-                      return Jest.Expect[/* toEqual */12](custodianRemovalProcess, Jest.Expect[/* expect */0](Venture__State.custodianRemovalProcessForPartnerRemovalProcess(partnerRemovalProcess, state)));
+                      return Jest.Expect[/* toEqual */12](/* Some */[custodianRemovalProcess], Jest.Expect[/* expect */0](Venture__State.custodianRemovalProcessForPartnerRemovalProcess(partnerRemovalProcess, state)));
                     }));
       }));
 

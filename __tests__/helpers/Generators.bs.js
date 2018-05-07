@@ -64,6 +64,11 @@ function custodianKeyChain($staropt$star, param) {
   return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, WalletTypes.AccountIndex[/* default */8], WalletTypes.CustodianKeyChainIndex[/* first */7], param[/* masterKeyChain */4]));
 }
 
+function nextCustodianKeyChain($staropt$star, param, custodianKeyChain) {
+  var ventureId = $staropt$star ? $staropt$star[0] : PrimitiveTypes.VentureId[/* fromString */1]("test");
+  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianKeyChain), WalletTypes.CustodianKeyChainIndex[/* next */1](CustodianKeyChain.keyChainIdx(custodianKeyChain)), param[/* masterKeyChain */4]));
+}
+
 function accountKeyChain(users) {
   return AccountKeyChain.make(WalletTypes.AccountIndex[/* default */8], WalletTypes.AccountKeyChainIndex[/* first */1], List.map((function (user) {
                     return /* tuple */[
@@ -71,6 +76,23 @@ function accountKeyChain(users) {
                             custodianKeyChain(/* None */0, user)
                           ];
                   }), users));
+}
+
+function nextAccountKeyChain(users, param) {
+  var userKeys = List.map((function (user) {
+          return /* tuple */[
+                  user[/* userId */0],
+                  user
+                ];
+        }), users);
+  var keyChains = List.map((function (param) {
+          var user = param[0];
+          return /* tuple */[
+                  user,
+                  nextCustodianKeyChain(/* None */0, List.assoc(user, userKeys), param[1])
+                ];
+        }), param[/* custodianKeyChains */3]);
+  return AccountKeyChain.make(param[/* accountIdx */0], WalletTypes.AccountKeyChainIndex[/* next */2](param[/* keyChainIdx */1]), keyChains);
 }
 
 function createVenture(session) {
@@ -386,7 +408,9 @@ exports.twoUserSessions = twoUserSessions;
 exports.threeUserSessions = threeUserSessions;
 exports.fourUserSessions = fourUserSessions;
 exports.custodianKeyChain = custodianKeyChain;
+exports.nextCustodianKeyChain = nextCustodianKeyChain;
 exports.accountKeyChain = accountKeyChain;
+exports.nextAccountKeyChain = nextAccountKeyChain;
 exports.Event = Event$1;
 exports.Log = Log;
 /* Event Not a pure module */

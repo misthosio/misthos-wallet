@@ -43,13 +43,20 @@ let custodianProcessForPartnerProcess = (processId, {custodianProcesses}) =>
   |> fst;
 
 let custodianAcceptedFor = (partnerId, {custodianAccepted}) =>
-  custodianAccepted |> List.assoc(partnerId);
+  try (Some(custodianAccepted |> List.assoc(partnerId))) {
+  | Not_found => None
+  };
 
 let custodianRemovalProcessForPartnerRemovalProcess =
-    (processId, {custodianRemovalProcesses, partnerRemovalProcesses}) => {
-  let custodianId = partnerRemovalProcesses |> List.assoc(processId);
-  custodianRemovalProcesses |> List.assoc(custodianId);
-};
+    (processId, {custodianRemovalProcesses, partnerRemovalProcesses}) =>
+  try (
+    {
+      let custodianId = partnerRemovalProcesses |> List.assoc(processId);
+      Some(custodianRemovalProcesses |> List.assoc(custodianId));
+    }
+  ) {
+  | Not_found => None
+  };
 
 let lastRemovalOfPartner = (partnerId, {partnerRemovals}) =>
   try (Some(partnerRemovals |> List.assoc(partnerId))) {

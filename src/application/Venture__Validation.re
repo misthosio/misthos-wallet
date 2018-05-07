@@ -519,8 +519,7 @@ let validateAccountKeyChainUpdated =
           BadData("Bad KeyChainIndex");
         } else {
           let accountIdx = keyChain.accountIdx;
-          keyChain
-          |> AccountKeyChain.custodianKeyChains
+          keyChain.custodianKeyChains
           |> List.map(((partnerId, keyChain)) =>
                try (
                  {
@@ -562,8 +561,7 @@ let validateIncomeAddressExposed =
     ) =>
   try (
     {
-      let generatedAddress =
-        accountKeyChains |> AccountKeyChain.find(coordinates);
+      let generatedAddress = accountKeyChains |> Address.find(coordinates);
       if (address == generatedAddress.address) {
         Ok;
       } else {

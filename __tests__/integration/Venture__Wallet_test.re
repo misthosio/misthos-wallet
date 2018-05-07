@@ -68,7 +68,6 @@ let () =
       AccountKeyChain.make(
         accountIdx,
         AccountKeyChainIndex.first,
-        1,
         [(userA, cKeyChainA), (userB, cKeyChainB)],
       );
     let wallet =
@@ -89,16 +88,17 @@ let () =
              AccountKeyChainUpdated.make(~keyChain=accountKeyChain),
            ),
          );
-    let address1 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+    let address1 =
+      wallet |> Wallet.exposeNextIncomeAddress(userA, accountIdx);
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address1));
-    let address2 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+    let address2 =
+      wallet |> Wallet.exposeNextIncomeAddress(userA, accountIdx);
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address2));
     let oneKeyChainWallet = ref(wallet);
     let accountKeyChain =
       AccountKeyChain.make(
         accountIdx,
         AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
-        2,
         [(userA, cKeyChainA), (userB, cKeyChainB)],
       );
     let wallet =
@@ -108,9 +108,11 @@ let () =
              AccountKeyChainUpdated.make(~keyChain=accountKeyChain),
            ),
          );
-    let address3 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+    let address3 =
+      wallet |> Wallet.exposeNextIncomeAddress(userA, accountIdx);
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address3));
-    let address4 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+    let address4 =
+      wallet |> Wallet.exposeNextIncomeAddress(userA, accountIdx);
     let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address4));
     let twoKeyChainWallet = ref(wallet);
     let address1Satoshis = BTC.fromSatoshis(10000L);

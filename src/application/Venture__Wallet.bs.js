@@ -5,6 +5,7 @@ var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Policy = require("./Policy.bs.js");
+var Address = require("./wallet/Address.bs.js");
 var Network = require("./wallet/Network.bs.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
@@ -17,8 +18,6 @@ function make() {
           /* network : Testnet */1,
           /* payoutPolicy */Policy.unanimous,
           /* accountKeyChains : [] */0,
-          /* nextCoordinates : [] */0,
-          /* nextChangeCoordinates : [] */0,
           /* exposedCoordinates : [] */0,
           /* reservedInputs : [] */0,
           /* payoutProcesses : [] */0
@@ -29,11 +28,9 @@ function getExposedAddresses(param) {
   var accountKeyChains = param[/* accountKeyChains */3];
   return List.map((function (a) {
                 return a[/* address */5];
-              }), List.flatten(List.map((function (param) {
-                        return List.map((function (c) {
-                                      return AccountKeyChain.find(c, accountKeyChains);
-                                    }), param[1]);
-                      }), param[/* exposedCoordinates */6])));
+              }), List.map((function (coordinates) {
+                    return Address.find(coordinates, accountKeyChains);
+                  }), param[/* exposedCoordinates */4]));
 }
 
 function apply($$event, state) {
@@ -45,85 +42,42 @@ function apply($$event, state) {
                 /* network */match[/* network */6],
                 /* payoutPolicy */match[/* metaPolicy */4],
                 /* accountKeyChains */state[/* accountKeyChains */3],
-                /* nextCoordinates */state[/* nextCoordinates */4],
-                /* nextChangeCoordinates */state[/* nextChangeCoordinates */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* reservedInputs */state[/* reservedInputs */7],
-                /* payoutProcesses */state[/* payoutProcesses */8]
-              ];
-    case 9 : 
-        var data = $$event[0][/* data */2];
-        return /* record */[
-                /* ventureId */state[/* ventureId */0],
-                /* network */state[/* network */1],
-                /* payoutPolicy */state[/* payoutPolicy */2],
-                /* accountKeyChains : :: */[
-                  /* tuple */[
-                    data[/* accountIdx */0],
-                    /* [] */0
-                  ],
-                  state[/* accountKeyChains */3]
-                ],
-                /* nextCoordinates */state[/* nextCoordinates */4],
-                /* nextChangeCoordinates */state[/* nextChangeCoordinates */5],
-                /* exposedCoordinates : :: */[
-                  /* tuple */[
-                    data[/* accountIdx */0],
-                    /* [] */0
-                  ],
-                  state[/* exposedCoordinates */6]
-                ],
-                /* reservedInputs */state[/* reservedInputs */7],
-                /* payoutProcesses */state[/* payoutProcesses */8]
+                /* exposedCoordinates */state[/* exposedCoordinates */4],
+                /* reservedInputs */state[/* reservedInputs */5],
+                /* payoutProcesses */state[/* payoutProcesses */6]
               ];
     case 16 : 
         var match$1 = $$event[0];
-        var data$1 = match$1[/* data */5];
-        var match$2 = data$1[/* changeAddressCoordinates */2];
+        var data = match$1[/* data */5];
+        var match$2 = data[/* changeAddressCoordinates */2];
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
                 /* payoutPolicy */state[/* payoutPolicy */2],
                 /* accountKeyChains */state[/* accountKeyChains */3],
-                /* nextCoordinates */state[/* nextCoordinates */4],
-                /* nextChangeCoordinates : :: */[
-                  /* tuple */[
-                    data$1[/* accountIdx */0],
-                    Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* next */2], List.assoc(data$1[/* accountIdx */0], state[/* nextChangeCoordinates */5]))
-                  ],
-                  List.remove_assoc(data$1[/* accountIdx */0], state[/* nextCoordinates */4])
-                ],
                 /* exposedCoordinates */match$2 ? /* :: */[
-                    /* tuple */[
-                      data$1[/* accountIdx */0],
-                      /* :: */[
-                        match$2[0],
-                        List.assoc(data$1[/* accountIdx */0], state[/* exposedCoordinates */6])
-                      ]
-                    ],
-                    List.remove_assoc(data$1[/* accountIdx */0], state[/* exposedCoordinates */6])
-                  ] : state[/* exposedCoordinates */6],
+                    match$2[0],
+                    state[/* exposedCoordinates */4]
+                  ] : state[/* exposedCoordinates */4],
                 /* reservedInputs */List.rev_append(List.map((function (prim) {
                             return prim[1];
-                          }), data$1[/* payoutTx */1][/* usedInputs */1]), state[/* reservedInputs */7]),
+                          }), data[/* payoutTx */1][/* usedInputs */1]), state[/* reservedInputs */5]),
                 /* payoutProcesses : :: */[
                   /* tuple */[
                     match$1[/* processId */0],
-                    data$1[/* payoutTx */1]
+                    data[/* payoutTx */1]
                   ],
-                  state[/* payoutProcesses */8]
+                  state[/* payoutProcesses */6]
                 ]
               ];
     case 20 : 
-        var payoutTx = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */8]);
+        var payoutTx = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */6]);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
                 /* payoutPolicy */state[/* payoutPolicy */2],
                 /* accountKeyChains */state[/* accountKeyChains */3],
-                /* nextCoordinates */state[/* nextCoordinates */4],
-                /* nextChangeCoordinates */state[/* nextChangeCoordinates */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* exposedCoordinates */state[/* exposedCoordinates */4],
                 /* reservedInputs */List.filter((function (input) {
                           return List.exists((function (i) {
                                         if (input[/* txId */0] === i[/* txId */0]) {
@@ -134,19 +88,17 @@ function apply($$event, state) {
                                       }), List.map((function (prim) {
                                             return prim[1];
                                           }), payoutTx[/* usedInputs */1])) === false;
-                        }))(state[/* reservedInputs */7]),
-                /* payoutProcesses */state[/* payoutProcesses */8]
+                        }))(state[/* reservedInputs */5]),
+                /* payoutProcesses */state[/* payoutProcesses */6]
               ];
     case 22 : 
-        var payoutTx$1 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */8]);
+        var payoutTx$1 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */6]);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
                 /* payoutPolicy */state[/* payoutPolicy */2],
                 /* accountKeyChains */state[/* accountKeyChains */3],
-                /* nextCoordinates */state[/* nextCoordinates */4],
-                /* nextChangeCoordinates */state[/* nextChangeCoordinates */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* exposedCoordinates */state[/* exposedCoordinates */4],
                 /* reservedInputs */List.filter((function (input) {
                           return List.exists((function (i) {
                                         if (input[/* txId */0] === i[/* txId */0]) {
@@ -157,97 +109,55 @@ function apply($$event, state) {
                                       }), List.map((function (prim) {
                                             return prim[1];
                                           }), payoutTx$1[/* usedInputs */1])) === false;
-                        }))(state[/* reservedInputs */7]),
-                /* payoutProcesses */state[/* payoutProcesses */8]
+                        }))(state[/* reservedInputs */5]),
+                /* payoutProcesses */state[/* payoutProcesses */6]
               ];
     case 24 : 
-        var keyChain = $$event[0][/* keyChain */0];
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
                 /* payoutPolicy */state[/* payoutPolicy */2],
-                /* accountKeyChains : :: */[
-                  /* tuple */[
-                    keyChain[/* accountIdx */0],
-                    /* :: */[
-                      /* tuple */[
-                        keyChain[/* keyChainIdx */1],
-                        keyChain
-                      ],
-                      List.assoc(keyChain[/* accountIdx */0], state[/* accountKeyChains */3])
-                    ]
-                  ],
-                  List.remove_assoc(keyChain[/* accountIdx */0], state[/* accountKeyChains */3])
-                ],
-                /* nextCoordinates : :: */[
-                  /* tuple */[
-                    keyChain[/* accountIdx */0],
-                    Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* firstExternal */0], keyChain)
-                  ],
-                  List.remove_assoc(keyChain[/* accountIdx */0], state[/* nextCoordinates */4])
-                ],
-                /* nextChangeCoordinates : :: */[
-                  /* tuple */[
-                    keyChain[/* accountIdx */0],
-                    Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* firstInternal */1], keyChain)
-                  ],
-                  List.remove_assoc(keyChain[/* accountIdx */0], state[/* nextCoordinates */4])
-                ],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* reservedInputs */state[/* reservedInputs */7],
-                /* payoutProcesses */state[/* payoutProcesses */8]
+                /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* accountKeyChains */3]),
+                /* exposedCoordinates */state[/* exposedCoordinates */4],
+                /* reservedInputs */state[/* reservedInputs */5],
+                /* payoutProcesses */state[/* payoutProcesses */6]
               ];
     case 25 : 
-        var coordinates = $$event[0][/* coordinates */0];
-        var accountIdx = Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* accountIdx */6], coordinates);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
                 /* payoutPolicy */state[/* payoutPolicy */2],
                 /* accountKeyChains */state[/* accountKeyChains */3],
-                /* nextCoordinates : :: */[
-                  /* tuple */[
-                    accountIdx,
-                    Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* next */2], coordinates)
-                  ],
-                  List.remove_assoc(accountIdx, state[/* nextCoordinates */4])
-                ],
-                /* nextChangeCoordinates */state[/* nextChangeCoordinates */5],
                 /* exposedCoordinates : :: */[
-                  /* tuple */[
-                    accountIdx,
-                    /* :: */[
-                      coordinates,
-                      List.assoc(accountIdx, state[/* exposedCoordinates */6])
-                    ]
-                  ],
-                  List.remove_assoc(accountIdx, state[/* exposedCoordinates */6])
+                  $$event[0][/* coordinates */0],
+                  state[/* exposedCoordinates */4]
                 ],
-                /* reservedInputs */state[/* reservedInputs */7],
-                /* payoutProcesses */state[/* payoutProcesses */8]
+                /* reservedInputs */state[/* reservedInputs */5],
+                /* payoutProcesses */state[/* payoutProcesses */6]
               ];
     default:
       return state;
   }
 }
 
-function exposeNextIncomeAddress(accountIdx, param) {
-  var coordinates = List.assoc(accountIdx, param[/* nextCoordinates */4]);
-  var address = AccountKeyChain.find(coordinates, param[/* accountKeyChains */3]);
-  return Event.IncomeAddressExposed[/* make */0](coordinates, address[/* address */5]);
+function exposeNextIncomeAddress(userId, accountIdx, param) {
+  var accountKeyChain = AccountKeyChain.Collection[/* latest */3](accountIdx, param[/* accountKeyChains */3]);
+  var coordinates = Address.Coordinates[/* nextExternal */2](userId, param[/* exposedCoordinates */4], accountKeyChain);
+  return Event.IncomeAddressExposed[/* make */0](coordinates, Address.make(coordinates, accountKeyChain)[/* address */5]);
 }
 
 function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) {
-  var reservedInputs = param$1[/* reservedInputs */7];
+  var reservedInputs = param$1[/* reservedInputs */5];
   var accountKeyChains = param$1[/* accountKeyChains */3];
   var payoutPolicy = param$1[/* payoutPolicy */2];
   var ventureId = param$1[/* ventureId */0];
   var network = param[/* network */5];
   var masterKeyChain = param[/* masterKeyChain */4];
   var userId = param[/* userId */0];
-  var coordinates = List.assoc(accountIdx, param$1[/* exposedCoordinates */6]);
-  var nextChangeCoordinates = List.assoc(accountIdx, param$1[/* nextChangeCoordinates */5]);
-  var currentKeyChainIdx = Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* keyChainIdx */4], nextChangeCoordinates);
+  var accountKeyChain = AccountKeyChain.Collection[/* latest */3](accountIdx, accountKeyChains);
+  var currentKeyChainIdx = accountKeyChain[/* keyChainIdx */1];
+  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(param$1[/* exposedCoordinates */4]);
+  var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
   return Network.transactionInputs(network)(coordinates, accountKeyChains).then((function (inputs) {
                 var inputs$1 = List.filter((function (input) {
                           return List.exists((function (reservedIn) {
@@ -259,9 +169,9 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                                       }), reservedInputs) === false;
                         }))(inputs);
                 var oldInputs = List.find_all((function (i) {
-                          return WalletTypes.AccountKeyChainIndex[/* neq */7](currentKeyChainIdx, Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* keyChainIdx */4], i[/* coordinates */6]));
+                          return WalletTypes.AccountKeyChainIndex[/* neq */7](currentKeyChainIdx, Address.Coordinates[/* keyChainIdx */4](i[/* coordinates */6]));
                         }))(inputs$1);
-                var changeAddress = AccountKeyChain.find(nextChangeCoordinates, accountKeyChains);
+                var changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
                 var match = PayoutTransaction.build(oldInputs, inputs$1, destinations, satsPerByte, changeAddress, network);
                 var match$1;
                 match$1 = match.tag ? /* tuple */[

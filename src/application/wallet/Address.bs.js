@@ -11,6 +11,7 @@ var WalletTypes = require("./WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
+var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 
 function next(coSigner, usedCoordinates, chainIdx, param) {
@@ -81,6 +82,12 @@ function addressIdx(param) {
   return param[4];
 }
 
+function allForAccount(aIdx) {
+  return List.filter((function (c) {
+                return WalletTypes.AccountIndex[/* eq */6](accountIdx(c), aIdx);
+              }));
+}
+
 function encode(param) {
   var partial_arg = WalletTypes.AccountKeyChainIndex[/* encode */3];
   var partial_arg$1 = WalletTypes.AccountIndex[/* encode */3];
@@ -135,6 +142,7 @@ var Coordinates = /* module */[
   /* coSignerIdx */coSignerIdx,
   /* chainIdx */chainIdx,
   /* addressIdx */addressIdx,
+  /* allForAccount */allForAccount,
   /* encode */encode,
   /* decode */decode
 ];
@@ -167,6 +175,11 @@ function make(coordinates, param) {
         ];
 }
 
+function find(coordinates, keyChains) {
+  return make(coordinates, AccountKeyChain.Collection[/* lookup */2](accountIdx(coordinates), keyChainIdx(coordinates), keyChains));
+}
+
 exports.Coordinates = Coordinates;
 exports.make = make;
+exports.find = find;
 /* Utils Not a pure module */

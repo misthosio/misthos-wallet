@@ -39,8 +39,8 @@ function toPublicKeyChain(keyChain) {
         ];
 }
 
-function getSigningKey(chainIdx, addressIdx, keyChain) {
-  return keyChain[/* hdNode */2].derive(0).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).keyPair;
+function getSigningKey(coSignerIdx, chainIdx, addressIdx, keyChain) {
+  return keyChain[/* hdNode */2].derive(WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx)).derive(WalletTypes.ChainIndex[/* toInt */0](chainIdx)).derive(WalletTypes.AddressIndex[/* toInt */0](addressIdx)).keyPair;
 }
 
 function encode(keyChain) {
@@ -73,10 +73,7 @@ function decode(raw) {
         ];
 }
 
-var defaultCosignerIdx = 0;
-
 exports.make = make;
-exports.defaultCosignerIdx = defaultCosignerIdx;
 exports.toPublicKeyChain = toPublicKeyChain;
 exports.accountIdx = accountIdx;
 exports.keyChainIdx = keyChainIdx;
