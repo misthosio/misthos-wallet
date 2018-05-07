@@ -52,7 +52,7 @@ module AccountKeyChainIndex: {include WalletType;};
 
 type accountKeyChainIdx = AccountKeyChainIndex.t;
 
-module CoSignerIndex: {include WalletType;};
+module CoSignerIndex: {include WalletType; let fromInt: int => t;};
 
 type coSignerIdx = CoSignerIndex.t;
 

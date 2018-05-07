@@ -72,6 +72,10 @@ function CoSignerIndex_000(prim) {
   return prim;
 }
 
+function CoSignerIndex_008(prim) {
+  return prim;
+}
+
 var CoSignerIndex = [
   CoSignerIndex_000,
   0,
@@ -80,7 +84,8 @@ var CoSignerIndex = [
   decode,
   compare,
   eq,
-  neq
+  neq,
+  CoSignerIndex_008
 ];
 
 function ChainIndex_000(prim) {
