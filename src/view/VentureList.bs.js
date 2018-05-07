@@ -46,15 +46,9 @@ var link = Css.style(/* :: */[
       ]
     ]);
 
-var title = Css.style(/* :: */[
-      Css.padding2(Css.px(7), Css.px(20)),
-      /* [] */0
-    ]);
-
 var Styles = /* module */[
   /* linkSelected */linkSelected,
-  /* link */link,
-  /* title */title
+  /* link */link
 ];
 
 function make(selected, index, _) {
@@ -82,8 +76,8 @@ function make(selected, index, _) {
                                             ]], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, Link.make(/* Venture */Block.__(0, [id]), /* Some */[match ? linkSelected : link], /* array */[Utils.text(param[/* name */1])]))], /* None */0, /* None */0, /* array */[]))]));
                           }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* array */[]));
               Utils.text("ventures:");
-              var title$1 = ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* array */[ReasonReact.element(/* Some */["titleBar"], /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* Some */[title], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* array */[Utils.text("My Ventures")]))]));
-              return React.createElement("div", undefined, title$1, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
+              var title = ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* array */[Utils.text("My Ventures")]))]));
+              return React.createElement("div", undefined, title, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

@@ -2,17 +2,37 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
+var Glamor = require("glamor");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("TitleBar");
 
+var titleGrid = Glamor.css({
+      display: "grid",
+      gridGap: "0 20px",
+      gridTemplateColumns: "minmax(0, 1fr) minmax(400px, 10fr) minmax(0, 1fr)",
+      gridTemplateRows: "auto 4px",
+      width: "100%"
+    });
+
 var title = Css.style(/* :: */[
       Css.backgroundColor(Colors.black),
-      /* [] */0
+      /* :: */[
+        Css.display(Css.grid),
+        /* [] */0
+      ]
     ]);
+
+var container = Glamor.css({
+      gridColumn: "2 / 3",
+      gridRow: "1",
+      display: "grid",
+      padding: "7px 0",
+      gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))"
+    });
 
 var gradient = Css.style(/* :: */[
       Css.height(Css.px(4)),
@@ -22,9 +42,17 @@ var gradient = Css.style(/* :: */[
       ]
     ]);
 
+var gradientGrid = Glamor.css({
+      gridColumn: "1 / 4",
+      gridRow: "2"
+    });
+
 var Styles = /* module */[
+  /* titleGrid */titleGrid,
   /* title */title,
-  /* gradient */gradient
+  /* container */container,
+  /* gradient */gradient,
+  /* gradientGrid */gradientGrid
 ];
 
 function make(children) {
@@ -39,12 +67,17 @@ function make(children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* Some */[title], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V12 */13], /* None */0, /* None */0, /* array */[
-                              children,
-                              React.createElement("div", {
-                                    className: gradient
-                                  })
-                            ]));
+              return React.createElement("div", {
+                          className: title + (" " + titleGrid)
+                        }, React.createElement("div", {
+                              className: container
+                            }, $$Array.mapi((function (i, child) {
+                                    return React.createElement("div", {
+                                                key: String(i)
+                                              }, child);
+                                  }), children)), React.createElement("div", {
+                              className: gradient + (" " + gradientGrid)
+                            }));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

@@ -20,7 +20,6 @@
     "bs-json",
     "bs-fetch",
     "@jsiebern/bs-material-ui",
-    "bs-material-ui-icons",
     "reason-reroute",
     "bs-css"
   ],
