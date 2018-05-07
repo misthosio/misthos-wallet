@@ -47,8 +47,6 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
                             AccountKeyChain.make(
                               accountIdx,
                               state^.nextKeyChainIdx,
-                              AccountKeyChain.defaultCosignerList[custodianKeyChains
-                                                                  |> List.length],
                               custodianKeyChains,
                             ),
                         ),
@@ -77,8 +75,6 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
                         AccountKeyChain.make(
                           accountIdx,
                           state^.nextKeyChainIdx,
-                          AccountKeyChain.defaultCosignerList[custodianKeyChains
-                                                              |> List.length],
                           custodianKeyChains,
                         ),
                     ),

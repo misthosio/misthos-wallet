@@ -11,13 +11,13 @@ type t = {
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
 };
 
-let defaultCosignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6|];
+let defaultCoSignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8|];
 
-let make = (accountIdx, keyChainIdx, nCoSigners, custodianKeyChains) => {
+let make = (accountIdx, keyChainIdx, custodianKeyChains) => {
   accountIdx,
   keyChainIdx,
   custodianKeyChains,
-  nCoSigners,
+  nCoSigners: defaultCoSignerList[custodianKeyChains |> List.length],
 };
 
 module Address = {

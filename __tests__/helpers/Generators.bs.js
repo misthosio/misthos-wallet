@@ -17,6 +17,8 @@ var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
+var AccountKeyChain = require("../../src/application/wallet/AccountKeyChain.bs.js");
+var CustodianKeyChain = require("../../src/application/wallet/CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function userSession(id) {
@@ -55,6 +57,20 @@ function fourUserSessions() {
           userSession(PrimitiveTypes.UserId[/* fromString */1]("user3")),
           userSession(PrimitiveTypes.UserId[/* fromString */1]("user4"))
         ];
+}
+
+function custodianKeyChain($staropt$star, param) {
+  var ventureId = $staropt$star ? $staropt$star[0] : PrimitiveTypes.VentureId[/* fromString */1]("test");
+  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, WalletTypes.AccountIndex[/* default */8], WalletTypes.CustodianKeyChainIndex[/* first */7], param[/* masterKeyChain */4]));
+}
+
+function accountKeyChain(users) {
+  return AccountKeyChain.make(WalletTypes.AccountIndex[/* default */8], WalletTypes.AccountKeyChainIndex[/* first */1], List.map((function (user) {
+                    return /* tuple */[
+                            user[/* userId */0],
+                            custodianKeyChain(/* None */0, user)
+                          ];
+                  }), users));
 }
 
 function createVenture(session) {
@@ -369,6 +385,8 @@ exports.userSession = userSession;
 exports.twoUserSessions = twoUserSessions;
 exports.threeUserSessions = threeUserSessions;
 exports.fourUserSessions = fourUserSessions;
+exports.custodianKeyChain = custodianKeyChain;
+exports.accountKeyChain = accountKeyChain;
 exports.Event = Event$1;
 exports.Log = Log;
 /* Event Not a pure module */

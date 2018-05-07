@@ -47,6 +47,26 @@ let fourUserSessions = () => (
   userSession("user4" |> UserId.fromString),
 );
 
+let custodianKeyChain =
+    (
+      ~ventureId=VentureId.fromString("test"),
+      {masterKeyChain}: Session.Data.t,
+    ) =>
+  CustodianKeyChain.make(
+    ~ventureId,
+    ~accountIdx=AccountIndex.default,
+    ~keyChainIdx=CustodianKeyChainIndex.first,
+    ~masterKeyChain,
+  )
+  |> CustodianKeyChain.toPublicKeyChain;
+
+let accountKeyChain = users =>
+  users
+  |> List.map((user: Session.Data.t) =>
+       (user.userId, custodianKeyChain(user))
+     )
+  |> AccountKeyChain.make(AccountIndex.default, AccountKeyChainIndex.first);
+
 module Event = {
   let createVenture = (session: Session.Data.t) =>
     AppEvent.VentureCreated.make(

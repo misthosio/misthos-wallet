@@ -4,6 +4,7 @@
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var WalletTypes = require("./WalletTypes.bs.js");
@@ -12,7 +13,7 @@ var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 
-var defaultCosignerList = /* array */[
+var defaultCoSignerList = /* array */[
   0,
   1,
   1,
@@ -25,14 +26,17 @@ var defaultCosignerList = /* array */[
   5,
   5,
   6,
-  6
+  6,
+  7,
+  7,
+  8
 ];
 
-function make(accountIdx, keyChainIdx, nCoSigners, custodianKeyChains) {
+function make(accountIdx, keyChainIdx, custodianKeyChains) {
   return /* record */[
           /* accountIdx */accountIdx,
           /* keyChainIdx */keyChainIdx,
-          /* nCoSigners */nCoSigners,
+          /* nCoSigners */Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains)),
           /* custodianKeyChains */custodianKeyChains
         ];
 }
@@ -209,7 +213,7 @@ function decode$1(raw) {
         ];
 }
 
-exports.defaultCosignerList = defaultCosignerList;
+exports.defaultCoSignerList = defaultCoSignerList;
 exports.make = make;
 exports.Address = Address;
 exports.custodianKeyChains = custodianKeyChains;

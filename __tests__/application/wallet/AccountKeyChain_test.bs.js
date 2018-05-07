@@ -25,7 +25,7 @@ describe("getAddress", (function () {
         CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterB));
         CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterC));
         return Jest.test("single Custodian", (function () {
-                      var accountKeyChain = AccountKeyChain.make(WalletTypes.AccountIndex[/* first */1], WalletTypes.AccountKeyChainIndex[/* first */1], 1, /* :: */[
+                      var accountKeyChain = AccountKeyChain.make(WalletTypes.AccountIndex[/* first */1], WalletTypes.AccountKeyChainIndex[/* first */1], /* :: */[
                             /* tuple */[
                               PrimitiveTypes.UserId[/* fromString */1]("custodianA"),
                               cKeyChainA

@@ -63,7 +63,6 @@ let () =
         AccountKeyChain.make(
           AccountIndex.first,
           AccountKeyChainIndex.first,
-          1,
           [(UserId.fromString("custodianA"), cKeyChainA)],
         );
       let firstCoordinates =
