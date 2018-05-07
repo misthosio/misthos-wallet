@@ -104,6 +104,10 @@ function AddressIndex_000(prim) {
   return prim;
 }
 
+function AddressIndex_008(prim) {
+  return prim;
+}
+
 var AddressIndex = [
   AddressIndex_000,
   0,
@@ -112,7 +116,8 @@ var AddressIndex = [
   decode,
   compare,
   eq,
-  neq
+  neq,
+  AddressIndex_008
 ];
 
 exports.AccountIndex = AccountIndex;

@@ -64,6 +64,6 @@ module ChainIndex: {
 
 type chainIdx = ChainIndex.t;
 
-module AddressIndex: {include WalletType;};
+module AddressIndex: {include WalletType; let fromInt: int => t;};
 
 type addressIdx = AddressIndex.t;
