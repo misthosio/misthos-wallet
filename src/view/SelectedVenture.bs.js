@@ -5,6 +5,7 @@ var BTC = require("../application/wallet/BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Body3 = require("./components/Body3.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
@@ -12,6 +13,7 @@ var Payout = require("./components/Payout.bs.js");
 var Router = require("./Router.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var ViewModel = require("./ViewModel.bs.js");
+var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -111,27 +113,39 @@ function make(initialViewModel, session, commands, _) {
                                           }, Utils.text("Reject Payout")) : null);
                         }), ViewModel.payouts(state[/* viewModel */0])));
               var match = state[/* selfRemoved */1];
-              return React.createElement("div", undefined, React.createElement("div", undefined, React.createElement("h2", undefined, Utils.text(ViewModel.ventureName(state[/* viewModel */0]))), match ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, React.createElement("div", undefined, Utils.text("Join Venture url: " + (window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
+              return ReasonReact.element(/* None */0, /* None */0, Body3.make(/* Some */[/* :: */[
+                                "Partners",
+                                /* :: */[
+                                  "Transactions",
+                                  /* [] */0
+                                ]
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[Utils.text(ViewModel.ventureName(state[/* viewModel */0]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
+                                          React.createElement("b", undefined, Utils.text(BTC.format(state[/* balance */3][/* income */0].minus(state[/* balance */3][/* spent */1])))),
+                                          Utils.text("BTC")
+                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
+                                          React.createElement("b", undefined, Utils.text(BTC.format(state[/* balance */3][/* reserved */2]))),
+                                          Utils.text(" BTC IN RESERVE")
+                                        ]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, Utils.text("Join Venture url: " + (window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                                               initialViewModel[/* ventureId */0],
                                               session[/* userId */0]
-                                            ]))))), React.createElement("h3", undefined, Utils.text("Partners:")), React.createElement("ul", undefined, partners), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), React.createElement("input", {
-                                  autoFocus: false,
-                                  placeholder: "BlockstackId",
-                                  value: state[/* prospectId */2],
-                                  onChange: (function (e) {
-                                      return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [e.target.value]));
-                                    })
-                                }), React.createElement("button", {
-                                  onClick: (function () {
-                                      return Curry._1(send, /* ProposePartner */0);
-                                    })
-                                }, Utils.text("Propose Partner")), React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("blance: ")), Utils.text("income: " + (BTC.format(state[/* balance */3][/* income */0]) + (" spent: " + (BTC.format(state[/* balance */3][/* spent */1]) + (" reserved: " + BTC.format(state[/* balance */3][/* reserved */2])))))), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
-                                  onClick: (function () {
-                                      return Curry._1(send, /* GetIncomeAddress */1);
-                                    })
-                                }, Utils.text("Get New Income Address")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
-                                        return Curry._1(send, /* ProposePayout */Block.__(4, [destinations]));
-                                      }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payouts:")), React.createElement("ul", undefined, payouts)));
+                                            ])))), React.createElement("ul", undefined, partners), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), React.createElement("input", {
+                                      autoFocus: false,
+                                      placeholder: "BlockstackId",
+                                      value: state[/* prospectId */2],
+                                      onChange: (function (e) {
+                                          return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [e.target.value]));
+                                        })
+                                    }), React.createElement("button", {
+                                      onClick: (function () {
+                                          return Curry._1(send, /* ProposePartner */0);
+                                        })
+                                    }, Utils.text("Propose Partner"))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
+                                      onClick: (function () {
+                                          return Curry._1(send, /* GetIncomeAddress */1);
+                                        })
+                                    }, Utils.text("Get New Income Address")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
+                                            return Curry._1(send, /* ProposePayout */Block.__(4, [destinations]));
+                                          }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payouts:")), React.createElement("ul", undefined, payouts)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

@@ -9,6 +9,10 @@ let sourceSansPro = {|"Source Sans Pro", sans-serif|};
 
 let oswald = {|"Oswald", sans-serif|};
 
+let spacingBase = 8;
+
+let space = factor => factor * spacingBase;
+
 let theme =
   createMuiTheme({
     "palette": {
@@ -106,5 +110,8 @@ let theme =
         "fontWeight": 700,
         "lineHeight": "26px",
       },
+    },
+    "spacing": {
+      "unit": spacingBase,
     },
   });

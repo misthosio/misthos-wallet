@@ -15,7 +15,7 @@
     "bip39": "^2.5.0",
     "bitcoinjs-lib": "^3.3",
     "blockstack": "^0.17",
-    "bs-css": "^6.6.0",
+    "bs-css": "^6.7.0",
     "bs-fetch": "^0.2.1",
     "bs-json": "^1.0",
     "bs-material-ui-icons": "^0.1.5",

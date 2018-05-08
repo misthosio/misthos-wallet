@@ -260,23 +260,44 @@ let make =
              ),
         ),
       );
-    <div>
-      <div>
-        <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
-        (
-          switch (state.selfRemoved) {
-          | true =>
+    <Body3
+      titles=["Partners", "Transactions"]
+      body1=
+        <div>
+          <MTypography variant=`Title>
+            (ViewModel.ventureName(state.viewModel) |> Utils.text)
+          </MTypography>
+          <MTypography variant=`Display2>
             <b>
               (
-                text(
-                  "YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY",
-                )
+                state.balance.income
+                |> BTC.minus(state.balance.spent)
+                |> BTC.format
+                |> Utils.text
               )
             </b>
-          | _ => ReasonReact.null
-          }
-        )
+            ("BTC" |> Utils.text)
+          </MTypography>
+          <MTypography variant=`Subheading>
+            <b> (BTC.format(state.balance.reserved) |> Utils.text) </b>
+            (" BTC IN RESERVE" |> Utils.text)
+          </MTypography>
+        </div>
+      body2=
         <div>
+          (
+            switch (state.selfRemoved) {
+            | true =>
+              <b>
+                (
+                  text(
+                    "YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY",
+                  )
+                )
+              </b>
+            | _ => ReasonReact.null
+            }
+          )
           (
             text(
               "Join Venture url: "
@@ -286,43 +307,35 @@ let make =
                  ),
             )
           )
+          <ul> partners </ul>
+          <h4> (text("Prospects:")) </h4>
+          <ul> prospects </ul>
+          <h4> (text("To be removed:")) </h4>
+          <ul> removalProspects </ul>
+          <input
+            placeholder="BlockstackId"
+            value=state.prospectId
+            onChange=(e => send(changeNewPartnerId(e)))
+            autoFocus=false
+          />
+          <button onClick=(_e => send(ProposePartner))>
+            (text("Propose Partner"))
+          </button>
         </div>
-        <h3> (text("Partners:")) </h3>
-        <ul> partners </ul>
-        <h4> (text("Prospects:")) </h4>
-        <ul> prospects </ul>
-        <h4> (text("To be removed:")) </h4>
-        <ul> removalProspects </ul>
-        <input
-          placeholder="BlockstackId"
-          value=state.prospectId
-          onChange=(e => send(changeNewPartnerId(e)))
-          autoFocus=false
-        />
-        <button onClick=(_e => send(ProposePartner))>
-          (text("Propose Partner"))
-        </button>
-        <h3> (text("Wallet:")) </h3>
-        <h4> (text("blance: ")) </h4>
-        (
-          text(
-            "income: "
-            ++ BTC.format(state.balance.income)
-            ++ " spent: "
-            ++ BTC.format(state.balance.spent)
-            ++ " reserved: "
-            ++ BTC.format(state.balance.reserved),
-          )
-        )
-        <h4> (text("Income Addresses:")) </h4>
-        <ul> addresses </ul>
-        <button onClick=(_e => send(GetIncomeAddress))>
-          (text("Get New Income Address"))
-        </button>
-        <Payout onSend=(destinations => send(ProposePayout(destinations))) />
-        <h4> (text("Payouts:")) </h4>
-        <ul> payouts </ul>
-      </div>
-    </div>;
+      body3=
+        <div>
+          <h3> (text("Wallet:")) </h3>
+          <h4> (text("Income Addresses:")) </h4>
+          <ul> addresses </ul>
+          <button onClick=(_e => send(GetIncomeAddress))>
+            (text("Get New Income Address"))
+          </button>
+          <Payout
+            onSend=(destinations => send(ProposePayout(destinations)))
+          />
+          <h4> (text("Payouts:")) </h4>
+          <ul> payouts </ul>
+        </div>
+    />;
   },
 };

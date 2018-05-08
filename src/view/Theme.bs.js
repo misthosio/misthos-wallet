@@ -5,6 +5,10 @@ var Styles = require("material-ui/styles");
 
 var oswald = "\"Oswald\", sans-serif";
 
+function space(factor) {
+  return (factor << 3);
+}
+
 var theme = Styles.createMuiTheme({
       palette: {
         primary: {
@@ -101,6 +105,9 @@ var theme = Styles.createMuiTheme({
           fontWeight: 700,
           lineHeight: "26px"
         }
+      },
+      spacing: {
+        unit: 8
       }
     });
 
@@ -109,5 +116,6 @@ function toJsUnsafe(prim) {
 }
 
 exports.toJsUnsafe = toJsUnsafe;
+exports.space = space;
 exports.theme = theme;
 /* theme Not a pure module */

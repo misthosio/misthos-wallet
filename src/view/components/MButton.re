@@ -6,9 +6,9 @@ module Styles = {
     style([
       borderRadius(px(25)),
       border(px(2), `solid, black),
-      margin(px(2)),
       paddingLeft(px(25)),
       paddingRight(px(25)),
+      margin2(~v=px(Theme.space(5)), ~h=px(0)),
       width(fullWidth ? `percent(100.0) : auto),
     ]);
 };

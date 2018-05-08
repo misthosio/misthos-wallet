@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Theme = require("../Theme.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
@@ -13,11 +14,11 @@ function button(fullWidth) {
               /* :: */[
                 Css.border(Css.px(2), /* solid */12956715, Css.black),
                 /* :: */[
-                  Css.margin(Css.px(2)),
+                  Css.paddingLeft(Css.px(25)),
                   /* :: */[
-                    Css.paddingLeft(Css.px(25)),
+                    Css.paddingRight(Css.px(25)),
                     /* :: */[
-                      Css.paddingRight(Css.px(25)),
+                      Css.margin2(Css.px(Theme.space(5)), Css.px(0)),
                       /* :: */[
                         Css.width(fullWidth ? /* `percent */[
                                 -119887163,
