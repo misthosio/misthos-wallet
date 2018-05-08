@@ -2,11 +2,7 @@ open Jest;
 
 open Expect;
 
-open PrimitiveTypes;
-
 open WalletTypes;
-
-open Bitcoin;
 
 module G = Generators;
 

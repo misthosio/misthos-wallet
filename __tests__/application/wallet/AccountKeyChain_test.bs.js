@@ -10,14 +10,14 @@ describe("Collection", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var accountKeyChain1 = Generators.accountKeyChain(/* :: */[
+        var accountKeyChain1 = Generators.accountKeyChain(/* None */0, /* :: */[
               user1,
               /* :: */[
                 user2,
                 /* [] */0
               ]
             ]);
-        var accountKeyChain2 = Generators.nextAccountKeyChain(/* :: */[
+        var accountKeyChain2 = Generators.nextAccountKeyChain(/* None */0, /* :: */[
               user1,
               /* :: */[
                 user2,
