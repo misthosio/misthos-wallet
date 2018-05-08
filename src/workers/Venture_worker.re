@@ -167,7 +167,7 @@ module Handle = {
     );
   };
   let proposePartner = (ventureId, prospectId) => {
-    logMessage("Handing 'ProposePartner'");
+    logMessage("Handling 'ProposePartner'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ProposePartner.(
@@ -186,7 +186,7 @@ module Handle = {
     );
   };
   let endorsePartner = (ventureId, processId) => {
-    logMessage("Handing 'EndorsePartner'");
+    logMessage("Handling 'EndorsePartner'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.EndorsePartner.(
@@ -204,7 +204,7 @@ module Handle = {
     );
   };
   let proposePartnerRemoval = (ventureId, partnerId) => {
-    logMessage("Handing 'ProposePartnerRemoval'");
+    logMessage("Handling 'ProposePartnerRemoval'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ProposePartnerRemoval.(
@@ -223,7 +223,7 @@ module Handle = {
     );
   };
   let endorsePartnerRemoval = (ventureId, processId) => {
-    logMessage("Handing 'EndorsePartnerRemoval'");
+    logMessage("Handling 'EndorsePartnerRemoval'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.EndorsePartnerRemoval.(
@@ -241,7 +241,7 @@ module Handle = {
     );
   };
   let proposePayout = (ventureId, accountIdx, destinations, fee) => {
-    logMessage("Handing 'ProposePayout'");
+    logMessage("Handling 'ProposePayout'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ProposePayout.(
@@ -259,7 +259,7 @@ module Handle = {
     );
   };
   let endorsePayout = (ventureId, processId) => {
-    logMessage("Handing 'EndorsePayout'");
+    logMessage("Handling 'EndorsePayout'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.EndorsePayout.(
@@ -277,7 +277,7 @@ module Handle = {
     );
   };
   let exposeIncomeAddress = (ventureId, accountIdx) => {
-    logMessage("Handing 'ExposeIncomeAddress'");
+    logMessage("Handling 'ExposeIncomeAddress'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.ExposeIncomeAddress.(
@@ -295,7 +295,7 @@ module Handle = {
     );
   };
   let transactionDetected = (ventureId, events) => {
-    logMessage("Handing 'TransactionDetected'");
+    logMessage("Handling 'TransactionDetected'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.SynchronizeWallet.(
@@ -313,7 +313,7 @@ module Handle = {
     );
   };
   let newItemsDetected = (ventureId, items) => {
-    logMessage("Handing 'NewItemsDetected'");
+    logMessage("Handling 'NewItemsDetected'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.SynchronizeLogs.(

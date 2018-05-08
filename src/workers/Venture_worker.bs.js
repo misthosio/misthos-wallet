@@ -224,7 +224,7 @@ function create(name) {
 }
 
 function proposePartner(ventureId, prospectId) {
-  logMessage("Handing 'ProposePartner'");
+  logMessage("Handling 'ProposePartner'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -241,7 +241,7 @@ function proposePartner(ventureId, prospectId) {
 }
 
 function endorsePartner(ventureId, processId) {
-  logMessage("Handing 'EndorsePartner'");
+  logMessage("Handling 'EndorsePartner'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -254,7 +254,7 @@ function endorsePartner(ventureId, processId) {
 }
 
 function proposePartnerRemoval(ventureId, partnerId) {
-  logMessage("Handing 'ProposePartnerRemoval'");
+  logMessage("Handling 'ProposePartnerRemoval'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -271,7 +271,7 @@ function proposePartnerRemoval(ventureId, partnerId) {
 }
 
 function endorsePartnerRemoval(ventureId, processId) {
-  logMessage("Handing 'EndorsePartnerRemoval'");
+  logMessage("Handling 'EndorsePartnerRemoval'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -284,7 +284,7 @@ function endorsePartnerRemoval(ventureId, processId) {
 }
 
 function proposePayout(ventureId, accountIdx, destinations, fee) {
-  logMessage("Handing 'ProposePayout'");
+  logMessage("Handling 'ProposePayout'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -297,7 +297,7 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
 }
 
 function endorsePayout(ventureId, processId) {
-  logMessage("Handing 'EndorsePayout'");
+  logMessage("Handling 'EndorsePayout'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -310,7 +310,7 @@ function endorsePayout(ventureId, processId) {
 }
 
 function exposeIncomeAddress(ventureId, accountIdx) {
-  logMessage("Handing 'ExposeIncomeAddress'");
+  logMessage("Handling 'ExposeIncomeAddress'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -323,7 +323,7 @@ function exposeIncomeAddress(ventureId, accountIdx) {
 }
 
 function transactionDetected(ventureId, events) {
-  logMessage("Handing 'TransactionDetected'");
+  logMessage("Handling 'TransactionDetected'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
@@ -336,7 +336,7 @@ function transactionDetected(ventureId, events) {
 }
 
 function newItemsDetected(ventureId, items) {
-  logMessage("Handing 'NewItemsDetected'");
+  logMessage("Handling 'NewItemsDetected'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
