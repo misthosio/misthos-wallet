@@ -4,6 +4,7 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
+var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var Network = require("./wallet/Network.bs.js");
@@ -163,26 +164,23 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                           return WalletTypes.AccountKeyChainIndex[/* neq */8](currentKeyChainIdx, Address.Coordinates[/* keyChainIdx */4](i[/* coordinates */6]));
                         }))(inputs$1);
                 var changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
-                var match = PayoutTransaction.build(oldInputs, inputs$1, destinations, satsPerByte, changeAddress, network);
-                var match$1;
-                match$1 = match.tag ? /* tuple */[
-                    match[0],
-                    /* None */0
-                  ] : /* tuple */[
-                    match[0],
-                    /* Some */[nextChangeCoordinates]
-                  ];
-                var payoutTx = match$1[0];
-                var match$2 = PayoutTransaction.signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payoutTx, network);
-                var payoutTx$1 = match$2 ? match$2[0] : payoutTx;
+                var payoutTx = PayoutTransaction.build(oldInputs, inputs$1, destinations, satsPerByte, changeAddress, network);
+                var changeAddressCoordinates = Utils.mapOption((function () {
+                        return nextChangeCoordinates;
+                      }), payoutTx[/* changeAddress */3]);
+                var match = PayoutTransaction.signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payoutTx, network);
+                var payoutTx$1 = match ? match[0] : payoutTx;
                 return Promise.resolve(Curry._5(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, userId, payoutPolicy, /* record */[
                                 /* accountIdx */accountIdx,
                                 /* payoutTx */payoutTx$1,
-                                /* changeAddressCoordinates */match$1[1]
+                                /* changeAddressCoordinates */changeAddressCoordinates
                               ]));
               }));
 }
 
+var faucetAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
+exports.faucetAddress = faucetAddress;
 exports.make = make;
 exports.apply = apply;
 exports.exposeNextIncomeAddress = exposeNextIncomeAddress;

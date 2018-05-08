@@ -53,94 +53,66 @@ let () =
       address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
     };
     test("uses as many inputs as necessary", () => {
-      let (payoutTx, changeUsed) =
-        switch (
-          PayoutTransaction.build(
-            ~mandatoryInputs=[],
-            ~allInputs=inputs,
-            ~destinations=[
-              (
-                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                BTC.fromSatoshis(10000L),
-              ),
-            ],
-            ~satsPerByte=BTC.fromSatoshis(1L),
-            ~changeAddress,
-            ~network=Network.Regtest,
-          )
-        ) {
-        | WithChangeAddress(payout) => (payout, true)
-        | WithoutChangeAddress(payout) => (payout, false)
-        };
+      let payoutTx =
+        PayoutTransaction.build(
+          ~mandatoryInputs=[],
+          ~allInputs=inputs,
+          ~destinations=[
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(10000L)),
+          ],
+          ~satsPerByte=BTC.fromSatoshis(1L),
+          ~changeAddress,
+          ~network=Network.Regtest,
+        );
+      let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
       expect((payoutTx.usedInputs |> List.length, changeUsed))
       |> toEqual((2, true));
     });
     test("uses smallest possible input", () => {
-      let (payoutTx, changeUsed) =
-        switch (
-          PayoutTransaction.build(
-            ~mandatoryInputs=[],
-            ~allInputs=inputs,
-            ~destinations=[
-              (
-                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                BTC.fromSatoshis(4000L),
-              ),
-            ],
-            ~satsPerByte=BTC.fromSatoshis(1L),
-            ~changeAddress,
-            ~network=Network.Regtest,
-          )
-        ) {
-        | WithChangeAddress(payout) => (payout, true)
-        | WithoutChangeAddress(payout) => (payout, false)
-        };
+      let payoutTx =
+        PayoutTransaction.build(
+          ~mandatoryInputs=[],
+          ~allInputs=inputs,
+          ~destinations=[
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(4000L)),
+          ],
+          ~satsPerByte=BTC.fromSatoshis(1L),
+          ~changeAddress,
+          ~network=Network.Regtest,
+        );
+      let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
       expect((snd(payoutTx.usedInputs |> List.hd).txOutputN, changeUsed))
       |> toEqual((1, true));
     });
     test("doesn't use change address if not worth it", () => {
-      let (payoutTx, changeUsed) =
-        switch (
-          PayoutTransaction.build(
-            ~mandatoryInputs=[],
-            ~allInputs=inputs,
-            ~destinations=[
-              (
-                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                BTC.fromSatoshis(9800L),
-              ),
-            ],
-            ~satsPerByte=BTC.fromSatoshis(1L),
-            ~changeAddress,
-            ~network=Network.Regtest,
-          )
-        ) {
-        | WithChangeAddress(payout) => (payout, true)
-        | WithoutChangeAddress(payout) => (payout, false)
-        };
+      let payoutTx =
+        PayoutTransaction.build(
+          ~mandatoryInputs=[],
+          ~allInputs=inputs,
+          ~destinations=[
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9500L)),
+          ],
+          ~satsPerByte=BTC.fromSatoshis(1L),
+          ~changeAddress,
+          ~network=Network.Regtest,
+        );
+      let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
       expect((snd(payoutTx.usedInputs |> List.hd).txOutputN, changeUsed))
       |> toEqual((0, false));
     });
     test("respects mandatory inputs", () => {
-      let (payoutTx, changeUsed) =
-        switch (
-          PayoutTransaction.build(
-            ~mandatoryInputs=[List.nth(inputs, 1)],
-            ~allInputs=inputs,
-            ~destinations=[
-              (
-                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                BTC.fromSatoshis(6000L),
-              ),
-            ],
-            ~satsPerByte=BTC.fromSatoshis(1L),
-            ~changeAddress,
-            ~network=Network.Regtest,
-          )
-        ) {
-        | WithChangeAddress(payout) => (payout, true)
-        | WithoutChangeAddress(payout) => (payout, false)
-        };
+      let payoutTx =
+        PayoutTransaction.build(
+          ~mandatoryInputs=[List.nth(inputs, 1)],
+          ~allInputs=inputs,
+          ~destinations=[
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(6000L)),
+          ],
+          ~satsPerByte=BTC.fromSatoshis(1L),
+          ~changeAddress,
+          ~network=Network.Regtest,
+        );
+      let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
       expect((payoutTx.usedInputs |> List.length, changeUsed))
       |> toEqual((2, true));
     });
@@ -164,4 +136,27 @@ let () =
       )
       |> toThrow
     );
+    test("summary", () => {
+      let summary =
+        PayoutTransaction.build(
+          ~mandatoryInputs=[],
+          ~allInputs=inputs,
+          ~destinations=[
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L)),
+          ],
+          ~satsPerByte=BTC.fromSatoshis(1L),
+          ~changeAddress,
+          ~network=Network.Regtest,
+        )
+        |> PayoutTransaction.summary(Network.Regtest);
+      expect(summary)
+      |> toEqual(
+           PayoutTransaction.{
+             reserved: BTC.fromSatoshis(15000L),
+             spent: BTC.fromSatoshis(10370L),
+             misthosFee: BTC.fromSatoshis(285L),
+             networkFee: BTC.fromSatoshis(285L),
+           },
+         );
+    });
   });

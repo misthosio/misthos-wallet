@@ -139,3 +139,14 @@ let bitcoinNetwork =
   | Regtest => Regtest.network
   | Testnet => Testnet.network
   | Mainnet => Mainnet.network;
+
+/* For now send income to faucet */
+let regtestIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
+let testnetIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
+let incomeAddress =
+  fun
+  | Regtest => regtestIncomeAddress
+  | Testnet => testnetIncomeAddress
+  | Mainnet => testnetIncomeAddress;

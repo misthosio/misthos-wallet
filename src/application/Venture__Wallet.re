@@ -4,6 +4,8 @@ open WalletTypes;
 
 open Event;
 
+let faucetAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
 type t = {
   ventureId,
   network: Network.t,
@@ -150,23 +152,18 @@ let preparePayoutTx =
               );
          let changeAddress =
            Address.find(nextChangeCoordinates, accountKeyChains);
-         let (payoutTx, changeAddressCoordinates) =
-           switch (
-             PayoutTransaction.build(
-               ~mandatoryInputs=oldInputs,
-               ~allInputs=inputs,
-               ~destinations,
-               ~satsPerByte,
-               ~changeAddress,
-               ~network,
-             )
-           ) {
-           | WithChangeAddress(payout) => (
-               payout,
-               Some(nextChangeCoordinates),
-             )
-           | WithoutChangeAddress(payout) => (payout, None)
-           };
+         let payoutTx =
+           PayoutTransaction.build(
+             ~mandatoryInputs=oldInputs,
+             ~allInputs=inputs,
+             ~destinations,
+             ~satsPerByte,
+             ~changeAddress,
+             ~network,
+           );
+         let changeAddressCoordinates =
+           payoutTx.changeAddress
+           |> Utils.mapOption((_) => nextChangeCoordinates);
          let payoutTx =
            switch (
              PayoutTransaction.signPayout(

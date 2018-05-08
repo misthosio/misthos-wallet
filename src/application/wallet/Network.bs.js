@@ -297,6 +297,18 @@ function bitcoinNetwork(param) {
   }
 }
 
+var regtestIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
+var testnetIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
+function incomeAddress(param) {
+  if (param !== 0) {
+    return testnetIncomeAddress;
+  } else {
+    return regtestIncomeAddress;
+  }
+}
+
 exports.encode = encode;
 exports.decode = decode;
 exports.encodeInput = encodeInput;
@@ -308,4 +320,7 @@ exports.Mainnet = Mainnet;
 exports.transactionInputs = transactionInputs$3;
 exports.broadcastTransaction = broadcastTransaction$3;
 exports.bitcoinNetwork = bitcoinNetwork;
+exports.regtestIncomeAddress = regtestIncomeAddress;
+exports.testnetIncomeAddress = testnetIncomeAddress;
+exports.incomeAddress = incomeAddress;
 /* Client Not a pure module */

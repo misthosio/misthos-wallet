@@ -13,20 +13,18 @@ type input = Network.txInput;
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
-  withChange: bool,
+  misthosFeeAddress: string,
+  changeAddress: option(string),
 };
 
 type summary = {
   reserved: BTC.t,
   spent: BTC.t,
-  fee: BTC.t,
+  misthosFee: BTC.t,
+  networkFee: BTC.t,
 };
 
-let summary: t => summary;
-
-type buildResult =
-  | WithChangeAddress(t)
-  | WithoutChangeAddress(t);
+let summary: (Network.t, t) => summary;
 
 let build:
   (
@@ -37,7 +35,7 @@ let build:
     ~changeAddress: Address.t,
     ~network: Network.t
   ) =>
-  buildResult;
+  t;
 
 type signResult =
   | Signed(t)

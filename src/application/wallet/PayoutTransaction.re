@@ -1,7 +1,5 @@
 module B = Bitcoin;
 
-open WalletTypes;
-
 exception NotEnoughFunds;
 
 exception NotEnoughSignatures;
@@ -12,19 +10,24 @@ module Fee = TransactionFee;
 
 type input = Network.txInput;
 
+let misthosFeePercent = 2.9;
+
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
-  withChange: bool,
+  misthosFeeAddress: string,
+  changeAddress: option(string),
 };
 
 type summary = {
   reserved: BTC.t,
   spent: BTC.t,
-  fee: BTC.t,
+  misthosFee: BTC.t,
+  networkFee: BTC.t,
 };
 
-let summary = ({withChange, usedInputs, txHex}) => {
+let summary =
+    (network, {misthosFeeAddress, changeAddress, usedInputs, txHex}) => {
   let totalIn =
     usedInputs
     |> List.fold_left(
@@ -35,15 +38,35 @@ let summary = ({withChange, usedInputs, txHex}) => {
   let outs =
     tx##outs
     |> Array.to_list
-    |> List.map(o => o##value |> Int64.of_float |> BTC.fromSatoshis);
+    |> List.map(o =>
+         (
+           B.Address.fromOutputScript(
+             o##script,
+             Network.bitcoinNetwork(network),
+           ),
+           o##value |> Int64.of_float |> BTC.fromSatoshis,
+         )
+       );
   let totalOut =
-    outs |> List.fold_left((total, out) => total |> BTC.plus(out), BTC.zero);
-  let fee = totalIn |> BTC.minus(totalOut);
-  let changeOut = withChange ? outs |> List.rev |> List.hd : BTC.zero;
+    outs
+    |> List.fold_left(
+         (total, out) => total |> BTC.plus(out |> snd),
+         BTC.zero,
+       );
+  let networkFee = totalIn |> BTC.minus(totalOut);
+  let changeOut =
+    changeAddress
+    |> Utils.mapOption(changeAddress =>
+         outs |> List.find(((a, _)) => a == changeAddress) |> snd
+       )
+    |> Js.Option.getWithDefault(BTC.zero);
+  let misthosFee =
+    outs |> List.find(((a, _)) => a == misthosFeeAddress) |> snd;
   {
     reserved: totalIn,
-    spent: totalOut |> BTC.plus(fee) |> BTC.minus(changeOut),
-    fee,
+    spent: totalOut |> BTC.plus(networkFee) |> BTC.minus(changeOut),
+    misthosFee,
+    networkFee,
   };
 };
 
@@ -55,7 +78,8 @@ let encode = payout =>
         "usedInputs",
         list(pair(int, Network.encodeInput), payout.usedInputs),
       ),
-      ("withChange", bool(payout.withChange)),
+      ("misthosFeeAddress", string(payout.misthosFeeAddress)),
+      ("changeAddress", nullable(string, payout.changeAddress)),
     ])
   );
 
@@ -64,7 +88,8 @@ let decode = raw =>
     txHex: raw |> field("txHex", string),
     usedInputs:
       raw |> field("usedInputs", list(pair(int, Network.decodeInput))),
-    withChange: raw |> field("withChange", bool),
+    misthosFeeAddress: raw |> field("misthosFeeAddress", string),
+    changeAddress: raw |> field("changeAddress", optional(string)),
   };
 
 type signResult =
@@ -83,8 +108,7 @@ let signPayout =
       ~ventureId,
       ~userId,
       ~masterKeyChain: B.HDNode.t,
-      ~accountKeyChains:
-         list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+      ~accountKeyChains: AccountKeyChain.Collection.t,
       ~payoutTx as payout: t,
       ~network: Network.t,
     ) => {
@@ -259,10 +283,6 @@ let addChangeOutput =
     false;
   };
 
-type buildResult =
-  | WithChangeAddress(t)
-  | WithoutChangeAddress(t);
-
 let build =
     (
       ~mandatoryInputs,
@@ -287,7 +307,7 @@ let build =
     |> List.map((i: input) =>
          (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
        );
-  let outTotal =
+  let outTotalWithoutFee =
     destinations
     |> List.fold_left(
          (total, (address, value)) => {
@@ -298,6 +318,16 @@ let build =
          },
          BTC.zero,
        );
+  let misthosFee =
+    outTotalWithoutFee |> BTC.timesRounded(misthosFeePercent /. 100.);
+  let misthosFeeAddress = Network.incomeAddress(network);
+  txB
+  |> B.TxBuilder.addOutput(
+       misthosFeeAddress,
+       misthosFee |> BTC.toSatoshisFloat,
+     )
+  |> ignore;
+  let outTotal = outTotalWithoutFee |> BTC.plus(misthosFee);
   let currentInputValue =
     usedInputs
     |> List.fold_left(
@@ -322,12 +352,12 @@ let build =
         ~network,
         ~txBuilder=txB,
       );
-    let result = {
+    {
       usedInputs,
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
-      withChange,
+      misthosFeeAddress,
+      changeAddress: withChange ? Some(changeAddress.address) : None,
     };
-    withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
   } else {
     let (inputs, success) =
       findInputs(
@@ -363,12 +393,12 @@ let build =
           ~network,
           ~txBuilder=txB,
         );
-      let result = {
+      {
         usedInputs,
         txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
-        withChange,
+        misthosFeeAddress,
+        changeAddress: withChange ? Some(changeAddress.address) : None,
       };
-      withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
     } else {
       raise(NotEnoughFunds);
     };
