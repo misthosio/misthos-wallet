@@ -6,6 +6,7 @@ let text = Utils.text;
 
 type state = {
   viewModel: ViewModel.t,
+  selfRemoved: bool,
   prospectId: string,
   balance: ViewModel.Wallet.balance,
 };
@@ -38,50 +39,55 @@ let make =
   ...component,
   initialState: () => {
     viewModel: initialViewModel,
+    selfRemoved:
+      initialViewModel |> ViewModel.isPartner(session.userId) == false,
     prospectId: "",
     balance: initialViewModel |> ViewModel.balance,
   },
   willReceiveProps: ({state}) => {
     ...state,
     viewModel: initialViewModel,
+    selfRemoved:
+      initialViewModel |> ViewModel.isPartner(session.userId) == false,
     balance: initialViewModel |> ViewModel.balance,
   },
   reducer: (action, state) =>
-    switch (action) {
-    | ChangeNewPartnerId(text) =>
+    switch (state.selfRemoved, action) {
+    | (_, ChangeNewPartnerId(text)) =>
       ReasonReact.Update({...state, prospectId: text})
-    | ProposePartner =>
+    | (false, ProposePartner) =>
       switch (String.trim(state.prospectId)) {
       | "" => ReasonReact.NoUpdate
       | prospectId =>
         commands.proposePartner(~prospectId=prospectId |> UserId.fromString);
         ReasonReact.Update({...state, prospectId: ""});
       }
-    | EndorsePartner(processId) =>
+    | (false, EndorsePartner(processId)) =>
       commands.endorsePartner(~processId);
       ReasonReact.NoUpdate;
-    | RemovePartner(partnerId) =>
+    | (false, RemovePartner(partnerId)) =>
       commands.proposePartnerRemoval(~partnerId);
       ReasonReact.NoUpdate;
-    | EndorsePartnerRemoval(processId) =>
+    | (false, EndorsePartnerRemoval(processId)) =>
       commands.endorsePartnerRemoval(~processId);
       ReasonReact.NoUpdate;
-    | GetIncomeAddress =>
+    | (false, GetIncomeAddress) =>
       commands.exposeIncomeAddress(~accountIdx=AccountIndex.default);
       ReasonReact.NoUpdate;
-    | ProposePayout(destinations) =>
+    | (false, ProposePayout(destinations)) =>
       commands.proposePayout(
         ~accountIdx=WalletTypes.AccountIndex.default,
         ~destinations,
         ~fee=BTC.fromSatoshis(5L),
       );
       ReasonReact.NoUpdate;
-    | RejectPayout(processId) =>
+    | (false, RejectPayout(processId)) =>
       commands.rejectPayout(~processId);
       ReasonReact.NoUpdate;
-    | EndorsePayout(processId) =>
+    | (false, EndorsePayout(processId)) =>
       commands.endorsePayout(~processId);
       ReasonReact.NoUpdate;
+    | _ => ReasonReact.NoUpdate
     },
   render: ({send, state}) => {
     let partners =
@@ -258,14 +264,29 @@ let make =
       <div>
         <h2> (text(ViewModel.ventureName(state.viewModel))) </h2>
         (
-          text(
-            "Join Venture url: "
-            ++ Location.origin
-            ++ Router.Config.routeToUrl(
-                 JoinVenture(initialViewModel.ventureId, session.userId),
-               ),
-          )
+          switch (state.selfRemoved) {
+          | true =>
+            <b>
+              (
+                text(
+                  "YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY",
+                )
+              )
+            </b>
+          | _ => ReasonReact.null
+          }
         )
+        <div>
+          (
+            text(
+              "Join Venture url: "
+              ++ Location.origin
+              ++ Router.Config.routeToUrl(
+                   JoinVenture(initialViewModel.ventureId, session.userId),
+                 ),
+            )
+          )
+        </div>
         <h3> (text("Partners:")) </h3>
         <ul> partners </ul>
         <h4> (text("Prospects:")) </h4>
