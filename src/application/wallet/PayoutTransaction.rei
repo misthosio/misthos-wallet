@@ -34,7 +34,7 @@ let build:
     ~allInputs: list(input),
     ~destinations: list((string, BTC.t)),
     ~satsPerByte: BTC.t,
-    ~changeAddress: AccountKeyChain.Address.t,
+    ~changeAddress: Address.t,
     ~network: Network.t
   ) =>
   buildResult;

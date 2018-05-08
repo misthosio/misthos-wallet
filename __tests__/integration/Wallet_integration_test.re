@@ -4,114 +4,41 @@ open Jest;
 
 open Expect;
 
-open PrimitiveTypes;
-
 open WalletTypes;
-
-open Bitcoin;
 
 open Event;
 
-module Wallet = Venture__Wallet;
+open WalletHelpers;
 
 let () =
-  describe("interation", () => {
-    let (userA, userB) = (
-      UserId.fromString("userA"),
-      UserId.fromString("userB"),
-    );
-    let (keyA, keyB) = (
-      ECPair.fromWIFWithNetwork(
-        "cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1",
-        Networks.testnet,
-      ),
-      ECPair.fromWIFWithNetwork(
-        "cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf",
-        Networks.testnet,
-      ),
-    );
-    let createdEvent =
-      VentureCreated.make(
-        ~ventureName="test",
-        ~creatorId=userA,
-        ~creatorPubKey=keyA |> Utils.publicKeyFromKeyPair,
-        ~metaPolicy=Policy.unanimous,
-        ~network=Network.Regtest,
+  describe("integration", () => {
+    let (userA, userB, userC) = G.threeUserSessions();
+    let log =
+      L.(
+        createVenture(userA)
+        |> withFirstPartner(userA)
+        |> withAccount(~supporter=userA)
+        |> withCustodian(userA, ~supporters=[userA])
+        |> withPartner(userB, ~supporters=[userA])
+        |> withCustodian(userB, ~supporters=[userA, userB])
+        |> withAccountKeyChain([userA, userB])
       );
-    let chainCode =
-      "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb"
-      |> Utils.bufFromHex;
-    let (masterA, masterB) = (
-      HDNode.make(keyA, chainCode),
-      HDNode.make(keyB, chainCode),
-    );
-    let ventureId = createdEvent.ventureId;
     let accountIdx = AccountIndex.default;
-    let keyChainIdx = CustodianKeyChainIndex.first;
-    let (cKeyChainA, cKeyChainB) = (
-      CustodianKeyChain.make(
-        ~ventureId,
-        ~accountIdx,
-        ~keyChainIdx,
-        ~masterKeyChain=masterA,
-      )
-      |> CustodianKeyChain.toPublicKeyChain,
-      CustodianKeyChain.make(
-        ~ventureId,
-        ~accountIdx,
-        ~keyChainIdx,
-        ~masterKeyChain=masterB,
-      )
-      |> CustodianKeyChain.toPublicKeyChain,
-    );
-    let accountKeyChain =
-      AccountKeyChain.make(
-        accountIdx,
-        AccountKeyChainIndex.first,
-        1,
-        [(userA, cKeyChainA), (userB, cKeyChainB)],
+    let ventureId = log |> L.ventureId;
+    let wallet = log |> constructState;
+    let ((address1, address2), (wallet, log)) =
+      (wallet, log) |> collectNextTwoAddresses(userA);
+    let log =
+      L.(
+        log
+        |> withPartner(userC, ~supporters=[userA, userB])
+        |> withCustodian(userC, ~supporters=[userA, userB])
+        |> withAccountKeyChain(~keyChainIdx=1, [userA, userB, userC])
       );
-    let wallet =
-      Wallet.make()
-      |> Wallet.apply(VentureCreated(createdEvent))
-      |> Wallet.apply(
-           AccountCreationAccepted({
-             dependsOnCompletions: [],
-             processId: ProcessId.make(),
-             data: {
-               accountIdx,
-               name: "default",
-             },
-           }),
-         )
-      |> Wallet.apply(
-           AccountKeyChainUpdated(
-             AccountKeyChainUpdated.make(~keyChain=accountKeyChain),
-           ),
-         );
-    let address1 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
-    let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address1));
-    let address2 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
-    let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address2));
     let oneKeyChainWallet = ref(wallet);
-    let accountKeyChain =
-      AccountKeyChain.make(
-        accountIdx,
-        AccountKeyChainIndex.first |> AccountKeyChainIndex.next,
-        2,
-        [(userA, cKeyChainA), (userB, cKeyChainB)],
-      );
-    let wallet =
-      wallet
-      |> Wallet.apply(
-           AccountKeyChainUpdated(
-             AccountKeyChainUpdated.make(~keyChain=accountKeyChain),
-           ),
-         );
-    let address3 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
-    let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address3));
-    let address4 = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
-    let wallet = wallet |> Wallet.apply(IncomeAddressExposed(address4));
+    let wallet = log |> constructState;
+    let ((address3, address4), (wallet, _)) =
+      (wallet, log) |> collectNextTwoAddresses(userC);
     let twoKeyChainWallet = ref(wallet);
     let address1Satoshis = BTC.fromSatoshis(10000L);
     let address2Satoshis = BTC.fromSatoshis(10000L);
@@ -131,22 +58,15 @@ let () =
     beforeAllPromise(~timeout=40000, () =>
       Js.Promise.(
         Helpers.faucet([
-          (address1.address, address1Satoshis),
-          (address2.address, address2Satoshis),
-          (address3.address, address3Satoshis),
-          (address4.address, address4Satoshis),
+          (address1, address1Satoshis),
+          (address2, address2Satoshis),
+          (address3, address3Satoshis),
+          (address4, address4Satoshis),
         ])
         |> then_((_) =>
              oneKeyChainWallet^
              |> Wallet.preparePayoutTx(
-                  Session.Data.{
-                    appPrivateKey: "",
-                    userId: userA,
-                    issuerKeyPair: keyA,
-                    storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
-                    masterKeyChain: masterA,
-                    network: Regtest,
-                  },
+                  userA,
                   accountIdx,
                   [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
                   BTC.fromSatoshis(10L),
@@ -185,7 +105,7 @@ let () =
     testPromise("1 of 2 wallet", () =>
       Js.Promise.(
         oneKeyChainWallet^
-        |> Wallet.getExposedAddresses
+        |> WalletHelpers.getExposedAddresses
         |> Helpers.getUTXOs
         |> then_(utxos =>
              utxos
@@ -204,18 +124,11 @@ let () =
            )
       )
     );
-    testPromise(~timeout=80000, "2 of 2 wallet", () =>
+    testPromise(~timeout=80000, "2 of 3 wallet", () =>
       Js.Promise.(
         twoKeyChainWallet^
         |> Wallet.preparePayoutTx(
-             Session.Data.{
-               appPrivateKey: "",
-               network: Regtest,
-               userId: userA,
-               issuerKeyPair: keyA,
-               storagePrefix: keyA |> Bitcoin.ECPair.getAddress,
-               masterKeyChain: masterA,
-             },
+             userA,
              accountIdx,
              [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
              BTC.fromSatoshis(10L),
@@ -224,8 +137,8 @@ let () =
              let payoutTx =
                PayoutTransaction.signPayout(
                  ~ventureId,
-                 ~userId=userB,
-                 ~masterKeyChain=masterB,
+                 ~userId=userB.userId,
+                 ~masterKeyChain=userB.masterKeyChain,
                  ~accountKeyChains=wallet.accountKeyChains,
                  ~payoutTx=data.payoutTx,
                  ~network=Network.Regtest,
@@ -243,9 +156,9 @@ let () =
              ));
            })
         |> then_(((wallet, _broadcastResult)) => {
-             let expectedFee = BTC.fromSatoshis(5640L);
+             let expectedFee = BTC.fromSatoshis(5810L);
              wallet
-             |> Wallet.getExposedAddresses
+             |> WalletHelpers.getExposedAddresses
              |> Helpers.getUTXOs
              |> then_(utxos =>
                   utxos

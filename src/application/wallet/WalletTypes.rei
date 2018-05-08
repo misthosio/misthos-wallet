@@ -31,6 +31,7 @@ module type NetworkClient = {
 module type WalletType = {
   type t;
   let toInt: t => int;
+  let fromInt: int => t;
   let first: t;
   let next: t => t;
   let encode: t => Js.Json.t;
@@ -48,6 +49,14 @@ module CustodianKeyChainIndex: {include WalletType; let first: t;};
 
 type custodianKeyChainIdx = CustodianKeyChainIndex.t;
 
+module AccountKeyChainIndex: {include WalletType;};
+
+type accountKeyChainIdx = AccountKeyChainIndex.t;
+
+module CoSignerIndex: {include WalletType;};
+
+type coSignerIdx = CoSignerIndex.t;
+
 module ChainIndex: {
   include WalletType;
   let externalChain: t;
@@ -55,10 +64,6 @@ module ChainIndex: {
 };
 
 type chainIdx = ChainIndex.t;
-
-module AccountKeyChainIndex: {include WalletType;};
-
-type accountKeyChainIdx = AccountKeyChainIndex.t;
 
 module AddressIndex: {include WalletType;};
 

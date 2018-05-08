@@ -2,51 +2,38 @@
 'use strict';
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
-var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../../../src/utils/Utils.bs.js");
+var Generators = require("../../helpers/Generators.bs.js");
 var WalletTypes = require("../../../src/application/wallet/WalletTypes.bs.js");
-var BitcoinjsLib = require("bitcoinjs-lib");
-var PrimitiveTypes = require("../../../src/application/PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../../../src/application/wallet/AccountKeyChain.bs.js");
-var CustodianKeyChain = require("../../../src/application/wallet/CustodianKeyChain.bs.js");
 
-describe("getAddress", (function () {
-        var keyA = BitcoinjsLib.ECPair.fromWIF("cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1", BitcoinjsLib.networks.testnet);
-        var keyB = BitcoinjsLib.ECPair.fromWIF("cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf", BitcoinjsLib.networks.testnet);
-        var keyC = BitcoinjsLib.ECPair.fromWIF("cPMRPo3fXGehCmFC5QsSFcZmYivsFtLVexxWi22CFwocvndXLqP1", BitcoinjsLib.networks.testnet);
-        var chainCode = Utils.bufFromHex("c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb");
-        var masterA = new BitcoinjsLib.HDNode(keyA, chainCode);
-        var masterB = new BitcoinjsLib.HDNode(keyB, chainCode);
-        var masterC = new BitcoinjsLib.HDNode(keyC, chainCode);
-        var ventureId = PrimitiveTypes.VentureId[/* fromString */1]("test");
-        var accountIdx = WalletTypes.AccountIndex[/* default */8];
-        var keyChainIdx = WalletTypes.CustodianKeyChainIndex[/* first */7];
-        var cKeyChainA = CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterA));
-        CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterB));
-        CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterC));
-        return Jest.test("single Custodian", (function () {
-                      var accountKeyChain = AccountKeyChain.make(WalletTypes.AccountIndex[/* first */1], WalletTypes.AccountKeyChainIndex[/* first */1], 1, /* :: */[
-                            /* tuple */[
-                              PrimitiveTypes.UserId[/* fromString */1]("custodianA"),
-                              cKeyChainA
-                            ],
-                            /* [] */0
-                          ]);
-                      var firstCoordinates = Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* firstExternal */0], accountKeyChain);
-                      return Jest.Expect[/* toEqual */12](/* record */[
-                                  /* nCoSigners */1,
-                                  /* nPubKeys */1,
-                                  /* coordinates : tuple */[
-                                    WalletTypes.AccountIndex[/* first */1],
-                                    WalletTypes.AccountKeyChainIndex[/* first */1],
-                                    WalletTypes.ChainIndex[/* externalChain */8],
-                                    WalletTypes.AddressIndex[/* first */1]
-                                  ],
-                                  /* witnessScript */"512103331e2cc5405b722e54b4c64ce11e149906a8af27f6126eb2ded2f0a780a1406c51ae",
-                                  /* redeemScript */"002097eab88cae50436c7588ce328aa33b139edcf8dd833cdf4cf8e80fbc31b8a0f3",
-                                  /* address */"2NCzQPvZTdvtyu3pkqyMKGNgoTNBvFHNL3n"
-                                ], Jest.Expect[/* expect */0](AccountKeyChain.Address[/* make */1](firstCoordinates, accountKeyChain)));
+describe("Collection", (function () {
+        var match = Generators.twoUserSessions(/* () */0);
+        var user2 = match[1];
+        var user1 = match[0];
+        var accountKeyChain1 = Generators.accountKeyChain(/* None */0, /* None */0, /* :: */[
+              user1,
+              /* :: */[
+                user2,
+                /* [] */0
+              ]
+            ]);
+        var accountKeyChain2 = Generators.accountKeyChain(/* None */0, /* Some */[1], /* :: */[
+              user1,
+              /* :: */[
+                user2,
+                /* [] */0
+              ]
+            ]);
+        var keyChains = AccountKeyChain.Collection[/* add */1](accountKeyChain1, AccountKeyChain.Collection[/* add */1](accountKeyChain2, /* [] */0));
+        Jest.test("lookup", (function () {
+                return Jest.Expect[/* toEqual */12](accountKeyChain1, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* lookup */2](WalletTypes.AccountIndex[/* default */9], WalletTypes.AccountKeyChainIndex[/* first */2], keyChains)));
+              }));
+        return Jest.test("latest", (function () {
+                      return Jest.Expect[/* toEqual */12](accountKeyChain2, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* latest */3](WalletTypes.AccountIndex[/* default */9], keyChains)));
                     }));
       }));
 
+var G = 0;
+
+exports.G = G;
 /*  Not a pure module */

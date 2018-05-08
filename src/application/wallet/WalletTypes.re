@@ -44,6 +44,7 @@ module Base = {
 module type WalletType = {
   type t;
   let toInt: t => int;
+  let fromInt: int => t;
   let first: t;
   let next: t => t;
   let encode: t => Js.Json.t;
@@ -72,6 +73,12 @@ module AccountKeyChainIndex = {
 };
 
 type accountKeyChainIdx = AccountKeyChainIndex.t;
+
+module CoSignerIndex = {
+  include Base;
+};
+
+type coSignerIdx = CoSignerIndex.t;
 
 module ChainIndex = {
   include Base;

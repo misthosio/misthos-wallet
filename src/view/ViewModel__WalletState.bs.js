@@ -3,8 +3,7 @@
 
 var BTC = require("../application/wallet/BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
-var Curry = require("bs-platform/lib/js/curry.js");
-var AccountKeyChain = require("../application/wallet/AccountKeyChain.bs.js");
+var Address = require("../application/wallet/Address.bs.js");
 var PayoutTransaction = require("../application/wallet/PayoutTransaction.bs.js");
 
 function make() {
@@ -26,7 +25,7 @@ function getAccountIndexOfAddress(address, param) {
                               List.map((function (a) {
                                       return a[/* address */5];
                                     }), List.map((function (c) {
-                                          return AccountKeyChain.find(c, accountKeyChains);
+                                          return Address.find(c, accountKeyChains);
                                         }), param[1]))
                             ];
                     }), param[/* exposedCoordinates */2]))[0];
@@ -167,7 +166,7 @@ function apply($$event, state) {
               ];
     case 25 : 
         var coordinates = $$event[0][/* coordinates */0];
-        var accountIdx$2 = Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* accountIdx */6], coordinates);
+        var accountIdx$2 = Address.Coordinates[/* accountIdx */3](coordinates);
         return /* record */[
                 /* accountKeyChains */state[/* accountKeyChains */0],
                 /* balance */state[/* balance */1],

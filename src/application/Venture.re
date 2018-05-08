@@ -267,11 +267,14 @@ module Cmd = {
                    collector,
                    conflicts,
                  );
-               | conflict => (
-                   venture,
-                   collector,
-                   [(item, conflict), ...conflicts],
-                 )
+               | conflict =>
+                 logMessage(
+                   "Encountered '"
+                   ++ Validation.resultToString(conflict)
+                   ++ "'. Ignoring event:",
+                 );
+                 logMessage(Event.encode(event) |> Json.stringify);
+                 (venture, collector, [(item, conflict), ...conflicts]);
                },
              (venture, [], []),
            );
@@ -423,21 +426,27 @@ module Cmd = {
       if (state |> State.isPartner(partnerId) == false) {
         PartnerDoesNotExist |> Js.Promise.resolve;
       } else {
-        let custodianAccepted =
-          state |> State.custodianAcceptedFor(partnerId);
         Js.Promise.(
-          venture
-          |> apply(
-               Event.makeCustodianRemovalProposed(
-                 ~custodianAccepted,
-                 ~supporterId=session.userId,
-                 ~custodianId=partnerId,
-                 ~accountIdx=AccountIndex.default,
-                 ~policy=
-                   state
-                   |> State.currentPolicy(Event.Custodian.Removal.processName),
-               ),
-             )
+          (
+            switch (state |> State.custodianAcceptedFor(partnerId)) {
+            | Some(custodianAccepted) =>
+              venture
+              |> apply(
+                   Event.makeCustodianRemovalProposed(
+                     ~custodianAccepted,
+                     ~supporterId=session.userId,
+                     ~custodianId=partnerId,
+                     ~accountIdx=AccountIndex.default,
+                     ~policy=
+                       state
+                       |> State.currentPolicy(
+                            Event.Custodian.Removal.processName,
+                          ),
+                   ),
+                 )
+            | None => (venture, []) |> resolve
+            }
+          )
           |> then_(((v, c)) =>
                v
                |> apply(
@@ -464,17 +473,25 @@ module Cmd = {
       | Ok(t, list(Event.t));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartnerRemoval' command");
-      let custodianRemovalProcessId =
-        state
-        |> State.custodianRemovalProcessForPartnerRemovalProcess(processId);
       Js.Promise.(
-        venture
-        |> apply(
-             Event.makeCustodianRemovalEndorsed(
-               ~processId=custodianRemovalProcessId,
-               ~supporterId=session.userId,
-             ),
-           )
+        (
+          switch (
+            state
+            |> State.custodianRemovalProcessForPartnerRemovalProcess(
+                 processId,
+               )
+          ) {
+          | Some(custodianRemovalProcessId) =>
+            venture
+            |> apply(
+                 Event.makeCustodianRemovalEndorsed(
+                   ~processId=custodianRemovalProcessId,
+                   ~supporterId=session.userId,
+                 ),
+               )
+          | None => (venture, []) |> resolve
+          }
+        )
         |> then_(((v, c)) =>
              v
              |> apply(
@@ -493,9 +510,10 @@ module Cmd = {
   module ExposeIncomeAddress = {
     type result =
       | Ok(string, t, list(Event.t));
-    let exec = (~accountIdx, {wallet} as venture) => {
+    let exec = (~accountIdx, {wallet, session: {userId}} as venture) => {
       logMessage("Executing 'GetIncomeAddress' command");
-      let exposeEvent = wallet |> Wallet.exposeNextIncomeAddress(accountIdx);
+      let exposeEvent =
+        wallet |> Wallet.exposeNextIncomeAddress(userId, accountIdx);
       Js.Promise.(
         venture
         |> apply(~systemEvent=true, IncomeAddressExposed(exposeEvent))

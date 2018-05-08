@@ -145,7 +145,7 @@ function make(initialViewModel, session, commands, _) {
                               ]]);
                   }
                 } else {
-                  Curry._1(commands[/* exposeIncomeAddress */6], WalletTypes.AccountIndex[/* default */8]);
+                  Curry._1(commands[/* exposeIncomeAddress */6], WalletTypes.AccountIndex[/* default */9]);
                   return /* NoUpdate */0;
                 }
               } else {
@@ -166,7 +166,7 @@ function make(initialViewModel, session, commands, _) {
                       Curry._1(commands[/* endorsePartnerRemoval */3], action[0]);
                       return /* NoUpdate */0;
                   case 4 : 
-                      Curry._3(commands[/* proposePayout */4], WalletTypes.AccountIndex[/* default */8], action[0], BTC.fromSatoshis(/* int64 */[
+                      Curry._3(commands[/* proposePayout */4], WalletTypes.AccountIndex[/* default */9], action[0], BTC.fromSatoshis(/* int64 */[
                                 /* hi */0,
                                 /* lo */5
                               ]));

@@ -3,11 +3,10 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
-var Curry = require("bs-platform/lib/js/curry.js");
 var Policy = require("../application/Policy.bs.js");
+var Address = require("../application/wallet/Address.bs.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var AccountKeyChain = require("../application/wallet/AccountKeyChain.bs.js");
 var ViewModel__WalletState = require("./ViewModel__WalletState.bs.js");
 
 function make() {
@@ -344,7 +343,7 @@ function apply($$event, state) {
               ];
     case 25 : 
         var match$10 = $$event[0];
-        var accountIdx = Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* accountIdx */6], match$10[/* coordinates */0]);
+        var accountIdx = Address.Coordinates[/* accountIdx */3](match$10[/* coordinates */0]);
         return /* record */[
                 state_000,
                 state_001,
@@ -402,7 +401,7 @@ function ventureName(state) {
 }
 
 function incomeAddresses(state) {
-  return List.assoc(WalletTypes.AccountIndex[/* default */8], state[/* incomeAddresses */7]);
+  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* incomeAddresses */7]);
 }
 
 function payouts(state) {
@@ -410,7 +409,7 @@ function payouts(state) {
 }
 
 function balance(state) {
-  return List.assoc(WalletTypes.AccountIndex[/* default */8], state[/* wallet */9][/* balance */1]);
+  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* wallet */9][/* balance */1]);
 }
 
 var Wallet = 0;

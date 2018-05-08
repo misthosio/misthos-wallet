@@ -8,7 +8,6 @@ var Event = require("../events/Event.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../events/EventLog.bs.js");
-var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("../wallet/WalletTypes.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -60,7 +59,7 @@ function make(param, log) {
                 case 15 : 
                     var match = $$event[0][/* data */2];
                     var removedAccount = match[/* accountIdx */1];
-                    if (WalletTypes.AccountIndex[/* eq */6](removedAccount, removedAccount)) {
+                    if (WalletTypes.AccountIndex[/* eq */7](removedAccount, removedAccount)) {
                       try {
                         var custodianKeyChains = List.remove_assoc(match[/* custodianId */0], self$1[state][0][/* custodianKeyChains */1]);
                         var init$1 = self$1[state][0];
@@ -70,7 +69,7 @@ function make(param, log) {
                           /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */2],
                           /* pendingEvent : Some */[/* tuple */[
                               self$1[state][0][/* systemIssuer */0],
-                              /* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(removedAccount, self$1[state][0][/* nextKeyChainIdx */2], Caml_array.caml_array_get(AccountKeyChain.defaultCosignerList, List.length(custodianKeyChains)), custodianKeyChains))])
+                              /* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(removedAccount, self$1[state][0][/* nextKeyChainIdx */2], custodianKeyChains))])
                             ]]
                         ];
                       }
@@ -106,7 +105,7 @@ function make(param, log) {
                         /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */2],
                         /* pendingEvent : Some */[/* tuple */[
                             self$1[state][0][/* systemIssuer */0],
-                            /* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(env$1[0], self$1[state][0][/* nextKeyChainIdx */2], Caml_array.caml_array_get(AccountKeyChain.defaultCosignerList, List.length(custodianKeyChains$1)), custodianKeyChains$1))])
+                            /* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(env$1[0], self$1[state][0][/* nextKeyChainIdx */2], custodianKeyChains$1))])
                           ]]
                       ];
                     } else {
@@ -119,7 +118,7 @@ function make(param, log) {
                       tmp = /* record */[
                         /* systemIssuer */init$3[/* systemIssuer */0],
                         /* custodianKeyChains */init$3[/* custodianKeyChains */1],
-                        /* nextKeyChainIdx */WalletTypes.AccountKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */2]),
+                        /* nextKeyChainIdx */WalletTypes.AccountKeyChainIndex[/* next */3](self$1[state][0][/* nextKeyChainIdx */2]),
                         /* pendingEvent : None */0
                       ];
                     } else {
@@ -148,7 +147,7 @@ function make(param, log) {
       self[state] = [/* record */[
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* custodianKeyChains : [] */0,
-          /* nextKeyChainIdx */WalletTypes.AccountKeyChainIndex[/* first */1],
+          /* nextKeyChainIdx */WalletTypes.AccountKeyChainIndex[/* first */2],
           /* pendingEvent : None */0
         ]];
       self[env] = env$1;

@@ -159,7 +159,7 @@ module Payout = {
     type t = {
       accountIdx,
       payoutTx: PayoutTransaction.t,
-      changeAddressCoordinates: option(AccountKeyChain.Address.Coordinates.t),
+      changeAddressCoordinates: option(Address.Coordinates.t),
     };
     let encode = event =>
       Json.Encode.(
@@ -169,7 +169,7 @@ module Payout = {
           (
             "changeAddressCoordinates",
             nullable(
-              AccountKeyChain.Address.Coordinates.encode,
+              Address.Coordinates.encode,
               event.changeAddressCoordinates,
             ),
           ),
@@ -183,7 +183,7 @@ module Payout = {
           raw
           |> field(
                "changeAddressCoordinates",
-               optional(AccountKeyChain.Address.Coordinates.decode),
+               optional(Address.Coordinates.decode),
              ),
       };
   };
@@ -318,7 +318,7 @@ module AccountKeyChainUpdated = {
 
 module IncomeAddressExposed = {
   type t = {
-    coordinates: AccountKeyChain.Address.Coordinates.t,
+    coordinates: Address.Coordinates.t,
     address: string,
   };
   let make = (~coordinates, ~address) => {coordinates, address};
@@ -326,18 +326,13 @@ module IncomeAddressExposed = {
     Json.Encode.(
       object_([
         ("type", string("IncomeAddressExposed")),
-        (
-          "coordinates",
-          AccountKeyChain.Address.Coordinates.encode(event.coordinates),
-        ),
+        ("coordinates", Address.Coordinates.encode(event.coordinates)),
         ("address", string(event.address)),
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      coordinates:
-        raw
-        |> field("coordinates", AccountKeyChain.Address.Coordinates.decode),
+      coordinates: raw |> field("coordinates", Address.Coordinates.decode),
       address: raw |> field("address", string),
     };
 };

@@ -8,13 +8,8 @@ type t = {
   ventureId,
   network: Network.t,
   payoutPolicy: Policy.t,
-  accountKeyChains:
-    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
-  nextCoordinates: list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
-  nextChangeCoordinates:
-    list((accountIdx, AccountKeyChain.Address.Coordinates.t)),
-  exposedCoordinates:
-    list((accountIdx, list(AccountKeyChain.Address.Coordinates.t))),
+  accountKeyChains: AccountKeyChain.Collection.t,
+  exposedCoordinates: list(Address.Coordinates.t),
   reservedInputs: list(Network.txInput),
   payoutProcesses: list((ProcessId.t, PayoutTransaction.t)),
 };
@@ -24,21 +19,10 @@ let make = () => {
   ventureId: VentureId.fromString(""),
   payoutPolicy: Policy.unanimous,
   accountKeyChains: [],
-  nextCoordinates: [],
-  nextChangeCoordinates: [],
   exposedCoordinates: [],
   reservedInputs: [],
   payoutProcesses: [],
 };
-
-let getExposedAddresses = ({exposedCoordinates, accountKeyChains}) =>
-  exposedCoordinates
-  |> List.map(((_idx, coordinates)) =>
-       coordinates
-       |> List.map(c => accountKeyChains |> AccountKeyChain.find(c))
-     )
-  |> List.flatten
-  |> List.map((a: AccountKeyChain.Address.t) => a.address);
 
 let apply = (event: Event.t, state) =>
   switch (event) {
@@ -48,61 +32,15 @@ let apply = (event: Event.t, state) =>
       ventureId,
       payoutPolicy: metaPolicy,
     }
-  | AccountCreationAccepted({data}) => {
-      ...state,
-      exposedCoordinates: [
-        (data.accountIdx, []),
-        ...state.exposedCoordinates,
-      ],
-      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
-    }
   | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) => {
       ...state,
-      accountKeyChains: [
-        (
-          keyChain.accountIdx,
-          [
-            (keyChain.keyChainIdx, keyChain),
-            ...state.accountKeyChains |> List.assoc(keyChain.accountIdx),
-          ],
-        ),
-        ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx),
-      ],
-      nextCoordinates: [
-        (
-          keyChain.accountIdx,
-          AccountKeyChain.Address.Coordinates.firstExternal(keyChain),
-        ),
-        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx),
-      ],
-      nextChangeCoordinates: [
-        (
-          keyChain.accountIdx,
-          AccountKeyChain.Address.Coordinates.firstInternal(keyChain),
-        ),
-        ...state.nextCoordinates |> List.remove_assoc(keyChain.accountIdx),
-      ],
+      accountKeyChains:
+        state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
     }
-  | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
-    let accountIdx =
-      coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
-    {
+  | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) => {
       ...state,
-      nextCoordinates: [
-        (accountIdx, coordinates |> AccountKeyChain.Address.Coordinates.next),
-        ...state.nextCoordinates |> List.remove_assoc(accountIdx),
-      ],
-      exposedCoordinates: [
-        (
-          accountIdx,
-          [
-            coordinates,
-            ...state.exposedCoordinates |> List.assoc(accountIdx),
-          ],
-        ),
-        ...state.exposedCoordinates |> List.remove_assoc(accountIdx),
-      ],
-    };
+      exposedCoordinates: [coordinates, ...state.exposedCoordinates],
+    }
   | PayoutProposed({data, processId}) => {
       ...state,
       reservedInputs:
@@ -111,26 +49,8 @@ let apply = (event: Event.t, state) =>
       exposedCoordinates:
         switch (data.changeAddressCoordinates) {
         | None => state.exposedCoordinates
-        | Some(coordinates) => [
-            (
-              data.accountIdx,
-              [
-                coordinates,
-                ...state.exposedCoordinates |> List.assoc(data.accountIdx),
-              ],
-            ),
-            ...state.exposedCoordinates |> List.remove_assoc(data.accountIdx),
-          ]
+        | Some(coordinates) => [coordinates, ...state.exposedCoordinates]
         },
-      nextChangeCoordinates: [
-        (
-          data.accountIdx,
-          state.nextChangeCoordinates
-          |> List.assoc(data.accountIdx)
-          |> AccountKeyChain.Address.Coordinates.next,
-        ),
-        ...state.nextCoordinates |> List.remove_assoc(data.accountIdx),
-      ],
       payoutProcesses: [
         (processId, data.payoutTx),
         ...state.payoutProcesses,
@@ -170,10 +90,19 @@ let apply = (event: Event.t, state) =>
   };
 
 let exposeNextIncomeAddress =
-    (accountIdx, {nextCoordinates, accountKeyChains}) => {
-  let coordinates = nextCoordinates |> List.assoc(accountIdx);
-  let address = accountKeyChains |> AccountKeyChain.find(coordinates);
-  IncomeAddressExposed.make(~coordinates, ~address=address.address);
+    (userId, accountIdx, {exposedCoordinates, accountKeyChains}) => {
+  let accountKeyChain =
+    accountKeyChains |> AccountKeyChain.Collection.latest(accountIdx);
+  let coordinates =
+    Address.Coordinates.nextExternal(
+      userId,
+      exposedCoordinates,
+      accountKeyChain,
+    );
+  IncomeAddressExposed.make(
+    ~coordinates,
+    ~address=Address.make(coordinates, accountKeyChain).address,
+  );
 };
 
 let preparePayoutTx =
@@ -185,16 +114,19 @@ let preparePayoutTx =
       {
         ventureId,
         payoutPolicy,
-        nextChangeCoordinates,
         exposedCoordinates,
         accountKeyChains,
         reservedInputs,
       },
     ) => {
-  open AccountKeyChain.Address;
-  let coordinates = exposedCoordinates |> List.assoc(accountIdx);
-  let nextChangeCoordinates = nextChangeCoordinates |> List.assoc(accountIdx);
-  let currentKeyChainIdx = nextChangeCoordinates |> Coordinates.keyChainIdx;
+  open Address;
+  let accountKeyChain: AccountKeyChain.t =
+    accountKeyChains |> AccountKeyChain.Collection.latest(accountIdx);
+  let currentKeyChainIdx = accountKeyChain.keyChainIdx;
+  let coordinates =
+    exposedCoordinates |> Coordinates.allForAccount(accountIdx);
+  let nextChangeCoordinates =
+    Coordinates.nextInternal(userId, coordinates, accountKeyChain);
   Js.Promise.(
     accountKeyChains
     |> Network.transactionInputs(network, coordinates)
@@ -217,7 +149,7 @@ let preparePayoutTx =
                 |> AccountKeyChainIndex.neq(currentKeyChainIdx)
               );
          let changeAddress =
-           AccountKeyChain.find(nextChangeCoordinates, accountKeyChains);
+           Address.find(nextChangeCoordinates, accountKeyChains);
          let (payoutTx, changeAddressCoordinates) =
            switch (
              PayoutTransaction.build(

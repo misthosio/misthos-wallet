@@ -5,9 +5,9 @@ var BTC = require("./BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
-var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
+var Address = require("./Address.bs.js");
 var Network = require("./Network.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
@@ -108,12 +108,13 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
                         }))($$Array.to_list(match))) < input[/* nCoSigners */4];
           if (needsSigning) {
             try {
-              var custodianPubChain = List.assoc(userId, AccountKeyChain.lookupKeyChain(input[/* coordinates */6], accountKeyChains)[/* custodianKeyChains */3]);
+              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdx */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
-              var chainIdx = Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* chainIdx */5], input[/* coordinates */6]);
-              var addressIdx = Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* addressIdx */3], input[/* coordinates */6]);
-              var keyPair = CustodianKeyChain.getSigningKey(chainIdx, addressIdx, custodianKeyChain);
-              var address = AccountKeyChain.find(input[/* coordinates */6], accountKeyChains);
+              var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
+              var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
+              var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
+              var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
+              var address = Address.find(input[/* coordinates */6], accountKeyChains);
               txB.sign(idx, keyPair, Utils.bufFromHex(address[/* redeemScript */4]), null, BTC.toSatoshisFloat(input[/* value */3]), Utils.bufFromHex(address[/* witnessScript */3]));
               return true;
             }

@@ -29,7 +29,7 @@ type txInput = {
   value: BTC.t,
   nCoSigners: int,
   nPubKeys: int,
-  coordinates: AccountKeyChain.Address.Coordinates.t,
+  coordinates: Address.Coordinates.t,
 };
 
 let encodeInput = input =>
@@ -41,10 +41,7 @@ let encodeInput = input =>
       ("value", BTC.encode(input.value)),
       ("nCoSigners", int(input.nCoSigners)),
       ("nPubKeys", int(input.nPubKeys)),
-      (
-        "coordinates",
-        AccountKeyChain.Address.Coordinates.encode(input.coordinates),
-      ),
+      ("coordinates", Address.Coordinates.encode(input.coordinates)),
     ])
   );
 
@@ -56,8 +53,7 @@ let decodeInput = raw =>
     value: raw |> field("value", BTC.decode),
     nCoSigners: raw |> field("nCoSigners", int),
     nPubKeys: raw |> field("nPubKeys", int),
-    coordinates:
-      raw |> field("coordinates", AccountKeyChain.Address.Coordinates.decode),
+    coordinates: raw |> field("coordinates", Address.Coordinates.decode),
   };
 
 module Make = (Client: NetworkClient) => {
@@ -66,7 +62,7 @@ module Make = (Client: NetworkClient) => {
     let addresses =
       coordinates
       |> List.map(c => {
-           let address = AccountKeyChain.find(c, accountKeyChains);
+           let address = Address.find(c, accountKeyChains);
            (address.address, (c, address));
          });
     Js.Promise.(

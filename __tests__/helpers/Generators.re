@@ -47,6 +47,27 @@ let fourUserSessions = () => (
   userSession("user4" |> UserId.fromString),
 );
 
+let custodianKeyChain =
+    (~ventureId, ~keyChainIdx, {masterKeyChain}: Session.Data.t) =>
+  CustodianKeyChain.make(
+    ~ventureId,
+    ~accountIdx=AccountIndex.default,
+    ~keyChainIdx=CustodianKeyChainIndex.fromInt(keyChainIdx),
+    ~masterKeyChain,
+  )
+  |> CustodianKeyChain.toPublicKeyChain;
+
+let accountKeyChain =
+    (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
+  users
+  |> List.map((user: Session.Data.t) =>
+       (user.userId, custodianKeyChain(~ventureId, ~keyChainIdx, user))
+     )
+  |> AccountKeyChain.make(
+       AccountIndex.default,
+       AccountKeyChainIndex.fromInt(keyChainIdx),
+     );
+
 module Event = {
   let createVenture = (session: Session.Data.t) =>
     AppEvent.VentureCreated.make(
@@ -136,15 +157,19 @@ module Event = {
       ~policy=Policy.unanimousMinusOne,
     )
     |> AppEvent.getCustodianRemovalProposedExn;
+  let custodianKeyChainUpdated = AppEvent.CustodianKeyChainUpdated.make;
+  let accountKeyChainUpdated = AppEvent.AccountKeyChainUpdated.make;
 };
 
 module Log = {
   type t = {
+    ventureId,
     systemIssuer: Bitcoin.ECPair.t,
     lastItem: EventLog.item,
     log: EventLog.t,
   };
   let reduce = (f, s, {log}) => EventLog.reduce(f, s, log);
+  let ventureId = ({ventureId}) => ventureId;
   let systemIssuer = ({systemIssuer}) => systemIssuer;
   let lastItem = ({lastItem}) => lastItem;
   let lastEvent = ({lastItem: {event}}) => event;
@@ -155,16 +180,22 @@ module Log = {
   };
   let appendSystemEvent = (event, {systemIssuer} as log) =>
     appendEvent(systemIssuer, event, log);
-  let createVenture = (session: Session.Data.t) => {
-    let ventureCreated = Event.createVenture(session);
+  let make = (session: Session.Data.t, ventureCreated) => {
     let (lastItem, log) =
       EventLog.make()
       |> EventLog.append(
            session.issuerKeyPair,
            VentureCreated(ventureCreated),
          );
-    {systemIssuer: ventureCreated.systemIssuer, lastItem, log};
+    {
+      ventureId: ventureCreated.ventureId,
+      systemIssuer: ventureCreated.systemIssuer,
+      lastItem,
+      log,
+    };
   };
+  let createVenture = (session: Session.Data.t) =>
+    make(session, Event.createVenture(session));
   let withPartnerProposed =
       (
         ~withLastRemoval=true,
@@ -278,6 +309,11 @@ module Log = {
     appendSystemEvent(
       AccountCreationAccepted(Event.accountCreationAccepted(proposal)),
     );
+  let withAccount = (~supporter, log) => {
+    let log = log |> withAccountCreationProposed(~supporter);
+    let proposal = log |> lastEvent |> AppEvent.getAccountCreationProposedExn;
+    log |> withAccountCreationAccepted(proposal);
+  };
   let withCustodianProposed =
       (~supporter: Session.Data.t, ~custodian: Session.Data.t, {log} as l) => {
     let partnerProposed =
@@ -350,6 +386,53 @@ module Log = {
              supporter,
              toBeRemoved,
            ),
+         ),
+       );
+  };
+  let withAccountKeyChain =
+      (~keyChainIdx=0, custodians, {log, ventureId} as l) => {
+    let custodianProcesses =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | CustodianAccepted({processId, data: {partnerId}}) => [
+                 (partnerId, processId),
+                 ...res,
+               ]
+             | _ => res
+             },
+           [],
+         );
+    let accountKeyChain =
+      accountKeyChain(~ventureId, ~keyChainIdx, custodians);
+    accountKeyChain.custodianKeyChains
+    |> List.map(((partnerId, keyChain)) =>
+         Event.custodianKeyChainUpdated(
+           ~custodianApprovalProcess=
+             custodianProcesses |> List.assoc(partnerId),
+           ~partnerId,
+           ~keyChain,
+         )
+       )
+    |> List.fold_left(
+         (l, event: AppEvent.CustodianKeyChainUpdated.t) =>
+           l
+           |> appendEvent(
+                (
+                  custodians
+                  |> List.find(({userId}: Session.Data.t) =>
+                       UserId.eq(userId, event.partnerId)
+                     )
+                ).
+                  issuerKeyPair,
+                CustodianKeyChainUpdated(event),
+              ),
+         l,
+       )
+    |> appendSystemEvent(
+         AccountKeyChainUpdated(
+           Event.accountKeyChainUpdated(~keyChain=accountKeyChain),
          ),
        );
   };

@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Policy = require("../Policy.bs.js");
+var Address = require("../wallet/Address.bs.js");
 var Network = require("../wallet/Network.bs.js");
 var EventTypes = require("./EventTypes.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -199,7 +200,7 @@ function encode$3($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "accountIdx",
-                WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */0])
+                WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */0])
               ],
               /* :: */[
                 /* tuple */[
@@ -213,7 +214,7 @@ function encode$3($$event) {
 
 function decode$3(raw) {
   return /* record */[
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw),
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* name */Json_decode.field("name", Json_decode.string, raw)
         ];
 }
@@ -255,7 +256,7 @@ function encode$4($$event) {
                 /* :: */[
                   /* tuple */[
                     "accountIdx",
-                    WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */2])
+                    WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */2])
                   ],
                   /* [] */0
                 ]
@@ -267,7 +268,7 @@ function decode$4(raw) {
   return /* record */[
           /* partnerId */Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw),
           /* partnerApprovalProcess */Json_decode.field("partnerApprovalProcess", PrimitiveTypes.ProcessId[/* decode */3], raw),
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw)
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw)
         ];
 }
 
@@ -293,7 +294,7 @@ function encode$5($$event) {
               /* :: */[
                 /* tuple */[
                   "accountIdx",
-                  WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */1])
+                  WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */1])
                 ],
                 /* [] */0
               ]
@@ -303,7 +304,7 @@ function encode$5($$event) {
 function decode$5(raw) {
   return /* record */[
           /* custodianId */Json_decode.field("custodianId", PrimitiveTypes.UserId[/* decode */3], raw),
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw)
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw)
         ];
 }
 
@@ -345,7 +346,7 @@ function encode$6($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "accountIdx",
-                WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */0])
+                WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */0])
               ],
               /* :: */[
                 /* tuple */[
@@ -355,7 +356,7 @@ function encode$6($$event) {
                 /* :: */[
                   /* tuple */[
                     "changeAddressCoordinates",
-                    Json_encode.nullable(AccountKeyChain.Address[/* Coordinates */0][/* encode */7], $$event[/* changeAddressCoordinates */2])
+                    Json_encode.nullable(Address.Coordinates[/* encode */9], $$event[/* changeAddressCoordinates */2])
                   ],
                   /* [] */0
                 ]
@@ -364,9 +365,9 @@ function encode$6($$event) {
 }
 
 function decode$6(raw) {
-  var partial_arg = AccountKeyChain.Address[/* Coordinates */0][/* decode */8];
+  var partial_arg = Address.Coordinates[/* decode */10];
   return /* record */[
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw),
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw),
           /* changeAddressCoordinates */Json_decode.field("changeAddressCoordinates", (function (param) {
                   return Json_decode.optional(partial_arg, param);
@@ -661,7 +662,7 @@ function encode$13($$event) {
               /* :: */[
                 /* tuple */[
                   "coordinates",
-                  Curry._1(AccountKeyChain.Address[/* Coordinates */0][/* encode */7], $$event[/* coordinates */0])
+                  Address.Coordinates[/* encode */9]($$event[/* coordinates */0])
                 ],
                 /* :: */[
                   /* tuple */[
@@ -676,7 +677,7 @@ function encode$13($$event) {
 
 function decode$13(raw) {
   return /* record */[
-          /* coordinates */Json_decode.field("coordinates", AccountKeyChain.Address[/* Coordinates */0][/* decode */8], raw),
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
           /* address */Json_decode.field("address", Json_decode.string, raw)
         ];
 }

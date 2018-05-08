@@ -1,4 +1,4 @@
-open Bitcoin;
+module B = Bitcoin;
 
 open WalletTypes;
 
@@ -31,7 +31,7 @@ let summary = ({withChange, usedInputs, txHex}) => {
          (total, input) => total |> BTC.plus((snd(input): input).value),
          BTC.zero,
        );
-  let tx = txHex |> Transaction.fromHex;
+  let tx = txHex |> B.Transaction.fromHex;
   let outs =
     tx##outs
     |> Array.to_list
@@ -82,15 +82,15 @@ let signPayout =
     (
       ~ventureId,
       ~userId,
-      ~masterKeyChain: HDNode.t,
+      ~masterKeyChain: B.HDNode.t,
       ~accountKeyChains:
          list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
       ~payoutTx as payout: t,
       ~network: Network.t,
     ) => {
   let txB =
-    TxBuilder.fromTransactionWithNetwork(
-      Transaction.fromHex(payout.txHex),
+    B.TxBuilder.fromTransactionWithNetwork(
+      B.Transaction.fromHex(payout.txHex),
       network |> Network.bitcoinNetwork,
     );
   let signed =
@@ -116,7 +116,10 @@ let signPayout =
                  let custodianPubChain =
                    (
                      accountKeyChains
-                     |> AccountKeyChain.lookupKeyChain(input.coordinates)
+                     |> AccountKeyChain.Collection.lookup(
+                          input.coordinates |> Address.Coordinates.accountIdx,
+                          input.coordinates |> Address.Coordinates.keyChainIdx,
+                        )
                    ).
                      custodianKeyChains
                    |> List.assoc(userId);
@@ -129,19 +132,22 @@ let signPayout =
                        CustodianKeyChain.keyChainIdx(custodianPubChain),
                      ~masterKeyChain,
                    );
-                 let (chainIdx, addressIdx) = (
-                   input.coordinates
-                   |> AccountKeyChain.Address.Coordinates.chainIdx,
-                   input.coordinates
-                   |> AccountKeyChain.Address.Coordinates.addressIdx,
+                 let (coSignerIdx, chainIdx, addressIdx) = (
+                   input.coordinates |> Address.Coordinates.coSignerIdx,
+                   input.coordinates |> Address.Coordinates.chainIdx,
+                   input.coordinates |> Address.Coordinates.addressIdx,
                  );
                  let keyPair =
                    custodianKeyChain
-                   |> CustodianKeyChain.getSigningKey(chainIdx, addressIdx);
-                 let address: AccountKeyChain.Address.t =
-                   accountKeyChains |> AccountKeyChain.find(input.coordinates);
+                   |> CustodianKeyChain.getSigningKey(
+                        coSignerIdx,
+                        chainIdx,
+                        addressIdx,
+                      );
+                 let address: Address.t =
+                   accountKeyChains |> Address.find(input.coordinates);
                  txB
-                 |> TxBuilder.signSegwit(
+                 |> B.TxBuilder.signSegwit(
                       idx,
                       keyPair,
                       ~redeemScript=address.redeemScript |> Utils.bufFromHex,
@@ -162,7 +168,7 @@ let signPayout =
   signed ?
     Signed({
       ...payout,
-      txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex,
+      txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
     }) :
     NotSigned;
 };
@@ -206,7 +212,7 @@ let addChangeOutput =
       ~totalInputs,
       ~outTotal,
       ~currentFee,
-      ~changeAddress: AccountKeyChain.Address.t,
+      ~changeAddress: Address.t,
       ~fee,
       ~network,
       ~txBuilder,
@@ -240,7 +246,7 @@ let addChangeOutput =
            ),
          );
     txBuilder
-    |> TxBuilder.addOutput(
+    |> B.TxBuilder.addOutput(
          changeAddress.address,
          totalInputs
          |> BTC.minus(outTotal)
@@ -263,7 +269,7 @@ let build =
       ~allInputs,
       ~destinations,
       ~satsPerByte,
-      ~changeAddress: AccountKeyChain.Address.t,
+      ~changeAddress: Address.t,
       ~network,
     ) => {
   let mandatoryInputs =
@@ -275,18 +281,18 @@ let build =
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
        );
-  let txB = TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
+  let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
     mandatoryInputs
     |> List.map((i: input) =>
-         (txB |> TxBuilder.addInput(i.txId, i.txOutputN), i)
+         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
        );
   let outTotal =
     destinations
     |> List.fold_left(
          (total, (address, value)) => {
            txB
-           |> TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat)
+           |> B.TxBuilder.addOutput(address, value |> BTC.toSatoshisFloat)
            |> ignore;
            total |> BTC.plus(value);
          },
@@ -318,7 +324,7 @@ let build =
       );
     let result = {
       usedInputs,
-      txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex,
+      txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
       withChange,
     };
     withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
@@ -341,7 +347,7 @@ let build =
                     Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
                   ),
                [
-                 (txB |> TxBuilder.addInput(i.txId, i.txOutputN), i),
+                 (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
                  ...usedInputs,
                ],
              ),
@@ -359,7 +365,7 @@ let build =
         );
       let result = {
         usedInputs,
-        txHex: txB |> TxBuilder.buildIncomplete |> Transaction.toHex,
+        txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
         withChange,
       };
       withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
@@ -410,16 +416,16 @@ let finalize = (signedTransactions, network) =>
   switch (signedTransactions) {
   | [{txHex, usedInputs}, ...moreSignedTransactions] =>
     let txB =
-      TxBuilder.fromTransactionWithNetwork(
-        txHex |> Transaction.fromHex,
+      B.TxBuilder.fromTransactionWithNetwork(
+        txHex |> B.Transaction.fromHex,
         network |> Network.bitcoinNetwork,
       );
     let inputs = txB##inputs;
     let otherInputs =
       moreSignedTransactions
       |> List.map(({txHex}: t) =>
-           TxBuilder.fromTransactionWithNetwork(
-             txHex |> Transaction.fromHex,
+           B.TxBuilder.fromTransactionWithNetwork(
+             txHex |> B.Transaction.fromHex,
              network |> Network.bitcoinNetwork,
            )##inputs
          );
@@ -482,7 +488,7 @@ let finalize = (signedTransactions, network) =>
            raise(NotEnoughSignatures);
          };
        });
-    txB |> TxBuilder.build;
+    txB |> B.TxBuilder.build;
   | _ => %assert
          "finalize"
   };

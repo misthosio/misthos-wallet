@@ -6,10 +6,10 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
+var Address = require("./wallet/Address.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
-var AccountKeyChain = require("./wallet/AccountKeyChain.bs.js");
 var CustodianKeyChain = require("./wallet/CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
@@ -879,7 +879,7 @@ function validateCustodianRemovalData(param, param$1) {
     var match = List.exists((function (param) {
             var data = param[1][1];
             if (PrimitiveTypes.UserId[/* eq */5](data[/* partnerId */0], custodianId)) {
-              return WalletTypes.AccountIndex[/* eq */6](accountIdx, data[/* accountIdx */2]);
+              return WalletTypes.AccountIndex[/* eq */7](accountIdx, data[/* accountIdx */2]);
             } else {
               return false;
             }
@@ -1118,7 +1118,7 @@ function validateEvent(param) {
                                         throw exn;
                                       }
                                     }
-                                  }), AccountKeyChain.custodianKeyChains(keyChain)));
+                                  }), keyChain[/* custodianKeyChains */3]));
                 }
               } else {
                 return /* BadData */["Account doesn't exist"];
@@ -1138,7 +1138,7 @@ function validateEvent(param) {
             var param$2 = partial_arg$2;
             var param$3 = param;
             try {
-              var generatedAddress = AccountKeyChain.find(param$2[/* coordinates */0], param$3[/* accountKeyChains */17]);
+              var generatedAddress = Address.find(param$2[/* coordinates */0], param$3[/* accountKeyChains */17]);
               if (param$2[/* address */1] === generatedAddress[/* address */5]) {
                 return /* Ok */0;
               } else {

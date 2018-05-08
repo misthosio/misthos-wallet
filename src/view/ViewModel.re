@@ -114,8 +114,7 @@ let apply = (event: Event.t, state) => {
       incomeAddresses: [(data.accountIdx, [])],
     }
   | IncomeAddressExposed({address, coordinates}) =>
-    let accountIdx =
-      coordinates |> AccountKeyChain.Address.Coordinates.accountIdx;
+    let accountIdx = coordinates |> Address.Coordinates.accountIdx;
     {
       ...state,
       incomeAddresses: [

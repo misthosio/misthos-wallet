@@ -44,12 +44,30 @@ function custodianProcessForPartnerProcess(processId, param) {
 }
 
 function custodianAcceptedFor(partnerId, param) {
-  return List.assoc(partnerId, param[/* custodianAccepted */7]);
+  try {
+    return /* Some */[List.assoc(partnerId, param[/* custodianAccepted */7])];
+  }
+  catch (exn){
+    if (exn === Caml_builtin_exceptions.not_found) {
+      return /* None */0;
+    } else {
+      throw exn;
+    }
+  }
 }
 
 function custodianRemovalProcessForPartnerRemovalProcess(processId, param) {
-  var custodianId = List.assoc(processId, param[/* partnerRemovalProcesses */5]);
-  return List.assoc(custodianId, param[/* custodianRemovalProcesses */6]);
+  try {
+    var custodianId = List.assoc(processId, param[/* partnerRemovalProcesses */5]);
+    return /* Some */[List.assoc(custodianId, param[/* custodianRemovalProcesses */6])];
+  }
+  catch (exn){
+    if (exn === Caml_builtin_exceptions.not_found) {
+      return /* None */0;
+    } else {
+      throw exn;
+    }
+  }
 }
 
 function lastRemovalOfPartner(partnerId, param) {

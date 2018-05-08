@@ -7,78 +7,83 @@ var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../../src/application/events/Event.bs.js");
-var Utils = require("../../src/utils/Utils.bs.js");
-var Policy = require("../../src/application/Policy.bs.js");
 var Helpers = require("../helpers/Helpers.bs.js");
+var Generators = require("../helpers/Generators.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
-var BitcoinjsLib = require("bitcoinjs-lib");
-var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
-var AccountKeyChain = require("../../src/application/wallet/AccountKeyChain.bs.js");
+var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
-var CustodianKeyChain = require("../../src/application/wallet/CustodianKeyChain.bs.js");
 var PayoutTransaction = require("../../src/application/wallet/PayoutTransaction.bs.js");
 
 Helpers.enableHttpRequests(/* () */0);
 
-describe("interation", (function () {
-        var userA = PrimitiveTypes.UserId[/* fromString */1]("userA");
-        var userB = PrimitiveTypes.UserId[/* fromString */1]("userB");
-        var keyA = BitcoinjsLib.ECPair.fromWIF("cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1", BitcoinjsLib.networks.testnet);
-        var keyB = BitcoinjsLib.ECPair.fromWIF("cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf", BitcoinjsLib.networks.testnet);
-        var createdEvent = Event.VentureCreated[/* make */0]("test", userA, Utils.publicKeyFromKeyPair(keyA), Policy.unanimous, /* Regtest */0);
-        var chainCode = Utils.bufFromHex("c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb");
-        var masterA = new BitcoinjsLib.HDNode(keyA, chainCode);
-        var masterB = new BitcoinjsLib.HDNode(keyB, chainCode);
-        var ventureId = createdEvent[/* ventureId */0];
-        var accountIdx = WalletTypes.AccountIndex[/* default */8];
-        var keyChainIdx = WalletTypes.CustodianKeyChainIndex[/* first */7];
-        var cKeyChainA = CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterA));
-        var cKeyChainB = CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, keyChainIdx, masterB));
-        var accountKeyChain = AccountKeyChain.make(accountIdx, WalletTypes.AccountKeyChainIndex[/* first */1], 1, /* :: */[
-              /* tuple */[
-                userA,
-                cKeyChainA
-              ],
+describe("integration", (function () {
+        var match = Generators.threeUserSessions(/* () */0);
+        var userC = match[2];
+        var userB = match[1];
+        var userA = match[0];
+        var log = Generators.Log[/* withAccountKeyChain */27](/* None */0, /* :: */[
+              userA,
               /* :: */[
-                /* tuple */[
-                  userB,
-                  cKeyChainB
-                ],
+                userB,
                 /* [] */0
               ]
+            ], Generators.Log[/* withCustodian */25](userB, /* :: */[
+                  userA,
+                  /* :: */[
+                    userB,
+                    /* [] */0
+                  ]
+                ], Generators.Log[/* withPartner */13](userB, /* :: */[
+                      userA,
+                      /* [] */0
+                    ], Generators.Log[/* withCustodian */25](userA, /* :: */[
+                          userA,
+                          /* [] */0
+                        ], Generators.Log[/* withAccount */21](userA, Generators.Log[/* withFirstPartner */14](userA)(Generators.Log[/* createVenture */9](userA)))))));
+        var accountIdx = WalletTypes.AccountIndex[/* default */9];
+        var ventureId = Generators.Log[/* ventureId */1](log);
+        var wallet = WalletHelpers.constructState(log);
+        var match$1 = WalletHelpers.collectNextTwoAddresses(userA, /* tuple */[
+              wallet,
+              log
             ]);
-        var wallet = Venture__Wallet.apply(/* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](accountKeyChain)]), Venture__Wallet.apply(/* AccountCreationAccepted */Block.__(9, [/* record */[
-                      /* processId */PrimitiveTypes.ProcessId[/* make */7](/* () */0),
-                      /* dependsOnCompletions : [] */0,
-                      /* data : record */[
-                        /* accountIdx */accountIdx,
-                        /* name */"default"
+        var match$2 = match$1[1];
+        var match$3 = match$1[0];
+        var address2 = match$3[1];
+        var address1 = match$3[0];
+        var log$1 = Generators.Log[/* withAccountKeyChain */27](/* Some */[1], /* :: */[
+              userA,
+              /* :: */[
+                userB,
+                /* :: */[
+                  userC,
+                  /* [] */0
+                ]
+              ]
+            ], Generators.Log[/* withCustodian */25](userC, /* :: */[
+                  userA,
+                  /* :: */[
+                    userB,
+                    /* [] */0
+                  ]
+                ], Generators.Log[/* withPartner */13](userC, /* :: */[
+                      userA,
+                      /* :: */[
+                        userB,
+                        /* [] */0
                       ]
-                    ]]), Venture__Wallet.apply(/* VentureCreated */Block.__(0, [createdEvent]), Venture__Wallet.make(/* () */0))));
-        var address1 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet);
-        var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address1]), wallet);
-        var address2 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet$1);
-        var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address2]), wallet$1);
-        var oneKeyChainWallet = [wallet$2];
-        var accountKeyChain$1 = AccountKeyChain.make(accountIdx, WalletTypes.AccountKeyChainIndex[/* next */2](WalletTypes.AccountKeyChainIndex[/* first */1]), 2, /* :: */[
-              /* tuple */[
-                userA,
-                cKeyChainA
-              ],
-              /* :: */[
-                /* tuple */[
-                  userB,
-                  cKeyChainB
-                ],
-                /* [] */0
-              ]
+                    ], match$2[1])));
+        var oneKeyChainWallet = [match$2[0]];
+        var wallet$1 = WalletHelpers.constructState(log$1);
+        var match$4 = WalletHelpers.collectNextTwoAddresses(userC, /* tuple */[
+              wallet$1,
+              log$1
             ]);
-        var wallet$3 = Venture__Wallet.apply(/* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](accountKeyChain$1)]), wallet$2);
-        var address3 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet$3);
-        var wallet$4 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address3]), wallet$3);
-        var address4 = Venture__Wallet.exposeNextIncomeAddress(accountIdx, wallet$4);
-        var wallet$5 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [address4]), wallet$4);
-        var twoKeyChainWallet = [wallet$5];
+        var wallet$2 = match$4[1][0];
+        var match$5 = match$4[0];
+        var address4 = match$5[1];
+        var address3 = match$5[0];
+        var twoKeyChainWallet = [wallet$2];
         var address1Satoshis = BTC.fromSatoshis(/* int64 */[
               /* hi */0,
               /* lo */10000
@@ -112,22 +117,22 @@ describe("interation", (function () {
         Jest.beforeAllPromise(/* Some */[40000], (function () {
                 return Helpers.faucet(/* :: */[
                                   /* tuple */[
-                                    address1[/* address */1],
+                                    address1,
                                     address1Satoshis
                                   ],
                                   /* :: */[
                                     /* tuple */[
-                                      address2[/* address */1],
+                                      address2,
                                       address2Satoshis
                                     ],
                                     /* :: */[
                                       /* tuple */[
-                                        address3[/* address */1],
+                                        address3,
                                         address3Satoshis
                                       ],
                                       /* :: */[
                                         /* tuple */[
-                                          address4[/* address */1],
+                                          address4,
                                           address4Satoshis
                                         ],
                                         /* [] */0
@@ -135,14 +140,7 @@ describe("interation", (function () {
                                     ]
                                   ]
                                 ]).then((function () {
-                                  return Venture__Wallet.preparePayoutTx(/* record */[
-                                              /* userId */userA,
-                                              /* appPrivateKey */"",
-                                              /* issuerKeyPair */keyA,
-                                              /* storagePrefix */keyA.getAddress(),
-                                              /* masterKeyChain */masterA,
-                                              /* network : Regtest */0
-                                            ], accountIdx, /* :: */[
+                                  return Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
                                               /* tuple */[
                                                 Helpers.faucetAddress,
                                                 oneKeyChainSpendAmount
@@ -171,21 +169,14 @@ describe("interation", (function () {
                             }));
               }));
         Jest.testPromise(/* None */0, "1 of 2 wallet", (function () {
-                return Helpers.getUTXOs(Venture__Wallet.getExposedAddresses(oneKeyChainWallet[0])).then((function (utxos) {
+                return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(oneKeyChainWallet[0])).then((function (utxos) {
                               return Promise.resolve(Jest.Expect[/* toEqual */12](oneKeyChainWalletTotal.minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                         return total.plus(utxo[/* amount */3]);
                                                       }), BTC.zero, utxos))));
                             }));
               }));
-        return Jest.testPromise(/* Some */[80000], "2 of 2 wallet", (function () {
-                      return Venture__Wallet.preparePayoutTx(/* record */[
-                                      /* userId */userA,
-                                      /* appPrivateKey */"",
-                                      /* issuerKeyPair */keyA,
-                                      /* storagePrefix */keyA.getAddress(),
-                                      /* masterKeyChain */masterA,
-                                      /* network : Regtest */0
-                                    ], accountIdx, /* :: */[
+        return Jest.testPromise(/* Some */[80000], "2 of 3 wallet", (function () {
+                      return Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
                                       /* tuple */[
                                         Helpers.faucetAddress,
                                         twoKeyChainSpendAmount
@@ -196,7 +187,7 @@ describe("interation", (function () {
                                           /* lo */10
                                         ]), twoKeyChainWallet[0]).then((function ($$event) {
                                       var data = $$event[/* data */5];
-                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB, masterB, wallet$5[/* accountKeyChains */3], data[/* payoutTx */1], /* Regtest */0));
+                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* accountKeyChains */3], data[/* payoutTx */1], /* Regtest */0));
                                       return Promise.all(/* tuple */[
                                                   Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(16, [$$event]), twoKeyChainWallet[0])),
                                                   Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
@@ -210,9 +201,9 @@ describe("interation", (function () {
                                     })).then((function (param) {
                                     var expectedFee = BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */5640
+                                          /* lo */5810
                                         ]);
-                                    return Helpers.getUTXOs(Venture__Wallet.getExposedAddresses(param[0])).then((function (utxos) {
+                                    return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                   return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                                             return total.plus(utxo[/* amount */3]);
                                                                           }), BTC.zero, utxos))));
@@ -221,7 +212,4 @@ describe("interation", (function () {
                     }));
       }));
 
-var Wallet = 0;
-
-exports.Wallet = Wallet;
 /*  Not a pure module */

@@ -12,14 +12,14 @@ var Watcher__PartnerApproval = require("../../../src/application/watcher/Watcher
 
 describe("Will approve the creator", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("creator.id"));
-        var eta = Generators.Log[/* createVenture */7](user1);
-        var func = Generators.Log[/* withPartnerProposed */8];
+        var eta = Generators.Log[/* createVenture */9](user1);
+        var func = Generators.Log[/* withPartnerProposed */10];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user1);
                 })(/* None */0, /* None */0, /* None */0), eta);
-        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
-        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
-        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
+        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
+        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log));
+        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */2](log), (function (param) {
                       if (param.tag === 3) {
                         return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
@@ -32,14 +32,14 @@ describe("With 1 partner and a proposal", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1));
-        var func = Generators.Log[/* withPartnerProposed */8];
+        var eta = Generators.Log[/* withFirstPartner */14](user1)(Generators.Log[/* createVenture */9](user1));
+        var func = Generators.Log[/* withPartnerProposed */10];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user2);
                 })(/* None */0, /* None */0, /* None */0), eta);
-        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
-        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
-        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
+        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
+        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log));
+        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */2](log), (function (param) {
                       if (param.tag === 3) {
                         return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
@@ -52,15 +52,15 @@ describe("Completes when the partner is accepted", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1));
-        var func = Generators.Log[/* withPartnerProposed */8];
+        var eta = Generators.Log[/* withFirstPartner */14](user1)(Generators.Log[/* createVenture */9](user1));
+        var func = Generators.Log[/* withPartnerProposed */10];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user2);
                 })(/* None */0, /* None */0, /* None */0), eta);
-        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
-        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
-        var log$1 = Generators.Log[/* withPartnerAccepted */10](proposal)(log);
-        Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */2](log$1));
+        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
+        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log));
+        var log$1 = Generators.Log[/* withPartnerAccepted */12](proposal)(log);
+        Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */3](log$1));
         return WatcherHelpers.testWatcherHasCompleted(watcher);
       }));
 
@@ -68,16 +68,16 @@ describe("With 2 users and a proposal", (function () {
         var match = Generators.threeUserSessions(/* () */0);
         var user3 = match[2];
         var user1 = match[0];
-        var eta = Generators.Log[/* withPartner */11](match[1], /* :: */[
+        var eta = Generators.Log[/* withPartner */13](match[1], /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1)));
-        var func = Generators.Log[/* withPartnerProposed */8];
+            ], Generators.Log[/* withFirstPartner */14](user1)(Generators.Log[/* createVenture */9](user1)));
+        var func = Generators.Log[/* withPartnerProposed */10];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user3);
                 })(/* None */0, /* None */0, /* None */0), eta);
-        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
-        return WatcherHelpers.testWatcherHasNoEventPending(Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log)));
+        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
+        return WatcherHelpers.testWatcherHasNoEventPending(Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log)));
       }));
 
 describe("With 2 users and a proposal and endorsement", (function () {
@@ -85,18 +85,18 @@ describe("With 2 users and a proposal and endorsement", (function () {
         var user3 = match[2];
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withPartner */11](user2, /* :: */[
+        var eta = Generators.Log[/* withPartner */13](user2, /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1)));
-        var func = Generators.Log[/* withPartnerProposed */8];
+            ], Generators.Log[/* withFirstPartner */14](user1)(Generators.Log[/* createVenture */9](user1)));
+        var func = Generators.Log[/* withPartnerProposed */10];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user3);
                 })(/* None */0, /* None */0, /* None */0), eta);
-        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
-        var log$1 = Generators.Log[/* withPartnerEndorsed */9](/* None */0, user2, proposal)(log);
-        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log$1));
-        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log$1), (function (param) {
+        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
+        var log$1 = Generators.Log[/* withPartnerEndorsed */11](/* None */0, user2, proposal)(log);
+        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log$1));
+        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */2](log$1), (function (param) {
                       if (param.tag === 3) {
                         return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {
@@ -110,20 +110,20 @@ describe("With 2 users and a removal and a proposal", (function () {
         var user3 = match[2];
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withPartnerRemoved */16](user2, /* :: */[
+        var eta = Generators.Log[/* withPartnerRemoved */18](user2, /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withPartner */11](user2, /* :: */[
+            ], Generators.Log[/* withPartner */13](user2, /* :: */[
                   user1,
                   /* [] */0
-                ], Generators.Log[/* withFirstPartner */12](user1)(Generators.Log[/* createVenture */7](user1))));
-        var func = Generators.Log[/* withPartnerProposed */8];
+                ], Generators.Log[/* withFirstPartner */14](user1)(Generators.Log[/* createVenture */9](user1))));
+        var func = Generators.Log[/* withPartnerProposed */10];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user3);
                 })(/* None */0, /* None */0, /* None */0), eta);
-        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */3](log));
-        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */4](log));
-        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */1](log), (function (param) {
+        var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
+        var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log));
+        return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */2](log), (function (param) {
                       if (param.tag === 3) {
                         return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
                       } else {

@@ -17,6 +17,7 @@ let () =
         coordinates: (
           AccountIndex.first,
           AccountKeyChainIndex.first,
+          CoSignerIndex.first,
           ChainIndex.externalChain,
           AddressIndex.first,
         ),
@@ -31,17 +32,19 @@ let () =
         coordinates: (
           AccountIndex.first,
           AccountKeyChainIndex.first,
+          CoSignerIndex.first,
           ChainIndex.externalChain,
           AddressIndex.first |> AddressIndex.next,
         ),
       },
     ];
-    let changeAddress: AccountKeyChain.Address.t = {
+    let changeAddress: Address.t = {
       nCoSigners: 1,
       nPubKeys: 1,
       coordinates: (
         AccountIndex.first,
         AccountKeyChainIndex.first,
+        CoSignerIndex.first,
         ChainIndex.externalChain,
         AddressIndex.first,
       ),
