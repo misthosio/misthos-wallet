@@ -467,12 +467,12 @@ function exec$5(partnerId, venture) {
   } else {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     return (
-                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(match[0], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
+                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(match[0], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */6][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
                           venture,
                           /* [] */0
                         ])
                 ).then((function (param) {
-                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */5][/* processName */1], state)), param[0]);
+                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */6][/* processName */1], state)), param[0]);
                     })).then(persist).then((function (param) {
                   return Promise.resolve(/* Ok */[
                               param[0],

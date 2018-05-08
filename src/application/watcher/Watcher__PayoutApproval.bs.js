@@ -124,7 +124,7 @@ function make(proposal, log) {
               if (tmp$1) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */3],
-                    /* PayoutAccepted */Block.__(18, [Curry._1(Event.Payout[/* Accepted */4][/* fromProposal */0], env$1[0])])
+                    /* PayoutAccepted */Block.__(18, [Curry._1(Event.Payout[/* Accepted */5][/* fromProposal */0], env$1[0])])
                   ]];
                 return /* () */0;
               } else {

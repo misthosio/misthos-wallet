@@ -165,12 +165,12 @@ function apply(param, state) {
                 state_013,
                 /* policies : :: */[
                   /* tuple */[
-                    Event.Partner[/* Removal */5][/* processName */1],
+                    Event.Partner[/* Removal */6][/* processName */1],
                     /* UnanimousMinusOne */1
                   ],
                   /* :: */[
                     /* tuple */[
-                      Event.Custodian[/* Removal */5][/* processName */1],
+                      Event.Custodian[/* Removal */6][/* processName */1],
                       /* UnanimousMinusOne */1
                     ],
                     List.map((function (n) {
@@ -786,12 +786,12 @@ function validateProposal($staropt$star, processName, dataList, param, state, is
   }
 }
 
-function validateAcceptance(param, dataList, param$1, _) {
+function validateAcceptance(param, dataList, eq, param$1, _) {
   var completedProcesses = param$1[/* completedProcesses */13];
   var processId = param[/* processId */0];
   try {
     var match = List.assoc(processId, param$1[/* processes */12]);
-    if (Caml_obj.caml_notequal(param[/* data */2], List.assoc(processId, dataList)[1])) {
+    if (Curry._2(eq, param[/* data */2], List.assoc(processId, dataList)[1]) === false) {
       return /* BadData */["Data doesn't match proposal"];
     } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* currentPartners */3], match[/* supporterIds */0]) === false) {
       return /* PolicyNotFulfilled */5;
@@ -927,16 +927,17 @@ function validateEvent(param) {
     case 3 : 
         var acceptance = param[0];
         return (function (state) {
-            var partial_arg = state[/* partnerData */5];
+            var partial_arg = Event.Partner[/* dataEq */2];
+            var partial_arg$1 = state[/* partnerData */5];
             return (function (param) {
-                return validateAcceptance(acceptance, partial_arg, state, param);
+                return validateAcceptance(acceptance, partial_arg$1, partial_arg, state, param);
               });
           });
     case 4 : 
         var proposal$1 = param[0];
         return (function (state) {
             var partial_arg = state[/* partnerRemovalData */6];
-            var partial_arg$1 = Event.Partner[/* Removal */5][/* processName */1];
+            var partial_arg$1 = Event.Partner[/* Removal */6][/* processName */1];
             var partial_arg$2 = /* Some */[validatePartnerRemovalData];
             return (function (param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$1, state, param);
@@ -945,9 +946,10 @@ function validateEvent(param) {
     case 6 : 
         var acceptance$1 = param[0];
         return (function (state) {
-            var partial_arg = state[/* partnerRemovalData */6];
+            var partial_arg = Event.Partner[/* Removal */6][/* dataEq */2];
+            var partial_arg$1 = state[/* partnerRemovalData */6];
             return (function (param) {
-                return validateAcceptance(acceptance$1, partial_arg, state, param);
+                return validateAcceptance(acceptance$1, partial_arg$1, partial_arg, state, param);
               });
           });
     case 7 : 
@@ -963,9 +965,10 @@ function validateEvent(param) {
     case 9 : 
         var acceptance$2 = param[0];
         return (function (state) {
-            var partial_arg = state[/* accountCreationData */10];
+            var partial_arg = Event.AccountCreation[/* dataEq */2];
+            var partial_arg$1 = state[/* accountCreationData */10];
             return (function (param) {
-                return validateAcceptance(acceptance$2, partial_arg, state, param);
+                return validateAcceptance(acceptance$2, partial_arg$1, partial_arg, state, param);
               });
           });
     case 10 : 
@@ -981,16 +984,17 @@ function validateEvent(param) {
     case 12 : 
         var acceptance$3 = param[0];
         return (function (state) {
-            var partial_arg = state[/* custodianData */8];
+            var partial_arg = Event.Custodian[/* dataEq */2];
+            var partial_arg$1 = state[/* custodianData */8];
             return (function (param) {
-                return validateAcceptance(acceptance$3, partial_arg, state, param);
+                return validateAcceptance(acceptance$3, partial_arg$1, partial_arg, state, param);
               });
           });
     case 13 : 
         var proposal$4 = param[0];
         return (function (state) {
             var partial_arg = state[/* custodianRemovalData */9];
-            var partial_arg$1 = Event.Custodian[/* Removal */5][/* processName */1];
+            var partial_arg$1 = Event.Custodian[/* Removal */6][/* processName */1];
             var partial_arg$2 = /* Some */[validateCustodianRemovalData];
             return (function (param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$4, state, param);
@@ -999,9 +1003,10 @@ function validateEvent(param) {
     case 15 : 
         var acceptance$4 = param[0];
         return (function (state) {
-            var partial_arg = state[/* custodianRemovalData */9];
+            var partial_arg = Event.Custodian[/* Removal */6][/* dataEq */2];
+            var partial_arg$1 = state[/* custodianRemovalData */9];
             return (function (param) {
-                return validateAcceptance(acceptance$4, partial_arg, state, param);
+                return validateAcceptance(acceptance$4, partial_arg$1, partial_arg, state, param);
               });
           });
     case 16 : 
@@ -1016,9 +1021,10 @@ function validateEvent(param) {
     case 18 : 
         var acceptance$5 = param[0];
         return (function (state) {
-            var partial_arg = state[/* payoutData */11];
+            var partial_arg = Event.Payout[/* dataEq */2];
+            var partial_arg$1 = state[/* payoutData */11];
             return (function (param) {
-                return validateAcceptance(acceptance$5, partial_arg, state, param);
+                return validateAcceptance(acceptance$5, partial_arg$1, partial_arg, state, param);
               });
           });
     case 19 : 

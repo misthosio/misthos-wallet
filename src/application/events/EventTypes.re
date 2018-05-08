@@ -168,6 +168,7 @@ module type Process =
   (Data: EventData) =>
   {
     let processName: string;
+    let dataEq: (Data.t, Data.t) => bool;
     module Proposed: {
       type t = proposal(Data.t);
       let make:
@@ -203,4 +204,6 @@ let makeProcess = (name: string) : (module Process) =>
      module Proposed = (val makeProposal(name ++ "Proposed"))(Data);
      module Endorsed = (val makeEndorsement(name ++ "Endorsed"));
      module Accepted = (val makeAcceptance(name ++ "Accepted"))(Data);
+     let dataEq = (dataA, dataB) =>
+       Data.encode(dataA) == Data.encode(dataB);
    });

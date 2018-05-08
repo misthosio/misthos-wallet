@@ -93,12 +93,12 @@ function apply($$event, state) {
                 /* systemIssuer */match[/* systemIssuer */5],
                 /* policies : :: */[
                   /* tuple */[
-                    Event.Partner[/* Removal */5][/* processName */1],
+                    Event.Partner[/* Removal */6][/* processName */1],
                     /* UnanimousMinusOne */1
                   ],
                   /* :: */[
                     /* tuple */[
-                      Event.Custodian[/* Removal */5][/* processName */1],
+                      Event.Custodian[/* Removal */6][/* processName */1],
                       /* UnanimousMinusOne */1
                     ],
                     List.map((function (n) {

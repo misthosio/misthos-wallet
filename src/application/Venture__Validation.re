@@ -359,13 +359,14 @@ let validateAcceptance =
     (
       {processId, data, dependsOnCompletions}: EventTypes.acceptance('a),
       dataList: list((processId, (userId, 'a))),
+      eq: ('a, 'a) => bool,
       {processes, currentPartners, completedProcesses},
       _issuerPubKey,
     ) =>
   try (
     {
       let {policy, supporterIds} = processes |> List.assoc(processId);
-      if (data != (dataList |> List.assoc(processId) |> snd)) {
+      if (eq(data, dataList |> List.assoc(processId) |> snd) == false) {
         BadData("Data doesn't match proposal");
       } else if (Policy.fulfilled(
                    ~eligable=currentPartners,
@@ -641,24 +642,53 @@ let validateEvent =
   | AccountCreationEndorsed(endorsement) => validateEndorsement(endorsement)
   | PayoutEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerAccepted(acceptance) => (
-      state => validateAcceptance(acceptance, state.partnerData, state)
+      state =>
+        validateAcceptance(
+          acceptance,
+          state.partnerData,
+          Partner.dataEq,
+          state,
+        )
     )
   | PartnerRemovalAccepted(acceptance) => (
-      state => validateAcceptance(acceptance, state.partnerRemovalData, state)
+      state =>
+        validateAcceptance(
+          acceptance,
+          state.partnerRemovalData,
+          Partner.Removal.dataEq,
+          state,
+        )
     )
   | CustodianAccepted(acceptance) => (
-      state => validateAcceptance(acceptance, state.custodianData, state)
+      state =>
+        validateAcceptance(
+          acceptance,
+          state.custodianData,
+          Custodian.dataEq,
+          state,
+        )
     )
   | CustodianRemovalAccepted(acceptance) => (
       state =>
-        validateAcceptance(acceptance, state.custodianRemovalData, state)
+        validateAcceptance(
+          acceptance,
+          state.custodianRemovalData,
+          Custodian.Removal.dataEq,
+          state,
+        )
     )
   | AccountCreationAccepted(acceptance) => (
       state =>
-        validateAcceptance(acceptance, state.accountCreationData, state)
+        validateAcceptance(
+          acceptance,
+          state.accountCreationData,
+          AccountCreation.dataEq,
+          state,
+        )
     )
   | PayoutAccepted(acceptance) => (
-      state => validateAcceptance(acceptance, state.payoutData, state)
+      state =>
+        validateAcceptance(acceptance, state.payoutData, Payout.dataEq, state)
     )
   | CustodianKeyChainUpdated(update) =>
     validateCustodianKeyChainUpdated(update)

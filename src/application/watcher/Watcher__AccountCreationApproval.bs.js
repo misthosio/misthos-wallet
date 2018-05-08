@@ -124,7 +124,7 @@ function make(proposal, log) {
               if (tmp$1) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */3],
-                    /* AccountCreationAccepted */Block.__(9, [Curry._1(Event.AccountCreation[/* Accepted */4][/* fromProposal */0], env$1[0])])
+                    /* AccountCreationAccepted */Block.__(9, [Curry._1(Event.AccountCreation[/* Accepted */5][/* fromProposal */0], env$1[0])])
                   ]];
                 return /* () */0;
               } else {

@@ -142,11 +142,11 @@ var Data = /* module */[
 
 var include = EventTypes.makeProcess("Partner")(Data);
 
-var Proposed = include[1];
+var Proposed = include[2];
 
-var Endorsed = include[2];
+var Endorsed = include[3];
 
-var Accepted = include[3];
+var Accepted = include[4];
 
 function encode$2($$event) {
   return Json_encode.object_(/* :: */[
@@ -169,17 +169,20 @@ var Data$1 = /* module */[
 
 var include$1 = EventTypes.makeProcess("PartnerRemoval")(Data$1);
 
-var Proposed$1 = include$1[1];
+var Proposed$1 = include$1[2];
 
-var Endorsed$1 = include$1[2];
+var Endorsed$1 = include$1[3];
 
-var Accepted$1 = include$1[3];
+var Accepted$1 = include$1[4];
 
 var Removal_001 = /* processName */include$1[0];
+
+var Removal_002 = /* dataEq */include$1[1];
 
 var Removal = /* module */[
   /* Data */Data$1,
   Removal_001,
+  Removal_002,
   /* Proposed */Proposed$1,
   /* Endorsed */Endorsed$1,
   /* Accepted */Accepted$1
@@ -187,9 +190,12 @@ var Removal = /* module */[
 
 var Partner_001 = /* processName */include[0];
 
+var Partner_002 = /* dataEq */include[1];
+
 var Partner = /* module */[
   /* Data */Data,
   Partner_001,
+  Partner_002,
   /* Proposed */Proposed,
   /* Endorsed */Endorsed,
   /* Accepted */Accepted,
@@ -226,17 +232,20 @@ var Data$2 = /* module */[
 
 var include$2 = EventTypes.makeProcess("AccountCreation")(Data$2);
 
-var Proposed$2 = include$2[1];
+var Proposed$2 = include$2[2];
 
-var Endorsed$2 = include$2[2];
+var Endorsed$2 = include$2[3];
 
-var Accepted$2 = include$2[3];
+var Accepted$2 = include$2[4];
 
 var AccountCreation_001 = /* processName */include$2[0];
+
+var AccountCreation_002 = /* dataEq */include$2[1];
 
 var AccountCreation = /* module */[
   /* Data */Data$2,
   AccountCreation_001,
+  AccountCreation_002,
   /* Proposed */Proposed$2,
   /* Endorsed */Endorsed$2,
   /* Accepted */Accepted$2
@@ -279,11 +288,11 @@ var Data$3 = /* module */[
 
 var include$3 = EventTypes.makeProcess("Custodian")(Data$3);
 
-var Proposed$3 = include$3[1];
+var Proposed$3 = include$3[2];
 
-var Endorsed$3 = include$3[2];
+var Endorsed$3 = include$3[3];
 
-var Accepted$3 = include$3[3];
+var Accepted$3 = include$3[4];
 
 function encode$5($$event) {
   return Json_encode.object_(/* :: */[
@@ -315,17 +324,20 @@ var Data$4 = /* module */[
 
 var include$4 = EventTypes.makeProcess("CustodianRemoval")(Data$4);
 
-var Proposed$4 = include$4[1];
+var Proposed$4 = include$4[2];
 
-var Endorsed$4 = include$4[2];
+var Endorsed$4 = include$4[3];
 
-var Accepted$4 = include$4[3];
+var Accepted$4 = include$4[4];
 
 var Removal_001$1 = /* processName */include$4[0];
+
+var Removal_002$1 = /* dataEq */include$4[1];
 
 var Removal$1 = /* module */[
   /* Data */Data$4,
   Removal_001$1,
+  Removal_002$1,
   /* Proposed */Proposed$4,
   /* Endorsed */Endorsed$4,
   /* Accepted */Accepted$4
@@ -333,9 +345,12 @@ var Removal$1 = /* module */[
 
 var Custodian_001 = /* processName */include$3[0];
 
+var Custodian_002 = /* dataEq */include$3[1];
+
 var Custodian = /* module */[
   /* Data */Data$3,
   Custodian_001,
+  Custodian_002,
   /* Proposed */Proposed$3,
   /* Endorsed */Endorsed$3,
   /* Accepted */Accepted$3,
@@ -382,11 +397,11 @@ var Data$5 = /* module */[
 
 var include$5 = EventTypes.makeProcess("Payout")(Data$5);
 
-var Proposed$5 = include$5[1];
+var Proposed$5 = include$5[2];
 
-var Endorsed$5 = include$5[2];
+var Endorsed$5 = include$5[3];
 
-var Accepted$5 = include$5[3];
+var Accepted$5 = include$5[4];
 
 function make$1(processId, custodianId, payoutTx) {
   return /* record */[
@@ -554,9 +569,12 @@ var BroadcastFailed = /* module */[
 
 var Payout_001 = /* processName */include$5[0];
 
+var Payout_002 = /* dataEq */include$5[1];
+
 var Payout = /* module */[
   /* Data */Data$5,
   Payout_001,
+  Payout_002,
   /* Proposed */Proposed$5,
   /* Endorsed */Endorsed$5,
   /* Accepted */Accepted$5,

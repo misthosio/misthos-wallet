@@ -4,6 +4,7 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Policy = require("../Policy.bs.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
@@ -187,13 +188,17 @@ function makeAcceptance(name) {
 }
 
 function makeProcess(name) {
-  return (function (Data) {
+  return (function (funarg) {
       var processName = name + "ApprovalProcess";
-      var Proposed = makeProposal(name + "Proposed")(Data);
+      var Proposed = makeProposal(name + "Proposed")(funarg);
       var Endorsed = makeEndorsement(name + "Endorsed");
-      var Accepted = makeAcceptance(name + "Accepted")(Data);
+      var Accepted = makeAcceptance(name + "Accepted")(funarg);
+      var dataEq = function (dataA, dataB) {
+        return Caml_obj.caml_equal(Curry._1(funarg[/* encode */0], dataA), Curry._1(funarg[/* encode */0], dataB));
+      };
       return /* module */[
               /* processName */processName,
+              /* dataEq */dataEq,
               /* Proposed */Proposed,
               /* Endorsed */Endorsed,
               /* Accepted */Accepted
