@@ -387,6 +387,24 @@ module Cmd = {
       };
     };
   };
+  module RejectPartner = {
+    type result =
+      | Ok(t, list(Event.t));
+    let exec = (~processId, {session} as venture) => {
+      logMessage("Executing 'RejectPartner' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             Event.makePartnerRejected(
+               ~processId,
+               ~rejectorId=session.userId,
+             ),
+           )
+        |> then_(persist)
+        |> then_(((v, c)) => resolve(Ok(v, c)))
+      );
+    };
+  };
   module EndorsePartner = {
     type result =
       | Ok(t, list(Event.t));
@@ -468,6 +486,24 @@ module Cmd = {
       };
     };
   };
+  module RejectPartnerRemoval = {
+    type result =
+      | Ok(t, list(Event.t));
+    let exec = (~processId, {session} as venture) => {
+      logMessage("Executing 'RejectPartnerRemoval' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             Event.makePartnerRemovalRejected(
+               ~processId,
+               ~rejectorId=session.userId,
+             ),
+           )
+        |> then_(persist)
+        |> then_(((v, c)) => resolve(Ok(v, c)))
+      );
+    };
+  };
   module EndorsePartnerRemoval = {
     type result =
       | Ok(t, list(Event.t));
@@ -531,6 +567,21 @@ module Cmd = {
       Js.Promise.(
         Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
         |> then_(proposal => venture |> apply(PayoutProposed(proposal)))
+        |> then_(persist)
+        |> then_(((v, c)) => resolve(Ok(v, c)))
+      );
+    };
+  };
+  module RejectPayout = {
+    type result =
+      | Ok(t, list(Event.t));
+    let exec = (~processId, {session} as venture) => {
+      logMessage("Executing 'RejectPayout' command");
+      Js.Promise.(
+        venture
+        |> apply(
+             Event.makePayoutRejected(~processId, ~rejectorId=session.userId),
+           )
         |> then_(persist)
         |> then_(((v, c)) => resolve(Ok(v, c)))
       );

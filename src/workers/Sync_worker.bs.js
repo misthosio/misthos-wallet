@@ -79,7 +79,7 @@ function getLogFromUser(ventureId, userId, storagePrefix) {
 function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
   getLogFromUser(ventureId, userId, storagePrefix).then((function (other) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
-          return Promise.resolve(items ? (postMessage(/* NewItemsDetected */Block.__(12, [
+          return Promise.resolve(items ? (postMessage(/* NewItemsDetected */Block.__(15, [
                                 ventureId,
                                 List.map(EventLog.encodeItem, items)
                               ])), /* () */0) : /* () */0);

@@ -240,12 +240,25 @@ function proposePartner(ventureId, prospectId) {
     });
 }
 
+function rejectPartner(ventureId, processId) {
+  logMessage("Handling 'RejectPartner'");
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
+  return (function (param) {
+      return withVenture(partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* RejectPartner */4][/* exec */0], processId, venture).then((function (param) {
+                                  newEvents(ventureId, param[1]);
+                                  return Promise.resolve(param[0]);
+                                }));
+                  }), param);
+    });
+}
+
 function endorsePartner(ventureId, processId) {
   logMessage("Handling 'EndorsePartner'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    return Curry._2(Venture.Cmd[/* EndorsePartner */4][/* exec */0], processId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* EndorsePartner */5][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -258,7 +271,7 @@ function proposePartnerRemoval(ventureId, partnerId) {
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    return Curry._2(Venture.Cmd[/* ProposePartnerRemoval */5][/* exec */0], partnerId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* ProposePartnerRemoval */6][/* exec */0], partnerId, venture).then((function (param) {
                                   if (param) {
                                     newEvents(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
@@ -270,12 +283,25 @@ function proposePartnerRemoval(ventureId, partnerId) {
     });
 }
 
+function rejectPartnerRemoval(ventureId, processId) {
+  logMessage("Handling 'RejectPartnerRemoval'");
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
+  return (function (param) {
+      return withVenture(partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* RejectPartnerRemoval */7][/* exec */0], processId, venture).then((function (param) {
+                                  newEvents(ventureId, param[1]);
+                                  return Promise.resolve(param[0]);
+                                }));
+                  }), param);
+    });
+}
+
 function endorsePartnerRemoval(ventureId, processId) {
   logMessage("Handling 'EndorsePartnerRemoval'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */6][/* exec */0], processId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */8][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -288,7 +314,20 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    return Curry._4(Venture.Cmd[/* ProposePayout */8][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
+                    return Curry._4(Venture.Cmd[/* ProposePayout */10][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
+                                  newEvents(ventureId, param[1]);
+                                  return Promise.resolve(param[0]);
+                                }));
+                  }), param);
+    });
+}
+
+function rejectPayout(ventureId, processId) {
+  logMessage("Handling 'RejectPayout'");
+  var partial_arg = /* Load */Block.__(1, [ventureId]);
+  return (function (param) {
+      return withVenture(partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* RejectPayout */11][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -301,7 +340,7 @@ function endorsePayout(ventureId, processId) {
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    return Curry._2(Venture.Cmd[/* EndorsePayout */9][/* exec */0], processId, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* EndorsePayout */12][/* exec */0], processId, venture).then((function (param) {
                                   newEvents(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -314,7 +353,7 @@ function exposeIncomeAddress(ventureId, accountIdx) {
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */7][/* exec */0], accountIdx, venture).then((function (param) {
+                    return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */9][/* exec */0], accountIdx, venture).then((function (param) {
                                   newEvents(ventureId, param[2]);
                                   return Promise.resolve(param[1]);
                                 }));
@@ -361,10 +400,13 @@ var Handle = /* module */[
   /* joinVia */joinVia,
   /* create */create,
   /* proposePartner */proposePartner,
+  /* rejectPartner */rejectPartner,
   /* endorsePartner */endorsePartner,
   /* proposePartnerRemoval */proposePartnerRemoval,
+  /* rejectPartnerRemoval */rejectPartnerRemoval,
   /* endorsePartnerRemoval */endorsePartnerRemoval,
   /* proposePayout */proposePayout,
+  /* rejectPayout */rejectPayout,
   /* endorsePayout */endorsePayout,
   /* exposeIncomeAddress */exposeIncomeAddress,
   /* transactionDetected */transactionDetected,
@@ -387,25 +429,31 @@ function handleMessage(param) {
     case 4 : 
         return proposePartner(param[0], param[1]);
     case 5 : 
-        return endorsePartner(param[0], param[1]);
+        return rejectPartner(param[0], param[1]);
     case 6 : 
-        return proposePartnerRemoval(param[0], param[1]);
+        return endorsePartner(param[0], param[1]);
     case 7 : 
-        return endorsePartnerRemoval(param[0], param[1]);
+        return proposePartnerRemoval(param[0], param[1]);
     case 8 : 
+        return rejectPartnerRemoval(param[0], param[1]);
+    case 9 : 
+        return endorsePartnerRemoval(param[0], param[1]);
+    case 10 : 
         return proposePayout(param[0], param[1], List.map((function (param) {
                           return /* tuple */[
                                   param[0],
                                   BTC.decode(param[1])
                                 ];
                         }), param[2]), BTC.decode(param[3]));
-    case 9 : 
-        return endorsePayout(param[0], param[1]);
-    case 10 : 
-        return exposeIncomeAddress(param[0], param[1]);
     case 11 : 
-        return transactionDetected(param[0], List.map(Event.IncomeDetected[/* decode */2], param[1]));
+        return rejectPayout(param[0], param[1]);
     case 12 : 
+        return endorsePayout(param[0], param[1]);
+    case 13 : 
+        return exposeIncomeAddress(param[0], param[1]);
+    case 14 : 
+        return transactionDetected(param[0], List.map(Event.IncomeDetected[/* decode */2], param[1]));
+    case 15 : 
         return newItemsDetected(param[0], List.map(EventLog.decodeItem, param[1]));
     
   }

@@ -121,7 +121,7 @@ function detectIncomeFromVenture(ventureId) {
                   return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
                 })).then((function (param) {
                 return Promise.resolve((List.map((function (events) {
-                                    postMessage(/* TransactionDetected */Block.__(11, [
+                                    postMessage(/* TransactionDetected */Block.__(14, [
                                             ventureId,
                                             events
                                           ]));

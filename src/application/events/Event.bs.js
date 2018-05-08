@@ -834,6 +834,10 @@ function makePartnerEndorsed(processId, supporterId) {
   return /* PartnerEndorsed */Block.__(3, [Curry._2(Endorsed[/* make */0], processId, supporterId)]);
 }
 
+function makePartnerRemovalRejected(processId, rejectorId) {
+  return /* PartnerRemovalRejected */Block.__(6, [Curry._2(Rejected$1[/* make */0], processId, rejectorId)]);
+}
+
 function makePartnerRemovalEndorsed(processId, supporterId) {
   return /* PartnerRemovalEndorsed */Block.__(7, [Curry._2(Endorsed$1[/* make */0], processId, supporterId)]);
 }
@@ -848,6 +852,10 @@ function makeCustodianRemovalEndorsed(processId, supporterId) {
 
 function makePayoutEndorsed(processId, supporterId) {
   return /* PayoutEndorsed */Block.__(23, [Curry._2(Endorsed$5[/* make */0], processId, supporterId)]);
+}
+
+function makePayoutRejected(processId, rejectorId) {
+  return /* PayoutRejected */Block.__(22, [Curry._2(Rejected$5[/* make */0], processId, rejectorId)]);
 }
 
 function encode$15(param) {
@@ -953,6 +961,8 @@ function decode$15(raw) {
         return /* AccountCreationEndorsed */Block.__(11, [Curry._1(Endorsed$2[/* decode */2], raw)]);
     case "AccountCreationProposed" : 
         return /* AccountCreationProposed */Block.__(9, [Curry._1(Proposed$2[/* decode */2], raw)]);
+    case "AccountCreationRejected" : 
+        return /* AccountCreationRejected */Block.__(10, [Curry._1(Rejected$2[/* decode */2], raw)]);
     case "AccountKeyChainUpdated" : 
         return /* AccountKeyChainUpdated */Block.__(30, [decode$12(raw)]);
     case "CustodianAccepted" : 
@@ -963,12 +973,16 @@ function decode$15(raw) {
         return /* CustodianKeyChainUpdated */Block.__(29, [decode$11(raw)]);
     case "CustodianProposed" : 
         return /* CustodianProposed */Block.__(13, [Curry._1(Proposed$3[/* decode */2], raw)]);
+    case "CustodianRejected" : 
+        return /* CustodianRejected */Block.__(14, [Curry._1(Rejected$3[/* decode */2], raw)]);
     case "CustodianRemovalAccepted" : 
         return /* CustodianRemovalAccepted */Block.__(20, [Curry._1(Accepted$4[/* decode */2], raw)]);
     case "CustodianRemovalEndorsed" : 
         return /* CustodianRemovalEndorsed */Block.__(19, [Curry._1(Endorsed$4[/* decode */2], raw)]);
     case "CustodianRemovalProposed" : 
         return /* CustodianRemovalProposed */Block.__(17, [Curry._1(Proposed$4[/* decode */2], raw)]);
+    case "CustodianRemovalRejected" : 
+        return /* CustodianRemovalRejected */Block.__(18, [Curry._1(Rejected$4[/* decode */2], raw)]);
     case "IncomeAddressExposed" : 
         return /* IncomeAddressExposed */Block.__(31, [decode$13(raw)]);
     case "IncomeDetected" : 
@@ -979,12 +993,16 @@ function decode$15(raw) {
         return /* PartnerEndorsed */Block.__(3, [Curry._1(Endorsed[/* decode */2], raw)]);
     case "PartnerProposed" : 
         return /* PartnerProposed */Block.__(1, [Curry._1(Proposed[/* decode */2], raw)]);
+    case "PartnerRejected" : 
+        return /* PartnerRejected */Block.__(2, [Curry._1(Rejected[/* decode */2], raw)]);
     case "PartnerRemovalAccepted" : 
         return /* PartnerRemovalAccepted */Block.__(8, [Curry._1(Accepted$1[/* decode */2], raw)]);
     case "PartnerRemovalEndorsed" : 
         return /* PartnerRemovalEndorsed */Block.__(7, [Curry._1(Endorsed$1[/* decode */2], raw)]);
     case "PartnerRemovalProposed" : 
         return /* PartnerRemovalProposed */Block.__(5, [Curry._1(Proposed$1[/* decode */2], raw)]);
+    case "PartnerRemovalRejected" : 
+        return /* PartnerRemovalRejected */Block.__(6, [Curry._1(Rejected$1[/* decode */2], raw)]);
     case "PayoutAccepted" : 
         return /* PayoutAccepted */Block.__(24, [Curry._1(Accepted$5[/* decode */2], raw)]);
     case "PayoutBroadcast" : 
@@ -997,6 +1015,8 @@ function decode$15(raw) {
         return /* PayoutEndorsed */Block.__(23, [Curry._1(Endorsed$5[/* decode */2], raw)]);
     case "PayoutProposed" : 
         return /* PayoutProposed */Block.__(21, [Curry._1(Proposed$5[/* decode */2], raw)]);
+    case "PayoutRejected" : 
+        return /* PayoutRejected */Block.__(22, [Curry._1(Rejected$5[/* decode */2], raw)]);
     case "PayoutSigned" : 
         return /* PayoutSigned */Block.__(25, [decode$7(raw)]);
     case "VentureCreated" : 
@@ -1218,10 +1238,12 @@ exports.makeCustodianProposed = makeCustodianProposed;
 exports.makeCustodianRemovalProposed = makeCustodianRemovalProposed;
 exports.makePartnerRejected = makePartnerRejected;
 exports.makePartnerEndorsed = makePartnerEndorsed;
+exports.makePartnerRemovalRejected = makePartnerRemovalRejected;
 exports.makePartnerRemovalEndorsed = makePartnerRemovalEndorsed;
 exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;
 exports.makePayoutEndorsed = makePayoutEndorsed;
+exports.makePayoutRejected = makePayoutRejected;
 exports.encode = encode$15;
 exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;

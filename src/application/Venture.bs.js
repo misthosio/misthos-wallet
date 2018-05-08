@@ -443,6 +443,18 @@ function exec$3(prospectId, venture) {
 var ProposePartner = /* module */[/* exec */exec$3];
 
 function exec$4(processId, venture) {
+  logMessage("Executing 'RejectPartner' command");
+  return apply(/* None */0, /* None */0, Event.makePartnerRejected(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
+              }));
+}
+
+var RejectPartner = /* module */[/* exec */exec$4];
+
+function exec$5(processId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'EndorsePartner' command");
   var custodianProcessId = Venture__State.custodianProcessForPartnerProcess(processId, venture[/* state */3]);
@@ -456,9 +468,9 @@ function exec$4(processId, venture) {
               }));
 }
 
-var EndorsePartner = /* module */[/* exec */exec$4];
+var EndorsePartner = /* module */[/* exec */exec$5];
 
-function exec$5(partnerId, venture) {
+function exec$6(partnerId, venture) {
   var state = venture[/* state */3];
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePartnerRemoval' command");
@@ -482,9 +494,21 @@ function exec$5(partnerId, venture) {
   }
 }
 
-var ProposePartnerRemoval = /* module */[/* exec */exec$5];
+var ProposePartnerRemoval = /* module */[/* exec */exec$6];
 
-function exec$6(processId, venture) {
+function exec$7(processId, venture) {
+  logMessage("Executing 'RejectPartnerRemoval' command");
+  return apply(/* None */0, /* None */0, Event.makePartnerRemovalRejected(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
+              }));
+}
+
+var RejectPartnerRemoval = /* module */[/* exec */exec$7];
+
+function exec$8(processId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'EndorsePartnerRemoval' command");
   var match = Venture__State.custodianRemovalProcessForPartnerRemovalProcess(processId, venture[/* state */3]);
@@ -503,9 +527,9 @@ function exec$6(processId, venture) {
               }));
 }
 
-var EndorsePartnerRemoval = /* module */[/* exec */exec$6];
+var EndorsePartnerRemoval = /* module */[/* exec */exec$8];
 
-function exec$7(accountIdx, venture) {
+function exec$9(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
   return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(31, [exposeEvent]), venture).then(persist).then((function (param) {
@@ -517,9 +541,9 @@ function exec$7(accountIdx, venture) {
               }));
 }
 
-var ExposeIncomeAddress = /* module */[/* exec */exec$7];
+var ExposeIncomeAddress = /* module */[/* exec */exec$9];
 
-function exec$8(accountIdx, destinations, fee, venture) {
+function exec$10(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
   return Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]).then((function (proposal) {
                     return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [proposal]), venture);
@@ -531,9 +555,21 @@ function exec$8(accountIdx, destinations, fee, venture) {
               }));
 }
 
-var ProposePayout = /* module */[/* exec */exec$8];
+var ProposePayout = /* module */[/* exec */exec$10];
 
-function exec$9(processId, venture) {
+function exec$11(processId, venture) {
+  logMessage("Executing 'RejectPayout' command");
+  return apply(/* None */0, /* None */0, Event.makePayoutRejected(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+                return Promise.resolve(/* Ok */[
+                            param[0],
+                            param[1]
+                          ]);
+              }));
+}
+
+var RejectPayout = /* module */[/* exec */exec$11];
+
+function exec$12(processId, venture) {
   logMessage("Executing 'EndorsePayout' command");
   return apply(/* None */0, /* None */0, Event.makePayoutEndorsed(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
                 return Promise.resolve(/* Ok */[
@@ -543,18 +579,21 @@ function exec$9(processId, venture) {
               }));
 }
 
-var EndorsePayout = /* module */[/* exec */exec$9];
+var EndorsePayout = /* module */[/* exec */exec$12];
 
 var Cmd = /* module */[
   /* Create */Create,
   /* SynchronizeLogs */SynchronizeLogs,
   /* SynchronizeWallet */SynchronizeWallet,
   /* ProposePartner */ProposePartner,
+  /* RejectPartner */RejectPartner,
   /* EndorsePartner */EndorsePartner,
   /* ProposePartnerRemoval */ProposePartnerRemoval,
+  /* RejectPartnerRemoval */RejectPartnerRemoval,
   /* EndorsePartnerRemoval */EndorsePartnerRemoval,
   /* ExposeIncomeAddress */ExposeIncomeAddress,
   /* ProposePayout */ProposePayout,
+  /* RejectPayout */RejectPayout,
   /* EndorsePayout */EndorsePayout
 ];
 

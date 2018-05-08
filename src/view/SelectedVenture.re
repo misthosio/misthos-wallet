@@ -18,6 +18,7 @@ type action =
   | EndorsePartnerRemoval(ProcessId.t)
   | GetIncomeAddress
   | ProposePayout(list((string, BTC.t)))
+  | RejectPayout(ProcessId.t)
   | EndorsePayout(ProcessId.t);
 
 let changeNewPartnerId = event =>
@@ -74,6 +75,9 @@ let make =
         ~destinations,
         ~fee=BTC.fromSatoshis(5L),
       );
+      ReasonReact.NoUpdate;
+    | RejectPayout(processId) =>
+      commands.rejectPayout(~processId);
       ReasonReact.NoUpdate;
     | EndorsePayout(processId) =>
       commands.endorsePayout(~processId);
@@ -210,6 +214,12 @@ let make =
                           (state, partnerId) => state ++ partnerId ++ " ",
                           "",
                           payout.endorsedBy |> List.map(UserId.toString),
+                        )
+                     ++ " rejected by: "
+                     ++ List.fold_left(
+                          (state, partnerId) => state ++ partnerId ++ " ",
+                          "",
+                          payout.rejectedBy |> List.map(UserId.toString),
                         ),
                    )
                  )
@@ -222,6 +232,19 @@ let make =
                      <button
                        onClick=(_e => send(EndorsePayout(payout.processId)))>
                        (text("Endorse Payout"))
+                     </button>
+                   | _ => ReasonReact.null
+                   }
+                 )
+                 (
+                   switch (
+                     payout.status,
+                     payout.rejectedBy |> List.mem(session.userId),
+                   ) {
+                   | (PayoutPending, false) =>
+                     <button
+                       onClick=(_e => send(RejectPayout(payout.processId)))>
+                       (text("Reject Payout"))
                      </button>
                    | _ => ReasonReact.null
                    }

@@ -73,6 +73,11 @@ module Cmd: {
       | NoUserInfo;
     let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };
+  module RejectPartner: {
+    type result =
+      | Ok(t, list(Event.t));
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
+  };
   module EndorsePartner: {
     type result =
       | Ok(t, list(Event.t));
@@ -83,6 +88,11 @@ module Cmd: {
       | Ok(t, list(Event.t))
       | PartnerDoesNotExist;
     let exec: (~partnerId: userId, t) => Js.Promise.t(result);
+  };
+  module RejectPartnerRemoval: {
+    type result =
+      | Ok(t, list(Event.t));
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePartnerRemoval: {
     type result =
@@ -105,6 +115,11 @@ module Cmd: {
         t
       ) =>
       Js.Promise.t(result);
+  };
+  module RejectPayout: {
+    type result =
+      | Ok(t, list(Event.t));
+    let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePayout: {
     type result =
