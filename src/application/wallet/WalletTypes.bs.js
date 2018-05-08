@@ -26,8 +26,13 @@ function AccountIndex_000(prim) {
   return prim;
 }
 
+function AccountIndex_001(prim) {
+  return prim;
+}
+
 var AccountIndex = [
   AccountIndex_000,
+  AccountIndex_001,
   0,
   next,
   encode,
@@ -42,8 +47,13 @@ function CustodianKeyChainIndex_000(prim) {
   return prim;
 }
 
+function CustodianKeyChainIndex_001(prim) {
+  return prim;
+}
+
 var CustodianKeyChainIndex = [
   CustodianKeyChainIndex_000,
+  CustodianKeyChainIndex_001,
   next,
   encode,
   decode,
@@ -57,8 +67,13 @@ function AccountKeyChainIndex_000(prim) {
   return prim;
 }
 
+function AccountKeyChainIndex_001(prim) {
+  return prim;
+}
+
 var AccountKeyChainIndex = [
   AccountKeyChainIndex_000,
+  AccountKeyChainIndex_001,
   0,
   next,
   encode,
@@ -72,28 +87,33 @@ function CoSignerIndex_000(prim) {
   return prim;
 }
 
-function CoSignerIndex_008(prim) {
+function CoSignerIndex_001(prim) {
   return prim;
 }
 
 var CoSignerIndex = [
   CoSignerIndex_000,
+  CoSignerIndex_001,
   0,
   next,
   encode,
   decode,
   compare,
   eq,
-  neq,
-  CoSignerIndex_008
+  neq
 ];
 
 function ChainIndex_000(prim) {
   return prim;
 }
 
+function ChainIndex_001(prim) {
+  return prim;
+}
+
 var ChainIndex = [
   ChainIndex_000,
+  ChainIndex_001,
   0,
   next,
   encode,
@@ -109,20 +129,20 @@ function AddressIndex_000(prim) {
   return prim;
 }
 
-function AddressIndex_008(prim) {
+function AddressIndex_001(prim) {
   return prim;
 }
 
 var AddressIndex = [
   AddressIndex_000,
+  AddressIndex_001,
   0,
   next,
   encode,
   decode,
   compare,
   eq,
-  neq,
-  AddressIndex_008
+  neq
 ];
 
 exports.AccountIndex = AccountIndex;

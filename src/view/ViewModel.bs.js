@@ -401,7 +401,7 @@ function ventureName(state) {
 }
 
 function incomeAddresses(state) {
-  return List.assoc(WalletTypes.AccountIndex[/* default */8], state[/* incomeAddresses */7]);
+  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* incomeAddresses */7]);
 }
 
 function payouts(state) {
@@ -409,7 +409,7 @@ function payouts(state) {
 }
 
 function balance(state) {
-  return List.assoc(WalletTypes.AccountIndex[/* default */8], state[/* wallet */9][/* balance */1]);
+  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* wallet */9][/* balance */1]);
 }
 
 var Wallet = 0;

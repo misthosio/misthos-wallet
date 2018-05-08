@@ -11,7 +11,7 @@ let userSession = (userId, keyPair) : Session.Data.t => {
     issuerKeyPair: keyPair,
     storagePrefix: UserInfo.storagePrefix(~appPubKey),
     masterKeyChain: HDNode.make(keyPair, chainCode),
-    network: Testnet,
+    network: Regtest,
   };
 };
 
@@ -19,15 +19,15 @@ let threeUserSessions = {
   let (keyA, keyB, keyC) = (
     ECPair.fromWIFWithNetwork(
       "cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1",
-      Networks.testnet,
+      Network.bitcoinNetwork(Regtest),
     ),
     ECPair.fromWIFWithNetwork(
       "cPMRPo3fXGehCmFC5QsSFcZmYivsFtLVexxWi22CFwocvndXLqP1",
-      Networks.testnet,
+      Network.bitcoinNetwork(Regtest),
     ),
     ECPair.fromWIFWithNetwork(
       "cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf",
-      Networks.testnet,
+      Network.bitcoinNetwork(Regtest),
     ),
   );
   (

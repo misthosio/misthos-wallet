@@ -17,7 +17,7 @@ var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 function next(coSigner, usedCoordinates, chainIdx, param) {
   var keyChainIdx = param[/* keyChainIdx */1];
   var accountIdx = param[/* accountIdx */0];
-  var coSignerIdx = WalletTypes.CoSignerIndex[/* fromInt */8](Js_option.getExn(List.find(Js_option.isSome, List.mapi((function (i, param) {
+  var coSignerIdx = WalletTypes.CoSignerIndex[/* fromInt */1](Js_option.getExn(List.find(Js_option.isSome, List.mapi((function (i, param) {
                       var match = PrimitiveTypes.UserId[/* eq */5](param[0], coSigner);
                       if (match) {
                         return /* Some */[i];
@@ -34,8 +34,8 @@ function next(coSigner, usedCoordinates, chainIdx, param) {
                             }), param[/* custodianKeyChains */3]))))));
   var addressIdx = List.fold_left((function (res, param) {
           var addressIdx = param[4];
-          if (WalletTypes.AccountIndex[/* eq */6](accountIdx, param[0]) && WalletTypes.AccountKeyChainIndex[/* eq */6](keyChainIdx, param[1]) && WalletTypes.CoSignerIndex[/* eq */6](coSignerIdx, param[2]) && WalletTypes.ChainIndex[/* eq */6](chainIdx, param[3])) {
-            var match = WalletTypes.AddressIndex[/* compare */5](addressIdx, res) > 0;
+          if (WalletTypes.AccountIndex[/* eq */7](accountIdx, param[0]) && WalletTypes.AccountKeyChainIndex[/* eq */7](keyChainIdx, param[1]) && WalletTypes.CoSignerIndex[/* eq */7](coSignerIdx, param[2]) && WalletTypes.ChainIndex[/* eq */7](chainIdx, param[3])) {
+            var match = WalletTypes.AddressIndex[/* compare */6](addressIdx, res) > 0;
             if (match) {
               return addressIdx;
             } else {
@@ -44,22 +44,22 @@ function next(coSigner, usedCoordinates, chainIdx, param) {
           } else {
             return res;
           }
-        }), WalletTypes.AddressIndex[/* fromInt */8](-1), usedCoordinates);
+        }), WalletTypes.AddressIndex[/* fromInt */1](-1), usedCoordinates);
   return /* tuple */[
           accountIdx,
           keyChainIdx,
           coSignerIdx,
           chainIdx,
-          WalletTypes.AddressIndex[/* next */2](addressIdx)
+          WalletTypes.AddressIndex[/* next */3](addressIdx)
         ];
 }
 
 function nextInternal(user, usedCoordinates, accountKeyChain) {
-  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* internalChain */9], accountKeyChain);
+  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* internalChain */10], accountKeyChain);
 }
 
 function nextExternal(user, usedCoordinates, accountKeyChain) {
-  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* externalChain */8], accountKeyChain);
+  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* externalChain */9], accountKeyChain);
 }
 
 function accountIdx(param) {
@@ -84,16 +84,16 @@ function addressIdx(param) {
 
 function allForAccount(aIdx) {
   return List.filter((function (c) {
-                return WalletTypes.AccountIndex[/* eq */6](accountIdx(c), aIdx);
+                return WalletTypes.AccountIndex[/* eq */7](accountIdx(c), aIdx);
               }));
 }
 
 function encode(param) {
-  var partial_arg = WalletTypes.AccountKeyChainIndex[/* encode */3];
-  var partial_arg$1 = WalletTypes.AccountIndex[/* encode */3];
-  var partial_arg$2 = WalletTypes.AddressIndex[/* encode */3];
-  var partial_arg$3 = WalletTypes.ChainIndex[/* encode */3];
-  var partial_arg$4 = WalletTypes.CoSignerIndex[/* encode */3];
+  var partial_arg = WalletTypes.AccountKeyChainIndex[/* encode */4];
+  var partial_arg$1 = WalletTypes.AccountIndex[/* encode */4];
+  var partial_arg$2 = WalletTypes.AddressIndex[/* encode */4];
+  var partial_arg$3 = WalletTypes.ChainIndex[/* encode */4];
+  var partial_arg$4 = WalletTypes.CoSignerIndex[/* encode */4];
   return Json_encode.tuple2((function (param) {
                 return Json_encode.tuple2(partial_arg$1, partial_arg, param);
               }), (function (param) {
@@ -112,11 +112,11 @@ function encode(param) {
 }
 
 function decode(raw) {
-  var partial_arg = WalletTypes.AccountKeyChainIndex[/* decode */4];
-  var partial_arg$1 = WalletTypes.AccountIndex[/* decode */4];
-  var partial_arg$2 = WalletTypes.AddressIndex[/* decode */4];
-  var partial_arg$3 = WalletTypes.ChainIndex[/* decode */4];
-  var partial_arg$4 = WalletTypes.CoSignerIndex[/* decode */4];
+  var partial_arg = WalletTypes.AccountKeyChainIndex[/* decode */5];
+  var partial_arg$1 = WalletTypes.AccountIndex[/* decode */5];
+  var partial_arg$2 = WalletTypes.AddressIndex[/* decode */5];
+  var partial_arg$3 = WalletTypes.ChainIndex[/* decode */5];
+  var partial_arg$4 = WalletTypes.CoSignerIndex[/* decode */5];
   var match = Json_decode.tuple2((function (param) {
           return Json_decode.tuple2(partial_arg$1, partial_arg, param);
         }), (function (param) {

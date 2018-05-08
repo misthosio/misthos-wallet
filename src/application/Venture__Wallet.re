@@ -24,11 +24,6 @@ let make = () => {
   payoutProcesses: [],
 };
 
-let getExposedAddresses = ({exposedCoordinates, accountKeyChains}) =>
-  exposedCoordinates
-  |> List.map(coordinates => accountKeyChains |> Address.find(coordinates))
-  |> List.map((a: Address.t) => a.address);
-
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({ventureId, metaPolicy, network}) => {

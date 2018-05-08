@@ -24,15 +24,6 @@ function make() {
         ];
 }
 
-function getExposedAddresses(param) {
-  var accountKeyChains = param[/* accountKeyChains */3];
-  return List.map((function (a) {
-                return a[/* address */5];
-              }), List.map((function (coordinates) {
-                    return Address.find(coordinates, accountKeyChains);
-                  }), param[/* exposedCoordinates */4]));
-}
-
 function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
@@ -169,7 +160,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                                       }), reservedInputs) === false;
                         }))(inputs);
                 var oldInputs = List.find_all((function (i) {
-                          return WalletTypes.AccountKeyChainIndex[/* neq */7](currentKeyChainIdx, Address.Coordinates[/* keyChainIdx */4](i[/* coordinates */6]));
+                          return WalletTypes.AccountKeyChainIndex[/* neq */8](currentKeyChainIdx, Address.Coordinates[/* keyChainIdx */4](i[/* coordinates */6]));
                         }))(inputs$1);
                 var changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
                 var match = PayoutTransaction.build(oldInputs, inputs$1, destinations, satsPerByte, changeAddress, network);
@@ -193,7 +184,6 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
 }
 
 exports.make = make;
-exports.getExposedAddresses = getExposedAddresses;
 exports.apply = apply;
 exports.exposeNextIncomeAddress = exposeNextIncomeAddress;
 exports.preparePayoutTx = preparePayoutTx;

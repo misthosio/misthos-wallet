@@ -424,7 +424,7 @@ function exec$3(prospectId, venture) {
     return UserInfo.Public[/* read */4](prospectId).then((function (param) {
                   if (param) {
                     var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(session[/* userId */0], prospectId, param[0][/* appPubKey */0], Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state)));
-                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
+                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
                     return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposed]), venture).then((function (param) {
                                       return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(10, [custodianProposal]), param[0]);
                                     })).then(persist).then((function (param) {
@@ -467,7 +467,7 @@ function exec$5(partnerId, venture) {
   } else {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     return (
-                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(match[0], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */8], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
+                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(match[0], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */5][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
                           venture,
                           /* [] */0
                         ])

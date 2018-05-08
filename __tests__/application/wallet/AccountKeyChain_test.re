@@ -10,8 +10,7 @@ let () =
   describe("Collection", () => {
     let (user1, user2) = G.twoUserSessions();
     let accountKeyChain1 = G.accountKeyChain([user1, user2]);
-    let accountKeyChain2 =
-      accountKeyChain1 |> G.nextAccountKeyChain([user1, user2]);
+    let accountKeyChain2 = G.accountKeyChain(~keyChainIdx=1, [user1, user2]);
     let keyChains =
       []
       |> AccountKeyChain.Collection.add(accountKeyChain2)

@@ -10,26 +10,26 @@ describe("Collection", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var accountKeyChain1 = Generators.accountKeyChain(/* None */0, /* :: */[
+        var accountKeyChain1 = Generators.accountKeyChain(/* None */0, /* None */0, /* :: */[
               user1,
               /* :: */[
                 user2,
                 /* [] */0
               ]
             ]);
-        var accountKeyChain2 = Generators.nextAccountKeyChain(/* None */0, /* :: */[
+        var accountKeyChain2 = Generators.accountKeyChain(/* None */0, /* Some */[1], /* :: */[
               user1,
               /* :: */[
                 user2,
                 /* [] */0
               ]
-            ], accountKeyChain1);
+            ]);
         var keyChains = AccountKeyChain.Collection[/* add */1](accountKeyChain1, AccountKeyChain.Collection[/* add */1](accountKeyChain2, /* [] */0));
         Jest.test("lookup", (function () {
-                return Jest.Expect[/* toEqual */12](accountKeyChain1, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* lookup */2](WalletTypes.AccountIndex[/* default */8], WalletTypes.AccountKeyChainIndex[/* first */1], keyChains)));
+                return Jest.Expect[/* toEqual */12](accountKeyChain1, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* lookup */2](WalletTypes.AccountIndex[/* default */9], WalletTypes.AccountKeyChainIndex[/* first */2], keyChains)));
               }));
         return Jest.test("latest", (function () {
-                      return Jest.Expect[/* toEqual */12](accountKeyChain2, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* latest */3](WalletTypes.AccountIndex[/* default */8], keyChains)));
+                      return Jest.Expect[/* toEqual */12](accountKeyChain2, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* latest */3](WalletTypes.AccountIndex[/* default */9], keyChains)));
                     }));
       }));
 

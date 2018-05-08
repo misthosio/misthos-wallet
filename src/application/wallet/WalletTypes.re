@@ -44,6 +44,7 @@ module Base = {
 module type WalletType = {
   type t;
   let toInt: t => int;
+  let fromInt: int => t;
   let first: t;
   let next: t => t;
   let encode: t => Js.Json.t;

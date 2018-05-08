@@ -47,12 +47,12 @@ function encode(keyChain) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "accountIndex",
-                WalletTypes.AccountIndex[/* encode */3](keyChain[/* accountIdx */0])
+                WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
               ],
               /* :: */[
                 /* tuple */[
                   "keyChainIndex",
-                  WalletTypes.CustodianKeyChainIndex[/* encode */2](keyChain[/* keyChainIdx */1])
+                  WalletTypes.CustodianKeyChainIndex[/* encode */3](keyChain[/* keyChainIdx */1])
                 ],
                 /* :: */[
                   /* tuple */[
@@ -67,8 +67,8 @@ function encode(keyChain) {
 
 function decode(raw) {
   return /* record */[
-          /* accountIdx */Json_decode.field("accountIndex", WalletTypes.AccountIndex[/* decode */4], raw),
-          /* keyChainIdx */Json_decode.field("keyChainIndex", WalletTypes.CustodianKeyChainIndex[/* decode */3], raw),
+          /* accountIdx */Json_decode.field("accountIndex", WalletTypes.AccountIndex[/* decode */5], raw),
+          /* keyChainIdx */Json_decode.field("keyChainIndex", WalletTypes.CustodianKeyChainIndex[/* decode */4], raw),
           /* hdNode */Bitcoin.HDNode[/* fromBase58 */0](Json_decode.field("hdNode", Json_decode.string, raw))
         ];
 }

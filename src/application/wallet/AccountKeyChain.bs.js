@@ -76,7 +76,7 @@ function lookup(accountIdx, accountKeyChainIdx, accounts) {
 
 function latest(accountIdx, accounts) {
   return List.fold_left((function (res, param) {
-                var match = WalletTypes.AccountKeyChainIndex[/* compare */5](param[0], res[/* keyChainIdx */1]) > 0;
+                var match = WalletTypes.AccountKeyChainIndex[/* compare */6](param[0], res[/* keyChainIdx */1]) > 0;
                 if (match) {
                   return param[1];
                 } else {
@@ -109,12 +109,12 @@ function encode(keyChain) {
                 /* :: */[
                   /* tuple */[
                     "accountIdx",
-                    WalletTypes.AccountIndex[/* encode */3](keyChain[/* accountIdx */0])
+                    WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
                   ],
                   /* :: */[
                     /* tuple */[
                       "keyChainIdx",
-                      WalletTypes.AccountKeyChainIndex[/* encode */3](keyChain[/* keyChainIdx */1])
+                      WalletTypes.AccountKeyChainIndex[/* encode */4](keyChain[/* keyChainIdx */1])
                     ],
                     /* [] */0
                   ]
@@ -129,8 +129,8 @@ function decode(raw) {
     return Json_decode.pair(partial_arg, CustodianKeyChain.decode, param);
   };
   return /* record */[
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw),
-          /* keyChainIdx */Json_decode.field("keyChainIdx", WalletTypes.AccountKeyChainIndex[/* decode */4], raw),
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
+          /* keyChainIdx */Json_decode.field("keyChainIdx", WalletTypes.AccountKeyChainIndex[/* decode */5], raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
           /* custodianKeyChains */Json_decode.field("custodianKeyChains", (function (param) {
                   return Json_decode.list(partial_arg$1, param);

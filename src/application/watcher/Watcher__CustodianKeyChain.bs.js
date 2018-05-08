@@ -77,7 +77,7 @@ function make(param, param$1, log) {
                     var match$1 = match[/* data */2];
                     var fromAccount = match$1[/* accountIdx */1];
                     var removedId = match$1[/* custodianId */0];
-                    if (PrimitiveTypes.UserId[/* eq */5](removedId, env$1[5]) && PrimitiveTypes.ProcessId[/* eq */5](List.hd(match[/* dependsOnCompletions */1]), env$1[4]) && WalletTypes.AccountIndex[/* eq */6](fromAccount, env$1[6])) {
+                    if (PrimitiveTypes.UserId[/* eq */5](removedId, env$1[5]) && PrimitiveTypes.ProcessId[/* eq */5](List.hd(match[/* dependsOnCompletions */1]), env$1[4]) && WalletTypes.AccountIndex[/* eq */7](fromAccount, env$1[6])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$2[/* ventureId */0],
@@ -85,7 +85,7 @@ function make(param, param$1, log) {
                         /* selfRemoved */true,
                         /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */3]
                       ];
-                    } else if (PrimitiveTypes.UserId[/* neq */6](removedId, env$1[5]) && WalletTypes.AccountIndex[/* eq */6](fromAccount, env$1[6])) {
+                    } else if (PrimitiveTypes.UserId[/* neq */6](removedId, env$1[5]) && WalletTypes.AccountIndex[/* eq */7](fromAccount, env$1[6])) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$3[/* ventureId */0],
@@ -110,7 +110,7 @@ function make(param, param$1, log) {
                         /* ventureId */init$4[/* ventureId */0],
                         /* pendingEvent : None */0,
                         /* selfRemoved */init$4[/* selfRemoved */2],
-                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */1](self$1[state][0][/* nextKeyChainIdx */3])
+                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3])
                       ];
                     } else if (PrimitiveTypes.UserId[/* eq */5](partnerId, env$1[5]) && Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
                       var init$5 = self$1[state][0];
@@ -119,11 +119,11 @@ function make(param, param$1, log) {
                         /* pendingEvent */Utils.mapOption((function () {
                                 return /* tuple */[
                                         env$1[2],
-                                        /* CustodianKeyChainUpdated */Block.__(23, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */1](self$1[state][0][/* nextKeyChainIdx */3]), env$1[3])))])
+                                        /* CustodianKeyChainUpdated */Block.__(23, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3]), env$1[3])))])
                                       ];
                               }), self$1[state][0][/* pendingEvent */1]),
                         /* selfRemoved */init$5[/* selfRemoved */2],
-                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */1](self$1[state][0][/* nextKeyChainIdx */3])
+                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3])
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -157,7 +157,7 @@ function make(param, param$1, log) {
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* pendingEvent : None */0,
           /* selfRemoved */false,
-          /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* first */7]
+          /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* first */8]
         ]];
       self[env] = env$1;
       return self;

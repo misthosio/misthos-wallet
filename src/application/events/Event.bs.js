@@ -200,7 +200,7 @@ function encode$3($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "accountIdx",
-                WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */0])
+                WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */0])
               ],
               /* :: */[
                 /* tuple */[
@@ -214,7 +214,7 @@ function encode$3($$event) {
 
 function decode$3(raw) {
   return /* record */[
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw),
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* name */Json_decode.field("name", Json_decode.string, raw)
         ];
 }
@@ -256,7 +256,7 @@ function encode$4($$event) {
                 /* :: */[
                   /* tuple */[
                     "accountIdx",
-                    WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */2])
+                    WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */2])
                   ],
                   /* [] */0
                 ]
@@ -268,7 +268,7 @@ function decode$4(raw) {
   return /* record */[
           /* partnerId */Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw),
           /* partnerApprovalProcess */Json_decode.field("partnerApprovalProcess", PrimitiveTypes.ProcessId[/* decode */3], raw),
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw)
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw)
         ];
 }
 
@@ -294,7 +294,7 @@ function encode$5($$event) {
               /* :: */[
                 /* tuple */[
                   "accountIdx",
-                  WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */1])
+                  WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */1])
                 ],
                 /* [] */0
               ]
@@ -304,7 +304,7 @@ function encode$5($$event) {
 function decode$5(raw) {
   return /* record */[
           /* custodianId */Json_decode.field("custodianId", PrimitiveTypes.UserId[/* decode */3], raw),
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw)
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw)
         ];
 }
 
@@ -346,7 +346,7 @@ function encode$6($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "accountIdx",
-                WalletTypes.AccountIndex[/* encode */3]($$event[/* accountIdx */0])
+                WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */0])
               ],
               /* :: */[
                 /* tuple */[
@@ -367,7 +367,7 @@ function encode$6($$event) {
 function decode$6(raw) {
   var partial_arg = Address.Coordinates[/* decode */10];
   return /* record */[
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */4], raw),
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw),
           /* changeAddressCoordinates */Json_decode.field("changeAddressCoordinates", (function (param) {
                   return Json_decode.optional(partial_arg, param);

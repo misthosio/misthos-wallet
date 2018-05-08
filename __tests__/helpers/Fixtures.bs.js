@@ -3,6 +3,7 @@
 
 var Utils = require("../../src/utils/Utils.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var Network = require("../../src/application/wallet/Network.bs.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
 var Generators = require("./Generators.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -17,15 +18,15 @@ function userSession(userId, keyPair) {
           /* issuerKeyPair */keyPair,
           /* storagePrefix */UserInfo.storagePrefix(appPubKey),
           /* masterKeyChain */new BitcoinjsLib.HDNode(keyPair, chainCode),
-          /* network : Testnet */1
+          /* network : Regtest */0
         ];
 }
 
-var keyA = BitcoinjsLib.ECPair.fromWIF("cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1", BitcoinjsLib.networks.testnet);
+var keyA = BitcoinjsLib.ECPair.fromWIF("cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1", Network.bitcoinNetwork(/* Regtest */0));
 
-var keyB = BitcoinjsLib.ECPair.fromWIF("cPMRPo3fXGehCmFC5QsSFcZmYivsFtLVexxWi22CFwocvndXLqP1", BitcoinjsLib.networks.testnet);
+var keyB = BitcoinjsLib.ECPair.fromWIF("cPMRPo3fXGehCmFC5QsSFcZmYivsFtLVexxWi22CFwocvndXLqP1", Network.bitcoinNetwork(/* Regtest */0));
 
-var keyC = BitcoinjsLib.ECPair.fromWIF("cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf", BitcoinjsLib.networks.testnet);
+var keyC = BitcoinjsLib.ECPair.fromWIF("cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf", Network.bitcoinNetwork(/* Regtest */0));
 
 var threeUserSessions_000 = userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"), keyA);
 

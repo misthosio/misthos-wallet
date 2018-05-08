@@ -19,11 +19,11 @@ describe("build", (function () {
           /* nCoSigners */1,
           /* nPubKeys */1,
           /* coordinates : tuple */[
-            WalletTypes.AccountIndex[/* first */1],
-            WalletTypes.AccountKeyChainIndex[/* first */1],
-            WalletTypes.CoSignerIndex[/* first */1],
-            WalletTypes.ChainIndex[/* externalChain */8],
-            WalletTypes.AddressIndex[/* first */1]
+            WalletTypes.AccountIndex[/* first */2],
+            WalletTypes.AccountKeyChainIndex[/* first */2],
+            WalletTypes.CoSignerIndex[/* first */2],
+            WalletTypes.ChainIndex[/* externalChain */9],
+            WalletTypes.AddressIndex[/* first */2]
           ]
         ];
         var inputs_001 = /* :: */[
@@ -38,11 +38,11 @@ describe("build", (function () {
             /* nCoSigners */1,
             /* nPubKeys */1,
             /* coordinates : tuple */[
-              WalletTypes.AccountIndex[/* first */1],
-              WalletTypes.AccountKeyChainIndex[/* first */1],
-              WalletTypes.CoSignerIndex[/* first */1],
-              WalletTypes.ChainIndex[/* externalChain */8],
-              WalletTypes.AddressIndex[/* next */2](WalletTypes.AddressIndex[/* first */1])
+              WalletTypes.AccountIndex[/* first */2],
+              WalletTypes.AccountKeyChainIndex[/* first */2],
+              WalletTypes.CoSignerIndex[/* first */2],
+              WalletTypes.ChainIndex[/* externalChain */9],
+              WalletTypes.AddressIndex[/* next */3](WalletTypes.AddressIndex[/* first */2])
             ]
           ],
           /* [] */0
@@ -52,11 +52,11 @@ describe("build", (function () {
           inputs_001
         ];
         var changeAddress_002 = /* coordinates : tuple */[
-          WalletTypes.AccountIndex[/* first */1],
-          WalletTypes.AccountKeyChainIndex[/* first */1],
-          WalletTypes.CoSignerIndex[/* first */1],
-          WalletTypes.ChainIndex[/* externalChain */8],
-          WalletTypes.AddressIndex[/* first */1]
+          WalletTypes.AccountIndex[/* first */2],
+          WalletTypes.AccountKeyChainIndex[/* first */2],
+          WalletTypes.CoSignerIndex[/* first */2],
+          WalletTypes.ChainIndex[/* externalChain */9],
+          WalletTypes.AddressIndex[/* first */2]
         ];
         var changeAddress = /* record */[
           /* nCoSigners */1,

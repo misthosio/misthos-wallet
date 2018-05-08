@@ -47,65 +47,26 @@ let fourUserSessions = () => (
   userSession("user4" |> UserId.fromString),
 );
 
-let custodianKeyChain = (~ventureId, {masterKeyChain}: Session.Data.t) =>
+let custodianKeyChain =
+    (~ventureId, ~keyChainIdx, {masterKeyChain}: Session.Data.t) =>
   CustodianKeyChain.make(
     ~ventureId,
     ~accountIdx=AccountIndex.default,
-    ~keyChainIdx=CustodianKeyChainIndex.first,
+    ~keyChainIdx=CustodianKeyChainIndex.fromInt(keyChainIdx),
     ~masterKeyChain,
   )
   |> CustodianKeyChain.toPublicKeyChain;
 
-let nextCustodianKeyChain =
-    (
-      ~ventureId,
-      {masterKeyChain}: Session.Data.t,
-      custodianKeyChain: CustodianKeyChain.public,
-    ) =>
-  CustodianKeyChain.make(
-    ~ventureId,
-    ~accountIdx=custodianKeyChain |> CustodianKeyChain.accountIdx,
-    ~keyChainIdx=
-      custodianKeyChain
-      |> CustodianKeyChain.keyChainIdx
-      |> CustodianKeyChainIndex.next,
-    ~masterKeyChain,
-  )
-  |> CustodianKeyChain.toPublicKeyChain;
-
-let accountKeyChain = (~ventureId=VentureId.fromString("test"), users) =>
+let accountKeyChain =
+    (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
   users
   |> List.map((user: Session.Data.t) =>
-       (user.userId, custodianKeyChain(~ventureId, user))
+       (user.userId, custodianKeyChain(~ventureId, ~keyChainIdx, user))
      )
-  |> AccountKeyChain.make(AccountIndex.default, AccountKeyChainIndex.first);
-
-let nextAccountKeyChain =
-    (
-      ~ventureId=VentureId.fromString("test"),
-      users,
-      {accountIdx, keyChainIdx, custodianKeyChains}: AccountKeyChain.t,
-    ) => {
-  let userKeys =
-    users |> List.map(({userId} as user: Session.Data.t) => (userId, user));
-  let keyChains =
-    custodianKeyChains
-    |> List.map(((user, keyChain)) =>
-         (
-           user,
-           nextCustodianKeyChain(
-             ~ventureId,
-             userKeys |> List.assoc(user),
-             keyChain,
-           ),
-         )
-       );
-  AccountKeyChain.make(
-    accountIdx,
-    keyChainIdx |> AccountKeyChainIndex.next,
-    keyChains,
-  );
-};
+  |> AccountKeyChain.make(
+       AccountIndex.default,
+       AccountKeyChainIndex.fromInt(keyChainIdx),
+     );
 
 module Event = {
   let createVenture = (session: Session.Data.t) =>
@@ -428,7 +389,8 @@ module Log = {
          ),
        );
   };
-  let withAccountKeyChain = (custodians, {log, ventureId} as l) => {
+  let withAccountKeyChain =
+      (~keyChainIdx=0, custodians, {log, ventureId} as l) => {
     let custodianProcesses =
       log
       |> EventLog.reduce(
@@ -442,7 +404,8 @@ module Log = {
              },
            [],
          );
-    let accountKeyChain = accountKeyChain(~ventureId, custodians);
+    let accountKeyChain =
+      accountKeyChain(~ventureId, ~keyChainIdx, custodians);
     accountKeyChain.custodianKeyChains
     |> List.map(((partnerId, keyChain)) =>
          Event.custodianKeyChainUpdated(

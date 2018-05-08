@@ -59,40 +59,19 @@ function fourUserSessions() {
         ];
 }
 
-function custodianKeyChain(ventureId, param) {
-  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, WalletTypes.AccountIndex[/* default */8], WalletTypes.CustodianKeyChainIndex[/* first */7], param[/* masterKeyChain */4]));
+function custodianKeyChain(ventureId, keyChainIdx, param) {
+  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, WalletTypes.AccountIndex[/* default */9], WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
 }
 
-function nextCustodianKeyChain(ventureId, param, custodianKeyChain) {
-  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianKeyChain), WalletTypes.CustodianKeyChainIndex[/* next */1](CustodianKeyChain.keyChainIdx(custodianKeyChain)), param[/* masterKeyChain */4]));
-}
-
-function accountKeyChain($staropt$star, users) {
+function accountKeyChain($staropt$star, $staropt$star$1, users) {
   var ventureId = $staropt$star ? $staropt$star[0] : PrimitiveTypes.VentureId[/* fromString */1]("test");
-  return AccountKeyChain.make(WalletTypes.AccountIndex[/* default */8], WalletTypes.AccountKeyChainIndex[/* first */1], List.map((function (user) {
+  var keyChainIdx = $staropt$star$1 ? $staropt$star$1[0] : 0;
+  return AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], WalletTypes.AccountKeyChainIndex[/* fromInt */1](keyChainIdx), List.map((function (user) {
                     return /* tuple */[
                             user[/* userId */0],
-                            custodianKeyChain(ventureId, user)
+                            custodianKeyChain(ventureId, keyChainIdx, user)
                           ];
                   }), users));
-}
-
-function nextAccountKeyChain($staropt$star, users, param) {
-  var ventureId = $staropt$star ? $staropt$star[0] : PrimitiveTypes.VentureId[/* fromString */1]("test");
-  var userKeys = List.map((function (user) {
-          return /* tuple */[
-                  user[/* userId */0],
-                  user
-                ];
-        }), users);
-  var keyChains = List.map((function (param) {
-          var user = param[0];
-          return /* tuple */[
-                  user,
-                  nextCustodianKeyChain(ventureId, List.assoc(user, userKeys), param[1])
-                ];
-        }), param[/* custodianKeyChains */3]);
-  return AccountKeyChain.make(param[/* accountIdx */0], WalletTypes.AccountKeyChainIndex[/* next */2](param[/* keyChainIdx */1]), keyChains);
 }
 
 function createVenture(session) {
@@ -121,13 +100,13 @@ function partnerRemovalEndorsed(supporter, param) {
 var partnerRemovalAccepted = Event.Partner[/* Removal */5][/* Accepted */4][/* fromProposal */0];
 
 function accountCreationProposed(param) {
-  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */8], Policy.unanimous));
+  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
 }
 
 var accountCreationAccepted = Event.AccountCreation[/* Accepted */4][/* fromProposal */0];
 
 function custodianProposed(param, partnerProposal) {
-  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal, param[/* userId */0], WalletTypes.AccountIndex[/* default */8], Policy.unanimous));
+  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal, param[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
 }
 
 function custodianEndorsed(supporter, param) {
@@ -137,7 +116,7 @@ function custodianEndorsed(supporter, param) {
 var custodianAccepted = Event.Custodian[/* Accepted */4][/* fromProposal */0];
 
 function custodianRemovalProposed(custodianAccepted, supporterSession, toBeRemoved) {
-  return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(custodianAccepted, supporterSession[/* userId */0], toBeRemoved[/* userId */0], WalletTypes.AccountIndex[/* default */8], Policy.unanimousMinusOne));
+  return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(custodianAccepted, supporterSession[/* userId */0], toBeRemoved[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimousMinusOne));
 }
 
 var custodianKeyChainUpdated = Event.CustodianKeyChainUpdated[/* make */0];
@@ -394,7 +373,8 @@ function withCustodianRemovalProposed(supporter, toBeRemoved, l) {
   return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianRemovalProposed */Block.__(13, [custodianRemovalProposed(custodianAccepted, supporter, toBeRemoved)]), l);
 }
 
-function withAccountKeyChain(custodians, l) {
+function withAccountKeyChain($staropt$star, custodians, l) {
+  var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
   var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           if ($$event.tag === 12) {
@@ -410,7 +390,7 @@ function withAccountKeyChain(custodians, l) {
             return res;
           }
         }), /* [] */0, l[/* log */3]);
-  var accountKeyChain$1 = accountKeyChain(/* Some */[l[/* ventureId */0]], custodians);
+  var accountKeyChain$1 = accountKeyChain(/* Some */[l[/* ventureId */0]], /* Some */[keyChainIdx], custodians);
   return appendSystemEvent(/* AccountKeyChainUpdated */Block.__(24, [Curry._1(accountKeyChainUpdated, accountKeyChain$1)]), List.fold_left((function (l, $$event) {
                     return appendEvent(List.find((function (param) {
                                         return PrimitiveTypes.UserId[/* eq */5](param[/* userId */0], $$event[/* partnerId */1]);
@@ -460,9 +440,7 @@ exports.twoUserSessions = twoUserSessions;
 exports.threeUserSessions = threeUserSessions;
 exports.fourUserSessions = fourUserSessions;
 exports.custodianKeyChain = custodianKeyChain;
-exports.nextCustodianKeyChain = nextCustodianKeyChain;
 exports.accountKeyChain = accountKeyChain;
-exports.nextAccountKeyChain = nextAccountKeyChain;
 exports.Event = Event$1;
 exports.Log = Log;
 /* Event Not a pure module */

@@ -2,7 +2,9 @@
 'use strict';
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
+var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Address = require("../../src/application/wallet/Address.bs.js");
 var Generators = require("./Generators.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
@@ -15,12 +17,43 @@ function constructState(log) {
 }
 
 function testNextIncomeAddress(user, address, wallet) {
-  var exposed = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */8], wallet);
+  var exposed = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
   var description = "the next address of '" + (PrimitiveTypes.UserId[/* toString */0](user[/* userId */0]) + ("' is '" + (address + "'")));
   Jest.test(description, (function () {
           return Jest.Expect[/* toEqual */12](address, Jest.Expect[/* expect */0](exposed[/* address */1]));
         }));
   return Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [exposed]), wallet);
+}
+
+function collectNextTwoAddresses(user, param) {
+  var wallet = param[0];
+  var exposed = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
+  var address1 = exposed[/* address */1];
+  var log = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(25, [exposed]), param[1]);
+  var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [exposed]), wallet);
+  var exposed$1 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet$1);
+  var address2 = exposed$1[/* address */1];
+  var log$1 = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(25, [exposed$1]), log);
+  var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [exposed$1]), wallet$1);
+  return /* tuple */[
+          /* tuple */[
+            address1,
+            address2
+          ],
+          /* tuple */[
+            wallet$2,
+            log$1
+          ]
+        ];
+}
+
+function getExposedAddresses(param) {
+  var accountKeyChains = param[/* accountKeyChains */3];
+  return List.map((function (a) {
+                return a[/* address */5];
+              }), List.map((function (coordinates) {
+                    return Address.find(coordinates, accountKeyChains);
+                  }), param[/* exposedCoordinates */4]));
 }
 
 var Wallet = 0;
@@ -34,4 +67,6 @@ exports.G = G;
 exports.L = L;
 exports.constructState = constructState;
 exports.testNextIncomeAddress = testNextIncomeAddress;
+exports.collectNextTwoAddresses = collectNextTwoAddresses;
+exports.getExposedAddresses = getExposedAddresses;
 /* Jest Not a pure module */

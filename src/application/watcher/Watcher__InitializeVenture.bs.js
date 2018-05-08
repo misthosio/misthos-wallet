@@ -68,7 +68,7 @@ function make(param, param$1, log) {
                   case 1 : 
                       if ($$event.tag === 7) {
                         var $$event$2 = $$event[0];
-                        tmp = WalletTypes.AccountIndex[/* eq */6]($$event$2[/* data */5][/* accountIdx */0], WalletTypes.AccountIndex[/* default */8]) ? /* AccountCreationProposed */Block.__(2, [
+                        tmp = WalletTypes.AccountIndex[/* eq */7]($$event$2[/* data */5][/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) ? /* AccountCreationProposed */Block.__(2, [
                               $$event$2[/* processId */0],
                               match[0]
                             ]) : self$1[state][0];
@@ -106,13 +106,13 @@ function make(param, param$1, log) {
                   case 1 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeAccountCreationProposed(env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */8], env$1[3])
+                          Event.makeAccountCreationProposed(env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */9], env$1[3])
                         ]];
                       break;
                   case 3 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeCustodianProposed(match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */8], env$1[3])
+                          Event.makeCustodianProposed(match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
                         ]];
                       break;
                   default:

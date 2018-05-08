@@ -879,7 +879,7 @@ function validateCustodianRemovalData(param, param$1) {
     var match = List.exists((function (param) {
             var data = param[1][1];
             if (PrimitiveTypes.UserId[/* eq */5](data[/* partnerId */0], custodianId)) {
-              return WalletTypes.AccountIndex[/* eq */6](accountIdx, data[/* accountIdx */2]);
+              return WalletTypes.AccountIndex[/* eq */7](accountIdx, data[/* accountIdx */2]);
             } else {
               return false;
             }
