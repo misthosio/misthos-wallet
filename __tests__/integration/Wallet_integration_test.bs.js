@@ -163,8 +163,8 @@ describe("integration", (function () {
                               })).then((function (param) {
                               var txId = param[1];
                               var processId = param[0];
-                              oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(20, [Curry._2(Event.Payout[/* Broadcast */6][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
-                              twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(20, [Curry._2(Event.Payout[/* Broadcast */6][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
+                              oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(20, [Curry._2(Event.Payout[/* Broadcast */7][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
+                              twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(20, [Curry._2(Event.Payout[/* Broadcast */7][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
                               return Promise.resolve(/* () */0);
                             }));
               }));

@@ -87,7 +87,7 @@ function partnerEndorsed(supporter, param) {
   return Event.getPartnerEndorsedExn(Event.makePartnerEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
-var partnerAccepted = Event.Partner[/* Accepted */4][/* fromProposal */0];
+var partnerAccepted = Event.Partner[/* Accepted */5][/* fromProposal */0];
 
 function partnerRemovalProposed(supporterSession, toBeRemoved) {
   return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(supporterSession[/* userId */0], toBeRemoved[/* userId */0], Policy.unanimousMinusOne));
@@ -97,13 +97,13 @@ function partnerRemovalEndorsed(supporter, param) {
   return Event.getPartnerRemovalEndorsedExn(Event.makePartnerRemovalEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
-var partnerRemovalAccepted = Event.Partner[/* Removal */5][/* Accepted */4][/* fromProposal */0];
+var partnerRemovalAccepted = Event.Partner[/* Removal */6][/* Accepted */5][/* fromProposal */0];
 
 function accountCreationProposed(param) {
   return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
 }
 
-var accountCreationAccepted = Event.AccountCreation[/* Accepted */4][/* fromProposal */0];
+var accountCreationAccepted = Event.AccountCreation[/* Accepted */5][/* fromProposal */0];
 
 function custodianProposed(param, partnerProposal) {
   return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal, param[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
@@ -113,7 +113,7 @@ function custodianEndorsed(supporter, param) {
   return Event.getCustodianEndorsedExn(Event.makeCustodianEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
-var custodianAccepted = Event.Custodian[/* Accepted */4][/* fromProposal */0];
+var custodianAccepted = Event.Custodian[/* Accepted */5][/* fromProposal */0];
 
 function custodianRemovalProposed(custodianAccepted, supporterSession, toBeRemoved) {
   return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(custodianAccepted, supporterSession[/* userId */0], toBeRemoved[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimousMinusOne));
