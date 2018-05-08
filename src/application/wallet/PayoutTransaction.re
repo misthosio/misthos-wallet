@@ -10,19 +10,24 @@ module Fee = TransactionFee;
 
 type input = Network.txInput;
 
+let misthosFeePercent = 2.9;
+
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
+  misthosFeeAddress: string,
   changeAddress: option(string),
 };
 
 type summary = {
   reserved: BTC.t,
   spent: BTC.t,
+  misthosFee: BTC.t,
   networkFee: BTC.t,
 };
 
-let summary = ({changeAddress, usedInputs, txHex}) => {
+let summary =
+    (network, {misthosFeeAddress, changeAddress, usedInputs, txHex}) => {
   let totalIn =
     usedInputs
     |> List.fold_left(
@@ -33,15 +38,34 @@ let summary = ({changeAddress, usedInputs, txHex}) => {
   let outs =
     tx##outs
     |> Array.to_list
-    |> List.map(o => o##value |> Int64.of_float |> BTC.fromSatoshis);
+    |> List.map(o =>
+         (
+           B.Address.fromOutputScript(
+             o##script,
+             Network.bitcoinNetwork(network),
+           ),
+           o##value |> Int64.of_float |> BTC.fromSatoshis,
+         )
+       );
   let totalOut =
-    outs |> List.fold_left((total, out) => total |> BTC.plus(out), BTC.zero);
+    outs
+    |> List.fold_left(
+         (total, out) => total |> BTC.plus(out |> snd),
+         BTC.zero,
+       );
   let networkFee = totalIn |> BTC.minus(totalOut);
   let changeOut =
-    changeAddress |> Js.Option.isSome ? outs |> List.rev |> List.hd : BTC.zero;
+    changeAddress
+    |> Utils.mapOption(changeAddress =>
+         outs |> List.find(((a, _)) => a == changeAddress) |> snd
+       )
+    |> Js.Option.getWithDefault(BTC.zero);
+  let misthosFee =
+    outs |> List.find(((a, _)) => a == misthosFeeAddress) |> snd;
   {
     reserved: totalIn,
     spent: totalOut |> BTC.plus(networkFee) |> BTC.minus(changeOut),
+    misthosFee,
     networkFee,
   };
 };
@@ -54,6 +78,7 @@ let encode = payout =>
         "usedInputs",
         list(pair(int, Network.encodeInput), payout.usedInputs),
       ),
+      ("misthosFeeAddress", string(payout.misthosFeeAddress)),
       ("changeAddress", nullable(string, payout.changeAddress)),
     ])
   );
@@ -63,6 +88,7 @@ let decode = raw =>
     txHex: raw |> field("txHex", string),
     usedInputs:
       raw |> field("usedInputs", list(pair(int, Network.decodeInput))),
+    misthosFeeAddress: raw |> field("misthosFeeAddress", string),
     changeAddress: raw |> field("changeAddress", optional(string)),
   };
 
@@ -281,7 +307,7 @@ let build =
     |> List.map((i: input) =>
          (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
        );
-  let outTotal =
+  let outTotalWithoutFee =
     destinations
     |> List.fold_left(
          (total, (address, value)) => {
@@ -292,6 +318,16 @@ let build =
          },
          BTC.zero,
        );
+  let misthosFee =
+    outTotalWithoutFee |> BTC.timesRounded(misthosFeePercent /. 100.);
+  let misthosFeeAddress = Network.incomeAddress(network);
+  txB
+  |> B.TxBuilder.addOutput(
+       misthosFeeAddress,
+       misthosFee |> BTC.toSatoshisFloat,
+     )
+  |> ignore;
+  let outTotal = outTotalWithoutFee |> BTC.plus(misthosFee);
   let currentInputValue =
     usedInputs
     |> List.fold_left(
@@ -319,6 +355,7 @@ let build =
     {
       usedInputs,
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
+      misthosFeeAddress,
       changeAddress: withChange ? Some(changeAddress.address) : None,
     };
   } else {
@@ -359,6 +396,7 @@ let build =
       {
         usedInputs,
         txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
+        misthosFeeAddress,
         changeAddress: withChange ? Some(changeAddress.address) : None,
       };
     } else {

@@ -11,6 +11,7 @@ type balance = {
 };
 
 type t = {
+  network: Network.t,
   accountKeyChains:
     list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
   balance: list((accountIdx, balance)),
@@ -19,6 +20,7 @@ type t = {
 };
 
 let make = () => {
+  network: Network.Testnet,
   accountKeyChains: [],
   balance: [],
   exposedCoordinates: [],
@@ -41,6 +43,7 @@ let getAccountIndexOfAddress =
 
 let apply = (event: Event.t, state) =>
   switch (event) {
+  | VentureCreated({network}) => {...state, network}
   | AccountCreationAccepted({data}) => {
       ...state,
       exposedCoordinates: [
@@ -127,7 +130,8 @@ let apply = (event: Event.t, state) =>
             reserved:
               balance.reserved
               |> BTC.plus(
-                   (data.payoutTx |> PayoutTransaction.summary).reserved,
+                   (data.payoutTx |> PayoutTransaction.summary(state.network)).
+                     reserved,
                  ),
           },
         ),
@@ -138,7 +142,7 @@ let apply = (event: Event.t, state) =>
     let (accountIdx, payoutTx) =
       state.payoutProcesses |> List.assoc(processId);
     let balance = state.balance |> List.assoc(accountIdx);
-    let payoutSummary = payoutTx |> PayoutTransaction.summary;
+    let payoutSummary = payoutTx |> PayoutTransaction.summary(state.network);
     {
       ...state,
       balance: [
@@ -157,7 +161,7 @@ let apply = (event: Event.t, state) =>
     let (accountIdx, payoutTx) =
       state.payoutProcesses |> List.assoc(processId);
     let balance = state.balance |> List.assoc(accountIdx);
-    let payoutSummary = payoutTx |> PayoutTransaction.summary;
+    let payoutSummary = payoutTx |> PayoutTransaction.summary(state.network);
     {
       ...state,
       balance: [

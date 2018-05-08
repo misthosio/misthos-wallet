@@ -81,7 +81,7 @@ describe("build", (function () {
                           /* hi */0,
                           /* lo */1
                         ]), changeAddress, /* Regtest */0);
-                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */2]);
+                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */3]);
                 return Jest.Expect[/* toEqual */12](/* tuple */[
                             2,
                             true
@@ -104,7 +104,7 @@ describe("build", (function () {
                           /* hi */0,
                           /* lo */1
                         ]), changeAddress, /* Regtest */0);
-                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */2]);
+                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */3]);
                 return Jest.Expect[/* toEqual */12](/* tuple */[
                             1,
                             true
@@ -119,7 +119,7 @@ describe("build", (function () {
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
                               /* hi */0,
-                              /* lo */9800
+                              /* lo */9500
                             ])
                       ],
                       /* [] */0
@@ -127,7 +127,7 @@ describe("build", (function () {
                           /* hi */0,
                           /* lo */1
                         ]), changeAddress, /* Regtest */0);
-                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */2]);
+                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */3]);
                 return Jest.Expect[/* toEqual */12](/* tuple */[
                             0,
                             false
@@ -153,7 +153,7 @@ describe("build", (function () {
                           /* hi */0,
                           /* lo */1
                         ]), changeAddress, /* Regtest */0);
-                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */2]);
+                var changeUsed = Js_option.isSome(payoutTx[/* changeAddress */3]);
                 return Jest.Expect[/* toEqual */12](/* tuple */[
                             2,
                             true
@@ -180,7 +180,7 @@ describe("build", (function () {
                                 }), /* () */0));
               }));
         return Jest.test("summary", (function () {
-                      var summary = PayoutTransaction.summary(PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                      var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(/* [] */0, inputs, /* :: */[
                                 /* tuple */[
                                   "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                   BTC.fromSatoshis(/* int64 */[
@@ -196,15 +196,19 @@ describe("build", (function () {
                       return Jest.Expect[/* toEqual */12](/* record */[
                                   /* reserved */BTC.fromSatoshis(/* int64 */[
                                         /* hi */0,
-                                        /* lo */10000
+                                        /* lo */15000
                                       ]),
                                   /* spent */BTC.fromSatoshis(/* int64 */[
                                         /* hi */0,
-                                        /* lo */10000
+                                        /* lo */10370
+                                      ]),
+                                  /* misthosFee */BTC.fromSatoshis(/* int64 */[
+                                        /* hi */0,
+                                        /* lo */285
                                       ]),
                                   /* networkFee */BTC.fromSatoshis(/* int64 */[
                                         /* hi */0,
-                                        /* lo */200
+                                        /* lo */285
                                       ])
                                 ], Jest.Expect[/* expect */0](summary));
                     }));

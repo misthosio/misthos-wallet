@@ -409,7 +409,7 @@ function payouts(state) {
 }
 
 function balance(state) {
-  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* wallet */9][/* balance */1]);
+  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* wallet */9][/* balance */2]);
 }
 
 var Wallet = 0;

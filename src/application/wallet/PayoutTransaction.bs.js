@@ -28,23 +28,34 @@ var NotEnoughSignatures = Caml_exceptions.create("PayoutTransaction.NotEnoughSig
 
 var NoSignaturesForInput = Caml_exceptions.create("PayoutTransaction.NoSignaturesForInput");
 
-function summary(param) {
+function summary(network, param) {
+  var misthosFeeAddress = param[/* misthosFeeAddress */2];
   var totalIn = List.fold_left((function (total, input) {
           return total.plus(input[1][/* value */3]);
         }), BTC.zero, param[/* usedInputs */1]);
   var tx = BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]);
   var outs = List.map((function (o) {
-          return BTC.fromSatoshis(Caml_int64.of_float(o.value));
+          return /* tuple */[
+                  BitcoinjsLib.address.fromOutputScript(o.script, Network.bitcoinNetwork(network)),
+                  BTC.fromSatoshis(Caml_int64.of_float(o.value))
+                ];
         }), $$Array.to_list(tx.outs));
   var totalOut = List.fold_left((function (total, out) {
-          return total.plus(out);
+          return total.plus(out[1]);
         }), BTC.zero, outs);
   var networkFee = totalIn.minus(totalOut);
-  var match = Js_option.isSome(param[/* changeAddress */2]);
-  var changeOut = match ? List.hd(List.rev(outs)) : BTC.zero;
+  var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (changeAddress) {
+              return List.find((function (param) {
+                              return param[0] === changeAddress;
+                            }), outs)[1];
+            }), param[/* changeAddress */3]));
+  var misthosFee = List.find((function (param) {
+            return param[0] === misthosFeeAddress;
+          }), outs)[1];
   return /* record */[
           /* reserved */totalIn,
           /* spent */totalOut.plus(networkFee).minus(changeOut),
+          /* misthosFee */misthosFee,
           /* networkFee */networkFee
         ];
 }
@@ -66,12 +77,18 @@ function encode(payout) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "changeAddress",
-                    Json_encode.nullable((function (prim) {
-                            return prim;
-                          }), payout[/* changeAddress */2])
+                    "misthosFeeAddress",
+                    payout[/* misthosFeeAddress */2]
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "changeAddress",
+                      Json_encode.nullable((function (prim) {
+                              return prim;
+                            }), payout[/* changeAddress */3])
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]);
@@ -85,6 +102,7 @@ function decode(raw) {
                                 return Json_decode.pair(Json_decode.$$int, Network.decodeInput, param);
                               }), param);
                 }), raw),
+          /* misthosFeeAddress */Json_decode.field("misthosFeeAddress", Json_decode.string, raw),
           /* changeAddress */Json_decode.field("changeAddress", (function (param) {
                   return Json_decode.optional(Json_decode.string, param);
                 }), raw)
@@ -137,7 +155,8 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
     return /* Signed */[/* record */[
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */payout[/* usedInputs */1],
-              /* changeAddress */payout[/* changeAddress */2]
+              /* misthosFeeAddress */payout[/* misthosFeeAddress */2],
+              /* changeAddress */payout[/* changeAddress */3]
             ]];
   } else {
     return /* NotSigned */0;
@@ -232,11 +251,15 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
                   i
                 ];
         }), mandatoryInputs$1);
-  var outTotal = List.fold_left((function (total, param) {
+  var outTotalWithoutFee = List.fold_left((function (total, param) {
           var value = param[1];
           txB.addOutput(param[0], BTC.toSatoshisFloat(value));
           return total.plus(value);
         }), BTC.zero, destinations);
+  var misthosFee = BTC.timesRounded(2.9 / 100, outTotalWithoutFee);
+  var misthosFeeAddress = Network.incomeAddress(network);
+  txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
+  var outTotal = outTotalWithoutFee.plus(misthosFee);
   var currentInputValue = List.fold_left((function (total, param) {
           return total.plus(param[1][/* value */3]);
         }), BTC.zero, usedInputs);
@@ -250,6 +273,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
     return /* record */[
             /* txHex */txB.buildIncomplete().toHex(),
             /* usedInputs */usedInputs,
+            /* misthosFeeAddress */misthosFeeAddress,
             /* changeAddress */withChange ? /* Some */[changeAddress[/* address */5]] : /* None */0
           ];
   } else {
@@ -276,6 +300,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
       return /* record */[
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */match$1[2],
+              /* misthosFeeAddress */misthosFeeAddress,
               /* changeAddress */withChange$1 ? /* Some */[changeAddress[/* address */5]] : /* None */0
             ];
     } else {

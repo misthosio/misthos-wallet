@@ -167,7 +167,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                 var payoutTx = PayoutTransaction.build(oldInputs, inputs$1, destinations, satsPerByte, changeAddress, network);
                 var changeAddressCoordinates = Utils.mapOption((function () {
                         return nextChangeCoordinates;
-                      }), payoutTx[/* changeAddress */2]);
+                      }), payoutTx[/* changeAddress */3]);
                 var match = PayoutTransaction.signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payoutTx, network);
                 var payoutTx$1 = match ? match[0] : payoutTx;
                 return Promise.resolve(Curry._5(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, userId, payoutPolicy, /* record */[

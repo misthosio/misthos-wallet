@@ -13,16 +13,18 @@ type input = Network.txInput;
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
+  misthosFeeAddress: string,
   changeAddress: option(string),
 };
 
 type summary = {
   reserved: BTC.t,
   spent: BTC.t,
+  misthosFee: BTC.t,
   networkFee: BTC.t,
 };
 
-let summary: t => summary;
+let summary: (Network.t, t) => summary;
 
 let build:
   (

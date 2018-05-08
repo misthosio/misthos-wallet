@@ -30,6 +30,10 @@ function fromFloat(btcFloat) {
   return new BignumberJs.BigNumber(btcFloat).times(satoshisPerBTC);
 }
 
+function timesRounded(n, btc) {
+  return btc.times(n).integerValue(BignumberJs.ROUND_CEIL);
+}
+
 function encode(prim) {
   return prim.toJSON();
 }
@@ -48,6 +52,7 @@ exports.satoshisPerBTC = satoshisPerBTC;
 exports.fromString = fromString;
 exports.format = format;
 exports.fromFloat = fromFloat;
+exports.timesRounded = timesRounded;
 exports.encode = encode;
 exports.decode = decode;
 /* zero Not a pure module */

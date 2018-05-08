@@ -23,6 +23,9 @@ let format = btc =>
 let fromFloat = btcFloat =>
   BigNumber.make(`Float(btcFloat)) |> BigNumber.times(satoshisPerBTC);
 
+let timesRounded = (n, btc) =>
+  btc |> timesFloat(n) |> BigNumber.integerValue(BigNumber.RoundingMode.ceil);
+
 let encode = toJSON;
 
 let decode = raw => BigNumber.make(`String(Json.Decode.string(raw)));

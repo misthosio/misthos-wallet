@@ -90,7 +90,7 @@ let () =
           ~mandatoryInputs=[],
           ~allInputs=inputs,
           ~destinations=[
-            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L)),
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9500L)),
           ],
           ~satsPerByte=BTC.fromSatoshis(1L),
           ~changeAddress,
@@ -148,13 +148,14 @@ let () =
           ~changeAddress,
           ~network=Network.Regtest,
         )
-        |> PayoutTransaction.summary;
+        |> PayoutTransaction.summary(Network.Regtest);
       expect(summary)
       |> toEqual(
            PayoutTransaction.{
-             reserved: BTC.fromSatoshis(10000L),
-             spent: BTC.fromSatoshis(10000L),
-             networkFee: BTC.fromSatoshis(200L),
+             reserved: BTC.fromSatoshis(15000L),
+             spent: BTC.fromSatoshis(10370L),
+             misthosFee: BTC.fromSatoshis(285L),
+             networkFee: BTC.fromSatoshis(285L),
            },
          );
     });

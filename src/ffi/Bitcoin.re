@@ -87,7 +87,11 @@ module HDNode = {
 };
 
 module Transaction = {
-  type out = {. "value": float};
+  type out = {
+    .
+    "value": float,
+    "script": Node.buffer,
+  };
   type t = {. "outs": array(out)};
   [@bs.send] external toBuffer : t => Node.buffer = "";
   [@bs.send] external toHex : t => string = "";
