@@ -36,3 +36,12 @@ let threeUserSessions = {
     userSession("user3" |> UserId.fromString, keyC),
   );
 };
+
+let createVenture = user =>
+  Generators.Log.make(
+    user,
+    {
+      ...Generators.Event.createVenture(user),
+      ventureId: VentureId.fromString("fixedVentureId"),
+    },
+  );

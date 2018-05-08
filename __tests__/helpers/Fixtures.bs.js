@@ -4,6 +4,7 @@
 var Utils = require("../../src/utils/Utils.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
+var Generators = require("./Generators.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 
@@ -38,6 +39,20 @@ var threeUserSessions = /* tuple */[
   threeUserSessions_002
 ];
 
+function createVenture(user) {
+  var init = Generators.Event[/* createVenture */0](user);
+  return Generators.Log[/* make */8](user, /* record */[
+              /* ventureId */PrimitiveTypes.VentureId[/* fromString */1]("fixedVentureId"),
+              /* ventureName */init[/* ventureName */1],
+              /* creatorId */init[/* creatorId */2],
+              /* creatorPubKey */init[/* creatorPubKey */3],
+              /* metaPolicy */init[/* metaPolicy */4],
+              /* systemIssuer */init[/* systemIssuer */5],
+              /* network */init[/* network */6]
+            ]);
+}
+
 exports.userSession = userSession;
 exports.threeUserSessions = threeUserSessions;
+exports.createVenture = createVenture;
 /* keyA Not a pure module */

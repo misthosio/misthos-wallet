@@ -26,7 +26,7 @@ function testCoordinates(expected, param) {
 
 var user1 = Fixtures.threeUserSessions[0];
 
-var accountKeyChain = Generators.accountKeyChain(/* :: */[
+var accountKeyChain = Generators.accountKeyChain(/* None */0, /* :: */[
       user1,
       /* :: */[
         Fixtures.threeUserSessions[1],
