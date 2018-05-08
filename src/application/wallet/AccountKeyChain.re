@@ -2,8 +2,6 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
-open Bitcoin;
-
 type t = {
   accountIdx,
   keyChainIdx: accountKeyChainIdx,

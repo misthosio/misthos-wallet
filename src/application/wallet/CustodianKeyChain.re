@@ -50,8 +50,6 @@ let toPublicKeyChain = keyChain => {
   hdNode: keyChain.hdNode |> HDNode.neutered,
 };
 
-let defaultCosignerIdx = 0;
-
 let getSigningKey = (coSignerIdx, chainIdx, addressIdx, keyChain) => (
                                                                     keyChain.
                                                                     hdNode
