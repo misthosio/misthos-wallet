@@ -42,7 +42,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 9 : 
+    case 12 : 
         var data = $$event[0][/* data */2];
         return /* record */[
                 /* network */state[/* network */0],
@@ -73,7 +73,7 @@ function apply($$event, state) {
                 ],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 16 : 
+    case 21 : 
         var match = $$event[0];
         var data$1 = match[/* data */5];
         var balance = List.assoc(data$1[/* accountIdx */0], state[/* balance */2]);
@@ -113,7 +113,7 @@ function apply($$event, state) {
                   state[/* payoutProcesses */4]
                 ]
               ];
-    case 20 : 
+    case 26 : 
         var match$2 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */4]);
         var accountIdx = match$2[0];
         var balance$1 = List.assoc(accountIdx, state[/* balance */2]);
@@ -135,7 +135,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 22 : 
+    case 28 : 
         var match$3 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */4]);
         var accountIdx$1 = match$3[0];
         var balance$2 = List.assoc(accountIdx$1, state[/* balance */2]);
@@ -157,7 +157,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 24 : 
+    case 30 : 
         var keyChain = $$event[0][/* keyChain */0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -178,7 +178,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 25 : 
+    case 31 : 
         var coordinates = $$event[0][/* coordinates */0];
         var accountIdx$2 = Address.Coordinates[/* accountIdx */3](coordinates);
         return /* record */[
@@ -197,7 +197,7 @@ function apply($$event, state) {
                 ],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 26 : 
+    case 32 : 
         var match$4 = $$event[0];
         var accountIdx$3 = getAccountIndexOfAddress(match$4[/* address */0], state);
         var balance$3 = List.assoc(accountIdx$3, state[/* balance */2]);

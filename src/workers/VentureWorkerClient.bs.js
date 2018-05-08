@@ -53,8 +53,16 @@ function proposePartner(worker, ventureId, prospectId) {
   return /* () */0;
 }
 
+function rejectPartner(worker, ventureId, processId) {
+  worker.postMessage(/* RejectPartner */Block.__(5, [
+          ventureId,
+          processId
+        ]));
+  return /* () */0;
+}
+
 function endorsePartner(worker, ventureId, processId) {
-  worker.postMessage(/* EndorsePartner */Block.__(5, [
+  worker.postMessage(/* EndorsePartner */Block.__(6, [
           ventureId,
           processId
         ]));
@@ -62,15 +70,23 @@ function endorsePartner(worker, ventureId, processId) {
 }
 
 function proposePartnerRemoval(worker, ventureId, partnerId) {
-  worker.postMessage(/* ProposePartnerRemoval */Block.__(6, [
+  worker.postMessage(/* ProposePartnerRemoval */Block.__(7, [
           ventureId,
           partnerId
         ]));
   return /* () */0;
 }
 
+function rejectPartnerRemoval(worker, ventureId, processId) {
+  worker.postMessage(/* RejectPartnerRemoval */Block.__(8, [
+          ventureId,
+          processId
+        ]));
+  return /* () */0;
+}
+
 function endorsePartnerRemoval(worker, ventureId, processId) {
-  worker.postMessage(/* EndorsePartnerRemoval */Block.__(7, [
+  worker.postMessage(/* EndorsePartnerRemoval */Block.__(9, [
           ventureId,
           processId
         ]));
@@ -78,7 +94,7 @@ function endorsePartnerRemoval(worker, ventureId, processId) {
 }
 
 function proposePayout(worker, ventureId, accountIdx, destinations, fee) {
-  worker.postMessage(/* ProposePayout */Block.__(8, [
+  worker.postMessage(/* ProposePayout */Block.__(10, [
           ventureId,
           accountIdx,
           List.map((function (param) {
@@ -92,8 +108,16 @@ function proposePayout(worker, ventureId, accountIdx, destinations, fee) {
   return /* () */0;
 }
 
+function rejectPayout(worker, ventureId, processId) {
+  worker.postMessage(/* RejectPayout */Block.__(11, [
+          ventureId,
+          processId
+        ]));
+  return /* () */0;
+}
+
 function endorsePayout(worker, ventureId, processId) {
-  worker.postMessage(/* EndorsePayout */Block.__(9, [
+  worker.postMessage(/* EndorsePayout */Block.__(12, [
           ventureId,
           processId
         ]));
@@ -101,7 +125,7 @@ function endorsePayout(worker, ventureId, processId) {
 }
 
 function exposeIncomeAddress(worker, ventureId, accountIdx) {
-  worker.postMessage(/* ExposeIncomeAddress */Block.__(10, [
+  worker.postMessage(/* ExposeIncomeAddress */Block.__(13, [
           ventureId,
           accountIdx
         ]));
@@ -116,8 +140,14 @@ function make(worker, ventureId) {
           /* endorsePartner */(function (param) {
               return endorsePartner(worker, ventureId, param);
             }),
+          /* rejectPartner */(function (param) {
+              return rejectPartner(worker, ventureId, param);
+            }),
           /* proposePartnerRemoval */(function (param) {
               return proposePartnerRemoval(worker, ventureId, param);
+            }),
+          /* rejectPartnerRemoval */(function (param) {
+              return rejectPartnerRemoval(worker, ventureId, param);
             }),
           /* endorsePartnerRemoval */(function (param) {
               return endorsePartnerRemoval(worker, ventureId, param);
@@ -127,6 +157,9 @@ function make(worker, ventureId) {
             }),
           /* endorsePayout */(function (param) {
               return endorsePayout(worker, ventureId, param);
+            }),
+          /* rejectPayout */(function (param) {
+              return rejectPayout(worker, ventureId, param);
             }),
           /* exposeIncomeAddress */(function (param) {
               return exposeIncomeAddress(worker, ventureId, param);
@@ -145,10 +178,13 @@ exports.create = create;
 exports.load = load;
 exports.joinVia = joinVia;
 exports.proposePartner = proposePartner;
+exports.rejectPartner = rejectPartner;
 exports.endorsePartner = endorsePartner;
 exports.proposePartnerRemoval = proposePartnerRemoval;
+exports.rejectPartnerRemoval = rejectPartnerRemoval;
 exports.endorsePartnerRemoval = endorsePartnerRemoval;
 exports.proposePayout = proposePayout;
+exports.rejectPayout = rejectPayout;
 exports.endorsePayout = endorsePayout;
 exports.exposeIncomeAddress = exposeIncomeAddress;
 exports.Cmd = Cmd;

@@ -185,6 +185,24 @@ module Handle = {
       )
     );
   };
+  let rejectPartner = (ventureId, processId) => {
+    logMessage("Handling 'RejectPartner'");
+    withVenture(Load(ventureId), venture =>
+      Js.Promise.(
+        Venture.Cmd.RejectPartner.(
+          venture
+          |> exec(~processId)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
   let endorsePartner = (ventureId, processId) => {
     logMessage("Handling 'EndorsePartner'");
     withVenture(Load(ventureId), venture =>
@@ -222,6 +240,24 @@ module Handle = {
       )
     );
   };
+  let rejectPartnerRemoval = (ventureId, processId) => {
+    logMessage("Handling 'RejectPartnerRemoval'");
+    withVenture(Load(ventureId), venture =>
+      Js.Promise.(
+        Venture.Cmd.RejectPartnerRemoval.(
+          venture
+          |> exec(~processId)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
   let endorsePartnerRemoval = (ventureId, processId) => {
     logMessage("Handling 'EndorsePartnerRemoval'");
     withVenture(Load(ventureId), venture =>
@@ -247,6 +283,24 @@ module Handle = {
         Venture.Cmd.ProposePayout.(
           venture
           |> exec(~accountIdx, ~destinations, ~fee)
+          |> then_(
+               fun
+               | Ok(venture, newEvents) => {
+                   Notify.newEvents(ventureId, newEvents);
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
+  let rejectPayout = (ventureId, processId) => {
+    logMessage("Handling 'RejectPayout'");
+    withVenture(Load(ventureId), venture =>
+      Js.Promise.(
+        Venture.Cmd.RejectPayout.(
+          venture
+          |> exec(~processId)
           |> then_(
                fun
                | Ok(venture, newEvents) => {
@@ -349,10 +403,14 @@ let handleMessage =
   | Message.Create(name) => Handle.create(name)
   | Message.ProposePartner(ventureId, userId) =>
     Handle.proposePartner(ventureId, userId)
+  | Message.RejectPartner(ventureId, processId) =>
+    Handle.rejectPartner(ventureId, processId)
   | Message.EndorsePartner(ventureId, processId) =>
     Handle.endorsePartner(ventureId, processId)
   | Message.ProposePartnerRemoval(ventureId, userId) =>
     Handle.proposePartnerRemoval(ventureId, userId)
+  | Message.RejectPartnerRemoval(ventureId, processId) =>
+    Handle.rejectPartnerRemoval(ventureId, processId)
   | Message.EndorsePartnerRemoval(ventureId, processId) =>
     Handle.endorsePartnerRemoval(ventureId, processId)
   | Message.ProposePayout(ventureId, accountIdx, destinations, fee) =>
@@ -362,6 +420,8 @@ let handleMessage =
       destinations |> List.map(((a, btc)) => (a, btc |> BTC.decode)),
       fee |> BTC.decode,
     )
+  | Message.RejectPayout(ventureId, processId) =>
+    Handle.rejectPayout(ventureId, processId)
   | Message.EndorsePayout(ventureId, processId) =>
     Handle.endorsePayout(ventureId, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>

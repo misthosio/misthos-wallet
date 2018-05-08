@@ -27,7 +27,7 @@ function determinPartnerKeys(localUserId) {
   return Curry._2(EventLog.reduce, (function (keys, param) {
                 var $$event = param[/* event */0];
                 switch ($$event.tag | 0) {
-                  case 3 : 
+                  case 4 : 
                       var data = $$event[0][/* data */2];
                       if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
                         return /* :: */[
@@ -40,7 +40,7 @@ function determinPartnerKeys(localUserId) {
                       } else {
                         return keys;
                       }
-                  case 6 : 
+                  case 8 : 
                       return List.remove_assoc($$event[0][/* data */2][/* id */0], keys);
                   default:
                     return keys;

@@ -87,7 +87,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 2 : 
+    case 3 : 
         var match$2 = $$event[0];
         var supporterId = match$2[/* supporterId */1];
         var processId = match$2[/* processId */0];
@@ -117,7 +117,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 3 : 
+    case 4 : 
         var data = $$event[0][/* data */2];
         return /* record */[
                 state_000,
@@ -136,7 +136,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 4 : 
+    case 5 : 
         var match$3 = $$event[0];
         return /* record */[
                 state_000,
@@ -160,7 +160,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 5 : 
+    case 7 : 
         var match$4 = $$event[0];
         var supporterId$1 = match$4[/* supporterId */1];
         var processId$1 = match$4[/* processId */0];
@@ -190,7 +190,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 6 : 
+    case 8 : 
         var match$5 = $$event[0];
         var id = match$5[/* data */2][/* id */0];
         var processId$2 = match$5[/* processId */0];
@@ -210,7 +210,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 9 : 
+    case 12 : 
         return /* record */[
                 state_000,
                 state_001,
@@ -229,7 +229,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 16 : 
+    case 21 : 
         var match$6 = $$event[0];
         return /* record */[
                 state_000,
@@ -248,15 +248,16 @@ function apply($$event, state) {
                       match$6[/* supporterId */3],
                       /* [] */0
                     ],
+                    /* rejectedBy : [] */0,
                     /* status : PayoutPending */0
                   ],
                   state_008
                 ],
                 state_009
               ];
-    case 17 : 
+    case 22 : 
         var match$7 = $$event[0];
-        var supporterId$2 = match$7[/* supporterId */1];
+        var rejectorId = match$7[/* rejectorId */1];
         var processId$3 = match$7[/* processId */0];
         return /* record */[
                 state_000,
@@ -273,11 +274,12 @@ function apply($$event, state) {
                           return /* record */[
                                   /* processId */p[/* processId */0],
                                   /* payoutTx */p[/* payoutTx */1],
-                                  /* endorsedBy : :: */[
-                                    supporterId$2,
-                                    p[/* endorsedBy */2]
+                                  /* endorsedBy */p[/* endorsedBy */2],
+                                  /* rejectedBy : :: */[
+                                    rejectorId,
+                                    p[/* rejectedBy */3]
                                   ],
-                                  /* status */p[/* status */3]
+                                  /* status */p[/* status */4]
                                 ];
                         } else {
                           return p;
@@ -285,9 +287,9 @@ function apply($$event, state) {
                       }), state_008),
                 state_009
               ];
-    case 20 : 
+    case 23 : 
         var match$8 = $$event[0];
-        var transactionId = match$8[/* transactionId */1];
+        var supporterId$2 = match$8[/* supporterId */1];
         var processId$4 = match$8[/* processId */0];
         return /* record */[
                 state_000,
@@ -304,8 +306,12 @@ function apply($$event, state) {
                           return /* record */[
                                   /* processId */p[/* processId */0],
                                   /* payoutTx */p[/* payoutTx */1],
-                                  /* endorsedBy */p[/* endorsedBy */2],
-                                  /* status : PayoutCompleted */Block.__(0, [transactionId])
+                                  /* endorsedBy : :: */[
+                                    supporterId$2,
+                                    p[/* endorsedBy */2]
+                                  ],
+                                  /* rejectedBy */p[/* rejectedBy */3],
+                                  /* status */p[/* status */4]
                                 ];
                         } else {
                           return p;
@@ -313,9 +319,9 @@ function apply($$event, state) {
                       }), state_008),
                 state_009
               ];
-    case 22 : 
+    case 26 : 
         var match$9 = $$event[0];
-        var errorMessage = match$9[/* errorMessage */1];
+        var transactionId = match$9[/* transactionId */1];
         var processId$5 = match$9[/* processId */0];
         return /* record */[
                 state_000,
@@ -333,6 +339,36 @@ function apply($$event, state) {
                                   /* processId */p[/* processId */0],
                                   /* payoutTx */p[/* payoutTx */1],
                                   /* endorsedBy */p[/* endorsedBy */2],
+                                  /* rejectedBy */p[/* rejectedBy */3],
+                                  /* status : PayoutCompleted */Block.__(0, [transactionId])
+                                ];
+                        } else {
+                          return p;
+                        }
+                      }), state_008),
+                state_009
+              ];
+    case 28 : 
+        var match$10 = $$event[0];
+        var errorMessage = match$10[/* errorMessage */1];
+        var processId$6 = match$10[/* processId */0];
+        return /* record */[
+                state_000,
+                state_001,
+                state_002,
+                state_003,
+                state_004,
+                state_005,
+                state_006,
+                state_007,
+                /* payouts */List.map((function (p) {
+                        var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$6);
+                        if (match) {
+                          return /* record */[
+                                  /* processId */p[/* processId */0],
+                                  /* payoutTx */p[/* payoutTx */1],
+                                  /* endorsedBy */p[/* endorsedBy */2],
+                                  /* rejectedBy */p[/* rejectedBy */3],
                                   /* status : PayoutFailed */Block.__(1, [errorMessage])
                                 ];
                         } else {
@@ -341,9 +377,9 @@ function apply($$event, state) {
                       }), state_008),
                 state_009
               ];
-    case 25 : 
-        var match$10 = $$event[0];
-        var accountIdx = Address.Coordinates[/* accountIdx */3](match$10[/* coordinates */0]);
+    case 31 : 
+        var match$11 = $$event[0];
+        var accountIdx = Address.Coordinates[/* accountIdx */3](match$11[/* coordinates */0]);
         return /* record */[
                 state_000,
                 state_001,
@@ -356,7 +392,7 @@ function apply($$event, state) {
                   /* tuple */[
                     accountIdx,
                     /* :: */[
-                      match$10[/* address */1],
+                      match$11[/* address */1],
                       List.assoc(accountIdx, state_007)
                     ]
                   ],

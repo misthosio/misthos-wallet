@@ -22,19 +22,19 @@ function testNextIncomeAddress(user, address, wallet) {
   Jest.test(description, (function () {
           return Jest.Expect[/* toEqual */12](address, Jest.Expect[/* expect */0](exposed[/* address */1]));
         }));
-  return Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [exposed]), wallet);
+  return Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(31, [exposed]), wallet);
 }
 
 function collectNextTwoAddresses(user, param) {
   var wallet = param[0];
   var exposed = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
   var address1 = exposed[/* address */1];
-  var log = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(25, [exposed]), param[1]);
-  var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [exposed]), wallet);
+  var log = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(31, [exposed]), param[1]);
+  var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(31, [exposed]), wallet);
   var exposed$1 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet$1);
   var address2 = exposed$1[/* address */1];
-  var log$1 = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(25, [exposed$1]), log);
-  var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(25, [exposed$1]), wallet$1);
+  var log$1 = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(31, [exposed$1]), log);
+  var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(31, [exposed$1]), wallet$1);
   return /* tuple */[
           /* tuple */[
             address1,

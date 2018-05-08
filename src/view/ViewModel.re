@@ -21,6 +21,7 @@ type payout = {
   processId,
   payoutTx: PayoutTransaction.t,
   endorsedBy: list(userId),
+  rejectedBy: list(userId),
   status: payoutStatus,
 };
 
@@ -132,10 +133,20 @@ let apply = (event: Event.t, state) => {
           processId,
           payoutTx: data.payoutTx,
           endorsedBy: [supporterId],
+          rejectedBy: [],
           status: PayoutPending,
         },
         ...state.payouts,
       ],
+    }
+  | PayoutRejected({processId, rejectorId}) => {
+      ...state,
+      payouts:
+        state.payouts
+        |> List.map((p: payout) =>
+             ProcessId.eq(p.processId, processId) ?
+               {...p, rejectedBy: [rejectorId, ...p.rejectedBy]} : p
+           ),
     }
   | PayoutEndorsed({processId, supporterId}) => {
       ...state,

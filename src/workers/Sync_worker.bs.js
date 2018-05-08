@@ -31,7 +31,7 @@ function determinPartnerIds(localUserId) {
   return Curry._2(EventLog.reduce, (function (ids, param) {
                 var $$event = param[/* event */0];
                 switch ($$event.tag | 0) {
-                  case 3 : 
+                  case 4 : 
                       var data = $$event[0][/* data */2];
                       if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
                         return /* :: */[
@@ -41,7 +41,7 @@ function determinPartnerIds(localUserId) {
                       } else {
                         return ids;
                       }
-                  case 6 : 
+                  case 8 : 
                       var data$1 = $$event[0][/* data */2];
                       return List.filter((function (id) {
                                       return PrimitiveTypes.UserId[/* neq */6](id, data$1[/* id */0]);
@@ -79,7 +79,7 @@ function getLogFromUser(ventureId, userId, storagePrefix) {
 function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
   getLogFromUser(ventureId, userId, storagePrefix).then((function (other) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
-          return Promise.resolve(items ? (postMessage(/* NewItemsDetected */Block.__(12, [
+          return Promise.resolve(items ? (postMessage(/* NewItemsDetected */Block.__(15, [
                                 ventureId,
                                 List.map(EventLog.encodeItem, items)
                               ])), /* () */0) : /* () */0);

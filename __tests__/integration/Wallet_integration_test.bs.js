@@ -21,25 +21,25 @@ describe("integration", (function () {
         var userC = match[2];
         var userB = match[1];
         var userA = match[0];
-        var log = Generators.Log[/* withAccountKeyChain */27](/* None */0, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChain */28](/* None */0, /* :: */[
               userA,
               /* :: */[
                 userB,
                 /* [] */0
               ]
-            ], Generators.Log[/* withCustodian */25](userB, /* :: */[
+            ], Generators.Log[/* withCustodian */26](userB, /* :: */[
                   userA,
                   /* :: */[
                     userB,
                     /* [] */0
                   ]
-                ], Generators.Log[/* withPartner */13](userB, /* :: */[
+                ], Generators.Log[/* withPartner */14](userB, /* :: */[
                       userA,
                       /* [] */0
-                    ], Generators.Log[/* withCustodian */25](userA, /* :: */[
+                    ], Generators.Log[/* withCustodian */26](userA, /* :: */[
                           userA,
                           /* [] */0
-                        ], Generators.Log[/* withAccount */21](userA, Generators.Log[/* withFirstPartner */14](userA)(Generators.Log[/* createVenture */9](userA)))))));
+                        ], Generators.Log[/* withAccount */22](userA, Generators.Log[/* withFirstPartner */15](userA)(Generators.Log[/* createVenture */9](userA)))))));
         var accountIdx = WalletTypes.AccountIndex[/* default */9];
         var ventureId = Generators.Log[/* ventureId */1](log);
         var wallet = WalletHelpers.constructState(log);
@@ -51,7 +51,7 @@ describe("integration", (function () {
         var match$3 = match$1[0];
         var address2 = match$3[1];
         var address1 = match$3[0];
-        var log$1 = Generators.Log[/* withAccountKeyChain */27](/* Some */[1], /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChain */28](/* Some */[1], /* :: */[
               userA,
               /* :: */[
                 userB,
@@ -60,13 +60,13 @@ describe("integration", (function () {
                   /* [] */0
                 ]
               ]
-            ], Generators.Log[/* withCustodian */25](userC, /* :: */[
+            ], Generators.Log[/* withCustodian */26](userC, /* :: */[
                   userA,
                   /* :: */[
                     userB,
                     /* [] */0
                   ]
-                ], Generators.Log[/* withPartner */13](userC, /* :: */[
+                ], Generators.Log[/* withPartner */14](userC, /* :: */[
                       userA,
                       /* :: */[
                         userB,
@@ -151,8 +151,8 @@ describe("integration", (function () {
                                                   /* lo */10
                                                 ]), oneKeyChainWallet[0]);
                                 })).then((function ($$event) {
-                                oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(16, [$$event]), oneKeyChainWallet[0]);
-                                twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(16, [$$event]), twoKeyChainWallet[0]);
+                                oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), oneKeyChainWallet[0]);
+                                twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0]);
                                 return Promise.all(/* tuple */[
                                             Promise.resolve($$event[/* processId */0]),
                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
@@ -163,8 +163,8 @@ describe("integration", (function () {
                               })).then((function (param) {
                               var txId = param[1];
                               var processId = param[0];
-                              oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(20, [Curry._2(Event.Payout[/* Broadcast */7][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
-                              twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(20, [Curry._2(Event.Payout[/* Broadcast */7][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
+                              oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(26, [Curry._2(Event.Payout[/* Broadcast */8][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
+                              twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(26, [Curry._2(Event.Payout[/* Broadcast */8][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
                               return Promise.resolve(/* () */0);
                             }));
               }));
@@ -189,7 +189,7 @@ describe("integration", (function () {
                                       var data = $$event[/* data */5];
                                       var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* accountKeyChains */3], data[/* payoutTx */1], /* Regtest */0));
                                       return Promise.all(/* tuple */[
-                                                  Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(16, [$$event]), twoKeyChainWallet[0])),
+                                                  Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),
                                                   Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
                                                             data[/* payoutTx */1],
                                                             /* :: */[

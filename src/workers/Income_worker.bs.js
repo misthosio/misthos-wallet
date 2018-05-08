@@ -76,7 +76,7 @@ var findAddressesAndTxIds = Curry._2(EventLog.reduce, (function (param, param$1)
         var txIds = param[1];
         var addresses = param[0];
         switch ($$event.tag | 0) {
-          case 25 : 
+          case 31 : 
               return /* tuple */[
                       /* :: */[
                         $$event[0][/* address */1],
@@ -84,7 +84,7 @@ var findAddressesAndTxIds = Curry._2(EventLog.reduce, (function (param, param$1)
                       ],
                       txIds
                     ];
-          case 26 : 
+          case 32 : 
               return /* tuple */[
                       addresses,
                       /* :: */[
@@ -121,7 +121,7 @@ function detectIncomeFromVenture(ventureId) {
                   return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
                 })).then((function (param) {
                 return Promise.resolve((List.map((function (events) {
-                                    postMessage(/* TransactionDetected */Block.__(11, [
+                                    postMessage(/* TransactionDetected */Block.__(14, [
                                             ventureId,
                                             events
                                           ]));

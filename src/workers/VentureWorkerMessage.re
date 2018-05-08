@@ -10,8 +10,10 @@ type incoming =
   | Load(ventureId)
   | JoinVia(ventureId, userId)
   | ProposePartner(ventureId, userId)
+  | RejectPartner(ventureId, processId)
   | EndorsePartner(ventureId, processId)
   | ProposePartnerRemoval(ventureId, userId)
+  | RejectPartnerRemoval(ventureId, processId)
   | EndorsePartnerRemoval(ventureId, processId)
   | ProposePayout(
       ventureId,
@@ -19,6 +21,7 @@ type incoming =
       list((string, BTC.encoded)),
       BTC.encoded,
     )
+  | RejectPayout(ventureId, processId)
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
   | TransactionDetected(ventureId, list(Js.Json.t))

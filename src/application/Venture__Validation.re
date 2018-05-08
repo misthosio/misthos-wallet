@@ -155,6 +155,12 @@ let apply = ({hash, event}: EventLog.item, state) => {
       ...addProcess(proposal, state),
       payoutData: [(processId, (supporterId, data)), ...state.payoutData],
     }
+  | PartnerRejected(_)
+  | PartnerRemovalRejected(_)
+  | CustodianRejected(_)
+  | CustodianRemovalRejected(_)
+  | AccountCreationRejected(_)
+  | PayoutRejected(_) => state
   | PartnerEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerRemovalEndorsed(endorsement) => endorseProcess(endorsement, state)
   | CustodianEndorsed(endorsement) => endorseProcess(endorsement, state)
@@ -264,10 +270,11 @@ type result =
   | Ignore
   | InvalidIssuer
   | UnknownProcessId
-  | BadData(string)
+  | AlreadyEndorsed
   | PolicyMissmatch
   | PolicyNotFulfilled
-  | DependencyNotMet;
+  | DependencyNotMet
+  | BadData(string);
 
 let resultToString =
   fun
@@ -275,10 +282,11 @@ let resultToString =
   | Ignore => "Ignore"
   | InvalidIssuer => "InvalidIssuer"
   | UnknownProcessId => "UnknownProcessId"
-  | BadData(description) => "BadData(" ++ description ++ ")"
+  | AlreadyEndorsed => "AlreadyEndorsed"
   | PolicyMissmatch => "PolicyMissmatch"
   | PolicyNotFulfilled => "PolicyNotFulfilled"
-  | DependencyNotMet => "DependencyNotMet";
+  | DependencyNotMet => "DependencyNotMet"
+  | BadData(description) => "BadData('" ++ description ++ "')";
 
 let defaultDataValidator = (_, _) => Ok;
 
@@ -329,6 +337,30 @@ let validateProposal =
     | (true, true) => validateData(data, state)
     | _ => DependencyNotMet
     };
+  };
+
+let validateRejection =
+    (
+      {processId, rejectorId}: EventTypes.rejection,
+      {processes, currentPartnerPubKeys},
+      issuerPubKey,
+    ) =>
+  try (
+    {
+      let {supporterIds} = processes |> List.assoc(processId);
+      if (UserId.neq(
+            currentPartnerPubKeys |> List.assoc(issuerPubKey),
+            rejectorId,
+          )) {
+        InvalidIssuer;
+      } else if (supporterIds |> List.mem(rejectorId)) {
+        AlreadyEndorsed;
+      } else {
+        Ok;
+      };
+    }
+  ) {
+  | Not_found => UnknownProcessId
   };
 
 let validateEndorsement =
@@ -635,6 +667,12 @@ let validateEvent =
           state,
         )
     )
+  | PartnerRejected(rejection) => validateRejection(rejection)
+  | PartnerRemovalRejected(rejection) => validateRejection(rejection)
+  | CustodianRejected(rejection) => validateRejection(rejection)
+  | CustodianRemovalRejected(rejection) => validateRejection(rejection)
+  | AccountCreationRejected(rejection) => validateRejection(rejection)
+  | PayoutRejected(rejection) => validateRejection(rejection)
   | PartnerEndorsed(endorsement) => validateEndorsement(endorsement)
   | PartnerRemovalEndorsed(endorsement) => validateEndorsement(endorsement)
   | CustodianEndorsed(endorsement) => validateEndorsement(endorsement)

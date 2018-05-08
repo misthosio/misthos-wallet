@@ -364,21 +364,27 @@ module IncomeDetected = {
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposed.t)
+  | PartnerRejected(Partner.Rejected.t)
   | PartnerEndorsed(Partner.Endorsed.t)
   | PartnerAccepted(Partner.Accepted.t)
   | PartnerRemovalProposed(Partner.Removal.Proposed.t)
+  | PartnerRemovalRejected(Partner.Removal.Rejected.t)
   | PartnerRemovalEndorsed(Partner.Removal.Endorsed.t)
   | PartnerRemovalAccepted(Partner.Removal.Accepted.t)
   | AccountCreationProposed(AccountCreation.Proposed.t)
+  | AccountCreationRejected(AccountCreation.Rejected.t)
   | AccountCreationEndorsed(AccountCreation.Endorsed.t)
   | AccountCreationAccepted(AccountCreation.Accepted.t)
   | CustodianProposed(Custodian.Proposed.t)
+  | CustodianRejected(Custodian.Rejected.t)
   | CustodianEndorsed(Custodian.Endorsed.t)
   | CustodianAccepted(Custodian.Accepted.t)
   | CustodianRemovalProposed(Custodian.Removal.Proposed.t)
+  | CustodianRemovalRejected(Custodian.Removal.Rejected.t)
   | CustodianRemovalEndorsed(Custodian.Removal.Endorsed.t)
   | CustodianRemovalAccepted(Custodian.Removal.Accepted.t)
   | PayoutProposed(Payout.Proposed.t)
+  | PayoutRejected(Payout.Rejected.t)
   | PayoutEndorsed(Payout.Endorsed.t)
   | PayoutAccepted(Payout.Accepted.t)
   | PayoutSigned(Payout.Signature.t)
@@ -478,8 +484,16 @@ let makeCustodianRemovalProposed =
     ),
   );
 
+let makePartnerRejected = (~processId, ~rejectorId) =>
+  PartnerRejected(Partner.Rejected.make(~processId, ~rejectorId));
+
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
+
+let makePartnerRemovalRejected = (~processId, ~rejectorId) =>
+  PartnerRemovalRejected(
+    Partner.Removal.Rejected.make(~processId, ~rejectorId),
+  );
 
 let makePartnerRemovalEndorsed = (~processId, ~supporterId) =>
   PartnerRemovalEndorsed(
@@ -497,25 +511,34 @@ let makeCustodianRemovalEndorsed = (~processId, ~supporterId) =>
 let makePayoutEndorsed = (~processId, ~supporterId) =>
   PayoutEndorsed(Payout.Endorsed.make(~processId, ~supporterId));
 
+let makePayoutRejected = (~processId, ~rejectorId) =>
+  PayoutRejected(Payout.Rejected.make(~processId, ~rejectorId));
+
 let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
   | PartnerProposed(event) => Partner.Proposed.encode(event)
+  | PartnerRejected(event) => Partner.Rejected.encode(event)
   | PartnerEndorsed(event) => Partner.Endorsed.encode(event)
   | PartnerAccepted(event) => Partner.Accepted.encode(event)
   | PartnerRemovalProposed(event) => Partner.Removal.Proposed.encode(event)
+  | PartnerRemovalRejected(event) => Partner.Removal.Rejected.encode(event)
   | PartnerRemovalEndorsed(event) => Partner.Removal.Endorsed.encode(event)
   | PartnerRemovalAccepted(event) => Partner.Removal.Accepted.encode(event)
   | CustodianProposed(event) => Custodian.Proposed.encode(event)
+  | CustodianRejected(event) => Custodian.Rejected.encode(event)
   | CustodianEndorsed(event) => Custodian.Endorsed.encode(event)
   | CustodianAccepted(event) => Custodian.Accepted.encode(event)
   | CustodianRemovalProposed(event) =>
     Custodian.Removal.Proposed.encode(event)
+  | CustodianRemovalRejected(event) =>
+    Custodian.Removal.Rejected.encode(event)
   | CustodianRemovalEndorsed(event) =>
     Custodian.Removal.Endorsed.encode(event)
   | CustodianRemovalAccepted(event) =>
     Custodian.Removal.Accepted.encode(event)
   | PayoutProposed(event) => Payout.Proposed.encode(event)
+  | PayoutRejected(event) => Payout.Rejected.encode(event)
   | PayoutEndorsed(event) => Payout.Endorsed.encode(event)
   | PayoutAccepted(event) => Payout.Accepted.encode(event)
   | PayoutSigned(event) => Payout.Signature.encode(event)
@@ -524,6 +547,7 @@ let encode =
     Payout.BroadcastDuplicate.encode(event)
   | PayoutBroadcastFailed(event) => Payout.BroadcastFailed.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposed.encode(event)
+  | AccountCreationRejected(event) => AccountCreation.Rejected.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsed.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Accepted.encode(event)
   | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
@@ -554,24 +578,31 @@ let decode = raw => {
   switch (type_) {
   | "VentureCreated" => VentureCreated(VentureCreated.decode(raw))
   | "PartnerProposed" => PartnerProposed(Partner.Proposed.decode(raw))
+  | "PartnerRejected" => PartnerRejected(Partner.Rejected.decode(raw))
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsed.decode(raw))
   | "PartnerAccepted" => PartnerAccepted(Partner.Accepted.decode(raw))
   | "PartnerRemovalProposed" =>
     PartnerRemovalProposed(Partner.Removal.Proposed.decode(raw))
+  | "PartnerRemovalRejected" =>
+    PartnerRemovalRejected(Partner.Removal.Rejected.decode(raw))
   | "PartnerRemovalEndorsed" =>
     PartnerRemovalEndorsed(Partner.Removal.Endorsed.decode(raw))
   | "PartnerRemovalAccepted" =>
     PartnerRemovalAccepted(Partner.Removal.Accepted.decode(raw))
   | "CustodianProposed" => CustodianProposed(Custodian.Proposed.decode(raw))
+  | "CustodianRejected" => CustodianRejected(Custodian.Rejected.decode(raw))
   | "CustodianEndorsed" => CustodianEndorsed(Custodian.Endorsed.decode(raw))
   | "CustodianAccepted" => CustodianAccepted(Custodian.Accepted.decode(raw))
   | "CustodianRemovalProposed" =>
     CustodianRemovalProposed(Custodian.Removal.Proposed.decode(raw))
+  | "CustodianRemovalRejected" =>
+    CustodianRemovalRejected(Custodian.Removal.Rejected.decode(raw))
   | "CustodianRemovalEndorsed" =>
     CustodianRemovalEndorsed(Custodian.Removal.Endorsed.decode(raw))
   | "CustodianRemovalAccepted" =>
     CustodianRemovalAccepted(Custodian.Removal.Accepted.decode(raw))
   | "PayoutProposed" => PayoutProposed(Payout.Proposed.decode(raw))
+  | "PayoutRejected" => PayoutRejected(Payout.Rejected.decode(raw))
   | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsed.decode(raw))
   | "PayoutAccepted" => PayoutAccepted(Payout.Accepted.decode(raw))
   | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
@@ -582,6 +613,8 @@ let decode = raw => {
     PayoutBroadcastFailed(Payout.BroadcastFailed.decode(raw))
   | "AccountCreationProposed" =>
     AccountCreationProposed(AccountCreation.Proposed.decode(raw))
+  | "AccountCreationRejected" =>
+    AccountCreationRejected(AccountCreation.Rejected.decode(raw))
   | "AccountCreationEndorsed" =>
     AccountCreationEndorsed(AccountCreation.Endorsed.decode(raw))
   | "AccountCreationAccepted" =>
@@ -707,6 +740,13 @@ let getPartnerAcceptedExn = event =>
   | PartnerAccepted(unwrapped) => unwrapped
   | _ => %assert
          "getPartnerAcceptedExn"
+  };
+
+let getPartnerRejectedExn = event =>
+  switch (event) {
+  | PartnerRejected(unwrapped) => unwrapped
+  | _ => %assert
+         "getPartnerRejectedExn"
   };
 
 let getPartnerEndorsedExn = event =>

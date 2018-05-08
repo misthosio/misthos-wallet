@@ -83,22 +83,30 @@ function make(initialViewModel, session, commands, _) {
                                     }, Utils.text(address));
                         }), ViewModel.incomeAddresses(state[/* viewModel */0])));
               var payouts = $$Array.of_list(List.map((function (payout) {
-                          var match = payout[/* status */3];
+                          var match = payout[/* status */4];
                           var tmp;
                           tmp = typeof match === "number" ? "pending" : (
                               match.tag ? "failed (error: '" + (match[0] + "')") : "completed (txId: " + (match[0] + ")")
                             );
-                          var match$1 = payout[/* status */3];
+                          var match$1 = payout[/* status */4];
                           var match$2 = List.mem(session[/* userId */0], payout[/* endorsedBy */2]);
+                          var match$3 = payout[/* status */4];
+                          var match$4 = List.mem(session[/* userId */0], payout[/* rejectedBy */3]);
                           return React.createElement("li", {
                                       key: PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0])
-                                    }, Utils.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' status: " + (tmp + (" endorsed by: " + List.fold_left((function (state, partnerId) {
-                                                        return state + (partnerId + " ");
-                                                      }), "", List.map(PrimitiveTypes.UserId[/* toString */0], payout[/* endorsedBy */2]))))))), typeof match$1 === "number" && !match$2 ? React.createElement("button", {
+                                    }, Utils.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' status: " + (tmp + (" endorsed by: " + (List.fold_left((function (state, partnerId) {
+                                                          return state + (partnerId + " ");
+                                                        }), "", List.map(PrimitiveTypes.UserId[/* toString */0], payout[/* endorsedBy */2])) + (" rejected by: " + List.fold_left((function (state, partnerId) {
+                                                            return state + (partnerId + " ");
+                                                          }), "", List.map(PrimitiveTypes.UserId[/* toString */0], payout[/* rejectedBy */3]))))))))), typeof match$1 === "number" && !match$2 ? React.createElement("button", {
                                             onClick: (function () {
-                                                return Curry._1(send, /* EndorsePayout */Block.__(5, [payout[/* processId */0]]));
+                                                return Curry._1(send, /* EndorsePayout */Block.__(6, [payout[/* processId */0]]));
                                               })
-                                          }, Utils.text("Endorse Payout")) : null);
+                                          }, Utils.text("Endorse Payout")) : null, typeof match$3 === "number" && !match$4 ? React.createElement("button", {
+                                            onClick: (function () {
+                                                return Curry._1(send, /* RejectPayout */Block.__(5, [payout[/* processId */0]]));
+                                              })
+                                          }, Utils.text("Reject Payout")) : null);
                         }), ViewModel.payouts(state[/* viewModel */0])));
               return React.createElement("div", undefined, React.createElement("div", undefined, React.createElement("h2", undefined, Utils.text(ViewModel.ventureName(state[/* viewModel */0]))), Utils.text("Join Venture url: " + (window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                                           initialViewModel[/* ventureId */0],
@@ -145,7 +153,7 @@ function make(initialViewModel, session, commands, _) {
                               ]]);
                   }
                 } else {
-                  Curry._1(commands[/* exposeIncomeAddress */6], WalletTypes.AccountIndex[/* default */9]);
+                  Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]);
                   return /* NoUpdate */0;
                 }
               } else {
@@ -160,19 +168,22 @@ function make(initialViewModel, session, commands, _) {
                       Curry._1(commands[/* endorsePartner */1], action[0]);
                       return /* NoUpdate */0;
                   case 2 : 
-                      Curry._1(commands[/* proposePartnerRemoval */2], action[0]);
+                      Curry._1(commands[/* proposePartnerRemoval */3], action[0]);
                       return /* NoUpdate */0;
                   case 3 : 
-                      Curry._1(commands[/* endorsePartnerRemoval */3], action[0]);
+                      Curry._1(commands[/* endorsePartnerRemoval */5], action[0]);
                       return /* NoUpdate */0;
                   case 4 : 
-                      Curry._3(commands[/* proposePayout */4], WalletTypes.AccountIndex[/* default */9], action[0], BTC.fromSatoshis(/* int64 */[
+                      Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], action[0], BTC.fromSatoshis(/* int64 */[
                                 /* hi */0,
                                 /* lo */5
                               ]));
                       return /* NoUpdate */0;
                   case 5 : 
-                      Curry._1(commands[/* endorsePayout */5], action[0]);
+                      Curry._1(commands[/* rejectPayout */8], action[0]);
+                      return /* NoUpdate */0;
+                  case 6 : 
+                      Curry._1(commands[/* endorsePayout */7], action[0]);
                       return /* NoUpdate */0;
                   
                 }
