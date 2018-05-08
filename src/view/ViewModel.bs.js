@@ -448,6 +448,12 @@ function balance(state) {
   return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* wallet */9][/* balance */2]);
 }
 
+function isPartner(id, param) {
+  return List.exists((function (param) {
+                return PrimitiveTypes.UserId[/* eq */5](param[/* userId */0], id);
+              }), param[/* partners */2]);
+}
+
 var Wallet = 0;
 
 exports.Wallet = Wallet;
@@ -462,4 +468,5 @@ exports.ventureName = ventureName;
 exports.incomeAddresses = incomeAddresses;
 exports.payouts = payouts;
 exports.balance = balance;
+exports.isPartner = isPartner;
 /* partial_arg Not a pure module */

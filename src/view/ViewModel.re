@@ -199,3 +199,6 @@ let payouts = state => state.payouts;
 
 let balance = state =>
   state.wallet.balance |> List.assoc(AccountIndex.default);
+
+let isPartner = (id, {partners}) =>
+  partners |> List.exists(({userId}: partner) => UserId.eq(userId, id));
