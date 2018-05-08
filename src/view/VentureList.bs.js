@@ -76,7 +76,10 @@ function make(selected, index, _) {
                                             ]], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, Link.make(/* Venture */Block.__(0, [id]), /* Some */[match ? linkSelected : link], /* array */[Utils.text(param[/* name */1])]))], /* None */0, /* None */0, /* array */[]))]));
                           }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* array */[]));
               Utils.text("ventures:");
-              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* array */[Utils.text("My Ventures")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
+              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
+                                    "My Ventures",
+                                    /* [] */0
+                                  ]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

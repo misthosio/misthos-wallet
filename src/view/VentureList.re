@@ -55,7 +55,7 @@ let make = (~selected=?, ~index, _children) => {
       };
     let _status = Utils.text("ventures:");
     <div>
-      <TitleBar> ("My Ventures" |> Utils.text) </TitleBar>
+      <TitleBar titles=["My Ventures"] />
       <MaterialUi.List dense=true> ventureList </MaterialUi.List>
     </div>;
   },

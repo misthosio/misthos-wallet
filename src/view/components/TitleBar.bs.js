@@ -2,7 +2,9 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
+var Utils = require("../../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
 var Glamor = require("glamor");
@@ -11,15 +13,16 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("TitleBar");
 
-var titleGrid = Glamor.css({
+var barGrid = Glamor.css({
       display: "grid",
       gridGap: "0 20px",
-      gridTemplateColumns: "minmax(0, 1fr) minmax(400px, 10fr) minmax(0, 1fr)",
+      gridTemplateAreas: "\". title1 . title2 .\" \"line line line line line\"",
+      gridTemplateColumns: "minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr)",
       gridTemplateRows: "auto 4px",
       width: "100%"
     });
 
-var title = Css.style(/* :: */[
+var bar = Css.style(/* :: */[
       Css.backgroundColor(Colors.black),
       /* :: */[
         Css.display(Css.grid),
@@ -27,13 +30,10 @@ var title = Css.style(/* :: */[
       ]
     ]);
 
-var container = Glamor.css({
-      gridColumn: "2 / 3",
-      gridRow: "1",
-      display: "grid",
-      padding: "7px 0",
-      gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))"
-    });
+var title = Css.style(/* :: */[
+      Css.padding2(Css.px(7), Css.px(0)),
+      /* [] */0
+    ]);
 
 var gradient = Css.style(/* :: */[
       Css.height(Css.px(4)),
@@ -43,21 +43,23 @@ var gradient = Css.style(/* :: */[
       ]
     ]);
 
-var gradientGrid = Glamor.css({
-      gridColumn: "1 / 4",
-      gridRow: "2"
-    });
+function area(area$1) {
+  return Glamor.css({
+              gridArea: area$1
+            });
+}
 
 var Styles = /* module */[
-  /* titleGrid */titleGrid,
+  /* barGrid */barGrid,
+  /* bar */bar,
   /* title */title,
-  /* container */container,
   /* gradient */gradient,
-  /* gradientGrid */gradientGrid
+  /* area */area
 ];
 
-function make($staropt$star, children) {
+function make($staropt$star, $staropt$star$1, _) {
   var className = $staropt$star ? $staropt$star[0] : "";
+  var titles = $staropt$star$1 ? $staropt$star$1[0] : /* [] */0;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -70,13 +72,16 @@ function make($staropt$star, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return React.createElement("div", {
-                          className: title + (" " + (titleGrid + (" " + className)))
-                        }, React.createElement("div", {
-                              className: container
-                            }, $$Array.mapi((function (i, child) {
-                                    return ReasonReact.element(/* Some */[String(i)], /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* array */[child]));
-                                  }), children)), React.createElement("div", {
-                              className: gradient + (" " + gradientGrid)
+                          className: bar + (" " + (barGrid + (" " + className)))
+                        }, $$Array.of_list(List.mapi((function (i, title$1) {
+                                    var si = String(i + 1 | 0);
+                                    return React.createElement("div", {
+                                                key: si,
+                                                className: area("title" + si) + (" " + title)
+                                              }, ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* array */[Utils.text(title$1)])));
+                                  }), titles)), React.createElement("div", {
+                              key: "line",
+                              className: gradient + (" " + area("line"))
                             }));
             }),
           /* initialState */component[/* initialState */10],
