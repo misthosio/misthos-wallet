@@ -12,6 +12,7 @@ var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 var EncryptionJs = require("blockstack/lib/encryption.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
@@ -23,42 +24,198 @@ function logMessage(msg) {
   return /* () */0;
 }
 
-function determinPartnerKeys(localUserId) {
-  return Curry._2(EventLog.reduce, (function (keys, param) {
-                var $$event = param[/* event */0];
-                switch ($$event.tag | 0) {
-                  case 4 : 
-                      var data = $$event[0][/* data */2];
-                      if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
-                        return /* :: */[
-                                /* tuple */[
-                                  data[/* id */1],
-                                  data[/* pubKey */2]
-                                ],
-                                keys
-                              ];
-                      } else {
-                        return keys;
-                      }
-                  case 8 : 
-                      return List.remove_assoc($$event[0][/* data */2][/* id */0], keys);
-                  default:
-                    return keys;
+function determinPartnerKeysAndRemovals(localUserId, eventLog) {
+  var match = Curry._3(EventLog.reduce, (function (param, item) {
+          var $$event = item[/* event */0];
+          var removalProcesses = param[3];
+          var processLookup = param[2];
+          var keys = param[1];
+          var partners = param[0];
+          switch ($$event.tag | 0) {
+            case 4 : 
+                var data = $$event[0][/* data */2];
+                if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
+                  return /* tuple */[
+                          /* :: */[
+                            data[/* id */1],
+                            partners
+                          ],
+                          /* :: */[
+                            /* tuple */[
+                              data[/* id */1],
+                              data[/* pubKey */2]
+                            ],
+                            keys
+                          ],
+                          processLookup,
+                          removalProcesses
+                        ];
+                } else {
+                  return /* tuple */[
+                          partners,
+                          keys,
+                          processLookup,
+                          removalProcesses
+                        ];
                 }
-              }), /* [] */0);
+            case 5 : 
+                var match = $$event[0];
+                var id = match[/* data */5][/* id */0];
+                var removals;
+                try {
+                  removals = List.assoc(id, removalProcesses);
+                }
+                catch (exn){
+                  if (exn === Caml_builtin_exceptions.not_found) {
+                    removals = /* [] */0;
+                  } else {
+                    throw exn;
+                  }
+                }
+                return /* tuple */[
+                        partners,
+                        keys,
+                        /* :: */[
+                          /* tuple */[
+                            match[/* processId */0],
+                            id
+                          ],
+                          processLookup
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            id,
+                            /* :: */[
+                              item,
+                              removals
+                            ]
+                          ],
+                          List.remove_assoc(id, removalProcesses)
+                        ]
+                      ];
+            case 6 : 
+                var id$1 = List.assoc($$event[0][/* processId */0], processLookup);
+                var removals$1 = List.assoc(id$1, removalProcesses);
+                return /* tuple */[
+                        partners,
+                        keys,
+                        processLookup,
+                        /* :: */[
+                          /* tuple */[
+                            id$1,
+                            /* :: */[
+                              item,
+                              removals$1
+                            ]
+                          ],
+                          List.remove_assoc(id$1, removalProcesses)
+                        ]
+                      ];
+            case 7 : 
+                var id$2 = List.assoc($$event[0][/* processId */0], processLookup);
+                var removals$2 = List.assoc(id$2, removalProcesses);
+                return /* tuple */[
+                        partners,
+                        keys,
+                        processLookup,
+                        /* :: */[
+                          /* tuple */[
+                            id$2,
+                            /* :: */[
+                              item,
+                              removals$2
+                            ]
+                          ],
+                          List.remove_assoc(id$2, removalProcesses)
+                        ]
+                      ];
+            case 8 : 
+                var id$3 = $$event[0][/* data */2][/* id */0];
+                var removals$3 = List.assoc(id$3, removalProcesses);
+                var partial_arg = PrimitiveTypes.UserId[/* neq */6];
+                return /* tuple */[
+                        List.filter((function (param) {
+                                  return partial_arg(id$3, param);
+                                }))(partners),
+                        keys,
+                        processLookup,
+                        /* :: */[
+                          /* tuple */[
+                            id$3,
+                            /* :: */[
+                              item,
+                              removals$3
+                            ]
+                          ],
+                          List.remove_assoc(id$3, removalProcesses)
+                        ]
+                      ];
+            default:
+              return /* tuple */[
+                      partners,
+                      keys,
+                      processLookup,
+                      removalProcesses
+                    ];
+          }
+        }), /* tuple */[
+        /* [] */0,
+        /* [] */0,
+        /* [] */0,
+        /* [] */0
+      ], eventLog);
+  var keys = match[1];
+  var partners = match[0];
+  return /* tuple */[
+          List.filter((function (param) {
+                    return List.mem(param[0], partners);
+                  }))(keys),
+          /* tuple */[
+            List.filter((function (param) {
+                      return List.mem(param[0], partners) === false;
+                    }))(match[3]),
+            keys
+          ]
+        ];
 }
 
-function persist(ventureId, eventLog, keys) {
+function persistLogString(ventureId, logString, pubKey) {
+  return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/log.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, logString)), ( {"encrypt": false} ));
+}
+
+function persistSummaryString(ventureId, summaryString, pubKey) {
+  return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, summaryString)), ( {"encrypt": false} ));
+}
+
+function persistRemovals(ventureId, param) {
+  var removedKeys = param[1];
+  return List.fold_left((function (promise, param) {
+                var pubKey = List.assoc(param[0], removedKeys);
+                var eventLog = List.fold_left((function (log, item) {
+                        return Curry._2(EventLog.appendItem, item, log);
+                      }), Curry._1(EventLog.make, /* () */0), List.rev(param[1]));
+                return promise.then((function () {
+                                return persistLogString(ventureId, Json.stringify(Curry._1(EventLog.encode, eventLog)), pubKey);
+                              })).then((function () {
+                              return persistSummaryString(ventureId, Json.stringify(Curry._1(EventLog.encodeSummary, Curry._1(EventLog.getSummary, eventLog))), pubKey);
+                            }));
+              }), Promise.resolve(/* () */0), param[0]);
+}
+
+function persist(ventureId, eventLog, param) {
+  var removals = param[1];
   var logString = Json.stringify(Curry._1(EventLog.encode, eventLog));
   var summaryString = Json.stringify(Curry._1(EventLog.encodeSummary, Curry._1(EventLog.getSummary, eventLog)));
   return List.fold_left((function (promise, param) {
-                var pubKey = param[1];
-                return promise.then((function () {
-                                return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/log.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, logString)), ( {"encrypt": false} ));
-                              })).then((function () {
-                              return Blockstack.putFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (UserInfo.storagePrefix(pubKey) + "/summary.json")), Json.stringify(EncryptionJs.encryptECIES(pubKey, summaryString)), ( {"encrypt": false} ));
-                            }));
-              }), Promise.resolve(/* () */0), keys);
+                  var pubKey = param[1];
+                  return promise.then((function () {
+                                  return persistLogString(ventureId, logString, pubKey);
+                                })).then((function () {
+                                return persistSummaryString(ventureId, summaryString, pubKey);
+                              }));
+                }), Promise.resolve(/* () */0), param[0]).then((function () {
+                return Promise.resolve(removals);
+              }));
 }
 
 function persistVenture(ventureId) {
@@ -69,7 +226,9 @@ function persistVenture(ventureId) {
           } else {
             var userId = param[0][/* userId */0];
             return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                          return persist(ventureId, eventLog, Curry._1(determinPartnerKeys(userId), eventLog));
+                            return persist(ventureId, eventLog, determinPartnerKeysAndRemovals(userId, eventLog));
+                          })).then((function (param) {
+                          return persistRemovals(ventureId, param);
                         }));
           }
         }));
@@ -98,7 +257,10 @@ var Message = 0;
 
 exports.Message = Message;
 exports.logMessage = logMessage;
-exports.determinPartnerKeys = determinPartnerKeys;
+exports.determinPartnerKeysAndRemovals = determinPartnerKeysAndRemovals;
+exports.persistLogString = persistLogString;
+exports.persistSummaryString = persistSummaryString;
+exports.persistRemovals = persistRemovals;
 exports.persist = persist;
 exports.persistVenture = persistVenture;
 exports.handleMessage = handleMessage;
