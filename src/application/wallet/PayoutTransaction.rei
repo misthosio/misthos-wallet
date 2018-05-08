@@ -13,7 +13,7 @@ type input = Network.txInput;
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
-  withChange: bool,
+  changeAddress: option(string),
 };
 
 type summary = {
@@ -24,10 +24,6 @@ type summary = {
 
 let summary: t => summary;
 
-type buildResult =
-  | WithChangeAddress(t)
-  | WithoutChangeAddress(t);
-
 let build:
   (
     ~mandatoryInputs: list(input),
@@ -37,7 +33,7 @@ let build:
     ~changeAddress: Address.t,
     ~network: Network.t
   ) =>
-  buildResult;
+  t;
 
 type signResult =
   | Signed(t)

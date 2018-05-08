@@ -4,7 +4,6 @@
 var BTC = require("./BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
-var Block = require("bs-platform/lib/js/block.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Address = require("./Address.bs.js");
@@ -41,7 +40,8 @@ function summary(param) {
           return total.plus(out);
         }), BTC.zero, outs);
   var fee = totalIn.minus(totalOut);
-  var changeOut = param[/* withChange */2] ? List.hd(List.rev(outs)) : BTC.zero;
+  var match = Js_option.isSome(param[/* changeAddress */2]);
+  var changeOut = match ? List.hd(List.rev(outs)) : BTC.zero;
   return /* record */[
           /* reserved */totalIn,
           /* spent */totalOut.plus(fee).minus(changeOut),
@@ -66,8 +66,10 @@ function encode(payout) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "withChange",
-                    Json_encode.bool(payout[/* withChange */2])
+                    "changeAddress",
+                    Json_encode.nullable((function (prim) {
+                            return prim;
+                          }), payout[/* changeAddress */2])
                   ],
                   /* [] */0
                 ]
@@ -83,7 +85,9 @@ function decode(raw) {
                                 return Json_decode.pair(Json_decode.$$int, Network.decodeInput, param);
                               }), param);
                 }), raw),
-          /* withChange */Json_decode.field("withChange", Json_decode.bool, raw)
+          /* changeAddress */Json_decode.field("changeAddress", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), raw)
         ];
 }
 
@@ -133,7 +137,7 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
     return /* Signed */[/* record */[
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */payout[/* usedInputs */1],
-              /* withChange */payout[/* withChange */2]
+              /* changeAddress */payout[/* changeAddress */2]
             ]];
   } else {
     return /* NotSigned */0;
@@ -243,17 +247,11 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             }), usedInputs), satsPerByte, Network.bitcoinNetwork(network));
   if (currentInputValue.gte(outTotal.plus(currentFee))) {
     var withChange = addChangeOutput(currentInputValue, outTotal, currentFee, changeAddress, satsPerByte, network, txB);
-    var result_000 = /* txHex */txB.buildIncomplete().toHex();
-    var result = /* record */[
-      result_000,
-      /* usedInputs */usedInputs,
-      /* withChange */withChange
-    ];
-    if (withChange) {
-      return /* WithChangeAddress */Block.__(0, [result]);
-    } else {
-      return /* WithoutChangeAddress */Block.__(1, [result]);
-    }
+    return /* record */[
+            /* txHex */txB.buildIncomplete().toHex(),
+            /* usedInputs */usedInputs,
+            /* changeAddress */withChange ? /* Some */[changeAddress[/* address */5]] : /* None */0
+          ];
   } else {
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
     if (match[1]) {
@@ -275,18 +273,11 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             usedInputs
           ], match[0]);
       var withChange$1 = addChangeOutput(match$1[0], outTotal, match$1[1], changeAddress, satsPerByte, network, txB);
-      var result_000$1 = /* txHex */txB.buildIncomplete().toHex();
-      var result_001 = /* usedInputs */match$1[2];
-      var result$1 = /* record */[
-        result_000$1,
-        result_001,
-        /* withChange */withChange$1
-      ];
-      if (withChange$1) {
-        return /* WithChangeAddress */Block.__(0, [result$1]);
-      } else {
-        return /* WithoutChangeAddress */Block.__(1, [result$1]);
-      }
+      return /* record */[
+              /* txHex */txB.buildIncomplete().toHex(),
+              /* usedInputs */match$1[2],
+              /* changeAddress */withChange$1 ? /* Some */[changeAddress[/* address */5]] : /* None */0
+            ];
     } else {
       throw NotEnoughFunds;
     }

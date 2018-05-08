@@ -15,7 +15,7 @@ type input = Network.txInput;
 type t = {
   txHex: string,
   usedInputs: list((int, input)),
-  withChange: bool,
+  changeAddress: option(string),
 };
 
 type summary = {
@@ -24,7 +24,7 @@ type summary = {
   fee: BTC.t,
 };
 
-let summary = ({withChange, usedInputs, txHex}) => {
+let summary = ({changeAddress, usedInputs, txHex}) => {
   let totalIn =
     usedInputs
     |> List.fold_left(
@@ -39,7 +39,8 @@ let summary = ({withChange, usedInputs, txHex}) => {
   let totalOut =
     outs |> List.fold_left((total, out) => total |> BTC.plus(out), BTC.zero);
   let fee = totalIn |> BTC.minus(totalOut);
-  let changeOut = withChange ? outs |> List.rev |> List.hd : BTC.zero;
+  let changeOut =
+    changeAddress |> Js.Option.isSome ? outs |> List.rev |> List.hd : BTC.zero;
   {
     reserved: totalIn,
     spent: totalOut |> BTC.plus(fee) |> BTC.minus(changeOut),
@@ -55,7 +56,7 @@ let encode = payout =>
         "usedInputs",
         list(pair(int, Network.encodeInput), payout.usedInputs),
       ),
-      ("withChange", bool(payout.withChange)),
+      ("changeAddress", nullable(string, payout.changeAddress)),
     ])
   );
 
@@ -64,7 +65,7 @@ let decode = raw =>
     txHex: raw |> field("txHex", string),
     usedInputs:
       raw |> field("usedInputs", list(pair(int, Network.decodeInput))),
-    withChange: raw |> field("withChange", bool),
+    changeAddress: raw |> field("changeAddress", optional(string)),
   };
 
 type signResult =
@@ -83,8 +84,7 @@ let signPayout =
       ~ventureId,
       ~userId,
       ~masterKeyChain: B.HDNode.t,
-      ~accountKeyChains:
-         list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+      ~accountKeyChains: AccountKeyChain.Collection.t,
       ~payoutTx as payout: t,
       ~network: Network.t,
     ) => {
@@ -322,12 +322,11 @@ let build =
         ~network,
         ~txBuilder=txB,
       );
-    let result = {
+    {
       usedInputs,
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
-      withChange,
+      changeAddress: withChange ? Some(changeAddress.address) : None,
     };
-    withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
   } else {
     let (inputs, success) =
       findInputs(
@@ -363,12 +362,11 @@ let build =
           ~network,
           ~txBuilder=txB,
         );
-      let result = {
+      {
         usedInputs,
         txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
-        withChange,
+        changeAddress: withChange ? Some(changeAddress.address) : None,
       };
-      withChange ? WithChangeAddress(result) : WithoutChangeAddress(result);
     } else {
       raise(NotEnoughFunds);
     };
