@@ -39,13 +39,13 @@ function summary(param) {
   var totalOut = List.fold_left((function (total, out) {
           return total.plus(out);
         }), BTC.zero, outs);
-  var fee = totalIn.minus(totalOut);
+  var networkFee = totalIn.minus(totalOut);
   var match = Js_option.isSome(param[/* changeAddress */2]);
   var changeOut = match ? List.hd(List.rev(outs)) : BTC.zero;
   return /* record */[
           /* reserved */totalIn,
-          /* spent */totalOut.plus(fee).minus(changeOut),
-          /* fee */fee
+          /* spent */totalOut.plus(networkFee).minus(changeOut),
+          /* networkFee */networkFee
         ];
 }
 

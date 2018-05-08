@@ -178,6 +178,9 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
               }));
 }
 
+var faucetAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+
+exports.faucetAddress = faucetAddress;
 exports.make = make;
 exports.apply = apply;
 exports.exposeNextIncomeAddress = exposeNextIncomeAddress;

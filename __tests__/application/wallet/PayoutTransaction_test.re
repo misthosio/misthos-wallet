@@ -136,4 +136,26 @@ let () =
       )
       |> toThrow
     );
+    test("summary", () => {
+      let summary =
+        PayoutTransaction.build(
+          ~mandatoryInputs=[],
+          ~allInputs=inputs,
+          ~destinations=[
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L)),
+          ],
+          ~satsPerByte=BTC.fromSatoshis(1L),
+          ~changeAddress,
+          ~network=Network.Regtest,
+        )
+        |> PayoutTransaction.summary;
+      expect(summary)
+      |> toEqual(
+           PayoutTransaction.{
+             reserved: BTC.fromSatoshis(10000L),
+             spent: BTC.fromSatoshis(10000L),
+             networkFee: BTC.fromSatoshis(200L),
+           },
+         );
+    });
   });

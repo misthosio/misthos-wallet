@@ -162,22 +162,51 @@ describe("build", (function () {
                                 changeUsed
                               ]));
               }));
-        return Jest.test("raises when there aren't enough funds", (function () {
-                      return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function () {
-                                        return PayoutTransaction.build(/* [] */0, inputs, /* :: */[
-                                                    /* tuple */[
-                                                      "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                                                      BTC.fromSatoshis(/* int64 */[
-                                                            /* hi */0,
-                                                            /* lo */15000
-                                                          ])
-                                                    ],
-                                                    /* [] */0
-                                                  ], BTC.fromSatoshis(/* int64 */[
-                                                        /* hi */0,
-                                                        /* lo */1
-                                                      ]), changeAddress, /* Regtest */0);
-                                      }), /* () */0));
+        Jest.test("raises when there aren't enough funds", (function () {
+                return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function () {
+                                  return PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                                              /* tuple */[
+                                                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                                                BTC.fromSatoshis(/* int64 */[
+                                                      /* hi */0,
+                                                      /* lo */15000
+                                                    ])
+                                              ],
+                                              /* [] */0
+                                            ], BTC.fromSatoshis(/* int64 */[
+                                                  /* hi */0,
+                                                  /* lo */1
+                                                ]), changeAddress, /* Regtest */0);
+                                }), /* () */0));
+              }));
+        return Jest.test("summary", (function () {
+                      var summary = PayoutTransaction.summary(PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                                /* tuple */[
+                                  "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                                  BTC.fromSatoshis(/* int64 */[
+                                        /* hi */0,
+                                        /* lo */9800
+                                      ])
+                                ],
+                                /* [] */0
+                              ], BTC.fromSatoshis(/* int64 */[
+                                    /* hi */0,
+                                    /* lo */1
+                                  ]), changeAddress, /* Regtest */0));
+                      return Jest.Expect[/* toEqual */12](/* record */[
+                                  /* reserved */BTC.fromSatoshis(/* int64 */[
+                                        /* hi */0,
+                                        /* lo */10000
+                                      ]),
+                                  /* spent */BTC.fromSatoshis(/* int64 */[
+                                        /* hi */0,
+                                        /* lo */10000
+                                      ]),
+                                  /* networkFee */BTC.fromSatoshis(/* int64 */[
+                                        /* hi */0,
+                                        /* lo */200
+                                      ])
+                                ], Jest.Expect[/* expect */0](summary));
                     }));
       }));
 

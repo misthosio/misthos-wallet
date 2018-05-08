@@ -19,7 +19,7 @@ type t = {
 type summary = {
   reserved: BTC.t,
   spent: BTC.t,
-  fee: BTC.t,
+  networkFee: BTC.t,
 };
 
 let summary: t => summary;

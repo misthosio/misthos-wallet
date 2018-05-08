@@ -1,7 +1,5 @@
 module B = Bitcoin;
 
-open WalletTypes;
-
 exception NotEnoughFunds;
 
 exception NotEnoughSignatures;
@@ -21,7 +19,7 @@ type t = {
 type summary = {
   reserved: BTC.t,
   spent: BTC.t,
-  fee: BTC.t,
+  networkFee: BTC.t,
 };
 
 let summary = ({changeAddress, usedInputs, txHex}) => {
@@ -38,13 +36,13 @@ let summary = ({changeAddress, usedInputs, txHex}) => {
     |> List.map(o => o##value |> Int64.of_float |> BTC.fromSatoshis);
   let totalOut =
     outs |> List.fold_left((total, out) => total |> BTC.plus(out), BTC.zero);
-  let fee = totalIn |> BTC.minus(totalOut);
+  let networkFee = totalIn |> BTC.minus(totalOut);
   let changeOut =
     changeAddress |> Js.Option.isSome ? outs |> List.rev |> List.hd : BTC.zero;
   {
     reserved: totalIn,
-    spent: totalOut |> BTC.plus(fee) |> BTC.minus(changeOut),
-    fee,
+    spent: totalOut |> BTC.plus(networkFee) |> BTC.minus(changeOut),
+    networkFee,
   };
 };
 
@@ -258,10 +256,6 @@ let addChangeOutput =
   } else {
     false;
   };
-
-type buildResult =
-  | WithChangeAddress(t)
-  | WithoutChangeAddress(t);
 
 let build =
     (
