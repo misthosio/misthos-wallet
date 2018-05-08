@@ -20,7 +20,8 @@ function margin(tf, bf) {
 
 var Styles = /* module */[/* margin */margin];
 
-function make(variant, children) {
+function make(variant, $staropt$star, children) {
+  var className = $staropt$star ? $staropt$star[0] : "";
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -37,7 +38,7 @@ function make(variant, children) {
                       variant !== 594052472 ? margin(0, 0) : margin(4, 0)
                     ) : margin(4, 4)
                 ) : margin(3, 0);
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* Some */[style], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[variant], /* None */0, /* array */[children]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* Some */[style + (" " + className)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[variant], /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

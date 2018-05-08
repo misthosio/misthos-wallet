@@ -3,10 +3,13 @@ let component = ReasonReact.statelessComponent("MTypography");
 module Styles = {
   open Css;
   let margin = (~tf, ~bf) =>
-    style([marginTop(px(Theme.space(tf))), marginBottom(px(Theme.space(bf)))]);
+    style([
+      marginTop(px(Theme.space(tf))),
+      marginBottom(px(Theme.space(bf))),
+    ]);
 };
 
-let make = (~variant, children) => {
+let make = (~variant, ~className="", children) => {
   ...component,
   render: _self => {
     let style =
@@ -16,7 +19,7 @@ let make = (~variant, children) => {
       | `Body2 => Styles.margin(~tf=3, ~bf=0)
       | _ => Styles.margin(~tf=0, ~bf=0)
       };
-    <MaterialUi.Typography className=style variant>
+    <MaterialUi.Typography className=(style ++ " " ++ className) variant>
       children
     </MaterialUi.Typography>;
   },
