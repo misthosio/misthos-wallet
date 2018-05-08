@@ -240,8 +240,9 @@ let make =
                    switch (
                      payout.status,
                      payout.rejectedBy |> List.mem(session.userId),
+                     payout.endorsedBy |> List.mem(session.userId),
                    ) {
-                   | (PayoutPending, false) =>
+                   | (PayoutPending, false, false) =>
                      <button
                        onClick=(_e => send(RejectPayout(payout.processId)))>
                        (text("Reject Payout"))

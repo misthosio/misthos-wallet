@@ -92,6 +92,7 @@ function make(initialViewModel, session, commands, _) {
                           var match$2 = List.mem(session[/* userId */0], payout[/* endorsedBy */2]);
                           var match$3 = payout[/* status */4];
                           var match$4 = List.mem(session[/* userId */0], payout[/* rejectedBy */3]);
+                          var match$5 = List.mem(session[/* userId */0], payout[/* endorsedBy */2]);
                           return React.createElement("li", {
                                       key: PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0])
                                     }, Utils.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' status: " + (tmp + (" endorsed by: " + (List.fold_left((function (state, partnerId) {
@@ -102,7 +103,7 @@ function make(initialViewModel, session, commands, _) {
                                             onClick: (function () {
                                                 return Curry._1(send, /* EndorsePayout */Block.__(6, [payout[/* processId */0]]));
                                               })
-                                          }, Utils.text("Endorse Payout")) : null, typeof match$3 === "number" && !match$4 ? React.createElement("button", {
+                                          }, Utils.text("Endorse Payout")) : null, typeof match$3 === "number" && !(match$4 || match$5) ? React.createElement("button", {
                                             onClick: (function () {
                                                 return Curry._1(send, /* RejectPayout */Block.__(5, [payout[/* processId */0]]));
                                               })
