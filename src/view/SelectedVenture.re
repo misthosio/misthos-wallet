@@ -279,11 +279,8 @@ let make =
             ("BTC" |> Utils.text)
           </MTypography>
           <MTypography variant=`Subheading>
-            (
-              BTC.format(state.balance.reserved)
-              ++ " BTC IN RESERVE"
-              |> Utils.text
-            )
+            <b> (BTC.format(state.balance.reserved) |> Utils.text) </b>
+            (" BTC IN RESERVE" |> Utils.text)
           </MTypography>
         </div>
       body2=
