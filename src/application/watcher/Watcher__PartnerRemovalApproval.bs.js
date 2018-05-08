@@ -60,7 +60,7 @@ function make(proposal, log) {
                       /* creatorId */$$event$1[/* creatorId */2]
                     ];
                     break;
-                case 3 : 
+                case 4 : 
                     var init$1 = self$1[state][0];
                     tmp = /* record */[
                       /* eligable : :: */[
@@ -73,7 +73,7 @@ function make(proposal, log) {
                       /* creatorId */init$1[/* creatorId */4]
                     ];
                     break;
-                case 5 : 
+                case 7 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$2 = self$1[state][0];
@@ -91,7 +91,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 6 : 
+                case 8 : 
                     var $$event$3 = $$event[0];
                     var id = $$event$3[/* data */2][/* id */0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$3[/* processId */0], env$1[0][/* processId */0])) {
@@ -127,7 +127,7 @@ function make(proposal, log) {
               if (tmp$1) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */3],
-                    /* PartnerRemovalAccepted */Block.__(6, [Curry._1(Event.Partner[/* Removal */6][/* Accepted */5][/* fromProposal */0], env$1[0])])
+                    /* PartnerRemovalAccepted */Block.__(8, [Curry._1(Event.Partner[/* Removal */7][/* Accepted */6][/* fromProposal */0], env$1[0])])
                   ]];
                 return /* () */0;
               } else {

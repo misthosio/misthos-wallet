@@ -364,21 +364,27 @@ module IncomeDetected = {
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposed.t)
+  | PartnerRejected(Partner.Rejected.t)
   | PartnerEndorsed(Partner.Endorsed.t)
   | PartnerAccepted(Partner.Accepted.t)
   | PartnerRemovalProposed(Partner.Removal.Proposed.t)
+  | PartnerRemovalRejected(Partner.Removal.Rejected.t)
   | PartnerRemovalEndorsed(Partner.Removal.Endorsed.t)
   | PartnerRemovalAccepted(Partner.Removal.Accepted.t)
   | AccountCreationProposed(AccountCreation.Proposed.t)
+  | AccountCreationRejected(AccountCreation.Rejected.t)
   | AccountCreationEndorsed(AccountCreation.Endorsed.t)
   | AccountCreationAccepted(AccountCreation.Accepted.t)
   | CustodianProposed(Custodian.Proposed.t)
+  | CustodianRejected(Custodian.Rejected.t)
   | CustodianEndorsed(Custodian.Endorsed.t)
   | CustodianAccepted(Custodian.Accepted.t)
   | CustodianRemovalProposed(Custodian.Removal.Proposed.t)
+  | CustodianRemovalRejected(Custodian.Removal.Rejected.t)
   | CustodianRemovalEndorsed(Custodian.Removal.Endorsed.t)
   | CustodianRemovalAccepted(Custodian.Removal.Accepted.t)
   | PayoutProposed(Payout.Proposed.t)
+  | PayoutRejected(Payout.Rejected.t)
   | PayoutEndorsed(Payout.Endorsed.t)
   | PayoutAccepted(Payout.Accepted.t)
   | PayoutSigned(Payout.Signature.t)
@@ -478,6 +484,9 @@ let makeCustodianRemovalProposed =
     ),
   );
 
+let makePartnerRejected = (~processId, ~rejectorId) =>
+  PartnerRejected(Partner.Rejected.make(~processId, ~rejectorId));
+
 let makePartnerEndorsed = (~processId, ~supporterId) =>
   PartnerEndorsed(Partner.Endorsed.make(~processId, ~supporterId));
 
@@ -501,21 +510,27 @@ let encode =
   fun
   | VentureCreated(event) => VentureCreated.encode(event)
   | PartnerProposed(event) => Partner.Proposed.encode(event)
+  | PartnerRejected(event) => Partner.Rejected.encode(event)
   | PartnerEndorsed(event) => Partner.Endorsed.encode(event)
   | PartnerAccepted(event) => Partner.Accepted.encode(event)
   | PartnerRemovalProposed(event) => Partner.Removal.Proposed.encode(event)
+  | PartnerRemovalRejected(event) => Partner.Removal.Rejected.encode(event)
   | PartnerRemovalEndorsed(event) => Partner.Removal.Endorsed.encode(event)
   | PartnerRemovalAccepted(event) => Partner.Removal.Accepted.encode(event)
   | CustodianProposed(event) => Custodian.Proposed.encode(event)
+  | CustodianRejected(event) => Custodian.Rejected.encode(event)
   | CustodianEndorsed(event) => Custodian.Endorsed.encode(event)
   | CustodianAccepted(event) => Custodian.Accepted.encode(event)
   | CustodianRemovalProposed(event) =>
     Custodian.Removal.Proposed.encode(event)
+  | CustodianRemovalRejected(event) =>
+    Custodian.Removal.Rejected.encode(event)
   | CustodianRemovalEndorsed(event) =>
     Custodian.Removal.Endorsed.encode(event)
   | CustodianRemovalAccepted(event) =>
     Custodian.Removal.Accepted.encode(event)
   | PayoutProposed(event) => Payout.Proposed.encode(event)
+  | PayoutRejected(event) => Payout.Rejected.encode(event)
   | PayoutEndorsed(event) => Payout.Endorsed.encode(event)
   | PayoutAccepted(event) => Payout.Accepted.encode(event)
   | PayoutSigned(event) => Payout.Signature.encode(event)
@@ -524,6 +539,7 @@ let encode =
     Payout.BroadcastDuplicate.encode(event)
   | PayoutBroadcastFailed(event) => Payout.BroadcastFailed.encode(event)
   | AccountCreationProposed(event) => AccountCreation.Proposed.encode(event)
+  | AccountCreationRejected(event) => AccountCreation.Rejected.encode(event)
   | AccountCreationEndorsed(event) => AccountCreation.Endorsed.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Accepted.encode(event)
   | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
@@ -707,6 +723,13 @@ let getPartnerAcceptedExn = event =>
   | PartnerAccepted(unwrapped) => unwrapped
   | _ => %assert
          "getPartnerAcceptedExn"
+  };
+
+let getPartnerRejectedExn = event =>
+  switch (event) {
+  | PartnerRejected(unwrapped) => unwrapped
+  | _ => %assert
+         "getPartnerRejectedExn"
   };
 
 let getPartnerEndorsedExn = event =>

@@ -92,6 +92,47 @@ function makeProposal(name) {
     });
 }
 
+function makeRejection(name) {
+  var make = function (processId, rejectorId) {
+    return /* record */[
+            /* processId */processId,
+            /* rejectorId */rejectorId
+          ];
+  };
+  var encode = function ($$event) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  name
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "processId",
+                    PrimitiveTypes.ProcessId[/* encode */2]($$event[/* processId */0])
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "rejectorId",
+                      PrimitiveTypes.UserId[/* encode */2]($$event[/* rejectorId */1])
+                    ],
+                    /* [] */0
+                  ]
+                ]
+              ]);
+  };
+  var decode = function (raw) {
+    return /* record */[
+            /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
+            /* rejectorId */Json_decode.field("rejectorId", PrimitiveTypes.UserId[/* decode */3], raw)
+          ];
+  };
+  return /* module */[
+          /* make */make,
+          /* encode */encode,
+          /* decode */decode
+        ];
+}
+
 function makeEndorsement(name) {
   var make = function (processId, supporterId) {
     return /* record */[
@@ -191,6 +232,7 @@ function makeProcess(name) {
   return (function (funarg) {
       var processName = name + "ApprovalProcess";
       var Proposed = makeProposal(name + "Proposed")(funarg);
+      var Rejected = makeRejection(name + "Rejected");
       var Endorsed = makeEndorsement(name + "Endorsed");
       var Accepted = makeAcceptance(name + "Accepted")(funarg);
       var dataEq = function (dataA, dataB) {
@@ -200,6 +242,7 @@ function makeProcess(name) {
               /* processName */processName,
               /* dataEq */dataEq,
               /* Proposed */Proposed,
+              /* Rejected */Rejected,
               /* Endorsed */Endorsed,
               /* Accepted */Accepted
             ];
@@ -207,6 +250,7 @@ function makeProcess(name) {
 }
 
 exports.makeProposal = makeProposal;
+exports.makeRejection = makeRejection;
 exports.makeEndorsement = makeEndorsement;
 exports.makeAcceptance = makeAcceptance;
 exports.makeProcess = makeProcess;

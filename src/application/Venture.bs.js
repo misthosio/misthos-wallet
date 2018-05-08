@@ -399,7 +399,7 @@ function exec$2(incomeEvents, venture) {
   logMessage("Synchronizing wallet");
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
-                                  return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(26, [$$event]), param[0]);
+                                  return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(32, [$$event]), param[0]);
                                 }));
                   }), Promise.resolve(/* tuple */[
                       venture,
@@ -426,7 +426,7 @@ function exec$3(prospectId, venture) {
                     var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(session[/* userId */0], prospectId, param[0][/* appPubKey */0], Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state)));
                     var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
                     return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposed]), venture).then((function (param) {
-                                      return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(10, [custodianProposal]), param[0]);
+                                      return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(13, [custodianProposal]), param[0]);
                                     })).then(persist).then((function (param) {
                                   return Promise.resolve(/* Ok */[
                                               param[0],
@@ -467,12 +467,12 @@ function exec$5(partnerId, venture) {
   } else {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     return (
-                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(match[0], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */6][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
+                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(match[0], session[/* userId */0], partnerId, WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */7][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
                           venture,
                           /* [] */0
                         ])
                 ).then((function (param) {
-                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */6][/* processName */1], state)), param[0]);
+                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)), param[0]);
                     })).then(persist).then((function (param) {
                   return Promise.resolve(/* Ok */[
                               param[0],
@@ -508,7 +508,7 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$6];
 function exec$7(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(25, [exposeEvent]), venture).then(persist).then((function (param) {
+  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(31, [exposeEvent]), venture).then(persist).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             exposeEvent[/* address */1],
                             param[0],
@@ -522,7 +522,7 @@ var ExposeIncomeAddress = /* module */[/* exec */exec$7];
 function exec$8(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
   return Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]).then((function (proposal) {
-                    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(16, [proposal]), venture);
+                    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [proposal]), venture);
                   })).then(persist).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],

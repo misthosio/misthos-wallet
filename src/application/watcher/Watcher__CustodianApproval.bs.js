@@ -58,7 +58,7 @@ function make(proposal, log) {
                       /* systemIssuer */$$event[0][/* systemIssuer */5]
                     ];
                     break;
-                case 3 : 
+                case 4 : 
                     var init$1 = self$1[state][0];
                     tmp = /* record */[
                       /* eligable : :: */[
@@ -70,7 +70,7 @@ function make(proposal, log) {
                       /* systemIssuer */init$1[/* systemIssuer */3]
                     ];
                     break;
-                case 6 : 
+                case 8 : 
                     var id = $$event[0][/* data */2][/* id */0];
                     var init$2 = self$1[state][0];
                     var partial_arg = PrimitiveTypes.UserId[/* neq */6];
@@ -83,7 +83,7 @@ function make(proposal, log) {
                       /* systemIssuer */init$2[/* systemIssuer */3]
                     ];
                     break;
-                case 11 : 
+                case 15 : 
                     var $$event$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$1[/* processId */0], env$1[0][/* processId */0])) {
                       var init$3 = self$1[state][0];
@@ -100,7 +100,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 12 : 
+                case 16 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* processId */0])) {
                       self$1[completed][0] = true;
                       tmp = self$1[state][0];
@@ -124,7 +124,7 @@ function make(proposal, log) {
               if (tmp$1) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */3],
-                    /* CustodianAccepted */Block.__(12, [Curry._1(Event.Custodian[/* Accepted */5][/* fromProposal */0], env$1[0])])
+                    /* CustodianAccepted */Block.__(16, [Curry._1(Event.Custodian[/* Accepted */6][/* fromProposal */0], env$1[0])])
                   ]];
                 return /* () */0;
               } else {

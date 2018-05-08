@@ -56,7 +56,7 @@ function make(param, log) {
                       /* pendingEvent */init[/* pendingEvent */3]
                     ];
                     break;
-                case 15 : 
+                case 20 : 
                     var match = $$event[0][/* data */2];
                     var removedAccount = match[/* accountIdx */1];
                     if (WalletTypes.AccountIndex[/* eq */7](removedAccount, removedAccount)) {
@@ -69,7 +69,7 @@ function make(param, log) {
                           /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */2],
                           /* pendingEvent : Some */[/* tuple */[
                               self$1[state][0][/* systemIssuer */0],
-                              /* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(removedAccount, self$1[state][0][/* nextKeyChainIdx */2], custodianKeyChains))])
+                              /* AccountKeyChainUpdated */Block.__(30, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(removedAccount, self$1[state][0][/* nextKeyChainIdx */2], custodianKeyChains))])
                             ]]
                         ];
                       }
@@ -84,7 +84,7 @@ function make(param, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 23 : 
+                case 29 : 
                     var match$1 = $$event[0];
                     var keyChain = match$1[/* keyChain */2];
                     var partnerId = match$1[/* partnerId */1];
@@ -105,14 +105,14 @@ function make(param, log) {
                         /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */2],
                         /* pendingEvent : Some */[/* tuple */[
                             self$1[state][0][/* systemIssuer */0],
-                            /* AccountKeyChainUpdated */Block.__(24, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(env$1[0], self$1[state][0][/* nextKeyChainIdx */2], custodianKeyChains$1))])
+                            /* AccountKeyChainUpdated */Block.__(30, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(env$1[0], self$1[state][0][/* nextKeyChainIdx */2], custodianKeyChains$1))])
                           ]]
                       ];
                     } else {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 24 : 
+                case 30 : 
                     if (Caml_obj.caml_equal($$event[0][/* keyChain */0][/* accountIdx */0], env$1[0])) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[

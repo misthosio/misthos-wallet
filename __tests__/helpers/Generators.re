@@ -97,6 +97,10 @@ module Event = {
       (supporter: Session.Data.t, {processId}: AppEvent.Partner.Proposed.t) =>
     AppEvent.makePartnerEndorsed(~processId, ~supporterId=supporter.userId)
     |> AppEvent.getPartnerEndorsedExn;
+  let partnerRejected =
+      (rejector: Session.Data.t, {processId}: AppEvent.Partner.Proposed.t) =>
+    AppEvent.makePartnerRejected(~processId, ~rejectorId=rejector.userId)
+    |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
   let partnerRemovalProposed =
       (supporterSession: Session.Data.t, toBeRemoved: Session.Data.t) =>
@@ -246,6 +250,17 @@ module Log = {
     appendEvent(
       issuer,
       PartnerEndorsed(Event.partnerEndorsed(supporter, proposal)),
+    );
+  };
+  let withPartnerRejected = (~issuer=?, supporter: Session.Data.t, proposal) => {
+    let issuer =
+      switch (issuer) {
+      | None => supporter.issuerKeyPair
+      | Some(key) => key
+      };
+    appendEvent(
+      issuer,
+      PartnerRejected(Event.partnerRejected(supporter, proposal)),
     );
   };
   let withPartnerAccepted = proposal =>

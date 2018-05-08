@@ -38,7 +38,7 @@ function apply($$event, state) {
                 /* reservedInputs */state[/* reservedInputs */5],
                 /* payoutProcesses */state[/* payoutProcesses */6]
               ];
-    case 16 : 
+    case 21 : 
         var match$1 = $$event[0];
         var data = match$1[/* data */5];
         var match$2 = data[/* changeAddressCoordinates */2];
@@ -62,7 +62,7 @@ function apply($$event, state) {
                   state[/* payoutProcesses */6]
                 ]
               ];
-    case 20 : 
+    case 26 : 
         var payoutTx = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */6]);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
@@ -83,7 +83,7 @@ function apply($$event, state) {
                         }))(state[/* reservedInputs */5]),
                 /* payoutProcesses */state[/* payoutProcesses */6]
               ];
-    case 22 : 
+    case 28 : 
         var payoutTx$1 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */6]);
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
@@ -104,7 +104,7 @@ function apply($$event, state) {
                         }))(state[/* reservedInputs */5]),
                 /* payoutProcesses */state[/* payoutProcesses */6]
               ];
-    case 24 : 
+    case 30 : 
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
@@ -114,7 +114,7 @@ function apply($$event, state) {
                 /* reservedInputs */state[/* reservedInputs */5],
                 /* payoutProcesses */state[/* payoutProcesses */6]
               ];
-    case 25 : 
+    case 31 : 
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],

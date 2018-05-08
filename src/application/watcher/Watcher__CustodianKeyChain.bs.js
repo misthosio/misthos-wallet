@@ -56,14 +56,14 @@ function make(param, param$1, log) {
                       /* nextKeyChainIdx */init[/* nextKeyChainIdx */3]
                     ];
                     break;
-                case 9 : 
+                case 12 : 
                     if (Caml_obj.caml_equal($$event[0][/* data */2][/* accountIdx */0], env$1[6])) {
                       var init$1 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$1[/* ventureId */0],
                         /* pendingEvent : Some */[/* tuple */[
                             env$1[2],
-                            /* CustodianKeyChainUpdated */Block.__(23, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
+                            /* CustodianKeyChainUpdated */Block.__(29, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
                           ]],
                         /* selfRemoved */init$1[/* selfRemoved */2],
                         /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */3]
@@ -72,7 +72,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 15 : 
+                case 20 : 
                     var match = $$event[0];
                     var match$1 = match[/* data */2];
                     var fromAccount = match$1[/* accountIdx */1];
@@ -91,7 +91,7 @@ function make(param, param$1, log) {
                         /* ventureId */init$3[/* ventureId */0],
                         /* pendingEvent : Some */[/* tuple */[
                             env$1[2],
-                            /* CustodianKeyChainUpdated */Block.__(23, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
+                            /* CustodianKeyChainUpdated */Block.__(29, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
                           ]],
                         /* selfRemoved */init$3[/* selfRemoved */2],
                         /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */3]
@@ -100,7 +100,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 23 : 
+                case 29 : 
                     var match$2 = $$event[0];
                     var keyChain = match$2[/* keyChain */2];
                     var partnerId = match$2[/* partnerId */1];
@@ -119,7 +119,7 @@ function make(param, param$1, log) {
                         /* pendingEvent */Utils.mapOption((function () {
                                 return /* tuple */[
                                         env$1[2],
-                                        /* CustodianKeyChainUpdated */Block.__(23, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3]), env$1[3])))])
+                                        /* CustodianKeyChainUpdated */Block.__(29, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[5], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3]), env$1[3])))])
                                       ];
                               }), self$1[state][0][/* pendingEvent */1]),
                         /* selfRemoved */init$5[/* selfRemoved */2],

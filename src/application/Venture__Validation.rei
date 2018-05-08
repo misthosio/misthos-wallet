@@ -9,10 +9,11 @@ type result =
   | Ignore
   | InvalidIssuer
   | UnknownProcessId
-  | BadData(string)
+  | AlreadyEndorsed
   | PolicyMissmatch
   | PolicyNotFulfilled
-  | DependencyNotMet;
+  | DependencyNotMet
+  | BadData(string);
 
 let resultToString: result => string;
 

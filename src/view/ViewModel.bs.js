@@ -87,7 +87,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 2 : 
+    case 3 : 
         var match$2 = $$event[0];
         var supporterId = match$2[/* supporterId */1];
         var processId = match$2[/* processId */0];
@@ -117,7 +117,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 3 : 
+    case 4 : 
         var data = $$event[0][/* data */2];
         return /* record */[
                 state_000,
@@ -136,7 +136,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 4 : 
+    case 5 : 
         var match$3 = $$event[0];
         return /* record */[
                 state_000,
@@ -160,7 +160,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 5 : 
+    case 7 : 
         var match$4 = $$event[0];
         var supporterId$1 = match$4[/* supporterId */1];
         var processId$1 = match$4[/* processId */0];
@@ -190,7 +190,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 6 : 
+    case 8 : 
         var match$5 = $$event[0];
         var id = match$5[/* data */2][/* id */0];
         var processId$2 = match$5[/* processId */0];
@@ -210,7 +210,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 9 : 
+    case 12 : 
         return /* record */[
                 state_000,
                 state_001,
@@ -229,7 +229,7 @@ function apply($$event, state) {
                 state_008,
                 state_009
               ];
-    case 16 : 
+    case 21 : 
         var match$6 = $$event[0];
         return /* record */[
                 state_000,
@@ -254,7 +254,7 @@ function apply($$event, state) {
                 ],
                 state_009
               ];
-    case 17 : 
+    case 23 : 
         var match$7 = $$event[0];
         var supporterId$2 = match$7[/* supporterId */1];
         var processId$3 = match$7[/* processId */0];
@@ -285,7 +285,7 @@ function apply($$event, state) {
                       }), state_008),
                 state_009
               ];
-    case 20 : 
+    case 26 : 
         var match$8 = $$event[0];
         var transactionId = match$8[/* transactionId */1];
         var processId$4 = match$8[/* processId */0];
@@ -313,7 +313,7 @@ function apply($$event, state) {
                       }), state_008),
                 state_009
               ];
-    case 22 : 
+    case 28 : 
         var match$9 = $$event[0];
         var errorMessage = match$9[/* errorMessage */1];
         var processId$5 = match$9[/* processId */0];
@@ -341,7 +341,7 @@ function apply($$event, state) {
                       }), state_008),
                 state_009
               ];
-    case 25 : 
+    case 31 : 
         var match$10 = $$event[0];
         var accountIdx = Address.Coordinates[/* accountIdx */3](match$10[/* coordinates */0]);
         return /* record */[

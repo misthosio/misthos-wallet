@@ -9,6 +9,11 @@ type proposal('a) = {
   data: 'a,
 };
 
+type rejection = {
+  processId,
+  rejectorId: userId,
+};
+
 type endorsement = {
   processId,
   supporterId: userId,
@@ -90,6 +95,33 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
          supporterId: raw |> field("supporterId", UserId.decode),
          policy: raw |> field("policy", Policy.decode),
          data: raw |> field("data", Data.decode),
+       };
+   });
+
+module type RejectedEvent = {
+  type t = rejection;
+  let make: (~processId: processId, ~rejectorId: userId) => t;
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
+};
+
+let makeRejection = (name: string) : (module RejectedEvent) =>
+  (module
+   {
+     type t = rejection;
+     let make = (~processId, ~rejectorId) => {processId, rejectorId};
+     let encode = (event: t) =>
+       Json.Encode.(
+         object_([
+           ("type", string(name)),
+           ("processId", ProcessId.encode(event.processId)),
+           ("rejectorId", UserId.encode(event.rejectorId)),
+         ])
+       );
+     let decode = raw =>
+       Json.Decode.{
+         processId: raw |> field("processId", ProcessId.decode),
+         rejectorId: raw |> field("rejectorId", UserId.decode),
        };
    });
 
@@ -183,6 +215,12 @@ module type Process =
       let encode: t => Js.Json.t;
       let decode: Js.Json.t => t;
     };
+    module Rejected: {
+      type t = rejection;
+      let make: (~processId: processId, ~rejectorId: userId) => t;
+      let encode: t => Js.Json.t;
+      let decode: Js.Json.t => t;
+    };
     module Endorsed: {
       type t = endorsement;
       let make: (~processId: processId, ~supporterId: userId) => t;
@@ -202,6 +240,7 @@ let makeProcess = (name: string) : (module Process) =>
    (Data: EventData) => {
      let processName = name ++ "ApprovalProcess";
      module Proposed = (val makeProposal(name ++ "Proposed"))(Data);
+     module Rejected = (val makeRejection(name ++ "Rejected"));
      module Endorsed = (val makeEndorsement(name ++ "Endorsed"));
      module Accepted = (val makeAcceptance(name ++ "Accepted"))(Data);
      let dataEq = (dataA, dataB) =>
