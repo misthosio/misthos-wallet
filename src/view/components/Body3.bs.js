@@ -6,7 +6,7 @@ var Glamor = require("glamor");
 var TitleBar = require("./TitleBar.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
-var component = ReasonReact.statelessComponent("Body2");
+var component = ReasonReact.statelessComponent("Body3");
 
 var grid = Glamor.css({
       display: "grid",
