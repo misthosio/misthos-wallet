@@ -9,6 +9,7 @@ var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Policy = require("../Policy.bs.js");
 var Address = require("../wallet/Address.bs.js");
 var Network = require("../wallet/Network.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var EventTypes = require("./EventTypes.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
@@ -786,7 +787,13 @@ function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemova
           }
           return param[/* processId */0];
         }), lastRemovalAccepted);
-  return /* PartnerProposed */Block.__(1, [Curry._5(Proposed[/* make */0], /* None */0, /* None */0, supporterId, policy, /* record */[
+  var dependsOnCompletions = Js_option.getWithDefault(/* [] */0, Utils.mapOption((function (p) {
+              return /* :: */[
+                      p,
+                      /* [] */0
+                    ];
+            }), lastRemovalProcess));
+  return /* PartnerProposed */Block.__(1, [Curry._5(Proposed[/* make */0], /* None */0, /* Some */[dependsOnCompletions], supporterId, policy, /* record */[
                   /* lastRemoval */lastRemovalProcess,
                   /* id */prospectId,
                   /* pubKey */prospectPubKey

@@ -419,8 +419,13 @@ let makePartnerProposed =
          };
          processId;
        });
+  let dependsOnCompletions =
+    lastRemovalProcess
+    |> Utils.mapOption(p => [p])
+    |> Js.Option.getWithDefault([]);
   PartnerProposed(
     Partner.Proposed.make(
+      ~dependsOnCompletions,
       ~supporterId,
       ~policy,
       Partner.Data.{
