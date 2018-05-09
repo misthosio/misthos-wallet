@@ -153,7 +153,7 @@ let () =
       |> toEqual(
            PayoutTransaction.{
              reserved: BTC.fromSatoshis(15000L),
-             spent: BTC.fromSatoshis(10370L),
+             spentWithFees: BTC.fromSatoshis(10370L),
              misthosFee: BTC.fromSatoshis(285L),
              networkFee: BTC.fromSatoshis(285L),
            },

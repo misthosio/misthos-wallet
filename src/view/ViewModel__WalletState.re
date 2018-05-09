@@ -5,8 +5,7 @@ open PrimitiveTypes;
 open WalletTypes;
 
 type balance = {
-  income: BTC.t,
-  spent: BTC.t,
+  currentSpendable: BTC.t,
   reserved: BTC.t,
 };
 
@@ -52,10 +51,7 @@ let apply = (event: Event.t, state) =>
       ],
       accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
       balance: [
-        (
-          data.accountIdx,
-          {income: BTC.zero, spent: BTC.zero, reserved: BTC.zero},
-        ),
+        (data.accountIdx, {currentSpendable: BTC.zero, reserved: BTC.zero}),
         ...state.balance,
       ],
     }
@@ -95,13 +91,18 @@ let apply = (event: Event.t, state) =>
       balance: [
         (
           accountIdx,
-          {...balance, income: balance.income |> BTC.plus(amount)},
+          {
+            ...balance,
+            currentSpendable: balance.currentSpendable |> BTC.plus(amount),
+          },
         ),
         ...state.balance |> List.remove_assoc(accountIdx),
       ],
     };
   | PayoutProposed({data, processId}) =>
     let balance = state.balance |> List.assoc(data.accountIdx);
+    let payoutSummary =
+      data.payoutTx |> PayoutTransaction.summary(state.network);
     {
       ...state,
       payoutProcesses: [
@@ -126,13 +127,9 @@ let apply = (event: Event.t, state) =>
         (
           data.accountIdx,
           {
-            ...balance,
-            reserved:
-              balance.reserved
-              |> BTC.plus(
-                   (data.payoutTx |> PayoutTransaction.summary(state.network)).
-                     reserved,
-                 ),
+            currentSpendable:
+              balance.currentSpendable |> BTC.minus(payoutSummary.reserved),
+            reserved: balance.reserved |> BTC.plus(payoutSummary.reserved),
           },
         ),
         ...state.balance |> List.remove_assoc(data.accountIdx),
@@ -149,8 +146,10 @@ let apply = (event: Event.t, state) =>
         (
           accountIdx,
           {
-            ...balance,
-            spent: balance.spent |> BTC.plus(payoutSummary.spent),
+            currentSpendable:
+              balance.currentSpendable
+              |> BTC.plus(payoutSummary.reserved)
+              |> BTC.minus(payoutSummary.spentWithFees),
             reserved: balance.reserved |> BTC.minus(payoutSummary.reserved),
           },
         ),
@@ -168,7 +167,8 @@ let apply = (event: Event.t, state) =>
         (
           accountIdx,
           {
-            ...balance,
+            currentSpendable:
+              balance.currentSpendable |> BTC.plus(payoutSummary.reserved),
             reserved: balance.reserved |> BTC.minus(payoutSummary.reserved),
           },
         ),

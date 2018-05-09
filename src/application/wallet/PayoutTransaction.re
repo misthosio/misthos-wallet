@@ -21,7 +21,7 @@ type t = {
 
 type summary = {
   reserved: BTC.t,
-  spent: BTC.t,
+  spentWithFees: BTC.t,
   misthosFee: BTC.t,
   networkFee: BTC.t,
 };
@@ -64,7 +64,7 @@ let summary =
     outs |> List.find(((a, _)) => a == misthosFeeAddress) |> snd;
   {
     reserved: totalIn,
-    spent: totalOut |> BTC.plus(networkFee) |> BTC.minus(changeOut),
+    spentWithFees: totalOut |> BTC.plus(networkFee) |> BTC.minus(changeOut),
     misthosFee,
     networkFee,
   };

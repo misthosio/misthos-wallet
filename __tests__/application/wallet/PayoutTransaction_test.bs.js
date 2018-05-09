@@ -198,7 +198,7 @@ describe("build", (function () {
                                         /* hi */0,
                                         /* lo */15000
                                       ]),
-                                  /* spent */BTC.fromSatoshis(/* int64 */[
+                                  /* spentWithFees */BTC.fromSatoshis(/* int64 */[
                                         /* hi */0,
                                         /* lo */10370
                                       ]),

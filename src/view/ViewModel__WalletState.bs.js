@@ -57,8 +57,7 @@ function apply($$event, state) {
                   /* tuple */[
                     data[/* accountIdx */0],
                     /* record */[
-                      /* income */BTC.zero,
-                      /* spent */BTC.zero,
+                      /* currentSpendable */BTC.zero,
                       /* reserved */BTC.zero
                     ]
                   ],
@@ -77,6 +76,7 @@ function apply($$event, state) {
         var match = $$event[0];
         var data$1 = match[/* data */5];
         var balance = List.assoc(data$1[/* accountIdx */0], state[/* balance */2]);
+        var payoutSummary = PayoutTransaction.summary(state[/* network */0], data$1[/* payoutTx */1]);
         var match$1 = data$1[/* changeAddressCoordinates */2];
         return /* record */[
                 /* network */state[/* network */0],
@@ -85,9 +85,8 @@ function apply($$event, state) {
                   /* tuple */[
                     data$1[/* accountIdx */0],
                     /* record */[
-                      /* income */balance[/* income */0],
-                      /* spent */balance[/* spent */1],
-                      /* reserved */balance[/* reserved */2].plus(PayoutTransaction.summary(state[/* network */0], data$1[/* payoutTx */1])[/* reserved */0])
+                      /* currentSpendable */balance[/* currentSpendable */0].minus(payoutSummary[/* reserved */0]),
+                      /* reserved */balance[/* reserved */1].plus(payoutSummary[/* reserved */0])
                     ]
                   ],
                   List.remove_assoc(data$1[/* accountIdx */0], state[/* balance */2])
@@ -117,7 +116,7 @@ function apply($$event, state) {
         var match$2 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */4]);
         var accountIdx = match$2[0];
         var balance$1 = List.assoc(accountIdx, state[/* balance */2]);
-        var payoutSummary = PayoutTransaction.summary(state[/* network */0], match$2[1]);
+        var payoutSummary$1 = PayoutTransaction.summary(state[/* network */0], match$2[1]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* accountKeyChains */state[/* accountKeyChains */1],
@@ -125,9 +124,8 @@ function apply($$event, state) {
                   /* tuple */[
                     accountIdx,
                     /* record */[
-                      /* income */balance$1[/* income */0],
-                      /* spent */balance$1[/* spent */1].plus(payoutSummary[/* spent */1]),
-                      /* reserved */balance$1[/* reserved */2].minus(payoutSummary[/* reserved */0])
+                      /* currentSpendable */balance$1[/* currentSpendable */0].plus(payoutSummary$1[/* reserved */0]).minus(payoutSummary$1[/* spentWithFees */1]),
+                      /* reserved */balance$1[/* reserved */1].minus(payoutSummary$1[/* reserved */0])
                     ]
                   ],
                   List.remove_assoc(accountIdx, state[/* balance */2])
@@ -139,7 +137,7 @@ function apply($$event, state) {
         var match$3 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */4]);
         var accountIdx$1 = match$3[0];
         var balance$2 = List.assoc(accountIdx$1, state[/* balance */2]);
-        var payoutSummary$1 = PayoutTransaction.summary(state[/* network */0], match$3[1]);
+        var payoutSummary$2 = PayoutTransaction.summary(state[/* network */0], match$3[1]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* accountKeyChains */state[/* accountKeyChains */1],
@@ -147,9 +145,8 @@ function apply($$event, state) {
                   /* tuple */[
                     accountIdx$1,
                     /* record */[
-                      /* income */balance$2[/* income */0],
-                      /* spent */balance$2[/* spent */1],
-                      /* reserved */balance$2[/* reserved */2].minus(payoutSummary$1[/* reserved */0])
+                      /* currentSpendable */balance$2[/* currentSpendable */0].plus(payoutSummary$2[/* reserved */0]),
+                      /* reserved */balance$2[/* reserved */1].minus(payoutSummary$2[/* reserved */0])
                     ]
                   ],
                   List.remove_assoc(accountIdx$1, state[/* balance */2])
@@ -208,9 +205,8 @@ function apply($$event, state) {
                   /* tuple */[
                     accountIdx$3,
                     /* record */[
-                      /* income */balance$3[/* income */0].plus(match$4[/* amount */2]),
-                      /* spent */balance$3[/* spent */1],
-                      /* reserved */balance$3[/* reserved */2]
+                      /* currentSpendable */balance$3[/* currentSpendable */0].plus(match$4[/* amount */2]),
+                      /* reserved */balance$3[/* reserved */1]
                     ]
                   ],
                   List.remove_assoc(accountIdx$3, state[/* balance */2])

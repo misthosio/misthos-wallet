@@ -54,7 +54,7 @@ function summary(network, param) {
           }), outs)[1];
   return /* record */[
           /* reserved */totalIn,
-          /* spent */totalOut.plus(networkFee).minus(changeOut),
+          /* spentWithFees */totalOut.plus(networkFee).minus(changeOut),
           /* misthosFee */misthosFee,
           /* networkFee */networkFee
         ];

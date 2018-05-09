@@ -269,12 +269,7 @@ let make =
           </MTypography>
           <MTypography variant=`Display2>
             <b>
-              (
-                state.balance.income
-                |> BTC.minus(state.balance.spent)
-                |> BTC.format
-                |> Utils.text
-              )
+              (state.balance.currentSpendable |> BTC.format |> Utils.text)
             </b>
             ("BTC" |> Utils.text)
           </MTypography>
