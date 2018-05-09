@@ -17,7 +17,7 @@ open WatcherHelpers;
 let keyChainEq = (keyChainA, keyChainB) =>
   keyChainA |> KeyChain.encode == (keyChainB |> KeyChain.encode);
 
-let () =
+let () = {
   describe("Initial key chain", () => {
     let user1 = G.userSession("user1" |> UserId.fromString);
     let log =
@@ -54,3 +54,23 @@ let () =
       | _ => false,
     );
   });
+  describe("Completion", () =>
+    describe("when the custodian is removed", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withPartner(user2, ~supporters=[user1])
+          |> withCustodian(user2, ~supporters=[user1, user2])
+        );
+      let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      let log = L.(log |> withCustodianRemoved(user2, ~supporters=[user1]));
+      let watcher =
+        CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
+      testWatcherHasCompleted(watcher);
+    })
+  );
+};

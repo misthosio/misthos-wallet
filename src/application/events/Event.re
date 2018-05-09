@@ -791,6 +791,13 @@ let getCustodianRemovalProposedExn = event =>
          "getCustodianRemovalProposedExn"
   };
 
+let getCustodianRemovalEndorsedExn = event =>
+  switch (event) {
+  | CustodianRemovalEndorsed(unwrapped) => unwrapped
+  | _ => %assert
+         "getCustodianRemovalEndorsedExn"
+  };
+
 let getVentureCreatedExn = event =>
   switch (event) {
   | VentureCreated(unwrapped) => unwrapped

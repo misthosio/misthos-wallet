@@ -123,6 +123,12 @@ function custodianRemovalProposed(custodianAccepted, supporterSession, toBeRemov
   return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(custodianAccepted, supporterSession[/* userId */0], toBeRemoved[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimousMinusOne));
 }
 
+function custodianRemovalEndorsed(supporter, param) {
+  return Event.getCustodianRemovalEndorsedExn(Event.makeCustodianRemovalEndorsed(param[/* processId */0], supporter[/* userId */0]));
+}
+
+var custodianRemovalAccepted = Event.Custodian[/* Removal */7][/* Accepted */6][/* fromProposal */0];
+
 var custodianKeyChainUpdated = Event.CustodianKeyChainUpdated[/* make */0];
 
 var accountKeyChainUpdated = Event.AccountKeyChainUpdated[/* make */0];
@@ -142,6 +148,8 @@ var Event$1 = /* module */[
   /* custodianEndorsed */custodianEndorsed,
   /* custodianAccepted */custodianAccepted,
   /* custodianRemovalProposed */custodianRemovalProposed,
+  /* custodianRemovalEndorsed */custodianRemovalEndorsed,
+  /* custodianRemovalAccepted */custodianRemovalAccepted,
   /* custodianKeyChainUpdated */custodianKeyChainUpdated,
   /* accountKeyChainUpdated */accountKeyChainUpdated
 ];
@@ -386,6 +394,33 @@ function withCustodianRemovalProposed(supporter, toBeRemoved, l) {
   return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianRemovalProposed */Block.__(17, [custodianRemovalProposed(custodianAccepted, supporter, toBeRemoved)]), l);
 }
 
+function withCustodianRemovalEndorsed(supporter, proposal) {
+  var partial_arg = /* CustodianRemovalEndorsed */Block.__(19, [custodianRemovalEndorsed(supporter, proposal)]);
+  var partial_arg$1 = supporter[/* issuerKeyPair */2];
+  return (function (param) {
+      return appendEvent(partial_arg$1, partial_arg, param);
+    });
+}
+
+function withCustodianRemovalAccepted(proposal) {
+  var partial_arg = /* CustodianRemovalAccepted */Block.__(20, [Curry._1(custodianRemovalAccepted, proposal)]);
+  return (function (param) {
+      return appendSystemEvent(partial_arg, param);
+    });
+}
+
+function withCustodianRemoved(user, supporters, log) {
+  if (supporters) {
+    var log$1 = withCustodianRemovalProposed(supporters[0], user, log);
+    var proposal = Event.getCustodianRemovalProposedExn(lastEvent(log$1));
+    return withCustodianRemovalAccepted(proposal)(List.fold_left((function (log, supporter) {
+                      return withCustodianRemovalEndorsed(supporter, proposal)(log);
+                    }), log$1, supporters[1]));
+  } else {
+    return Js_exn.raiseError("withCustodian");
+  }
+}
+
 function withAccountKeyChain($staropt$star, custodians, l) {
   var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
   var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
@@ -443,6 +478,9 @@ var Log = /* module */[
   /* withCustodianAccepted */withCustodianAccepted,
   /* withCustodian */withCustodian,
   /* withCustodianRemovalProposed */withCustodianRemovalProposed,
+  /* withCustodianRemovalEndorsed */withCustodianRemovalEndorsed,
+  /* withCustodianRemovalAccepted */withCustodianRemovalAccepted,
+  /* withCustodianRemoved */withCustodianRemoved,
   /* withAccountKeyChain */withAccountKeyChain
 ];
 

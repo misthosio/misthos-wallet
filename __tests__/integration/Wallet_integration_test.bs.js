@@ -21,7 +21,7 @@ describe("integration", (function () {
         var userC = match[2];
         var userB = match[1];
         var userA = match[0];
-        var log = Generators.Log[/* withAccountKeyChain */28](/* None */0, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChain */31](/* None */0, /* :: */[
               userA,
               /* :: */[
                 userB,
@@ -51,7 +51,7 @@ describe("integration", (function () {
         var match$3 = match$1[0];
         var address2 = match$3[1];
         var address1 = match$3[0];
-        var log$1 = Generators.Log[/* withAccountKeyChain */28](/* Some */[1], /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChain */31](/* Some */[1], /* :: */[
               userA,
               /* :: */[
                 userB,

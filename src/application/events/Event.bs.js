@@ -1213,6 +1213,14 @@ function getCustodianRemovalProposedExn($$event) {
   }
 }
 
+function getCustodianRemovalEndorsedExn($$event) {
+  if ($$event.tag === 19) {
+    return $$event[0];
+  } else {
+    return Js_exn.raiseError("getCustodianRemovalEndorsedExn");
+  }
+}
+
 function getVentureCreatedExn($$event) {
   if ($$event.tag) {
     return Js_exn.raiseError("getVentureCreatedExn");
@@ -1271,5 +1279,6 @@ exports.getPartnerRemovalAcceptedExn = getPartnerRemovalAcceptedExn;
 exports.getPartnerRemovalEndorsedExn = getPartnerRemovalEndorsedExn;
 exports.getPartnerRemovalProposedExn = getPartnerRemovalProposedExn;
 exports.getCustodianRemovalProposedExn = getCustodianRemovalProposedExn;
+exports.getCustodianRemovalEndorsedExn = getCustodianRemovalEndorsedExn;
 exports.getVentureCreatedExn = getVentureCreatedExn;
 /* include Not a pure module */

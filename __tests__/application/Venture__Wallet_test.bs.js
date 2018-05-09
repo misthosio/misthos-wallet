@@ -9,7 +9,7 @@ describe("nextIncomeAddress", (function () {
         var userC = Fixtures.threeUserSessions[2];
         var userB = Fixtures.threeUserSessions[1];
         var userA = Fixtures.threeUserSessions[0];
-        var log = Generators.Log[/* withAccountKeyChain */28](/* None */0, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChain */31](/* None */0, /* :: */[
               userA,
               /* :: */[
                 userB,
@@ -29,7 +29,7 @@ describe("nextIncomeAddress", (function () {
                           /* [] */0
                         ], Generators.Log[/* withAccount */22](userA, Generators.Log[/* withFirstPartner */15](userA)(Fixtures.createVenture(userA)))))));
         WalletHelpers.testNextIncomeAddress(userA, "2NCAxqkK9bhRQWssyrMqJhXS65xmUCWraXT", WalletHelpers.testNextIncomeAddress(userB, "2NGFyACMJG6KJ9Db92n9MM2nNtR4r4tUNFW", WalletHelpers.testNextIncomeAddress(userA, "2MtvnaAWnfkSBU7NbpSfMRrCKSTgLeRVd93", WalletHelpers.constructState(log))));
-        var log$1 = Generators.Log[/* withAccountKeyChain */28](/* Some */[1], /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChain */31](/* Some */[1], /* :: */[
               userA,
               /* :: */[
                 userB,
