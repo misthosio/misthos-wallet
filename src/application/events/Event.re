@@ -50,7 +50,7 @@ module VentureCreated = {
 module Partner = {
   module Data = {
     type t = {
-      lastRemoval: option(processId),
+      lastPartnerRemovalProcess: option(processId),
       id: userId,
       pubKey: string,
     };
@@ -59,24 +59,44 @@ module Partner = {
         object_([
           ("id", UserId.encode(event.id)),
           ("pubKey", string(event.pubKey)),
-          ("lastRemoval", nullable(ProcessId.encode, event.lastRemoval)),
+          (
+            "lastPartnerRemovalProcess",
+            nullable(ProcessId.encode, event.lastPartnerRemovalProcess),
+          ),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         id: raw |> field("id", UserId.decode),
         pubKey: raw |> field("pubKey", string),
-        lastRemoval: raw |> field("lastRemoval", optional(ProcessId.decode)),
+        lastPartnerRemovalProcess:
+          raw
+          |> field("lastPartnerRemovalProcess", optional(ProcessId.decode)),
       };
   };
   include (val EventTypes.makeProcess("Partner"))(Data);
   module Removal = {
     module Data = {
-      type t = {id: userId};
+      type t = {
+        id: userId,
+        lastPartnerProcess: processId,
+      };
       let encode = event =>
-        Json.Encode.(object_([("id", UserId.encode(event.id))]));
+        Json.Encode.(
+          object_([
+            ("id", UserId.encode(event.id)),
+            (
+              "lastPartnerProcess",
+              ProcessId.encode(event.lastPartnerProcess),
+            ),
+          ])
+        );
       let decode = raw =>
-        Json.Decode.{id: raw |> field("id", UserId.decode)};
+        Json.Decode.{
+          id: raw |> field("id", UserId.decode),
+          lastPartnerProcess:
+            raw |> field("lastPartnerProcess", ProcessId.decode),
+        };
     };
     include (val EventTypes.makeProcess("PartnerRemoval"))(Data);
   };
@@ -406,7 +426,7 @@ let makePartnerProposed =
       ~lastRemovalAccepted,
       ~policy,
     ) => {
-  let lastRemovalProcess =
+  let lastPartnerRemovalProcess =
     lastRemovalAccepted
     |> Utils.mapOption(
          ({data: {id}, processId}: Partner.Removal.Accepted.t) => {
@@ -420,7 +440,7 @@ let makePartnerProposed =
          processId;
        });
   let dependsOnCompletions =
-    lastRemovalProcess
+    lastPartnerRemovalProcess
     |> Utils.mapOption(p => [p])
     |> Js.Option.getWithDefault([]);
   PartnerProposed(
@@ -431,20 +451,36 @@ let makePartnerProposed =
       Partner.Data.{
         id: prospectId,
         pubKey: prospectPubKey,
-        lastRemoval: lastRemovalProcess,
+        lastPartnerRemovalProcess,
       },
     ),
   );
 };
 
-let makePartnerRemovalProposed = (~supporterId, ~partnerId, ~policy) =>
+let makePartnerRemovalProposed =
+    (
+      ~lastPartnerAccepted: Partner.Accepted.t,
+      ~supporterId,
+      ~partnerId,
+      ~policy,
+    ) => {
+  if (UserId.neq(lastPartnerAccepted.data.id, partnerId)) {
+    raise(
+      BadData("The provided PartnerAccepted wasn't for the same partner"),
+    );
+  };
   PartnerRemovalProposed(
     Partner.Removal.Proposed.make(
+      ~dependsOnCompletions=[lastPartnerAccepted.processId],
       ~supporterId,
       ~policy,
-      Partner.Removal.Data.{id: partnerId},
+      Partner.Removal.Data.{
+        lastPartnerProcess: lastPartnerAccepted.processId,
+        id: partnerId,
+      },
     ),
   );
+};
 
 let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(

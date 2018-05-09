@@ -484,7 +484,7 @@ function exec$6(partnerId, venture) {
                           /* [] */0
                         ])
                 ).then((function (param) {
-                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)), param[0]);
+                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], partnerId, Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)), param[0]);
                     })).then(persist).then((function (param) {
                   return Promise.resolve(/* Ok */[
                               param[0],

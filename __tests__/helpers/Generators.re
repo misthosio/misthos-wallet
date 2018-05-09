@@ -103,8 +103,13 @@ module Event = {
     |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
   let partnerRemovalProposed =
-      (supporterSession: Session.Data.t, toBeRemoved: Session.Data.t) =>
+      (
+        ~lastPartnerAccepted,
+        supporterSession: Session.Data.t,
+        toBeRemoved: Session.Data.t,
+      ) =>
     AppEvent.makePartnerRemovalProposed(
+      ~lastPartnerAccepted,
       ~supporterId=supporterSession.userId,
       ~partnerId=toBeRemoved.userId,
       ~policy=Policy.unanimousMinusOne,
@@ -292,13 +297,33 @@ module Log = {
            "withPartner"
     };
   let withFirstPartner = user => withPartner(user, ~supporters=[user]);
-  let withPartnerRemovalProposed = (~supporter: Session.Data.t, ~toBeRemoved) =>
-    appendEvent(
-      supporter.issuerKeyPair,
-      PartnerRemovalProposed(
-        Event.partnerRemovalProposed(supporter, toBeRemoved),
-      ),
-    );
+  let withPartnerRemovalProposed =
+      (~supporter: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
+    let lastPartnerAccepted =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | PartnerAccepted({data: {id}} as event)
+                 when UserId.eq(id, toBeRemoved.userId) =>
+               Some(event)
+             | _ => res
+             },
+           None,
+         )
+      |> Js.Option.getExn;
+    l
+    |> appendEvent(
+         supporter.issuerKeyPair,
+         PartnerRemovalProposed(
+           Event.partnerRemovalProposed(
+             ~lastPartnerAccepted,
+             supporter,
+             toBeRemoved,
+           ),
+         ),
+       );
+  };
   let withPartnerRemovalEndorsed = (supporter: Session.Data.t, proposal) =>
     appendEvent(
       supporter.issuerKeyPair,

@@ -35,6 +35,13 @@ function testValidationResult(state, item, expected) {
               }));
 }
 
+function testDataValidation(dataValidation, state, data, expected) {
+  var description = Venture__Validation.resultToString(expected);
+  return Jest.test("valdation should return '" + (description + "'"), (function () {
+                return Jest.Expect[/* toEqual */12](description, Jest.Expect[/* expect */0](Venture__Validation.resultToString(Curry._2(dataValidation, data, state))));
+              }));
+}
+
 describe("CreateVenture", (function () {
         describe("as first event", (function () {
                 var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
@@ -412,6 +419,46 @@ describe("PartnerProposal", (function () {
         return /* () */0;
       }));
 
+describe("PartnerRemovalProposal", (function () {
+        describe("when proposing another partner", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withPartner */14](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)));
+                return testValidationResult(constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerRemovalProposed */16](user1, user2, log)), /* Ok */0);
+              }));
+        describe("validate Data", (function () {
+                describe("when the prospect is not a partner", (function () {
+                        var match = Generators.twoUserSessions(/* () */0);
+                        var user2 = match[1];
+                        var user1 = match[0];
+                        var log = Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1));
+                        return testDataValidation(Venture__Validation.validatePartnerRemovalData, constructState(log), /* record */[
+                                    /* id */user2[/* userId */0],
+                                    /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */7](/* () */0)
+                                  ], /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](user2[/* userId */0]) + "' doesn't exist")]);
+                      }));
+                describe("when lastPartnerProcess doesn't match", (function () {
+                        var match = Generators.twoUserSessions(/* () */0);
+                        var user2 = match[1];
+                        var user1 = match[0];
+                        var log = Generators.Log[/* withPartner */14](user2, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)));
+                        return testDataValidation(Venture__Validation.validatePartnerRemovalData, constructState(log), /* record */[
+                                    /* id */user2[/* userId */0],
+                                    /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */7](/* () */0)
+                                  ], /* BadData */["lastPartnerProcess doesn't match"]);
+                      }));
+                return /* () */0;
+              }));
+        return /* () */0;
+      }));
+
 var G = 0;
 
 var E = 0;
@@ -427,4 +474,5 @@ exports.Validation = Validation;
 exports.TestingInvalidSequence = TestingInvalidSequence;
 exports.constructState = constructState;
 exports.testValidationResult = testValidationResult;
+exports.testDataValidation = testDataValidation;
 /*  Not a pure module */

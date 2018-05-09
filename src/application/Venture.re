@@ -470,6 +470,8 @@ module Cmd = {
                |> apply(
                     ~collector=c,
                     Event.makePartnerRemovalProposed(
+                      ~lastPartnerAccepted=
+                        state |> State.lastPartnerAccepted(partnerId),
                       ~supporterId=session.userId,
                       ~partnerId,
                       ~policy=

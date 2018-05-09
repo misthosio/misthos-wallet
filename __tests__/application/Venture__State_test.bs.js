@@ -159,7 +159,7 @@ describe("RemovalProcessMapping", (function () {
                     ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))));
         var match$1 = Event.getCustodianRemovalProposedExn(Generators.Log[/* lastEvent */4](log));
         var custodianRemovalProcess = match$1[/* processId */0];
-        var log$1 = Generators.Log[/* withPartnerRemovalProposed */16](user1, user2)(log);
+        var log$1 = Generators.Log[/* withPartnerRemovalProposed */16](user1, user2, log);
         var match$2 = Event.getPartnerRemovalProposedExn(Generators.Log[/* lastEvent */4](log$1));
         var partnerRemovalProcess = match$2[/* processId */0];
         var state = constructState(log$1);

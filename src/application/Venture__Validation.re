@@ -16,6 +16,7 @@ type t = {
   currentPartners: list(userId),
   currentPartnerPubKeys: list((string, userId)),
   partnerData: list((processId, (userId, Partner.Data.t))),
+  partnerAccepted: list((userId, processId)),
   partnerRemovalData: list((processId, (userId, Partner.Removal.Data.t))),
   partnerRemovals: list((userId, processId)),
   custodianData: list((processId, (userId, Custodian.Data.t))),
@@ -40,6 +41,7 @@ let make = () => {
   currentPartnerPubKeys: [],
   metaPolicy: Policy.unanimous,
   partnerData: [],
+  partnerAccepted: [],
   partnerRemovalData: [],
   partnerRemovals: [],
   custodianData: [],
@@ -52,7 +54,7 @@ let make = () => {
   creatorData: {
     id: UserId.fromString(""),
     pubKey: "",
-    lastRemoval: None,
+    lastPartnerRemovalProcess: None,
   },
   custodianKeyChains: [],
   accountKeyChains: [],
@@ -116,7 +118,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
         Partner.Data.{
           id: creatorId,
           pubKey: creatorPubKey,
-          lastRemoval: None,
+          lastPartnerRemovalProcess: None,
         },
     }
   | PartnerProposed({supporterId, processId, data} as proposal) => {
@@ -169,13 +171,14 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | AccountCreationEndorsed(endorsement) =>
     endorseProcess(endorsement, state)
   | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
-  | PartnerAccepted({data} as acceptance) => {
+  | PartnerAccepted({processId, data} as acceptance) => {
       ...completeProcess(acceptance, state),
       currentPartners: [data.id, ...state.currentPartners],
       currentPartnerPubKeys: [
         (data.pubKey, data.id),
         ...state.currentPartnerPubKeys,
       ],
+      partnerAccepted: [(data.id, processId), ...state.partnerAccepted],
     }
   | PartnerRemovalAccepted({processId, data: {id}} as acceptance) =>
     let pubKey =
@@ -422,7 +425,10 @@ let validateAcceptance =
   };
 
 let validatePartnerData =
-    ({id, lastRemoval}: Partner.Data.t, {partnerRemovals, currentPartners}) =>
+    (
+      {id, lastPartnerRemovalProcess}: Partner.Data.t,
+      {partnerRemovals, currentPartners},
+    ) =>
   if (currentPartners |> List.mem(id)) {
     BadData("Partner already exists");
   } else {
@@ -430,7 +436,7 @@ let validatePartnerData =
       try (Some(partnerRemovals |> List.assoc(id))) {
       | Not_found => None
       };
-    if (partnerRemovalProcess != lastRemoval) {
+    if (partnerRemovalProcess != lastPartnerRemovalProcess) {
       BadData("Last removal doesn't match");
     } else {
       Ok;
@@ -438,10 +444,26 @@ let validatePartnerData =
   };
 
 let validatePartnerRemovalData =
-    ({id}: Partner.Removal.Data.t, {currentPartners}) =>
-  currentPartners |> List.mem(id) ?
-    Ok :
+    (
+      {id, lastPartnerProcess}: Partner.Removal.Data.t,
+      {partnerAccepted, currentPartners},
+    ) =>
+  if (currentPartners |> List.mem(id) == false) {
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
+  } else {
+    try (
+      {
+        let partnerProcess = partnerAccepted |> List.assoc(id);
+        if (ProcessId.eq(partnerProcess, lastPartnerProcess)) {
+          Ok;
+        } else {
+          BadData("lastPartnerProcess doesn't match");
+        };
+      }
+    ) {
+    | Not_found => BadData("lastPartnerProcess doesn't match")
+    };
+  };
 
 let validateCustodianData =
     ({partnerApprovalProcess, partnerId}: Custodian.Data.t, {partnerData}) =>

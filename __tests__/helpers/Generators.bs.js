@@ -93,8 +93,8 @@ function partnerRejected(rejector, param) {
 
 var partnerAccepted = Event.Partner[/* Accepted */6][/* fromProposal */0];
 
-function partnerRemovalProposed(supporterSession, toBeRemoved) {
-  return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(supporterSession[/* userId */0], toBeRemoved[/* userId */0], Policy.unanimousMinusOne));
+function partnerRemovalProposed(lastPartnerAccepted, supporterSession, toBeRemoved) {
+  return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(lastPartnerAccepted, supporterSession[/* userId */0], toBeRemoved[/* userId */0], Policy.unanimousMinusOne));
 }
 
 function partnerRemovalEndorsed(supporter, param) {
@@ -271,12 +271,21 @@ function withFirstPartner(user) {
     });
 }
 
-function withPartnerRemovalProposed(supporter, toBeRemoved) {
-  var partial_arg = /* PartnerRemovalProposed */Block.__(5, [partnerRemovalProposed(supporter, toBeRemoved)]);
-  var partial_arg$1 = supporter[/* issuerKeyPair */2];
-  return (function (param) {
-      return appendEvent(partial_arg$1, partial_arg, param);
-    });
+function withPartnerRemovalProposed(supporter, toBeRemoved, l) {
+  var lastPartnerAccepted = Js_option.getExn(Curry._3(EventLog.reduce, (function (res, param) {
+              var $$event = param[/* event */0];
+              if ($$event.tag === 4) {
+                var $$event$1 = $$event[0];
+                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* id */1], toBeRemoved[/* userId */0])) {
+                  return /* Some */[$$event$1];
+                } else {
+                  return res;
+                }
+              } else {
+                return res;
+              }
+            }), /* None */0, l[/* log */3]));
+  return appendEvent(supporter[/* issuerKeyPair */2], /* PartnerRemovalProposed */Block.__(5, [partnerRemovalProposed(lastPartnerAccepted, supporter, toBeRemoved)]), l);
 }
 
 function withPartnerRemovalEndorsed(supporter, proposal) {
@@ -296,7 +305,7 @@ function withPartnerRemovalAccepted(proposal) {
 
 function withPartnerRemoved(user, supporters, log) {
   if (supporters) {
-    var log$1 = withPartnerRemovalProposed(supporters[0], user)(log);
+    var log$1 = withPartnerRemovalProposed(supporters[0], user, log);
     var proposal = Event.getPartnerRemovalProposedExn(lastEvent(log$1));
     return withPartnerRemovalAccepted(proposal)(List.fold_left((function (log, supporter) {
                       return withPartnerRemovalEndorsed(supporter, proposal)(log);

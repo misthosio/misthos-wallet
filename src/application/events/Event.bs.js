@@ -116,8 +116,8 @@ function encode$1($$event) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "lastRemoval",
-                    Json_encode.nullable(PrimitiveTypes.ProcessId[/* encode */2], $$event[/* lastRemoval */0])
+                    "lastPartnerRemovalProcess",
+                    Json_encode.nullable(PrimitiveTypes.ProcessId[/* encode */2], $$event[/* lastPartnerRemovalProcess */0])
                   ],
                   /* [] */0
                 ]
@@ -128,7 +128,7 @@ function encode$1($$event) {
 function decode$1(raw) {
   var partial_arg = PrimitiveTypes.ProcessId[/* decode */3];
   return /* record */[
-          /* lastRemoval */Json_decode.field("lastRemoval", (function (param) {
+          /* lastPartnerRemovalProcess */Json_decode.field("lastPartnerRemovalProcess", (function (param) {
                   return Json_decode.optional(partial_arg, param);
                 }), raw),
           /* id */Json_decode.field("id", PrimitiveTypes.UserId[/* decode */3], raw),
@@ -157,12 +157,21 @@ function encode$2($$event) {
                 "id",
                 PrimitiveTypes.UserId[/* encode */2]($$event[/* id */0])
               ],
-              /* [] */0
+              /* :: */[
+                /* tuple */[
+                  "lastPartnerProcess",
+                  PrimitiveTypes.ProcessId[/* encode */2]($$event[/* lastPartnerProcess */1])
+                ],
+                /* [] */0
+              ]
             ]);
 }
 
 function decode$2(raw) {
-  return /* record */[/* id */Json_decode.field("id", PrimitiveTypes.UserId[/* decode */3], raw)];
+  return /* record */[
+          /* id */Json_decode.field("id", PrimitiveTypes.UserId[/* decode */3], raw),
+          /* lastPartnerProcess */Json_decode.field("lastPartnerProcess", PrimitiveTypes.ProcessId[/* decode */3], raw)
+        ];
 }
 
 var Data$1 = /* module */[
@@ -778,7 +787,7 @@ var IncomeDetected = /* module */[
 var BadData = Caml_exceptions.create("Event.BadData");
 
 function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
-  var lastRemovalProcess = Utils.mapOption((function (param) {
+  var lastPartnerRemovalProcess = Utils.mapOption((function (param) {
           if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* id */0], prospectId)) {
             throw [
                   BadData,
@@ -792,16 +801,28 @@ function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemova
                       p,
                       /* [] */0
                     ];
-            }), lastRemovalProcess));
+            }), lastPartnerRemovalProcess));
   return /* PartnerProposed */Block.__(1, [Curry._5(Proposed[/* make */0], /* None */0, /* Some */[dependsOnCompletions], supporterId, policy, /* record */[
-                  /* lastRemoval */lastRemovalProcess,
+                  /* lastPartnerRemovalProcess */lastPartnerRemovalProcess,
                   /* id */prospectId,
                   /* pubKey */prospectPubKey
                 ])]);
 }
 
-function makePartnerRemovalProposed(supporterId, partnerId, policy) {
-  return /* PartnerRemovalProposed */Block.__(5, [Curry._5(Proposed$1[/* make */0], /* None */0, /* None */0, supporterId, policy, /* record */[/* id */partnerId])]);
+function makePartnerRemovalProposed(lastPartnerAccepted, supporterId, partnerId, policy) {
+  if (PrimitiveTypes.UserId[/* neq */6](lastPartnerAccepted[/* data */2][/* id */1], partnerId)) {
+    throw [
+          BadData,
+          "The provided PartnerAccepted wasn't for the same partner"
+        ];
+  }
+  return /* PartnerRemovalProposed */Block.__(5, [Curry._5(Proposed$1[/* make */0], /* None */0, /* Some */[/* :: */[
+                    lastPartnerAccepted[/* processId */0],
+                    /* [] */0
+                  ]], supporterId, policy, /* record */[
+                  /* id */partnerId,
+                  /* lastPartnerProcess */lastPartnerAccepted[/* processId */0]
+                ])]);
 }
 
 function makeAccountCreationProposed(supporterId, name, accountIdx, policy) {

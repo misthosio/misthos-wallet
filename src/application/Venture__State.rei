@@ -18,6 +18,8 @@ let custodianAcceptedFor: (userId, t) => option(Custodian.Accepted.t);
 
 let lastRemovalOfPartner: (userId, t) => option(Partner.Removal.Accepted.t);
 
+let lastPartnerAccepted: (userId, t) => Partner.Accepted.t;
+
 let custodianProcessForPartnerProcess: (processId, t) => processId;
 
 let custodianRemovalProcessForPartnerRemovalProcess:
