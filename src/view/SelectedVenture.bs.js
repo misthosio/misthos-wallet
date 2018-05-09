@@ -14,6 +14,7 @@ var Router = require("./Router.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Partner = require("./components/Partner.bs.js");
 var ViewModel = require("./ViewModel.bs.js");
+var LinkButton = require("./components/LinkButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -144,7 +145,7 @@ function make(initialViewModel, session, commands, _) {
                                       onClick: (function () {
                                           return Curry._1(send, /* ProposePartner */0);
                                         })
-                                    }, Utils.text("Propose Partner"))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
+                                    }, Utils.text("Propose Partner")), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* ManagePartners */Block.__(2, [ViewModel.ventureId(state[/* viewModel */0])]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
                                       onClick: (function () {
                                           return Curry._1(send, /* GetIncomeAddress */1);
                                         })

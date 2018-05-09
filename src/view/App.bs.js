@@ -2,6 +2,7 @@
 'use strict';
 
 var Home = require("./Home.bs.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Drawer = require("./Drawer.bs.js");
 var Layout = require("./Layout.bs.js");
@@ -21,6 +22,20 @@ function make(session, updateSession, _) {
   };
   var onSignOut = function () {
     return Curry._1(updateSession, /* SignOut */1);
+  };
+  var modal = function (currentRoute) {
+    if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag !== 2) {
+      return /* None */0;
+    } else {
+      var selected = currentRoute[0];
+      return /* Some */[/* tuple */[
+                ReasonReact.element(/* None */0, /* None */0, Spinner.make("manage partners", /* array */[])),
+                (function (param) {
+                    var ventureId = selected;
+                    return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [ventureId])));
+                  })
+              ]];
+    }
   };
   var drawer = function (index, currentRoute) {
     var exit = 0;
@@ -49,19 +64,36 @@ function make(session, updateSession, _) {
       } else {
         return ReasonReact.element(/* None */0, /* None */0, PublicHome.make(onSignIn, /* array */[]));
       }
-    } else if (typeof currentRoute === "number") {
-      switch (currentRoute) {
-        case 0 : 
-            return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, /* array */[]));
-        case 1 : 
-            return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
-        case 2 : 
-            exit$1 = 2;
-            break;
-        
-      }
     } else {
-      exit = 1;
+      var exit$2 = 0;
+      if (typeof currentRoute === "number") {
+        switch (currentRoute) {
+          case 0 : 
+              exit$2 = 3;
+              break;
+          case 1 : 
+              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
+          case 2 : 
+              exit$1 = 2;
+              break;
+          
+        }
+      } else {
+        switch (currentRoute.tag | 0) {
+          case 0 : 
+          case 1 : 
+              exit = 1;
+              break;
+          case 2 : 
+              exit$2 = 3;
+              break;
+          
+        }
+      }
+      if (exit$2 === 3) {
+        return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, /* array */[]));
+      }
+      
     }
     if (exit$1 === 2) {
       if (typeof currentRoute === "number" && currentRoute >= 2) {
@@ -74,7 +106,7 @@ function make(session, updateSession, _) {
       if (typeof session === "number") {
         if (session !== 1) {
           if (session >= 3) {
-            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("You have signed in with a blockstack user that doesn't have a registered blockstack.id, make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.", /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("\n             You have signed in with a blockstack user that doesn\'t have a registered blockstack.id,\n             make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.\n             ", /* array */[]));
           } else {
             return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading", /* array */[]));
           }
@@ -100,7 +132,7 @@ function make(session, updateSession, _) {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Curry._1(Router.Container[/* make */1], (function (currentRoute) {
                                 return ReasonReact.element(/* None */0, /* None */0, VentureStore.make(currentRoute, session, (function (index, selectedVenture, createVenture) {
-                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), body(selectedVenture, createVenture, currentRoute)));
+                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(currentRoute), body(selectedVenture, createVenture, currentRoute)));
                                                 })));
                               })));
             }),

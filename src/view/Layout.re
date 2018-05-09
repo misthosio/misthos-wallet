@@ -6,7 +6,7 @@ type action =
   | OpenDrawer
   | CloseDrawer;
 
-type state = {open_: bool};
+type state = {drawerOpen: bool};
 
 let component = ReasonReact.reducerComponent("Layout");
 
@@ -33,13 +33,13 @@ module Styles = {
   let drawer = style([width(`px(440)), flex(1)]);
 };
 
-let make = (~drawer, children) => {
+let make = (~drawer, ~modal, children) => {
   ...component,
-  initialState: () => {open_: false},
+  initialState: () => {drawerOpen: false},
   reducer: (action, _state) =>
     switch (action) {
-    | OpenDrawer => ReasonReact.Update({open_: true})
-    | CloseDrawer => ReasonReact.Update({open_: false})
+    | OpenDrawer => ReasonReact.Update({drawerOpen: true})
+    | CloseDrawer => ReasonReact.Update({drawerOpen: false})
     },
   render: ({send, state}) =>
     MaterialUi.(
@@ -49,7 +49,7 @@ let make = (~drawer, children) => {
           <div className=Styles.container>
             (
               switch (drawer) {
-              | None => <div />
+              | None => ReasonReact.null
               | Some(drawer) =>
                 <AppBar position=`Static className=Styles.appBar>
                   <Toolbar>
@@ -65,7 +65,7 @@ let make = (~drawer, children) => {
                     variant=`Temporary
                     anchor=`Right
                     onClose=(() => send(CloseDrawer))
-                    _open=state.open_>
+                    _open=state.drawerOpen>
                     <div
                       className=Styles.drawer
                       tabIndex=0
@@ -75,6 +75,18 @@ let make = (~drawer, children) => {
                     </div>
                   </Drawer>
                 </AppBar>
+              }
+            )
+            (
+              switch (modal) {
+              | None => ReasonReact.null
+              | Some((modal, onClose)) =>
+                <Modal _open=true onClose>
+                  <Paper>
+                    <MButton onClick=onClose> ("X" |> Utils.text) </MButton>
+                    modal
+                  </Paper>
+                </Modal>
               }
             )
             <Grid

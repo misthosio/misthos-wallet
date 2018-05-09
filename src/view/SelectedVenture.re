@@ -324,6 +324,11 @@ let make =
           <button onClick=(_e => send(ProposePartner))>
             (text("Propose Partner"))
           </button>
+          <LinkButton
+            fullWidth=true
+            route=(ManagePartners(ViewModel.ventureId(state.viewModel)))>
+            ("Add or Remove Partners" |> Utils.text)
+          </LinkButton>
         </div>
       body3=
         <div>

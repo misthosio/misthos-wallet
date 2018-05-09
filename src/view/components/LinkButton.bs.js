@@ -7,7 +7,8 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("LinkButton");
 
-function make(route, children) {
+function make(route, $staropt$star, children) {
+  var fullWidth = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -23,7 +24,7 @@ function make(route, children) {
               return ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function ($$event) {
                                   $$event.preventDefault();
                                   return ReasonReact.Router[/* push */0](href);
-                                })], /* None */0, /* array */[children]));
+                                })], /* Some */[fullWidth], /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

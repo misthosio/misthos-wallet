@@ -198,6 +198,8 @@ let init = Array.fold_left((m, item) => m |> apply(item), make());
 let applyAll = (events, model) =>
   events |> Array.fold_left((m, item) => m |> apply(item), model);
 
+let ventureId = state => state.ventureId;
+
 let partners = state => state.partners;
 
 let prospects = state => state.prospects;

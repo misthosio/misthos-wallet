@@ -29,18 +29,25 @@ function routeFromUrl(url) {
             if (exit === 1) {
               var match$2 = match$1[1];
               if (match$2) {
-                if (match$2[0] === "joinvia") {
-                  var match$3 = match$2[1];
-                  if (match$3 && !match$3[1]) {
-                    return /* JoinVenture */Block.__(1, [
-                              PrimitiveTypes.VentureId[/* fromString */1](id),
-                              PrimitiveTypes.UserId[/* fromString */1](match$3[0])
-                            ]);
-                  } else {
+                switch (match$2[0]) {
+                  case "joinvia" : 
+                      var match$3 = match$2[1];
+                      if (match$3 && !match$3[1]) {
+                        return /* JoinVenture */Block.__(1, [
+                                  PrimitiveTypes.VentureId[/* fromString */1](id),
+                                  PrimitiveTypes.UserId[/* fromString */1](match$3[0])
+                                ]);
+                      } else {
+                        return /* Home */0;
+                      }
+                  case "partners" : 
+                      if (match$2[1]) {
+                        return /* Home */0;
+                      } else {
+                        return /* ManagePartners */Block.__(2, [PrimitiveTypes.VentureId[/* fromString */1](id)]);
+                      }
+                  default:
                     return /* Home */0;
-                  }
-                } else {
-                  return /* Home */0;
                 }
               } else {
                 return /* Venture */Block.__(0, [PrimitiveTypes.VentureId[/* fromString */1](id)]);
@@ -70,10 +77,16 @@ function routeToUrl(route) {
           return "/typographystack";
       
     }
-  } else if (route.tag) {
-    return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](route[0]) + ("/joinvia/" + PrimitiveTypes.UserId[/* toString */0](route[1])));
   } else {
-    return "/ventures/" + PrimitiveTypes.VentureId[/* toString */0](route[0]);
+    switch (route.tag | 0) {
+      case 0 : 
+          return "/ventures/" + PrimitiveTypes.VentureId[/* toString */0](route[0]);
+      case 1 : 
+          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](route[0]) + ("/joinvia/" + PrimitiveTypes.UserId[/* toString */0](route[1])));
+      case 2 : 
+          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](route[0]) + "/partners");
+      
+    }
   }
 }
 

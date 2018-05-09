@@ -449,6 +449,10 @@ function applyAll(events, model) {
               }), model, events);
 }
 
+function ventureId(state) {
+  return state[/* ventureId */0];
+}
+
 function partners(state) {
   return state[/* partners */3];
 }
@@ -493,6 +497,7 @@ exports.make = make;
 exports.apply = apply;
 exports.init = init;
 exports.applyAll = applyAll;
+exports.ventureId = ventureId;
 exports.partners = partners;
 exports.prospects = prospects;
 exports.removalProspects = removalProspects;

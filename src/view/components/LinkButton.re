@@ -1,10 +1,11 @@
 let component = ReasonReact.statelessComponent("LinkButton");
 
-let make = (~route, children) => {
+let make = (~route, ~fullWidth=false, children) => {
   ...component,
   render: _self => {
     let href = Router.Config.routeToUrl(route);
     <MButton
+      fullWidth
       onClick=(
         event => {
           ReactEventRe.Synthetic.preventDefault(event);
