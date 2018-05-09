@@ -94,6 +94,13 @@ let make =
       ReasonReact.array(
         Array.of_list(
           ViewModel.partners(state.viewModel)
+          |> List.map((partner: ViewModel.partner) => <Partner partner />),
+        ),
+      );
+    let partnersOld =
+      ReasonReact.array(
+        Array.of_list(
+          ViewModel.partners(state.viewModel)
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
                  <div>
@@ -302,7 +309,8 @@ let make =
                  ),
             )
           )
-          <ul> partners </ul>
+          <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
+          <ul> partnersOld </ul>
           <h4> (text("Prospects:")) </h4>
           <ul> prospects </ul>
           <h4> (text("To be removed:")) </h4>

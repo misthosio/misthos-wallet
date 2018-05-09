@@ -4,7 +4,10 @@ open WalletTypes;
 
 module Wallet = ViewModel__WalletState;
 
-type partner = {userId};
+type partner = {
+  userId,
+  name: option(string),
+};
 
 type prospect = {
   processId,
@@ -79,7 +82,7 @@ let apply = (event: Event.t, state) => {
     }
   | PartnerAccepted({data}) => {
       ...state,
-      partners: [{userId: data.id}, ...state.partners],
+      partners: [{userId: data.id, name: None}, ...state.partners],
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id)),
     }

@@ -12,7 +12,9 @@ var React = require("react");
 var Payout = require("./components/Payout.bs.js");
 var Router = require("./Router.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var Partner = require("./components/Partner.bs.js");
 var ViewModel = require("./ViewModel.bs.js");
+var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
@@ -45,7 +47,10 @@ function make(initialViewModel, session, commands, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var state = param[/* state */1];
-              var partners = $$Array.of_list(List.map((function (m) {
+              var partners = $$Array.of_list(List.map((function (partner) {
+                          return ReasonReact.element(/* None */0, /* None */0, Partner.make(partner, /* array */[]));
+                        }), ViewModel.partners(state[/* viewModel */0])));
+              var partnersOld = $$Array.of_list(List.map((function (m) {
                           var match = PrimitiveTypes.UserId[/* eq */5](session[/* userId */0], m[/* userId */0]);
                           var match$1 = List.exists((function (p) {
                                   return PrimitiveTypes.UserId[/* eq */5](p[/* userId */1], m[/* userId */0]);
@@ -128,7 +133,7 @@ function make(initialViewModel, session, commands, _) {
                                         ]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, Utils.text("Join Venture url: " + (window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                                               initialViewModel[/* ventureId */0],
                                               session[/* userId */0]
-                                            ])))), React.createElement("ul", undefined, partners), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), React.createElement("input", {
+                                            ])))), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), React.createElement("input", {
                                       autoFocus: false,
                                       placeholder: "BlockstackId",
                                       value: state[/* prospectId */2],
