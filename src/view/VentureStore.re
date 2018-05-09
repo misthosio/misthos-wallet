@@ -46,6 +46,8 @@ let loadVentureAndIndex =
   switch (session, currentRoute: Router.Config.route, selectedVenture) {
   | (LoggedIn(_), Venture(ventureId), VentureLoaded(loadedId, _, _))
       when VentureId.eq(ventureId, loadedId) => selectedVenture
+  | (LoggedIn(_), ManagePartners(ventureId), VentureLoaded(loadedId, _, _))
+      when VentureId.eq(ventureId, loadedId) => selectedVenture
   | (LoggedIn(_), Venture(ventureId), VentureLoaded(loadedId, _, _))
       when VentureId.neq(ventureId, loadedId) =>
     ventureWorker^ |> VentureWorkerClient.load(~ventureId);

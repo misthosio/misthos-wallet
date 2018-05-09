@@ -53,8 +53,13 @@ function loadVentureAndIndex(session, currentRoute, param) {
           var ventureId$1 = currentRoute[0];
           VentureWorkerClient.joinVia(ventureId$1, currentRoute[1], ventureWorker[0]);
           return /* JoiningVenture */Block.__(0, [ventureId$1]);
-      default:
-        return /* None */0;
+      case 2 : 
+          if (typeof selectedVenture === "number" || !(selectedVenture.tag === 2 && PrimitiveTypes.VentureId[/* eq */5](currentRoute[0], selectedVenture[0]))) {
+            return /* None */0;
+          } else {
+            return selectedVenture;
+          }
+      
     }
   }
 }
