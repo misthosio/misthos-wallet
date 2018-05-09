@@ -2,8 +2,6 @@ open Jest;
 
 open PrimitiveTypes;
 
-open WalletTypes;
-
 open Event;
 
 open ValidationHelpers;
