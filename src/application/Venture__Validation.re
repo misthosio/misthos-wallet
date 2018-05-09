@@ -466,15 +466,31 @@ let validatePartnerRemovalData =
   };
 
 let validateCustodianData =
-    ({partnerApprovalProcess, partnerId}: Custodian.Data.t, {partnerData}) =>
-  try (
-    {
-      let pData = partnerData |> List.assoc(partnerApprovalProcess) |> snd;
-      UserId.eq(pData.id, partnerId) ?
-        Ok : BadData("Partner with Id 'custodian.id' doesn't exist");
-    }
-  ) {
-  | Not_found => BadData("Partner with Id 'custodian.id' doesn't exist")
+    (
+      {accountIdx, partnerApprovalProcess, partnerId}: Custodian.Data.t,
+      {accountCreationData, partnerData},
+    ) =>
+  if (accountCreationData
+      |>
+      List.exists(((_, (_, accountData: AccountCreation.Data.t))) =>
+        AccountIndex.eq(accountData.accountIdx, accountIdx)
+      ) == false) {
+    BadData("account doesn't exist");
+  } else {
+    try (
+      {
+        let pData = partnerData |> List.assoc(partnerApprovalProcess) |> snd;
+        UserId.eq(pData.id, partnerId) ?
+          Ok :
+          BadData(
+            "Partner with Id '"
+            ++ UserId.toString(partnerId)
+            ++ "' doesn't exist",
+          );
+      }
+    ) {
+    | Not_found => BadData("partner approval process doesn't exist")
+    };
   };
 
 let validateCustodianRemovalData =

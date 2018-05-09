@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../../src/application/events/Event.bs.js");
 var Policy = require("../../src/application/Policy.bs.js");
 var Generators = require("../helpers/Generators.bs.js");
+var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var Venture__Validation = require("../../src/application/Venture__Validation.bs.js");
@@ -430,7 +431,7 @@ describe("PartnerRemovalProposal", (function () {
                     ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)));
                 return testValidationResult(constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerRemovalProposed */16](user1, user2, log)), /* Ok */0);
               }));
-        describe("validate Data", (function () {
+        describe("validatePartnerRemovalData", (function () {
                 describe("when the prospect is not a partner", (function () {
                         var match = Generators.twoUserSessions(/* () */0);
                         var user2 = match[1];
@@ -453,6 +454,66 @@ describe("PartnerRemovalProposal", (function () {
                                     /* id */user2[/* userId */0],
                                     /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */7](/* () */0)
                                   ], /* BadData */["lastPartnerProcess doesn't match"]);
+                      }));
+                return /* () */0;
+              }));
+        return /* () */0;
+      }));
+
+describe("CustodianProposed", (function () {
+        describe("when proposing a custodian partner", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withPartner */14](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withCustodian */26](user1, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))));
+                return testValidationResult(constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withCustodianProposed */23](user1, user2, log)), /* Ok */0);
+              }));
+        describe("validateCustodianData", (function () {
+                describe("when the custodian is not a partner", (function () {
+                        var match = Generators.threeUserSessions(/* () */0);
+                        var user3 = match[2];
+                        var user1 = match[0];
+                        var log = Generators.Log[/* withPartner */14](match[1], /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))));
+                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */4](log));
+                        return testDataValidation(Venture__Validation.validateCustodianData, constructState(log), /* record */[
+                                    /* partnerId */user3[/* userId */0],
+                                    /* partnerApprovalProcess */partnerApproval[/* processId */0],
+                                    /* accountIdx */WalletTypes.AccountIndex[/* default */9]
+                                  ], /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](user3[/* userId */0]) + "' doesn't exist")]);
+                      }));
+                describe("when the partner approval process reference is wrong", (function () {
+                        var match = Generators.twoUserSessions(/* () */0);
+                        var user2 = match[1];
+                        var user1 = match[0];
+                        var log = Generators.Log[/* withPartner */14](user2, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))));
+                        return testDataValidation(Venture__Validation.validateCustodianData, constructState(log), /* record */[
+                                    /* partnerId */user2[/* userId */0],
+                                    /* partnerApprovalProcess */PrimitiveTypes.ProcessId[/* make */7](/* () */0),
+                                    /* accountIdx */WalletTypes.AccountIndex[/* default */9]
+                                  ], /* BadData */["partner approval process doesn't exist"]);
+                      }));
+                describe("when the account doesn't exist", (function () {
+                        var match = Generators.twoUserSessions(/* () */0);
+                        var user1 = match[0];
+                        var log = Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1));
+                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */4](log));
+                        return testDataValidation(Venture__Validation.validateCustodianData, constructState(log), /* record */[
+                                    /* partnerId */user1[/* userId */0],
+                                    /* partnerApprovalProcess */partnerApproval[/* processId */0],
+                                    /* accountIdx */WalletTypes.AccountIndex[/* default */9]
+                                  ], /* BadData */["account doesn't exist"]);
                       }));
                 return /* () */0;
               }));

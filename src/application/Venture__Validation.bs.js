@@ -944,20 +944,28 @@ function validatePartnerRemovalData(param, param$1) {
 }
 
 function validateCustodianData(param, param$1) {
-  try {
-    var pData = List.assoc(param[/* partnerApprovalProcess */1], param$1[/* partnerData */5])[1];
-    var match = PrimitiveTypes.UserId[/* eq */5](pData[/* id */1], param[/* partnerId */0]);
-    if (match) {
-      return /* Ok */0;
-    } else {
-      return /* BadData */["Partner with Id 'custodian.id' doesn't exist"];
+  var accountIdx = param[/* accountIdx */2];
+  var partnerId = param[/* partnerId */0];
+  if (List.exists((function (param) {
+            return WalletTypes.AccountIndex[/* eq */7](param[1][1][/* accountIdx */0], accountIdx);
+          }), param$1[/* accountCreationData */11]) === false) {
+    return /* BadData */["account doesn't exist"];
+  } else {
+    try {
+      var pData = List.assoc(param[/* partnerApprovalProcess */1], param$1[/* partnerData */5])[1];
+      var match = PrimitiveTypes.UserId[/* eq */5](pData[/* id */1], partnerId);
+      if (match) {
+        return /* Ok */0;
+      } else {
+        return /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](partnerId) + "' doesn't exist")];
+      }
     }
-  }
-  catch (exn){
-    if (exn === Caml_builtin_exceptions.not_found) {
-      return /* BadData */["Partner with Id 'custodian.id' doesn't exist"];
-    } else {
-      throw exn;
+    catch (exn){
+      if (exn === Caml_builtin_exceptions.not_found) {
+        return /* BadData */["partner approval process doesn't exist"];
+      } else {
+        throw exn;
+      }
     }
   }
 }
