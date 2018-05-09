@@ -3,6 +3,7 @@
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../../src/utils/Utils.bs.js");
 var Generators = require("./Generators.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var Venture__Validation = require("../../src/application/Venture__Validation.bs.js");
@@ -44,6 +45,10 @@ function testDataValidation(dataValidation, state, data, expected) {
               }));
 }
 
+function withIssuer(issuer, dataValidation, data, state) {
+  return Curry._3(dataValidation, data, state, Utils.publicKeyFromKeyPair(issuer[/* issuerKeyPair */2]));
+}
+
 var G = 0;
 
 var E = 0;
@@ -60,4 +65,5 @@ exports.TestingInvalidSequence = TestingInvalidSequence;
 exports.constructState = constructState;
 exports.testValidationResult = testValidationResult;
 exports.testDataValidation = testDataValidation;
+exports.withIssuer = withIssuer;
 /* Jest Not a pure module */

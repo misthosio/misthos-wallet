@@ -45,3 +45,16 @@ let testDataValidation =
     |> toEqual(description)
   );
 };
+
+let withIssuer =
+    (
+      issuer: Session.Data.t,
+      dataValidation: ('a, Validation.t, string) => Validation.result,
+      data,
+      state,
+    ) =>
+  dataValidation(
+    data,
+    state,
+    issuer.issuerKeyPair |> Utils.publicKeyFromKeyPair,
+  );

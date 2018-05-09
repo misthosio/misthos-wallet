@@ -9,8 +9,23 @@ open Event;
 open ValidationHelpers;
 
 let () =
-  describe("CustodianProposed", () => {
-    describe("when proposing a custodian", () => {
+  describe("CustodianKeyChainUpdate", () => {
+    describe("when everything is fine", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(log |> withCustodianKeyChain(user1) |> lastItem),
+        Validation.Ok,
+      );
+    });
+    describe("when the signer doesn't match the custodianId", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
         L.(
@@ -22,15 +37,62 @@ let () =
         );
       testValidationResult(
         log |> constructState,
-        L.(
-          log
-          |> withCustodianProposed(~supporter=user1, ~custodian=user2)
-          |> lastItem
-        ),
-        Validation.Ok,
+        L.(log |> withCustodianKeyChain(~issuer=user2, user1) |> lastItem),
+        Validation.InvalidIssuer,
       );
     });
-    describe("when proposing a custodian after removal", () => {
+    describe("when the custodianApprovalProcess doesn't exist", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+        );
+      testDataValidation(
+        Validation.validateCustodianKeyChainUpdated |> withIssuer(user1),
+        log |> constructState,
+        CustodianKeyChainUpdated.{
+          custodianApprovalProcess: ProcessId.make(),
+          custodianId: user1.userId,
+          keyChain:
+            G.custodianKeyChain(
+              ~ventureId=log |> L.ventureId,
+              ~keyChainIdx=0,
+              user1,
+            ),
+        },
+        Validation.BadData("Bad custodianApprovalProcess"),
+      );
+    });
+    describe("when the custodianApprovalProcess isn't completed", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodianProposed(~supporter=user1, ~custodian=user1)
+        );
+      let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+      testDataValidation(
+        Validation.validateCustodianKeyChainUpdated |> withIssuer(user1),
+        log |> constructState,
+        CustodianKeyChainUpdated.{
+          custodianApprovalProcess: proposal.processId,
+          custodianId: user1.userId,
+          keyChain:
+            G.custodianKeyChain(
+              ~ventureId=log |> L.ventureId,
+              ~keyChainIdx=0,
+              user1,
+            ),
+        },
+        Validation.BadData("Bad custodianApprovalProcess"),
+      );
+    });
+    describe("when the custodian approval process is for another user", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
         L.(
@@ -38,114 +100,77 @@ let () =
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
-          |> withPartner(user2, ~supporters=[user1])
-          |> withCustodian(user2, ~supporters=[user1, user2])
-          |> withCustodianRemoved(user2, ~supporters=[user1, user2])
         );
-      testValidationResult(
+      let accepted = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      let log = log |> L.withPartner(user2, ~supporters=[user1]);
+      testDataValidation(
+        Validation.validateCustodianKeyChainUpdated |> withIssuer(user2),
         log |> constructState,
-        L.(
-          log
-          |> withCustodianProposed(~supporter=user1, ~custodian=user2)
-          |> lastItem
-        ),
-        Validation.Ok,
+        CustodianKeyChainUpdated.{
+          custodianApprovalProcess: accepted.processId,
+          custodianId: user2.userId,
+          keyChain:
+            G.custodianKeyChain(
+              ~ventureId=log |> L.ventureId,
+              ~keyChainIdx=0,
+              user1,
+            ),
+        },
+        Validation.BadData("CustodianApprovalProcess is for another partner"),
       );
     });
-    describe("validateCustodianData", () => {
-      describe("when the custodian is not a partner", () => {
-        let (user1, user2, user3) = G.threeUserSessions();
-        let log =
-          L.(
-            createVenture(user1)
-            |> withFirstPartner(user1)
-            |> withAccount(~supporter=user1)
-            |> withPartner(user2, ~supporters=[user1])
-          );
-        let partnerApproval =
-          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-        testDataValidation(
-          Validation.validateCustodianData,
-          log |> constructState,
-          Custodian.Data.{
-            lastCustodianRemovalProcess: None,
-            partnerId: user3.userId,
-            partnerApprovalProcess: partnerApproval.processId,
-            accountIdx: AccountIndex.default,
-          },
-          Validation.BadData(
-            "Partner approval process doesn't match user id",
-          ),
+    describe("when the account doesn't exist", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
         );
-      });
-      describe("when the partner approval process reference is wrong", () => {
-        let (user1, user2) = G.twoUserSessions();
-        let log =
-          L.(
-            createVenture(user1)
-            |> withFirstPartner(user1)
-            |> withAccount(~supporter=user1)
-            |> withPartner(user2, ~supporters=[user1])
-          );
-        testDataValidation(
-          Validation.validateCustodianData,
-          log |> constructState,
-          Custodian.Data.{
-            lastCustodianRemovalProcess: None,
-            partnerId: user2.userId,
-            partnerApprovalProcess: ProcessId.make(),
-            accountIdx: AccountIndex.default,
-          },
-          Validation.BadData("partner approval process doesn't exist"),
+      let accepted = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      testDataValidation(
+        Validation.validateCustodianKeyChainUpdated |> withIssuer(user1),
+        log |> constructState,
+        CustodianKeyChainUpdated.{
+          custodianApprovalProcess: accepted.processId,
+          custodianId: user1.userId,
+          keyChain:
+            G.custodianKeyChain(
+              ~accountIdx=1 |> AccountIndex.fromInt,
+              ~ventureId=log |> L.ventureId,
+              ~keyChainIdx=0,
+              user1,
+            ),
+        },
+        Validation.BadData("Account doesn't exist"),
+      );
+    });
+    describe("when the key chain index isn't in order", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
         );
-      });
-      describe("when the account doesn't exist", () => {
-        let (user1, _user2) = G.twoUserSessions();
-        let log = L.(createVenture(user1) |> withFirstPartner(user1));
-        let partnerApproval =
-          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-        testDataValidation(
-          Validation.validateCustodianData,
-          log |> constructState,
-          Custodian.Data.{
-            lastCustodianRemovalProcess: None,
-            partnerId: user1.userId,
-            partnerApprovalProcess: partnerApproval.processId,
-            accountIdx: AccountIndex.default,
-          },
-          Validation.BadData("account doesn't exist"),
-        );
-      });
-      describe("when lastCustodianRemovalProcess doesn't match", () => {
-        let (user1, user2) = G.twoUserSessions();
-        let log =
-          L.(
-            createVenture(user1)
-            |> withFirstPartner(user1)
-            |> withAccount(~supporter=user1)
-            |> withCustodian(user1, ~supporters=[user1])
-            |> withPartner(user2, ~supporters=[user1])
-          );
-        let partnerApproval =
-          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-        let log =
-          L.(
-            log
-            |> withCustodian(user2, ~supporters=[user1, user2])
-            |> withCustodianRemoved(user2, ~supporters=[user1])
-          );
-        testDataValidation(
-          Validation.validateCustodianData,
-          log |> constructState,
-          Custodian.Data.{
-            lastCustodianRemovalProcess: None,
-            partnerId: user2.userId,
-            partnerApprovalProcess: partnerApproval.processId,
-            accountIdx: AccountIndex.default,
-          },
-          Validation.BadData("Last removal doesn't match"),
-        );
-      });
+      let accepted = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+      testDataValidation(
+        Validation.validateCustodianKeyChainUpdated |> withIssuer(user1),
+        log |> constructState,
+        CustodianKeyChainUpdated.{
+          custodianApprovalProcess: accepted.processId,
+          custodianId: user1.userId,
+          keyChain:
+            G.custodianKeyChain(
+              ~ventureId=log |> L.ventureId,
+              ~keyChainIdx=1,
+              user1,
+            ),
+        },
+        Validation.BadData("CustodianKeyChainIndex isn't in order"),
+      );
     });
   });
 /* describe("Validate AccountKeyChainUpdated", () => { */

@@ -537,9 +537,10 @@ let validateAccountCreationData =
 
 let validateCustodianKeyChainUpdated =
     (
-      {custodianId, keyChain}: CustodianKeyChainUpdated.t,
+      {custodianApprovalProcess, custodianId, keyChain}: CustodianKeyChainUpdated.t,
       {
         currentPartnerPubKeys,
+        accountCreationData,
         custodianData,
         completedProcesses,
         custodianKeyChains,
@@ -547,38 +548,48 @@ let validateCustodianKeyChainUpdated =
       issuerPubKey,
     ) =>
   if (UserId.neq(
-        currentPartnerPubKeys |> List.assoc(issuerPubKey),
+        try (currentPartnerPubKeys |> List.assoc(issuerPubKey)) {
+        | Not_found => UserId.fromString("impossible")
+        },
         custodianId,
       )) {
     InvalidIssuer;
   } else {
-    try (
-      {
-        let (process, _data) =
-          custodianData
-          |> List.find(((_pId, (_, data: Custodian.Data.t))) =>
-               UserId.eq(data.partnerId, custodianId)
-               && data.accountIdx == CustodianKeyChain.accountIdx(keyChain)
-             );
-        if (completedProcesses |> List.mem(process)) {
-          if (custodianKeyChains
-              |> List.assoc(custodianId)
-              |> List.assoc(CustodianKeyChain.accountIdx(keyChain))
-              |>
-              List.length != (
-                               CustodianKeyChain.keyChainIdx(keyChain)
-                               |> CustodianKeyChainIndex.toInt
-                             )) {
-            BadData("Bad KeyChainIndex");
-          } else {
-            Ok;
-          };
-        } else {
-          BadData("Custodian isn't accepted yet");
-        };
-      }
-    ) {
-    | Not_found => BadData("Custodian doesn't exist")
+    let accountIdx = keyChain |> CustodianKeyChain.accountIdx;
+    let pId =
+      try (
+        accountCreationData
+        |> List.find(((_, (_, data: AccountCreation.Data.t))) =>
+             AccountIndex.eq(data.accountIdx, accountIdx)
+           )
+        |> fst
+      ) {
+      | Not_found => ProcessId.fromString("impossible")
+      };
+    if (completedProcesses |> List.mem(pId) == false) {
+      BadData("Account doesn't exist");
+    } else if (custodianData
+               |> List.mem_assoc(custodianApprovalProcess) == false
+               || completedProcesses
+               |> List.mem(custodianApprovalProcess) == false) {
+      BadData("Bad custodianApprovalProcess");
+    } else {
+      let (_, custodianData: Custodian.Data.t) =
+        custodianData |> List.assoc(custodianApprovalProcess);
+      if (UserId.neq(custodianData.partnerId, custodianId)) {
+        BadData("CustodianApprovalProcess is for another partner");
+      } else if (CustodianKeyChainIndex.neq(
+                   keyChain |> CustodianKeyChain.keyChainIdx,
+                   custodianKeyChains
+                   |> List.assoc(custodianId)
+                   |> List.assoc(accountIdx)
+                   |> List.length
+                   |> CustodianKeyChainIndex.fromInt,
+                 )) {
+        BadData("CustodianKeyChainIndex isn't in order");
+      } else {
+        Ok;
+      };
     };
   };
 

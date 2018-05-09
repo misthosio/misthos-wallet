@@ -1070,35 +1070,51 @@ function validateAccountCreationData(param, param$1) {
 }
 
 function validateCustodianKeyChainUpdated(param, param$1, issuerPubKey) {
+  var completedProcesses = param$1[/* completedProcesses */15];
+  var custodianData = param$1[/* custodianData */9];
   var keyChain = param[/* keyChain */2];
   var custodianId = param[/* custodianId */1];
-  if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$1[/* currentPartnerPubKeys */4]), custodianId)) {
+  var custodianApprovalProcess = param[/* custodianApprovalProcess */0];
+  var tmp;
+  try {
+    tmp = List.assoc(issuerPubKey, param$1[/* currentPartnerPubKeys */4]);
+  }
+  catch (exn){
+    if (exn === Caml_builtin_exceptions.not_found) {
+      tmp = PrimitiveTypes.UserId[/* fromString */1]("impossible");
+    } else {
+      throw exn;
+    }
+  }
+  if (PrimitiveTypes.UserId[/* neq */6](tmp, custodianId)) {
     return /* InvalidIssuer */2;
   } else {
+    var accountIdx = CustodianKeyChain.accountIdx(keyChain);
+    var pId;
     try {
-      var match = List.find((function (param) {
-              var data = param[1][1];
-              if (PrimitiveTypes.UserId[/* eq */5](data[/* partnerId */0], custodianId)) {
-                return Caml_obj.caml_equal(data[/* accountIdx */3], CustodianKeyChain.accountIdx(keyChain));
-              } else {
-                return false;
-              }
-            }), param$1[/* custodianData */9]);
-      if (List.mem(match[0], param$1[/* completedProcesses */15])) {
-        if (List.length(List.assoc(CustodianKeyChain.accountIdx(keyChain), List.assoc(custodianId, param$1[/* custodianKeyChains */18]))) !== WalletTypes.CustodianKeyChainIndex[/* toInt */0](CustodianKeyChain.keyChainIdx(keyChain))) {
-          return /* BadData */["Bad KeyChainIndex"];
-        } else {
-          return /* Ok */0;
-        }
+      pId = List.find((function (param) {
+                return WalletTypes.AccountIndex[/* eq */7](param[1][1][/* accountIdx */0], accountIdx);
+              }), param$1[/* accountCreationData */12])[0];
+    }
+    catch (exn$1){
+      if (exn$1 === Caml_builtin_exceptions.not_found) {
+        pId = PrimitiveTypes.ProcessId[/* fromString */1]("impossible");
       } else {
-        return /* BadData */["Custodian isn't accepted yet"];
+        throw exn$1;
       }
     }
-    catch (exn){
-      if (exn === Caml_builtin_exceptions.not_found) {
-        return /* BadData */["Custodian doesn't exist"];
+    if (List.mem(pId, completedProcesses) === false) {
+      return /* BadData */["Account doesn't exist"];
+    } else if (List.mem_assoc(custodianApprovalProcess, custodianData) === false || List.mem(custodianApprovalProcess, completedProcesses) === false) {
+      return /* BadData */["Bad custodianApprovalProcess"];
+    } else {
+      var match = List.assoc(custodianApprovalProcess, custodianData);
+      if (PrimitiveTypes.UserId[/* neq */6](match[1][/* partnerId */0], custodianId)) {
+        return /* BadData */["CustodianApprovalProcess is for another partner"];
+      } else if (WalletTypes.CustodianKeyChainIndex[/* neq */7](CustodianKeyChain.keyChainIdx(keyChain), WalletTypes.CustodianKeyChainIndex[/* fromInt */1](List.length(List.assoc(accountIdx, List.assoc(custodianId, param$1[/* custodianKeyChains */18])))))) {
+        return /* BadData */["CustodianKeyChainIndex isn't in order"];
       } else {
-        throw exn;
+        return /* Ok */0;
       }
     }
   }
