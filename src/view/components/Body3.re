@@ -6,7 +6,11 @@ module Styles = {
   let grid =
     cssUnsafe({
       "display": "grid",
-      "gridGap": "0 20px",
+      "gridGap":
+        (Theme.space(8) |> string_of_int)
+        ++ "px "
+        ++ (Theme.space(3) |> string_of_int)
+        ++ "px",
       "gridTemplateAreas": {|". body1 body1 body1 ." "title title title title title" ". body2 . body3 ."|},
       "gridTemplateColumns": "minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr)",
       "gridTemplateRows": "min-content min-content auto",
