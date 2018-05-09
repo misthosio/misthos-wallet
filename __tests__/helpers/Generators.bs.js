@@ -451,6 +451,27 @@ function withCustodianRemoved(user, supporters, log) {
   }
 }
 
+function withCustodianKeyChain($staropt$star, custodian, l) {
+  var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
+  var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
+          var $$event = param[/* event */0];
+          if ($$event.tag === 16) {
+            var match = $$event[0];
+            return /* :: */[
+                    /* tuple */[
+                      match[/* data */2][/* partnerId */0],
+                      match[/* processId */0]
+                    ],
+                    res
+                  ];
+          } else {
+            return res;
+          }
+        }), /* [] */0, l[/* log */3]);
+  var keyChain = custodianKeyChain(l[/* ventureId */0], keyChainIdx, custodian);
+  return appendEvent(custodian[/* issuerKeyPair */2], /* CustodianKeyChainUpdated */Block.__(29, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
+}
+
 function withAccountKeyChain($staropt$star, custodians, l) {
   var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
   var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
@@ -511,6 +532,7 @@ var Log = /* module */[
   /* withCustodianRemovalEndorsed */withCustodianRemovalEndorsed,
   /* withCustodianRemovalAccepted */withCustodianRemovalAccepted,
   /* withCustodianRemoved */withCustodianRemoved,
+  /* withCustodianKeyChain */withCustodianKeyChain,
   /* withAccountKeyChain */withAccountKeyChain
 ];
 

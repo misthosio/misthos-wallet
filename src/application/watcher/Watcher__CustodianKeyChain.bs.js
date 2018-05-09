@@ -59,16 +59,11 @@ function make(param, param$1, log) {
                       var init$1 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$1[/* ventureId */0],
-                        /* pendingEvent */init$1[/* pendingEvent */1],
+                        /* pendingEvent : None */0,
                         /* selfRemoved */true,
                         /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */3]
                       ];
                     } else {
-                      tmp = self$1[state][0];
-                    }
-                    break;
-                case 12 : 
-                    if (Caml_obj.caml_equal($$event[0][/* data */2][/* accountIdx */0], env$1[6])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$2[/* ventureId */0],
@@ -79,31 +74,32 @@ function make(param, param$1, log) {
                         /* selfRemoved */init$2[/* selfRemoved */2],
                         /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */3]
                       ];
+                    }
+                    break;
+                case 12 : 
+                    if (Caml_obj.caml_equal($$event[0][/* data */2][/* accountIdx */0], env$1[6])) {
+                      var init$3 = self$1[state][0];
+                      tmp = /* record */[
+                        /* ventureId */init$3[/* ventureId */0],
+                        /* pendingEvent : Some */[/* tuple */[
+                            env$1[2],
+                            /* CustodianKeyChainUpdated */Block.__(29, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
+                          ]],
+                        /* selfRemoved */init$3[/* selfRemoved */2],
+                        /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */3]
+                      ];
                     } else {
                       tmp = self$1[state][0];
                     }
                     break;
                 case 20 : 
                     var match$1 = $$event[0][/* data */2];
-                    var fromAccount = match$1[/* accountIdx */1];
-                    var removedId = match$1[/* custodianId */0];
-                    if (PrimitiveTypes.UserId[/* eq */5](removedId, env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](match$1[/* lastCustodianProcess */2], env$1[4]) && WalletTypes.AccountIndex[/* eq */7](fromAccount, env$1[6])) {
-                      var init$3 = self$1[state][0];
-                      tmp = /* record */[
-                        /* ventureId */init$3[/* ventureId */0],
-                        /* pendingEvent */init$3[/* pendingEvent */1],
-                        /* selfRemoved */true,
-                        /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */3]
-                      ];
-                    } else if (PrimitiveTypes.UserId[/* neq */6](removedId, env$1[1]) && WalletTypes.AccountIndex[/* eq */7](fromAccount, env$1[6])) {
+                    if (PrimitiveTypes.UserId[/* eq */5](match$1[/* custodianId */0], env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](match$1[/* lastCustodianProcess */2], env$1[4]) && WalletTypes.AccountIndex[/* eq */7](match$1[/* accountIdx */1], env$1[6])) {
                       var init$4 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$4[/* ventureId */0],
-                        /* pendingEvent : Some */[/* tuple */[
-                            env$1[2],
-                            /* CustodianKeyChainUpdated */Block.__(29, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
-                          ]],
-                        /* selfRemoved */init$4[/* selfRemoved */2],
+                        /* pendingEvent : None */0,
+                        /* selfRemoved */true,
                         /* nextKeyChainIdx */init$4[/* nextKeyChainIdx */3]
                       ];
                     } else {
@@ -114,7 +110,7 @@ function make(param, param$1, log) {
                     var match$2 = $$event[0];
                     var keyChain = match$2[/* keyChain */2];
                     var custodian = match$2[/* custodianId */1];
-                    if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](env$1[4], match$2[/* custodianApprovalProcess */0]) && Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
+                    if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](env$1[4], match$2[/* custodianApprovalProcess */0]) && WalletTypes.AccountIndex[/* eq */7](CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
                       var init$5 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$5[/* ventureId */0],
@@ -122,7 +118,7 @@ function make(param, param$1, log) {
                         /* selfRemoved */init$5[/* selfRemoved */2],
                         /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3])
                       ];
-                    } else if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
+                    } else if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && WalletTypes.AccountIndex[/* eq */7](CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
                       var init$6 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$6[/* ventureId */0],

@@ -461,6 +461,35 @@ module Log = {
     | _ => %assert
            "withCustodian"
     };
+  let withCustodianKeyChain =
+      (~keyChainIdx=0, custodian, {log, ventureId} as l) => {
+    let custodianProcesses =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | CustodianAccepted({processId, data: {partnerId}}) => [
+                 (partnerId, processId),
+                 ...res,
+               ]
+             | _ => res
+             },
+           [],
+         );
+    let keyChain = custodianKeyChain(~ventureId, ~keyChainIdx, custodian);
+    l
+    |> appendEvent(
+         custodian.issuerKeyPair,
+         CustodianKeyChainUpdated(
+           Event.custodianKeyChainUpdated(
+             ~custodianApprovalProcess=
+               custodianProcesses |> List.assoc(custodian.userId),
+             ~custodianId=custodian.userId,
+             ~keyChain,
+           ),
+         ),
+       );
+  };
   let withAccountKeyChain =
       (~keyChainIdx=0, custodians, {log, ventureId} as l) => {
     let custodianProcesses =

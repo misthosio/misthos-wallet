@@ -71,6 +71,7 @@ let make =
                    )
                 && AccountIndex.eq(fromAccount, accountIdx) => {
               ...state^,
+              pendingEvent: None,
               selfRemoved: true,
             }
           | PartnerRemovalAccepted({data: {id, lastPartnerProcess}})
@@ -78,14 +79,10 @@ let make =
                 UserId.eq(custodianId, id)
                 && ProcessId.eq(lastPartnerProcess, partnerApprovalProcess) => {
               ...state^,
+              pendingEvent: None,
               selfRemoved: true,
             }
-          | CustodianRemovalAccepted({
-              data: {custodianId: removedId, accountIdx: fromAccount},
-            })
-              when
-                UserId.neq(removedId, custodianId)
-                && AccountIndex.eq(fromAccount, accountIdx) => {
+          | PartnerRemovalAccepted(_) => {
               ...state^,
               pendingEvent:
                 Some((
@@ -114,7 +111,10 @@ let make =
               when
                 UserId.eq(custodian, custodianId)
                 && ProcessId.eq(custodianApprovalProcess, processId)
-                && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
+                && AccountIndex.eq(
+                     CustodianKeyChain.accountIdx(keyChain),
+                     accountIdx,
+                   ) => {
               ...state^,
               pendingEvent: None,
               nextKeyChainIdx:
@@ -123,7 +123,10 @@ let make =
           | CustodianKeyChainUpdated({custodianId: custodian, keyChain})
               when
                 UserId.eq(custodian, custodianId)
-                && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
+                && AccountIndex.eq(
+                     CustodianKeyChain.accountIdx(keyChain),
+                     accountIdx,
+                   ) => {
               ...state^,
               pendingEvent:
                 state^.pendingEvent
