@@ -50,7 +50,7 @@ module VentureCreated = {
 module Partner = {
   module Data = {
     type t = {
-      lastRemoval: option(processId),
+      lastPartnerRemovalProcess: option(processId),
       id: userId,
       pubKey: string,
     };
@@ -59,24 +59,44 @@ module Partner = {
         object_([
           ("id", UserId.encode(event.id)),
           ("pubKey", string(event.pubKey)),
-          ("lastRemoval", nullable(ProcessId.encode, event.lastRemoval)),
+          (
+            "lastPartnerRemovalProcess",
+            nullable(ProcessId.encode, event.lastPartnerRemovalProcess),
+          ),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         id: raw |> field("id", UserId.decode),
         pubKey: raw |> field("pubKey", string),
-        lastRemoval: raw |> field("lastRemoval", optional(ProcessId.decode)),
+        lastPartnerRemovalProcess:
+          raw
+          |> field("lastPartnerRemovalProcess", optional(ProcessId.decode)),
       };
   };
   include (val EventTypes.makeProcess("Partner"))(Data);
   module Removal = {
     module Data = {
-      type t = {id: userId};
+      type t = {
+        id: userId,
+        lastPartnerProcess: processId,
+      };
       let encode = event =>
-        Json.Encode.(object_([("id", UserId.encode(event.id))]));
+        Json.Encode.(
+          object_([
+            ("id", UserId.encode(event.id)),
+            (
+              "lastPartnerProcess",
+              ProcessId.encode(event.lastPartnerProcess),
+            ),
+          ])
+        );
       let decode = raw =>
-        Json.Decode.{id: raw |> field("id", UserId.decode)};
+        Json.Decode.{
+          id: raw |> field("id", UserId.decode),
+          lastPartnerProcess:
+            raw |> field("lastPartnerProcess", ProcessId.decode),
+        };
     };
     include (val EventTypes.makeProcess("PartnerRemoval"))(Data);
   };
@@ -109,6 +129,7 @@ module Custodian = {
     type t = {
       partnerId: userId,
       partnerApprovalProcess: processId,
+      lastCustodianRemovalProcess: option(processId),
       accountIdx,
     };
     let encode = event =>
@@ -119,6 +140,10 @@ module Custodian = {
             "partnerApprovalProcess",
             ProcessId.encode(event.partnerApprovalProcess),
           ),
+          (
+            "lastCustodianRemovalProcess",
+            nullable(ProcessId.encode, event.lastCustodianRemovalProcess),
+          ),
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
         ])
       );
@@ -127,6 +152,9 @@ module Custodian = {
         partnerId: raw |> field("partnerId", UserId.decode),
         partnerApprovalProcess:
           raw |> field("partnerApprovalProcess", ProcessId.decode),
+        lastCustodianRemovalProcess:
+          raw
+          |> field("lastCustodianRemovalProcess", optional(ProcessId.decode)),
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
       };
   };
@@ -136,18 +164,25 @@ module Custodian = {
       type t = {
         custodianId: userId,
         accountIdx,
+        lastCustodianProcess: processId,
       };
       let encode = event =>
         Json.Encode.(
           object_([
             ("custodianId", UserId.encode(event.custodianId)),
             ("accountIdx", AccountIndex.encode(event.accountIdx)),
+            (
+              "lastCustodianProcess",
+              ProcessId.encode(event.lastCustodianProcess),
+            ),
           ])
         );
       let decode = raw =>
         Json.Decode.{
           custodianId: raw |> field("custodianId", UserId.decode),
           accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+          lastCustodianProcess:
+            raw |> field("lastCustodianProcess", ProcessId.decode),
         };
     };
     include (val EventTypes.makeProcess("CustodianRemoval"))(Data);
@@ -273,12 +308,12 @@ module Payout = {
 module CustodianKeyChainUpdated = {
   type t = {
     custodianApprovalProcess: processId,
-    partnerId: userId,
+    custodianId: userId,
     keyChain: CustodianKeyChain.public,
   };
-  let make = (~custodianApprovalProcess, ~partnerId, ~keyChain) => {
+  let make = (~custodianApprovalProcess, ~custodianId, ~keyChain) => {
     custodianApprovalProcess,
-    partnerId,
+    custodianId,
     keyChain,
   };
   let encode = event =>
@@ -289,7 +324,7 @@ module CustodianKeyChainUpdated = {
           "custodianApprovalProcess",
           ProcessId.encode(event.custodianApprovalProcess),
         ),
-        ("partnerId", UserId.encode(event.partnerId)),
+        ("custodianId", UserId.encode(event.custodianId)),
         ("keyChain", CustodianKeyChain.encode(event.keyChain)),
       ])
     );
@@ -297,7 +332,7 @@ module CustodianKeyChainUpdated = {
     Json.Decode.{
       custodianApprovalProcess:
         raw |> field("custodianApprovalProcess", ProcessId.decode),
-      partnerId: raw |> field("partnerId", UserId.decode),
+      custodianId: raw |> field("custodianId", UserId.decode),
       keyChain: raw |> field("keyChain", CustodianKeyChain.decode),
     };
 };
@@ -406,7 +441,7 @@ let makePartnerProposed =
       ~lastRemovalAccepted,
       ~policy,
     ) => {
-  let lastRemovalProcess =
+  let lastPartnerRemovalProcess =
     lastRemovalAccepted
     |> Utils.mapOption(
          ({data: {id}, processId}: Partner.Removal.Accepted.t) => {
@@ -419,25 +454,35 @@ let makePartnerProposed =
          };
          processId;
        });
+  let dependsOnCompletions =
+    lastPartnerRemovalProcess
+    |> Utils.mapOption(p => [p])
+    |> Js.Option.getWithDefault([]);
   PartnerProposed(
     Partner.Proposed.make(
+      ~dependsOnCompletions,
       ~supporterId,
       ~policy,
       Partner.Data.{
         id: prospectId,
         pubKey: prospectPubKey,
-        lastRemoval: lastRemovalProcess,
+        lastPartnerRemovalProcess,
       },
     ),
   );
 };
 
-let makePartnerRemovalProposed = (~supporterId, ~partnerId, ~policy) =>
+let makePartnerRemovalProposed =
+    (~lastPartnerAccepted: Partner.Accepted.t, ~supporterId, ~policy) =>
   PartnerRemovalProposed(
     Partner.Removal.Proposed.make(
+      ~dependsOnCompletions=[lastPartnerAccepted.processId],
       ~supporterId,
       ~policy,
-      Partner.Removal.Data.{id: partnerId},
+      Partner.Removal.Data.{
+        lastPartnerProcess: lastPartnerAccepted.processId,
+        id: lastPartnerAccepted.data.id,
+      },
     ),
   );
 
@@ -451,16 +496,36 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   );
 
 let makeCustodianProposed =
-    (~partnerProposed: Partner.Proposed.t, ~supporterId, ~accountIdx, ~policy) => {
-  let partnerApprovalProcess = partnerProposed.processId;
+    (
+      ~lastCustodianRemovalAccepted,
+      ~partnerProposed: Partner.Proposed.t,
+      ~supporterId,
+      ~accountIdx,
+      ~policy,
+    ) => {
+  let {processId: partnerApprovalProcess, data: {id: partnerId}}: Partner.Proposed.t = partnerProposed;
+  let lastCustodianRemovalProcess =
+    lastCustodianRemovalAccepted
+    |> Utils.mapOption(
+         ({data: {custodianId}, processId}: Custodian.Removal.Accepted.t) => {
+         if (UserId.neq(custodianId, partnerId)) {
+           raise(
+             BadData(
+               "The provided CustodianRemovalAccepted wasn't for the same custodian",
+             ),
+           );
+         };
+         processId;
+       });
   CustodianProposed(
     Custodian.Proposed.make(
       ~dependsOnProposals=[partnerApprovalProcess],
       ~supporterId,
       ~policy,
       Custodian.Data.{
+        lastCustodianRemovalProcess,
         partnerApprovalProcess,
-        partnerId: partnerProposed.data.id,
+        partnerId,
         accountIdx,
       },
     ),
@@ -471,18 +536,19 @@ let makeCustodianRemovalProposed =
     (
       ~custodianAccepted: Custodian.Accepted.t,
       ~supporterId,
-      ~custodianId,
       ~accountIdx,
       ~policy,
-    ) =>
+    ) => {
+  let {processId: lastCustodianProcess, data: {partnerId: custodianId}}: Custodian.Accepted.t = custodianAccepted;
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOnCompletions=[custodianAccepted.processId],
+      ~dependsOnCompletions=[lastCustodianProcess],
       ~supporterId,
       ~policy,
-      Custodian.Removal.Data.{custodianId, accountIdx},
+      Custodian.Removal.Data.{lastCustodianProcess, custodianId, accountIdx},
     ),
   );
+};
 
 let makePartnerRejected = (~processId, ~rejectorId) =>
   PartnerRejected(Partner.Rejected.make(~processId, ~rejectorId));
@@ -789,6 +855,13 @@ let getCustodianRemovalProposedExn = event =>
   | CustodianRemovalProposed(unwrapped) => unwrapped
   | _ => %assert
          "getCustodianRemovalProposedExn"
+  };
+
+let getCustodianRemovalEndorsedExn = event =>
+  switch (event) {
+  | CustodianRemovalEndorsed(unwrapped) => unwrapped
+  | _ => %assert
+         "getCustodianRemovalEndorsedExn"
   };
 
 let getVentureCreatedExn = event =>

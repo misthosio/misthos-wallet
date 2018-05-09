@@ -16,11 +16,13 @@ type t = {
   currentPartners: list(userId),
   currentPartnerPubKeys: list((string, userId)),
   partnerData: list((processId, (userId, Partner.Data.t))),
+  partnerAccepted: list((userId, processId)),
   partnerRemovalData: list((processId, (userId, Partner.Removal.Data.t))),
   partnerRemovals: list((userId, processId)),
   custodianData: list((processId, (userId, Custodian.Data.t))),
   custodianRemovalData:
     list((processId, (userId, Custodian.Removal.Data.t))),
+  custodianRemovals: list((userId, processId)),
   accountCreationData: list((processId, (userId, AccountCreation.Data.t))),
   payoutData: list((processId, (userId, Payout.Data.t))),
   processes: list((processId, approvalProcess)),
@@ -40,10 +42,12 @@ let make = () => {
   currentPartnerPubKeys: [],
   metaPolicy: Policy.unanimous,
   partnerData: [],
+  partnerAccepted: [],
   partnerRemovalData: [],
   partnerRemovals: [],
   custodianData: [],
   custodianRemovalData: [],
+  custodianRemovals: [],
   accountCreationData: [],
   payoutData: [],
   processes: [],
@@ -52,7 +56,7 @@ let make = () => {
   creatorData: {
     id: UserId.fromString(""),
     pubKey: "",
-    lastRemoval: None,
+    lastPartnerRemovalProcess: None,
   },
   custodianKeyChains: [],
   accountKeyChains: [],
@@ -116,7 +120,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
         Partner.Data.{
           id: creatorId,
           pubKey: creatorPubKey,
-          lastRemoval: None,
+          lastPartnerRemovalProcess: None,
         },
     }
   | PartnerProposed({supporterId, processId, data} as proposal) => {
@@ -169,13 +173,14 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | AccountCreationEndorsed(endorsement) =>
     endorseProcess(endorsement, state)
   | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
-  | PartnerAccepted({data} as acceptance) => {
+  | PartnerAccepted({processId, data} as acceptance) => {
       ...completeProcess(acceptance, state),
       currentPartners: [data.id, ...state.currentPartners],
       currentPartnerPubKeys: [
         (data.pubKey, data.id),
         ...state.currentPartnerPubKeys,
       ],
+      partnerAccepted: [(data.id, processId), ...state.partnerAccepted],
     }
   | PartnerRemovalAccepted({processId, data: {id}} as acceptance) =>
     let pubKey =
@@ -216,11 +221,16 @@ let apply = ({hash, event}: EventLog.item, state) => {
         ...state.custodianKeyChains |> List.remove_assoc(partnerId),
       ],
     };
-  | CustodianRemovalAccepted(acceptance) =>
-    completeProcess(acceptance, state)
-  | CustodianKeyChainUpdated({partnerId, keyChain}) =>
+  | CustodianRemovalAccepted(acceptance) => {
+      ...completeProcess(acceptance, state),
+      custodianRemovals: [
+        (acceptance.data.custodianId, acceptance.processId),
+        ...state.custodianRemovals,
+      ],
+    }
+  | CustodianKeyChainUpdated({custodianId, keyChain}) =>
     let userChains =
-      try (state.custodianKeyChains |> List.assoc(partnerId)) {
+      try (state.custodianKeyChains |> List.assoc(custodianId)) {
       | Not_found => []
       };
     let accountChains =
@@ -231,7 +241,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       ...state,
       custodianKeyChains: [
         (
-          partnerId,
+          custodianId,
           [
             (
               CustodianKeyChain.accountIdx(keyChain),
@@ -239,7 +249,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
             ),
           ],
         ),
-        ...state.custodianKeyChains |> List.remove_assoc(partnerId),
+        ...state.custodianKeyChains |> List.remove_assoc(custodianId),
       ],
     };
   | AccountKeyChainUpdated({keyChain}) =>
@@ -422,7 +432,10 @@ let validateAcceptance =
   };
 
 let validatePartnerData =
-    ({id, lastRemoval}: Partner.Data.t, {partnerRemovals, currentPartners}) =>
+    (
+      {id, lastPartnerRemovalProcess}: Partner.Data.t,
+      {partnerRemovals, currentPartners},
+    ) =>
   if (currentPartners |> List.mem(id)) {
     BadData("Partner already exists");
   } else {
@@ -430,7 +443,7 @@ let validatePartnerData =
       try (Some(partnerRemovals |> List.assoc(id))) {
       | Not_found => None
       };
-    if (partnerRemovalProcess != lastRemoval) {
+    if (partnerRemovalProcess != lastPartnerRemovalProcess) {
       BadData("Last removal doesn't match");
     } else {
       Ok;
@@ -438,21 +451,64 @@ let validatePartnerData =
   };
 
 let validatePartnerRemovalData =
-    ({id}: Partner.Removal.Data.t, {currentPartners}) =>
-  currentPartners |> List.mem(id) ?
-    Ok :
+    (
+      {id, lastPartnerProcess}: Partner.Removal.Data.t,
+      {partnerAccepted, currentPartners},
+    ) =>
+  if (currentPartners |> List.mem(id) == false) {
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
+  } else {
+    try (
+      {
+        let partnerProcess = partnerAccepted |> List.assoc(id);
+        if (ProcessId.eq(partnerProcess, lastPartnerProcess)) {
+          Ok;
+        } else {
+          BadData("lastPartnerProcess doesn't match");
+        };
+      }
+    ) {
+    | Not_found => BadData("lastPartnerProcess doesn't match")
+    };
+  };
 
 let validateCustodianData =
-    ({partnerApprovalProcess, partnerId}: Custodian.Data.t, {partnerData}) =>
-  try (
-    {
-      let pData = partnerData |> List.assoc(partnerApprovalProcess) |> snd;
-      UserId.eq(pData.id, partnerId) ?
-        Ok : BadData("Partner with Id 'custodian.id' doesn't exist");
-    }
-  ) {
-  | Not_found => BadData("Partner with Id 'custodian.id' doesn't exist")
+    (
+      {
+        accountIdx,
+        lastCustodianRemovalProcess,
+        partnerApprovalProcess,
+        partnerId,
+      }: Custodian.Data.t,
+      {custodianRemovals, accountCreationData, partnerData},
+    ) =>
+  if (accountCreationData
+      |>
+      List.exists(((_, (_, accountData: AccountCreation.Data.t))) =>
+        AccountIndex.eq(accountData.accountIdx, accountIdx)
+      ) == false) {
+    BadData("account doesn't exist");
+  } else {
+    try (
+      {
+        let pData = partnerData |> List.assoc(partnerApprovalProcess) |> snd;
+        if (UserId.neq(pData.id, partnerId)) {
+          BadData("Partner approval process doesn't match user id");
+        } else {
+          let custodianRemovalProcess =
+            try (Some(custodianRemovals |> List.assoc(partnerId))) {
+            | Not_found => None
+            };
+          if (custodianRemovalProcess != lastCustodianRemovalProcess) {
+            BadData("Last removal doesn't match");
+          } else {
+            Ok;
+          };
+        };
+      }
+    ) {
+    | Not_found => BadData("partner approval process doesn't exist")
+    };
   };
 
 let validateCustodianRemovalData =
@@ -481,7 +537,7 @@ let validateAccountCreationData =
 
 let validateCustodianKeyChainUpdated =
     (
-      {partnerId, keyChain}: CustodianKeyChainUpdated.t,
+      {custodianId, keyChain}: CustodianKeyChainUpdated.t,
       {
         currentPartnerPubKeys,
         custodianData,
@@ -492,7 +548,7 @@ let validateCustodianKeyChainUpdated =
     ) =>
   if (UserId.neq(
         currentPartnerPubKeys |> List.assoc(issuerPubKey),
-        partnerId,
+        custodianId,
       )) {
     InvalidIssuer;
   } else {
@@ -501,12 +557,12 @@ let validateCustodianKeyChainUpdated =
         let (process, _data) =
           custodianData
           |> List.find(((_pId, (_, data: Custodian.Data.t))) =>
-               data.partnerId == partnerId
+               UserId.eq(data.partnerId, custodianId)
                && data.accountIdx == CustodianKeyChain.accountIdx(keyChain)
              );
         if (completedProcesses |> List.mem(process)) {
           if (custodianKeyChains
-              |> List.assoc(partnerId)
+              |> List.assoc(custodianId)
               |> List.assoc(CustodianKeyChain.accountIdx(keyChain))
               |>
               List.length != (

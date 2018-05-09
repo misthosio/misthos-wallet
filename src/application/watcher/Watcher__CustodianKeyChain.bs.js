@@ -23,7 +23,7 @@ var class_tables = [
 function make(param, param$1, log) {
   var data = param$1[/* data */2];
   var custodianId = data[/* partnerId */0];
-  var accountIdx = data[/* accountIdx */2];
+  var accountIdx = data[/* accountIdx */3];
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",
@@ -103,8 +103,8 @@ function make(param, param$1, log) {
                 case 29 : 
                     var match$2 = $$event[0];
                     var keyChain = match$2[/* keyChain */2];
-                    var partnerId = match$2[/* partnerId */1];
-                    if (PrimitiveTypes.UserId[/* eq */5](partnerId, env$1[5]) && PrimitiveTypes.ProcessId[/* eq */5](env$1[4], match$2[/* custodianApprovalProcess */0]) && Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
+                    var custodian = match$2[/* custodianId */1];
+                    if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[5]) && PrimitiveTypes.ProcessId[/* eq */5](env$1[4], match$2[/* custodianApprovalProcess */0]) && Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
                       var init$4 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$4[/* ventureId */0],
@@ -112,7 +112,7 @@ function make(param, param$1, log) {
                         /* selfRemoved */init$4[/* selfRemoved */2],
                         /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3])
                       ];
-                    } else if (PrimitiveTypes.UserId[/* eq */5](partnerId, env$1[5]) && Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
+                    } else if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[5]) && Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
                       var init$5 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$5[/* ventureId */0],

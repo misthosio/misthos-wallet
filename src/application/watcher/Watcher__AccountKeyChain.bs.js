@@ -87,13 +87,13 @@ function make(param, log) {
                 case 29 : 
                     var match$1 = $$event[0];
                     var keyChain = match$1[/* keyChain */2];
-                    var partnerId = match$1[/* partnerId */1];
+                    var custodianId = match$1[/* custodianId */1];
                     if (Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[0])) {
                       var custodianKeyChains_000 = /* tuple */[
-                        partnerId,
+                        custodianId,
                         keyChain
                       ];
-                      var custodianKeyChains_001 = List.remove_assoc(partnerId, self$1[state][0][/* custodianKeyChains */1]);
+                      var custodianKeyChains_001 = List.remove_assoc(custodianId, self$1[state][0][/* custodianKeyChains */1]);
                       var custodianKeyChains$1 = /* :: */[
                         custodianKeyChains_000,
                         custodianKeyChains_001

@@ -12,6 +12,8 @@ type t = {
   custodianRemovalProcesses: list((userId, processId)),
   custodianAccepted: list((userId, Custodian.Accepted.t)),
   partnerRemovals: list((userId, Partner.Removal.Accepted.t)),
+  custodianRemovals: list((userId, Custodian.Removal.Accepted.t)),
+  partnerAccepted: list((userId, Partner.Accepted.t)),
 };
 
 let make = () => {
@@ -24,6 +26,8 @@ let make = () => {
   custodianRemovalProcesses: [],
   custodianAccepted: [],
   partnerRemovals: [],
+  custodianRemovals: [],
+  partnerAccepted: [],
 };
 
 let systemIssuer = ({systemIssuer}) => systemIssuer;
@@ -63,6 +67,14 @@ let lastRemovalOfPartner = (partnerId, {partnerRemovals}) =>
   | Not_found => None
   };
 
+let lastRemovalOfCustodian = (partnerId, {custodianRemovals}) =>
+  try (Some(custodianRemovals |> List.assoc(partnerId))) {
+  | Not_found => None
+  };
+
+let lastPartnerAccepted = (partnerId, {partnerAccepted}) =>
+  partnerAccepted |> List.assoc(partnerId);
+
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({ventureName, metaPolicy, systemIssuer}) => {
@@ -81,9 +93,10 @@ let apply = (event, state) =>
            |> List.map(n => (n, metaPolicy)),
       ],
     }
-  | PartnerAccepted({data: {id}}) => {
+  | PartnerAccepted({data: {id}} as event) => {
       ...state,
       partnerIds: [id, ...state.partnerIds],
+      partnerAccepted: [(id, event)],
     }
   | CustodianProposed({processId, data: {partnerApprovalProcess}}) => {
       ...state,
@@ -109,6 +122,10 @@ let apply = (event, state) =>
         (custodianId, processId),
         ...state.custodianRemovalProcesses,
       ],
+    }
+  | CustodianRemovalAccepted({data: {custodianId}} as event) => {
+      ...state,
+      custodianRemovals: [(custodianId, event)],
     }
   | PartnerRemovalAccepted({data: {id}} as event) => {
       ...state,
