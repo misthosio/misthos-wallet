@@ -103,15 +103,10 @@ module Event = {
     |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
   let partnerRemovalProposed =
-      (
-        ~lastPartnerAccepted,
-        supporterSession: Session.Data.t,
-        toBeRemoved: Session.Data.t,
-      ) =>
+      (~lastPartnerAccepted, supporterSession: Session.Data.t) =>
     AppEvent.makePartnerRemovalProposed(
       ~lastPartnerAccepted,
       ~supporterId=supporterSession.userId,
-      ~partnerId=toBeRemoved.userId,
       ~policy=Policy.unanimousMinusOne,
     )
     |> AppEvent.getPartnerRemovalProposedExn;
@@ -137,10 +132,12 @@ module Event = {
   let accountCreationAccepted = AppEvent.AccountCreation.Accepted.fromProposal;
   let custodianProposed =
       (
+        ~lastCustodianRemovalAccepted,
         {userId}: Session.Data.t,
         partnerProposal: AppEvent.Partner.Proposed.t,
       ) =>
     Event.makeCustodianProposed(
+      ~lastCustodianRemovalAccepted,
       ~partnerProposed=partnerProposal,
       ~supporterId=userId,
       ~accountIdx=AccountIndex.default,
@@ -153,15 +150,10 @@ module Event = {
     |> AppEvent.getCustodianEndorsedExn;
   let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
   let custodianRemovalProposed =
-      (
-        ~custodianAccepted,
-        supporterSession: Session.Data.t,
-        toBeRemoved: Session.Data.t,
-      ) =>
+      (~custodianAccepted, supporterSession: Session.Data.t) =>
     AppEvent.makeCustodianRemovalProposed(
       ~custodianAccepted,
       ~supporterId=supporterSession.userId,
-      ~custodianId=toBeRemoved.userId,
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimousMinusOne,
     )
@@ -316,11 +308,7 @@ module Log = {
     |> appendEvent(
          supporter.issuerKeyPair,
          PartnerRemovalProposed(
-           Event.partnerRemovalProposed(
-             ~lastPartnerAccepted,
-             supporter,
-             toBeRemoved,
-           ),
+           Event.partnerRemovalProposed(~lastPartnerAccepted, supporter),
          ),
        );
   };
@@ -367,28 +355,36 @@ module Log = {
   };
   let withCustodianProposed =
       (~supporter: Session.Data.t, ~custodian: Session.Data.t, {log} as l) => {
-    let partnerProposed =
+    let (partnerProposed, lastCustodianRemovalAccepted) =
       log
       |> EventLog.reduce(
-           (partnerProposal, {event}) =>
-             switch (partnerProposal, event) {
-             | (Some(p), _) => Some(p)
-             | (_, PartnerProposed(proposal))
-                 when UserId.eq(proposal.data.id, custodian.userId) =>
-               Some(proposal)
-             | _ => partnerProposal
+           ((partnerProposal, custodianRemoved), {event}) =>
+             switch (event) {
+             | PartnerProposed(proposal)
+                 when UserId.eq(proposal.data.id, custodian.userId) => (
+                 Some(proposal),
+                 custodianRemoved,
+               )
+             | CustodianRemovalAccepted(removal)
+                 when UserId.eq(removal.data.custodianId, custodian.userId) => (
+                 partnerProposal,
+                 Some(removal),
+               )
+             | _ => (partnerProposal, custodianRemoved)
              },
-           None,
+           (None, None),
          );
-    switch (partnerProposed) {
-    | Some(proposal) =>
-      appendEvent(
-        supporter.issuerKeyPair,
-        CustodianProposed(Event.custodianProposed(supporter, proposal)),
-        l,
-      )
-    | None => raise(Not_found)
-    };
+    appendEvent(
+      supporter.issuerKeyPair,
+      CustodianProposed(
+        Event.custodianProposed(
+          ~lastCustodianRemovalAccepted,
+          supporter,
+          partnerProposed |> Js.Option.getExn,
+        ),
+      ),
+      l,
+    );
   };
   let withCustodianEndorsed = (supporter: Session.Data.t, proposal) =>
     appendEvent(
@@ -432,11 +428,7 @@ module Log = {
     |> appendEvent(
          supporter.issuerKeyPair,
          CustodianRemovalProposed(
-           Event.custodianRemovalProposed(
-             ~custodianAccepted,
-             supporter,
-             toBeRemoved,
-           ),
+           Event.custodianRemovalProposed(~custodianAccepted, supporter),
          ),
        );
   };

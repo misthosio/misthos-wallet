@@ -51,7 +51,7 @@ let testDataValidation =
   );
 };
 
-let () =
+let () = {
   describe("CreateVenture", () => {
     describe("as first event", () => {
       let user1 = G.userSession("user1" |> UserId.fromString);
@@ -79,554 +79,563 @@ let () =
       );
     });
   });
-
-describe("Any proposal type", () => {
-  describe("when submitting the identical proposal twice", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(log |> lastItem),
-      Validation.Ignore,
-    );
-  });
-  describe("with the wrong policy", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log = L.(createVenture(user1) |> withFirstPartner(user1));
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(
-             ~policy=Policy.unanimousMinusOne,
-             ~supporter=user1,
-             ~prospect=user2,
-           )
-        |> lastItem
-      ),
-      Validation.PolicyMissmatch,
-    );
-  });
-  describe("when the supporter is a non-partner", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log = L.(createVenture(user1) |> withFirstPartner(user1));
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(~supporter=user2, ~prospect=user3)
-        |> lastItem
-      ),
-      Validation.InvalidIssuer,
-    );
-  });
-  describe("when the supporter is not the signer", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log = L.(createVenture(user1) |> withFirstPartner(user1));
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(
-             ~issuer=user1.issuerKeyPair,
-             ~supporter=user2,
-             ~prospect=user3,
-           )
-        |> lastItem
-      ),
-      Validation.InvalidIssuer,
-    );
-  });
-  describe("when the proposal was already submitted by this partner", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-        |> lastItem
-      ),
-      Validation.BadData("This proposal already exists"),
-    );
-  });
-  describe("when the same proposal was already made by another partner", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(~supporter=user2, ~prospect=user3)
-        |> lastItem
-      ),
-      Validation.Ok,
-    );
-  });
-});
-
-describe("Any rejection type", () => {
-  describe("when the process is unknown", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> appendEvent(
-             user2.issuerKeyPair,
-             Event.makePartnerRejected(
-               ~processId=ProcessId.make(),
-               ~rejectorId=user2.userId,
-             ),
-           )
-        |> lastItem
-      ),
-      Validation.UnknownProcessId,
-    );
-  });
-  describe("when the rejector is not a partner", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    testValidationResult(
-      log |> constructState,
-      L.(log |> withPartnerRejected(user3, proposal) |> lastItem),
-      Validation.InvalidIssuer,
-    );
-  });
-  describe("when the rejector is not the signer", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerRejected(~issuer=user1.issuerKeyPair, user2, proposal)
-        |> lastItem
-      ),
-      Validation.InvalidIssuer,
-    );
-  });
-  describe("when the rejection has already been submitted", () => {
-    let (user1, user2, user3, user4) = G.fourUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartner(user3, ~supporters=[user1, user2])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user4)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    let log = log |> L.withPartnerRejected(user2, proposal);
-    testValidationResult(
-      log |> constructState,
-      L.(log |> lastItem),
-      Validation.Ignore,
-    );
-  });
-  describe("when the rejector has already endorsed", () => {
-    let (user1, user2, user3, user4) = G.fourUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartner(user3, ~supporters=[user1, user2])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user4)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    let log = log |> L.withPartnerEndorsed(user2, proposal);
-    testValidationResult(
-      log |> constructState,
-      L.(log |> withPartnerRejected(user2, proposal) |> lastItem),
-      Validation.AlreadyEndorsed,
-    );
-  });
-  describe("when the rejection is fine", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    testValidationResult(
-      log |> constructState,
-      L.(log |> withPartnerRejected(user2, proposal) |> lastItem),
-      Validation.Ok,
-    );
-  });
-});
-
-describe("Any endorsement type", () => {
-  describe("when the process is unknown", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> appendEvent(
-             user2.issuerKeyPair,
-             Event.makePartnerEndorsed(
-               ~processId=ProcessId.make(),
-               ~supporterId=user2.userId,
-             ),
-           )
-        |> lastItem
-      ),
-      Validation.UnknownProcessId,
-    );
-  });
-  describe("when the supporter is not a partner", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    testValidationResult(
-      log |> constructState,
-      L.(log |> withPartnerEndorsed(user3, proposal) |> lastItem),
-      Validation.InvalidIssuer,
-    );
-  });
-  describe("when the supporter is not the signer", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerEndorsed(~issuer=user1.issuerKeyPair, user2, proposal)
-        |> lastItem
-      ),
-      Validation.InvalidIssuer,
-    );
-  });
-  describe("when the endorsement has already been submitted", () => {
-    let (user1, user2, user3, user4) = G.fourUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartner(user3, ~supporters=[user1, user2])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user4)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    let log = log |> L.withPartnerEndorsed(user2, proposal);
-    testValidationResult(
-      log |> constructState,
-      L.(log |> lastItem),
-      Validation.Ignore,
-    );
-  });
-  describe("when the endorsement is fine", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerProposed(~supporter=user1, ~prospect=user3)
-      );
-    let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-    testValidationResult(
-      log |> constructState,
-      L.(log |> withPartnerEndorsed(user2, proposal) |> lastItem),
-      Validation.Ok,
-    );
-  });
-});
-
-describe("PartnerProposal", () => {
-  describe("when proposing another partner", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log = L.(createVenture(user1) |> withFirstPartner(user1));
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-        |> lastItem
-      ),
-      Validation.Ok,
-    );
-  });
-  describe("when the prospect is already a partner", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(~supporter=user2, ~prospect=user1)
-        |> lastItem
-      ),
-      Validation.BadData("Partner already exists"),
-    );
-  });
-  describe("when the creator proposes themselves", () => {
-    let user1 = G.userSession("user1" |> UserId.fromString);
-    let log = L.createVenture(user1);
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(~supporter=user1, ~prospect=user1)
-        |> lastItem
-      ),
-      Validation.Ok,
-    );
-  });
-  describe("when proposing a partner that was removed", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartnerRemoved(user2, ~supporters=[user1])
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-        |> lastItem
-      ),
-      Validation.Ok,
-    );
-  });
-  describe("when the partner was removed but the proposal doesn't show it", () => {
-    let (user1, user2, user3) = G.threeUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-        |> withPartner(user3, ~supporters=[user1, user2])
-        |> withPartnerRemoved(user2, ~supporters=[user1, user3])
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerProposed(
-             ~withLastRemoval=false,
-             ~supporter=user3,
-             ~prospect=user2,
-           )
-        |> lastItem
-      ),
-      Validation.BadData("Last removal doesn't match"),
-    );
-  });
-});
-
-describe("PartnerRemovalProposal", () => {
-  describe("when proposing another partner", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withPartner(user2, ~supporters=[user1])
-      );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withPartnerRemovalProposed(~supporter=user1, ~toBeRemoved=user2)
-        |> lastItem
-      ),
-      Validation.Ok,
-    );
-  });
-  describe("validatePartnerRemovalData", () => {
-    describe("when the prospect is not a partner", () => {
-      let (user1, user2) = G.twoUserSessions();
-      let log = L.(createVenture(user1) |> withFirstPartner(user1));
-      testDataValidation(
-        Validation.validatePartnerRemovalData,
-        log |> constructState,
-        Partner.Removal.Data.{
-          id: user2.userId,
-          lastPartnerProcess: ProcessId.make(),
-        },
-        Validation.BadData(
-          "Partner with Id '"
-          ++ UserId.toString(user2.userId)
-          ++ "' doesn't exist",
-        ),
-      );
-    });
-    describe("when lastPartnerProcess doesn't match", () => {
+  describe("Any proposal type", () => {
+    describe("when submitting the identical proposal twice", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
-          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
         );
-      testDataValidation(
-        Validation.validatePartnerRemovalData,
+      testValidationResult(
         log |> constructState,
-        Partner.Removal.Data.{
-          id: user2.userId,
-          lastPartnerProcess: ProcessId.make(),
-        },
-        Validation.BadData("lastPartnerProcess doesn't match"),
+        L.(log |> lastItem),
+        Validation.Ignore,
       );
     });
-  });
-});
-
-describe("CustodianProposed", () => {
-  describe("when proposing a custodian partner", () => {
-    let (user1, user2) = G.twoUserSessions();
-    let log =
-      L.(
-        createVenture(user1)
-        |> withFirstPartner(user1)
-        |> withAccount(~supporter=user1)
-        |> withCustodian(user1, ~supporters=[user1])
-        |> withPartner(user2, ~supporters=[user1])
+    describe("with the wrong policy", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~policy=Policy.unanimousMinusOne,
+               ~supporter=user1,
+               ~prospect=user2,
+             )
+          |> lastItem
+        ),
+        Validation.PolicyMissmatch,
       );
-    testValidationResult(
-      log |> constructState,
-      L.(
-        log
-        |> withCustodianProposed(~supporter=user1, ~custodian=user2)
-        |> lastItem
-      ),
-      Validation.Ok,
-    );
-  });
-  describe("validateCustodianData", () => {
-    describe("when the custodian is not a partner", () => {
+    });
+    describe("when the supporter is a non-partner", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the supporter is not the signer", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~issuer=user1.issuerKeyPair,
+               ~supporter=user2,
+               ~prospect=user3,
+             )
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the proposal was already submitted by this partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.BadData("This proposal already exists"),
+      );
+    });
+    describe("when the same proposal was already made by another partner", () => {
       let (user1, user2, user3) = G.threeUserSessions();
       let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
-          |> withAccount(~supporter=user1)
           |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
         );
-      let partnerApproval = log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-      testDataValidation(
-        Validation.validateCustodianData,
+      testValidationResult(
         log |> constructState,
-        Custodian.Data.{
-          partnerId: user3.userId,
-          partnerApprovalProcess: partnerApproval.processId,
-          accountIdx: AccountIndex.default,
-        },
-        Validation.BadData(
-          "Partner with Id '"
-          ++ UserId.toString(user3.userId)
-          ++ "' doesn't exist",
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+          |> lastItem
         ),
+        Validation.Ok,
       );
     });
-    describe("when the partner approval process reference is wrong", () => {
+  });
+  describe("Any rejection type", () => {
+    describe("when the process is unknown", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> appendEvent(
+               user2.issuerKeyPair,
+               Event.makePartnerRejected(
+                 ~processId=ProcessId.make(),
+                 ~rejectorId=user2.userId,
+               ),
+             )
+          |> lastItem
+        ),
+        Validation.UnknownProcessId,
+      );
+    });
+    describe("when the rejector is not a partner", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      testValidationResult(
+        log |> constructState,
+        L.(log |> withPartnerRejected(user3, proposal) |> lastItem),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the rejector is not the signer", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerRejected(
+               ~issuer=user1.issuerKeyPair,
+               user2,
+               proposal,
+             )
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the rejection has already been submitted", () => {
+      let (user1, user2, user3, user4) = G.fourUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user4)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      let log = log |> L.withPartnerRejected(user2, proposal);
+      testValidationResult(
+        log |> constructState,
+        L.(log |> lastItem),
+        Validation.Ignore,
+      );
+    });
+    describe("when the rejector has already endorsed", () => {
+      let (user1, user2, user3, user4) = G.fourUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user4)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      let log = log |> L.withPartnerEndorsed(user2, proposal);
+      testValidationResult(
+        log |> constructState,
+        L.(log |> withPartnerRejected(user2, proposal) |> lastItem),
+        Validation.AlreadyEndorsed,
+      );
+    });
+    describe("when the rejection is fine", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      testValidationResult(
+        log |> constructState,
+        L.(log |> withPartnerRejected(user2, proposal) |> lastItem),
+        Validation.Ok,
+      );
+    });
+  });
+  describe("Any endorsement type", () => {
+    describe("when the process is unknown", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> appendEvent(
+               user2.issuerKeyPair,
+               Event.makePartnerEndorsed(
+                 ~processId=ProcessId.make(),
+                 ~supporterId=user2.userId,
+               ),
+             )
+          |> lastItem
+        ),
+        Validation.UnknownProcessId,
+      );
+    });
+    describe("when the supporter is not a partner", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      testValidationResult(
+        log |> constructState,
+        L.(log |> withPartnerEndorsed(user3, proposal) |> lastItem),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the supporter is not the signer", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerEndorsed(
+               ~issuer=user1.issuerKeyPair,
+               user2,
+               proposal,
+             )
+          |> lastItem
+        ),
+        Validation.InvalidIssuer,
+      );
+    });
+    describe("when the endorsement has already been submitted", () => {
+      let (user1, user2, user3, user4) = G.fourUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user4)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      let log = log |> L.withPartnerEndorsed(user2, proposal);
+      testValidationResult(
+        log |> constructState,
+        L.(log |> lastItem),
+        Validation.Ignore,
+      );
+    });
+    describe("when the endorsement is fine", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+      testValidationResult(
+        log |> constructState,
+        L.(log |> withPartnerEndorsed(user2, proposal) |> lastItem),
+        Validation.Ok,
+      );
+    });
+  });
+  describe("PartnerProposal", () => {
+    describe("when proposing another partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log = L.(createVenture(user1) |> withFirstPartner(user1));
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when the prospect is already a partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user2, ~prospect=user1)
+          |> lastItem
+        ),
+        Validation.BadData("Partner already exists"),
+      );
+    });
+    describe("when the creator proposes themselves", () => {
+      let user1 = G.userSession("user1" |> UserId.fromString);
+      let log = L.createVenture(user1);
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user1)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when proposing a partner that was removed", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerRemoved(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe(
+      "when the partner was removed but the proposal doesn't show it", () => {
+      let (user1, user2, user3) = G.threeUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withPartnerRemoved(user2, ~supporters=[user1, user3])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerProposed(
+               ~withLastRemoval=false,
+               ~supporter=user3,
+               ~prospect=user2,
+             )
+          |> lastItem
+        ),
+        Validation.BadData("Last removal doesn't match"),
+      );
+    });
+  });
+  describe("PartnerRemovalProposal", () => {
+    describe("when proposing another partner", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withPartnerRemovalProposed(~supporter=user1, ~toBeRemoved=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("validatePartnerRemovalData", () => {
+      describe("when the prospect is not a partner", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log = L.(createVenture(user1) |> withFirstPartner(user1));
+        testDataValidation(
+          Validation.validatePartnerRemovalData,
+          log |> constructState,
+          Partner.Removal.Data.{
+            id: user2.userId,
+            lastPartnerProcess: ProcessId.make(),
+          },
+          Validation.BadData(
+            "Partner with Id '"
+            ++ UserId.toString(user2.userId)
+            ++ "' doesn't exist",
+          ),
+        );
+      });
+      describe("when lastPartnerProcess doesn't match", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
+          L.(
+            createVenture(user1)
+            |> withFirstPartner(user1)
+            |> withPartner(user2, ~supporters=[user1])
+          );
+        testDataValidation(
+          Validation.validatePartnerRemovalData,
+          log |> constructState,
+          Partner.Removal.Data.{
+            id: user2.userId,
+            lastPartnerProcess: ProcessId.make(),
+          },
+          Validation.BadData("lastPartnerProcess doesn't match"),
+        );
+      });
+    });
+  });
+  describe("CustodianProposed", () => {
+    describe("when proposing a custodian partner", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
           |> withPartner(user2, ~supporters=[user1])
         );
-      testDataValidation(
-        Validation.validateCustodianData,
+      testValidationResult(
         log |> constructState,
-        Custodian.Data.{
-          partnerId: user2.userId,
-          partnerApprovalProcess: ProcessId.make(),
-          accountIdx: AccountIndex.default,
-        },
-        Validation.BadData("partner approval process doesn't exist"),
+        L.(
+          log
+          |> withCustodianProposed(~supporter=user1, ~custodian=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
       );
     });
-    describe("when the account doesn't exist", () => {
-      let (user1, _user2) = G.twoUserSessions();
-      let log = L.(createVenture(user1) |> withFirstPartner(user1));
-      let partnerApproval = log |> L.lastEvent |> Event.getPartnerAcceptedExn;
-      testDataValidation(
-        Validation.validateCustodianData,
-        log |> constructState,
-        Custodian.Data.{
-          partnerId: user1.userId,
-          partnerApprovalProcess: partnerApproval.processId,
-          accountIdx: AccountIndex.default,
-        },
-        Validation.BadData("account doesn't exist"),
-      );
+    describe("validateCustodianData", () => {
+      describe("when the custodian is not a partner", () => {
+        let (user1, user2, user3) = G.threeUserSessions();
+        let log =
+          L.(
+            createVenture(user1)
+            |> withFirstPartner(user1)
+            |> withAccount(~supporter=user1)
+            |> withPartner(user2, ~supporters=[user1])
+          );
+        let partnerApproval =
+          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user3.userId,
+            partnerApprovalProcess: partnerApproval.processId,
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData(
+            "Partner with Id '"
+            ++ UserId.toString(user3.userId)
+            ++ "' doesn't exist",
+          ),
+        );
+      });
+      describe("when the partner approval process reference is wrong", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
+          L.(
+            createVenture(user1)
+            |> withFirstPartner(user1)
+            |> withAccount(~supporter=user1)
+            |> withPartner(user2, ~supporters=[user1])
+          );
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user2.userId,
+            partnerApprovalProcess: ProcessId.make(),
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData("partner approval process doesn't exist"),
+        );
+      });
+      describe("when the account doesn't exist", () => {
+        let (user1, _user2) = G.twoUserSessions();
+        let log = L.(createVenture(user1) |> withFirstPartner(user1));
+        let partnerApproval =
+          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user1.userId,
+            partnerApprovalProcess: partnerApproval.processId,
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData("account doesn't exist"),
+        );
+      });
     });
   });
-});
+};
 /* describe("Validate AccountKeyChainUpdated", () => { */
 /*   let supporterId = UserId.fromString("supporter"); */
 /*   let systemIssuer = Bitcoin.ECPair.makeRandom(); */

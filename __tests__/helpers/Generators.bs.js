@@ -19,7 +19,6 @@ var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var AccountKeyChain = require("../../src/application/wallet/AccountKeyChain.bs.js");
 var CustodianKeyChain = require("../../src/application/wallet/CustodianKeyChain.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function userSession(id) {
   var appPrivateKey = Utils.bufToHex(Crypto.randomBytes(32));
@@ -93,8 +92,8 @@ function partnerRejected(rejector, param) {
 
 var partnerAccepted = Event.Partner[/* Accepted */6][/* fromProposal */0];
 
-function partnerRemovalProposed(lastPartnerAccepted, supporterSession, toBeRemoved) {
-  return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(lastPartnerAccepted, supporterSession[/* userId */0], toBeRemoved[/* userId */0], Policy.unanimousMinusOne));
+function partnerRemovalProposed(lastPartnerAccepted, supporterSession) {
+  return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(lastPartnerAccepted, supporterSession[/* userId */0], Policy.unanimousMinusOne));
 }
 
 function partnerRemovalEndorsed(supporter, param) {
@@ -109,8 +108,8 @@ function accountCreationProposed(param) {
 
 var accountCreationAccepted = Event.AccountCreation[/* Accepted */6][/* fromProposal */0];
 
-function custodianProposed(param, partnerProposal) {
-  return Event.getCustodianProposedExn(Event.makeCustodianProposed(partnerProposal, param[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
+function custodianProposed(lastCustodianRemovalAccepted, param, partnerProposal) {
+  return Event.getCustodianProposedExn(Event.makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposal, param[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
 }
 
 function custodianEndorsed(supporter, param) {
@@ -119,8 +118,8 @@ function custodianEndorsed(supporter, param) {
 
 var custodianAccepted = Event.Custodian[/* Accepted */6][/* fromProposal */0];
 
-function custodianRemovalProposed(custodianAccepted, supporterSession, toBeRemoved) {
-  return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(custodianAccepted, supporterSession[/* userId */0], toBeRemoved[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimousMinusOne));
+function custodianRemovalProposed(custodianAccepted, supporterSession) {
+  return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(custodianAccepted, supporterSession[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimousMinusOne));
 }
 
 function custodianRemovalEndorsed(supporter, param) {
@@ -285,7 +284,7 @@ function withPartnerRemovalProposed(supporter, toBeRemoved, l) {
                 return res;
               }
             }), /* None */0, l[/* log */3]));
-  return appendEvent(supporter[/* issuerKeyPair */2], /* PartnerRemovalProposed */Block.__(5, [partnerRemovalProposed(lastPartnerAccepted, supporter, toBeRemoved)]), l);
+  return appendEvent(supporter[/* issuerKeyPair */2], /* PartnerRemovalProposed */Block.__(5, [partnerRemovalProposed(lastPartnerAccepted, supporter)]), l);
 }
 
 function withPartnerRemovalEndorsed(supporter, proposal) {
@@ -337,26 +336,48 @@ function withAccount(supporter, log) {
 }
 
 function withCustodianProposed(supporter, custodian, l) {
-  var partnerProposed = Curry._3(EventLog.reduce, (function (partnerProposal, param) {
-          var $$event = param[/* event */0];
-          if (partnerProposal) {
-            return /* Some */[partnerProposal[0]];
-          } else if ($$event.tag === 1) {
-            var proposal = $$event[0];
-            if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */5][/* id */1], custodian[/* userId */0])) {
-              return /* Some */[proposal];
-            } else {
-              return partnerProposal;
-            }
-          } else {
-            return partnerProposal;
+  var match = Curry._3(EventLog.reduce, (function (param, param$1) {
+          var $$event = param$1[/* event */0];
+          var custodianRemoved = param[1];
+          var partnerProposal = param[0];
+          switch ($$event.tag | 0) {
+            case 1 : 
+                var proposal = $$event[0];
+                if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */5][/* id */1], custodian[/* userId */0])) {
+                  return /* tuple */[
+                          /* Some */[proposal],
+                          custodianRemoved
+                        ];
+                } else {
+                  return /* tuple */[
+                          partnerProposal,
+                          custodianRemoved
+                        ];
+                }
+            case 20 : 
+                var removal = $$event[0];
+                if (PrimitiveTypes.UserId[/* eq */5](removal[/* data */2][/* custodianId */0], custodian[/* userId */0])) {
+                  return /* tuple */[
+                          partnerProposal,
+                          /* Some */[removal]
+                        ];
+                } else {
+                  return /* tuple */[
+                          partnerProposal,
+                          custodianRemoved
+                        ];
+                }
+            default:
+              return /* tuple */[
+                      partnerProposal,
+                      custodianRemoved
+                    ];
           }
-        }), /* None */0, l[/* log */3]);
-  if (partnerProposed) {
-    return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianProposed */Block.__(13, [custodianProposed(supporter, partnerProposed[0])]), l);
-  } else {
-    throw Caml_builtin_exceptions.not_found;
-  }
+        }), /* tuple */[
+        /* None */0,
+        /* None */0
+      ], l[/* log */3]);
+  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianProposed */Block.__(13, [custodianProposed(match[1], supporter, Js_option.getExn(match[0]))]), l);
 }
 
 function withCustodianEndorsed(supporter, proposal) {
@@ -400,7 +421,7 @@ function withCustodianRemovalProposed(supporter, toBeRemoved, l) {
                 return res;
               }
             }), /* None */0, l[/* log */3]));
-  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianRemovalProposed */Block.__(17, [custodianRemovalProposed(custodianAccepted, supporter, toBeRemoved)]), l);
+  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianRemovalProposed */Block.__(17, [custodianRemovalProposed(custodianAccepted, supporter)]), l);
 }
 
 function withCustodianRemovalEndorsed(supporter, proposal) {

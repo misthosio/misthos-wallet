@@ -112,7 +112,7 @@ function make(param, param$1, log) {
                   case 3 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeCustodianProposed(match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
+                          Event.makeCustodianProposed(/* None */0, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
                         ]];
                       break;
                   default:

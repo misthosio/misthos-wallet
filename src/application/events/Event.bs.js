@@ -283,19 +283,29 @@ function encode$4($$event) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "accountIdx",
-                    WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */2])
+                    "lastCustodianRemovalProcess",
+                    Json_encode.nullable(PrimitiveTypes.ProcessId[/* encode */2], $$event[/* lastCustodianRemovalProcess */2])
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "accountIdx",
+                      WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */3])
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]);
 }
 
 function decode$4(raw) {
+  var partial_arg = PrimitiveTypes.ProcessId[/* decode */3];
   return /* record */[
           /* partnerId */Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw),
           /* partnerApprovalProcess */Json_decode.field("partnerApprovalProcess", PrimitiveTypes.ProcessId[/* decode */3], raw),
+          /* lastCustodianRemovalProcess */Json_decode.field("lastCustodianRemovalProcess", (function (param) {
+                  return Json_decode.optional(partial_arg, param);
+                }), raw),
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw)
         ];
 }
@@ -326,7 +336,13 @@ function encode$5($$event) {
                   "accountIdx",
                   WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */1])
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "lastCustodianProcess",
+                    PrimitiveTypes.ProcessId[/* encode */2]($$event[/* lastCustodianProcess */2])
+                  ],
+                  /* [] */0
+                ]
               ]
             ]);
 }
@@ -334,7 +350,8 @@ function encode$5($$event) {
 function decode$5(raw) {
   return /* record */[
           /* custodianId */Json_decode.field("custodianId", PrimitiveTypes.UserId[/* decode */3], raw),
-          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw)
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
+          /* lastCustodianProcess */Json_decode.field("lastCustodianProcess", PrimitiveTypes.ProcessId[/* decode */3], raw)
         ];
 }
 
@@ -809,18 +826,12 @@ function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemova
                 ])]);
 }
 
-function makePartnerRemovalProposed(lastPartnerAccepted, supporterId, partnerId, policy) {
-  if (PrimitiveTypes.UserId[/* neq */6](lastPartnerAccepted[/* data */2][/* id */1], partnerId)) {
-    throw [
-          BadData,
-          "The provided PartnerAccepted wasn't for the same partner"
-        ];
-  }
+function makePartnerRemovalProposed(lastPartnerAccepted, supporterId, policy) {
   return /* PartnerRemovalProposed */Block.__(5, [Curry._5(Proposed$1[/* make */0], /* None */0, /* Some */[/* :: */[
                     lastPartnerAccepted[/* processId */0],
                     /* [] */0
                   ]], supporterId, policy, /* record */[
-                  /* id */partnerId,
+                  /* id */lastPartnerAccepted[/* data */2][/* id */1],
                   /* lastPartnerProcess */lastPartnerAccepted[/* processId */0]
                 ])]);
 }
@@ -832,25 +843,38 @@ function makeAccountCreationProposed(supporterId, name, accountIdx, policy) {
                 ])]);
 }
 
-function makeCustodianProposed(partnerProposed, supporterId, accountIdx, policy) {
+function makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposed, supporterId, accountIdx, policy) {
+  var partnerId = partnerProposed[/* data */5][/* id */1];
   var partnerApprovalProcess = partnerProposed[/* processId */0];
+  var lastCustodianRemovalProcess = Utils.mapOption((function (param) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* custodianId */0], partnerId)) {
+            throw [
+                  BadData,
+                  "The provided CustodianRemovalAccepted wasn't for the same custodian"
+                ];
+          }
+          return param[/* processId */0];
+        }), lastCustodianRemovalAccepted);
   return /* CustodianProposed */Block.__(13, [Curry._5(Proposed$3[/* make */0], /* Some */[/* :: */[
                     partnerApprovalProcess,
                     /* [] */0
                   ]], /* None */0, supporterId, policy, /* record */[
-                  /* partnerId */partnerProposed[/* data */5][/* id */1],
+                  /* partnerId */partnerId,
                   /* partnerApprovalProcess */partnerApprovalProcess,
+                  /* lastCustodianRemovalProcess */lastCustodianRemovalProcess,
                   /* accountIdx */accountIdx
                 ])]);
 }
 
-function makeCustodianRemovalProposed(custodianAccepted, supporterId, custodianId, accountIdx, policy) {
+function makeCustodianRemovalProposed(custodianAccepted, supporterId, accountIdx, policy) {
+  var lastCustodianProcess = custodianAccepted[/* processId */0];
   return /* CustodianRemovalProposed */Block.__(17, [Curry._5(Proposed$4[/* make */0], /* None */0, /* Some */[/* :: */[
-                    custodianAccepted[/* processId */0],
+                    lastCustodianProcess,
                     /* [] */0
                   ]], supporterId, policy, /* record */[
-                  /* custodianId */custodianId,
-                  /* accountIdx */accountIdx
+                  /* custodianId */custodianAccepted[/* data */2][/* partnerId */0],
+                  /* accountIdx */accountIdx,
+                  /* lastCustodianProcess */lastCustodianProcess
                 ])]);
 }
 

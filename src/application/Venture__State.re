@@ -12,6 +12,7 @@ type t = {
   custodianRemovalProcesses: list((userId, processId)),
   custodianAccepted: list((userId, Custodian.Accepted.t)),
   partnerRemovals: list((userId, Partner.Removal.Accepted.t)),
+  custodianRemovals: list((userId, Custodian.Removal.Accepted.t)),
   partnerAccepted: list((userId, Partner.Accepted.t)),
 };
 
@@ -25,6 +26,7 @@ let make = () => {
   custodianRemovalProcesses: [],
   custodianAccepted: [],
   partnerRemovals: [],
+  custodianRemovals: [],
   partnerAccepted: [],
 };
 
@@ -62,6 +64,11 @@ let custodianRemovalProcessForPartnerRemovalProcess =
 
 let lastRemovalOfPartner = (partnerId, {partnerRemovals}) =>
   try (Some(partnerRemovals |> List.assoc(partnerId))) {
+  | Not_found => None
+  };
+
+let lastRemovalOfCustodian = (partnerId, {custodianRemovals}) =>
+  try (Some(custodianRemovals |> List.assoc(partnerId))) {
   | Not_found => None
   };
 
@@ -115,6 +122,10 @@ let apply = (event, state) =>
         (custodianId, processId),
         ...state.custodianRemovalProcesses,
       ],
+    }
+  | CustodianRemovalAccepted({data: {custodianId}} as event) => {
+      ...state,
+      custodianRemovals: [(custodianId, event)],
     }
   | PartnerRemovalAccepted({data: {id}} as event) => {
       ...state,

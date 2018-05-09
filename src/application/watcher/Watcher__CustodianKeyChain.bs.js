@@ -23,7 +23,7 @@ var class_tables = [
 function make(param, param$1, log) {
   var data = param$1[/* data */2];
   var custodianId = data[/* partnerId */0];
-  var accountIdx = data[/* accountIdx */2];
+  var accountIdx = data[/* accountIdx */3];
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",

@@ -361,6 +361,8 @@ module Cmd = {
                      |> Event.getPartnerProposedExn;
                    let custodianProposal =
                      Event.makeCustodianProposed(
+                       ~lastCustodianRemovalAccepted=
+                         state |> State.lastRemovalOfCustodian(prospectId),
                        ~partnerProposed,
                        ~supporterId=session.userId,
                        ~accountIdx=AccountIndex.default,
@@ -453,7 +455,6 @@ module Cmd = {
                    Event.makeCustodianRemovalProposed(
                      ~custodianAccepted,
                      ~supporterId=session.userId,
-                     ~custodianId=partnerId,
                      ~accountIdx=AccountIndex.default,
                      ~policy=
                        state
@@ -473,7 +474,6 @@ module Cmd = {
                       ~lastPartnerAccepted=
                         state |> State.lastPartnerAccepted(partnerId),
                       ~supporterId=session.userId,
-                      ~partnerId,
                       ~policy=
                         state
                         |> State.currentPolicy(

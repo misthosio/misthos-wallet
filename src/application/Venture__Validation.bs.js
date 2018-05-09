@@ -496,7 +496,7 @@ function apply(param, state) {
     case 16 : 
         var acceptance$3 = $$event[0];
         var match$1 = acceptance$3[/* data */2];
-        var accountIdx = match$1[/* accountIdx */2];
+        var accountIdx = match$1[/* accountIdx */3];
         var partnerId = match$1[/* partnerId */0];
         var userChains;
         try {
@@ -944,7 +944,7 @@ function validatePartnerRemovalData(param, param$1) {
 }
 
 function validateCustodianData(param, param$1) {
-  var accountIdx = param[/* accountIdx */2];
+  var accountIdx = param[/* accountIdx */3];
   var partnerId = param[/* partnerId */0];
   if (List.exists((function (param) {
             return WalletTypes.AccountIndex[/* eq */7](param[1][1][/* accountIdx */0], accountIdx);
@@ -977,7 +977,7 @@ function validateCustodianRemovalData(param, param$1) {
     var match = List.exists((function (param) {
             var data = param[1][1];
             if (PrimitiveTypes.UserId[/* eq */5](data[/* partnerId */0], custodianId)) {
-              return WalletTypes.AccountIndex[/* eq */7](accountIdx, data[/* accountIdx */2]);
+              return WalletTypes.AccountIndex[/* eq */7](accountIdx, data[/* accountIdx */3]);
             } else {
               return false;
             }
@@ -1016,7 +1016,7 @@ function validateCustodianKeyChainUpdated(param, param$1, issuerPubKey) {
       var match = List.find((function (param) {
               var data = param[1][1];
               if (PrimitiveTypes.UserId[/* eq */5](data[/* partnerId */0], custodianId)) {
-                return Caml_obj.caml_equal(data[/* accountIdx */2], CustodianKeyChain.accountIdx(keyChain));
+                return Caml_obj.caml_equal(data[/* accountIdx */3], CustodianKeyChain.accountIdx(keyChain));
               } else {
                 return false;
               }

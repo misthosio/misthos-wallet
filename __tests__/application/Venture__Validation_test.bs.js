@@ -487,6 +487,7 @@ describe("CustodianProposed", (function () {
                         return testDataValidation(Venture__Validation.validateCustodianData, constructState(log), /* record */[
                                     /* partnerId */user3[/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
+                                    /* lastCustodianRemovalProcess : None */0,
                                     /* accountIdx */WalletTypes.AccountIndex[/* default */9]
                                   ], /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](user3[/* userId */0]) + "' doesn't exist")]);
                       }));
@@ -501,6 +502,7 @@ describe("CustodianProposed", (function () {
                         return testDataValidation(Venture__Validation.validateCustodianData, constructState(log), /* record */[
                                     /* partnerId */user2[/* userId */0],
                                     /* partnerApprovalProcess */PrimitiveTypes.ProcessId[/* make */7](/* () */0),
+                                    /* lastCustodianRemovalProcess : None */0,
                                     /* accountIdx */WalletTypes.AccountIndex[/* default */9]
                                   ], /* BadData */["partner approval process doesn't exist"]);
                       }));
@@ -512,6 +514,7 @@ describe("CustodianProposed", (function () {
                         return testDataValidation(Venture__Validation.validateCustodianData, constructState(log), /* record */[
                                     /* partnerId */user1[/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
+                                    /* lastCustodianRemovalProcess : None */0,
                                     /* accountIdx */WalletTypes.AccountIndex[/* default */9]
                                   ], /* BadData */["account doesn't exist"]);
                       }));

@@ -129,6 +129,7 @@ module Custodian = {
     type t = {
       partnerId: userId,
       partnerApprovalProcess: processId,
+      lastCustodianRemovalProcess: option(processId),
       accountIdx,
     };
     let encode = event =>
@@ -139,6 +140,10 @@ module Custodian = {
             "partnerApprovalProcess",
             ProcessId.encode(event.partnerApprovalProcess),
           ),
+          (
+            "lastCustodianRemovalProcess",
+            nullable(ProcessId.encode, event.lastCustodianRemovalProcess),
+          ),
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
         ])
       );
@@ -147,6 +152,9 @@ module Custodian = {
         partnerId: raw |> field("partnerId", UserId.decode),
         partnerApprovalProcess:
           raw |> field("partnerApprovalProcess", ProcessId.decode),
+        lastCustodianRemovalProcess:
+          raw
+          |> field("lastCustodianRemovalProcess", optional(ProcessId.decode)),
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
       };
   };
@@ -156,18 +164,25 @@ module Custodian = {
       type t = {
         custodianId: userId,
         accountIdx,
+        lastCustodianProcess: processId,
       };
       let encode = event =>
         Json.Encode.(
           object_([
             ("custodianId", UserId.encode(event.custodianId)),
             ("accountIdx", AccountIndex.encode(event.accountIdx)),
+            (
+              "lastCustodianProcess",
+              ProcessId.encode(event.lastCustodianProcess),
+            ),
           ])
         );
       let decode = raw =>
         Json.Decode.{
           custodianId: raw |> field("custodianId", UserId.decode),
           accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+          lastCustodianProcess:
+            raw |> field("lastCustodianProcess", ProcessId.decode),
         };
     };
     include (val EventTypes.makeProcess("CustodianRemoval"))(Data);
@@ -458,17 +473,7 @@ let makePartnerProposed =
 };
 
 let makePartnerRemovalProposed =
-    (
-      ~lastPartnerAccepted: Partner.Accepted.t,
-      ~supporterId,
-      ~partnerId,
-      ~policy,
-    ) => {
-  if (UserId.neq(lastPartnerAccepted.data.id, partnerId)) {
-    raise(
-      BadData("The provided PartnerAccepted wasn't for the same partner"),
-    );
-  };
+    (~lastPartnerAccepted: Partner.Accepted.t, ~supporterId, ~policy) =>
   PartnerRemovalProposed(
     Partner.Removal.Proposed.make(
       ~dependsOnCompletions=[lastPartnerAccepted.processId],
@@ -476,11 +481,10 @@ let makePartnerRemovalProposed =
       ~policy,
       Partner.Removal.Data.{
         lastPartnerProcess: lastPartnerAccepted.processId,
-        id: partnerId,
+        id: lastPartnerAccepted.data.id,
       },
     ),
   );
-};
 
 let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(
@@ -492,16 +496,36 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
   );
 
 let makeCustodianProposed =
-    (~partnerProposed: Partner.Proposed.t, ~supporterId, ~accountIdx, ~policy) => {
-  let partnerApprovalProcess = partnerProposed.processId;
+    (
+      ~lastCustodianRemovalAccepted,
+      ~partnerProposed: Partner.Proposed.t,
+      ~supporterId,
+      ~accountIdx,
+      ~policy,
+    ) => {
+  let {processId: partnerApprovalProcess, data: {id: partnerId}}: Partner.Proposed.t = partnerProposed;
+  let lastCustodianRemovalProcess =
+    lastCustodianRemovalAccepted
+    |> Utils.mapOption(
+         ({data: {custodianId}, processId}: Custodian.Removal.Accepted.t) => {
+         if (UserId.neq(custodianId, partnerId)) {
+           raise(
+             BadData(
+               "The provided CustodianRemovalAccepted wasn't for the same custodian",
+             ),
+           );
+         };
+         processId;
+       });
   CustodianProposed(
     Custodian.Proposed.make(
       ~dependsOnProposals=[partnerApprovalProcess],
       ~supporterId,
       ~policy,
       Custodian.Data.{
+        lastCustodianRemovalProcess,
         partnerApprovalProcess,
-        partnerId: partnerProposed.data.id,
+        partnerId,
         accountIdx,
       },
     ),
@@ -512,18 +536,19 @@ let makeCustodianRemovalProposed =
     (
       ~custodianAccepted: Custodian.Accepted.t,
       ~supporterId,
-      ~custodianId,
       ~accountIdx,
       ~policy,
-    ) =>
+    ) => {
+  let {processId: lastCustodianProcess, data: {partnerId: custodianId}}: Custodian.Accepted.t = custodianAccepted;
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOnCompletions=[custodianAccepted.processId],
+      ~dependsOnCompletions=[lastCustodianProcess],
       ~supporterId,
       ~policy,
-      Custodian.Removal.Data.{custodianId, accountIdx},
+      Custodian.Removal.Data.{lastCustodianProcess, custodianId, accountIdx},
     ),
   );
+};
 
 let makePartnerRejected = (~processId, ~rejectorId) =>
   PartnerRejected(Partner.Rejected.make(~processId, ~rejectorId));
