@@ -1,4 +1,4 @@
-let component = ReasonReact.statelessComponent("Body2");
+let component = ReasonReact.statelessComponent("Body3");
 
 [@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
 
