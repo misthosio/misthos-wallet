@@ -36,6 +36,30 @@ describe("Initial key chain", (function () {
       }));
 
 describe("Completion", (function () {
+        describe("when the custodian is a different user", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withCustodian */26](user2, /* :: */[
+                      user1,
+                      /* :: */[
+                        user2,
+                        /* [] */0
+                      ]
+                    ], Generators.Log[/* withPartner */14](user2, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], Generators.Log[/* withCustodian */26](user1, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
+                var acceptance = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */4](log));
+                var log$1 = Generators.Log[/* withCustodianRemoved */30](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], log);
+                return WatcherHelpers.testWatcherHasCompleted(Watcher__CustodianKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */5](log$1)));
+              }));
         describe("when the custodian is removed", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
@@ -55,6 +79,30 @@ describe("Completion", (function () {
                             ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
                 var acceptance = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */4](log));
                 var log$1 = Generators.Log[/* withCustodianRemoved */30](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], log);
+                return WatcherHelpers.testWatcherHasCompleted(Watcher__CustodianKeyChain.make(user2, acceptance, Generators.Log[/* eventLog */5](log$1)));
+              }));
+        describe("when the partner is removed", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withCustodian */26](user2, /* :: */[
+                      user1,
+                      /* :: */[
+                        user2,
+                        /* [] */0
+                      ]
+                    ], Generators.Log[/* withPartner */14](user2, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], Generators.Log[/* withCustodian */26](user1, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
+                var acceptance = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */4](log));
+                var log$1 = Generators.Log[/* withPartnerRemoved */19](user2, /* :: */[
                       user1,
                       /* [] */0
                     ], log);

@@ -14,11 +14,12 @@ type state = {
 let make =
     (
       {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
-      {data, processId: custodianApprovalProcess}: Custodian.Accepted.t,
+      {
+        data: {partnerId: custodianId, accountIdx, partnerApprovalProcess},
+        processId: custodianApprovalProcess,
+      }: Custodian.Accepted.t,
       log,
     ) => {
-  let custodianId = data.partnerId;
-  let accountIdx = data.accountIdx;
   let process = {
     val state =
       ref({
@@ -56,16 +57,26 @@ let make =
                 )),
             }
           | CustodianRemovalAccepted({
-              dependsOnCompletions,
-              data: {custodianId: removedId, accountIdx: fromAccount},
+              data: {
+                lastCustodianProcess,
+                custodianId: removedId,
+                accountIdx: fromAccount,
+              },
             })
               when
                 UserId.eq(removedId, custodianId)
                 && ProcessId.eq(
-                     dependsOnCompletions |> List.hd,
+                     lastCustodianProcess,
                      custodianApprovalProcess,
                    )
                 && AccountIndex.eq(fromAccount, accountIdx) => {
+              ...state^,
+              selfRemoved: true,
+            }
+          | PartnerRemovalAccepted({data: {id, lastPartnerProcess}})
+              when
+                UserId.eq(custodianId, id)
+                && ProcessId.eq(lastPartnerProcess, partnerApprovalProcess) => {
               ...state^,
               selfRemoved: true,
             }
@@ -115,23 +126,28 @@ let make =
                 && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
               ...state^,
               pendingEvent:
-                state^.pendingEvent |> Utils.mapOption(_=>((
-                  issuerKeyPair,
-                  CustodianKeyChainUpdated(
-                    CustodianKeyChainUpdated.make(
-                      ~custodianApprovalProcess,
-                      ~custodianId,
-                      ~keyChain=
-                        CustodianKeyChain.make(
-                          ~ventureId=state^.ventureId,
-                          ~accountIdx,
-                          ~keyChainIdx=state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
-                          ~masterKeyChain,
-                        )
-                        |> CustodianKeyChain.toPublicKeyChain,
-                    ),
-                  ),
-                ))),
+                state^.pendingEvent
+                |> Utils.mapOption((_) =>
+                     (
+                       issuerKeyPair,
+                       CustodianKeyChainUpdated(
+                         CustodianKeyChainUpdated.make(
+                           ~custodianApprovalProcess,
+                           ~custodianId,
+                           ~keyChain=
+                             CustodianKeyChain.make(
+                               ~ventureId=state^.ventureId,
+                               ~accountIdx,
+                               ~keyChainIdx=
+                                 state^.nextKeyChainIdx
+                                 |> CustodianKeyChainIndex.next,
+                               ~masterKeyChain,
+                             )
+                             |> CustodianKeyChain.toPublicKeyChain,
+                         ),
+                       ),
+                     )
+                   ),
               nextKeyChainIdx:
                 state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
             }
@@ -140,7 +156,7 @@ let make =
         );
     };
     pub processCompleted = () =>
-      userId != data.partnerId || state^.selfRemoved;
+      UserId.neq(userId, custodianId) || state^.selfRemoved;
     pub pendingEvent = () =>
       state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)
   };
