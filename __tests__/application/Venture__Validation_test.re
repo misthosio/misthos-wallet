@@ -16,7 +16,7 @@ module L = G.Log;
 
 module Validation = Venture__Validation;
 
-exception TestingInvalidSequence;
+exception TestingInvalidSequence(string);
 
 let constructState = log =>
   log
@@ -24,7 +24,8 @@ let constructState = log =>
        (s, item) =>
          switch (s |. Validation.validate(item)) {
          | Ok => s |> Validation.apply(item)
-         | _ => raise(TestingInvalidSequence)
+         | bad =>
+           raise(TestingInvalidSequence(bad |> Validation.resultToString))
          },
        Validation.make(),
      );
@@ -547,7 +548,7 @@ let () = {
     });
   });
   describe("CustodianProposed", () => {
-    describe("when proposing a custodian partner", () => {
+    describe("when proposing a custodian", () => {
       let (user1, user2) = G.twoUserSessions();
       let log =
         L.(
@@ -556,6 +557,28 @@ let () = {
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
           |> withPartner(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log
+          |> withCustodianProposed(~supporter=user1, ~custodian=user2)
+          |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
+    describe("when proposing a custodian after removal", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withPartner(user2, ~supporters=[user1])
+          |> withCustodian(user2, ~supporters=[user1, user2])
+          |> withCustodianRemoved(user2, ~supporters=[user1, user2])
         );
       testValidationResult(
         log |> constructState,
@@ -589,9 +612,7 @@ let () = {
             accountIdx: AccountIndex.default,
           },
           Validation.BadData(
-            "Partner with Id '"
-            ++ UserId.toString(user3.userId)
-            ++ "' doesn't exist",
+            "Partner approval process doesn't match user id",
           ),
         );
       });
@@ -631,6 +652,36 @@ let () = {
             accountIdx: AccountIndex.default,
           },
           Validation.BadData("account doesn't exist"),
+        );
+      });
+      describe("when lastCustodianRemovalProcess doesn't match", () => {
+        let (user1, user2) = G.twoUserSessions();
+        let log =
+          L.(
+            createVenture(user1)
+            |> withFirstPartner(user1)
+            |> withAccount(~supporter=user1)
+            |> withCustodian(user1, ~supporters=[user1])
+            |> withPartner(user2, ~supporters=[user1])
+          );
+        let partnerApproval =
+          log |> L.lastEvent |> Event.getPartnerAcceptedExn;
+        let log =
+          L.(
+            log
+            |> withCustodian(user2, ~supporters=[user1, user2])
+            |> withCustodianRemoved(user2, ~supporters=[user1])
+          );
+        testDataValidation(
+          Validation.validateCustodianData,
+          log |> constructState,
+          Custodian.Data.{
+            lastCustodianRemovalProcess: None,
+            partnerId: user2.userId,
+            partnerApprovalProcess: partnerApproval.processId,
+            accountIdx: AccountIndex.default,
+          },
+          Validation.BadData("Last removal doesn't match"),
         );
       });
     });

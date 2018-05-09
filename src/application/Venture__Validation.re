@@ -22,6 +22,7 @@ type t = {
   custodianData: list((processId, (userId, Custodian.Data.t))),
   custodianRemovalData:
     list((processId, (userId, Custodian.Removal.Data.t))),
+  custodianRemovals: list((userId, processId)),
   accountCreationData: list((processId, (userId, AccountCreation.Data.t))),
   payoutData: list((processId, (userId, Payout.Data.t))),
   processes: list((processId, approvalProcess)),
@@ -46,6 +47,7 @@ let make = () => {
   partnerRemovals: [],
   custodianData: [],
   custodianRemovalData: [],
+  custodianRemovals: [],
   accountCreationData: [],
   payoutData: [],
   processes: [],
@@ -219,8 +221,13 @@ let apply = ({hash, event}: EventLog.item, state) => {
         ...state.custodianKeyChains |> List.remove_assoc(partnerId),
       ],
     };
-  | CustodianRemovalAccepted(acceptance) =>
-    completeProcess(acceptance, state)
+  | CustodianRemovalAccepted(acceptance) => {
+      ...completeProcess(acceptance, state),
+      custodianRemovals: [
+        (acceptance.data.custodianId, acceptance.processId),
+        ...state.custodianRemovals,
+      ],
+    }
   | CustodianKeyChainUpdated({custodianId, keyChain}) =>
     let userChains =
       try (state.custodianKeyChains |> List.assoc(custodianId)) {
@@ -467,8 +474,13 @@ let validatePartnerRemovalData =
 
 let validateCustodianData =
     (
-      {accountIdx, partnerApprovalProcess, partnerId}: Custodian.Data.t,
-      {accountCreationData, partnerData},
+      {
+        accountIdx,
+        lastCustodianRemovalProcess,
+        partnerApprovalProcess,
+        partnerId,
+      }: Custodian.Data.t,
+      {custodianRemovals, accountCreationData, partnerData},
     ) =>
   if (accountCreationData
       |>
@@ -480,13 +492,19 @@ let validateCustodianData =
     try (
       {
         let pData = partnerData |> List.assoc(partnerApprovalProcess) |> snd;
-        UserId.eq(pData.id, partnerId) ?
-          Ok :
-          BadData(
-            "Partner with Id '"
-            ++ UserId.toString(partnerId)
-            ++ "' doesn't exist",
-          );
+        if (UserId.neq(pData.id, partnerId)) {
+          BadData("Partner approval process doesn't match user id");
+        } else {
+          let custodianRemovalProcess =
+            try (Some(custodianRemovals |> List.assoc(partnerId))) {
+            | Not_found => None
+            };
+          if (custodianRemovalProcess != lastCustodianRemovalProcess) {
+            BadData("Last removal doesn't match");
+          } else {
+            Ok;
+          };
+        };
       }
     ) {
     | Not_found => BadData("partner approval process doesn't exist")
