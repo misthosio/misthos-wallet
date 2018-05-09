@@ -123,7 +123,10 @@ function apply($$event, state) {
                 state_000,
                 state_001,
                 /* partners : :: */[
-                  /* record */[/* userId */data[/* id */1]],
+                  /* record */[
+                    /* userId */data[/* id */1],
+                    /* name : None */0
+                  ],
                   state_002
                 ],
                 /* prospects */List.filter((function (p) {
