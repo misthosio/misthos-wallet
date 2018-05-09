@@ -422,11 +422,11 @@ module Log = {
     let accountKeyChain =
       accountKeyChain(~ventureId, ~keyChainIdx, custodians);
     accountKeyChain.custodianKeyChains
-    |> List.map(((partnerId, keyChain)) =>
+    |> List.map(((custodianId, keyChain)) =>
          Event.custodianKeyChainUpdated(
            ~custodianApprovalProcess=
-             custodianProcesses |> List.assoc(partnerId),
-           ~partnerId,
+             custodianProcesses |> List.assoc(custodianId),
+           ~custodianId,
            ~keyChain,
          )
        )
@@ -437,7 +437,7 @@ module Log = {
                 (
                   custodians
                   |> List.find(({userId}: Session.Data.t) =>
-                       UserId.eq(userId, event.partnerId)
+                       UserId.eq(userId, event.custodianId)
                      )
                 ).
                   issuerKeyPair,

@@ -406,11 +406,11 @@ function withAccountKeyChain($staropt$star, custodians, l) {
   var accountKeyChain$1 = accountKeyChain(/* Some */[l[/* ventureId */0]], /* Some */[keyChainIdx], custodians);
   return appendSystemEvent(/* AccountKeyChainUpdated */Block.__(30, [Curry._1(accountKeyChainUpdated, accountKeyChain$1)]), List.fold_left((function (l, $$event) {
                     return appendEvent(List.find((function (param) {
-                                        return PrimitiveTypes.UserId[/* eq */5](param[/* userId */0], $$event[/* partnerId */1]);
+                                        return PrimitiveTypes.UserId[/* eq */5](param[/* userId */0], $$event[/* custodianId */1]);
                                       }), custodians)[/* issuerKeyPair */2], /* CustodianKeyChainUpdated */Block.__(29, [$$event]), l);
                   }), l, List.map((function (param) {
-                        var partnerId = param[0];
-                        return Curry._3(custodianKeyChainUpdated, List.assoc(partnerId, custodianProcesses), partnerId, param[1]);
+                        var custodianId = param[0];
+                        return Curry._3(custodianKeyChainUpdated, List.assoc(custodianId, custodianProcesses), custodianId, param[1]);
                       }), accountKeyChain$1[/* custodianKeyChains */3])));
 }
 

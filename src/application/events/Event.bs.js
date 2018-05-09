@@ -602,10 +602,10 @@ var Payout = /* module */[
   /* BroadcastFailed */BroadcastFailed
 ];
 
-function make$5(custodianApprovalProcess, partnerId, keyChain) {
+function make$5(custodianApprovalProcess, custodianId, keyChain) {
   return /* record */[
           /* custodianApprovalProcess */custodianApprovalProcess,
-          /* partnerId */partnerId,
+          /* custodianId */custodianId,
           /* keyChain */keyChain
         ];
 }
@@ -623,8 +623,8 @@ function encode$11($$event) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "partnerId",
-                    PrimitiveTypes.UserId[/* encode */2]($$event[/* partnerId */1])
+                    "custodianId",
+                    PrimitiveTypes.UserId[/* encode */2]($$event[/* custodianId */1])
                   ],
                   /* :: */[
                     /* tuple */[
@@ -641,7 +641,7 @@ function encode$11($$event) {
 function decode$11(raw) {
   return /* record */[
           /* custodianApprovalProcess */Json_decode.field("custodianApprovalProcess", PrimitiveTypes.ProcessId[/* decode */3], raw),
-          /* partnerId */Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw),
+          /* custodianId */Json_decode.field("custodianId", PrimitiveTypes.UserId[/* decode */3], raw),
           /* keyChain */Json_decode.field("keyChain", CustodianKeyChain.decode, raw)
         ];
 }

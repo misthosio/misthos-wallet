@@ -42,7 +42,7 @@ let make =
                   CustodianKeyChainUpdated(
                     CustodianKeyChainUpdated.make(
                       ~custodianApprovalProcess,
-                      ~partnerId=custodianId,
+                      ~custodianId,
                       ~keyChain=
                         CustodianKeyChain.make(
                           ~ventureId=state^.ventureId,
@@ -82,7 +82,7 @@ let make =
                   CustodianKeyChainUpdated(
                     CustodianKeyChainUpdated.make(
                       ~custodianApprovalProcess,
-                      ~partnerId=custodianId,
+                      ~custodianId,
                       ~keyChain=
                         CustodianKeyChain.make(
                           ~ventureId=state^.ventureId,
@@ -97,11 +97,11 @@ let make =
             }
           | CustodianKeyChainUpdated({
               custodianApprovalProcess: processId,
-              partnerId,
+              custodianId: custodian,
               keyChain,
             })
               when
-                UserId.eq(partnerId, custodianId)
+                UserId.eq(custodian, custodianId)
                 && ProcessId.eq(custodianApprovalProcess, processId)
                 && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
               ...state^,
@@ -109,9 +109,9 @@ let make =
               nextKeyChainIdx:
                 state^.nextKeyChainIdx |> CustodianKeyChainIndex.next,
             }
-          | CustodianKeyChainUpdated({partnerId, keyChain})
+          | CustodianKeyChainUpdated({custodianId: custodian, keyChain})
               when
-                UserId.eq(partnerId, custodianId)
+                UserId.eq(custodian, custodianId)
                 && CustodianKeyChain.accountIdx(keyChain) == accountIdx => {
               ...state^,
               pendingEvent:
@@ -120,7 +120,7 @@ let make =
                   CustodianKeyChainUpdated(
                     CustodianKeyChainUpdated.make(
                       ~custodianApprovalProcess,
-                      ~partnerId=custodianId,
+                      ~custodianId,
                       ~keyChain=
                         CustodianKeyChain.make(
                           ~ventureId=state^.ventureId,

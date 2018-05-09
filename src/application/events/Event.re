@@ -273,12 +273,12 @@ module Payout = {
 module CustodianKeyChainUpdated = {
   type t = {
     custodianApprovalProcess: processId,
-    partnerId: userId,
+    custodianId: userId,
     keyChain: CustodianKeyChain.public,
   };
-  let make = (~custodianApprovalProcess, ~partnerId, ~keyChain) => {
+  let make = (~custodianApprovalProcess, ~custodianId, ~keyChain) => {
     custodianApprovalProcess,
-    partnerId,
+    custodianId,
     keyChain,
   };
   let encode = event =>
@@ -289,7 +289,7 @@ module CustodianKeyChainUpdated = {
           "custodianApprovalProcess",
           ProcessId.encode(event.custodianApprovalProcess),
         ),
-        ("partnerId", UserId.encode(event.partnerId)),
+        ("custodianId", UserId.encode(event.custodianId)),
         ("keyChain", CustodianKeyChain.encode(event.keyChain)),
       ])
     );
@@ -297,7 +297,7 @@ module CustodianKeyChainUpdated = {
     Json.Decode.{
       custodianApprovalProcess:
         raw |> field("custodianApprovalProcess", ProcessId.decode),
-      partnerId: raw |> field("partnerId", UserId.decode),
+      custodianId: raw |> field("custodianId", UserId.decode),
       keyChain: raw |> field("keyChain", CustodianKeyChain.decode),
     };
 };

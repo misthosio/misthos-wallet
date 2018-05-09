@@ -57,11 +57,11 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
             ) {
             | Not_found => state^
             }
-          | CustodianKeyChainUpdated({keyChain, partnerId})
+          | CustodianKeyChainUpdated({keyChain, custodianId})
               when CustodianKeyChain.accountIdx(keyChain) == accountIdx =>
             let custodianKeyChains = [
-              (partnerId, keyChain),
-              ...state^.custodianKeyChains |> List.remove_assoc(partnerId),
+              (custodianId, keyChain),
+              ...state^.custodianKeyChains |> List.remove_assoc(custodianId),
             ];
             {
               ...state^,

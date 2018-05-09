@@ -615,10 +615,10 @@ function apply(param, state) {
     case 29 : 
         var match$2 = $$event[0];
         var keyChain = match$2[/* keyChain */2];
-        var partnerId$1 = match$2[/* partnerId */1];
+        var custodianId = match$2[/* custodianId */1];
         var userChains$1;
         try {
-          userChains$1 = List.assoc(partnerId$1, state_016);
+          userChains$1 = List.assoc(custodianId, state_016);
         }
         catch (exn$2){
           if (exn$2 === Caml_builtin_exceptions.not_found) {
@@ -657,7 +657,7 @@ function apply(param, state) {
                 state_015,
                 /* custodianKeyChains : :: */[
                   /* tuple */[
-                    partnerId$1,
+                    custodianId,
                     /* :: */[
                       /* tuple */[
                         CustodianKeyChain.accountIdx(keyChain),
@@ -669,7 +669,7 @@ function apply(param, state) {
                       /* [] */0
                     ]
                   ],
-                  List.remove_assoc(partnerId$1, state_016)
+                  List.remove_assoc(custodianId, state_016)
                 ],
                 state_017
               ];
@@ -1110,21 +1110,21 @@ function validateEvent(param) {
             var param$3 = param;
             var issuerPubKey = param$1;
             var keyChain = param$2[/* keyChain */2];
-            var partnerId = param$2[/* partnerId */1];
-            if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$3[/* currentPartnerPubKeys */4]), partnerId)) {
+            var custodianId = param$2[/* custodianId */1];
+            if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$3[/* currentPartnerPubKeys */4]), custodianId)) {
               return /* InvalidIssuer */2;
             } else {
               try {
                 var match = List.find((function (param) {
                         var data = param[1][1];
-                        if (Caml_obj.caml_equal(data[/* partnerId */0], partnerId)) {
+                        if (PrimitiveTypes.UserId[/* eq */5](data[/* partnerId */0], custodianId)) {
                           return Caml_obj.caml_equal(data[/* accountIdx */2], CustodianKeyChain.accountIdx(keyChain));
                         } else {
                           return false;
                         }
                       }), param$3[/* custodianData */8]);
                 if (List.mem(match[0], param$3[/* completedProcesses */13])) {
-                  if (List.length(List.assoc(CustodianKeyChain.accountIdx(keyChain), List.assoc(partnerId, param$3[/* custodianKeyChains */16]))) !== WalletTypes.CustodianKeyChainIndex[/* toInt */0](CustodianKeyChain.keyChainIdx(keyChain))) {
+                  if (List.length(List.assoc(CustodianKeyChain.accountIdx(keyChain), List.assoc(custodianId, param$3[/* custodianKeyChains */16]))) !== WalletTypes.CustodianKeyChainIndex[/* toInt */0](CustodianKeyChain.keyChainIdx(keyChain))) {
                     return /* BadData */["Bad KeyChainIndex"];
                   } else {
                     return /* Ok */0;

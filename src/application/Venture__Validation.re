@@ -218,9 +218,9 @@ let apply = ({hash, event}: EventLog.item, state) => {
     };
   | CustodianRemovalAccepted(acceptance) =>
     completeProcess(acceptance, state)
-  | CustodianKeyChainUpdated({partnerId, keyChain}) =>
+  | CustodianKeyChainUpdated({custodianId, keyChain}) =>
     let userChains =
-      try (state.custodianKeyChains |> List.assoc(partnerId)) {
+      try (state.custodianKeyChains |> List.assoc(custodianId)) {
       | Not_found => []
       };
     let accountChains =
@@ -231,7 +231,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       ...state,
       custodianKeyChains: [
         (
-          partnerId,
+          custodianId,
           [
             (
               CustodianKeyChain.accountIdx(keyChain),
@@ -239,7 +239,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
             ),
           ],
         ),
-        ...state.custodianKeyChains |> List.remove_assoc(partnerId),
+        ...state.custodianKeyChains |> List.remove_assoc(custodianId),
       ],
     };
   | AccountKeyChainUpdated({keyChain}) =>
@@ -481,7 +481,7 @@ let validateAccountCreationData =
 
 let validateCustodianKeyChainUpdated =
     (
-      {partnerId, keyChain}: CustodianKeyChainUpdated.t,
+      {custodianId, keyChain}: CustodianKeyChainUpdated.t,
       {
         currentPartnerPubKeys,
         custodianData,
@@ -492,7 +492,7 @@ let validateCustodianKeyChainUpdated =
     ) =>
   if (UserId.neq(
         currentPartnerPubKeys |> List.assoc(issuerPubKey),
-        partnerId,
+        custodianId,
       )) {
     InvalidIssuer;
   } else {
@@ -501,12 +501,12 @@ let validateCustodianKeyChainUpdated =
         let (process, _data) =
           custodianData
           |> List.find(((_pId, (_, data: Custodian.Data.t))) =>
-               data.partnerId == partnerId
+               UserId.eq(data.partnerId, custodianId)
                && data.accountIdx == CustodianKeyChain.accountIdx(keyChain)
              );
         if (completedProcesses |> List.mem(process)) {
           if (custodianKeyChains
-              |> List.assoc(partnerId)
+              |> List.assoc(custodianId)
               |> List.assoc(CustodianKeyChain.accountIdx(keyChain))
               |>
               List.length != (
