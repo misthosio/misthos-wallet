@@ -58,8 +58,9 @@ function fourUserSessions() {
         ];
 }
 
-function custodianKeyChain(ventureId, keyChainIdx, param) {
-  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, WalletTypes.AccountIndex[/* default */9], WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
+function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
+  var accountIdx = $staropt$star ? $staropt$star[0] : WalletTypes.AccountIndex[/* default */9];
+  return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
 }
 
 function accountKeyChain($staropt$star, $staropt$star$1, users) {
@@ -68,7 +69,7 @@ function accountKeyChain($staropt$star, $staropt$star$1, users) {
   return AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], WalletTypes.AccountKeyChainIndex[/* fromInt */1](keyChainIdx), List.map((function (user) {
                     return /* tuple */[
                             user[/* userId */0],
-                            custodianKeyChain(ventureId, keyChainIdx, user)
+                            custodianKeyChain(/* None */0, ventureId, keyChainIdx, user)
                           ];
                   }), users));
 }
@@ -451,6 +452,30 @@ function withCustodianRemoved(user, supporters, log) {
   }
 }
 
+function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
+  var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
+  var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
+          var $$event = param[/* event */0];
+          if ($$event.tag === 16) {
+            var match = $$event[0];
+            return /* :: */[
+                    /* tuple */[
+                      match[/* data */2][/* partnerId */0],
+                      match[/* processId */0]
+                    ],
+                    res
+                  ];
+          } else {
+            return res;
+          }
+        }), /* [] */0, l[/* log */3]);
+  var keyChain = custodianKeyChain(/* None */0, l[/* ventureId */0], keyChainIdx, custodian);
+  var issuerKeyPair = Js_option.getWithDefault(custodian[/* issuerKeyPair */2], Utils.mapOption((function (issuer) {
+              return issuer[/* issuerKeyPair */2];
+            }), issuer));
+  return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(29, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
+}
+
 function withAccountKeyChain($staropt$star, custodians, l) {
   var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
   var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
@@ -511,6 +536,7 @@ var Log = /* module */[
   /* withCustodianRemovalEndorsed */withCustodianRemovalEndorsed,
   /* withCustodianRemovalAccepted */withCustodianRemovalAccepted,
   /* withCustodianRemoved */withCustodianRemoved,
+  /* withCustodianKeyChain */withCustodianKeyChain,
   /* withAccountKeyChain */withAccountKeyChain
 ];
 

@@ -48,10 +48,15 @@ let fourUserSessions = () => (
 );
 
 let custodianKeyChain =
-    (~ventureId, ~keyChainIdx, {masterKeyChain}: Session.Data.t) =>
+    (
+      ~accountIdx=AccountIndex.default,
+      ~ventureId,
+      ~keyChainIdx,
+      {masterKeyChain}: Session.Data.t,
+    ) =>
   CustodianKeyChain.make(
     ~ventureId,
-    ~accountIdx=AccountIndex.default,
+    ~accountIdx,
     ~keyChainIdx=CustodianKeyChainIndex.fromInt(keyChainIdx),
     ~masterKeyChain,
   )
@@ -461,6 +466,39 @@ module Log = {
     | _ => %assert
            "withCustodian"
     };
+  let withCustodianKeyChain =
+      (~keyChainIdx=0, ~issuer=?, custodian, {log, ventureId} as l) => {
+    let custodianProcesses =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | CustodianAccepted({processId, data: {partnerId}}) => [
+                 (partnerId, processId),
+                 ...res,
+               ]
+             | _ => res
+             },
+           [],
+         );
+    let keyChain = custodianKeyChain(~ventureId, ~keyChainIdx, custodian);
+    let issuerKeyPair =
+      issuer
+      |> Utils.mapOption((issuer: Session.Data.t) => issuer.issuerKeyPair)
+      |> Js.Option.getWithDefault(custodian.issuerKeyPair);
+    l
+    |> appendEvent(
+         issuerKeyPair,
+         CustodianKeyChainUpdated(
+           Event.custodianKeyChainUpdated(
+             ~custodianApprovalProcess=
+               custodianProcesses |> List.assoc(custodian.userId),
+             ~custodianId=custodian.userId,
+             ~keyChain,
+           ),
+         ),
+       );
+  };
   let withAccountKeyChain =
       (~keyChainIdx=0, custodians, {log, ventureId} as l) => {
     let custodianProcesses =
