@@ -2,6 +2,28 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+module Identifier = {
+  type t = string;
+  let encode = Json.Encode.string;
+  let decode = Json.Decode.string;
+  let make = (nCoSigners, custodianKeyChains) =>
+    custodianKeyChains
+    |> List.sort(((userId1, _), (userId2, _)) =>
+         UserId.compare(userId1, userId2)
+       )
+    |> List.map(((userId, keyChain)) =>
+         (
+           userId,
+           keyChain |> CustodianKeyChain.hdNode |> Bitcoin.HDNode.toBase58,
+         )
+       )
+    |> List.fold_left(
+         (res, (userId, xpub)) => res ++ UserId.toString(userId) ++ xpub,
+         nCoSigners |> string_of_int,
+       )
+    |> Utils.hash;
+};
+
 type t = {
   accountIdx,
   keyChainIdx: accountKeyChainIdx,
