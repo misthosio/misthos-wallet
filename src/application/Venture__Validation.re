@@ -23,6 +23,7 @@ type t = {
   custodianRemovalData:
     list((processId, (userId, Custodian.Removal.Data.t))),
   custodianRemovals: list((userId, processId)),
+  currentCustodians: list((accountIdx, list(userId))),
   accountCreationData: list((processId, (userId, AccountCreation.Data.t))),
   payoutData: list((processId, (userId, Payout.Data.t))),
   processes: list((processId, approvalProcess)),
@@ -48,6 +49,7 @@ let make = () => {
   custodianData: [],
   custodianRemovalData: [],
   custodianRemovals: [],
+  currentCustodians: [],
   accountCreationData: [],
   payoutData: [],
   processes: [],
@@ -197,6 +199,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | AccountCreationAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
       accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
+      currentCustodians: [(data.accountIdx, []), ...state.currentCustodians],
     }
   | PayoutAccepted(acceptance) => completeProcess(acceptance, state)
   | CustodianAccepted({data: {partnerId, accountIdx}} as acceptance) =>
@@ -220,12 +223,30 @@ let apply = ({hash, event}: EventLog.item, state) => {
         ),
         ...state.custodianKeyChains |> List.remove_assoc(partnerId),
       ],
+      currentCustodians: [
+        (
+          accountIdx,
+          [partnerId, ...state.currentCustodians |> List.assoc(accountIdx)],
+        ),
+        ...state.currentCustodians |> List.remove_assoc(accountIdx),
+      ],
     };
-  | CustodianRemovalAccepted(acceptance) => {
+  | CustodianRemovalAccepted(
+      {processId, data: {custodianId, accountIdx}} as acceptance,
+    ) => {
       ...completeProcess(acceptance, state),
       custodianRemovals: [
-        (acceptance.data.custodianId, acceptance.processId),
+        (custodianId, processId),
         ...state.custodianRemovals,
+      ],
+      currentCustodians: [
+        (
+          accountIdx,
+          state.currentCustodians
+          |> List.assoc(accountIdx)
+          |> List.filter(UserId.neq(custodianId)),
+        ),
+        ...state.currentCustodians |> List.remove_assoc(accountIdx),
       ],
     }
   | CustodianKeyChainUpdated({custodianId, keyChain}) =>
@@ -595,12 +616,13 @@ let validateCustodianKeyChainUpdated =
 
 let validateAccountKeyChainUpdated =
     (
-      {keyChain}: AccountKeyChainUpdated.t,
+      {keyChain: {accountIdx, keyChainIdx, custodianKeyChains}}: AccountKeyChainUpdated.t,
       {
         accountCreationData,
         completedProcesses,
-        custodianKeyChains,
+        custodianKeyChains: currentCustodianKeyChains,
         accountKeyChains,
+        currentCustodians,
       },
       _issuerPubKey,
     ) =>
@@ -609,41 +631,45 @@ let validateAccountKeyChainUpdated =
       let (pId, _) =
         accountCreationData
         |> List.find(((_, (_, data: AccountCreation.Data.t))) =>
-             data.accountIdx == keyChain.accountIdx
+             AccountIndex.eq(data.accountIdx, accountIdx)
            );
       if (completedProcesses |> List.mem(pId)) {
         if (accountKeyChains
-            |> List.assoc(keyChain.accountIdx)
-            |>
-            List.length != (keyChain.keyChainIdx |> AccountKeyChainIndex.toInt)) {
-          BadData("Bad KeyChainIndex");
+            |> List.assoc(accountIdx)
+            |> List.length != (keyChainIdx |> AccountKeyChainIndex.toInt)) {
+          BadData("Bad AccountKeyChainIndex");
         } else {
-          let accountIdx = keyChain.accountIdx;
-          keyChain.custodianKeyChains
-          |> List.map(((partnerId, keyChain)) =>
-               try (
-                 {
-                   let latestKeyChain =
-                     custodianKeyChains
-                     /* list((userId, list((int, list(CustodianKeyChain.public))))), */
-                     |> List.assoc(partnerId)
-                     |> List.assoc(accountIdx)
-                     |> List.sort((keysA, keysB) =>
-                          compare(
-                            keysA |> CustodianKeyChain.keyChainIdx,
-                            keysB |> CustodianKeyChain.keyChainIdx,
-                          )
-                        )
-                     |> List.rev
-                     |> List.hd;
-                   keyChain == latestKeyChain ?
-                     Ok : BadData("Bad CustodianKeyChain");
+          let currentCustodians = currentCustodians |> List.assoc(accountIdx);
+          let allThere =
+            currentCustodians
+            |> List.fold_left(
+                 (res, custodian) =>
+                   res && custodianKeyChains |> List.mem_assoc(custodian),
+                 true,
+               );
+          if (allThere == false
+              || currentCustodians
+              |> List.length != (custodianKeyChains |> List.length)) {
+            BadData("Wrong custodians");
+          } else {
+            custodianKeyChains
+            |> List.map(((partnerId, keyChain)) =>
+                 try (
+                   {
+                     let latestKeyChain =
+                       currentCustodianKeyChains
+                       |> List.assoc(partnerId)
+                       |> List.assoc(accountIdx)
+                       |> List.hd;
+                     CustodianKeyChain.eq(keyChain, latestKeyChain);
+                   }
+                 ) {
+                 | Not_found => false
                  }
-               ) {
-               | Not_found => BadData("Bad CustodianKeyChain")
-               }
-             )
-          |> List.fold_left((result, test) => test == Ok ? result : test, Ok);
+               )
+            |> List.fold_left((result, test) => result && test, true) ?
+              Ok : BadData("Bad CustodianKeyChain");
+          };
         };
       } else {
         BadData("Account doesn't exist");

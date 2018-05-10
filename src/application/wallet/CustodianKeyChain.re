@@ -85,3 +85,5 @@ let decode = raw =>
     keyChainIdx: raw |> field("keyChainIndex", CustodianKeyChainIndex.decode),
     hdNode: raw |> field("hdNode", string) |> Bitcoin.HDNode.fromBase58,
   };
+
+let eq = (a, b) => encode(a) == encode(b);

@@ -509,7 +509,10 @@ module Log = {
              switch (event) {
              | CustodianKeyChainUpdated({custodianId, keyChain}) => (
                  idx,
-                 [(custodianId, keyChain), ...res],
+                 [
+                   (custodianId, keyChain),
+                   ...res |> List.remove_assoc(custodianId),
+                 ],
                )
              | CustodianRemovalAccepted({data: {custodianId}}) => (
                  idx,

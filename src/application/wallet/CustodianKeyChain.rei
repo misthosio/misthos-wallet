@@ -30,3 +30,5 @@ let hdNode: public => HDNode.t;
 let encode: public => Js.Json.t;
 
 let decode: Js.Json.t => public;
+
+let eq: (public, public) => bool;

@@ -525,14 +525,15 @@ function withAccountKeyChain(l) {
                       ];
             case 29 : 
                 var match = $$event[0];
+                var custodianId = match[/* custodianId */1];
                 return /* tuple */[
                         idx,
                         /* :: */[
                           /* tuple */[
-                            match[/* custodianId */1],
+                            custodianId,
                             match[/* keyChain */2]
                           ],
-                          res
+                          List.remove_assoc(custodianId, res)
                         ]
                       ];
             case 30 : 

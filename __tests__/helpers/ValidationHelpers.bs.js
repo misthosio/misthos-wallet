@@ -45,6 +45,10 @@ function testDataValidation(dataValidation, state, data, expected) {
               }));
 }
 
+function withSystemIssuer(issuer, dataValidation, data, state) {
+  return Curry._3(dataValidation, data, state, Utils.publicKeyFromKeyPair(issuer));
+}
+
 function withIssuer(issuer, dataValidation, data, state) {
   return Curry._3(dataValidation, data, state, Utils.publicKeyFromKeyPair(issuer[/* issuerKeyPair */2]));
 }
@@ -65,5 +69,6 @@ exports.TestingInvalidSequence = TestingInvalidSequence;
 exports.constructState = constructState;
 exports.testValidationResult = testValidationResult;
 exports.testDataValidation = testDataValidation;
+exports.withSystemIssuer = withSystemIssuer;
 exports.withIssuer = withIssuer;
 /* Jest Not a pure module */
