@@ -337,6 +337,57 @@ module CustodianKeyChainUpdated = {
     };
 };
 
+module AccountKeyChainIdentified = {
+  type t = {
+    identifier: AccountKeyChain.Identifier.t,
+    keyChain: AccountKeyChain.t,
+  };
+  let make = (~keyChain: AccountKeyChain.t) => {
+    identifier:
+      AccountKeyChain.Identifier.make(
+        keyChain.nCoSigners,
+        keyChain.custodianKeyChains,
+      ),
+    keyChain,
+  };
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("AccountKeyChainIdentified")),
+        ("identifier", AccountKeyChain.Identifier.encode(event.identifier)),
+        ("keyChain", AccountKeyChain.encode(event.keyChain)),
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      identifier:
+        raw |> field("identifier", AccountKeyChain.Identifier.decode),
+      keyChain: raw |> field("keyChain", AccountKeyChain.decode),
+    };
+};
+
+module AccountKeyChainActivated = {
+  type t = {
+    identifier: AccountKeyChain.Identifier.t,
+    sequence: int,
+  };
+  let make = (~identifier, ~sequence) => {identifier, sequence};
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("AccountKeyChainActivated")),
+        ("identifier", AccountKeyChain.Identifier.encode(event.identifier)),
+        ("sequence", int(event.sequence)),
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      identifier:
+        raw |> field("identifier", AccountKeyChain.Identifier.decode),
+      sequence: raw |> field("sequence", int),
+    };
+};
+
 module AccountKeyChainUpdated = {
   type t = {keyChain: AccountKeyChain.t};
   let make = (~keyChain) => {keyChain: keyChain};

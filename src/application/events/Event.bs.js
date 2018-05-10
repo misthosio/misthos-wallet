@@ -680,10 +680,94 @@ var CustodianKeyChainUpdated = /* module */[
 ];
 
 function make$6(keyChain) {
-  return /* record */[/* keyChain */keyChain];
+  return /* record */[
+          /* identifier */AccountKeyChain.Identifier[/* make */2](keyChain[/* nCoSigners */2], keyChain[/* custodianKeyChains */3]),
+          /* keyChain */keyChain
+        ];
 }
 
 function encode$12($$event) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "AccountKeyChainIdentified"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "identifier",
+                  AccountKeyChain.Identifier[/* encode */0]($$event[/* identifier */0])
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "keyChain",
+                    AccountKeyChain.encode($$event[/* keyChain */1])
+                  ],
+                  /* [] */0
+                ]
+              ]
+            ]);
+}
+
+function decode$12(raw) {
+  return /* record */[
+          /* identifier */Json_decode.field("identifier", AccountKeyChain.Identifier[/* decode */1], raw),
+          /* keyChain */Json_decode.field("keyChain", AccountKeyChain.decode, raw)
+        ];
+}
+
+var AccountKeyChainIdentified = /* module */[
+  /* make */make$6,
+  /* encode */encode$12,
+  /* decode */decode$12
+];
+
+function make$7(identifier, sequence) {
+  return /* record */[
+          /* identifier */identifier,
+          /* sequence */sequence
+        ];
+}
+
+function encode$13($$event) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "AccountKeyChainActivated"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "identifier",
+                  AccountKeyChain.Identifier[/* encode */0]($$event[/* identifier */0])
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "sequence",
+                    $$event[/* sequence */1]
+                  ],
+                  /* [] */0
+                ]
+              ]
+            ]);
+}
+
+function decode$13(raw) {
+  return /* record */[
+          /* identifier */Json_decode.field("identifier", AccountKeyChain.Identifier[/* decode */1], raw),
+          /* sequence */Json_decode.field("sequence", Json_decode.$$int, raw)
+        ];
+}
+
+var AccountKeyChainActivated = /* module */[
+  /* make */make$7,
+  /* encode */encode$13,
+  /* decode */decode$13
+];
+
+function make$8(keyChain) {
+  return /* record */[/* keyChain */keyChain];
+}
+
+function encode$14($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -699,24 +783,24 @@ function encode$12($$event) {
             ]);
 }
 
-function decode$12(raw) {
+function decode$14(raw) {
   return /* record */[/* keyChain */Json_decode.field("keyChain", AccountKeyChain.decode, raw)];
 }
 
 var AccountKeyChainUpdated = /* module */[
-  /* make */make$6,
-  /* encode */encode$12,
-  /* decode */decode$12
+  /* make */make$8,
+  /* encode */encode$14,
+  /* decode */decode$14
 ];
 
-function make$7(coordinates, address) {
+function make$9(coordinates, address) {
   return /* record */[
           /* coordinates */coordinates,
           /* address */address
         ];
 }
 
-function encode$13($$event) {
+function encode$15($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -738,7 +822,7 @@ function encode$13($$event) {
             ]);
 }
 
-function decode$13(raw) {
+function decode$15(raw) {
   return /* record */[
           /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
           /* address */Json_decode.field("address", Json_decode.string, raw)
@@ -746,12 +830,12 @@ function decode$13(raw) {
 }
 
 var IncomeAddressExposed = /* module */[
-  /* make */make$7,
-  /* encode */encode$13,
-  /* decode */decode$13
+  /* make */make$9,
+  /* encode */encode$15,
+  /* decode */decode$15
 ];
 
-function make$8(address, txId, amount) {
+function make$10(address, txId, amount) {
   return /* record */[
           /* address */address,
           /* txId */txId,
@@ -759,7 +843,7 @@ function make$8(address, txId, amount) {
         ];
 }
 
-function encode$14($$event) {
+function encode$16($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -787,7 +871,7 @@ function encode$14($$event) {
             ]);
 }
 
-function decode$14(raw) {
+function decode$16(raw) {
   return /* record */[
           /* address */Json_decode.field("address", Json_decode.string, raw),
           /* txId */Json_decode.field("txId", Json_decode.string, raw),
@@ -796,9 +880,9 @@ function decode$14(raw) {
 }
 
 var IncomeDetected = /* module */[
-  /* make */make$8,
-  /* encode */encode$14,
-  /* decode */decode$14
+  /* make */make$10,
+  /* encode */encode$16,
+  /* decode */decode$16
 ];
 
 var BadData = Caml_exceptions.create("Event.BadData");
@@ -910,7 +994,7 @@ function makePayoutRejected(processId, rejectorId) {
   return /* PayoutRejected */Block.__(22, [Curry._2(Rejected$5[/* make */0], processId, rejectorId)]);
 }
 
-function encode$15(param) {
+function encode$17(param) {
   switch (param.tag | 0) {
     case 0 : 
         return encode(param[0]);
@@ -973,11 +1057,11 @@ function encode$15(param) {
     case 29 : 
         return encode$11(param[0]);
     case 30 : 
-        return encode$12(param[0]);
-    case 31 : 
-        return encode$13(param[0]);
-    case 32 : 
         return encode$14(param[0]);
+    case 31 : 
+        return encode$15(param[0]);
+    case 32 : 
+        return encode$16(param[0]);
     
   }
 }
@@ -1004,7 +1088,7 @@ function isSystemEvent(param) {
 
 var UnknownEvent = Caml_exceptions.create("Event.UnknownEvent");
 
-function decode$15(raw) {
+function decode$17(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "AccountCreationAccepted" : 
@@ -1016,7 +1100,7 @@ function decode$15(raw) {
     case "AccountCreationRejected" : 
         return /* AccountCreationRejected */Block.__(10, [Curry._1(Rejected$2[/* decode */2], raw)]);
     case "AccountKeyChainUpdated" : 
-        return /* AccountKeyChainUpdated */Block.__(30, [decode$12(raw)]);
+        return /* AccountKeyChainUpdated */Block.__(30, [decode$14(raw)]);
     case "CustodianAccepted" : 
         return /* CustodianAccepted */Block.__(16, [Curry._1(Accepted$3[/* decode */2], raw)]);
     case "CustodianEndorsed" : 
@@ -1036,9 +1120,9 @@ function decode$15(raw) {
     case "CustodianRemovalRejected" : 
         return /* CustodianRemovalRejected */Block.__(18, [Curry._1(Rejected$4[/* decode */2], raw)]);
     case "IncomeAddressExposed" : 
-        return /* IncomeAddressExposed */Block.__(31, [decode$13(raw)]);
+        return /* IncomeAddressExposed */Block.__(31, [decode$15(raw)]);
     case "IncomeDetected" : 
-        return /* IncomeDetected */Block.__(32, [decode$14(raw)]);
+        return /* IncomeDetected */Block.__(32, [decode$16(raw)]);
     case "PartnerAccepted" : 
         return /* PartnerAccepted */Block.__(4, [Curry._1(Accepted[/* decode */2], raw)]);
     case "PartnerEndorsed" : 
@@ -1287,6 +1371,8 @@ exports.AccountCreation = AccountCreation;
 exports.Custodian = Custodian;
 exports.Payout = Payout;
 exports.CustodianKeyChainUpdated = CustodianKeyChainUpdated;
+exports.AccountKeyChainIdentified = AccountKeyChainIdentified;
+exports.AccountKeyChainActivated = AccountKeyChainActivated;
 exports.AccountKeyChainUpdated = AccountKeyChainUpdated;
 exports.IncomeAddressExposed = IncomeAddressExposed;
 exports.IncomeDetected = IncomeDetected;
@@ -1304,10 +1390,10 @@ exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;
 exports.makePayoutEndorsed = makePayoutEndorsed;
 exports.makePayoutRejected = makePayoutRejected;
-exports.encode = encode$15;
+exports.encode = encode$17;
 exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;
-exports.decode = decode$15;
+exports.decode = decode$17;
 exports.getIncomeAddressExposedExn = getIncomeAddressExposedExn;
 exports.getAccountKeyChainUpdatedExn = getAccountKeyChainUpdatedExn;
 exports.getCustodianKeyChainUpdatedExn = getCustodianKeyChainUpdatedExn;
