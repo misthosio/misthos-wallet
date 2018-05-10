@@ -501,7 +501,7 @@ module Log = {
          ),
        );
   };
-  let withAccountKeyChain = ({log, ventureId} as l) => {
+  let withAccountKeyChain = ({log} as l) => {
     let (keyChainIdx, keyChains) =
       log
       |> EventLog.reduce(
