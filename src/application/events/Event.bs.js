@@ -721,8 +721,10 @@ var AccountKeyChainIdentified = /* module */[
   /* decode */decode$12
 ];
 
-function make$7(identifier, sequence) {
+function make$7(accountIdx, custodianId, identifier, sequence) {
   return /* record */[
+          /* accountIdx */accountIdx,
+          /* custodianId */custodianId,
           /* identifier */identifier,
           /* sequence */sequence
         ];
@@ -736,15 +738,27 @@ function encode$13($$event) {
               ],
               /* :: */[
                 /* tuple */[
-                  "identifier",
-                  AccountKeyChain.Identifier[/* encode */0]($$event[/* identifier */0])
+                  "accountIdx",
+                  WalletTypes.AccountIndex[/* encode */4]($$event[/* accountIdx */0])
                 ],
                 /* :: */[
                   /* tuple */[
-                    "sequence",
-                    $$event[/* sequence */1]
+                    "custodianId",
+                    PrimitiveTypes.UserId[/* encode */2]($$event[/* custodianId */1])
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "identifier",
+                      AccountKeyChain.Identifier[/* encode */0]($$event[/* identifier */2])
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "sequence",
+                        $$event[/* sequence */3]
+                      ],
+                      /* [] */0
+                    ]
+                  ]
                 ]
               ]
             ]);
@@ -752,6 +766,8 @@ function encode$13($$event) {
 
 function decode$13(raw) {
   return /* record */[
+          /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
+          /* custodianId */Json_decode.field("custodianId", PrimitiveTypes.UserId[/* decode */3], raw),
           /* identifier */Json_decode.field("identifier", AccountKeyChain.Identifier[/* decode */1], raw),
           /* sequence */Json_decode.field("sequence", Json_decode.$$int, raw)
         ];
@@ -1057,10 +1073,14 @@ function encode$17(param) {
     case 29 : 
         return encode$11(param[0]);
     case 30 : 
-        return encode$14(param[0]);
+        return encode$12(param[0]);
     case 31 : 
-        return encode$15(param[0]);
+        return encode$13(param[0]);
     case 32 : 
+        return encode$14(param[0]);
+    case 33 : 
+        return encode$15(param[0]);
+    case 34 : 
         return encode$16(param[0]);
     
   }
@@ -1078,8 +1098,9 @@ function isSystemEvent(param) {
     case 27 : 
     case 28 : 
     case 30 : 
-    case 31 : 
     case 32 : 
+    case 33 : 
+    case 34 : 
         return true;
     default:
       return false;
@@ -1099,8 +1120,12 @@ function decode$17(raw) {
         return /* AccountCreationProposed */Block.__(9, [Curry._1(Proposed$2[/* decode */2], raw)]);
     case "AccountCreationRejected" : 
         return /* AccountCreationRejected */Block.__(10, [Curry._1(Rejected$2[/* decode */2], raw)]);
+    case "AccountKeyChainActivated" : 
+        return /* AccountKeyChainActivated */Block.__(31, [decode$13(raw)]);
+    case "AccountKeyChainIdentified" : 
+        return /* AccountKeyChainIdentified */Block.__(30, [decode$12(raw)]);
     case "AccountKeyChainUpdated" : 
-        return /* AccountKeyChainUpdated */Block.__(30, [decode$14(raw)]);
+        return /* AccountKeyChainUpdated */Block.__(32, [decode$14(raw)]);
     case "CustodianAccepted" : 
         return /* CustodianAccepted */Block.__(16, [Curry._1(Accepted$3[/* decode */2], raw)]);
     case "CustodianEndorsed" : 
@@ -1120,9 +1145,9 @@ function decode$17(raw) {
     case "CustodianRemovalRejected" : 
         return /* CustodianRemovalRejected */Block.__(18, [Curry._1(Rejected$4[/* decode */2], raw)]);
     case "IncomeAddressExposed" : 
-        return /* IncomeAddressExposed */Block.__(31, [decode$15(raw)]);
+        return /* IncomeAddressExposed */Block.__(33, [decode$15(raw)]);
     case "IncomeDetected" : 
-        return /* IncomeDetected */Block.__(32, [decode$16(raw)]);
+        return /* IncomeDetected */Block.__(34, [decode$16(raw)]);
     case "PartnerAccepted" : 
         return /* PartnerAccepted */Block.__(4, [Curry._1(Accepted[/* decode */2], raw)]);
     case "PartnerEndorsed" : 
@@ -1166,15 +1191,31 @@ function decode$17(raw) {
 }
 
 function getIncomeAddressExposedExn($$event) {
-  if ($$event.tag === 31) {
+  if ($$event.tag === 33) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getIncomeAddressExposedExn");
   }
 }
 
-function getAccountKeyChainUpdatedExn($$event) {
+function getAccountKeyChainIdentifiedExn($$event) {
   if ($$event.tag === 30) {
+    return $$event[0];
+  } else {
+    return Js_exn.raiseError("getAccountKeyChainIdentifiedExn");
+  }
+}
+
+function getAccountKeyChainActivatedExn($$event) {
+  if ($$event.tag === 31) {
+    return $$event[0];
+  } else {
+    return Js_exn.raiseError("getAccountKeyChainActivatedExn");
+  }
+}
+
+function getAccountKeyChainUpdatedExn($$event) {
+  if ($$event.tag === 32) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getAccountKeyChainUpdatedExn");
@@ -1395,6 +1436,8 @@ exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;
 exports.decode = decode$17;
 exports.getIncomeAddressExposedExn = getIncomeAddressExposedExn;
+exports.getAccountKeyChainIdentifiedExn = getAccountKeyChainIdentifiedExn;
+exports.getAccountKeyChainActivatedExn = getAccountKeyChainActivatedExn;
 exports.getAccountKeyChainUpdatedExn = getAccountKeyChainUpdatedExn;
 exports.getCustodianKeyChainUpdatedExn = getCustodianKeyChainUpdatedExn;
 exports.getPayoutBroadcastFailedExn = getPayoutBroadcastFailedExn;

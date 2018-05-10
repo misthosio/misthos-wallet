@@ -60,7 +60,7 @@ function make(param, param$1, log) {
                 } else {
                   return state;
                 }
-            case 30 : 
+            case 32 : 
                 var keyChain = $$event[0][/* keyChain */0];
                 var accountKeyChains;
                 try {

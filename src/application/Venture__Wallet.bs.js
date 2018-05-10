@@ -104,7 +104,7 @@ function apply($$event, state) {
                         }))(state[/* reservedInputs */5]),
                 /* payoutProcesses */state[/* payoutProcesses */6]
               ];
-    case 30 : 
+    case 32 : 
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
@@ -114,7 +114,7 @@ function apply($$event, state) {
                 /* reservedInputs */state[/* reservedInputs */5],
                 /* payoutProcesses */state[/* payoutProcesses */6]
               ];
-    case 31 : 
+    case 33 : 
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],

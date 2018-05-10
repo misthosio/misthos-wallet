@@ -25,7 +25,7 @@ describe("Updates the key chain when a custodian key chain changes", (function (
                 ], log));
         var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */5](log$1));
         return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainUpdated", watcher, Generators.Log[/* systemIssuer */2](log$1), (function (param) {
-                      if (param.tag === 30) {
+                      if (param.tag === 32) {
                         var match = param[0][/* keyChain */0];
                         if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && WalletTypes.AccountKeyChainIndex[/* eq */7](match[/* keyChainIdx */1], WalletTypes.AccountKeyChainIndex[/* first */2]) && match[/* nCoSigners */2] === 1) {
                           return List.length(match[/* custodianKeyChains */3]) === 1;
@@ -59,7 +59,7 @@ describe("Increases the AccountKeyChainIndex every time", (function () {
                                 ], log))))));
         var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */5](log$1));
         return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainUpdated", watcher, Generators.Log[/* systemIssuer */2](log$1), (function (param) {
-                      if (param.tag === 30) {
+                      if (param.tag === 32) {
                         var match = param[0][/* keyChain */0];
                         if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && WalletTypes.AccountKeyChainIndex[/* eq */7](match[/* keyChainIdx */1], WalletTypes.AccountKeyChainIndex[/* next */3](WalletTypes.AccountKeyChainIndex[/* first */2])) && match[/* nCoSigners */2] === 1) {
                           return List.length(match[/* custodianKeyChains */3]) === 2;

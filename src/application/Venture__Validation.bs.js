@@ -372,20 +372,6 @@ function apply(param, state) {
           newrecord[/* payoutData */14]
         ];
         return newrecord$12;
-    case 2 : 
-    case 6 : 
-    case 10 : 
-    case 14 : 
-    case 18 : 
-    case 22 : 
-        return newrecord;
-    case 3 : 
-    case 7 : 
-    case 11 : 
-    case 15 : 
-    case 19 : 
-    case 23 : 
-        return endorseProcess($$event[0], newrecord);
     case 24 : 
         return completeProcess($$event[0], newrecord);
     case 29 : 
@@ -433,6 +419,16 @@ function apply(param, state) {
         ];
         return newrecord$13;
     case 30 : 
+    case 31 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              [
+                "Venture__Validation.re",
+                105,
+                2
+              ]
+            ];
+    case 32 : 
         var keyChain$1 = $$event[0][/* keyChain */0];
         var accountChains$2;
         try {
@@ -460,8 +456,21 @@ function apply(param, state) {
           /* [] */0
         ];
         return newrecord$14;
+    case 2 : 
+    case 6 : 
+    case 10 : 
+    case 14 : 
+    case 18 : 
+    case 22 : 
+    case 25 : 
+    case 26 : 
+    case 27 : 
+    case 28 : 
+    case 33 : 
+    case 34 : 
+        return newrecord;
     default:
-      return newrecord;
+      return endorseProcess($$event[0], newrecord);
   }
 }
 
@@ -1028,16 +1037,26 @@ function validateEvent(param) {
             return validateCustodianKeyChainUpdated(partial_arg$6, param, param$1);
           });
     case 30 : 
+    case 31 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              [
+                "Venture__Validation.re",
+                683,
+                2
+              ]
+            ];
+    case 32 : 
         var partial_arg$7 = param[0];
         return (function (param, param$1) {
             return validateAccountKeyChainUpdated(partial_arg$7, param, param$1);
           });
-    case 31 : 
+    case 33 : 
         var partial_arg$8 = param[0];
         return (function (param, param$1) {
             return validateIncomeAddressExposed(partial_arg$8, param, param$1);
           });
-    case 32 : 
+    case 34 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });

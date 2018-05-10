@@ -97,7 +97,7 @@ function make(param, param$1, log) {
                           /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */3],
                           /* pendingEvent : Some */[/* tuple */[
                               self$1[state][0][/* systemIssuer */0],
-                              /* AccountKeyChainUpdated */Block.__(30, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(cAccountIdx, self$1[state][0][/* nextKeyChainIdx */3], custodianKeyChains))])
+                              /* AccountKeyChainUpdated */Block.__(32, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(cAccountIdx, self$1[state][0][/* nextKeyChainIdx */3], custodianKeyChains))])
                             ]]
                         ];
                       }
@@ -134,14 +134,14 @@ function make(param, param$1, log) {
                         /* nextKeyChainIdx */init$4[/* nextKeyChainIdx */3],
                         /* pendingEvent : Some */[/* tuple */[
                             self$1[state][0][/* systemIssuer */0],
-                            /* AccountKeyChainUpdated */Block.__(30, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(env$1[1], self$1[state][0][/* nextKeyChainIdx */3], custodianKeyChains$1))])
+                            /* AccountKeyChainUpdated */Block.__(32, [Event.AccountKeyChainUpdated[/* make */0](AccountKeyChain.make(env$1[1], self$1[state][0][/* nextKeyChainIdx */3], custodianKeyChains$1))])
                           ]]
                       ];
                     } else {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 30 : 
+                case 32 : 
                     if (Caml_obj.caml_equal($$event[0][/* keyChain */0][/* accountIdx */0], env$1[1])) {
                       var init$5 = self$1[state][0];
                       tmp = /* record */[

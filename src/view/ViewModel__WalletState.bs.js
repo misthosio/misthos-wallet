@@ -154,7 +154,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 30 : 
+    case 32 : 
         var keyChain = $$event[0][/* keyChain */0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -175,7 +175,7 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 31 : 
+    case 33 : 
         var coordinates = $$event[0][/* coordinates */0];
         var accountIdx$2 = Address.Coordinates[/* accountIdx */3](coordinates);
         return /* record */[
@@ -194,7 +194,7 @@ function apply($$event, state) {
                 ],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 32 : 
+    case 34 : 
         var match$4 = $$event[0];
         var accountIdx$3 = getAccountIndexOfAddress(match$4[/* address */0], state);
         var balance$3 = List.assoc(accountIdx$3, state[/* balance */2]);

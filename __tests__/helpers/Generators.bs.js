@@ -142,6 +142,13 @@ var custodianKeyChainUpdated = Event.CustodianKeyChainUpdated[/* make */0];
 
 var accountKeyChainUpdated = Event.AccountKeyChainUpdated[/* make */0];
 
+var accountKeyChainIdentified = Event.AccountKeyChainIdentified[/* make */0];
+
+function accountKeyChainActivated($staropt$star, custodian, identifier) {
+  var sequence = $staropt$star ? $staropt$star[0] : 0;
+  return Event.AccountKeyChainActivated[/* make */0](WalletTypes.AccountIndex[/* default */9], custodian[/* userId */0], identifier, sequence);
+}
+
 var Event$1 = /* module */[
   /* createVenture */createVenture,
   /* partnerProposed */partnerProposed,
@@ -160,7 +167,9 @@ var Event$1 = /* module */[
   /* custodianRemovalEndorsed */custodianRemovalEndorsed,
   /* custodianRemovalAccepted */custodianRemovalAccepted,
   /* custodianKeyChainUpdated */custodianKeyChainUpdated,
-  /* accountKeyChainUpdated */accountKeyChainUpdated
+  /* accountKeyChainUpdated */accountKeyChainUpdated,
+  /* accountKeyChainIdentified */accountKeyChainIdentified,
+  /* accountKeyChainActivated */accountKeyChainActivated
 ];
 
 function reduce(f, s, param) {
@@ -536,7 +545,7 @@ function withAccountKeyChain(l) {
                           List.remove_assoc(custodianId, res)
                         ]
                       ];
-            case 30 : 
+            case 32 : 
                 return /* tuple */[
                         WalletTypes.AccountKeyChainIndex[/* next */3]($$event[0][/* keyChain */0][/* keyChainIdx */1]),
                         res
@@ -552,7 +561,63 @@ function withAccountKeyChain(l) {
         /* [] */0
       ], l[/* log */3]);
   var accountKeyChain = accountKeyChainFrom(/* Some */[match[0]])(match[1]);
-  return appendSystemEvent(/* AccountKeyChainUpdated */Block.__(30, [Curry._1(accountKeyChainUpdated, accountKeyChain)]), l);
+  return appendSystemEvent(/* AccountKeyChainUpdated */Block.__(32, [Curry._1(accountKeyChainUpdated, accountKeyChain)]), l);
+}
+
+function withAccountKeyChainIdentified(l) {
+  var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
+          var $$event = param[/* event */0];
+          switch ($$event.tag | 0) {
+            case 8 : 
+                try {
+                  return List.remove_assoc($$event[0][/* data */2][/* id */0], res);
+                }
+                catch (exn){
+                  if (exn === Caml_builtin_exceptions.not_found) {
+                    return res;
+                  } else {
+                    throw exn;
+                  }
+                }
+            case 20 : 
+                try {
+                  return List.remove_assoc($$event[0][/* data */2][/* custodianId */0], res);
+                }
+                catch (exn$1){
+                  if (exn$1 === Caml_builtin_exceptions.not_found) {
+                    return res;
+                  } else {
+                    throw exn$1;
+                  }
+                }
+            case 29 : 
+                var match = $$event[0];
+                var custodianId = match[/* custodianId */1];
+                return /* :: */[
+                        /* tuple */[
+                          custodianId,
+                          match[/* keyChain */2]
+                        ],
+                        List.remove_assoc(custodianId, res)
+                      ];
+            default:
+              return res;
+          }
+        }), /* [] */0, l[/* log */3]);
+  var accountKeyChain = accountKeyChainFrom(/* Some */[WalletTypes.AccountKeyChainIndex[/* first */2]])(keyChains);
+  return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(30, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
+}
+
+function withAccountKeyChainActivated(user, l) {
+  var identifier = Curry._3(EventLog.reduce, (function (res, param) {
+          var $$event = param[/* event */0];
+          if ($$event.tag === 30) {
+            return $$event[0][/* identifier */0];
+          } else {
+            return res;
+          }
+        }), "", l[/* log */3]);
+  return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(31, [accountKeyChainActivated(/* Some */[0], user, identifier)]), l);
 }
 
 var Log = /* module */[
@@ -588,7 +653,9 @@ var Log = /* module */[
   /* withCustodianRemovalAccepted */withCustodianRemovalAccepted,
   /* withCustodianRemoved */withCustodianRemoved,
   /* withCustodianKeyChain */withCustodianKeyChain,
-  /* withAccountKeyChain */withAccountKeyChain
+  /* withAccountKeyChain */withAccountKeyChain,
+  /* withAccountKeyChainIdentified */withAccountKeyChainIdentified,
+  /* withAccountKeyChainActivated */withAccountKeyChainActivated
 ];
 
 var AppEvent = 0;

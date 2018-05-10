@@ -178,6 +178,15 @@ module Event = {
   let custodianRemovalAccepted = AppEvent.Custodian.Removal.Accepted.fromProposal;
   let custodianKeyChainUpdated = AppEvent.CustodianKeyChainUpdated.make;
   let accountKeyChainUpdated = AppEvent.AccountKeyChainUpdated.make;
+  let accountKeyChainIdentified = AppEvent.AccountKeyChainIdentified.make;
+  let accountKeyChainActivated =
+      (~sequence=0, ~custodian: Session.Data.t, ~identifier) =>
+    AppEvent.AccountKeyChainActivated.make(
+      ~accountIdx=AccountIndex.default,
+      ~custodianId=custodian.userId,
+      ~identifier,
+      ~sequence,
+    );
 };
 
 module Log = {
@@ -539,6 +548,60 @@ module Log = {
     |> appendSystemEvent(
          AccountKeyChainUpdated(
            Event.accountKeyChainUpdated(~keyChain=accountKeyChain),
+         ),
+       );
+  };
+  let withAccountKeyChainIdentified = ({log} as l) => {
+    let keyChains =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | CustodianKeyChainUpdated({custodianId, keyChain}) => [
+                 (custodianId, keyChain),
+                 ...res |> List.remove_assoc(custodianId),
+               ]
+             | CustodianRemovalAccepted({data: {custodianId}}) =>
+               try (res |> List.remove_assoc(custodianId)) {
+               | Not_found => res
+               }
+             | PartnerRemovalAccepted({data: {id}}) =>
+               try (res |> List.remove_assoc(id)) {
+               | Not_found => res
+               }
+             | _ => res
+             },
+           [],
+         );
+    let accountKeyChain =
+      accountKeyChainFrom(~keyChainIdx=AccountKeyChainIndex.first, keyChains);
+    l
+    |> appendSystemEvent(
+         AccountKeyChainIdentified(
+           Event.accountKeyChainIdentified(~keyChain=accountKeyChain),
+         ),
+       );
+  };
+  let withAccountKeyChainActivated = (user: Session.Data.t, {log} as l) => {
+    let identifier =
+      log
+      |> EventLog.reduce(
+           (res, {event}) =>
+             switch (event) {
+             | AccountKeyChainIdentified({identifier}) => identifier
+             | _ => res
+             },
+           "",
+         );
+    l
+    |> appendEvent(
+         user.issuerKeyPair,
+         AccountKeyChainActivated(
+           Event.accountKeyChainActivated(
+             ~sequence=0,
+             ~custodian=user,
+             ~identifier,
+           ),
          ),
        );
   };
