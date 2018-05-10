@@ -62,15 +62,17 @@ let custodianKeyChain =
   )
   |> CustodianKeyChain.toPublicKeyChain;
 
+let accountKeyChainFrom = (~keyChainIdx=AccountKeyChainIndex.first) =>
+  AccountKeyChain.make(AccountIndex.default, keyChainIdx);
+
 let accountKeyChain =
     (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
   users
   |> List.map((user: Session.Data.t) =>
        (user.userId, custodianKeyChain(~ventureId, ~keyChainIdx, user))
      )
-  |> AccountKeyChain.make(
-       AccountIndex.default,
-       AccountKeyChainIndex.fromInt(keyChainIdx),
+  |> accountKeyChainFrom(
+       ~keyChainIdx=keyChainIdx |> AccountKeyChainIndex.fromInt,
      );
 
 module Event = {
@@ -499,47 +501,38 @@ module Log = {
          ),
        );
   };
-  let withAccountKeyChain =
-      (~keyChainIdx=0, custodians, {log, ventureId} as l) => {
-    let custodianProcesses =
+  let withAccountKeyChain = ({log, ventureId} as l) => {
+    let (keyChainIdx, keyChains) =
       log
       |> EventLog.reduce(
-           (res, {event}) =>
+           ((idx, res), {event}) =>
              switch (event) {
-             | CustodianAccepted({processId, data: {partnerId}}) => [
-                 (partnerId, processId),
-                 ...res,
-               ]
-             | _ => res
+             | CustodianKeyChainUpdated({custodianId, keyChain}) => (
+                 idx,
+                 [(custodianId, keyChain), ...res],
+               )
+             | CustodianRemovalAccepted({data: {custodianId}}) => (
+                 idx,
+                 try (res |> List.remove_assoc(custodianId)) {
+                 | Not_found => res
+                 },
+               )
+             | PartnerRemovalAccepted({data: {id}}) => (
+                 idx,
+                 try (res |> List.remove_assoc(id)) {
+                 | Not_found => res
+                 },
+               )
+             | AccountKeyChainUpdated({keyChain: {keyChainIdx}}) => (
+                 keyChainIdx |> AccountKeyChainIndex.next,
+                 res,
+               )
+             | _ => (idx, res)
              },
-           [],
+           (AccountKeyChainIndex.first, []),
          );
-    let accountKeyChain =
-      accountKeyChain(~ventureId, ~keyChainIdx, custodians);
-    accountKeyChain.custodianKeyChains
-    |> List.map(((custodianId, keyChain)) =>
-         Event.custodianKeyChainUpdated(
-           ~custodianApprovalProcess=
-             custodianProcesses |> List.assoc(custodianId),
-           ~custodianId,
-           ~keyChain,
-         )
-       )
-    |> List.fold_left(
-         (l, event: AppEvent.CustodianKeyChainUpdated.t) =>
-           l
-           |> appendEvent(
-                (
-                  custodians
-                  |> List.find(({userId}: Session.Data.t) =>
-                       UserId.eq(userId, event.custodianId)
-                     )
-                ).
-                  issuerKeyPair,
-                CustodianKeyChainUpdated(event),
-              ),
-         l,
-       )
+    let accountKeyChain = accountKeyChainFrom(~keyChainIdx, keyChains);
+    l
     |> appendSystemEvent(
          AccountKeyChainUpdated(
            Event.accountKeyChainUpdated(~keyChain=accountKeyChain),

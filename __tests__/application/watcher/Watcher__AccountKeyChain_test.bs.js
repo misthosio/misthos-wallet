@@ -53,13 +53,10 @@ describe("Increases the AccountKeyChainIndex every time", (function () {
                 ], Generators.Log[/* withPartner */14](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withAccountKeyChain */32](/* None */0, /* :: */[
-                          user1,
-                          /* [] */0
-                        ], Generators.Log[/* withCustodian */26](user1, /* :: */[
-                              user1,
-                              /* [] */0
-                            ], log)))));
+                    ], Generators.Log[/* withAccountKeyChain */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                                  user1,
+                                  /* [] */0
+                                ], log))))));
         var watcher = Watcher__AccountKeyChain.make(acceptance, Generators.Log[/* eventLog */5](log$1));
         return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainUpdated", watcher, Generators.Log[/* systemIssuer */2](log$1), (function (param) {
                       if (param.tag === 30) {

@@ -65,7 +65,8 @@ let () = {
       L.(
         log
         |> withCustodian(user1, ~supporters=[user1])
-        |> withAccountKeyChain([user1])
+        |> withCustodianKeyChain(user1)
+        |> withAccountKeyChain
         |> withPartner(user2, ~supporters=[user1])
         |> withCustodian(user2, ~supporters=[user1, user2])
         |> withCustodianKeyChain(user2)
