@@ -122,7 +122,7 @@ describe("ProcessMapping", (function () {
                     }));
       }));
 
-describe("ProcessMapping", (function () {
+describe("custodianAcceptedFor", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
@@ -138,8 +138,16 @@ describe("ProcessMapping", (function () {
                 ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))));
         var custodianAccepted = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */4](log));
         var state = constructState(log);
-        return Jest.test("Remembers the latest CustodianAccepted events", (function () {
-                      return Jest.Expect[/* toEqual */12](/* Some */[custodianAccepted], Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state)));
+        Jest.test("Remembers the latest CustodianAccepted events", (function () {
+                return Jest.Expect[/* toEqual */12](/* Some */[custodianAccepted], Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state)));
+              }));
+        var log$1 = Generators.Log[/* withCustodianRemoved */30](user2, /* :: */[
+              user1,
+              /* [] */0
+            ], log);
+        var state$1 = constructState(log$1);
+        return Jest.test("Returns None if the custodian has been removed", (function () {
+                      return Jest.Expect[/* toEqual */12](/* None */0, Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state$1)));
                     }));
       }));
 

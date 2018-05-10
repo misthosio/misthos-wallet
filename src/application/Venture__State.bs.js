@@ -285,6 +285,8 @@ function apply($$event, state) {
               ];
     case 20 : 
         var $$event$4 = $$event[0];
+        var match$4 = $$event$4[/* data */2];
+        var lastCustodianProcess = match$4[/* lastCustodianProcess */2];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
@@ -293,11 +295,13 @@ function apply($$event, state) {
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
-                /* custodianAccepted */state[/* custodianAccepted */7],
+                /* custodianAccepted */List.filter((function (param) {
+                          return PrimitiveTypes.ProcessId[/* neq */6](param[1][/* processId */0], lastCustodianProcess);
+                        }))(state[/* custodianAccepted */7]),
                 /* partnerRemovals */state[/* partnerRemovals */8],
                 /* custodianRemovals : :: */[
                   /* tuple */[
-                    $$event$4[/* data */2][/* custodianId */0],
+                    match$4[/* custodianId */0],
                     $$event$4
                   ],
                   /* [] */0

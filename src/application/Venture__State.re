@@ -123,9 +123,16 @@ let apply = (event, state) =>
         ...state.custodianRemovalProcesses,
       ],
     }
-  | CustodianRemovalAccepted({data: {custodianId}} as event) => {
+  | CustodianRemovalAccepted(
+      {data: {custodianId, lastCustodianProcess}} as event,
+    ) => {
       ...state,
       custodianRemovals: [(custodianId, event)],
+      custodianAccepted:
+        state.custodianAccepted
+        |> List.filter(((_, {processId}: Custodian.Accepted.t)) =>
+             ProcessId.neq(processId, lastCustodianProcess)
+           ),
     }
   | PartnerRemovalAccepted({data: {id}} as event) => {
       ...state,

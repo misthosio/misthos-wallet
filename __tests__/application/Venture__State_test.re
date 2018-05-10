@@ -86,7 +86,7 @@ let () = {
       |> toEqual(custodianProcess)
     );
   });
-  describe("ProcessMapping", () => {
+  describe("custodianAcceptedFor", () => {
     let (user1, user2) = G.twoUserSessions();
     let log =
       L.(
@@ -101,6 +101,12 @@ let () = {
     test("Remembers the latest CustodianAccepted events", () =>
       expect(state |> State.custodianAcceptedFor(user2.userId))
       |> toEqual(Some(custodianAccepted))
+    );
+    let log = log |> L.withCustodianRemoved(user2, ~supporters=[user1]);
+    let state = log |> constructState;
+    test("Returns None if the custodian has been removed", () =>
+      expect(state |> State.custodianAcceptedFor(user2.userId))
+      |> toEqual(None)
     );
   });
   describe("RemovalProcessMapping", () => {
