@@ -9,49 +9,37 @@ describe("nextIncomeAddress", (function () {
         var userC = Fixtures.threeUserSessions[2];
         var userB = Fixtures.threeUserSessions[1];
         var userA = Fixtures.threeUserSessions[0];
-        var log = Generators.Log[/* withAccountKeyChain */32](/* None */0, /* :: */[
-              userA,
-              /* :: */[
-                userB,
-                /* [] */0
-              ]
-            ], Generators.Log[/* withCustodian */26](userB, /* :: */[
-                  userA,
-                  /* :: */[
-                    userB,
-                    /* [] */0
-                  ]
-                ], Generators.Log[/* withPartner */14](userB, /* :: */[
-                      userA,
-                      /* [] */0
-                    ], Generators.Log[/* withCustodian */26](userA, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChain */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */26](userB, /* :: */[
                           userA,
-                          /* [] */0
-                        ], Generators.Log[/* withAccount */22](userA, Generators.Log[/* withFirstPartner */15](userA)(Fixtures.createVenture(userA)))))));
+                          /* :: */[
+                            userB,
+                            /* [] */0
+                          ]
+                        ], Generators.Log[/* withPartner */14](userB, /* :: */[
+                              userA,
+                              /* [] */0
+                            ], Generators.Log[/* withCustodian */26](userA, /* :: */[
+                                  userA,
+                                  /* [] */0
+                                ], Generators.Log[/* withAccount */22](userA, Generators.Log[/* withFirstPartner */15](userA)(Fixtures.createVenture(userA)))))))));
         WalletHelpers.testNextIncomeAddress(userA, "2NCAxqkK9bhRQWssyrMqJhXS65xmUCWraXT", WalletHelpers.testNextIncomeAddress(userB, "2NGFyACMJG6KJ9Db92n9MM2nNtR4r4tUNFW", WalletHelpers.testNextIncomeAddress(userA, "2MtvnaAWnfkSBU7NbpSfMRrCKSTgLeRVd93", WalletHelpers.constructState(log))));
-        var log$1 = Generators.Log[/* withAccountKeyChain */32](/* Some */[1], /* :: */[
-              userA,
-              /* :: */[
-                userB,
-                /* :: */[
-                  userC,
-                  /* [] */0
-                ]
-              ]
-            ], Generators.Log[/* withCustodian */26](userC, /* :: */[
-                  userA,
-                  /* :: */[
-                    userB,
-                    /* [] */0
-                  ]
-                ], Generators.Log[/* withPartner */14](userC, /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChain */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */26](userC, /* :: */[
                       userA,
                       /* :: */[
                         userB,
-                        /* [] */0
+                        /* :: */[
+                          userC,
+                          /* [] */0
+                        ]
                       ]
-                    ], log)));
-        WalletHelpers.testNextIncomeAddress(userC, "2NBh9WTFfbiTSqQQpy8NHuU8gZv362vMsFf", WalletHelpers.testNextIncomeAddress(userB, "2N5aKGngKwUDhUYdiT6QQCbSEC4aU2GpAJE", WalletHelpers.testNextIncomeAddress(userC, "2Mu1gDoDnhGFJqYxAcRan17HyU9oLwty35g", WalletHelpers.constructState(log$1))));
+                    ], Generators.Log[/* withPartner */14](userC, /* :: */[
+                          userA,
+                          /* :: */[
+                            userB,
+                            /* [] */0
+                          ]
+                        ], log))));
+        WalletHelpers.testNextIncomeAddress(userC, "2N85sud6RgkaAEPitqdrNXsMbADYzXCWc7T", WalletHelpers.testNextIncomeAddress(userB, "2N1sd2funBMd3ntLSbJrALAz3CJxEVsAPV7", WalletHelpers.testNextIncomeAddress(userC, "2NCGfPo6ehd2cgwFNE2ocqUFpv8rtcN3TGj", WalletHelpers.constructState(log$1))));
         return /* () */0;
       }));
 

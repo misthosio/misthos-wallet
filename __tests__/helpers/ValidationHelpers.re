@@ -46,6 +46,15 @@ let testDataValidation =
   );
 };
 
+let withSystemIssuer =
+    (
+      issuer,
+      dataValidation: ('a, Validation.t, string) => Validation.result,
+      data,
+      state,
+    ) =>
+  dataValidation(data, state, issuer |> Utils.publicKeyFromKeyPair);
+
 let withIssuer =
     (
       issuer: Session.Data.t,

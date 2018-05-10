@@ -3,6 +3,7 @@
 
 var Utils = require("../../utils/Utils.bs.js");
 var Bitcoin = require("../../ffi/Bitcoin.bs.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var WalletTypes = require("./WalletTypes.bs.js");
@@ -73,6 +74,10 @@ function decode(raw) {
         ];
 }
 
+function eq(a, b) {
+  return Caml_obj.caml_equal(encode(a), encode(b));
+}
+
 exports.make = make;
 exports.toPublicKeyChain = toPublicKeyChain;
 exports.accountIdx = accountIdx;
@@ -81,4 +86,5 @@ exports.getSigningKey = getSigningKey;
 exports.hdNode = hdNode;
 exports.encode = encode;
 exports.decode = decode;
+exports.eq = eq;
 /* Utils Not a pure module */

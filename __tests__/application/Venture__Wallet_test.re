@@ -13,7 +13,9 @@ let () =
         |> withCustodian(userA, ~supporters=[userA])
         |> withPartner(userB, ~supporters=[userA])
         |> withCustodian(userB, ~supporters=[userA, userB])
-        |> withAccountKeyChain([userA, userB])
+        |> withCustodianKeyChain(userA)
+        |> withCustodianKeyChain(userB)
+        |> withAccountKeyChain
       );
     log
     |> constructState
@@ -25,13 +27,14 @@ let () =
       L.(
         log
         |> withPartner(userC, ~supporters=[userA, userB])
-        |> withCustodian(userC, ~supporters=[userA, userB])
-        |> withAccountKeyChain(~keyChainIdx=1, [userA, userB, userC])
+        |> withCustodian(userC, ~supporters=[userA, userB, userC])
+        |> withCustodianKeyChain(userC)
+        |> withAccountKeyChain
       );
     log
     |> constructState
-    |> testNextIncomeAddress(userC, "2Mu1gDoDnhGFJqYxAcRan17HyU9oLwty35g")
-    |> testNextIncomeAddress(userB, "2N5aKGngKwUDhUYdiT6QQCbSEC4aU2GpAJE")
-    |> testNextIncomeAddress(userC, "2NBh9WTFfbiTSqQQpy8NHuU8gZv362vMsFf")
+    |> testNextIncomeAddress(userC, "2NCGfPo6ehd2cgwFNE2ocqUFpv8rtcN3TGj")
+    |> testNextIncomeAddress(userB, "2N1sd2funBMd3ntLSbJrALAz3CJxEVsAPV7")
+    |> testNextIncomeAddress(userC, "2N85sud6RgkaAEPitqdrNXsMbADYzXCWc7T")
     |> ignore;
   });

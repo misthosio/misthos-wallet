@@ -21,7 +21,9 @@ let () =
         |> withCustodian(userA, ~supporters=[userA])
         |> withPartner(userB, ~supporters=[userA])
         |> withCustodian(userB, ~supporters=[userA, userB])
-        |> withAccountKeyChain([userA, userB])
+        |> withCustodianKeyChain(userA)
+        |> withCustodianKeyChain(userB)
+        |> withAccountKeyChain
       );
     let accountIdx = AccountIndex.default;
     let ventureId = log |> L.ventureId;
@@ -33,7 +35,8 @@ let () =
         log
         |> withPartner(userC, ~supporters=[userA, userB])
         |> withCustodian(userC, ~supporters=[userA, userB])
-        |> withAccountKeyChain(~keyChainIdx=1, [userA, userB, userC])
+        |> withCustodianKeyChain(userC)
+        |> withAccountKeyChain
       );
     let oneKeyChainWallet = ref(wallet);
     let wallet = log |> constructState;
