@@ -85,6 +85,55 @@ let determinPartnerKeysAndRemovals = (localUserId, eventLog) => {
                  ...removalProcesses |> List.remove_assoc(id),
                ],
              );
+           | CustodianRemovalProposed({processId, data: {custodianId}}) =>
+             let removals =
+               try (removalProcesses |> List.assoc(custodianId)) {
+               | Not_found => []
+               };
+             (
+               partners,
+               keys,
+               [(processId, custodianId), ...processLookup],
+               [
+                 (custodianId, [item, ...removals]),
+                 ...removalProcesses |> List.remove_assoc(custodianId),
+               ],
+             );
+           | CustodianRemovalEndorsed({processId}) =>
+             let id = processLookup |> List.assoc(processId);
+             let removals = removalProcesses |> List.assoc(id);
+             (
+               partners,
+               keys,
+               processLookup,
+               [
+                 (id, [item, ...removals]),
+                 ...removalProcesses |> List.remove_assoc(id),
+               ],
+             );
+           | CustodianRemovalRejected({processId}) =>
+             let id = processLookup |> List.assoc(processId);
+             let removals = removalProcesses |> List.assoc(id);
+             (
+               partners,
+               keys,
+               processLookup,
+               [
+                 (id, [item, ...removals]),
+                 ...removalProcesses |> List.remove_assoc(id),
+               ],
+             );
+           | CustodianRemovalAccepted({data: {custodianId}}) =>
+             let removals = removalProcesses |> List.assoc(custodianId);
+             (
+               partners |> List.filter(UserId.neq(custodianId)),
+               keys,
+               processLookup,
+               [
+                 (custodianId, [item, ...removals]),
+                 ...removalProcesses |> List.remove_assoc(custodianId),
+               ],
+             );
            | _ => (partners, keys, processLookup, removalProcesses)
            },
          ([], [], [], []),

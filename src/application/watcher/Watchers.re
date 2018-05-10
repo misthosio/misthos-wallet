@@ -42,7 +42,7 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   | AccountCreationProposed(proposal) =>
     Some(AccountCreationApproval.make(proposal, log))
   | AccountCreationAccepted(acceptance) =>
-    Some(AccountKeyChain.make(acceptance, log))
+    Some(AccountKeyChain.make(session, acceptance, log))
   | PayoutProposed(proposal) => Some(PayoutApproval.make(proposal, log))
   | PayoutEndorsed(endorsement) =>
     Some(SignPayout.make(session, endorsement, log))

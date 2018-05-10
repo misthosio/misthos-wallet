@@ -34,7 +34,7 @@ function initWatcherFor(session, param, log) {
     case 9 : 
         return /* Some */[Watcher__AccountCreationApproval.make($$event[0], log)];
     case 12 : 
-        return /* Some */[Watcher__AccountKeyChain.make($$event[0], log)];
+        return /* Some */[Watcher__AccountKeyChain.make(session, $$event[0], log)];
     case 13 : 
         return /* Some */[Watcher__CustodianApproval.make($$event[0], log)];
     case 16 : 
