@@ -46,6 +46,20 @@ let () = {
     watcher#receive(log |> L.lastItem);
     testWatcherHasCompleted(watcher);
   });
+  describe("Completes when the partner is removed", () => {
+    let (user1, user2) = G.twoUserSessions();
+    let log =
+      L.(
+        createVenture(user1)
+        |> withFirstPartner(user1)
+        |> withPartner(user2, ~supporters=[user1])
+        |> withCustodianProposed(~supporter=user1, ~custodian=user2)
+      );
+    let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+    let log = log |> L.withPartnerRemoved(user2, ~supporters=[user1]);
+    let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
+    testWatcherHasCompleted(watcher);
+  });
   describe("With 2 users and a proposal", () => {
     let (user1, user2) = G.twoUserSessions();
     let log =

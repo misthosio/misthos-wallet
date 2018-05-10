@@ -33,6 +33,22 @@ describe("Completes when the custodian is accepted", (function () {
         return WatcherHelpers.testWatcherHasCompleted(watcher);
       }));
 
+describe("Completes when the partner is removed", (function () {
+        var match = Generators.twoUserSessions(/* () */0);
+        var user2 = match[1];
+        var user1 = match[0];
+        var log = Generators.Log[/* withCustodianProposed */23](user1, user2, Generators.Log[/* withPartner */14](user2, /* :: */[
+                  user1,
+                  /* [] */0
+                ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))));
+        var proposal = Event.getCustodianProposedExn(Generators.Log[/* lastEvent */4](log));
+        var log$1 = Generators.Log[/* withPartnerRemoved */19](user2, /* :: */[
+              user1,
+              /* [] */0
+            ], log);
+        return WatcherHelpers.testWatcherHasCompleted(Watcher__CustodianApproval.make(proposal, Generators.Log[/* eventLog */5](log$1)));
+      }));
+
 describe("With 2 users and a proposal", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];

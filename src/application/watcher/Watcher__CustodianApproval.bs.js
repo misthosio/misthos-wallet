@@ -71,17 +71,23 @@ function make(proposal, log) {
                     ];
                     break;
                 case 8 : 
-                    var id = $$event[0][/* data */2][/* id */0];
-                    var init$2 = self$1[state][0];
-                    var partial_arg = PrimitiveTypes.UserId[/* neq */6];
-                    tmp = /* record */[
-                      /* eligable */List.filter((function (param) {
-                                return partial_arg(id, param);
-                              }))(self$1[state][0][/* eligable */0]),
-                      /* endorsements */init$2[/* endorsements */1],
-                      /* policy */init$2[/* policy */2],
-                      /* systemIssuer */init$2[/* systemIssuer */3]
-                    ];
+                    var match = $$event[0][/* data */2];
+                    var id = match[/* id */0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](match[/* lastPartnerProcess */1], env$1[0][/* data */5][/* partnerApprovalProcess */1])) {
+                      self$1[completed][0] = true;
+                      tmp = self$1[state][0];
+                    } else {
+                      var init$2 = self$1[state][0];
+                      var partial_arg = PrimitiveTypes.UserId[/* neq */6];
+                      tmp = /* record */[
+                        /* eligable */List.filter((function (param) {
+                                  return partial_arg(id, param);
+                                }))(self$1[state][0][/* eligable */0]),
+                        /* endorsements */init$2[/* endorsements */1],
+                        /* policy */init$2[/* policy */2],
+                        /* systemIssuer */init$2[/* systemIssuer */3]
+                      ];
+                    }
                     break;
                 case 15 : 
                     var $$event$1 = $$event[0];
