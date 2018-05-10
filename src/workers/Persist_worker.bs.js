@@ -150,6 +150,98 @@ function determinPartnerKeysAndRemovals(localUserId, eventLog) {
                           List.remove_assoc(id$3, removalProcesses)
                         ]
                       ];
+            case 17 : 
+                var match$1 = $$event[0];
+                var custodianId = match$1[/* data */5][/* custodianId */0];
+                var removals$4;
+                try {
+                  removals$4 = List.assoc(custodianId, removalProcesses);
+                }
+                catch (exn$1){
+                  if (exn$1 === Caml_builtin_exceptions.not_found) {
+                    removals$4 = /* [] */0;
+                  } else {
+                    throw exn$1;
+                  }
+                }
+                return /* tuple */[
+                        partners,
+                        keys,
+                        /* :: */[
+                          /* tuple */[
+                            match$1[/* processId */0],
+                            custodianId
+                          ],
+                          processLookup
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            custodianId,
+                            /* :: */[
+                              item,
+                              removals$4
+                            ]
+                          ],
+                          List.remove_assoc(custodianId, removalProcesses)
+                        ]
+                      ];
+            case 18 : 
+                var id$4 = List.assoc($$event[0][/* processId */0], processLookup);
+                var removals$5 = List.assoc(id$4, removalProcesses);
+                return /* tuple */[
+                        partners,
+                        keys,
+                        processLookup,
+                        /* :: */[
+                          /* tuple */[
+                            id$4,
+                            /* :: */[
+                              item,
+                              removals$5
+                            ]
+                          ],
+                          List.remove_assoc(id$4, removalProcesses)
+                        ]
+                      ];
+            case 19 : 
+                var id$5 = List.assoc($$event[0][/* processId */0], processLookup);
+                var removals$6 = List.assoc(id$5, removalProcesses);
+                return /* tuple */[
+                        partners,
+                        keys,
+                        processLookup,
+                        /* :: */[
+                          /* tuple */[
+                            id$5,
+                            /* :: */[
+                              item,
+                              removals$6
+                            ]
+                          ],
+                          List.remove_assoc(id$5, removalProcesses)
+                        ]
+                      ];
+            case 20 : 
+                var custodianId$1 = $$event[0][/* data */2][/* custodianId */0];
+                var removals$7 = List.assoc(custodianId$1, removalProcesses);
+                var partial_arg$1 = PrimitiveTypes.UserId[/* neq */6];
+                return /* tuple */[
+                        List.filter((function (param) {
+                                  return partial_arg$1(custodianId$1, param);
+                                }))(partners),
+                        keys,
+                        processLookup,
+                        /* :: */[
+                          /* tuple */[
+                            custodianId$1,
+                            /* :: */[
+                              item,
+                              removals$7
+                            ]
+                          ],
+                          List.remove_assoc(custodianId$1, removalProcesses)
+                        ]
+                      ];
             default:
               return /* tuple */[
                       partners,
