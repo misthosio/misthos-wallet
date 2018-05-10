@@ -6,16 +6,23 @@ open WalletTypes;
 
 type state = {
   systemIssuer: Bitcoin.ECPair.t,
+  active: bool,
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
   nextKeyChainIdx: accountKeyChainIdx,
   pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
 };
 
-let make = ({data}: AccountCreation.Accepted.t, log) => {
+let make =
+    (
+      {userId: localUserId}: Session.Data.t,
+      {data}: AccountCreation.Accepted.t,
+      log,
+    ) => {
   let accountIdx = data.accountIdx;
   let process = {
     val state =
       ref({
+        active: false,
         custodianKeyChains: [],
         nextKeyChainIdx: AccountKeyChainIndex.first,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
@@ -27,6 +34,23 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
         (
           switch (event) {
           | VentureCreated({systemIssuer}) => {...state^, systemIssuer}
+          | CustodianAccepted({data: {partnerId, accountIdx: cAccountIdx}})
+              when
+                UserId.eq(partnerId, localUserId)
+                && AccountIndex.eq(accountIdx, cAccountIdx) => {
+              ...state^,
+              active: true,
+            }
+          | CustodianRemovalAccepted({
+              data: {custodianId, accountIdx: cAccountIdx},
+            })
+              when
+                UserId.eq(custodianId, localUserId)
+                && AccountIndex.eq(accountIdx, cAccountIdx) => {
+              ...state^,
+              pendingEvent: None,
+              active: false,
+            }
           | CustodianRemovalAccepted({
               data: {custodianId, accountIdx as removedAccount},
             })
@@ -94,7 +118,8 @@ let make = ({data}: AccountCreation.Accepted.t, log) => {
     };
     pub processCompleted = () => false;
     pub pendingEvent = () =>
-      state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)
+      state^.active ?
+        state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve) : None
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

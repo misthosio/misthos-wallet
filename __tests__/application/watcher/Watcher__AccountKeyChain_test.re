@@ -35,7 +35,7 @@ let () = {
         |> withCustodian(user1, ~supporters=[user1])
         |> withCustodianKeyChain(user1)
       );
-    let watcher = AccountKeyChain.make(acceptance, log |> L.eventLog);
+    let watcher = AccountKeyChain.make(user1, acceptance, log |> L.eventLog);
     testWatcherHasEventPending(
       "AccountKeyChainUpdated",
       watcher,
@@ -71,7 +71,7 @@ let () = {
         |> withCustodian(user2, ~supporters=[user1, user2])
         |> withCustodianKeyChain(user2)
       );
-    let watcher = AccountKeyChain.make(acceptance, log |> L.eventLog);
+    let watcher = AccountKeyChain.make(user1, acceptance, log |> L.eventLog);
     testWatcherHasEventPending(
       "AccountKeyChainUpdated",
       watcher,
@@ -90,5 +90,28 @@ let () = {
         |> List.length == 2
       | _ => false,
     );
+  });
+  describe("Idle if user is not a custodian", () => {
+    let (user1, user2) = G.twoUserSessions();
+    let log =
+      L.(
+        createVenture(user1)
+        |> withFirstPartner(user1)
+        |> withAccount(~supporter=user1)
+      );
+    let acceptance = log |> L.lastEvent |> Event.getAccountCreationAcceptedExn;
+    let log =
+      L.(
+        log
+        |> withCustodian(user1, ~supporters=[user1])
+        |> withCustodianKeyChain(user1)
+        |> withAccountKeyChain
+        |> withPartner(user2, ~supporters=[user1])
+        |> withCustodian(user2, ~supporters=[user1, user2])
+        |> withCustodianRemoved(user1, ~supporters=[user2])
+        |> withCustodianKeyChain(user2)
+      );
+    let watcher = AccountKeyChain.make(user1, acceptance, log |> L.eventLog);
+    testWatcherHasNoEventPending(watcher);
   });
 };
