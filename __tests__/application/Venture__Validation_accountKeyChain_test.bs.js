@@ -27,9 +27,8 @@ describe("AccountKeyChainUpdate", (function () {
                         ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))));
                 var match$1 = Event.getAccountKeyChainUpdatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChain */32](log)));
                 var keyChain = match$1[/* keyChain */0];
-                var partial_arg = Generators.Log[/* systemIssuer */2](log);
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
-                              return ValidationHelpers.withSystemIssuer(partial_arg, Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
+                              return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
                               /* accountIdx */WalletTypes.AccountIndex[/* fromInt */1](1),
                               /* keyChainIdx */keyChain[/* keyChainIdx */1],
@@ -46,9 +45,8 @@ describe("AccountKeyChainUpdate", (function () {
                         ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))));
                 var match$1 = Event.getAccountKeyChainUpdatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChain */32](log)));
                 var keyChain = match$1[/* keyChain */0];
-                var partial_arg = Generators.Log[/* systemIssuer */2](log);
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
-                              return ValidationHelpers.withSystemIssuer(partial_arg, Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
+                              return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
                               /* accountIdx */keyChain[/* accountIdx */0],
                               /* keyChainIdx */WalletTypes.AccountKeyChainIndex[/* fromInt */1](1),
@@ -75,9 +73,8 @@ describe("AccountKeyChainUpdate", (function () {
                                     ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))))));
                 var match$1 = Event.getAccountKeyChainUpdatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChain */32](log)));
                 var keyChain = match$1[/* keyChain */0];
-                var partial_arg = Generators.Log[/* systemIssuer */2](log);
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
-                              return ValidationHelpers.withSystemIssuer(partial_arg, Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
+                              return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
                               /* accountIdx */keyChain[/* accountIdx */0],
                               /* keyChainIdx */keyChain[/* keyChainIdx */1],
@@ -104,9 +101,8 @@ describe("AccountKeyChainUpdate", (function () {
                                     ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))))));
                 var match$1 = Event.getAccountKeyChainUpdatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChain */32](log)));
                 var keyChain = match$1[/* keyChain */0];
-                var partial_arg = Generators.Log[/* systemIssuer */2](log);
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
-                              return ValidationHelpers.withSystemIssuer(partial_arg, Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
+                              return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainUpdated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
                               /* accountIdx */keyChain[/* accountIdx */0],
                               /* keyChainIdx */keyChain[/* keyChainIdx */1],

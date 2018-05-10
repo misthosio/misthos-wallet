@@ -495,7 +495,7 @@ function defaultDataValidator(_, _$1) {
   return /* Ok */0;
 }
 
-function validateProposal($staropt$star, processName, dataList, param, state, issuerPubKey) {
+function validateProposal($staropt$star, processName, dataList, param, state, issuerId) {
   var completedProcesses = state[/* completedProcesses */16];
   var processes = state[/* processes */15];
   var data = param[/* data */5];
@@ -512,7 +512,7 @@ function validateProposal($staropt$star, processName, dataList, param, state, is
     return /* BadData */["This proposal already exists"];
   } else if (Policy.neq(param[/* policy */4], List.assoc(processName, state[/* policies */17]))) {
     return /* PolicyMissmatch */5;
-  } else if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, state[/* currentPartnerPubKeys */4]), supporterId)) {
+  } else if (PrimitiveTypes.UserId[/* neq */6](issuerId, supporterId)) {
     return /* InvalidIssuer */2;
   } else {
     var proposalsThere = List.fold_left((function (res, processId) {
@@ -537,11 +537,11 @@ function validateProposal($staropt$star, processName, dataList, param, state, is
   }
 }
 
-function validateRejection(param, param$1, issuerPubKey) {
+function validateRejection(param, param$1, issuerId) {
   var rejectorId = param[/* rejectorId */1];
   try {
     var match = List.assoc(param[/* processId */0], param$1[/* processes */15]);
-    if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$1[/* currentPartnerPubKeys */4]), rejectorId)) {
+    if (PrimitiveTypes.UserId[/* neq */6](issuerId, rejectorId)) {
       return /* InvalidIssuer */2;
     } else if (List.mem(rejectorId, match[/* supporterIds */0])) {
       return /* AlreadyEndorsed */4;
@@ -558,11 +558,11 @@ function validateRejection(param, param$1, issuerPubKey) {
   }
 }
 
-function validateEndorsement(param, param$1, issuerPubKey) {
+function validateEndorsement(param, param$1, issuerId) {
   var supporterId = param[/* supporterId */1];
   try {
     var match = List.assoc(param[/* processId */0], param$1[/* processes */15]);
-    if (PrimitiveTypes.UserId[/* neq */6](List.assoc(issuerPubKey, param$1[/* currentPartnerPubKeys */4]), supporterId)) {
+    if (PrimitiveTypes.UserId[/* neq */6](issuerId, supporterId)) {
       return /* InvalidIssuer */2;
     } else if (List.mem(supporterId, match[/* supporterIds */0])) {
       return /* Ignore */1;
@@ -736,24 +736,13 @@ function validateAccountCreationData(param, param$1) {
   }
 }
 
-function validateCustodianKeyChainUpdated(param, param$1, issuerPubKey) {
+function validateCustodianKeyChainUpdated(param, param$1, issuerId) {
   var completedProcesses = param$1[/* completedProcesses */16];
   var custodianData = param$1[/* custodianData */9];
   var keyChain = param[/* keyChain */2];
   var custodianId = param[/* custodianId */1];
   var custodianApprovalProcess = param[/* custodianApprovalProcess */0];
-  var tmp;
-  try {
-    tmp = List.assoc(issuerPubKey, param$1[/* currentPartnerPubKeys */4]);
-  }
-  catch (exn){
-    if (exn === Caml_builtin_exceptions.not_found) {
-      tmp = PrimitiveTypes.UserId[/* fromString */1]("impossible");
-    } else {
-      throw exn;
-    }
-  }
-  if (PrimitiveTypes.UserId[/* neq */6](tmp, custodianId)) {
+  if (PrimitiveTypes.UserId[/* neq */6](issuerId, custodianId)) {
     return /* InvalidIssuer */2;
   } else {
     var accountIdx = CustodianKeyChain.accountIdx(keyChain);
@@ -763,11 +752,11 @@ function validateCustodianKeyChainUpdated(param, param$1, issuerPubKey) {
                 return WalletTypes.AccountIndex[/* eq */7](param[1][1][/* accountIdx */0], accountIdx);
               }), param$1[/* accountCreationData */13])[0];
     }
-    catch (exn$1){
-      if (exn$1 === Caml_builtin_exceptions.not_found) {
+    catch (exn){
+      if (exn === Caml_builtin_exceptions.not_found) {
         pId = PrimitiveTypes.ProcessId[/* fromString */1]("impossible");
       } else {
-        throw exn$1;
+        throw exn;
       }
     }
     if (List.mem(pId, completedProcesses) === false) {
@@ -1069,6 +1058,7 @@ function validate(state, param) {
     var match = Event.isSystemEvent($$event);
     var match$1 = List.mem_assoc(issuerPubKey, state[/* currentPartnerPubKeys */4]);
     var exit = 0;
+    var exit$1 = 0;
     switch ($$event.tag | 0) {
       case 0 : 
           var match$2 = PrimitiveTypes.UserId[/* eq */5](state[/* creatorData */18][/* id */1], PrimitiveTypes.UserId[/* fromString */1](""));
@@ -1079,34 +1069,40 @@ function validate(state, param) {
           }
       case 1 : 
           if (match) {
-            exit = 1;
+            exit$1 = 3;
           } else if (match$1) {
-            return Curry._2(validateEvent($$event), state, issuerPubKey);
+            exit = 2;
           } else if (Caml_obj.caml_equal($$event[0][/* data */5], state[/* creatorData */18]) && issuerPubKey === state[/* creatorData */18][/* pubKey */2] && List.length(state[/* partnerData */5]) === 0) {
             return /* Ok */0;
           } else {
-            exit = 1;
+            exit$1 = 3;
           }
           break;
       default:
-        exit = 1;
+        exit$1 = 3;
     }
-    if (exit === 1) {
+    if (exit$1 === 3) {
       if (match) {
         if (issuerPubKey !== state[/* systemPubKey */0]) {
           return /* InvalidIssuer */2;
         } else if ($$event.tag === 4 && !(match$1 || !(Caml_obj.caml_equal($$event[0][/* data */2], state[/* creatorData */18]) && List.length(state[/* partnerData */5]) === 1))) {
           return /* Ok */0;
         } else {
-          return Curry._2(validateEvent($$event), state, issuerPubKey);
+          exit = 1;
         }
       } else if (match$1) {
-        return Curry._2(validateEvent($$event), state, issuerPubKey);
+        exit = 2;
       } else {
         return /* InvalidIssuer */2;
       }
     }
-    
+    switch (exit) {
+      case 1 : 
+          return Curry._2(validateEvent($$event), state, PrimitiveTypes.UserId[/* fromString */1]("system"));
+      case 2 : 
+          return Curry._2(validateEvent($$event), state, List.assoc(issuerPubKey, state[/* currentPartnerPubKeys */4]));
+      
+    }
   }
 }
 

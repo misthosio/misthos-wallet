@@ -38,8 +38,7 @@ let () =
         L.(log |> withAccountKeyChain |> lastEvent)
         |> Event.getAccountKeyChainUpdatedExn;
       testDataValidation(
-        Validation.validateAccountKeyChainUpdated
-        |> withSystemIssuer(log |> L.systemIssuer),
+        Validation.validateAccountKeyChainUpdated |> withSystemIssuer,
         log |> constructState,
         AccountKeyChainUpdated.{
           keyChain: {
@@ -64,8 +63,7 @@ let () =
         L.(log |> withAccountKeyChain |> lastEvent)
         |> Event.getAccountKeyChainUpdatedExn;
       testDataValidation(
-        Validation.validateAccountKeyChainUpdated
-        |> withSystemIssuer(log |> L.systemIssuer),
+        Validation.validateAccountKeyChainUpdated |> withSystemIssuer,
         log |> constructState,
         AccountKeyChainUpdated.{
           keyChain: {
@@ -93,8 +91,7 @@ let () =
         L.(log |> withAccountKeyChain |> lastEvent)
         |> Event.getAccountKeyChainUpdatedExn;
       testDataValidation(
-        Validation.validateAccountKeyChainUpdated
-        |> withSystemIssuer(log |> L.systemIssuer),
+        Validation.validateAccountKeyChainUpdated |> withSystemIssuer,
         log |> constructState,
         AccountKeyChainUpdated.{
           keyChain: {
@@ -122,8 +119,7 @@ let () =
         L.(log |> withAccountKeyChain |> lastEvent)
         |> Event.getAccountKeyChainUpdatedExn;
       testDataValidation(
-        Validation.validateAccountKeyChainUpdated
-        |> withSystemIssuer(log |> L.systemIssuer),
+        Validation.validateAccountKeyChainUpdated |> withSystemIssuer,
         log |> constructState,
         AccountKeyChainUpdated.{
           keyChain: {

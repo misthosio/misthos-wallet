@@ -328,8 +328,8 @@ let validateProposal =
       dataList: list((processId, (userId, 'a))),
       {policy, supporterId, data, dependsOnProposals, dependsOnCompletions}:
         EventTypes.proposal('a),
-      {policies, currentPartnerPubKeys, completedProcesses, processes} as state,
-      issuerPubKey,
+      {policies, completedProcesses, processes} as state,
+      issuerId,
     ) =>
   if (dataList
       |> List.exists(((_, (previousSupporter, previousData))) =>
@@ -338,10 +338,7 @@ let validateProposal =
     BadData("This proposal already exists");
   } else if (Policy.neq(policy, policies |> List.assoc(processName))) {
     PolicyMissmatch;
-  } else if (UserId.neq(
-               currentPartnerPubKeys |> List.assoc(issuerPubKey),
-               supporterId,
-             )) {
+  } else if (UserId.neq(issuerId, supporterId)) {
     InvalidIssuer;
   } else {
     let proposalsThere =
@@ -371,18 +368,11 @@ let validateProposal =
   };
 
 let validateRejection =
-    (
-      {processId, rejectorId}: EventTypes.rejection,
-      {processes, currentPartnerPubKeys},
-      issuerPubKey,
-    ) =>
+    ({processId, rejectorId}: EventTypes.rejection, {processes}, issuerId) =>
   try (
     {
       let {supporterIds} = processes |> List.assoc(processId);
-      if (UserId.neq(
-            currentPartnerPubKeys |> List.assoc(issuerPubKey),
-            rejectorId,
-          )) {
+      if (UserId.neq(issuerId, rejectorId)) {
         InvalidIssuer;
       } else if (supporterIds |> List.mem(rejectorId)) {
         AlreadyEndorsed;
@@ -397,16 +387,13 @@ let validateRejection =
 let validateEndorsement =
     (
       {processId, supporterId}: EventTypes.endorsement,
-      {processes, currentPartnerPubKeys},
-      issuerPubKey,
+      {processes},
+      issuerId,
     ) =>
   try (
     {
       let {supporterIds} = processes |> List.assoc(processId);
-      if (UserId.neq(
-            currentPartnerPubKeys |> List.assoc(issuerPubKey),
-            supporterId,
-          )) {
+      if (UserId.neq(issuerId, supporterId)) {
         InvalidIssuer;
       } else if (supporterIds |> List.mem(supporterId)) {
         Ignore;
@@ -424,7 +411,7 @@ let validateAcceptance =
       dataList: list((processId, (userId, 'a))),
       eq: ('a, 'a) => bool,
       {processes, currentPartners, completedProcesses},
-      _issuerPubKey,
+      _issuerId,
     ) =>
   try (
     {
@@ -560,20 +547,14 @@ let validateCustodianKeyChainUpdated =
     (
       {custodianApprovalProcess, custodianId, keyChain}: CustodianKeyChainUpdated.t,
       {
-        currentPartnerPubKeys,
         accountCreationData,
         custodianData,
         completedProcesses,
         custodianKeyChains,
       },
-      issuerPubKey,
+      issuerId,
     ) =>
-  if (UserId.neq(
-        try (currentPartnerPubKeys |> List.assoc(issuerPubKey)) {
-        | Not_found => UserId.fromString("impossible")
-        },
-        custodianId,
-      )) {
+  if (UserId.neq(issuerId, custodianId)) {
     InvalidIssuer;
   } else {
     let accountIdx = keyChain |> CustodianKeyChain.accountIdx;
@@ -624,7 +605,7 @@ let validateAccountKeyChainUpdated =
         accountKeyChains,
         currentCustodians,
       },
-      _issuerPubKey,
+      _issuerId,
     ) =>
   try (
     {
@@ -683,7 +664,7 @@ let validateIncomeAddressExposed =
     (
       {coordinates, address}: IncomeAddressExposed.t,
       {accountKeyChains},
-      _issuerPubKey,
+      _issuerId,
     ) =>
   try (
     {
@@ -859,6 +840,13 @@ let validate =
           && state.partnerData
           |> List.length == 1 =>
       Ok
-    | _ => validateEvent(event, state, issuerPubKey)
+    | (_, true, _) =>
+      validateEvent(event, state, UserId.fromString("system"))
+    | _ =>
+      validateEvent(
+        event,
+        state,
+        state.currentPartnerPubKeys |> List.assoc(issuerPubKey),
+      )
     };
   };

@@ -10,6 +10,8 @@ module L = G.Log;
 
 module Validation = Venture__Validation;
 
+open PrimitiveTypes;
+
 exception TestingInvalidSequence(string);
 
 let constructState = log =>
@@ -47,23 +49,14 @@ let testDataValidation =
 };
 
 let withSystemIssuer =
-    (
-      issuer,
-      dataValidation: ('a, Validation.t, string) => Validation.result,
-      data,
-      state,
-    ) =>
-  dataValidation(data, state, issuer |> Utils.publicKeyFromKeyPair);
+    (dataValidation: ('a, Validation.t, 'b) => Validation.result, data, state) =>
+  dataValidation(data, state, ());
 
 let withIssuer =
     (
       issuer: Session.Data.t,
-      dataValidation: ('a, Validation.t, string) => Validation.result,
+      dataValidation: ('a, Validation.t, userId) => Validation.result,
       data,
       state,
     ) =>
-  dataValidation(
-    data,
-    state,
-    issuer.issuerKeyPair |> Utils.publicKeyFromKeyPair,
-  );
+  dataValidation(data, state, issuer.userId);
