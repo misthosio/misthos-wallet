@@ -106,7 +106,8 @@ module Cmd: {
   };
   module ProposePayout: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, list(EventLog.item))
+      | NotEnoughFunds;
     let exec:
       (
         ~accountIdx: accountIdx,

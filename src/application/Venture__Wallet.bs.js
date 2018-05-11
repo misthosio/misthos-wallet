@@ -213,17 +213,26 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                           return AccountKeyChain.Identifier[/* neq */3](keyChainIdent, Address.Coordinates[/* keyChainIdent */5](i[/* coordinates */6]));
                         }))(inputs$1);
                 var changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
-                var payoutTx = PayoutTransaction.build(oldInputs, inputs$1, destinations, satsPerByte, changeAddress, network);
-                var changeAddressCoordinates = Utils.mapOption((function () {
-                        return nextChangeCoordinates;
-                      }), payoutTx[/* changeAddress */3]);
-                var match = PayoutTransaction.signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payoutTx, network);
-                var payoutTx$1 = match ? match[0] : payoutTx;
-                return Promise.resolve(Curry._5(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, userId, payoutPolicy, /* record */[
-                                /* accountIdx */accountIdx,
-                                /* payoutTx */payoutTx$1,
-                                /* changeAddressCoordinates */changeAddressCoordinates
-                              ]));
+                try {
+                  var payoutTx = PayoutTransaction.build(oldInputs, inputs$1, destinations, satsPerByte, changeAddress, network);
+                  var changeAddressCoordinates = Utils.mapOption((function () {
+                          return nextChangeCoordinates;
+                        }), payoutTx[/* changeAddress */3]);
+                  var match = PayoutTransaction.signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payoutTx, network);
+                  var payoutTx$1 = match ? match[0] : payoutTx;
+                  return Promise.resolve(/* Ok */[Curry._5(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, userId, payoutPolicy, /* record */[
+                                    /* accountIdx */accountIdx,
+                                    /* payoutTx */payoutTx$1,
+                                    /* changeAddressCoordinates */changeAddressCoordinates
+                                  ])]);
+                }
+                catch (exn){
+                  if (exn === PayoutTransaction.NotEnoughFunds) {
+                    return Promise.resolve(/* NotEnoughFunds */0);
+                  } else {
+                    throw exn;
+                  }
+                }
               }));
 }
 

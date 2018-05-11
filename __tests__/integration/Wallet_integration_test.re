@@ -86,17 +86,27 @@ let () =
                   BTC.fromSatoshis(10L),
                 )
            )
-        |> then_(({data, processId} as event: Event.Payout.Proposed.t) => {
-             oneKeyChainWallet :=
-               oneKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
-             twoKeyChainWallet :=
-               twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
-             all2((
-               processId |> resolve,
-               PayoutTransaction.finalize([data.payoutTx], Network.Regtest)
-               |> Helpers.broadcastTransaction,
-             ));
-           })
+        |> then_(
+             fun
+             | Wallet.Ok(
+                 ({data, processId} as event: Event.Payout.Proposed.t),
+               ) => {
+                 oneKeyChainWallet :=
+                   oneKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
+                 twoKeyChainWallet :=
+                   twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event));
+                 all2((
+                   processId |> resolve,
+                   PayoutTransaction.finalize(
+                     [data.payoutTx],
+                     Network.Regtest,
+                   )
+                   |> Helpers.broadcastTransaction,
+                 ));
+               }
+             | Wallet.NotEnoughFunds =>
+               raise(PayoutTransaction.NotEnoughFunds),
+           )
         |> then_(((processId, txId)) => {
              oneKeyChainWallet :=
                oneKeyChainWallet^
@@ -147,28 +157,34 @@ let () =
              [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
              BTC.fromSatoshis(10L),
            )
-        |> then_(({data} as event: Event.Payout.Proposed.t) => {
-             let payoutTx =
-               PayoutTransaction.signPayout(
-                 ~ventureId,
-                 ~userId=userB.userId,
-                 ~masterKeyChain=userB.masterKeyChain,
-                 ~accountKeyChains=wallet.accountKeyChains,
-                 ~payoutTx=data.payoutTx,
-                 ~network=Network.Regtest,
-               )
-               |> PayoutTransaction.getSignedExn;
-             Js.Promise.all2((
-               resolve(
-                 twoKeyChainWallet^ |> Wallet.apply(PayoutProposed(event)),
-               ),
-               PayoutTransaction.finalize(
-                 [data.payoutTx, payoutTx],
-                 Network.Regtest,
-               )
-               |> Helpers.broadcastTransaction,
-             ));
-           })
+        |> then_(
+             fun
+             | Wallet.Ok(({data} as event: Event.Payout.Proposed.t)) => {
+                 let payoutTx =
+                   PayoutTransaction.signPayout(
+                     ~ventureId,
+                     ~userId=userB.userId,
+                     ~masterKeyChain=userB.masterKeyChain,
+                     ~accountKeyChains=wallet.accountKeyChains,
+                     ~payoutTx=data.payoutTx,
+                     ~network=Network.Regtest,
+                   )
+                   |> PayoutTransaction.getSignedExn;
+                 Js.Promise.all2((
+                   resolve(
+                     twoKeyChainWallet^
+                     |> Wallet.apply(PayoutProposed(event)),
+                   ),
+                   PayoutTransaction.finalize(
+                     [data.payoutTx, payoutTx],
+                     Network.Regtest,
+                   )
+                   |> Helpers.broadcastTransaction,
+                 ));
+               }
+             | Wallet.NotEnoughFunds =>
+               raise(PayoutTransaction.NotEnoughFunds),
+           )
         |> then_(((wallet, _broadcastResult)) => {
              let expectedFee =
                BTC.fromSatoshis(5810L)

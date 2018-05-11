@@ -566,15 +566,22 @@ module Cmd = {
   };
   module ProposePayout = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, list(EventLog.item))
+      | NotEnoughFunds;
     let exec =
         (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
         Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
-        |> then_(proposal => venture |> apply(PayoutProposed(proposal)))
-        |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(v, c)))
+        |> then_(
+             fun
+             | Wallet.Ok(proposal) =>
+               venture
+               |> apply(PayoutProposed(proposal))
+               |> then_(persist)
+               |> then_(((v, c)) => resolve(Ok(v, c)))
+             | Wallet.NotEnoughFunds => NotEnoughFunds |> resolve,
+           )
       );
     };
   };

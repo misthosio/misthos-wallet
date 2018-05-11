@@ -559,13 +559,17 @@ var ExposeIncomeAddress = /* module */[/* exec */exec$9];
 
 function exec$10(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
-  return Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]).then((function (proposal) {
-                    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [proposal]), venture);
-                  })).then(persist).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+  return Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]).then((function (param) {
+                if (param) {
+                  return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [param[0]]), venture).then(persist).then((function (param) {
+                                return Promise.resolve(/* Ok */[
+                                            param[0],
+                                            param[1]
+                                          ]);
+                              }));
+                } else {
+                  return Promise.resolve(/* NotEnoughFunds */0);
+                }
               }));
 }
 

@@ -135,6 +135,10 @@ let exposeNextIncomeAddress =
   );
 };
 
+type preparePayoutResult =
+  | NotEnoughFunds
+  | Ok(Payout.Proposed.t);
+
 let preparePayoutTx =
     (
       {userId, masterKeyChain, network}: Session.Data.t,
@@ -183,40 +187,48 @@ let preparePayoutTx =
               );
          let changeAddress =
            Address.find(nextChangeCoordinates, accountKeyChains);
-         let payoutTx =
-           PayoutTransaction.build(
-             ~mandatoryInputs=oldInputs,
-             ~allInputs=inputs,
-             ~destinations,
-             ~satsPerByte,
-             ~changeAddress,
-             ~network,
-           );
-         let changeAddressCoordinates =
-           payoutTx.changeAddress
-           |> Utils.mapOption((_) => nextChangeCoordinates);
-         let payoutTx =
-           switch (
-             PayoutTransaction.signPayout(
-               ~ventureId,
-               ~userId,
-               ~masterKeyChain,
-               ~accountKeyChains,
-               ~payoutTx,
-               ~network,
+         try (
+           {
+             let payoutTx =
+               PayoutTransaction.build(
+                 ~mandatoryInputs=oldInputs,
+                 ~allInputs=inputs,
+                 ~destinations,
+                 ~satsPerByte,
+                 ~changeAddress,
+                 ~network,
+               );
+             let changeAddressCoordinates =
+               payoutTx.changeAddress
+               |> Utils.mapOption((_) => nextChangeCoordinates);
+             let payoutTx =
+               switch (
+                 PayoutTransaction.signPayout(
+                   ~ventureId,
+                   ~userId,
+                   ~masterKeyChain,
+                   ~accountKeyChains,
+                   ~payoutTx,
+                   ~network,
+                 )
+               ) {
+               | Signed(payout) => payout
+               | NotSigned => payoutTx
+               };
+             Ok(
+               Event.Payout.(
+                 Proposed.make(
+                   ~supporterId=userId,
+                   ~policy=payoutPolicy,
+                   Data.{accountIdx, payoutTx, changeAddressCoordinates},
+                 )
+               ),
              )
-           ) {
-           | Signed(payout) => payout
-           | NotSigned => payoutTx
-           };
-         Event.Payout.(
-           Proposed.make(
-             ~supporterId=userId,
-             ~policy=payoutPolicy,
-             Data.{accountIdx, payoutTx, changeAddressCoordinates},
-           )
-         )
-         |> resolve;
+             |> resolve;
+           }
+         ) {
+         | PayoutTransaction.NotEnoughFunds => NotEnoughFunds |> resolve
+         };
        })
   );
 };

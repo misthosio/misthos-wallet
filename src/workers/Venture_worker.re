@@ -288,6 +288,10 @@ module Handle = {
                | Ok(venture, newItems) => {
                    Notify.newItems(ventureId, newItems);
                    venture |> resolve;
+                 }
+               | NotEnoughFunds => {
+                   logMessage("Not enough funds");
+                   venture |> resolve;
                  },
              )
         )

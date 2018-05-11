@@ -312,8 +312,13 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._4(Venture.Cmd[/* ProposePayout */10][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param) {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  } else {
+                                    logMessage("Not enough funds");
+                                    return Promise.resolve(venture);
+                                  }
                                 }));
                   }), param);
     });

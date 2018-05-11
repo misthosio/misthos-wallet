@@ -135,16 +135,21 @@ describe("integration", (function () {
                                                   /* hi */0,
                                                   /* lo */10
                                                 ]), oneKeyChainWallet[0]);
-                                })).then((function ($$event) {
-                                oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), oneKeyChainWallet[0]);
-                                twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0]);
-                                return Promise.all(/* tuple */[
-                                            Promise.resolve($$event[/* processId */0]),
-                                            Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
-                                                      $$event[/* data */5][/* payoutTx */1],
-                                                      /* [] */0
-                                                    ], /* Regtest */0))
-                                          ]);
+                                })).then((function (param) {
+                                if (param) {
+                                  var $$event = param[0];
+                                  oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), oneKeyChainWallet[0]);
+                                  twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0]);
+                                  return Promise.all(/* tuple */[
+                                              Promise.resolve($$event[/* processId */0]),
+                                              Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
+                                                        $$event[/* data */5][/* payoutTx */1],
+                                                        /* [] */0
+                                                      ], /* Regtest */0))
+                                            ]);
+                                } else {
+                                  throw PayoutTransaction.NotEnoughFunds;
+                                }
                               })).then((function (param) {
                               var txId = param[1];
                               var processId = param[0];
@@ -170,19 +175,24 @@ describe("integration", (function () {
                                     ], BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
                                           /* lo */10
-                                        ]), twoKeyChainWallet[0]).then((function ($$event) {
-                                      var data = $$event[/* data */5];
-                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* accountKeyChains */3], data[/* payoutTx */1], /* Regtest */0));
-                                      return Promise.all(/* tuple */[
-                                                  Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),
-                                                  Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
-                                                            data[/* payoutTx */1],
-                                                            /* :: */[
-                                                              payoutTx,
-                                                              /* [] */0
-                                                            ]
-                                                          ], /* Regtest */0))
-                                                ]);
+                                        ]), twoKeyChainWallet[0]).then((function (param) {
+                                      if (param) {
+                                        var $$event = param[0];
+                                        var data = $$event[/* data */5];
+                                        var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* accountKeyChains */3], data[/* payoutTx */1], /* Regtest */0));
+                                        return Promise.all(/* tuple */[
+                                                    Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),
+                                                    Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
+                                                              data[/* payoutTx */1],
+                                                              /* :: */[
+                                                                payoutTx,
+                                                                /* [] */0
+                                                              ]
+                                                            ], /* Regtest */0))
+                                                  ]);
+                                      } else {
+                                        throw PayoutTransaction.NotEnoughFunds;
+                                      }
                                     })).then((function (param) {
                                     var expectedFee = BTC.fromSatoshis(/* int64 */[
                                             /* hi */0,
