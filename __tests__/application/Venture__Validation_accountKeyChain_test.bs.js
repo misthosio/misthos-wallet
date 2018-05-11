@@ -114,4 +114,100 @@ describe("AccountKeyChainIdentified", (function () {
         return /* () */0;
       }));
 
+describe("AccountKeyChainActivated", (function () {
+        describe("when everything is fine", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user1 = match[0];
+                var log = Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)), /* Ok */0);
+              }));
+        describe("when the account doesn't exist", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user1 = match[0];
+                var log = Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
+                            }), ValidationHelpers.constructState(log), /* record */[
+                            /* accountIdx */WalletTypes.AccountIndex[/* fromInt */1](1),
+                            /* custodianId */activated[/* custodianId */1],
+                            /* identifier */activated[/* identifier */2],
+                            /* sequence */activated[/* sequence */3]
+                          ], /* BadData */["Account doesn't exist"]);
+              }));
+        describe("when the issuer doesn't match", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withPartner */14](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                                  user1,
+                                  /* [] */0
+                                ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))))));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
+                            }), ValidationHelpers.constructState(log), activated, /* InvalidIssuer */2);
+              }));
+        describe("when the issuer is not a custodian", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withPartner */14](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                                  user1,
+                                  /* [] */0
+                                ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))))));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user2, log)));
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
+                            }), ValidationHelpers.constructState(log), activated, /* BadData */["Not a custodian"]);
+              }));
+        describe("when the identifier is unknown", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user1 = match[0];
+                var log = Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
+                            }), ValidationHelpers.constructState(log), /* record */[
+                            /* accountIdx */activated[/* accountIdx */0],
+                            /* custodianId */activated[/* custodianId */1],
+                            /* identifier */"bad",
+                            /* sequence */activated[/* sequence */3]
+                          ], /* BadData */["Unknown AccountKeyChain identifier"]);
+              }));
+        describe("when the sequence is not in order", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user1 = match[0];
+                var log = Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
+                            }), ValidationHelpers.constructState(log), /* record */[
+                            /* accountIdx */activated[/* accountIdx */0],
+                            /* custodianId */activated[/* custodianId */1],
+                            /* identifier */activated[/* identifier */2],
+                            /* sequence */1
+                          ], /* BadData */["AccountKeyChain sequence out of order"]);
+              }));
+        return /* () */0;
+      }));
+
 /*  Not a pure module */

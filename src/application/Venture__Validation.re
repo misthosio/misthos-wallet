@@ -27,8 +27,13 @@ module CustodianValidator = {
   type t = {
     custodians: list((accountIdx, list(userId))),
     areCurrent: (accountIdx, list(userId)) => bool,
+    isCustodian: (accountIdx, userId) => bool,
   };
-  let make = () => {custodians: [], areCurrent: (_, _) => false};
+  let make = () => {
+    custodians: [],
+    areCurrent: (_, _) => false,
+    isCustodian: (_, _) => false,
+  };
   let update = (event, {custodians}) => {
     let custodians =
       switch (event) {
@@ -64,6 +69,8 @@ module CustodianValidator = {
         |> List.map(c => accountCustodians |> List.mem(c))
         |> List.fold_left((r, v) => r && v, true);
       },
+      isCustodian: (accountIdx, testCustodian) =>
+        custodians |> List.assoc(accountIdx) |> List.mem(testCustodian),
     };
   };
 };
@@ -122,6 +129,76 @@ module CustodianKeyChainValidator = {
   };
 };
 
+module AccountKeyChainValidator = {
+  type t = {
+    identified: list((accountIdx, list(AccountKeyChain.Identifier.t))),
+    activations:
+      list((userId, list((AccountKeyChain.Identifier.t, list(int))))),
+    exists: (accountIdx, AccountKeyChain.Identifier.t) => bool,
+    inOrder: (userId, AccountKeyChain.Identifier.t, int) => bool,
+  };
+  let make = () => {
+    identified: [],
+    activations: [],
+    exists: (_, _) => false,
+    inOrder: (_, _, _) => false,
+  };
+  let getOrEmpty = (item, theList) =>
+    try (theList |> List.assoc(item)) {
+    | Not_found => []
+    };
+  let update = (event, {identified, activations}) => {
+    let (identified, activations) =
+      switch (event) {
+      | AccountCreationAccepted({data: {accountIdx}}) => (
+          [(accountIdx, []), ...identified],
+          activations,
+        )
+      | AccountKeyChainIdentified({keyChain: {accountIdx, identifier}}) => (
+          [
+            (
+              accountIdx,
+              [identifier, ...identified |> List.assoc(accountIdx)],
+            ),
+            ...identified |> List.remove_assoc(accountIdx),
+          ],
+          activations,
+        )
+      | AccountKeyChainActivated({custodianId, identifier, sequence}) => (
+          identified,
+          [
+            (
+              custodianId,
+              [
+                (
+                  identifier,
+                  [
+                    sequence,
+                    ...activations
+                       |> getOrEmpty(custodianId)
+                       |> getOrEmpty(identifier),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        )
+      | _ => (identified, activations)
+      };
+    {
+      identified,
+      activations,
+      exists: (accountIdx, identifier) =>
+        identified |> List.assoc(accountIdx) |> List.mem(identifier),
+      inOrder: (custodianId, identifier, sequence) =>
+        activations
+        |> getOrEmpty(custodianId)
+        |> getOrEmpty(identifier)
+        |> List.length == sequence,
+    };
+  };
+};
+
 type approvalProcess = {
   supporterIds: list(userId),
   policy: Policy.t,
@@ -131,6 +208,7 @@ type t = {
   accountValidator: AccountValidator.t,
   custodianValidator: CustodianValidator.t,
   custodianKeyChainValidator: CustodianKeyChainValidator.t,
+  accountKeyChainValidator: AccountKeyChainValidator.t,
   systemPubKey: string,
   metaPolicy: Policy.t,
   knownItems: list(string),
@@ -160,6 +238,7 @@ let make = () => {
   accountValidator: AccountValidator.make(),
   custodianValidator: CustodianValidator.make(),
   custodianKeyChainValidator: CustodianKeyChainValidator.make(),
+  accountKeyChainValidator: AccountKeyChainValidator.make(),
   systemPubKey: "",
   knownItems: [],
   currentPartners: [],
@@ -234,6 +313,8 @@ let apply = ({hash, event}: EventLog.item, state) => {
     custodianKeyChainValidator:
       state.custodianKeyChainValidator
       |> CustodianKeyChainValidator.update(event),
+    accountKeyChainValidator:
+      state.accountKeyChainValidator |> AccountKeyChainValidator.update(event),
   };
   switch (event) {
   | VentureCreated({metaPolicy, systemIssuer, creatorId, creatorPubKey}) => {
@@ -444,9 +525,23 @@ let resultToString =
   | DependencyNotMet => "DependencyNotMet"
   | BadData(description) => "BadData('" ++ description ++ "')";
 
+let test = (test, state) => (state |> test, state);
+
+let andThen = (test, (res, state)) =>
+  switch (res) {
+  | Ok => (state |> test, state)
+  | _ => (res, state)
+  };
+
+let returnResult = ((res, _)) => res;
+
 let accountExists = (accountIdx, {accountValidator}) =>
   accountValidator.exists(accountIdx) ?
     Ok : BadData("Account doesn't exist");
+
+let isCustodian = (accountIdx, custodian, {custodianValidator}) =>
+  custodian |> custodianValidator.isCustodian(accountIdx) ?
+    Ok : BadData("Not a custodian");
 
 let currentCustodians = (accountIdx, custodians, {custodianValidator}) =>
   custodians |> custodianValidator.areCurrent(accountIdx) ?
@@ -456,6 +551,16 @@ let custodianKeyChainsExist =
     (accountIdx, keyChains, {custodianKeyChainValidator}) =>
   keyChains |> custodianKeyChainValidator.allExist(accountIdx) ?
     Ok : BadData("Bad CustodianKeyChain");
+
+let accountKeyChainIdentified =
+    (accountIdx, identifier, {accountKeyChainValidator}) =>
+  identifier |> accountKeyChainValidator.exists(accountIdx) ?
+    Ok : BadData("Unknown AccountKeyChain identifier");
+
+let activationSequenceInOrder =
+    (custodianId, identifier, sequence, {accountKeyChainValidator}) =>
+  sequence |> accountKeyChainValidator.inOrder(custodianId, identifier) ?
+    Ok : BadData("AccountKeyChain sequence out of order");
 
 let defaultDataValidator = (_, _) => Ok;
 
@@ -724,16 +829,6 @@ let validateCustodianKeyChainUpdated =
     };
   };
 
-let test = (test, state) => (state |> test, state);
-
-let andThen = (test, (res, state)) =>
-  switch (res) {
-  | Ok => (state |> test, state)
-  | _ => (res, state)
-  };
-
-let returnResult = ((res, _)) => res;
-
 let validateAccountKeyChainIdentified =
     (
       {keyChain: {accountIdx, custodianKeyChains} as keyChain}: AccountKeyChainIdentified.t,
@@ -750,7 +845,22 @@ let validateAccountKeyChainIdentified =
     |> andThen(custodianKeyChains |> custodianKeyChainsExist(accountIdx))
     |> returnResult;
 
-let validateAccountKeyChainActivated = (_, _, _) => Ok;
+let validateAccountKeyChainActivated =
+    (
+      {accountIdx, custodianId, identifier, sequence}: AccountKeyChainActivated.t,
+      state,
+      issuerId,
+    ) =>
+  UserId.neq(issuerId, custodianId) ?
+    InvalidIssuer :
+    state
+    |> test(accountExists(accountIdx))
+    |> andThen(custodianId |> isCustodian(accountIdx))
+    |> andThen(identifier |> accountKeyChainIdentified(accountIdx))
+    |> andThen(
+         sequence |> activationSequenceInOrder(custodianId, identifier),
+       )
+    |> returnResult;
 
 let validateIncomeAddressExposed =
     (

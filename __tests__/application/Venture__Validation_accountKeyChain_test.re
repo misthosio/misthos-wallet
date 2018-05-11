@@ -8,7 +8,7 @@ open Event;
 
 open ValidationHelpers;
 
-let () =
+let () = {
   describe("AccountKeyChainIdentified", () => {
     describe("when everything is fine", () => {
       let (user1, _user2) = G.twoUserSessions();
@@ -156,3 +156,133 @@ let () =
       );
     });
   });
+  describe("AccountKeyChainActivated", () => {
+    describe("when everything is fine", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(log |> withAccountKeyChainActivated(user1) |> lastItem),
+        Validation.Ok,
+      );
+    });
+    describe("when the account doesn't exist", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+        );
+      let activated: AccountKeyChainActivated.t =
+        L.(log |> withAccountKeyChainActivated(user1) |> lastEvent)
+        |> Event.getAccountKeyChainActivatedExn;
+      testDataValidation(
+        Validation.validateAccountKeyChainActivated |> withIssuer(user1),
+        log |> constructState,
+        AccountKeyChainActivated.{
+          ...activated,
+          accountIdx: 1 |> AccountIndex.fromInt,
+        },
+        Validation.BadData("Account doesn't exist"),
+      );
+    });
+    describe("when the issuer doesn't match", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+          |> withPartner(user2, ~supporters=[user1])
+        );
+      let activated: AccountKeyChainActivated.t =
+        L.(log |> withAccountKeyChainActivated(user1) |> lastEvent)
+        |> Event.getAccountKeyChainActivatedExn;
+      testDataValidation(
+        Validation.validateAccountKeyChainActivated |> withIssuer(user2),
+        log |> constructState,
+        activated,
+        InvalidIssuer,
+      );
+    });
+    describe("when the issuer is not a custodian", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+          |> withPartner(user2, ~supporters=[user1])
+        );
+      let activated: AccountKeyChainActivated.t =
+        L.(log |> withAccountKeyChainActivated(user2) |> lastEvent)
+        |> Event.getAccountKeyChainActivatedExn;
+      testDataValidation(
+        Validation.validateAccountKeyChainActivated |> withIssuer(user2),
+        log |> constructState,
+        activated,
+        BadData("Not a custodian"),
+      );
+    });
+    describe("when the identifier is unknown", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+        );
+      let activated: AccountKeyChainActivated.t =
+        L.(log |> withAccountKeyChainActivated(user1) |> lastEvent)
+        |> Event.getAccountKeyChainActivatedExn;
+      testDataValidation(
+        Validation.validateAccountKeyChainActivated |> withIssuer(user1),
+        log |> constructState,
+        {...activated, identifier: "bad"},
+        BadData("Unknown AccountKeyChain identifier"),
+      );
+    });
+    describe("when the sequence is not in order", () => {
+      let (user1, _user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+        );
+      let activated: AccountKeyChainActivated.t =
+        L.(log |> withAccountKeyChainActivated(user1) |> lastEvent)
+        |> Event.getAccountKeyChainActivatedExn;
+      testDataValidation(
+        Validation.validateAccountKeyChainActivated |> withIssuer(user1),
+        log |> constructState,
+        {...activated, sequence: 1},
+        BadData("AccountKeyChain sequence out of order"),
+      );
+    });
+  });
+};
