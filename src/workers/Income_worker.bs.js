@@ -138,16 +138,20 @@ function detectIncomeFromVenture(ventureId) {
 
 function detectIncomeFromAll() {
   return Session.getCurrentSession(/* () */0).then((function (param) {
-                if (typeof param === "number") {
-                  return Promise.resolve(/* () */0);
-                } else {
-                  return Venture.Index[/* load */0](/* () */0).then((function (index) {
-                                return Promise.resolve(List.iter((function (param) {
-                                                  detectIncomeFromVenture(param[/* id */0]);
-                                                  return /* () */0;
-                                                }), index));
-                              }));
-                }
+                  if (typeof param === "number") {
+                    return Promise.resolve(/* () */0);
+                  } else {
+                    return Venture.Index[/* load */0](/* () */0).then((function (index) {
+                                  return Promise.resolve(List.iter((function (param) {
+                                                    detectIncomeFromVenture(param[/* id */0]);
+                                                    return /* () */0;
+                                                  }), index));
+                                }));
+                  }
+                })).catch((function (err) {
+                logMessage("Error while syncing:");
+                console.log(err);
+                return Promise.resolve(/* () */0);
               }));
 }
 

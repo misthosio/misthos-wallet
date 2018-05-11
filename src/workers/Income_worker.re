@@ -142,6 +142,11 @@ let detectIncomeFromAll = () =>
               )
          | _ => resolve(),
        )
+    |> catch(err => {
+         logMessage("Error while syncing:");
+         Js.log(err);
+         resolve();
+       })
   );
 
 let tenSecondsInMilliseconds = 10000;
