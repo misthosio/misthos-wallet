@@ -390,19 +390,10 @@ let validateEndorsement =
       {processes},
       issuerId,
     ) =>
-  try (
-    {
-      let {supporterIds} = processes |> List.assoc(processId);
-      if (UserId.neq(issuerId, supporterId)) {
-        InvalidIssuer;
-      } else if (supporterIds |> List.mem(supporterId)) {
-        Ignore;
-      } else {
-        Ok;
-      };
-    }
-  ) {
-  | Not_found => UnknownProcessId
+  if (processes |> List.mem_assoc(processId)) {
+    UserId.neq(issuerId, supporterId) ? InvalidIssuer : Ok;
+  } else {
+    UnknownProcessId;
   };
 
 let validateAcceptance =

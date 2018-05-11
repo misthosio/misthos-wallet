@@ -372,6 +372,20 @@ function apply(param, state) {
           newrecord[/* payoutData */14]
         ];
         return newrecord$12;
+    case 2 : 
+    case 6 : 
+    case 10 : 
+    case 14 : 
+    case 18 : 
+    case 22 : 
+        return newrecord;
+    case 3 : 
+    case 7 : 
+    case 11 : 
+    case 15 : 
+    case 19 : 
+    case 23 : 
+        return endorseProcess($$event[0], newrecord);
     case 24 : 
         return completeProcess($$event[0], newrecord);
     case 29 : 
@@ -456,21 +470,8 @@ function apply(param, state) {
           /* [] */0
         ];
         return newrecord$14;
-    case 2 : 
-    case 6 : 
-    case 10 : 
-    case 14 : 
-    case 18 : 
-    case 22 : 
-    case 25 : 
-    case 26 : 
-    case 27 : 
-    case 28 : 
-    case 33 : 
-    case 34 : 
-        return newrecord;
     default:
-      return endorseProcess($$event[0], newrecord);
+      return newrecord;
   }
 }
 
@@ -568,23 +569,15 @@ function validateRejection(param, param$1, issuerId) {
 }
 
 function validateEndorsement(param, param$1, issuerId) {
-  var supporterId = param[/* supporterId */1];
-  try {
-    var match = List.assoc(param[/* processId */0], param$1[/* processes */15]);
-    if (PrimitiveTypes.UserId[/* neq */6](issuerId, supporterId)) {
+  if (List.mem_assoc(param[/* processId */0], param$1[/* processes */15])) {
+    var match = PrimitiveTypes.UserId[/* neq */6](issuerId, param[/* supporterId */1]);
+    if (match) {
       return /* InvalidIssuer */2;
-    } else if (List.mem(supporterId, match[/* supporterIds */0])) {
-      return /* Ignore */1;
     } else {
       return /* Ok */0;
     }
-  }
-  catch (exn){
-    if (exn === Caml_builtin_exceptions.not_found) {
-      return /* UnknownProcessId */3;
-    } else {
-      throw exn;
-    }
+  } else {
+    return /* UnknownProcessId */3;
   }
 }
 
@@ -1042,7 +1035,7 @@ function validateEvent(param) {
               Caml_builtin_exceptions.match_failure,
               [
                 "Venture__Validation.re",
-                683,
+                674,
                 2
               ]
             ];
