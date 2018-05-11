@@ -212,10 +212,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           selectedVenture:
             VentureLoaded(
               ventureId,
-              viewModel
-              |> ViewModel.applyAll(
-                   newItems |> List.map(({event}: EventLog.item) => event),
-                 ),
+              viewModel |> ViewModel.applyAll(newItems),
               cmd,
             ),
         });

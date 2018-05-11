@@ -2,7 +2,6 @@
 'use strict';
 
 var Json = require("bs-json/src/Json.js");
-var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Router = require("./Router.bs.js");
@@ -263,9 +262,7 @@ function make(currentRoute, session, children) {
                                           /* index */state[/* index */0],
                                           /* selectedVenture : VentureLoaded */Block.__(2, [
                                               ventureId$2,
-                                              ViewModel.applyAll(List.map((function (param) {
-                                                          return param[/* event */0];
-                                                        }), msg$1[1]), match[1]),
+                                              ViewModel.applyAll(msg$1[1], match[1]),
                                               match[2]
                                             ]),
                                           /* syncWorker */state[/* syncWorker */2],

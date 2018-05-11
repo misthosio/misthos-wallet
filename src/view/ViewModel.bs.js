@@ -418,8 +418,8 @@ function init(param) {
 }
 
 function applyAll(events, model) {
-  return List.fold_left((function (m, e) {
-                return apply(e, m);
+  return List.fold_left((function (m, param) {
+                return apply(param[/* event */0], m);
               }), model, events);
 }
 
