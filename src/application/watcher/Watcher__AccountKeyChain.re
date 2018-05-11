@@ -82,6 +82,7 @@ let make =
                   state^ |> identifiedEvent(custodianKeyChains);
                 {
                   ...state^,
+                  custodianKeyChains,
                   identifiedKeyChains,
                   activatedEvent:
                     activatedEvent(identifier, identifiedKeyChains),

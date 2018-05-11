@@ -135,7 +135,7 @@ function make(param, param$1, log) {
                         var init$3 = self$1[state][0];
                         tmp = /* record */[
                           /* systemIssuer */init$3[/* systemIssuer */0],
-                          /* custodianKeyChains */init$3[/* custodianKeyChains */1],
+                          /* custodianKeyChains */custodianKeyChains,
                           /* identifiedKeyChains */identifiedKeyChains,
                           /* identifiedEvent */match$1[2],
                           /* activatedEvent */Curry._2(env$1[3], match$1[0], identifiedKeyChains),

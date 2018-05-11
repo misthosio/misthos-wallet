@@ -46,6 +46,49 @@ let () = {
       | _ => false,
     );
   });
+  describe("Identifies a key chain when a partner is removed", () => {
+    let (user1, user2, _) = Fixtures.threeUserSessions;
+    let log =
+      L.(
+        Fixtures.createVenture(user1)
+        |> withFirstPartner(user1)
+        |> withAccount(~supporter=user1)
+      );
+    let acceptance = log |> L.lastEvent |> Event.getAccountCreationAcceptedExn;
+    let log =
+      L.(
+        log
+        |> withCustodian(user1, ~supporters=[user1])
+        |> withCustodianKeyChain(user1)
+        |> withAccountKeyChainIdentified
+        |> withAccountKeyChainActivated(user1)
+        |> withPartner(user2, ~supporters=[user1])
+        |> withCustodian(user2, ~supporters=[user1, user2])
+        |> withCustodianKeyChain(user2)
+        |> withAccountKeyChainIdentified
+        |> withAccountKeyChainActivated(user1)
+        |> withCustodianRemoved(user2, ~supporters=[user1])
+        |> withPartnerRemoved(user2, ~supporters=[user1])
+        |> withCustodianKeyChain(~keyChainIdx=1, user1)
+      );
+    let watcher = AccountKeyChain.make(user1, acceptance, log |> L.eventLog);
+    testWatcherHasEventPending(
+      "AccountKeyChainIdentified",
+      watcher,
+      log |> L.systemIssuer,
+      fun
+      | AccountKeyChainIdentified({
+          identifier,
+          keyChain: {accountIdx, custodianKeyChains},
+        })
+          when AccountIndex.eq(accountIdx, AccountIndex.default) =>
+        identifier
+        == "038ccb176653ad573f4342fc625dc121b573762a69becbaaad5b8bbadb934340"
+        && custodianKeyChains
+        |> List.length == 1
+      | _ => false,
+    );
+  });
   describe("Activates a key chain when a custodian key chain changes", () => {
     let (user1, _, _) = Fixtures.threeUserSessions;
     let log =
