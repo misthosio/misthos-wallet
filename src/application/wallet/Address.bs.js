@@ -15,7 +15,7 @@ var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 
 function next(coSigner, usedCoordinates, chainIdx, param) {
-  var keyChainIdx = param[/* keyChainIdx */1];
+  var identifier = param[/* identifier */1];
   var accountIdx = param[/* accountIdx */0];
   var coSignerIdx = WalletTypes.CoSignerIndex[/* fromInt */1](Js_option.getExn(List.find(Js_option.isSome, List.mapi((function (i, param) {
                       var match = PrimitiveTypes.UserId[/* eq */5](param[0], coSigner);
@@ -34,7 +34,7 @@ function next(coSigner, usedCoordinates, chainIdx, param) {
                             }), param[/* custodianKeyChains */3]))))));
   var addressIdx = List.fold_left((function (res, param) {
           var addressIdx = param[4];
-          if (WalletTypes.AccountIndex[/* eq */7](accountIdx, param[0]) && WalletTypes.AccountKeyChainIndex[/* eq */7](keyChainIdx, param[1]) && WalletTypes.CoSignerIndex[/* eq */7](coSignerIdx, param[2]) && WalletTypes.ChainIndex[/* eq */7](chainIdx, param[3])) {
+          if (WalletTypes.AccountIndex[/* eq */7](accountIdx, param[0]) && AccountKeyChain.Identifier[/* eq */4](identifier, param[1]) && WalletTypes.CoSignerIndex[/* eq */7](coSignerIdx, param[2]) && WalletTypes.ChainIndex[/* eq */7](chainIdx, param[3])) {
             var match = WalletTypes.AddressIndex[/* compare */6](addressIdx, res) > 0;
             if (match) {
               return addressIdx;
@@ -47,7 +47,7 @@ function next(coSigner, usedCoordinates, chainIdx, param) {
         }), WalletTypes.AddressIndex[/* fromInt */1](-1), usedCoordinates);
   return /* tuple */[
           accountIdx,
-          keyChainIdx,
+          identifier,
           coSignerIdx,
           chainIdx,
           WalletTypes.AddressIndex[/* next */3](addressIdx)
@@ -70,6 +70,10 @@ function keyChainIdx(param) {
   return param[1];
 }
 
+function keyChainIdent(param) {
+  return param[1];
+}
+
 function coSignerIdx(param) {
   return param[2];
 }
@@ -89,7 +93,7 @@ function allForAccount(aIdx) {
 }
 
 function encode(param) {
-  var partial_arg = WalletTypes.AccountKeyChainIndex[/* encode */4];
+  var partial_arg = AccountKeyChain.Identifier[/* encode */0];
   var partial_arg$1 = WalletTypes.AccountIndex[/* encode */4];
   var partial_arg$2 = WalletTypes.AddressIndex[/* encode */4];
   var partial_arg$3 = WalletTypes.ChainIndex[/* encode */4];
@@ -112,7 +116,7 @@ function encode(param) {
 }
 
 function decode(raw) {
-  var partial_arg = WalletTypes.AccountKeyChainIndex[/* decode */5];
+  var partial_arg = AccountKeyChain.Identifier[/* decode */1];
   var partial_arg$1 = WalletTypes.AccountIndex[/* decode */5];
   var partial_arg$2 = WalletTypes.AddressIndex[/* decode */5];
   var partial_arg$3 = WalletTypes.ChainIndex[/* decode */5];
@@ -139,6 +143,7 @@ var Coordinates = /* module */[
   /* nextExternal */nextExternal,
   /* accountIdx */accountIdx,
   /* keyChainIdx */keyChainIdx,
+  /* keyChainIdent */keyChainIdent,
   /* coSignerIdx */coSignerIdx,
   /* chainIdx */chainIdx,
   /* addressIdx */addressIdx,

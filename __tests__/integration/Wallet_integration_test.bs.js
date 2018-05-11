@@ -21,19 +21,19 @@ describe("integration", (function () {
         var userC = match[2];
         var userB = match[1];
         var userA = match[0];
-        var log = Generators.Log[/* withAccountKeyChain */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */26](userB, /* :: */[
-                          userA,
-                          /* :: */[
-                            userB,
-                            /* [] */0
-                          ]
-                        ], Generators.Log[/* withPartner */14](userB, /* :: */[
-                              userA,
-                              /* [] */0
-                            ], Generators.Log[/* withCustodian */26](userA, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChainActivated */33](userB, Generators.Log[/* withAccountKeyChainActivated */33](userA, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */26](userB, /* :: */[
                                   userA,
-                                  /* [] */0
-                                ], Generators.Log[/* withAccount */22](userA, Generators.Log[/* withFirstPartner */15](userA)(Generators.Log[/* createVenture */9](userA)))))))));
+                                  /* :: */[
+                                    userB,
+                                    /* [] */0
+                                  ]
+                                ], Generators.Log[/* withPartner */14](userB, /* :: */[
+                                      userA,
+                                      /* [] */0
+                                    ], Generators.Log[/* withCustodian */26](userA, /* :: */[
+                                          userA,
+                                          /* [] */0
+                                        ], Generators.Log[/* withAccount */22](userA, Generators.Log[/* withFirstPartner */15](userA)(Generators.Log[/* createVenture */9](userA)))))))))));
         var accountIdx = WalletTypes.AccountIndex[/* default */9];
         var ventureId = Generators.Log[/* ventureId */1](log);
         var wallet = WalletHelpers.constructState(log);
@@ -45,19 +45,19 @@ describe("integration", (function () {
         var match$3 = match$1[0];
         var address2 = match$3[1];
         var address1 = match$3[0];
-        var log$1 = Generators.Log[/* withAccountKeyChain */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */26](userC, /* :: */[
-                      userA,
-                      /* :: */[
-                        userB,
-                        /* [] */0
-                      ]
-                    ], Generators.Log[/* withPartner */14](userC, /* :: */[
-                          userA,
-                          /* :: */[
-                            userB,
-                            /* [] */0
-                          ]
-                        ], match$2[1]))));
+        var log$1 = Generators.Log[/* withAccountKeyChainActivated */33](userC, Generators.Log[/* withAccountKeyChainActivated */33](userB, Generators.Log[/* withAccountKeyChainActivated */33](userA, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */26](userC, /* :: */[
+                                  userA,
+                                  /* :: */[
+                                    userB,
+                                    /* [] */0
+                                  ]
+                                ], Generators.Log[/* withPartner */14](userC, /* :: */[
+                                      userA,
+                                      /* :: */[
+                                        userB,
+                                        /* [] */0
+                                      ]
+                                    ], match$2[1])))))));
         var oneKeyChainWallet = [match$2[0]];
         var wallet$1 = WalletHelpers.constructState(log$1);
         var match$4 = WalletHelpers.collectNextTwoAddresses(userC, /* tuple */[

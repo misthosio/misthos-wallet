@@ -337,18 +337,51 @@ module CustodianKeyChainUpdated = {
     };
 };
 
-module AccountKeyChainUpdated = {
+module AccountKeyChainIdentified = {
   type t = {keyChain: AccountKeyChain.t};
-  let make = (~keyChain) => {keyChain: keyChain};
+  let make = (~keyChain: AccountKeyChain.t) => {keyChain: keyChain};
   let encode = event =>
     Json.Encode.(
       object_([
-        ("type", string("AccountKeyChainUpdated")),
+        ("type", string("AccountKeyChainIdentified")),
         ("keyChain", AccountKeyChain.encode(event.keyChain)),
       ])
     );
   let decode = raw =>
     Json.Decode.{keyChain: raw |> field("keyChain", AccountKeyChain.decode)};
+};
+
+module AccountKeyChainActivated = {
+  type t = {
+    accountIdx,
+    custodianId: userId,
+    identifier: AccountKeyChain.Identifier.t,
+    sequence: int,
+  };
+  let make = (~accountIdx, ~custodianId, ~identifier, ~sequence) => {
+    accountIdx,
+    custodianId,
+    identifier,
+    sequence,
+  };
+  let encode = event =>
+    Json.Encode.(
+      object_([
+        ("type", string("AccountKeyChainActivated")),
+        ("accountIdx", AccountIndex.encode(event.accountIdx)),
+        ("custodianId", UserId.encode(event.custodianId)),
+        ("identifier", AccountKeyChain.Identifier.encode(event.identifier)),
+        ("sequence", int(event.sequence)),
+      ])
+    );
+  let decode = raw =>
+    Json.Decode.{
+      accountIdx: raw |> field("accountIdx", AccountIndex.decode),
+      custodianId: raw |> field("custodianId", UserId.decode),
+      identifier:
+        raw |> field("identifier", AccountKeyChain.Identifier.decode),
+      sequence: raw |> field("sequence", int),
+    };
 };
 
 module IncomeAddressExposed = {
@@ -427,7 +460,8 @@ type t =
   | PayoutBroadcastDuplicate(Payout.BroadcastDuplicate.t)
   | PayoutBroadcastFailed(Payout.BroadcastFailed.t)
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
-  | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
+  | AccountKeyChainIdentified(AccountKeyChainIdentified.t)
+  | AccountKeyChainActivated(AccountKeyChainActivated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t)
   | IncomeDetected(IncomeDetected.t);
 
@@ -617,7 +651,9 @@ let encode =
   | AccountCreationEndorsed(event) => AccountCreation.Endorsed.encode(event)
   | AccountCreationAccepted(event) => AccountCreation.Accepted.encode(event)
   | CustodianKeyChainUpdated(event) => CustodianKeyChainUpdated.encode(event)
-  | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event)
+  | AccountKeyChainIdentified(event) =>
+    AccountKeyChainIdentified.encode(event)
+  | AccountKeyChainActivated(event) => AccountKeyChainActivated.encode(event)
   | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event)
   | IncomeDetected(event) => IncomeDetected.encode(event);
 
@@ -629,7 +665,7 @@ let isSystemEvent =
   | CustodianAccepted(_)
   | CustodianRemovalAccepted(_)
   | PayoutAccepted(_)
-  | AccountKeyChainUpdated(_)
+  | AccountKeyChainIdentified(_)
   | IncomeAddressExposed(_)
   | IncomeDetected(_)
   | PayoutBroadcast(_)
@@ -687,8 +723,10 @@ let decode = raw => {
     AccountCreationAccepted(AccountCreation.Accepted.decode(raw))
   | "CustodianKeyChainUpdated" =>
     CustodianKeyChainUpdated(CustodianKeyChainUpdated.decode(raw))
-  | "AccountKeyChainUpdated" =>
-    AccountKeyChainUpdated(AccountKeyChainUpdated.decode(raw))
+  | "AccountKeyChainIdentified" =>
+    AccountKeyChainIdentified(AccountKeyChainIdentified.decode(raw))
+  | "AccountKeyChainActivated" =>
+    AccountKeyChainActivated(AccountKeyChainActivated.decode(raw))
   | "IncomeAddressExposed" =>
     IncomeAddressExposed(IncomeAddressExposed.decode(raw))
   | "IncomeDetected" => IncomeDetected(IncomeDetected.decode(raw))
@@ -703,11 +741,18 @@ let getIncomeAddressExposedExn = event =>
          "getIncomeAddressExposedExn"
   };
 
-let getAccountKeyChainUpdatedExn = event =>
+let getAccountKeyChainIdentifiedExn = event =>
   switch (event) {
-  | AccountKeyChainUpdated(unwrapped) => unwrapped
+  | AccountKeyChainIdentified(unwrapped) => unwrapped
   | _ => %assert
-         "getAccountKeyChainUpdatedExn"
+         "getAccountKeyChainIdentifiedExn"
+  };
+
+let getAccountKeyChainActivatedExn = event =>
+  switch (event) {
+  | AccountKeyChainActivated(unwrapped) => unwrapped
+  | _ => %assert
+         "getAccountKeyChainActivatedExn"
   };
 
 let getCustodianKeyChainUpdatedExn = event =>

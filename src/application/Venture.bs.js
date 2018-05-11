@@ -306,31 +306,45 @@ function exec$1(newItems, venture) {
           var validation = venture[/* validation */4];
           var conflict = Venture__Validation.validate(validation, item);
           var exit = 0;
-          if (typeof conflict === "number" && conflict === 0) {
-            logMessage("Appending synced event to log:");
-            logMessage(Json.stringify(Event.encode($$event)));
-            var log = Curry._2(EventLog.appendItem, item, venture[/* log */2]);
-            var validation$1 = Venture__Validation.apply(item, validation);
-            var state = Venture__State.apply($$event, venture[/* state */3]);
-            var wallet = Venture__Wallet.apply($$event, venture[/* wallet */5]);
-            var collector$1 = /* :: */[
-              $$event,
-              collector
-            ];
-            var watchers = Watchers.apply(/* None */0, session, /* Some */[item], log, venture[/* watchers */6]);
-            return /* tuple */[
-                    /* record */[
-                      /* session */venture[/* session */0],
-                      /* id */venture[/* id */1],
-                      /* log */log,
-                      /* state */state,
-                      /* validation */validation$1,
-                      /* wallet */wallet,
-                      /* watchers */watchers
-                    ],
-                    collector$1,
-                    conflicts
-                  ];
+          if (typeof conflict === "number") {
+            if (conflict !== 1) {
+              if (conflict !== 0) {
+                exit = 1;
+              } else {
+                logMessage("Appending synced event to log:");
+                logMessage(Json.stringify(Event.encode($$event)));
+                var log = Curry._2(EventLog.appendItem, item, venture[/* log */2]);
+                var validation$1 = Venture__Validation.apply(item, validation);
+                var state = Venture__State.apply($$event, venture[/* state */3]);
+                var wallet = Venture__Wallet.apply($$event, venture[/* wallet */5]);
+                var collector$1 = /* :: */[
+                  $$event,
+                  collector
+                ];
+                var watchers = Watchers.apply(/* None */0, session, /* Some */[item], log, venture[/* watchers */6]);
+                return /* tuple */[
+                        /* record */[
+                          /* session */venture[/* session */0],
+                          /* id */venture[/* id */1],
+                          /* log */log,
+                          /* state */state,
+                          /* validation */validation$1,
+                          /* wallet */wallet,
+                          /* watchers */watchers
+                        ],
+                        collector$1,
+                        conflicts
+                      ];
+              }
+            } else {
+              logMessage("Ignoring event:");
+              logMessage(Json.stringify(Event.encode($$event)));
+              return /* tuple */[
+                      venture,
+                      collector,
+                      conflicts
+                    ];
+            }
           } else {
             exit = 1;
           }
@@ -399,7 +413,7 @@ function exec$2(incomeEvents, venture) {
   logMessage("Synchronizing wallet");
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
-                                  return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(32, [$$event]), param[0]);
+                                  return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(33, [$$event]), param[0]);
                                 }));
                   }), Promise.resolve(/* tuple */[
                       venture,
@@ -532,7 +546,7 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$8];
 function exec$9(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(31, [exposeEvent]), venture).then(persist).then((function (param) {
+  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(32, [exposeEvent]), venture).then(persist).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             exposeEvent[/* address */1],
                             param[0],

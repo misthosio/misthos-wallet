@@ -2,6 +2,8 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var Utils = require("../../utils/Utils.bs.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
@@ -9,6 +11,35 @@ var WalletTypes = require("./WalletTypes.bs.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
+
+function encode(prim) {
+  return prim;
+}
+
+function make(nCoSigners, custodianKeyChains) {
+  return Utils.hash(List.fold_left((function (res, param) {
+                    return res + (PrimitiveTypes.UserId[/* toString */0](param[0]) + param[1]);
+                  }), String(nCoSigners), List.map((function (param) {
+                        return /* tuple */[
+                                param[0],
+                                CustodianKeyChain.hdNode(param[1]).toBase58()
+                              ];
+                      }), List.sort((function (param, param$1) {
+                            return PrimitiveTypes.UserId[/* compare */4](param[0], param$1[0]);
+                          }), custodianKeyChains))));
+}
+
+var neq = Caml_obj.caml_notequal;
+
+var eq = Caml_obj.caml_equal;
+
+var Identifier = /* module */[
+  /* encode */encode,
+  /* decode */Json_decode.string,
+  /* make */make,
+  /* neq */neq,
+  /* eq */eq
+];
 
 var defaultCoSignerList = /* array */[
   0,
@@ -29,16 +60,27 @@ var defaultCoSignerList = /* array */[
   8
 ];
 
-function make(accountIdx, keyChainIdx, custodianKeyChains) {
+function make$1(accountIdx, custodianKeyChains) {
+  var nCoSigners = Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains));
   return /* record */[
           /* accountIdx */accountIdx,
-          /* keyChainIdx */keyChainIdx,
-          /* nCoSigners */Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains)),
+          /* identifier */make(nCoSigners, custodianKeyChains),
+          /* nCoSigners */nCoSigners,
           /* custodianKeyChains */custodianKeyChains
         ];
 }
 
-function make$1() {
+function isConsistent(param) {
+  var custodianKeyChains = param[/* custodianKeyChains */3];
+  var nCoSigners = param[/* nCoSigners */2];
+  if (nCoSigners === Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains))) {
+    return Caml_obj.caml_equal(make(nCoSigners, custodianKeyChains), param[/* identifier */1]);
+  } else {
+    return false;
+  }
+}
+
+function make$2() {
   return /* [] */0;
 }
 
@@ -60,7 +102,7 @@ function add(keyChain, collection) {
             accountIdx,
             /* :: */[
               /* tuple */[
-                keyChain[/* keyChainIdx */1],
+                keyChain[/* identifier */1],
                 keyChain
               ],
               keyChains
@@ -74,25 +116,13 @@ function lookup(accountIdx, accountKeyChainIdx, accounts) {
   return List.assoc(accountKeyChainIdx, List.assoc(accountIdx, accounts));
 }
 
-function latest(accountIdx, accounts) {
-  return List.fold_left((function (res, param) {
-                var match = WalletTypes.AccountKeyChainIndex[/* compare */6](param[0], res[/* keyChainIdx */1]) > 0;
-                if (match) {
-                  return param[1];
-                } else {
-                  return res;
-                }
-              }), List.hd(List.assoc(accountIdx, accounts))[1], List.assoc(accountIdx, accounts));
-}
-
 var Collection = /* module */[
-  /* make */make$1,
+  /* make */make$2,
   /* add */add,
-  /* lookup */lookup,
-  /* latest */latest
+  /* lookup */lookup
 ];
 
-function encode(keyChain) {
+function encode$1(keyChain) {
   var partial_arg = PrimitiveTypes.UserId[/* encode */2];
   return Json_encode.object_(/* :: */[
               /* tuple */[
@@ -113,8 +143,8 @@ function encode(keyChain) {
                   ],
                   /* :: */[
                     /* tuple */[
-                      "keyChainIdx",
-                      WalletTypes.AccountKeyChainIndex[/* encode */4](keyChain[/* keyChainIdx */1])
+                      "identifier",
+                      keyChain[/* identifier */1]
                     ],
                     /* [] */0
                   ]
@@ -130,7 +160,7 @@ function decode(raw) {
   };
   return /* record */[
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
-          /* keyChainIdx */Json_decode.field("keyChainIdx", WalletTypes.AccountKeyChainIndex[/* decode */5], raw),
+          /* identifier */Json_decode.field("identifier", Json_decode.string, raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
           /* custodianKeyChains */Json_decode.field("custodianKeyChains", (function (param) {
                   return Json_decode.list(partial_arg$1, param);
@@ -138,9 +168,11 @@ function decode(raw) {
         ];
 }
 
+exports.Identifier = Identifier;
 exports.defaultCoSignerList = defaultCoSignerList;
-exports.make = make;
+exports.make = make$1;
+exports.isConsistent = isConsistent;
 exports.Collection = Collection;
-exports.encode = encode;
+exports.encode = encode$1;
 exports.decode = decode;
-/* Json_encode Not a pure module */
+/* Utils Not a pure module */

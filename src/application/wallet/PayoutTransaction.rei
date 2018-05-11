@@ -1,7 +1,5 @@
 open PrimitiveTypes;
 
-open WalletTypes;
-
 exception NotEnoughFunds;
 
 exception NotEnoughSignatures;
@@ -48,12 +46,7 @@ let signPayout:
     ~ventureId: ventureId,
     ~userId: userId,
     ~masterKeyChain: Bitcoin.HDNode.t,
-    ~accountKeyChains: list(
-                         (
-                           accountIdx,
-                           list((accountKeyChainIdx, AccountKeyChain.t)),
-                         ),
-                       ),
+    ~accountKeyChains: AccountKeyChain.Collection.t,
     ~payoutTx: t,
     ~network: Network.t
   ) =>

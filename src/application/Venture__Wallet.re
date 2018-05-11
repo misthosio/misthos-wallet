@@ -11,6 +11,8 @@ type t = {
   network: Network.t,
   payoutPolicy: Policy.t,
   accountKeyChains: AccountKeyChain.Collection.t,
+  activatedKeyChain:
+    list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
   exposedCoordinates: list(Address.Coordinates.t),
   reservedInputs: list(Network.txInput),
   payoutProcesses: list((ProcessId.t, PayoutTransaction.t)),
@@ -21,6 +23,7 @@ let make = () => {
   ventureId: VentureId.fromString(""),
   payoutPolicy: Policy.unanimous,
   accountKeyChains: [],
+  activatedKeyChain: [],
   exposedCoordinates: [],
   reservedInputs: [],
   payoutProcesses: [],
@@ -34,10 +37,29 @@ let apply = (event: Event.t, state) =>
       ventureId,
       payoutPolicy: metaPolicy,
     }
-  | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) => {
+  | AccountCreationAccepted(
+      ({data: {accountIdx}}: AccountCreation.Accepted.t),
+    ) => {
+      ...state,
+      activatedKeyChain: [(accountIdx, []), ...state.activatedKeyChain],
+    }
+  | AccountKeyChainIdentified(({keyChain}: AccountKeyChainIdentified.t)) => {
       ...state,
       accountKeyChains:
         state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
+    }
+  | AccountKeyChainActivated({accountIdx, custodianId, identifier}) => {
+      ...state,
+      activatedKeyChain: [
+        (
+          accountIdx,
+          [
+            (custodianId, identifier),
+            ...state.activatedKeyChain |> List.assoc(accountIdx),
+          ],
+        ),
+        ...state.activatedKeyChain |> List.remove_assoc(accountIdx),
+      ],
     }
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) => {
       ...state,
@@ -92,9 +114,15 @@ let apply = (event: Event.t, state) =>
   };
 
 let exposeNextIncomeAddress =
-    (userId, accountIdx, {exposedCoordinates, accountKeyChains}) => {
+    (
+      userId,
+      accountIdx,
+      {exposedCoordinates, activatedKeyChain, accountKeyChains},
+    ) => {
+  let ident =
+    activatedKeyChain |> List.assoc(accountIdx) |> List.assoc(userId);
   let accountKeyChain =
-    accountKeyChains |> AccountKeyChain.Collection.latest(accountIdx);
+    accountKeyChains |> AccountKeyChain.Collection.lookup(accountIdx, ident);
   let coordinates =
     Address.Coordinates.nextExternal(
       userId,
@@ -117,14 +145,17 @@ let preparePayoutTx =
         ventureId,
         payoutPolicy,
         exposedCoordinates,
+        activatedKeyChain,
         accountKeyChains,
         reservedInputs,
       },
     ) => {
   open Address;
-  let accountKeyChain: AccountKeyChain.t =
-    accountKeyChains |> AccountKeyChain.Collection.latest(accountIdx);
-  let currentKeyChainIdx = accountKeyChain.keyChainIdx;
+  let keyChainIdent =
+    activatedKeyChain |> List.assoc(accountIdx) |> List.assoc(userId);
+  let accountKeyChain =
+    accountKeyChains
+    |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
   let coordinates =
     exposedCoordinates |> Coordinates.allForAccount(accountIdx);
   let nextChangeCoordinates =
@@ -147,8 +178,8 @@ let preparePayoutTx =
            inputs
            |> List.find_all((i: Network.txInput) =>
                 i.coordinates
-                |> Coordinates.keyChainIdx
-                |> AccountKeyChainIndex.neq(currentKeyChainIdx)
+                |> Coordinates.keyChainIdent
+                |> AccountKeyChain.Identifier.neq(keyChainIdent)
               );
          let changeAddress =
            Address.find(nextChangeCoordinates, accountKeyChains);

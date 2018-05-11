@@ -11,12 +11,12 @@ function testCoordinates(expected, param) {
   var addressIdx = param[4];
   var chainIdx = param[3];
   var coSignerIdx = param[2];
-  var accountKeyChainIdx = param[1];
+  var keyChainIdent = param[1];
   var accountIdx = param[0];
   return Jest.test("should match", (function () {
                 return Jest.Expect[/* toEqual */12](expected, Jest.Expect[/* expect */0](/* tuple */[
                                 WalletTypes.AccountIndex[/* toInt */0](accountIdx),
-                                WalletTypes.AccountKeyChainIndex[/* toInt */0](accountKeyChainIdx),
+                                keyChainIdent,
                                 WalletTypes.CoSignerIndex[/* toInt */0](coSignerIdx),
                                 WalletTypes.ChainIndex[/* toInt */0](chainIdx),
                                 WalletTypes.AddressIndex[/* toInt */0](addressIdx)
@@ -41,7 +41,7 @@ describe("Coordinates", (function () {
         describe("first coordinates", (function () {
                 return testCoordinates(/* tuple */[
                             0,
-                            0,
+                            "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
                             2,
                             1,
                             0
@@ -55,7 +55,7 @@ describe("Coordinates", (function () {
                     ], accountKeyChain);
                 return testCoordinates(/* tuple */[
                             0,
-                            0,
+                            "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
                             2,
                             0,
                             2

@@ -16,7 +16,7 @@ let () =
         nPubKeys: 1,
         coordinates: (
           AccountIndex.first,
-          AccountKeyChainIndex.first,
+          "identifier",
           CoSignerIndex.first,
           ChainIndex.externalChain,
           AddressIndex.first,
@@ -31,7 +31,7 @@ let () =
         nCoSigners: 1,
         coordinates: (
           AccountIndex.first,
-          AccountKeyChainIndex.first,
+          "identifier",
           CoSignerIndex.first,
           ChainIndex.externalChain,
           AddressIndex.first |> AddressIndex.next,
@@ -43,7 +43,7 @@ let () =
       nPubKeys: 1,
       coordinates: (
         AccountIndex.first,
-        AccountKeyChainIndex.first,
+        "identifier",
         CoSignerIndex.first,
         ChainIndex.externalChain,
         AddressIndex.first,
