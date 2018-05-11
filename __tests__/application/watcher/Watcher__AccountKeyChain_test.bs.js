@@ -26,9 +26,9 @@ describe("Identifies a key chain when a custodian key chain changes", (function 
         var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */5](log$1));
         return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainIdentified", watcher, Generators.Log[/* systemIssuer */2](log$1), (function (param) {
                       if (param.tag === 30) {
-                        var match = param[0];
-                        if (WalletTypes.AccountIndex[/* eq */7](match[/* keyChain */1][/* accountIdx */0], WalletTypes.AccountIndex[/* default */9])) {
-                          return match[/* identifier */0] === "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73";
+                        var match = param[0][/* keyChain */0];
+                        if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9])) {
+                          return match[/* identifier */1] === "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73";
                         } else {
                           return false;
                         }
@@ -65,10 +65,9 @@ describe("Identifies a key chain when a partner is removed", (function () {
         var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */5](log$1));
         return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainIdentified", watcher, Generators.Log[/* systemIssuer */2](log$1), (function (param) {
                       if (param.tag === 30) {
-                        var match = param[0];
-                        var match$1 = match[/* keyChain */1];
-                        if (WalletTypes.AccountIndex[/* eq */7](match$1[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */0] === "038ccb176653ad573f4342fc625dc121b573762a69becbaaad5b8bbadb934340") {
-                          return List.length(match$1[/* custodianKeyChains */3]) === 1;
+                        var match = param[0][/* keyChain */0];
+                        if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */1] === "038ccb176653ad573f4342fc625dc121b573762a69becbaaad5b8bbadb934340") {
+                          return List.length(match[/* custodianKeyChains */3]) === 1;
                         } else {
                           return false;
                         }

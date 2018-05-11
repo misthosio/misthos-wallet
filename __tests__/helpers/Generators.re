@@ -542,7 +542,7 @@ module Log = {
       |> EventLog.reduce(
            (res, {event}) =>
              switch (event) {
-             | AccountKeyChainIdentified({identifier}) => identifier
+             | AccountKeyChainIdentified({keyChain: {identifier}}) => identifier
              | _ => res
              },
            "",

@@ -25,18 +25,15 @@ describe("AccountKeyChainIdentified", (function () {
                           /* [] */0
                         ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))));
                 var identified = Event.getAccountKeyChainIdentifiedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainIdentified */32](log)));
-                var init = identified[/* keyChain */1];
+                var init = identified[/* keyChain */0];
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
-                            }), ValidationHelpers.constructState(log), /* record */[
-                            /* identifier */identified[/* identifier */0],
-                            /* keyChain : record */[
+                            }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
                               /* accountIdx */WalletTypes.AccountIndex[/* fromInt */1](1),
                               /* identifier */init[/* identifier */1],
                               /* nCoSigners */init[/* nCoSigners */2],
                               /* custodianKeyChains */init[/* custodianKeyChains */3]
-                            ]
-                          ], /* BadData */["Account doesn't exist"]);
+                            ]], /* BadData */["Account doesn't exist"]);
               }));
         return /* () */0;
       }));

@@ -24,7 +24,7 @@ let make =
       AccountKeyChainIdentified.make(
         ~keyChain=AccountKeyChain.make(accountIdx, keyChains),
       );
-    let identifier = event.identifier;
+    let identifier = event.keyChain.identifier;
     state.identifiedKeyChains |> List.mem_assoc(identifier) ?
       (identifier, state.identifiedKeyChains, None) :
       (

@@ -41,7 +41,6 @@ let () =
         Validation.validateAccountKeyChainIdentified |> withSystemIssuer,
         log |> constructState,
         AccountKeyChainIdentified.{
-          ...identified,
           keyChain: {
             ...identified.keyChain,
             accountIdx: 1 |> AccountIndex.fromInt,

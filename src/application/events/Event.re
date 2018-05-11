@@ -338,32 +338,17 @@ module CustodianKeyChainUpdated = {
 };
 
 module AccountKeyChainIdentified = {
-  type t = {
-    identifier: AccountKeyChain.Identifier.t,
-    keyChain: AccountKeyChain.t,
-  };
-  let make = (~keyChain: AccountKeyChain.t) => {
-    identifier:
-      AccountKeyChain.Identifier.make(
-        keyChain.nCoSigners,
-        keyChain.custodianKeyChains,
-      ),
-    keyChain,
-  };
+  type t = {keyChain: AccountKeyChain.t};
+  let make = (~keyChain: AccountKeyChain.t) => {keyChain: keyChain};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("AccountKeyChainIdentified")),
-        ("identifier", AccountKeyChain.Identifier.encode(event.identifier)),
         ("keyChain", AccountKeyChain.encode(event.keyChain)),
       ])
     );
   let decode = raw =>
-    Json.Decode.{
-      identifier:
-        raw |> field("identifier", AccountKeyChain.Identifier.decode),
-      keyChain: raw |> field("keyChain", AccountKeyChain.decode),
-    };
+    Json.Decode.{keyChain: raw |> field("keyChain", AccountKeyChain.decode)};
 };
 
 module AccountKeyChainActivated = {

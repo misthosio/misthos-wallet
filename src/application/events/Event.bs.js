@@ -680,10 +680,7 @@ var CustodianKeyChainUpdated = /* module */[
 ];
 
 function make$6(keyChain) {
-  return /* record */[
-          /* identifier */AccountKeyChain.Identifier[/* make */2](keyChain[/* nCoSigners */2], keyChain[/* custodianKeyChains */3]),
-          /* keyChain */keyChain
-        ];
+  return /* record */[/* keyChain */keyChain];
 }
 
 function encode$12($$event) {
@@ -694,25 +691,16 @@ function encode$12($$event) {
               ],
               /* :: */[
                 /* tuple */[
-                  "identifier",
-                  AccountKeyChain.Identifier[/* encode */0]($$event[/* identifier */0])
+                  "keyChain",
+                  AccountKeyChain.encode($$event[/* keyChain */0])
                 ],
-                /* :: */[
-                  /* tuple */[
-                    "keyChain",
-                    AccountKeyChain.encode($$event[/* keyChain */1])
-                  ],
-                  /* [] */0
-                ]
+                /* [] */0
               ]
             ]);
 }
 
 function decode$12(raw) {
-  return /* record */[
-          /* identifier */Json_decode.field("identifier", AccountKeyChain.Identifier[/* decode */1], raw),
-          /* keyChain */Json_decode.field("keyChain", AccountKeyChain.decode, raw)
-        ];
+  return /* record */[/* keyChain */Json_decode.field("keyChain", AccountKeyChain.decode, raw)];
 }
 
 var AccountKeyChainIdentified = /* module */[

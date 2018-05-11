@@ -29,7 +29,7 @@ function make(param, param$1, log) {
   var localUserId = param[/* userId */0];
   var identifiedEvent = function (keyChains, state) {
     var $$event = Event.AccountKeyChainIdentified[/* make */0](AccountKeyChain.make(accountIdx, keyChains));
-    var identifier = $$event[/* identifier */0];
+    var identifier = $$event[/* keyChain */0][/* identifier */1];
     var match = List.mem_assoc(identifier, state[/* identifiedKeyChains */2]);
     if (match) {
       return /* tuple */[
@@ -183,7 +183,7 @@ function make(param, param$1, log) {
                     }
                     break;
                 case 30 : 
-                    if (Caml_obj.caml_equal($$event[0][/* keyChain */1][/* accountIdx */0], env$1[1])) {
+                    if (Caml_obj.caml_equal($$event[0][/* keyChain */0][/* accountIdx */0], env$1[1])) {
                       var init$5 = self$1[state][0];
                       tmp = /* record */[
                         /* systemIssuer */init$5[/* systemIssuer */0],

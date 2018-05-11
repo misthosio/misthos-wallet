@@ -464,7 +464,7 @@ function apply(param, state) {
         return newrecord$13;
     case 30 : 
         var newrecord$14 = Caml_array.caml_array_dup(newrecord);
-        newrecord$14[/* accountKeyChains */21] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */1], newrecord[/* accountKeyChains */21]);
+        newrecord$14[/* accountKeyChains */21] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], newrecord[/* accountKeyChains */21]);
         return newrecord$14;
     case 2 : 
     case 6 : 
@@ -792,7 +792,7 @@ function validateCustodianKeyChainUpdated(param, param$1, issuerId) {
 }
 
 function validateAccountKeyChainIdentified(param, state, _) {
-  return accountExists(param[/* keyChain */1][/* accountIdx */0], state);
+  return accountExists(param[/* keyChain */0][/* accountIdx */0], state);
 }
 
 function validateAccountKeyChainActivated(_, _$1, _$2) {

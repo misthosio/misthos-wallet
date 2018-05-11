@@ -158,7 +158,7 @@ function apply($$event, state) {
     case 30 : 
         return /* record */[
                 /* network */state[/* network */0],
-                /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */1], state[/* accountKeyChains */1]),
+                /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* accountKeyChains */1]),
                 /* balance */state[/* balance */2],
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]

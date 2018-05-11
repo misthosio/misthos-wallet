@@ -39,7 +39,7 @@ let () = {
       watcher,
       log |> L.systemIssuer,
       fun
-      | AccountKeyChainIdentified({identifier, keyChain: {accountIdx}})
+      | AccountKeyChainIdentified({keyChain: {identifier, accountIdx}})
           when AccountIndex.eq(accountIdx, AccountIndex.default) =>
         identifier
         == "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73"
@@ -78,8 +78,7 @@ let () = {
       log |> L.systemIssuer,
       fun
       | AccountKeyChainIdentified({
-          identifier,
-          keyChain: {accountIdx, custodianKeyChains},
+          keyChain: {identifier, accountIdx, custodianKeyChains},
         })
           when AccountIndex.eq(accountIdx, AccountIndex.default) =>
         identifier

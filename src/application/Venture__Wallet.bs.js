@@ -130,7 +130,7 @@ function apply($$event, state) {
                 /* ventureId */state[/* ventureId */0],
                 /* network */state[/* network */1],
                 /* payoutPolicy */state[/* payoutPolicy */2],
-                /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */1], state[/* accountKeyChains */3]),
+                /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* accountKeyChains */3]),
                 /* activatedKeyChain */state[/* activatedKeyChain */4],
                 /* exposedCoordinates */state[/* exposedCoordinates */5],
                 /* reservedInputs */state[/* reservedInputs */6],

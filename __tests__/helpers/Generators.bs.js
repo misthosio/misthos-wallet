@@ -537,7 +537,7 @@ function withAccountKeyChainActivated(user, l) {
   var identifier = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           if ($$event.tag === 30) {
-            return $$event[0][/* identifier */0];
+            return $$event[0][/* keyChain */0][/* identifier */1];
           } else {
             return res;
           }

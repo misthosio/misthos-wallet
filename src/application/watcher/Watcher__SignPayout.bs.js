@@ -63,7 +63,7 @@ function make(param, param$1, log) {
                 return /* record */[
                         /* network */state[/* network */0],
                         /* ventureId */state[/* ventureId */1],
-                        /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */1], state[/* accountKeyChains */2]),
+                        /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* accountKeyChains */2]),
                         /* payoutTx */state[/* payoutTx */3],
                         /* complete */state[/* complete */4]
                       ];
