@@ -37,6 +37,12 @@ let apply = (event: Event.t, state) =>
       ventureId,
       payoutPolicy: metaPolicy,
     }
+  | AccountCreationAccepted(
+      ({data: {accountIdx}}: AccountCreation.Accepted.t),
+    ) => {
+      ...state,
+      activatedKeyChain: [(accountIdx, []), ...state.activatedKeyChain],
+    }
   | AccountKeyChainIdentified(({keyChain}: AccountKeyChainIdentified.t)) => {
       ...state,
       accountKeyChains:

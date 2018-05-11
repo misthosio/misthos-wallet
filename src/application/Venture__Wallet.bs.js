@@ -39,6 +39,23 @@ function apply($$event, state) {
                 /* reservedInputs */state[/* reservedInputs */6],
                 /* payoutProcesses */state[/* payoutProcesses */7]
               ];
+    case 12 : 
+        return /* record */[
+                /* ventureId */state[/* ventureId */0],
+                /* network */state[/* network */1],
+                /* payoutPolicy */state[/* payoutPolicy */2],
+                /* accountKeyChains */state[/* accountKeyChains */3],
+                /* activatedKeyChain : :: */[
+                  /* tuple */[
+                    $$event[0][/* data */2][/* accountIdx */0],
+                    /* [] */0
+                  ],
+                  state[/* activatedKeyChain */4]
+                ],
+                /* exposedCoordinates */state[/* exposedCoordinates */5],
+                /* reservedInputs */state[/* reservedInputs */6],
+                /* payoutProcesses */state[/* payoutProcesses */7]
+              ];
     case 21 : 
         var match$1 = $$event[0];
         var data = match$1[/* data */5];
