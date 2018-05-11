@@ -253,8 +253,8 @@ let handleMessage =
     switch (raw |> VentureWorkerMessage.decodeOutgoing) {
     | VentureLoaded(ventureId, _) => persistVenture(ventureId)
     | VentureCreated(ventureId, _) => persistVenture(ventureId)
-    | NewEvents(ventureId, _) => persistVenture(ventureId)
-    | UpdateIndex(_) => ()
+    | NewItems(ventureId, _) => persistVenture(ventureId)
+    | _ => ()
     };
 
 onMessage(self, msg => handleMessage(msg##data));

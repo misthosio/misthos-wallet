@@ -2,6 +2,8 @@
 'use strict';
 
 var Utils = require("../utils/Utils.bs.js");
+var Json_decode = require("bs-json/src/Json_decode.js");
+var Json_encode = require("bs-json/src/Json_encode.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 
 function getItem(key) {
@@ -11,6 +13,48 @@ function getItem(key) {
 function setItem(key, value) {
   localStorage.setItem(key, value);
   return /* () */0;
+}
+
+function encodeItems(items) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "blockstack",
+                Json_encode.nullable((function (prim) {
+                        return prim;
+                      }), items[/* blockstack */0])
+              ],
+              /* :: */[
+                /* tuple */[
+                  "blockstackGaiaHubConfig",
+                  Json_encode.nullable((function (prim) {
+                          return prim;
+                        }), items[/* blockstackGaiaHubConfig */1])
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "blockstackTransitPrivateKey",
+                    Json_encode.nullable((function (prim) {
+                            return prim;
+                          }), items[/* blockstackTransitPrivateKey */2])
+                  ],
+                  /* [] */0
+                ]
+              ]
+            ]);
+}
+
+function decodeItems(raw) {
+  return /* record */[
+          /* blockstack */Json_decode.field("blockstack", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), raw),
+          /* blockstackGaiaHubConfig */Json_decode.field("blockstackGaiaHubConfig", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), raw),
+          /* blockstackTransitPrivateKey */Json_decode.field("blockstackTransitPrivateKey", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), raw)
+        ];
 }
 
 function readBlockstackItemsFromStorage() {
@@ -38,6 +82,8 @@ var L = 0;
 
 exports.getItem = getItem;
 exports.setItem = setItem;
+exports.encodeItems = encodeItems;
+exports.decodeItems = decodeItems;
 exports.L = L;
 exports.readBlockstackItemsFromStorage = readBlockstackItemsFromStorage;
 exports.setBlockstackItems = setBlockstackItems;

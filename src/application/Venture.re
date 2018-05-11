@@ -52,7 +52,7 @@ let applyInternal =
     let validation = validation |> Validation.apply(item);
     let state = state |> State.apply(event);
     let wallet = wallet |> Wallet.apply(event);
-    let collector = [event, ...collector];
+    let collector = [item, ...collector];
     (Some(item), log, (validation, state, wallet, collector));
   | Ignore =>
     logMessage("Ignoring event:");
@@ -116,7 +116,7 @@ let reconstruct = (session, log) => {
            validation |> Validation.apply(item),
            state |> State.apply(event),
            wallet |> Wallet.apply(event),
-           [event, ...collector],
+           [item, ...collector],
            watchers
            |> Watchers.apply(~reconstruct=true, session, Some(item), log),
          ),
@@ -233,10 +233,10 @@ module Cmd = {
   };
   module SynchronizeLogs = {
     type result =
-      | Ok(t, list(Event.t))
+      | Ok(t, list(EventLog.item))
       | WithConflicts(
           t,
-          list(Event.t),
+          list(EventLog.item),
           list((EventLog.item, Validation.result)),
         );
     let exec = (newItems, {session} as venture) => {
@@ -259,7 +259,7 @@ module Cmd = {
                  let validation = validation |> Validation.apply(item);
                  let state = state |> State.apply(event);
                  let wallet = wallet |> Wallet.apply(event);
-                 let collector = [event, ...collector];
+                 let collector = [item, ...collector];
                  let watchers =
                    watchers |> Watchers.apply(session, Some(item), log);
                  (
@@ -311,7 +311,7 @@ module Cmd = {
   };
   module SynchronizeWallet = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec = (incomeEvents, venture) => {
       logMessage("Synchronizing wallet");
       Js.Promise.(
@@ -338,7 +338,7 @@ module Cmd = {
   };
   module ProposePartner = {
     type result =
-      | Ok(t, list(Event.t))
+      | Ok(t, list(EventLog.item))
       | PartnerAlreadyExists
       | NoUserInfo;
     let exec = (~prospectId, {session, state} as venture) => {
@@ -395,7 +395,7 @@ module Cmd = {
   };
   module RejectPartner = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPartner' command");
       Js.Promise.(
@@ -413,7 +413,7 @@ module Cmd = {
   };
   module EndorsePartner = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
       let custodianProcessId =
@@ -443,7 +443,7 @@ module Cmd = {
   };
   module ProposePartnerRemoval = {
     type result =
-      | Ok(t, list(Event.t))
+      | Ok(t, list(EventLog.item))
       | PartnerDoesNotExist;
     let exec = (~partnerId, {state, session} as venture) => {
       logMessage("Executing 'ProposePartnerRemoval' command");
@@ -494,7 +494,7 @@ module Cmd = {
   };
   module RejectPartnerRemoval = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPartnerRemoval' command");
       Js.Promise.(
@@ -512,7 +512,7 @@ module Cmd = {
   };
   module EndorsePartnerRemoval = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartnerRemoval' command");
       Js.Promise.(
@@ -551,7 +551,7 @@ module Cmd = {
   };
   module ExposeIncomeAddress = {
     type result =
-      | Ok(string, t, list(Event.t));
+      | Ok(string, t, list(EventLog.item));
     let exec = (~accountIdx, {wallet, session: {userId}} as venture) => {
       logMessage("Executing 'GetIncomeAddress' command");
       let exposeEvent =
@@ -566,7 +566,7 @@ module Cmd = {
   };
   module ProposePayout = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec =
         (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
       logMessage("Executing 'ProposePayout' command");
@@ -580,7 +580,7 @@ module Cmd = {
   };
   module RejectPayout = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPayout' command");
       Js.Promise.(
@@ -595,7 +595,7 @@ module Cmd = {
   };
   module EndorsePayout = {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'EndorsePayout' command");
       Js.Promise.(

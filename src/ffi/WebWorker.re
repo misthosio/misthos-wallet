@@ -1,6 +1,7 @@
 module type Config = {
   type t;
   type incoming;
+  type encodedIncoming;
   type outgoing;
   type encodedOutgoing;
   let decodeOutgoing: encodedOutgoing => outgoing;
@@ -15,6 +16,9 @@ module MakeClient = (Config: Config) => {
     "onmessage";
   [@bs.send] external terminate : t => unit = "";
   [@bs.send] external postMessage : (t, Config.incoming) => unit = "";
+  [@bs.send]
+  external postMessageEncoded : (t, Config.encodedIncoming) => unit =
+    "postMessage";
   let make = (~onMessage) => {
     let worker = Config.instance();
     worker

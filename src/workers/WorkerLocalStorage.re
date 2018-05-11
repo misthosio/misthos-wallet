@@ -17,6 +17,30 @@ type blockstackItems = {
   blockstackTransitPrivateKey: option(string),
 };
 
+let encodeItems = items =>
+  Json.Encode.(
+    object_([
+      ("blockstack", nullable(string, items.blockstack)),
+      (
+        "blockstackGaiaHubConfig",
+        nullable(string, items.blockstackGaiaHubConfig),
+      ),
+      (
+        "blockstackTransitPrivateKey",
+        nullable(string, items.blockstackTransitPrivateKey),
+      ),
+    ])
+  );
+
+let decodeItems = raw =>
+  Json.Decode.{
+    blockstack: raw |> field("blockstack", optional(string)),
+    blockstackGaiaHubConfig:
+      raw |> field("blockstackGaiaHubConfig", optional(string)),
+    blockstackTransitPrivateKey:
+      raw |> field("blockstackTransitPrivateKey", optional(string)),
+  };
+
 module L = Dom.Storage;
 
 let readBlockstackItemsFromStorage = () => {

@@ -14,11 +14,17 @@ var Blockstack = require("../ffi/Blockstack.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
+var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
 
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
+
+function postMessage$1(msg) {
+  postMessage(VentureWorkerMessage.encodeIncoming(msg));
+  return /* () */0;
+}
 
 function logMessage(msg) {
   console.log("[Sync Worker] - " + msg);
@@ -79,10 +85,10 @@ function getLogFromUser(ventureId, userId, storagePrefix) {
 function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
   getLogFromUser(ventureId, userId, storagePrefix).then((function (other) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
-          return Promise.resolve(items ? (postMessage(/* NewItemsDetected */Block.__(15, [
-                                ventureId,
-                                List.map(EventLog.encodeItem, items)
-                              ])), /* () */0) : /* () */0);
+          return Promise.resolve(items ? (postMessage(VentureWorkerMessage.encodeIncoming(/* NewItemsDetected */Block.__(15, [
+                                    ventureId,
+                                    items
+                                  ]))), /* () */0) : /* () */0);
         }));
   return /* () */0;
 }
@@ -159,6 +165,7 @@ var tenSecondsInMilliseconds = 10000;
 var syncInterval = 10000;
 
 exports.Message = Message;
+exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.intervalId = intervalId;
 exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;

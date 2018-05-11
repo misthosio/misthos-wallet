@@ -6,6 +6,8 @@ type incoming =
 
 type outgoing = unit;
 
+type encodedIncoming = unit;
+
 type encodedOutgoing = outgoing;
 
 let decodeOutgoing = outgoing => outgoing;

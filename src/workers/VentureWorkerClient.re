@@ -11,6 +11,11 @@ module Config = {
 
 include WebWorker.MakeClient(Config);
 
+let postMessage = (worker, msg) => {
+  let encodedMsg = msg |> VentureWorkerMessage.encodeIncoming;
+  encodedMsg |> postMessageEncoded(worker);
+};
+
 let updateSession = worker =>
   worker
   |. postMessage(
@@ -71,8 +76,8 @@ let proposePayout =
        VentureWorkerMessage.ProposePayout(
          ventureId,
          accountIdx,
-         destinations |> List.map(((a, btc)) => (a, btc |> BTC.encode)),
-         fee |> BTC.encode,
+         destinations,
+         fee,
        ),
      );
 

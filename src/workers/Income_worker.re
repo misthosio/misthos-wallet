@@ -15,7 +15,10 @@ external onMessage :
   (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
   "onmessage";
 
-[@bs.val] external postMessage : Message.outgoing => unit = "postMessage";
+[@bs.val] external _postMessage : Js.Json.t => unit = "postMessage";
+
+let postMessage = msg =>
+  msg |> VentureWorkerMessage.encodeIncoming |> _postMessage;
 
 open PrimitiveTypes;
 
@@ -99,7 +102,6 @@ let detectIncomeFromTransaction = addresses =>
            ~txId=tx.txId,
            ~amount=out.amount,
          )
-         |> Event.IncomeDetected.encode
        )
   );
 

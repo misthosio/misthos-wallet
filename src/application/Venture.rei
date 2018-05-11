@@ -53,60 +53,60 @@ module Cmd: {
   };
   module SynchronizeLogs: {
     type result =
-      | Ok(t, list(Event.t))
+      | Ok(t, list(EventLog.item))
       | WithConflicts(
           t,
-          list(Event.t),
+          list(EventLog.item),
           list((EventLog.item, Validation.result)),
         );
     let exec: (list(EventLog.item), t) => Js.Promise.t(result);
   };
   module SynchronizeWallet: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec: (list(Event.IncomeDetected.t), t) => Js.Promise.t(result);
   };
   module ProposePartner: {
     type result =
-      | Ok(t, list(Event.t))
+      | Ok(t, list(EventLog.item))
       | PartnerAlreadyExists
       | NoUserInfo;
     let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };
   module RejectPartner: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePartner: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ProposePartnerRemoval: {
     type result =
-      | Ok(t, list(Event.t))
+      | Ok(t, list(EventLog.item))
       | PartnerDoesNotExist;
     let exec: (~partnerId: userId, t) => Js.Promise.t(result);
   };
   module RejectPartnerRemoval: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePartnerRemoval: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ExposeIncomeAddress: {
     type result =
-      | Ok(string, t, list(Event.t));
+      | Ok(string, t, list(EventLog.item));
     let exec: (~accountIdx: accountIdx, t) => Js.Promise.t(result);
   };
   module ProposePayout: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec:
       (
         ~accountIdx: accountIdx,
@@ -118,12 +118,12 @@ module Cmd: {
   };
   module RejectPayout: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePayout: {
     type result =
-      | Ok(t, list(Event.t));
+      | Ok(t, list(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
 };
