@@ -16,10 +16,16 @@ var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var SmartbitClient = require("../application/wallet/SmartbitClient.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
+var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
 
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
+
+function postMessage$1(msg) {
+  postMessage(VentureWorkerMessage.encodeIncoming(msg));
+  return /* () */0;
+}
 
 function logMessage(msg) {
   console.log("[Income Worker] - " + msg);
@@ -107,7 +113,7 @@ function detectIncomeFromTransaction(addresses) {
   return (function (param) {
       return List.map((function (tx) {
                     return List.map((function (out) {
-                                  return Event.IncomeDetected[/* encode */1](Event.IncomeDetected[/* make */0](out[/* address */0], tx[/* txId */0], out[/* amount */1]));
+                                  return Event.IncomeDetected[/* make */0](out[/* address */0], tx[/* txId */0], out[/* amount */1]);
                                 }), List.filter((function (o) {
                                         return List.mem(o[/* address */0], addresses);
                                       }))(tx[/* outputs */1]));
@@ -121,10 +127,10 @@ function detectIncomeFromVenture(ventureId) {
                   return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
                 })).then((function (param) {
                 return Promise.resolve((List.map((function (events) {
-                                    postMessage(/* TransactionDetected */Block.__(14, [
-                                            ventureId,
-                                            events
-                                          ]));
+                                    postMessage(VentureWorkerMessage.encodeIncoming(/* TransactionDetected */Block.__(14, [
+                                                ventureId,
+                                                events
+                                              ])));
                                     return /* () */0;
                                   }), detectIncomeFromTransaction(param[0])(param[1])), /* () */0));
               }));
@@ -178,6 +184,7 @@ var tenSecondsInMilliseconds = 10000;
 var syncInterval = 10000;
 
 exports.Message = Message;
+exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.testnetApiEndpoint = testnetApiEndpoint;
 exports.decodeResponse = decodeResponse;

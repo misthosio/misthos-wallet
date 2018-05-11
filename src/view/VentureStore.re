@@ -67,8 +67,11 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
-  didMount: ({state}) =>
-    loadVentureAndIndex(session, currentRoute, state) |> ignore,
+  didMount: ({state}) => {
+    DomRe.window
+    |> WindowRe.addEventListener("storage", Js.log2("receiving event:"));
+    loadVentureAndIndex(session, currentRoute, state) |> ignore;
+  },
   willReceiveProps: ({state}) => {
     ...state,
     selectedVenture: loadVentureAndIndex(session, currentRoute, state),

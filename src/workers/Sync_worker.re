@@ -15,7 +15,10 @@ external onMessage :
   (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
   "onmessage";
 
-[@bs.val] external postMessage : Message.outgoing => unit = "postMessage";
+[@bs.val] external _postMessage : Js.Json.t => unit = "postMessage";
+
+let postMessage = msg =>
+  msg |> VentureWorkerMessage.encodeIncoming |> _postMessage;
 
 open PrimitiveTypes;
 
@@ -83,13 +86,7 @@ let findNewItemsFromPartner = (ventureId, userId, storagePrefix, eventLog) =>
          (
            switch (eventLog |> EventLog.findNewItems(~other)) {
            | [] => ()
-           | items =>
-             postMessage(
-               NewItemsDetected(
-                 ventureId,
-                 items |> List.map(EventLog.encodeItem),
-               ),
-             )
+           | items => postMessage(NewItemsDetected(ventureId, items))
            }
          )
          |> resolve

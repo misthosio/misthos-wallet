@@ -9,6 +9,8 @@ type incoming =
 
 type outgoing = VentureWorkerMessage.incoming;
 
-type encodedOutgoing = outgoing;
+type encodedIncoming = unit;
 
-let decodeOutgoing = a => a;
+type encodedOutgoing = VentureWorkerMessage.encodedIncoming;
+
+let decodeOutgoing = VentureWorkerMessage.decodeIncoming;

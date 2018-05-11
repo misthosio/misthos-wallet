@@ -12,7 +12,7 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": Message.encodedIncoming} => unit)) => unit =
   "onmessage";
 
 [@bs.set]
@@ -414,12 +414,7 @@ let handleMessage =
   | Message.EndorsePartnerRemoval(ventureId, processId) =>
     Handle.endorsePartnerRemoval(ventureId, processId)
   | Message.ProposePayout(ventureId, accountIdx, destinations, fee) =>
-    Handle.proposePayout(
-      ventureId,
-      accountIdx,
-      destinations |> List.map(((a, btc)) => (a, btc |> BTC.decode)),
-      fee |> BTC.decode,
-    )
+    Handle.proposePayout(ventureId, accountIdx, destinations, fee)
   | Message.RejectPayout(ventureId, processId) =>
     Handle.rejectPayout(ventureId, processId)
   | Message.EndorsePayout(ventureId, processId) =>
@@ -427,20 +422,16 @@ let handleMessage =
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(ventureId, accountIdx)
   | TransactionDetected(ventureId, events) =>
-    Handle.transactionDetected(
-      ventureId,
-      events |> List.map(Event.IncomeDetected.decode),
-    )
+    Handle.transactionDetected(ventureId, events)
   | NewItemsDetected(ventureId, items) =>
-    Handle.newItemsDetected(
-      ventureId,
-      items |> List.map(EventLog.decodeItem),
-    );
+    Handle.newItemsDetected(ventureId, items);
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 
 let workerState = ref(cleanState);
 
 onMessage(self, msg =>
-  workerState := workerState^ |> handleMessage(msg##data)
+  workerState :=
+    workerState^
+    |> handleMessage(msg##data |> VentureWorkerMessage.decodeIncoming)
 );

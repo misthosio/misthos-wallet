@@ -68,6 +68,10 @@ function make(currentRoute, session, children) {
                     ];
             }),
           /* didMount */(function (param) {
+              window.addEventListener("storage", (function (param) {
+                      console.log("receiving event:", param);
+                      return /* () */0;
+                    }));
               loadVentureAndIndex(session, currentRoute, param[/* state */1]);
               return /* () */0;
             }),
@@ -232,7 +236,7 @@ function make(currentRoute, session, children) {
                 
               }
               if (exit === 1) {
-                state[/* ventureWorker */5][0].postMessage(action[0]);
+                VentureWorkerClient.postMessage(state[/* ventureWorker */5][0], action[0]);
                 return /* NoUpdate */0;
               }
               
