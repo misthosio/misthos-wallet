@@ -9,6 +9,7 @@ type selectedVenture =
 
 type action =
   | CreateVenture(string)
+  | OutgoingFromLocalStorage(VentureWorkerMessage.outgoing)
   | SyncWorkerMessage(SyncWorkerMessage.outgoing)
   | IncomeWorkerMessage(IncomeWorkerMessage.outgoing)
   | VentureWorkerMessage(VentureWorkerMessage.outgoing);
@@ -57,6 +58,34 @@ let loadVentureAndIndex =
 
 let component = ReasonReact.reducerComponent("VentureStore");
 
+module L = Dom.Storage;
+
+let updateOtherTabs = msg => {
+  let encodedMsg = msg |> VentureWorkerMessage.encodeOutgoing;
+  L.setItem("outgoing", encodedMsg |> Json.stringify, L.localStorage);
+};
+
+external toStorageEvent : Dom.event => StorageEventRe.t = "%identity";
+
+let handler = (send, msg) => {
+  let storageEvent = msg |> toStorageEvent;
+  switch (storageEvent |> StorageEventRe.key) {
+  | "outgoing" =>
+    try (
+      OutgoingFromLocalStorage(
+        storageEvent
+        |> StorageEventRe.newValue
+        |> Json.parseOrRaise
+        |> VentureWorkerMessage.decodeOutgoing,
+      )
+      |> send
+    ) {
+    | _ => ()
+    }
+  | _ => ()
+  };
+};
+
 let make = (~currentRoute, ~session: Session.t, children) => {
   ...component,
   initialState: () => {
@@ -67,54 +96,62 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
-  didMount: ({state}) => {
-    DomRe.window
-    |> WindowRe.addEventListener("storage", Js.log2("receiving event:"));
-    loadVentureAndIndex(session, currentRoute, state) |> ignore;
-  },
+  didMount: ({state}) =>
+    loadVentureAndIndex(session, currentRoute, state) |> ignore,
   willReceiveProps: ({state}) => {
     ...state,
     selectedVenture: loadVentureAndIndex(session, currentRoute, state),
   },
-  subscriptions: ({send, state}) => [
-    Sub(
-      () => {
-        SyncWorkerClient.terminate(state.syncWorker^);
-        let worker =
-          SyncWorkerClient.make(~onMessage=message =>
-            send(SyncWorkerMessage(message))
-          );
-        state.syncWorker := worker;
-        worker;
-      },
-      SyncWorkerClient.terminate,
-    ),
-    Sub(
-      () => {
-        IncomeWorkerClient.terminate(state.incomeWorker^);
-        let worker =
-          IncomeWorkerClient.make(~onMessage=message =>
-            send(IncomeWorkerMessage(message))
-          );
-        state.incomeWorker := worker;
-        worker;
-      },
-      IncomeWorkerClient.terminate,
-    ),
-    Sub(() => state.persistWorker^, PersistWorkerClient.terminate),
-    Sub(
-      () => {
-        VentureWorkerClient.terminate(state.ventureWorker^);
-        let worker =
-          VentureWorkerClient.make(~onMessage=message =>
-            send(VentureWorkerMessage(message))
-          );
-        state.ventureWorker := worker;
-        worker;
-      },
-      VentureWorkerClient.terminate,
-    ),
-  ],
+  subscriptions: ({send, state}) => {
+    let eventListener = handler(send);
+    [
+      Sub(
+        () => {
+          DomRe.window |> WindowRe.addEventListener("storage", eventListener);
+          eventListener;
+        },
+        listener =>
+          DomRe.window |> WindowRe.removeEventListener("storage", listener),
+      ),
+      Sub(
+        () => {
+          SyncWorkerClient.terminate(state.syncWorker^);
+          let worker =
+            SyncWorkerClient.make(~onMessage=message =>
+              send(SyncWorkerMessage(message))
+            );
+          state.syncWorker := worker;
+          worker;
+        },
+        SyncWorkerClient.terminate,
+      ),
+      Sub(
+        () => {
+          IncomeWorkerClient.terminate(state.incomeWorker^);
+          let worker =
+            IncomeWorkerClient.make(~onMessage=message =>
+              send(IncomeWorkerMessage(message))
+            );
+          state.incomeWorker := worker;
+          worker;
+        },
+        IncomeWorkerClient.terminate,
+      ),
+      Sub(() => state.persistWorker^, PersistWorkerClient.terminate),
+      Sub(
+        () => {
+          VentureWorkerClient.terminate(state.ventureWorker^);
+          let worker =
+            VentureWorkerClient.make(~onMessage=message =>
+              send(VentureWorkerMessage(message))
+            );
+          state.ventureWorker := worker;
+          worker;
+        },
+        VentureWorkerClient.terminate,
+      ),
+    ];
+  },
   reducer: (action, state) =>
     switch (action) {
     | CreateVenture(name) =>
@@ -124,7 +161,8 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       state.persistWorker^ |> PersistWorkerClient.ventureMessage(msg);
       switch (msg, state.selectedVenture) {
       | (UpdateIndex(index), _) =>
-        ReasonReact.Update({...state, index: Some(index)})
+        updateOtherTabs(msg);
+        ReasonReact.Update({...state, index: Some(index)});
       | (VentureCreated(ventureId, events), _) =>
         ReasonReact.UpdateWithSideEffects(
           {
@@ -164,19 +202,23 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             ),
         })
       | (
-          NewEvents(ventureId, newEvents),
+          NewItems(ventureId, newItems),
           VentureLoaded(loadedId, viewModel, cmd),
         )
           when VentureId.eq(ventureId, loadedId) =>
+        updateOtherTabs(msg);
         ReasonReact.Update({
           ...state,
           selectedVenture:
             VentureLoaded(
               ventureId,
-              viewModel |> ViewModel.applyAll(newEvents),
+              viewModel
+              |> ViewModel.applyAll(
+                   newItems |> List.map(({event}: EventLog.item) => event),
+                 ),
               cmd,
             ),
-        })
+        });
       | _ => ReasonReact.NoUpdate
       };
     | SyncWorkerMessage(msg) =>
@@ -185,6 +227,18 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     | IncomeWorkerMessage(msg) =>
       state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
       ReasonReact.NoUpdate;
+    | OutgoingFromLocalStorage(msg) =>
+      switch (msg) {
+      | NewItems(ventureId, items) =>
+        state.ventureWorker^
+        |. VentureWorkerClient.postMessage(
+             NewItemsDetected(ventureId, items),
+           );
+        ReasonReact.NoUpdate;
+      | UpdateIndex(index) =>
+        ReasonReact.Update({...state, index: Some(index)})
+      | _ => ReasonReact.NoUpdate
+      }
     },
   render: ({state: {index, selectedVenture}, send}) =>
     children(~index, ~selectedVenture, ~createVenture=name =>

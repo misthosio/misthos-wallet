@@ -11,8 +11,10 @@ module Config = {
 
 include WebWorker.MakeClient(Config);
 
-let postMessage = (worker, msg) =>
-  msg |> VentureWorkerMessage.encodeIncoming |> postMessageEncoded(worker);
+let postMessage = (worker, msg) => {
+  let encodedMsg = msg |> VentureWorkerMessage.encodeIncoming;
+  encodedMsg |> postMessageEncoded(worker);
+};
 
 let updateSession = worker =>
   worker

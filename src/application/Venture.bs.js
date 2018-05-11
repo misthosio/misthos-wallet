@@ -64,7 +64,7 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
         var state$1 = Venture__State.apply($$event, state);
         var wallet$1 = Venture__Wallet.apply($$event, wallet);
         var collector$1 = /* :: */[
-          $$event,
+          item,
           collector
         ];
         return /* tuple */[
@@ -172,7 +172,7 @@ function reconstruct(session, log) {
                   Venture__State.apply($$event, param[2]),
                   Venture__Wallet.apply($$event, param[3]),
                   /* :: */[
-                    $$event,
+                    item,
                     param[4]
                   ],
                   Watchers.apply(/* Some */[true], session, /* Some */[item], log, param[5])
@@ -318,7 +318,7 @@ function exec$1(newItems, venture) {
                 var state = Venture__State.apply($$event, venture[/* state */3]);
                 var wallet = Venture__Wallet.apply($$event, venture[/* wallet */5]);
                 var collector$1 = /* :: */[
-                  $$event,
+                  item,
                   collector
                 ];
                 var watchers = Watchers.apply(/* None */0, session, /* Some */[item], log, venture[/* watchers */6]);

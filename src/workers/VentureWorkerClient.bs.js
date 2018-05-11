@@ -23,7 +23,8 @@ var include = WebWorker.MakeClient([
     ]);
 
 function postMessage(worker, msg) {
-  worker.postMessage(VentureWorkerMessage.encodeIncoming(msg));
+  var encodedMsg = VentureWorkerMessage.encodeIncoming(msg);
+  worker.postMessage(encodedMsg);
   return /* () */0;
 }
 

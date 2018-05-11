@@ -51,10 +51,10 @@ function ventureCreated(id, events) {
   return /* () */0;
 }
 
-function newEvents(id, events) {
-  if (events) {
-    var msg_001 = List.rev(events);
-    var msg = /* NewEvents */Block.__(3, [
+function newItems(id, items) {
+  if (items) {
+    var msg_001 = List.rev(items);
+    var msg = /* NewItems */Block.__(3, [
         id,
         msg_001
       ]);
@@ -69,7 +69,7 @@ var Notify = /* module */[
   /* indexUpdated */indexUpdated,
   /* ventureLoaded */ventureLoaded,
   /* ventureCreated */ventureCreated,
-  /* newEvents */newEvents
+  /* newItems */newItems
 ];
 
 function withVenture(ventureAction, f, param) {
@@ -229,7 +229,7 @@ function proposePartner(ventureId, prospectId) {
                                   if (typeof param === "number") {
                                     return Promise.resolve(venture);
                                   } else {
-                                    newEvents(ventureId, param[1]);
+                                    newItems(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
@@ -243,7 +243,7 @@ function rejectPartner(ventureId, processId) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartner */4][/* exec */0], processId, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -256,7 +256,7 @@ function endorsePartner(ventureId, processId) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartner */5][/* exec */0], processId, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -270,7 +270,7 @@ function proposePartnerRemoval(ventureId, partnerId) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* ProposePartnerRemoval */6][/* exec */0], partnerId, venture).then((function (param) {
                                   if (param) {
-                                    newEvents(ventureId, param[1]);
+                                    newItems(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
                                   } else {
                                     return Promise.resolve(venture);
@@ -286,7 +286,7 @@ function rejectPartnerRemoval(ventureId, processId) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartnerRemoval */7][/* exec */0], processId, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -299,7 +299,7 @@ function endorsePartnerRemoval(ventureId, processId) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */8][/* exec */0], processId, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -312,7 +312,7 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._4(Venture.Cmd[/* ProposePayout */10][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -325,7 +325,7 @@ function rejectPayout(ventureId, processId) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* RejectPayout */11][/* exec */0], processId, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -338,7 +338,7 @@ function endorsePayout(ventureId, processId) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePayout */12][/* exec */0], processId, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -351,7 +351,7 @@ function exposeIncomeAddress(ventureId, accountIdx) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */9][/* exec */0], accountIdx, venture).then((function (param) {
-                                  newEvents(ventureId, param[2]);
+                                  newItems(ventureId, param[2]);
                                   return Promise.resolve(param[1]);
                                 }));
                   }), param);
@@ -364,7 +364,7 @@ function transactionDetected(ventureId, events) {
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, venture).then((function (param) {
-                                  newEvents(ventureId, param[1]);
+                                  newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
                   }), param);
@@ -379,10 +379,10 @@ function newItemsDetected(ventureId, items) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
                                     logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
-                                    newEvents(ventureId, param[1]);
+                                    newItems(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
                                   } else {
-                                    newEvents(ventureId, param[1]);
+                                    newItems(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
                                   }
                                 }));

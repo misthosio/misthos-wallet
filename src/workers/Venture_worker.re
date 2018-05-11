@@ -33,10 +33,10 @@ module Notify = {
     postMessage(VentureLoaded(id, events |> List.rev));
   let ventureCreated = (id, events) =>
     postMessage(VentureCreated(id, events |> List.rev));
-  let newEvents = (id, events) =>
-    switch (events) {
+  let newItems = (id, items) =>
+    switch (items) {
     | [] => ()
-    | events => postMessage(NewEvents(id, events |> List.rev))
+    | items => postMessage(NewItems(id, items |> List.rev))
     };
 };
 
@@ -175,8 +175,8 @@ module Handle = {
           |> exec(~prospectId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  }
                | _ => venture |> resolve,
@@ -194,8 +194,8 @@ module Handle = {
           |> exec(~processId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -212,8 +212,8 @@ module Handle = {
           |> exec(~processId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -230,8 +230,8 @@ module Handle = {
           |> exec(~partnerId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  }
                | _ => venture |> resolve,
@@ -249,8 +249,8 @@ module Handle = {
           |> exec(~processId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -267,8 +267,8 @@ module Handle = {
           |> exec(~processId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -285,8 +285,8 @@ module Handle = {
           |> exec(~accountIdx, ~destinations, ~fee)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -303,8 +303,8 @@ module Handle = {
           |> exec(~processId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -321,8 +321,8 @@ module Handle = {
           |> exec(~processId)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -339,8 +339,8 @@ module Handle = {
           |> exec(~accountIdx)
           |> then_(
                fun
-               | Ok(_address, venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(_address, venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -357,8 +357,8 @@ module Handle = {
           |> exec(events)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )
@@ -375,17 +375,17 @@ module Handle = {
           |> exec(items)
           |> then_(
                fun
-               | Ok(venture, newEvents) => {
-                   Notify.newEvents(ventureId, newEvents);
+               | Ok(venture, newItems) => {
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  }
-               | WithConflicts(venture, newEvents, conflicts) => {
+               | WithConflicts(venture, newItems, conflicts) => {
                    logMessage(
                      "There were "
                      ++ (conflicts |> List.length |> string_of_int)
                      ++ " conflicts while syncing",
                    );
-                   Notify.newEvents(ventureId, newEvents);
+                   Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
              )

@@ -28,7 +28,7 @@ type outgoing =
   | UpdateIndex(Venture.Index.t)
   | VentureLoaded(ventureId, list(Event.t))
   | VentureCreated(ventureId, list(Event.t))
-  | NewEvents(ventureId, list(Event.t));
+  | NewItems(ventureId, list(EventLog.item));
 
 type encodedOutgoing = Js.Json.t;
 
@@ -269,12 +269,12 @@ let encodeOutgoing =
         ("events", list(Event.encode, events)),
       ])
     )
-  | NewEvents(ventureId, events) =>
+  | NewItems(ventureId, items) =>
     Json.Encode.(
       object_([
-        ("type", string("NewEvents")),
+        ("type", string("NewItems")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("events", list(Event.encode, events)),
+        ("items", list(EventLog.encodeItem, items)),
       ])
     );
 
@@ -289,10 +289,11 @@ let decodeOutgoing = raw => {
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let events = Json.Decode.(raw |> field("events", list(Event.decode)));
     VentureLoaded(ventureId, events);
-  | "NewEvents" =>
+  | "NewItems" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
-    let events = Json.Decode.(raw |> field("events", list(Event.decode)));
-    NewEvents(ventureId, events);
+    let items =
+      Json.Decode.(raw |> field("items", list(EventLog.decodeItem)));
+    NewItems(ventureId, items);
   | "UpdateIndex" =>
     UpdateIndex(raw |> Json.Decode.field("index", Venture.Index.decode))
   | _ => raise(UnknownMessage(raw))
