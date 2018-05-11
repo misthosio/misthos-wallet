@@ -2,13 +2,10 @@ open Event;
 
 open PrimitiveTypes;
 
-open WalletTypes;
-
 type state = {
   network: Network.t,
   ventureId,
-  accountKeyChains:
-    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+  accountKeyChains: AccountKeyChain.Collection.t,
   payoutTx: option(PayoutTransaction.t),
   complete: bool,
 };
@@ -29,22 +26,14 @@ let make =
                ventureId,
                network,
              }
-           | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) =>
-             let accountKeyChains =
-               try (state.accountKeyChains |> List.assoc(keyChain.accountIdx)) {
-               | Not_found => []
-               };
-             {
+           | AccountKeyChainIdentified(
+               ({keyChain}: AccountKeyChainIdentified.t),
+             ) => {
                ...state,
-               accountKeyChains: [
-                 (
-                   keyChain.accountIdx,
-                   [(keyChain.keyChainIdx, keyChain), ...accountKeyChains],
-                 ),
-                 ...state.accountKeyChains
-                    |> List.remove_assoc(keyChain.accountIdx),
-               ],
-             };
+               accountKeyChains:
+                 state.accountKeyChains
+                 |> AccountKeyChain.Collection.add(keyChain),
+             }
            | PayoutProposed({processId, data})
                when ProcessId.eq(processId, payoutProcess) => {
                ...state,

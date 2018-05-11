@@ -399,20 +399,6 @@ module AccountKeyChainActivated = {
     };
 };
 
-module AccountKeyChainUpdated = {
-  type t = {keyChain: AccountKeyChain.t};
-  let make = (~keyChain) => {keyChain: keyChain};
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("AccountKeyChainUpdated")),
-        ("keyChain", AccountKeyChain.encode(event.keyChain)),
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{keyChain: raw |> field("keyChain", AccountKeyChain.decode)};
-};
-
 module IncomeAddressExposed = {
   type t = {
     coordinates: Address.Coordinates.t,
@@ -491,7 +477,6 @@ type t =
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainIdentified(AccountKeyChainIdentified.t)
   | AccountKeyChainActivated(AccountKeyChainActivated.t)
-  | AccountKeyChainUpdated(AccountKeyChainUpdated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t)
   | IncomeDetected(IncomeDetected.t);
 
@@ -684,7 +669,6 @@ let encode =
   | AccountKeyChainIdentified(event) =>
     AccountKeyChainIdentified.encode(event)
   | AccountKeyChainActivated(event) => AccountKeyChainActivated.encode(event)
-  | AccountKeyChainUpdated(event) => AccountKeyChainUpdated.encode(event)
   | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event)
   | IncomeDetected(event) => IncomeDetected.encode(event);
 
@@ -697,7 +681,6 @@ let isSystemEvent =
   | CustodianRemovalAccepted(_)
   | PayoutAccepted(_)
   | AccountKeyChainIdentified(_)
-  | AccountKeyChainUpdated(_)
   | IncomeAddressExposed(_)
   | IncomeDetected(_)
   | PayoutBroadcast(_)
@@ -759,8 +742,6 @@ let decode = raw => {
     AccountKeyChainIdentified(AccountKeyChainIdentified.decode(raw))
   | "AccountKeyChainActivated" =>
     AccountKeyChainActivated(AccountKeyChainActivated.decode(raw))
-  | "AccountKeyChainUpdated" =>
-    AccountKeyChainUpdated(AccountKeyChainUpdated.decode(raw))
   | "IncomeAddressExposed" =>
     IncomeAddressExposed(IncomeAddressExposed.decode(raw))
   | "IncomeDetected" => IncomeDetected(IncomeDetected.decode(raw))
@@ -787,13 +768,6 @@ let getAccountKeyChainActivatedExn = event =>
   | AccountKeyChainActivated(unwrapped) => unwrapped
   | _ => %assert
          "getAccountKeyChainActivatedExn"
-  };
-
-let getAccountKeyChainUpdatedExn = event =>
-  switch (event) {
-  | AccountKeyChainUpdated(unwrapped) => unwrapped
-  | _ => %assert
-         "getAccountKeyChainUpdatedExn"
   };
 
 let getCustodianKeyChainUpdatedExn = event =>

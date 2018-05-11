@@ -7,7 +7,7 @@ open Bitcoin;
 module Coordinates = {
   type t = (
     AccountIndex.t,
-    AccountKeyChainIndex.t,
+    AccountKeyChain.Identifier.t,
     CoSignerIndex.t,
     ChainIndex.t,
     AddressIndex.t,
@@ -17,7 +17,7 @@ module Coordinates = {
         coSigner,
         usedCoordinates,
         chainIdx,
-        {accountIdx, keyChainIdx, custodianKeyChains}: AccountKeyChain.t,
+        {accountIdx, identifier, custodianKeyChains}: AccountKeyChain.t,
       ) => {
     let coSignerIdx =
       custodianKeyChains
@@ -39,9 +39,9 @@ module Coordinates = {
     let addressIdx =
       usedCoordinates
       |> List.fold_left(
-           (res, (aIdx, kIdx, coIdx, cIdx, addressIdx)) =>
+           (res, (aIdx, ident, coIdx, cIdx, addressIdx)) =>
              if (AccountIndex.eq(accountIdx, aIdx)
-                 && AccountKeyChainIndex.eq(keyChainIdx, kIdx)
+                 && AccountKeyChain.Identifier.eq(identifier, ident)
                  && CoSignerIndex.eq(coSignerIdx, coIdx)
                  && ChainIndex.eq(chainIdx, cIdx)) {
                AddressIndex.compare(addressIdx, res) > 0 ? addressIdx : res;
@@ -52,7 +52,7 @@ module Coordinates = {
          );
     (
       accountIdx,
-      keyChainIdx,
+      identifier,
       coSignerIdx,
       chainIdx,
       addressIdx |> AddressIndex.next,
@@ -64,6 +64,7 @@ module Coordinates = {
     next(user, usedCoordinates, ChainIndex.externalChain, accountKeyChain);
   let accountIdx = ((idx, _, _, _, _)) => idx;
   let keyChainIdx = ((_, keyChainIdx, _, _, _)) => keyChainIdx;
+  let keyChainIdent = ((_, ident, _, _, _)) => ident;
   let coSignerIdx = ((_, _, coSignerIdx, _, _)) => coSignerIdx;
   let chainIdx = ((_, _, _, chainIdx, _)) => chainIdx;
   let addressIdx = ((_, _, _, _, addressIdx)) => addressIdx;
@@ -73,7 +74,7 @@ module Coordinates = {
     Json.Encode.(
       ((a, b), (c, d, e))
       |> tuple2(
-           tuple2(AccountIndex.encode, AccountKeyChainIndex.encode),
+           tuple2(AccountIndex.encode, AccountKeyChain.Identifier.encode),
            tuple3(
              CoSignerIndex.encode,
              ChainIndex.encode,
@@ -86,7 +87,7 @@ module Coordinates = {
       Json.Decode.(
         raw
         |> tuple2(
-             tuple2(AccountIndex.decode, AccountKeyChainIndex.decode),
+             tuple2(AccountIndex.decode, AccountKeyChain.Identifier.decode),
              tuple3(
                CoSignerIndex.decode,
                ChainIndex.decode,

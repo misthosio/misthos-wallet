@@ -64,18 +64,16 @@ function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
   return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
 }
 
-function accountKeyChainFrom($staropt$star) {
-  var keyChainIdx = $staropt$star ? $staropt$star[0] : WalletTypes.AccountKeyChainIndex[/* first */2];
-  var partial_arg = WalletTypes.AccountIndex[/* default */9];
-  return (function (param) {
-      return AccountKeyChain.make(partial_arg, keyChainIdx, param);
-    });
+var partial_arg = WalletTypes.AccountIndex[/* default */9];
+
+function accountKeyChainFrom(param) {
+  return AccountKeyChain.make(partial_arg, param);
 }
 
 function accountKeyChain($staropt$star, $staropt$star$1, users) {
   var ventureId = $staropt$star ? $staropt$star[0] : PrimitiveTypes.VentureId[/* fromString */1]("test");
   var keyChainIdx = $staropt$star$1 ? $staropt$star$1[0] : 0;
-  return accountKeyChainFrom(/* Some */[WalletTypes.AccountKeyChainIndex[/* fromInt */1](keyChainIdx)])(List.map((function (user) {
+  return accountKeyChainFrom(List.map((function (user) {
                     return /* tuple */[
                             user[/* userId */0],
                             custodianKeyChain(/* None */0, ventureId, keyChainIdx, user)
@@ -140,8 +138,6 @@ var custodianRemovalAccepted = Event.Custodian[/* Removal */7][/* Accepted */6][
 
 var custodianKeyChainUpdated = Event.CustodianKeyChainUpdated[/* make */0];
 
-var accountKeyChainUpdated = Event.AccountKeyChainUpdated[/* make */0];
-
 var accountKeyChainIdentified = Event.AccountKeyChainIdentified[/* make */0];
 
 function accountKeyChainActivated($staropt$star, custodian, identifier) {
@@ -167,7 +163,6 @@ var Event$1 = /* module */[
   /* custodianRemovalEndorsed */custodianRemovalEndorsed,
   /* custodianRemovalAccepted */custodianRemovalAccepted,
   /* custodianKeyChainUpdated */custodianKeyChainUpdated,
-  /* accountKeyChainUpdated */accountKeyChainUpdated,
   /* accountKeyChainIdentified */accountKeyChainIdentified,
   /* accountKeyChainActivated */accountKeyChainActivated
 ];
@@ -494,76 +489,6 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
   return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(29, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
 }
 
-function withAccountKeyChain(l) {
-  var match = Curry._3(EventLog.reduce, (function (param, param$1) {
-          var $$event = param$1[/* event */0];
-          var res = param[1];
-          var idx = param[0];
-          switch ($$event.tag | 0) {
-            case 8 : 
-                var tmp;
-                try {
-                  tmp = List.remove_assoc($$event[0][/* data */2][/* id */0], res);
-                }
-                catch (exn){
-                  if (exn === Caml_builtin_exceptions.not_found) {
-                    tmp = res;
-                  } else {
-                    throw exn;
-                  }
-                }
-                return /* tuple */[
-                        idx,
-                        tmp
-                      ];
-            case 20 : 
-                var tmp$1;
-                try {
-                  tmp$1 = List.remove_assoc($$event[0][/* data */2][/* custodianId */0], res);
-                }
-                catch (exn$1){
-                  if (exn$1 === Caml_builtin_exceptions.not_found) {
-                    tmp$1 = res;
-                  } else {
-                    throw exn$1;
-                  }
-                }
-                return /* tuple */[
-                        idx,
-                        tmp$1
-                      ];
-            case 29 : 
-                var match = $$event[0];
-                var custodianId = match[/* custodianId */1];
-                return /* tuple */[
-                        idx,
-                        /* :: */[
-                          /* tuple */[
-                            custodianId,
-                            match[/* keyChain */2]
-                          ],
-                          List.remove_assoc(custodianId, res)
-                        ]
-                      ];
-            case 32 : 
-                return /* tuple */[
-                        WalletTypes.AccountKeyChainIndex[/* next */3]($$event[0][/* keyChain */0][/* keyChainIdx */1]),
-                        res
-                      ];
-            default:
-              return /* tuple */[
-                      idx,
-                      res
-                    ];
-          }
-        }), /* tuple */[
-        WalletTypes.AccountKeyChainIndex[/* first */2],
-        /* [] */0
-      ], l[/* log */3]);
-  var accountKeyChain = accountKeyChainFrom(/* Some */[match[0]])(match[1]);
-  return appendSystemEvent(/* AccountKeyChainUpdated */Block.__(32, [Curry._1(accountKeyChainUpdated, accountKeyChain)]), l);
-}
-
 function withAccountKeyChainIdentified(l) {
   var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
@@ -604,7 +529,7 @@ function withAccountKeyChainIdentified(l) {
               return res;
           }
         }), /* [] */0, l[/* log */3]);
-  var accountKeyChain = accountKeyChainFrom(/* Some */[WalletTypes.AccountKeyChainIndex[/* first */2]])(keyChains);
+  var accountKeyChain = accountKeyChainFrom(keyChains);
   return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(30, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
 }
 
@@ -653,7 +578,6 @@ var Log = /* module */[
   /* withCustodianRemovalAccepted */withCustodianRemovalAccepted,
   /* withCustodianRemoved */withCustodianRemoved,
   /* withCustodianKeyChain */withCustodianKeyChain,
-  /* withAccountKeyChain */withAccountKeyChain,
   /* withAccountKeyChainIdentified */withAccountKeyChainIdentified,
   /* withAccountKeyChainActivated */withAccountKeyChainActivated
 ];

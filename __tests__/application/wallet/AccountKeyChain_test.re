@@ -49,18 +49,9 @@ let () = {
     test("lookup", () =>
       expect(
         keyChains
-        |> AccountKeyChain.Collection.lookup(
-             AccountIndex.default,
-             AccountKeyChainIndex.first,
-           ),
+        |> AccountKeyChain.Collection.lookup(AccountIndex.default, ""),
       )
       |> toEqual(accountKeyChain1)
-    );
-    test("latest", () =>
-      expect(
-        keyChains |> AccountKeyChain.Collection.latest(AccountIndex.default),
-      )
-      |> toEqual(accountKeyChain2)
     );
   });
 };

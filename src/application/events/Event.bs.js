@@ -413,7 +413,7 @@ function encode$6($$event) {
                 /* :: */[
                   /* tuple */[
                     "changeAddressCoordinates",
-                    Json_encode.nullable(Address.Coordinates[/* encode */9], $$event[/* changeAddressCoordinates */2])
+                    Json_encode.nullable(Address.Coordinates[/* encode */10], $$event[/* changeAddressCoordinates */2])
                   ],
                   /* [] */0
                 ]
@@ -422,7 +422,7 @@ function encode$6($$event) {
 }
 
 function decode$6(raw) {
-  var partial_arg = Address.Coordinates[/* decode */10];
+  var partial_arg = Address.Coordinates[/* decode */11];
   return /* record */[
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw),
@@ -779,44 +779,14 @@ var AccountKeyChainActivated = /* module */[
   /* decode */decode$13
 ];
 
-function make$8(keyChain) {
-  return /* record */[/* keyChain */keyChain];
-}
-
-function encode$14($$event) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "type",
-                "AccountKeyChainUpdated"
-              ],
-              /* :: */[
-                /* tuple */[
-                  "keyChain",
-                  AccountKeyChain.encode($$event[/* keyChain */0])
-                ],
-                /* [] */0
-              ]
-            ]);
-}
-
-function decode$14(raw) {
-  return /* record */[/* keyChain */Json_decode.field("keyChain", AccountKeyChain.decode, raw)];
-}
-
-var AccountKeyChainUpdated = /* module */[
-  /* make */make$8,
-  /* encode */encode$14,
-  /* decode */decode$14
-];
-
-function make$9(coordinates, address) {
+function make$8(coordinates, address) {
   return /* record */[
           /* coordinates */coordinates,
           /* address */address
         ];
 }
 
-function encode$15($$event) {
+function encode$14($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -825,7 +795,7 @@ function encode$15($$event) {
               /* :: */[
                 /* tuple */[
                   "coordinates",
-                  Address.Coordinates[/* encode */9]($$event[/* coordinates */0])
+                  Address.Coordinates[/* encode */10]($$event[/* coordinates */0])
                 ],
                 /* :: */[
                   /* tuple */[
@@ -838,20 +808,20 @@ function encode$15($$event) {
             ]);
 }
 
-function decode$15(raw) {
+function decode$14(raw) {
   return /* record */[
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */11], raw),
           /* address */Json_decode.field("address", Json_decode.string, raw)
         ];
 }
 
 var IncomeAddressExposed = /* module */[
-  /* make */make$9,
-  /* encode */encode$15,
-  /* decode */decode$15
+  /* make */make$8,
+  /* encode */encode$14,
+  /* decode */decode$14
 ];
 
-function make$10(address, txId, amount) {
+function make$9(address, txId, amount) {
   return /* record */[
           /* address */address,
           /* txId */txId,
@@ -859,7 +829,7 @@ function make$10(address, txId, amount) {
         ];
 }
 
-function encode$16($$event) {
+function encode$15($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -887,7 +857,7 @@ function encode$16($$event) {
             ]);
 }
 
-function decode$16(raw) {
+function decode$15(raw) {
   return /* record */[
           /* address */Json_decode.field("address", Json_decode.string, raw),
           /* txId */Json_decode.field("txId", Json_decode.string, raw),
@@ -896,9 +866,9 @@ function decode$16(raw) {
 }
 
 var IncomeDetected = /* module */[
-  /* make */make$10,
-  /* encode */encode$16,
-  /* decode */decode$16
+  /* make */make$9,
+  /* encode */encode$15,
+  /* decode */decode$15
 ];
 
 var BadData = Caml_exceptions.create("Event.BadData");
@@ -1010,7 +980,7 @@ function makePayoutRejected(processId, rejectorId) {
   return /* PayoutRejected */Block.__(22, [Curry._2(Rejected$5[/* make */0], processId, rejectorId)]);
 }
 
-function encode$17(param) {
+function encode$16(param) {
   switch (param.tag | 0) {
     case 0 : 
         return encode(param[0]);
@@ -1080,8 +1050,6 @@ function encode$17(param) {
         return encode$14(param[0]);
     case 33 : 
         return encode$15(param[0]);
-    case 34 : 
-        return encode$16(param[0]);
     
   }
 }
@@ -1100,7 +1068,6 @@ function isSystemEvent(param) {
     case 30 : 
     case 32 : 
     case 33 : 
-    case 34 : 
         return true;
     default:
       return false;
@@ -1109,7 +1076,7 @@ function isSystemEvent(param) {
 
 var UnknownEvent = Caml_exceptions.create("Event.UnknownEvent");
 
-function decode$17(raw) {
+function decode$16(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "AccountCreationAccepted" : 
@@ -1124,8 +1091,6 @@ function decode$17(raw) {
         return /* AccountKeyChainActivated */Block.__(31, [decode$13(raw)]);
     case "AccountKeyChainIdentified" : 
         return /* AccountKeyChainIdentified */Block.__(30, [decode$12(raw)]);
-    case "AccountKeyChainUpdated" : 
-        return /* AccountKeyChainUpdated */Block.__(32, [decode$14(raw)]);
     case "CustodianAccepted" : 
         return /* CustodianAccepted */Block.__(16, [Curry._1(Accepted$3[/* decode */2], raw)]);
     case "CustodianEndorsed" : 
@@ -1145,9 +1110,9 @@ function decode$17(raw) {
     case "CustodianRemovalRejected" : 
         return /* CustodianRemovalRejected */Block.__(18, [Curry._1(Rejected$4[/* decode */2], raw)]);
     case "IncomeAddressExposed" : 
-        return /* IncomeAddressExposed */Block.__(33, [decode$15(raw)]);
+        return /* IncomeAddressExposed */Block.__(32, [decode$14(raw)]);
     case "IncomeDetected" : 
-        return /* IncomeDetected */Block.__(34, [decode$16(raw)]);
+        return /* IncomeDetected */Block.__(33, [decode$15(raw)]);
     case "PartnerAccepted" : 
         return /* PartnerAccepted */Block.__(4, [Curry._1(Accepted[/* decode */2], raw)]);
     case "PartnerEndorsed" : 
@@ -1191,7 +1156,7 @@ function decode$17(raw) {
 }
 
 function getIncomeAddressExposedExn($$event) {
-  if ($$event.tag === 33) {
+  if ($$event.tag === 32) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getIncomeAddressExposedExn");
@@ -1211,14 +1176,6 @@ function getAccountKeyChainActivatedExn($$event) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getAccountKeyChainActivatedExn");
-  }
-}
-
-function getAccountKeyChainUpdatedExn($$event) {
-  if ($$event.tag === 32) {
-    return $$event[0];
-  } else {
-    return Js_exn.raiseError("getAccountKeyChainUpdatedExn");
   }
 }
 
@@ -1414,7 +1371,6 @@ exports.Payout = Payout;
 exports.CustodianKeyChainUpdated = CustodianKeyChainUpdated;
 exports.AccountKeyChainIdentified = AccountKeyChainIdentified;
 exports.AccountKeyChainActivated = AccountKeyChainActivated;
-exports.AccountKeyChainUpdated = AccountKeyChainUpdated;
 exports.IncomeAddressExposed = IncomeAddressExposed;
 exports.IncomeDetected = IncomeDetected;
 exports.BadData = BadData;
@@ -1431,14 +1387,13 @@ exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;
 exports.makePayoutEndorsed = makePayoutEndorsed;
 exports.makePayoutRejected = makePayoutRejected;
-exports.encode = encode$17;
+exports.encode = encode$16;
 exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;
-exports.decode = decode$17;
+exports.decode = decode$16;
 exports.getIncomeAddressExposedExn = getIncomeAddressExposedExn;
 exports.getAccountKeyChainIdentifiedExn = getAccountKeyChainIdentifiedExn;
 exports.getAccountKeyChainActivatedExn = getAccountKeyChainActivatedExn;
-exports.getAccountKeyChainUpdatedExn = getAccountKeyChainUpdatedExn;
 exports.getCustodianKeyChainUpdatedExn = getCustodianKeyChainUpdatedExn;
 exports.getPayoutBroadcastFailedExn = getPayoutBroadcastFailedExn;
 exports.getPayoutBroadcastExn = getPayoutBroadcastExn;

@@ -21,7 +21,7 @@ describe("build", (function () {
           /* nPubKeys */1,
           /* coordinates : tuple */[
             WalletTypes.AccountIndex[/* first */2],
-            WalletTypes.AccountKeyChainIndex[/* first */2],
+            "identifier",
             WalletTypes.CoSignerIndex[/* first */2],
             WalletTypes.ChainIndex[/* externalChain */9],
             WalletTypes.AddressIndex[/* first */2]
@@ -40,7 +40,7 @@ describe("build", (function () {
             /* nPubKeys */1,
             /* coordinates : tuple */[
               WalletTypes.AccountIndex[/* first */2],
-              WalletTypes.AccountKeyChainIndex[/* first */2],
+              "identifier",
               WalletTypes.CoSignerIndex[/* first */2],
               WalletTypes.ChainIndex[/* externalChain */9],
               WalletTypes.AddressIndex[/* next */3](WalletTypes.AddressIndex[/* first */2])
@@ -54,7 +54,7 @@ describe("build", (function () {
         ];
         var changeAddress_002 = /* coordinates : tuple */[
           WalletTypes.AccountIndex[/* first */2],
-          WalletTypes.AccountKeyChainIndex[/* first */2],
+          "identifier",
           WalletTypes.CoSignerIndex[/* first */2],
           WalletTypes.ChainIndex[/* externalChain */9],
           WalletTypes.AddressIndex[/* first */2]

@@ -4,6 +4,7 @@
 var BTC = require("../application/wallet/BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var Address = require("../application/wallet/Address.bs.js");
+var AccountKeyChain = require("../application/wallet/AccountKeyChain.bs.js");
 var PayoutTransaction = require("../application/wallet/PayoutTransaction.bs.js");
 
 function make() {
@@ -154,28 +155,15 @@ function apply($$event, state) {
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 32 : 
-        var keyChain = $$event[0][/* keyChain */0];
+    case 30 : 
         return /* record */[
                 /* network */state[/* network */0],
-                /* accountKeyChains : :: */[
-                  /* tuple */[
-                    keyChain[/* accountIdx */0],
-                    /* :: */[
-                      /* tuple */[
-                        keyChain[/* keyChainIdx */1],
-                        keyChain
-                      ],
-                      List.assoc(keyChain[/* accountIdx */0], state[/* accountKeyChains */1])
-                    ]
-                  ],
-                  List.remove_assoc(keyChain[/* accountIdx */0], state[/* accountKeyChains */1])
-                ],
+                /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */1], state[/* accountKeyChains */1]),
                 /* balance */state[/* balance */2],
                 /* exposedCoordinates */state[/* exposedCoordinates */3],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 33 : 
+    case 32 : 
         var coordinates = $$event[0][/* coordinates */0];
         var accountIdx$2 = Address.Coordinates[/* accountIdx */3](coordinates);
         return /* record */[
@@ -194,7 +182,7 @@ function apply($$event, state) {
                 ],
                 /* payoutProcesses */state[/* payoutProcesses */4]
               ];
-    case 34 : 
+    case 33 : 
         var match$4 = $$event[0];
         var accountIdx$3 = getAccountIndexOfAddress(match$4[/* address */0], state);
         var balance$3 = List.assoc(accountIdx$3, state[/* balance */2]);

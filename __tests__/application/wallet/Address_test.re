@@ -11,12 +11,12 @@ open WalletTypes;
 let testCoordinates =
     (
       expected,
-      (accountIdx, accountKeyChainIdx, coSignerIdx, chainIdx, addressIdx),
+      (accountIdx, keyChainIdent, coSignerIdx, chainIdx, addressIdx),
     ) =>
   test("should match", () =>
     (
       accountIdx |> AccountIndex.toInt,
-      accountKeyChainIdx |> AccountKeyChainIndex.toInt,
+      keyChainIdent,
       coSignerIdx |> CoSignerIndex.toInt,
       chainIdx |> ChainIndex.toInt,
       addressIdx |> AddressIndex.toInt,
@@ -31,7 +31,7 @@ let () = {
   describe("Coordinates", () => {
     describe("first coordinates", () =>
       Address.Coordinates.nextInternal(user1.userId, [], accountKeyChain)
-      |> testCoordinates((0, 0, 2, 1, 0))
+      |> testCoordinates((0, "", 2, 1, 0))
     );
     describe("next coordinates", () => {
       let coordinates1 =
@@ -47,7 +47,7 @@ let () = {
         [coordinates2, coordinates1],
         accountKeyChain,
       )
-      |> testCoordinates((0, 0, 2, 0, 2));
+      |> testCoordinates((0, "", 2, 0, 2));
     });
   });
   describe("make", () =>

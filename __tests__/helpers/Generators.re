@@ -62,8 +62,7 @@ let custodianKeyChain =
   )
   |> CustodianKeyChain.toPublicKeyChain;
 
-let accountKeyChainFrom = (~keyChainIdx=AccountKeyChainIndex.first) =>
-  AccountKeyChain.make(AccountIndex.default, keyChainIdx);
+let accountKeyChainFrom = AccountKeyChain.make(AccountIndex.default);
 
 let accountKeyChain =
     (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
@@ -71,9 +70,7 @@ let accountKeyChain =
   |> List.map((user: Session.Data.t) =>
        (user.userId, custodianKeyChain(~ventureId, ~keyChainIdx, user))
      )
-  |> accountKeyChainFrom(
-       ~keyChainIdx=keyChainIdx |> AccountKeyChainIndex.fromInt,
-     );
+  |> accountKeyChainFrom;
 
 module Event = {
   let createVenture = (session: Session.Data.t) =>
@@ -177,7 +174,6 @@ module Event = {
     |> AppEvent.getCustodianRemovalEndorsedExn;
   let custodianRemovalAccepted = AppEvent.Custodian.Removal.Accepted.fromProposal;
   let custodianKeyChainUpdated = AppEvent.CustodianKeyChainUpdated.make;
-  let accountKeyChainUpdated = AppEvent.AccountKeyChainUpdated.make;
   let accountKeyChainIdentified = AppEvent.AccountKeyChainIdentified.make;
   let accountKeyChainActivated =
       (~sequence=0, ~custodian: Session.Data.t, ~identifier) =>
@@ -510,47 +506,6 @@ module Log = {
          ),
        );
   };
-  let withAccountKeyChain = ({log} as l) => {
-    let (keyChainIdx, keyChains) =
-      log
-      |> EventLog.reduce(
-           ((idx, res), {event}) =>
-             switch (event) {
-             | CustodianKeyChainUpdated({custodianId, keyChain}) => (
-                 idx,
-                 [
-                   (custodianId, keyChain),
-                   ...res |> List.remove_assoc(custodianId),
-                 ],
-               )
-             | CustodianRemovalAccepted({data: {custodianId}}) => (
-                 idx,
-                 try (res |> List.remove_assoc(custodianId)) {
-                 | Not_found => res
-                 },
-               )
-             | PartnerRemovalAccepted({data: {id}}) => (
-                 idx,
-                 try (res |> List.remove_assoc(id)) {
-                 | Not_found => res
-                 },
-               )
-             | AccountKeyChainUpdated({keyChain: {keyChainIdx}}) => (
-                 keyChainIdx |> AccountKeyChainIndex.next,
-                 res,
-               )
-             | _ => (idx, res)
-             },
-           (AccountKeyChainIndex.first, []),
-         );
-    let accountKeyChain = accountKeyChainFrom(~keyChainIdx, keyChains);
-    l
-    |> appendSystemEvent(
-         AccountKeyChainUpdated(
-           Event.accountKeyChainUpdated(~keyChain=accountKeyChain),
-         ),
-       );
-  };
   let withAccountKeyChainIdentified = ({log} as l) => {
     let keyChains =
       log
@@ -573,8 +528,7 @@ module Log = {
              },
            [],
          );
-    let accountKeyChain =
-      accountKeyChainFrom(~keyChainIdx=AccountKeyChainIndex.first, keyChains);
+    let accountKeyChain = accountKeyChainFrom(keyChains);
     l
     |> appendSystemEvent(
          AccountKeyChainIdentified(

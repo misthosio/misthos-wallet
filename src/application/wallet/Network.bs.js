@@ -72,7 +72,7 @@ function encodeInput(input) {
                         /* :: */[
                           /* tuple */[
                             "coordinates",
-                            Address.Coordinates[/* encode */9](input[/* coordinates */6])
+                            Address.Coordinates[/* encode */10](input[/* coordinates */6])
                           ],
                           /* [] */0
                         ]
@@ -92,7 +92,7 @@ function decodeInput(raw) {
           /* value */Json_decode.field("value", BTC.decode, raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
           /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw),
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw)
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */11], raw)
         ];
 }
 

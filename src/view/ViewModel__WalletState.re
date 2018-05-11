@@ -11,8 +11,7 @@ type balance = {
 
 type t = {
   network: Network.t,
-  accountKeyChains:
-    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+  accountKeyChains: AccountKeyChain.Collection.t,
   balance: list((accountIdx, balance)),
   exposedCoordinates: list((accountIdx, list(Address.Coordinates.t))),
   payoutProcesses: list((ProcessId.t, (accountIdx, PayoutTransaction.t))),
@@ -55,18 +54,10 @@ let apply = (event: Event.t, state) =>
         ...state.balance,
       ],
     }
-  | AccountKeyChainUpdated(({keyChain}: AccountKeyChainUpdated.t)) => {
+  | AccountKeyChainIdentified(({keyChain}: AccountKeyChainIdentified.t)) => {
       ...state,
-      accountKeyChains: [
-        (
-          keyChain.accountIdx,
-          [
-            (keyChain.keyChainIdx, keyChain),
-            ...state.accountKeyChains |> List.assoc(keyChain.accountIdx),
-          ],
-        ),
-        ...state.accountKeyChains |> List.remove_assoc(keyChain.accountIdx),
-      ],
+      accountKeyChains:
+        state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
     }
   | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;

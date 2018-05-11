@@ -22,49 +22,45 @@ module Identifier = {
          nCoSigners |> string_of_int,
        )
     |> Utils.hash;
+  let neq = (a, b) => a != b;
+  let eq = (a, b) => a == b;
 };
 
 type t = {
   accountIdx,
-  keyChainIdx: accountKeyChainIdx,
+  identifier: Identifier.t,
   nCoSigners: int,
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
 };
 
 let defaultCoSignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8|];
 
-let make = (accountIdx, keyChainIdx, custodianKeyChains) => {
-  accountIdx,
-  keyChainIdx,
-  custodianKeyChains,
-  nCoSigners: defaultCoSignerList[custodianKeyChains |> List.length],
+let make = (accountIdx, custodianKeyChains) => {
+  let nCoSigners = defaultCoSignerList[custodianKeyChains |> List.length];
+  {
+    accountIdx,
+    identifier: Identifier.make(nCoSigners, custodianKeyChains),
+    custodianKeyChains,
+    nCoSigners,
+  };
 };
 
 module Collection = {
-  type collection = list((accountIdx, list((accountKeyChainIdx, t))));
+  type collection = list((accountIdx, list((Identifier.t, t))));
   type t = collection;
   let make = () => [];
-  let add = ({accountIdx, keyChainIdx} as keyChain, collection) => {
+  let add = ({accountIdx, identifier} as keyChain, collection) => {
     let keyChains =
       try (collection |> List.assoc(accountIdx)) {
       | Not_found => []
       };
     [
-      (accountIdx, [(keyChainIdx, keyChain), ...keyChains]),
+      (accountIdx, [(identifier, keyChain), ...keyChains]),
       ...collection |> List.remove_assoc(accountIdx),
     ];
   };
   let lookup = (accountIdx, accountKeyChainIdx, accounts: t) =>
     accounts |> List.assoc(accountIdx) |> List.assoc(accountKeyChainIdx);
-  let latest = (accountIdx, accounts: t) =>
-    accounts
-    |> List.assoc(accountIdx)
-    |> List.fold_left(
-         (res, (keyChainIdx, keyChain)) =>
-           AccountKeyChainIndex.compare(keyChainIdx, res.keyChainIdx) > 0 ?
-             keyChain : res,
-         accounts |> List.assoc(accountIdx) |> List.hd |> snd,
-       );
 };
 
 let encode = keyChain =>
@@ -79,7 +75,7 @@ let encode = keyChain =>
       ),
       ("nCoSigners", int(keyChain.nCoSigners)),
       ("accountIdx", AccountIndex.encode(keyChain.accountIdx)),
-      ("keyChainIdx", AccountKeyChainIndex.encode(keyChain.keyChainIdx)),
+      ("identifier", Identifier.encode(keyChain.identifier)),
     ])
   );
 
@@ -93,5 +89,5 @@ let decode = raw =>
          ),
     nCoSigners: raw |> field("nCoSigners", int),
     accountIdx: raw |> field("accountIdx", AccountIndex.decode),
-    keyChainIdx: raw |> field("keyChainIdx", AccountKeyChainIndex.decode),
+    identifier: raw |> field("identifier", Identifier.decode),
   };

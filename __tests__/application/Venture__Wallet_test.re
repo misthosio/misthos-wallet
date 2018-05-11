@@ -15,7 +15,9 @@ let () =
         |> withCustodian(userB, ~supporters=[userA, userB])
         |> withCustodianKeyChain(userA)
         |> withCustodianKeyChain(userB)
-        |> withAccountKeyChain
+        |> withAccountKeyChainIdentified
+        |> withAccountKeyChainActivated(userA)
+        |> withAccountKeyChainActivated(userB)
       );
     log
     |> constructState
@@ -29,7 +31,10 @@ let () =
         |> withPartner(userC, ~supporters=[userA, userB])
         |> withCustodian(userC, ~supporters=[userA, userB, userC])
         |> withCustodianKeyChain(userC)
-        |> withAccountKeyChain
+        |> withAccountKeyChainIdentified
+        |> withAccountKeyChainActivated(userA)
+        |> withAccountKeyChainActivated(userB)
+        |> withAccountKeyChainActivated(userC)
       );
     log
     |> constructState

@@ -52,8 +52,7 @@ type t = {
   creatorData: Partner.Data.t,
   custodianKeyChains:
     list((userId, list((accountIdx, list(CustodianKeyChain.public))))),
-  accountKeyChains:
-    list((accountIdx, list((accountKeyChainIdx, AccountKeyChain.t)))),
+  accountKeyChains: AccountKeyChain.Collection.t,
 };
 
 let make = () => {
@@ -299,20 +298,12 @@ let apply = ({hash, event}: EventLog.item, state) => {
         ...state.custodianKeyChains |> List.remove_assoc(custodianId),
       ],
     };
-  | AccountKeyChainUpdated({keyChain}) =>
-    let accountChains =
-      try (state.accountKeyChains |> List.assoc(keyChain.accountIdx)) {
-      | Not_found => []
-      };
-    {
+  | AccountKeyChainActivated(_) => state
+  | AccountKeyChainIdentified({keyChain}) => {
       ...state,
-      accountKeyChains: [
-        (
-          keyChain.accountIdx,
-          [(keyChain.keyChainIdx, keyChain), ...accountChains],
-        ),
-      ],
-    };
+      accountKeyChains:
+        state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
+    }
   | IncomeDetected(_)
   | IncomeAddressExposed(_)
   | PayoutSigned(_)
@@ -618,77 +609,78 @@ let validateCustodianKeyChainUpdated =
 
 let validateAccountKeyChainIdentified =
     (
-      {keyChain: {accountIdx}, identifier}: AccountKeyChainIdentified.t,
+      {keyChain: {accountIdx}}: AccountKeyChainIdentified.t,
       state,
       _issuerId,
     ) =>
   state |> accountExists(accountIdx);
 
-let validateAccountKeyChainUpdated =
-    (
-      {keyChain: {accountIdx, keyChainIdx, custodianKeyChains}}: AccountKeyChainUpdated.t,
-      {
-        accountCreationData,
-        completedProcesses,
-        custodianKeyChains: currentCustodianKeyChains,
-        accountKeyChains,
-        currentCustodians,
-      },
-      _issuerId,
-    ) =>
-  try (
-    {
-      let (pId, _) =
-        accountCreationData
-        |> List.find(((_, (_, data: AccountCreation.Data.t))) =>
-             AccountIndex.eq(data.accountIdx, accountIdx)
-           );
-      if (completedProcesses |> List.mem(pId)) {
-        if (accountKeyChains
-            |> List.assoc(accountIdx)
-            |> List.length != (keyChainIdx |> AccountKeyChainIndex.toInt)) {
-          BadData("Bad AccountKeyChainIndex");
-        } else {
-          let currentCustodians = currentCustodians |> List.assoc(accountIdx);
-          let allThere =
-            currentCustodians
-            |> List.fold_left(
-                 (res, custodian) =>
-                   res && custodianKeyChains |> List.mem_assoc(custodian),
-                 true,
-               );
-          if (allThere == false
-              || currentCustodians
-              |> List.length != (custodianKeyChains |> List.length)) {
-            BadData("Wrong custodians");
-          } else {
-            custodianKeyChains
-            |> List.map(((partnerId, keyChain)) =>
-                 try (
-                   {
-                     let latestKeyChain =
-                       currentCustodianKeyChains
-                       |> List.assoc(partnerId)
-                       |> List.assoc(accountIdx)
-                       |> List.hd;
-                     CustodianKeyChain.eq(keyChain, latestKeyChain);
-                   }
-                 ) {
-                 | Not_found => false
-                 }
-               )
-            |> List.fold_left((result, test) => result && test, true) ?
-              Ok : BadData("Bad CustodianKeyChain");
-          };
-        };
-      } else {
-        BadData("Account doesn't exist");
-      };
-    }
-  ) {
-  | Not_found => BadData("Account doesn't exist")
-  };
+let validateAccountKeyChainActivated = (_, _, _) => Ok;
 
+/* let validateAccountKeyChainUpdated = */
+/*     ( */
+/*       {keyChain: {accountIdx, keyChainIdx, custodianKeyChains}}: AccountKeyChainUpdated.t, */
+/*       { */
+/*         accountCreationData, */
+/*         completedProcesses, */
+/*         custodianKeyChains: currentCustodianKeyChains, */
+/*         accountKeyChains, */
+/*         currentCustodians, */
+/*       }, */
+/*       _issuerId, */
+/*     ) => */
+/*   try ( */
+/*     { */
+/*       let (pId, _) = */
+/*         accountCreationData */
+/*         |> List.find(((_, (_, data: AccountCreation.Data.t))) => */
+/*              AccountIndex.eq(data.accountIdx, accountIdx) */
+/*            ); */
+/*       if (completedProcesses |> List.mem(pId)) { */
+/*         if (accountKeyChains */
+/*             |> List.assoc(accountIdx) */
+/*             |> List.length != (keyChainIdx |> AccountKeyChainIndex.toInt)) { */
+/*           BadData("Bad AccountKeyChainIndex"); */
+/*         } else { */
+/*           let currentCustodians = currentCustodians |> List.assoc(accountIdx); */
+/*           let allThere = */
+/*             currentCustodians */
+/*             |> List.fold_left( */
+/*                  (res, custodian) => */
+/*                    res && custodianKeyChains |> List.mem_assoc(custodian), */
+/*                  true, */
+/*                ); */
+/*           if (allThere == false */
+/*               || currentCustodians */
+/*               |> List.length != (custodianKeyChains |> List.length)) { */
+/*             BadData("Wrong custodians"); */
+/*           } else { */
+/*             custodianKeyChains */
+/*             |> List.map(((partnerId, keyChain)) => */
+/*                  try ( */
+/*                    { */
+/*                      let latestKeyChain = */
+/*                        currentCustodianKeyChains */
+/*                        |> List.assoc(partnerId) */
+/*                        |> List.assoc(accountIdx) */
+/*                        |> List.hd; */
+/*                      CustodianKeyChain.eq(keyChain, latestKeyChain); */
+/*                    } */
+/*                  ) { */
+/*                  | Not_found => false */
+/*                  } */
+/*                ) */
+/*             |> List.fold_left((result, test) => result && test, true) ? */
+/*               Ok : BadData("Bad CustodianKeyChain"); */
+/*           }; */
+/*         }; */
+/*       } else { */
+/*         BadData("Account doesn't exist"); */
+/*       }; */
+/*     } */
+/*   ) { */
+/*   | Not_found => BadData("Account doesn't exist") */
+/*   }; */
 let validateIncomeAddressExposed =
     (
       {coordinates, address}: IncomeAddressExposed.t,
@@ -835,7 +827,8 @@ let validateEvent =
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainIdentified(update) =>
     validateAccountKeyChainIdentified(update)
-  | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
+  | AccountKeyChainActivated(update) =>
+    validateAccountKeyChainActivated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)

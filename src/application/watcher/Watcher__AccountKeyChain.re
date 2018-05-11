@@ -6,27 +6,54 @@ open WalletTypes;
 
 type state = {
   systemIssuer: Bitcoin.ECPair.t,
-  active: bool,
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
-  nextKeyChainIdx: accountKeyChainIdx,
-  pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
+  identifiedKeyChains: list((AccountKeyChain.Identifier.t, int)),
+  identifiedEvent: option((Bitcoin.ECPair.t, Event.t)),
+  activatedEvent: option((Bitcoin.ECPair.t, Event.t)),
+  active: bool,
 };
 
 let make =
     (
-      {userId: localUserId}: Session.Data.t,
-      {data}: AccountCreation.Accepted.t,
+      {userId: localUserId, issuerKeyPair}: Session.Data.t,
+      {data: {accountIdx}}: AccountCreation.Accepted.t,
       log,
     ) => {
-  let accountIdx = data.accountIdx;
+  let identifiedEvent = (keyChains, state) => {
+    let event =
+      AccountKeyChainIdentified.make(
+        ~keyChain=AccountKeyChain.make(accountIdx, keyChains),
+      );
+    let identifier = event.identifier;
+    state.identifiedKeyChains |> List.mem_assoc(identifier) ?
+      (identifier, state.identifiedKeyChains, None) :
+      (
+        identifier,
+        [(identifier, 0), ...state.identifiedKeyChains],
+        Some((state.systemIssuer, AccountKeyChainIdentified(event))),
+      );
+  };
+  let activatedEvent = (identifier, identifiedKeyChains) =>
+    Some((
+      issuerKeyPair,
+      AccountKeyChainActivated(
+        AccountKeyChainActivated.make(
+          ~accountIdx,
+          ~custodianId=localUserId,
+          ~identifier,
+          ~sequence=identifiedKeyChains |> List.assoc(identifier),
+        ),
+      ),
+    ));
   let process = {
     val state =
       ref({
-        active: false,
         custodianKeyChains: [],
-        nextKeyChainIdx: AccountKeyChainIndex.first,
+        identifiedKeyChains: [],
         systemIssuer: Bitcoin.ECPair.makeRandom(),
-        pendingEvent: None,
+        identifiedEvent: None,
+        activatedEvent: None,
+        active: false,
       });
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
@@ -34,21 +61,13 @@ let make =
         (
           switch (event) {
           | VentureCreated({systemIssuer}) => {...state^, systemIssuer}
-          | CustodianAccepted({data: {partnerId, accountIdx: cAccountIdx}})
-              when
-                UserId.eq(partnerId, localUserId)
-                && AccountIndex.eq(accountIdx, cAccountIdx) => {
+          | PartnerAccepted({data: {id}}) when UserId.eq(id, localUserId) => {
               ...state^,
               active: true,
             }
-          | CustodianRemovalAccepted({
-              data: {custodianId, accountIdx: cAccountIdx},
-            })
-              when
-                UserId.eq(custodianId, localUserId)
-                && AccountIndex.eq(accountIdx, cAccountIdx) => {
+          | PartnerRemovalAccepted({data: {id}})
+              when UserId.eq(id, localUserId) => {
               ...state^,
-              pendingEvent: None,
               active: false,
             }
           | CustodianRemovalAccepted({
@@ -59,23 +78,14 @@ let make =
               {
                 let custodianKeyChains =
                   state^.custodianKeyChains |> List.remove_assoc(custodianId);
+                let (identifier, identifiedKeyChains, event) =
+                  state^ |> identifiedEvent(custodianKeyChains);
                 {
                   ...state^,
-                  custodianKeyChains,
-                  pendingEvent:
-                    Some((
-                      state^.systemIssuer,
-                      AccountKeyChainUpdated(
-                        AccountKeyChainUpdated.make(
-                          ~keyChain=
-                            AccountKeyChain.make(
-                              accountIdx,
-                              state^.nextKeyChainIdx,
-                              custodianKeyChains,
-                            ),
-                        ),
-                      ),
-                    )),
+                  identifiedKeyChains,
+                  activatedEvent:
+                    activatedEvent(identifier, identifiedKeyChains),
+                  identifiedEvent: event,
                 };
               }
             ) {
@@ -87,30 +97,37 @@ let make =
               (custodianId, keyChain),
               ...state^.custodianKeyChains |> List.remove_assoc(custodianId),
             ];
+            let (identifier, identifiedKeyChains, event) =
+              state^ |> identifiedEvent(custodianKeyChains);
             {
               ...state^,
               custodianKeyChains,
-              pendingEvent:
-                Some((
-                  state^.systemIssuer,
-                  AccountKeyChainUpdated(
-                    AccountKeyChainUpdated.make(
-                      ~keyChain=
-                        AccountKeyChain.make(
-                          accountIdx,
-                          state^.nextKeyChainIdx,
-                          custodianKeyChains,
-                        ),
-                    ),
-                  ),
-                )),
+              identifiedKeyChains,
+              activatedEvent: activatedEvent(identifier, identifiedKeyChains),
+              identifiedEvent: event,
             };
-          | AccountKeyChainUpdated({keyChain})
+          | AccountKeyChainActivated({
+              accountIdx: aIdx,
+              custodianId,
+              identifier,
+            })
+              when
+                AccountIndex.eq(aIdx, accountIdx)
+                && UserId.eq(custodianId, localUserId) => {
+              ...state^,
+              activatedEvent: None,
+              identifiedKeyChains: [
+                (
+                  identifier,
+                  (state^.identifiedKeyChains |> List.assoc(identifier)) + 1,
+                ),
+                ...state^.identifiedKeyChains |> List.remove_assoc(identifier),
+              ],
+            }
+          | AccountKeyChainIdentified({keyChain})
               when keyChain.accountIdx == accountIdx => {
               ...state^,
-              pendingEvent: None,
-              nextKeyChainIdx:
-                state^.nextKeyChainIdx |> AccountKeyChainIndex.next,
+              identifiedEvent: None,
             }
           | _ => state^
           }
@@ -119,7 +136,14 @@ let make =
     pub processCompleted = () => false;
     pub pendingEvent = () =>
       state^.active ?
-        state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve) : None
+        (
+          switch (state^.identifiedEvent) {
+          | Some(_) => state^.identifiedEvent
+          | None => state^.activatedEvent
+          }
+        )
+        |> Utils.mapOption(Js.Promise.resolve) :
+        None
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

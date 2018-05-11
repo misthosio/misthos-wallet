@@ -132,9 +132,9 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
             try {
               var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdx */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
-              var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
-              var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
-              var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
+              var coSignerIdx = Address.Coordinates[/* coSignerIdx */6](input[/* coordinates */6]);
+              var chainIdx = Address.Coordinates[/* chainIdx */7](input[/* coordinates */6]);
+              var addressIdx = Address.Coordinates[/* addressIdx */8](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
               txB.sign(idx, keyPair, Utils.bufFromHex(address[/* redeemScript */4]), null, BTC.toSatoshisFloat(input[/* value */3]), Utils.bufFromHex(address[/* witnessScript */3]));

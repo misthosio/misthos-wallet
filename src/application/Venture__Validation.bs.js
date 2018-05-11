@@ -11,6 +11,7 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
+var AccountKeyChain = require("./wallet/AccountKeyChain.bs.js");
 var CustodianKeyChain = require("./wallet/CustodianKeyChain.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
@@ -408,6 +409,13 @@ function apply(param, state) {
           newrecord[/* payoutData */15]
         ];
         return newrecord$12;
+    case 3 : 
+    case 7 : 
+    case 11 : 
+    case 15 : 
+    case 19 : 
+    case 23 : 
+        return endorseProcess($$event[0], newrecord);
     case 24 : 
         return completeProcess($$event[0], newrecord);
     case 29 : 
@@ -455,42 +463,8 @@ function apply(param, state) {
         ];
         return newrecord$13;
     case 30 : 
-    case 31 : 
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              [
-                "Venture__Validation.re",
-                131,
-                2
-              ]
-            ];
-    case 32 : 
-        var keyChain$1 = $$event[0][/* keyChain */0];
-        var accountChains$2;
-        try {
-          accountChains$2 = List.assoc(keyChain$1[/* accountIdx */0], newrecord[/* accountKeyChains */21]);
-        }
-        catch (exn$4){
-          if (exn$4 === Caml_builtin_exceptions.not_found) {
-            accountChains$2 = /* [] */0;
-          } else {
-            throw exn$4;
-          }
-        }
         var newrecord$14 = Caml_array.caml_array_dup(newrecord);
-        newrecord$14[/* accountKeyChains */21] = /* :: */[
-          /* tuple */[
-            keyChain$1[/* accountIdx */0],
-            /* :: */[
-              /* tuple */[
-                keyChain$1[/* keyChainIdx */1],
-                keyChain$1
-              ],
-              accountChains$2
-            ]
-          ],
-          /* [] */0
-        ];
+        newrecord$14[/* accountKeyChains */21] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */1], newrecord[/* accountKeyChains */21]);
         return newrecord$14;
     case 2 : 
     case 6 : 
@@ -498,15 +472,10 @@ function apply(param, state) {
     case 14 : 
     case 18 : 
     case 22 : 
-    case 25 : 
-    case 26 : 
-    case 27 : 
-    case 28 : 
-    case 33 : 
-    case 34 : 
+    case 31 : 
         return newrecord;
     default:
-      return endorseProcess($$event[0], newrecord);
+      return newrecord;
   }
 }
 
@@ -826,67 +795,8 @@ function validateAccountKeyChainIdentified(param, state, _) {
   return accountExists(param[/* keyChain */1][/* accountIdx */0], state);
 }
 
-function validateAccountKeyChainUpdated(param, param$1, _) {
-  var currentCustodianKeyChains = param$1[/* custodianKeyChains */20];
-  var match = param[/* keyChain */0];
-  var custodianKeyChains = match[/* custodianKeyChains */3];
-  var accountIdx = match[/* accountIdx */0];
-  try {
-    var match$1 = List.find((function (param) {
-            return WalletTypes.AccountIndex[/* eq */7](param[1][1][/* accountIdx */0], accountIdx);
-          }), param$1[/* accountCreationData */14]);
-    if (List.mem(match$1[0], param$1[/* completedProcesses */17])) {
-      if (List.length(List.assoc(accountIdx, param$1[/* accountKeyChains */21])) !== WalletTypes.AccountKeyChainIndex[/* toInt */0](match[/* keyChainIdx */1])) {
-        return /* BadData */["Bad AccountKeyChainIndex"];
-      } else {
-        var currentCustodians = List.assoc(accountIdx, param$1[/* currentCustodians */13]);
-        var allThere = List.fold_left((function (res, custodian) {
-                if (res) {
-                  return List.mem_assoc(custodian, custodianKeyChains);
-                } else {
-                  return false;
-                }
-              }), true, currentCustodians);
-        if (allThere === false || List.length(currentCustodians) !== List.length(custodianKeyChains)) {
-          return /* BadData */["Wrong custodians"];
-        } else {
-          var match$2 = List.fold_left((function (result, test) {
-                  if (result) {
-                    return test;
-                  } else {
-                    return false;
-                  }
-                }), true, List.map((function (param) {
-                      try {
-                        var latestKeyChain = List.hd(List.assoc(accountIdx, List.assoc(param[0], currentCustodianKeyChains)));
-                        return CustodianKeyChain.eq(param[1], latestKeyChain);
-                      }
-                      catch (exn){
-                        if (exn === Caml_builtin_exceptions.not_found) {
-                          return false;
-                        } else {
-                          throw exn;
-                        }
-                      }
-                    }), custodianKeyChains));
-          if (match$2) {
-            return /* Ok */0;
-          } else {
-            return /* BadData */["Bad CustodianKeyChain"];
-          }
-        }
-      }
-    } else {
-      return /* BadData */["Account doesn't exist"];
-    }
-  }
-  catch (exn){
-    if (exn === Caml_builtin_exceptions.not_found) {
-      return /* BadData */["Account doesn't exist"];
-    } else {
-      throw exn;
-    }
-  }
+function validateAccountKeyChainActivated(_, _$1, _$2) {
+  return /* Ok */0;
 }
 
 function validateIncomeAddressExposed(param, param$1, _) {
@@ -1083,32 +993,22 @@ function validateEvent(param) {
             return validateAccountKeyChainIdentified(partial_arg$7, param, param$1);
           });
     case 31 : 
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              [
-                "Venture__Validation.re",
-                712,
-                2
-              ]
-            ];
+        return (function (_, _$1) {
+            return /* Ok */0;
+          });
     case 32 : 
         var partial_arg$8 = param[0];
         return (function (param, param$1) {
-            return validateAccountKeyChainUpdated(partial_arg$8, param, param$1);
+            return validateIncomeAddressExposed(partial_arg$8, param, param$1);
           });
     case 33 : 
-        var partial_arg$9 = param[0];
-        return (function (param, param$1) {
-            return validateIncomeAddressExposed(partial_arg$9, param, param$1);
-          });
-    case 34 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });
     default:
-      var partial_arg$10 = param[0];
+      var partial_arg$9 = param[0];
       return (function (param, param$1) {
-          return validateEndorsement(partial_arg$10, param, param$1);
+          return validateEndorsement(partial_arg$9, param, param$1);
         });
   }
 }
@@ -1190,7 +1090,7 @@ exports.validateCustodianRemovalData = validateCustodianRemovalData;
 exports.validateAccountCreationData = validateAccountCreationData;
 exports.validateCustodianKeyChainUpdated = validateCustodianKeyChainUpdated;
 exports.validateAccountKeyChainIdentified = validateAccountKeyChainIdentified;
-exports.validateAccountKeyChainUpdated = validateAccountKeyChainUpdated;
+exports.validateAccountKeyChainActivated = validateAccountKeyChainActivated;
 exports.validateIncomeAddressExposed = validateIncomeAddressExposed;
 exports.validateEvent = validateEvent;
 exports.validate = validate;
