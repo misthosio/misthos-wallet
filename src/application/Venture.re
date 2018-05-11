@@ -267,6 +267,10 @@ module Cmd = {
                    collector,
                    conflicts,
                  );
+               | Ignore =>
+                 logMessage("Ignoring event:");
+                 logMessage(Event.encode(event) |> Json.stringify);
+                 (venture, collector, conflicts);
                | conflict =>
                  logMessage(
                    "Encountered '"
