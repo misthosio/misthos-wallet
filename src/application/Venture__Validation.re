@@ -4,201 +4,6 @@ open WalletTypes;
 
 open Event;
 
-module AccountValidator = {
-  type t = {
-    accounts: list(accountIdx),
-    exists: accountIdx => bool,
-  };
-  let make = () => {accounts: [], exists: (_) => false};
-  let update = (event, {accounts}) => {
-    let accounts =
-      switch (event) {
-      | AccountCreationAccepted({data: {accountIdx}}) => [
-          accountIdx,
-          ...accounts,
-        ]
-      | _ => accounts
-      };
-    {accounts, exists: accountIdx => accounts |> List.mem(accountIdx)};
-  };
-};
-
-module CustodianValidator = {
-  type t = {
-    custodians: list((accountIdx, list(userId))),
-    areCurrent: (accountIdx, list(userId)) => bool,
-    isCustodian: (accountIdx, userId) => bool,
-  };
-  let make = () => {
-    custodians: [],
-    areCurrent: (_, _) => false,
-    isCustodian: (_, _) => false,
-  };
-  let update = (event, {custodians}) => {
-    let custodians =
-      switch (event) {
-      | AccountCreationAccepted({data: {accountIdx}}) => [
-          (accountIdx, []),
-          ...custodians,
-        ]
-      | CustodianAccepted({data: {accountIdx, partnerId}}) => [
-          (
-            accountIdx,
-            [partnerId, ...custodians |> List.assoc(accountIdx)],
-          ),
-          ...custodians |> List.remove_assoc(accountIdx),
-        ]
-      | CustodianRemovalAccepted({data: {accountIdx, custodianId}}) => [
-          (
-            accountIdx,
-            custodians
-            |> List.assoc(accountIdx)
-            |> List.filter(UserId.neq(custodianId)),
-          ),
-          ...custodians |> List.remove_assoc(accountIdx),
-        ]
-      | _ => custodians
-      };
-    {
-      custodians,
-      areCurrent: (accountIdx, testCustodians) => {
-        let accountCustodians = custodians |> List.assoc(accountIdx);
-        testCustodians
-        |> List.length == (accountCustodians |> List.length)
-        && testCustodians
-        |> List.map(c => accountCustodians |> List.mem(c))
-        |> List.fold_left((r, v) => r && v, true);
-      },
-      isCustodian: (accountIdx, testCustodian) =>
-        custodians |> List.assoc(accountIdx) |> List.mem(testCustodian),
-    };
-  };
-};
-
-module CustodianKeyChainValidator = {
-  type t = {
-    keyChains:
-      list((accountIdx, list((userId, list(CustodianKeyChain.public))))),
-    allExist: (accountIdx, list((userId, CustodianKeyChain.public))) => bool,
-  };
-  let make = () => {keyChains: [], allExist: (_, _) => false};
-  let update = (event, {keyChains}) => {
-    let keyChains =
-      switch (event) {
-      | AccountCreationAccepted({data: {accountIdx}}) => [
-          (accountIdx, []),
-          ...keyChains,
-        ]
-      | CustodianKeyChainUpdated({custodianId, keyChain}) =>
-        let accountIdx = keyChain |> CustodianKeyChain.accountIdx;
-        let accountChains = keyChains |> List.assoc(accountIdx);
-        let userChains =
-          try (accountChains |> List.assoc(custodianId)) {
-          | Not_found => []
-          };
-        [
-          (
-            keyChain |> CustodianKeyChain.accountIdx,
-            [
-              (custodianId, [keyChain, ...userChains]),
-              ...accountChains |> List.remove_assoc(custodianId),
-            ],
-          ),
-          ...keyChains |> List.remove_assoc(accountIdx),
-        ];
-      | _ => keyChains
-      };
-    {
-      keyChains,
-      allExist: (accountIdx, testChains) =>
-        try (
-          {
-            let accountChains = keyChains |> List.assoc(accountIdx);
-            testChains
-            |> List.map(((user, chain)) =>
-                 accountChains
-                 |> List.assoc(user)
-                 |> List.exists(CustodianKeyChain.eq(chain))
-               )
-            |> List.fold_left((r, v) => r && v, true);
-          }
-        ) {
-        | Not_found => false
-        },
-    };
-  };
-};
-
-module AccountKeyChainValidator = {
-  type t = {
-    identified: list((accountIdx, list(AccountKeyChain.Identifier.t))),
-    activations:
-      list((userId, list((AccountKeyChain.Identifier.t, list(int))))),
-    exists: (accountIdx, AccountKeyChain.Identifier.t) => bool,
-    inOrder: (userId, AccountKeyChain.Identifier.t, int) => bool,
-  };
-  let make = () => {
-    identified: [],
-    activations: [],
-    exists: (_, _) => false,
-    inOrder: (_, _, _) => false,
-  };
-  let getOrEmpty = (item, theList) =>
-    try (theList |> List.assoc(item)) {
-    | Not_found => []
-    };
-  let update = (event, {identified, activations}) => {
-    let (identified, activations) =
-      switch (event) {
-      | AccountCreationAccepted({data: {accountIdx}}) => (
-          [(accountIdx, []), ...identified],
-          activations,
-        )
-      | AccountKeyChainIdentified({keyChain: {accountIdx, identifier}}) => (
-          [
-            (
-              accountIdx,
-              [identifier, ...identified |> List.assoc(accountIdx)],
-            ),
-            ...identified |> List.remove_assoc(accountIdx),
-          ],
-          activations,
-        )
-      | AccountKeyChainActivated({custodianId, identifier, sequence}) => (
-          identified,
-          [
-            (
-              custodianId,
-              [
-                (
-                  identifier,
-                  [
-                    sequence,
-                    ...activations
-                       |> getOrEmpty(custodianId)
-                       |> getOrEmpty(identifier),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        )
-      | _ => (identified, activations)
-      };
-    {
-      identified,
-      activations,
-      exists: (accountIdx, identifier) =>
-        identified |> List.assoc(accountIdx) |> List.mem(identifier),
-      inOrder: (custodianId, identifier, sequence) =>
-        activations
-        |> getOrEmpty(custodianId)
-        |> getOrEmpty(identifier)
-        |> List.length == sequence,
-    };
-  };
-};
-
 type approvalProcess = {
   supporterIds: list(userId),
   policy: Policy.t,
@@ -525,16 +330,6 @@ let resultToString =
   | DependencyNotMet => "DependencyNotMet"
   | BadData(description) => "BadData('" ++ description ++ "')";
 
-let test = (test, state) => (state |> test, state);
-
-let andThen = (test, (res, state)) =>
-  switch (res) {
-  | Ok => (state |> test, state)
-  | _ => (res, state)
-  };
-
-let returnResult = ((res, _)) => res;
-
 let accountExists = (accountIdx, {accountValidator}) =>
   accountValidator.exists(accountIdx) ?
     Ok : BadData("Account doesn't exist");
@@ -561,6 +356,16 @@ let activationSequenceInOrder =
     (custodianId, identifier, sequence, {accountKeyChainValidator}) =>
   sequence |> accountKeyChainValidator.inOrder(custodianId, identifier) ?
     Ok : BadData("AccountKeyChain sequence out of order");
+
+let test = (test, state) => (state |> test, state);
+
+let andThen = (test, (res, state)) =>
+  switch (res) {
+  | Ok => (state |> test, state)
+  | _ => (res, state)
+  };
+
+let returnResult = ((res, _)) => res;
 
 let defaultDataValidator = (_, _) => Ok;
 

@@ -12,360 +12,19 @@ var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./wallet/AccountKeyChain.bs.js");
+var AccountValidator = require("./validation/AccountValidator.bs.js");
 var CustodianKeyChain = require("./wallet/CustodianKeyChain.bs.js");
+var CustodianValidator = require("./validation/CustodianValidator.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
+var AccountKeyChainValidator = require("./validation/AccountKeyChainValidator.bs.js");
+var CustodianKeyChainValidator = require("./validation/CustodianKeyChainValidator.bs.js");
 
 function make() {
   return /* record */[
-          /* accounts : [] */0,
-          /* exists */(function () {
-              return false;
-            })
-        ];
-}
-
-function update($$event, param) {
-  var accounts = param[/* accounts */0];
-  var accounts$1;
-  accounts$1 = $$event.tag === 12 ? /* :: */[
-      $$event[0][/* data */2][/* accountIdx */0],
-      accounts
-    ] : accounts;
-  return /* record */[
-          /* accounts */accounts$1,
-          /* exists */(function (accountIdx) {
-              return List.mem(accountIdx, accounts$1);
-            })
-        ];
-}
-
-var AccountValidator = /* module */[
-  /* make */make,
-  /* update */update
-];
-
-function make$1() {
-  return /* record */[
-          /* custodians : [] */0,
-          /* areCurrent */(function (_, _$1) {
-              return false;
-            }),
-          /* isCustodian */(function (_, _$1) {
-              return false;
-            })
-        ];
-}
-
-function update$1($$event, param) {
-  var custodians = param[/* custodians */0];
-  var custodians$1;
-  switch ($$event.tag | 0) {
-    case 12 : 
-        custodians$1 = /* :: */[
-          /* tuple */[
-            $$event[0][/* data */2][/* accountIdx */0],
-            /* [] */0
-          ],
-          custodians
-        ];
-        break;
-    case 16 : 
-        var match = $$event[0][/* data */2];
-        var accountIdx = match[/* accountIdx */3];
-        custodians$1 = /* :: */[
-          /* tuple */[
-            accountIdx,
-            /* :: */[
-              match[/* partnerId */0],
-              List.assoc(accountIdx, custodians)
-            ]
-          ],
-          List.remove_assoc(accountIdx, custodians)
-        ];
-        break;
-    case 20 : 
-        var match$1 = $$event[0][/* data */2];
-        var accountIdx$1 = match$1[/* accountIdx */1];
-        var custodianId = match$1[/* custodianId */0];
-        var partial_arg = PrimitiveTypes.UserId[/* neq */6];
-        custodians$1 = /* :: */[
-          /* tuple */[
-            accountIdx$1,
-            List.filter((function (param) {
-                      return partial_arg(custodianId, param);
-                    }))(List.assoc(accountIdx$1, custodians))
-          ],
-          List.remove_assoc(accountIdx$1, custodians)
-        ];
-        break;
-    default:
-      custodians$1 = custodians;
-  }
-  return /* record */[
-          /* custodians */custodians$1,
-          /* areCurrent */(function (accountIdx, testCustodians) {
-              var accountCustodians = List.assoc(accountIdx, custodians$1);
-              if (List.length(testCustodians) === List.length(accountCustodians)) {
-                return List.fold_left((function (r, v) {
-                              if (r) {
-                                return v;
-                              } else {
-                                return false;
-                              }
-                            }), true, List.map((function (c) {
-                                  return List.mem(c, accountCustodians);
-                                }), testCustodians));
-              } else {
-                return false;
-              }
-            }),
-          /* isCustodian */(function (accountIdx, testCustodian) {
-              return List.mem(testCustodian, List.assoc(accountIdx, custodians$1));
-            })
-        ];
-}
-
-var CustodianValidator = /* module */[
-  /* make */make$1,
-  /* update */update$1
-];
-
-function make$2() {
-  return /* record */[
-          /* keyChains : [] */0,
-          /* allExist */(function (_, _$1) {
-              return false;
-            })
-        ];
-}
-
-function update$2($$event, param) {
-  var keyChains = param[/* keyChains */0];
-  var keyChains$1;
-  switch ($$event.tag | 0) {
-    case 12 : 
-        keyChains$1 = /* :: */[
-          /* tuple */[
-            $$event[0][/* data */2][/* accountIdx */0],
-            /* [] */0
-          ],
-          keyChains
-        ];
-        break;
-    case 29 : 
-        var match = $$event[0];
-        var keyChain = match[/* keyChain */2];
-        var custodianId = match[/* custodianId */1];
-        var accountIdx = CustodianKeyChain.accountIdx(keyChain);
-        var accountChains = List.assoc(accountIdx, keyChains);
-        var userChains;
-        try {
-          userChains = List.assoc(custodianId, accountChains);
-        }
-        catch (exn){
-          if (exn === Caml_builtin_exceptions.not_found) {
-            userChains = /* [] */0;
-          } else {
-            throw exn;
-          }
-        }
-        keyChains$1 = /* :: */[
-          /* tuple */[
-            CustodianKeyChain.accountIdx(keyChain),
-            /* :: */[
-              /* tuple */[
-                custodianId,
-                /* :: */[
-                  keyChain,
-                  userChains
-                ]
-              ],
-              List.remove_assoc(custodianId, accountChains)
-            ]
-          ],
-          List.remove_assoc(accountIdx, keyChains)
-        ];
-        break;
-    default:
-      keyChains$1 = keyChains;
-  }
-  return /* record */[
-          /* keyChains */keyChains$1,
-          /* allExist */(function (accountIdx, testChains) {
-              try {
-                var accountChains = List.assoc(accountIdx, keyChains$1);
-                return List.fold_left((function (r, v) {
-                              if (r) {
-                                return v;
-                              } else {
-                                return false;
-                              }
-                            }), true, List.map((function (param) {
-                                  var chain = param[1];
-                                  return List.exists((function (param) {
-                                                return CustodianKeyChain.eq(chain, param);
-                                              }), List.assoc(param[0], accountChains));
-                                }), testChains));
-              }
-              catch (exn){
-                if (exn === Caml_builtin_exceptions.not_found) {
-                  return false;
-                } else {
-                  throw exn;
-                }
-              }
-            })
-        ];
-}
-
-var CustodianKeyChainValidator = /* module */[
-  /* make */make$2,
-  /* update */update$2
-];
-
-function make$3() {
-  return /* record */[
-          /* identified : [] */0,
-          /* activations : [] */0,
-          /* exists */(function (_, _$1) {
-              return false;
-            }),
-          /* inOrder */(function (_, _$1, _$2) {
-              return false;
-            })
-        ];
-}
-
-function getOrEmpty(item, theList) {
-  try {
-    return List.assoc(item, theList);
-  }
-  catch (exn){
-    if (exn === Caml_builtin_exceptions.not_found) {
-      return /* [] */0;
-    } else {
-      throw exn;
-    }
-  }
-}
-
-function update$3($$event, param) {
-  var activations = param[/* activations */1];
-  var identified = param[/* identified */0];
-  var match;
-  switch ($$event.tag | 0) {
-    case 12 : 
-        match = /* tuple */[
-          /* :: */[
-            /* tuple */[
-              $$event[0][/* data */2][/* accountIdx */0],
-              /* [] */0
-            ],
-            identified
-          ],
-          activations
-        ];
-        break;
-    case 30 : 
-        var match$1 = $$event[0][/* keyChain */0];
-        var accountIdx = match$1[/* accountIdx */0];
-        match = /* tuple */[
-          /* :: */[
-            /* tuple */[
-              accountIdx,
-              /* :: */[
-                match$1[/* identifier */1],
-                List.assoc(accountIdx, identified)
-              ]
-            ],
-            List.remove_assoc(accountIdx, identified)
-          ],
-          activations
-        ];
-        break;
-    case 31 : 
-        var match$2 = $$event[0];
-        var identifier = match$2[/* identifier */2];
-        var custodianId = match$2[/* custodianId */1];
-        match = /* tuple */[
-          identified,
-          /* :: */[
-            /* tuple */[
-              custodianId,
-              /* :: */[
-                /* tuple */[
-                  identifier,
-                  /* :: */[
-                    match$2[/* sequence */3],
-                    getOrEmpty(identifier, getOrEmpty(custodianId, activations))
-                  ]
-                ],
-                /* [] */0
-              ]
-            ],
-            /* [] */0
-          ]
-        ];
-        break;
-    default:
-      match = /* tuple */[
-        identified,
-        activations
-      ];
-  }
-  var activations$1 = match[1];
-  var identified$1 = match[0];
-  return /* record */[
-          /* identified */identified$1,
-          /* activations */activations$1,
-          /* exists */(function (accountIdx, identifier) {
-              return List.mem(identifier, List.assoc(accountIdx, identified$1));
-            }),
-          /* inOrder */(function (custodianId, identifier, sequence) {
-              return List.length(getOrEmpty(identifier, getOrEmpty(custodianId, activations$1))) === sequence;
-            })
-        ];
-}
-
-var AccountKeyChainValidator = /* module */[
-  /* make */make$3,
-  /* getOrEmpty */getOrEmpty,
-  /* update */update$3
-];
-
-function make$4() {
-  return /* record */[
-          /* accountValidator : record */[
-            /* accounts : [] */0,
-            /* exists */(function () {
-                return false;
-              })
-          ],
-          /* custodianValidator : record */[
-            /* custodians : [] */0,
-            /* areCurrent */(function (_, _$1) {
-                return false;
-              }),
-            /* isCustodian */(function (_, _$1) {
-                return false;
-              })
-          ],
-          /* custodianKeyChainValidator : record */[
-            /* keyChains : [] */0,
-            /* allExist */(function (_, _$1) {
-                return false;
-              })
-          ],
-          /* accountKeyChainValidator : record */[
-            /* identified : [] */0,
-            /* activations : [] */0,
-            /* exists */(function (_, _$1) {
-                return false;
-              }),
-            /* inOrder */(function (_, _$1, _$2) {
-                return false;
-              })
-          ],
+          /* accountValidator */AccountValidator.make(/* () */0),
+          /* custodianValidator */CustodianValidator.make(/* () */0),
+          /* custodianKeyChainValidator */CustodianKeyChainValidator.make(/* () */0),
+          /* accountKeyChainValidator */AccountKeyChainValidator.make(/* () */0),
           /* systemPubKey */"",
           /* metaPolicy */Policy.unanimous,
           /* knownItems : [] */0,
@@ -453,10 +112,10 @@ function completeProcess(param, state) {
 function apply(param, state) {
   var $$event = param[/* event */0];
   var newrecord = Caml_array.caml_array_dup(state);
-  newrecord[/* accountValidator */0] = update($$event, state[/* accountValidator */0]);
-  newrecord[/* custodianValidator */1] = update$1($$event, state[/* custodianValidator */1]);
-  newrecord[/* custodianKeyChainValidator */2] = update$2($$event, state[/* custodianKeyChainValidator */2]);
-  newrecord[/* accountKeyChainValidator */3] = update$3($$event, state[/* accountKeyChainValidator */3]);
+  newrecord[/* accountValidator */0] = AccountValidator.update($$event, state[/* accountValidator */0]);
+  newrecord[/* custodianValidator */1] = CustodianValidator.update($$event, state[/* custodianValidator */1]);
+  newrecord[/* custodianKeyChainValidator */2] = CustodianKeyChainValidator.update($$event, state[/* custodianKeyChainValidator */2]);
+  newrecord[/* accountKeyChainValidator */3] = AccountKeyChainValidator.update($$event, state[/* accountKeyChainValidator */3]);
   newrecord[/* knownItems */6] = /* :: */[
     param[/* hash */1],
     state[/* knownItems */6]
@@ -822,40 +481,6 @@ function resultToString(param) {
   }
 }
 
-function test(test$1, state) {
-  return /* tuple */[
-          Curry._1(test$1, state),
-          state
-        ];
-}
-
-function andThen(test, param) {
-  var state = param[1];
-  var res = param[0];
-  if (typeof res === "number") {
-    if (res !== 0) {
-      return /* tuple */[
-              res,
-              state
-            ];
-    } else {
-      return /* tuple */[
-              Curry._1(test, state),
-              state
-            ];
-    }
-  } else {
-    return /* tuple */[
-            res,
-            state
-          ];
-  }
-}
-
-function returnResult(param) {
-  return param[0];
-}
-
 function accountExists(accountIdx, param) {
   var match = Curry._1(param[/* accountValidator */0][/* exists */1], accountIdx);
   if (match) {
@@ -908,6 +533,40 @@ function activationSequenceInOrder(custodianId, identifier, sequence, param) {
   } else {
     return /* BadData */["AccountKeyChain sequence out of order"];
   }
+}
+
+function test(test$1, state) {
+  return /* tuple */[
+          Curry._1(test$1, state),
+          state
+        ];
+}
+
+function andThen(test, param) {
+  var state = param[1];
+  var res = param[0];
+  if (typeof res === "number") {
+    if (res !== 0) {
+      return /* tuple */[
+              res,
+              state
+            ];
+    } else {
+      return /* tuple */[
+              Curry._1(test, state),
+              state
+            ];
+    }
+  } else {
+    return /* tuple */[
+            res,
+            state
+          ];
+  }
+}
+
+function returnResult(param) {
+  return param[0];
 }
 
 function defaultDataValidator(_, _$1) {
@@ -1503,25 +1162,21 @@ function validate(state, param) {
   }
 }
 
-exports.AccountValidator = AccountValidator;
-exports.CustodianValidator = CustodianValidator;
-exports.CustodianKeyChainValidator = CustodianKeyChainValidator;
-exports.AccountKeyChainValidator = AccountKeyChainValidator;
-exports.make = make$4;
+exports.make = make;
 exports.addProcess = addProcess;
 exports.endorseProcess = endorseProcess;
 exports.completeProcess = completeProcess;
 exports.apply = apply;
 exports.resultToString = resultToString;
-exports.test = test;
-exports.andThen = andThen;
-exports.returnResult = returnResult;
 exports.accountExists = accountExists;
 exports.isCustodian = isCustodian;
 exports.currentCustodians = currentCustodians;
 exports.custodianKeyChainsExist = custodianKeyChainsExist;
 exports.accountKeyChainIdentified = accountKeyChainIdentified;
 exports.activationSequenceInOrder = activationSequenceInOrder;
+exports.test = test;
+exports.andThen = andThen;
+exports.returnResult = returnResult;
 exports.defaultDataValidator = defaultDataValidator;
 exports.validateProposal = validateProposal;
 exports.validateRejection = validateRejection;
