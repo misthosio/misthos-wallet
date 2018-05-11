@@ -143,7 +143,7 @@ let bitcoinNetwork =
 /* For now send income to faucet */
 let regtestIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
 
-let testnetIncomeAddress = "2N8FxQC69aQ6R1jgdvwSm2Yj1UcgJgH8HpD";
+let testnetIncomeAddress = "2NAAjKUjEwD1NZHFT5e6tAzXgGEraizzMd8";
 
 let incomeAddress =
   fun
