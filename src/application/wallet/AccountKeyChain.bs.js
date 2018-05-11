@@ -70,6 +70,16 @@ function make$1(accountIdx, custodianKeyChains) {
         ];
 }
 
+function isConsistent(param) {
+  var custodianKeyChains = param[/* custodianKeyChains */3];
+  var nCoSigners = param[/* nCoSigners */2];
+  if (nCoSigners === Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains))) {
+    return Caml_obj.caml_equal(make(nCoSigners, custodianKeyChains), param[/* identifier */1]);
+  } else {
+    return false;
+  }
+}
+
 function make$2() {
   return /* [] */0;
 }
@@ -161,6 +171,7 @@ function decode(raw) {
 exports.Identifier = Identifier;
 exports.defaultCoSignerList = defaultCoSignerList;
 exports.make = make$1;
+exports.isConsistent = isConsistent;
 exports.Collection = Collection;
 exports.encode = encode$1;
 exports.decode = decode;

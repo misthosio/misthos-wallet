@@ -4,6 +4,8 @@
 var Event = require("../../src/application/events/Event.bs.js");
 var Generators = require("../helpers/Generators.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
+var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
+var AccountKeyChain = require("../../src/application/wallet/AccountKeyChain.bs.js");
 var ValidationHelpers = require("../helpers/ValidationHelpers.bs.js");
 var Venture__Validation = require("../../src/application/Venture__Validation.bs.js");
 
@@ -34,6 +36,80 @@ describe("AccountKeyChainIdentified", (function () {
                               /* nCoSigners */init[/* nCoSigners */2],
                               /* custodianKeyChains */init[/* custodianKeyChains */3]
                             ]], /* BadData */["Account doesn't exist"]);
+              }));
+        describe("when the AccountKeyChain is inconsistent", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user1 = match[0];
+                var log = Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))));
+                var identified = Event.getAccountKeyChainIdentifiedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainIdentified */32](log)));
+                var init = identified[/* keyChain */0];
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
+                            }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
+                              /* accountIdx */init[/* accountIdx */0],
+                              /* identifier */"",
+                              /* nCoSigners */init[/* nCoSigners */2],
+                              /* custodianKeyChains */init[/* custodianKeyChains */3]
+                            ]], /* BadData */["Inconsistent AccountKeyChain"]);
+              }));
+        describe("with an old custodian", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withCustodianKeyChain */31](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */19](user2, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], Generators.Log[/* withCustodianRemoved */30](user2, /* :: */[
+                              user1,
+                              /* [] */0
+                            ], Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */26](user2, /* :: */[
+                                          user1,
+                                          /* :: */[
+                                            user2,
+                                            /* [] */0
+                                          ]
+                                        ], Generators.Log[/* withPartner */14](user2, /* :: */[
+                                              user1,
+                                              /* [] */0
+                                            ], Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                                                      user1,
+                                                      /* [] */0
+                                                    ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))))))))));
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
+                            }), ValidationHelpers.constructState(log), /* record */[/* keyChain */AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], /* :: */[
+                                  /* tuple */[
+                                    user1[/* userId */0],
+                                    Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */1](log), 1, user1)
+                                  ],
+                                  /* :: */[
+                                    /* tuple */[
+                                      user2[/* userId */0],
+                                      Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */1](log), 0, user2)
+                                    ],
+                                    /* [] */0
+                                  ]
+                                ])], /* BadData */["Custodians aren't current"]);
+              }));
+        describe("when a CustodianKeyChain is unknown", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user1 = match[0];
+                var log = Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                          user1,
+                          /* [] */0
+                        ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))));
+                return ValidationHelpers.testDataValidation((function (param, param$1) {
+                              return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
+                            }), ValidationHelpers.constructState(log), /* record */[/* keyChain */AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], /* :: */[
+                                  /* tuple */[
+                                    user1[/* userId */0],
+                                    Generators.custodianKeyChain(/* None */0, PrimitiveTypes.VentureId[/* make */7](/* () */0), 1, user1)
+                                  ],
+                                  /* [] */0
+                                ])], /* BadData */["Bad CustodianKeyChain"]);
               }));
         return /* () */0;
       }));

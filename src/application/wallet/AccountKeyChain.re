@@ -45,6 +45,11 @@ let make = (accountIdx, custodianKeyChains) => {
   };
 };
 
+let isConsistent = ({custodianKeyChains, identifier, nCoSigners}) =>
+  nCoSigners == defaultCoSignerList[custodianKeyChains |> List.length]
+  && identifier
+  |> Identifier.eq(Identifier.make(nCoSigners, custodianKeyChains));
+
 module Collection = {
   type collection = list((accountIdx, list((Identifier.t, t))));
   type t = collection;

@@ -23,6 +23,105 @@ module AccountValidator = {
   };
 };
 
+module CustodianValidator = {
+  type t = {
+    custodians: list((accountIdx, list(userId))),
+    areCurrent: (accountIdx, list(userId)) => bool,
+  };
+  let make = () => {custodians: [], areCurrent: (_, _) => false};
+  let update = (event, {custodians}) => {
+    let custodians =
+      switch (event) {
+      | AccountCreationAccepted({data: {accountIdx}}) => [
+          (accountIdx, []),
+          ...custodians,
+        ]
+      | CustodianAccepted({data: {accountIdx, partnerId}}) => [
+          (
+            accountIdx,
+            [partnerId, ...custodians |> List.assoc(accountIdx)],
+          ),
+          ...custodians |> List.remove_assoc(accountIdx),
+        ]
+      | CustodianRemovalAccepted({data: {accountIdx, custodianId}}) => [
+          (
+            accountIdx,
+            custodians
+            |> List.assoc(accountIdx)
+            |> List.filter(UserId.neq(custodianId)),
+          ),
+          ...custodians |> List.remove_assoc(accountIdx),
+        ]
+      | _ => custodians
+      };
+    {
+      custodians,
+      areCurrent: (accountIdx, testCustodians) => {
+        let accountCustodians = custodians |> List.assoc(accountIdx);
+        testCustodians
+        |> List.length == (accountCustodians |> List.length)
+        && testCustodians
+        |> List.map(c => accountCustodians |> List.mem(c))
+        |> List.fold_left((r, v) => r && v, true);
+      },
+    };
+  };
+};
+
+module CustodianKeyChainValidator = {
+  type t = {
+    keyChains:
+      list((accountIdx, list((userId, list(CustodianKeyChain.public))))),
+    allExist: (accountIdx, list((userId, CustodianKeyChain.public))) => bool,
+  };
+  let make = () => {keyChains: [], allExist: (_, _) => false};
+  let update = (event, {keyChains}) => {
+    let keyChains =
+      switch (event) {
+      | AccountCreationAccepted({data: {accountIdx}}) => [
+          (accountIdx, []),
+          ...keyChains,
+        ]
+      | CustodianKeyChainUpdated({custodianId, keyChain}) =>
+        let accountIdx = keyChain |> CustodianKeyChain.accountIdx;
+        let accountChains = keyChains |> List.assoc(accountIdx);
+        let userChains =
+          try (accountChains |> List.assoc(custodianId)) {
+          | Not_found => []
+          };
+        [
+          (
+            keyChain |> CustodianKeyChain.accountIdx,
+            [
+              (custodianId, [keyChain, ...userChains]),
+              ...accountChains |> List.remove_assoc(custodianId),
+            ],
+          ),
+          ...keyChains |> List.remove_assoc(accountIdx),
+        ];
+      | _ => keyChains
+      };
+    {
+      keyChains,
+      allExist: (accountIdx, testChains) =>
+        try (
+          {
+            let accountChains = keyChains |> List.assoc(accountIdx);
+            testChains
+            |> List.map(((user, chain)) =>
+                 accountChains
+                 |> List.assoc(user)
+                 |> List.exists(CustodianKeyChain.eq(chain))
+               )
+            |> List.fold_left((r, v) => r && v, true);
+          }
+        ) {
+        | Not_found => false
+        },
+    };
+  };
+};
+
 type approvalProcess = {
   supporterIds: list(userId),
   policy: Policy.t,
@@ -30,6 +129,8 @@ type approvalProcess = {
 
 type t = {
   accountValidator: AccountValidator.t,
+  custodianValidator: CustodianValidator.t,
+  custodianKeyChainValidator: CustodianKeyChainValidator.t,
   systemPubKey: string,
   metaPolicy: Policy.t,
   knownItems: list(string),
@@ -57,6 +158,8 @@ type t = {
 
 let make = () => {
   accountValidator: AccountValidator.make(),
+  custodianValidator: CustodianValidator.make(),
+  custodianKeyChainValidator: CustodianKeyChainValidator.make(),
   systemPubKey: "",
   knownItems: [],
   currentPartners: [],
@@ -126,6 +229,11 @@ let apply = ({hash, event}: EventLog.item, state) => {
     knownItems: [hash, ...state.knownItems],
     accountValidator:
       state.accountValidator |> AccountValidator.update(event),
+    custodianValidator:
+      state.custodianValidator |> CustodianValidator.update(event),
+    custodianKeyChainValidator:
+      state.custodianKeyChainValidator
+      |> CustodianKeyChainValidator.update(event),
   };
   switch (event) {
   | VentureCreated({metaPolicy, systemIssuer, creatorId, creatorPubKey}) => {
@@ -339,6 +447,15 @@ let resultToString =
 let accountExists = (accountIdx, {accountValidator}) =>
   accountValidator.exists(accountIdx) ?
     Ok : BadData("Account doesn't exist");
+
+let currentCustodians = (accountIdx, custodians, {custodianValidator}) =>
+  custodians |> custodianValidator.areCurrent(accountIdx) ?
+    Ok : BadData("Custodians aren't current");
+
+let custodianKeyChainsExist =
+    (accountIdx, keyChains, {custodianKeyChainValidator}) =>
+  keyChains |> custodianKeyChainValidator.allExist(accountIdx) ?
+    Ok : BadData("Bad CustodianKeyChain");
 
 let defaultDataValidator = (_, _) => Ok;
 
@@ -607,80 +724,34 @@ let validateCustodianKeyChainUpdated =
     };
   };
 
+let test = (test, state) => (state |> test, state);
+
+let andThen = (test, (res, state)) =>
+  switch (res) {
+  | Ok => (state |> test, state)
+  | _ => (res, state)
+  };
+
+let returnResult = ((res, _)) => res;
+
 let validateAccountKeyChainIdentified =
     (
-      {keyChain: {accountIdx}}: AccountKeyChainIdentified.t,
+      {keyChain: {accountIdx, custodianKeyChains} as keyChain}: AccountKeyChainIdentified.t,
       state,
       _issuerId,
     ) =>
-  state |> accountExists(accountIdx);
+  AccountKeyChain.isConsistent(keyChain) == false ?
+    BadData("Inconsistent AccountKeyChain") :
+    state
+    |> test(accountExists(accountIdx))
+    |> andThen(
+         custodianKeyChains |> List.map(fst) |> currentCustodians(accountIdx),
+       )
+    |> andThen(custodianKeyChains |> custodianKeyChainsExist(accountIdx))
+    |> returnResult;
 
 let validateAccountKeyChainActivated = (_, _, _) => Ok;
 
-/* let validateAccountKeyChainUpdated = */
-/*     ( */
-/*       {keyChain: {accountIdx, keyChainIdx, custodianKeyChains}}: AccountKeyChainUpdated.t, */
-/*       { */
-/*         accountCreationData, */
-/*         completedProcesses, */
-/*         custodianKeyChains: currentCustodianKeyChains, */
-/*         accountKeyChains, */
-/*         currentCustodians, */
-/*       }, */
-/*       _issuerId, */
-/*     ) => */
-/*   try ( */
-/*     { */
-/*       let (pId, _) = */
-/*         accountCreationData */
-/*         |> List.find(((_, (_, data: AccountCreation.Data.t))) => */
-/*              AccountIndex.eq(data.accountIdx, accountIdx) */
-/*            ); */
-/*       if (completedProcesses |> List.mem(pId)) { */
-/*         if (accountKeyChains */
-/*             |> List.assoc(accountIdx) */
-/*             |> List.length != (keyChainIdx |> AccountKeyChainIndex.toInt)) { */
-/*           BadData("Bad AccountKeyChainIndex"); */
-/*         } else { */
-/*           let currentCustodians = currentCustodians |> List.assoc(accountIdx); */
-/*           let allThere = */
-/*             currentCustodians */
-/*             |> List.fold_left( */
-/*                  (res, custodian) => */
-/*                    res && custodianKeyChains |> List.mem_assoc(custodian), */
-/*                  true, */
-/*                ); */
-/*           if (allThere == false */
-/*               || currentCustodians */
-/*               |> List.length != (custodianKeyChains |> List.length)) { */
-/*             BadData("Wrong custodians"); */
-/*           } else { */
-/*             custodianKeyChains */
-/*             |> List.map(((partnerId, keyChain)) => */
-/*                  try ( */
-/*                    { */
-/*                      let latestKeyChain = */
-/*                        currentCustodianKeyChains */
-/*                        |> List.assoc(partnerId) */
-/*                        |> List.assoc(accountIdx) */
-/*                        |> List.hd; */
-/*                      CustodianKeyChain.eq(keyChain, latestKeyChain); */
-/*                    } */
-/*                  ) { */
-/*                  | Not_found => false */
-/*                  } */
-/*                ) */
-/*             |> List.fold_left((result, test) => result && test, true) ? */
-/*               Ok : BadData("Bad CustodianKeyChain"); */
-/*           }; */
-/*         }; */
-/*       } else { */
-/*         BadData("Account doesn't exist"); */
-/*       }; */
-/*     } */
-/*   ) { */
-/*   | Not_found => BadData("Account doesn't exist") */
-/*   }; */
 let validateIncomeAddressExposed =
     (
       {coordinates, address}: IncomeAddressExposed.t,
