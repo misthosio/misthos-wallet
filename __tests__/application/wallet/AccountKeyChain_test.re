@@ -49,7 +49,10 @@ let () = {
     test("lookup", () =>
       expect(
         keyChains
-        |> AccountKeyChain.Collection.lookup(AccountIndex.default, ""),
+        |> AccountKeyChain.Collection.lookup(
+             AccountIndex.default,
+             accountKeyChain1.identifier,
+           ),
       )
       |> toEqual(accountKeyChain1)
     );

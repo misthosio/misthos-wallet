@@ -41,7 +41,7 @@ describe("Coordinates", (function () {
         describe("first coordinates", (function () {
                 return testCoordinates(/* tuple */[
                             0,
-                            "",
+                            "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
                             2,
                             1,
                             0
@@ -55,7 +55,7 @@ describe("Coordinates", (function () {
                     ], accountKeyChain);
                 return testCoordinates(/* tuple */[
                             0,
-                            "",
+                            "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
                             2,
                             0,
                             2

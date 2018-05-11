@@ -31,7 +31,13 @@ let () = {
   describe("Coordinates", () => {
     describe("first coordinates", () =>
       Address.Coordinates.nextInternal(user1.userId, [], accountKeyChain)
-      |> testCoordinates((0, "", 2, 1, 0))
+      |> testCoordinates((
+           0,
+           "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
+           2,
+           1,
+           0,
+         ))
     );
     describe("next coordinates", () => {
       let coordinates1 =
@@ -47,7 +53,13 @@ let () = {
         [coordinates2, coordinates1],
         accountKeyChain,
       )
-      |> testCoordinates((0, "", 2, 0, 2));
+      |> testCoordinates((
+           0,
+           "4cb9efbdaabe81bbb58465f055f30d37fd3b4555505c4349c8e0233e4a0243a3",
+           2,
+           0,
+           2,
+         ));
     });
   });
   describe("make", () =>

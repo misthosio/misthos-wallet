@@ -51,7 +51,7 @@ describe("Collection", (function () {
             ]);
         var keyChains = AccountKeyChain.Collection[/* add */1](accountKeyChain1, AccountKeyChain.Collection[/* add */1](accountKeyChain2, /* [] */0));
         return Jest.test("lookup", (function () {
-                      return Jest.Expect[/* toEqual */12](accountKeyChain1, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* lookup */2](WalletTypes.AccountIndex[/* default */9], "", keyChains)));
+                      return Jest.Expect[/* toEqual */12](accountKeyChain1, Jest.Expect[/* expect */0](AccountKeyChain.Collection[/* lookup */2](WalletTypes.AccountIndex[/* default */9], accountKeyChain1[/* identifier */1], keyChains)));
                     }));
       }));
 
