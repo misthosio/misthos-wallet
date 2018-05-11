@@ -4,12 +4,32 @@ open WalletTypes;
 
 open Event;
 
+module AccountValidator = {
+  type t = {
+    accounts: list(accountIdx),
+    exists: accountIdx => bool,
+  };
+  let make = () => {accounts: [], exists: (_) => false};
+  let update = (event, {accounts}) => {
+    let accounts =
+      switch (event) {
+      | AccountCreationAccepted({data: {accountIdx}}) => [
+          accountIdx,
+          ...accounts,
+        ]
+      | _ => accounts
+      };
+    {accounts, exists: accountIdx => accounts |> List.mem(accountIdx)};
+  };
+};
+
 type approvalProcess = {
   supporterIds: list(userId),
   policy: Policy.t,
 };
 
 type t = {
+  accountValidator: AccountValidator.t,
   systemPubKey: string,
   metaPolicy: Policy.t,
   knownItems: list(string),
@@ -37,6 +57,7 @@ type t = {
 };
 
 let make = () => {
+  accountValidator: AccountValidator.make(),
   systemPubKey: "",
   knownItems: [],
   currentPartners: [],
@@ -101,7 +122,12 @@ let completeProcess =
 };
 
 let apply = ({hash, event}: EventLog.item, state) => {
-  let state = {...state, knownItems: [hash, ...state.knownItems]};
+  let state = {
+    ...state,
+    knownItems: [hash, ...state.knownItems],
+    accountValidator:
+      state.accountValidator |> AccountValidator.update(event),
+  };
   switch (event) {
   | VentureCreated({metaPolicy, systemIssuer, creatorId, creatorPubKey}) => {
       ...state,
@@ -318,6 +344,10 @@ let resultToString =
   | PolicyNotFulfilled => "PolicyNotFulfilled"
   | DependencyNotMet => "DependencyNotMet"
   | BadData(description) => "BadData('" ++ description ++ "')";
+
+let accountExists = (accountIdx, {accountValidator}) =>
+  accountValidator.exists(accountIdx) ?
+    Ok : BadData("Account doesn't exist");
 
 let defaultDataValidator = (_, _) => Ok;
 
@@ -586,6 +616,14 @@ let validateCustodianKeyChainUpdated =
     };
   };
 
+let validateAccountKeyChainIdentified =
+    (
+      {keyChain: {accountIdx}, identifier}: AccountKeyChainIdentified.t,
+      state,
+      _issuerId,
+    ) =>
+  state |> accountExists(accountIdx);
+
 let validateAccountKeyChainUpdated =
     (
       {keyChain: {accountIdx, keyChainIdx, custodianKeyChains}}: AccountKeyChainUpdated.t,
@@ -795,6 +833,8 @@ let validateEvent =
     )
   | CustodianKeyChainUpdated(update) =>
     validateCustodianKeyChainUpdated(update)
+  | AccountKeyChainIdentified(update) =>
+    validateAccountKeyChainIdentified(update)
   | AccountKeyChainUpdated(update) => validateAccountKeyChainUpdated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
