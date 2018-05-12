@@ -16,7 +16,7 @@ type t = {
   txHex: string,
   usedInputs: list((int, input)),
   misthosFeeAddress: string,
-  changeAddress: option(string),
+  changeAddress: option((string, Address.Coordinates.t)),
 };
 
 type summary = {
@@ -56,7 +56,7 @@ let summary =
   let networkFee = totalIn |> BTC.minus(totalOut);
   let changeOut =
     changeAddress
-    |> Utils.mapOption(changeAddress =>
+    |> Utils.mapOption(((changeAddress, _)) =>
          outs |> List.find(((a, _)) => a == changeAddress) |> snd
        )
     |> Js.Option.getWithDefault(BTC.zero);
@@ -79,7 +79,13 @@ let encode = payout =>
         list(pair(int, Network.encodeInput), payout.usedInputs),
       ),
       ("misthosFeeAddress", string(payout.misthosFeeAddress)),
-      ("changeAddress", nullable(string, payout.changeAddress)),
+      (
+        "changeAddress",
+        nullable(
+          tuple2(string, Address.Coordinates.encode),
+          payout.changeAddress,
+        ),
+      ),
     ])
   );
 
@@ -89,7 +95,12 @@ let decode = raw =>
     usedInputs:
       raw |> field("usedInputs", list(pair(int, Network.decodeInput))),
     misthosFeeAddress: raw |> field("misthosFeeAddress", string),
-    changeAddress: raw |> field("changeAddress", optional(string)),
+    changeAddress:
+      raw
+      |> field(
+           "changeAddress",
+           optional(tuple2(string, Address.Coordinates.decode)),
+         ),
   };
 
 type signResult =
@@ -356,7 +367,9 @@ let build =
       usedInputs,
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
       misthosFeeAddress,
-      changeAddress: withChange ? Some(changeAddress.address) : None,
+      changeAddress:
+        withChange ?
+          Some((changeAddress.address, changeAddress.coordinates)) : None,
     };
   } else {
     let (inputs, success) =
@@ -397,7 +410,9 @@ let build =
         usedInputs,
         txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
         misthosFeeAddress,
-        changeAddress: withChange ? Some(changeAddress.address) : None,
+        changeAddress:
+          withChange ?
+            Some((changeAddress.address, changeAddress.coordinates)) : None,
       };
     } else {
       raise(NotEnoughFunds);

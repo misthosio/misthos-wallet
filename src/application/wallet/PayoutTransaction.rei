@@ -12,7 +12,7 @@ type t = {
   txHex: string,
   usedInputs: list((int, input)),
   misthosFeeAddress: string,
-  changeAddress: option(string),
+  changeAddress: option((string, Address.Coordinates.t)),
 };
 
 type summary = {

@@ -44,7 +44,8 @@ function summary(network, param) {
           return total.plus(out[1]);
         }), BTC.zero, outs);
   var networkFee = totalIn.minus(totalOut);
-  var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (changeAddress) {
+  var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (param) {
+              var changeAddress = param[0];
               return List.find((function (param) {
                               return param[0] === changeAddress;
                             }), outs)[1];
@@ -61,6 +62,7 @@ function summary(network, param) {
 }
 
 function encode(payout) {
+  var partial_arg = Address.Coordinates[/* encode */10];
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "txHex",
@@ -83,8 +85,10 @@ function encode(payout) {
                   /* :: */[
                     /* tuple */[
                       "changeAddress",
-                      Json_encode.nullable((function (prim) {
-                              return prim;
+                      Json_encode.nullable((function (param) {
+                              return Json_encode.tuple2((function (prim) {
+                                            return prim;
+                                          }), partial_arg, param);
                             }), payout[/* changeAddress */3])
                     ],
                     /* [] */0
@@ -95,6 +99,10 @@ function encode(payout) {
 }
 
 function decode(raw) {
+  var partial_arg = Address.Coordinates[/* decode */11];
+  var partial_arg$1 = function (param) {
+    return Json_decode.tuple2(Json_decode.string, partial_arg, param);
+  };
   return /* record */[
           /* txHex */Json_decode.field("txHex", Json_decode.string, raw),
           /* usedInputs */Json_decode.field("usedInputs", (function (param) {
@@ -104,7 +112,7 @@ function decode(raw) {
                 }), raw),
           /* misthosFeeAddress */Json_decode.field("misthosFeeAddress", Json_decode.string, raw),
           /* changeAddress */Json_decode.field("changeAddress", (function (param) {
-                  return Json_decode.optional(Json_decode.string, param);
+                  return Json_decode.optional(partial_arg$1, param);
                 }), raw)
         ];
 }
@@ -274,7 +282,10 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             /* txHex */txB.buildIncomplete().toHex(),
             /* usedInputs */usedInputs,
             /* misthosFeeAddress */misthosFeeAddress,
-            /* changeAddress */withChange ? /* Some */[changeAddress[/* address */5]] : /* None */0
+            /* changeAddress */withChange ? /* Some */[/* tuple */[
+                  changeAddress[/* address */5],
+                  changeAddress[/* coordinates */2]
+                ]] : /* None */0
           ];
   } else {
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
@@ -301,7 +312,10 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */match$1[2],
               /* misthosFeeAddress */misthosFeeAddress,
-              /* changeAddress */withChange$1 ? /* Some */[changeAddress[/* address */5]] : /* None */0
+              /* changeAddress */withChange$1 ? /* Some */[/* tuple */[
+                    changeAddress[/* address */5],
+                    changeAddress[/* coordinates */2]
+                  ]] : /* None */0
             ];
     } else {
       throw NotEnoughFunds;
