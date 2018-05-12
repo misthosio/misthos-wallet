@@ -55,15 +55,15 @@ var component = ReasonReact.reducerComponent("VentureStore");
 
 function updateOtherTabs(msg) {
   var encodedMsg = VentureWorkerMessage.encodeOutgoing(msg);
-  localStorage.setItem("outgoing", Json.stringify(encodedMsg));
+  localStorage.setItem("tab-sync", Json.stringify(encodedMsg));
   return /* () */0;
 }
 
 function handler(send, msg) {
   var match = msg.key;
-  if (match === "outgoing") {
+  if (match === "tab-sync") {
     try {
-      return Curry._1(send, /* OutgoingFromLocalStorage */Block.__(1, [VentureWorkerMessage.decodeOutgoing(Json.parseOrRaise(msg.newValue))]));
+      return Curry._1(send, /* TabSync */Block.__(1, [VentureWorkerMessage.decodeOutgoing(Json.parseOrRaise(msg.newValue))]));
     }
     catch (exn){
       return /* () */0;
