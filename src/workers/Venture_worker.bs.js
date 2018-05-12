@@ -36,8 +36,8 @@ function indexUpdated(index) {
   return /* () */0;
 }
 
-function ventureLoaded(id, events) {
-  var msg_001 = List.rev(events);
+function ventureLoaded(id, venture) {
+  var msg_001 = List.rev(Venture.getAllItems(venture));
   var msg = /* VentureLoaded */Block.__(1, [
       id,
       msg_001
@@ -46,10 +46,11 @@ function ventureLoaded(id, events) {
   return /* () */0;
 }
 
-function ventureCreated(id, events) {
-  var msg_001 = List.rev(events);
+function ventureCreated(venture) {
+  var msg_000 = Venture.getId(venture);
+  var msg_001 = List.rev(Venture.getAllItems(venture));
   var msg = /* VentureCreated */Block.__(2, [
-      id,
+      msg_000,
       msg_001
     ]);
   postMessage(VentureWorkerMessage.encodeOutgoing(msg));
@@ -141,7 +142,7 @@ function withVenture(ventureAction, f, param) {
                                         match[1].then(Curry.__1(f)).catch((function (err) {
                                                 console.log("[Venture Worker] - Encountered an unhandled exception:", err);
                                                 return Venture.load(/* None */0, data, ventureId$3).then((function (venture) {
-                                                              ventureLoaded(ventureId$3, Venture.getAllItems(venture));
+                                                              ventureLoaded(ventureId$3, venture);
                                                               return Promise.resolve(venture);
                                                             }));
                                               }))
@@ -207,7 +208,7 @@ function load(ventureId) {
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, Venture.getAllItems(venture));
+                    ventureLoaded(ventureId, venture);
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -221,7 +222,7 @@ function joinVia(ventureId, userId) {
     ]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, Venture.getAllItems(venture));
+                    ventureLoaded(ventureId, venture);
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -232,7 +233,7 @@ function create(name) {
   var partial_arg = /* Create */Block.__(0, [name]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureCreated(Venture.getId(venture), Venture.getAllItems(venture));
+                    ventureCreated(venture);
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -422,11 +423,11 @@ function syncTabs(ventureId, items) {
                                   if (param.tag) {
                                     var venture = param[0];
                                     logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
-                                    ventureLoaded(ventureId, Venture.getAllItems(venture));
+                                    ventureLoaded(ventureId, venture);
                                     return Promise.resolve(venture);
                                   } else {
                                     var venture$1 = param[0];
-                                    ventureLoaded(ventureId, Venture.getAllItems(venture$1));
+                                    ventureLoaded(ventureId, venture$1);
                                     return Promise.resolve(venture$1);
                                   }
                                 }));

@@ -32,10 +32,17 @@ let logError = error =>
 
 module Notify = {
   let indexUpdated = index => postMessage(UpdateIndex(index));
-  let ventureLoaded = (id, events) =>
-    postMessage(VentureLoaded(id, events |> List.rev));
-  let ventureCreated = (id, events) =>
-    postMessage(VentureCreated(id, events |> List.rev));
+  let ventureLoaded = (id, venture) =>
+    postMessage(
+      VentureLoaded(id, venture |> Venture.getAllItems |> List.rev),
+    );
+  let ventureCreated = venture =>
+    postMessage(
+      VentureCreated(
+        venture |> Venture.getId,
+        venture |> Venture.getAllItems |> List.rev,
+      ),
+    );
   let newItems = (id, items) =>
     switch (items) {
     | [] => ()
@@ -109,10 +116,7 @@ module Handle = {
                              logError(err);
                              Venture.load(data, ~ventureId)
                              |> then_(venture => {
-                                  Notify.ventureLoaded(
-                                    ventureId,
-                                    venture |> Venture.getAllItems,
-                                  );
+                                  Notify.ventureLoaded(ventureId, venture);
                                   venture |> resolve;
                                 });
                            }),
@@ -161,7 +165,7 @@ module Handle = {
     withVenture(
       Load(ventureId),
       venture => {
-        Notify.ventureLoaded(ventureId, venture |> Venture.getAllItems);
+        Notify.ventureLoaded(ventureId, venture);
         Js.Promise.resolve(venture);
       },
     );
@@ -171,7 +175,7 @@ module Handle = {
     withVenture(
       JoinVia(ventureId, userId),
       venture => {
-        Notify.ventureLoaded(ventureId, venture |> Venture.getAllItems);
+        Notify.ventureLoaded(ventureId, venture);
         Js.Promise.resolve(venture);
       },
     );
@@ -181,10 +185,7 @@ module Handle = {
     withVenture(
       Create(name),
       venture => {
-        Notify.ventureCreated(
-          venture |> Venture.getId,
-          venture |> Venture.getAllItems,
-        );
+        Notify.ventureCreated(venture);
         Js.Promise.resolve(venture);
       },
     );
@@ -430,10 +431,7 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, _newItems) => {
-                   Notify.ventureLoaded(
-                     ventureId,
-                     venture |> Venture.getAllItems,
-                   );
+                   Notify.ventureLoaded(ventureId, venture);
                    venture |> resolve;
                  }
                | WithConflicts(venture, _newItems, conflicts) => {
@@ -442,10 +440,7 @@ module Handle = {
                      ++ (conflicts |> List.length |> string_of_int)
                      ++ " conflicts while syncing",
                    );
-                   Notify.ventureLoaded(
-                     ventureId,
-                     venture |> Venture.getAllItems,
-                   );
+                   Notify.ventureLoaded(ventureId, venture);
                    venture |> resolve;
                  },
              )
