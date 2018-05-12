@@ -29,8 +29,6 @@ function logMessage(msg) {
 
 var InvalidEvent = Caml_exceptions.create("Venture.InvalidEvent");
 
-var CouldNotLoadVenture = Caml_exceptions.create("Venture.CouldNotLoadVenture");
-
 var NotPersistingNewEvents = Caml_exceptions.create("Venture.NotPersistingNewEvents");
 
 function make(session, id) {
@@ -238,42 +236,56 @@ function load($staropt$star, session, ventureId) {
   logMessage("Loading venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   var partial_arg = /* Some */[shouldPersist];
   return Blockstack$1.getFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + "/log.json").then((function (nullLog) {
-                  if (nullLog == null) {
-                    throw CouldNotLoadVenture;
-                  } else {
-                    return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
-                  }
-                })).then((function (param) {
-                return persist(partial_arg, param);
+                      if (nullLog == null) {
+                        throw Caml_builtin_exceptions.not_found;
+                      } else {
+                        return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
+                      }
+                    })).then((function (param) {
+                    return persist(partial_arg, param);
+                  })).then((function (param) {
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                param[0],
+                                param[1]
+                              ]));
+                })).catch((function (err) {
+                return Promise.resolve(/* CouldNotLoad */Block.__(1, [err]));
               }));
 }
 
 function join(session, userId, ventureId) {
-  return load(/* None */0, session, ventureId).then((function (param) {
-                  return Promise.all(/* tuple */[
-                              Venture__Index.load(/* () */0),
-                              Promise.resolve(param[0])
-                            ]);
-                })).catch((function () {
-                return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).catch((function () {
-                                    throw Caml_builtin_exceptions.not_found;
-                                  })).then((function (nullFile) {
-                                  if (nullFile == null) {
-                                    throw Caml_builtin_exceptions.not_found;
-                                  } else {
-                                    return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
-                                  }
-                                })).then((function (eta) {
-                                return persist(/* None */0, eta);
-                              })).then((function (param) {
-                              var venture = param[0];
-                              return Venture__Index.add(venture[/* id */1], Venture__State.ventureName(venture[/* state */3])).then((function (index) {
-                                            return Promise.resolve(/* tuple */[
-                                                        index,
-                                                        venture
-                                                      ]);
-                                          }));
-                            }));
+  return load(/* None */0, session, ventureId).then((function (loadResult) {
+                if (loadResult.tag) {
+                  return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).then((function (nullFile) {
+                                      if (nullFile == null) {
+                                        throw Caml_builtin_exceptions.not_found;
+                                      } else {
+                                        return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
+                                      }
+                                    })).then((function (eta) {
+                                    return persist(/* None */0, eta);
+                                  })).then((function (param) {
+                                  var venture = param[0];
+                                  return Venture__Index.add(venture[/* id */1], Venture__State.ventureName(venture[/* state */3])).then((function (index) {
+                                                return Promise.resolve(/* Joined */Block.__(1, [
+                                                              index,
+                                                              venture
+                                                            ]));
+                                              }));
+                                })).catch((function (err) {
+                                return Promise.resolve(/* CouldNotJoin */Block.__(2, [err]));
+                              }));
+                } else {
+                  var newItems = loadResult[1];
+                  var venture = loadResult[0];
+                  return Venture__Index.add(ventureId, Venture__State.ventureName(venture[/* state */3])).then((function (index) {
+                                return Promise.resolve(/* AlreadyLoaded */Block.__(0, [
+                                              index,
+                                              venture,
+                                              newItems
+                                            ]));
+                              }));
+                }
               }));
 }
 
@@ -657,10 +669,9 @@ var Validation = [Venture__Validation.resultToString];
 exports.Index = Index;
 exports.Validation = Validation;
 exports.InvalidEvent = InvalidEvent;
-exports.CouldNotLoadVenture = CouldNotLoadVenture;
 exports.NotPersistingNewEvents = NotPersistingNewEvents;
-exports.join = join;
 exports.load = load;
+exports.join = join;
 exports.getId = getId;
 exports.getAllItems = getAllItems;
 exports.getSummary = getSummary;

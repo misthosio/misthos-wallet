@@ -2,6 +2,7 @@
 'use strict';
 
 var Json = require("bs-json/src/Json.js");
+var List = require("bs-platform/lib/js/list.js");
 var Blockstack = require("blockstack");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
@@ -67,15 +68,25 @@ function load() {
               }));
 }
 
+function itemPresent(ventureId, index) {
+  return List.exists((function (item) {
+                return PrimitiveTypes.VentureId[/* eq */5](item[/* id */0], ventureId);
+              }), index);
+}
+
 function add(id, name) {
   return load(/* () */0).then((function (index) {
-                return persist(/* :: */[
-                            /* record */[
-                              /* id */id,
-                              /* name */name
-                            ],
-                            index
-                          ]);
+                if (itemPresent(id, index)) {
+                  return Promise.resolve(index);
+                } else {
+                  return persist(/* :: */[
+                              /* record */[
+                                /* id */id,
+                                /* name */name
+                              ],
+                              index
+                            ]);
+                }
               }));
 }
 
@@ -90,5 +101,6 @@ exports.decode = decode;
 exports.indexPath = indexPath;
 exports.persist = persist;
 exports.load = load;
+exports.itemPresent = itemPresent;
 exports.add = add;
 /* blockstack Not a pure module */

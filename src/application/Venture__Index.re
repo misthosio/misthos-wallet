@@ -53,5 +53,17 @@ let load = () =>
        )
   );
 
+let itemPresent = (ventureId, index) =>
+  index |> List.exists(item => VentureId.eq(item.id, ventureId));
+
 let add = (~ventureId as id, ~ventureName as name) =>
-  Js.Promise.(load() |> then_(index => [{id, name}, ...index] |> persist));
+  Js.Promise.(
+    load()
+    |> then_(index =>
+         if (index |> itemPresent(id)) {
+           index |> resolve;
+         } else {
+           [{id, name}, ...index] |> persist;
+         }
+       )
+  );

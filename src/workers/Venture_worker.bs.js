@@ -8,6 +8,7 @@ var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -91,12 +92,18 @@ var Notify = /* module */[
   /* newItems */newItems
 ];
 
+var DeadThread = Caml_exceptions.create("Venture_worker.DeadThread");
+
 function loadAndNotify($staropt$star, data, ventureId) {
   var persist = $staropt$star ? $staropt$star[0] : true;
   return Venture.load(/* Some */[persist], data, ventureId).then((function (param) {
-                var venture = param[0];
-                ventureLoaded(ventureId, venture, param[1]);
-                return Promise.resolve(venture);
+                if (param.tag) {
+                  throw DeadThread;
+                } else {
+                  var venture = param[0];
+                  ventureLoaded(ventureId, venture, param[1]);
+                  return Promise.resolve(venture);
+                }
               }));
 }
 
@@ -122,7 +129,9 @@ function withVenture(ventureAction, f, param) {
                                   try {
                                     match = /* tuple */[
                                       ventureId,
-                                      List.assoc(ventureId, ventures)
+                                      List.assoc(ventureId, ventures).catch((function () {
+                                              return loadAndNotify(/* None */0, data, ventureId);
+                                            }))
                                     ];
                                   }
                                   catch (exn){
@@ -148,8 +157,21 @@ function withVenture(ventureAction, f, param) {
                                   match = /* tuple */[
                                     ventureId$2,
                                     Venture.join(data, ventureAction[1], ventureId$2).then((function (param) {
-                                            postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
-                                            return Promise.resolve(param[1]);
+                                            switch (param.tag | 0) {
+                                              case 0 : 
+                                                  var venture = param[1];
+                                                  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                                  ventureLoaded(ventureId$2, venture, param[2]);
+                                                  return Promise.resolve(venture);
+                                              case 1 : 
+                                                  var venture$1 = param[1];
+                                                  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                                  ventureJoined(ventureId$2, venture$1);
+                                                  return Promise.resolve(venture$1);
+                                              case 2 : 
+                                                  throw DeadThread;
+                                              
+                                            }
                                           }))
                                   ];
                                   break;
@@ -239,9 +261,8 @@ function joinVia(ventureId, userId) {
       userId
     ]);
   return (function (param) {
-      return withVenture(partial_arg, (function (venture) {
-                    ventureJoined(ventureId, venture);
-                    return Promise.resolve(venture);
+      return withVenture(partial_arg, (function (prim) {
+                    return Promise.resolve(prim);
                   }), param);
     });
 }
@@ -532,6 +553,7 @@ exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.logError = logError;
 exports.Notify = Notify;
+exports.DeadThread = DeadThread;
 exports.Handle = Handle;
 exports.handleMessage = handleMessage;
 exports.cleanState = cleanState;

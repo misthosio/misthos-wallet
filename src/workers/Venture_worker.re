@@ -67,6 +67,8 @@ type state = {
     ),
 };
 
+exception DeadThread;
+
 module Handle = {
   type ventureAction =
     | Create(string)
@@ -76,10 +78,14 @@ module Handle = {
   let loadAndNotify = (~persist=true, data, ventureId) =>
     Js.Promise.(
       Venture.load(~persist, data, ~ventureId)
-      |> then_(((venture, newItems)) => {
-           Notify.ventureLoaded(ventureId, venture, newItems);
-           resolve(venture);
-         })
+      |> then_(
+           fun
+           | Venture.Ok(venture, newItems) => {
+               Notify.ventureLoaded(ventureId, venture, newItems);
+               resolve(venture);
+             }
+           | Venture.CouldNotLoad(_error) => raise(DeadThread),
+         )
     );
   let withVenture = (ventureAction, f, {venturesThread}) => {
     let venturesThread =
@@ -102,7 +108,12 @@ module Handle = {
                            }),
                       );
                     | Load(ventureId) =>
-                      try (ventureId, ventures |> List.assoc(ventureId)) {
+                      try (
+                        ventureId,
+                        ventures
+                        |> List.assoc(ventureId)
+                        |> catch((_) => loadAndNotify(data, ventureId)),
+                      ) {
                       | Not_found => (
                           ventureId,
                           loadAndNotify(data, ventureId),
@@ -115,10 +126,25 @@ module Handle = {
                     | JoinVia(ventureId, userId) => (
                         ventureId,
                         Venture.join(data, ~userId, ~ventureId)
-                        |> then_(((index, venture)) => {
-                             Notify.indexUpdated(index);
-                             venture |> resolve;
-                           }),
+                        |> then_(
+                             fun
+                             | Venture.Joined(index, venture) => {
+                                 Notify.indexUpdated(index);
+                                 Notify.ventureJoined(ventureId, venture);
+                                 venture |> resolve;
+                               }
+                             | Venture.AlreadyLoaded(index, venture, newItems) => {
+                                 Notify.indexUpdated(index);
+                                 Notify.ventureLoaded(
+                                   ventureId,
+                                   venture,
+                                   newItems,
+                                 );
+                                 venture |> resolve;
+                               }
+                             | Venture.CouldNotJoin(_error) =>
+                               raise(DeadThread),
+                           ),
                       )
                     };
                   (
@@ -178,13 +204,7 @@ module Handle = {
   };
   let joinVia = (ventureId, userId) => {
     logMessage("Handling 'JoinVia'");
-    withVenture(
-      JoinVia(ventureId, userId),
-      venture => {
-        Notify.ventureJoined(ventureId, venture);
-        Js.Promise.resolve(venture);
-      },
-    );
+    withVenture(JoinVia(ventureId, userId), Js.Promise.resolve);
   };
   let create = name => {
     logMessage("Handling 'Create'");
