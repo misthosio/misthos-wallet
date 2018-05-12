@@ -9,23 +9,23 @@ var Fetch = require("bs-fetch/src/Fetch.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 
-function decodeUTXO(address, raw) {
+function decodeUTXO(raw) {
   return /* record */[
           /* txId */Json_decode.field("txid", Json_decode.string, raw),
           /* txOutputN */Json_decode.field("n", Json_decode.$$int, raw),
-          /* address */address,
+          /* address */Caml_array.caml_array_get(Json_decode.field("addresses", (function (param) {
+                      return Json_decode.array(Json_decode.string, param);
+                    }), raw), 0),
           /* amount */BTC.fromSatoshisFloat(Json_decode.field("value_int", Json_decode.$$float, raw)),
           /* confirmations */Json_decode.field("confirmations", Json_decode.$$int, raw)
         ];
 }
 
-function decodeUTXOs(address, raw) {
+function decodeUTXOs(raw) {
   return Json_decode.withDefault(/* [] */0, (function (param) {
                 return Json_decode.field("unspent", (function (param) {
                               return Json_decode.withDefault(/* [] */0, (function (param) {
-                                            return Json_decode.list((function (param) {
-                                                          return decodeUTXO(address, param);
-                                                        }), param);
+                                            return Json_decode.list(decodeUTXO, param);
                                           }), param);
                             }), param);
               }), raw);
@@ -39,12 +39,12 @@ function decodeNextLink(raw) {
               }), raw);
 }
 
-function fetchAll(address, link, utxos) {
+function fetchAll(link, utxos) {
   if (link) {
     return fetch(link[0]).then((function (prim) {
                     return prim.json();
                   })).then((function (res) {
-                  return fetchAll(address, decodeNextLink(res), List.append(decodeUTXOs(address, res), utxos));
+                  return fetchAll(decodeNextLink(res), List.append(decodeUTXOs(res), utxos));
                 }));
   } else {
     return Promise.resolve(utxos);
@@ -52,11 +52,9 @@ function fetchAll(address, link, utxos) {
 }
 
 function getUTXOs(config, addresses) {
-  return Promise.all($$Array.of_list(List.map((function (address) {
-                          return fetchAll(address, /* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/address/" + (address + "/unspent?limit=1000")))], /* [] */0);
-                        }), addresses))).then((function (all) {
-                return Promise.resolve(List.flatten($$Array.to_list(all)));
-              }));
+  return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/address/" + (List.fold_left((function (res, a) {
+                            return a + ("," + res);
+                          }), "", addresses) + "/unspent?limit=1000")))], /* [] */0);
 }
 
 function broadcastTransaction(config, transaction) {
