@@ -17,6 +17,7 @@ type action =
 type state = {
   index: option(Venture.Index.t),
   selectedVenture,
+  session: Session.t,
   syncWorker: ref(SyncWorkerClient.t),
   incomeWorker: ref(IncomeWorkerClient.t),
   persistWorker: ref(PersistWorkerClient.t),
@@ -33,12 +34,15 @@ let loadVentureAndIndex =
         persistWorker,
         incomeWorker,
         syncWorker,
+        session: oldSession,
       },
     ) => {
-  ventureWorker^ |> VentureWorkerClient.updateSession;
-  incomeWorker^ |> IncomeWorkerClient.updateSession;
-  persistWorker^ |> PersistWorkerClient.updateSession;
-  syncWorker^ |> SyncWorkerClient.updateSession;
+  if (oldSession != session) {
+    ventureWorker^ |> VentureWorkerClient.updateSession;
+    incomeWorker^ |> IncomeWorkerClient.updateSession;
+    persistWorker^ |> PersistWorkerClient.updateSession;
+    syncWorker^ |> SyncWorkerClient.updateSession;
+  };
   switch (session, currentRoute: Router.Config.route, selectedVenture) {
   | (LoggedIn(_), Venture(ventureId), VentureLoaded(loadedId, _, _))
       when VentureId.eq(ventureId, loadedId) => selectedVenture
@@ -89,6 +93,7 @@ let handler = (send, msg) => {
 let make = (~currentRoute, ~session: Session.t, children) => {
   ...component,
   initialState: () => {
+    session: Unknown,
     index: None,
     selectedVenture: None,
     syncWorker: ref(SyncWorkerClient.make(~onMessage=Js.log)),
@@ -101,6 +106,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
   willReceiveProps: ({state}) => {
     ...state,
     selectedVenture: loadVentureAndIndex(session, currentRoute, state),
+    session,
   },
   subscriptions: ({send, state}) => {
     let eventListener = handler(send);
