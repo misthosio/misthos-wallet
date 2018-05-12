@@ -91,6 +91,15 @@ var Notify = /* module */[
   /* newItems */newItems
 ];
 
+function loadAndNotify($staropt$star, data, ventureId) {
+  var persist = $staropt$star ? $staropt$star[0] : true;
+  return Venture.load(/* Some */[persist], data, ventureId).then((function (param) {
+                var venture = param[0];
+                ventureLoaded(ventureId, venture, param[1]);
+                return Promise.resolve(venture);
+              }));
+}
+
 function withVenture(ventureAction, f, param) {
   var venturesThread = param[/* venturesThread */0].then((function (threads) {
           return Promise.resolve(Utils.mapOption((function (param) {
@@ -120,11 +129,7 @@ function withVenture(ventureAction, f, param) {
                                     if (exn === Caml_builtin_exceptions.not_found) {
                                       match = /* tuple */[
                                         ventureId,
-                                        Venture.load(/* None */0, data, ventureId).then((function (param) {
-                                                var venture = param[0];
-                                                ventureLoaded(ventureId, venture, param[1]);
-                                                return Promise.resolve(venture);
-                                              }))
+                                        loadAndNotify(/* None */0, data, ventureId)
                                       ];
                                     } else {
                                       throw exn;
@@ -135,11 +140,7 @@ function withVenture(ventureAction, f, param) {
                                   var ventureId$1 = ventureAction[0];
                                   match = /* tuple */[
                                     ventureId$1,
-                                    Venture.load(/* Some */[false], data, ventureId$1).then((function (param) {
-                                            var venture = param[0];
-                                            ventureLoaded(ventureId$1, venture, param[1]);
-                                            return Promise.resolve(venture);
-                                          }))
+                                    loadAndNotify(/* Some */[false], data, ventureId$1)
                                   ];
                                   break;
                               case 3 : 
@@ -162,11 +163,7 @@ function withVenture(ventureAction, f, param) {
                                         ventureId$3,
                                         match[1].then(Curry.__1(f)).catch((function (err) {
                                                 console.log("[Venture Worker] - Encountered an unhandled exception:", err);
-                                                return Venture.load(/* None */0, data, ventureId$3).then((function (param) {
-                                                              var venture = param[0];
-                                                              ventureLoaded(ventureId$3, venture, param[1]);
-                                                              return Promise.resolve(venture);
-                                                            }));
+                                                return loadAndNotify(/* None */0, data, ventureId$3);
                                               }))
                                       ],
                                       List.remove_assoc(ventureId$3, ventures)
@@ -455,6 +452,7 @@ function syncTabs(ventureId, items) {
 }
 
 var Handle = /* module */[
+  /* loadAndNotify */loadAndNotify,
   /* withVenture */withVenture,
   /* updateSession */updateSession,
   /* load */load,

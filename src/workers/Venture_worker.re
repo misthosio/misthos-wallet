@@ -73,6 +73,14 @@ module Handle = {
     | Load(ventureId)
     | Reload(ventureId)
     | JoinVia(ventureId, userId);
+  let loadAndNotify = (~persist=true, data, ventureId) =>
+    Js.Promise.(
+      Venture.load(~persist, data, ~ventureId)
+      |> then_(((venture, newItems)) => {
+           Notify.ventureLoaded(ventureId, venture, newItems);
+           resolve(venture);
+         })
+    );
   let withVenture = (ventureAction, f, {venturesThread}) => {
     let venturesThread =
       Js.Promise.(
@@ -97,28 +105,12 @@ module Handle = {
                       try (ventureId, ventures |> List.assoc(ventureId)) {
                       | Not_found => (
                           ventureId,
-                          Venture.load(data, ~ventureId)
-                          |> then_(((venture, newItems)) => {
-                               Notify.ventureLoaded(
-                                 ventureId,
-                                 venture,
-                                 newItems,
-                               );
-                               resolve(venture);
-                             }),
+                          loadAndNotify(data, ventureId),
                         )
                       }
                     | Reload(ventureId) => (
                         ventureId,
-                        Venture.load(~persist=false, data, ~ventureId)
-                        |> then_(((venture, newItems)) => {
-                             Notify.ventureLoaded(
-                               ventureId,
-                               venture,
-                               newItems,
-                             );
-                             resolve(venture);
-                           }),
+                        loadAndNotify(~persist=false, data, ventureId),
                       )
                     | JoinVia(ventureId, userId) => (
                         ventureId,
@@ -138,15 +130,7 @@ module Handle = {
                         |> then_(f)
                         |> catch(err => {
                              logError(err);
-                             Venture.load(data, ~ventureId)
-                             |> then_(((venture, newItems)) => {
-                                  Notify.ventureLoaded(
-                                    ventureId,
-                                    venture,
-                                    newItems,
-                                  );
-                                  resolve(venture);
-                                });
+                             loadAndNotify(data, ventureId);
                            }),
                       ),
                       ...ventures |> List.remove_assoc(ventureId),
