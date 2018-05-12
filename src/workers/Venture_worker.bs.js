@@ -26,6 +26,11 @@ function logMessage(msg) {
   return /* () */0;
 }
 
+function logError(error) {
+  console.log("[Venture Worker] - Encountered an unhandled exception:", error);
+  return /* () */0;
+}
+
 function indexUpdated(index) {
   postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [index])));
   return /* () */0;
@@ -133,7 +138,13 @@ function withVenture(ventureAction, f, param) {
                                     /* :: */[
                                       /* tuple */[
                                         ventureId$3,
-                                        match[1].then(Curry.__1(f))
+                                        match[1].then(Curry.__1(f)).catch((function (err) {
+                                                console.log("[Venture Worker] - Encountered an unhandled exception:", err);
+                                                return Venture.load(/* None */0, data, ventureId$3).then((function (venture) {
+                                                              ventureLoaded(ventureId$3, Venture.getAllItems(venture));
+                                                              return Promise.resolve(venture);
+                                                            }));
+                                              }))
                                       ],
                                       List.remove_assoc(ventureId$3, ventures)
                                     ]
@@ -501,6 +512,7 @@ var Message = 0;
 exports.Message = Message;
 exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
+exports.logError = logError;
 exports.Notify = Notify;
 exports.Handle = Handle;
 exports.handleMessage = handleMessage;

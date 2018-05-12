@@ -27,6 +27,9 @@ let postMessage = msg => msg |> Message.encodeOutgoing |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
+let logError = error =>
+  Js.log2("[Venture Worker] - Encountered an unhandled exception:", error);
+
 module Notify = {
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, events) =>
@@ -98,7 +101,22 @@ module Handle = {
                   (
                     data,
                     [
-                      (ventureId, ventureThread |> then_(f)),
+                      (
+                        ventureId,
+                        ventureThread
+                        |> then_(f)
+                        |> catch(err => {
+                             logError(err);
+                             Venture.load(data, ~ventureId)
+                             |> then_(venture => {
+                                  Notify.ventureLoaded(
+                                    ventureId,
+                                    venture |> Venture.getAllItems,
+                                  );
+                                  venture |> resolve;
+                                });
+                           }),
+                      ),
                       ...ventures |> List.remove_assoc(ventureId),
                     ],
                   );
