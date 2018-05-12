@@ -143,7 +143,7 @@ module Handle = {
     withVenture(
       Load(ventureId),
       venture => {
-        Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
+        Notify.ventureLoaded(ventureId, venture |> Venture.getAllItems);
         Js.Promise.resolve(venture);
       },
     );
@@ -153,7 +153,7 @@ module Handle = {
     withVenture(
       JoinVia(ventureId, userId),
       venture => {
-        Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
+        Notify.ventureLoaded(ventureId, venture |> Venture.getAllItems);
         Js.Promise.resolve(venture);
       },
     );
@@ -165,7 +165,7 @@ module Handle = {
       venture => {
         Notify.ventureCreated(
           venture |> Venture.getId,
-          venture |> Venture.getAllEvents,
+          venture |> Venture.getAllItems,
         );
         Js.Promise.resolve(venture);
       },
@@ -414,7 +414,7 @@ module Handle = {
                | Ok(venture, _newItems) => {
                    Notify.ventureLoaded(
                      ventureId,
-                     venture |> Venture.getAllEvents,
+                     venture |> Venture.getAllItems,
                    );
                    venture |> resolve;
                  }
@@ -426,7 +426,7 @@ module Handle = {
                    );
                    Notify.ventureLoaded(
                      ventureId,
-                     venture |> Venture.getAllEvents,
+                     venture |> Venture.getAllItems,
                    );
                    venture |> resolve;
                  },

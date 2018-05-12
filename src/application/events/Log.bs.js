@@ -21,6 +21,9 @@ function Make(funarg) {
                       eventHash
                     ]).toString());
   };
+  var items = function (log) {
+    return log;
+  };
   var makeItem = function (issuerKeyPair, $$event) {
     var issuerPubKey = Utils.publicKeyFromKeyPair(issuerKeyPair);
     var hashBuffer = makeItemHash(issuerPubKey, $$event);
@@ -149,6 +152,7 @@ function Make(funarg) {
   };
   return [
           make,
+          items,
           append,
           appendItem,
           reduce,

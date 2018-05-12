@@ -31,6 +31,8 @@ var InvalidEvent = Caml_exceptions.create("Venture.InvalidEvent");
 
 var CouldNotLoadVenture = Caml_exceptions.create("Venture.CouldNotLoadVenture");
 
+var NotPersistingNewEvents = Caml_exceptions.create("Venture.NotPersistingNewEvents");
+
 function make(session, id) {
   return /* record */[
           /* session */session,
@@ -192,7 +194,7 @@ function reconstruct(session, log) {
                 match$1[1],
                 match$1[2],
                 match$1[3],
-                match$1[4]
+                /* [] */0
               ], match$1[5]).then((function (param) {
                 var match = param[1];
                 return Promise.resolve(/* tuple */[
@@ -221,6 +223,8 @@ function persist($staropt$star, param) {
                               collector
                             ]);
                 }));
+  } else if (List.length(collector) !== 0) {
+    throw NotPersistingNewEvents;
   } else {
     return Promise.resolve(/* tuple */[
                 venture,
@@ -283,13 +287,8 @@ function getSummary(param) {
   return Curry._1(EventLog.getSummary, param[/* log */2]);
 }
 
-function getAllEvents(param) {
-  return Curry._3(EventLog.reduce, (function (l, param) {
-                return /* :: */[
-                        param[/* event */0],
-                        l
-                      ];
-              }), /* [] */0, param[/* log */2]);
+function getAllItems(param) {
+  return Curry._1(EventLog.items, param[/* log */2]);
 }
 
 function exec(session, ventureName) {
@@ -661,10 +660,11 @@ exports.Index = Index;
 exports.Validation = Validation;
 exports.InvalidEvent = InvalidEvent;
 exports.CouldNotLoadVenture = CouldNotLoadVenture;
+exports.NotPersistingNewEvents = NotPersistingNewEvents;
 exports.join = join;
 exports.load = load;
 exports.getId = getId;
-exports.getAllEvents = getAllEvents;
+exports.getAllItems = getAllItems;
 exports.getSummary = getSummary;
 exports.Cmd = Cmd;
 /* Event Not a pure module */

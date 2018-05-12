@@ -182,7 +182,8 @@ let apply = (event: Event.t, state) => {
   };
 };
 
-let init = List.fold_left((m, e) => m |> apply(e), make());
+let init =
+  List.fold_left((m, {event}: EventLog.item) => m |> apply(event), make());
 
 let applyAll = (events, model) =>
   events

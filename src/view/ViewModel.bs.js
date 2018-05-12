@@ -412,8 +412,8 @@ function apply($$event, state) {
 var partial_arg = make(/* () */0);
 
 function init(param) {
-  return List.fold_left((function (m, e) {
-                return apply(e, m);
+  return List.fold_left((function (m, param) {
+                return apply(param[/* event */0], m);
               }), partial_arg, param);
 }
 

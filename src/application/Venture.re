@@ -14,6 +14,8 @@ exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
 
+exception NotPersistingNewEvents;
+
 type t = {
   session: Session.Data.t,
   id: ventureId,
@@ -99,7 +101,7 @@ let apply =
 
 let reconstruct = (session, log) => {
   let {validation, state, wallet} = make(session, VentureId.make());
-  let (id, validation, state, wallet, collector, watchers) =
+  let (id, validation, state, wallet, _collector, watchers) =
     log
     |> EventLog.reduce(
          (
@@ -124,7 +126,7 @@ let reconstruct = (session, log) => {
        session,
        log,
        applyInternal,
-       (validation, state, wallet, collector),
+       (validation, state, wallet, []),
      )
   |> Js.Promise.then_(
        ((log, (validation, state, wallet, collector), watchers)) =>
@@ -141,6 +143,8 @@ let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
         log |> EventLog.encode |> Json.stringify,
       )
       |> then_(() => resolve((venture, collector)));
+    } else if (collector |> List.length != 0) {
+      raise(NotPersistingNewEvents);
     } else {
       resolve((venture, collector));
     }
@@ -205,8 +209,7 @@ let getId = ({id}) => id;
 
 let getSummary = ({log}) => log |> EventLog.getSummary;
 
-let getAllEvents = ({log}) =>
-  log |> EventLog.reduce((l, {event}) => [event, ...l], []);
+let getAllItems = ({log}) => log |> EventLog.items;
 
 module Cmd = {
   module Create = {

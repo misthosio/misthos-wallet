@@ -31,6 +31,8 @@ exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
 
+exception NotPersistingNewEvents;
+
 type t;
 
 let join:
@@ -42,7 +44,7 @@ let load:
 
 let getId: t => ventureId;
 
-let getAllEvents: t => list(Event.t);
+let getAllItems: t => list(EventLog.item);
 
 let getSummary: t => EventLog.summary;
 

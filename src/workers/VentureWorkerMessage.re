@@ -27,8 +27,8 @@ type encodedIncoming = Js.Json.t;
 
 type outgoing =
   | UpdateIndex(Venture.Index.t)
-  | VentureLoaded(ventureId, list(Event.t))
-  | VentureCreated(ventureId, list(Event.t))
+  | VentureLoaded(ventureId, list(EventLog.item))
+  | VentureCreated(ventureId, list(EventLog.item))
   | NewItems(ventureId, list(EventLog.item));
 
 type encodedOutgoing = Js.Json.t;
@@ -267,20 +267,20 @@ let encodeOutgoing =
         ("index", Venture.Index.encode(index)),
       ])
     )
-  | VentureCreated(ventureId, events) =>
+  | VentureCreated(ventureId, items) =>
     Json.Encode.(
       object_([
         ("type", string("VentureCreated")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("events", list(Event.encode, events)),
+        ("items", list(EventLog.encodeItem, items)),
       ])
     )
-  | VentureLoaded(ventureId, events) =>
+  | VentureLoaded(ventureId, items) =>
     Json.Encode.(
       object_([
         ("type", string("VentureLoaded")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("events", list(Event.encode, events)),
+        ("items", list(EventLog.encodeItem, items)),
       ])
     )
   | NewItems(ventureId, items) =>
@@ -297,12 +297,14 @@ let decodeOutgoing = raw => {
   switch (type_) {
   | "VentureCreated" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
-    let events = Json.Decode.(raw |> field("events", list(Event.decode)));
-    VentureCreated(ventureId, events);
+    let items =
+      Json.Decode.(raw |> field("items", list(EventLog.decodeItem)));
+    VentureCreated(ventureId, items);
   | "VentureLoaded" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
-    let events = Json.Decode.(raw |> field("events", list(Event.decode)));
-    VentureLoaded(ventureId, events);
+    let items =
+      Json.Decode.(raw |> field("items", list(EventLog.decodeItem)));
+    VentureLoaded(ventureId, items);
   | "NewItems" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =

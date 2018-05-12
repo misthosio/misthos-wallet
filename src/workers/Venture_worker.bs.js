@@ -196,7 +196,7 @@ function load(ventureId) {
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
+                    ventureLoaded(ventureId, Venture.getAllItems(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -210,7 +210,7 @@ function joinVia(ventureId, userId) {
     ]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
+                    ventureLoaded(ventureId, Venture.getAllItems(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -221,7 +221,7 @@ function create(name) {
   var partial_arg = /* Create */Block.__(0, [name]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureCreated(Venture.getId(venture), Venture.getAllEvents(venture));
+                    ventureCreated(Venture.getId(venture), Venture.getAllItems(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -411,11 +411,11 @@ function syncTabs(ventureId, items) {
                                   if (param.tag) {
                                     var venture = param[0];
                                     logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
-                                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
+                                    ventureLoaded(ventureId, Venture.getAllItems(venture));
                                     return Promise.resolve(venture);
                                   } else {
                                     var venture$1 = param[0];
-                                    ventureLoaded(ventureId, Venture.getAllEvents(venture$1));
+                                    ventureLoaded(ventureId, Venture.getAllItems(venture$1));
                                     return Promise.resolve(venture$1);
                                   }
                                 }));
