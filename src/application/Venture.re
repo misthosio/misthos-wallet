@@ -137,7 +137,7 @@ let reconstruct = (session, log) => {
 
 let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
   Js.Promise.(
-    if (shouldPersist) {
+    if (shouldPersist && collector |> List.length > 0) {
       Blockstack.putFileEncrypted(
         (id |> VentureId.toString) ++ "/log.json",
         log |> EventLog.encode |> Json.stringify,

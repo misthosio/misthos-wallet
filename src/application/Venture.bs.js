@@ -216,7 +216,7 @@ function persist($staropt$star, param) {
   var collector = param[1];
   var venture = param[0];
   var shouldPersist = $staropt$star ? $staropt$star[0] : true;
-  if (shouldPersist) {
+  if (shouldPersist && List.length(collector) > 0) {
     return Blockstack$1.putFile(PrimitiveTypes.VentureId[/* toString */0](venture[/* id */1]) + "/log.json", Json.stringify(Curry._1(EventLog.encode, venture[/* log */2]))).then((function () {
                   return Promise.resolve(/* tuple */[
                               venture,
