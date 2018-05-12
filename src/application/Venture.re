@@ -12,8 +12,6 @@ module State = Venture__State;
 
 exception InvalidEvent(Validation.result);
 
-exception CouldNotLoadVenture;
-
 exception NotPersistingNewEvents;
 
 type t = {
@@ -152,6 +150,10 @@ let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
 
 let defaultPolicy = Policy.unanimous;
 
+type loadResult =
+  | Ok(t, list(EventLog.item))
+  | CouldNotLoad(Js.Promise.error);
+
 let load =
     (~persist as shouldPersist=true, session: Session.Data.t, ~ventureId) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
@@ -163,45 +165,61 @@ let load =
          switch (Js.Nullable.toOption(nullLog)) {
          | Some(raw) =>
            raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
-         | None => raise(CouldNotLoadVenture)
+         | None => raise(Not_found)
          }
        )
     |> then_(persist(~shouldPersist))
-    |> then_(((v, _)) => v |> resolve)
+    |> then_(((v, c)) => Ok(v, c) |> resolve)
+    |> catch(err => CouldNotLoad(err) |> resolve)
   );
 };
+
+type joinResult =
+  | AlreadyLoaded(Index.t, t, list(EventLog.item))
+  | Joined(Index.t, t)
+  | CouldNotJoin(Js.Promise.error);
 
 let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
     load(session, ~ventureId)
-    |> then_(venture => all2((Index.load(), venture |> resolve)))
-    |> catch(_error =>
-         Blockstack.getFileFromUserAndDecrypt(
-           (ventureId |> VentureId.toString)
-           ++ "/"
-           ++ session.storagePrefix
-           ++ "/log.json",
-           ~username=userId |> UserId.toString,
-         )
-         |> catch(_error => raise(Not_found))
-         |> then_(nullFile =>
-              switch (Js.Nullable.toOption(nullFile)) {
-              | None => raise(Not_found)
-              | Some(raw) =>
-                raw
-                |> Json.parseOrRaise
-                |> EventLog.decode
-                |> reconstruct(session)
-              }
-            )
-         |> then_(persist)
-         |> then_(((venture, _)) =>
-              Index.add(
-                ~ventureId=venture.id,
-                ~ventureName=venture.state |> State.ventureName,
+    |> then_(loadResult =>
+         switch (loadResult) {
+         | Ok(venture, newItems) =>
+           Index.add(
+             ~ventureId,
+             ~ventureName=venture.state |> State.ventureName,
+           )
+           |> then_(index =>
+                AlreadyLoaded(index, venture, newItems) |> resolve
               )
-              |> then_(index => resolve((index, venture)))
-            )
+         | CouldNotLoad(_) =>
+           Blockstack.getFileFromUserAndDecrypt(
+             (ventureId |> VentureId.toString)
+             ++ "/"
+             ++ session.storagePrefix
+             ++ "/log.json",
+             ~username=userId |> UserId.toString,
+           )
+           |> then_(nullFile =>
+                switch (Js.Nullable.toOption(nullFile)) {
+                | None => raise(Not_found)
+                | Some(raw) =>
+                  raw
+                  |> Json.parseOrRaise
+                  |> EventLog.decode
+                  |> reconstruct(session)
+                }
+              )
+           |> then_(persist)
+           |> then_(((venture, _)) =>
+                Index.add(
+                  ~ventureId=venture.id,
+                  ~ventureName=venture.state |> State.ventureName,
+                )
+                |> then_(index => resolve(Joined(index, venture)))
+              )
+           |> catch(err => CouldNotJoin(err) |> resolve)
+         }
        )
   );
 

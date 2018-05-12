@@ -8,6 +8,7 @@ var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -36,13 +37,25 @@ function indexUpdated(index) {
   return /* () */0;
 }
 
-function ventureLoaded(id, venture) {
+function ventureLoaded(id, venture, newItems) {
   var msg_001 = List.rev(Venture.getAllItems(venture));
+  var msg_002 = List.rev(newItems);
   var msg = /* VentureLoaded */Block.__(1, [
       id,
-      msg_001
+      msg_001,
+      msg_002
     ]);
   postMessage(VentureWorkerMessage.encodeOutgoing(msg));
+  return /* () */0;
+}
+
+function ventureJoined(id, venture) {
+  var items = List.rev(Venture.getAllItems(venture));
+  postMessage(VentureWorkerMessage.encodeOutgoing(/* VentureLoaded */Block.__(1, [
+              id,
+              items,
+              items
+            ])));
   return /* () */0;
 }
 
@@ -74,9 +87,25 @@ function newItems(id, items) {
 var Notify = /* module */[
   /* indexUpdated */indexUpdated,
   /* ventureLoaded */ventureLoaded,
+  /* ventureJoined */ventureJoined,
   /* ventureCreated */ventureCreated,
   /* newItems */newItems
 ];
+
+var DeadThread = Caml_exceptions.create("Venture_worker.DeadThread");
+
+function loadAndNotify($staropt$star, data, ventureId) {
+  var persist = $staropt$star ? $staropt$star[0] : true;
+  return Venture.load(/* Some */[persist], data, ventureId).then((function (param) {
+                if (param.tag) {
+                  throw DeadThread;
+                } else {
+                  var venture = param[0];
+                  ventureLoaded(ventureId, venture, param[1]);
+                  return Promise.resolve(venture);
+                }
+              }));
+}
 
 function withVenture(ventureAction, f, param) {
   var venturesThread = param[/* venturesThread */0].then((function (threads) {
@@ -100,14 +129,16 @@ function withVenture(ventureAction, f, param) {
                                   try {
                                     match = /* tuple */[
                                       ventureId,
-                                      List.assoc(ventureId, ventures)
+                                      List.assoc(ventureId, ventures).catch((function () {
+                                              return loadAndNotify(/* None */0, data, ventureId);
+                                            }))
                                     ];
                                   }
                                   catch (exn){
                                     if (exn === Caml_builtin_exceptions.not_found) {
                                       match = /* tuple */[
                                         ventureId,
-                                        Venture.load(/* None */0, data, ventureId)
+                                        loadAndNotify(/* None */0, data, ventureId)
                                       ];
                                     } else {
                                       throw exn;
@@ -118,7 +149,7 @@ function withVenture(ventureAction, f, param) {
                                   var ventureId$1 = ventureAction[0];
                                   match = /* tuple */[
                                     ventureId$1,
-                                    Venture.load(/* Some */[false], data, ventureId$1)
+                                    loadAndNotify(/* Some */[false], data, ventureId$1)
                                   ];
                                   break;
                               case 3 : 
@@ -126,8 +157,21 @@ function withVenture(ventureAction, f, param) {
                                   match = /* tuple */[
                                     ventureId$2,
                                     Venture.join(data, ventureAction[1], ventureId$2).then((function (param) {
-                                            postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
-                                            return Promise.resolve(param[1]);
+                                            switch (param.tag | 0) {
+                                              case 0 : 
+                                                  var venture = param[1];
+                                                  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                                  ventureLoaded(ventureId$2, venture, param[2]);
+                                                  return Promise.resolve(venture);
+                                              case 1 : 
+                                                  var venture$1 = param[1];
+                                                  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                                  ventureJoined(ventureId$2, venture$1);
+                                                  return Promise.resolve(venture$1);
+                                              case 2 : 
+                                                  throw DeadThread;
+                                              
+                                            }
                                           }))
                                   ];
                                   break;
@@ -141,10 +185,7 @@ function withVenture(ventureAction, f, param) {
                                         ventureId$3,
                                         match[1].then(Curry.__1(f)).catch((function (err) {
                                                 console.log("[Venture Worker] - Encountered an unhandled exception:", err);
-                                                return Venture.load(/* None */0, data, ventureId$3).then((function (venture) {
-                                                              ventureLoaded(ventureId$3, venture);
-                                                              return Promise.resolve(venture);
-                                                            }));
+                                                return loadAndNotify(/* None */0, data, ventureId$3);
                                               }))
                                       ],
                                       List.remove_assoc(ventureId$3, ventures)
@@ -207,9 +248,8 @@ function load(ventureId) {
   logMessage("Handling 'Load'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, venture);
-                    return Promise.resolve(venture);
+      return withVenture(partial_arg, (function (prim) {
+                    return Promise.resolve(prim);
                   }), param);
     });
 }
@@ -221,9 +261,8 @@ function joinVia(ventureId, userId) {
       userId
     ]);
   return (function (param) {
-      return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, venture);
-                    return Promise.resolve(venture);
+      return withVenture(partial_arg, (function (prim) {
+                    return Promise.resolve(prim);
                   }), param);
     });
 }
@@ -421,14 +460,12 @@ function syncTabs(ventureId, items) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
-                                    var venture = param[0];
                                     logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
-                                    ventureLoaded(ventureId, venture);
-                                    return Promise.resolve(venture);
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   } else {
-                                    var venture$1 = param[0];
-                                    ventureLoaded(ventureId, venture$1);
-                                    return Promise.resolve(venture$1);
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   }
                                 }));
                   }), param);
@@ -436,6 +473,7 @@ function syncTabs(ventureId, items) {
 }
 
 var Handle = /* module */[
+  /* loadAndNotify */loadAndNotify,
   /* withVenture */withVenture,
   /* updateSession */updateSession,
   /* load */load,
@@ -515,6 +553,7 @@ exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.logError = logError;
 exports.Notify = Notify;
+exports.DeadThread = DeadThread;
 exports.Handle = Handle;
 exports.handleMessage = handleMessage;
 exports.cleanState = cleanState;

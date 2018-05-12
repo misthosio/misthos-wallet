@@ -176,7 +176,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           },
           ((_) => Router.goTo(Router.Config.Venture(ventureId))),
         )
-      | (VentureLoaded(ventureId, events), JoiningVenture(joiningId))
+      | (VentureLoaded(ventureId, events, _), JoiningVenture(joiningId))
           when VentureId.eq(ventureId, joiningId) =>
         ReasonReact.UpdateWithSideEffects(
           {
@@ -190,7 +190,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           },
           ((_) => Router.goTo(Router.Config.Venture(ventureId))),
         )
-      | (VentureLoaded(ventureId, events), LoadingVenture(loadingId))
+      | (VentureLoaded(ventureId, events, _), LoadingVenture(loadingId))
           when VentureId.eq(ventureId, loadingId) =>
         ReasonReact.Update({
           ...state,

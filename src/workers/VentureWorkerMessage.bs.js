@@ -524,7 +524,13 @@ function encodeOutgoing(param) {
                           "items",
                           Json_encode.list(EventLog.encodeItem, param[1])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "newItems",
+                            Json_encode.list(EventLog.encodeItem, param[2])
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]);
@@ -600,9 +606,13 @@ function decodeOutgoing(raw) {
         var items$2 = Json_decode.field("items", (function (param) {
                 return Json_decode.list(EventLog.decodeItem, param);
               }), raw);
+        var newItems = Json_decode.field("newItems", (function (param) {
+                return Json_decode.list(EventLog.decodeItem, param);
+              }), raw);
         return /* VentureLoaded */Block.__(1, [
                   ventureId$2,
-                  items$2
+                  items$2,
+                  newItems
                 ]);
     default:
       throw [

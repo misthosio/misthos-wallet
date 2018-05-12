@@ -330,10 +330,19 @@ function persistVenture(ventureId) {
 function handleMessage(param) {
   if (param.tag) {
     var match = VentureWorkerMessage.decodeOutgoing(param[0]);
-    if (match.tag) {
-      return persistVenture(match[0]);
-    } else {
-      return /* () */0;
+    switch (match.tag | 0) {
+      case 0 : 
+          return /* () */0;
+      case 1 : 
+          if (List.length(match[2]) > 0) {
+            return persistVenture(match[0]);
+          } else {
+            return /* () */0;
+          }
+      case 2 : 
+      case 3 : 
+          return persistVenture(match[0]);
+      
     }
   } else {
     logMessage("Handling 'UpdateSession'");

@@ -251,7 +251,8 @@ let handleMessage =
     }
   | VentureWorkerMessage(raw) =>
     switch (raw |> VentureWorkerMessage.decodeOutgoing) {
-    | VentureLoaded(ventureId, _) => persistVenture(ventureId)
+    | VentureLoaded(ventureId, _, newItems) when newItems |> List.length > 0 =>
+      persistVenture(ventureId)
     | VentureCreated(ventureId, _) => persistVenture(ventureId)
     | NewItems(ventureId, _) => persistVenture(ventureId)
     | _ => ()

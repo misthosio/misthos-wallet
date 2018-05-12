@@ -29,18 +29,26 @@ module Validation: {
 
 exception InvalidEvent(Validation.result);
 
-exception CouldNotLoadVenture;
-
 exception NotPersistingNewEvents;
 
 type t;
 
-let join:
-  (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
-  Js.Promise.t((Index.t, t));
+type loadResult =
+  | Ok(t, list(EventLog.item))
+  | CouldNotLoad(Js.Promise.error);
 
 let load:
-  (~persist: bool=?, Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
+  (~persist: bool=?, Session.Data.t, ~ventureId: ventureId) =>
+  Js.Promise.t(loadResult);
+
+type joinResult =
+  | AlreadyLoaded(Index.t, t, list(EventLog.item))
+  | Joined(Index.t, t)
+  | CouldNotJoin(Js.Promise.error);
+
+let join:
+  (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
+  Js.Promise.t(joinResult);
 
 let getId: t => ventureId;
 
