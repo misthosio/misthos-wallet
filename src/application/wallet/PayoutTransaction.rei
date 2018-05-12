@@ -24,6 +24,10 @@ type summary = {
 
 let summary: (Network.t, t) => summary;
 
+let txInputForChangeAddress:
+  (~transactionId: string, AccountKeyChain.Collection.t, Network.t, t) =>
+  option(input);
+
 let build:
   (
     ~mandatoryInputs: list(input),

@@ -5,6 +5,8 @@ type encoded = Js.Json.t;
 let fromSatoshis = satoshis =>
   BigNumber.make(`Float(satoshis |> Int64.to_float));
 
+let fromSatoshisFloat = satoshis => BigNumber.make(`Float(satoshis));
+
 let toSatoshisFloat = btc =>
   btc
   |> BigNumber.integerValue(BigNumber.RoundingMode.ceil)

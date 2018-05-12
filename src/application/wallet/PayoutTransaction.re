@@ -70,6 +70,41 @@ let summary =
   };
 };
 
+let txInputForChangeAddress =
+    (~transactionId, accountKeyChains, network, {changeAddress, txHex}) =>
+  changeAddress
+  |> Utils.mapOption(((address, coordinates)) => {
+       let keyChain =
+         accountKeyChains
+         |> AccountKeyChain.Collection.lookup(
+              coordinates |> Address.Coordinates.accountIdx,
+              coordinates |> Address.Coordinates.keyChainIdent,
+            );
+       let tx = B.Transaction.fromHex(txHex);
+       let (idx, value) =
+         tx##outs
+         |> Array.to_list
+         |> List.mapi((i, out) =>
+              B.Address.fromOutputScript(
+                out##script,
+                network |> Network.bitcoinNetwork,
+              )
+              == address ?
+                Some((i, BTC.fromSatoshisFloat(out##value))) : None
+            )
+         |> List.find(Js.Option.isSome)
+         |> Js.Option.getExn;
+       Network.{
+         txId: transactionId,
+         txOutputN: idx,
+         value,
+         nCoSigners: keyChain.nCoSigners,
+         nPubKeys: keyChain.custodianKeyChains |> List.length,
+         address,
+         coordinates,
+       };
+     });
+
 let encode = payout =>
   Json.Encode.(
     object_([
@@ -153,7 +188,8 @@ let signPayout =
                      accountKeyChains
                      |> AccountKeyChain.Collection.lookup(
                           input.coordinates |> Address.Coordinates.accountIdx,
-                          input.coordinates |> Address.Coordinates.keyChainIdx,
+                          input.coordinates
+                          |> Address.Coordinates.keyChainIdent,
                         )
                    ).
                      custodianKeyChains

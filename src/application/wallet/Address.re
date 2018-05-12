@@ -63,7 +63,6 @@ module Coordinates = {
   let nextExternal = (user, usedCoordinates, accountKeyChain) =>
     next(user, usedCoordinates, ChainIndex.externalChain, accountKeyChain);
   let accountIdx = ((idx, _, _, _, _)) => idx;
-  let keyChainIdx = ((_, keyChainIdx, _, _, _)) => keyChainIdx;
   let keyChainIdent = ((_, ident, _, _, _)) => ident;
   let coSignerIdx = ((_, _, coSignerIdx, _, _)) => coSignerIdx;
   let chainIdx = ((_, _, _, chainIdx, _)) => chainIdx;
@@ -158,7 +157,7 @@ let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) =>
 let find = (coordinates, keyChains) =>
   AccountKeyChain.Collection.lookup(
     coordinates |> Coordinates.accountIdx,
-    coordinates |> Coordinates.keyChainIdx,
+    coordinates |> Coordinates.keyChainIdent,
     keyChains,
   )
   |> make(coordinates);

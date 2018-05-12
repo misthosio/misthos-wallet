@@ -61,8 +61,38 @@ function summary(network, param) {
         ];
 }
 
+function txInputForChangeAddress(transactionId, accountKeyChains, network, param) {
+  var txHex = param[/* txHex */0];
+  return Utils.mapOption((function (param) {
+                var coordinates = param[1];
+                var address = param[0];
+                var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), accountKeyChains);
+                var tx = BitcoinjsLib.Transaction.fromHex(txHex);
+                var match = Js_option.getExn(List.find(Js_option.isSome, List.mapi((function (i, out) {
+                                var match = BitcoinjsLib.address.fromOutputScript(out.script, Network.bitcoinNetwork(network)) === address;
+                                if (match) {
+                                  return /* Some */[/* tuple */[
+                                            i,
+                                            BTC.fromSatoshisFloat(out.value)
+                                          ]];
+                                } else {
+                                  return /* None */0;
+                                }
+                              }), $$Array.to_list(tx.outs))));
+                return /* record */[
+                        /* txId */transactionId,
+                        /* txOutputN */match[0],
+                        /* address */address,
+                        /* value */match[1],
+                        /* nCoSigners */keyChain[/* nCoSigners */2],
+                        /* nPubKeys */List.length(keyChain[/* custodianKeyChains */3]),
+                        /* coordinates */coordinates
+                      ];
+              }), param[/* changeAddress */3]);
+}
+
 function encode(payout) {
-  var partial_arg = Address.Coordinates[/* encode */10];
+  var partial_arg = Address.Coordinates[/* encode */9];
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "txHex",
@@ -99,7 +129,7 @@ function encode(payout) {
 }
 
 function decode(raw) {
-  var partial_arg = Address.Coordinates[/* decode */11];
+  var partial_arg = Address.Coordinates[/* decode */10];
   var partial_arg$1 = function (param) {
     return Json_decode.tuple2(Json_decode.string, partial_arg, param);
   };
@@ -138,11 +168,11 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
                         }))($$Array.to_list(match))) < input[/* nCoSigners */4];
           if (needsSigning) {
             try {
-              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdx */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
+              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
-              var coSignerIdx = Address.Coordinates[/* coSignerIdx */6](input[/* coordinates */6]);
-              var chainIdx = Address.Coordinates[/* chainIdx */7](input[/* coordinates */6]);
-              var addressIdx = Address.Coordinates[/* addressIdx */8](input[/* coordinates */6]);
+              var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
+              var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
+              var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
               txB.sign(idx, keyPair, Utils.bufFromHex(address[/* redeemScript */4]), null, BTC.toSatoshisFloat(input[/* value */3]), Utils.bufFromHex(address[/* witnessScript */3]));
@@ -439,6 +469,7 @@ exports.NotEnoughFunds = NotEnoughFunds;
 exports.NotEnoughSignatures = NotEnoughSignatures;
 exports.NoSignaturesForInput = NoSignaturesForInput;
 exports.summary = summary;
+exports.txInputForChangeAddress = txInputForChangeAddress;
 exports.build = build;
 exports.getSignedExn = getSignedExn;
 exports.signPayout = signPayout;

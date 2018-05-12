@@ -66,10 +66,6 @@ function accountIdx(param) {
   return param[0];
 }
 
-function keyChainIdx(param) {
-  return param[1];
-}
-
 function keyChainIdent(param) {
   return param[1];
 }
@@ -142,7 +138,6 @@ var Coordinates = /* module */[
   /* nextInternal */nextInternal,
   /* nextExternal */nextExternal,
   /* accountIdx */accountIdx,
-  /* keyChainIdx */keyChainIdx,
   /* keyChainIdent */keyChainIdent,
   /* coSignerIdx */coSignerIdx,
   /* chainIdx */chainIdx,
@@ -181,7 +176,7 @@ function make(coordinates, param) {
 }
 
 function find(coordinates, keyChains) {
-  return make(coordinates, AccountKeyChain.Collection[/* lookup */2](accountIdx(coordinates), keyChainIdx(coordinates), keyChains));
+  return make(coordinates, AccountKeyChain.Collection[/* lookup */2](accountIdx(coordinates), keyChainIdent(coordinates), keyChains));
 }
 
 exports.Coordinates = Coordinates;

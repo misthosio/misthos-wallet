@@ -7,7 +7,6 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
-var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 
 function decodeUTXO(address, raw) {
@@ -15,7 +14,7 @@ function decodeUTXO(address, raw) {
           /* txId */Json_decode.field("txid", Json_decode.string, raw),
           /* txOutputN */Json_decode.field("n", Json_decode.$$int, raw),
           /* address */address,
-          /* amount */BTC.fromSatoshis(Caml_int64.of_float(Json_decode.field("value_int", Json_decode.$$float, raw))),
+          /* amount */BTC.fromSatoshisFloat(Json_decode.field("value_int", Json_decode.$$float, raw)),
           /* confirmations */Json_decode.field("confirmations", Json_decode.$$int, raw)
         ];
 }

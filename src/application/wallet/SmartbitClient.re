@@ -12,8 +12,7 @@ let decodeUTXO = (address, raw) : WalletTypes.utxo =>
   Json.Decode.{
     txId: raw |> field("txid", string),
     txOutputN: raw |> field("n", int),
-    amount:
-      raw |> field("value_int", float_) |> Int64.of_float |> BTC.fromSatoshis,
+    amount: raw |> field("value_int", float_) |> BTC.fromSatoshisFloat,
     confirmations: raw |> field("confirmations", int),
     address,
   };

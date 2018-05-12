@@ -413,7 +413,7 @@ function encode$6($$event) {
                 /* :: */[
                   /* tuple */[
                     "changeAddressCoordinates",
-                    Json_encode.nullable(Address.Coordinates[/* encode */10], $$event[/* changeAddressCoordinates */2])
+                    Json_encode.nullable(Address.Coordinates[/* encode */9], $$event[/* changeAddressCoordinates */2])
                   ],
                   /* [] */0
                 ]
@@ -422,7 +422,7 @@ function encode$6($$event) {
 }
 
 function decode$6(raw) {
-  var partial_arg = Address.Coordinates[/* decode */11];
+  var partial_arg = Address.Coordinates[/* decode */10];
   return /* record */[
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw),
@@ -783,7 +783,7 @@ function encode$14($$event) {
               /* :: */[
                 /* tuple */[
                   "coordinates",
-                  Address.Coordinates[/* encode */10]($$event[/* coordinates */0])
+                  Address.Coordinates[/* encode */9]($$event[/* coordinates */0])
                 ],
                 /* :: */[
                   /* tuple */[
@@ -798,7 +798,7 @@ function encode$14($$event) {
 
 function decode$14(raw) {
   return /* record */[
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */11], raw),
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
           /* address */Json_decode.field("address", Json_decode.string, raw)
         ];
 }

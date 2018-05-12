@@ -197,7 +197,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
   var userId = param[/* userId */0];
   var keyChainIdent = List.assoc(userId, List.assoc(accountIdx, param$1[/* activatedKeyChain */4]));
   var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, accountKeyChains);
-  var coordinates = Address.Coordinates[/* allForAccount */9](accountIdx)(param$1[/* exposedCoordinates */5]);
+  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(param$1[/* exposedCoordinates */5]);
   var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
   return Network.transactionInputs(network)(coordinates, accountKeyChains).then((function (inputs) {
                 var inputs$1 = List.filter((function (input) {
@@ -210,7 +210,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                                       }), reservedInputs) === false;
                         }))(inputs);
                 var oldInputs = List.find_all((function (i) {
-                          return AccountKeyChain.Identifier[/* neq */3](keyChainIdent, Address.Coordinates[/* keyChainIdent */5](i[/* coordinates */6]));
+                          return AccountKeyChain.Identifier[/* neq */3](keyChainIdent, Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6]));
                         }))(inputs$1);
                 var changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
                 try {
