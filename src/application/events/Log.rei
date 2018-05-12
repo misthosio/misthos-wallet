@@ -16,6 +16,7 @@ module Make:
       signature: Bitcoin.ECSignature.t,
     };
     let make: unit => t;
+    let items: t => list(item);
     let append: (Bitcoin.ECPair.t, Event.t, t) => (item, t);
     let appendItem: (item, t) => t;
     let reduce: (('s, item) => 's, 's, t) => 's;

@@ -31,17 +31,20 @@ exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
 
+exception NotPersistingNewEvents;
+
 type t;
 
 let join:
   (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
   Js.Promise.t((Index.t, t));
 
-let load: (Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
+let load:
+  (~persist: bool=?, Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
 
 let getId: t => ventureId;
 
-let getAllEvents: t => list(Event.t);
+let getAllItems: t => list(EventLog.item);
 
 let getSummary: t => EventLog.summary;
 

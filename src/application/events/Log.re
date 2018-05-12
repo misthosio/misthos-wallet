@@ -23,6 +23,7 @@ module Make = (Event: Encodable) => {
     |> BufferExt.toString
     |> Bitcoin.Crypto.sha256;
   };
+  let items = log => log;
   let makeItem = (issuerKeyPair, event) => {
     let issuerPubKey = Utils.publicKeyFromKeyPair(issuerKeyPair);
     let hashBuffer = makeItemHash(issuerPubKey, event);

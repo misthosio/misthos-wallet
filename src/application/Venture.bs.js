@@ -31,6 +31,8 @@ var InvalidEvent = Caml_exceptions.create("Venture.InvalidEvent");
 
 var CouldNotLoadVenture = Caml_exceptions.create("Venture.CouldNotLoadVenture");
 
+var NotPersistingNewEvents = Caml_exceptions.create("Venture.NotPersistingNewEvents");
+
 function make(session, id) {
   return /* record */[
           /* session */session,
@@ -79,8 +81,6 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
               ];
       }
     } else {
-      logMessage("Ignoring event:");
-      logMessage(Json.stringify(Event.encode($$event)));
       return /* tuple */[
               /* None */0,
               oldLog,
@@ -194,7 +194,7 @@ function reconstruct(session, log) {
                 match$1[1],
                 match$1[2],
                 match$1[3],
-                match$1[4]
+                /* [] */0
               ], match$1[5]).then((function (param) {
                 var match = param[1];
                 return Promise.resolve(/* tuple */[
@@ -212,32 +212,46 @@ function reconstruct(session, log) {
               }));
 }
 
-function persist(param) {
+function persist($staropt$star, param) {
   var collector = param[1];
   var venture = param[0];
-  return Blockstack$1.putFile(PrimitiveTypes.VentureId[/* toString */0](venture[/* id */1]) + "/log.json", Json.stringify(Curry._1(EventLog.encode, venture[/* log */2]))).then((function () {
-                return Promise.resolve(/* tuple */[
-                            venture,
-                            collector
-                          ]);
-              }));
+  var shouldPersist = $staropt$star ? $staropt$star[0] : true;
+  if (shouldPersist && List.length(collector) > 0) {
+    return Blockstack$1.putFile(PrimitiveTypes.VentureId[/* toString */0](venture[/* id */1]) + "/log.json", Json.stringify(Curry._1(EventLog.encode, venture[/* log */2]))).then((function () {
+                  return Promise.resolve(/* tuple */[
+                              venture,
+                              collector
+                            ]);
+                }));
+  } else if (List.length(collector) !== 0) {
+    throw NotPersistingNewEvents;
+  } else {
+    return Promise.resolve(/* tuple */[
+                venture,
+                collector
+              ]);
+  }
 }
 
-function load(session, ventureId) {
+function load($staropt$star, session, ventureId) {
+  var shouldPersist = $staropt$star ? $staropt$star[0] : true;
   logMessage("Loading venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
+  var partial_arg = /* Some */[shouldPersist];
   return Blockstack$1.getFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + "/log.json").then((function (nullLog) {
                     if (nullLog == null) {
                       throw CouldNotLoadVenture;
                     } else {
                       return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
                     }
-                  })).then(persist).then((function (param) {
+                  })).then((function (param) {
+                  return persist(partial_arg, param);
+                })).then((function (param) {
                 return Promise.resolve(param[0]);
               }));
 }
 
 function join(session, userId, ventureId) {
-  return load(session, ventureId).then((function (venture) {
+  return load(/* None */0, session, ventureId).then((function (venture) {
                   return Promise.all(/* tuple */[
                               Venture__Index.load(/* () */0),
                               Promise.resolve(venture)
@@ -251,7 +265,9 @@ function join(session, userId, ventureId) {
                                   } else {
                                     return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
                                   }
-                                })).then(persist).then((function (param) {
+                                })).then((function (eta) {
+                                return persist(/* None */0, eta);
+                              })).then((function (param) {
                               var venture = param[0];
                               return Venture__Index.add(venture[/* id */1], Venture__State.ventureName(venture[/* state */3])).then((function (index) {
                                             return Promise.resolve(/* tuple */[
@@ -271,13 +287,8 @@ function getSummary(param) {
   return Curry._1(EventLog.getSummary, param[/* log */2]);
 }
 
-function getAllEvents(param) {
-  return Curry._3(EventLog.reduce, (function (l, param) {
-                return /* :: */[
-                        param[/* event */0],
-                        l
-                      ];
-              }), /* [] */0, param[/* log */2]);
+function getAllItems(param) {
+  return Curry._1(EventLog.items, param[/* log */2]);
 }
 
 function exec(session, ventureName) {
@@ -287,7 +298,9 @@ function exec(session, ventureName) {
           ventureCreated[/* ventureId */0],
           Promise.all(/* tuple */[
                 Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
-                apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then(persist).then((function (param) {
+                apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then((function (eta) {
+                          return persist(/* None */0, eta);
+                        })).then((function (param) {
                         return Promise.resolve(param[0]);
                       }))
               ])
@@ -337,8 +350,6 @@ function exec$1(newItems, venture) {
                       ];
               }
             } else {
-              logMessage("Ignoring event:");
-              logMessage(Json.stringify(Event.encode($$event)));
               return /* tuple */[
                       venture,
                       collector,
@@ -381,7 +392,7 @@ function exec$1(newItems, venture) {
                   match[1]
                 ], match$1[/* watchers */6]).then((function (param) {
                   var match = param[1];
-                  return persist(/* tuple */[
+                  return persist(/* None */0, /* tuple */[
                               /* record */[
                                 /* session */venture[/* session */0],
                                 /* id */venture[/* id */1],
@@ -418,7 +429,9 @@ function exec$2(incomeEvents, venture) {
                   }), Promise.resolve(/* tuple */[
                       venture,
                       /* [] */0
-                    ]), incomeEvents).then(persist).then((function (param) {
+                    ]), incomeEvents).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],
                             param[1]
@@ -441,7 +454,9 @@ function exec$3(prospectId, venture) {
                     var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
                     return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposed]), venture).then((function (param) {
                                       return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(13, [custodianProposal]), param[0]);
-                                    })).then(persist).then((function (param) {
+                                    })).then((function (eta) {
+                                    return persist(/* None */0, eta);
+                                  })).then((function (param) {
                                   return Promise.resolve(/* Ok */[
                                               param[0],
                                               param[1]
@@ -458,7 +473,9 @@ var ProposePartner = /* module */[/* exec */exec$3];
 
 function exec$4(processId, venture) {
   logMessage("Executing 'RejectPartner' command");
-  return apply(/* None */0, /* None */0, Event.makePartnerRejected(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+  return apply(/* None */0, /* None */0, Event.makePartnerRejected(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],
                             param[1]
@@ -474,7 +491,9 @@ function exec$5(processId, venture) {
   var custodianProcessId = Venture__State.custodianProcessForPartnerProcess(processId, venture[/* state */3]);
   return apply(/* None */0, /* None */0, Event.makePartnerEndorsed(processId, session[/* userId */0]), venture).then((function (param) {
                     return apply(/* None */0, /* Some */[param[1]], Event.makeCustodianEndorsed(custodianProcessId, session[/* userId */0]), param[0]);
-                  })).then(persist).then((function (param) {
+                  })).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],
                             param[1]
@@ -499,7 +518,9 @@ function exec$6(partnerId, venture) {
                         ])
                 ).then((function (param) {
                       return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)), param[0]);
-                    })).then(persist).then((function (param) {
+                    })).then((function (eta) {
+                    return persist(/* None */0, eta);
+                  })).then((function (param) {
                   return Promise.resolve(/* Ok */[
                               param[0],
                               param[1]
@@ -512,7 +533,9 @@ var ProposePartnerRemoval = /* module */[/* exec */exec$6];
 
 function exec$7(processId, venture) {
   logMessage("Executing 'RejectPartnerRemoval' command");
-  return apply(/* None */0, /* None */0, Event.makePartnerRemovalRejected(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+  return apply(/* None */0, /* None */0, Event.makePartnerRemovalRejected(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],
                             param[1]
@@ -533,7 +556,9 @@ function exec$8(processId, venture) {
                       ])
               ).then((function (param) {
                     return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalEndorsed(processId, session[/* userId */0]), param[0]);
-                  })).then(persist).then((function (param) {
+                  })).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],
                             param[1]
@@ -546,7 +571,9 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$8];
 function exec$9(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(32, [exposeEvent]), venture).then(persist).then((function (param) {
+  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(32, [exposeEvent]), venture).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             exposeEvent[/* address */1],
                             param[0],
@@ -561,7 +588,9 @@ function exec$10(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
   return Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]).then((function (param) {
                 if (param) {
-                  return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [param[0]]), venture).then(persist).then((function (param) {
+                  return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [param[0]]), venture).then((function (eta) {
+                                  return persist(/* None */0, eta);
+                                })).then((function (param) {
                                 return Promise.resolve(/* Ok */[
                                             param[0],
                                             param[1]
@@ -577,7 +606,9 @@ var ProposePayout = /* module */[/* exec */exec$10];
 
 function exec$11(processId, venture) {
   logMessage("Executing 'RejectPayout' command");
-  return apply(/* None */0, /* None */0, Event.makePayoutRejected(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+  return apply(/* None */0, /* None */0, Event.makePayoutRejected(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],
                             param[1]
@@ -589,7 +620,9 @@ var RejectPayout = /* module */[/* exec */exec$11];
 
 function exec$12(processId, venture) {
   logMessage("Executing 'EndorsePayout' command");
-  return apply(/* None */0, /* None */0, Event.makePayoutEndorsed(processId, venture[/* session */0][/* userId */0]), venture).then(persist).then((function (param) {
+  return apply(/* None */0, /* None */0, Event.makePayoutEndorsed(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
+                  return persist(/* None */0, eta);
+                })).then((function (param) {
                 return Promise.resolve(/* Ok */[
                             param[0],
                             param[1]
@@ -627,10 +660,11 @@ exports.Index = Index;
 exports.Validation = Validation;
 exports.InvalidEvent = InvalidEvent;
 exports.CouldNotLoadVenture = CouldNotLoadVenture;
+exports.NotPersistingNewEvents = NotPersistingNewEvents;
 exports.join = join;
 exports.load = load;
 exports.getId = getId;
-exports.getAllEvents = getAllEvents;
+exports.getAllItems = getAllItems;
 exports.getSummary = getSummary;
 exports.Cmd = Cmd;
 /* Event Not a pure module */

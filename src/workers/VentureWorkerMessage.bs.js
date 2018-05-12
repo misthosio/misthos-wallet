@@ -335,6 +335,26 @@ function encodeIncoming(param) {
                       ]
                     ]
                   ]);
+    case 16 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "SyncTabs"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "ventureId",
+                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "items",
+                          Json_encode.list(EventLog.encodeItem, param[1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
     
   }
 }
@@ -442,14 +462,23 @@ function decodeIncoming(raw) {
                   ventureId$12,
                   processId$5
                 ]);
-    case "TransactionDetected" : 
+    case "SyncTabs" : 
         var ventureId$13 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var items$1 = Json_decode.field("items", (function (param) {
+                return Json_decode.list(EventLog.decodeItem, param);
+              }), raw);
+        return /* SyncTabs */Block.__(16, [
+                  ventureId$13,
+                  items$1
+                ]);
+    case "TransactionDetected" : 
+        var ventureId$14 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var partial_arg = Event.IncomeDetected[/* decode */2];
         var incomeEvents = Json_decode.field("incomeEvents", (function (param) {
                 return Json_decode.list(partial_arg, param);
               }), raw);
         return /* TransactionDetected */Block.__(14, [
-                  ventureId$13,
+                  ventureId$14,
                   incomeEvents
                 ]);
     case "UpdateSession" : 
@@ -492,8 +521,8 @@ function encodeOutgoing(param) {
                       ],
                       /* :: */[
                         /* tuple */[
-                          "events",
-                          Json_encode.list(Event.encode, param[1])
+                          "items",
+                          Json_encode.list(EventLog.encodeItem, param[1])
                         ],
                         /* [] */0
                       ]
@@ -512,8 +541,8 @@ function encodeOutgoing(param) {
                       ],
                       /* :: */[
                         /* tuple */[
-                          "events",
-                          Json_encode.list(Event.encode, param[1])
+                          "items",
+                          Json_encode.list(EventLog.encodeItem, param[1])
                         ],
                         /* [] */0
                       ]
@@ -559,21 +588,21 @@ function decodeOutgoing(raw) {
         return /* UpdateIndex */Block.__(0, [Json_decode.field("index", Venture.Index[/* decode */2], raw)]);
     case "VentureCreated" : 
         var ventureId$1 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
-        var events = Json_decode.field("events", (function (param) {
-                return Json_decode.list(Event.decode, param);
+        var items$1 = Json_decode.field("items", (function (param) {
+                return Json_decode.list(EventLog.decodeItem, param);
               }), raw);
         return /* VentureCreated */Block.__(2, [
                   ventureId$1,
-                  events
+                  items$1
                 ]);
     case "VentureLoaded" : 
         var ventureId$2 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
-        var events$1 = Json_decode.field("events", (function (param) {
-                return Json_decode.list(Event.decode, param);
+        var items$2 = Json_decode.field("items", (function (param) {
+                return Json_decode.list(EventLog.decodeItem, param);
               }), raw);
         return /* VentureLoaded */Block.__(1, [
                   ventureId$2,
-                  events$1
+                  items$2
                 ]);
     default:
       throw [

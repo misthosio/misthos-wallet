@@ -27,6 +27,9 @@ let postMessage = msg => msg |> Message.encodeOutgoing |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
+let logError = error =>
+  Js.log2("[Venture Worker] - Encountered an unhandled exception:", error);
+
 module Notify = {
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, events) =>
@@ -53,6 +56,7 @@ module Handle = {
   type ventureAction =
     | Create(string)
     | Load(ventureId)
+    | Reload(ventureId)
     | JoinVia(ventureId, userId);
   let withVenture = (ventureAction, f, {venturesThread}) => {
     let venturesThread =
@@ -81,6 +85,10 @@ module Handle = {
                           Venture.load(data, ~ventureId),
                         )
                       }
+                    | Reload(ventureId) => (
+                        ventureId,
+                        Venture.load(~persist=false, data, ~ventureId),
+                      )
                     | JoinVia(ventureId, userId) => (
                         ventureId,
                         Venture.join(data, ~userId, ~ventureId)
@@ -93,7 +101,22 @@ module Handle = {
                   (
                     data,
                     [
-                      (ventureId, ventureThread |> then_(f)),
+                      (
+                        ventureId,
+                        ventureThread
+                        |> then_(f)
+                        |> catch(err => {
+                             logError(err);
+                             Venture.load(data, ~ventureId)
+                             |> then_(venture => {
+                                  Notify.ventureLoaded(
+                                    ventureId,
+                                    venture |> Venture.getAllItems,
+                                  );
+                                  venture |> resolve;
+                                });
+                           }),
+                      ),
                       ...ventures |> List.remove_assoc(ventureId),
                     ],
                   );
@@ -138,7 +161,7 @@ module Handle = {
     withVenture(
       Load(ventureId),
       venture => {
-        Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
+        Notify.ventureLoaded(ventureId, venture |> Venture.getAllItems);
         Js.Promise.resolve(venture);
       },
     );
@@ -148,7 +171,7 @@ module Handle = {
     withVenture(
       JoinVia(ventureId, userId),
       venture => {
-        Notify.ventureLoaded(ventureId, venture |> Venture.getAllEvents);
+        Notify.ventureLoaded(ventureId, venture |> Venture.getAllItems);
         Js.Promise.resolve(venture);
       },
     );
@@ -160,7 +183,7 @@ module Handle = {
       venture => {
         Notify.ventureCreated(
           venture |> Venture.getId,
-          venture |> Venture.getAllEvents,
+          venture |> Venture.getAllItems,
         );
         Js.Promise.resolve(venture);
       },
@@ -397,6 +420,39 @@ module Handle = {
       )
     );
   };
+  let syncTabs = (ventureId, items) => {
+    logMessage("Handling 'SyncTabs'");
+    withVenture(Reload(ventureId), venture =>
+      Js.Promise.(
+        Venture.Cmd.SynchronizeLogs.(
+          venture
+          |> exec(items)
+          |> then_(
+               fun
+               | Ok(venture, _newItems) => {
+                   Notify.ventureLoaded(
+                     ventureId,
+                     venture |> Venture.getAllItems,
+                   );
+                   venture |> resolve;
+                 }
+               | WithConflicts(venture, _newItems, conflicts) => {
+                   logMessage(
+                     "There were "
+                     ++ (conflicts |> List.length |> string_of_int)
+                     ++ " conflicts while syncing",
+                   );
+                   Notify.ventureLoaded(
+                     ventureId,
+                     venture |> Venture.getAllItems,
+                   );
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
 };
 
 let handleMessage =
@@ -428,7 +484,8 @@ let handleMessage =
   | TransactionDetected(ventureId, events) =>
     Handle.transactionDetected(ventureId, events)
   | NewItemsDetected(ventureId, items) =>
-    Handle.newItemsDetected(ventureId, items);
+    Handle.newItemsDetected(ventureId, items)
+  | SyncTabs(ventureId, items) => Handle.syncTabs(ventureId, items);
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 

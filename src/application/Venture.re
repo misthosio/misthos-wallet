@@ -14,6 +14,8 @@ exception InvalidEvent(Validation.result);
 
 exception CouldNotLoadVenture;
 
+exception NotPersistingNewEvents;
+
 type t = {
   session: Session.Data.t,
   id: ventureId,
@@ -54,10 +56,7 @@ let applyInternal =
     let wallet = wallet |> Wallet.apply(event);
     let collector = [item, ...collector];
     (Some(item), log, (validation, state, wallet, collector));
-  | Ignore =>
-    logMessage("Ignoring event:");
-    logMessage(Event.encode(event) |> Json.stringify);
-    (None, oldLog, (validation, state, wallet, collector));
+  | Ignore => (None, oldLog, (validation, state, wallet, collector))
   | result =>
     logMessage("Event:");
     logMessage(Event.encode(event) |> Json.stringify);
@@ -102,7 +101,7 @@ let apply =
 
 let reconstruct = (session, log) => {
   let {validation, state, wallet} = make(session, VentureId.make());
-  let (id, validation, state, wallet, collector, watchers) =
+  let (id, validation, state, wallet, _collector, watchers) =
     log
     |> EventLog.reduce(
          (
@@ -127,7 +126,7 @@ let reconstruct = (session, log) => {
        session,
        log,
        applyInternal,
-       (validation, state, wallet, collector),
+       (validation, state, wallet, []),
      )
   |> Js.Promise.then_(
        ((log, (validation, state, wallet, collector), watchers)) =>
@@ -136,18 +135,25 @@ let reconstruct = (session, log) => {
      );
 };
 
-let persist = (({id, log} as venture, collector)) =>
+let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
   Js.Promise.(
-    Blockstack.putFileEncrypted(
-      (id |> VentureId.toString) ++ "/log.json",
-      log |> EventLog.encode |> Json.stringify,
-    )
-    |> then_(() => resolve((venture, collector)))
+    if (shouldPersist && collector |> List.length > 0) {
+      Blockstack.putFileEncrypted(
+        (id |> VentureId.toString) ++ "/log.json",
+        log |> EventLog.encode |> Json.stringify,
+      )
+      |> then_(() => resolve((venture, collector)));
+    } else if (collector |> List.length != 0) {
+      raise(NotPersistingNewEvents);
+    } else {
+      resolve((venture, collector));
+    }
   );
 
 let defaultPolicy = Policy.unanimous;
 
-let load = (session: Session.Data.t, ~ventureId) => {
+let load =
+    (~persist as shouldPersist=true, session: Session.Data.t, ~ventureId) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
     Blockstack.getFileDecrypted(
@@ -160,7 +166,7 @@ let load = (session: Session.Data.t, ~ventureId) => {
          | None => raise(CouldNotLoadVenture)
          }
        )
-    |> then_(persist)
+    |> then_(persist(~shouldPersist))
     |> then_(((v, _)) => v |> resolve)
   );
 };
@@ -203,8 +209,7 @@ let getId = ({id}) => id;
 
 let getSummary = ({log}) => log |> EventLog.getSummary;
 
-let getAllEvents = ({log}) =>
-  log |> EventLog.reduce((l, {event}) => [event, ...l], []);
+let getAllItems = ({log}) => log |> EventLog.items;
 
 module Cmd = {
   module Create = {
@@ -267,10 +272,7 @@ module Cmd = {
                    collector,
                    conflicts,
                  );
-               | Ignore =>
-                 logMessage("Ignoring event:");
-                 logMessage(Event.encode(event) |> Json.stringify);
-                 (venture, collector, conflicts);
+               | Ignore => (venture, collector, conflicts)
                | conflict =>
                  logMessage(
                    "Encountered '"

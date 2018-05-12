@@ -11,31 +11,34 @@ var include = Log.Make([
 
 var make = include[0];
 
-var append = include[1];
+var items = include[1];
 
-var appendItem = include[2];
+var append = include[2];
 
-var reduce = include[3];
+var appendItem = include[3];
 
-var findNewItems = include[4];
+var reduce = include[4];
 
-var length = include[5];
+var findNewItems = include[5];
 
-var encode = include[6];
+var length = include[6];
 
-var decode = include[7];
+var encode = include[7];
 
-var encodeItem = include[8];
+var decode = include[8];
 
-var decodeItem = include[9];
+var encodeItem = include[9];
 
-var getSummary = include[10];
+var decodeItem = include[10];
 
-var encodeSummary = include[11];
+var getSummary = include[11];
 
-var decodeSummary = include[12];
+var encodeSummary = include[12];
+
+var decodeSummary = include[13];
 
 exports.make = make;
+exports.items = items;
 exports.append = append;
 exports.appendItem = appendItem;
 exports.reduce = reduce;

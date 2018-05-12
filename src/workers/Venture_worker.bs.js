@@ -26,6 +26,11 @@ function logMessage(msg) {
   return /* () */0;
 }
 
+function logError(error) {
+  console.log("[Venture Worker] - Encountered an unhandled exception:", error);
+  return /* () */0;
+}
+
 function indexUpdated(index) {
   postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [index])));
   return /* () */0;
@@ -101,7 +106,7 @@ function withVenture(ventureAction, f, param) {
                                     if (exn === Caml_builtin_exceptions.not_found) {
                                       match = /* tuple */[
                                         ventureId,
-                                        Venture.load(data, ventureId)
+                                        Venture.load(/* None */0, data, ventureId)
                                       ];
                                     } else {
                                       throw exn;
@@ -112,7 +117,14 @@ function withVenture(ventureAction, f, param) {
                                   var ventureId$1 = ventureAction[0];
                                   match = /* tuple */[
                                     ventureId$1,
-                                    Venture.join(data, ventureAction[1], ventureId$1).then((function (param) {
+                                    Venture.load(/* Some */[false], data, ventureId$1)
+                                  ];
+                                  break;
+                              case 3 : 
+                                  var ventureId$2 = ventureAction[0];
+                                  match = /* tuple */[
+                                    ventureId$2,
+                                    Venture.join(data, ventureAction[1], ventureId$2).then((function (param) {
                                             postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
                                             return Promise.resolve(param[1]);
                                           }))
@@ -120,15 +132,21 @@ function withVenture(ventureAction, f, param) {
                                   break;
                               
                             }
-                            var ventureId$2 = match[0];
+                            var ventureId$3 = match[0];
                             return /* tuple */[
                                     data,
                                     /* :: */[
                                       /* tuple */[
-                                        ventureId$2,
-                                        match[1].then(Curry.__1(f))
+                                        ventureId$3,
+                                        match[1].then(Curry.__1(f)).catch((function (err) {
+                                                console.log("[Venture Worker] - Encountered an unhandled exception:", err);
+                                                return Venture.load(/* None */0, data, ventureId$3).then((function (venture) {
+                                                              ventureLoaded(ventureId$3, Venture.getAllItems(venture));
+                                                              return Promise.resolve(venture);
+                                                            }));
+                                              }))
                                       ],
-                                      List.remove_assoc(ventureId$2, ventures)
+                                      List.remove_assoc(ventureId$3, ventures)
                                     ]
                                   ];
                           }), threads));
@@ -189,7 +207,7 @@ function load(ventureId) {
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
+                    ventureLoaded(ventureId, Venture.getAllItems(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -197,13 +215,13 @@ function load(ventureId) {
 
 function joinVia(ventureId, userId) {
   logMessage("Handling 'JoinVia'");
-  var partial_arg = /* JoinVia */Block.__(2, [
+  var partial_arg = /* JoinVia */Block.__(3, [
       ventureId,
       userId
     ]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
+                    ventureLoaded(ventureId, Venture.getAllItems(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -214,7 +232,7 @@ function create(name) {
   var partial_arg = /* Create */Block.__(0, [name]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureCreated(Venture.getId(venture), Venture.getAllEvents(venture));
+                    ventureCreated(Venture.getId(venture), Venture.getAllItems(venture));
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -395,6 +413,27 @@ function newItemsDetected(ventureId, items) {
     });
 }
 
+function syncTabs(ventureId, items) {
+  logMessage("Handling 'SyncTabs'");
+  var partial_arg = /* Reload */Block.__(2, [ventureId]);
+  return (function (param) {
+      return withVenture(partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
+                                  if (param.tag) {
+                                    var venture = param[0];
+                                    logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
+                                    ventureLoaded(ventureId, Venture.getAllItems(venture));
+                                    return Promise.resolve(venture);
+                                  } else {
+                                    var venture$1 = param[0];
+                                    ventureLoaded(ventureId, Venture.getAllItems(venture$1));
+                                    return Promise.resolve(venture$1);
+                                  }
+                                }));
+                  }), param);
+    });
+}
+
 var Handle = /* module */[
   /* withVenture */withVenture,
   /* updateSession */updateSession,
@@ -412,7 +451,8 @@ var Handle = /* module */[
   /* endorsePayout */endorsePayout,
   /* exposeIncomeAddress */exposeIncomeAddress,
   /* transactionDetected */transactionDetected,
-  /* newItemsDetected */newItemsDetected
+  /* newItemsDetected */newItemsDetected,
+  /* syncTabs */syncTabs
 ];
 
 function handleMessage(param) {
@@ -452,6 +492,8 @@ function handleMessage(param) {
         return transactionDetected(param[0], param[1]);
     case 15 : 
         return newItemsDetected(param[0], param[1]);
+    case 16 : 
+        return syncTabs(param[0], param[1]);
     
   }
 }
@@ -470,6 +512,7 @@ var Message = 0;
 exports.Message = Message;
 exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
+exports.logError = logError;
 exports.Notify = Notify;
 exports.Handle = Handle;
 exports.handleMessage = handleMessage;
