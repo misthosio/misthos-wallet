@@ -27,8 +27,10 @@ let postMessage = msg => msg |> Message.encodeOutgoing |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
-let logError = error =>
-  Js.log2("[Venture Worker] - Encountered an unhandled exception:", error);
+let logError = error => {
+  Js.Console.error("[Venture Worker] - Encountered an unhandled exception");
+  Js.Console.error(error);
+};
 
 module Notify = {
   let indexUpdated = index => postMessage(UpdateIndex(index));
@@ -67,7 +69,7 @@ type state = {
     ),
 };
 
-exception DeadThread;
+exception DeadThread(Js.Promise.error);
 
 module Handle = {
   type ventureAction =
@@ -84,7 +86,7 @@ module Handle = {
                Notify.ventureLoaded(ventureId, venture, newItems);
                resolve(venture);
              }
-           | Venture.CouldNotLoad(_error) => raise(DeadThread),
+           | Venture.CouldNotLoad(error) => raise(DeadThread(error)),
          )
     );
   let withVenture = (ventureAction, f, {venturesThread}) => {
@@ -142,8 +144,8 @@ module Handle = {
                                  );
                                  venture |> resolve;
                                }
-                             | Venture.CouldNotJoin(_error) =>
-                               raise(DeadThread),
+                             | Venture.CouldNotJoin(error) =>
+                               raise(DeadThread(error)),
                            ),
                       )
                     };

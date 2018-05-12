@@ -28,7 +28,8 @@ function logMessage(msg) {
 }
 
 function logError(error) {
-  console.log("[Venture Worker] - Encountered an unhandled exception:", error);
+  console.error("[Venture Worker] - Encountered an unhandled exception");
+  console.error(error);
   return /* () */0;
 }
 
@@ -98,7 +99,10 @@ function loadAndNotify($staropt$star, data, ventureId) {
   var persist = $staropt$star ? $staropt$star[0] : true;
   return Venture.load(/* Some */[persist], data, ventureId).then((function (param) {
                 if (param.tag) {
-                  throw DeadThread;
+                  throw [
+                        DeadThread,
+                        param[0]
+                      ];
                 } else {
                   var venture = param[0];
                   ventureLoaded(ventureId, venture, param[1]);
@@ -169,7 +173,10 @@ function withVenture(ventureAction, f, param) {
                                                   ventureJoined(ventureId$2, venture$1);
                                                   return Promise.resolve(venture$1);
                                               case 2 : 
-                                                  throw DeadThread;
+                                                  throw [
+                                                        DeadThread,
+                                                        param[0]
+                                                      ];
                                               
                                             }
                                           }))
@@ -184,7 +191,7 @@ function withVenture(ventureAction, f, param) {
                                       /* tuple */[
                                         ventureId$3,
                                         match[1].then(Curry.__1(f)).catch((function (err) {
-                                                console.log("[Venture Worker] - Encountered an unhandled exception:", err);
+                                                logError(err);
                                                 return loadAndNotify(/* None */0, data, ventureId$3);
                                               }))
                                       ],
