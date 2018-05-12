@@ -167,14 +167,15 @@ let load =
          }
        )
     |> then_(persist(~shouldPersist))
-    |> then_(((v, _)) => v |> resolve)
   );
 };
 
 let join = (session: Session.Data.t, ~userId, ~ventureId) =>
   Js.Promise.(
     load(session, ~ventureId)
-    |> then_(venture => all2((Index.load(), venture |> resolve)))
+    |> then_(((venture, _collector)) =>
+         all2((Index.load(), venture |> resolve))
+       )
     |> catch(_error =>
          Blockstack.getFileFromUserAndDecrypt(
            (ventureId |> VentureId.toString)

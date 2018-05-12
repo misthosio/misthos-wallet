@@ -36,13 +36,25 @@ function indexUpdated(index) {
   return /* () */0;
 }
 
-function ventureLoaded(id, venture) {
+function ventureLoaded(id, venture, newItems) {
   var msg_001 = List.rev(Venture.getAllItems(venture));
+  var msg_002 = List.rev(newItems);
   var msg = /* VentureLoaded */Block.__(1, [
       id,
-      msg_001
+      msg_001,
+      msg_002
     ]);
   postMessage(VentureWorkerMessage.encodeOutgoing(msg));
+  return /* () */0;
+}
+
+function ventureJoined(id, venture) {
+  var items = List.rev(Venture.getAllItems(venture));
+  postMessage(VentureWorkerMessage.encodeOutgoing(/* VentureLoaded */Block.__(1, [
+              id,
+              items,
+              items
+            ])));
   return /* () */0;
 }
 
@@ -74,6 +86,7 @@ function newItems(id, items) {
 var Notify = /* module */[
   /* indexUpdated */indexUpdated,
   /* ventureLoaded */ventureLoaded,
+  /* ventureJoined */ventureJoined,
   /* ventureCreated */ventureCreated,
   /* newItems */newItems
 ];
@@ -107,7 +120,11 @@ function withVenture(ventureAction, f, param) {
                                     if (exn === Caml_builtin_exceptions.not_found) {
                                       match = /* tuple */[
                                         ventureId,
-                                        Venture.load(/* None */0, data, ventureId)
+                                        Venture.load(/* None */0, data, ventureId).then((function (param) {
+                                                var venture = param[0];
+                                                ventureLoaded(ventureId, venture, param[1]);
+                                                return Promise.resolve(venture);
+                                              }))
                                       ];
                                     } else {
                                       throw exn;
@@ -118,7 +135,11 @@ function withVenture(ventureAction, f, param) {
                                   var ventureId$1 = ventureAction[0];
                                   match = /* tuple */[
                                     ventureId$1,
-                                    Venture.load(/* Some */[false], data, ventureId$1)
+                                    Venture.load(/* Some */[false], data, ventureId$1).then((function (param) {
+                                            var venture = param[0];
+                                            ventureLoaded(ventureId$1, venture, param[1]);
+                                            return Promise.resolve(venture);
+                                          }))
                                   ];
                                   break;
                               case 3 : 
@@ -141,8 +162,9 @@ function withVenture(ventureAction, f, param) {
                                         ventureId$3,
                                         match[1].then(Curry.__1(f)).catch((function (err) {
                                                 console.log("[Venture Worker] - Encountered an unhandled exception:", err);
-                                                return Venture.load(/* None */0, data, ventureId$3).then((function (venture) {
-                                                              ventureLoaded(ventureId$3, venture);
+                                                return Venture.load(/* None */0, data, ventureId$3).then((function (param) {
+                                                              var venture = param[0];
+                                                              ventureLoaded(ventureId$3, venture, param[1]);
                                                               return Promise.resolve(venture);
                                                             }));
                                               }))
@@ -207,9 +229,8 @@ function load(ventureId) {
   logMessage("Handling 'Load'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
-      return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, venture);
-                    return Promise.resolve(venture);
+      return withVenture(partial_arg, (function (prim) {
+                    return Promise.resolve(prim);
                   }), param);
     });
 }
@@ -222,7 +243,7 @@ function joinVia(ventureId, userId) {
     ]);
   return (function (param) {
       return withVenture(partial_arg, (function (venture) {
-                    ventureLoaded(ventureId, venture);
+                    ventureJoined(ventureId, venture);
                     return Promise.resolve(venture);
                   }), param);
     });
@@ -421,14 +442,12 @@ function syncTabs(ventureId, items) {
       return withVenture(partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
-                                    var venture = param[0];
                                     logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
-                                    ventureLoaded(ventureId, venture);
-                                    return Promise.resolve(venture);
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   } else {
-                                    var venture$1 = param[0];
-                                    ventureLoaded(ventureId, venture$1);
-                                    return Promise.resolve(venture$1);
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   }
                                 }));
                   }), param);

@@ -27,7 +27,7 @@ type encodedIncoming = Js.Json.t;
 
 type outgoing =
   | UpdateIndex(Venture.Index.t)
-  | VentureLoaded(ventureId, list(EventLog.item))
+  | VentureLoaded(ventureId, list(EventLog.item), list(EventLog.item))
   | VentureCreated(ventureId, list(EventLog.item))
   | NewItems(ventureId, list(EventLog.item));
 
@@ -275,12 +275,13 @@ let encodeOutgoing =
         ("items", list(EventLog.encodeItem, items)),
       ])
     )
-  | VentureLoaded(ventureId, items) =>
+  | VentureLoaded(ventureId, items, newItems) =>
     Json.Encode.(
       object_([
         ("type", string("VentureLoaded")),
         ("ventureId", VentureId.encode(ventureId)),
         ("items", list(EventLog.encodeItem, items)),
+        ("newItems", list(EventLog.encodeItem, newItems)),
       ])
     )
   | NewItems(ventureId, items) =>
@@ -304,7 +305,9 @@ let decodeOutgoing = raw => {
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =
       Json.Decode.(raw |> field("items", list(EventLog.decodeItem)));
-    VentureLoaded(ventureId, items);
+    let newItems =
+      Json.Decode.(raw |> field("newItems", list(EventLog.decodeItem)));
+    VentureLoaded(ventureId, items, newItems);
   | "NewItems" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =

@@ -40,7 +40,8 @@ let join:
   Js.Promise.t((Index.t, t));
 
 let load:
-  (~persist: bool=?, Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
+  (~persist: bool=?, Session.Data.t, ~ventureId: ventureId) =>
+  Js.Promise.t((t, list(EventLog.item)));
 
 let getId: t => ventureId;
 

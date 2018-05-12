@@ -238,23 +238,21 @@ function load($staropt$star, session, ventureId) {
   logMessage("Loading venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   var partial_arg = /* Some */[shouldPersist];
   return Blockstack$1.getFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + "/log.json").then((function (nullLog) {
-                    if (nullLog == null) {
-                      throw CouldNotLoadVenture;
-                    } else {
-                      return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
-                    }
-                  })).then((function (param) {
-                  return persist(partial_arg, param);
+                  if (nullLog == null) {
+                    throw CouldNotLoadVenture;
+                  } else {
+                    return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
+                  }
                 })).then((function (param) {
-                return Promise.resolve(param[0]);
+                return persist(partial_arg, param);
               }));
 }
 
 function join(session, userId, ventureId) {
-  return load(/* None */0, session, ventureId).then((function (venture) {
+  return load(/* None */0, session, ventureId).then((function (param) {
                   return Promise.all(/* tuple */[
                               Venture__Index.load(/* () */0),
-                              Promise.resolve(venture)
+                              Promise.resolve(param[0])
                             ]);
                 })).catch((function () {
                 return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).catch((function () {
