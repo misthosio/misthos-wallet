@@ -77,19 +77,21 @@ module Handle = {
     | Load(ventureId)
     | Reload(ventureId)
     | JoinVia(ventureId, userId);
-  let loadAndNotify = (~persist=true, data, ventureId) =>
+  let loadAndNotify = (~notify, ~persist=true, data, ventureId) =>
     Js.Promise.(
       Venture.load(~persist, data, ~ventureId)
       |> then_(
            fun
            | Venture.Ok(venture, newItems) => {
-               Notify.ventureLoaded(ventureId, venture, newItems);
+               if (notify) {
+                 Notify.ventureLoaded(ventureId, venture, newItems);
+               };
                resolve(venture);
              }
            | Venture.CouldNotLoad(error) => raise(DeadThread(error)),
          )
     );
-  let withVenture = (ventureAction, f, {venturesThread}) => {
+  let withVenture = (~notify=false, ventureAction, f, {venturesThread}) => {
     let venturesThread =
       Js.Promise.(
         venturesThread
@@ -114,16 +116,29 @@ module Handle = {
                         ventureId,
                         ventures
                         |> List.assoc(ventureId)
-                        |> catch((_) => loadAndNotify(data, ventureId)),
+                        |> then_(venture => {
+                             if (notify) {
+                               Notify.ventureLoaded(ventureId, venture, []);
+                             };
+                             resolve(venture);
+                           })
+                        |> catch((_) =>
+                             loadAndNotify(~notify, data, ventureId)
+                           ),
                       ) {
                       | Not_found => (
                           ventureId,
-                          loadAndNotify(data, ventureId),
+                          loadAndNotify(~notify, data, ventureId),
                         )
                       }
                     | Reload(ventureId) => (
                         ventureId,
-                        loadAndNotify(~persist=false, data, ventureId),
+                        loadAndNotify(
+                          ~notify,
+                          ~persist=false,
+                          data,
+                          ventureId,
+                        ),
                       )
                     | JoinVia(ventureId, userId) => (
                         ventureId,
@@ -158,7 +173,7 @@ module Handle = {
                         |> then_(f)
                         |> catch(err => {
                              logError(err);
-                             loadAndNotify(data, ventureId);
+                             loadAndNotify(~notify=true, data, ventureId);
                            }),
                       ),
                       ...ventures |> List.remove_assoc(ventureId),
@@ -202,7 +217,7 @@ module Handle = {
   };
   let load = ventureId => {
     logMessage("Handling 'Load'");
-    withVenture(Load(ventureId), Js.Promise.resolve);
+    withVenture(~notify=true, Load(ventureId), Js.Promise.resolve);
   };
   let joinVia = (ventureId, userId) => {
     logMessage("Handling 'JoinVia'");
@@ -451,7 +466,7 @@ module Handle = {
   };
   let syncTabs = (ventureId, items) => {
     logMessage("Handling 'SyncTabs'");
-    withVenture(Reload(ventureId), venture =>
+    withVenture(~notify=true, Reload(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.SynchronizeLogs.(
           venture
