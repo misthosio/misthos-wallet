@@ -54,10 +54,7 @@ let applyInternal =
     let wallet = wallet |> Wallet.apply(event);
     let collector = [item, ...collector];
     (Some(item), log, (validation, state, wallet, collector));
-  | Ignore =>
-    logMessage("Ignoring event:");
-    logMessage(Event.encode(event) |> Json.stringify);
-    (None, oldLog, (validation, state, wallet, collector));
+  | Ignore => (None, oldLog, (validation, state, wallet, collector))
   | result =>
     logMessage("Event:");
     logMessage(Event.encode(event) |> Json.stringify);
@@ -136,18 +133,23 @@ let reconstruct = (session, log) => {
      );
 };
 
-let persist = (({id, log} as venture, collector)) =>
+let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
   Js.Promise.(
-    Blockstack.putFileEncrypted(
-      (id |> VentureId.toString) ++ "/log.json",
-      log |> EventLog.encode |> Json.stringify,
-    )
-    |> then_(() => resolve((venture, collector)))
+    if (shouldPersist) {
+      Blockstack.putFileEncrypted(
+        (id |> VentureId.toString) ++ "/log.json",
+        log |> EventLog.encode |> Json.stringify,
+      )
+      |> then_(() => resolve((venture, collector)));
+    } else {
+      resolve((venture, collector));
+    }
   );
 
 let defaultPolicy = Policy.unanimous;
 
-let load = (session: Session.Data.t, ~ventureId) => {
+let load =
+    (~persist as shouldPersist=true, session: Session.Data.t, ~ventureId) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
     Blockstack.getFileDecrypted(
@@ -160,7 +162,7 @@ let load = (session: Session.Data.t, ~ventureId) => {
          | None => raise(CouldNotLoadVenture)
          }
        )
-    |> then_(persist)
+    |> then_(persist(~shouldPersist))
     |> then_(((v, _)) => v |> resolve)
   );
 };
@@ -267,10 +269,7 @@ module Cmd = {
                    collector,
                    conflicts,
                  );
-               | Ignore =>
-                 logMessage("Ignoring event:");
-                 logMessage(Event.encode(event) |> Json.stringify);
-                 (venture, collector, conflicts);
+               | Ignore => (venture, collector, conflicts)
                | conflict =>
                  logMessage(
                    "Encountered '"

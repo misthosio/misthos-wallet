@@ -101,7 +101,7 @@ function withVenture(ventureAction, f, param) {
                                     if (exn === Caml_builtin_exceptions.not_found) {
                                       match = /* tuple */[
                                         ventureId,
-                                        Venture.load(data, ventureId)
+                                        Venture.load(/* None */0, data, ventureId)
                                       ];
                                     } else {
                                       throw exn;
@@ -112,7 +112,14 @@ function withVenture(ventureAction, f, param) {
                                   var ventureId$1 = ventureAction[0];
                                   match = /* tuple */[
                                     ventureId$1,
-                                    Venture.join(data, ventureAction[1], ventureId$1).then((function (param) {
+                                    Venture.load(/* Some */[false], data, ventureId$1)
+                                  ];
+                                  break;
+                              case 3 : 
+                                  var ventureId$2 = ventureAction[0];
+                                  match = /* tuple */[
+                                    ventureId$2,
+                                    Venture.join(data, ventureAction[1], ventureId$2).then((function (param) {
                                             postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
                                             return Promise.resolve(param[1]);
                                           }))
@@ -120,15 +127,15 @@ function withVenture(ventureAction, f, param) {
                                   break;
                               
                             }
-                            var ventureId$2 = match[0];
+                            var ventureId$3 = match[0];
                             return /* tuple */[
                                     data,
                                     /* :: */[
                                       /* tuple */[
-                                        ventureId$2,
+                                        ventureId$3,
                                         match[1].then(Curry.__1(f))
                                       ],
-                                      List.remove_assoc(ventureId$2, ventures)
+                                      List.remove_assoc(ventureId$3, ventures)
                                     ]
                                   ];
                           }), threads));
@@ -197,7 +204,7 @@ function load(ventureId) {
 
 function joinVia(ventureId, userId) {
   logMessage("Handling 'JoinVia'");
-  var partial_arg = /* JoinVia */Block.__(2, [
+  var partial_arg = /* JoinVia */Block.__(3, [
       ventureId,
       userId
     ]);
@@ -395,6 +402,27 @@ function newItemsDetected(ventureId, items) {
     });
 }
 
+function syncTabs(ventureId, items) {
+  logMessage("Handling 'SyncTabs'");
+  var partial_arg = /* Reload */Block.__(2, [ventureId]);
+  return (function (param) {
+      return withVenture(partial_arg, (function (venture) {
+                    return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
+                                  if (param.tag) {
+                                    var venture = param[0];
+                                    logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
+                                    ventureLoaded(ventureId, Venture.getAllEvents(venture));
+                                    return Promise.resolve(venture);
+                                  } else {
+                                    var venture$1 = param[0];
+                                    ventureLoaded(ventureId, Venture.getAllEvents(venture$1));
+                                    return Promise.resolve(venture$1);
+                                  }
+                                }));
+                  }), param);
+    });
+}
+
 var Handle = /* module */[
   /* withVenture */withVenture,
   /* updateSession */updateSession,
@@ -412,7 +440,8 @@ var Handle = /* module */[
   /* endorsePayout */endorsePayout,
   /* exposeIncomeAddress */exposeIncomeAddress,
   /* transactionDetected */transactionDetected,
-  /* newItemsDetected */newItemsDetected
+  /* newItemsDetected */newItemsDetected,
+  /* syncTabs */syncTabs
 ];
 
 function handleMessage(param) {
@@ -452,6 +481,8 @@ function handleMessage(param) {
         return transactionDetected(param[0], param[1]);
     case 15 : 
         return newItemsDetected(param[0], param[1]);
+    case 16 : 
+        return syncTabs(param[0], param[1]);
     
   }
 }

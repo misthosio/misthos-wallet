@@ -53,6 +53,7 @@ module Handle = {
   type ventureAction =
     | Create(string)
     | Load(ventureId)
+    | Reload(ventureId)
     | JoinVia(ventureId, userId);
   let withVenture = (ventureAction, f, {venturesThread}) => {
     let venturesThread =
@@ -81,6 +82,10 @@ module Handle = {
                           Venture.load(data, ~ventureId),
                         )
                       }
+                    | Reload(ventureId) => (
+                        ventureId,
+                        Venture.load(~persist=false, data, ~ventureId),
+                      )
                     | JoinVia(ventureId, userId) => (
                         ventureId,
                         Venture.join(data, ~userId, ~ventureId)
@@ -397,6 +402,39 @@ module Handle = {
       )
     );
   };
+  let syncTabs = (ventureId, items) => {
+    logMessage("Handling 'SyncTabs'");
+    withVenture(Reload(ventureId), venture =>
+      Js.Promise.(
+        Venture.Cmd.SynchronizeLogs.(
+          venture
+          |> exec(items)
+          |> then_(
+               fun
+               | Ok(venture, _newItems) => {
+                   Notify.ventureLoaded(
+                     ventureId,
+                     venture |> Venture.getAllEvents,
+                   );
+                   venture |> resolve;
+                 }
+               | WithConflicts(venture, _newItems, conflicts) => {
+                   logMessage(
+                     "There were "
+                     ++ (conflicts |> List.length |> string_of_int)
+                     ++ " conflicts while syncing",
+                   );
+                   Notify.ventureLoaded(
+                     ventureId,
+                     venture |> Venture.getAllEvents,
+                   );
+                   venture |> resolve;
+                 },
+             )
+        )
+      )
+    );
+  };
 };
 
 let handleMessage =
@@ -428,7 +466,8 @@ let handleMessage =
   | TransactionDetected(ventureId, events) =>
     Handle.transactionDetected(ventureId, events)
   | NewItemsDetected(ventureId, items) =>
-    Handle.newItemsDetected(ventureId, items);
+    Handle.newItemsDetected(ventureId, items)
+  | SyncTabs(ventureId, items) => Handle.syncTabs(ventureId, items);
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};
 

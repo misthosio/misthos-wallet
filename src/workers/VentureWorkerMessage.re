@@ -20,7 +20,8 @@ type incoming =
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
   | TransactionDetected(ventureId, list(Event.IncomeDetected.t))
-  | NewItemsDetected(ventureId, list(EventLog.item));
+  | NewItemsDetected(ventureId, list(EventLog.item))
+  | SyncTabs(ventureId, list(EventLog.item));
 
 type encodedIncoming = Js.Json.t;
 
@@ -159,6 +160,14 @@ let encodeIncoming =
         ("ventureId", VentureId.encode(ventureId)),
         ("items", list(EventLog.encodeItem, items)),
       ])
+    )
+  | SyncTabs(ventureId, items) =>
+    Json.Encode.(
+      object_([
+        ("type", string("SyncTabs")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("items", list(EventLog.encodeItem, items)),
+      ])
     );
 
 let decodeIncoming = raw => {
@@ -240,6 +249,11 @@ let decodeIncoming = raw => {
     let items =
       raw |> Json.Decode.(field("items", list(EventLog.decodeItem)));
     NewItemsDetected(ventureId, items);
+  | "SyncTabs" =>
+    let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
+    let items =
+      raw |> Json.Decode.(field("items", list(EventLog.decodeItem)));
+    SyncTabs(ventureId, items);
   | _ => raise(UnknownMessage(raw))
   };
 };

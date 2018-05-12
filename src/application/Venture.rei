@@ -37,7 +37,8 @@ let join:
   (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
   Js.Promise.t((Index.t, t));
 
-let load: (Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
+let load:
+  (~persist: bool=?, Session.Data.t, ~ventureId: ventureId) => Js.Promise.t(t);
 
 let getId: t => ventureId;
 

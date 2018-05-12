@@ -226,12 +226,23 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       ReasonReact.NoUpdate;
     | OutgoingFromLocalStorage(msg) =>
       switch (msg) {
-      | NewItems(ventureId, items) =>
+      | NewItems(ventureId, newItems) =>
         state.ventureWorker^
-        |. VentureWorkerClient.postMessage(
-             NewItemsDetected(ventureId, items),
-           );
-        ReasonReact.NoUpdate;
+        |. VentureWorkerClient.postMessage(SyncTabs(ventureId, newItems));
+        switch (state.selectedVenture) {
+        | VentureLoaded(loadedId, viewModel, cmd)
+            when VentureId.eq(loadedId, ventureId) =>
+          ReasonReact.Update({
+            ...state,
+            selectedVenture:
+              VentureLoaded(
+                ventureId,
+                viewModel |> ViewModel.applyAll(newItems),
+                cmd,
+              ),
+          })
+        | _ => ReasonReact.NoUpdate
+        };
       | UpdateIndex(index) =>
         ReasonReact.Update({...state, index: Some(index)})
       | _ => ReasonReact.NoUpdate
