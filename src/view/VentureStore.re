@@ -9,7 +9,7 @@ type selectedVenture =
 
 type action =
   | CreateVenture(string)
-  | OutgoingFromLocalStorage(VentureWorkerMessage.outgoing)
+  | TabSync(VentureWorkerMessage.outgoing)
   | SyncWorkerMessage(SyncWorkerMessage.outgoing)
   | IncomeWorkerMessage(IncomeWorkerMessage.outgoing)
   | VentureWorkerMessage(VentureWorkerMessage.outgoing);
@@ -62,7 +62,7 @@ module L = Dom.Storage;
 
 let updateOtherTabs = msg => {
   let encodedMsg = msg |> VentureWorkerMessage.encodeOutgoing;
-  L.setItem("outgoing", encodedMsg |> Json.stringify, L.localStorage);
+  L.localStorage |> L.setItem("tab-sync", encodedMsg |> Json.stringify);
 };
 
 external toStorageEvent : Dom.event => StorageEventRe.t = "%identity";
@@ -70,9 +70,9 @@ external toStorageEvent : Dom.event => StorageEventRe.t = "%identity";
 let handler = (send, msg) => {
   let storageEvent = msg |> toStorageEvent;
   switch (storageEvent |> StorageEventRe.key) {
-  | "outgoing" =>
+  | "tab-sync" =>
     try (
-      OutgoingFromLocalStorage(
+      TabSync(
         storageEvent
         |> StorageEventRe.newValue
         |> Json.parseOrRaise
@@ -224,7 +224,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     | IncomeWorkerMessage(msg) =>
       state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
       ReasonReact.NoUpdate;
-    | OutgoingFromLocalStorage(msg) =>
+    | TabSync(msg) =>
       switch (msg) {
       | NewItems(ventureId, newItems) =>
         state.ventureWorker^
