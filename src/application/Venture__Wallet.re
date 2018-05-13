@@ -4,8 +4,6 @@ open WalletTypes;
 
 open Event;
 
-let faucetAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
-
 type t = {
   ventureId,
   network: Network.t,
