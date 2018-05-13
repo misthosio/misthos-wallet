@@ -391,7 +391,7 @@ let validateProposal =
   } else {
     let proposalsThere =
       dependsOnProposals
-      |> List.fold_left(
+      |> Array.fold_left(
            (res, processId) =>
              (
                completedProcesses
@@ -404,7 +404,7 @@ let validateProposal =
          );
     let completionsThere =
       dependsOnCompletions
-      |> List.fold_left(
+      |> Array.fold_left(
            (res, processId) =>
              completedProcesses |> List.mem(processId) && res,
            true,
@@ -466,7 +466,7 @@ let validateAcceptance =
         PolicyNotFulfilled;
       } else {
         dependsOnCompletions
-        |> List.fold_left(
+        |> Array.fold_left(
              (res, processId) =>
                completedProcesses |> List.mem(processId) && res,
              true,

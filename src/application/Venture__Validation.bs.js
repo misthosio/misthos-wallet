@@ -2,6 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
@@ -593,14 +594,14 @@ function validateProposal($staropt$star, processName, dataList, param, state, is
   } else if (PrimitiveTypes.UserId[/* neq */6](issuerId, supporterId)) {
     return /* InvalidIssuer */2;
   } else {
-    var proposalsThere = List.fold_left((function (res, processId) {
+    var proposalsThere = $$Array.fold_left((function (res, processId) {
             if (List.mem(processId, completedProcesses) || List.mem_assoc(processId, processes)) {
               return res;
             } else {
               return false;
             }
           }), true, param[/* dependsOnProposals */1]);
-    var completionsThere = List.fold_left((function (res, processId) {
+    var completionsThere = $$Array.fold_left((function (res, processId) {
             if (List.mem(processId, completedProcesses)) {
               return res;
             } else {
@@ -659,7 +660,7 @@ function validateAcceptance(param, dataList, eq, param$1, _) {
     } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* currentPartners */7], match[/* supporterIds */0]) === false) {
       return /* PolicyNotFulfilled */6;
     } else {
-      var match$1 = List.fold_left((function (res, processId) {
+      var match$1 = $$Array.fold_left((function (res, processId) {
               if (List.mem(processId, completedProcesses)) {
                 return res;
               } else {

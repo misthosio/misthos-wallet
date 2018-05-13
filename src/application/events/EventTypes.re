@@ -2,8 +2,8 @@ open PrimitiveTypes;
 
 type proposal('a) = {
   processId,
-  dependsOnProposals: list(processId),
-  dependsOnCompletions: list(processId),
+  dependsOnProposals: array(processId),
+  dependsOnCompletions: array(processId),
   supporterId: userId,
   policy: Policy.t,
   data: 'a,
@@ -21,7 +21,7 @@ type endorsement = {
 
 type acceptance('a) = {
   processId,
-  dependsOnCompletions: list(processId),
+  dependsOnCompletions: array(processId),
   data: 'a,
 };
 
@@ -37,8 +37,8 @@ module type ProposedEvent =
     type t = proposal(Data.t);
     let make:
       (
-        ~dependsOnProposals: list(processId)=?,
-        ~dependsOnCompletions: list(processId)=?,
+        ~dependsOnProposals: array(processId)=?,
+        ~dependsOnCompletions: array(processId)=?,
         ~supporterId: userId,
         ~policy: Policy.t,
         Data.t
@@ -54,8 +54,8 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
      type t = proposal(Data.t);
      let make =
          (
-           ~dependsOnProposals=[],
-           ~dependsOnCompletions=[],
+           ~dependsOnProposals=[||],
+           ~dependsOnCompletions=[||],
            ~supporterId,
            ~policy,
            data,
@@ -74,11 +74,11 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
            ("processId", ProcessId.encode(event.processId)),
            (
              "dependsOnProposals",
-             list(ProcessId.encode, event.dependsOnProposals),
+             array(ProcessId.encode, event.dependsOnProposals),
            ),
            (
              "dependsOnCompletions",
-             list(ProcessId.encode, event.dependsOnCompletions),
+             array(ProcessId.encode, event.dependsOnCompletions),
            ),
            ("supporterId", UserId.encode(event.supporterId)),
            ("policy", Policy.encode(event.policy)),
@@ -89,9 +89,9 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
        Json.Decode.{
          processId: raw |> field("processId", ProcessId.decode),
          dependsOnProposals:
-           raw |> field("dependsOnProposals", list(ProcessId.decode)),
+           raw |> field("dependsOnProposals", array(ProcessId.decode)),
          dependsOnCompletions:
-           raw |> field("dependsOnCompletions", list(ProcessId.decode)),
+           raw |> field("dependsOnCompletions", array(ProcessId.decode)),
          supporterId: raw |> field("supporterId", UserId.decode),
          policy: raw |> field("policy", Policy.decode),
          data: raw |> field("data", Data.decode),
@@ -171,7 +171,7 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
              proposal(Data.t),
          ) => {
        dependsOnCompletions:
-         dependsOnProposals |> List.append(dependsOnCompletions),
+         dependsOnProposals |> Array.append(dependsOnCompletions),
        processId,
        data,
      };
@@ -182,7 +182,7 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
            ("processId", ProcessId.encode(event.processId)),
            (
              "dependsOnCompletions",
-             list(ProcessId.encode, event.dependsOnCompletions),
+             array(ProcessId.encode, event.dependsOnCompletions),
            ),
            ("data", Data.encode(event.data)),
          ])
@@ -191,7 +191,7 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
        Json.Decode.{
          processId: raw |> field("processId", ProcessId.decode),
          dependsOnCompletions:
-           raw |> field("dependsOnCompletions", list(ProcessId.decode)),
+           raw |> field("dependsOnCompletions", array(ProcessId.decode)),
          data: raw |> field("data", Data.decode),
        };
    });
@@ -205,8 +205,8 @@ module type Process =
       type t = proposal(Data.t);
       let make:
         (
-          ~dependsOnProposals: list(processId)=?,
-          ~dependsOnCompletions: list(processId)=?,
+          ~dependsOnProposals: array(processId)=?,
+          ~dependsOnCompletions: array(processId)=?,
           ~supporterId: userId,
           ~policy: Policy.t,
           Data.t

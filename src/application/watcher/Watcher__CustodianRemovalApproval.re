@@ -40,11 +40,7 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
               eligable: state^.eligable |> List.filter(UserId.neq(id)),
             }
           | CustodianAccepted({processId})
-              when
-                ProcessId.eq(
-                  processId,
-                  proposal.dependsOnCompletions |> List.hd,
-                ) => {
+              when ProcessId.eq(processId, proposal.data.lastCustodianProcess) => {
               ...state^,
               dependencyMet: true,
             }
