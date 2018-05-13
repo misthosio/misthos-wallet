@@ -11,9 +11,9 @@ module Make = (Event: Encodable) => {
     issuerPubKey: string,
     signature: Bitcoin.ECSignature.t,
   };
-  type t = list(item);
-  type summary = {knownItems: list(string)};
-  let make = () => [];
+  type t = array(item);
+  type summary = {knownItems: Belt.Set.String.t};
+  let make = () => [||];
   let makeItemHash = (issuerPubKey, event) => {
     let issuerPubKeyHash = issuerPubKey |> Bitcoin.Crypto.sha256;
     let eventHash =
@@ -36,28 +36,30 @@ module Make = (Event: Encodable) => {
   };
   let append = (issuer, event, log) => {
     let item = event |> makeItem(issuer);
-    (item, [item, ...log]);
+    (item, Array.append(log, [|item|]));
   };
-  let appendItem = (item, log) => [item, ...log];
+  let appendItem = (item, log) => Array.append(log, [|item|]);
   let reduce = (reducer, start, log) =>
-    log |> List.rev |> List.fold_left(reducer, start);
+    log |> Array.fold_left(reducer, start);
   let findNewItems = (~other, log) => {
-    let existingHashes = log |> List.rev_map(({hash}) => hash);
+    let existingHashes =
+      log |> Array.map(({hash}) => hash) |> Belt.Set.String.fromArray;
     other
-    |> List.rev
-    |> List.fold_left(
+    |> Array.fold_left(
          (found, {hash} as item) =>
-           if (found |> List.mem_assoc(hash)) {
+           if (found
+               |> Js.Array.find(((foundHash, _)) => foundHash == hash)
+               |> Js.Option.isSome) {
              found;
-           } else if (existingHashes |> List.mem(hash)) {
+           } else if (existingHashes |. Belt.Set.String.has(hash)) {
              found;
            } else {
-             [(hash, item), ...found];
+             Array.append(found, [|(hash, item)|]);
            },
-         [],
+         [||],
        )
-    |> List.rev_map(((_, item)) => item)
-    |> List.find_all(({issuerPubKey, event, hash, signature}) => {
+    |> Array.map(((_, item)) => item)
+    |> Js.Array.filter(({issuerPubKey, event, hash, signature}) => {
          let hashCheck = makeItemHash(issuerPubKey, event);
          if (hashCheck |> Utils.bufToHex != hash) {
            false;
@@ -67,17 +69,25 @@ module Make = (Event: Encodable) => {
          };
        });
   };
-  let length = List.length;
+  let length = Array.length;
   let getSummary = log => {
     knownItems:
-      log |> List.fold_left((items, {hash}) => [hash, ...items], []),
+      log |> Array.map(({hash}) => hash) |> Belt.Set.String.ofArray,
   };
   let encodeSummary = summary =>
     Json.Encode.(
-      object_([("knownItems", list(string, summary.knownItems))])
+      object_([
+        (
+          "knownItems",
+          array(string, summary.knownItems |> Belt.Set.String.toArray),
+        ),
+      ])
     );
   let decodeSummary = raw =>
-    Json.Decode.{knownItems: raw |> field("knownItems", list(string))};
+    Json.Decode.{
+      knownItems:
+        raw |> field("knownItems", array(string)) |> Belt.Set.String.ofArray,
+    };
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);
     let item = item =>
@@ -89,7 +99,7 @@ module Make = (Event: Encodable) => {
           ("signature", ecSig(item.signature)),
         ])
       );
-    let log = Json.Encode.(list(item));
+    let log = Json.Encode.(array(item));
   };
   let encodeItem = Encode.item;
   let encode = Encode.log;
@@ -103,7 +113,7 @@ module Make = (Event: Encodable) => {
         issuerPubKey: item |> field("issuerPubKey", string),
         signature: item |> field("signature", ecSig),
       };
-    let log = Json.Decode.(list(item));
+    let log = Json.Decode.(array(item));
   };
   let decodeItem = Decode.item;
   let decode = Decode.log;

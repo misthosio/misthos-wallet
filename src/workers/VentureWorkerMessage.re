@@ -20,16 +20,16 @@ type incoming =
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
   | TransactionDetected(ventureId, list(Event.IncomeDetected.t))
-  | NewItemsDetected(ventureId, list(EventLog.item))
-  | SyncTabs(ventureId, list(EventLog.item));
+  | NewItemsDetected(ventureId, array(EventLog.item))
+  | SyncTabs(ventureId, array(EventLog.item));
 
 type encodedIncoming = Js.Json.t;
 
 type outgoing =
   | UpdateIndex(Venture.Index.t)
-  | VentureLoaded(ventureId, list(EventLog.item), list(EventLog.item))
-  | VentureCreated(ventureId, list(EventLog.item))
-  | NewItems(ventureId, list(EventLog.item));
+  | VentureLoaded(ventureId, array(EventLog.item), array(EventLog.item))
+  | VentureCreated(ventureId, array(EventLog.item))
+  | NewItems(ventureId, array(EventLog.item));
 
 type encodedOutgoing = Js.Json.t;
 
@@ -158,7 +158,7 @@ let encodeIncoming =
       object_([
         ("type", string("NewItemsDetected")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("items", list(EventLog.encodeItem, items)),
+        ("items", array(EventLog.encodeItem, items)),
       ])
     )
   | SyncTabs(ventureId, items) =>
@@ -166,7 +166,7 @@ let encodeIncoming =
       object_([
         ("type", string("SyncTabs")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("items", list(EventLog.encodeItem, items)),
+        ("items", array(EventLog.encodeItem, items)),
       ])
     );
 
@@ -247,12 +247,12 @@ let decodeIncoming = raw => {
   | "NewItemsDetected" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =
-      raw |> Json.Decode.(field("items", list(EventLog.decodeItem)));
+      raw |> Json.Decode.(field("items", array(EventLog.decodeItem)));
     NewItemsDetected(ventureId, items);
   | "SyncTabs" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =
-      raw |> Json.Decode.(field("items", list(EventLog.decodeItem)));
+      raw |> Json.Decode.(field("items", array(EventLog.decodeItem)));
     SyncTabs(ventureId, items);
   | _ => raise(UnknownMessage(raw))
   };
@@ -272,7 +272,7 @@ let encodeOutgoing =
       object_([
         ("type", string("VentureCreated")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("items", list(EventLog.encodeItem, items)),
+        ("items", array(EventLog.encodeItem, items)),
       ])
     )
   | VentureLoaded(ventureId, items, newItems) =>
@@ -280,8 +280,8 @@ let encodeOutgoing =
       object_([
         ("type", string("VentureLoaded")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("items", list(EventLog.encodeItem, items)),
-        ("newItems", list(EventLog.encodeItem, newItems)),
+        ("items", array(EventLog.encodeItem, items)),
+        ("newItems", array(EventLog.encodeItem, newItems)),
       ])
     )
   | NewItems(ventureId, items) =>
@@ -289,7 +289,7 @@ let encodeOutgoing =
       object_([
         ("type", string("NewItems")),
         ("ventureId", VentureId.encode(ventureId)),
-        ("items", list(EventLog.encodeItem, items)),
+        ("items", array(EventLog.encodeItem, items)),
       ])
     );
 
@@ -299,19 +299,19 @@ let decodeOutgoing = raw => {
   | "VentureCreated" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =
-      Json.Decode.(raw |> field("items", list(EventLog.decodeItem)));
+      Json.Decode.(raw |> field("items", array(EventLog.decodeItem)));
     VentureCreated(ventureId, items);
   | "VentureLoaded" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =
-      Json.Decode.(raw |> field("items", list(EventLog.decodeItem)));
+      Json.Decode.(raw |> field("items", array(EventLog.decodeItem)));
     let newItems =
-      Json.Decode.(raw |> field("newItems", list(EventLog.decodeItem)));
+      Json.Decode.(raw |> field("newItems", array(EventLog.decodeItem)));
     VentureLoaded(ventureId, items, newItems);
   | "NewItems" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =
-      Json.Decode.(raw |> field("items", list(EventLog.decodeItem)));
+      Json.Decode.(raw |> field("items", array(EventLog.decodeItem)));
     NewItems(ventureId, items);
   | "UpdateIndex" =>
     UpdateIndex(raw |> Json.Decode.field("index", Venture.Index.decode))

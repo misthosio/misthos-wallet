@@ -34,7 +34,7 @@ exception NotPersistingNewEvents;
 type t;
 
 type loadResult =
-  | Ok(t, list(EventLog.item))
+  | Ok(t, array(EventLog.item))
   | CouldNotLoad(Js.Promise.error);
 
 let load:
@@ -42,7 +42,7 @@ let load:
   Js.Promise.t(loadResult);
 
 type joinResult =
-  | AlreadyLoaded(Index.t, t, list(EventLog.item))
+  | AlreadyLoaded(Index.t, t, array(EventLog.item))
   | Joined(Index.t, t)
   | CouldNotJoin(Js.Promise.error);
 
@@ -52,7 +52,7 @@ let join:
 
 let getId: t => ventureId;
 
-let getAllItems: t => list(EventLog.item);
+let getAllItems: t => array(EventLog.item);
 
 let getSummary: t => EventLog.summary;
 
@@ -64,60 +64,60 @@ module Cmd: {
   };
   module SynchronizeLogs: {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | WithConflicts(
           t,
-          list(EventLog.item),
-          list((EventLog.item, Validation.result)),
+          array(EventLog.item),
+          array((EventLog.item, Validation.result)),
         );
-    let exec: (list(EventLog.item), t) => Js.Promise.t(result);
+    let exec: (array(EventLog.item), t) => Js.Promise.t(result);
   };
   module SynchronizeWallet: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec: (list(Event.IncomeDetected.t), t) => Js.Promise.t(result);
   };
   module ProposePartner: {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | PartnerAlreadyExists
       | NoUserInfo;
     let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };
   module RejectPartner: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePartner: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ProposePartnerRemoval: {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | PartnerDoesNotExist;
     let exec: (~partnerId: userId, t) => Js.Promise.t(result);
   };
   module RejectPartnerRemoval: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePartnerRemoval: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ExposeIncomeAddress: {
     type result =
-      | Ok(string, t, list(EventLog.item));
+      | Ok(string, t, array(EventLog.item));
     let exec: (~accountIdx: accountIdx, t) => Js.Promise.t(result);
   };
   module ProposePayout: {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | NotEnoughFunds;
     let exec:
       (
@@ -130,12 +130,12 @@ module Cmd: {
   };
   module RejectPayout: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePayout: {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
 };

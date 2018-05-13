@@ -35,28 +35,22 @@ let logError = error => {
 module Notify = {
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, venture, newItems) =>
-    postMessage(
-      VentureLoaded(
-        id,
-        venture |> Venture.getAllItems |> List.rev,
-        newItems |> List.rev,
-      ),
-    );
+    postMessage(VentureLoaded(id, venture |> Venture.getAllItems, newItems));
   let ventureJoined = (id, venture) => {
-    let items = venture |> Venture.getAllItems |> List.rev;
+    let items = venture |> Venture.getAllItems;
     postMessage(VentureLoaded(id, items, items));
   };
   let ventureCreated = venture =>
     postMessage(
       VentureCreated(
         venture |> Venture.getId,
-        venture |> Venture.getAllItems |> List.rev,
+        venture |> Venture.getAllItems,
       ),
     );
   let newItems = (id, items) =>
     switch (items) {
-    | [] => ()
-    | items => postMessage(NewItems(id, items |> List.rev))
+    | [||] => ()
+    | items => postMessage(NewItems(id, items))
     };
 };
 
@@ -118,7 +112,7 @@ module Handle = {
                         |> List.assoc(ventureId)
                         |> then_(venture => {
                              if (notify) {
-                               Notify.ventureLoaded(ventureId, venture, []);
+                               Notify.ventureLoaded(ventureId, venture, [||]);
                              };
                              resolve(venture);
                            })
@@ -453,7 +447,7 @@ module Handle = {
                | WithConflicts(venture, newItems, conflicts) => {
                    logMessage(
                      "There were "
-                     ++ (conflicts |> List.length |> string_of_int)
+                     ++ (conflicts |> Array.length |> string_of_int)
                      ++ " conflicts while syncing",
                    );
                    Notify.newItems(ventureId, newItems);
@@ -480,7 +474,7 @@ module Handle = {
                | WithConflicts(venture, newItems, conflicts) => {
                    logMessage(
                      "There were "
-                     ++ (conflicts |> List.length |> string_of_int)
+                     ++ (conflicts |> Array.length |> string_of_int)
                      ++ " conflicts while syncing",
                    );
                    Notify.newItems(ventureId, newItems);

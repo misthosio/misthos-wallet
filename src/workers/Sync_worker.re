@@ -85,7 +85,7 @@ let findNewItemsFromPartner = (ventureId, userId, storagePrefix, eventLog) =>
     |> then_(other =>
          (
            switch (eventLog |> EventLog.findNewItems(~other)) {
-           | [] => ()
+           | [||] => ()
            | items => postMessage(NewItemsDetected(ventureId, items))
            }
          )
@@ -95,16 +95,13 @@ let findNewItemsFromPartner = (ventureId, userId, storagePrefix, eventLog) =>
   |> ignore;
 
 let syncEventsFromPartner =
-    (storagePrefix, ventureId, summary: EventLog.summary, eventLog, userId) =>
+    (storagePrefix, ventureId, knownItems, eventLog, userId) =>
   Js.Promise.(
     getSummaryFromUser(ventureId, userId, storagePrefix)
     |> then_((otherSummary: EventLog.summary) =>
          (
            if (otherSummary.knownItems
-               |> List.filter(item =>
-                    summary.knownItems |> List.mem(item) == false
-                  )
-               |> List.length > 0) {
+               |> Belt.Set.String.eq(knownItems) == false) {
              findNewItemsFromPartner(
                ventureId,
                userId,
@@ -133,7 +130,7 @@ let syncEventsFromVenture = (ventureId, localUserId, storagePrefix) => {
               syncEventsFromPartner(
                 storagePrefix,
                 ventureId,
-                summary,
+                summary.knownItems,
                 eventLog,
               ),
             );

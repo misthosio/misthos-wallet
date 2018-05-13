@@ -334,7 +334,7 @@ function handleMessage(param) {
       case 0 : 
           return /* () */0;
       case 1 : 
-          if (List.length(match[2]) > 0) {
+          if (match[2].length !== 0) {
             return persistVenture(match[0]);
           } else {
             return /* () */0;

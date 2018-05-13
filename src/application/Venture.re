@@ -52,7 +52,7 @@ let applyInternal =
     let validation = validation |> Validation.apply(item);
     let state = state |> State.apply(event);
     let wallet = wallet |> Wallet.apply(event);
-    let collector = [item, ...collector];
+    let collector = Array.append(collector, [|item|]);
     (Some(item), log, (validation, state, wallet, collector));
   | Ignore => (None, oldLog, (validation, state, wallet, collector))
   | result =>
@@ -70,7 +70,7 @@ let applyInternal =
 let apply =
     (
       ~systemEvent=false,
-      ~collector=[],
+      ~collector=[||],
       event,
       {session, id, log, validation, state, wallet, watchers},
     ) => {
@@ -124,7 +124,7 @@ let reconstruct = (session, log) => {
        session,
        log,
        applyInternal,
-       (validation, state, wallet, []),
+       (validation, state, wallet, [||]),
      )
   |> Js.Promise.then_(
        ((log, (validation, state, wallet, collector), watchers)) =>
@@ -135,13 +135,13 @@ let reconstruct = (session, log) => {
 
 let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
   Js.Promise.(
-    if (shouldPersist && collector |> List.length > 0) {
+    if (shouldPersist && collector |> Array.length > 0) {
       Blockstack.putFileEncrypted(
         (id |> VentureId.toString) ++ "/log.json",
         log |> EventLog.encode |> Json.stringify,
       )
       |> then_(() => resolve((venture, collector)));
-    } else if (collector |> List.length != 0) {
+    } else if (collector |> Array.length != 0) {
       raise(NotPersistingNewEvents);
     } else {
       resolve((venture, collector));
@@ -151,7 +151,7 @@ let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
 let defaultPolicy = Policy.unanimous;
 
 type loadResult =
-  | Ok(t, list(EventLog.item))
+  | Ok(t, array(EventLog.item))
   | CouldNotLoad(Js.Promise.error);
 
 let load =
@@ -175,7 +175,7 @@ let load =
 };
 
 type joinResult =
-  | AlreadyLoaded(Index.t, t, list(EventLog.item))
+  | AlreadyLoaded(Index.t, t, array(EventLog.item))
   | Joined(Index.t, t)
   | CouldNotJoin(Js.Promise.error);
 
@@ -256,16 +256,16 @@ module Cmd = {
   };
   module SynchronizeLogs = {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | WithConflicts(
           t,
-          list(EventLog.item),
-          list((EventLog.item, Validation.result)),
+          array(EventLog.item),
+          array((EventLog.item, Validation.result)),
         );
     let exec = (newItems, {session} as venture) => {
       let ({log, validation, state, wallet, watchers}, collector, conflicts) =
         newItems
-        |> List.fold_left(
+        |> Array.fold_left(
              (
                (
                  {log, watchers, validation, state, wallet} as venture,
@@ -282,7 +282,7 @@ module Cmd = {
                  let validation = validation |> Validation.apply(item);
                  let state = state |> State.apply(event);
                  let wallet = wallet |> Wallet.apply(event);
-                 let collector = [item, ...collector];
+                 let collector = Array.append(collector, [|item|]);
                  let watchers =
                    watchers |> Watchers.apply(session, Some(item), log);
                  (
@@ -298,9 +298,13 @@ module Cmd = {
                    ++ "'. Ignoring event:",
                  );
                  logMessage(Event.encode(event) |> Json.stringify);
-                 (venture, collector, [(item, conflict), ...conflicts]);
+                 (
+                   venture,
+                   collector,
+                   Array.append(conflicts, [|(item, conflict)|]),
+                 );
                },
-             (venture, [], []),
+             (venture, [||], [||]),
            );
       Js.Promise.(
         watchers
@@ -320,7 +324,7 @@ module Cmd = {
         |> then_(((venture, collector)) =>
              (
                switch (conflicts) {
-               | [] => Ok(venture, collector)
+               | [||] => Ok(venture, collector)
                | conflicts => WithConflicts(venture, collector, conflicts)
                }
              )
@@ -331,7 +335,7 @@ module Cmd = {
   };
   module SynchronizeWallet = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec = (incomeEvents, venture) => {
       logMessage("Synchronizing wallet");
       Js.Promise.(
@@ -347,7 +351,7 @@ module Cmd = {
                          IncomeDetected(event),
                        )
                   ),
-             (venture, []) |> resolve,
+             (venture, [||]) |> resolve,
            )
         |> then_(persist)
         |> then_(((venture, collector)) =>
@@ -358,7 +362,7 @@ module Cmd = {
   };
   module ProposePartner = {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | PartnerAlreadyExists
       | NoUserInfo;
     let exec = (~prospectId, {session, state} as venture) => {
@@ -415,7 +419,7 @@ module Cmd = {
   };
   module RejectPartner = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPartner' command");
       Js.Promise.(
@@ -433,7 +437,7 @@ module Cmd = {
   };
   module EndorsePartner = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
       let custodianProcessId =
@@ -463,7 +467,7 @@ module Cmd = {
   };
   module ProposePartnerRemoval = {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | PartnerDoesNotExist;
     let exec = (~partnerId, {state, session} as venture) => {
       logMessage("Executing 'ProposePartnerRemoval' command");
@@ -487,7 +491,7 @@ module Cmd = {
                           ),
                    ),
                  )
-            | None => (venture, []) |> resolve
+            | None => (venture, [||]) |> resolve
             }
           )
           |> then_(((v, c)) =>
@@ -514,7 +518,7 @@ module Cmd = {
   };
   module RejectPartnerRemoval = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPartnerRemoval' command");
       Js.Promise.(
@@ -532,7 +536,7 @@ module Cmd = {
   };
   module EndorsePartnerRemoval = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartnerRemoval' command");
       Js.Promise.(
@@ -551,7 +555,7 @@ module Cmd = {
                    ~supporterId=session.userId,
                  ),
                )
-          | None => (venture, []) |> resolve
+          | None => (venture, [||]) |> resolve
           }
         )
         |> then_(((v, c)) =>
@@ -571,7 +575,7 @@ module Cmd = {
   };
   module ExposeIncomeAddress = {
     type result =
-      | Ok(string, t, list(EventLog.item));
+      | Ok(string, t, array(EventLog.item));
     let exec = (~accountIdx, {wallet, session: {userId}} as venture) => {
       logMessage("Executing 'GetIncomeAddress' command");
       let exposeEvent =
@@ -586,7 +590,7 @@ module Cmd = {
   };
   module ProposePayout = {
     type result =
-      | Ok(t, list(EventLog.item))
+      | Ok(t, array(EventLog.item))
       | NotEnoughFunds;
     let exec =
         (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
@@ -607,7 +611,7 @@ module Cmd = {
   };
   module RejectPayout = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPayout' command");
       Js.Promise.(
@@ -622,7 +626,7 @@ module Cmd = {
   };
   module EndorsePayout = {
     type result =
-      | Ok(t, list(EventLog.item));
+      | Ok(t, array(EventLog.item));
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'EndorsePayout' command");
       Js.Promise.(
