@@ -14,9 +14,9 @@ let misthosFeePercent = 2.9;
 
 type t = {
   txHex: string,
-  usedInputs: list((int, input)),
+  usedInputs: array(input),
   misthosFeeAddress: string,
-  changeAddress: option(string),
+  changeAddress: option((string, Address.Coordinates.t)),
 };
 
 type summary = {
@@ -30,8 +30,8 @@ let summary =
     (network, {misthosFeeAddress, changeAddress, usedInputs, txHex}) => {
   let totalIn =
     usedInputs
-    |> List.fold_left(
-         (total, input) => total |> BTC.plus((snd(input): input).value),
+    |> Array.fold_left(
+         (total, input: input) => total |> BTC.plus(input.value),
          BTC.zero,
        );
   let tx = txHex |> B.Transaction.fromHex;
@@ -56,7 +56,7 @@ let summary =
   let networkFee = totalIn |> BTC.minus(totalOut);
   let changeOut =
     changeAddress
-    |> Utils.mapOption(changeAddress =>
+    |> Utils.mapOption(((changeAddress, _)) =>
          outs |> List.find(((a, _)) => a == changeAddress) |> snd
        )
     |> Js.Option.getWithDefault(BTC.zero);
@@ -70,26 +70,68 @@ let summary =
   };
 };
 
+let txInputForChangeAddress =
+    (~transactionId, accountKeyChains, network, {changeAddress, txHex}) =>
+  changeAddress
+  |> Utils.mapOption(((address, coordinates)) => {
+       let keyChain =
+         accountKeyChains
+         |> AccountKeyChain.Collection.lookup(
+              coordinates |> Address.Coordinates.accountIdx,
+              coordinates |> Address.Coordinates.keyChainIdent,
+            );
+       let tx = B.Transaction.fromHex(txHex);
+       let (idx, value) =
+         tx##outs
+         |> Array.to_list
+         |> List.mapi((i, out) =>
+              B.Address.fromOutputScript(
+                out##script,
+                network |> Network.bitcoinNetwork,
+              )
+              == address ?
+                Some((i, BTC.fromSatoshisFloat(out##value))) : None
+            )
+         |> List.find(Js.Option.isSome)
+         |> Js.Option.getExn;
+       Network.{
+         txId: transactionId,
+         txOutputN: idx,
+         value,
+         nCoSigners: keyChain.nCoSigners,
+         nPubKeys: keyChain.custodianKeyChains |> List.length,
+         address,
+         coordinates,
+       };
+     });
+
 let encode = payout =>
   Json.Encode.(
     object_([
       ("txHex", string(payout.txHex)),
-      (
-        "usedInputs",
-        list(pair(int, Network.encodeInput), payout.usedInputs),
-      ),
+      ("usedInputs", array(Network.encodeInput, payout.usedInputs)),
       ("misthosFeeAddress", string(payout.misthosFeeAddress)),
-      ("changeAddress", nullable(string, payout.changeAddress)),
+      (
+        "changeAddress",
+        nullable(
+          tuple2(string, Address.Coordinates.encode),
+          payout.changeAddress,
+        ),
+      ),
     ])
   );
 
 let decode = raw =>
   Json.Decode.{
     txHex: raw |> field("txHex", string),
-    usedInputs:
-      raw |> field("usedInputs", list(pair(int, Network.decodeInput))),
+    usedInputs: raw |> field("usedInputs", array(Network.decodeInput)),
     misthosFeeAddress: raw |> field("misthosFeeAddress", string),
-    changeAddress: raw |> field("changeAddress", optional(string)),
+    changeAddress:
+      raw
+      |> field(
+           "changeAddress",
+           optional(tuple2(string, Address.Coordinates.decode)),
+         ),
   };
 
 type signResult =
@@ -119,77 +161,74 @@ let signPayout =
     );
   let signed =
     payout.usedInputs
-    |> List.fold_left(
-         (signed, (idx, input: input)) => {
-           let inputs = txB##inputs;
-           let txBInput = inputs[idx];
-           let needsSigning =
-             switch (txBInput##signatures |> Js.Nullable.toOption) {
-             | Some(signatures) =>
-               signatures
-               |> Array.to_list
-               |> List.filter(s =>
-                    s |> Js.Nullable.toOption |> Js.Option.isSome
-                  )
-               |> List.length < input.nCoSigners
-             | None => true
-             };
-           if (needsSigning) {
-             try (
-               {
-                 let custodianPubChain =
-                   (
-                     accountKeyChains
-                     |> AccountKeyChain.Collection.lookup(
-                          input.coordinates |> Address.Coordinates.accountIdx,
-                          input.coordinates |> Address.Coordinates.keyChainIdx,
-                        )
-                   ).
-                     custodianKeyChains
-                   |> List.assoc(userId);
-                 let custodianKeyChain =
-                   CustodianKeyChain.make(
-                     ~ventureId,
-                     ~accountIdx=
-                       CustodianKeyChain.accountIdx(custodianPubChain),
-                     ~keyChainIdx=
-                       CustodianKeyChain.keyChainIdx(custodianPubChain),
-                     ~masterKeyChain,
-                   );
-                 let (coSignerIdx, chainIdx, addressIdx) = (
-                   input.coordinates |> Address.Coordinates.coSignerIdx,
-                   input.coordinates |> Address.Coordinates.chainIdx,
-                   input.coordinates |> Address.Coordinates.addressIdx,
-                 );
-                 let keyPair =
-                   custodianKeyChain
-                   |> CustodianKeyChain.getSigningKey(
-                        coSignerIdx,
-                        chainIdx,
-                        addressIdx,
-                      );
-                 let address: Address.t =
-                   accountKeyChains |> Address.find(input.coordinates);
-                 txB
-                 |> B.TxBuilder.signSegwit(
-                      idx,
-                      keyPair,
-                      ~redeemScript=address.redeemScript |> Utils.bufFromHex,
-                      ~witnessValue=input.value |> BTC.toSatoshisFloat,
-                      ~witnessScript=address.witnessScript |> Utils.bufFromHex,
-                    );
-                 true;
-               }
-             ) {
-             | Not_found => signed
-             };
-           } else {
-             signed;
+    |> Array.mapi((idx, input: input) => {
+         let inputs = txB##inputs;
+         let txBInput = inputs[idx];
+         let needsSigning =
+           switch (txBInput##signatures |> Js.Nullable.toOption) {
+           | Some(signatures) =>
+             signatures
+             |> Array.to_list
+             |> List.filter(s =>
+                  s |> Js.Nullable.toOption |> Js.Option.isSome
+                )
+             |> List.length < input.nCoSigners
+           | None => true
            };
-         },
-         false,
-       );
-  signed ?
+         if (needsSigning) {
+           try (
+             {
+               let custodianPubChain =
+                 (
+                   accountKeyChains
+                   |> AccountKeyChain.Collection.lookup(
+                        input.coordinates |> Address.Coordinates.accountIdx,
+                        input.coordinates |> Address.Coordinates.keyChainIdent,
+                      )
+                 ).
+                   custodianKeyChains
+                 |> List.assoc(userId);
+               let custodianKeyChain =
+                 CustodianKeyChain.make(
+                   ~ventureId,
+                   ~accountIdx=
+                     CustodianKeyChain.accountIdx(custodianPubChain),
+                   ~keyChainIdx=
+                     CustodianKeyChain.keyChainIdx(custodianPubChain),
+                   ~masterKeyChain,
+                 );
+               let (coSignerIdx, chainIdx, addressIdx) = (
+                 input.coordinates |> Address.Coordinates.coSignerIdx,
+                 input.coordinates |> Address.Coordinates.chainIdx,
+                 input.coordinates |> Address.Coordinates.addressIdx,
+               );
+               let keyPair =
+                 custodianKeyChain
+                 |> CustodianKeyChain.getSigningKey(
+                      coSignerIdx,
+                      chainIdx,
+                      addressIdx,
+                    );
+               let address: Address.t =
+                 accountKeyChains |> Address.find(input.coordinates);
+               txB
+               |> B.TxBuilder.signSegwit(
+                    idx,
+                    keyPair,
+                    ~redeemScript=address.redeemScript |> Utils.bufFromHex,
+                    ~witnessValue=input.value |> BTC.toSatoshisFloat,
+                    ~witnessScript=address.witnessScript |> Utils.bufFromHex,
+                  );
+               true;
+             }
+           ) {
+           | Not_found => false
+           };
+         } else {
+           false;
+         };
+       });
+  signed |> Js.Array.find(s => s) |> Js.Option.isSome ?
     Signed({
       ...payout,
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
@@ -353,10 +392,18 @@ let build =
         ~txBuilder=txB,
       );
     {
-      usedInputs,
+      usedInputs:
+        usedInputs
+        |> Array.of_list
+        |> Js.Array.sortInPlaceWith(((idxA, _), (idxB, _)) =>
+             compare(idxA, idxB)
+           )
+        |> Array.map(((_, input)) => input),
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
       misthosFeeAddress,
-      changeAddress: withChange ? Some(changeAddress.address) : None,
+      changeAddress:
+        withChange ?
+          Some((changeAddress.address, changeAddress.coordinates)) : None,
     };
   } else {
     let (inputs, success) =
@@ -394,10 +441,18 @@ let build =
           ~txBuilder=txB,
         );
       {
-        usedInputs,
+        usedInputs:
+          usedInputs
+          |> Array.of_list
+          |> Js.Array.sortInPlaceWith(((idxA, _), (idxB, _)) =>
+               compare(idxA, idxB)
+             )
+          |> Array.map(((_, input)) => input),
         txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
         misthosFeeAddress,
-        changeAddress: withChange ? Some(changeAddress.address) : None,
+        changeAddress:
+          withChange ?
+            Some((changeAddress.address, changeAddress.coordinates)) : None,
       };
     } else {
       raise(NotEnoughFunds);
@@ -460,7 +515,7 @@ let finalize = (signedTransactions, network) =>
            )##inputs
          );
     usedInputs
-    |> List.iter(((inputIdx, {nCoSigners}: input)) => {
+    |> Array.iteri((inputIdx, {nCoSigners}: input) => {
          let testInput = inputs[inputIdx];
          inputs[inputIdx] = (
            switch (testInput##signatures |> Js.Nullable.toOption) {

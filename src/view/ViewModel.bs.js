@@ -2,6 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Policy = require("../application/Policy.bs.js");
 var Address = require("../application/wallet/Address.bs.js");
@@ -437,13 +438,13 @@ function apply(param, state) {
 var partial_arg = make(/* () */0);
 
 function init(param) {
-  return List.fold_left((function (m, item) {
+  return $$Array.fold_left((function (m, item) {
                 return apply(item, m);
               }), partial_arg, param);
 }
 
 function applyAll(events, model) {
-  return List.fold_left((function (m, item) {
+  return $$Array.fold_left((function (m, item) {
                 return apply(item, m);
               }), model, events);
 }

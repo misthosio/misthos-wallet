@@ -10,6 +10,10 @@ function fromSatoshis(satoshis) {
   return new BignumberJs.BigNumber(Caml_int64.to_float(satoshis));
 }
 
+function fromSatoshisFloat(satoshis) {
+  return new BignumberJs.BigNumber(satoshis);
+}
+
 function toSatoshisFloat(btc) {
   return btc.integerValue(BignumberJs.ROUND_CEIL).toNumber();
 }
@@ -46,6 +50,7 @@ var RoundingMode = BigNumber.RoundingMode;
 
 exports.RoundingMode = RoundingMode;
 exports.fromSatoshis = fromSatoshis;
+exports.fromSatoshisFloat = fromSatoshisFloat;
 exports.toSatoshisFloat = toSatoshisFloat;
 exports.zero = zero;
 exports.satoshisPerBTC = satoshisPerBTC;

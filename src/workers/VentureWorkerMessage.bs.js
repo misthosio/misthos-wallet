@@ -329,7 +329,7 @@ function encodeIncoming(param) {
                       /* :: */[
                         /* tuple */[
                           "items",
-                          Json_encode.list(EventLog.encodeItem, param[1])
+                          Json_encode.array(EventLog.encodeItem, param[1])
                         ],
                         /* [] */0
                       ]
@@ -349,7 +349,7 @@ function encodeIncoming(param) {
                       /* :: */[
                         /* tuple */[
                           "items",
-                          Json_encode.list(EventLog.encodeItem, param[1])
+                          Json_encode.array(EventLog.encodeItem, param[1])
                         ],
                         /* [] */0
                       ]
@@ -406,7 +406,7 @@ function decodeIncoming(raw) {
     case "NewItemsDetected" : 
         var ventureId$6 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items = Json_decode.field("items", (function (param) {
-                return Json_decode.list(EventLog.decodeItem, param);
+                return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* NewItemsDetected */Block.__(15, [
                   ventureId$6,
@@ -465,7 +465,7 @@ function decodeIncoming(raw) {
     case "SyncTabs" : 
         var ventureId$13 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items$1 = Json_decode.field("items", (function (param) {
-                return Json_decode.list(EventLog.decodeItem, param);
+                return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* SyncTabs */Block.__(16, [
                   ventureId$13,
@@ -522,12 +522,12 @@ function encodeOutgoing(param) {
                       /* :: */[
                         /* tuple */[
                           "items",
-                          Json_encode.list(EventLog.encodeItem, param[1])
+                          Json_encode.array(EventLog.encodeItem, param[1])
                         ],
                         /* :: */[
                           /* tuple */[
                             "newItems",
-                            Json_encode.list(EventLog.encodeItem, param[2])
+                            Json_encode.array(EventLog.encodeItem, param[2])
                           ],
                           /* [] */0
                         ]
@@ -548,7 +548,7 @@ function encodeOutgoing(param) {
                       /* :: */[
                         /* tuple */[
                           "items",
-                          Json_encode.list(EventLog.encodeItem, param[1])
+                          Json_encode.array(EventLog.encodeItem, param[1])
                         ],
                         /* [] */0
                       ]
@@ -568,7 +568,7 @@ function encodeOutgoing(param) {
                       /* :: */[
                         /* tuple */[
                           "items",
-                          Json_encode.list(EventLog.encodeItem, param[1])
+                          Json_encode.array(EventLog.encodeItem, param[1])
                         ],
                         /* [] */0
                       ]
@@ -584,7 +584,7 @@ function decodeOutgoing(raw) {
     case "NewItems" : 
         var ventureId = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items = Json_decode.field("items", (function (param) {
-                return Json_decode.list(EventLog.decodeItem, param);
+                return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* NewItems */Block.__(3, [
                   ventureId,
@@ -595,7 +595,7 @@ function decodeOutgoing(raw) {
     case "VentureCreated" : 
         var ventureId$1 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items$1 = Json_decode.field("items", (function (param) {
-                return Json_decode.list(EventLog.decodeItem, param);
+                return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* VentureCreated */Block.__(2, [
                   ventureId$1,
@@ -604,10 +604,10 @@ function decodeOutgoing(raw) {
     case "VentureLoaded" : 
         var ventureId$2 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items$2 = Json_decode.field("items", (function (param) {
-                return Json_decode.list(EventLog.decodeItem, param);
+                return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         var newItems = Json_decode.field("newItems", (function (param) {
-                return Json_decode.list(EventLog.decodeItem, param);
+                return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* VentureLoaded */Block.__(1, [
                   ventureId$2,

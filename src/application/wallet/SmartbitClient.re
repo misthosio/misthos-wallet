@@ -8,23 +8,19 @@ let mainnetConfig = {subdomain: "api"};
 
 let float_ = Json.Decode.float;
 
-let decodeUTXO = (address, raw) : WalletTypes.utxo =>
+let decodeUTXO = raw : WalletTypes.utxo =>
   Json.Decode.{
     txId: raw |> field("txid", string),
     txOutputN: raw |> field("n", int),
-    amount:
-      raw |> field("value_int", float_) |> Int64.of_float |> BTC.fromSatoshis,
+    amount: raw |> field("value_int", float_) |> BTC.fromSatoshisFloat,
     confirmations: raw |> field("confirmations", int),
-    address,
+    address: field("addresses", array(string), raw)[0],
   };
 
-let decodeUTXOs = (address, raw) =>
+let decodeUTXOs = raw =>
   Json.Decode.(
     raw
-    |> withDefault(
-         [],
-         field("unspent", withDefault([], list(decodeUTXO(address)))),
-       )
+    |> withDefault([], field("unspent", withDefault([], list(decodeUTXO))))
   );
 
 let decodeNextLink = raw =>
@@ -32,7 +28,7 @@ let decodeNextLink = raw =>
     raw |> optional(field("paging", field("next_link", string)))
   );
 
-let rec fetchAll = (address, link, utxos) =>
+let rec fetchAll = (link, utxos) =>
   Js.Promise.(
     switch (link) {
     | Some(link) =>
@@ -40,9 +36,8 @@ let rec fetchAll = (address, link, utxos) =>
       |> then_(Fetch.Response.json)
       |> then_(res =>
            fetchAll(
-             address,
              decodeNextLink(res),
-             utxos |> List.append(decodeUTXOs(address, res)),
+             utxos |> List.append(decodeUTXOs(res)),
            )
          )
     | None => resolve(utxos)
@@ -50,24 +45,15 @@ let rec fetchAll = (address, link, utxos) =>
   );
 
 let getUTXOs = (config, addresses) =>
-  Js.Promise.(
-    addresses
-    |> List.map(address =>
-         fetchAll(
-           address,
-           Some(
-             "https://"
-             ++ config.subdomain
-             ++ ".smartbit.com.au/v1/blockchain/address/"
-             ++ address
-             ++ "/unspent?limit=1000",
-           ),
-           [],
-         )
-       )
-    |> Array.of_list
-    |> all
-    |> then_(all => all |> Array.to_list |> List.flatten |> resolve)
+  fetchAll(
+    Some(
+      "https://"
+      ++ config.subdomain
+      ++ ".smartbit.com.au/v1/blockchain/address/"
+      ++ List.fold_left((res, a) => a ++ "," ++ res, "", addresses)
+      ++ "/unspent?limit=1000",
+    ),
+    [],
   );
 
 let broadcastTransaction = (config, transaction) => {

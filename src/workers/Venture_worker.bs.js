@@ -39,19 +39,18 @@ function indexUpdated(index) {
 }
 
 function ventureLoaded(id, venture, newItems) {
-  var msg_001 = List.rev(Venture.getAllItems(venture));
-  var msg_002 = List.rev(newItems);
+  var msg_001 = Venture.getAllItems(venture);
   var msg = /* VentureLoaded */Block.__(1, [
       id,
       msg_001,
-      msg_002
+      newItems
     ]);
   postMessage(VentureWorkerMessage.encodeOutgoing(msg));
   return /* () */0;
 }
 
 function ventureJoined(id, venture) {
-  var items = List.rev(Venture.getAllItems(venture));
+  var items = Venture.getAllItems(venture);
   postMessage(VentureWorkerMessage.encodeOutgoing(/* VentureLoaded */Block.__(1, [
               id,
               items,
@@ -62,7 +61,7 @@ function ventureJoined(id, venture) {
 
 function ventureCreated(venture) {
   var msg_000 = Venture.getId(venture);
-  var msg_001 = List.rev(Venture.getAllItems(venture));
+  var msg_001 = Venture.getAllItems(venture);
   var msg = /* VentureCreated */Block.__(2, [
       msg_000,
       msg_001
@@ -72,13 +71,11 @@ function ventureCreated(venture) {
 }
 
 function newItems(id, items) {
-  if (items) {
-    var msg_001 = List.rev(items);
-    var msg = /* NewItems */Block.__(3, [
-        id,
-        msg_001
-      ]);
-    postMessage(VentureWorkerMessage.encodeOutgoing(msg));
+  if (items.length !== 0) {
+    postMessage(VentureWorkerMessage.encodeOutgoing(/* NewItems */Block.__(3, [
+                id,
+                items
+              ])));
     return /* () */0;
   } else {
     return /* () */0;
@@ -138,7 +135,7 @@ function withVenture($staropt$star, ventureAction, f, param) {
                                       ventureId,
                                       List.assoc(ventureId, ventures).then((function (venture) {
                                                 if (notify) {
-                                                  ventureLoaded(ventureId, venture, /* [] */0);
+                                                  ventureLoaded(ventureId, venture, /* array */[]);
                                                 }
                                                 return Promise.resolve(venture);
                                               })).catch((function () {
@@ -457,7 +454,7 @@ function newItemsDetected(ventureId, items) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
-                                    logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
+                                    logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
                                     newItems(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
                                   } else {
@@ -477,7 +474,7 @@ function syncTabs(ventureId, items) {
       return withVenture(partial_arg$1, partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
-                                    logMessage("There were " + (String(List.length(param[2])) + " conflicts while syncing"));
+                                    logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
                                     newItems(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
                                   } else {

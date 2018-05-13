@@ -87,7 +87,7 @@ function make(proposal, log) {
                     ];
                     break;
                 case 16 : 
-                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], List.hd(env$1[0][/* dependsOnCompletions */2]))) {
+                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* data */5][/* lastCustodianProcess */2])) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[
                         /* dependencyMet */true,

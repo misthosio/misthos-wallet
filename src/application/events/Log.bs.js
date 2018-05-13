@@ -2,16 +2,19 @@
 'use strict';
 
 var Json = require("bs-json/src/Json.js");
-var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
+var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 
 function Make(funarg) {
   var make = function () {
-    return /* [] */0;
+    return /* array */[];
   };
   var makeItemHash = function (issuerPubKey, $$event) {
     var issuerPubKeyHash = BitcoinjsLib.crypto.sha256(issuerPubKey);
@@ -38,73 +41,64 @@ function Make(funarg) {
     var item = makeItem(issuer, $$event);
     return /* tuple */[
             item,
-            /* :: */[
-              item,
-              log
-            ]
+            $$Array.append(log, /* array */[item])
           ];
   };
   var appendItem = function (item, log) {
-    return /* :: */[
-            item,
-            log
-          ];
+    return $$Array.append(log, /* array */[item]);
   };
-  var reduce = function (reducer, start, log) {
-    return List.fold_left(reducer, start, List.rev(log));
-  };
+  var reduce = $$Array.fold_left;
   var findNewItems = function (other, log) {
-    var existingHashes = List.rev_map((function (param) {
-            return param[/* hash */1];
-          }), log);
-    return List.find_all((function (param) {
-                    var issuerPubKey = param[/* issuerPubKey */2];
-                    var hashCheck = makeItemHash(issuerPubKey, param[/* event */0]);
-                    if (Utils.bufToHex(hashCheck) !== param[/* hash */1]) {
-                      return false;
-                    } else {
-                      return Utils.keyFromPublicKey(issuerPubKey).verify(hashCheck, param[/* signature */3]);
-                    }
-                  }))(List.rev_map((function (param) {
-                      return param[1];
-                    }), List.fold_left((function (found, item) {
-                          var hash = item[/* hash */1];
-                          if (List.mem_assoc(hash, found) || List.mem(hash, existingHashes)) {
-                            return found;
-                          } else {
-                            return /* :: */[
-                                    /* tuple */[
-                                      hash,
-                                      item
-                                    ],
-                                    found
-                                  ];
-                          }
-                        }), /* [] */0, List.rev(other))));
+    var existingHashes = Belt_SetString.fromArray($$Array.map((function (param) {
+                return param[/* hash */1];
+              }), log));
+    return $$Array.map((function (param) {
+                    return param[1];
+                  }), $$Array.fold_left((function (found, item) {
+                        var hash = item[/* hash */1];
+                        if (Js_option.isSome(Js_primitive.undefined_to_opt(found.find((function (param) {
+                                          return param[0] === hash;
+                                        })))) || Belt_SetString.has(existingHashes, hash)) {
+                          return found;
+                        } else {
+                          return $$Array.append(found, /* array */[/* tuple */[
+                                        hash,
+                                        item
+                                      ]]);
+                        }
+                      }), /* array */[], other)).filter((function (param) {
+                  var issuerPubKey = param[/* issuerPubKey */2];
+                  var hashCheck = makeItemHash(issuerPubKey, param[/* event */0]);
+                  if (Utils.bufToHex(hashCheck) !== param[/* hash */1]) {
+                    return false;
+                  } else {
+                    return Utils.keyFromPublicKey(issuerPubKey).verify(hashCheck, param[/* signature */3]);
+                  }
+                }));
+  };
+  var length = function (prim) {
+    return prim.length;
   };
   var getSummary = function (log) {
-    return /* record */[/* knownItems */List.fold_left((function (items, param) {
-                    return /* :: */[
-                            param[/* hash */1],
-                            items
-                          ];
-                  }), /* [] */0, log)];
+    return /* record */[/* knownItems */Belt_SetString.fromArray($$Array.map((function (param) {
+                        return param[/* hash */1];
+                      }), log))];
   };
   var encodeSummary = function (summary) {
     return Json_encode.object_(/* :: */[
                 /* tuple */[
                   "knownItems",
-                  Json_encode.list((function (prim) {
+                  Json_encode.array((function (prim) {
                           return prim;
-                        }), summary[/* knownItems */0])
+                        }), Belt_SetString.toArray(summary[/* knownItems */0]))
                 ],
                 /* [] */0
               ]);
   };
   var decodeSummary = function (raw) {
-    return /* record */[/* knownItems */Json_decode.field("knownItems", (function (param) {
-                    return Json_decode.list(Json_decode.string, param);
-                  }), raw)];
+    return /* record */[/* knownItems */Belt_SetString.ofArray(Json_decode.field("knownItems", (function (param) {
+                        return Json_decode.array(Json_decode.string, param);
+                      }), raw))];
   };
   var item = function (item$1) {
     return Json_encode.object_(/* :: */[
@@ -134,7 +128,7 @@ function Make(funarg) {
               ]);
   };
   var log = function (param) {
-    return Json_encode.list(item, param);
+    return Json_encode.array(item, param);
   };
   var ecSig = function (ecSig$1) {
     return Utils.signatureFromString(Json_decode.string(ecSig$1));
@@ -148,7 +142,7 @@ function Make(funarg) {
           ];
   };
   var log$1 = function (param) {
-    return Json_decode.list(item$1, param);
+    return Json_decode.array(item$1, param);
   };
   return [
           make,
@@ -157,7 +151,7 @@ function Make(funarg) {
           appendItem,
           reduce,
           findNewItems,
-          List.length,
+          length,
           log,
           log$1,
           item,

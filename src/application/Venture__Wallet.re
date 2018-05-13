@@ -4,8 +4,6 @@ open WalletTypes;
 
 open Event;
 
-let faucetAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
-
 type t = {
   ventureId,
   network: Network.t,
@@ -69,7 +67,7 @@ let apply = (event: Event.t, state) =>
       ...state,
       reservedInputs:
         state.reservedInputs
-        |> List.rev_append(data.payoutTx.usedInputs |> List.map(snd)),
+        |> List.rev_append(data.payoutTx.usedInputs |> Array.to_list),
       exposedCoordinates:
         switch (data.changeAddressCoordinates) {
         | None => state.exposedCoordinates
@@ -88,11 +86,10 @@ let apply = (event: Event.t, state) =>
         state.reservedInputs
         |> List.filter((input: Network.txInput) =>
              payoutTx.usedInputs
-             |> List.map(snd)
-             |>
-             List.exists((i: Network.txInput) =>
-               input.txId == i.txId && input.txOutputN == i.txOutputN
-             ) == false
+             |> Js.Array.find((i: Network.txInput) =>
+                  input.txId == i.txId && input.txOutputN == i.txOutputN
+                )
+             |> Js.Option.isNone
            ),
     };
   | PayoutBroadcastFailed({processId}) =>
@@ -103,11 +100,10 @@ let apply = (event: Event.t, state) =>
         state.reservedInputs
         |> List.filter((input: Network.txInput) =>
              payoutTx.usedInputs
-             |> List.map(snd)
-             |>
-             List.exists((i: Network.txInput) =>
-               input.txId == i.txId && input.txOutputN == i.txOutputN
-             ) == false
+             |> Js.Array.find((i: Network.txInput) =>
+                  input.txId == i.txId && input.txOutputN == i.txOutputN
+                )
+             |> Js.Option.isNone
            ),
     };
   | _ => state

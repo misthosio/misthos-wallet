@@ -490,8 +490,8 @@ let makePartnerProposed =
        });
   let dependsOnCompletions =
     lastPartnerRemovalProcess
-    |> Utils.mapOption(p => [p])
-    |> Js.Option.getWithDefault([]);
+    |> Utils.mapOption(p => [|p|])
+    |> Js.Option.getWithDefault([||]);
   PartnerProposed(
     Partner.Proposed.make(
       ~dependsOnCompletions,
@@ -510,7 +510,7 @@ let makePartnerRemovalProposed =
     (~lastPartnerAccepted: Partner.Accepted.t, ~supporterId, ~policy) =>
   PartnerRemovalProposed(
     Partner.Removal.Proposed.make(
-      ~dependsOnCompletions=[lastPartnerAccepted.processId],
+      ~dependsOnCompletions=[|lastPartnerAccepted.processId|],
       ~supporterId,
       ~policy,
       Partner.Removal.Data.{
@@ -553,7 +553,7 @@ let makeCustodianProposed =
        });
   CustodianProposed(
     Custodian.Proposed.make(
-      ~dependsOnProposals=[partnerApprovalProcess],
+      ~dependsOnProposals=[|partnerApprovalProcess|],
       ~supporterId,
       ~policy,
       Custodian.Data.{
@@ -576,7 +576,7 @@ let makeCustodianRemovalProposed =
   let {processId: lastCustodianProcess, data: {partnerId: custodianId}}: Custodian.Accepted.t = custodianAccepted;
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOnCompletions=[lastCustodianProcess],
+      ~dependsOnCompletions=[|lastCustodianProcess|],
       ~supporterId,
       ~policy,
       Custodian.Removal.Data.{lastCustodianProcess, custodianId, accountIdx},

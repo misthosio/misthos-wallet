@@ -30,7 +30,7 @@ let () = {
       let result =
         log
         |> TestLog.findNewItems(~other)
-        |> List.fold_left(
+        |> Array.fold_left(
              (state, {event}: TestLog.item) => state ++ event,
              "",
            );

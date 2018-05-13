@@ -16,6 +16,7 @@ var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
+var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 var TransactionFee = require("./TransactionFee.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -30,8 +31,8 @@ var NoSignaturesForInput = Caml_exceptions.create("PayoutTransaction.NoSignature
 
 function summary(network, param) {
   var misthosFeeAddress = param[/* misthosFeeAddress */2];
-  var totalIn = List.fold_left((function (total, input) {
-          return total.plus(input[1][/* value */3]);
+  var totalIn = $$Array.fold_left((function (total, input) {
+          return total.plus(input[/* value */3]);
         }), BTC.zero, param[/* usedInputs */1]);
   var tx = BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]);
   var outs = List.map((function (o) {
@@ -44,7 +45,8 @@ function summary(network, param) {
           return total.plus(out[1]);
         }), BTC.zero, outs);
   var networkFee = totalIn.minus(totalOut);
-  var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (changeAddress) {
+  var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (param) {
+              var changeAddress = param[0];
               return List.find((function (param) {
                               return param[0] === changeAddress;
                             }), outs)[1];
@@ -60,7 +62,38 @@ function summary(network, param) {
         ];
 }
 
+function txInputForChangeAddress(transactionId, accountKeyChains, network, param) {
+  var txHex = param[/* txHex */0];
+  return Utils.mapOption((function (param) {
+                var coordinates = param[1];
+                var address = param[0];
+                var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), accountKeyChains);
+                var tx = BitcoinjsLib.Transaction.fromHex(txHex);
+                var match = Js_option.getExn(List.find(Js_option.isSome, List.mapi((function (i, out) {
+                                var match = BitcoinjsLib.address.fromOutputScript(out.script, Network.bitcoinNetwork(network)) === address;
+                                if (match) {
+                                  return /* Some */[/* tuple */[
+                                            i,
+                                            BTC.fromSatoshisFloat(out.value)
+                                          ]];
+                                } else {
+                                  return /* None */0;
+                                }
+                              }), $$Array.to_list(tx.outs))));
+                return /* record */[
+                        /* txId */transactionId,
+                        /* txOutputN */match[0],
+                        /* address */address,
+                        /* value */match[1],
+                        /* nCoSigners */keyChain[/* nCoSigners */2],
+                        /* nPubKeys */List.length(keyChain[/* custodianKeyChains */3]),
+                        /* coordinates */coordinates
+                      ];
+              }), param[/* changeAddress */3]);
+}
+
 function encode(payout) {
+  var partial_arg = Address.Coordinates[/* encode */9];
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "txHex",
@@ -69,11 +102,7 @@ function encode(payout) {
               /* :: */[
                 /* tuple */[
                   "usedInputs",
-                  Json_encode.list((function (param) {
-                          return Json_encode.pair((function (prim) {
-                                        return prim;
-                                      }), Network.encodeInput, param);
-                        }), payout[/* usedInputs */1])
+                  Json_encode.array(Network.encodeInput, payout[/* usedInputs */1])
                 ],
                 /* :: */[
                   /* tuple */[
@@ -83,8 +112,10 @@ function encode(payout) {
                   /* :: */[
                     /* tuple */[
                       "changeAddress",
-                      Json_encode.nullable((function (prim) {
-                              return prim;
+                      Json_encode.nullable((function (param) {
+                              return Json_encode.tuple2((function (prim) {
+                                            return prim;
+                                          }), partial_arg, param);
                             }), payout[/* changeAddress */3])
                     ],
                     /* [] */0
@@ -95,16 +126,18 @@ function encode(payout) {
 }
 
 function decode(raw) {
+  var partial_arg = Address.Coordinates[/* decode */10];
+  var partial_arg$1 = function (param) {
+    return Json_decode.tuple2(Json_decode.string, partial_arg, param);
+  };
   return /* record */[
           /* txHex */Json_decode.field("txHex", Json_decode.string, raw),
           /* usedInputs */Json_decode.field("usedInputs", (function (param) {
-                  return Json_decode.list((function (param) {
-                                return Json_decode.pair(Json_decode.$$int, Network.decodeInput, param);
-                              }), param);
+                  return Json_decode.array(Network.decodeInput, param);
                 }), raw),
           /* misthosFeeAddress */Json_decode.field("misthosFeeAddress", Json_decode.string, raw),
           /* changeAddress */Json_decode.field("changeAddress", (function (param) {
-                  return Json_decode.optional(Json_decode.string, param);
+                  return Json_decode.optional(partial_arg$1, param);
                 }), raw)
         ];
 }
@@ -119,9 +152,7 @@ function getSignedExn(result) {
 
 function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, network) {
   var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(payout[/* txHex */0]), Network.bitcoinNetwork(network));
-  var signed = List.fold_left((function (signed, param) {
-          var input = param[1];
-          var idx = param[0];
+  var signed = $$Array.mapi((function (idx, input) {
           var inputs = txB.inputs;
           var txBInput = Caml_array.caml_array_get(inputs, idx);
           var match = txBInput.signatures;
@@ -130,11 +161,11 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
                         }))($$Array.to_list(match))) < input[/* nCoSigners */4];
           if (needsSigning) {
             try {
-              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdx */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
+              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
-              var coSignerIdx = Address.Coordinates[/* coSignerIdx */6](input[/* coordinates */6]);
-              var chainIdx = Address.Coordinates[/* chainIdx */7](input[/* coordinates */6]);
-              var addressIdx = Address.Coordinates[/* addressIdx */8](input[/* coordinates */6]);
+              var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
+              var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
+              var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
               txB.sign(idx, keyPair, Utils.bufFromHex(address[/* redeemScript */4]), null, BTC.toSatoshisFloat(input[/* value */3]), Utils.bufFromHex(address[/* witnessScript */3]));
@@ -142,16 +173,19 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
             }
             catch (exn){
               if (exn === Caml_builtin_exceptions.not_found) {
-                return signed;
+                return false;
               } else {
                 throw exn;
               }
             }
           } else {
-            return signed;
+            return false;
           }
-        }), false, payout[/* usedInputs */1]);
-  if (signed) {
+        }), payout[/* usedInputs */1]);
+  var match = Js_option.isSome(Js_primitive.undefined_to_opt(signed.find((function (s) {
+                  return s;
+                }))));
+  if (match) {
     return /* Signed */[/* record */[
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */payout[/* usedInputs */1],
@@ -272,9 +306,16 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
     var withChange = addChangeOutput(currentInputValue, outTotal, currentFee, changeAddress, satsPerByte, network, txB);
     return /* record */[
             /* txHex */txB.buildIncomplete().toHex(),
-            /* usedInputs */usedInputs,
+            /* usedInputs */$$Array.map((function (param) {
+                    return param[1];
+                  }), $$Array.of_list(usedInputs).sort((function (param, param$1) {
+                        return Caml_primitive.caml_int_compare(param[0], param$1[0]);
+                      }))),
             /* misthosFeeAddress */misthosFeeAddress,
-            /* changeAddress */withChange ? /* Some */[changeAddress[/* address */5]] : /* None */0
+            /* changeAddress */withChange ? /* Some */[/* tuple */[
+                  changeAddress[/* address */5],
+                  changeAddress[/* coordinates */2]
+                ]] : /* None */0
           ];
   } else {
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
@@ -299,9 +340,16 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
       var withChange$1 = addChangeOutput(match$1[0], outTotal, match$1[1], changeAddress, satsPerByte, network, txB);
       return /* record */[
               /* txHex */txB.buildIncomplete().toHex(),
-              /* usedInputs */match$1[2],
+              /* usedInputs */$$Array.map((function (param) {
+                      return param[1];
+                    }), $$Array.of_list(match$1[2]).sort((function (param, param$1) {
+                          return Caml_primitive.caml_int_compare(param[0], param$1[0]);
+                        }))),
               /* misthosFeeAddress */misthosFeeAddress,
-              /* changeAddress */withChange$1 ? /* Some */[changeAddress[/* address */5]] : /* None */0
+              /* changeAddress */withChange$1 ? /* Some */[/* tuple */[
+                    changeAddress[/* address */5],
+                    changeAddress[/* coordinates */2]
+                  ]] : /* None */0
             ];
     } else {
       throw NotEnoughFunds;
@@ -367,9 +415,8 @@ function finalize(signedTransactions, network) {
     var otherInputs = List.map((function (param) {
             return BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]), Network.bitcoinNetwork(network)).inputs;
           }), signedTransactions[1]);
-    List.iter((function (param) {
-            var nCoSigners = param[1][/* nCoSigners */4];
-            var inputIdx = param[0];
+    $$Array.iteri((function (inputIdx, param) {
+            var nCoSigners = param[/* nCoSigners */4];
             var testInput = Caml_array.caml_array_get(inputs, inputIdx);
             var match = testInput.signatures;
             var tmp;
@@ -425,6 +472,7 @@ exports.NotEnoughFunds = NotEnoughFunds;
 exports.NotEnoughSignatures = NotEnoughSignatures;
 exports.NoSignaturesForInput = NoSignaturesForInput;
 exports.summary = summary;
+exports.txInputForChangeAddress = txInputForChangeAddress;
 exports.build = build;
 exports.getSignedExn = getSignedExn;
 exports.signPayout = signPayout;

@@ -2,12 +2,15 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var Network = require("./wallet/Network.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
+var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./wallet/AccountKeyChain.bs.js");
 var PayoutTransaction = require("./wallet/PayoutTransaction.bs.js");
@@ -70,9 +73,7 @@ function apply($$event, state) {
                     match$2[0],
                     state[/* exposedCoordinates */5]
                   ] : state[/* exposedCoordinates */5],
-                /* reservedInputs */List.rev_append(List.map((function (prim) {
-                            return prim[1];
-                          }), data[/* payoutTx */1][/* usedInputs */1]), state[/* reservedInputs */6]),
+                /* reservedInputs */List.rev_append($$Array.to_list(data[/* payoutTx */1][/* usedInputs */1]), state[/* reservedInputs */6]),
                 /* payoutProcesses : :: */[
                   /* tuple */[
                     match$1[/* processId */0],
@@ -91,15 +92,13 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */4],
                 /* exposedCoordinates */state[/* exposedCoordinates */5],
                 /* reservedInputs */List.filter((function (input) {
-                          return List.exists((function (i) {
-                                        if (input[/* txId */0] === i[/* txId */0]) {
-                                          return input[/* txOutputN */1] === i[/* txOutputN */1];
-                                        } else {
-                                          return false;
-                                        }
-                                      }), List.map((function (prim) {
-                                            return prim[1];
-                                          }), payoutTx[/* usedInputs */1])) === false;
+                          return Js_option.isNone(Js_primitive.undefined_to_opt(payoutTx[/* usedInputs */1].find((function (i) {
+                                                if (input[/* txId */0] === i[/* txId */0]) {
+                                                  return input[/* txOutputN */1] === i[/* txOutputN */1];
+                                                } else {
+                                                  return false;
+                                                }
+                                              }))));
                         }))(state[/* reservedInputs */6]),
                 /* payoutProcesses */state[/* payoutProcesses */7]
               ];
@@ -113,15 +112,13 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */4],
                 /* exposedCoordinates */state[/* exposedCoordinates */5],
                 /* reservedInputs */List.filter((function (input) {
-                          return List.exists((function (i) {
-                                        if (input[/* txId */0] === i[/* txId */0]) {
-                                          return input[/* txOutputN */1] === i[/* txOutputN */1];
-                                        } else {
-                                          return false;
-                                        }
-                                      }), List.map((function (prim) {
-                                            return prim[1];
-                                          }), payoutTx$1[/* usedInputs */1])) === false;
+                          return Js_option.isNone(Js_primitive.undefined_to_opt(payoutTx$1[/* usedInputs */1].find((function (i) {
+                                                if (input[/* txId */0] === i[/* txId */0]) {
+                                                  return input[/* txOutputN */1] === i[/* txOutputN */1];
+                                                } else {
+                                                  return false;
+                                                }
+                                              }))));
                         }))(state[/* reservedInputs */6]),
                 /* payoutProcesses */state[/* payoutProcesses */7]
               ];
@@ -197,7 +194,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
   var userId = param[/* userId */0];
   var keyChainIdent = List.assoc(userId, List.assoc(accountIdx, param$1[/* activatedKeyChain */4]));
   var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, accountKeyChains);
-  var coordinates = Address.Coordinates[/* allForAccount */9](accountIdx)(param$1[/* exposedCoordinates */5]);
+  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(param$1[/* exposedCoordinates */5]);
   var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
   return Network.transactionInputs(network)(coordinates, accountKeyChains).then((function (inputs) {
                 var inputs$1 = List.filter((function (input) {
@@ -210,7 +207,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
                                       }), reservedInputs) === false;
                         }))(inputs);
                 var oldInputs = List.find_all((function (i) {
-                          return AccountKeyChain.Identifier[/* neq */3](keyChainIdent, Address.Coordinates[/* keyChainIdent */5](i[/* coordinates */6]));
+                          return AccountKeyChain.Identifier[/* neq */3](keyChainIdent, Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6]));
                         }))(inputs$1);
                 var changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
                 try {
@@ -236,9 +233,6 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
               }));
 }
 
-var faucetAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
-
-exports.faucetAddress = faucetAddress;
 exports.make = make;
 exports.apply = apply;
 exports.exposeNextIncomeAddress = exposeNextIncomeAddress;

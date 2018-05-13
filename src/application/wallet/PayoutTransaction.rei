@@ -10,9 +10,9 @@ type input = Network.txInput;
 
 type t = {
   txHex: string,
-  usedInputs: list((int, input)),
+  usedInputs: array(input),
   misthosFeeAddress: string,
-  changeAddress: option(string),
+  changeAddress: option((string, Address.Coordinates.t)),
 };
 
 type summary = {
@@ -23,6 +23,10 @@ type summary = {
 };
 
 let summary: (Network.t, t) => summary;
+
+let txInputForChangeAddress:
+  (~transactionId: string, AccountKeyChain.Collection.t, Network.t, t) =>
+  option(input);
 
 let build:
   (

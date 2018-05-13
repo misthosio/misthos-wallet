@@ -12,6 +12,7 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
@@ -85,7 +86,7 @@ function getLogFromUser(ventureId, userId, storagePrefix) {
 function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
   getLogFromUser(ventureId, userId, storagePrefix).then((function (other) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
-          return Promise.resolve(items ? (postMessage(VentureWorkerMessage.encodeIncoming(/* NewItemsDetected */Block.__(15, [
+          return Promise.resolve(items.length !== 0 ? (postMessage(VentureWorkerMessage.encodeIncoming(/* NewItemsDetected */Block.__(15, [
                                     ventureId,
                                     items
                                   ]))), /* () */0) : /* () */0);
@@ -93,11 +94,9 @@ function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
   return /* () */0;
 }
 
-function syncEventsFromPartner(storagePrefix, ventureId, summary, eventLog, userId) {
+function syncEventsFromPartner(storagePrefix, ventureId, knownItems, eventLog, userId) {
   getSummaryFromUser(ventureId, userId, storagePrefix).then((function (otherSummary) {
-            return Promise.resolve(List.length(List.filter((function (item) {
-                                    return List.mem(item, summary[/* knownItems */0]) === false;
-                                  }))(otherSummary[/* knownItems */0])) > 0 ? findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) : 0);
+            return Promise.resolve(Belt_SetString.subset(otherSummary[/* knownItems */0], knownItems) === false ? findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) : 0);
           })).catch((function () {
           return Promise.resolve(/* () */0);
         }));
@@ -109,8 +108,9 @@ function syncEventsFromVenture(ventureId, localUserId, storagePrefix) {
   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
                 var summary = Curry._1(EventLog.getSummary, eventLog);
                 var partnerKeys = Curry._1(determinPartnerIds(localUserId), eventLog);
+                var partial_arg = summary[/* knownItems */0];
                 List.iter((function (param) {
-                        return syncEventsFromPartner(storagePrefix, ventureId, summary, eventLog, param);
+                        return syncEventsFromPartner(storagePrefix, ventureId, partial_arg, eventLog, param);
                       }), partnerKeys);
                 return Promise.resolve(/* () */0);
               }));

@@ -193,10 +193,10 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
     };
   };
 
-let init = List.fold_left((m, item) => m |> apply(item), make());
+let init = Array.fold_left((m, item) => m |> apply(item), make());
 
 let applyAll = (events, model) =>
-  events |> List.fold_left((m, item) => m |> apply(item), model);
+  events |> Array.fold_left((m, item) => m |> apply(item), model);
 
 let partners = state => state.partners;
 
