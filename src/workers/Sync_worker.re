@@ -101,7 +101,7 @@ let syncEventsFromPartner =
     |> then_((otherSummary: EventLog.summary) =>
          (
            if (otherSummary.knownItems
-               |> Belt.Set.String.eq(knownItems) == false) {
+               |. Belt.Set.String.subset(knownItems) == false) {
              findNewItemsFromPartner(
                ventureId,
                userId,

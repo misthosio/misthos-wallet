@@ -96,7 +96,7 @@ function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
 
 function syncEventsFromPartner(storagePrefix, ventureId, knownItems, eventLog, userId) {
   getSummaryFromUser(ventureId, userId, storagePrefix).then((function (otherSummary) {
-            return Promise.resolve(Belt_SetString.eq(knownItems, otherSummary[/* knownItems */0]) === false ? findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) : 0);
+            return Promise.resolve(Belt_SetString.subset(otherSummary[/* knownItems */0], knownItems) === false ? findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) : 0);
           })).catch((function () {
           return Promise.resolve(/* () */0);
         }));
