@@ -10,7 +10,7 @@ type input = Network.txInput;
 
 type t = {
   txHex: string,
-  usedInputs: list((int, input)),
+  usedInputs: array(input),
   misthosFeeAddress: string,
   changeAddress: option((string, Address.Coordinates.t)),
 };

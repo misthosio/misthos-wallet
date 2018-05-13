@@ -65,7 +65,7 @@ let () =
           ~network=Network.Regtest,
         );
       let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
-      expect((payoutTx.usedInputs |> List.length, changeUsed))
+      expect((payoutTx.usedInputs |> Array.length, changeUsed))
       |> toEqual((2, true));
     });
     test("uses smallest possible input", () => {
@@ -81,7 +81,7 @@ let () =
           ~network=Network.Regtest,
         );
       let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
-      expect((snd(payoutTx.usedInputs |> List.hd).txOutputN, changeUsed))
+      expect((payoutTx.usedInputs[0].txOutputN, changeUsed))
       |> toEqual((1, true));
     });
     test("doesn't use change address if not worth it", () => {
@@ -97,7 +97,7 @@ let () =
           ~network=Network.Regtest,
         );
       let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
-      expect((snd(payoutTx.usedInputs |> List.hd).txOutputN, changeUsed))
+      expect((payoutTx.usedInputs[0].txOutputN, changeUsed))
       |> toEqual((0, false));
     });
     test("respects mandatory inputs", () => {
@@ -113,7 +113,7 @@ let () =
           ~network=Network.Regtest,
         );
       let changeUsed = payoutTx.changeAddress |> Js.Option.isSome;
-      expect((payoutTx.usedInputs |> List.length, changeUsed))
+      expect((payoutTx.usedInputs |> Array.length, changeUsed))
       |> toEqual((2, true));
     });
     test("raises when there aren't enough funds", () =>

@@ -5,6 +5,7 @@ var BTC = require("../../../src/application/wallet/BTC.bs.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var List = require("bs-platform/lib/js/list.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("../../../src/application/wallet/WalletTypes.bs.js");
 var PayoutTransaction = require("../../../src/application/wallet/PayoutTransaction.bs.js");
 
@@ -86,7 +87,7 @@ describe("build", (function () {
                             2,
                             true
                           ], Jest.Expect[/* expect */0](/* tuple */[
-                                List.length(payoutTx[/* usedInputs */1]),
+                                payoutTx[/* usedInputs */1].length,
                                 changeUsed
                               ]));
               }));
@@ -109,7 +110,7 @@ describe("build", (function () {
                             1,
                             true
                           ], Jest.Expect[/* expect */0](/* tuple */[
-                                List.hd(payoutTx[/* usedInputs */1])[1][/* txOutputN */1],
+                                Caml_array.caml_array_get(payoutTx[/* usedInputs */1], 0)[/* txOutputN */1],
                                 changeUsed
                               ]));
               }));
@@ -132,7 +133,7 @@ describe("build", (function () {
                             0,
                             false
                           ], Jest.Expect[/* expect */0](/* tuple */[
-                                List.hd(payoutTx[/* usedInputs */1])[1][/* txOutputN */1],
+                                Caml_array.caml_array_get(payoutTx[/* usedInputs */1], 0)[/* txOutputN */1],
                                 changeUsed
                               ]));
               }));
@@ -158,7 +159,7 @@ describe("build", (function () {
                             2,
                             true
                           ], Jest.Expect[/* expect */0](/* tuple */[
-                                List.length(payoutTx[/* usedInputs */1]),
+                                payoutTx[/* usedInputs */1].length,
                                 changeUsed
                               ]));
               }));

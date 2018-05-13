@@ -33,8 +33,8 @@ module UserId = {
 
 type userId = UserId.t;
 
-/* module UserIdMap = { */
-/* }; */
+module UserIdMap = {};
+
 module ProcessId = {
   include Base;
   let make = Uuid.v4;

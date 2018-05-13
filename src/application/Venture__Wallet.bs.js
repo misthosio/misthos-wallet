@@ -2,12 +2,15 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var Network = require("./wallet/Network.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
+var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./wallet/AccountKeyChain.bs.js");
 var PayoutTransaction = require("./wallet/PayoutTransaction.bs.js");
@@ -70,9 +73,7 @@ function apply($$event, state) {
                     match$2[0],
                     state[/* exposedCoordinates */5]
                   ] : state[/* exposedCoordinates */5],
-                /* reservedInputs */List.rev_append(List.map((function (prim) {
-                            return prim[1];
-                          }), data[/* payoutTx */1][/* usedInputs */1]), state[/* reservedInputs */6]),
+                /* reservedInputs */List.rev_append($$Array.to_list(data[/* payoutTx */1][/* usedInputs */1]), state[/* reservedInputs */6]),
                 /* payoutProcesses : :: */[
                   /* tuple */[
                     match$1[/* processId */0],
@@ -91,15 +92,13 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */4],
                 /* exposedCoordinates */state[/* exposedCoordinates */5],
                 /* reservedInputs */List.filter((function (input) {
-                          return List.exists((function (i) {
-                                        if (input[/* txId */0] === i[/* txId */0]) {
-                                          return input[/* txOutputN */1] === i[/* txOutputN */1];
-                                        } else {
-                                          return false;
-                                        }
-                                      }), List.map((function (prim) {
-                                            return prim[1];
-                                          }), payoutTx[/* usedInputs */1])) === false;
+                          return Js_option.isNone(Js_primitive.undefined_to_opt(payoutTx[/* usedInputs */1].find((function (i) {
+                                                if (input[/* txId */0] === i[/* txId */0]) {
+                                                  return input[/* txOutputN */1] === i[/* txOutputN */1];
+                                                } else {
+                                                  return false;
+                                                }
+                                              }))));
                         }))(state[/* reservedInputs */6]),
                 /* payoutProcesses */state[/* payoutProcesses */7]
               ];
@@ -113,15 +112,13 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */4],
                 /* exposedCoordinates */state[/* exposedCoordinates */5],
                 /* reservedInputs */List.filter((function (input) {
-                          return List.exists((function (i) {
-                                        if (input[/* txId */0] === i[/* txId */0]) {
-                                          return input[/* txOutputN */1] === i[/* txOutputN */1];
-                                        } else {
-                                          return false;
-                                        }
-                                      }), List.map((function (prim) {
-                                            return prim[1];
-                                          }), payoutTx$1[/* usedInputs */1])) === false;
+                          return Js_option.isNone(Js_primitive.undefined_to_opt(payoutTx$1[/* usedInputs */1].find((function (i) {
+                                                if (input[/* txId */0] === i[/* txId */0]) {
+                                                  return input[/* txOutputN */1] === i[/* txOutputN */1];
+                                                } else {
+                                                  return false;
+                                                }
+                                              }))));
                         }))(state[/* reservedInputs */6]),
                 /* payoutProcesses */state[/* payoutProcesses */7]
               ];

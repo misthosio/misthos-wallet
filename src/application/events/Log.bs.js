@@ -80,7 +80,7 @@ function Make(funarg) {
     return prim.length;
   };
   var getSummary = function (log) {
-    return /* record */[/* knownItems */Belt_SetString.ofArray($$Array.map((function (param) {
+    return /* record */[/* knownItems */Belt_SetString.fromArray($$Array.map((function (param) {
                         return param[/* hash */1];
                       }), log))];
   };

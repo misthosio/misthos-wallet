@@ -16,6 +16,7 @@ var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
+var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 var TransactionFee = require("./TransactionFee.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -30,8 +31,8 @@ var NoSignaturesForInput = Caml_exceptions.create("PayoutTransaction.NoSignature
 
 function summary(network, param) {
   var misthosFeeAddress = param[/* misthosFeeAddress */2];
-  var totalIn = List.fold_left((function (total, input) {
-          return total.plus(input[1][/* value */3]);
+  var totalIn = $$Array.fold_left((function (total, input) {
+          return total.plus(input[/* value */3]);
         }), BTC.zero, param[/* usedInputs */1]);
   var tx = BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]);
   var outs = List.map((function (o) {
@@ -101,11 +102,7 @@ function encode(payout) {
               /* :: */[
                 /* tuple */[
                   "usedInputs",
-                  Json_encode.list((function (param) {
-                          return Json_encode.pair((function (prim) {
-                                        return prim;
-                                      }), Network.encodeInput, param);
-                        }), payout[/* usedInputs */1])
+                  Json_encode.array(Network.encodeInput, payout[/* usedInputs */1])
                 ],
                 /* :: */[
                   /* tuple */[
@@ -136,9 +133,7 @@ function decode(raw) {
   return /* record */[
           /* txHex */Json_decode.field("txHex", Json_decode.string, raw),
           /* usedInputs */Json_decode.field("usedInputs", (function (param) {
-                  return Json_decode.list((function (param) {
-                                return Json_decode.pair(Json_decode.$$int, Network.decodeInput, param);
-                              }), param);
+                  return Json_decode.array(Network.decodeInput, param);
                 }), raw),
           /* misthosFeeAddress */Json_decode.field("misthosFeeAddress", Json_decode.string, raw),
           /* changeAddress */Json_decode.field("changeAddress", (function (param) {
@@ -157,9 +152,7 @@ function getSignedExn(result) {
 
 function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, network) {
   var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(payout[/* txHex */0]), Network.bitcoinNetwork(network));
-  var signed = List.fold_left((function (signed, param) {
-          var input = param[1];
-          var idx = param[0];
+  var signed = $$Array.mapi((function (idx, input) {
           var inputs = txB.inputs;
           var txBInput = Caml_array.caml_array_get(inputs, idx);
           var match = txBInput.signatures;
@@ -180,16 +173,19 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
             }
             catch (exn){
               if (exn === Caml_builtin_exceptions.not_found) {
-                return signed;
+                return false;
               } else {
                 throw exn;
               }
             }
           } else {
-            return signed;
+            return false;
           }
-        }), false, payout[/* usedInputs */1]);
-  if (signed) {
+        }), payout[/* usedInputs */1]);
+  var match = Js_option.isSome(Js_primitive.undefined_to_opt(signed.find((function (s) {
+                  return s;
+                }))));
+  if (match) {
     return /* Signed */[/* record */[
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */payout[/* usedInputs */1],
@@ -310,7 +306,11 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
     var withChange = addChangeOutput(currentInputValue, outTotal, currentFee, changeAddress, satsPerByte, network, txB);
     return /* record */[
             /* txHex */txB.buildIncomplete().toHex(),
-            /* usedInputs */usedInputs,
+            /* usedInputs */$$Array.map((function (param) {
+                    return param[1];
+                  }), $$Array.of_list(usedInputs).sort((function (param, param$1) {
+                        return Caml_primitive.caml_int_compare(param[0], param$1[0]);
+                      }))),
             /* misthosFeeAddress */misthosFeeAddress,
             /* changeAddress */withChange ? /* Some */[/* tuple */[
                   changeAddress[/* address */5],
@@ -340,7 +340,11 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
       var withChange$1 = addChangeOutput(match$1[0], outTotal, match$1[1], changeAddress, satsPerByte, network, txB);
       return /* record */[
               /* txHex */txB.buildIncomplete().toHex(),
-              /* usedInputs */match$1[2],
+              /* usedInputs */$$Array.map((function (param) {
+                      return param[1];
+                    }), $$Array.of_list(match$1[2]).sort((function (param, param$1) {
+                          return Caml_primitive.caml_int_compare(param[0], param$1[0]);
+                        }))),
               /* misthosFeeAddress */misthosFeeAddress,
               /* changeAddress */withChange$1 ? /* Some */[/* tuple */[
                     changeAddress[/* address */5],
@@ -411,9 +415,8 @@ function finalize(signedTransactions, network) {
     var otherInputs = List.map((function (param) {
             return BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]), Network.bitcoinNetwork(network)).inputs;
           }), signedTransactions[1]);
-    List.iter((function (param) {
-            var nCoSigners = param[1][/* nCoSigners */4];
-            var inputIdx = param[0];
+    $$Array.iteri((function (inputIdx, param) {
+            var nCoSigners = param[/* nCoSigners */4];
             var testInput = Caml_array.caml_array_get(inputs, inputIdx);
             var match = testInput.signatures;
             var tmp;

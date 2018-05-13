@@ -72,7 +72,7 @@ module Make = (Event: Encodable) => {
   let length = Array.length;
   let getSummary = log => {
     knownItems:
-      log |> Array.map(({hash}) => hash) |> Belt.Set.String.ofArray,
+      log |> Array.map(({hash}) => hash) |> Belt.Set.String.fromArray,
   };
   let encodeSummary = summary =>
     Json.Encode.(
