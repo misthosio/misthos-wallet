@@ -86,7 +86,9 @@ module Make = (Event: Encodable) => {
   let decodeSummary = raw =>
     Json.Decode.{
       knownItems:
-        raw |> field("knownItems", array(string)) |> Belt.Set.String.ofArray,
+        raw
+        |> field("knownItems", array(string))
+        |> Belt.Set.String.fromArray,
     };
   module Encode = {
     let ecSig = ecSig => Json.Encode.string(ecSig |> Utils.signatureToString);

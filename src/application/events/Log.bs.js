@@ -96,7 +96,7 @@ function Make(funarg) {
               ]);
   };
   var decodeSummary = function (raw) {
-    return /* record */[/* knownItems */Belt_SetString.ofArray(Json_decode.field("knownItems", (function (param) {
+    return /* record */[/* knownItems */Belt_SetString.fromArray(Json_decode.field("knownItems", (function (param) {
                         return Json_decode.array(Json_decode.string, param);
                       }), raw))];
   };
