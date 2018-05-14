@@ -10,19 +10,14 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Payout = require("./components/Payout.bs.js");
-var Router = require("./Router.bs.js");
-var $$String = require("bs-platform/lib/js/string.js");
 var Partner = require("./components/Partner.bs.js");
 var ViewModel = require("./ViewModel.bs.js");
+var LinkButton = require("./components/LinkButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-
-function changeNewPartnerId($$event) {
-  return /* ChangeNewPartnerId */Block.__(0, [$$event.target.value]);
-}
 
 var component = ReasonReact.reducerComponent("SelectedVenture");
 
@@ -31,11 +26,10 @@ function make(initialViewModel, session, commands, _) {
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */(function (param) {
+          /* willReceiveProps */(function () {
               return /* record */[
                       /* viewModel */initialViewModel,
                       /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
-                      /* prospectId */param[/* state */1][/* prospectId */2],
                       /* balance */ViewModel.balance(initialViewModel)
                     ];
             }),
@@ -48,20 +42,7 @@ function make(initialViewModel, session, commands, _) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var partners = $$Array.of_list(List.map((function (partner) {
-                          return ReasonReact.element(/* None */0, /* None */0, Partner.make(partner, /* array */[]));
-                        }), ViewModel.partners(state[/* viewModel */0])));
-              var partnersOld = $$Array.of_list(List.map((function (m) {
-                          var match = PrimitiveTypes.UserId[/* eq */5](session[/* userId */0], m[/* userId */0]);
-                          var match$1 = List.exists((function (p) {
-                                  return PrimitiveTypes.UserId[/* eq */5](p[/* userId */1], m[/* userId */0]);
-                                }), ViewModel.removalProspects(state[/* viewModel */0]));
-                          return React.createElement("li", {
-                                      key: PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])
-                                    }, React.createElement("div", undefined, Utils.text(PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])), match || match$1 ? null : React.createElement("button", {
-                                                onClick: (function () {
-                                                    return Curry._1(send, /* RemovePartner */Block.__(2, [m[/* userId */0]]));
-                                                  })
-                                              }, Utils.text("Propose Removal"))));
+                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
                         }), ViewModel.partners(state[/* viewModel */0])));
               var prospects = $$Array.of_list(List.map((function (prospect) {
                           return React.createElement("li", {
@@ -70,7 +51,7 @@ function make(initialViewModel, session, commands, _) {
                                                     return state + (partnerId + " ");
                                                   }), "", List.map(PrimitiveTypes.UserId[/* toString */0], prospect[/* endorsedBy */2]))))), List.mem(session[/* userId */0], prospect[/* endorsedBy */2]) === false ? React.createElement("button", {
                                             onClick: (function () {
-                                                return Curry._1(send, /* EndorsePartner */Block.__(1, [prospect[/* processId */0]]));
+                                                return Curry._1(send, /* EndorsePartner */Block.__(0, [prospect[/* processId */0]]));
                                               })
                                           }, Utils.text("Endorse Partner")) : null);
                         }), ViewModel.prospects(state[/* viewModel */0])));
@@ -81,7 +62,7 @@ function make(initialViewModel, session, commands, _) {
                                                     return state + (partnerId + " ");
                                                   }), "", List.map(PrimitiveTypes.UserId[/* toString */0], prospect[/* endorsedBy */2]))))), List.mem(session[/* userId */0], prospect[/* endorsedBy */2]) === false ? React.createElement("button", {
                                             onClick: (function () {
-                                                return Curry._1(send, /* EndorsePartnerRemoval */Block.__(3, [prospect[/* processId */0]]));
+                                                return Curry._1(send, /* EndorsePartnerRemoval */Block.__(1, [prospect[/* processId */0]]));
                                               })
                                           }, Utils.text("Endorse Removal")) : null);
                         }), ViewModel.removalProspects(state[/* viewModel */0])));
@@ -109,11 +90,11 @@ function make(initialViewModel, session, commands, _) {
                                                             return state + (partnerId + " ");
                                                           }), "", List.map(PrimitiveTypes.UserId[/* toString */0], payout[/* rejectedBy */3]))))))))), typeof match$1 === "number" && !match$2 ? React.createElement("button", {
                                             onClick: (function () {
-                                                return Curry._1(send, /* EndorsePayout */Block.__(6, [payout[/* processId */0]]));
+                                                return Curry._1(send, /* EndorsePayout */Block.__(4, [payout[/* processId */0]]));
                                               })
                                           }, Utils.text("Endorse Payout")) : null, typeof match$3 === "number" && !(match$4 || match$5) ? React.createElement("button", {
                                             onClick: (function () {
-                                                return Curry._1(send, /* RejectPayout */Block.__(5, [payout[/* processId */0]]));
+                                                return Curry._1(send, /* RejectPayout */Block.__(3, [payout[/* processId */0]]));
                                               })
                                           }, Utils.text("Reject Payout")) : null);
                         }), ViewModel.payouts(state[/* viewModel */0])));
@@ -125,104 +106,64 @@ function make(initialViewModel, session, commands, _) {
                                   /* [] */0
                                 ]
                               ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[Utils.text(ViewModel.ventureName(state[/* viewModel */0]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
-                                          React.createElement("b", undefined, Utils.text(BTC.format(state[/* balance */3][/* currentSpendable */0]))),
+                                          React.createElement("b", {
+                                                key: "currentSpendable"
+                                              }, Utils.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
                                           Utils.text("BTC")
                                         ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
-                                          React.createElement("b", undefined, Utils.text(BTC.format(state[/* balance */3][/* reserved */1]))),
+                                          React.createElement("b", {
+                                                key: "reserved"
+                                              }, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
                                           Utils.text(" BTC IN RESERVE")
-                                        ]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, Utils.text("Join Venture url: " + (window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
-                                              initialViewModel[/* ventureId */0],
-                                              session[/* userId */0]
-                                            ])))), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), React.createElement("input", {
-                                      autoFocus: false,
-                                      placeholder: "BlockstackId",
-                                      value: state[/* prospectId */2],
-                                      onChange: (function (e) {
-                                          return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [e.target.value]));
-                                        })
-                                    }), React.createElement("button", {
+                                        ]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                                            ViewModel.ventureId(state[/* viewModel */0]),
+                                            /* ManagePartners */1
+                                          ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
                                       onClick: (function () {
-                                          return Curry._1(send, /* ProposePartner */0);
-                                        })
-                                    }, Utils.text("Propose Partner"))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
-                                      onClick: (function () {
-                                          return Curry._1(send, /* GetIncomeAddress */1);
+                                          return Curry._1(send, /* GetIncomeAddress */0);
                                         })
                                     }, Utils.text("Get New Income Address")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
-                                            return Curry._1(send, /* ProposePayout */Block.__(4, [destinations]));
+                                            return Curry._1(send, /* ProposePayout */Block.__(2, [destinations]));
                                           }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payouts:")), React.createElement("ul", undefined, payouts)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
                       /* viewModel */initialViewModel,
                       /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
-                      /* prospectId */"",
                       /* balance */ViewModel.balance(initialViewModel)
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               var match = state[/* selfRemoved */1];
-              var exit = 0;
-              if (typeof action === "number" || action.tag) {
-                exit = 1;
+              if (match) {
+                return /* NoUpdate */0;
+              } else if (typeof action === "number") {
+                Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]);
+                return /* NoUpdate */0;
               } else {
-                return /* Update */Block.__(0, [/* record */[
-                            /* viewModel */state[/* viewModel */0],
-                            /* selfRemoved */state[/* selfRemoved */1],
-                            /* prospectId */action[0],
-                            /* balance */state[/* balance */3]
-                          ]]);
-              }
-              if (exit === 1) {
-                if (match) {
-                  return /* NoUpdate */0;
-                } else if (typeof action === "number") {
-                  if (action === 0) {
-                    var prospectId = $$String.trim(state[/* prospectId */2]);
-                    if (prospectId === "") {
+                switch (action.tag | 0) {
+                  case 0 : 
+                      Curry._1(commands[/* endorsePartner */1], action[0]);
                       return /* NoUpdate */0;
-                    } else {
-                      Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* viewModel */state[/* viewModel */0],
-                                  /* selfRemoved */state[/* selfRemoved */1],
-                                  /* prospectId */"",
-                                  /* balance */state[/* balance */3]
-                                ]]);
-                    }
-                  } else {
-                    Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]);
-                    return /* NoUpdate */0;
-                  }
-                } else {
-                  switch (action.tag | 0) {
-                    case 1 : 
-                        Curry._1(commands[/* endorsePartner */1], action[0]);
-                        return /* NoUpdate */0;
-                    case 2 : 
-                        Curry._1(commands[/* proposePartnerRemoval */3], action[0]);
-                        return /* NoUpdate */0;
-                    case 3 : 
-                        Curry._1(commands[/* endorsePartnerRemoval */5], action[0]);
-                        return /* NoUpdate */0;
-                    case 4 : 
-                        Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], action[0], BTC.fromSatoshis(/* int64 */[
-                                  /* hi */0,
-                                  /* lo */5
-                                ]));
-                        return /* NoUpdate */0;
-                    case 5 : 
-                        Curry._1(commands[/* rejectPayout */8], action[0]);
-                        return /* NoUpdate */0;
-                    case 6 : 
-                        Curry._1(commands[/* endorsePayout */7], action[0]);
-                        return /* NoUpdate */0;
-                    
-                  }
+                  case 1 : 
+                      Curry._1(commands[/* endorsePartnerRemoval */5], action[0]);
+                      return /* NoUpdate */0;
+                  case 2 : 
+                      Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], action[0], BTC.fromSatoshis(/* int64 */[
+                                /* hi */0,
+                                /* lo */5
+                              ]));
+                      return /* NoUpdate */0;
+                  case 3 : 
+                      Curry._1(commands[/* rejectPayout */8], action[0]);
+                      return /* NoUpdate */0;
+                  case 4 : 
+                      Curry._1(commands[/* endorsePayout */7], action[0]);
+                      return /* NoUpdate */0;
+                  
                 }
               }
-              
             }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
@@ -232,7 +173,6 @@ function make(initialViewModel, session, commands, _) {
 var text = Utils.text;
 
 exports.text = text;
-exports.changeNewPartnerId = changeNewPartnerId;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

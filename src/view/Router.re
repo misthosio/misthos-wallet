@@ -1,16 +1,21 @@
 open PrimitiveTypes;
 
 module Config = {
+  type ventureSubRoute =
+    | None
+    | ManagePartners;
   type route =
     | Home
-    | Venture(ventureId)
+    | Venture(ventureId, ventureSubRoute)
     | JoinVenture(ventureId, userId)
     | CreateVenture
     | TypographyStack;
   let routeFromUrl = (url: ReasonReact.Router.url) =>
     switch (url.path) {
     | ["ventures", "new"] => CreateVenture
-    | ["ventures", id] => Venture(id |> VentureId.fromString)
+    | ["ventures", id] => Venture(id |> VentureId.fromString, None)
+    | ["ventures", id, "partners"] =>
+      Venture(id |> VentureId.fromString, ManagePartners)
     | ["ventures", id, "joinvia", userId] =>
       JoinVenture(id |> VentureId.fromString, userId |> UserId.fromString)
     | ["typographystack"] => TypographyStack
@@ -20,7 +25,9 @@ module Config = {
   let routeToUrl = (route: route) =>
     switch (route) {
     | CreateVenture => "/ventures/new"
-    | Venture(id) => "/ventures/" ++ (id |> VentureId.toString)
+    | Venture(id, None) => "/ventures/" ++ (id |> VentureId.toString)
+    | Venture(id, ManagePartners) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/partners"
     | JoinVenture(id, userId) =>
       "/ventures/"
       ++ (id |> VentureId.toString)

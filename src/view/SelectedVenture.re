@@ -7,25 +7,16 @@ let text = Utils.text;
 type state = {
   viewModel: ViewModel.t,
   selfRemoved: bool,
-  prospectId: string,
   balance: ViewModel.Wallet.balance,
 };
 
 type action =
-  | ChangeNewPartnerId(string)
-  | ProposePartner
   | EndorsePartner(ProcessId.t)
-  | RemovePartner(UserId.t)
   | EndorsePartnerRemoval(ProcessId.t)
   | GetIncomeAddress
   | ProposePayout(list((string, BTC.t)))
   | RejectPayout(ProcessId.t)
   | EndorsePayout(ProcessId.t);
-
-let changeNewPartnerId = event =>
-  ChangeNewPartnerId(
-    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value,
-  );
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
 
@@ -41,11 +32,9 @@ let make =
     viewModel: initialViewModel,
     selfRemoved:
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
-    prospectId: "",
     balance: initialViewModel |> ViewModel.balance,
   },
-  willReceiveProps: ({state}) => {
-    ...state,
+  willReceiveProps: (_) => {
     viewModel: initialViewModel,
     selfRemoved:
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
@@ -53,20 +42,8 @@ let make =
   },
   reducer: (action, state) =>
     switch (state.selfRemoved, action) {
-    | (_, ChangeNewPartnerId(text)) =>
-      ReasonReact.Update({...state, prospectId: text})
-    | (false, ProposePartner) =>
-      switch (String.trim(state.prospectId)) {
-      | "" => ReasonReact.NoUpdate
-      | prospectId =>
-        commands.proposePartner(~prospectId=prospectId |> UserId.fromString);
-        ReasonReact.Update({...state, prospectId: ""});
-      }
     | (false, EndorsePartner(processId)) =>
       commands.endorsePartner(~processId);
-      ReasonReact.NoUpdate;
-    | (false, RemovePartner(partnerId)) =>
-      commands.proposePartnerRemoval(~partnerId);
       ReasonReact.NoUpdate;
     | (false, EndorsePartnerRemoval(processId)) =>
       commands.endorsePartnerRemoval(~processId);
@@ -94,34 +71,8 @@ let make =
       ReasonReact.array(
         Array.of_list(
           ViewModel.partners(state.viewModel)
-          |> List.map((partner: ViewModel.partner) => <Partner partner />),
-        ),
-      );
-    let partnersOld =
-      ReasonReact.array(
-        Array.of_list(
-          ViewModel.partners(state.viewModel)
-          |> List.map((m: ViewModel.partner) =>
-               <li key=(m.userId |> UserId.toString)>
-                 <div>
-                   (text(m.userId |> UserId.toString))
-                   (
-                     switch (
-                       m.userId |> UserId.eq(session.userId),
-                       ViewModel.removalProspects(state.viewModel)
-                       |> List.exists((p: ViewModel.prospect) =>
-                            UserId.eq(p.userId, m.userId)
-                          ),
-                     ) {
-                     | (false, false) =>
-                       <button onClick=(_e => send(RemovePartner(m.userId)))>
-                         (text("Propose Removal"))
-                       </button>
-                     | _ => ReasonReact.null
-                     }
-                   )
-                 </div>
-               </li>
+          |> List.map((partner: ViewModel.partner) =>
+               <Partner key=(partner.userId |> UserId.toString) partner />
              ),
         ),
       );
@@ -275,13 +226,15 @@ let make =
             (ViewModel.ventureName(state.viewModel) |> Utils.text)
           </MTypography>
           <MTypography variant=`Display2>
-            <b>
+            <b key="currentSpendable">
               (state.balance.currentSpendable |> BTC.format |> Utils.text)
             </b>
             ("BTC" |> Utils.text)
           </MTypography>
           <MTypography variant=`Subheading>
-            <b> (BTC.format(state.balance.reserved) |> Utils.text) </b>
+            <b key="reserved">
+              (BTC.format(state.balance.reserved) |> Utils.text)
+            </b>
             (" BTC IN RESERVE" |> Utils.text)
           </MTypography>
         </div>
@@ -300,30 +253,18 @@ let make =
             | _ => ReasonReact.null
             }
           )
-          (
-            text(
-              "Join Venture url: "
-              ++ Location.origin
-              ++ Router.Config.routeToUrl(
-                   JoinVenture(initialViewModel.ventureId, session.userId),
-                 ),
-            )
-          )
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
-          <ul> partnersOld </ul>
           <h4> (text("Prospects:")) </h4>
           <ul> prospects </ul>
           <h4> (text("To be removed:")) </h4>
           <ul> removalProspects </ul>
-          <input
-            placeholder="BlockstackId"
-            value=state.prospectId
-            onChange=(e => send(changeNewPartnerId(e)))
-            autoFocus=false
-          />
-          <button onClick=(_e => send(ProposePartner))>
-            (text("Propose Partner"))
-          </button>
+          <LinkButton
+            fullWidth=true
+            route=(
+              Venture(ViewModel.ventureId(state.viewModel), ManagePartners)
+            )>
+            ("Add or Remove Partners" |> Utils.text)
+          </LinkButton>
         </div>
       body3=
         <div>

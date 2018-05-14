@@ -11,6 +11,7 @@ var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MenuSvg = require("../assets/img/menu.svg");
 var LogoSolidSvg = require("../assets/img/logo-solid.svg");
+var CloseButtonSvg = require("../assets/img/close-button.svg");
 
 var component = ReasonReact.reducerComponent("Layout");
 
@@ -91,15 +92,45 @@ var drawer = Css.style(/* :: */[
       ]
     ]);
 
+var modal = Css.style(/* :: */[
+      Css.width(/* `vw */[
+            26433,
+            90.0
+          ]),
+      /* :: */[
+        Css.height(/* `vh */[
+              26418,
+              90.0
+            ]),
+        /* :: */[
+          Css.margin2(/* `vh */[
+                26418,
+                5.0
+              ], /* `vw */[
+                26433,
+                5.0
+              ]),
+          /* :: */[
+            Css.focus(/* :: */[
+                  Css.outlineStyle(/* none */-922086728),
+                  /* [] */0
+                ]),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* flex_ */flex_,
   /* appBar */appBar,
   /* container */container,
   /* grid */grid,
-  /* drawer */drawer
+  /* drawer */drawer,
+  /* modal */modal
 ];
 
-function make(drawer$1, children) {
+function make(drawer$1, modal$1, children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -112,6 +143,25 @@ function make(drawer$1, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
+              var tmp;
+              if (modal$1) {
+                var match = modal$1[0];
+                var onClose = match[1];
+                tmp = ReasonReact.element(/* None */0, /* None */0, MaterialUi.Modal[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, true, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.Paper[/* make */1](/* Some */[modal], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi.Toolbar[/* make */1](/* None */0, /* None */0, /* None */0, /* array */[
+                                              React.createElement("div", {
+                                                    className: flex_
+                                                  }),
+                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.IconButton[/* make */3](/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
+                                                              alt: "close",
+                                                              src: CloseButtonSvg
+                                                            })]))
+                                            ])),
+                                    match[0]
+                                  ]))]));
+              } else {
+                tmp = null;
+              }
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi.MuiThemeProvider[/* make */0](/* None */0, /* None */0, /* `ObjectGeneric */[
                               -317959944,
                               Theme.toJsUnsafe(Theme.theme)
@@ -135,7 +185,7 @@ function make(drawer$1, children) {
                                                                 ])),
                                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi.Drawer[/* make */7](/* Some */[/* Right */-57574468], /* None */0, /* None */0, /* None */0, /* Some */[(function () {
                                                                       return Curry._1(send, /* CloseDrawer */1);
-                                                                    })], /* Some */[param[/* state */1][/* open_ */0]], /* None */0, /* None */0, Theme.toJsUnsafe(Theme.theme), /* None */0, /* Some */[/* Temporary */-103274127], /* None */0, /* array */[React.createElement("div", {
+                                                                    })], /* Some */[param[/* state */1][/* drawerOpen */0]], /* None */0, /* None */0, Theme.toJsUnsafe(Theme.theme), /* None */0, /* Some */[/* Temporary */-103274127], /* None */0, /* array */[React.createElement("div", {
                                                                         className: drawer,
                                                                         role: "button",
                                                                         tabIndex: 0,
@@ -143,17 +193,17 @@ function make(drawer$1, children) {
                                                                             return Curry._1(send, /* CloseDrawer */1);
                                                                           })
                                                                       }, drawer$1[0])]))
-                                                      ])) : React.createElement("div", undefined), ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* Some */[grid], /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V24 */3], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children])))]))]));
+                                                      ])) : null, tmp, ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* Some */[grid], /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V24 */3], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children])))]))]));
             }),
           /* initialState */(function () {
-              return /* record */[/* open_ */false];
+              return /* record */[/* drawerOpen */false];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, _) {
               if (action) {
-                return /* Update */Block.__(0, [/* record */[/* open_ */false]]);
+                return /* Update */Block.__(0, [/* record */[/* drawerOpen */false]]);
               } else {
-                return /* Update */Block.__(0, [/* record */[/* open_ */true]]);
+                return /* Update */Block.__(0, [/* record */[/* drawerOpen */true]]);
               }
             }),
           /* subscriptions */component[/* subscriptions */13],

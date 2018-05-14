@@ -70,7 +70,7 @@ function make(partner, _) {
                   Utils.text(userId),
                   /* None */0
                 ];
-              return ReasonReact.element(/* Some */[userId], /* None */0, MaterialUi.ListItem[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.Avatar[/* make */1](/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Utils.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[match$1[0]], match$1[1], /* None */0, /* array */[]))
                             ]));

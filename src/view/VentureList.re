@@ -41,7 +41,7 @@ let make = (~selected=?, ~index, _children) => {
                                Some(id) == selected ?
                                  Styles.linkSelected : Styles.link
                              )
-                             route=(Venture(id))>
+                             route=(Venture(id, None))>
                              (name |> Utils.text)
                            </Link>
                          }

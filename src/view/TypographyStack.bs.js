@@ -40,7 +40,7 @@ function make() {
                                       ])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V6 */7], /* None */0, /* None */0, /* array */[
                                         ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* array */[Utils.text("Button")])),
-                                        ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* TypographyStack */2, /* array */[Utils.text("LinkButton")])),
+                                        ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* TypographyStack */2, /* None */0, /* array */[Utils.text("LinkButton")])),
                                         React.createElement("br", undefined),
                                         ReasonReact.element(/* None */0, /* None */0, Link.make(/* TypographyStack */2, /* None */0, /* array */[Utils.text("Link")]))
                                       ]))

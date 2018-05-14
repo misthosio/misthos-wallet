@@ -45,7 +45,7 @@ function make(onSignOut, index, selected, _) {
                           className: container
                         }, ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[])), React.createElement("div", {
                               className: flex_
-                            }), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* array */[Utils.text("Create a Venture")])), React.createElement("div", {
+                            }), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[Utils.text("Create a Venture")])), React.createElement("div", {
                               className: flex_
                             }), ReasonReact.element(/* None */0, /* None */0, MaterialUi.Button[/* make */7](/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onSignOut], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Sign Out"])));
             }),

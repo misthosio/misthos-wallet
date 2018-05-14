@@ -233,7 +233,10 @@ function make(currentRoute, session, children) {
                                                 /* ventureWorker */state[/* ventureWorker */6]
                                               ],
                                               (function () {
-                                                  return Router.goTo(/* Venture */Block.__(0, [ventureId$1]));
+                                                  return Router.goTo(/* Venture */Block.__(0, [
+                                                                ventureId$1,
+                                                                /* None */0
+                                                              ]));
                                                 })
                                             ]);
                                   } else {
@@ -278,7 +281,10 @@ function make(currentRoute, session, children) {
                                       /* ventureWorker */state[/* ventureWorker */6]
                                     ],
                                     (function () {
-                                        return Router.goTo(/* Venture */Block.__(0, [ventureId$2]));
+                                        return Router.goTo(/* Venture */Block.__(0, [
+                                                      ventureId$2,
+                                                      /* None */0
+                                                    ]));
                                       })
                                   ]);
                       case 3 : 

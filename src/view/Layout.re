@@ -2,11 +2,13 @@
 
 [@bs.module] external menu : string = "../assets/img/menu.svg";
 
+[@bs.module] external close : string = "../assets/img/close-button.svg";
+
 type action =
   | OpenDrawer
   | CloseDrawer;
 
-type state = {open_: bool};
+type state = {drawerOpen: bool};
 
 let component = ReasonReact.reducerComponent("Layout");
 
@@ -31,15 +33,22 @@ module Styles = {
       overflowY(auto),
     ]);
   let drawer = style([width(`px(440)), flex(1)]);
+  let modal =
+    style([
+      width(`vw(90.0)),
+      height(`vh(90.0)),
+      margin2(~v=`vh(5.0), ~h=`vw(5.0)),
+      focus([outlineStyle(`none)]),
+    ]);
 };
 
-let make = (~drawer, children) => {
+let make = (~drawer, ~modal, children) => {
   ...component,
-  initialState: () => {open_: false},
+  initialState: () => {drawerOpen: false},
   reducer: (action, _state) =>
     switch (action) {
-    | OpenDrawer => ReasonReact.Update({open_: true})
-    | CloseDrawer => ReasonReact.Update({open_: false})
+    | OpenDrawer => ReasonReact.Update({drawerOpen: true})
+    | CloseDrawer => ReasonReact.Update({drawerOpen: false})
     },
   render: ({send, state}) =>
     MaterialUi.(
@@ -49,7 +58,7 @@ let make = (~drawer, children) => {
           <div className=Styles.container>
             (
               switch (drawer) {
-              | None => <div />
+              | None => ReasonReact.null
               | Some(drawer) =>
                 <AppBar position=`Static className=Styles.appBar>
                   <Toolbar>
@@ -65,7 +74,7 @@ let make = (~drawer, children) => {
                     variant=`Temporary
                     anchor=`Right
                     onClose=(() => send(CloseDrawer))
-                    _open=state.open_>
+                    _open=state.drawerOpen>
                     <div
                       className=Styles.drawer
                       tabIndex=0
@@ -75,6 +84,23 @@ let make = (~drawer, children) => {
                     </div>
                   </Drawer>
                 </AppBar>
+              }
+            )
+            (
+              switch (modal) {
+              | None => ReasonReact.null
+              | Some((modal, onClose)) =>
+                <Modal _open=true onClose>
+                  <Paper className=Styles.modal>
+                    <Toolbar>
+                      <div className=Styles.flex_ />
+                      <IconButton color=`Inherit onClick=onClose>
+                        <img src=close alt="close" />
+                      </IconButton>
+                    </Toolbar>
+                    modal
+                  </Paper>
+                </Modal>
               }
             )
             <Grid
