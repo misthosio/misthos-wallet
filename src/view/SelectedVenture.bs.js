@@ -13,6 +13,7 @@ var Payout = require("./components/Payout.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
+var MFabButton = require("./components/MFabButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -120,17 +121,27 @@ function make(initialViewModel, session, commands, _) {
                                   "Transactions",
                                   /* [] */0
                                 ]
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[Utils.text(ViewModel.ventureName(state[/* viewModel */0]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
-                                          React.createElement("b", {
-                                                key: "currentSpendable"
-                                              }, Utils.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
-                                          Utils.text("BTC")
-                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
-                                          React.createElement("b", {
-                                                key: "reserved"
-                                              }, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
-                                          Utils.text(" BTC IN RESERVE")
-                                        ]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                              ]], ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V7 */8], /* None */0, /* None */0, /* array */[
+                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[Utils.text(ViewModel.ventureName(state[/* viewModel */0]))])),
+                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
+                                                          React.createElement("b", {
+                                                                key: "currentSpendable"
+                                                              }, Utils.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
+                                                          Utils.text("BTC")
+                                                        ])),
+                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
+                                                          React.createElement("b", {
+                                                                key: "reserved"
+                                                              }, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
+                                                          Utils.text(" BTC IN RESERVE")
+                                                        ]))
+                                              ])),
+                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V5 */6], /* None */0, /* None */0, /* array */[
+                                                ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* None */0, /* array */[Utils.text("RECEIVE")])),
+                                                ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* None */0, /* array */[Utils.text("PAY OUT")]))
+                                              ]))
+                                    ])), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),
                                             /* ManagePartners */1
                                           ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {

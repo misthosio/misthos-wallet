@@ -1,16 +1,32 @@
 open Css;
 
-let black = hex("000000");
+let uBlack = "000000";
 
-let white = hex("ffffff");
+let black = hex(uBlack);
 
-let robinsEgg = hex("59f7f0");
+let uWhite = "FFFFFF";
 
-let misthosTeal = hex("02a2b4");
+let white = hex(uWhite);
 
-let strongPink = hex("ff006d");
+let uRobinsEgg = "59f7f0";
 
-let reddishOrange = hex("f65e25");
+let robinsEgg = hex(uRobinsEgg);
+
+let uDeepAqua = "067781";
+
+let deepAqua = hex(uDeepAqua);
+
+let uMisthosTeal = "02a2b4";
+
+let misthosTeal = hex(uMisthosTeal);
+
+let uStrongPink = "ff006d";
+
+let strongPink = hex(uStrongPink);
+
+let uReddishOrange = "f65e25";
+
+let reddishOrange = hex(uReddishOrange);
 
 let gradient =
   linearGradient(
@@ -18,8 +34,21 @@ let gradient =
     [
       (0, robinsEgg),
       (28, misthosTeal),
-      (57, hex("067781")),
+      (57, deepAqua),
       (80, strongPink),
       (100, reddishOrange),
     ],
   );
+
+let gradientAqua =
+  linearGradient(
+    deg(75),
+    [(0, robinsEgg), (49, misthosTeal), (100, deepAqua)],
+  );
+
+let uGradientAqua = {j|linear-gradient(75deg, #$uRobinsEgg, #$uMisthosTeal 49%, #$uDeepAqua)|j};
+
+let gradientOrange =
+  linearGradient(deg(75), [(0, strongPink), (100, reddishOrange)]);
+
+let uGradientOrange = {j|linear-gradient(75deg, #$uStrongPink, #$uReddishOrange)|j};

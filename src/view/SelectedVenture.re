@@ -281,24 +281,39 @@ let make =
       );
     <Body3
       titles=["Partners", "Transactions"]
-      body1=
-        <div>
-          <MTypography variant=`Title>
-            (ViewModel.ventureName(state.viewModel) |> Utils.text)
-          </MTypography>
-          <MTypography variant=`Display2>
-            <b key="currentSpendable">
-              (state.balance.currentSpendable |> BTC.format |> Utils.text)
-            </b>
-            ("BTC" |> Utils.text)
-          </MTypography>
-          <MTypography variant=`Subheading>
-            <b key="reserved">
-              (BTC.format(state.balance.reserved) |> Utils.text)
-            </b>
-            (" BTC IN RESERVE" |> Utils.text)
-          </MTypography>
-        </div>
+      body1=MaterialUi.(
+              <Grid container=true>
+                <Grid item=true xs=V7>
+                  <MTypography variant=`Title>
+                    (ViewModel.ventureName(state.viewModel) |> Utils.text)
+                  </MTypography>
+                  <MTypography variant=`Display2>
+                    <b key="currentSpendable">
+                      (
+                        state.balance.currentSpendable
+                        |> BTC.format
+                        |> Utils.text
+                      )
+                    </b>
+                    ("BTC" |> Utils.text)
+                  </MTypography>
+                  <MTypography variant=`Subheading>
+                    <b key="reserved">
+                      (BTC.format(state.balance.reserved) |> Utils.text)
+                    </b>
+                    (" BTC IN RESERVE" |> Utils.text)
+                  </MTypography>
+                </Grid>
+                <Grid item=true xs=V5>
+                  <MFabButton variant=Aqua>
+                    ("RECEIVE" |> Utils.text)
+                  </MFabButton>
+                  <MFabButton variant=Orange>
+                    ("PAY OUT" |> Utils.text)
+                  </MFabButton>
+                </Grid>
+              </Grid>
+            )
       body2=
         <div>
           (
