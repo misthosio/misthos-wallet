@@ -4,17 +4,17 @@ open Expect;
 
 let () =
   describe("Income addresses", () => {
-    test("mainnetIncomeAddress can be user", () =>
-      expect(
-        Bitcoin.(
-          Network.incomeAddress(Mainnet)
-          |. Address.toOutputScript(Network.bitcoinNetwork(Mainnet))
-          |. Address.fromOutputScript(Network.bitcoinNetwork(Mainnet))
-        ),
-      )
-      |> toEqual(Network.incomeAddress(Mainnet))
-    );
-    test("testnetIncomeAddress can be user", () =>
+    /* test("mainnetIncomeAddress can be used", () => */
+    /*   expect( */
+    /*     Bitcoin.( */
+    /*       Network.incomeAddress(Mainnet) */
+    /*       |. Address.toOutputScript(Network.bitcoinNetwork(Mainnet)) */
+    /*       |. Address.fromOutputScript(Network.bitcoinNetwork(Mainnet)) */
+    /*     ), */
+    /*   ) */
+    /*   |> toEqual(Network.incomeAddress(Mainnet)) */
+    /* ); */
+    test("testnetIncomeAddress can be used", () =>
       expect(
         Bitcoin.(
           Network.incomeAddress(Testnet)
@@ -24,7 +24,7 @@ let () =
       )
       |> toEqual(Network.incomeAddress(Testnet))
     );
-    test("regtestIncomeAddress can be user", () =>
+    test("regtestIncomeAddress can be used", () =>
       expect(
         Bitcoin.(
           Network.incomeAddress(Regtest)

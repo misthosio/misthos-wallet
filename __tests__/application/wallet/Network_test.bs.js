@@ -6,13 +6,10 @@ var Network = require("../../../src/application/wallet/Network.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 
 describe("Income addresses", (function () {
-        Jest.test("mainnetIncomeAddress can be user", (function () {
-                return Jest.Expect[/* toEqual */12](Network.incomeAddress(/* Mainnet */2), Jest.Expect[/* expect */0](BitcoinjsLib.address.fromOutputScript(BitcoinjsLib.address.toOutputScript(Network.incomeAddress(/* Mainnet */2), Network.bitcoinNetwork(/* Mainnet */2)), Network.bitcoinNetwork(/* Mainnet */2))));
-              }));
-        Jest.test("testnetIncomeAddress can be user", (function () {
+        Jest.test("testnetIncomeAddress can be used", (function () {
                 return Jest.Expect[/* toEqual */12](Network.incomeAddress(/* Testnet */1), Jest.Expect[/* expect */0](BitcoinjsLib.address.fromOutputScript(BitcoinjsLib.address.toOutputScript(Network.incomeAddress(/* Testnet */1), Network.bitcoinNetwork(/* Testnet */1)), Network.bitcoinNetwork(/* Testnet */1))));
               }));
-        return Jest.test("regtestIncomeAddress can be user", (function () {
+        return Jest.test("regtestIncomeAddress can be used", (function () {
                       return Jest.Expect[/* toEqual */12](Network.incomeAddress(/* Regtest */0), Jest.Expect[/* expect */0](BitcoinjsLib.address.fromOutputScript(BitcoinjsLib.address.toOutputScript(Network.incomeAddress(/* Regtest */0), Network.bitcoinNetwork(/* Regtest */0)), Network.bitcoinNetwork(/* Regtest */0))));
                     }));
       }));
