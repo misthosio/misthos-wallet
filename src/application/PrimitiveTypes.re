@@ -7,6 +7,15 @@ module Base = {
   let compare = (a, b) => String.compare(toString(a), toString(b));
   let eq = (a, b) => compare(a, b) == 0;
   let neq = (a, b) => compare(a, b) != 0;
+  type parent = t;
+  module Comparator =
+    Belt.Id.MakeComparableU(
+      {
+        type t = parent;
+        let cmp = (. pA, pB) => compare(pA, pB);
+      },
+    );
+  type map('v) = Belt.Map.t(Comparator.t, 'v, Comparator.identity);
 };
 
 module type PrimitiveType = {
@@ -18,6 +27,13 @@ module type PrimitiveType = {
   let compare: (t, t) => int;
   let eq: (t, t) => bool;
   let neq: (t, t) => bool;
+  type parent = t;
+  module Comparator: {
+    type identity;
+    type t = parent;
+    let cmp: Belt.Id.cmp(t, identity);
+  };
+  type map('v) = Belt.Map.t(t, 'v, Comparator.identity);
 };
 
 module VentureId = {
@@ -32,8 +48,6 @@ module UserId = {
 };
 
 type userId = UserId.t;
-
-module UserIdMap = {};
 
 module ProcessId = {
   include Base;
