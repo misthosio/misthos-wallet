@@ -270,7 +270,7 @@ function bitcoinNetwork(param) {
 
 var regtestIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
 
-var testnetIncomeAddress = "2NDKFAo6J1F8iBXMkks3qVZAA3ZavYaJ4Ux";
+var testnetIncomeAddress = "2N5GAGs1vwFGmmTTqWgBhs2PhKoAntP4iPX";
 
 function incomeAddress(param) {
   if (param !== 0) {
