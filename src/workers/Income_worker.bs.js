@@ -111,7 +111,7 @@ function handleMsg(param) {
   return setInterval((function () {
                 detectIncomeFromAll(/* () */0);
                 return /* () */0;
-              }), 10000);
+              }), 5000);
 }
 
 var intervalId = [/* None */0];
@@ -132,9 +132,9 @@ self.onmessage = (function (msg) {
 
 var Message = 0;
 
-var tenSecondsInMilliseconds = 10000;
+var fiveSecondsInMilliseconds = 5000;
 
-var syncInterval = 10000;
+var syncInterval = 5000;
 
 exports.Message = Message;
 exports.postMessage = postMessage$1;
@@ -143,7 +143,7 @@ exports.scanTransactions = scanTransactions;
 exports.findAddressesAndTxIds = findAddressesAndTxIds;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
 exports.detectIncomeFromAll = detectIncomeFromAll;
-exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
+exports.fiveSecondsInMilliseconds = fiveSecondsInMilliseconds;
 exports.syncInterval = syncInterval;
 exports.handleMsg = handleMsg;
 exports.intervalId = intervalId;

@@ -111,9 +111,9 @@ let detectIncomeFromAll = () =>
        })
   );
 
-let tenSecondsInMilliseconds = 10000;
+let fiveSecondsInMilliseconds = 5000;
 
-let syncInterval = tenSecondsInMilliseconds;
+let syncInterval = fiveSecondsInMilliseconds;
 
 let handleMsg =
   fun
