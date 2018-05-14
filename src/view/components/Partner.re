@@ -29,7 +29,7 @@ let make = (~partner: ViewModel.partner, _children) => {
       | None => (userId |> Utils.text, None)
       };
     MaterialUi.(
-      <ListItem key=userId disableGutters=true>
+      <ListItem disableGutters=true>
         <Avatar className=Styles.avatar>
           (userId.[0] |> String.make(1) |> String.uppercase |> Utils.text)
         </Avatar>

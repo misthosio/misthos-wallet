@@ -42,7 +42,7 @@ function make(initialViewModel, session, commands, _) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var partners = $$Array.of_list(List.map((function (partner) {
-                          return ReasonReact.element(/* None */0, /* None */0, Partner.make(partner, /* array */[]));
+                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
                         }), ViewModel.partners(state[/* viewModel */0])));
               var prospects = $$Array.of_list(List.map((function (prospect) {
                           return React.createElement("li", {
@@ -106,10 +106,14 @@ function make(initialViewModel, session, commands, _) {
                                   /* [] */0
                                 ]
                               ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[Utils.text(ViewModel.ventureName(state[/* viewModel */0]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
-                                          React.createElement("b", undefined, Utils.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
+                                          React.createElement("b", {
+                                                key: "currentSpendable"
+                                              }, Utils.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
                                           Utils.text("BTC")
                                         ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
-                                          React.createElement("b", undefined, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
+                                          React.createElement("b", {
+                                                key: "reserved"
+                                              }, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
                                           Utils.text(" BTC IN RESERVE")
                                         ]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),

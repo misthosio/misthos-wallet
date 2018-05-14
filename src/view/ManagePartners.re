@@ -49,7 +49,9 @@ let make =
       ReasonReact.array(
         Array.of_list(
           ViewModel.partners(state.viewModel)
-          |> List.map((partner: ViewModel.partner) => <Partner partner />),
+          |> List.map((partner: ViewModel.partner) =>
+               <Partner key=(partner.userId |> UserId.toString) partner />
+             ),
         ),
       );
     let partnersOld =

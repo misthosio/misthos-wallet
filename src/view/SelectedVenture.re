@@ -34,8 +34,7 @@ let make =
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
     balance: initialViewModel |> ViewModel.balance,
   },
-  willReceiveProps: ({state}) => {
-    ...state,
+  willReceiveProps: (_) => {
     viewModel: initialViewModel,
     selfRemoved:
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
@@ -72,7 +71,9 @@ let make =
       ReasonReact.array(
         Array.of_list(
           ViewModel.partners(state.viewModel)
-          |> List.map((partner: ViewModel.partner) => <Partner partner />),
+          |> List.map((partner: ViewModel.partner) =>
+               <Partner key=(partner.userId |> UserId.toString) partner />
+             ),
         ),
       );
     let prospects =
@@ -225,13 +226,15 @@ let make =
             (ViewModel.ventureName(state.viewModel) |> Utils.text)
           </MTypography>
           <MTypography variant=`Display2>
-            <b>
+            <b key="currentSpendable">
               (state.balance.currentSpendable |> BTC.format |> Utils.text)
             </b>
             ("BTC" |> Utils.text)
           </MTypography>
           <MTypography variant=`Subheading>
-            <b> (BTC.format(state.balance.reserved) |> Utils.text) </b>
+            <b key="reserved">
+              (BTC.format(state.balance.reserved) |> Utils.text)
+            </b>
             (" BTC IN RESERVE" |> Utils.text)
           </MTypography>
         </div>

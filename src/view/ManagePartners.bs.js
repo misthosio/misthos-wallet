@@ -45,7 +45,7 @@ function make(initialViewModel, session, commands, _) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var partners = $$Array.of_list(List.map((function (partner) {
-                          return ReasonReact.element(/* None */0, /* None */0, Partner.make(partner, /* array */[]));
+                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
                         }), ViewModel.partners(state[/* viewModel */0])));
               var partnersOld = $$Array.of_list(List.map((function (m) {
                           var match = PrimitiveTypes.UserId[/* eq */5](session[/* userId */0], m[/* userId */0]);
