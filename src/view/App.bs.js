@@ -12,6 +12,7 @@ var PublicHome = require("./PublicHome.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureStore = require("./VentureStore.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
+var ManagePartners = require("./ManagePartners.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -31,7 +32,7 @@ function make(session, updateSession, _) {
     } else {
       var selected = currentRoute[0];
       return /* Some */[/* tuple */[
-                ReasonReact.element(/* None */0, /* None */0, Spinner.make("manage partners", /* array */[])),
+                ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(selectedVenture[1], session[0], selectedVenture[2], /* array */[])),
                 (function (param) {
                     var ventureId = selected;
                     return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [
@@ -121,7 +122,7 @@ function make(session, updateSession, _) {
                     Caml_builtin_exceptions.match_failure,
                     [
                       "App.re",
-                      41,
+                      44,
                       4
                     ]
                   ];

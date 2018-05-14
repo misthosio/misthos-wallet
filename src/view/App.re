@@ -18,9 +18,12 @@ let make = (~session, ~updateSession, _children) => {
     | (
         LoggedIn(session),
         Venture(selected, ManagePartners),
-        VentureLoaded(_, _, _),
+        VentureLoaded(_, venture, commands),
       ) =>
-      Some((<Spinner text="manage partners" />, onCloseModal(selected)))
+      Some((
+        <ManagePartners venture commands session />,
+        onCloseModal(selected),
+      ))
     | (LoggedIn(session), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
