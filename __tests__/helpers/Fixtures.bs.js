@@ -5,7 +5,6 @@ var Fs = require("fs");
 var Json = require("bs-json/src/Json.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../src/utils/Utils.bs.js");
-var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Network = require("../../src/application/wallet/Network.bs.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
@@ -113,9 +112,7 @@ function loadFixture(fileName) {
   try {
     return /* Some */[decodeFixture(Json.parseOrRaise(Fs.readFileSync(fileName + "-fixture.json", "utf8")))];
   }
-  catch (raw_err){
-    var err = Js_exn.internalToOCamlException(raw_err);
-    console.log("couldn't load", err);
+  catch (exn){
     return /* None */0;
   }
 }

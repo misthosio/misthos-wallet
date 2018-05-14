@@ -88,9 +88,7 @@ let loadFixture = fileName =>
       |> decodeFixture,
     )
   ) {
-  | err =>
-    Js.log2("couldn't load", err);
-    None;
+  | _ => None
   };
 
 let writeFixture = (fileName, sessions, log) =>
