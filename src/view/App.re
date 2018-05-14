@@ -8,12 +8,20 @@ let make = (~session, ~updateSession, _children) => {
   let onCloseModal = (ventureId, unit) =>
     Router.Config.routeToUrl(Venture(ventureId, None))
     |> ReasonReact.Router.push;
-  let modal = (currentRoute: Router.Config.route) =>
-    switch (session, currentRoute) {
-    | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
-    | (LoggedIn(session), Venture(selected, ManagePartners)) =>
+  let modal =
+      (
+        selectedVenture: VentureStore.selectedVenture,
+        currentRoute: Router.Config.route,
+      ) =>
+    switch (session, currentRoute, selectedVenture) {
+    | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _, _) => None
+    | (
+        LoggedIn(session),
+        Venture(selected, ManagePartners),
+        VentureLoaded(_, _, _),
+      ) =>
       Some((<Spinner text="manage partners" />, onCloseModal(selected)))
-    | (LoggedIn(session), _) => None
+    | (LoggedIn(session), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
@@ -25,23 +33,39 @@ let make = (~session, ~updateSession, _children) => {
       Some(<Drawer onSignOut selected index />)
     };
   let body =
-      (selectedVenture, createVenture, currentRoute: Router.Config.route) =>
-    switch (session, currentRoute) {
-    | (NotLoggedIn, _) => <PublicHome onSignIn />
-    | (_, TypographyStack) => <TypographyStack />
-    | (Unknown, _) => <Spinner text="Loading" />
-    | (AnonymousLogin, _) =>
+      (
+        selectedVenture: VentureStore.selectedVenture,
+        createVenture,
+        currentRoute: Router.Config.route,
+      ) =>
+    switch (session, currentRoute, selectedVenture) {
+    | (NotLoggedIn, _, _) => <PublicHome onSignIn />
+    | (_, TypographyStack, _) => <TypographyStack />
+    | (Unknown, _, _) => <Spinner text="Loading" />
+    | (AnonymousLogin, _, _) =>
       <Spinner
         text={js|
              You have signed in with a blockstack user that doesn't have a registered blockstack.id,
              make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.
              |js}
       />
-    | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
-    | (LoggedIn(session), Home) => <Home session selectedVenture />
-    | (LoggedIn(_), CreateVenture) =>
+    | (LoginPending, _, _) =>
+      <Spinner text="Waiting for BlockStack session" />
+    | (
+        LoggedIn(session),
+        Venture(_, _),
+        VentureLoaded(_ventureId, venture, commands),
+      ) =>
+      <SelectedVenture venture commands session />
+    | (LoggedIn(_), CreateVenture, _) =>
       <VentureCreate selectedVenture onCreateVenture=createVenture />
-    | (LoggedIn(session), _) => <Home session selectedVenture />
+    | (LoggedIn(session), _, JoiningVenture(_)) =>
+      <Spinner text="Joining venture" />
+    | (LoggedIn(session), _, LoadingVenture(_)) =>
+      <Spinner text="Loading venture" />
+    | (LoggedIn(session), _, CreatingVenture) =>
+      <Spinner text="Creating venture" />
+    | (LoggedIn(session), _, None) => Utils.text("Not selected")
     };
   {
     ...component,
@@ -54,7 +78,7 @@ let make = (~session, ~updateSession, _children) => {
                       (~index, ~selectedVenture, ~createVenture) =>
                         <Layout
                           drawer=(currentRoute |> drawer(index))
-                          modal=(currentRoute |> modal)>
+                          modal=(currentRoute |> modal(selectedVenture))>
                           ...(
                                currentRoute
                                |> body(selectedVenture, createVenture)
