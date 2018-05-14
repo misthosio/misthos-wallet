@@ -60,9 +60,9 @@ let detectIncomeFromVenture = ventureId => {
     |> then_(((knownTxs, utxos)) => {
          let events =
            utxos
-           |. Belt.List.keepMapU((. utxo: Network.txInput) => {
+           |. List.keepMapU((. utxo: Network.txInput) => {
                 let txOutId = utxo.txId ++ string_of_int(utxo.txOutputN);
-                knownTxs |. Belt.Set.String.has(txOutId) ?
+                knownTxs |. Set.String.has(txOutId) ?
                   None :
                   Some(
                     Event.IncomeDetected.make(
