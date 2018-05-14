@@ -326,7 +326,9 @@ let make =
           </button>
           <LinkButton
             fullWidth=true
-            route=(ManagePartners(ViewModel.ventureId(state.viewModel)))>
+            route=(
+              Venture(ViewModel.ventureId(state.viewModel), ManagePartners)
+            )>
             ("Add or Remove Partners" |> Utils.text)
           </LinkButton>
         </div>

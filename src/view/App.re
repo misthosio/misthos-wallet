@@ -6,11 +6,12 @@ let make = (~session, ~updateSession, _children) => {
   let onSignIn = _e => updateSession(SessionStore.SignIn);
   let onSignOut = _e => updateSession(SessionStore.SignOut);
   let onCloseModal = (ventureId, unit) =>
-    Router.Config.routeToUrl(Venture(ventureId)) |> ReasonReact.Router.push;
+    Router.Config.routeToUrl(Venture(ventureId, None))
+    |> ReasonReact.Router.push;
   let modal = (currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
     | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
-    | (LoggedIn(session), ManagePartners(selected)) =>
+    | (LoggedIn(session), Venture(selected, ManagePartners)) =>
       Some((<Spinner text="manage partners" />, onCloseModal(selected)))
     | (LoggedIn(session), _) => None
     };
@@ -20,11 +21,7 @@ let make = (~session, ~updateSession, _children) => {
     | (_, TypographyStack) => None
     | (LoggedIn(_data), Home | CreateVenture) =>
       Some(<Drawer onSignOut index />)
-    | (
-        LoggedIn(_data),
-        Venture(selected) | JoinVenture(selected, _) |
-        ManagePartners(selected),
-      ) =>
+    | (LoggedIn(_data), Venture(selected, _) | JoinVenture(selected, _)) =>
       Some(<Drawer onSignOut selected index />)
     };
   let body =
@@ -41,8 +38,7 @@ let make = (~session, ~updateSession, _children) => {
              |js}
       />
     | (LoginPending, _) => <Spinner text="Waiting for BlockStack session" />
-    | (LoggedIn(session), Home | ManagePartners(_)) =>
-      <Home session selectedVenture />
+    | (LoggedIn(session), Home) => <Home session selectedVenture />
     | (LoggedIn(_), CreateVenture) =>
       <VentureCreate selectedVenture onCreateVenture=createVenture />
     | (LoggedIn(session), _) => <Home session selectedVenture />

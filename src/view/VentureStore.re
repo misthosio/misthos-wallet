@@ -44,15 +44,13 @@ let loadVentureAndIndex =
     syncWorker^ |> SyncWorkerClient.updateSession;
   };
   switch (session, currentRoute: Router.Config.route, selectedVenture) {
-  | (LoggedIn(_), Venture(ventureId), VentureLoaded(loadedId, _, _))
+  | (LoggedIn(_), Venture(ventureId, _), VentureLoaded(loadedId, _, _))
       when VentureId.eq(ventureId, loadedId) => selectedVenture
-  | (LoggedIn(_), ManagePartners(ventureId), VentureLoaded(loadedId, _, _))
-      when VentureId.eq(ventureId, loadedId) => selectedVenture
-  | (LoggedIn(_), Venture(ventureId), VentureLoaded(loadedId, _, _))
+  | (LoggedIn(_), Venture(ventureId, _), VentureLoaded(loadedId, _, _))
       when VentureId.neq(ventureId, loadedId) =>
     ventureWorker^ |> VentureWorkerClient.load(~ventureId);
     LoadingVenture(ventureId);
-  | (LoggedIn(_), Venture(ventureId), _) =>
+  | (LoggedIn(_), Venture(ventureId, _), _) =>
     ventureWorker^ |> VentureWorkerClient.load(~ventureId);
     LoadingVenture(ventureId);
   | (LoggedIn(_sessionData), JoinVenture(ventureId, userId), _) =>
@@ -182,7 +180,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
               ),
           },
-          ((_) => Router.goTo(Router.Config.Venture(ventureId))),
+          ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
         )
       | (VentureLoaded(ventureId, events, _), JoiningVenture(joiningId))
           when VentureId.eq(ventureId, joiningId) =>
@@ -196,7 +194,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
               ),
           },
-          ((_) => Router.goTo(Router.Config.Venture(ventureId))),
+          ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
         )
       | (VentureLoaded(ventureId, events, _), LoadingVenture(loadingId))
           when VentureId.eq(ventureId, loadingId) =>

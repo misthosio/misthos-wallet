@@ -24,7 +24,7 @@ function make(session, updateSession, _) {
     return Curry._1(updateSession, /* SignOut */1);
   };
   var modal = function (currentRoute) {
-    if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag !== 2) {
+    if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag || !currentRoute[1]) {
       return /* None */0;
     } else {
       var selected = currentRoute[0];
@@ -32,7 +32,10 @@ function make(session, updateSession, _) {
                 ReasonReact.element(/* None */0, /* None */0, Spinner.make("manage partners", /* array */[])),
                 (function (param) {
                     var ventureId = selected;
-                    return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [ventureId])));
+                    return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [
+                                      ventureId,
+                                      /* None */0
+                                    ])));
                   })
               ]];
     }
@@ -64,36 +67,19 @@ function make(session, updateSession, _) {
       } else {
         return ReasonReact.element(/* None */0, /* None */0, PublicHome.make(onSignIn, /* array */[]));
       }
+    } else if (typeof currentRoute === "number") {
+      switch (currentRoute) {
+        case 0 : 
+            return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, /* array */[]));
+        case 1 : 
+            return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
+        case 2 : 
+            exit$1 = 2;
+            break;
+        
+      }
     } else {
-      var exit$2 = 0;
-      if (typeof currentRoute === "number") {
-        switch (currentRoute) {
-          case 0 : 
-              exit$2 = 3;
-              break;
-          case 1 : 
-              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
-          case 2 : 
-              exit$1 = 2;
-              break;
-          
-        }
-      } else {
-        switch (currentRoute.tag | 0) {
-          case 0 : 
-          case 1 : 
-              exit = 1;
-              break;
-          case 2 : 
-              exit$2 = 3;
-              break;
-          
-        }
-      }
-      if (exit$2 === 3) {
-        return ReasonReact.element(/* None */0, /* None */0, Home.make(session[0], selectedVenture, /* array */[]));
-      }
-      
+      exit = 1;
     }
     if (exit$1 === 2) {
       if (typeof currentRoute === "number" && currentRoute >= 2) {

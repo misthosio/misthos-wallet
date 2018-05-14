@@ -26,41 +26,31 @@ function loadVentureAndIndex(session, currentRoute, param) {
   }
   if (typeof session === "number" || typeof currentRoute === "number") {
     return /* None */0;
+  } else if (currentRoute.tag) {
+    var ventureId = currentRoute[0];
+    VentureWorkerClient.joinVia(ventureId, currentRoute[1], ventureWorker[0]);
+    return /* JoiningVenture */Block.__(0, [ventureId]);
   } else {
-    switch (currentRoute.tag | 0) {
-      case 0 : 
-          var ventureId = currentRoute[0];
-          var exit = 0;
-          if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
-            exit = 1;
-          } else {
-            var loadedId = selectedVenture[0];
-            if (PrimitiveTypes.VentureId[/* eq */5](ventureId, loadedId)) {
-              return selectedVenture;
-            } else if (PrimitiveTypes.VentureId[/* neq */6](ventureId, loadedId)) {
-              VentureWorkerClient.load(ventureId, ventureWorker[0]);
-              return /* LoadingVenture */Block.__(1, [ventureId]);
-            } else {
-              exit = 1;
-            }
-          }
-          if (exit === 1) {
-            VentureWorkerClient.load(ventureId, ventureWorker[0]);
-            return /* LoadingVenture */Block.__(1, [ventureId]);
-          }
-          break;
-      case 1 : 
-          var ventureId$1 = currentRoute[0];
-          VentureWorkerClient.joinVia(ventureId$1, currentRoute[1], ventureWorker[0]);
-          return /* JoiningVenture */Block.__(0, [ventureId$1]);
-      case 2 : 
-          if (typeof selectedVenture === "number" || !(selectedVenture.tag === 2 && PrimitiveTypes.VentureId[/* eq */5](currentRoute[0], selectedVenture[0]))) {
-            return /* None */0;
-          } else {
-            return selectedVenture;
-          }
-      
+    var ventureId$1 = currentRoute[0];
+    var exit = 0;
+    if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+      exit = 1;
+    } else {
+      var loadedId = selectedVenture[0];
+      if (PrimitiveTypes.VentureId[/* eq */5](ventureId$1, loadedId)) {
+        return selectedVenture;
+      } else if (PrimitiveTypes.VentureId[/* neq */6](ventureId$1, loadedId)) {
+        VentureWorkerClient.load(ventureId$1, ventureWorker[0]);
+        return /* LoadingVenture */Block.__(1, [ventureId$1]);
+      } else {
+        exit = 1;
+      }
     }
+    if (exit === 1) {
+      VentureWorkerClient.load(ventureId$1, ventureWorker[0]);
+      return /* LoadingVenture */Block.__(1, [ventureId$1]);
+    }
+    
   }
 }
 
@@ -243,7 +233,10 @@ function make(currentRoute, session, children) {
                                                 /* ventureWorker */state[/* ventureWorker */6]
                                               ],
                                               (function () {
-                                                  return Router.goTo(/* Venture */Block.__(0, [ventureId$1]));
+                                                  return Router.goTo(/* Venture */Block.__(0, [
+                                                                ventureId$1,
+                                                                /* None */0
+                                                              ]));
                                                 })
                                             ]);
                                   } else {
@@ -288,7 +281,10 @@ function make(currentRoute, session, children) {
                                       /* ventureWorker */state[/* ventureWorker */6]
                                     ],
                                     (function () {
-                                        return Router.goTo(/* Venture */Block.__(0, [ventureId$2]));
+                                        return Router.goTo(/* Venture */Block.__(0, [
+                                                      ventureId$2,
+                                                      /* None */0
+                                                    ]));
                                       })
                                   ]);
                       case 3 : 
