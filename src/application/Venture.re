@@ -597,15 +597,15 @@ module Cmd = {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
         Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
-        |> then_(
-             fun
-             | Wallet.Ok(proposal) =>
-               venture
-               |> apply(PayoutProposed(proposal))
-               |> then_(persist)
-               |> then_(((v, c)) => resolve(Ok(v, c)))
-             | Wallet.NotEnoughFunds => NotEnoughFunds |> resolve,
-           )
+        |> (
+          fun
+          | Wallet.Ok(proposal) =>
+            venture
+            |> apply(PayoutProposed(proposal))
+            |> then_(persist)
+            |> then_(((v, c)) => resolve(Ok(v, c)))
+          | Wallet.NotEnoughFunds => NotEnoughFunds |> resolve
+        )
       );
     };
   };

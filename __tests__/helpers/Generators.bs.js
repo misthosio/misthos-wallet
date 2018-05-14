@@ -52,6 +52,14 @@ function twoUserSessionsFromArray(sessions) {
         ];
 }
 
+function threeUserSessionsFromArray(sessions) {
+  return /* tuple */[
+          Caml_array.caml_array_get(sessions, 0),
+          Caml_array.caml_array_get(sessions, 1),
+          Caml_array.caml_array_get(sessions, 2)
+        ];
+}
+
 function twoUserSessions() {
   return /* tuple */[
           userSession(PrimitiveTypes.UserId[/* fromString */1]("user1")),
@@ -700,6 +708,7 @@ exports.AppEvent = AppEvent;
 exports.userSession = userSession;
 exports.withUserSessions = withUserSessions;
 exports.twoUserSessionsFromArray = twoUserSessionsFromArray;
+exports.threeUserSessionsFromArray = threeUserSessionsFromArray;
 exports.twoUserSessions = twoUserSessions;
 exports.threeUserSessions = threeUserSessions;
 exports.fourUserSessions = fourUserSessions;

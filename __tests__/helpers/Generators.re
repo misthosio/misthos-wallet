@@ -37,6 +37,12 @@ let withUserSessions = n =>
 
 let twoUserSessionsFromArray = sessions => (sessions[0], sessions[1]);
 
+let threeUserSessionsFromArray = sessions => (
+  sessions[0],
+  sessions[1],
+  sessions[2],
+);
+
 let twoUserSessions = () => (
   userSession("user1" |> UserId.fromString),
   userSession("user2" |> UserId.fromString),

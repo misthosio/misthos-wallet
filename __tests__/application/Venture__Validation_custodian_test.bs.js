@@ -73,7 +73,7 @@ describe("CustodianProposed", (function () {
                             ], Generators.Log[/* withAccount */23](user1, Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1))));
                         return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log), /* record */[
                                     /* partnerId */user2[/* userId */0],
-                                    /* partnerApprovalProcess */PrimitiveTypes.ProcessId[/* make */7](/* () */0),
+                                    /* partnerApprovalProcess */PrimitiveTypes.ProcessId[/* make */9](/* () */0),
                                     /* lastCustodianRemovalProcess : None */0,
                                     /* accountIdx */WalletTypes.AccountIndex[/* default */9]
                                   ], /* BadData */["partner approval process doesn't exist"]);

@@ -27,18 +27,16 @@ function testNextIncomeAddress(user, address, wallet) {
 
 function collectNextTwoAddresses(user, param) {
   var wallet = param[0];
-  var exposed = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
-  var address1 = exposed[/* address */1];
-  var log = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(32, [exposed]), param[1]);
-  var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(32, [exposed]), wallet);
-  var exposed$1 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet$1);
-  var address2 = exposed$1[/* address */1];
-  var log$1 = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(32, [exposed$1]), log);
-  var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(32, [exposed$1]), wallet$1);
+  var exposed1 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
+  var log = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(32, [exposed1]), param[1]);
+  var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(32, [exposed1]), wallet);
+  var exposed2 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet$1);
+  var log$1 = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(32, [exposed2]), log);
+  var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(32, [exposed2]), wallet$1);
   return /* tuple */[
           /* tuple */[
-            address1,
-            address2
+            exposed1,
+            exposed2
           ],
           /* tuple */[
             wallet$2,
@@ -48,7 +46,7 @@ function collectNextTwoAddresses(user, param) {
 }
 
 function getExposedAddresses(param) {
-  var accountKeyChains = param[/* accountKeyChains */3];
+  var accountKeyChains = param[/* txInputCollector */3][/* keyChains */3];
   return List.map((function (a) {
                 return a[/* address */5];
               }), List.map((function (coordinates) {

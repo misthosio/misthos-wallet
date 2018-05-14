@@ -32,6 +32,26 @@ type txInput = {
   coordinates: Address.Coordinates.t,
 };
 
+module TxInputCmp =
+  Belt.Id.MakeComparableU(
+    {
+      type t = txInput;
+      let cmp =
+        (.
+          {txId, txOutputN}: txInput,
+          {txId: id2, txOutputN: out2}: txInput,
+        ) =>
+          compare(
+            txId ++ string_of_int(txOutputN),
+            id2 ++ string_of_int(out2),
+          );
+    },
+  );
+
+type inputSet = Belt.Set.t(TxInputCmp.t, TxInputCmp.identity);
+
+let inputSet = () => Belt.Set.make(~id=(module TxInputCmp));
+
 let encodeInput = input =>
   Json.Encode.(
     object_([

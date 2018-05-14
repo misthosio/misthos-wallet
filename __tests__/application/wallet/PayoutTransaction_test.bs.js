@@ -3,56 +3,54 @@
 
 var BTC = require("../../../src/application/wallet/BTC.bs.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
-var List = require("bs-platform/lib/js/list.js");
+var Network = require("../../../src/application/wallet/Network.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("../../../src/application/wallet/WalletTypes.bs.js");
 var PayoutTransaction = require("../../../src/application/wallet/PayoutTransaction.bs.js");
 
 describe("build", (function () {
-        var inputs_000 = /* record */[
-          /* txId */"d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
-          /* txOutputN */0,
-          /* address */"2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
-          /* value */BTC.fromSatoshis(/* int64 */[
-                /* hi */0,
-                /* lo */10000
-              ]),
-          /* nCoSigners */1,
-          /* nPubKeys */1,
-          /* coordinates : tuple */[
-            WalletTypes.AccountIndex[/* first */2],
-            "identifier",
-            WalletTypes.CoSignerIndex[/* first */2],
-            WalletTypes.ChainIndex[/* externalChain */9],
-            WalletTypes.AddressIndex[/* first */2]
-          ]
-        ];
-        var inputs_001 = /* :: */[
-          /* record */[
-            /* txId */"d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
-            /* txOutputN */1,
-            /* address */"2N3CDv7U6xVYmNqdvNscKBWwUYky7SM6Wdq",
-            /* value */BTC.fromSatoshis(/* int64 */[
-                  /* hi */0,
-                  /* lo */5000
-                ]),
-            /* nCoSigners */1,
-            /* nPubKeys */1,
-            /* coordinates : tuple */[
-              WalletTypes.AccountIndex[/* first */2],
-              "identifier",
-              WalletTypes.CoSignerIndex[/* first */2],
-              WalletTypes.ChainIndex[/* externalChain */9],
-              WalletTypes.AddressIndex[/* next */3](WalletTypes.AddressIndex[/* first */2])
-            ]
-          ],
-          /* [] */0
-        ];
-        var inputs = /* :: */[
-          inputs_000,
-          inputs_001
-        ];
+        var inputs = (function (param) {
+              return Belt_Set.fromArray(param, Network.TxInputCmp);
+            })(/* array */[
+              /* record */[
+                /* txId */"d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
+                /* txOutputN */0,
+                /* address */"2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
+                /* value */BTC.fromSatoshis(/* int64 */[
+                      /* hi */0,
+                      /* lo */10000
+                    ]),
+                /* nCoSigners */1,
+                /* nPubKeys */1,
+                /* coordinates : tuple */[
+                  WalletTypes.AccountIndex[/* first */2],
+                  "identifier",
+                  WalletTypes.CoSignerIndex[/* first */2],
+                  WalletTypes.ChainIndex[/* externalChain */9],
+                  WalletTypes.AddressIndex[/* first */2]
+                ]
+              ],
+              /* record */[
+                /* txId */"d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
+                /* txOutputN */1,
+                /* address */"2N3CDv7U6xVYmNqdvNscKBWwUYky7SM6Wdq",
+                /* value */BTC.fromSatoshis(/* int64 */[
+                      /* hi */0,
+                      /* lo */5000
+                    ]),
+                /* nCoSigners */1,
+                /* nPubKeys */1,
+                /* coordinates : tuple */[
+                  WalletTypes.AccountIndex[/* first */2],
+                  "identifier",
+                  WalletTypes.CoSignerIndex[/* first */2],
+                  WalletTypes.ChainIndex[/* externalChain */9],
+                  WalletTypes.AddressIndex[/* next */3](WalletTypes.AddressIndex[/* first */2])
+                ]
+              ]
+            ]);
         var changeAddress_002 = /* coordinates : tuple */[
           WalletTypes.AccountIndex[/* first */2],
           "identifier",
@@ -69,7 +67,7 @@ describe("build", (function () {
           /* address */"2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE"
         ];
         Jest.test("uses as many inputs as necessary", (function () {
-                var payoutTx = PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                var payoutTx = PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -92,7 +90,7 @@ describe("build", (function () {
                               ]));
               }));
         Jest.test("uses smallest possible input", (function () {
-                var payoutTx = PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                var payoutTx = PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -115,7 +113,7 @@ describe("build", (function () {
                               ]));
               }));
         Jest.test("doesn't use change address if not worth it", (function () {
-                var payoutTx = PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                var payoutTx = PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -138,10 +136,9 @@ describe("build", (function () {
                               ]));
               }));
         Jest.test("respects mandatory inputs", (function () {
-                var payoutTx = PayoutTransaction.build(/* :: */[
-                      List.nth(inputs, 1),
-                      /* [] */0
-                    ], inputs, /* :: */[
+                var payoutTx = PayoutTransaction.build(Belt_Set.keepU(inputs, (function (input) {
+                            return input[/* txOutputN */1] === 1;
+                          })), inputs, /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -165,7 +162,7 @@ describe("build", (function () {
               }));
         Jest.test("raises when there aren't enough funds", (function () {
                 return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function () {
-                                  return PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                                  return PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
                                               /* tuple */[
                                                 "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                                 BTC.fromSatoshis(/* int64 */[
@@ -181,7 +178,7 @@ describe("build", (function () {
                                 }), /* () */0));
               }));
         return Jest.test("summary", (function () {
-                      var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(/* [] */0, inputs, /* :: */[
+                      var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
                                 /* tuple */[
                                   "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                   BTC.fromSatoshis(/* int64 */[

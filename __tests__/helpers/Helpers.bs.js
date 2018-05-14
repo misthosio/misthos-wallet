@@ -111,22 +111,9 @@ function fundAddress(outputs, utxos) {
           return /* () */0;
         }), inputs);
   return broadcastTransaction(txB.build()).then((function () {
-                  return BitcoindClient.getUTXOs(bitcoindConfig, List.map((function (prim) {
-                                    return prim[0];
-                                  }), outputs));
-                })).then((function (utxos) {
-                return Promise.resolve(List.map((function (utxo) {
-                                  return /* record */[
-                                          /* txId */utxo[/* txId */0],
-                                          /* outputs : :: */[
-                                            /* record */[
-                                              /* address */utxo[/* address */2],
-                                              /* amount */utxo[/* amount */3]
-                                            ],
-                                            /* [] */0
-                                          ]
-                                        ];
-                                }), utxos));
+                return BitcoindClient.getUTXOs(bitcoindConfig, List.map((function (prim) {
+                                  return prim[0];
+                                }), outputs));
               }));
 }
 

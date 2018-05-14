@@ -101,41 +101,95 @@ describe("integration", (function () {
             ]);
         Jest.beforeAllPromise(/* Some */[40000], (function () {
                 return Helpers.faucet(/* :: */[
+                                /* tuple */[
+                                  address1[/* address */1],
+                                  address1Satoshis
+                                ],
+                                /* :: */[
                                   /* tuple */[
-                                    address1,
-                                    address1Satoshis
+                                    address2[/* address */1],
+                                    address2Satoshis
                                   ],
                                   /* :: */[
                                     /* tuple */[
-                                      address2,
-                                      address2Satoshis
+                                      address3[/* address */1],
+                                      address3Satoshis
                                     ],
                                     /* :: */[
                                       /* tuple */[
-                                        address3,
-                                        address3Satoshis
+                                        address4[/* address */1],
+                                        address4Satoshis
                                       ],
-                                      /* :: */[
-                                        /* tuple */[
-                                          address4,
-                                          address4Satoshis
-                                        ],
-                                        /* [] */0
-                                      ]
+                                      /* [] */0
                                     ]
                                   ]
-                                ]).then((function () {
-                                  return Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
-                                              /* tuple */[
-                                                Helpers.faucetAddress,
-                                                oneKeyChainSpendAmount
-                                              ],
-                                              /* [] */0
-                                            ], BTC.fromSatoshis(/* int64 */[
-                                                  /* hi */0,
-                                                  /* lo */10
-                                                ]), oneKeyChainWallet[0]);
-                                })).then((function (param) {
+                                ]
+                              ]).then((function (utxos) {
+                                var walletOneAddresses_000 = /* tuple */[
+                                  address1[/* address */1],
+                                  address1
+                                ];
+                                var walletOneAddresses_001 = /* :: */[
+                                  /* tuple */[
+                                    address2[/* address */1],
+                                    address2
+                                  ],
+                                  /* [] */0
+                                ];
+                                var walletOneAddresses = /* :: */[
+                                  walletOneAddresses_000,
+                                  walletOneAddresses_001
+                                ];
+                                var walletTwoAddresses_000 = /* tuple */[
+                                  address1[/* address */1],
+                                  address1
+                                ];
+                                var walletTwoAddresses_001 = /* :: */[
+                                  /* tuple */[
+                                    address2[/* address */1],
+                                    address2
+                                  ],
+                                  /* :: */[
+                                    /* tuple */[
+                                      address3[/* address */1],
+                                      address3
+                                    ],
+                                    /* :: */[
+                                      /* tuple */[
+                                        address4[/* address */1],
+                                        address4
+                                      ],
+                                      /* [] */0
+                                    ]
+                                  ]
+                                ];
+                                var walletTwoAddresses = /* :: */[
+                                  walletTwoAddresses_000,
+                                  walletTwoAddresses_001
+                                ];
+                                List.iter((function (param) {
+                                        var address = param[/* address */2];
+                                        var incomeEvent = Event.IncomeDetected[/* make */0](param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* coordinates */0], address, param[/* txId */0], param[/* amount */3]);
+                                        var match = List.mem_assoc(address, walletOneAddresses);
+                                        if (match) {
+                                          oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(33, [incomeEvent]), oneKeyChainWallet[0]);
+                                          twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(33, [incomeEvent]), twoKeyChainWallet[0]);
+                                          return /* () */0;
+                                        } else {
+                                          twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(33, [incomeEvent]), twoKeyChainWallet[0]);
+                                          return /* () */0;
+                                        }
+                                      }), utxos);
+                                var param = Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
+                                      /* tuple */[
+                                        Helpers.faucetAddress,
+                                        oneKeyChainSpendAmount
+                                      ],
+                                      /* [] */0
+                                    ], BTC.fromSatoshis(/* int64 */[
+                                          /* hi */0,
+                                          /* lo */10
+                                        ]), oneKeyChainWallet[0]);
                                 if (param) {
                                   var $$event = param[0];
                                   oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), oneKeyChainWallet[0]);
@@ -166,34 +220,35 @@ describe("integration", (function () {
                             }));
               }));
         return Jest.testPromise(/* Some */[80000], "2 of 3 wallet", (function () {
-                      return Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
-                                      /* tuple */[
-                                        Helpers.faucetAddress,
-                                        twoKeyChainSpendAmount
-                                      ],
-                                      /* [] */0
-                                    ], BTC.fromSatoshis(/* int64 */[
-                                          /* hi */0,
-                                          /* lo */10
-                                        ]), twoKeyChainWallet[0]).then((function (param) {
-                                      if (param) {
-                                        var $$event = param[0];
-                                        var data = $$event[/* data */5];
-                                        var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* accountKeyChains */3], data[/* payoutTx */1], /* Regtest */0));
-                                        return Promise.all(/* tuple */[
-                                                    Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),
-                                                    Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
-                                                              data[/* payoutTx */1],
-                                                              /* :: */[
-                                                                payoutTx,
-                                                                /* [] */0
-                                                              ]
-                                                            ], /* Regtest */0))
-                                                  ]);
-                                      } else {
-                                        throw PayoutTransaction.NotEnoughFunds;
-                                      }
-                                    })).then((function (param) {
+                      var param = Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
+                            /* tuple */[
+                              Helpers.faucetAddress,
+                              twoKeyChainSpendAmount
+                            ],
+                            /* [] */0
+                          ], BTC.fromSatoshis(/* int64 */[
+                                /* hi */0,
+                                /* lo */10
+                              ]), twoKeyChainWallet[0]);
+                      var tmp;
+                      if (param) {
+                        var $$event = param[0];
+                        var data = $$event[/* data */5];
+                        var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* txInputCollector */3][/* keyChains */3], data[/* payoutTx */1], /* Regtest */0));
+                        tmp = Promise.all(/* tuple */[
+                              Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),
+                              Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
+                                        data[/* payoutTx */1],
+                                        /* :: */[
+                                          payoutTx,
+                                          /* [] */0
+                                        ]
+                                      ], /* Regtest */0))
+                            ]);
+                      } else {
+                        throw PayoutTransaction.NotEnoughFunds;
+                      }
+                      return tmp.then((function (param) {
                                     var expectedFee = BTC.fromSatoshis(/* int64 */[
                                             /* hi */0,
                                             /* lo */5810

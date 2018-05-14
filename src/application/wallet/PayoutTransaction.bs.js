@@ -8,6 +8,7 @@ var Utils = require("../../utils/Utils.bs.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Address = require("./Address.bs.js");
 var Network = require("./Network.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
@@ -268,23 +269,21 @@ function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, 
 }
 
 function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddress, network) {
-  var mandatoryInputs$1 = List.filter((function (param) {
-            return TransactionFee.canPayForItself(satsPerByte, param);
-          }))(mandatoryInputs);
+  var mandatoryInputs$1 = Belt_Set.keep(mandatoryInputs, (function (param) {
+          return TransactionFee.canPayForItself(satsPerByte, param);
+        }));
   var allInputs$1 = List.sort((function (i1, i2) {
           return i1[/* value */3].comparedTo(i2[/* value */3]);
-        }), List.filter((function (input) {
-                return List.mem(input, mandatoryInputs$1) === false;
-              }))(List.filter((function (param) {
-                    return TransactionFee.canPayForItself(satsPerByte, param);
-                  }))(allInputs)));
+        }), Belt_Set.toList(Belt_Set.diff(Belt_Set.keep(allInputs, (function (param) {
+                      return TransactionFee.canPayForItself(satsPerByte, param);
+                    })), mandatoryInputs$1)));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   var usedInputs = List.map((function (i) {
           return /* tuple */[
                   txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                   i
                 ];
-        }), mandatoryInputs$1);
+        }), Belt_Set.toList(mandatoryInputs$1));
   var outTotalWithoutFee = List.fold_left((function (total, param) {
           var value = param[1];
           txB.addOutput(param[0], BTC.toSatoshisFloat(value));

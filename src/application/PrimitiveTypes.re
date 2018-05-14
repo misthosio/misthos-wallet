@@ -7,15 +7,15 @@ module Base = {
   let compare = (a, b) => String.compare(toString(a), toString(b));
   let eq = (a, b) => compare(a, b) == 0;
   let neq = (a, b) => compare(a, b) != 0;
-  type parent = t;
   module Comparator =
     Belt.Id.MakeComparableU(
       {
-        type t = parent;
+        type nonrec t = t;
         let cmp = (. pA, pB) => compare(pA, pB);
       },
     );
   type map('v) = Belt.Map.t(Comparator.t, 'v, Comparator.identity);
+  let makeMap = () => Belt.Map.make(~id=(module Comparator));
 };
 
 module type PrimitiveType = {
@@ -27,13 +27,13 @@ module type PrimitiveType = {
   let compare: (t, t) => int;
   let eq: (t, t) => bool;
   let neq: (t, t) => bool;
-  type parent = t;
   module Comparator: {
     type identity;
-    type t = parent;
+    type nonrec t = t;
     let cmp: Belt.Id.cmp(t, identity);
   };
   type map('v) = Belt.Map.t(t, 'v, Comparator.identity);
+  let makeMap: unit => map('v);
 };
 
 module VentureId = {

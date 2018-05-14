@@ -6,6 +6,8 @@ var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Address = require("./Address.bs.js");
+var Belt_Id = require("bs-platform/lib/js/belt_Id.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -13,6 +15,7 @@ var Json_encode = require("bs-json/src/Json_encode.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var BitcoindClient = require("./BitcoindClient.bs.js");
+var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 var SmartbitClient = require("./SmartbitClient.bs.js");
 
 function encode(param) {
@@ -39,6 +42,16 @@ function decode(raw) {
     default:
       return Js_exn.raiseError("Network.decode");
   }
+}
+
+function cmp(param, param$1) {
+  return Caml_primitive.caml_string_compare(param[/* txId */0] + String(param[/* txOutputN */1]), param$1[/* txId */0] + String(param$1[/* txOutputN */1]));
+}
+
+var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
+
+function inputSet() {
+  return Belt_Set.make(TxInputCmp);
 }
 
 function encodeInput(input) {
@@ -389,6 +402,8 @@ function incomeAddress(param) {
 
 exports.encode = encode;
 exports.decode = decode;
+exports.TxInputCmp = TxInputCmp;
+exports.inputSet = inputSet;
 exports.encodeInput = encodeInput;
 exports.decodeInput = decodeInput;
 exports.Make = Make;
@@ -401,4 +416,4 @@ exports.bitcoinNetwork = bitcoinNetwork;
 exports.regtestIncomeAddress = regtestIncomeAddress;
 exports.testnetIncomeAddress = testnetIncomeAddress;
 exports.incomeAddress = incomeAddress;
-/* Client Not a pure module */
+/* TxInputCmp Not a pure module */

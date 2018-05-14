@@ -120,7 +120,7 @@ describe("Any rejection type", (function () {
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* appendEvent */6](user2[/* issuerKeyPair */2], Event.makePartnerRejected(PrimitiveTypes.ProcessId[/* make */7](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* appendEvent */6](user2[/* issuerKeyPair */2], Event.makePartnerRejected(PrimitiveTypes.ProcessId[/* make */9](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
               }));
         describe("when the rejector is not a partner", (function () {
                 var match = Generators.threeUserSessions(/* () */0);
@@ -232,7 +232,7 @@ describe("Any endorsement type", (function () {
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* appendEvent */6](user2[/* issuerKeyPair */2], Event.makePartnerEndorsed(PrimitiveTypes.ProcessId[/* make */7](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* appendEvent */6](user2[/* issuerKeyPair */2], Event.makePartnerEndorsed(PrimitiveTypes.ProcessId[/* make */9](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
               }));
         describe("when the supporter is not a partner", (function () {
                 var match = Generators.threeUserSessions(/* () */0);

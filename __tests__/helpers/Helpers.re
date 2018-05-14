@@ -95,16 +95,6 @@ let fundAddress = (outputs, utxos) => {
     |> then_((_) =>
          BitcoindClient.getUTXOs(bitcoindConfig, outputs |> List.map(fst))
        )
-    |> then_(utxos =>
-         utxos
-         |> List.map((utxo: WalletTypes.utxo) =>
-              {
-                txId: utxo.txId,
-                outputs: [{address: utxo.address, amount: utxo.amount}],
-              }
-            )
-         |> resolve
-       )
   );
 };
 

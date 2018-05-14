@@ -15,7 +15,7 @@ function makeProposal(name) {
         var dependsOnProposals = $staropt$star ? $staropt$star[0] : /* array */[];
         var dependsOnCompletions = $staropt$star$1 ? $staropt$star$1[0] : /* array */[];
         return /* record */[
-                /* processId */PrimitiveTypes.ProcessId[/* make */7](/* () */0),
+                /* processId */PrimitiveTypes.ProcessId[/* make */9](/* () */0),
                 /* dependsOnProposals */dependsOnProposals,
                 /* dependsOnCompletions */dependsOnCompletions,
                 /* supporterId */supporterId,

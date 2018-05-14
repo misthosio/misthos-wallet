@@ -332,17 +332,19 @@ let build =
       ~network,
     ) => {
   let mandatoryInputs =
-    mandatoryInputs |> List.filter(Fee.canPayForItself(satsPerByte));
+    mandatoryInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
   let allInputs =
     allInputs
-    |> List.filter(Fee.canPayForItself(satsPerByte))
-    |> List.filter(input => mandatoryInputs |> List.mem(input) == false)
+    |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
+    |. Belt.Set.diff(mandatoryInputs)
+    |> Belt.Set.toList
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
        );
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
     mandatoryInputs
+    |> Belt.Set.toList
     |> List.map((i: input) =>
          (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
        );

@@ -8,26 +8,26 @@ type t = {
   ventureId,
   network: Network.t,
   payoutPolicy: Policy.t,
-  accountKeyChains: AccountKeyChain.Collection.t,
+  txInputCollector: TxInputCollector.t,
   activatedKeyChain:
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
   exposedCoordinates: list(Address.Coordinates.t),
-  reservedInputs: list(Network.txInput),
-  payoutProcesses: list((ProcessId.t, PayoutTransaction.t)),
 };
 
 let make = () => {
   network: Network.Testnet,
   ventureId: VentureId.fromString(""),
+  txInputCollector: TxInputCollector.make(),
   payoutPolicy: Policy.unanimous,
-  accountKeyChains: [],
   activatedKeyChain: [],
   exposedCoordinates: [],
-  reservedInputs: [],
-  payoutProcesses: [],
 };
 
-let apply = (event: Event.t, state) =>
+let apply = (event: Event.t, state) => {
+  let state = {
+    ...state,
+    txInputCollector: state.txInputCollector |> TxInputCollector.apply(event),
+  };
   switch (event) {
   | VentureCreated({ventureId, metaPolicy, network}) => {
       ...state,
@@ -40,11 +40,6 @@ let apply = (event: Event.t, state) =>
     ) => {
       ...state,
       activatedKeyChain: [(accountIdx, []), ...state.activatedKeyChain],
-    }
-  | AccountKeyChainIdentified(({keyChain}: AccountKeyChainIdentified.t)) => {
-      ...state,
-      accountKeyChains:
-        state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
     }
   | AccountKeyChainActivated({accountIdx, custodianId, identifier}) => {
       ...state,
@@ -63,57 +58,27 @@ let apply = (event: Event.t, state) =>
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
     }
-  | PayoutProposed({data, processId}) => {
+  | PayoutProposed({data}) => {
       ...state,
-      reservedInputs:
-        state.reservedInputs
-        |> List.rev_append(data.payoutTx.usedInputs |> Array.to_list),
       exposedCoordinates:
         switch (data.changeAddressCoordinates) {
         | None => state.exposedCoordinates
         | Some(coordinates) => [coordinates, ...state.exposedCoordinates]
         },
-      payoutProcesses: [
-        (processId, data.payoutTx),
-        ...state.payoutProcesses,
-      ],
     }
-  | PayoutBroadcast({processId}) =>
-    let payoutTx = state.payoutProcesses |> List.assoc(processId);
-    {
-      ...state,
-      reservedInputs:
-        state.reservedInputs
-        |> List.filter((input: Network.txInput) =>
-             payoutTx.usedInputs
-             |> Js.Array.find((i: Network.txInput) =>
-                  input.txId == i.txId && input.txOutputN == i.txOutputN
-                )
-             |> Js.Option.isNone
-           ),
-    };
-  | PayoutBroadcastFailed({processId}) =>
-    let payoutTx = state.payoutProcesses |> List.assoc(processId);
-    {
-      ...state,
-      reservedInputs:
-        state.reservedInputs
-        |> List.filter((input: Network.txInput) =>
-             payoutTx.usedInputs
-             |> Js.Array.find((i: Network.txInput) =>
-                  input.txId == i.txId && input.txOutputN == i.txOutputN
-                )
-             |> Js.Option.isNone
-           ),
-    };
   | _ => state
   };
+};
 
 let exposeNextIncomeAddress =
     (
       userId,
       accountIdx,
-      {exposedCoordinates, activatedKeyChain, accountKeyChains},
+      {
+        exposedCoordinates,
+        activatedKeyChain,
+        txInputCollector: {keyChains: accountKeyChains},
+      },
     ) => {
   let ident =
     activatedKeyChain |> List.assoc(accountIdx) |> List.assoc(userId);
@@ -146,8 +111,7 @@ let preparePayoutTx =
         payoutPolicy,
         exposedCoordinates,
         activatedKeyChain,
-        accountKeyChains,
-        reservedInputs,
+        txInputCollector: {keyChains: accountKeyChains, unused: inputs},
       },
     ) => {
   open Address;
@@ -160,71 +124,53 @@ let preparePayoutTx =
     exposedCoordinates |> Coordinates.allForAccount(accountIdx);
   let nextChangeCoordinates =
     Coordinates.nextInternal(userId, coordinates, accountKeyChain);
-  Js.Promise.(
-    accountKeyChains
-    |> Network.transactionInputs(network, coordinates)
-    |> then_(inputs => {
-         let inputs =
-           inputs
-           |> List.filter((input: Network.txInput) =>
-                reservedInputs
-                |>
-                List.exists((reservedIn: Network.txInput) =>
-                  reservedIn.txId == input.txId
-                  && reservedIn.txOutputN == input.txOutputN
-                ) == false
-              );
-         let oldInputs =
-           inputs
-           |> List.find_all((i: Network.txInput) =>
-                i.coordinates
-                |> Coordinates.keyChainIdent
-                |> AccountKeyChain.Identifier.neq(keyChainIdent)
-              );
-         let changeAddress =
-           Address.find(nextChangeCoordinates, accountKeyChains);
-         try (
-           {
-             let payoutTx =
-               PayoutTransaction.build(
-                 ~mandatoryInputs=oldInputs,
-                 ~allInputs=inputs,
-                 ~destinations,
-                 ~satsPerByte,
-                 ~changeAddress,
-                 ~network,
-               );
-             let changeAddressCoordinates =
-               payoutTx.changeAddress
-               |> Utils.mapOption((_) => nextChangeCoordinates);
-             let payoutTx =
-               switch (
-                 PayoutTransaction.signPayout(
-                   ~ventureId,
-                   ~userId,
-                   ~masterKeyChain,
-                   ~accountKeyChains,
-                   ~payoutTx,
-                   ~network,
-                 )
-               ) {
-               | Signed(payout) => payout
-               | NotSigned => payoutTx
-               };
-             Ok(
-               Event.Payout.(
-                 Proposed.make(
-                   ~supporterId=userId,
-                   ~policy=payoutPolicy,
-                   Data.{accountIdx, payoutTx, changeAddressCoordinates},
-                 )
-               ),
-             )
-             |> resolve;
-           }
-         ) {
-         | PayoutTransaction.NotEnoughFunds => NotEnoughFunds |> resolve
-         };
-       })
-  );
+  let oldInputs =
+    inputs
+    |. Belt.Set.keepU((. i: Network.txInput) =>
+         i.coordinates
+         |> Coordinates.keyChainIdent
+         |> AccountKeyChain.Identifier.neq(keyChainIdent)
+       );
+  let changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
+  try (
+    {
+      let payoutTx =
+        PayoutTransaction.build(
+          ~mandatoryInputs=oldInputs,
+          ~allInputs=inputs,
+          ~destinations,
+          ~satsPerByte,
+          ~changeAddress,
+          ~network,
+        );
+      let changeAddressCoordinates =
+        payoutTx.changeAddress
+        |> Utils.mapOption((_) => nextChangeCoordinates);
+      let payoutTx =
+        switch (
+          PayoutTransaction.signPayout(
+            ~ventureId,
+            ~userId,
+            ~masterKeyChain,
+            ~accountKeyChains,
+            ~payoutTx,
+            ~network,
+          )
+        ) {
+        | Signed(payout) => payout
+        | NotSigned => payoutTx
+        };
+      Ok(
+        Event.Payout.(
+          Proposed.make(
+            ~supporterId=userId,
+            ~policy=payoutPolicy,
+            Data.{accountIdx, payoutTx, changeAddressCoordinates},
+          )
+        ),
+      );
+    }
+  ) {
+  | PayoutTransaction.NotEnoughFunds => NotEnoughFunds
+  };
 };
