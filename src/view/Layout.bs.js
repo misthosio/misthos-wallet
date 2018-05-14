@@ -5,14 +5,13 @@ var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("./Theme.bs.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
-var MButton = require("./components/MButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MenuSvg = require("../assets/img/menu.svg");
 var LogoSolidSvg = require("../assets/img/logo-solid.svg");
+var CloseButtonSvg = require("../assets/img/close-button.svg");
 
 var component = ReasonReact.reducerComponent("Layout");
 
@@ -93,15 +92,45 @@ var drawer = Css.style(/* :: */[
       ]
     ]);
 
+var modal = Css.style(/* :: */[
+      Css.width(/* `vw */[
+            26433,
+            90.0
+          ]),
+      /* :: */[
+        Css.height(/* `vh */[
+              26418,
+              90.0
+            ]),
+        /* :: */[
+          Css.margin2(/* `vh */[
+                26418,
+                5.0
+              ], /* `vw */[
+                26433,
+                5.0
+              ]),
+          /* :: */[
+            Css.focus(/* :: */[
+                  Css.outlineStyle(/* none */-922086728),
+                  /* [] */0
+                ]),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* flex_ */flex_,
   /* appBar */appBar,
   /* container */container,
   /* grid */grid,
-  /* drawer */drawer
+  /* drawer */drawer,
+  /* modal */modal
 ];
 
-function make(drawer$1, modal, children) {
+function make(drawer$1, modal$1, children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -115,11 +144,19 @@ function make(drawer$1, modal, children) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var tmp;
-              if (modal) {
-                var match = modal[0];
+              if (modal$1) {
+                var match = modal$1[0];
                 var onClose = match[1];
-                tmp = ReasonReact.element(/* None */0, /* None */0, MaterialUi.Modal[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, true, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.Paper[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                    ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[onClose], /* None */0, /* array */[Utils.text("X")])),
+                tmp = ReasonReact.element(/* None */0, /* None */0, MaterialUi.Modal[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, true, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.Paper[/* make */1](/* Some */[modal], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi.Toolbar[/* make */1](/* None */0, /* None */0, /* None */0, /* array */[
+                                              React.createElement("div", {
+                                                    className: flex_
+                                                  }),
+                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.IconButton[/* make */3](/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
+                                                              alt: "close",
+                                                              src: CloseButtonSvg
+                                                            })]))
+                                            ])),
                                     match[0]
                                   ]))]));
               } else {

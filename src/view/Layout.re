@@ -2,6 +2,8 @@
 
 [@bs.module] external menu : string = "../assets/img/menu.svg";
 
+[@bs.module] external close : string = "../assets/img/close-button.svg";
+
 type action =
   | OpenDrawer
   | CloseDrawer;
@@ -31,6 +33,13 @@ module Styles = {
       overflowY(auto),
     ]);
   let drawer = style([width(`px(440)), flex(1)]);
+  let modal =
+    style([
+      width(`vw(90.0)),
+      height(`vh(90.0)),
+      margin2(~v=`vh(5.0), ~h=`vw(5.0)),
+      focus([outlineStyle(`none)]),
+    ]);
 };
 
 let make = (~drawer, ~modal, children) => {
@@ -82,8 +91,13 @@ let make = (~drawer, ~modal, children) => {
               | None => ReasonReact.null
               | Some((modal, onClose)) =>
                 <Modal _open=true onClose>
-                  <Paper>
-                    <MButton onClick=onClose> ("X" |> Utils.text) </MButton>
+                  <Paper className=Styles.modal>
+                    <Toolbar>
+                      <div className=Styles.flex_ />
+                      <IconButton color=`Inherit onClick=onClose>
+                        <img src=close alt="close" />
+                      </IconButton>
+                    </Toolbar>
                     modal
                   </Paper>
                 </Modal>
