@@ -23,7 +23,7 @@ var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
 
 function make(ventureName, creatorId, creatorPubKey, metaPolicy, network) {
   return /* record */[
-          /* ventureId */PrimitiveTypes.VentureId[/* make */7](/* () */0),
+          /* ventureId */PrimitiveTypes.VentureId[/* make */9](/* () */0),
           /* ventureName */ventureName,
           /* creatorId */creatorId,
           /* creatorPubKey */creatorPubKey,
@@ -809,10 +809,12 @@ var IncomeAddressExposed = /* module */[
   /* decode */decode$14
 ];
 
-function make$9(address, txId, amount) {
+function make$9(txOutputN, coordinates, address, txId, amount) {
   return /* record */[
           /* address */address,
+          /* coordinates */coordinates,
           /* txId */txId,
+          /* txOutputN */txOutputN,
           /* amount */amount
         ];
 }
@@ -831,14 +833,26 @@ function encode$15($$event) {
                 /* :: */[
                   /* tuple */[
                     "txId",
-                    $$event[/* txId */1]
+                    $$event[/* txId */2]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "amount",
-                      BTC.encode($$event[/* amount */2])
+                      "txOutputN",
+                      $$event[/* txOutputN */3]
                     ],
-                    /* [] */0
+                    /* :: */[
+                      /* tuple */[
+                        "coordinates",
+                        Address.Coordinates[/* encode */9]($$event[/* coordinates */1])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "amount",
+                          BTC.encode($$event[/* amount */4])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
                   ]
                 ]
               ]
@@ -848,7 +862,9 @@ function encode$15($$event) {
 function decode$15(raw) {
   return /* record */[
           /* address */Json_decode.field("address", Json_decode.string, raw),
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
           /* txId */Json_decode.field("txId", Json_decode.string, raw),
+          /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw),
           /* amount */Json_decode.field("amount", BTC.decode, raw)
         ];
 }

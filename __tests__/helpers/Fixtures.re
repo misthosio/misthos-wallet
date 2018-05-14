@@ -37,6 +37,11 @@ let threeUserSessions = {
   );
 };
 
+let threeUserSessionsArray = {
+  let (user1, user2, user3) = threeUserSessions;
+  [|user1, user2, user3|];
+};
+
 let createVenture = user =>
   Generators.Log.make(
     user,
@@ -45,3 +50,83 @@ let createVenture = user =>
       ventureId: VentureId.fromString("fixedVentureId"),
     },
   );
+
+let encodeSessionData = (data: Session.Data.t) =>
+  Json.Encode.(
+    object_([
+      ("userId", UserId.encode(data.userId)),
+      ("issuerKeyPair", string(Bitcoin.ECPair.toWIF(data.issuerKeyPair))),
+    ])
+  );
+
+let decodeSessionData = raw => {
+  let userId = Json.Decode.(raw |> field("userId", UserId.decode));
+  let issuerKeyPair =
+    Json.Decode.(
+      raw
+      |> field("issuerKeyPair", string)
+      |. Bitcoin.ECPair.fromWIFWithNetwork(Network.bitcoinNetwork(Regtest))
+    );
+  userSession(userId, issuerKeyPair);
+};
+
+let encodeFixture = (sessions, log) =>
+  Json.Encode.(
+    object_([
+      ("sessions", array(encodeSessionData, sessions)),
+      ("log", EventLog.encode(log)),
+    ])
+  );
+
+let decodeFixture = raw => {
+  let sessions =
+    raw |> Json.Decode.(field("sessions", array(decodeSessionData)));
+  let log = raw |> Json.Decode.field("log", EventLog.decode);
+  (sessions, log);
+};
+
+let loadFixture = fileName =>
+  try (
+    Some(
+      Node.Fs.readFileAsUtf8Sync(fileName ++ "-fixture.json")
+      |> Json.parseOrRaise
+      |> decodeFixture,
+    )
+  ) {
+  | _ => None
+  };
+
+let writeFixture = (fileName, sessions, log) =>
+  try (
+    Node.Fs.writeFileAsUtf8Sync(
+      fileName ++ "-fixture.json",
+      encodeFixture(sessions, log) |> Json.stringify,
+    )
+  ) {
+  | _ => ()
+  };
+
+let basePath = "__tests__/fixtures/";
+
+let withCached =
+    (~load=true, ~scope, description, sessionsGenerator, generator, testBody) => {
+  let replacedName = description |> Js.String.replaceByRe([%re "/ /g"], "_");
+  let cacheFileName = basePath ++ scope ++ "-" ++ replacedName;
+  let (sessions, log, cached) =
+    switch (load, loadFixture(cacheFileName)) {
+    | (true, Some((sessions, eventLog))) => (
+        sessions,
+        Generators.Log.fromEventLog(eventLog),
+        true,
+      )
+    | _ =>
+      let sessions = sessionsGenerator();
+      (sessions, generator(sessions), false);
+    };
+  if (cached == false) {
+    writeFixture(cacheFileName, sessions, log |> Generators.Log.eventLog);
+  };
+  Jest.describe(description, () =>
+    testBody(sessions, log)
+  );
+};

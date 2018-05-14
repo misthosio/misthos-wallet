@@ -11,7 +11,7 @@ var Watcher__AccountCreationApproval = require("../../../src/application/watcher
 
 describe("With 1 partner and a proposal", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
-        var log = Generators.Log[/* withAccountCreationProposed */20](user1)(Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)));
+        var log = Generators.Log[/* withAccountCreationProposed */21](user1)(Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
         var proposal = Event.getAccountCreationProposedExn(Generators.Log[/* lastEvent */4](log));
         var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */5](log));
         return WatcherHelpers.testWatcherHasEventPending("AccountCreationAccepted", watcher, Generators.Log[/* systemIssuer */2](log), (function (param) {
@@ -25,10 +25,10 @@ describe("With 1 partner and a proposal", (function () {
 
 describe("Completes when the account is accepted", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
-        var log = Generators.Log[/* withAccountCreationProposed */20](user1)(Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)));
+        var log = Generators.Log[/* withAccountCreationProposed */21](user1)(Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
         var proposal = Event.getAccountCreationProposedExn(Generators.Log[/* lastEvent */4](log));
         var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */5](log));
-        var log$1 = Generators.Log[/* withAccountCreationAccepted */21](proposal)(log);
+        var log$1 = Generators.Log[/* withAccountCreationAccepted */22](proposal)(log);
         Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */3](log$1));
         return WatcherHelpers.testWatcherHasCompleted(watcher);
       }));

@@ -7,6 +7,13 @@ module type PrimitiveType = {
   let compare: (t, t) => int;
   let eq: (t, t) => bool;
   let neq: (t, t) => bool;
+  module Comparator: {
+    type identity;
+    type nonrec t = t;
+    let cmp: Belt.Id.cmp(t, identity);
+  };
+  type map('v) = Belt.Map.t(t, 'v, Comparator.identity);
+  let makeMap: unit => map('v);
 };
 
 module VentureId: {include PrimitiveType; let make: unit => t;};

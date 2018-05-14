@@ -32,6 +32,26 @@ type txInput = {
   coordinates: Address.Coordinates.t,
 };
 
+module TxInputCmp =
+  Belt.Id.MakeComparableU(
+    {
+      type t = txInput;
+      let cmp =
+        (.
+          {txId, txOutputN}: txInput,
+          {txId: id2, txOutputN: out2}: txInput,
+        ) =>
+          compare(
+            txId ++ string_of_int(txOutputN),
+            id2 ++ string_of_int(out2),
+          );
+    },
+  );
+
+type inputSet = Belt.Set.t(TxInputCmp.t, TxInputCmp.identity);
+
+let inputSet = () => Belt.Set.make(~id=(module TxInputCmp));
+
 let encodeInput = input =>
   Json.Encode.(
     object_([
@@ -58,33 +78,32 @@ let decodeInput = raw =>
 
 module Make = (Client: NetworkClient) => {
   let network = Client.network;
-  let transactionInputs = (coordinates, accountKeyChains) => {
-    let addresses =
-      coordinates
-      |> List.map(c => {
-           let address = Address.find(c, accountKeyChains);
-           (address.address, (c, address));
-         });
-    Js.Promise.(
-      Client.getUTXOs(addresses |> List.map(fst))
-      |> then_(utxos =>
-           utxos
-           |> List.map(({txId, txOutputN, address, amount}: utxo) =>
-                {
-                  txId,
-                  txOutputN,
-                  address,
-                  nCoSigners:
-                    snd(addresses |> List.assoc(address)).nCoSigners,
-                  nPubKeys: snd(addresses |> List.assoc(address)).nPubKeys,
-                  value: amount,
-                  coordinates: addresses |> List.assoc(address) |> fst,
-                }
-              )
-           |> resolve
-         )
+  let transactionInputs = addresses =>
+    Belt.(
+      Js.Promise.(
+        addresses
+        |> Map.String.keysToArray
+        |> List.fromArray
+        |> Client.getUTXOs
+        |> then_(utxos =>
+             utxos
+             |. List.map(({txId, txOutputN, address, amount}: utxo) => {
+                  let a: Address.t =
+                    addresses |. Map.String.get(address) |> Js.Option.getExn;
+                  {
+                    txId,
+                    txOutputN,
+                    address,
+                    nCoSigners: a.nCoSigners,
+                    nPubKeys: a.nPubKeys,
+                    value: amount,
+                    coordinates: a.coordinates,
+                  };
+                })
+             |> resolve
+           )
+      )
     );
-  };
   let broadcastTransaction = Client.broadcastTransaction;
 };
 

@@ -30,8 +30,8 @@ let txInputForChangeAddress:
 
 let build:
   (
-    ~mandatoryInputs: list(input),
-    ~allInputs: list(input),
+    ~mandatoryInputs: Network.inputSet,
+    ~allInputs: Network.inputSet,
     ~destinations: list((string, BTC.t)),
     ~satsPerByte: BTC.t,
     ~changeAddress: Address.t,

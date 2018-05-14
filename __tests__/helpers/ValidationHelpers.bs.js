@@ -58,11 +58,14 @@ var E = 0;
 
 var L = 0;
 
+var F = 0;
+
 var Validation = 0;
 
 exports.G = G;
 exports.E = E;
 exports.L = L;
+exports.F = F;
 exports.Validation = Validation;
 exports.TestingInvalidSequence = TestingInvalidSequence;
 exports.constructState = constructState;

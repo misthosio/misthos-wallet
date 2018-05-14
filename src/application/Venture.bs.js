@@ -157,7 +157,7 @@ function apply($staropt$star, $staropt$star$1, $$event, param) {
 }
 
 function reconstruct(session, log) {
-  var match = make(session, PrimitiveTypes.VentureId[/* make */7](/* () */0));
+  var match = make(session, PrimitiveTypes.VentureId[/* make */9](/* () */0));
   var match$1 = Curry._3(EventLog.reduce, (function (param, item) {
           var $$event = item[/* event */0];
           var tmp;
@@ -174,7 +174,7 @@ function reconstruct(session, log) {
                   Watchers.apply(/* Some */[true], session, /* Some */[item], log, param[5])
                 ];
         }), /* tuple */[
-        PrimitiveTypes.VentureId[/* make */7](/* () */0),
+        PrimitiveTypes.VentureId[/* make */9](/* () */0),
         match[/* validation */4],
         match[/* state */3],
         match[/* wallet */5],
@@ -588,20 +588,19 @@ var ExposeIncomeAddress = /* module */[/* exec */exec$9];
 
 function exec$10(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
-  return Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]).then((function (param) {
-                if (param) {
-                  return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [param[0]]), venture).then((function (eta) {
-                                  return persist(/* None */0, eta);
-                                })).then((function (param) {
-                                return Promise.resolve(/* Ok */[
-                                            param[0],
-                                            param[1]
-                                          ]);
-                              }));
-                } else {
-                  return Promise.resolve(/* NotEnoughFunds */0);
-                }
-              }));
+  var param = Venture__Wallet.preparePayoutTx(venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]);
+  if (param) {
+    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [param[0]]), venture).then((function (eta) {
+                    return persist(/* None */0, eta);
+                  })).then((function (param) {
+                  return Promise.resolve(/* Ok */[
+                              param[0],
+                              param[1]
+                            ]);
+                }));
+  } else {
+    return Promise.resolve(/* NotEnoughFunds */0);
+  }
 }
 
 var ProposePayout = /* module */[/* exec */exec$10];

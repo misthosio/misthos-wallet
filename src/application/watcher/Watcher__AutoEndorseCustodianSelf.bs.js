@@ -121,7 +121,7 @@ function make(param, param$1, log) {
       var self = CamlinternalOO.create_object_opt(0, $$class);
       self[state] = [/* record */[
           /* pendingEvent : None */0,
-          /* custodianProcessId */PrimitiveTypes.ProcessId[/* make */7](/* () */0),
+          /* custodianProcessId */PrimitiveTypes.ProcessId[/* make */9](/* () */0),
           /* completed */false
         ]];
       self[env] = env$1;

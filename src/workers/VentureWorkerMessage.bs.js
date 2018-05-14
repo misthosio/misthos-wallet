@@ -299,7 +299,7 @@ function encodeIncoming(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "TransactionDetected"
+                      "IncomeDetected"
                     ],
                     /* :: */[
                       /* tuple */[
@@ -393,41 +393,51 @@ function decodeIncoming(raw) {
                   ventureId$3,
                   accountIdx
                 ]);
-    case "JoinVia" : 
+    case "IncomeDetected" : 
         var ventureId$4 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var partial_arg = Event.IncomeDetected[/* decode */2];
+        var incomeEvents = Json_decode.field("incomeEvents", (function (param) {
+                return Json_decode.list(partial_arg, param);
+              }), raw);
+        return /* IncomeDetected */Block.__(14, [
+                  ventureId$4,
+                  incomeEvents
+                ]);
+    case "JoinVia" : 
+        var ventureId$5 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var userId = Json_decode.field("userId", PrimitiveTypes.UserId[/* decode */3], raw);
         return /* JoinVia */Block.__(3, [
-                  ventureId$4,
+                  ventureId$5,
                   userId
                 ]);
     case "Load" : 
-        var ventureId$5 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
-        return /* Load */Block.__(2, [ventureId$5]);
-    case "NewItemsDetected" : 
         var ventureId$6 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        return /* Load */Block.__(2, [ventureId$6]);
+    case "NewItemsDetected" : 
+        var ventureId$7 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items = Json_decode.field("items", (function (param) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* NewItemsDetected */Block.__(15, [
-                  ventureId$6,
+                  ventureId$7,
                   items
                 ]);
     case "ProposePartner" : 
-        var ventureId$7 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$8 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var userId$1 = Json_decode.field("userId", PrimitiveTypes.UserId[/* decode */3], raw);
         return /* ProposePartner */Block.__(4, [
-                  ventureId$7,
+                  ventureId$8,
                   userId$1
                 ]);
     case "ProposePartnerRemoval" : 
-        var ventureId$8 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$9 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var userId$2 = Json_decode.field("userId", PrimitiveTypes.UserId[/* decode */3], raw);
         return /* ProposePartnerRemoval */Block.__(7, [
-                  ventureId$8,
+                  ventureId$9,
                   userId$2
                 ]);
     case "ProposePayout" : 
-        var ventureId$9 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$10 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var accountIdx$1 = Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw);
         var destinations = Json_decode.field("destinations", (function (param) {
                 return Json_decode.list((function (param) {
@@ -436,50 +446,40 @@ function decodeIncoming(raw) {
               }), raw);
         var fee = Json_decode.field("fee", BTC.decode, raw);
         return /* ProposePayout */Block.__(10, [
-                  ventureId$9,
+                  ventureId$10,
                   accountIdx$1,
                   destinations,
                   fee
                 ]);
     case "RejectPartner" : 
-        var ventureId$10 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$11 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var processId$3 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
         return /* RejectPartner */Block.__(5, [
-                  ventureId$10,
+                  ventureId$11,
                   processId$3
                 ]);
     case "RejectPartnerRemoval" : 
-        var ventureId$11 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$12 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var processId$4 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
         return /* RejectPartnerRemoval */Block.__(8, [
-                  ventureId$11,
+                  ventureId$12,
                   processId$4
                 ]);
     case "RejectPayout" : 
-        var ventureId$12 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$13 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var processId$5 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
         return /* RejectPayout */Block.__(11, [
-                  ventureId$12,
+                  ventureId$13,
                   processId$5
                 ]);
     case "SyncTabs" : 
-        var ventureId$13 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$14 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items$1 = Json_decode.field("items", (function (param) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* SyncTabs */Block.__(16, [
-                  ventureId$13,
-                  items$1
-                ]);
-    case "TransactionDetected" : 
-        var ventureId$14 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
-        var partial_arg = Event.IncomeDetected[/* decode */2];
-        var incomeEvents = Json_decode.field("incomeEvents", (function (param) {
-                return Json_decode.list(partial_arg, param);
-              }), raw);
-        return /* TransactionDetected */Block.__(14, [
                   ventureId$14,
-                  incomeEvents
+                  items$1
                 ]);
     case "UpdateSession" : 
         var blockstackItems = Json_decode.field("blockstackItems", WorkerLocalStorage.decodeItems, raw);

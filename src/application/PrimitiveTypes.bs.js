@@ -2,7 +2,9 @@
 'use strict';
 
 var $$String = require("bs-platform/lib/js/string.js");
+var Belt_Id = require("bs-platform/lib/js/belt_Id.js");
 var V4 = require("uuid/v4");
+var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 
 function encode(id) {
@@ -19,6 +21,14 @@ function eq(a, b) {
 
 function neq(a, b) {
   return $$String.compare(a, b) !== 0;
+}
+
+var cmp = $$String.compare;
+
+var Comparator = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
+
+function makeMap() {
+  return Belt_Map.make(Comparator);
 }
 
 function make() {
@@ -49,6 +59,8 @@ var VentureId = [
   compare,
   eq,
   neq,
+  Comparator,
+  makeMap,
   make
 ];
 
@@ -67,7 +79,9 @@ var UserId = [
   decode,
   compare,
   eq,
-  neq
+  neq,
+  Comparator,
+  makeMap
 ];
 
 function ProcessId_000(prim) {
@@ -86,6 +100,8 @@ var ProcessId = [
   compare,
   eq,
   neq,
+  Comparator,
+  makeMap,
   make$1
 ];
 
@@ -105,6 +121,8 @@ var LabelId = [
   compare,
   eq,
   neq,
+  Comparator,
+  makeMap,
   make$2
 ];
 
@@ -112,4 +130,4 @@ exports.VentureId = VentureId;
 exports.UserId = UserId;
 exports.ProcessId = ProcessId;
 exports.LabelId = LabelId;
-/* uuid/v4 Not a pure module */
+/* Comparator Not a pure module */

@@ -6,38 +6,44 @@ open WalletTypes;
 
 let () =
   describe("build", () => {
-    let inputs: list(Network.txInput) = [
-      {
-        txId: "d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
-        txOutputN: 0,
-        address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
-        value: BTC.fromSatoshis(10000L),
-        nCoSigners: 1,
-        nPubKeys: 1,
-        coordinates: (
-          AccountIndex.first,
-          "identifier",
-          CoSignerIndex.first,
-          ChainIndex.externalChain,
-          AddressIndex.first,
+    let inputs: Network.inputSet =
+      [|
+        (
+          {
+            txId: "d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
+            txOutputN: 0,
+            address: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
+            value: BTC.fromSatoshis(10000L),
+            nCoSigners: 1,
+            nPubKeys: 1,
+            coordinates: (
+              AccountIndex.first,
+              "identifier",
+              CoSignerIndex.first,
+              ChainIndex.externalChain,
+              AddressIndex.first,
+            ),
+          }: Network.txInput
         ),
-      },
-      {
-        txId: "d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
-        txOutputN: 1,
-        nPubKeys: 1,
-        address: "2N3CDv7U6xVYmNqdvNscKBWwUYky7SM6Wdq",
-        value: BTC.fromSatoshis(5000L),
-        nCoSigners: 1,
-        coordinates: (
-          AccountIndex.first,
-          "identifier",
-          CoSignerIndex.first,
-          ChainIndex.externalChain,
-          AddressIndex.first |> AddressIndex.next,
+        (
+          {
+            txId: "d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
+            txOutputN: 1,
+            nPubKeys: 1,
+            address: "2N3CDv7U6xVYmNqdvNscKBWwUYky7SM6Wdq",
+            value: BTC.fromSatoshis(5000L),
+            nCoSigners: 1,
+            coordinates: (
+              AccountIndex.first,
+              "identifier",
+              CoSignerIndex.first,
+              ChainIndex.externalChain,
+              AddressIndex.first |> AddressIndex.next,
+            ),
+          }: Network.txInput
         ),
-      },
-    ];
+      |]
+      |> Belt.Set.fromArray(~id=(module Network.TxInputCmp));
     let changeAddress: Address.t = {
       nCoSigners: 1,
       nPubKeys: 1,
@@ -55,7 +61,7 @@ let () =
     test("uses as many inputs as necessary", () => {
       let payoutTx =
         PayoutTransaction.build(
-          ~mandatoryInputs=[],
+          ~mandatoryInputs=Network.inputSet(),
           ~allInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(10000L)),
@@ -71,7 +77,7 @@ let () =
     test("uses smallest possible input", () => {
       let payoutTx =
         PayoutTransaction.build(
-          ~mandatoryInputs=[],
+          ~mandatoryInputs=Network.inputSet(),
           ~allInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(4000L)),
@@ -87,7 +93,7 @@ let () =
     test("doesn't use change address if not worth it", () => {
       let payoutTx =
         PayoutTransaction.build(
-          ~mandatoryInputs=[],
+          ~mandatoryInputs=Network.inputSet(),
           ~allInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9500L)),
@@ -103,7 +109,11 @@ let () =
     test("respects mandatory inputs", () => {
       let payoutTx =
         PayoutTransaction.build(
-          ~mandatoryInputs=[List.nth(inputs, 1)],
+          ~mandatoryInputs=
+            inputs
+            |. Belt.Set.keepU((. input: Network.txInput) =>
+                 input.txOutputN == 1
+               ),
           ~allInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(6000L)),
@@ -120,7 +130,7 @@ let () =
       expectFn(
         () =>
           PayoutTransaction.build(
-            ~mandatoryInputs=[],
+            ~mandatoryInputs=Network.inputSet(),
             ~allInputs=inputs,
             ~destinations=[
               (
@@ -139,7 +149,7 @@ let () =
     test("summary", () => {
       let summary =
         PayoutTransaction.build(
-          ~mandatoryInputs=[],
+          ~mandatoryInputs=Network.inputSet(),
           ~allInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L)),

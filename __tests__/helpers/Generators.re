@@ -29,6 +29,20 @@ let userSession = id : Session.Data.t => {
   };
 };
 
+let withUserSessions = n =>
+  Belt.List.makeBy(n, i =>
+    userSession("user" ++ string_of_int(i) |> UserId.fromString)
+  )
+  |> Array.of_list;
+
+let twoUserSessionsFromArray = sessions => (sessions[0], sessions[1]);
+
+let threeUserSessionsFromArray = sessions => (
+  sessions[0],
+  sessions[1],
+  sessions[2],
+);
+
 let twoUserSessions = () => (
   userSession("user1" |> UserId.fromString),
   userSession("user2" |> UserId.fromString),
@@ -183,6 +197,7 @@ module Event = {
       ~identifier,
       ~sequence,
     );
+  let incomeAddressExposed = AppEvent.IncomeAddressExposed.make;
 };
 
 module Log = {
@@ -204,6 +219,31 @@ module Log = {
   };
   let appendSystemEvent = (event, {systemIssuer} as log) =>
     appendEvent(systemIssuer, event, log);
+  let fromEventLog = log => {
+    let (ventureId, systemIssuer, lastItem) =
+      log
+      |> EventLog.reduce(
+           (
+             (ventureId, systemIssuer, _),
+             {event} as lastItem: EventLog.item,
+           ) =>
+             switch (event) {
+             | VentureCreated({ventureId, systemIssuer}) => (
+                 Some(ventureId),
+                 Some(systemIssuer),
+                 Some(lastItem),
+               )
+             | _ => (ventureId, systemIssuer, Some(lastItem))
+             },
+           (None, None, None),
+         );
+    {
+      ventureId: ventureId |> Js.Option.getExn,
+      systemIssuer: systemIssuer |> Js.Option.getExn,
+      lastItem: lastItem |> Js.Option.getExn,
+      log,
+    };
+  };
   let make = (session: Session.Data.t, ventureCreated) => {
     let (lastItem, log) =
       EventLog.make()
@@ -556,6 +596,47 @@ module Log = {
              ~sequence,
              ~custodian=user,
              ~identifier,
+           ),
+         ),
+       );
+  };
+  let withIncomeAddressExposed = (user: Session.Data.t, {log} as l) => {
+    let (keyChains, activations, exposed) =
+      log
+      |> EventLog.reduce(
+           ((keyChains, activations, exposed), {event}: EventLog.item) =>
+             switch (event) {
+             | AccountKeyChainIdentified({
+                 keyChain: {identifier} as keyChain,
+               }) => (
+                 [(identifier, keyChain), ...keyChains],
+                 activations,
+                 exposed,
+               )
+             | AccountKeyChainActivated({custodianId, identifier}) => (
+                 keyChains,
+                 [(custodianId, identifier), ...activations],
+                 exposed,
+               )
+             | IncomeAddressExposed({coordinates}) => (
+                 keyChains,
+                 activations,
+                 [coordinates, ...exposed],
+               )
+             | _ => (keyChains, activations, exposed)
+             },
+           ([], [], []),
+         );
+    let keyChain =
+      activations |> List.assoc(user.userId) |. List.assoc(keyChains);
+    let coordinates =
+      Address.Coordinates.nextExternal(user.userId, exposed, keyChain);
+    l
+    |> appendSystemEvent(
+         IncomeAddressExposed(
+           Event.incomeAddressExposed(
+             ~coordinates,
+             ~address=Address.make(coordinates, keyChain).address,
            ),
          ),
        );

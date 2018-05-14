@@ -158,7 +158,7 @@ function apply($$event, state) {
                   /* tuple */[
                     accountIdx$3,
                     /* record */[
-                      /* currentSpendable */balance$3[/* currentSpendable */0].plus(match$4[/* amount */2]),
+                      /* currentSpendable */balance$3[/* currentSpendable */0].plus(match$4[/* amount */4]),
                       /* reserved */balance$3[/* reserved */1]
                     ]
                   ],

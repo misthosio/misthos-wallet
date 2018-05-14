@@ -434,8 +434,8 @@ function exposeIncomeAddress(ventureId, accountIdx) {
     });
 }
 
-function transactionDetected(ventureId, events) {
-  logMessage("Handling 'TransactionDetected'");
+function incomeDetected(ventureId, events) {
+  logMessage("Handling 'IncomeDetected'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
@@ -503,7 +503,7 @@ var Handle = /* module */[
   /* rejectPayout */rejectPayout,
   /* endorsePayout */endorsePayout,
   /* exposeIncomeAddress */exposeIncomeAddress,
-  /* transactionDetected */transactionDetected,
+  /* incomeDetected */incomeDetected,
   /* newItemsDetected */newItemsDetected,
   /* syncTabs */syncTabs
 ];
@@ -542,7 +542,7 @@ function handleMessage(param) {
     case 13 : 
         return exposeIncomeAddress(param[0], param[1]);
     case 14 : 
-        return transactionDetected(param[0], param[1]);
+        return incomeDetected(param[0], param[1]);
     case 15 : 
         return newItemsDetected(param[0], param[1]);
     case 16 : 
