@@ -5,7 +5,7 @@ let component = ReasonReact.statelessComponent("App");
 let make = (~session, ~updateSession, _children) => {
   let onSignIn = _e => updateSession(SessionStore.SignIn);
   let onSignOut = _e => updateSession(SessionStore.SignOut);
-  let onCloseModal = (ventureId, unit) =>
+  let onCloseModal = (ventureId, _) =>
     Router.Config.routeToUrl(Venture(ventureId, None))
     |> ReasonReact.Router.push;
   let modal =
@@ -24,7 +24,7 @@ let make = (~session, ~updateSession, _children) => {
         <ManagePartners venture commands session />,
         onCloseModal(selected),
       ))
-    | (LoggedIn(session), _, _) => None
+    | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
@@ -56,19 +56,18 @@ let make = (~session, ~updateSession, _children) => {
       <Spinner text="Waiting for BlockStack session" />
     | (
         LoggedIn(session),
-        Venture(_, _),
+        Venture(_, _) | Home | JoinVenture(_),
         VentureLoaded(_ventureId, venture, commands),
       ) =>
       <SelectedVenture venture commands session />
     | (LoggedIn(_), CreateVenture, _) =>
       <VentureCreate selectedVenture onCreateVenture=createVenture />
-    | (LoggedIn(session), _, JoiningVenture(_)) =>
+    | (LoggedIn(_), _, JoiningVenture(_)) =>
       <Spinner text="Joining venture" />
-    | (LoggedIn(session), _, LoadingVenture(_)) =>
+    | (LoggedIn(_), _, LoadingVenture(_)) =>
       <Spinner text="Loading venture" />
-    | (LoggedIn(session), _, CreatingVenture) =>
-      <Spinner text="Creating venture" />
-    | (LoggedIn(session), _, None) => Utils.text("Not selected")
+    | (LoggedIn(_), _, CreatingVenture) => <Spinner text="Creating venture" />
+    | (LoggedIn(_), _, None) => Utils.text("Not selected")
     };
   {
     ...component,

@@ -15,7 +15,6 @@ var VentureCreate = require("./VentureCreate.bs.js");
 var ManagePartners = require("./ManagePartners.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var component = ReasonReact.statelessComponent("App");
 
@@ -70,22 +69,31 @@ function make(session, updateSession, _) {
       } else {
         return ReasonReact.element(/* None */0, /* None */0, PublicHome.make(onSignIn, /* array */[]));
       }
-    } else if (typeof currentRoute === "number") {
-      switch (currentRoute) {
-        case 0 : 
-            exit = 1;
-            break;
-        case 1 : 
-            return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
-        case 2 : 
-            exit$1 = 2;
-            break;
-        
-      }
-    } else if (currentRoute.tag || typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
-      exit = 1;
     } else {
-      return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[1], session[0], selectedVenture[2], /* array */[]));
+      var exit$2 = 0;
+      if (typeof currentRoute === "number") {
+        switch (currentRoute) {
+          case 0 : 
+              exit$2 = 3;
+              break;
+          case 1 : 
+              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
+          case 2 : 
+              exit$1 = 2;
+              break;
+          
+        }
+      } else {
+        exit$2 = 3;
+      }
+      if (exit$2 === 3) {
+        if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+          exit = 1;
+        } else {
+          return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(selectedVenture[1], session[0], selectedVenture[2], /* array */[]));
+        }
+      }
+      
     }
     if (exit$1 === 2) {
       if (typeof currentRoute === "number" && currentRoute >= 2) {
@@ -111,23 +119,10 @@ function make(session, updateSession, _) {
         } else {
           return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* array */[]));
         }
+      } else if (selectedVenture.tag) {
+        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* array */[]));
       } else {
-        switch (selectedVenture.tag | 0) {
-          case 0 : 
-              return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* array */[]));
-          case 1 : 
-              return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* array */[]));
-          case 2 : 
-              throw [
-                    Caml_builtin_exceptions.match_failure,
-                    [
-                      "App.re",
-                      44,
-                      4
-                    ]
-                  ];
-          
-        }
+        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* array */[]));
       }
     }
     
