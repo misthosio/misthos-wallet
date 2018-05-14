@@ -20,89 +20,32 @@ external onMessage :
 let postMessage = msg =>
   msg |> VentureWorkerMessage.encodeIncoming |> _postMessage;
 
-open PrimitiveTypes;
+open Belt;
 
-open WalletTypes;
+open PrimitiveTypes;
 
 let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
 
-let testnetApiEndpoint = "https://testnet-api.smartbit.com.au/v1/blockchain/address";
-
-let decodeResponse = raw =>
-  Json.Decode.(
-    raw
-    |> withDefault(
-         [],
-         field("address", address =>
-           address
-           |> field("transactions", array(SmartbitClient.decodeTransaction))
-           |> Array.to_list
-         ),
-       )
-  );
-
-let fetchTransactionsForAddress = address =>
+let scanTransactions = ((addresses: AddressCollector.t, txIds)) =>
   Js.Promise.(
-    Fetch.(
-      fetch(testnetApiEndpoint ++ "/" ++ address)
-      |> then_(res =>
-           if (res |> Response.status == 200) {
-             res
-             |> Response.json
-             |> then_(json => json |> decodeResponse |> resolve);
-           } else {
-             [] |> resolve;
-           }
-         )
-    )
-  );
-
-let scanTransactions = ((addresses, txIds)) =>
-  Js.Promise.(
-    addresses
-    |> List.map(address =>
-         fetchTransactionsForAddress(address)
-         |> then_(txs =>
-              txs
-              |> List.filter(tx =>
-                   tx.outputs |> List.exists(o => o.address == address)
-                 )
-              |> List.filter(tx => txIds |> List.mem(tx.txId) == false)
-              |> resolve
-            )
-       )
-    |> Array.of_list
-    |> all
-    |> then_(txs =>
-         (addresses, txs |> Array.to_list |> List.flatten) |> resolve
-       )
+    addresses.exposedAddresses
+    |> Network.Testnet.transactionInputs_ALT
+    |> then_(utxos => (txIds, utxos) |> resolve)
   );
 
 let findAddressesAndTxIds =
   EventLog.reduce(
-    ((addresses, txIds), {event}: EventLog.item) =>
+    ((addresses, txIds), {event}: EventLog.item) => {
+      let addresses = addresses |> AddressCollector.apply(event);
       switch (event) {
-      | Event.IncomeDetected({txId}) => (addresses, [txId, ...txIds])
-      | Event.IncomeAddressExposed({address}) => (
-          [address, ...addresses],
-          txIds,
+      | Event.IncomeDetected({txId, txOutputN}) => (
+          addresses,
+          txIds |. Belt.Set.String.add(txId ++ string_of_int(txOutputN)),
         )
       | _ => (addresses, txIds)
-      },
-    ([], []),
-  );
-
-let detectIncomeFromTransaction = addresses =>
-  List.map(tx =>
-    tx.outputs
-    |> List.filter(o => addresses |> List.mem(o.address))
-    |> List.map(out =>
-         Event.IncomeDetected.make(
-           ~address=out.address,
-           ~txId=tx.txId,
-           ~amount=out.amount,
-         )
-       )
+      };
+    },
+    (AddressCollector.make(), Belt.Set.String.empty),
   );
 
 let detectIncomeFromVenture = ventureId => {
@@ -114,15 +57,34 @@ let detectIncomeFromVenture = ventureId => {
     |> then_(eventLog =>
          eventLog |> findAddressesAndTxIds |> scanTransactions
        )
-    |> then_(((addresses, transactions)) =>
-         transactions
-         |> detectIncomeFromTransaction(addresses)
-         |> List.map(events =>
-              postMessage(TransactionDetected(ventureId, events))
-            )
-         |> ignore
-         |> resolve
-       )
+    |> then_(((knownTxs, utxos)) => {
+         let events =
+           utxos
+           |. Belt.List.keepMapU((. utxo: Network.txInput) => {
+                let txOutId = utxo.txId ++ string_of_int(utxo.txOutputN);
+                knownTxs |. Belt.Set.String.has(txOutId) ?
+                  None :
+                  Some(
+                    Event.IncomeDetected.make(
+                      ~address=utxo.address,
+                      ~coordinates=utxo.coordinates,
+                      ~txId=utxo.txId,
+                      ~amount=utxo.value,
+                      ~txOutputN=utxo.txOutputN,
+                    ),
+                  );
+              });
+         (
+           switch (events) {
+           | [] => ()
+           | _ =>
+             postMessage(
+               VentureWorkerMessage.IncomeDetected(ventureId, events),
+             )
+           }
+         )
+         |> resolve;
+       })
   );
 };
 
@@ -135,7 +97,7 @@ let detectIncomeFromAll = () =>
            Venture.Index.load()
            |> then_(index =>
                 index
-                |> List.iter(({id}: Venture.Index.item) =>
+                |. List.forEach(({id}: Venture.Index.item) =>
                      detectIncomeFromVenture(id) |> ignore
                    )
                 |> resolve

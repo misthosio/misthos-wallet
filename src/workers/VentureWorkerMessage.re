@@ -19,7 +19,7 @@ type incoming =
   | RejectPayout(ventureId, processId)
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
-  | TransactionDetected(ventureId, list(Event.IncomeDetected.t))
+  | IncomeDetected(ventureId, list(Event.IncomeDetected.t))
   | NewItemsDetected(ventureId, array(EventLog.item))
   | SyncTabs(ventureId, array(EventLog.item));
 
@@ -145,10 +145,10 @@ let encodeIncoming =
         ("accountIdx", AccountIndex.encode(accountIdx)),
       ])
     )
-  | TransactionDetected(ventureId, incomeEvents) =>
+  | IncomeDetected(ventureId, incomeEvents) =>
     Json.Encode.(
       object_([
-        ("type", string("TransactionDetected")),
+        ("type", string("IncomeDetected")),
         ("ventureId", VentureId.encode(ventureId)),
         ("incomeEvents", list(Event.IncomeDetected.encode, incomeEvents)),
       ])
@@ -236,14 +236,14 @@ let decodeIncoming = raw => {
     let accountIdx =
       raw |> Json.Decode.field("accountIdx", AccountIndex.decode);
     ExposeIncomeAddress(ventureId, accountIdx);
-  | "TransactionDetected" =>
+  | "IncomeDetected" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let incomeEvents =
       raw
       |> Json.Decode.(
            field("incomeEvents", list(Event.IncomeDetected.decode))
          );
-    TransactionDetected(ventureId, incomeEvents);
+    IncomeDetected(ventureId, incomeEvents);
   | "NewItemsDetected" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =

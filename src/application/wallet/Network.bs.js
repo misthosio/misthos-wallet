@@ -6,12 +6,12 @@ var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Address = require("./Address.bs.js");
-var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var BitcoindClient = require("./BitcoindClient.bs.js");
 var SmartbitClient = require("./SmartbitClient.bs.js");
 
@@ -130,10 +130,10 @@ function Make(Client) {
                 }));
   };
   var transactionInputs_ALT = function (addresses) {
-    return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+    return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                   return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                     var address = param[/* address */2];
-                                    var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                    var a = Js_option.getExn(Belt_MapString.get(addresses, address));
                                     return /* record */[
                                             /* txId */param[/* txId */0],
                                             /* txOutputN */param[/* txOutputN */1],
@@ -193,10 +193,10 @@ function transactionInputs(coordinates, accountKeyChains) {
 }
 
 function transactionInputs_ALT(addresses) {
-  return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+  return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                 return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                   var address = param[/* address */2];
-                                  var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                  var a = Js_option.getExn(Belt_MapString.get(addresses, address));
                                   return /* record */[
                                           /* txId */param[/* txId */0],
                                           /* txOutputN */param[/* txOutputN */1],
@@ -253,10 +253,10 @@ function transactionInputs$1(coordinates, accountKeyChains) {
 }
 
 function transactionInputs_ALT$1(addresses) {
-  return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+  return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                 return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                   var address = param[/* address */2];
-                                  var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                  var a = Js_option.getExn(Belt_MapString.get(addresses, address));
                                   return /* record */[
                                           /* txId */param[/* txId */0],
                                           /* txOutputN */param[/* txOutputN */1],
@@ -313,10 +313,10 @@ function transactionInputs$2(coordinates, accountKeyChains) {
 }
 
 function transactionInputs_ALT$2(addresses) {
-  return Curry._1(Client$2[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+  return Curry._1(Client$2[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                 return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                   var address = param[/* address */2];
-                                  var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                  var a = Js_option.getExn(Belt_MapString.get(addresses, address));
                                   return /* record */[
                                           /* txId */param[/* txId */0],
                                           /* txOutputN */param[/* txOutputN */1],

@@ -89,14 +89,14 @@ module Make = (Client: NetworkClient) => {
     Belt.(
       Js.Promise.(
         addresses
-        |> Map.keysToArray
+        |> Map.String.keysToArray
         |> List.fromArray
         |> Client.getUTXOs
         |> then_(utxos =>
              utxos
              |. List.map(({txId, txOutputN, address, amount}: utxo) => {
                   let a: Address.t =
-                    addresses |. Map.get(address) |> Js.Option.getExn;
+                    addresses |. Map.String.get(address) |> Js.Option.getExn;
                   {
                     txId,
                     txOutputN,

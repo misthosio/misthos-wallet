@@ -413,8 +413,8 @@ module Handle = {
       )
     );
   };
-  let transactionDetected = (ventureId, events) => {
-    logMessage("Handling 'TransactionDetected'");
+  let incomeDetected = (ventureId, events) => {
+    logMessage("Handling 'IncomeDetected'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
         Venture.Cmd.SynchronizeWallet.(
@@ -513,8 +513,8 @@ let handleMessage =
     Handle.endorsePayout(ventureId, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(ventureId, accountIdx)
-  | TransactionDetected(ventureId, events) =>
-    Handle.transactionDetected(ventureId, events)
+  | IncomeDetected(ventureId, events) =>
+    Handle.incomeDetected(ventureId, events)
   | NewItemsDetected(ventureId, items) =>
     Handle.newItemsDetected(ventureId, items)
   | SyncTabs(ventureId, items) => Handle.syncTabs(ventureId, items);
