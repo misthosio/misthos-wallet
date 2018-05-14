@@ -8,6 +8,8 @@ module E = G.Event;
 
 module L = G.Log;
 
+module F = Fixtures;
+
 module Validation = Venture__Validation;
 
 open PrimitiveTypes;

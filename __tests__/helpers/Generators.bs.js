@@ -2,6 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../../src/application/events/Event.bs.js");
@@ -13,7 +14,9 @@ var Crypto = require("crypto");
 var Network = require("../../src/application/wallet/Network.bs.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
@@ -32,6 +35,19 @@ function userSession(id) {
           /* storagePrefix */UserInfo.storagePrefix(Utils.publicKeyFromKeyPair(issuerKeyPair)),
           /* masterKeyChain */new BitcoinjsLib.HDNode(issuerKeyPair, Utils.bufFromHex($$String.sub(appPubKey, 0, 64))),
           /* network : Regtest */0
+        ];
+}
+
+function withUserSessions(n) {
+  return $$Array.of_list(Belt_List.makeBy(n, (function (i) {
+                    return userSession(PrimitiveTypes.UserId[/* fromString */1]("user" + String(i)));
+                  })));
+}
+
+function twoUserSessionsFromArray(sessions) {
+  return /* tuple */[
+          Caml_array.caml_array_get(sessions, 0),
+          Caml_array.caml_array_get(sessions, 1)
         ];
 }
 
@@ -203,6 +219,36 @@ function appendEvent(issuer, $$event, l) {
 
 function appendSystemEvent($$event, log) {
   return appendEvent(log[/* systemIssuer */1], $$event, log);
+}
+
+function fromEventLog(log) {
+  var match = Curry._3(EventLog.reduce, (function (param, lastItem) {
+          var $$event = lastItem[/* event */0];
+          if ($$event.tag) {
+            return /* tuple */[
+                    param[0],
+                    param[1],
+                    /* Some */[lastItem]
+                  ];
+          } else {
+            var match = $$event[0];
+            return /* tuple */[
+                    /* Some */[match[/* ventureId */0]],
+                    /* Some */[match[/* systemIssuer */5]],
+                    /* Some */[lastItem]
+                  ];
+          }
+        }), /* tuple */[
+        /* None */0,
+        /* None */0,
+        /* None */0
+      ], log);
+  return /* record */[
+          /* ventureId */Js_option.getExn(match[0]),
+          /* systemIssuer */Js_option.getExn(match[1]),
+          /* lastItem */Js_option.getExn(match[2]),
+          /* log */log
+        ];
 }
 
 function make(session, ventureCreated) {
@@ -555,6 +601,7 @@ var Log = /* module */[
   /* eventLog */eventLog,
   /* appendEvent */appendEvent,
   /* appendSystemEvent */appendSystemEvent,
+  /* fromEventLog */fromEventLog,
   /* make */make,
   /* createVenture */createVenture$1,
   /* withPartnerProposed */withPartnerProposed,
@@ -587,6 +634,8 @@ var AppEvent = 0;
 
 exports.AppEvent = AppEvent;
 exports.userSession = userSession;
+exports.withUserSessions = withUserSessions;
+exports.twoUserSessionsFromArray = twoUserSessionsFromArray;
 exports.twoUserSessions = twoUserSessions;
 exports.threeUserSessions = threeUserSessions;
 exports.fourUserSessions = fourUserSessions;

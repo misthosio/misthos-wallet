@@ -29,6 +29,14 @@ let userSession = id : Session.Data.t => {
   };
 };
 
+let withUserSessions = n =>
+  Belt.List.makeBy(n, i =>
+    userSession("user" ++ string_of_int(i) |> UserId.fromString)
+  )
+  |> Array.of_list;
+
+let twoUserSessionsFromArray = sessions => (sessions[0], sessions[1]);
+
 let twoUserSessions = () => (
   userSession("user1" |> UserId.fromString),
   userSession("user2" |> UserId.fromString),
@@ -204,6 +212,31 @@ module Log = {
   };
   let appendSystemEvent = (event, {systemIssuer} as log) =>
     appendEvent(systemIssuer, event, log);
+  let fromEventLog = log => {
+    let (ventureId, systemIssuer, lastItem) =
+      log
+      |> EventLog.reduce(
+           (
+             (ventureId, systemIssuer, _),
+             {event} as lastItem: EventLog.item,
+           ) =>
+             switch (event) {
+             | VentureCreated({ventureId, systemIssuer}) => (
+                 Some(ventureId),
+                 Some(systemIssuer),
+                 Some(lastItem),
+               )
+             | _ => (ventureId, systemIssuer, Some(lastItem))
+             },
+           (None, None, None),
+         );
+    {
+      ventureId: ventureId |> Js.Option.getExn,
+      systemIssuer: systemIssuer |> Js.Option.getExn,
+      lastItem: lastItem |> Js.Option.getExn,
+      log,
+    };
+  };
   let make = (session: Session.Data.t, ventureCreated) => {
     let (lastItem, log) =
       EventLog.make()

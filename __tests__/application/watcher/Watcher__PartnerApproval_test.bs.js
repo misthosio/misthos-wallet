@@ -12,8 +12,8 @@ var Watcher__PartnerApproval = require("../../../src/application/watcher/Watcher
 
 describe("Will approve the creator", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("creator.id"));
-        var eta = Generators.Log[/* createVenture */9](user1);
-        var func = Generators.Log[/* withPartnerProposed */10];
+        var eta = Generators.Log[/* createVenture */10](user1);
+        var func = Generators.Log[/* withPartnerProposed */11];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user1);
                 })(/* None */0, /* None */0, /* None */0), eta);
@@ -32,8 +32,8 @@ describe("With 1 partner and a proposal", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1));
-        var func = Generators.Log[/* withPartnerProposed */10];
+        var eta = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
+        var func = Generators.Log[/* withPartnerProposed */11];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user2);
                 })(/* None */0, /* None */0, /* None */0), eta);
@@ -52,14 +52,14 @@ describe("Completes when the partner is accepted", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1));
-        var func = Generators.Log[/* withPartnerProposed */10];
+        var eta = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
+        var func = Generators.Log[/* withPartnerProposed */11];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user2);
                 })(/* None */0, /* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log));
-        var log$1 = Generators.Log[/* withPartnerAccepted */13](proposal)(log);
+        var log$1 = Generators.Log[/* withPartnerAccepted */14](proposal)(log);
         Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */3](log$1));
         return WatcherHelpers.testWatcherHasCompleted(watcher);
       }));
@@ -68,11 +68,11 @@ describe("With 2 users and a proposal", (function () {
         var match = Generators.threeUserSessions(/* () */0);
         var user3 = match[2];
         var user1 = match[0];
-        var eta = Generators.Log[/* withPartner */14](match[1], /* :: */[
+        var eta = Generators.Log[/* withPartner */15](match[1], /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)));
-        var func = Generators.Log[/* withPartnerProposed */10];
+            ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
+        var func = Generators.Log[/* withPartnerProposed */11];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user3);
                 })(/* None */0, /* None */0, /* None */0), eta);
@@ -85,16 +85,16 @@ describe("With 2 users and a proposal and endorsement", (function () {
         var user3 = match[2];
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withPartner */14](user2, /* :: */[
+        var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)));
-        var func = Generators.Log[/* withPartnerProposed */10];
+            ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
+        var func = Generators.Log[/* withPartnerProposed */11];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user3);
                 })(/* None */0, /* None */0, /* None */0), eta);
         var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-        var log$1 = Generators.Log[/* withPartnerEndorsed */11](/* None */0, user2, proposal)(log);
+        var log$1 = Generators.Log[/* withPartnerEndorsed */12](/* None */0, user2, proposal)(log);
         var watcher = Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */5](log$1));
         return WatcherHelpers.testWatcherHasEventPending("PartnerAccepted", watcher, Generators.Log[/* systemIssuer */2](log$1), (function (param) {
                       if (param.tag === 4) {
@@ -110,14 +110,14 @@ describe("With 2 users and a removal and a proposal", (function () {
         var user3 = match[2];
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withPartnerRemoved */19](user2, /* :: */[
+        var eta = Generators.Log[/* withPartnerRemoved */20](user2, /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withPartner */14](user2, /* :: */[
+            ], Generators.Log[/* withPartner */15](user2, /* :: */[
                   user1,
                   /* [] */0
-                ], Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))));
-        var func = Generators.Log[/* withPartnerProposed */10];
+                ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1))));
+        var func = Generators.Log[/* withPartnerProposed */11];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user3);
                 })(/* None */0, /* None */0, /* None */0), eta);
