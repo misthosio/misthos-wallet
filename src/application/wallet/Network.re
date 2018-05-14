@@ -78,34 +78,7 @@ let decodeInput = raw =>
 
 module Make = (Client: NetworkClient) => {
   let network = Client.network;
-  let transactionInputs = (coordinates, accountKeyChains) => {
-    let addresses =
-      coordinates
-      |> List.map(c => {
-           let address = Address.find(c, accountKeyChains);
-           (address.address, (c, address));
-         });
-    Js.Promise.(
-      Client.getUTXOs(addresses |> List.map(fst))
-      |> then_(utxos =>
-           utxos
-           |> List.map(({txId, txOutputN, address, amount}: utxo) =>
-                {
-                  txId,
-                  txOutputN,
-                  address,
-                  nCoSigners:
-                    snd(addresses |> List.assoc(address)).nCoSigners,
-                  nPubKeys: snd(addresses |> List.assoc(address)).nPubKeys,
-                  value: amount,
-                  coordinates: addresses |> List.assoc(address) |> fst,
-                }
-              )
-           |> resolve
-         )
-    );
-  };
-  let transactionInputs_ALT = addresses =>
+  let transactionInputs = addresses =>
     Belt.(
       Js.Promise.(
         addresses

@@ -34,7 +34,8 @@ function logMessage(msg) {
 
 function scanTransactions(param) {
   var txIds = param[1];
-  return Network.Testnet[/* transactionInputs_ALT */2](param[0][/* exposedAddresses */2]).then((function (utxos) {
+  var addresses = param[0];
+  return Network.transactionInputs(addresses[/* network */0])(addresses[/* exposedAddresses */2]).then((function (utxos) {
                 return Promise.resolve(/* tuple */[
                             txIds,
                             utxos

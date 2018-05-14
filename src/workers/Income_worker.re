@@ -29,7 +29,7 @@ let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
 let scanTransactions = ((addresses: AddressCollector.t, txIds)) =>
   Js.Promise.(
     addresses.exposedAddresses
-    |> Network.Testnet.transactionInputs_ALT
+    |> Network.transactionInputs(addresses.network)
     |> then_(utxos => (txIds, utxos) |> resolve)
   );
 

@@ -2,7 +2,6 @@
 'use strict';
 
 var BTC = require("./BTC.bs.js");
-var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Address = require("./Address.bs.js");
@@ -114,35 +113,7 @@ function decodeInput(raw) {
 
 function Make(Client) {
   var network = Client[/* network */0];
-  var transactionInputs = function (coordinates, accountKeyChains) {
-    var addresses = List.map((function (c) {
-            var address = Address.find(c, accountKeyChains);
-            return /* tuple */[
-                    address[/* address */5],
-                    /* tuple */[
-                      c,
-                      address
-                    ]
-                  ];
-          }), coordinates);
-    return Curry._1(Client[/* getUTXOs */1], List.map((function (prim) {
-                        return prim[0];
-                      }), addresses)).then((function (utxos) {
-                  return Promise.resolve(List.map((function (param) {
-                                    var address = param[/* address */2];
-                                    return /* record */[
-                                            /* txId */param[/* txId */0],
-                                            /* txOutputN */param[/* txOutputN */1],
-                                            /* address */address,
-                                            /* value */param[/* amount */3],
-                                            /* nCoSigners */List.assoc(address, addresses)[1][/* nCoSigners */0],
-                                            /* nPubKeys */List.assoc(address, addresses)[1][/* nPubKeys */1],
-                                            /* coordinates */List.assoc(address, addresses)[0]
-                                          ];
-                                  }), utxos));
-                }));
-  };
-  var transactionInputs_ALT = function (addresses) {
+  var transactionInputs = function (addresses) {
     return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                   return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                     var address = param[/* address */2];
@@ -163,7 +134,6 @@ function Make(Client) {
   return /* module */[
           /* network */network,
           /* transactionInputs */transactionInputs,
-          /* transactionInputs_ALT */transactionInputs_ALT,
           /* broadcastTransaction */broadcastTransaction
         ];
 }
@@ -176,36 +146,7 @@ var Client = BitcoindClient.make(/* record */[
 
 var network = Client[/* network */0];
 
-function transactionInputs(coordinates, accountKeyChains) {
-  var addresses = List.map((function (c) {
-          var address = Address.find(c, accountKeyChains);
-          return /* tuple */[
-                  address[/* address */5],
-                  /* tuple */[
-                    c,
-                    address
-                  ]
-                ];
-        }), coordinates);
-  return Curry._1(Client[/* getUTXOs */1], List.map((function (prim) {
-                      return prim[0];
-                    }), addresses)).then((function (utxos) {
-                return Promise.resolve(List.map((function (param) {
-                                  var address = param[/* address */2];
-                                  return /* record */[
-                                          /* txId */param[/* txId */0],
-                                          /* txOutputN */param[/* txOutputN */1],
-                                          /* address */address,
-                                          /* value */param[/* amount */3],
-                                          /* nCoSigners */List.assoc(address, addresses)[1][/* nCoSigners */0],
-                                          /* nPubKeys */List.assoc(address, addresses)[1][/* nPubKeys */1],
-                                          /* coordinates */List.assoc(address, addresses)[0]
-                                        ];
-                                }), utxos));
-              }));
-}
-
-function transactionInputs_ALT(addresses) {
+function transactionInputs(addresses) {
   return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                 return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                   var address = param[/* address */2];
@@ -228,7 +169,6 @@ var broadcastTransaction = Client[/* broadcastTransaction */2];
 var Regtest = /* module */[
   /* network */network,
   /* transactionInputs */transactionInputs,
-  /* transactionInputs_ALT */transactionInputs_ALT,
   /* broadcastTransaction */broadcastTransaction
 ];
 
@@ -236,36 +176,7 @@ var Client$1 = SmartbitClient.make(SmartbitClient.testnetConfig, BitcoinjsLib.ne
 
 var network$1 = Client$1[/* network */0];
 
-function transactionInputs$1(coordinates, accountKeyChains) {
-  var addresses = List.map((function (c) {
-          var address = Address.find(c, accountKeyChains);
-          return /* tuple */[
-                  address[/* address */5],
-                  /* tuple */[
-                    c,
-                    address
-                  ]
-                ];
-        }), coordinates);
-  return Curry._1(Client$1[/* getUTXOs */1], List.map((function (prim) {
-                      return prim[0];
-                    }), addresses)).then((function (utxos) {
-                return Promise.resolve(List.map((function (param) {
-                                  var address = param[/* address */2];
-                                  return /* record */[
-                                          /* txId */param[/* txId */0],
-                                          /* txOutputN */param[/* txOutputN */1],
-                                          /* address */address,
-                                          /* value */param[/* amount */3],
-                                          /* nCoSigners */List.assoc(address, addresses)[1][/* nCoSigners */0],
-                                          /* nPubKeys */List.assoc(address, addresses)[1][/* nPubKeys */1],
-                                          /* coordinates */List.assoc(address, addresses)[0]
-                                        ];
-                                }), utxos));
-              }));
-}
-
-function transactionInputs_ALT$1(addresses) {
+function transactionInputs$1(addresses) {
   return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                 return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                   var address = param[/* address */2];
@@ -288,7 +199,6 @@ var broadcastTransaction$1 = Client$1[/* broadcastTransaction */2];
 var Testnet = /* module */[
   /* network */network$1,
   /* transactionInputs */transactionInputs$1,
-  /* transactionInputs_ALT */transactionInputs_ALT$1,
   /* broadcastTransaction */broadcastTransaction$1
 ];
 
@@ -296,36 +206,7 @@ var Client$2 = SmartbitClient.make(SmartbitClient.mainnetConfig, BitcoinjsLib.ne
 
 var network$2 = Client$2[/* network */0];
 
-function transactionInputs$2(coordinates, accountKeyChains) {
-  var addresses = List.map((function (c) {
-          var address = Address.find(c, accountKeyChains);
-          return /* tuple */[
-                  address[/* address */5],
-                  /* tuple */[
-                    c,
-                    address
-                  ]
-                ];
-        }), coordinates);
-  return Curry._1(Client$2[/* getUTXOs */1], List.map((function (prim) {
-                      return prim[0];
-                    }), addresses)).then((function (utxos) {
-                return Promise.resolve(List.map((function (param) {
-                                  var address = param[/* address */2];
-                                  return /* record */[
-                                          /* txId */param[/* txId */0],
-                                          /* txOutputN */param[/* txOutputN */1],
-                                          /* address */address,
-                                          /* value */param[/* amount */3],
-                                          /* nCoSigners */List.assoc(address, addresses)[1][/* nCoSigners */0],
-                                          /* nPubKeys */List.assoc(address, addresses)[1][/* nPubKeys */1],
-                                          /* coordinates */List.assoc(address, addresses)[0]
-                                        ];
-                                }), utxos));
-              }));
-}
-
-function transactionInputs_ALT$2(addresses) {
+function transactionInputs$2(addresses) {
   return Curry._1(Client$2[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                 return Promise.resolve(Belt_List.map(utxos, (function (param) {
                                   var address = param[/* address */2];
@@ -348,7 +229,6 @@ var broadcastTransaction$2 = Client$2[/* broadcastTransaction */2];
 var Mainnet = /* module */[
   /* network */network$2,
   /* transactionInputs */transactionInputs$2,
-  /* transactionInputs_ALT */transactionInputs_ALT$2,
   /* broadcastTransaction */broadcastTransaction$2
 ];
 
