@@ -533,7 +533,8 @@ function withAccountKeyChainIdentified(l) {
   return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(30, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
 }
 
-function withAccountKeyChainActivated(user, l) {
+function withAccountKeyChainActivated($staropt$star, user, l) {
+  var sequence = $staropt$star ? $staropt$star[0] : 0;
   var identifier = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           if ($$event.tag === 30) {
@@ -542,7 +543,7 @@ function withAccountKeyChainActivated(user, l) {
             return res;
           }
         }), "", l[/* log */3]);
-  return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(31, [accountKeyChainActivated(/* Some */[0], user, identifier)]), l);
+  return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(31, [accountKeyChainActivated(/* Some */[sequence], user, identifier)]), l);
 }
 
 var Log = /* module */[

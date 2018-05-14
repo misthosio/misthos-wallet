@@ -49,7 +49,7 @@ describe("Identifies a key chain when a partner is removed", (function () {
                 ], Generators.Log[/* withCustodianRemoved */30](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withAccountKeyChainActivated */33](user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */26](user2, /* :: */[
+                    ], Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */26](user2, /* :: */[
                                       user1,
                                       /* :: */[
                                         user2,
@@ -58,7 +58,7 @@ describe("Identifies a key chain when a partner is removed", (function () {
                                     ], Generators.Log[/* withPartner */14](user2, /* :: */[
                                           user1,
                                           /* [] */0
-                                        ], Generators.Log[/* withAccountKeyChainActivated */33](user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                                        ], Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
                                                           user1,
                                                           /* [] */0
                                                         ], log))))))))))));
@@ -104,7 +104,7 @@ describe("Is idle when the key chain has been activated", (function () {
         var user1 = Fixtures.threeUserSessions[0];
         var log = Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Fixtures.createVenture(user1)));
         var acceptance = Event.getAccountCreationAcceptedExn(Generators.Log[/* lastEvent */4](log));
-        var log$1 = Generators.Log[/* withAccountKeyChainActivated */33](user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
                           user1,
                           /* [] */0
                         ], log))));
@@ -119,7 +119,7 @@ describe("Activates a key chain when a custodian is removed", (function () {
         var log$1 = Generators.Log[/* withCustodianRemoved */30](user2, /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withAccountKeyChainActivated */33](user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */26](user2, /* :: */[
+            ], Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */26](user2, /* :: */[
                               user1,
                               /* :: */[
                                 user2,
@@ -128,7 +128,7 @@ describe("Activates a key chain when a custodian is removed", (function () {
                             ], Generators.Log[/* withPartner */14](user2, /* :: */[
                                   user1,
                                   /* [] */0
-                                ], Generators.Log[/* withAccountKeyChainActivated */33](user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                                ], Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
                                                   user1,
                                                   /* [] */0
                                                 ], log))))))))));
@@ -164,7 +164,7 @@ describe("Is idle when the partner is removed", (function () {
                     ], Generators.Log[/* withPartner */14](user2, /* :: */[
                           user1,
                           /* [] */0
-                        ], Generators.Log[/* withAccountKeyChainActivated */33](user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                        ], Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
                                           user1,
                                           /* [] */0
                                         ], log))))))));

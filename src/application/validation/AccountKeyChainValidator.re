@@ -56,8 +56,12 @@ let update = (event, {identified, activations}) => {
                      |> getOrEmpty(identifier),
                 ],
               ),
+              ...activations
+                 |> getOrEmpty(custodianId)
+                 |> List.remove_assoc(identifier),
             ],
           ),
+          ...activations |> List.remove_assoc(custodianId),
         ],
       )
     | _ => (identified, activations)

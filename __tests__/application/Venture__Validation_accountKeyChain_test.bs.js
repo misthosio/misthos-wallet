@@ -122,7 +122,29 @@ describe("AccountKeyChainActivated", (function () {
                               user1,
                               /* [] */0
                             ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, log)), /* Ok */0);
+              }));
+        describe.only("after a partner removal", (function () {
+                var match = Generators.twoUserSessions(/* () */0);
+                var user2 = match[1];
+                var user1 = match[0];
+                var log = Generators.Log[/* withPartnerRemoved */19](user2, /* :: */[
+                      user1,
+                      /* [] */0
+                    ], Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user2, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */26](user2, /* :: */[
+                                          user1,
+                                          /* :: */[
+                                            user2,
+                                            /* [] */0
+                                          ]
+                                        ], Generators.Log[/* withPartner */14](user2, /* :: */[
+                                              user1,
+                                              /* [] */0
+                                            ], Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */26](user1, /* :: */[
+                                                              user1,
+                                                              /* [] */0
+                                                            ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))))))))))));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withAccountKeyChainActivated */33](/* Some */[1], user1, log)), /* Ok */0);
               }));
         describe("when the account doesn't exist", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
@@ -131,7 +153,7 @@ describe("AccountKeyChainActivated", (function () {
                               user1,
                               /* [] */0
                             ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
-                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[
@@ -152,7 +174,7 @@ describe("AccountKeyChainActivated", (function () {
                                   user1,
                                   /* [] */0
                                 ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))))));
-                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
                             }), ValidationHelpers.constructState(log), activated, /* InvalidIssuer */2);
@@ -168,7 +190,7 @@ describe("AccountKeyChainActivated", (function () {
                                   user1,
                                   /* [] */0
                                 ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1)))))));
-                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user2, log)));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user2, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
                             }), ValidationHelpers.constructState(log), activated, /* BadData */["Not a custodian"]);
@@ -180,7 +202,7 @@ describe("AccountKeyChainActivated", (function () {
                               user1,
                               /* [] */0
                             ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
-                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[
@@ -197,7 +219,7 @@ describe("AccountKeyChainActivated", (function () {
                               user1,
                               /* [] */0
                             ], Generators.Log[/* withAccount */22](user1, Generators.Log[/* withFirstPartner */15](user1)(Generators.Log[/* createVenture */9](user1))))));
-                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](user1, log)));
+                var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */4](Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, user1, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[

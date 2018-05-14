@@ -174,6 +174,33 @@ let () = {
         Validation.Ok,
       );
     });
+    Only.describe("after a partner removal", () => {
+      let (user1, user2) = G.twoUserSessions();
+      let log =
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withCustodian(user2, ~supporters=[user1, user2])
+          |> withCustodianKeyChain(user2)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user2)
+          |> withAccountKeyChainActivated(user1)
+          |> withPartnerRemoved(user2, ~supporters=[user1])
+        );
+      testValidationResult(
+        log |> constructState,
+        L.(
+          log |> withAccountKeyChainActivated(~sequence=1, user1) |> lastItem
+        ),
+        Validation.Ok,
+      );
+    });
     describe("when the account doesn't exist", () => {
       let (user1, _user2) = G.twoUserSessions();
       let log =

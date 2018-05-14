@@ -536,7 +536,8 @@ module Log = {
          ),
        );
   };
-  let withAccountKeyChainActivated = (user: Session.Data.t, {log} as l) => {
+  let withAccountKeyChainActivated =
+      (~sequence=0, user: Session.Data.t, {log} as l) => {
     let identifier =
       log
       |> EventLog.reduce(
@@ -552,7 +553,7 @@ module Log = {
          user.issuerKeyPair,
          AccountKeyChainActivated(
            Event.accountKeyChainActivated(
-             ~sequence=0,
+             ~sequence,
              ~custodian=user,
              ~identifier,
            ),

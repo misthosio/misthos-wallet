@@ -21,7 +21,7 @@ describe("integration", (function () {
         var userC = match[2];
         var userB = match[1];
         var userA = match[0];
-        var log = Generators.Log[/* withAccountKeyChainActivated */33](userB, Generators.Log[/* withAccountKeyChainActivated */33](userA, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */26](userB, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */26](userB, /* :: */[
                                   userA,
                                   /* :: */[
                                     userB,
@@ -45,7 +45,7 @@ describe("integration", (function () {
         var match$3 = match$1[0];
         var address2 = match$3[1];
         var address1 = match$3[0];
-        var log$1 = Generators.Log[/* withAccountKeyChainActivated */33](userC, Generators.Log[/* withAccountKeyChainActivated */33](userB, Generators.Log[/* withAccountKeyChainActivated */33](userA, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */26](userC, /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, userC, Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */33](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */32](Generators.Log[/* withCustodianKeyChain */31](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */26](userC, /* :: */[
                                   userA,
                                   /* :: */[
                                     userB,

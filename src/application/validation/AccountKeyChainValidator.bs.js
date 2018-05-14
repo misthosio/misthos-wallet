@@ -81,10 +81,10 @@ function update($$event, param) {
                     getOrEmpty(identifier, getOrEmpty(custodianId, activations))
                   ]
                 ],
-                /* [] */0
+                List.remove_assoc(identifier, getOrEmpty(custodianId, activations))
               ]
             ],
-            /* [] */0
+            List.remove_assoc(custodianId, activations)
           ]
         ];
         break;
