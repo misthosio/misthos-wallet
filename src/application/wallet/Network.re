@@ -85,6 +85,32 @@ module Make = (Client: NetworkClient) => {
          )
     );
   };
+  let transactionInputs_ALT = addresses =>
+    Belt.(
+      Js.Promise.(
+        addresses
+        |> Map.keysToArray
+        |> List.fromArray
+        |> Client.getUTXOs
+        |> then_(utxos =>
+             utxos
+             |. List.map(({txId, txOutputN, address, amount}: utxo) => {
+                  let a: Address.t =
+                    addresses |. Map.get(address) |> Js.Option.getExn;
+                  {
+                    txId,
+                    txOutputN,
+                    address,
+                    nCoSigners: a.nCoSigners,
+                    nPubKeys: a.nPubKeys,
+                    value: amount,
+                    coordinates: a.coordinates,
+                  };
+                })
+             |> resolve
+           )
+      )
+    );
   let broadcastTransaction = Client.broadcastTransaction;
 };
 

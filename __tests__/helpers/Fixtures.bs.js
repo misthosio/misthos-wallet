@@ -46,6 +46,12 @@ var threeUserSessions = /* tuple */[
   threeUserSessions_002
 ];
 
+var threeUserSessionsArray = /* array */[
+  threeUserSessions_000,
+  threeUserSessions_001,
+  threeUserSessions_002
+];
+
 function createVenture(user) {
   var init = Generators.Event[/* createVenture */0](user);
   return Generators.Log[/* make */9](user, /* record */[
@@ -129,12 +135,14 @@ function writeFixture(fileName, sessions, log) {
 
 var basePath = "__tests__/fixtures/";
 
-function withCached(scope, description, sessionsGenerator, generator, testBody) {
+function withCached($staropt$star, scope, description, sessionsGenerator, generator, testBody) {
+  var load = $staropt$star ? $staropt$star[0] : true;
   var replacedName = description.replace((/ /g), "_");
   var cacheFileName = basePath + (scope + ("-" + replacedName));
   var match = loadFixture(cacheFileName);
   var match$1;
-  if (match) {
+  var exit = 0;
+  if (load && match) {
     var match$2 = match[0];
     match$1 = /* tuple */[
       match$2[0],
@@ -142,6 +150,9 @@ function withCached(scope, description, sessionsGenerator, generator, testBody) 
       true
     ];
   } else {
+    exit = 1;
+  }
+  if (exit === 1) {
     var sessions = Curry._1(sessionsGenerator, /* () */0);
     match$1 = /* tuple */[
       sessions,
@@ -162,6 +173,7 @@ function withCached(scope, description, sessionsGenerator, generator, testBody) 
 
 exports.userSession = userSession;
 exports.threeUserSessions = threeUserSessions;
+exports.threeUserSessionsArray = threeUserSessionsArray;
 exports.createVenture = createVenture;
 exports.encodeSessionData = encodeSessionData;
 exports.decodeSessionData = decodeSessionData;

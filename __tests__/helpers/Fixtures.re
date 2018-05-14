@@ -37,6 +37,11 @@ let threeUserSessions = {
   );
 };
 
+let threeUserSessionsArray = {
+  let (user1, user2, user3) = threeUserSessions;
+  [|user1, user2, user3|];
+};
+
 let createVenture = user =>
   Generators.Log.make(
     user,
@@ -103,17 +108,18 @@ let writeFixture = (fileName, sessions, log) =>
 
 let basePath = "__tests__/fixtures/";
 
-let withCached = (~scope, description, sessionsGenerator, generator, testBody) => {
+let withCached =
+    (~load=true, ~scope, description, sessionsGenerator, generator, testBody) => {
   let replacedName = description |> Js.String.replaceByRe([%re "/ /g"], "_");
   let cacheFileName = basePath ++ scope ++ "-" ++ replacedName;
   let (sessions, log, cached) =
-    switch (loadFixture(cacheFileName)) {
-    | Some((sessions, eventLog)) => (
+    switch (load, loadFixture(cacheFileName)) {
+    | (true, Some((sessions, eventLog))) => (
         sessions,
         Generators.Log.fromEventLog(eventLog),
         true,
       )
-    | None =>
+    | _ =>
       let sessions = sessionsGenerator();
       (sessions, generator(sessions), false);
     };

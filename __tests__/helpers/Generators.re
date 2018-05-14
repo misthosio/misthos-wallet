@@ -191,6 +191,7 @@ module Event = {
       ~identifier,
       ~sequence,
     );
+  let incomeAddressExposed = AppEvent.IncomeAddressExposed.make;
 };
 
 module Log = {
@@ -589,6 +590,47 @@ module Log = {
              ~sequence,
              ~custodian=user,
              ~identifier,
+           ),
+         ),
+       );
+  };
+  let withIncomeAddressExposed = (user: Session.Data.t, {log} as l) => {
+    let (keyChains, activations, exposed) =
+      log
+      |> EventLog.reduce(
+           ((keyChains, activations, exposed), {event}: EventLog.item) =>
+             switch (event) {
+             | AccountKeyChainIdentified({
+                 keyChain: {identifier} as keyChain,
+               }) => (
+                 [(identifier, keyChain), ...keyChains],
+                 activations,
+                 exposed,
+               )
+             | AccountKeyChainActivated({custodianId, identifier}) => (
+                 keyChains,
+                 [(custodianId, identifier), ...activations],
+                 exposed,
+               )
+             | IncomeAddressExposed({coordinates}) => (
+                 keyChains,
+                 activations,
+                 [coordinates, ...exposed],
+               )
+             | _ => (keyChains, activations, exposed)
+             },
+           ([], [], []),
+         );
+    let keyChain =
+      activations |> List.assoc(user.userId) |. List.assoc(keyChains);
+    let coordinates =
+      Address.Coordinates.nextExternal(user.userId, exposed, keyChain);
+    l
+    |> appendSystemEvent(
+         IncomeAddressExposed(
+           Event.incomeAddressExposed(
+             ~coordinates,
+             ~address=Address.make(coordinates, keyChain).address,
            ),
          ),
        );

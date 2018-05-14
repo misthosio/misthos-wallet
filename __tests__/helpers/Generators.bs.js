@@ -11,6 +11,7 @@ var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Policy = require("../../src/application/Policy.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Crypto = require("crypto");
+var Address = require("../../src/application/wallet/Address.bs.js");
 var Network = require("../../src/application/wallet/Network.bs.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
@@ -161,6 +162,8 @@ function accountKeyChainActivated($staropt$star, custodian, identifier) {
   return Event.AccountKeyChainActivated[/* make */0](WalletTypes.AccountIndex[/* default */9], custodian[/* userId */0], identifier, sequence);
 }
 
+var incomeAddressExposed = Event.IncomeAddressExposed[/* make */0];
+
 var Event$1 = /* module */[
   /* createVenture */createVenture,
   /* partnerProposed */partnerProposed,
@@ -180,7 +183,8 @@ var Event$1 = /* module */[
   /* custodianRemovalAccepted */custodianRemovalAccepted,
   /* custodianKeyChainUpdated */custodianKeyChainUpdated,
   /* accountKeyChainIdentified */accountKeyChainIdentified,
-  /* accountKeyChainActivated */accountKeyChainActivated
+  /* accountKeyChainActivated */accountKeyChainActivated,
+  /* incomeAddressExposed */incomeAddressExposed
 ];
 
 function reduce(f, s, param) {
@@ -592,6 +596,65 @@ function withAccountKeyChainActivated($staropt$star, user, l) {
   return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(31, [accountKeyChainActivated(/* Some */[sequence], user, identifier)]), l);
 }
 
+function withIncomeAddressExposed(user, l) {
+  var match = Curry._3(EventLog.reduce, (function (param, param$1) {
+          var $$event = param$1[/* event */0];
+          var exposed = param[2];
+          var activations = param[1];
+          var keyChains = param[0];
+          switch ($$event.tag | 0) {
+            case 30 : 
+                var keyChain = $$event[0][/* keyChain */0];
+                return /* tuple */[
+                        /* :: */[
+                          /* tuple */[
+                            keyChain[/* identifier */1],
+                            keyChain
+                          ],
+                          keyChains
+                        ],
+                        activations,
+                        exposed
+                      ];
+            case 31 : 
+                var match = $$event[0];
+                return /* tuple */[
+                        keyChains,
+                        /* :: */[
+                          /* tuple */[
+                            match[/* custodianId */1],
+                            match[/* identifier */2]
+                          ],
+                          activations
+                        ],
+                        exposed
+                      ];
+            case 32 : 
+                return /* tuple */[
+                        keyChains,
+                        activations,
+                        /* :: */[
+                          $$event[0][/* coordinates */0],
+                          exposed
+                        ]
+                      ];
+            default:
+              return /* tuple */[
+                      keyChains,
+                      activations,
+                      exposed
+                    ];
+          }
+        }), /* tuple */[
+        /* [] */0,
+        /* [] */0,
+        /* [] */0
+      ], l[/* log */3]);
+  var keyChain = List.assoc(List.assoc(user[/* userId */0], match[1]), match[0]);
+  var coordinates = Address.Coordinates[/* nextExternal */2](user[/* userId */0], match[2], keyChain);
+  return appendSystemEvent(/* IncomeAddressExposed */Block.__(32, [Curry._2(incomeAddressExposed, coordinates, Address.make(coordinates, keyChain)[/* address */5])]), l);
+}
+
 var Log = /* module */[
   /* reduce */reduce,
   /* ventureId */ventureId,
@@ -627,7 +690,8 @@ var Log = /* module */[
   /* withCustodianRemoved */withCustodianRemoved,
   /* withCustodianKeyChain */withCustodianKeyChain,
   /* withAccountKeyChainIdentified */withAccountKeyChainIdentified,
-  /* withAccountKeyChainActivated */withAccountKeyChainActivated
+  /* withAccountKeyChainActivated */withAccountKeyChainActivated,
+  /* withIncomeAddressExposed */withIncomeAddressExposed
 ];
 
 var AppEvent = 0;

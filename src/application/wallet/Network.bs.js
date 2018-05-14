@@ -6,6 +6,9 @@ var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Address = require("./Address.bs.js");
+var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -126,10 +129,28 @@ function Make(Client) {
                                   }), utxos));
                 }));
   };
+  var transactionInputs_ALT = function (addresses) {
+    return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+                  return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                                    var address = param[/* address */2];
+                                    var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                    return /* record */[
+                                            /* txId */param[/* txId */0],
+                                            /* txOutputN */param[/* txOutputN */1],
+                                            /* address */address,
+                                            /* value */param[/* amount */3],
+                                            /* nCoSigners */a[/* nCoSigners */0],
+                                            /* nPubKeys */a[/* nPubKeys */1],
+                                            /* coordinates */a[/* coordinates */2]
+                                          ];
+                                  })));
+                }));
+  };
   var broadcastTransaction = Client[/* broadcastTransaction */2];
   return /* module */[
           /* network */network,
           /* transactionInputs */transactionInputs,
+          /* transactionInputs_ALT */transactionInputs_ALT,
           /* broadcastTransaction */broadcastTransaction
         ];
 }
@@ -171,11 +192,30 @@ function transactionInputs(coordinates, accountKeyChains) {
               }));
 }
 
+function transactionInputs_ALT(addresses) {
+  return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+                return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                                  var address = param[/* address */2];
+                                  var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                  return /* record */[
+                                          /* txId */param[/* txId */0],
+                                          /* txOutputN */param[/* txOutputN */1],
+                                          /* address */address,
+                                          /* value */param[/* amount */3],
+                                          /* nCoSigners */a[/* nCoSigners */0],
+                                          /* nPubKeys */a[/* nPubKeys */1],
+                                          /* coordinates */a[/* coordinates */2]
+                                        ];
+                                })));
+              }));
+}
+
 var broadcastTransaction = Client[/* broadcastTransaction */2];
 
 var Regtest = /* module */[
   /* network */network,
   /* transactionInputs */transactionInputs,
+  /* transactionInputs_ALT */transactionInputs_ALT,
   /* broadcastTransaction */broadcastTransaction
 ];
 
@@ -212,11 +252,30 @@ function transactionInputs$1(coordinates, accountKeyChains) {
               }));
 }
 
+function transactionInputs_ALT$1(addresses) {
+  return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+                return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                                  var address = param[/* address */2];
+                                  var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                  return /* record */[
+                                          /* txId */param[/* txId */0],
+                                          /* txOutputN */param[/* txOutputN */1],
+                                          /* address */address,
+                                          /* value */param[/* amount */3],
+                                          /* nCoSigners */a[/* nCoSigners */0],
+                                          /* nPubKeys */a[/* nPubKeys */1],
+                                          /* coordinates */a[/* coordinates */2]
+                                        ];
+                                })));
+              }));
+}
+
 var broadcastTransaction$1 = Client$1[/* broadcastTransaction */2];
 
 var Testnet = /* module */[
   /* network */network$1,
   /* transactionInputs */transactionInputs$1,
+  /* transactionInputs_ALT */transactionInputs_ALT$1,
   /* broadcastTransaction */broadcastTransaction$1
 ];
 
@@ -253,11 +312,30 @@ function transactionInputs$2(coordinates, accountKeyChains) {
               }));
 }
 
+function transactionInputs_ALT$2(addresses) {
+  return Curry._1(Client$2[/* getUTXOs */1], Belt_List.fromArray(Belt_Map.keysToArray(addresses))).then((function (utxos) {
+                return Promise.resolve(Belt_List.map(utxos, (function (param) {
+                                  var address = param[/* address */2];
+                                  var a = Js_option.getExn(Belt_Map.get(addresses, address));
+                                  return /* record */[
+                                          /* txId */param[/* txId */0],
+                                          /* txOutputN */param[/* txOutputN */1],
+                                          /* address */address,
+                                          /* value */param[/* amount */3],
+                                          /* nCoSigners */a[/* nCoSigners */0],
+                                          /* nPubKeys */a[/* nPubKeys */1],
+                                          /* coordinates */a[/* coordinates */2]
+                                        ];
+                                })));
+              }));
+}
+
 var broadcastTransaction$2 = Client$2[/* broadcastTransaction */2];
 
 var Mainnet = /* module */[
   /* network */network$2,
   /* transactionInputs */transactionInputs$2,
+  /* transactionInputs_ALT */transactionInputs_ALT$2,
   /* broadcastTransaction */broadcastTransaction$2
 ];
 
