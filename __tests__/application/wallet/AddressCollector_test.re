@@ -29,7 +29,7 @@ let () =
       sessions => {
         let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         L.(
-          createVenture(user1)
+          F.createVenture(user1)
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
@@ -43,7 +43,7 @@ let () =
         test("has the address", () =>
           expect(
             constructState(log).exposedAddresses
-            |. Map.String.getExn("2MuMHJgoATXXdNCwJk2i6RoFVR78Ma1ngE9"),
+            |. Map.String.getExn("2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o"),
           )
           |> toEqual(
                {
@@ -51,14 +51,14 @@ let () =
                  nPubKeys: 1,
                  coordinates: (
                    0 |> AccountIndex.fromInt,
-                   "594c2d5570c25e865e19a106780e044a2a315ff9c27a2197a19ae3f7cd2bd572",
+                   "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73",
                    0 |> CoSignerIndex.fromInt,
                    ChainIndex.externalChain,
                    0 |> AddressIndex.fromInt,
                  ),
-                 witnessScript: "512102c3f0db0d8765b00e004d92c334bbb39668b26c5514a60e88a03002d7fd5e6dc551ae",
-                 redeemScript: "00204b13214aeea3af22812a9dafa3358ab278d3fff5d25d23cfcea859636a9460ff",
-                 address: "2MuMHJgoATXXdNCwJk2i6RoFVR78Ma1ngE9",
+                 witnessScript: "5121032a66ac40d30d81a2d0dca008ae11f0fed2a00896fe8e61350b2f9d0ca6256b6351ae",
+                 redeemScript: "0020a598432cbaab0e4039f2e240a97097e4f9a1e1763edd7ae2ca0021b4268ba8fc",
+                 address: "2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o",
                }: Address.t,
              )
         ),
