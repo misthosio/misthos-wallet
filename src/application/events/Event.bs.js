@@ -497,10 +497,10 @@ var Signature = /* module */[
   /* decode */decode$7
 ];
 
-function make$2(processId, transactionId) {
+function make$2(processId, txId) {
   return /* record */[
           /* processId */processId,
-          /* transactionId */transactionId
+          /* txId */txId
         ];
 }
 
@@ -517,8 +517,8 @@ function encode$8($$event) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "transactionId",
-                    $$event[/* transactionId */1]
+                    "txId",
+                    $$event[/* txId */1]
                   ],
                   /* [] */0
                 ]
@@ -529,7 +529,7 @@ function encode$8($$event) {
 function decode$8(raw) {
   return /* record */[
           /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
-          /* transactionId */Json_decode.field("transactionId", Json_decode.string, raw)
+          /* txId */Json_decode.field("txId", Json_decode.string, raw)
         ];
 }
 

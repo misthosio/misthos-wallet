@@ -38,14 +38,14 @@ let apply = (event: Event.t, state) =>
       ...state,
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
     }
-  | PayoutBroadcast({transactionId, processId}) =>
+  | PayoutBroadcast({txId, processId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
     {
       ...state,
       unconfirmedTxs: [
         UnconfirmedPayout(
-          transactionId,
+          txId,
           PayoutTransaction.summary(state.network, payoutTx).spentWithFees,
         ),
         ...state.unconfirmedTxs,

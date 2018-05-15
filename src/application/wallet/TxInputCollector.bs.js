@@ -43,7 +43,7 @@ function apply($$event, state) {
     case 26 : 
         var match$1 = $$event[0];
         var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */4], match$1[/* processId */0]);
-        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* transactionId */1], state[/* keyChains */3], state[/* network */0], payoutTx$1);
+        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], state[/* keyChains */3], state[/* network */0], payoutTx$1);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */match$2 ? Belt_Set.add(state[/* unused */1], match$2[0]) : state[/* unused */1],

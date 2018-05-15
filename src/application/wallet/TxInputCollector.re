@@ -54,7 +54,7 @@ let apply = (event, state) =>
       reserved: state.reserved |. Set.mergeMany(payoutTx.usedInputs),
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
     }
-  | PayoutBroadcast({processId, transactionId}) =>
+  | PayoutBroadcast({processId, txId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
     {
@@ -64,7 +64,7 @@ let apply = (event, state) =>
         switch (
           payoutTx
           |> PayoutTransaction.txInputForChangeAddress(
-               ~transactionId,
+               ~txId,
                state.keyChains,
                state.network,
              )

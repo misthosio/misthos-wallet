@@ -175,7 +175,7 @@ function apply(param, state) {
                 ];
       case 26 : 
           var match$4 = $$event[0];
-          var transactionId = match$4[/* transactionId */1];
+          var txId = match$4[/* txId */1];
           var processId$2 = match$4[/* processId */0];
           return /* record */[
                   state_000,
@@ -191,7 +191,7 @@ function apply(param, state) {
                                     /* payoutTx */p[/* payoutTx */1],
                                     /* endorsedBy */p[/* endorsedBy */2],
                                     /* rejectedBy */p[/* rejectedBy */3],
-                                    /* status : PayoutCompleted */Block.__(0, [transactionId])
+                                    /* status : PayoutCompleted */Block.__(0, [txId])
                                   ];
                           } else {
                             return p;

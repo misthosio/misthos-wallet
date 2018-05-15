@@ -71,7 +71,7 @@ let summary =
 };
 
 let txInputForChangeAddress =
-    (~transactionId, accountKeyChains, network, {changeAddress, txHex}) =>
+    (~txId, accountKeyChains, network, {changeAddress, txHex}) =>
   changeAddress
   |> Utils.mapOption(((address, coordinates)) => {
        let keyChain =
@@ -95,7 +95,7 @@ let txInputForChangeAddress =
          |> List.find(Js.Option.isSome)
          |> Js.Option.getExn;
        Network.{
-         txId: transactionId,
+         txId,
          txOutputN: idx,
          value,
          nCoSigners: keyChain.nCoSigners,

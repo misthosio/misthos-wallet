@@ -82,12 +82,12 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
                   delivered := true;
                   (
                     switch (result) {
-                    | WalletTypes.Ok(transactionId) => (
+                    | WalletTypes.Ok(txId) => (
                         systemIssuer,
                         PayoutBroadcast(
                           Payout.Broadcast.make(
                             ~processId=payoutProcess,
-                            ~transactionId,
+                            ~txId,
                           ),
                         ),
                       )

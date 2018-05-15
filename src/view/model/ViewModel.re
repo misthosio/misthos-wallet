@@ -125,13 +125,13 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
                  {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
              ),
       }
-    | PayoutBroadcast({processId, transactionId}) => {
+    | PayoutBroadcast({processId, txId}) => {
         ...state,
         payouts:
           state.payouts
           |> List.map((p: payout) =>
                ProcessId.eq(p.processId, processId) ?
-                 {...p, status: PayoutCompleted(transactionId)} : p
+                 {...p, status: PayoutCompleted(txId)} : p
              ),
       }
     | PayoutBroadcastFailed({processId, errorMessage}) => {
