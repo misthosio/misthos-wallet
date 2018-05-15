@@ -6,7 +6,6 @@ var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
-var V4 = require("uuid/v4");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 
@@ -143,60 +142,6 @@ function getUTXOs(config, addresses) {
               }));
 }
 
-function listTransactions(config, addresses, max) {
-  var label = V4();
-  return importAllAs(config, addresses, label).then((function () {
-                  var jsonRPCListTx = Json.stringify(Json_encode.object_(/* :: */[
-                            /* tuple */[
-                              "jsonrpc",
-                              "1.0"
-                            ],
-                            /* :: */[
-                              /* tuple */[
-                                "method",
-                                "listtransactions"
-                              ],
-                              /* :: */[
-                                /* tuple */[
-                                  "params",
-                                  Json_encode.tuple4((function (prim) {
-                                          return prim;
-                                        }), (function (prim) {
-                                          return prim;
-                                        }), (function (prim) {
-                                          return prim;
-                                        }), Json_encode.bool, /* tuple */[
-                                        label,
-                                        max,
-                                        0,
-                                        true
-                                      ])
-                                ],
-                                /* [] */0
-                              ]
-                            ]
-                          ]));
-                  return rpcCall(config, jsonRPCListTx);
-                })).then((function (obj) {
-                return Promise.resolve(Json_decode.field("result", (function (param) {
-                                  return Json_decode.withDefault(/* [] */0, (function (param) {
-                                                return Json_decode.list((function (tx) {
-                                                              return /* record */[
-                                                                      /* txId */Json_decode.field("txid", Json_decode.string, tx),
-                                                                      /* outputs : :: */[
-                                                                        /* record */[
-                                                                          /* address */Json_decode.field("address", Json_decode.string, tx),
-                                                                          /* amount */BTC.fromFloat(Json_decode.field("amount", Json_decode.$$float, tx))
-                                                                        ],
-                                                                        /* [] */0
-                                                                      ]
-                                                                    ];
-                                                            }), param);
-                                              }), param);
-                                }), obj));
-              }));
-}
-
 function broadcastTransaction(config, transaction) {
   var jsonRPC = Json.stringify(Json_encode.object_(/* :: */[
             /* tuple */[
@@ -256,7 +201,6 @@ exports.makeAuthHeaders = makeAuthHeaders;
 exports.rpcCall = rpcCall;
 exports.importAllAs = importAllAs;
 exports.getUTXOs = getUTXOs;
-exports.listTransactions = listTransactions;
 exports.broadcastTransaction = broadcastTransaction;
 exports.make = make;
 /* BTC Not a pure module */

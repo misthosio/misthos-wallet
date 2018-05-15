@@ -39,18 +39,4 @@ let () = {
       )
     )
   );
-  describe("BitcoindClient", () =>
-    testPromise("listTransactions", () =>
-      Js.Promise.(
-        BitcoindClient.listTransactions(
-          config,
-          [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress],
-          2,
-        )
-        |> then_(transactions =>
-             expect(transactions |> List.length) |> toEqual(2) |> resolve
-           )
-      )
-    )
-  );
 };

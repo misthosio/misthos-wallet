@@ -3,7 +3,6 @@
 
 var BTC = require("./BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
@@ -92,22 +91,6 @@ function make(config, network) {
         ];
 }
 
-function decodeTransaction(raw) {
-  return /* record */[
-          /* txId */Json_decode.field("txid", Json_decode.string, raw),
-          /* outputs */$$Array.to_list(Json_decode.field("outputs", (function (param) {
-                      return Json_decode.array((function (output) {
-                                    return /* record */[
-                                            /* address */Caml_array.caml_array_get(Json_decode.field("addresses", (function (param) {
-                                                        return Json_decode.array(Json_decode.string, param);
-                                                      }), output), 0),
-                                            /* amount */BTC.fromString(Json_decode.field("value", Json_decode.string, output))
-                                          ];
-                                  }), param);
-                    }), raw))
-        ];
-}
-
 var testnetConfig = /* record */[/* subdomain */"testnet-api"];
 
 var mainnetConfig = /* record */[/* subdomain */"api"];
@@ -124,5 +107,4 @@ exports.fetchAll = fetchAll;
 exports.getUTXOs = getUTXOs;
 exports.broadcastTransaction = broadcastTransaction;
 exports.make = make;
-exports.decodeTransaction = decodeTransaction;
 /* BTC Not a pure module */

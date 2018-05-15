@@ -97,20 +97,3 @@ let make = (config, network) : (module WalletTypes.NetworkClient) =>
      let getUTXOs = getUTXOs(config);
      let broadcastTransaction = broadcastTransaction(config);
    });
-
-let decodeTransaction = raw =>
-  Json.Decode.{
-    txId: raw |> field("txid", string),
-    outputs:
-      raw
-      |> field(
-           "outputs",
-           array(output =>
-             {
-               address: (output |> field("addresses", array(string)))[0],
-               amount: output |> field("value", string) |> BTC.fromString,
-             }
-           ),
-         )
-      |> Array.to_list,
-  };

@@ -110,56 +110,6 @@ let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
        )
   );
 
-let listTransactions =
-    (config, addresses, max)
-    : Js.Promise.t(list(WalletTypes.transaction)) => {
-  let label = Uuid.v4();
-  Js.Promise.(
-    importAllAs(config, addresses, label)
-    |> then_(_imports => {
-         let jsonRPCListTx =
-           Json.Encode.(
-             object_([
-               ("jsonrpc", string("1.0")),
-               ("method", string("listtransactions")),
-               (
-                 "params",
-                 tuple4(string, int, int, bool, (label, max, 0, true)),
-               ),
-             ])
-           )
-           |> Json.stringify;
-         rpcCall(config, jsonRPCListTx);
-       })
-    |> then_(obj =>
-         Json.Decode.(
-           obj
-           |> field(
-                "result",
-                withDefault(
-                  [],
-                  list(tx =>
-                    (
-                      {
-                        txId: tx |> field("txid", string),
-                        outputs: [
-                          {
-                            address: tx |> field("address", string),
-                            amount:
-                              tx |> field("amount", float_) |> BTC.fromFloat,
-                          },
-                        ],
-                      }: WalletTypes.transaction
-                    )
-                  ),
-                ),
-              )
-         )
-         |> resolve
-       )
-  );
-};
-
 let broadcastTransaction = (config, transaction) => {
   let jsonRPC =
     Json.Encode.(
