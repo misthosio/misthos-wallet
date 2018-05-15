@@ -2,20 +2,15 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+module PartnersCollector = ViewModel__PartnersCollector;
+
 module BalanceCollector = ViewModel__BalanceCollector;
 
 type balance = BalanceCollector.balance;
 
-type partner = {
-  userId,
-  name: option(string),
-};
+type partner = PartnersCollector.partner;
 
-type prospect = {
-  processId,
-  userId,
-  endorsedBy: list(userId),
-};
+type prospect = PartnersCollector.prospect;
 
 type payoutStatus =
   | PayoutPending
@@ -36,28 +31,22 @@ type t = {
   ventureId,
   name: string,
   processedItems: ItemsSet.t,
-  partners: list(partner),
-  prospects: list(prospect),
-  removalProspects: list(prospect),
   metaPolicy: Policy.t,
-  partnerPolicy: Policy.t,
   incomeAddresses: list((accountIdx, list(string))),
   payouts: list(payout),
   balanceCollector: BalanceCollector.t,
+  partnersCollector: PartnersCollector.t,
 };
 
 let make = () => {
   name: "",
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
-  partners: [],
-  prospects: [],
-  removalProspects: [],
   metaPolicy: Policy.unanimous,
-  partnerPolicy: Policy.unanimous,
   incomeAddresses: [],
   payouts: [],
   balanceCollector: BalanceCollector.make(),
+  partnersCollector: PartnersCollector.make(),
 };
 
 let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
@@ -68,6 +57,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
       ...state,
       balanceCollector:
         state.balanceCollector |> BalanceCollector.apply(event),
+      partnersCollector:
+        state.partnersCollector |> PartnersCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
@@ -76,56 +67,6 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         ventureId,
         name: ventureName,
         metaPolicy,
-        partnerPolicy: metaPolicy,
-      }
-    | PartnerProposed({processId, supporterId, data}) => {
-        ...state,
-        prospects: [
-          {processId, userId: data.id, endorsedBy: [supporterId]},
-          ...state.prospects,
-        ],
-      }
-    | PartnerEndorsed({processId, supporterId}) => {
-        ...state,
-        prospects:
-          state.prospects
-          |> List.map((p: prospect) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
-             ),
-      }
-    | PartnerAccepted({data}) => {
-        ...state,
-        partners: [{userId: data.id, name: None}, ...state.partners],
-        prospects:
-          state.prospects |> List.filter(p => UserId.neq(p.userId, data.id)),
-      }
-    | PartnerRemovalProposed({processId, supporterId, data}) => {
-        ...state,
-        removalProspects: [
-          {processId, userId: data.id, endorsedBy: [supporterId]},
-          ...state.removalProspects,
-        ],
-      }
-    | PartnerRemovalEndorsed({processId, supporterId}) => {
-        ...state,
-        removalProspects:
-          state.removalProspects
-          |> List.map((p: prospect) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
-             ),
-      }
-    | PartnerRemovalAccepted({processId, data: {id}}) => {
-        ...state,
-        partners:
-          state.partners
-          |> List.filter((p: partner) => UserId.neq(p.userId, id)),
-        removalProspects:
-          state.removalProspects
-          |> List.filter((p: prospect) =>
-               ProcessId.neq(p.processId, processId)
-             ),
       }
     | AccountCreationAccepted({data}) => {
         ...state,
@@ -203,11 +144,11 @@ let applyAll = (events, model) =>
 
 let ventureId = state => state.ventureId;
 
-let partners = state => state.partners;
+let partners = state => state.partnersCollector.partners;
 
-let prospects = state => state.prospects;
+let prospects = state => state.partnersCollector.prospects;
 
-let removalProspects = state => state.removalProspects;
+let removalProspects = state => state.partnersCollector.removalProspects;
 
 let ventureName = state => state.name;
 
@@ -220,5 +161,5 @@ let balance = state =>
   state.balanceCollector
   |> BalanceCollector.accountBalance(AccountIndex.default);
 
-let isPartner = (id, {partners}) =>
-  partners |> List.exists(({userId}: partner) => UserId.eq(userId, id));
+let isPartner = (id, {partnersCollector}) =>
+  partnersCollector |> PartnersCollector.isPartner(id);
