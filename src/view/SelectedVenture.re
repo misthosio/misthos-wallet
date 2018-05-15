@@ -152,6 +152,53 @@ let make =
           |> List.map(address => <li key=address> (text(address)) </li>),
         ),
       );
+    let transactions =
+      ReasonReact.array(
+        Array.of_list(
+          {
+            let (confirmed, unconfirmed) =
+              state.viewModel |> ViewModel.transactions;
+            List.append(
+              unconfirmed
+              |> List.mapi((iter, tx: ViewModel.unconfirmedTx) =>
+                   <li key=(iter |> string_of_int)>
+                     (
+                       switch (tx) {
+                       | UnconfirmedPayout(txId, amount) =>
+                         text(
+                           "Unconfirmed Payout: '"
+                           ++ txId
+                           ++ "' - "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
+                       | _ => ReasonReact.null
+                       }
+                     )
+                   </li>
+                 ),
+              confirmed
+              |> List.mapi((iter, tx: ViewModel.confirmedTx) =>
+                   <li key=(string_of_int(iter + List.length(unconfirmed)))>
+                     (
+                       switch (tx) {
+                       | ConfirmedIncome(amount, date) =>
+                         text(
+                           "INCOME: "
+                           ++ Js.Date.toString(date)
+                           ++ " - "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
+                       | _ => ReasonReact.null
+                       }
+                     )
+                   </li>
+                 ),
+            );
+          },
+        ),
+      );
     let payouts =
       ReasonReact.array(
         Array.of_list(
@@ -279,6 +326,8 @@ let make =
           />
           <h4> (text("Payouts:")) </h4>
           <ul> payouts </ul>
+          <h4> (text("Transactions:")) </h4>
+          <ul> transactions </ul>
         </div>
     />;
   },

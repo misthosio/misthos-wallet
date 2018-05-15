@@ -11,6 +11,7 @@ var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var ViewModel__BalanceCollector = require("./ViewModel__BalanceCollector.bs.js");
 var ViewModel__PartnersCollector = require("./ViewModel__PartnersCollector.bs.js");
+var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
 function make() {
   return /* record */[
@@ -21,7 +22,8 @@ function make() {
           /* incomeAddresses : [] */0,
           /* payouts : [] */0,
           /* balanceCollector */ViewModel__BalanceCollector.make(/* () */0),
-          /* partnersCollector */ViewModel__PartnersCollector.make(/* () */0)
+          /* partnersCollector */ViewModel__PartnersCollector.make(/* () */0),
+          /* transactionCollector */ViewModel__TransactionCollector.make(/* () */0)
         ];
 }
 
@@ -40,6 +42,7 @@ function apply(param, state) {
     var state_005 = /* payouts */state[/* payouts */5];
     var state_006 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */6]);
     var state_007 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */7]);
+    var state_008 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */8]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -48,7 +51,8 @@ function apply(param, state) {
       state_004,
       state_005,
       state_006,
-      state_007
+      state_007,
+      state_008
     ];
     switch ($$event.tag | 0) {
       case 0 : 
@@ -61,7 +65,8 @@ function apply(param, state) {
                   state_004,
                   state_005,
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 12 : 
           return /* record */[
@@ -78,7 +83,8 @@ function apply(param, state) {
                   ],
                   state_005,
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 21 : 
           var match$1 = $$event[0];
@@ -102,7 +108,8 @@ function apply(param, state) {
                     state_005
                   ],
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 22 : 
           var match$2 = $$event[0];
@@ -132,7 +139,8 @@ function apply(param, state) {
                           }
                         }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 23 : 
           var match$3 = $$event[0];
@@ -162,7 +170,8 @@ function apply(param, state) {
                           }
                         }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 26 : 
           var match$4 = $$event[0];
@@ -189,7 +198,8 @@ function apply(param, state) {
                           }
                         }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 28 : 
           var match$5 = $$event[0];
@@ -216,7 +226,8 @@ function apply(param, state) {
                           }
                         }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 32 : 
           var match$6 = $$event[0];
@@ -238,7 +249,8 @@ function apply(param, state) {
                   ],
                   state_005,
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       default:
         return state$1;
@@ -292,6 +304,14 @@ function balance(state) {
   return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */6]);
 }
 
+function transactions(param) {
+  var transactionCollector = param[/* transactionCollector */8];
+  return /* tuple */[
+          transactionCollector[/* confirmedTxs */1],
+          transactionCollector[/* unconfirmedTxs */2]
+        ];
+}
+
 function isPartner(id, param) {
   return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */7]);
 }
@@ -300,10 +320,13 @@ var PartnersCollector = 0;
 
 var BalanceCollector = 0;
 
+var TransactionCollector = 0;
+
 var ItemsSet = 0;
 
 exports.PartnersCollector = PartnersCollector;
 exports.BalanceCollector = BalanceCollector;
+exports.TransactionCollector = TransactionCollector;
 exports.ItemsSet = ItemsSet;
 exports.make = make;
 exports.apply = apply;
@@ -317,5 +340,6 @@ exports.ventureName = ventureName;
 exports.incomeAddresses = incomeAddresses;
 exports.payouts = payouts;
 exports.balance = balance;
+exports.transactions = transactions;
 exports.isPartner = isPartner;
 /* partial_arg Not a pure module */

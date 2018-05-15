@@ -71,6 +71,21 @@ function make(initialViewModel, session, commands, _) {
                                       key: address
                                     }, Utils.text(address));
                         }), ViewModel.incomeAddresses(state[/* viewModel */0])));
+              var match = ViewModel.transactions(state[/* viewModel */0]);
+              var unconfirmed = match[1];
+              var transactions = $$Array.of_list(List.append(List.mapi((function (iter, tx) {
+                              var tmp;
+                              tmp = tx.tag ? Utils.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : null;
+                              return React.createElement("li", {
+                                          key: String(iter)
+                                        }, tmp);
+                            }), unconfirmed), List.mapi((function (iter, tx) {
+                              var tmp;
+                              tmp = tx.tag ? null : Utils.text("INCOME: " + (tx[1].toString() + (" - " + (BTC.format(tx[0]) + "btc"))));
+                              return React.createElement("li", {
+                                          key: String(iter + List.length(unconfirmed) | 0)
+                                        }, tmp);
+                            }), match[0])));
               var payouts = $$Array.of_list(List.map((function (payout) {
                           var match = payout[/* status */4];
                           var tmp;
@@ -98,7 +113,7 @@ function make(initialViewModel, session, commands, _) {
                                               })
                                           }, Utils.text("Reject Payout")) : null);
                         }), ViewModel.payouts(state[/* viewModel */0])));
-              var match = state[/* selfRemoved */1];
+              var match$1 = state[/* selfRemoved */1];
               return ReasonReact.element(/* None */0, /* None */0, Body3.make(/* Some */[/* :: */[
                                 "Partners",
                                 /* :: */[
@@ -115,7 +130,7 @@ function make(initialViewModel, session, commands, _) {
                                                 key: "reserved"
                                               }, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
                                           Utils.text(" BTC IN RESERVE")
-                                        ]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                                        ]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),
                                             /* ManagePartners */1
                                           ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
@@ -124,7 +139,7 @@ function make(initialViewModel, session, commands, _) {
                                         })
                                     }, Utils.text("Get New Income Address")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
                                             return Curry._1(send, /* ProposePayout */Block.__(2, [destinations]));
-                                          }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payouts:")), React.createElement("ul", undefined, payouts)), /* array */[]));
+                                          }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payouts:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, Utils.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

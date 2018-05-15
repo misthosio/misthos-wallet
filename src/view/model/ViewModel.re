@@ -6,7 +6,13 @@ module PartnersCollector = ViewModel__PartnersCollector;
 
 module BalanceCollector = ViewModel__BalanceCollector;
 
+module TransactionCollector = ViewModel__TransactionCollector;
+
 type balance = BalanceCollector.balance;
+
+type confirmedTx = TransactionCollector.confirmedTx;
+
+type unconfirmedTx = TransactionCollector.unconfirmedTx;
 
 type partner = PartnersCollector.partner;
 
@@ -36,6 +42,7 @@ type t = {
   payouts: list(payout),
   balanceCollector: BalanceCollector.t,
   partnersCollector: PartnersCollector.t,
+  transactionCollector: TransactionCollector.t,
 };
 
 let make = () => {
@@ -47,6 +54,7 @@ let make = () => {
   payouts: [],
   balanceCollector: BalanceCollector.make(),
   partnersCollector: PartnersCollector.make(),
+  transactionCollector: TransactionCollector.make(),
 };
 
 let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
@@ -59,6 +67,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.balanceCollector |> BalanceCollector.apply(event),
       partnersCollector:
         state.partnersCollector |> PartnersCollector.apply(event),
+      transactionCollector:
+        state.transactionCollector |> TransactionCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
@@ -160,6 +170,11 @@ let payouts = state => state.payouts;
 let balance = state =>
   state.balanceCollector
   |> BalanceCollector.accountBalance(AccountIndex.default);
+
+let transactions = ({transactionCollector}) => (
+  transactionCollector.confirmedTxs,
+  transactionCollector.unconfirmedTxs,
+);
 
 let isPartner = (id, {partnersCollector}) =>
   partnersCollector |> PartnersCollector.isPartner(id);
