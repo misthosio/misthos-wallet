@@ -26,9 +26,9 @@ let logMessage = msg => Js.log("[Sync Worker] - " ++ msg);
 
 let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
 
-let tenSecondsInMilliseconds = 10000;
+let fiveSecondsInMilliseconds = 5000;
 
-let syncInterval = tenSecondsInMilliseconds;
+let syncInterval = fiveSecondsInMilliseconds;
 
 let determinPartnerIds =
   EventLog.reduce(
