@@ -26,8 +26,8 @@ let decodeUTXOs = raw =>
 let decodeTransaction = raw =>
   Json.Decode.{
     txId: raw |> field("txid", string),
-    blockHeight: raw |> field("block", float_),
-    unixTime: raw |> field("time", float_),
+    blockHeight: raw |> field("block", optional(float_)),
+    unixTime: raw |> field("time", optional(float_)),
   };
 
 let decodeTransactions = raw =>

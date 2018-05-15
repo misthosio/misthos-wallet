@@ -35,8 +35,12 @@ function decodeUTXOs(raw) {
 function decodeTransaction(raw) {
   return /* record */[
           /* txId */Json_decode.field("txid", Json_decode.string, raw),
-          /* blockHeight */Json_decode.field("block", Json_decode.$$float, raw),
-          /* unixTime */Json_decode.field("time", Json_decode.$$float, raw)
+          /* blockHeight */Json_decode.field("block", (function (param) {
+                  return Json_decode.optional(Json_decode.$$float, param);
+                }), raw),
+          /* unixTime */Json_decode.field("time", (function (param) {
+                  return Json_decode.optional(Json_decode.$$float, param);
+                }), raw)
         ];
 }
 

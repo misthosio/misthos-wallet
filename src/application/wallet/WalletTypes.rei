@@ -8,8 +8,8 @@ type utxo = {
 
 type txInfo = {
   txId: string,
-  blockHeight: float,
-  unixTime: float,
+  blockHeight: option(float),
+  unixTime: option(float),
 };
 
 type broadcastResult =

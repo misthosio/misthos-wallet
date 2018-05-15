@@ -88,13 +88,19 @@ let detectIncomeFromVenture = ventureId => {
                  ventureId,
                  events,
                  txInfos
-                 |. List.mapU(
+                 |. List.keepMapU(
                       (. {txId, blockHeight, unixTime}: WalletTypes.txInfo) =>
-                      Event.Transaction.Confirmed.make(
-                        ~txId,
-                        ~blockHeight,
-                        ~unixTime,
-                      )
+                      switch (blockHeight, unixTime) {
+                      | (Some(blockHeight), Some(unixTime)) =>
+                        Some(
+                          Event.Transaction.Confirmed.make(
+                            ~txId,
+                            ~blockHeight,
+                            ~unixTime,
+                          ),
+                        )
+                      | _ => None
+                      }
                     ),
                ),
              )

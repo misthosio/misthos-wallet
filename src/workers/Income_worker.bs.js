@@ -90,8 +90,14 @@ function detectIncomeFromVenture(ventureId) {
                   tmp = /* () */0;
                 }
                 if (exit === 1) {
-                  var msg_002 = Belt_List.mapU(txInfos, (function (param) {
-                          return Curry._3(Event.Transaction[/* Confirmed */0][/* make */0], param[/* txId */0], param[/* blockHeight */1], param[/* unixTime */2]);
+                  var msg_002 = Belt_List.keepMapU(txInfos, (function (param) {
+                          var unixTime = param[/* unixTime */2];
+                          var blockHeight = param[/* blockHeight */1];
+                          if (blockHeight && unixTime) {
+                            return /* Some */[Curry._3(Event.Transaction[/* Confirmed */0][/* make */0], param[/* txId */0], blockHeight[0], unixTime[0])];
+                          } else {
+                            return /* None */0;
+                          }
                         }));
                   var msg = /* SyncWallet */Block.__(15, [
                       ventureId,
