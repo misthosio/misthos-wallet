@@ -132,7 +132,7 @@ function handleMsg(param) {
   return setInterval((function () {
                 findNewEventsForAll(/* () */0);
                 return /* () */0;
-              }), 5000);
+              }), 10000);
 }
 
 self.onmessage = (function (msg) {
@@ -151,15 +151,15 @@ self.onmessage = (function (msg) {
 
 var Message = 0;
 
-var fiveSecondsInMilliseconds = 5000;
+var tenSecondsInMilliseconds = 10000;
 
-var syncInterval = 5000;
+var syncInterval = 10000;
 
 exports.Message = Message;
 exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.intervalId = intervalId;
-exports.fiveSecondsInMilliseconds = fiveSecondsInMilliseconds;
+exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
 exports.syncInterval = syncInterval;
 exports.determinPartnerIds = determinPartnerIds;
 exports.getSummaryFromUser = getSummaryFromUser;
