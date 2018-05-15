@@ -299,6 +299,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
         state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
     }
   | IncomeDetected(_)
+  | TransactionConfirmed(_)
   | IncomeAddressExposed(_)
   | PayoutSigned(_)
   | PayoutBroadcast(_)
@@ -817,6 +818,7 @@ let validateEvent =
     validateAccountKeyChainActivated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
+  | TransactionConfirmed(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastDuplicate(_) => ((_state, _pubKey) => Ignore)

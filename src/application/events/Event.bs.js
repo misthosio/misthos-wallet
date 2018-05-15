@@ -891,6 +891,58 @@ var IncomeDetected = /* module */[
   /* decode */decode$15
 ];
 
+function make$10(txId, blockHeight, unixTime) {
+  return /* record */[
+          /* txId */txId,
+          /* blockHeight */blockHeight,
+          /* unixTime */unixTime
+        ];
+}
+
+function encode$16($$event) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "TransactionConfirmed"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "txId",
+                  $$event[/* txId */0]
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "blockHeight",
+                    Utils.encodeFloat($$event[/* blockHeight */1])
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "unixTime",
+                      Utils.encodeFloat($$event[/* unixTime */2])
+                    ],
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function decode$16(raw) {
+  return /* record */[
+          /* txId */Json_decode.field("txId", Json_decode.string, raw),
+          /* blockHeight */Json_decode.field("blockHeight", Utils.decodeFloat, raw),
+          /* unixTime */Json_decode.field("unixTime", Utils.decodeFloat, raw)
+        ];
+}
+
+var Confirmed = /* module */[
+  /* make */make$10,
+  /* encode */encode$16,
+  /* decode */decode$16
+];
+
+var Transaction = /* module */[/* Confirmed */Confirmed];
+
 var BadData = Caml_exceptions.create("Event.BadData");
 
 function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
@@ -988,7 +1040,7 @@ function makePayoutRejected(processId, rejectorId) {
   return /* PayoutRejected */Block.__(22, [Curry._2(Rejected$5[/* make */0], processId, rejectorId)]);
 }
 
-function encode$16(param) {
+function encode$17(param) {
   switch (param.tag | 0) {
     case 0 : 
         return encode(param[0]);
@@ -1058,6 +1110,8 @@ function encode$16(param) {
         return encode$14(param[0]);
     case 33 : 
         return encode$15(param[0]);
+    case 34 : 
+        return encode$16(param[0]);
     
   }
 }
@@ -1084,7 +1138,7 @@ function isSystemEvent(param) {
 
 var UnknownEvent = Caml_exceptions.create("Event.UnknownEvent");
 
-function decode$16(raw) {
+function decode$17(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "AccountCreationAccepted" : 
@@ -1153,6 +1207,8 @@ function decode$16(raw) {
         return /* PayoutRejected */Block.__(22, [Curry._1(Rejected$5[/* decode */2], raw)]);
     case "PayoutSigned" : 
         return /* PayoutSigned */Block.__(25, [decode$7(raw)]);
+    case "TransactionConfirmed" : 
+        return /* TransactionConfirmed */Block.__(34, [decode$16(raw)]);
     case "VentureCreated" : 
         return /* VentureCreated */Block.__(0, [decode(raw)]);
     default:
@@ -1381,6 +1437,7 @@ exports.AccountKeyChainIdentified = AccountKeyChainIdentified;
 exports.AccountKeyChainActivated = AccountKeyChainActivated;
 exports.IncomeAddressExposed = IncomeAddressExposed;
 exports.IncomeDetected = IncomeDetected;
+exports.Transaction = Transaction;
 exports.BadData = BadData;
 exports.makePartnerProposed = makePartnerProposed;
 exports.makePartnerRemovalProposed = makePartnerRemovalProposed;
@@ -1395,10 +1452,10 @@ exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;
 exports.makePayoutEndorsed = makePayoutEndorsed;
 exports.makePayoutRejected = makePayoutRejected;
-exports.encode = encode$16;
+exports.encode = encode$17;
 exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;
-exports.decode = decode$16;
+exports.decode = decode$17;
 exports.getIncomeAddressExposedExn = getIncomeAddressExposedExn;
 exports.getAccountKeyChainIdentifiedExn = getAccountKeyChainIdentifiedExn;
 exports.getAccountKeyChainActivatedExn = getAccountKeyChainActivatedExn;

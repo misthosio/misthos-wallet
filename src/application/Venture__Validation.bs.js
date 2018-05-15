@@ -443,13 +443,13 @@ function apply(param, state) {
         var newrecord$14 = Caml_array.caml_array_dup(newrecord);
         newrecord$14[/* accountKeyChains */24] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], newrecord[/* accountKeyChains */24]);
         return newrecord$14;
-    case 25 : 
-    case 26 : 
-    case 27 : 
-    case 28 : 
+    case 2 : 
+    case 6 : 
+    case 10 : 
+    case 14 : 
+    case 18 : 
+    case 22 : 
     case 31 : 
-    case 32 : 
-    case 33 : 
         return newrecord;
     default:
       return newrecord;
@@ -1095,6 +1095,10 @@ function validateEvent(param) {
             return validateIncomeAddressExposed(partial_arg$9, param, param$1);
           });
     case 33 : 
+        return (function (_, _$1) {
+            return /* Ok */0;
+          });
+    case 34 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });

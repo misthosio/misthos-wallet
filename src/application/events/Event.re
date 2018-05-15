@@ -458,6 +458,36 @@ module IncomeDetected = {
     };
 };
 
+module Transaction = {
+  module Confirmed = {
+    type t = {
+      txId: string,
+      blockHeight: float,
+      unixTime: float,
+    };
+    let make = (~txId, ~blockHeight, ~unixTime) => {
+      txId,
+      blockHeight,
+      unixTime,
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("TransactionConfirmed")),
+          ("txId", string(event.txId)),
+          ("blockHeight", Utils.encodeFloat(event.blockHeight)),
+          ("unixTime", Utils.encodeFloat(event.unixTime)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        txId: raw |> field("txId", string),
+        blockHeight: raw |> field("blockHeight", Utils.decodeFloat),
+        unixTime: raw |> field("unixTime", Utils.decodeFloat),
+      };
+  };
+};
+
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposed.t)
@@ -492,7 +522,8 @@ type t =
   | AccountKeyChainIdentified(AccountKeyChainIdentified.t)
   | AccountKeyChainActivated(AccountKeyChainActivated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t)
-  | IncomeDetected(IncomeDetected.t);
+  | IncomeDetected(IncomeDetected.t)
+  | TransactionConfirmed(Transaction.Confirmed.t);
 
 exception BadData(string);
 
@@ -684,7 +715,8 @@ let encode =
     AccountKeyChainIdentified.encode(event)
   | AccountKeyChainActivated(event) => AccountKeyChainActivated.encode(event)
   | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event)
-  | IncomeDetected(event) => IncomeDetected.encode(event);
+  | IncomeDetected(event) => IncomeDetected.encode(event)
+  | TransactionConfirmed(event) => Transaction.Confirmed.encode(event);
 
 let isSystemEvent =
   fun
@@ -759,6 +791,8 @@ let decode = raw => {
   | "IncomeAddressExposed" =>
     IncomeAddressExposed(IncomeAddressExposed.decode(raw))
   | "IncomeDetected" => IncomeDetected(IncomeDetected.decode(raw))
+  | "TransactionConfirmed" =>
+    TransactionConfirmed(Transaction.Confirmed.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };
