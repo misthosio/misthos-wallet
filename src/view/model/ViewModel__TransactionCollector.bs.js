@@ -3,6 +3,7 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
 
@@ -12,6 +13,44 @@ function make() {
           /* confirmedTxs : [] */0,
           /* unconfirmedTxs : [] */0,
           /* network : Regtest */0
+        ];
+}
+
+function mapConfirmation(param, state) {
+  var unconfirmedTxs = state[/* unconfirmedTxs */2];
+  var unixTime = param[/* unixTime */2];
+  var txId = param[/* txId */0];
+  var newTxs = Belt_List.keepMap(unconfirmedTxs, (function (param) {
+          if (param.tag) {
+            if (param[0] === txId) {
+              return /* Some */[/* ConfirmedPayout */Block.__(1, [
+                          param[1],
+                          new Date(unixTime * 1000)
+                        ])];
+            } else {
+              return /* None */0;
+            }
+          } else if (param[0] === txId) {
+            return /* Some */[/* ConfirmedIncome */Block.__(0, [
+                        param[1],
+                        new Date(unixTime * 1000)
+                      ])];
+          } else {
+            return /* None */0;
+          }
+        }));
+  var newUnconf = Belt_List.keep(unconfirmedTxs, (function (param) {
+          if (param[0] === txId) {
+            return false;
+          } else {
+            return true;
+          }
+        }));
+  return /* record */[
+          /* payoutProcesses */state[/* payoutProcesses */0],
+          /* confirmedTxs */Belt_List.concat(newTxs, state[/* confirmedTxs */1]),
+          /* unconfirmedTxs */newUnconf,
+          /* network */state[/* network */3]
         ];
 }
 
@@ -48,20 +87,27 @@ function apply($$event, state) {
                 /* network */state[/* network */3]
               ];
     case 33 : 
+        var match$2 = $$event[0];
         return /* record */[
                 /* payoutProcesses */state[/* payoutProcesses */0],
                 /* confirmedTxs */state[/* confirmedTxs */1],
                 /* unconfirmedTxs : :: */[
-                  /* UnconfirmedIncome */Block.__(0, [$$event[0][/* amount */4]]),
+                  /* UnconfirmedIncome */Block.__(0, [
+                      match$2[/* txId */2],
+                      match$2[/* amount */4]
+                    ]),
                   state[/* unconfirmedTxs */2]
                 ],
                 /* network */state[/* network */3]
               ];
+    case 34 : 
+        return mapConfirmation($$event[0], state);
     default:
       return state;
   }
 }
 
 exports.make = make;
+exports.mapConfirmation = mapConfirmation;
 exports.apply = apply;
 /* PrimitiveTypes Not a pure module */

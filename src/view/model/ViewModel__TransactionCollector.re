@@ -7,7 +7,7 @@ type confirmedTx =
   | ConfirmedPayout(BTC.t, Js.Date.t);
 
 type unconfirmedTx =
-  | UnconfirmedIncome(BTC.t)
+  | UnconfirmedIncome(string, BTC.t)
   | UnconfirmedPayout(string, BTC.t);
 
 type t = {
@@ -24,12 +24,49 @@ let make = () => {
   payoutProcesses: ProcessId.makeMap(),
 };
 
+let mapConfirmation =
+    (
+      {txId, unixTime}: Event.Transaction.Confirmed.t,
+      {unconfirmedTxs, confirmedTxs} as state,
+    ) => {
+  let newTxs =
+    unconfirmedTxs
+    |. List.keepMap(
+         fun
+         | UnconfirmedIncome(incomeTx, amount) when incomeTx == txId =>
+           Some(
+             ConfirmedIncome(amount, Js.Date.fromFloat(unixTime *. 1000.)),
+           )
+         | UnconfirmedPayout(payoutTx, amount) when payoutTx == txId =>
+           Some(
+             ConfirmedPayout(amount, Js.Date.fromFloat(unixTime *. 1000.)),
+           )
+         | _ => None,
+       );
+  let newUnconf =
+    unconfirmedTxs
+    |. List.keep(
+         fun
+         | UnconfirmedIncome(incomeTx, _) when incomeTx == txId => false
+         | UnconfirmedPayout(payoutTx, _) when payoutTx == txId => false
+         | _ => true,
+       );
+  {
+    ...state,
+    unconfirmedTxs: newUnconf,
+    confirmedTxs: newTxs |. List.concat(confirmedTxs),
+  };
+};
+
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
-  | IncomeDetected({amount}) => {
+  | IncomeDetected({txId, amount}) => {
       ...state,
-      unconfirmedTxs: [UnconfirmedIncome(amount), ...state.unconfirmedTxs],
+      unconfirmedTxs: [
+        UnconfirmedIncome(txId, amount),
+        ...state.unconfirmedTxs,
+      ],
     }
   | PayoutProposed({data: {payoutTx}, processId}) => {
       ...state,
@@ -48,5 +85,6 @@ let apply = (event: Event.t, state) =>
         ...state.unconfirmedTxs,
       ],
     };
+  | TransactionConfirmed(event) => state |> mapConfirmation(event)
   | _ => state
   };

@@ -172,9 +172,11 @@ let make =
                            ++ BTC.format(amount)
                            ++ "btc",
                          )
-                       | UnconfirmedIncome(amount) =>
+                       | UnconfirmedIncome(txId, amount) =>
                          text(
-                           "Unconfirmed income: "
+                           "Unconfirmed Income: '"
+                           ++ txId
+                           ++ "' - "
                            ++ BTC.format(amount)
                            ++ "btc",
                          )
@@ -195,7 +197,14 @@ let make =
                            ++ BTC.format(amount)
                            ++ "btc",
                          )
-                       | _ => ReasonReact.null
+                       | ConfirmedPayout(amount, date) =>
+                         text(
+                           "INCOME: "
+                           ++ Js.Date.toString(date)
+                           ++ " - "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
                        }
                      )
                    </li>

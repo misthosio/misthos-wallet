@@ -75,13 +75,13 @@ function make(initialViewModel, session, commands, _) {
               var unconfirmed = match[1];
               var transactions = $$Array.of_list(List.append(List.mapi((function (iter, tx) {
                               var tmp;
-                              tmp = tx.tag ? Utils.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("Unconfirmed income: " + (BTC.format(tx[0]) + "btc"));
+                              tmp = tx.tag ? Utils.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("Unconfirmed Income: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc"))));
                               return React.createElement("li", {
                                           key: String(iter)
                                         }, tmp);
                             }), unconfirmed), List.mapi((function (iter, tx) {
                               var tmp;
-                              tmp = tx.tag ? null : Utils.text("INCOME: " + (tx[1].toString() + (" - " + (BTC.format(tx[0]) + "btc"))));
+                              tmp = tx.tag ? Utils.text("INCOME: " + (tx[1].toString() + (" - " + (BTC.format(tx[0]) + "btc")))) : Utils.text("INCOME: " + (tx[1].toString() + (" - " + (BTC.format(tx[0]) + "btc"))));
                               return React.createElement("li", {
                                           key: String(iter + List.length(unconfirmed) | 0)
                                         }, tmp);
