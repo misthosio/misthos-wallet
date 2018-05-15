@@ -1,7 +1,5 @@
 open PrimitiveTypes;
 
-open WalletTypes;
-
 let text = Utils.text;
 
 type state = {
@@ -13,12 +11,17 @@ type state = {
 type action =
   | EndorsePartner(ProcessId.t)
   | EndorsePartnerRemoval(ProcessId.t)
-  | GetIncomeAddress
   | ProposePayout(list((string, BTC.t)))
   | RejectPayout(ProcessId.t)
   | EndorsePayout(ProcessId.t);
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
+
+module Styles = {
+  open Css;
+  let flexSpaceBetween =
+    style([display(`flex), justifyContent(`spaceBetween)]);
+};
 
 let make =
     (
@@ -47,9 +50,6 @@ let make =
       ReasonReact.NoUpdate;
     | (false, EndorsePartnerRemoval(processId)) =>
       commands.endorsePartnerRemoval(~processId);
-      ReasonReact.NoUpdate;
-    | (false, GetIncomeAddress) =>
-      commands.exposeIncomeAddress(~accountIdx=AccountIndex.default);
       ReasonReact.NoUpdate;
     | (false, ProposePayout(destinations)) =>
       commands.proposePayout(
@@ -143,13 +143,6 @@ let make =
                  )
                </li>
              ),
-        ),
-      );
-    let addresses =
-      ReasonReact.array(
-        Array.of_list(
-          ViewModel.incomeAddresses(state.viewModel)
-          |> List.map(address => <li key=address> (text(address)) </li>),
         ),
       );
     let transactions =
@@ -279,42 +272,40 @@ let make =
              ),
         ),
       );
-    <Body3
+    <Body4
       titles=["Partners", "Transactions"]
-      body1=MaterialUi.(
-              <Grid container=true>
-                <Grid item=true xs=V7>
-                  <MTypography variant=`Title>
-                    (ViewModel.ventureName(state.viewModel) |> Utils.text)
-                  </MTypography>
-                  <MTypography variant=`Display2>
-                    <b key="currentSpendable">
-                      (
-                        state.balance.currentSpendable
-                        |> BTC.format
-                        |> Utils.text
-                      )
-                    </b>
-                    ("BTC" |> Utils.text)
-                  </MTypography>
-                  <MTypography variant=`Subheading>
-                    <b key="reserved">
-                      (BTC.format(state.balance.reserved) |> Utils.text)
-                    </b>
-                    (" BTC IN RESERVE" |> Utils.text)
-                  </MTypography>
-                </Grid>
-                <Grid item=true xs=V5>
-                  <MFabButton variant=Aqua>
-                    ("RECEIVE" |> Utils.text)
-                  </MFabButton>
-                  <MFabButton variant=Orange>
-                    ("PAY OUT" |> Utils.text)
-                  </MFabButton>
-                </Grid>
-              </Grid>
-            )
+      body1=
+        <div>
+          <MTypography variant=`Title>
+            (ViewModel.ventureName(state.viewModel) |> Utils.text)
+          </MTypography>
+          <MTypography variant=`Display2>
+            <b key="currentSpendable">
+              (state.balance.currentSpendable |> BTC.format |> Utils.text)
+            </b>
+            ("BTC" |> Utils.text)
+          </MTypography>
+          <MTypography variant=`Subheading>
+            <b key="reserved">
+              (BTC.format(state.balance.reserved) |> Utils.text)
+            </b>
+            (" BTC IN RESERVE" |> Utils.text)
+          </MTypography>
+        </div>
       body2=
+        <div className=Styles.flexSpaceBetween>
+          <MFabButton
+            variant=Aqua
+            route=(Venture(ViewModel.ventureId(state.viewModel), Receive))>
+            ("RECEIVE" |> Utils.text)
+          </MFabButton>
+          <MFabButton
+            variant=Orange
+            route=(Venture(ViewModel.ventureId(state.viewModel), Payout))>
+            ("PAY OUT" |> Utils.text)
+          </MFabButton>
+        </div>
+      body3=
         <div>
           (
             switch (state.selfRemoved) {
@@ -342,14 +333,9 @@ let make =
             ("Add or Remove Partners" |> Utils.text)
           </LinkButton>
         </div>
-      body3=
+      body4=
         <div>
           <h3> (text("Wallet:")) </h3>
-          <h4> (text("Income Addresses:")) </h4>
-          <ul> addresses </ul>
-          <button onClick=(_e => send(GetIncomeAddress))>
-            (text("Get New Income Address"))
-          </button>
           <Payout
             onSend=(destinations => send(ProposePayout(destinations)))
           />

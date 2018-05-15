@@ -24,6 +24,12 @@ let make = (~session, ~updateSession, _children) => {
         <ManagePartners venture commands session />,
         onCloseModal(selected),
       ))
+    | (
+        LoggedIn(session),
+        Venture(selected, Receive),
+        VentureLoaded(_, venture, commands),
+      ) =>
+      Some((<Receive venture commands session />, onCloseModal(selected)))
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>

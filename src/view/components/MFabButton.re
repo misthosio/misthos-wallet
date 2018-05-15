@@ -1,7 +1,5 @@
 let component = ReasonReact.statelessComponent("MFabButton");
 
-[@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
-
 type variant =
   | Aqua
   | Orange;
@@ -32,11 +30,20 @@ module Styles = {
     ]);
 };
 
-let make = (~variant, ~onClick=?, children) => {
+let make = (~variant, ~route, children) => {
   ...component,
-  render: _self =>
+  render: _self => {
+    let href = Router.Config.routeToUrl(route);
     <MaterialUi.Button
-      className=(Styles.button(variant)) variant=`Fab ?onClick>
+      className=(Styles.button(variant))
+      variant=`Fab
+      onClick=(
+        event => {
+          ReactEventRe.Synthetic.preventDefault(event);
+          ReasonReact.Router.push(href);
+        }
+      )>
       children
-    </MaterialUi.Button>,
+    </MaterialUi.Button>;
+  },
 };

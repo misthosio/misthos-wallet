@@ -4,6 +4,7 @@
 var Css = require("bs-css/src/Css.js");
 var Theme = require("../Theme.bs.js");
 var Colors = require("../Colors.bs.js");
+var Router = require("../Router.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
@@ -47,7 +48,7 @@ function button(variant) {
 
 var Styles = /* module */[/* button */button];
 
-function make(variant, onClick, children) {
+function make(variant, route, children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -59,7 +60,11 @@ function make(variant, onClick, children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Button[/* make */7](/* Some */[button(variant)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Fab */3502759], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+              var href = Router.Config[/* routeToUrl */1](route);
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Button[/* make */7](/* Some */[button(variant)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Fab */3502759], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function ($$event) {
+                                  $$event.preventDefault();
+                                  return ReasonReact.Router[/* push */0](href);
+                                })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
