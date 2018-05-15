@@ -24,6 +24,7 @@ function mapConfirmation(param, state) {
           if (param.tag) {
             if (param[0] === txId) {
               return /* Some */[/* ConfirmedPayout */Block.__(1, [
+                          txId,
                           param[1],
                           new Date(unixTime * 1000)
                         ])];
@@ -32,6 +33,7 @@ function mapConfirmation(param, state) {
             }
           } else if (param[0] === txId) {
             return /* Some */[/* ConfirmedIncome */Block.__(0, [
+                        txId,
                         param[1],
                         new Date(unixTime * 1000)
                       ])];

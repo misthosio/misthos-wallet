@@ -3,8 +3,8 @@ open Belt;
 open PrimitiveTypes;
 
 type confirmedTx =
-  | ConfirmedIncome(BTC.t, Js.Date.t)
-  | ConfirmedPayout(BTC.t, Js.Date.t);
+  | ConfirmedIncome(string, BTC.t, Js.Date.t)
+  | ConfirmedPayout(string, BTC.t, Js.Date.t);
 
 type unconfirmedTx =
   | UnconfirmedIncome(string, BTC.t)
@@ -35,11 +35,19 @@ let mapConfirmation =
          fun
          | UnconfirmedIncome(incomeTx, amount) when incomeTx == txId =>
            Some(
-             ConfirmedIncome(amount, Js.Date.fromFloat(unixTime *. 1000.)),
+             ConfirmedIncome(
+               txId,
+               amount,
+               Js.Date.fromFloat(unixTime *. 1000.),
+             ),
            )
          | UnconfirmedPayout(payoutTx, amount) when payoutTx == txId =>
            Some(
-             ConfirmedPayout(amount, Js.Date.fromFloat(unixTime *. 1000.)),
+             ConfirmedPayout(
+               txId,
+               amount,
+               Js.Date.fromFloat(unixTime *. 1000.),
+             ),
            )
          | _ => None,
        );

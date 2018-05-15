@@ -81,7 +81,7 @@ function make(initialViewModel, session, commands, _) {
                                         }, tmp);
                             }), unconfirmed), List.mapi((function (iter, tx) {
                               var tmp;
-                              tmp = tx.tag ? Utils.text("INCOME: " + (tx[1].toString() + (" - " + (BTC.format(tx[0]) + "btc")))) : Utils.text("INCOME: " + (tx[1].toString() + (" - " + (BTC.format(tx[0]) + "btc"))));
+                              tmp = tx.tag ? Utils.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc"))));
                               return React.createElement("li", {
                                           key: String(iter + List.length(unconfirmed) | 0)
                                         }, tmp);
@@ -139,7 +139,7 @@ function make(initialViewModel, session, commands, _) {
                                         })
                                     }, Utils.text("Get New Income Address")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
                                             return Curry._1(send, /* ProposePayout */Block.__(2, [destinations]));
-                                          }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payouts:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, Utils.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
+                                          }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payout processes:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, Utils.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -167,7 +167,7 @@ function make(initialViewModel, session, commands, _) {
                   case 2 : 
                       Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], action[0], BTC.fromSatoshis(/* int64 */[
                                 /* hi */0,
-                                /* lo */5
+                                /* lo */100
                               ]));
                       return /* NoUpdate */0;
                   case 3 : 

@@ -55,7 +55,7 @@ let make =
       commands.proposePayout(
         ~accountIdx=WalletTypes.AccountIndex.default,
         ~destinations,
-        ~fee=BTC.fromSatoshis(5L),
+        ~fee=BTC.fromSatoshis(100L),
       );
       ReasonReact.NoUpdate;
     | (false, RejectPayout(processId)) =>
@@ -189,7 +189,7 @@ let make =
                    <li key=(string_of_int(iter + List.length(unconfirmed)))>
                      (
                        switch (tx) {
-                       | ConfirmedIncome(amount, date) =>
+                       | ConfirmedIncome(_, amount, date) =>
                          text(
                            "INCOME: "
                            ++ Js.Date.toString(date)
@@ -197,7 +197,7 @@ let make =
                            ++ BTC.format(amount)
                            ++ "btc",
                          )
-                       | ConfirmedPayout(amount, date) =>
+                       | ConfirmedPayout(_, amount, date) =>
                          text(
                            "INCOME: "
                            ++ Js.Date.toString(date)
@@ -338,7 +338,7 @@ let make =
           <Payout
             onSend=(destinations => send(ProposePayout(destinations)))
           />
-          <h4> (text("Payouts:")) </h4>
+          <h4> (text("Payout processes:")) </h4>
           <ul> payouts </ul>
           <h4> (text("Transactions:")) </h4>
           <ul> transactions </ul>
