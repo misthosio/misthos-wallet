@@ -412,26 +412,13 @@ module IncomeDetected = {
     txId: string,
     txOutputN: int,
     amount: BTC.t,
-    blockHeight: float,
-    unixTime: float,
   };
-  let make =
-      (
-        ~txOutputN,
-        ~coordinates,
-        ~address,
-        ~txId,
-        ~amount,
-        ~blockHeight,
-        ~unixTime,
-      ) => {
+  let make = (~txOutputN, ~coordinates, ~address, ~txId, ~amount) => {
     coordinates,
     address,
     txId,
     txOutputN,
     amount,
-    blockHeight,
-    unixTime,
   };
   let encode = event =>
     Json.Encode.(
@@ -442,8 +429,6 @@ module IncomeDetected = {
         ("txOutputN", int(event.txOutputN)),
         ("coordinates", Address.Coordinates.encode(event.coordinates)),
         ("amount", BTC.encode(event.amount)),
-        ("blockHeight", Utils.encodeFloat(event.blockHeight)),
-        ("unixTime", Utils.encodeFloat(event.unixTime)),
       ])
     );
   let decode = raw =>
@@ -453,8 +438,6 @@ module IncomeDetected = {
       amount: raw |> field("amount", BTC.decode),
       txOutputN: raw |> field("txOutputN", int),
       coordinates: raw |> field("coordinates", Address.Coordinates.decode),
-      blockHeight: raw |> field("blockHeight", Utils.decodeFloat),
-      unixTime: raw |> field("unixTime", Utils.decodeFloat),
     };
 };
 
@@ -729,6 +712,7 @@ let isSystemEvent =
   | AccountKeyChainIdentified(_)
   | IncomeAddressExposed(_)
   | IncomeDetected(_)
+  | TransactionConfirmed(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_) => true

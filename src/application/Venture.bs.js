@@ -422,16 +422,21 @@ function exec$1(newItems, venture) {
 
 var SynchronizeLogs = /* module */[/* exec */exec$1];
 
-function exec$2(incomeEvents, venture) {
+function exec$2(incomeEvents, txConfs, venture) {
   logMessage("Synchronizing wallet");
+  var __x = List.fold_left((function (p, $$event) {
+          return p.then((function (param) {
+                        return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(33, [$$event]), param[0]);
+                      }));
+        }), Promise.resolve(/* tuple */[
+            venture,
+            /* array */[]
+          ]), incomeEvents);
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
-                                  return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(33, [$$event]), param[0]);
+                                  return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(34, [$$event]), param[0]);
                                 }));
-                  }), Promise.resolve(/* tuple */[
-                      venture,
-                      /* array */[]
-                    ]), incomeEvents).then((function (eta) {
+                  }), __x, txConfs).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
                 return Promise.resolve(/* Ok */[

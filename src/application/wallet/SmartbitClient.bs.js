@@ -77,9 +77,13 @@ function getUTXOs(config, addresses) {
 }
 
 function getTransactionInfo(config, transactions) {
-  return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/tx/" + Belt_SetString.reduce(transactions, "", (function (res, a) {
-                          return a + ("," + res);
-                        }))))], decodeTransactions, /* [] */0);
+  if (Belt_SetString.isEmpty(transactions)) {
+    return Promise.resolve(/* [] */0);
+  } else {
+    return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/tx/" + Belt_SetString.reduce(transactions, "", (function (res, a) {
+                            return a + ("," + res);
+                          }))))], decodeTransactions, /* [] */0);
+  }
 }
 
 function broadcastTransaction(config, transaction) {

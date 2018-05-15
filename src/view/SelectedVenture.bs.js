@@ -75,7 +75,7 @@ function make(initialViewModel, session, commands, _) {
               var unconfirmed = match[1];
               var transactions = $$Array.of_list(List.append(List.mapi((function (iter, tx) {
                               var tmp;
-                              tmp = tx.tag ? Utils.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : null;
+                              tmp = tx.tag ? Utils.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("Unconfirmed income: " + (BTC.format(tx[0]) + "btc"));
                               return React.createElement("li", {
                                           key: String(iter)
                                         }, tmp);

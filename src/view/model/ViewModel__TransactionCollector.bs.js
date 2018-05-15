@@ -48,17 +48,13 @@ function apply($$event, state) {
                 /* network */state[/* network */3]
               ];
     case 33 : 
-        var match$2 = $$event[0];
         return /* record */[
                 /* payoutProcesses */state[/* payoutProcesses */0],
-                /* confirmedTxs : :: */[
-                  /* ConfirmedIncome */Block.__(0, [
-                      match$2[/* amount */4],
-                      new Date(match$2[/* unixTime */6] * 1000)
-                    ]),
-                  state[/* confirmedTxs */1]
+                /* confirmedTxs */state[/* confirmedTxs */1],
+                /* unconfirmedTxs : :: */[
+                  /* UnconfirmedIncome */Block.__(0, [$$event[0][/* amount */4]]),
+                  state[/* unconfirmedTxs */2]
                 ],
-                /* unconfirmedTxs */state[/* unconfirmedTxs */2],
                 /* network */state[/* network */3]
               ];
     default:

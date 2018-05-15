@@ -336,7 +336,7 @@ module Cmd = {
   module SynchronizeWallet = {
     type result =
       | Ok(t, array(EventLog.item));
-    let exec = (incomeEvents, venture) => {
+    let exec = (incomeEvents, txConfs, venture) => {
       logMessage("Synchronizing wallet");
       Js.Promise.(
         incomeEvents
@@ -352,6 +352,20 @@ module Cmd = {
                        )
                   ),
              (venture, [||]) |> resolve,
+           )
+        |> List.fold_left(
+             (p, event) =>
+               p
+               |> then_(((v, collector)) =>
+                    v
+                    |> apply(
+                         ~systemEvent=true,
+                         ~collector,
+                         TransactionConfirmed(event),
+                       )
+                  ),
+             _,
+             txConfs,
            )
         |> then_(persist)
         |> then_(((venture, collector)) =>

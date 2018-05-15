@@ -172,7 +172,12 @@ let make =
                            ++ BTC.format(amount)
                            ++ "btc",
                          )
-                       | _ => ReasonReact.null
+                       | UnconfirmedIncome(amount) =>
+                         text(
+                           "Unconfirmed income: "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
                        }
                      )
                    </li>

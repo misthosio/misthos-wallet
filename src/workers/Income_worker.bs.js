@@ -11,12 +11,12 @@ var Venture = require("../application/Venture.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var AddressCollector = require("../application/wallet/AddressCollector.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
+var TransactionCollector = require("../application/wallet/TransactionCollector.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
@@ -34,42 +34,36 @@ function logMessage(msg) {
 }
 
 function scanTransactions(param) {
-  var txIds = param[1];
+  var transactions = param[1];
   var addresses = param[0];
   return Network.transactionInputs(addresses[/* network */0])(addresses[/* exposedAddresses */2]).then((function (utxos) {
-                return Promise.resolve(/* tuple */[
-                            addresses[/* network */0],
-                            txIds,
-                            utxos
-                          ]);
+                var __x = Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */1], Belt_List.toArray(Belt_List.mapU(utxos, (function (param) {
+                                return param[/* txId */0];
+                              }))));
+                return Curry._1(Network.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(__x, transactions[/* confirmedTransactions */2])).then((function (txInfos) {
+                              return Promise.resolve(/* tuple */[
+                                          utxos,
+                                          txInfos,
+                                          transactions
+                                        ]);
+                            }));
               }));
 }
 
 var findAddressesAndTxIds = Curry._2(EventLog.reduce, (function (param, param$1) {
         var $$event = param$1[/* event */0];
-        var txIds = param[1];
-        var addresses = AddressCollector.apply($$event, param[0]);
-        if ($$event.tag === 33) {
-          var match = $$event[0];
-          return /* tuple */[
-                  addresses,
-                  Belt_SetString.add(txIds, match[/* txId */2] + String(match[/* txOutputN */3]))
-                ];
-        } else {
-          return /* tuple */[
-                  addresses,
-                  txIds
-                ];
-        }
+        return /* tuple */[
+                AddressCollector.apply($$event, param[0]),
+                TransactionCollector.apply($$event, param[1])
+              ];
       }), /* tuple */[
       AddressCollector.make(/* () */0),
-      Belt_SetString.empty
+      TransactionCollector.make(/* () */0)
     ]);
 
-function filterTransactions(knownTxs, utxos) {
+function filterUTXOs(knownTxs, utxos) {
   return Belt_List.keepMapU(utxos, (function (utxo) {
-                var txOutId = utxo[/* txId */0] + String(utxo[/* txOutputN */1]);
-                var match = Belt_SetString.has(knownTxs, txOutId);
+                var match = Belt_SetString.has(knownTxs, utxo[/* txId */0]);
                 if (match) {
                   return /* None */0;
                 } else {
@@ -78,35 +72,36 @@ function filterTransactions(knownTxs, utxos) {
               }));
 }
 
-function getTransactionInfo(network, utxos) {
-  return Curry._1(Network.transactionInfo(network), Belt_SetString.fromArray(Belt_List.toArray(Belt_List.map(utxos, (function (param) {
-                              return param[/* txId */0];
-                            }))))).then((function (infos) {
-                return Promise.resolve(/* tuple */[
-                            infos,
-                            utxos
-                          ]);
-              }));
-}
-
 function detectIncomeFromVenture(ventureId) {
   logMessage("Detecting income for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                    return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
-                  })).then((function (param) {
-                  return getTransactionInfo(param[0], filterTransactions(param[1], param[2]));
+                  return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
                 })).then((function (param) {
-                var txInfos = param[0];
-                var events = Belt_List.mapU(param[1], (function (utxo) {
-                        var transaction = Js_option.getExn(Belt_List.getByU(txInfos, (function (param) {
-                                    return param[/* txId */0] === utxo[/* txId */0];
-                                  })));
-                        return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3], transaction[/* blockHeight */1], transaction[/* unixTime */2]);
+                var txInfos = param[1];
+                var utxos = filterUTXOs(param[2][/* transactionsOfInterest */1], param[0]);
+                var events = Belt_List.mapU(utxos, (function (utxo) {
+                        return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
                       }));
-                return Promise.resolve(events ? (postMessage(VentureWorkerMessage.encodeIncoming(/* IncomeDetected */Block.__(14, [
-                                          ventureId,
-                                          events
-                                        ]))), /* () */0) : /* () */0);
+                var tmp;
+                var exit = 0;
+                if (events || txInfos) {
+                  exit = 1;
+                } else {
+                  tmp = /* () */0;
+                }
+                if (exit === 1) {
+                  var msg_002 = Belt_List.mapU(txInfos, (function (param) {
+                          return Curry._3(Event.Transaction[/* Confirmed */0][/* make */0], param[/* txId */0], param[/* blockHeight */1], param[/* unixTime */2]);
+                        }));
+                  var msg = /* SyncWallet */Block.__(15, [
+                      ventureId,
+                      events,
+                      msg_002
+                    ]);
+                  postMessage(VentureWorkerMessage.encodeIncoming(msg));
+                  tmp = /* () */0;
+                }
+                return Promise.resolve(tmp);
               }));
 }
 
@@ -166,8 +161,7 @@ exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.scanTransactions = scanTransactions;
 exports.findAddressesAndTxIds = findAddressesAndTxIds;
-exports.filterTransactions = filterTransactions;
-exports.getTransactionInfo = getTransactionInfo;
+exports.filterUTXOs = filterUTXOs;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
 exports.detectIncomeFromAll = detectIncomeFromAll;
 exports.fiveSecondsInMilliseconds = fiveSecondsInMilliseconds;

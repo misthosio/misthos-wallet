@@ -27,12 +27,9 @@ let make = () => {
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
-  | IncomeDetected({amount, unixTime}) => {
+  | IncomeDetected({amount}) => {
       ...state,
-      confirmedTxs: [
-        ConfirmedIncome(amount, Js.Date.fromFloat(unixTime *. 1000.)),
-        ...state.confirmedTxs,
-      ],
+      unconfirmedTxs: [UnconfirmedIncome(amount), ...state.unconfirmedTxs],
     }
   | PayoutProposed({data: {payoutTx}, processId}) => {
       ...state,

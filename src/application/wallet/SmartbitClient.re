@@ -75,16 +75,22 @@ let getUTXOs = (config, addresses) =>
   );
 
 let getTransactionInfo = (config, transactions) =>
-  fetchAll(
-    Some(
-      "https://"
-      ++ config.subdomain
-      ++ ".smartbit.com.au/v1/blockchain/tx/"
-      ++ Belt.Set.String.reduce(transactions, "", (res, a) => a ++ "," ++ res),
-    ),
-    decodeTransactions,
-    [],
-  );
+  if (transactions |> Belt.Set.String.isEmpty) {
+    Js.Promise.resolve([]);
+  } else {
+    fetchAll(
+      Some(
+        "https://"
+        ++ config.subdomain
+        ++ ".smartbit.com.au/v1/blockchain/tx/"
+        ++ Belt.Set.String.reduce(transactions, "", (res, a) =>
+             a ++ "," ++ res
+           ),
+      ),
+      decodeTransactions,
+      [],
+    );
+  };
 
 let broadcastTransaction = (config, transaction) => {
   let txHex = transaction |> Bitcoin.Transaction.toHex;
