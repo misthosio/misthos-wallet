@@ -7,7 +7,7 @@ let text = Utils.text;
 type state = {
   viewModel: ViewModel.t,
   selfRemoved: bool,
-  balance: ViewModel.Wallet.balance,
+  balance: ViewModel.balance,
 };
 
 type action =

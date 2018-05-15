@@ -2,7 +2,9 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
-module Wallet = ViewModel__WalletState;
+module BalanceCollector = ViewModel__BalanceCollector;
+
+type balance = BalanceCollector.balance;
 
 type partner = {
   userId,
@@ -41,7 +43,7 @@ type t = {
   partnerPolicy: Policy.t,
   incomeAddresses: list((accountIdx, list(string))),
   payouts: list(payout),
-  wallet: Wallet.t,
+  balanceCollector: BalanceCollector.t,
 };
 
 let make = () => {
@@ -55,7 +57,7 @@ let make = () => {
   partnerPolicy: Policy.unanimous,
   incomeAddresses: [],
   payouts: [],
-  wallet: Wallet.make(),
+  balanceCollector: BalanceCollector.make(),
 };
 
 let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
@@ -64,7 +66,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
   } else {
     let state = {
       ...state,
-      wallet: state.wallet |> Wallet.apply(event),
+      balanceCollector:
+        state.balanceCollector |> BalanceCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
@@ -214,7 +217,8 @@ let incomeAddresses = state =>
 let payouts = state => state.payouts;
 
 let balance = state =>
-  state.wallet.balance |> List.assoc(AccountIndex.default);
+  state.balanceCollector
+  |> BalanceCollector.accountBalance(AccountIndex.default);
 
 let isPartner = (id, {partners}) =>
   partners |> List.exists(({userId}: partner) => UserId.eq(userId, id));

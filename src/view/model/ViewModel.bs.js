@@ -4,12 +4,12 @@
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
-var Policy = require("../application/Policy.bs.js");
-var Address = require("../application/wallet/Address.bs.js");
-var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
+var Policy = require("../../application/Policy.bs.js");
+var Address = require("../../application/wallet/Address.bs.js");
+var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
-var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var ViewModel__WalletState = require("./ViewModel__WalletState.bs.js");
+var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
+var ViewModel__BalanceCollector = require("./ViewModel__BalanceCollector.bs.js");
 
 function make() {
   return /* record */[
@@ -23,7 +23,7 @@ function make() {
           /* partnerPolicy */Policy.unanimous,
           /* incomeAddresses : [] */0,
           /* payouts : [] */0,
-          /* wallet */ViewModel__WalletState.make(/* () */0)
+          /* balanceCollector */ViewModel__BalanceCollector.make(/* () */0)
         ];
 }
 
@@ -44,7 +44,7 @@ function apply(param, state) {
     var state_007 = /* partnerPolicy */state[/* partnerPolicy */7];
     var state_008 = /* incomeAddresses */state[/* incomeAddresses */8];
     var state_009 = /* payouts */state[/* payouts */9];
-    var state_010 = /* wallet */ViewModel__WalletState.apply($$event, state[/* wallet */10]);
+    var state_010 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */10]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -478,7 +478,7 @@ function payouts(state) {
 }
 
 function balance(state) {
-  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* wallet */10][/* balance */2]);
+  return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */10]);
 }
 
 function isPartner(id, param) {
@@ -487,11 +487,11 @@ function isPartner(id, param) {
               }), param[/* partners */3]);
 }
 
-var Wallet = 0;
+var BalanceCollector = 0;
 
 var ItemsSet = 0;
 
-exports.Wallet = Wallet;
+exports.BalanceCollector = BalanceCollector;
 exports.ItemsSet = ItemsSet;
 exports.make = make;
 exports.apply = apply;
