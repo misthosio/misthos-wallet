@@ -75,7 +75,13 @@ module Cmd: {
   module SynchronizeWallet: {
     type result =
       | Ok(t, array(EventLog.item));
-    let exec: (list(Event.IncomeDetected.t), t) => Js.Promise.t(result);
+    let exec:
+      (
+        list(Event.IncomeDetected.t),
+        list(Event.Transaction.Confirmed.t),
+        t
+      ) =>
+      Js.Promise.t(result);
   };
   module ProposePartner: {
     type result =

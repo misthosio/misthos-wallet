@@ -63,7 +63,7 @@ function summary(network, param) {
         ];
 }
 
-function txInputForChangeAddress(transactionId, accountKeyChains, network, param) {
+function txInputForChangeAddress(txId, accountKeyChains, network, param) {
   var txHex = param[/* txHex */0];
   return Utils.mapOption((function (param) {
                 var coordinates = param[1];
@@ -82,7 +82,7 @@ function txInputForChangeAddress(transactionId, accountKeyChains, network, param
                                 }
                               }), $$Array.to_list(tx.outs))));
                 return /* record */[
-                        /* txId */transactionId,
+                        /* txId */txId,
                         /* txOutputN */match[0],
                         /* address */address,
                         /* value */match[1],

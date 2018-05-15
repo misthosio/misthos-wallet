@@ -11,12 +11,6 @@ var BitcoindClient = require("../../src/application/wallet/BitcoindClient.bs.js"
 
 Helpers.enableHttpRequests(/* () */0);
 
-var config = /* record */[
-  /* bitcoindUrl */"http://localhost:18322",
-  /* rpcUser */"bitcoin",
-  /* rpcPassword */"bitcoin"
-];
-
 var keyA = Bitcoin.ECPair[/* makeRandomWithNetwork */0](BitcoinjsLib.networks.testnet);
 
 var keyB = Bitcoin.ECPair[/* makeRandomWithNetwork */0](BitcoinjsLib.networks.testnet);
@@ -41,7 +35,11 @@ describe("faucet", (function () {
                                         /* [] */0
                                       ]
                                     ]).then((function () {
-                                      return BitcoindClient.getUTXOs(config, /* :: */[
+                                      return BitcoindClient.getUTXOs(/* record */[
+                                                  /* bitcoindUrl */"http://localhost:18322",
+                                                  /* rpcUser */"bitcoin",
+                                                  /* rpcPassword */"bitcoin"
+                                                ], /* :: */[
                                                   keyA.getAddress(),
                                                   /* :: */[
                                                     keyB.getAddress(),
@@ -56,20 +54,6 @@ describe("faucet", (function () {
                                                         List.hd(utxos)[/* amount */3],
                                                         List.nth(utxos, 1)[/* amount */3]
                                                       ])));
-                                  }));
-                    }));
-      }));
-
-describe("BitcoindClient", (function () {
-        return Jest.testPromise(/* None */0, "listTransactions", (function () {
-                      return BitcoindClient.listTransactions(config, /* :: */[
-                                    keyA.getAddress(),
-                                    /* :: */[
-                                      keyB.getAddress(),
-                                      /* [] */0
-                                    ]
-                                  ], 2).then((function (transactions) {
-                                    return Promise.resolve(Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](List.length(transactions))));
                                   }));
                     }));
       }));

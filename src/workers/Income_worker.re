@@ -26,27 +26,36 @@ open PrimitiveTypes;
 
 let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
 
-let scanTransactions = ((addresses: AddressCollector.t, txIds)) =>
+let scanTransactions =
+    ((addresses: AddressCollector.t, transactions: TransactionCollector.t)) =>
   Js.Promise.(
     addresses.exposedAddresses
     |> Network.transactionInputs(addresses.network)
-    |> then_(utxos => (txIds, utxos) |> resolve)
+    |> then_(utxos =>
+         utxos
+         |. List.mapU((. {txId}: Network.txInput) => txId)
+         |> List.toArray
+         |> Set.String.mergeMany(transactions.transactionsOfInterest)
+         |> Set.String.diff(_, transactions.confirmedTransactions)
+         |> Network.transactionInfo(addresses.network)
+         |> then_(txInfos => (utxos, txInfos, transactions) |> resolve)
+       )
   );
 
 let findAddressesAndTxIds =
   EventLog.reduce(
-    ((addresses, txIds), {event}: EventLog.item) => {
-      let addresses = addresses |> AddressCollector.apply(event);
-      switch (event) {
-      | Event.IncomeDetected({txId, txOutputN}) => (
-          addresses,
-          txIds |. Belt.Set.String.add(txId ++ string_of_int(txOutputN)),
-        )
-      | _ => (addresses, txIds)
-      };
-    },
-    (AddressCollector.make(), Belt.Set.String.empty),
+    ((addresses, transactions), {event}: EventLog.item) => (
+      addresses |> AddressCollector.apply(event),
+      transactions |> TransactionCollector.apply(event),
+    ),
+    (AddressCollector.make(), TransactionCollector.make()),
   );
+
+let filterUTXOs = (knownTxs, utxos) =>
+  utxos
+  |. List.keepMapU((. {txId} as utxo: Network.txInput) =>
+       knownTxs |. Set.String.has(txId) ? None : Some(utxo)
+     );
 
 let detectIncomeFromVenture = ventureId => {
   logMessage(
@@ -57,29 +66,37 @@ let detectIncomeFromVenture = ventureId => {
     |> then_(eventLog =>
          eventLog |> findAddressesAndTxIds |> scanTransactions
        )
-    |> then_(((knownTxs, utxos)) => {
+    |> then_(((utxos, txInfos, transactions: TransactionCollector.t)) => {
+         let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
            utxos
-           |. List.keepMapU((. utxo: Network.txInput) => {
-                let txOutId = utxo.txId ++ string_of_int(utxo.txOutputN);
-                knownTxs |. Set.String.has(txOutId) ?
-                  None :
-                  Some(
-                    Event.IncomeDetected.make(
-                      ~address=utxo.address,
-                      ~coordinates=utxo.coordinates,
-                      ~txId=utxo.txId,
-                      ~amount=utxo.value,
-                      ~txOutputN=utxo.txOutputN,
-                    ),
-                  );
-              });
+           |. List.mapU((. utxo: Network.txInput) =>
+                Event.IncomeDetected.make(
+                  ~address=utxo.address,
+                  ~coordinates=utxo.coordinates,
+                  ~txId=utxo.txId,
+                  ~amount=utxo.value,
+                  ~txOutputN=utxo.txOutputN,
+                )
+              );
          (
-           switch (events) {
-           | [] => ()
+           switch (events, txInfos) {
+           | ([], []) => ()
            | _ =>
              postMessage(
-               VentureWorkerMessage.IncomeDetected(ventureId, events),
+               VentureWorkerMessage.SyncWallet(
+                 ventureId,
+                 events,
+                 txInfos
+                 |. List.mapU(
+                      (. {txId, blockHeight, unixTime}: WalletTypes.txInfo) =>
+                      Event.Transaction.Confirmed.make(
+                        ~txId,
+                        ~blockHeight,
+                        ~unixTime,
+                      )
+                    ),
+               ),
              )
            }
          )
@@ -111,9 +128,9 @@ let detectIncomeFromAll = () =>
        })
   );
 
-let fiveSecondsInMilliseconds = 5000;
+let tenSecondsInMilliseconds = 10000;
 
-let syncInterval = fiveSecondsInMilliseconds;
+let syncInterval = tenSecondsInMilliseconds;
 
 let handleMsg =
   fun

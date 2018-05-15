@@ -13,7 +13,6 @@ type t = {
   network: Network.t,
   accountKeyChains: AccountKeyChain.Collection.t,
   balance: list((accountIdx, balance)),
-  addressToAccountLookup: list((string, accountIdx)),
   payoutProcesses: list((ProcessId.t, (accountIdx, PayoutTransaction.t))),
 };
 
@@ -21,9 +20,11 @@ let make = () => {
   network: Network.Testnet,
   accountKeyChains: [],
   balance: [],
-  addressToAccountLookup: [],
   payoutProcesses: [],
 };
+
+let accountBalance = (accountIdx, {balance}) =>
+  balance |> List.assoc(accountIdx);
 
 let apply = (event: Event.t, state) =>
   switch (event) {
@@ -41,17 +42,8 @@ let apply = (event: Event.t, state) =>
       accountKeyChains:
         state.accountKeyChains |> AccountKeyChain.Collection.add(keyChain),
     }
-  | IncomeAddressExposed(({coordinates, address}: IncomeAddressExposed.t)) =>
+  | IncomeDetected({amount, coordinates}) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;
-    {
-      ...state,
-      addressToAccountLookup: [
-        (address, accountIdx),
-        ...state.addressToAccountLookup,
-      ],
-    };
-  | IncomeDetected({amount, address}) =>
-    let accountIdx = state.addressToAccountLookup |> List.assoc(address);
     let balance = state.balance |> List.assoc(accountIdx);
     {
       ...state,

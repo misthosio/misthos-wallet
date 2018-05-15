@@ -50,3 +50,7 @@ let mapOption = fn =>
   | None => None;
 
 let text = ReasonReact.string;
+
+let encodeFloat = Json.Encode.float;
+
+let decodeFloat = Json.Decode.float;

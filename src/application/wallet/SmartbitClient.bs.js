@@ -3,11 +3,12 @@
 
 var BTC = require("./BTC.bs.js");
 var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 
 function decodeUTXO(raw) {
   return /* record */[
@@ -31,6 +32,24 @@ function decodeUTXOs(raw) {
               }), raw);
 }
 
+function decodeTransaction(raw) {
+  return /* record */[
+          /* txId */Json_decode.field("txid", Json_decode.string, raw),
+          /* blockHeight */Json_decode.field("block", Json_decode.$$float, raw),
+          /* unixTime */Json_decode.field("time", Json_decode.$$float, raw)
+        ];
+}
+
+function decodeTransactions(raw) {
+  return Json_decode.withDefault(/* [] */0, (function (param) {
+                return Json_decode.field("transactions", (function (param) {
+                              return Json_decode.withDefault(/* [] */0, (function (param) {
+                                            return Json_decode.list(decodeTransaction, param);
+                                          }), param);
+                            }), param);
+              }), raw);
+}
+
 function decodeNextLink(raw) {
   return Json_decode.optional((function (param) {
                 return Json_decode.field("paging", (function (param) {
@@ -39,22 +58,32 @@ function decodeNextLink(raw) {
               }), raw);
 }
 
-function fetchAll(link, utxos) {
+function fetchAll(link, decoder, collector) {
   if (link) {
     return fetch(link[0]).then((function (prim) {
                     return prim.json();
                   })).then((function (res) {
-                  return fetchAll(decodeNextLink(res), List.append(decodeUTXOs(res), utxos));
+                  return fetchAll(decodeNextLink(res), decoder, List.append(Curry._1(decoder, res), collector));
                 }));
   } else {
-    return Promise.resolve(utxos);
+    return Promise.resolve(collector);
   }
 }
 
 function getUTXOs(config, addresses) {
   return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/address/" + (List.fold_left((function (res, a) {
                             return a + ("," + res);
-                          }), "", addresses) + "/unspent?limit=1000")))], /* [] */0);
+                          }), "", addresses) + "/unspent?limit=1000")))], decodeUTXOs, /* [] */0);
+}
+
+function getTransactionInfo(config, transactions) {
+  if (Belt_SetString.isEmpty(transactions)) {
+    return Promise.resolve(/* [] */0);
+  } else {
+    return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/tx/" + Belt_SetString.reduce(transactions, "", (function (res, a) {
+                            return a + ("," + res);
+                          }))))], decodeTransactions, /* [] */0);
+  }
 }
 
 function broadcastTransaction(config, transaction) {
@@ -82,29 +111,17 @@ function make(config, network) {
   var getUTXOs$1 = function (param) {
     return getUTXOs(config, param);
   };
+  var getTransactionInfo$1 = function (param) {
+    return getTransactionInfo(config, param);
+  };
   var broadcastTransaction$1 = function (param) {
     return broadcastTransaction(config, param);
   };
   return /* module */[
           /* network */network,
           /* getUTXOs */getUTXOs$1,
+          /* getTransactionInfo */getTransactionInfo$1,
           /* broadcastTransaction */broadcastTransaction$1
-        ];
-}
-
-function decodeTransaction(raw) {
-  return /* record */[
-          /* txId */Json_decode.field("txid", Json_decode.string, raw),
-          /* outputs */$$Array.to_list(Json_decode.field("outputs", (function (param) {
-                      return Json_decode.array((function (output) {
-                                    return /* record */[
-                                            /* address */Caml_array.caml_array_get(Json_decode.field("addresses", (function (param) {
-                                                        return Json_decode.array(Json_decode.string, param);
-                                                      }), output), 0),
-                                            /* amount */BTC.fromString(Json_decode.field("value", Json_decode.string, output))
-                                          ];
-                                  }), param);
-                    }), raw))
         ];
 }
 
@@ -119,10 +136,12 @@ exports.mainnetConfig = mainnetConfig;
 exports.float_ = float_;
 exports.decodeUTXO = decodeUTXO;
 exports.decodeUTXOs = decodeUTXOs;
+exports.decodeTransaction = decodeTransaction;
+exports.decodeTransactions = decodeTransactions;
 exports.decodeNextLink = decodeNextLink;
 exports.fetchAll = fetchAll;
 exports.getUTXOs = getUTXOs;
+exports.getTransactionInfo = getTransactionInfo;
 exports.broadcastTransaction = broadcastTransaction;
 exports.make = make;
-exports.decodeTransaction = decodeTransaction;
 /* BTC Not a pure module */

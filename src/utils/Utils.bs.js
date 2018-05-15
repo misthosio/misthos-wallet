@@ -7,6 +7,7 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Bitcoin = require("../ffi/Bitcoin.bs.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
+var Json_decode = require("bs-json/src/Json_decode.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 
 function bufToHex(param) {
@@ -74,6 +75,12 @@ function text(prim) {
   return prim;
 }
 
+function encodeFloat(prim) {
+  return prim;
+}
+
+var decodeFloat = Json_decode.$$float;
+
 exports.bufToHex = bufToHex;
 exports.bufFromHex = bufFromHex;
 exports.hexByteLength = hexByteLength;
@@ -88,4 +95,6 @@ exports.$great$great = $great$great;
 exports.printError = printError;
 exports.mapOption = mapOption;
 exports.text = text;
+exports.encodeFloat = encodeFloat;
+exports.decodeFloat = decodeFloat;
 /* bigi Not a pure module */

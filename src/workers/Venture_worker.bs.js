@@ -434,12 +434,12 @@ function exposeIncomeAddress(ventureId, accountIdx) {
     });
 }
 
-function incomeDetected(ventureId, events) {
-  logMessage("Handling 'IncomeDetected'");
+function syncWallet(ventureId, events, confs) {
+  logMessage("Handling 'SynchWallet'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
-                    return Curry._2(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, venture).then((function (param) {
+                    return Curry._3(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, confs, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
@@ -503,7 +503,7 @@ var Handle = /* module */[
   /* rejectPayout */rejectPayout,
   /* endorsePayout */endorsePayout,
   /* exposeIncomeAddress */exposeIncomeAddress,
-  /* incomeDetected */incomeDetected,
+  /* syncWallet */syncWallet,
   /* newItemsDetected */newItemsDetected,
   /* syncTabs */syncTabs
 ];
@@ -542,9 +542,9 @@ function handleMessage(param) {
     case 13 : 
         return exposeIncomeAddress(param[0], param[1]);
     case 14 : 
-        return incomeDetected(param[0], param[1]);
-    case 15 : 
         return newItemsDetected(param[0], param[1]);
+    case 15 : 
+        return syncWallet(param[0], param[1], param[2]);
     case 16 : 
         return syncTabs(param[0], param[1]);
     

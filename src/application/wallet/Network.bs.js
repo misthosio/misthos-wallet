@@ -113,6 +113,7 @@ function decodeInput(raw) {
 
 function Make(Client) {
   var network = Client[/* network */0];
+  var transactionInfo = Client[/* getTransactionInfo */2];
   var transactionInputs = function (addresses) {
     return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
                   return Promise.resolve(Belt_List.map(utxos, (function (param) {
@@ -130,9 +131,10 @@ function Make(Client) {
                                   })));
                 }));
   };
-  var broadcastTransaction = Client[/* broadcastTransaction */2];
+  var broadcastTransaction = Client[/* broadcastTransaction */3];
   return /* module */[
           /* network */network,
+          /* transactionInfo */transactionInfo,
           /* transactionInputs */transactionInputs,
           /* broadcastTransaction */broadcastTransaction
         ];
@@ -145,6 +147,8 @@ var Client = BitcoindClient.make(/* record */[
     ], BitcoinjsLib.networks.testnet);
 
 var network = Client[/* network */0];
+
+var transactionInfo = Client[/* getTransactionInfo */2];
 
 function transactionInputs(addresses) {
   return Curry._1(Client[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
@@ -164,10 +168,11 @@ function transactionInputs(addresses) {
               }));
 }
 
-var broadcastTransaction = Client[/* broadcastTransaction */2];
+var broadcastTransaction = Client[/* broadcastTransaction */3];
 
 var Regtest = /* module */[
   /* network */network,
+  /* transactionInfo */transactionInfo,
   /* transactionInputs */transactionInputs,
   /* broadcastTransaction */broadcastTransaction
 ];
@@ -175,6 +180,8 @@ var Regtest = /* module */[
 var Client$1 = SmartbitClient.make(SmartbitClient.testnetConfig, BitcoinjsLib.networks.testnet);
 
 var network$1 = Client$1[/* network */0];
+
+var transactionInfo$1 = Client$1[/* getTransactionInfo */2];
 
 function transactionInputs$1(addresses) {
   return Curry._1(Client$1[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
@@ -194,10 +201,11 @@ function transactionInputs$1(addresses) {
               }));
 }
 
-var broadcastTransaction$1 = Client$1[/* broadcastTransaction */2];
+var broadcastTransaction$1 = Client$1[/* broadcastTransaction */3];
 
 var Testnet = /* module */[
   /* network */network$1,
+  /* transactionInfo */transactionInfo$1,
   /* transactionInputs */transactionInputs$1,
   /* broadcastTransaction */broadcastTransaction$1
 ];
@@ -205,6 +213,8 @@ var Testnet = /* module */[
 var Client$2 = SmartbitClient.make(SmartbitClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
 
 var network$2 = Client$2[/* network */0];
+
+var transactionInfo$2 = Client$2[/* getTransactionInfo */2];
 
 function transactionInputs$2(addresses) {
   return Curry._1(Client$2[/* getUTXOs */1], Belt_List.fromArray(Belt_MapString.keysToArray(addresses))).then((function (utxos) {
@@ -224,10 +234,11 @@ function transactionInputs$2(addresses) {
               }));
 }
 
-var broadcastTransaction$2 = Client$2[/* broadcastTransaction */2];
+var broadcastTransaction$2 = Client$2[/* broadcastTransaction */3];
 
 var Mainnet = /* module */[
   /* network */network$2,
+  /* transactionInfo */transactionInfo$2,
   /* transactionInputs */transactionInputs$2,
   /* broadcastTransaction */broadcastTransaction$2
 ];
@@ -240,6 +251,18 @@ function transactionInputs$3(param) {
         return transactionInputs$1;
     case 2 : 
         return transactionInputs$2;
+    
+  }
+}
+
+function transactionInfo$3(param) {
+  switch (param) {
+    case 0 : 
+        return transactionInfo;
+    case 1 : 
+        return transactionInfo$1;
+    case 2 : 
+        return transactionInfo$2;
     
   }
 }
@@ -291,6 +314,7 @@ exports.Regtest = Regtest;
 exports.Testnet = Testnet;
 exports.Mainnet = Mainnet;
 exports.transactionInputs = transactionInputs$3;
+exports.transactionInfo = transactionInfo$3;
 exports.broadcastTransaction = broadcastTransaction$3;
 exports.bitcoinNetwork = bitcoinNetwork;
 exports.regtestIncomeAddress = regtestIncomeAddress;

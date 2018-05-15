@@ -150,14 +150,14 @@ let () =
                oneKeyChainWallet^
                |> Wallet.apply(
                     PayoutBroadcast(
-                      Payout.Broadcast.make(~processId, ~transactionId=txId),
+                      Payout.Broadcast.make(~processId, ~txId),
                     ),
                   );
              twoKeyChainWallet :=
                twoKeyChainWallet^
                |> Wallet.apply(
                     PayoutBroadcast(
-                      Payout.Broadcast.make(~processId, ~transactionId=txId),
+                      Payout.Broadcast.make(~processId, ~txId),
                     ),
                   );
              resolve();

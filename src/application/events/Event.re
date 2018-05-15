@@ -253,21 +253,21 @@ module Payout = {
   module Broadcast = {
     type t = {
       processId,
-      transactionId: string,
+      txId: string,
     };
-    let make = (~processId, ~transactionId) => {processId, transactionId};
+    let make = (~processId, ~txId) => {processId, txId};
     let encode = event =>
       Json.Encode.(
         object_([
           ("type", string("PayoutBroadcast")),
           ("processId", ProcessId.encode(event.processId)),
-          ("transactionId", string(event.transactionId)),
+          ("transactionId", string(event.txId)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         processId: raw |> field("processId", ProcessId.decode),
-        transactionId: raw |> field("transactionId", string),
+        txId: raw |> field("transactionId", string),
       };
   };
   module BroadcastDuplicate = {
@@ -441,6 +441,36 @@ module IncomeDetected = {
     };
 };
 
+module Transaction = {
+  module Confirmed = {
+    type t = {
+      txId: string,
+      blockHeight: float,
+      unixTime: float,
+    };
+    let make = (~txId, ~blockHeight, ~unixTime) => {
+      txId,
+      blockHeight,
+      unixTime,
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("TransactionConfirmed")),
+          ("txId", string(event.txId)),
+          ("blockHeight", Utils.encodeFloat(event.blockHeight)),
+          ("unixTime", Utils.encodeFloat(event.unixTime)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        txId: raw |> field("txId", string),
+        blockHeight: raw |> field("blockHeight", Utils.decodeFloat),
+        unixTime: raw |> field("unixTime", Utils.decodeFloat),
+      };
+  };
+};
+
 type t =
   | VentureCreated(VentureCreated.t)
   | PartnerProposed(Partner.Proposed.t)
@@ -475,7 +505,8 @@ type t =
   | AccountKeyChainIdentified(AccountKeyChainIdentified.t)
   | AccountKeyChainActivated(AccountKeyChainActivated.t)
   | IncomeAddressExposed(IncomeAddressExposed.t)
-  | IncomeDetected(IncomeDetected.t);
+  | IncomeDetected(IncomeDetected.t)
+  | TransactionConfirmed(Transaction.Confirmed.t);
 
 exception BadData(string);
 
@@ -667,7 +698,8 @@ let encode =
     AccountKeyChainIdentified.encode(event)
   | AccountKeyChainActivated(event) => AccountKeyChainActivated.encode(event)
   | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event)
-  | IncomeDetected(event) => IncomeDetected.encode(event);
+  | IncomeDetected(event) => IncomeDetected.encode(event)
+  | TransactionConfirmed(event) => Transaction.Confirmed.encode(event);
 
 let isSystemEvent =
   fun
@@ -680,6 +712,7 @@ let isSystemEvent =
   | AccountKeyChainIdentified(_)
   | IncomeAddressExposed(_)
   | IncomeDetected(_)
+  | TransactionConfirmed(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_) => true
@@ -742,6 +775,8 @@ let decode = raw => {
   | "IncomeAddressExposed" =>
     IncomeAddressExposed(IncomeAddressExposed.decode(raw))
   | "IncomeDetected" => IncomeDetected(IncomeDetected.decode(raw))
+  | "TransactionConfirmed" =>
+    TransactionConfirmed(Transaction.Confirmed.decode(raw))
   | _ => raise(UnknownEvent(raw))
   };
 };

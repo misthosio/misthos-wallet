@@ -19,8 +19,12 @@ type incoming =
   | RejectPayout(ventureId, processId)
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
-  | IncomeDetected(ventureId, list(Event.IncomeDetected.t))
   | NewItemsDetected(ventureId, array(EventLog.item))
+  | SyncWallet(
+      ventureId,
+      list(Event.IncomeDetected.t),
+      list(Event.Transaction.Confirmed.t),
+    )
   | SyncTabs(ventureId, array(EventLog.item));
 
 type encodedIncoming = Js.Json.t;
@@ -145,20 +149,24 @@ let encodeIncoming =
         ("accountIdx", AccountIndex.encode(accountIdx)),
       ])
     )
-  | IncomeDetected(ventureId, incomeEvents) =>
-    Json.Encode.(
-      object_([
-        ("type", string("IncomeDetected")),
-        ("ventureId", VentureId.encode(ventureId)),
-        ("incomeEvents", list(Event.IncomeDetected.encode, incomeEvents)),
-      ])
-    )
   | NewItemsDetected(ventureId, items) =>
     Json.Encode.(
       object_([
         ("type", string("NewItemsDetected")),
         ("ventureId", VentureId.encode(ventureId)),
         ("items", array(EventLog.encodeItem, items)),
+      ])
+    )
+  | SyncWallet(ventureId, incomeEvents, confs) =>
+    Json.Encode.(
+      object_([
+        ("type", string("SyncWallet")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("incomeEvents", list(Event.IncomeDetected.encode, incomeEvents)),
+        (
+          "transactionConfirmations",
+          list(Event.Transaction.Confirmed.encode, confs),
+        ),
       ])
     )
   | SyncTabs(ventureId, items) =>
@@ -236,14 +244,22 @@ let decodeIncoming = raw => {
     let accountIdx =
       raw |> Json.Decode.field("accountIdx", AccountIndex.decode);
     ExposeIncomeAddress(ventureId, accountIdx);
-  | "IncomeDetected" =>
+  | "SyncWallet" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let incomeEvents =
       raw
       |> Json.Decode.(
            field("incomeEvents", list(Event.IncomeDetected.decode))
          );
-    IncomeDetected(ventureId, incomeEvents);
+    let confs =
+      raw
+      |> Json.Decode.(
+           field(
+             "transactionConfirmations",
+             list(Event.Transaction.Confirmed.decode),
+           )
+         );
+    SyncWallet(ventureId, incomeEvents, confs);
   | "NewItemsDetected" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =

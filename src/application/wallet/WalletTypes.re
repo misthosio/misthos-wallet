@@ -6,14 +6,10 @@ type utxo = {
   confirmations: int,
 };
 
-type output = {
-  address: string,
-  amount: BTC.t,
-};
-
-type transaction = {
+type txInfo = {
   txId: string,
-  outputs: list(output),
+  blockHeight: float,
+  unixTime: float,
 };
 
 type broadcastResult =
@@ -24,6 +20,7 @@ type broadcastResult =
 module type NetworkClient = {
   let network: Bitcoin.Networks.t;
   let getUTXOs: list(string) => Js.Promise.t(list(utxo));
+  let getTransactionInfo: Belt.Set.String.t => Js.Promise.t(list(txInfo));
   let broadcastTransaction:
     Bitcoin.Transaction.t => Js.Promise.t(broadcastResult);
 };

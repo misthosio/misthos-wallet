@@ -7,7 +7,7 @@ let text = Utils.text;
 type state = {
   viewModel: ViewModel.t,
   selfRemoved: bool,
-  balance: ViewModel.Wallet.balance,
+  balance: ViewModel.balance,
 };
 
 type action =
@@ -55,7 +55,7 @@ let make =
       commands.proposePayout(
         ~accountIdx=WalletTypes.AccountIndex.default,
         ~destinations,
-        ~fee=BTC.fromSatoshis(5L),
+        ~fee=BTC.fromSatoshis(100L),
       );
       ReasonReact.NoUpdate;
     | (false, RejectPayout(processId)) =>
@@ -150,6 +150,67 @@ let make =
         Array.of_list(
           ViewModel.incomeAddresses(state.viewModel)
           |> List.map(address => <li key=address> (text(address)) </li>),
+        ),
+      );
+    let transactions =
+      ReasonReact.array(
+        Array.of_list(
+          {
+            let (confirmed, unconfirmed) =
+              state.viewModel |> ViewModel.transactions;
+            List.append(
+              unconfirmed
+              |> List.mapi((iter, tx: ViewModel.unconfirmedTx) =>
+                   <li key=(iter |> string_of_int)>
+                     (
+                       switch (tx) {
+                       | UnconfirmedPayout(txId, amount) =>
+                         text(
+                           "Unconfirmed Payout: '"
+                           ++ txId
+                           ++ "' - "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
+                       | UnconfirmedIncome(txId, amount) =>
+                         text(
+                           "Unconfirmed Income: '"
+                           ++ txId
+                           ++ "' - "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
+                       }
+                     )
+                   </li>
+                 ),
+              confirmed
+              |> List.mapi((iter, tx: ViewModel.confirmedTx) =>
+                   <li key=(string_of_int(iter + List.length(unconfirmed)))>
+                     (
+                       switch (tx) {
+                       | ConfirmedIncome(_, amount, date) =>
+                         text(
+                           "INCOME: "
+                           ++ Js.Date.toString(date)
+                           ++ " - "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
+                       | ConfirmedPayout(_, amount, date) =>
+                         text(
+                           "PAYOUT: "
+                           ++ Js.Date.toString(date)
+                           ++ " - "
+                           ++ BTC.format(amount)
+                           ++ "btc",
+                         )
+                       }
+                     )
+                   </li>
+                 ),
+            );
+          },
         ),
       );
     let payouts =
@@ -277,8 +338,10 @@ let make =
           <Payout
             onSend=(destinations => send(ProposePayout(destinations)))
           />
-          <h4> (text("Payouts:")) </h4>
+          <h4> (text("Payout processes:")) </h4>
           <ul> payouts </ul>
+          <h4> (text("Transactions:")) </h4>
+          <ul> transactions </ul>
         </div>
     />;
   },
