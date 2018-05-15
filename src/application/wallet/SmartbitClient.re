@@ -23,12 +23,28 @@ let decodeUTXOs = raw =>
     |> withDefault([], field("unspent", withDefault([], list(decodeUTXO))))
   );
 
+let decodeTransaction = raw =>
+  Json.Decode.{
+    txId: raw |> field("txid", string),
+    blockHeight: raw |> field("block", float_),
+    unixTime: raw |> field("time", float_),
+  };
+
+let decodeTransactions = raw =>
+  Json.Decode.(
+    raw
+    |> withDefault(
+         [],
+         field("transactions", withDefault([], list(decodeTransaction))),
+       )
+  );
+
 let decodeNextLink = raw =>
   Json.Decode.(
     raw |> optional(field("paging", field("next_link", string)))
   );
 
-let rec fetchAll = (link, utxos) =>
+let rec fetchAll = (link, decoder, collector) =>
   Js.Promise.(
     switch (link) {
     | Some(link) =>
@@ -37,10 +53,11 @@ let rec fetchAll = (link, utxos) =>
       |> then_(res =>
            fetchAll(
              decodeNextLink(res),
-             utxos |> List.append(decodeUTXOs(res)),
+             decoder,
+             collector |> List.append(decoder(res)),
            )
          )
-    | None => resolve(utxos)
+    | None => resolve(collector)
     }
   );
 
@@ -53,6 +70,19 @@ let getUTXOs = (config, addresses) =>
       ++ List.fold_left((res, a) => a ++ "," ++ res, "", addresses)
       ++ "/unspent?limit=1000",
     ),
+    decodeUTXOs,
+    [],
+  );
+
+let getTransactionInfo = (config, transactions) =>
+  fetchAll(
+    Some(
+      "https://"
+      ++ config.subdomain
+      ++ ".smartbit.com.au/v1/blockchain/tx/"
+      ++ Belt.Set.String.reduce(transactions, "", (res, a) => a ++ "," ++ res),
+    ),
+    decodeTransactions,
     [],
   );
 
@@ -95,5 +125,6 @@ let make = (config, network) : (module WalletTypes.NetworkClient) =>
    {
      let network = network;
      let getUTXOs = getUTXOs(config);
+     let getTransactionInfo = getTransactionInfo(config);
      let broadcastTransaction = broadcastTransaction(config);
    });

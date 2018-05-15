@@ -809,13 +809,15 @@ var IncomeAddressExposed = /* module */[
   /* decode */decode$14
 ];
 
-function make$9(txOutputN, coordinates, address, txId, amount) {
+function make$9(txOutputN, coordinates, address, txId, amount, blockHeight, unixTime) {
   return /* record */[
           /* address */address,
           /* coordinates */coordinates,
           /* txId */txId,
           /* txOutputN */txOutputN,
-          /* amount */amount
+          /* amount */amount,
+          /* blockHeight */blockHeight,
+          /* unixTime */unixTime
         ];
 }
 
@@ -850,7 +852,19 @@ function encode$15($$event) {
                           "amount",
                           BTC.encode($$event[/* amount */4])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "blockHeight",
+                            Utils.encodeFloat($$event[/* blockHeight */5])
+                          ],
+                          /* :: */[
+                            /* tuple */[
+                              "unixTime",
+                              Utils.encodeFloat($$event[/* unixTime */6])
+                            ],
+                            /* [] */0
+                          ]
+                        ]
                       ]
                     ]
                   ]
@@ -865,7 +879,9 @@ function decode$15(raw) {
           /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
           /* txId */Json_decode.field("txId", Json_decode.string, raw),
           /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw),
-          /* amount */Json_decode.field("amount", BTC.decode, raw)
+          /* amount */Json_decode.field("amount", BTC.decode, raw),
+          /* blockHeight */Json_decode.field("blockHeight", Utils.decodeFloat, raw),
+          /* unixTime */Json_decode.field("unixTime", Utils.decodeFloat, raw)
         ];
 }
 

@@ -30,7 +30,7 @@ let scanTransactions = ((addresses: AddressCollector.t, txIds)) =>
   Js.Promise.(
     addresses.exposedAddresses
     |> Network.transactionInputs(addresses.network)
-    |> then_(utxos => (txIds, utxos) |> resolve)
+    |> then_(utxos => (addresses.network, txIds, utxos) |> resolve)
   );
 
 let findAddressesAndTxIds =
@@ -48,6 +48,21 @@ let findAddressesAndTxIds =
     (AddressCollector.make(), Belt.Set.String.empty),
   );
 
+let filterTransactions = (knownTxs, utxos) =>
+  utxos
+  |. List.keepMapU((. utxo: Network.txInput) => {
+       let txOutId = utxo.txId ++ string_of_int(utxo.txOutputN);
+       knownTxs |. Set.String.has(txOutId) ? None : Some(utxo);
+     });
+
+let getTransactionInfo = (network, utxos) =>
+  utxos
+  |. List.map(({txId}: Network.txInput) => txId)
+  |> List.toArray
+  |> Set.String.fromArray
+  |> Network.transactionInfo(network)
+  |> Js.Promise.then_(infos => (infos, utxos) |> Js.Promise.resolve);
+
 let detectIncomeFromVenture = ventureId => {
   logMessage(
     "Detecting income for venture '" ++ VentureId.toString(ventureId) ++ "'",
@@ -57,22 +72,28 @@ let detectIncomeFromVenture = ventureId => {
     |> then_(eventLog =>
          eventLog |> findAddressesAndTxIds |> scanTransactions
        )
-    |> then_(((knownTxs, utxos)) => {
+    |> then_(((network, knownTxs, utxos)) =>
+         filterTransactions(knownTxs, utxos) |> getTransactionInfo(network)
+       )
+    |> then_(((txInfos, utxos)) => {
          let events =
            utxos
-           |. List.keepMapU((. utxo: Network.txInput) => {
-                let txOutId = utxo.txId ++ string_of_int(utxo.txOutputN);
-                knownTxs |. Set.String.has(txOutId) ?
-                  None :
-                  Some(
-                    Event.IncomeDetected.make(
-                      ~address=utxo.address,
-                      ~coordinates=utxo.coordinates,
-                      ~txId=utxo.txId,
-                      ~amount=utxo.value,
-                      ~txOutputN=utxo.txOutputN,
-                    ),
-                  );
+           |. List.mapU((. utxo: Network.txInput) => {
+                let transaction =
+                  txInfos
+                  |. List.getByU((. {txId}: WalletTypes.txInfo) =>
+                       txId == utxo.txId
+                     )
+                  |> Js.Option.getExn;
+                Event.IncomeDetected.make(
+                  ~address=utxo.address,
+                  ~coordinates=utxo.coordinates,
+                  ~txId=utxo.txId,
+                  ~amount=utxo.value,
+                  ~txOutputN=utxo.txOutputN,
+                  ~blockHeight=transaction.blockHeight,
+                  ~unixTime=transaction.unixTime,
+                );
               });
          (
            switch (events) {

@@ -181,12 +181,16 @@ function make(config, network) {
   var getUTXOs$1 = function (param) {
     return getUTXOs(config, param);
   };
+  var getTransactionInfo = function () {
+    return Promise.resolve(/* [] */0);
+  };
   var broadcastTransaction$1 = function (param) {
     return broadcastTransaction(config, param);
   };
   return /* module */[
           /* network */network,
           /* getUTXOs */getUTXOs$1,
+          /* getTransactionInfo */getTransactionInfo,
           /* broadcastTransaction */broadcastTransaction$1
         ];
 }

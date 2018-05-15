@@ -78,6 +78,7 @@ let decodeInput = raw =>
 
 module Make = (Client: NetworkClient) => {
   let network = Client.network;
+  let transactionInfo = Client.getTransactionInfo;
   let transactionInputs = addresses =>
     Belt.(
       Js.Promise.(
@@ -146,6 +147,12 @@ let transactionInputs =
   | Regtest => Regtest.transactionInputs
   | Testnet => Testnet.transactionInputs
   | Mainnet => Mainnet.transactionInputs;
+
+let transactionInfo =
+  fun
+  | Regtest => Regtest.transactionInfo
+  | Testnet => Testnet.transactionInfo
+  | Mainnet => Mainnet.transactionInfo;
 
 let broadcastTransaction =
   fun

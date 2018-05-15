@@ -11,6 +11,7 @@ var Venture = require("../application/Venture.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -37,6 +38,7 @@ function scanTransactions(param) {
   var addresses = param[0];
   return Network.transactionInputs(addresses[/* network */0])(addresses[/* exposedAddresses */2]).then((function (utxos) {
                 return Promise.resolve(/* tuple */[
+                            addresses[/* network */0],
                             txIds,
                             utxos
                           ]);
@@ -64,20 +66,42 @@ var findAddressesAndTxIds = Curry._2(EventLog.reduce, (function (param, param$1)
       Belt_SetString.empty
     ]);
 
+function filterTransactions(knownTxs, utxos) {
+  return Belt_List.keepMapU(utxos, (function (utxo) {
+                var txOutId = utxo[/* txId */0] + String(utxo[/* txOutputN */1]);
+                var match = Belt_SetString.has(knownTxs, txOutId);
+                if (match) {
+                  return /* None */0;
+                } else {
+                  return /* Some */[utxo];
+                }
+              }));
+}
+
+function getTransactionInfo(network, utxos) {
+  return Curry._1(Network.transactionInfo(network), Belt_SetString.fromArray(Belt_List.toArray(Belt_List.map(utxos, (function (param) {
+                              return param[/* txId */0];
+                            }))))).then((function (infos) {
+                return Promise.resolve(/* tuple */[
+                            infos,
+                            utxos
+                          ]);
+              }));
+}
+
 function detectIncomeFromVenture(ventureId) {
   logMessage("Detecting income for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                  return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
+                    return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
+                  })).then((function (param) {
+                  return getTransactionInfo(param[0], filterTransactions(param[1], param[2]));
                 })).then((function (param) {
-                var knownTxs = param[0];
-                var events = Belt_List.keepMapU(param[1], (function (utxo) {
-                        var txOutId = utxo[/* txId */0] + String(utxo[/* txOutputN */1]);
-                        var match = Belt_SetString.has(knownTxs, txOutId);
-                        if (match) {
-                          return /* None */0;
-                        } else {
-                          return /* Some */[Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3])];
-                        }
+                var txInfos = param[0];
+                var events = Belt_List.mapU(param[1], (function (utxo) {
+                        var transaction = Js_option.getExn(Belt_List.getByU(txInfos, (function (param) {
+                                    return param[/* txId */0] === utxo[/* txId */0];
+                                  })));
+                        return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3], transaction[/* blockHeight */1], transaction[/* unixTime */2]);
                       }));
                 return Promise.resolve(events ? (postMessage(VentureWorkerMessage.encodeIncoming(/* IncomeDetected */Block.__(14, [
                                           ventureId,
@@ -142,6 +166,8 @@ exports.postMessage = postMessage$1;
 exports.logMessage = logMessage;
 exports.scanTransactions = scanTransactions;
 exports.findAddressesAndTxIds = findAddressesAndTxIds;
+exports.filterTransactions = filterTransactions;
+exports.getTransactionInfo = getTransactionInfo;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
 exports.detectIncomeFromAll = detectIncomeFromAll;
 exports.fiveSecondsInMilliseconds = fiveSecondsInMilliseconds;

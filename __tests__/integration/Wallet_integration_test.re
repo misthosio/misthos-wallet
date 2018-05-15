@@ -99,6 +99,8 @@ let () =
                       ~coordinates=
                         (walletTwoAddresses |> List.assoc(address)).
                           coordinates,
+                      ~blockHeight=0.,
+                      ~unixTime=0.,
                     );
                   switch (walletOneAddresses |> List.mem_assoc(address)) {
                   | true =>
