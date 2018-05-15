@@ -21,7 +21,7 @@ open PrimitiveTypes;
 
 let logMessage = msg => Js.log("[Persist Worker] - " ++ msg);
 
-let determinPartnerKeysAndRemovals = (localUserId, eventLog) => {
+let determinPartnerKeysAndRemovals = eventLog => {
   let (partners, keys, _, removalProcesses) =
     eventLog
     |> EventLog.reduce(
@@ -30,7 +30,7 @@ let determinPartnerKeysAndRemovals = (localUserId, eventLog) => {
            {event} as item,
          ) =>
            switch (event) {
-           | PartnerAccepted({data}) when UserId.neq(data.id, localUserId) => (
+           | PartnerAccepted({data}) => (
                [data.id, ...partners],
                [(data.id, data.pubKey), ...keys],
                processLookup,
@@ -229,11 +229,11 @@ let persistVenture = ventureId => {
     Session.getCurrentSession()
     |> then_(
          fun
-         | Session.LoggedIn({userId}) =>
+         | Session.LoggedIn(_) =>
            WorkerUtils.loadVenture(ventureId)
            |> then_(eventLog =>
                 eventLog
-                |> determinPartnerKeysAndRemovals(userId)
+                |> determinPartnerKeysAndRemovals
                 |> persist(ventureId, eventLog)
               )
            |> then_(persistRemovals(ventureId))

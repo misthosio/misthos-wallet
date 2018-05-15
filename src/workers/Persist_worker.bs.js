@@ -24,7 +24,7 @@ function logMessage(msg) {
   return /* () */0;
 }
 
-function determinPartnerKeysAndRemovals(localUserId, eventLog) {
+function determinPartnerKeysAndRemovals(eventLog) {
   var match = Curry._3(EventLog.reduce, (function (param, item) {
           var $$event = item[/* event */0];
           var removalProcesses = param[3];
@@ -34,30 +34,21 @@ function determinPartnerKeysAndRemovals(localUserId, eventLog) {
           switch ($$event.tag | 0) {
             case 4 : 
                 var data = $$event[0][/* data */2];
-                if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
-                  return /* tuple */[
-                          /* :: */[
+                return /* tuple */[
+                        /* :: */[
+                          data[/* id */1],
+                          partners
+                        ],
+                        /* :: */[
+                          /* tuple */[
                             data[/* id */1],
-                            partners
+                            data[/* pubKey */2]
                           ],
-                          /* :: */[
-                            /* tuple */[
-                              data[/* id */1],
-                              data[/* pubKey */2]
-                            ],
-                            keys
-                          ],
-                          processLookup,
-                          removalProcesses
-                        ];
-                } else {
-                  return /* tuple */[
-                          partners,
-                          keys,
-                          processLookup,
-                          removalProcesses
-                        ];
-                }
+                          keys
+                        ],
+                        processLookup,
+                        removalProcesses
+                      ];
             case 5 : 
                 var match = $$event[0];
                 var id = match[/* data */5][/* id */0];
@@ -316,9 +307,8 @@ function persistVenture(ventureId) {
           if (typeof param === "number") {
             return Promise.resolve(/* () */0);
           } else {
-            var userId = param[0][/* userId */0];
             return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                            return persist(ventureId, eventLog, determinPartnerKeysAndRemovals(userId, eventLog));
+                            return persist(ventureId, eventLog, determinPartnerKeysAndRemovals(eventLog));
                           })).then((function (param) {
                           return persistRemovals(ventureId, param);
                         }));

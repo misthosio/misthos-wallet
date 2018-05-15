@@ -30,14 +30,11 @@ let tenSecondsInMilliseconds = 10000;
 
 let syncInterval = tenSecondsInMilliseconds;
 
-let determinPartnerIds = localUserId =>
+let determinPartnerIds =
   EventLog.reduce(
     (ids, {event}) =>
       switch (event) {
-      | PartnerAccepted({data}) when UserId.neq(data.id, localUserId) => [
-          data.id,
-          ...ids,
-        ]
+      | PartnerAccepted({data}) => [data.id, ...ids]
       | PartnerRemovalAccepted({data}) =>
         ids |> List.filter(id => UserId.neq(id, data.id))
       | _ => ids
@@ -116,7 +113,7 @@ let syncEventsFromPartner =
   )
   |> ignore;
 
-let syncEventsFromVenture = (ventureId, localUserId, storagePrefix) => {
+let syncEventsFromVenture = (ventureId, storagePrefix) => {
   logMessage(
     "Finding new events for venture '" ++ VentureId.toString(ventureId) ++ "'",
   );
@@ -124,7 +121,7 @@ let syncEventsFromVenture = (ventureId, localUserId, storagePrefix) => {
     WorkerUtils.loadVenture(ventureId)
     |> then_(eventLog => {
          let summary = eventLog |> EventLog.getSummary;
-         let partnerKeys = eventLog |> determinPartnerIds(localUserId);
+         let partnerKeys = eventLog |> determinPartnerIds;
          partnerKeys
          |> List.iter(
               syncEventsFromPartner(
@@ -144,13 +141,12 @@ let findNewEventsForAll = () =>
     Session.getCurrentSession()
     |> then_(
          fun
-         | Session.LoggedIn({userId, storagePrefix}) =>
+         | Session.LoggedIn({storagePrefix}) =>
            Venture.Index.load()
            |> then_(index =>
                 index
                 |> List.iter(({id}: Venture.Index.item) =>
-                     syncEventsFromVenture(id, userId, storagePrefix)
-                     |> ignore
+                     syncEventsFromVenture(id, storagePrefix) |> ignore
                    )
                 |> resolve
               )

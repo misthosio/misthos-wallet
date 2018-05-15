@@ -34,30 +34,23 @@ function logMessage(msg) {
 
 var intervalId = [/* None */0];
 
-function determinPartnerIds(localUserId) {
-  return Curry._2(EventLog.reduce, (function (ids, param) {
-                var $$event = param[/* event */0];
-                switch ($$event.tag | 0) {
-                  case 4 : 
-                      var data = $$event[0][/* data */2];
-                      if (PrimitiveTypes.UserId[/* neq */6](data[/* id */1], localUserId)) {
-                        return /* :: */[
-                                data[/* id */1],
-                                ids
-                              ];
-                      } else {
-                        return ids;
-                      }
-                  case 8 : 
-                      var data$1 = $$event[0][/* data */2];
-                      return List.filter((function (id) {
-                                      return PrimitiveTypes.UserId[/* neq */6](id, data$1[/* id */0]);
-                                    }))(ids);
-                  default:
-                    return ids;
-                }
-              }), /* [] */0);
-}
+var determinPartnerIds = Curry._2(EventLog.reduce, (function (ids, param) {
+        var $$event = param[/* event */0];
+        switch ($$event.tag | 0) {
+          case 4 : 
+              return /* :: */[
+                      $$event[0][/* data */2][/* id */1],
+                      ids
+                    ];
+          case 8 : 
+              var data = $$event[0][/* data */2];
+              return List.filter((function (id) {
+                              return PrimitiveTypes.UserId[/* neq */6](id, data[/* id */0]);
+                            }))(ids);
+          default:
+            return ids;
+        }
+      }), /* [] */0);
 
 function getSummaryFromUser(ventureId, userId, storagePrefix) {
   return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (storagePrefix + "/summary.json")), PrimitiveTypes.UserId[/* toString */0](userId)).catch((function () {
@@ -103,11 +96,11 @@ function syncEventsFromPartner(storagePrefix, ventureId, knownItems, eventLog, u
   return /* () */0;
 }
 
-function syncEventsFromVenture(ventureId, localUserId, storagePrefix) {
+function syncEventsFromVenture(ventureId, storagePrefix) {
   logMessage("Finding new events for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
                 var summary = Curry._1(EventLog.getSummary, eventLog);
-                var partnerKeys = Curry._1(determinPartnerIds(localUserId), eventLog);
+                var partnerKeys = Curry._1(determinPartnerIds, eventLog);
                 var partial_arg = summary[/* knownItems */0];
                 List.iter((function (param) {
                         return syncEventsFromPartner(storagePrefix, ventureId, partial_arg, eventLog, param);
@@ -121,12 +114,10 @@ function findNewEventsForAll() {
                 if (typeof param === "number") {
                   return Promise.resolve(/* () */0);
                 } else {
-                  var match = param[0];
-                  var storagePrefix = match[/* storagePrefix */3];
-                  var userId = match[/* userId */0];
+                  var storagePrefix = param[0][/* storagePrefix */3];
                   return Venture.Index[/* load */0](/* () */0).then((function (index) {
                                 return Promise.resolve(List.iter((function (param) {
-                                                  syncEventsFromVenture(param[/* id */0], userId, storagePrefix);
+                                                  syncEventsFromVenture(param[/* id */0], storagePrefix);
                                                   return /* () */0;
                                                 }), index));
                               }));
