@@ -7,12 +7,12 @@ var Glamor = require("glamor");
 var TitleBar = require("./TitleBar.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
-var component = ReasonReact.statelessComponent("Body3");
+var component = ReasonReact.statelessComponent("Body4");
 
 var grid = Glamor.css({
       display: "grid",
       gridGap: String(Theme.space(8)) + ("px " + (String(Theme.space(3)) + "px")),
-      gridTemplateAreas: "\". body1 body1 body1 .\" \"title title title title title\" \". body2 . body3 .\"",
+      gridTemplateAreas: "\". body1 . body2 .\" \"title title title title title\" \". body3 . body4 .\"",
       gridTemplateColumns: "minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr)",
       gridTemplateRows: "min-content min-content auto",
       width: "100%"
@@ -29,7 +29,7 @@ var Styles = /* module */[
   /* area */area
 ];
 
-function make($staropt$star, body1, body2, body3, _) {
+function make($staropt$star, body1, body2, body3, body4, _) {
   var titles = $staropt$star ? $staropt$star[0] : /* [] */0;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -47,13 +47,16 @@ function make($staropt$star, body1, body2, body3, _) {
                         }, React.createElement("div", {
                               key: "body1",
                               className: area("body1")
-                            }, body1), ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* Some */[area("title")], /* Some */[titles], /* array */[])), React.createElement("div", {
+                            }, body1), React.createElement("div", {
                               key: "body2",
                               className: area("body2")
-                            }, body2), React.createElement("div", {
+                            }, body2), ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* Some */[area("title")], /* Some */[titles], /* array */[])), React.createElement("div", {
                               key: "body3",
                               className: area("body3")
-                            }, body3));
+                            }, body3), React.createElement("div", {
+                              key: "body4",
+                              className: area("body4")
+                            }, body4));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

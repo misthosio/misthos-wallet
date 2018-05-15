@@ -7,6 +7,7 @@ var Utils = require("../utils/Utils.bs.js");
 var Drawer = require("./Drawer.bs.js");
 var Layout = require("./Layout.bs.js");
 var Router = require("./Router.bs.js");
+var Receive = require("./Receive.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -25,21 +26,54 @@ function make(session, updateSession, _) {
   var onSignOut = function () {
     return Curry._1(updateSession, /* SignOut */1);
   };
+  var onCloseModal = function (ventureId, _) {
+    return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [
+                      ventureId,
+                      /* None */0
+                    ])));
+  };
   var modal = function (selectedVenture, currentRoute) {
-    if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag || !(currentRoute[1] && !(typeof selectedVenture === "number" || selectedVenture.tag !== 2))) {
+    if (typeof session === "number") {
       return /* None */0;
     } else {
-      var selected = currentRoute[0];
-      return /* Some */[/* tuple */[
-                ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(selectedVenture[1], session[0], selectedVenture[2], /* array */[])),
-                (function (param) {
-                    var ventureId = selected;
-                    return ReasonReact.Router[/* push */0](Router.Config[/* routeToUrl */1](/* Venture */Block.__(0, [
-                                      ventureId,
-                                      /* None */0
-                                    ])));
-                  })
-              ]];
+      var session$1 = session[0];
+      if (typeof currentRoute === "number" || currentRoute.tag) {
+        return /* None */0;
+      } else {
+        var match = currentRoute[1];
+        if (match !== 0) {
+          var selected = currentRoute[0];
+          switch (match - 1 | 0) {
+            case 0 : 
+                if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+                  return /* None */0;
+                } else {
+                  return /* Some */[/* tuple */[
+                            ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(selectedVenture[1], session$1, selectedVenture[2], /* array */[])),
+                            (function (param) {
+                                return onCloseModal(selected, param);
+                              })
+                          ]];
+                }
+            case 1 : 
+                return /* None */0;
+            case 2 : 
+                if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+                  return /* None */0;
+                } else {
+                  return /* Some */[/* tuple */[
+                            ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[1], session$1, selectedVenture[2], /* array */[])),
+                            (function (param) {
+                                return onCloseModal(selected, param);
+                              })
+                          ]];
+                }
+            
+          }
+        } else {
+          return /* None */0;
+        }
+      }
     }
   };
   var drawer = function (index, currentRoute) {

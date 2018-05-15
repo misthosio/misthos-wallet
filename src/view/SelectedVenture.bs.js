@@ -2,10 +2,11 @@
 'use strict';
 
 var BTC = require("../application/wallet/BTC.bs.js");
+var Css = require("bs-css/src/Css.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
-var Body3 = require("./components/Body3.bs.js");
+var Body4 = require("./components/Body4.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
@@ -13,6 +14,7 @@ var Payout = require("./components/Payout.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
+var MFabButton = require("./components/MFabButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -20,6 +22,16 @@ var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
 var component = ReasonReact.reducerComponent("SelectedVenture");
+
+var flexSpaceBetween = Css.style(/* :: */[
+      Css.display(/* flex */-1010954439),
+      /* :: */[
+        Css.justifyContent(/* spaceBetween */516682146),
+        /* [] */0
+      ]
+    ]);
+
+var Styles = /* module */[/* flexSpaceBetween */flexSpaceBetween];
 
 function make(initialViewModel, session, commands, _) {
   return /* record */[
@@ -66,11 +78,6 @@ function make(initialViewModel, session, commands, _) {
                                               })
                                           }, Utils.text("Endorse Removal")) : null);
                         }), ViewModel.removalProspects(state[/* viewModel */0])));
-              var addresses = $$Array.of_list(List.map((function (address) {
-                          return React.createElement("li", {
-                                      key: address
-                                    }, Utils.text(address));
-                        }), ViewModel.incomeAddresses(state[/* viewModel */0])));
               var match = ViewModel.transactions(state[/* viewModel */0]);
               var unconfirmed = match[1];
               var transactions = $$Array.of_list(List.append(List.mapi((function (iter, tx) {
@@ -114,7 +121,7 @@ function make(initialViewModel, session, commands, _) {
                                           }, Utils.text("Reject Payout")) : null);
                         }), ViewModel.payouts(state[/* viewModel */0])));
               var match$1 = state[/* selfRemoved */1];
-              return ReasonReact.element(/* None */0, /* None */0, Body3.make(/* Some */[/* :: */[
+              return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[/* :: */[
                                 "Partners",
                                 /* :: */[
                                   "Transactions",
@@ -130,14 +137,18 @@ function make(initialViewModel, session, commands, _) {
                                                 key: "reserved"
                                               }, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
                                           Utils.text(" BTC IN RESERVE")
-                                        ]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                                        ]))), React.createElement("div", {
+                                  className: flexSpaceBetween
+                                }, ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
+                                            ViewModel.ventureId(state[/* viewModel */0]),
+                                            /* Receive */3
+                                          ]), /* array */[Utils.text("RECEIVE")])), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
+                                            ViewModel.ventureId(state[/* viewModel */0]),
+                                            /* Payout */2
+                                          ]), /* array */[Utils.text("PAY OUT")]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),
                                             /* ManagePartners */1
-                                          ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), React.createElement("h4", undefined, Utils.text("Income Addresses:")), React.createElement("ul", undefined, addresses), React.createElement("button", {
-                                      onClick: (function () {
-                                          return Curry._1(send, /* GetIncomeAddress */0);
-                                        })
-                                    }, Utils.text("Get New Income Address")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
+                                          ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
                                             return Curry._1(send, /* ProposePayout */Block.__(2, [destinations]));
                                           }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payout processes:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, Utils.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
             }),
@@ -152,9 +163,6 @@ function make(initialViewModel, session, commands, _) {
           /* reducer */(function (action, state) {
               var match = state[/* selfRemoved */1];
               if (match) {
-                return /* NoUpdate */0;
-              } else if (typeof action === "number") {
-                Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]);
                 return /* NoUpdate */0;
               } else {
                 switch (action.tag | 0) {
@@ -189,5 +197,6 @@ var text = Utils.text;
 
 exports.text = text;
 exports.component = component;
+exports.Styles = Styles;
 exports.make = make;
 /* component Not a pure module */

@@ -49,6 +49,24 @@ function routeFromUrl(url) {
                                   /* ManagePartners */1
                                 ]);
                       }
+                  case "payout" : 
+                      if (match$2[1]) {
+                        return /* Home */0;
+                      } else {
+                        return /* Venture */Block.__(0, [
+                                  PrimitiveTypes.VentureId[/* fromString */1](id),
+                                  /* Payout */2
+                                ]);
+                      }
+                  case "receive" : 
+                      if (match$2[1]) {
+                        return /* Home */0;
+                      } else {
+                        return /* Venture */Block.__(0, [
+                                  PrimitiveTypes.VentureId[/* fromString */1](id),
+                                  /* Receive */3
+                                ]);
+                      }
                   default:
                     return /* Home */0;
                 }
@@ -87,10 +105,16 @@ function routeToUrl(route) {
     return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](route[0]) + ("/joinvia/" + PrimitiveTypes.UserId[/* toString */0](route[1])));
   } else {
     var id = route[0];
-    if (route[1]) {
-      return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/partners");
-    } else {
-      return "/ventures/" + PrimitiveTypes.VentureId[/* toString */0](id);
+    switch (route[1]) {
+      case 0 : 
+          return "/ventures/" + PrimitiveTypes.VentureId[/* toString */0](id);
+      case 1 : 
+          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/partners");
+      case 2 : 
+          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/payout");
+      case 3 : 
+          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/receive");
+      
     }
   }
 }

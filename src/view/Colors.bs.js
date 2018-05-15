@@ -3,17 +3,33 @@
 
 var Css = require("bs-css/src/Css.js");
 
-var black = Css.hex("000000");
+var uBlack = "000000";
 
-var white = Css.hex("ffffff");
+var black = Css.hex(uBlack);
 
-var robinsEgg = Css.hex("59f7f0");
+var uWhite = "FFFFFF";
 
-var misthosTeal = Css.hex("02a2b4");
+var white = Css.hex(uWhite);
 
-var strongPink = Css.hex("ff006d");
+var uRobinsEgg = "59f7f0";
 
-var reddishOrange = Css.hex("f65e25");
+var robinsEgg = Css.hex(uRobinsEgg);
+
+var uDeepAqua = "067781";
+
+var deepAqua = Css.hex(uDeepAqua);
+
+var uMisthosTeal = "02a2b4";
+
+var misthosTeal = Css.hex(uMisthosTeal);
+
+var uStrongPink = "ff006d";
+
+var strongPink = Css.hex(uStrongPink);
+
+var uReddishOrange = "f65e25";
+
+var reddishOrange = Css.hex(uReddishOrange);
 
 var gradient = Css.linearGradient(Css.deg(90), /* :: */[
       /* tuple */[
@@ -28,7 +44,7 @@ var gradient = Css.linearGradient(Css.deg(90), /* :: */[
         /* :: */[
           /* tuple */[
             57,
-            Css.hex("067781")
+            deepAqua
           ],
           /* :: */[
             /* tuple */[
@@ -47,11 +63,61 @@ var gradient = Css.linearGradient(Css.deg(90), /* :: */[
       ]
     ]);
 
+var gradientAqua = Css.linearGradient(Css.deg(75), /* :: */[
+      /* tuple */[
+        0,
+        robinsEgg
+      ],
+      /* :: */[
+        /* tuple */[
+          49,
+          misthosTeal
+        ],
+        /* :: */[
+          /* tuple */[
+            100,
+            deepAqua
+          ],
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var uGradientAqua = "linear-gradient(75deg, #" + (String(uRobinsEgg) + (", #" + (String(uMisthosTeal) + (" 49%, #" + (String(uDeepAqua) + ")")))));
+
+var gradientOrange = Css.linearGradient(Css.deg(75), /* :: */[
+      /* tuple */[
+        0,
+        strongPink
+      ],
+      /* :: */[
+        /* tuple */[
+          100,
+          reddishOrange
+        ],
+        /* [] */0
+      ]
+    ]);
+
+var uGradientOrange = "linear-gradient(75deg, #" + (String(uStrongPink) + (", #" + (String(uReddishOrange) + ")")));
+
+exports.uBlack = uBlack;
 exports.black = black;
+exports.uWhite = uWhite;
 exports.white = white;
+exports.uRobinsEgg = uRobinsEgg;
 exports.robinsEgg = robinsEgg;
+exports.uDeepAqua = uDeepAqua;
+exports.deepAqua = deepAqua;
+exports.uMisthosTeal = uMisthosTeal;
 exports.misthosTeal = misthosTeal;
+exports.uStrongPink = uStrongPink;
 exports.strongPink = strongPink;
+exports.uReddishOrange = uReddishOrange;
 exports.reddishOrange = reddishOrange;
 exports.gradient = gradient;
+exports.gradientAqua = gradientAqua;
+exports.uGradientAqua = uGradientAqua;
+exports.gradientOrange = gradientOrange;
+exports.uGradientOrange = uGradientOrange;
 /* black Not a pure module */
