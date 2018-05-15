@@ -199,7 +199,7 @@ let make =
                          )
                        | ConfirmedPayout(_, amount, date) =>
                          text(
-                           "INCOME: "
+                           "PAYOUT: "
                            ++ Js.Date.toString(date)
                            ++ " - "
                            ++ BTC.format(amount)

@@ -81,7 +81,7 @@ function make(initialViewModel, session, commands, _) {
                                         }, tmp);
                             }), unconfirmed), List.mapi((function (iter, tx) {
                               var tmp;
-                              tmp = tx.tag ? Utils.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc"))));
+                              tmp = tx.tag ? Utils.text("PAYOUT: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc"))));
                               return React.createElement("li", {
                                           key: String(iter + List.length(unconfirmed) | 0)
                                         }, tmp);
