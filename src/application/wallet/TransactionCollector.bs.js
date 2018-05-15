@@ -7,6 +7,7 @@ function make() {
   return /* record */[
           /* network : Regtest */0,
           /* transactionsOfInterest */Belt_SetString.empty,
+          /* knownIncomeTxs */Belt_SetString.empty,
           /* confirmedTransactions */Belt_SetString.empty
         ];
 }
@@ -17,19 +18,23 @@ function apply($$event, state) {
         return /* record */[
                 /* network */state[/* network */0],
                 /* transactionsOfInterest */Belt_SetString.add(state[/* transactionsOfInterest */1], $$event[0][/* txId */1]),
-                /* confirmedTransactions */state[/* confirmedTransactions */2]
+                /* knownIncomeTxs */state[/* knownIncomeTxs */2],
+                /* confirmedTransactions */state[/* confirmedTransactions */3]
               ];
     case 33 : 
+        var txId = $$event[0][/* txId */2];
         return /* record */[
                 /* network */state[/* network */0],
-                /* transactionsOfInterest */Belt_SetString.add(state[/* transactionsOfInterest */1], $$event[0][/* txId */2]),
-                /* confirmedTransactions */state[/* confirmedTransactions */2]
+                /* transactionsOfInterest */Belt_SetString.add(state[/* transactionsOfInterest */1], txId),
+                /* knownIncomeTxs */Belt_SetString.add(state[/* knownIncomeTxs */2], txId),
+                /* confirmedTransactions */state[/* confirmedTransactions */3]
               ];
     case 34 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* transactionsOfInterest */state[/* transactionsOfInterest */1],
-                /* confirmedTransactions */Belt_SetString.add(state[/* confirmedTransactions */2], $$event[0][/* txId */0])
+                /* knownIncomeTxs */state[/* knownIncomeTxs */2],
+                /* confirmedTransactions */Belt_SetString.add(state[/* confirmedTransactions */3], $$event[0][/* txId */0])
               ];
     default:
       return state;

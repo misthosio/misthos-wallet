@@ -67,8 +67,7 @@ let detectIncomeFromVenture = ventureId => {
          eventLog |> findAddressesAndTxIds |> scanTransactions
        )
     |> then_(((utxos, txInfos, transactions: TransactionCollector.t)) => {
-         let utxos =
-           utxos |> filterUTXOs(transactions.transactionsOfInterest);
+         let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
            utxos
            |. List.mapU((. utxo: Network.txInput) =>

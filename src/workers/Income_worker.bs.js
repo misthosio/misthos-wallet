@@ -40,7 +40,7 @@ function scanTransactions(param) {
                 var __x = Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */1], Belt_List.toArray(Belt_List.mapU(utxos, (function (param) {
                                 return param[/* txId */0];
                               }))));
-                return Curry._1(Network.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(__x, transactions[/* confirmedTransactions */2])).then((function (txInfos) {
+                return Curry._1(Network.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(__x, transactions[/* confirmedTransactions */3])).then((function (txInfos) {
                               return Promise.resolve(/* tuple */[
                                           utxos,
                                           txInfos,
@@ -78,7 +78,7 @@ function detectIncomeFromVenture(ventureId) {
                   return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
                 })).then((function (param) {
                 var txInfos = param[1];
-                var utxos = filterUTXOs(param[2][/* transactionsOfInterest */1], param[0]);
+                var utxos = filterUTXOs(param[2][/* knownIncomeTxs */2], param[0]);
                 var events = Belt_List.mapU(utxos, (function (utxo) {
                         return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
                       }));
