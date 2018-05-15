@@ -291,9 +291,9 @@ function bitcoinNetwork(param) {
   }
 }
 
-var regtestIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+var regtestIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
 
-var testnetIncomeAddress = "2N6wr7uGB5Voj6s1a4JqhxHpfResM9VuW6t";
+var testnetIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
 
 function incomeAddress(param) {
   if (param !== 0) {

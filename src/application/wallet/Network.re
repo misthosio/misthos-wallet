@@ -166,10 +166,9 @@ let bitcoinNetwork =
   | Testnet => Testnet.network
   | Mainnet => Mainnet.network;
 
-/* For now send income to faucet */
-let regtestIncomeAddress = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
+let regtestIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
 
-let testnetIncomeAddress = "2N6wr7uGB5Voj6s1a4JqhxHpfResM9VuW6t";
+let testnetIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
 
 let incomeAddress =
   fun
