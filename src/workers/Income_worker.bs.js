@@ -81,34 +81,30 @@ function detectIncomeFromVenture(ventureId) {
   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
                   return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
                 })).then((function (param) {
-                var txInfos = param[1];
                 var utxos = filterUTXOs(param[2][/* knownIncomeTxs */2], param[0]);
                 var events = Belt_List.mapU(utxos, (function (utxo) {
                         return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
                       }));
-                var tmp;
-                var exit = 0;
-                if (events || txInfos) {
-                  exit = 1;
-                } else {
-                  tmp = /* () */0;
-                }
-                if (exit === 1) {
-                  tmp = postMessage$1(/* SyncWallet */Block.__(15, [
-                          ventureId,
-                          events,
-                          Belt_List.keepMapU(txInfos, (function (param) {
-                                  var unixTime = param[/* unixTime */2];
-                                  var blockHeight = param[/* blockHeight */1];
-                                  if (blockHeight && unixTime) {
-                                    return /* Some */[Curry._3(Event.Transaction[/* Confirmed */0][/* make */0], param[/* txId */0], blockHeight[0], unixTime[0])];
-                                  } else {
-                                    return /* None */0;
-                                  }
-                                }))
-                        ]));
-                }
-                return Promise.resolve(tmp);
+                var match = Belt_List.keepMapU(param[1], (function (param) {
+                        var unixTime = param[/* unixTime */2];
+                        var blockHeight = param[/* blockHeight */1];
+                        if (blockHeight && unixTime) {
+                          return /* Some */[Curry._3(Event.Transaction[/* Confirmed */0][/* make */0], param[/* txId */0], blockHeight[0], unixTime[0])];
+                        } else {
+                          return /* None */0;
+                        }
+                      }));
+                return Promise.resolve(events ? postMessage$1(/* SyncWallet */Block.__(15, [
+                                    ventureId,
+                                    events,
+                                    match
+                                  ])) : (
+                              match ? postMessage$1(/* SyncWallet */Block.__(15, [
+                                        ventureId,
+                                        events,
+                                        match
+                                      ])) : /* () */0
+                            ));
               }));
 }
 

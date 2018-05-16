@@ -90,29 +90,28 @@ let detectIncomeFromVenture = ventureId => {
                 )
               );
          (
-           switch (events, txInfos) {
+           switch (
+             events,
+             txInfos
+             |. List.keepMapU(
+                  (. {txId, blockHeight, unixTime}: WalletTypes.txInfo) =>
+                  switch (blockHeight, unixTime) {
+                  | (Some(blockHeight), Some(unixTime)) =>
+                    Some(
+                      Event.Transaction.Confirmed.make(
+                        ~txId,
+                        ~blockHeight,
+                        ~unixTime,
+                      ),
+                    )
+                  | _ => None
+                  }
+                ),
+           ) {
            | ([], []) => ()
-           | _ =>
+           | (_, confs) =>
              postMessage(
-               VentureWorkerMessage.SyncWallet(
-                 ventureId,
-                 events,
-                 txInfos
-                 |. List.keepMapU(
-                      (. {txId, blockHeight, unixTime}: WalletTypes.txInfo) =>
-                      switch (blockHeight, unixTime) {
-                      | (Some(blockHeight), Some(unixTime)) =>
-                        Some(
-                          Event.Transaction.Confirmed.make(
-                            ~txId,
-                            ~blockHeight,
-                            ~unixTime,
-                          ),
-                        )
-                      | _ => None
-                      }
-                    ),
-               ),
+               VentureWorkerMessage.SyncWallet(ventureId, events, confs),
              )
            }
          )
