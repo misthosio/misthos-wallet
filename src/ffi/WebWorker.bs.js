@@ -2,46 +2,69 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
+var V4 = require("uuid/v4");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 
 var emptySyncId = "";
 
 function MakeClient(Config) {
-  var terminate = function (param) {
-    param[/* worker */0].terminate();
-    return /* () */0;
-  };
-  var postMessage = function (param, msg) {
-    param[/* worker */0].postMessage({
+  var syncListeners = [Belt_MapString.empty];
+  var postMessage = function (worker, msg) {
+    worker.postMessage({
           msg: msg,
           syncId: emptySyncId
         });
     return /* () */0;
   };
-  var postMessageEncoded = function (param, msg) {
-    param[/* worker */0].postMessage({
+  var postMessageEncoded = function (worker, msg) {
+    worker.postMessage({
           msg: msg,
           syncId: emptySyncId
         });
     return /* () */0;
+  };
+  var postMessageEncodedSync = function (worker, msg) {
+    var syncId = V4();
+    var ret = new Promise((function (resolve, _) {
+            syncListeners[0] = Belt_MapString.set(syncListeners[0], syncId, resolve);
+            return /* () */0;
+          }));
+    worker.postMessage({
+          msg: msg,
+          syncId: syncId
+        });
+    return ret;
+  };
+  var handleMessage = function (onMessage, msg) {
+    var decodedMsg = Curry._1(Config[/* decodeOutgoing */0], msg.msg);
+    var syncId = msg.syncId;
+    if (syncId !== emptySyncId) {
+      var match = Belt_MapString.get(syncListeners[0], syncId);
+      if (match) {
+        match[0](decodedMsg);
+        syncListeners[0] = Belt_MapString.remove(syncListeners[0], syncId);
+      }
+      
+    }
+    return Curry._1(onMessage, Curry._1(Config[/* decodeOutgoing */0], msg.msg));
   };
   var make = function (onMessage) {
     var worker = Curry._1(Config[/* instance */1], /* () */0);
     worker.onmessage = (function (msg) {
-        return Curry._1(onMessage, Curry._1(Config[/* decodeOutgoing */0], msg.data.msg));
+        return handleMessage(onMessage, msg.data);
       });
-    return /* record */[
-            /* worker */worker,
-            /* onMessage */onMessage
-          ];
+    return worker;
   };
   return /* module */[
-          /* terminate */terminate,
+          /* syncListeners */syncListeners,
           /* postMessage */postMessage,
           /* postMessageEncoded */postMessageEncoded,
+          /* postMessageEncodedSync */postMessageEncodedSync,
+          /* handleMessage */handleMessage,
           /* make */make
         ];
 }
 
 exports.emptySyncId = emptySyncId;
 exports.MakeClient = MakeClient;
-/* No side effect */
+/* uuid/v4 Not a pure module */

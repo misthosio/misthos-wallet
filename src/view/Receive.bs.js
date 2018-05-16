@@ -2,12 +2,14 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var List = require("bs-platform/lib/js/list.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
+var Spinner = require("./components/Spinner.bs.js");
 var TitleBar = require("./components/TitleBar.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -33,46 +35,69 @@ function make(initialViewModel, session, commands, _) {
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */(function () {
+          /* willReceiveProps */(function (param) {
               return /* record */[
                       /* viewModel */initialViewModel,
-                      /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false
+                      /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
+                      /* address */param[/* state */1][/* address */2]
                     ];
             }),
-          /* didMount */component[/* didMount */4],
+          /* didMount */(function (param) {
+              return Curry._1(param[/* send */3], /* GetIncomeAddress */0);
+            }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
-              var address = List.nth(ViewModel.incomeAddresses(param[/* state */1][/* viewModel */0]), 0);
+              var state = param[/* state */1];
+              var match = state[/* address */2];
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "Receive BTC",
                                     /* [] */0
                                   ]], /* array */[])), React.createElement("div", {
                               className: container
-                            }, React.createElement("img", {
-                                  src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + address
-                                }), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(address)])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                            }, match ? React.createElement("img", {
+                                    src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
+                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */2]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* GetIncomeAddress */0);
                                         })], /* None */0, /* array */[Utils.text("Generate new income address")]))));
             }),
           /* initialState */(function () {
               return /* record */[
                       /* viewModel */initialViewModel,
-                      /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false
+                      /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
+                      /* address : None */0
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */(function (_, state) {
+          /* reducer */(function (action, state) {
               var match = state[/* selfRemoved */1];
-              if (match) {
-                return /* NoUpdate */0;
+              var exit = 0;
+              if (match || action) {
+                exit = 1;
               } else {
-                Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]);
-                return /* NoUpdate */0;
+                return /* SideEffects */Block.__(1, [(function (param) {
+                              var send = param[/* send */3];
+                              Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]).then((function (address) {
+                                      return Promise.resolve(Curry._1(send, /* UpdateAddress */[address]));
+                                    }));
+                              return /* () */0;
+                            })]);
               }
+              if (exit === 1) {
+                if (action) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* viewModel */state[/* viewModel */0],
+                              /* selfRemoved */state[/* selfRemoved */1],
+                              /* address : Some */[action[0]]
+                            ]]);
+                } else {
+                  return /* NoUpdate */0;
+                }
+              }
+              
             }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]

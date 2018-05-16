@@ -30,9 +30,8 @@ external _postMessage : WebWorker.payload(Message.encodedOutgoing) => unit =
 
 open PrimitiveTypes;
 
-let postMessage = msg =>
-  {"msg": msg |> Message.encodeOutgoing, "syncId": WebWorker.emptySyncId}
-  |> _postMessage;
+let postMessage = (~syncId=WebWorker.emptySyncId, msg) =>
+  {"msg": msg |> Message.encodeOutgoing, "syncId": syncId} |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
@@ -57,7 +56,7 @@ module Notify = {
       ),
     );
   let newIncomeAddress = (syncId, ventureId, address) =>
-    postMessage(NewIncomeAddress(syncId, ventureId, address));
+    postMessage(~syncId, NewIncomeAddress(ventureId, address));
   let newItems = (id, items) =>
     switch (items) {
     | [||] => ()
@@ -499,7 +498,7 @@ module Handle = {
   };
 };
 
-let handleMessage =
+let handleMessage = syncId =>
   fun
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
@@ -523,7 +522,7 @@ let handleMessage =
     Handle.rejectPayout(ventureId, processId)
   | Message.EndorsePayout(ventureId, processId) =>
     Handle.endorsePayout(ventureId, processId)
-  | Message.ExposeIncomeAddress(syncId, ventureId, accountIdx) =>
+  | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(syncId, ventureId, accountIdx)
   | SyncWallet(ventureId, income, confs) =>
     Handle.syncWallet(ventureId, income, confs)
@@ -538,5 +537,8 @@ let workerState = ref(cleanState);
 onMessage(self, msg =>
   workerState :=
     workerState^
-    |> handleMessage(msg##data##msg |> VentureWorkerMessage.decodeIncoming)
+    |> handleMessage(
+         msg##data##syncId,
+         msg##data##msg |> VentureWorkerMessage.decodeIncoming,
+       )
 );
