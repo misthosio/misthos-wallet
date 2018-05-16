@@ -71,10 +71,6 @@ function mapOption(fn, param) {
   }
 }
 
-function text(prim) {
-  return prim;
-}
-
 function encodeFloat(prim) {
   return prim;
 }
@@ -94,7 +90,6 @@ exports.hashCode = hashCode;
 exports.$great$great = $great$great;
 exports.printError = printError;
 exports.mapOption = mapOption;
-exports.text = text;
 exports.encodeFloat = encodeFloat;
 exports.decodeFloat = decodeFloat;
 /* bigi Not a pure module */

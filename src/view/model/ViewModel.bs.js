@@ -12,6 +12,8 @@ var ViewModel__BalanceCollector = require("./ViewModel__BalanceCollector.bs.js")
 var ViewModel__PartnersCollector = require("./ViewModel__PartnersCollector.bs.js");
 var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
+var Payout = /* module */[];
+
 function make() {
   return /* record */[
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
@@ -229,10 +231,6 @@ function partners(state) {
   return state[/* partnersCollector */6][/* partners */0];
 }
 
-function managePartnersModal(param) {
-  return param[/* partnersCollector */6];
-}
-
 function prospects(state) {
   return state[/* partnersCollector */6][/* prospects */1];
 }
@@ -265,19 +263,31 @@ function isPartner(id, param) {
   return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */6]);
 }
 
+function managePartnersModal(param) {
+  return param[/* partnersCollector */6];
+}
+
+function payoutModal(param) {
+  return /* record */[
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */5])[/* currentSpendable */0],
+          /* ventureName */param[/* name */1]
+        ];
+}
+
 var PartnersCollector = 0;
 
-var ManagePartners = 0;
-
 var BalanceCollector = 0;
+
+var ManagePartners = 0;
 
 var TransactionCollector = 0;
 
 var ItemsSet = 0;
 
 exports.PartnersCollector = PartnersCollector;
-exports.ManagePartners = ManagePartners;
 exports.BalanceCollector = BalanceCollector;
+exports.ManagePartners = ManagePartners;
+exports.Payout = Payout;
 exports.TransactionCollector = TransactionCollector;
 exports.ItemsSet = ItemsSet;
 exports.make = make;
@@ -286,7 +296,6 @@ exports.init = init;
 exports.applyAll = applyAll;
 exports.ventureId = ventureId;
 exports.partners = partners;
-exports.managePartnersModal = managePartnersModal;
 exports.prospects = prospects;
 exports.removalProspects = removalProspects;
 exports.ventureName = ventureName;
@@ -294,4 +303,6 @@ exports.payouts = payouts;
 exports.balance = balance;
 exports.transactions = transactions;
 exports.isPartner = isPartner;
+exports.managePartnersModal = managePartnersModal;
+exports.payoutModal = payoutModal;
 /* partial_arg Not a pure module */

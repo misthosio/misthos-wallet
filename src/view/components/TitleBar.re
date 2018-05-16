@@ -1,3 +1,5 @@
+include ViewCommon;
+
 let component = ReasonReact.statelessComponent("TitleBar");
 
 /* TODO switch to bs-css when all grid features we need are supported */
@@ -32,7 +34,7 @@ let make = (~className="", ~titles=[], _children) => {
                key=si
                className=(Styles.area("title" ++ si) ++ " " ++ Styles.title)>
                <MaterialUi.Typography variant=`Headline>
-                 (title |> Utils.text)
+                 (title |> text)
                </MaterialUi.Typography>
              </div>;
            })

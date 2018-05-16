@@ -1,6 +1,6 @@
-open PrimitiveTypes;
+include ViewCommon;
 
-let text = Utils.text;
+open PrimitiveTypes;
 
 type state = {
   viewData: ViewModel.ManagePartners.t,
@@ -12,11 +12,6 @@ type action =
   | ChangeNewPartnerId(string)
   | ProposePartner
   | RemovePartner(UserId.t);
-
-let changeNewPartnerId = event =>
-  ChangeNewPartnerId(
-    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value,
-  );
 
 let component = ReasonReact.reducerComponent("ManagePartners");
 
@@ -99,13 +94,13 @@ let make =
                  enter a valid Blockstack ID below. When enough partners endorse this proposal,
                  the partner will be added.
                 |js}
-              |> Utils.text
+              |> text
             )
           </MTypography>
           <MInput
             placeholder="Enter a Blockstack ID"
             value=(`String(state.prospectId))
-            onChange=(e => send(changeNewPartnerId(e)))
+            onChange=(e => send(ChangeNewPartnerId(extractString(e))))
             autoFocus=false
             fullWidth=true
           />
@@ -117,12 +112,10 @@ let make =
               {js|
                Please send the following URL to the proposed Partner so they can access the Venture:
                |js}
-              |> Utils.text
+              |> text
             )
           </MTypography>
-          <MTypography variant=`Body2>
-            (joinVentureUrl |> Utils.text)
-          </MTypography>
+          <MTypography variant=`Body2> (joinVentureUrl |> text) </MTypography>
         </div>
       body2=
         <div>
@@ -133,7 +126,7 @@ let make =
                select his or her name below and submit your proposal.
                When enough partners endorse this proposal, the partner will be removed.
                |js}
-              |> Utils.text
+              |> text
             )
           </MTypography>
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>

@@ -4,9 +4,16 @@ open WalletTypes;
 
 module PartnersCollector = ViewModel__PartnersCollector;
 
+module BalanceCollector = ViewModel__BalanceCollector;
+
 module ManagePartners = PartnersCollector;
 
-module BalanceCollector = ViewModel__BalanceCollector;
+module Payout = {
+  type t = {
+    balance: BTC.t,
+    ventureName: string,
+  };
+};
 
 module TransactionCollector = ViewModel__TransactionCollector;
 
@@ -140,8 +147,6 @@ let ventureId = state => state.ventureId;
 
 let partners = state => state.partnersCollector.partners;
 
-let managePartnersModal = ({partnersCollector}) => partnersCollector;
-
 let prospects = state => state.partnersCollector.prospects;
 
 let removalProspects = state => state.partnersCollector.removalProspects;
@@ -161,3 +166,14 @@ let transactions = ({transactionCollector}) => (
 
 let isPartner = (id, {partnersCollector}) =>
   partnersCollector |> PartnersCollector.isPartner(id);
+
+let managePartnersModal = ({partnersCollector}) => partnersCollector;
+
+let payoutModal = ({name, balanceCollector}) : Payout.t => {
+  balance:
+    (
+      balanceCollector |> BalanceCollector.accountBalance(AccountIndex.default)
+    ).
+      currentSpendable,
+  ventureName: name,
+};

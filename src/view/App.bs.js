@@ -3,15 +3,15 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../utils/Utils.bs.js");
 var Drawer = require("./Drawer.bs.js");
 var Layout = require("./Layout.bs.js");
-var Payout = require("./Payout.bs.js");
 var Router = require("./Router.bs.js");
 var Receive = require("./Receive.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
+var ViewCommon = require("./ViewCommon.bs.js");
+var PayoutModal = require("./PayoutModal.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureStore = require("./VentureStore.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
@@ -70,10 +70,11 @@ function make(session, updateSession, _) {
               if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
                 return /* None */0;
               } else {
-                var match$1 = ViewModel.isPartner(session$1[/* userId */0], selectedVenture[1]);
+                var venture$1 = selectedVenture[1];
+                var match$1 = ViewModel.isPartner(session$1[/* userId */0], venture$1);
                 if (match$1) {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, Payout.make(selectedVenture[2], /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, PayoutModal.make(ViewModel.payoutModal(venture$1), selectedVenture[2], /* array */[])),
                             (function (param) {
                                 return onCloseModal(selected, param);
                               })
@@ -176,7 +177,7 @@ function make(session, updateSession, _) {
         }
       } else if (typeof selectedVenture === "number") {
         if (selectedVenture === 0) {
-          return Utils.text("Not selected");
+          return ViewCommon.text("Not selected");
         } else {
           return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* array */[]));
         }
@@ -213,6 +214,12 @@ function make(session, updateSession, _) {
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+exports.text = text;
+exports.extractString = extractString;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

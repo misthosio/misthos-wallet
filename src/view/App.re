@@ -1,3 +1,5 @@
+include ViewCommon;
+
 open Session;
 
 let component = ReasonReact.statelessComponent("App");
@@ -49,7 +51,11 @@ let make = (~session, ~updateSession, _children) => {
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.isPartner(session.userId) ?
-        Some((<Payout commands />, onCloseModal(selected))) : None
+        Some((
+          <PayoutModal viewData=(venture |> ViewModel.payoutModal) commands />,
+          onCloseModal(selected),
+        )) :
+        None
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
@@ -93,7 +99,7 @@ let make = (~session, ~updateSession, _children) => {
     | (LoggedIn(_), _, LoadingVenture(_)) =>
       <Spinner text="Loading venture" />
     | (LoggedIn(_), _, CreatingVenture) => <Spinner text="Creating venture" />
-    | (LoggedIn(_), _, None) => Utils.text("Not selected")
+    | (LoggedIn(_), _, None) => text("Not selected")
     };
   {
     ...component,

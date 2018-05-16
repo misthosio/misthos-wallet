@@ -3,9 +3,9 @@
 
 var Css = require("bs-css/src/Css.js");
 var Theme = require("../Theme.bs.js");
-var Utils = require("../../utils/Utils.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
+var ViewCommon = require("../ViewCommon.bs.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
@@ -64,14 +64,14 @@ function make(partner, _) {
               var userId = PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0]);
               var match = partner[/* name */1];
               var match$1 = match ? /* tuple */[
-                  Utils.text(match[0]),
-                  /* Some */[Utils.text(userId)]
+                  ViewCommon.text(match[0]),
+                  /* Some */[ViewCommon.text(userId)]
                 ] : /* tuple */[
-                  Utils.text(userId),
+                  ViewCommon.text(userId),
                   /* None */0
                 ];
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.Avatar[/* make */1](/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Utils.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.Avatar[/* make */1](/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[match$1[0]], match$1[1], /* None */0, /* array */[]))
                             ]));
             }),
@@ -83,6 +83,12 @@ function make(partner, _) {
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+exports.text = text;
+exports.extractString = extractString;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

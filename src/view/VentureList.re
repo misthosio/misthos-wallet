@@ -1,3 +1,5 @@
+include ViewCommon;
+
 open PrimitiveTypes;
 
 let component = ReasonReact.statelessComponent("VentureList");
@@ -42,7 +44,7 @@ let make = (~selected=?, ~index, _children) => {
                                  Styles.linkSelected : Styles.link
                              )
                              route=(Venture(id, None))>
-                             (name |> Utils.text)
+                             (name |> text)
                            </Link>
                          }
                        />
@@ -53,7 +55,7 @@ let make = (~selected=?, ~index, _children) => {
           ),
         )
       };
-    let _status = Utils.text("ventures:");
+    let _status = text("ventures:");
     <div>
       <TitleBar titles=["My Ventures"] />
       <MaterialUi.List dense=true> ventureList </MaterialUi.List>

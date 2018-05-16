@@ -1,6 +1,6 @@
-open PrimitiveTypes;
+include ViewCommon;
 
-let text = Utils.text;
+open PrimitiveTypes;
 
 type state = {
   viewModel: ViewModel.t,
@@ -277,19 +277,19 @@ let make =
       body1=
         <div>
           <MTypography variant=`Title>
-            (ViewModel.ventureName(state.viewModel) |> Utils.text)
+            (ViewModel.ventureName(state.viewModel) |> text)
           </MTypography>
           <MTypography variant=`Display2>
             <b key="currentSpendable">
-              (state.balance.currentSpendable |> BTC.format |> Utils.text)
+              (state.balance.currentSpendable |> BTC.format |> text)
             </b>
-            ("BTC" |> Utils.text)
+            ("BTC" |> text)
           </MTypography>
           <MTypography variant=`Subheading>
             <b key="reserved">
-              (BTC.format(state.balance.reserved) |> Utils.text)
+              (BTC.format(state.balance.reserved) |> text)
             </b>
-            (" BTC IN RESERVE" |> Utils.text)
+            (" BTC IN RESERVE" |> text)
           </MTypography>
         </div>
       body2=
@@ -297,12 +297,12 @@ let make =
           <MFabButton
             variant=Aqua
             route=(Venture(ViewModel.ventureId(state.viewModel), Receive))>
-            ("RECEIVE" |> Utils.text)
+            ("RECEIVE" |> text)
           </MFabButton>
           <MFabButton
             variant=Orange
             route=(Venture(ViewModel.ventureId(state.viewModel), Payout))>
-            ("PAY OUT" |> Utils.text)
+            ("PAY OUT" |> text)
           </MFabButton>
         </div>
       body3=
@@ -330,7 +330,7 @@ let make =
             route=(
               Venture(ViewModel.ventureId(state.viewModel), ManagePartners)
             )>
-            ("Add or Remove Partners" |> Utils.text)
+            ("Add or Remove Partners" |> text)
           </LinkButton>
         </div>
       body4=

@@ -1,6 +1,6 @@
-open WalletTypes;
+include ViewCommon;
 
-let text = Utils.text;
+open WalletTypes;
 
 type state = {address: option(string)};
 

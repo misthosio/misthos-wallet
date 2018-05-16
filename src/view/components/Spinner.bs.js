@@ -2,9 +2,9 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var Utils = require("../../utils/Utils.bs.js");
 var Colors = require("../Colors.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
+var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("Spinner");
@@ -24,7 +24,7 @@ var Styles = /* module */[
   /* container */container
 ];
 
-function make(text, _) {
+function make(spinnerText, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -38,7 +38,7 @@ function make(text, _) {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* Some */[container], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[/* V2 */3], /* Some */[/* V4 */5], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V8 */9], /* None */0, /* None */0, /* array */[
                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi.CircularProgress[/* make */5](/* Some */[progress], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])),
-                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body1 */-904051921], /* None */0, /* array */[Utils.text(text)]))
+                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body1 */-904051921], /* None */0, /* array */[ViewCommon.text(spinnerText)]))
                                                 ]))]))]));
             }),
           /* initialState */component[/* initialState */10],
@@ -49,6 +49,12 @@ function make(text, _) {
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+exports.text = text;
+exports.extractString = extractString;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;
