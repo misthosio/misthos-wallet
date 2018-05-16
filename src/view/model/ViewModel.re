@@ -38,7 +38,6 @@ type t = {
   name: string,
   processedItems: ItemsSet.t,
   metaPolicy: Policy.t,
-  incomeAddresses: list((accountIdx, list(string))),
   payouts: list(payout),
   balanceCollector: BalanceCollector.t,
   partnersCollector: PartnersCollector.t,
@@ -50,7 +49,6 @@ let make = () => {
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   metaPolicy: Policy.unanimous,
-  incomeAddresses: [],
   payouts: [],
   balanceCollector: BalanceCollector.make(),
   partnersCollector: PartnersCollector.make(),
@@ -78,22 +76,6 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         name: ventureName,
         metaPolicy,
       }
-    | AccountCreationAccepted({data}) => {
-        ...state,
-        incomeAddresses: [(data.accountIdx, [])],
-      }
-    | IncomeAddressExposed({address, coordinates}) =>
-      let accountIdx = coordinates |> Address.Coordinates.accountIdx;
-      {
-        ...state,
-        incomeAddresses: [
-          (
-            accountIdx,
-            [address, ...state.incomeAddresses |> List.assoc(accountIdx)],
-          ),
-          ...state.incomeAddresses,
-        ],
-      };
     | PayoutProposed({processId, supporterId, data}) => {
         ...state,
         payouts: [
@@ -161,9 +143,6 @@ let prospects = state => state.partnersCollector.prospects;
 let removalProspects = state => state.partnersCollector.removalProspects;
 
 let ventureName = state => state.name;
-
-let incomeAddresses = state =>
-  state.incomeAddresses |> List.assoc(AccountIndex.default);
 
 let payouts = state => state.payouts;
 

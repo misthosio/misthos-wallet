@@ -5,7 +5,6 @@ var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Policy = require("../../application/Policy.bs.js");
-var Address = require("../../application/wallet/Address.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
@@ -19,7 +18,6 @@ function make() {
           /* name */"",
           /* processedItems */Belt_SetString.empty,
           /* metaPolicy */Policy.unanimous,
-          /* incomeAddresses : [] */0,
           /* payouts : [] */0,
           /* balanceCollector */ViewModel__BalanceCollector.make(/* () */0),
           /* partnersCollector */ViewModel__PartnersCollector.make(/* () */0),
@@ -38,11 +36,10 @@ function apply(param, state) {
     var state_001 = /* name */state[/* name */1];
     var state_002 = /* processedItems */Belt_SetString.add(processedItems, hash);
     var state_003 = /* metaPolicy */state[/* metaPolicy */3];
-    var state_004 = /* incomeAddresses */state[/* incomeAddresses */4];
-    var state_005 = /* payouts */state[/* payouts */5];
-    var state_006 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */6]);
-    var state_007 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */7]);
-    var state_008 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */8]);
+    var state_004 = /* payouts */state[/* payouts */4];
+    var state_005 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */5]);
+    var state_006 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */6]);
+    var state_007 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */7]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -51,8 +48,7 @@ function apply(param, state) {
       state_004,
       state_005,
       state_006,
-      state_007,
-      state_008
+      state_007
     ];
     switch ($$event.tag | 0) {
       case 0 : 
@@ -65,26 +61,7 @@ function apply(param, state) {
                   state_004,
                   state_005,
                   state_006,
-                  state_007,
-                  state_008
-                ];
-      case 12 : 
-          return /* record */[
-                  state_000,
-                  state_001,
-                  state_002,
-                  state_003,
-                  /* incomeAddresses : :: */[
-                    /* tuple */[
-                      $$event[0][/* data */2][/* accountIdx */0],
-                      /* [] */0
-                    ],
-                    /* [] */0
-                  ],
-                  state_005,
-                  state_006,
-                  state_007,
-                  state_008
+                  state_007
                 ];
       case 21 : 
           var match$1 = $$event[0];
@@ -93,7 +70,6 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
-                  state_004,
                   /* payouts : :: */[
                     /* record */[
                       /* processId */match$1[/* processId */0],
@@ -105,11 +81,11 @@ function apply(param, state) {
                       /* rejectedBy : [] */0,
                       /* status : PayoutPending */0
                     ],
-                    state_005
+                    state_004
                   ],
+                  state_005,
                   state_006,
-                  state_007,
-                  state_008
+                  state_007
                 ];
       case 22 : 
           var match$2 = $$event[0];
@@ -120,7 +96,6 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
-                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId);
                           if (match) {
@@ -137,10 +112,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_005),
+                        }), state_004),
+                  state_005,
                   state_006,
-                  state_007,
-                  state_008
+                  state_007
                 ];
       case 23 : 
           var match$3 = $$event[0];
@@ -151,7 +126,6 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
-                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$1);
                           if (match) {
@@ -168,10 +142,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_005),
+                        }), state_004),
+                  state_005,
                   state_006,
-                  state_007,
-                  state_008
+                  state_007
                 ];
       case 26 : 
           var match$4 = $$event[0];
@@ -182,7 +156,6 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
-                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$2);
                           if (match) {
@@ -196,10 +169,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_005),
+                        }), state_004),
+                  state_005,
                   state_006,
-                  state_007,
-                  state_008
+                  state_007
                 ];
       case 28 : 
           var match$5 = $$event[0];
@@ -210,7 +183,6 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
-                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$3);
                           if (match) {
@@ -224,33 +196,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_005),
-                  state_006,
-                  state_007,
-                  state_008
-                ];
-      case 32 : 
-          var match$6 = $$event[0];
-          var accountIdx = Address.Coordinates[/* accountIdx */3](match$6[/* coordinates */0]);
-          return /* record */[
-                  state_000,
-                  state_001,
-                  state_002,
-                  state_003,
-                  /* incomeAddresses : :: */[
-                    /* tuple */[
-                      accountIdx,
-                      /* :: */[
-                        match$6[/* address */1],
-                        List.assoc(accountIdx, state_004)
-                      ]
-                    ],
-                    state_004
-                  ],
+                        }), state_004),
                   state_005,
                   state_006,
-                  state_007,
-                  state_008
+                  state_007
                 ];
       default:
         return state$1;
@@ -277,35 +226,31 @@ function ventureId(state) {
 }
 
 function partners(state) {
-  return state[/* partnersCollector */7][/* partners */0];
+  return state[/* partnersCollector */6][/* partners */0];
 }
 
 function prospects(state) {
-  return state[/* partnersCollector */7][/* prospects */1];
+  return state[/* partnersCollector */6][/* prospects */1];
 }
 
 function removalProspects(state) {
-  return state[/* partnersCollector */7][/* removalProspects */2];
+  return state[/* partnersCollector */6][/* removalProspects */2];
 }
 
 function ventureName(state) {
   return state[/* name */1];
 }
 
-function incomeAddresses(state) {
-  return List.assoc(WalletTypes.AccountIndex[/* default */9], state[/* incomeAddresses */4]);
-}
-
 function payouts(state) {
-  return state[/* payouts */5];
+  return state[/* payouts */4];
 }
 
 function balance(state) {
-  return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */6]);
+  return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */5]);
 }
 
 function transactions(param) {
-  var transactionCollector = param[/* transactionCollector */8];
+  var transactionCollector = param[/* transactionCollector */7];
   return /* tuple */[
           transactionCollector[/* confirmedTxs */1],
           transactionCollector[/* unconfirmedTxs */2]
@@ -313,7 +258,7 @@ function transactions(param) {
 }
 
 function isPartner(id, param) {
-  return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */7]);
+  return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */6]);
 }
 
 var PartnersCollector = 0;
@@ -337,7 +282,6 @@ exports.partners = partners;
 exports.prospects = prospects;
 exports.removalProspects = removalProspects;
 exports.ventureName = ventureName;
-exports.incomeAddresses = incomeAddresses;
 exports.payouts = payouts;
 exports.balance = balance;
 exports.transactions = transactions;
