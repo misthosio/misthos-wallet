@@ -5,7 +5,6 @@ open PrimitiveTypes;
 type state = {
   viewData: ViewModel.ManagePartners.t,
   prospectId: string,
-  currentUser: userId,
 };
 
 type action =
@@ -20,16 +19,11 @@ let make =
       ~joinVentureUrl: string,
       ~viewData: ViewModel.ManagePartners.t,
       ~commands: VentureWorkerClient.Cmd.t,
-      ~session: Session.Data.t,
       _children,
     ) => {
   ...component,
-  initialState: () => {prospectId: "", currentUser: session.userId, viewData},
-  willReceiveProps: ({state}) => {
-    ...state,
-    viewData,
-    currentUser: session.userId,
-  },
+  initialState: () => {prospectId: "", viewData},
+  willReceiveProps: ({state}) => {...state, viewData},
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
@@ -64,14 +58,8 @@ let make =
                  <div>
                    (text(m.userId |> UserId.toString))
                    (
-                     switch (
-                       m.userId |> UserId.eq(state.currentUser),
-                       state.viewData.removalProspects
-                       |> List.exists((p: ViewModel.prospect) =>
-                            UserId.eq(p.userId, m.userId)
-                          ),
-                     ) {
-                     | (false, false) =>
+                     switch (m.canProposeRemoval) {
+                     | true =>
                        <button onClick=(_e => send(RemovePartner(m.userId)))>
                          (text("Propose Removal"))
                        </button>

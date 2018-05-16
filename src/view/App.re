@@ -33,7 +33,6 @@ let make = (~session, ~updateSession, _children) => {
             )
             viewData=(venture |> ViewModel.managePartnersModal)
             commands
-            session
           />,
           onCloseModal(selected),
         )) :

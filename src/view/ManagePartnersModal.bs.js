@@ -19,7 +19,7 @@ var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
-function make(joinVentureUrl, viewData, commands, session, _) {
+function make(joinVentureUrl, viewData, commands, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -27,8 +27,7 @@ function make(joinVentureUrl, viewData, commands, session, _) {
           /* willReceiveProps */(function (param) {
               return /* record */[
                       /* viewData */viewData,
-                      /* prospectId */param[/* state */1][/* prospectId */1],
-                      /* currentUser */session[/* userId */0]
+                      /* prospectId */param[/* state */1][/* prospectId */1]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -43,17 +42,14 @@ function make(joinVentureUrl, viewData, commands, session, _) {
                           return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
                         }), state[/* viewData */0][/* partners */1]));
               var partnersOld = $$Array.of_list(List.map((function (m) {
-                          var match = PrimitiveTypes.UserId[/* eq */5](state[/* currentUser */2], m[/* userId */0]);
-                          var match$1 = List.exists((function (p) {
-                                  return PrimitiveTypes.UserId[/* eq */5](p[/* userId */1], m[/* userId */0]);
-                                }), state[/* viewData */0][/* removalProspects */3]);
+                          var match = m[/* canProposeRemoval */2];
                           return React.createElement("li", {
                                       key: PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])
-                                    }, React.createElement("div", undefined, ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])), match || match$1 ? null : React.createElement("button", {
+                                    }, React.createElement("div", undefined, ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])), match ? React.createElement("button", {
                                                 onClick: (function () {
                                                     return Curry._1(send, /* RemovePartner */Block.__(1, [m[/* userId */0]]));
                                                   })
-                                              }, ViewCommon.text("Propose Removal"))));
+                                              }, ViewCommon.text("Propose Removal")) : null));
                         }), state[/* viewData */0][/* partners */1]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",
@@ -73,8 +69,7 @@ function make(joinVentureUrl, viewData, commands, session, _) {
           /* initialState */(function () {
               return /* record */[
                       /* viewData */viewData,
-                      /* prospectId */"",
-                      /* currentUser */session[/* userId */0]
+                      /* prospectId */""
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -87,8 +82,7 @@ function make(joinVentureUrl, viewData, commands, session, _) {
                   Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
                   return /* Update */Block.__(0, [/* record */[
                               /* viewData */state[/* viewData */0],
-                              /* prospectId */"",
-                              /* currentUser */state[/* currentUser */2]
+                              /* prospectId */""
                             ]]);
                 }
               } else if (action.tag) {
@@ -97,8 +91,7 @@ function make(joinVentureUrl, viewData, commands, session, _) {
               } else {
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
-                            /* prospectId */action[0],
-                            /* currentUser */state[/* currentUser */2]
+                            /* prospectId */action[0]
                           ]]);
               }
             }),

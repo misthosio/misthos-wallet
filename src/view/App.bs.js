@@ -57,7 +57,7 @@ function make(session, updateSession, _) {
                             ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                                             selectedVenture[0],
                                             session$1[/* userId */0]
-                                          ])), ViewModel.managePartnersModal(venture), selectedVenture[2], session$1, /* array */[])),
+                                          ])), ViewModel.managePartnersModal(venture), selectedVenture[2], /* array */[])),
                             (function (param) {
                                 return onCloseModal(selected, param);
                               })
