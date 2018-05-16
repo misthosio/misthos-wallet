@@ -10,6 +10,7 @@ type state = {
   identifiedKeyChains: list((AccountKeyChain.Identifier.t, int)),
   identifiedEvent: option((Bitcoin.ECPair.t, Event.t)),
   activatedEvent: option((Bitcoin.ECPair.t, Event.t)),
+  waitingForIdentification: string,
   active: bool,
 };
 
@@ -51,6 +52,7 @@ let make =
         custodianKeyChains: [],
         identifiedKeyChains: [],
         systemIssuer: Bitcoin.ECPair.makeRandom(),
+        waitingForIdentification: "",
         identifiedEvent: None,
         activatedEvent: None,
         active: false,
@@ -82,6 +84,7 @@ let make =
                   state^ |> identifiedEvent(custodianKeyChains);
                 {
                   ...state^,
+                  waitingForIdentification: identifier,
                   custodianKeyChains,
                   identifiedKeyChains,
                   activatedEvent:
@@ -102,6 +105,7 @@ let make =
               state^ |> identifiedEvent(custodianKeyChains);
             {
               ...state^,
+              waitingForIdentification: identifier,
               custodianKeyChains,
               identifiedKeyChains,
               activatedEvent: activatedEvent(identifier, identifiedKeyChains),
@@ -126,8 +130,11 @@ let make =
               ],
             }
           | AccountKeyChainIdentified({keyChain})
-              when keyChain.accountIdx == accountIdx => {
+              when
+                keyChain.accountIdx == accountIdx
+                && keyChain.identifier == state^.waitingForIdentification => {
               ...state^,
+              waitingForIdentification: "",
               identifiedEvent: None,
             }
           | _ => state^
