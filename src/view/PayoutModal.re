@@ -1,7 +1,5 @@
 include ViewCommon;
 
-open WalletTypes;
-
 module View = ViewModel.Payout;
 
 type inputs = {
