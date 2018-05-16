@@ -154,55 +154,20 @@ let make =
             List.append(
               unconfirmed
               |> List.mapi((iter, tx: ViewModel.unconfirmedTx) =>
-                   <li key=(iter |> string_of_int)>
-                     (
-                       switch (tx) {
-                       | UnconfirmedPayout(txId, amount) =>
-                         text(
-                           "Unconfirmed Payout: '"
-                           ++ txId
-                           ++ "' - "
-                           ++ BTC.format(amount)
-                           ++ "btc",
-                         )
-                       | UnconfirmedIncome(txId, amount) =>
-                         text(
-                           "Unconfirmed Income: '"
-                           ++ txId
-                           ++ "' - "
-                           ++ BTC.format(amount)
-                           ++ "btc",
-                         )
-                       }
-                     )
-                   </li>
+                   <Transaction
+                     tx=(Unconfirmed(tx))
+                     key=(iter |> string_of_int)
+                   />
                  ),
               confirmed
               |> List.mapi((iter, tx: ViewModel.confirmedTx) =>
-                   <li key=(string_of_int(iter + List.length(unconfirmed)))>
-                     (
-                       switch (tx) {
-                       | ConfirmedIncome(_, amount, date) =>
-                         text(
-                           "INCOME: "
-                           ++ Js.Date.toString(date)
-                           ++ " - "
-                           ++ BTC.format(amount)
-                           ++ "btc",
-                         )
-                       | ConfirmedPayout(_, amount, date) =>
-                         text(
-                           "PAYOUT: "
-                           ++ Js.Date.toString(date)
-                           ++ " - "
-                           ++ BTC.format(amount)
-                           ++ "btc",
-                         )
-                       }
-                     )
-                   </li>
+                   <Transaction
+                     tx=(Confirmed(tx))
+                     key=(string_of_int(iter + List.length(unconfirmed)))
+                   />
                  ),
-            );
+            )
+            |> Utils.intersperse(key => <MDivider key />);
           },
         ),
       );
@@ -341,8 +306,7 @@ let make =
           />
           <h4> (text("Payout processes:")) </h4>
           <ul> payouts </ul>
-          <h4> (text("Transactions:")) </h4>
-          <ul> transactions </ul>
+          <MaterialUi.List> transactions </MaterialUi.List>
         </div>
     />;
   },

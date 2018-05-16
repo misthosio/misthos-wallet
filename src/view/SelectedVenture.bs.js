@@ -8,8 +8,10 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Body4 = require("./components/Body4.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Partner = require("./components/Partner.bs.js");
+var MDivider = require("./components/MDivider.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
 var MFabButton = require("./components/MFabButton.bs.js");
@@ -18,6 +20,7 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var PayoutInput = require("./components/PayoutInput.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var Transaction = require("./components/Transaction.bs.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
@@ -80,19 +83,13 @@ function make(initialViewModel, session, commands, _) {
                         }), ViewModel.removalProspects(state[/* viewModel */0])));
               var match = ViewModel.transactions(state[/* viewModel */0]);
               var unconfirmed = match[1];
-              var transactions = $$Array.of_list(List.append(List.mapi((function (iter, tx) {
-                              var tmp;
-                              tmp = tx.tag ? ViewCommon.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : ViewCommon.text("Unconfirmed Income: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc"))));
-                              return React.createElement("li", {
-                                          key: String(iter)
-                                        }, tmp);
-                            }), unconfirmed), List.mapi((function (iter, tx) {
-                              var tmp;
-                              tmp = tx.tag ? ViewCommon.text("PAYOUT: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc")))) : ViewCommon.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc"))));
-                              return React.createElement("li", {
-                                          key: String(iter + List.length(unconfirmed) | 0)
-                                        }, tmp);
-                            }), match[0])));
+              var transactions = $$Array.of_list(Utils.intersperse((function (key) {
+                          return ReasonReact.element(/* Some */[key], /* None */0, MDivider.make(/* array */[]));
+                        }), List.append(List.mapi((function (iter, tx) {
+                                  return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(/* Unconfirmed */Block.__(1, [tx]), /* array */[]));
+                                }), unconfirmed), List.mapi((function (iter, tx) {
+                                  return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(/* Confirmed */Block.__(0, [tx]), /* array */[]));
+                                }), match[0]))));
               var payouts = $$Array.of_list(List.map((function (payout) {
                           var match = payout[/* status */4];
                           var tmp;
@@ -150,7 +147,7 @@ function make(initialViewModel, session, commands, _) {
                                             /* ManagePartners */1
                                           ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, ViewCommon.text("Wallet:")), ReasonReact.element(/* None */0, /* None */0, PayoutInput.make((function (destinations) {
                                             return Curry._1(send, /* ProposePayout */Block.__(2, [destinations]));
-                                          }), /* array */[])), React.createElement("h4", undefined, ViewCommon.text("Payout processes:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, ViewCommon.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
+                                          }), /* array */[])), React.createElement("h4", undefined, ViewCommon.text("Payout processes:")), React.createElement("ul", undefined, payouts), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
