@@ -44,7 +44,8 @@ let make =
   reducer: (action, state) =>
     switch (state.selfRemoved, action) {
     | (false, GetIncomeAddress) =>
-      ReasonReact.SideEffects(
+      ReasonReact.UpdateWithSideEffects(
+        {...state, address: None},
         (
           ({send}) =>
             commands.exposeIncomeAddress(~accountIdx=AccountIndex.default)

@@ -78,13 +78,20 @@ function make(initialViewModel, session, commands, _) {
               if (match || action) {
                 exit = 1;
               } else {
-                return /* SideEffects */Block.__(1, [(function (param) {
+                return /* UpdateWithSideEffects */Block.__(2, [
+                          /* record */[
+                            /* viewModel */state[/* viewModel */0],
+                            /* selfRemoved */state[/* selfRemoved */1],
+                            /* address : None */0
+                          ],
+                          (function (param) {
                               var send = param[/* send */3];
                               Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]).then((function (address) {
                                       return Promise.resolve(Curry._1(send, /* UpdateAddress */[address]));
                                     }));
                               return /* () */0;
-                            })]);
+                            })
+                        ]);
               }
               if (exit === 1) {
                 if (action) {
