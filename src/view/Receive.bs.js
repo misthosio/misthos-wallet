@@ -37,9 +37,8 @@ function make(initialViewModel, session, commands, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
               return /* record */[
-                      /* viewModel */initialViewModel,
                       /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
-                      /* address */param[/* state */1][/* address */2]
+                      /* address */param[/* state */1][/* address */1]
                     ];
             }),
           /* didMount */(function (param) {
@@ -52,7 +51,7 @@ function make(initialViewModel, session, commands, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var state = param[/* state */1];
-              var match = state[/* address */2];
+              var match = state[/* address */1];
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "Receive BTC",
                                     /* [] */0
@@ -60,28 +59,26 @@ function make(initialViewModel, session, commands, _) {
                               className: container
                             }, match ? React.createElement("img", {
                                     src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
-                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */2]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */1]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* GetIncomeAddress */0);
                                         })], /* None */0, /* array */[Utils.text("Generate new income address")]))));
             }),
           /* initialState */(function () {
               return /* record */[
-                      /* viewModel */initialViewModel,
                       /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
                       /* address : None */0
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              var match = state[/* selfRemoved */1];
+              var match = state[/* selfRemoved */0];
               var exit = 0;
               if (match || action) {
                 exit = 1;
               } else {
                 return /* UpdateWithSideEffects */Block.__(2, [
                           /* record */[
-                            /* viewModel */state[/* viewModel */0],
-                            /* selfRemoved */state[/* selfRemoved */1],
+                            /* selfRemoved */state[/* selfRemoved */0],
                             /* address : None */0
                           ],
                           (function (param) {
@@ -96,8 +93,7 @@ function make(initialViewModel, session, commands, _) {
               if (exit === 1) {
                 if (action) {
                   return /* Update */Block.__(0, [/* record */[
-                              /* viewModel */state[/* viewModel */0],
-                              /* selfRemoved */state[/* selfRemoved */1],
+                              /* selfRemoved */state[/* selfRemoved */0],
                               /* address : Some */[action[0]]
                             ]]);
                 } else {

@@ -3,7 +3,6 @@ open WalletTypes;
 let text = Utils.text;
 
 type state = {
-  viewModel: ViewModel.t,
   selfRemoved: bool,
   address: option(string),
 };
@@ -29,7 +28,6 @@ let make =
     ) => {
   ...component,
   initialState: () => {
-    viewModel: initialViewModel,
     selfRemoved:
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
     address: None,
@@ -37,7 +35,6 @@ let make =
   didMount: ({send}) => send(GetIncomeAddress),
   willReceiveProps: ({state}) => {
     ...state,
-    viewModel: initialViewModel,
     selfRemoved:
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
   },
