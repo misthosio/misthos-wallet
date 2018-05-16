@@ -291,16 +291,10 @@ function bitcoinNetwork(param) {
   }
 }
 
-var regtestIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
+var testnetIncomeAddress = "2MyDv73XiDVriarRzBMRNQj2f637tP12Vb6";
 
-var testnetIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
-
-function incomeAddress(param) {
-  if (param !== 0) {
-    return testnetIncomeAddress;
-  } else {
-    return regtestIncomeAddress;
-  }
+function incomeAddress() {
+  return testnetIncomeAddress;
 }
 
 exports.encode = encode;
@@ -317,7 +311,6 @@ exports.transactionInputs = transactionInputs$3;
 exports.transactionInfo = transactionInfo$3;
 exports.broadcastTransaction = broadcastTransaction$3;
 exports.bitcoinNetwork = bitcoinNetwork;
-exports.regtestIncomeAddress = regtestIncomeAddress;
 exports.testnetIncomeAddress = testnetIncomeAddress;
 exports.incomeAddress = incomeAddress;
 /* TxInputCmp Not a pure module */

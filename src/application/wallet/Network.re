@@ -166,12 +166,10 @@ let bitcoinNetwork =
   | Testnet => Testnet.network
   | Mainnet => Mainnet.network;
 
-let regtestIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
-
-let testnetIncomeAddress = "2MyjgYp38H946vwTHs1Q8mu88vv9bUoF2UC";
+let testnetIncomeAddress = "2MyDv73XiDVriarRzBMRNQj2f637tP12Vb6";
 
 let incomeAddress =
   fun
-  | Regtest => regtestIncomeAddress
+  | Regtest => testnetIncomeAddress
   | Testnet => testnetIncomeAddress
   | Mainnet => testnetIncomeAddress;
