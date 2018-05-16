@@ -32,7 +32,8 @@ let make =
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
     address: None,
   },
-  didMount: ({send}) => send(GetIncomeAddress),
+  didMount: ({state: {selfRemoved}, send}) =>
+    selfRemoved == false ? send(GetIncomeAddress) : (),
   willReceiveProps: ({state}) => {
     ...state,
     selfRemoved:
@@ -69,7 +70,10 @@ let make =
                 ++ address
               )
             />
-          | None => <Spinner text="Generating new address" />
+          | None =>
+            <Spinner
+              text=(state.selfRemoved ? "READ ONLY" : "Generating new address")
+            />
           }
         )
         <MTypography variant=`Body2>

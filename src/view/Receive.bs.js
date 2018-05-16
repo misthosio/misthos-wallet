@@ -42,7 +42,12 @@ function make(initialViewModel, session, commands, _) {
                     ];
             }),
           /* didMount */(function (param) {
-              return Curry._1(param[/* send */3], /* GetIncomeAddress */0);
+              var match = param[/* state */1][/* selfRemoved */0] === false;
+              if (match) {
+                return Curry._1(param[/* send */3], /* GetIncomeAddress */0);
+              } else {
+                return /* () */0;
+              }
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
@@ -52,14 +57,21 @@ function make(initialViewModel, session, commands, _) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var match = state[/* address */1];
+              var tmp;
+              if (match) {
+                tmp = React.createElement("img", {
+                      src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
+                    });
+              } else {
+                var match$1 = state[/* selfRemoved */0];
+                tmp = ReasonReact.element(/* None */0, /* None */0, Spinner.make(match$1 ? "READ ONLY" : "Generating new address", /* array */[]));
+              }
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "Receive BTC",
                                     /* [] */0
                                   ]], /* array */[])), React.createElement("div", {
                               className: container
-                            }, match ? React.createElement("img", {
-                                    src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
-                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */1]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                            }, tmp, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */1]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* GetIncomeAddress */0);
                                         })], /* None */0, /* array */[Utils.text("Generate new income address")]))));
             }),
