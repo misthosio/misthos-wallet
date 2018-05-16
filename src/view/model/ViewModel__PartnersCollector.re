@@ -3,6 +3,7 @@ open PrimitiveTypes;
 type partner = {
   userId,
   name: option(string),
+  canProposeRemoval: bool,
 };
 
 type prospect = {
@@ -48,12 +49,25 @@ let apply = (event: Event.t, state) =>
     }
   | PartnerAccepted({data}) => {
       ...state,
-      partners: [{userId: data.id, name: None}, ...state.partners],
+      partners: [
+        {
+          userId: data.id,
+          name: None,
+          canProposeRemoval: UserId.neq(data.id, state.localUser),
+        },
+        ...state.partners,
+      ],
       prospects:
         state.prospects |> List.filter(p => UserId.neq(p.userId, data.id)),
     }
   | PartnerRemovalProposed({processId, supporterId, data}) => {
       ...state,
+      partners:
+        state.partners
+        |> List.map((p: partner) =>
+             UserId.eq(p.userId, data.id) ?
+               {...p, canProposeRemoval: false} : p
+           ),
       removalProspects: [
         {processId, userId: data.id, endorsedBy: [supporterId]},
         ...state.removalProspects,
