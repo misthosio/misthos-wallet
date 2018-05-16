@@ -6,8 +6,6 @@ type incoming =
 
 type outgoing = unit;
 
-type encodedIncoming = unit;
+external encodeIncoming : incoming => Js.Json.t = "%identity";
 
-type encodedOutgoing = outgoing;
-
-let decodeOutgoing = outgoing => outgoing;
+external decodeOutgoing : Js.Json.t => outgoing = "%identity";

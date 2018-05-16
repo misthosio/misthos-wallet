@@ -5,14 +5,18 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
-var PersistWorkerMessage = require("./PersistWorkerMessage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Persist_workerBsJs = require("./Persist_worker.bs.js");
 
-var Config = /* module */[/* decodeOutgoing */PersistWorkerMessage.decodeOutgoing];
+var Config = /* module */[];
 
 var include = WebWorker.MakeClient([
-      PersistWorkerMessage.decodeOutgoing,
+      (function (prim) {
+          return prim;
+        }),
+      (function (prim) {
+          return prim;
+        }),
       (function () {
           return new Persist_workerBsJs();
         })
@@ -30,19 +34,16 @@ function ventureMessage(msg, worker) {
 
 var syncListeners = include[0];
 
-var postMessageEncoded = include[2];
+var postMessageSync = include[2];
 
-var postMessageEncodedSync = include[3];
+var handleMessage = include[3];
 
-var handleMessage = include[4];
-
-var make = include[5];
+var make = include[4];
 
 exports.Config = Config;
 exports.syncListeners = syncListeners;
 exports.postMessage = postMessage;
-exports.postMessageEncoded = postMessageEncoded;
-exports.postMessageEncodedSync = postMessageEncodedSync;
+exports.postMessageSync = postMessageSync;
 exports.handleMessage = handleMessage;
 exports.make = make;
 exports.updateSession = updateSession;

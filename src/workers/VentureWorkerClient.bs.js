@@ -18,88 +18,79 @@ var Config = /* module */[
 
 var include = WebWorker.MakeClient([
       VentureWorkerMessage.decodeOutgoing,
+      VentureWorkerMessage.encodeIncoming,
       (function () {
           return new Venture_workerBsJs();
         })
     ]);
 
-var postMessageEncoded = include[2];
+var postMessage = include[1];
 
-var postMessageEncodedSync = include[3];
-
-function postMessage(worker, msg) {
-  var encodedMsg = VentureWorkerMessage.encodeIncoming(msg);
-  return Curry._2(postMessageEncoded, worker, encodedMsg);
-}
-
-function postMessageSync(worker, msg) {
-  var encodedMsg = VentureWorkerMessage.encodeIncoming(msg);
-  return Curry._2(postMessageEncodedSync, worker, encodedMsg);
-}
+var postMessageSync = include[2];
 
 function updateSession(worker) {
-  return postMessage(worker, /* UpdateSession */Block.__(0, [WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]));
+  return Curry._2(postMessage, worker, /* UpdateSession */Block.__(0, [WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]));
 }
 
 function create(name, worker) {
-  return postMessage(worker, /* Create */Block.__(1, [name]));
+  return Curry._2(postMessage, worker, /* Create */Block.__(1, [name]));
 }
 
 function load(ventureId, worker) {
-  return postMessage(worker, /* Load */Block.__(2, [ventureId]));
+  return Curry._2(postMessage, worker, /* Load */Block.__(2, [ventureId]));
 }
 
 function joinVia(ventureId, userId, worker) {
-  return postMessage(worker, /* JoinVia */Block.__(3, [
+  return Curry._2(postMessage, worker, /* JoinVia */Block.__(3, [
                 ventureId,
                 userId
               ]));
 }
 
 function proposePartner(worker, ventureId, prospectId) {
-  return postMessage(worker, /* ProposePartner */Block.__(4, [
+  return Curry._2(postMessage, worker, /* ProposePartner */Block.__(4, [
                 ventureId,
                 prospectId
               ]));
 }
 
 function rejectPartner(worker, ventureId, processId) {
-  return postMessage(worker, /* RejectPartner */Block.__(5, [
+  return Curry._2(postMessage, worker, /* RejectPartner */Block.__(5, [
                 ventureId,
                 processId
               ]));
 }
 
 function endorsePartner(worker, ventureId, processId) {
-  return postMessage(worker, /* EndorsePartner */Block.__(6, [
+  return Curry._2(postMessage, worker, /* EndorsePartner */Block.__(6, [
                 ventureId,
                 processId
               ]));
 }
 
 function proposePartnerRemoval(worker, ventureId, partnerId) {
-  return postMessage(worker, /* ProposePartnerRemoval */Block.__(7, [
+  return Curry._2(postMessage, worker, /* ProposePartnerRemoval */Block.__(7, [
                 ventureId,
                 partnerId
               ]));
 }
 
 function rejectPartnerRemoval(worker, ventureId, processId) {
-  return postMessage(worker, /* RejectPartnerRemoval */Block.__(8, [
+  return Curry._2(postMessage, worker, /* RejectPartnerRemoval */Block.__(8, [
                 ventureId,
                 processId
               ]));
 }
 
 function endorsePartnerRemoval(worker, ventureId, processId) {
-  return postMessage(worker, /* EndorsePartnerRemoval */Block.__(9, [
+  return Curry._2(postMessage, worker, /* EndorsePartnerRemoval */Block.__(9, [
                 ventureId,
                 processId
               ]));
 }
 
 function proposePayout(worker, ventureId, accountIdx, destinations, fee) {
-  return postMessage(worker, /* ProposePayout */Block.__(10, [
+  return Curry._2(postMessage, worker, /* ProposePayout */Block.__(10, [
                 ventureId,
                 accountIdx,
                 destinations,
@@ -108,21 +99,21 @@ function proposePayout(worker, ventureId, accountIdx, destinations, fee) {
 }
 
 function rejectPayout(worker, ventureId, processId) {
-  return postMessage(worker, /* RejectPayout */Block.__(11, [
+  return Curry._2(postMessage, worker, /* RejectPayout */Block.__(11, [
                 ventureId,
                 processId
               ]));
 }
 
 function endorsePayout(worker, ventureId, processId) {
-  return postMessage(worker, /* EndorsePayout */Block.__(12, [
+  return Curry._2(postMessage, worker, /* EndorsePayout */Block.__(12, [
                 ventureId,
                 processId
               ]));
 }
 
 function exposeIncomeAddress(worker, ventureId, accountIdx) {
-  return postMessageSync(worker, /* ExposeIncomeAddress */Block.__(13, [
+  return Curry._2(postMessageSync, worker, /* ExposeIncomeAddress */Block.__(13, [
                   ventureId,
                   accountIdx
                 ])).then((function (param) {
@@ -173,18 +164,16 @@ var Cmd = /* module */[/* make */make];
 
 var syncListeners = include[0];
 
-var handleMessage = include[4];
+var handleMessage = include[3];
 
-var make$1 = include[5];
+var make$1 = include[4];
 
 exports.Config = Config;
 exports.syncListeners = syncListeners;
-exports.postMessageEncoded = postMessageEncoded;
-exports.postMessageEncodedSync = postMessageEncodedSync;
-exports.handleMessage = handleMessage;
-exports.make = make$1;
 exports.postMessage = postMessage;
 exports.postMessageSync = postMessageSync;
+exports.handleMessage = handleMessage;
+exports.make = make$1;
 exports.updateSession = updateSession;
 exports.create = create;
 exports.load = load;

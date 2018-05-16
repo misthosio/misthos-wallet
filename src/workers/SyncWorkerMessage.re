@@ -9,8 +9,8 @@ type incoming =
 
 type outgoing = VentureWorkerMessage.incoming;
 
-type encodedIncoming = unit;
+external encodeIncoming : incoming => Js.Json.t = "%identity";
 
-type encodedOutgoing = VentureWorkerMessage.encodedIncoming;
+external decodeIncoming : Js.Json.t => incoming = "%identity";
 
 let decodeOutgoing = VentureWorkerMessage.decodeIncoming;

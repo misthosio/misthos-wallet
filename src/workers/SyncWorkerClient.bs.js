@@ -11,6 +11,9 @@ var Config = /* module */[/* decodeOutgoing */SyncWorkerMessage.decodeOutgoing];
 
 var include = WebWorker.MakeClient([
       SyncWorkerMessage.decodeOutgoing,
+      (function (prim) {
+          return prim;
+        }),
       (function () {
           return new Sync_workerBsJs();
         })
@@ -24,19 +27,16 @@ function updateSession(worker) {
 
 var syncListeners = include[0];
 
-var postMessageEncoded = include[2];
+var postMessageSync = include[2];
 
-var postMessageEncodedSync = include[3];
+var handleMessage = include[3];
 
-var handleMessage = include[4];
-
-var make = include[5];
+var make = include[4];
 
 exports.Config = Config;
 exports.syncListeners = syncListeners;
 exports.postMessage = postMessage;
-exports.postMessageEncoded = postMessageEncoded;
-exports.postMessageEncodedSync = postMessageEncodedSync;
+exports.postMessageSync = postMessageSync;
 exports.handleMessage = handleMessage;
 exports.make = make;
 exports.updateSession = updateSession;

@@ -12,16 +12,10 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (
-    self,
-    [@bs.uncurry] ({. "data": WebWorker.payload(Message.incoming)} => unit)
-  ) =>
-  unit =
+  (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
   "onmessage";
 
-[@bs.val]
-external _postMessage : WebWorker.payload(Message.encodedOutgoing) => unit =
-  "postMessage";
+[@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
 
 let postMessage = msg =>
   {
@@ -164,7 +158,8 @@ let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
 onMessage(
   self,
   msg => {
-    let newIntervalid = handleMsg(msg##data##msg);
+    let newIntervalid =
+      handleMsg(msg##data##msg |> IncomeWorkerMessage.decodeIncoming);
     intervalId^
     |> Utils.mapOption(id =>
          if (newIntervalid != id) {

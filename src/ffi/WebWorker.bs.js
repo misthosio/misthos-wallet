@@ -11,26 +11,19 @@ function MakeClient(Config) {
   var syncListeners = [Belt_MapString.empty];
   var postMessage = function (worker, msg) {
     worker.postMessage({
-          msg: msg,
+          msg: Curry._1(Config[/* encodeIncoming */1], msg),
           syncId: emptySyncId
         });
     return /* () */0;
   };
-  var postMessageEncoded = function (worker, msg) {
-    worker.postMessage({
-          msg: msg,
-          syncId: emptySyncId
-        });
-    return /* () */0;
-  };
-  var postMessageEncodedSync = function (worker, msg) {
+  var postMessageSync = function (worker, msg) {
     var syncId = V4();
     var ret = new Promise((function (resolve, _) {
             syncListeners[0] = Belt_MapString.set(syncListeners[0], syncId, resolve);
             return /* () */0;
           }));
     worker.postMessage({
-          msg: msg,
+          msg: Curry._1(Config[/* encodeIncoming */1], msg),
           syncId: syncId
         });
     return ret;
@@ -49,7 +42,7 @@ function MakeClient(Config) {
     return Curry._1(onMessage, decodedMsg);
   };
   var make = function (onMessage) {
-    var worker = Curry._1(Config[/* instance */1], /* () */0);
+    var worker = Curry._1(Config[/* instance */2], /* () */0);
     worker.onmessage = (function (msg) {
         return handleMessage(onMessage, msg.data);
       });
@@ -58,8 +51,7 @@ function MakeClient(Config) {
   return /* module */[
           /* syncListeners */syncListeners,
           /* postMessage */postMessage,
-          /* postMessageEncoded */postMessageEncoded,
-          /* postMessageEncodedSync */postMessageEncodedSync,
+          /* postMessageSync */postMessageSync,
           /* handleMessage */handleMessage,
           /* make */make
         ];

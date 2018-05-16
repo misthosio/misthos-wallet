@@ -12,21 +12,13 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (
-    self,
-    [@bs.uncurry] (
-      {. "data": WebWorker.payload(Message.encodedIncoming)} => unit
-    )
-  ) =>
-  unit =
+  (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
   "onmessage";
 
 [@bs.set]
 external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
 
-[@bs.val]
-external _postMessage : WebWorker.payload(Message.encodedOutgoing) => unit =
-  "postMessage";
+[@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
 
 open PrimitiveTypes;
 

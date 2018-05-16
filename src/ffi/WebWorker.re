@@ -3,16 +3,15 @@ open Belt;
 module type Config = {
   type t;
   type incoming;
-  type encodedIncoming;
   type outgoing;
-  type encodedOutgoing;
-  let decodeOutgoing: encodedOutgoing => outgoing;
+  let decodeOutgoing: Js.Json.t => outgoing;
+  let encodeIncoming: incoming => Js.Json.t;
   let instance: unit => t;
 };
 
-type payload('t) = {
+type payload = {
   .
-  "msg": 't,
+  "msg": Js.Json.t,
   "syncId": string,
 };
 
@@ -23,27 +22,25 @@ module MakeClient = (Config: Config) => {
   let syncListeners: ref(Map.String.t(listener)) = ref(Map.String.empty);
   type t = Config.t;
   [@bs.set]
-  external _onMessage :
-    (t, {. "data": payload(Config.encodedOutgoing)} => unit) => unit =
+  external _onMessage : (t, {. "data": payload} => unit) => unit =
     "onmessage";
   [@bs.send] external terminate : t => unit = "terminate";
-  [@bs.send]
-  external _postMessage : (t, payload(Config.incoming)) => unit =
-    "postMessage";
+  [@bs.send] external _postMessage : (t, payload) => unit = "postMessage";
   let postMessage = (worker, msg) =>
-    _postMessage(worker, {"msg": msg, "syncId": emptySyncId});
-  [@bs.send]
-  external _postMessageEncoded : (t, payload(Config.encodedIncoming)) => unit =
-    "postMessage";
-  let postMessageEncoded = (worker, msg) =>
-    _postMessageEncoded(worker, {"msg": msg, "syncId": emptySyncId});
-  let postMessageEncodedSync = (worker, msg) => {
+    _postMessage(
+      worker,
+      {"msg": msg |> Config.encodeIncoming, "syncId": emptySyncId},
+    );
+  let postMessageSync = (worker, msg) => {
     let syncId = Uuid.v4();
     let ret =
       Js.Promise.make((~resolve, ~reject as _) =>
         syncListeners := syncListeners^ |. Map.String.set(syncId, resolve)
       );
-    _postMessageEncoded(worker, {"msg": msg, "syncId": syncId});
+    _postMessage(
+      worker,
+      {"msg": msg |> Config.encodeIncoming, "syncId": syncId},
+    );
     ret;
   };
   let handleMessage = (onMessage, msg) => {

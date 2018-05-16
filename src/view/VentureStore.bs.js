@@ -162,7 +162,7 @@ function make(currentRoute, session, children) {
                       case 4 : 
                           var newItems = msg[1];
                           var ventureId = msg[0];
-                          VentureWorkerClient.postMessage(state[/* ventureWorker */6][0], /* SyncTabs */Block.__(16, [
+                          Curry._2(VentureWorkerClient.postMessage, state[/* ventureWorker */6][0], /* SyncTabs */Block.__(16, [
                                   ventureId,
                                   newItems
                                 ]));
@@ -316,7 +316,7 @@ function make(currentRoute, session, children) {
                 
               }
               if (exit === 1) {
-                VentureWorkerClient.postMessage(state[/* ventureWorker */6][0], action[0]);
+                Curry._2(VentureWorkerClient.postMessage, state[/* ventureWorker */6][0], action[0]);
                 return /* NoUpdate */0;
               }
               
