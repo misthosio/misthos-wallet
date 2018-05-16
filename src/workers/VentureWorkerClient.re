@@ -16,6 +16,11 @@ let postMessage = (worker, msg) => {
   encodedMsg |> postMessageEncoded(worker);
 };
 
+let postMessageSync = (worker, msg) => {
+  let encodedMsg = msg |> VentureWorkerMessage.encodeIncoming;
+  encodedMsg |> postMessageEncodedSync(worker);
+};
+
 let updateSession = worker =>
   worker
   |. postMessage(
@@ -91,8 +96,16 @@ let endorsePayout = (worker, ventureId, ~processId: processId) =>
 
 let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
   worker
-  |. postMessage(
+  |. postMessageSync(
        VentureWorkerMessage.ExposeIncomeAddress(ventureId, accountIdx),
+     )
+  |> Js.Promise.(
+       then_(
+         fun
+         | VentureWorkerMessage.NewIncomeAddress(_, address) =>
+           resolve(address)
+         | _ => resolve("BAD"),
+       )
      );
 
 module Cmd = {
@@ -112,7 +125,7 @@ module Cmd = {
       unit,
     endorsePayout: (~processId: processId) => unit,
     rejectPayout: (~processId: processId) => unit,
-    exposeIncomeAddress: (~accountIdx: accountIdx) => unit,
+    exposeIncomeAddress: (~accountIdx: accountIdx) => Js.Promise.t(string),
   };
   let make = (worker, ventureId) => {
     proposePartner: proposePartner(worker, ventureId),

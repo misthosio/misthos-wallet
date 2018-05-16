@@ -12,10 +12,22 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
+  (
+    self,
+    [@bs.uncurry] (
+      {
+        .
+        "data": {
+          .
+          "msg": Message.incoming,
+          "syncId": string,
+        },
+      } =>
+      unit
+    )
+  ) =>
+  unit =
   "onmessage";
-
-[@bs.val] external postMessage : Message.outgoing => unit = "postMessage";
 
 open PrimitiveTypes;
 
@@ -258,4 +270,4 @@ let handleMessage =
     | _ => ()
     };
 
-onMessage(self, msg => handleMessage(msg##data));
+onMessage(self, msg => handleMessage(msg##data##msg));

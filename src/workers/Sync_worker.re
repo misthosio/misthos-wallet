@@ -12,13 +12,23 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.incoming} => unit)) => unit =
+  (
+    self,
+    [@bs.uncurry] ({. "data": WebWorker.payload(Message.incoming)} => unit)
+  ) =>
+  unit =
   "onmessage";
 
-[@bs.val] external _postMessage : Js.Json.t => unit = "postMessage";
+[@bs.val]
+external _postMessage : WebWorker.payload(Message.encodedOutgoing) => unit =
+  "postMessage";
 
 let postMessage = msg =>
-  msg |> VentureWorkerMessage.encodeIncoming |> _postMessage;
+  {
+    "msg": msg |> VentureWorkerMessage.encodeIncoming,
+    "syncId": WebWorker.emptySyncId,
+  }
+  |> _postMessage;
 
 open PrimitiveTypes;
 
@@ -169,7 +179,7 @@ let handleMsg =
 onMessage(
   self,
   msg => {
-    let newIntervalid = handleMsg(msg##data);
+    let newIntervalid = handleMsg(msg##data##msg);
     intervalId^
     |> Utils.mapOption(id =>
          if (newIntervalid != id) {

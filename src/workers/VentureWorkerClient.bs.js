@@ -2,6 +2,7 @@
 'use strict';
 
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
@@ -22,10 +23,18 @@ var include = WebWorker.MakeClient([
         })
     ]);
 
+var postMessageEncoded = include[2];
+
+var postMessageEncodedSync = include[3];
+
 function postMessage(worker, msg) {
   var encodedMsg = VentureWorkerMessage.encodeIncoming(msg);
-  worker.postMessage(encodedMsg);
-  return /* () */0;
+  return Curry._2(postMessageEncoded, worker, encodedMsg);
+}
+
+function postMessageSync(worker, msg) {
+  var encodedMsg = VentureWorkerMessage.encodeIncoming(msg);
+  return Curry._2(postMessageEncodedSync, worker, encodedMsg);
 }
 
 function updateSession(worker) {
@@ -113,10 +122,16 @@ function endorsePayout(worker, ventureId, processId) {
 }
 
 function exposeIncomeAddress(worker, ventureId, accountIdx) {
-  return postMessage(worker, /* ExposeIncomeAddress */Block.__(13, [
-                ventureId,
-                accountIdx
-              ]));
+  return postMessageSync(worker, /* ExposeIncomeAddress */Block.__(13, [
+                  ventureId,
+                  accountIdx
+                ])).then((function (param) {
+                if (param.tag) {
+                  return Promise.resolve("BAD");
+                } else {
+                  return Promise.resolve(param[1]);
+                }
+              }));
 }
 
 function make(worker, ventureId) {
@@ -156,11 +171,20 @@ function make(worker, ventureId) {
 
 var Cmd = /* module */[/* make */make];
 
-var make$1 = include[0];
+var syncListeners = include[0];
+
+var handleMessage = include[4];
+
+var make$1 = include[5];
 
 exports.Config = Config;
+exports.syncListeners = syncListeners;
+exports.postMessageEncoded = postMessageEncoded;
+exports.postMessageEncodedSync = postMessageEncodedSync;
+exports.handleMessage = handleMessage;
 exports.make = make$1;
 exports.postMessage = postMessage;
+exports.postMessageSync = postMessageSync;
 exports.updateSession = updateSession;
 exports.create = create;
 exports.load = load;

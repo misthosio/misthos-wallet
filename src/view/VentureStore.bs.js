@@ -149,7 +149,7 @@ function make(currentRoute, session, children) {
                 case 1 : 
                     var msg = action[0];
                     switch (msg.tag | 0) {
-                      case 0 : 
+                      case 1 : 
                           return /* Update */Block.__(0, [/* record */[
                                       /* index : Some */[msg[0]],
                                       /* selectedVenture */state[/* selectedVenture */1],
@@ -159,10 +159,7 @@ function make(currentRoute, session, children) {
                                       /* persistWorker */state[/* persistWorker */5],
                                       /* ventureWorker */state[/* ventureWorker */6]
                                     ]]);
-                      case 1 : 
-                      case 2 : 
-                          return /* NoUpdate */0;
-                      case 3 : 
+                      case 4 : 
                           var newItems = msg[1];
                           var ventureId = msg[0];
                           VentureWorkerClient.postMessage(state[/* ventureWorker */6][0], /* SyncTabs */Block.__(16, [
@@ -187,7 +184,8 @@ function make(currentRoute, session, children) {
                                         /* ventureWorker */state[/* ventureWorker */6]
                                       ]]);
                           }
-                      
+                      default:
+                        return /* NoUpdate */0;
                     }
                 case 2 : 
                 case 3 : 
@@ -199,6 +197,8 @@ function make(currentRoute, session, children) {
                     var match$1 = state[/* selectedVenture */1];
                     switch (msg$1.tag | 0) {
                       case 0 : 
+                          return /* NoUpdate */0;
+                      case 1 : 
                           updateOtherTabs(msg$1);
                           return /* Update */Block.__(0, [/* record */[
                                       /* index : Some */[msg$1[0]],
@@ -209,7 +209,7 @@ function make(currentRoute, session, children) {
                                       /* persistWorker */state[/* persistWorker */5],
                                       /* ventureWorker */state[/* ventureWorker */6]
                                     ]]);
-                      case 1 : 
+                      case 2 : 
                           var events = msg$1[1];
                           var ventureId$1 = msg$1[0];
                           if (typeof match$1 === "number") {
@@ -264,7 +264,7 @@ function make(currentRoute, session, children) {
                                 return /* NoUpdate */0;
                             }
                           }
-                      case 2 : 
+                      case 3 : 
                           var ventureId$2 = msg$1[0];
                           return /* UpdateWithSideEffects */Block.__(2, [
                                     /* record */[
@@ -287,7 +287,7 @@ function make(currentRoute, session, children) {
                                                     ]));
                                       })
                                   ]);
-                      case 3 : 
+                      case 4 : 
                           if (typeof match$1 === "number" || match$1.tag !== 2) {
                             return /* NoUpdate */0;
                           } else {

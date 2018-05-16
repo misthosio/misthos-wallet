@@ -11,6 +11,7 @@ var Venture = require("../application/Venture.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var WebWorker = require("../ffi/WebWorker.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -24,7 +25,10 @@ var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
 function postMessage$1(msg) {
-  postMessage(VentureWorkerMessage.encodeIncoming(msg));
+  postMessage({
+        msg: VentureWorkerMessage.encodeIncoming(msg),
+        syncId: WebWorker.emptySyncId
+      });
   return /* () */0;
 }
 
@@ -90,22 +94,19 @@ function detectIncomeFromVenture(ventureId) {
                   tmp = /* () */0;
                 }
                 if (exit === 1) {
-                  var msg_002 = Belt_List.keepMapU(txInfos, (function (param) {
-                          var unixTime = param[/* unixTime */2];
-                          var blockHeight = param[/* blockHeight */1];
-                          if (blockHeight && unixTime) {
-                            return /* Some */[Curry._3(Event.Transaction[/* Confirmed */0][/* make */0], param[/* txId */0], blockHeight[0], unixTime[0])];
-                          } else {
-                            return /* None */0;
-                          }
-                        }));
-                  var msg = /* SyncWallet */Block.__(15, [
-                      ventureId,
-                      events,
-                      msg_002
-                    ]);
-                  postMessage(VentureWorkerMessage.encodeIncoming(msg));
-                  tmp = /* () */0;
+                  tmp = postMessage$1(/* SyncWallet */Block.__(15, [
+                          ventureId,
+                          events,
+                          Belt_List.keepMapU(txInfos, (function (param) {
+                                  var unixTime = param[/* unixTime */2];
+                                  var blockHeight = param[/* blockHeight */1];
+                                  if (blockHeight && unixTime) {
+                                    return /* Some */[Curry._3(Event.Transaction[/* Confirmed */0][/* make */0], param[/* txId */0], blockHeight[0], unixTime[0])];
+                                  } else {
+                                    return /* None */0;
+                                  }
+                                }))
+                        ]));
                 }
                 return Promise.resolve(tmp);
               }));
@@ -143,7 +144,7 @@ function handleMsg(param) {
 var intervalId = [/* None */0];
 
 self.onmessage = (function (msg) {
-    var newIntervalid = handleMsg(msg.data);
+    var newIntervalid = handleMsg(msg.data.msg);
     Utils.mapOption((function (id) {
             if (Caml_obj.caml_notequal(newIntervalid, id)) {
               clearInterval(id);

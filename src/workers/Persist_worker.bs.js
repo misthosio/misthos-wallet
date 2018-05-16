@@ -322,15 +322,16 @@ function handleMessage(param) {
     var match = VentureWorkerMessage.decodeOutgoing(param[0]);
     switch (match.tag | 0) {
       case 0 : 
-          return /* () */0;
       case 1 : 
+          return /* () */0;
+      case 2 : 
           if (match[2].length !== 0) {
             return persistVenture(match[0]);
           } else {
             return /* () */0;
           }
-      case 2 : 
       case 3 : 
+      case 4 : 
           return persistVenture(match[0]);
       
     }
@@ -341,7 +342,7 @@ function handleMessage(param) {
 }
 
 self.onmessage = (function (msg) {
-    return handleMessage(msg.data);
+    return handleMessage(msg.data.msg);
   });
 
 var Message = 0;

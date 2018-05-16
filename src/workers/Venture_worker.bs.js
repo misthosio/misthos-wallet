@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
+var WebWorker = require("../ffi/WebWorker.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
@@ -17,8 +18,12 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
-function postMessage$1(msg) {
-  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
+function postMessage$1($staropt$star, msg) {
+  var syncId = $staropt$star ? $staropt$star[0] : WebWorker.emptySyncId;
+  postMessage({
+        msg: VentureWorkerMessage.encodeOutgoing(msg),
+        syncId: syncId
+      });
   return /* () */0;
 }
 
@@ -34,49 +39,46 @@ function logError(error) {
 }
 
 function indexUpdated(index) {
-  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [index])));
-  return /* () */0;
+  return postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index]));
 }
 
 function ventureLoaded(id, venture, newItems) {
-  var msg_001 = Venture.getAllItems(venture);
-  var msg = /* VentureLoaded */Block.__(1, [
-      id,
-      msg_001,
-      newItems
-    ]);
-  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
-  return /* () */0;
+  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(2, [
+                id,
+                Venture.getAllItems(venture),
+                newItems
+              ]));
 }
 
 function ventureJoined(id, venture) {
   var items = Venture.getAllItems(venture);
-  postMessage(VentureWorkerMessage.encodeOutgoing(/* VentureLoaded */Block.__(1, [
-              id,
-              items,
-              items
-            ])));
-  return /* () */0;
+  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(2, [
+                id,
+                items,
+                items
+              ]));
 }
 
 function ventureCreated(venture) {
-  var msg_000 = Venture.getId(venture);
-  var msg_001 = Venture.getAllItems(venture);
-  var msg = /* VentureCreated */Block.__(2, [
-      msg_000,
-      msg_001
-    ]);
-  postMessage(VentureWorkerMessage.encodeOutgoing(msg));
-  return /* () */0;
+  return postMessage$1(/* None */0, /* VentureCreated */Block.__(3, [
+                Venture.getId(venture),
+                Venture.getAllItems(venture)
+              ]));
+}
+
+function newIncomeAddress(syncId, ventureId, address) {
+  return postMessage$1(/* Some */[syncId], /* NewIncomeAddress */Block.__(0, [
+                ventureId,
+                address
+              ]));
 }
 
 function newItems(id, items) {
   if (items.length !== 0) {
-    postMessage(VentureWorkerMessage.encodeOutgoing(/* NewItems */Block.__(3, [
-                id,
-                items
-              ])));
-    return /* () */0;
+    return postMessage$1(/* None */0, /* NewItems */Block.__(4, [
+                  id,
+                  items
+                ]));
   } else {
     return /* () */0;
   }
@@ -87,6 +89,7 @@ var Notify = /* module */[
   /* ventureLoaded */ventureLoaded,
   /* ventureJoined */ventureJoined,
   /* ventureCreated */ventureCreated,
+  /* newIncomeAddress */newIncomeAddress,
   /* newItems */newItems
 ];
 
@@ -123,7 +126,7 @@ function withVenture($staropt$star, ventureAction, f, param) {
                                   match = /* tuple */[
                                     match$1[0],
                                     match$1[1].then((function (param) {
-                                            postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                            postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
                                             return Promise.resolve(param[1]);
                                           }))
                                   ];
@@ -169,12 +172,12 @@ function withVenture($staropt$star, ventureAction, f, param) {
                                             switch (param.tag | 0) {
                                               case 0 : 
                                                   var venture = param[1];
-                                                  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
                                                   ventureLoaded(ventureId$2, venture, param[2]);
                                                   return Promise.resolve(venture);
                                               case 1 : 
                                                   var venture$1 = param[1];
-                                                  postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [param[0]])));
+                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
                                                   ventureJoined(ventureId$2, venture$1);
                                                   return Promise.resolve(venture$1);
                                               case 2 : 
@@ -242,7 +245,7 @@ function updateSession(items, state) {
                     }
                     if (exit === 1) {
                       Venture.Index[/* load */0](/* () */0).then((function (index) {
-                              return Promise.resolve((postMessage(VentureWorkerMessage.encodeOutgoing(/* UpdateIndex */Block.__(0, [index]))), /* () */0));
+                              return Promise.resolve(postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index])));
                             }));
                       return Promise.resolve(/* Some */[/* tuple */[
                                     data,
@@ -421,12 +424,13 @@ function endorsePayout(ventureId, processId) {
     });
 }
 
-function exposeIncomeAddress(ventureId, accountIdx) {
+function exposeIncomeAddress(syncId, ventureId, accountIdx) {
   logMessage("Handling 'ExposeIncomeAddress'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param) {
       return withVenture(/* None */0, partial_arg, (function (venture) {
                     return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */9][/* exec */0], accountIdx, venture).then((function (param) {
+                                  newIncomeAddress(syncId, ventureId, param[0]);
                                   newItems(ventureId, param[2]);
                                   return Promise.resolve(param[1]);
                                 }));
@@ -508,7 +512,7 @@ var Handle = /* module */[
   /* syncTabs */syncTabs
 ];
 
-function handleMessage(param) {
+function handleMessage(syncId, param) {
   switch (param.tag | 0) {
     case 0 : 
         var partial_arg = param[0];
@@ -540,7 +544,7 @@ function handleMessage(param) {
     case 12 : 
         return endorsePayout(param[0], param[1]);
     case 13 : 
-        return exposeIncomeAddress(param[0], param[1]);
+        return exposeIncomeAddress(syncId, param[0], param[1]);
     case 14 : 
         return newItemsDetected(param[0], param[1]);
     case 15 : 
@@ -556,7 +560,7 @@ var cleanState = /* record */[/* venturesThread */Promise.resolve(/* None */0)];
 var workerState = [cleanState];
 
 self.onmessage = (function (msg) {
-    workerState[0] = handleMessage(VentureWorkerMessage.decodeIncoming(msg.data))(workerState[0]);
+    workerState[0] = handleMessage(msg.data.syncId, VentureWorkerMessage.decodeIncoming(msg.data.msg))(workerState[0]);
     return /* () */0;
   });
 

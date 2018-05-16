@@ -10,6 +10,7 @@ var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../application/events/EventLog.bs.js");
+var WebWorker = require("../ffi/WebWorker.bs.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -23,7 +24,10 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
 function postMessage$1(msg) {
-  postMessage(VentureWorkerMessage.encodeIncoming(msg));
+  postMessage({
+        msg: VentureWorkerMessage.encodeIncoming(msg),
+        syncId: WebWorker.emptySyncId
+      });
   return /* () */0;
 }
 
@@ -79,10 +83,10 @@ function getLogFromUser(ventureId, userId, storagePrefix) {
 function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
   getLogFromUser(ventureId, userId, storagePrefix).then((function (other) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
-          return Promise.resolve(items.length !== 0 ? (postMessage(VentureWorkerMessage.encodeIncoming(/* NewItemsDetected */Block.__(14, [
-                                    ventureId,
-                                    items
-                                  ]))), /* () */0) : /* () */0);
+          return Promise.resolve(items.length !== 0 ? postMessage$1(/* NewItemsDetected */Block.__(14, [
+                              ventureId,
+                              items
+                            ])) : /* () */0);
         }));
   return /* () */0;
 }
@@ -136,7 +140,7 @@ function handleMsg(param) {
 }
 
 self.onmessage = (function (msg) {
-    var newIntervalid = handleMsg(msg.data);
+    var newIntervalid = handleMsg(msg.data.msg);
     Utils.mapOption((function (id) {
             if (Caml_obj.caml_notequal(newIntervalid, id)) {
               clearInterval(id);
