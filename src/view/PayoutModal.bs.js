@@ -2,19 +2,22 @@
 'use strict';
 
 var BTC = require("../application/wallet/BTC.bs.js");
+var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
+var MButton = require("./components/MButton.bs.js");
 var TitleBar = require("./components/TitleBar.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
+var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 
 var component = ReasonReact.reducerComponent("Payout");
 
-function make(viewData, _, _$1) {
+function make(viewData, commands, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -28,8 +31,11 @@ function make(viewData, _, _$1) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              var inputs = match[/* inputs */1];
+              var inputs = match[/* inputs */4];
               var viewData = match[/* viewData */0];
+              var destinationList = $$Array.of_list(List.map((function (param) {
+                          return React.createElement("div", undefined, ViewCommon.text(param[0]), ViewCommon.text(BTC.format(param[1])));
+                        }), match[/* destinations */1]));
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "Create A Payout",
                                     /* [] */0
@@ -38,7 +44,7 @@ function make(viewData, _, _$1) {
                                         key: "currentSpendable"
                                       }, ViewCommon.text(BTC.format(viewData[/* balance */0]))),
                                   ViewCommon.text("BTC")
-                                ])), ViewCommon.text("Proposed recipients"), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
+                                ])), ViewCommon.text("Proposed recipients"), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(match[/* networkFee */3]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(match[/* misthosFee */2])))), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
                                     -976970511,
                                     inputs[/* recipientAddress */0]
                                   ]], /* Some */[(function (e) {
@@ -48,11 +54,16 @@ function make(viewData, _, _$1) {
                                     inputs[/* btcAmount */1]
                                   ]], /* Some */[(function (e) {
                                       return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
-                                    })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])));
+                                    })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                      return Curry._1(send, /* ProposePayout */0);
+                                    })], /* Some */[true], /* array */[ViewCommon.text("Propose Payout")])));
             }),
           /* initialState */(function () {
               return /* record */[
                       /* viewData */viewData,
+                      /* destinations : [] */0,
+                      /* misthosFee */BTC.zero,
+                      /* networkFee */BTC.zero,
                       /* inputs : record */[
                         /* recipientAddress */"",
                         /* btcAmount */""
@@ -61,22 +72,34 @@ function make(viewData, _, _$1) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              if (action.tag) {
-                throw [
-                      Caml_builtin_exceptions.match_failure,
-                      [
-                        "PayoutModal.re",
-                        34,
-                        4
-                      ]
-                    ];
-              } else {
-                var init = state[/* inputs */1];
+              if (typeof action === "number") {
+                Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], state[/* destinations */1], BTC.fromSatoshis(/* int64 */[
+                          /* hi */0,
+                          /* lo */100
+                        ]));
+                return /* NoUpdate */0;
+              } else if (action.tag) {
+                var init = state[/* inputs */4];
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
+                            /* destinations */state[/* destinations */1],
+                            /* misthosFee */state[/* misthosFee */2],
+                            /* networkFee */state[/* networkFee */3],
+                            /* inputs : record */[
+                              /* recipientAddress */init[/* recipientAddress */0],
+                              /* btcAmount */action[0]
+                            ]
+                          ]]);
+              } else {
+                var init$1 = state[/* inputs */4];
+                return /* Update */Block.__(0, [/* record */[
+                            /* viewData */state[/* viewData */0],
+                            /* destinations */state[/* destinations */1],
+                            /* misthosFee */state[/* misthosFee */2],
+                            /* networkFee */state[/* networkFee */3],
                             /* inputs : record */[
                               /* recipientAddress */action[0],
-                              /* btcAmount */init[/* btcAmount */1]
+                              /* btcAmount */init$1[/* btcAmount */1]
                             ]
                           ]]);
               }

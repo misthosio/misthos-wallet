@@ -11,12 +11,16 @@ type inputs = {
 
 type state = {
   viewData: View.t,
+  destinations: list((string, BTC.t)),
+  misthosFee: BTC.t,
+  networkFee: BTC.t,
   inputs,
 };
 
 type action =
   | ChangeRecipientAddress(string)
-  | ChangeBTCAmount(string);
+  | ChangeBTCAmount(string)
+  | ProposePayout;
 
 let component = ReasonReact.reducerComponent("Payout");
 
@@ -25,6 +29,9 @@ let make =
   ...component,
   initialState: () => {
     viewData,
+    destinations: [],
+    misthosFee: BTC.zero,
+    networkFee: BTC.zero,
     inputs: {
       recipientAddress: "",
       btcAmount: "",
@@ -40,8 +47,35 @@ let make =
           recipientAddress: address,
         },
       })
+    | ChangeBTCAmount(amount) =>
+      ReasonReact.Update({
+        ...state,
+        inputs: {
+          ...state.inputs,
+          btcAmount: amount,
+        },
+      })
+    | ProposePayout =>
+      commands.proposePayout(
+        ~accountIdx=WalletTypes.AccountIndex.default,
+        ~destinations=state.destinations,
+        ~fee=BTC.fromSatoshis(100L),
+      );
+      ReasonReact.NoUpdate;
     },
-  render: ({send, state: {viewData, inputs}}) =>
+  render:
+    (
+      {send, state: {viewData, inputs, destinations, networkFee, misthosFee}},
+    ) => {
+    let destinationList =
+      ReasonReact.array(
+        Array.of_list(
+          destinations
+          |> List.map(((address, amount)) =>
+               <div> (text(address)) (text(BTC.format(amount))) </div>
+             ),
+        ),
+      );
     <div>
       <TitleBar titles=["Create A Payout"] />
       <MTypography variant=`Title>
@@ -54,6 +88,11 @@ let make =
         ("BTC" |> text)
       </MTypography>
       (text("Proposed recipients"))
+      <ul>
+        destinationList
+        <li> (text("Network Fee - " ++ BTC.format(networkFee))) </li>
+        <li> (text("Misthos Fee - " ++ BTC.format(misthosFee))) </li>
+      </ul>
       <MInput
         placeholder="Recipient Address"
         value=(`String(inputs.recipientAddress))
@@ -68,5 +107,9 @@ let make =
         autoFocus=false
         fullWidth=true
       />
-    </div>,
+      <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
+        (text("Propose Payout"))
+      </MButton>
+    </div>;
+  },
 };
