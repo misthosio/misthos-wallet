@@ -12,18 +12,27 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": Message.encodedIncoming} => unit)) => unit =
+  (
+    self,
+    [@bs.uncurry] (
+      {. "data": WebWorker.payload(Message.encodedIncoming)} => unit
+    )
+  ) =>
+  unit =
   "onmessage";
 
 [@bs.set]
 external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
 
 [@bs.val]
-external _postMessage : Message.encodedOutgoing => unit = "postMessage";
+external _postMessage : WebWorker.payload(Message.encodedOutgoing) => unit =
+  "postMessage";
 
 open PrimitiveTypes;
 
-let postMessage = msg => msg |> Message.encodeOutgoing |> _postMessage;
+let postMessage = msg =>
+  {"msg": msg |> Message.encodeOutgoing, "syncId": WebWorker.emptySyncId}
+  |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
@@ -47,6 +56,8 @@ module Notify = {
         venture |> Venture.getAllItems,
       ),
     );
+  let newIncomeAddress = (syncId, ventureId, address) =>
+    postMessage(NewIncomeAddress(syncId, ventureId, address));
   let newItems = (id, items) =>
     switch (items) {
     | [||] => ()
@@ -395,7 +406,7 @@ module Handle = {
       )
     );
   };
-  let exposeIncomeAddress = (ventureId, accountIdx) => {
+  let exposeIncomeAddress = (syncId, ventureId, accountIdx) => {
     logMessage("Handling 'ExposeIncomeAddress'");
     withVenture(Load(ventureId), venture =>
       Js.Promise.(
@@ -404,7 +415,8 @@ module Handle = {
           |> exec(~accountIdx)
           |> then_(
                fun
-               | Ok(_address, venture, newItems) => {
+               | Ok(address, venture, newItems) => {
+                   Notify.newIncomeAddress(syncId, ventureId, address);
                    Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
@@ -511,8 +523,8 @@ let handleMessage =
     Handle.rejectPayout(ventureId, processId)
   | Message.EndorsePayout(ventureId, processId) =>
     Handle.endorsePayout(ventureId, processId)
-  | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
-    Handle.exposeIncomeAddress(ventureId, accountIdx)
+  | Message.ExposeIncomeAddress(syncId, ventureId, accountIdx) =>
+    Handle.exposeIncomeAddress(syncId, ventureId, accountIdx)
   | SyncWallet(ventureId, income, confs) =>
     Handle.syncWallet(ventureId, income, confs)
   | NewItemsDetected(ventureId, items) =>
@@ -526,5 +538,5 @@ let workerState = ref(cleanState);
 onMessage(self, msg =>
   workerState :=
     workerState^
-    |> handleMessage(msg##data |> VentureWorkerMessage.decodeIncoming)
+    |> handleMessage(msg##data##msg |> VentureWorkerMessage.decodeIncoming)
 );

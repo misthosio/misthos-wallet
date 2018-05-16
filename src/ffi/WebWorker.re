@@ -8,21 +8,41 @@ module type Config = {
   let instance: unit => t;
 };
 
+type payload('t) = {
+  .
+  "msg": 't,
+  "syncId": string,
+};
+
+let emptySyncId = "";
+
 module MakeClient = (Config: Config) => {
-  type t = Config.t;
+  type worker = Config.t;
+  type t = {
+    worker,
+    onMessage: Config.outgoing => unit,
+  };
   [@bs.set]
   external _onMessage :
-    (t, {. "data": Config.encodedOutgoing} => unit) => unit =
+    (worker, {. "data": payload(Config.encodedOutgoing)} => unit) => unit =
     "onmessage";
-  [@bs.send] external terminate : t => unit = "";
-  [@bs.send] external postMessage : (t, Config.incoming) => unit = "";
+  [@bs.send] external _terminate : worker => unit = "terminate";
+  let terminate = ({worker}) => _terminate(worker);
   [@bs.send]
-  external postMessageEncoded : (t, Config.encodedIncoming) => unit =
+  external _postMessage : (worker, payload(Config.incoming)) => unit =
     "postMessage";
+  let postMessage = ({worker}, msg) =>
+    _postMessage(worker, {"msg": msg, "syncId": emptySyncId});
+  [@bs.send]
+  external _postMessageEncoded :
+    (worker, payload(Config.encodedIncoming)) => unit =
+    "postMessage";
+  let postMessageEncoded = ({worker}, msg) =>
+    _postMessageEncoded(worker, {"msg": msg, "syncId": emptySyncId});
   let make = (~onMessage) => {
     let worker = Config.instance();
     worker
-    |. _onMessage(msg => msg##data |> Config.decodeOutgoing |> onMessage);
-    worker;
+    |. _onMessage(msg => msg##data##msg |> Config.decodeOutgoing |> onMessage);
+    {worker, onMessage};
   };
 };

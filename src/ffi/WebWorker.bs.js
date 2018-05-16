@@ -3,16 +3,45 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 
+var emptySyncId = "";
+
 function MakeClient(Config) {
+  var terminate = function (param) {
+    param[/* worker */0].terminate();
+    return /* () */0;
+  };
+  var postMessage = function (param, msg) {
+    param[/* worker */0].postMessage({
+          msg: msg,
+          syncId: emptySyncId
+        });
+    return /* () */0;
+  };
+  var postMessageEncoded = function (param, msg) {
+    param[/* worker */0].postMessage({
+          msg: msg,
+          syncId: emptySyncId
+        });
+    return /* () */0;
+  };
   var make = function (onMessage) {
     var worker = Curry._1(Config[/* instance */1], /* () */0);
     worker.onmessage = (function (msg) {
-        return Curry._1(onMessage, Curry._1(Config[/* decodeOutgoing */0], msg.data));
+        return Curry._1(onMessage, Curry._1(Config[/* decodeOutgoing */0], msg.data.msg));
       });
-    return worker;
+    return /* record */[
+            /* worker */worker,
+            /* onMessage */onMessage
+          ];
   };
-  return /* module */[/* make */make];
+  return /* module */[
+          /* terminate */terminate,
+          /* postMessage */postMessage,
+          /* postMessageEncoded */postMessageEncoded,
+          /* make */make
+        ];
 }
 
+exports.emptySyncId = emptySyncId;
 exports.MakeClient = MakeClient;
 /* No side effect */
