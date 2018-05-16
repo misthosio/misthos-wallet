@@ -1,3 +1,5 @@
+include ViewCommon;
+
 let component = ReasonReact.statelessComponent("TypographyStack");
 
 let make = _children => {
@@ -6,35 +8,25 @@ let make = _children => {
     MaterialUi.(
       <Grid container=true>
         <Grid item=true xs=V6>
-          <Typography variant=`Display4>
-            ("Display 4" |> Utils.text)
-          </Typography>
-          <Typography variant=`Display3>
-            ("Display 3" |> Utils.text)
-          </Typography>
-          <Typography variant=`Display2>
-            ("Display 2" |> Utils.text)
-          </Typography>
-          <Typography variant=`Display1>
-            ("Display 1" |> Utils.text)
-          </Typography>
-          <TitleBar> ("Headline" |> Utils.text) </TitleBar>
-          <Typography variant=`Title> ("Title" |> Utils.text) </Typography>
-          <Typography variant=`Subheading>
-            ("Subheading" |> Utils.text)
-          </Typography>
-          <Typography variant=`Body2> ("Body2" |> Utils.text) </Typography>
-          <Typography variant=`Body1> ("Body1" |> Utils.text) </Typography>
-          <Typography variant=`Caption> ("Caption" |> Utils.text) </Typography>
-          <Typography variant=`Button> ("Button" |> Utils.text) </Typography>
+          <Typography variant=`Display4> ("Display 4" |> text) </Typography>
+          <Typography variant=`Display3> ("Display 3" |> text) </Typography>
+          <Typography variant=`Display2> ("Display 2" |> text) </Typography>
+          <Typography variant=`Display1> ("Display 1" |> text) </Typography>
+          <TitleBar> ("Headline" |> text) </TitleBar>
+          <Typography variant=`Title> ("Title" |> text) </Typography>
+          <Typography variant=`Subheading> ("Subheading" |> text) </Typography>
+          <Typography variant=`Body2> ("Body2" |> text) </Typography>
+          <Typography variant=`Body1> ("Body1" |> text) </Typography>
+          <Typography variant=`Caption> ("Caption" |> text) </Typography>
+          <Typography variant=`Button> ("Button" |> text) </Typography>
         </Grid>
         <Grid item=true xs=V6>
-          <MButton> ("Button" |> Utils.text) </MButton>
+          <MButton> ("Button" |> text) </MButton>
           <LinkButton route=TypographyStack>
-            ("LinkButton" |> Utils.text)
+            ("LinkButton" |> text)
           </LinkButton>
           <br />
-          <Link route=TypographyStack> ("Link" |> Utils.text) </Link>
+          <Link route=TypographyStack> ("Link" |> text) </Link>
         </Grid>
       </Grid>
     ),

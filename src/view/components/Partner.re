@@ -1,3 +1,5 @@
+include ViewCommon;
+
 open PrimitiveTypes;
 
 let component = ReasonReact.statelessComponent("Partner");
@@ -25,13 +27,13 @@ let make = (~partner: ViewModel.partner, _children) => {
     let userId = partner.userId |> UserId.toString;
     let (primary, secondary) =
       switch (partner.name) {
-      | Some(name) => (name |> Utils.text, Some(userId |> Utils.text))
-      | None => (userId |> Utils.text, None)
+      | Some(name) => (name |> text, Some(userId |> text))
+      | None => (userId |> text, None)
       };
     MaterialUi.(
       <ListItem disableGutters=true>
         <Avatar className=Styles.avatar>
-          (userId.[0] |> String.make(1) |> String.uppercase |> Utils.text)
+          (userId.[0] |> String.make(1) |> String.uppercase |> text)
         </Avatar>
         <ListItemText primary ?secondary />
       </ListItem>

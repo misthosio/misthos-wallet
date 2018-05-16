@@ -1,9 +1,9 @@
+include ViewCommon;
+
 open PrimitiveTypes;
 
-let text = Utils.text;
-
 type state = {
-  viewModel: ViewModel.t,
+  viewData: ViewModel.ManagePartners.t,
   prospectId: string,
   currentUser: userId,
 };
@@ -13,29 +13,21 @@ type action =
   | ProposePartner
   | RemovePartner(UserId.t);
 
-let changeNewPartnerId = event =>
-  ChangeNewPartnerId(
-    ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value,
-  );
-
 let component = ReasonReact.reducerComponent("ManagePartners");
 
 let make =
     (
-      ~venture as initialViewModel,
+      ~joinVentureUrl: string,
+      ~viewData: ViewModel.ManagePartners.t,
       ~commands: VentureWorkerClient.Cmd.t,
       ~session: Session.Data.t,
       _children,
     ) => {
   ...component,
-  initialState: () => {
-    viewModel: initialViewModel,
-    prospectId: "",
-    currentUser: session.userId,
-  },
+  initialState: () => {prospectId: "", currentUser: session.userId, viewData},
   willReceiveProps: ({state}) => {
     ...state,
-    viewModel: initialViewModel,
+    viewData,
     currentUser: session.userId,
   },
   reducer: (action, state) =>
@@ -57,7 +49,7 @@ let make =
     let partners =
       ReasonReact.array(
         Array.of_list(
-          ViewModel.partners(state.viewModel)
+          state.viewData.partners
           |> List.map((partner: ViewModel.partner) =>
                <Partner key=(partner.userId |> UserId.toString) partner />
              ),
@@ -66,7 +58,7 @@ let make =
     let partnersOld =
       ReasonReact.array(
         Array.of_list(
-          ViewModel.partners(state.viewModel)
+          state.viewData.partners
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
                  <div>
@@ -74,7 +66,7 @@ let make =
                    (
                      switch (
                        m.userId |> UserId.eq(state.currentUser),
-                       ViewModel.removalProspects(state.viewModel)
+                       state.viewData.removalProspects
                        |> List.exists((p: ViewModel.prospect) =>
                             UserId.eq(p.userId, m.userId)
                           ),
@@ -102,13 +94,13 @@ let make =
                  enter a valid Blockstack ID below. When enough partners endorse this proposal,
                  the partner will be added.
                 |js}
-              |> Utils.text
+              |> text
             )
           </MTypography>
           <MInput
             placeholder="Enter a Blockstack ID"
             value=(`String(state.prospectId))
-            onChange=(e => send(changeNewPartnerId(e)))
+            onChange=(e => send(ChangeNewPartnerId(extractString(e))))
             autoFocus=false
             fullWidth=true
           />
@@ -120,18 +112,10 @@ let make =
               {js|
                Please send the following URL to the proposed Partner so they can access the Venture:
                |js}
-              |> Utils.text
+              |> text
             )
           </MTypography>
-          <MTypography variant=`Body2>
-            (
-              Location.origin
-              ++ Router.Config.routeToUrl(
-                   JoinVenture(initialViewModel.ventureId, session.userId),
-                 )
-              |> Utils.text
-            )
-          </MTypography>
+          <MTypography variant=`Body2> (joinVentureUrl |> text) </MTypography>
         </div>
       body2=
         <div>
@@ -142,7 +126,7 @@ let make =
                select his or her name below and submit your proposal.
                When enough partners endorse this proposal, the partner will be removed.
                |js}
-              |> Utils.text
+              |> text
             )
           </MTypography>
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>

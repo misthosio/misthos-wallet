@@ -6,17 +6,26 @@ module PartnersCollector = ViewModel__PartnersCollector;
 
 module BalanceCollector = ViewModel__BalanceCollector;
 
+module ManagePartners = PartnersCollector;
+
+module Payout = {
+  type t = {
+    balance: BTC.t,
+    ventureName: string,
+  };
+};
+
 module TransactionCollector = ViewModel__TransactionCollector;
 
 type balance = BalanceCollector.balance;
 
-type confirmedTx = TransactionCollector.confirmedTx;
-
-type unconfirmedTx = TransactionCollector.unconfirmedTx;
+type prospect = PartnersCollector.prospect;
 
 type partner = PartnersCollector.partner;
 
-type prospect = PartnersCollector.prospect;
+type confirmedTx = TransactionCollector.confirmedTx;
+
+type unconfirmedTx = TransactionCollector.unconfirmedTx;
 
 type payoutStatus =
   | PayoutPending
@@ -40,7 +49,7 @@ type t = {
   metaPolicy: Policy.t,
   payouts: list(payout),
   balanceCollector: BalanceCollector.t,
-  partnersCollector: PartnersCollector.t,
+  partnersCollector: ManagePartners.t,
   transactionCollector: TransactionCollector.t,
 };
 
@@ -51,7 +60,7 @@ let make = () => {
   metaPolicy: Policy.unanimous,
   payouts: [],
   balanceCollector: BalanceCollector.make(),
-  partnersCollector: PartnersCollector.make(),
+  partnersCollector: ManagePartners.make(),
   transactionCollector: TransactionCollector.make(),
 };
 
@@ -157,3 +166,14 @@ let transactions = ({transactionCollector}) => (
 
 let isPartner = (id, {partnersCollector}) =>
   partnersCollector |> PartnersCollector.isPartner(id);
+
+let managePartnersModal = ({partnersCollector}) => partnersCollector;
+
+let payoutModal = ({name, balanceCollector}) : Payout.t => {
+  balance:
+    (
+      balanceCollector |> BalanceCollector.accountBalance(AccountIndex.default)
+    ).
+      currentSpendable,
+  ventureName: name,
+};

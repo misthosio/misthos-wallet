@@ -2,12 +2,12 @@
 'use strict';
 
 var Link = require("./components/Link.bs.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var TitleBar = require("./components/TitleBar.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
+var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("TypographyStack");
@@ -26,23 +26,23 @@ function make() {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V6 */7], /* None */0, /* None */0, /* array */[
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* array */[Utils.text("Display 4")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display3 */-11760687], /* None */0, /* array */[Utils.text("Display 3")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display2 */-11760688], /* None */0, /* array */[Utils.text("Display 2")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* array */[Utils.text("Display 1")])),
-                                        ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* None */0, /* array */[Utils.text("Headline")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Title */594052472], /* None */0, /* array */[Utils.text("Title")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Subheading */148169314], /* None */0, /* array */[Utils.text("Subheading")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* array */[Utils.text("Body2")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body1 */-904051921], /* None */0, /* array */[Utils.text("Body1")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Caption */-191243578], /* None */0, /* array */[Utils.text("Caption")])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Button */242538002], /* None */0, /* array */[Utils.text("Button")]))
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* array */[ViewCommon.text("Display 4")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display3 */-11760687], /* None */0, /* array */[ViewCommon.text("Display 3")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display2 */-11760688], /* None */0, /* array */[ViewCommon.text("Display 2")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* array */[ViewCommon.text("Display 1")])),
+                                        ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* None */0, /* array */[ViewCommon.text("Headline")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Title */594052472], /* None */0, /* array */[ViewCommon.text("Title")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Subheading */148169314], /* None */0, /* array */[ViewCommon.text("Subheading")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* array */[ViewCommon.text("Body2")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body1 */-904051921], /* None */0, /* array */[ViewCommon.text("Body1")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Caption */-191243578], /* None */0, /* array */[ViewCommon.text("Caption")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Button */242538002], /* None */0, /* array */[ViewCommon.text("Button")]))
                                       ])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.Grid[/* make */23](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V6 */7], /* None */0, /* None */0, /* array */[
-                                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* array */[Utils.text("Button")])),
-                                        ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* TypographyStack */2, /* None */0, /* array */[Utils.text("LinkButton")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Button")])),
+                                        ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* TypographyStack */2, /* None */0, /* array */[ViewCommon.text("LinkButton")])),
                                         React.createElement("br", undefined),
-                                        ReasonReact.element(/* None */0, /* None */0, Link.make(/* TypographyStack */2, /* None */0, /* array */[Utils.text("Link")]))
+                                        ReasonReact.element(/* None */0, /* None */0, Link.make(/* TypographyStack */2, /* None */0, /* array */[ViewCommon.text("Link")]))
                                       ]))
                             ]));
             }),
@@ -54,6 +54,12 @@ function make() {
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+exports.text = text;
+exports.extractString = extractString;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

@@ -1,3 +1,5 @@
+include ViewCommon;
+
 let component = ReasonReact.statelessComponent("Spinner");
 
 module Styles = {
@@ -6,7 +8,7 @@ module Styles = {
   let container = style([textAlign(center)]);
 };
 
-let make = (~text, _children) => {
+let make = (~text as spinnerText, _children) => {
   ...component,
   render: _self =>
     MaterialUi.(
@@ -14,7 +16,7 @@ let make = (~text, _children) => {
         <Grid container=true direction=`Row justify=`Center>
           <Grid className=Styles.container item=true xs=V8 md=V4 lg=V2>
             <CircularProgress className=Styles.progress />
-            <Typography variant=`Body1> (text |> Utils.text) </Typography>
+            <Typography variant=`Body1> (spinnerText |> text) </Typography>
           </Grid>
         </Grid>
       </Grid>

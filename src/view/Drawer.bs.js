@@ -2,10 +2,10 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var LinkButton = require("./components/LinkButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
+var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureList = require("./VentureList.bs.js");
 
@@ -45,7 +45,7 @@ function make(onSignOut, index, selected, _) {
                           className: container
                         }, ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[])), React.createElement("div", {
                               className: flex_
-                            }), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[Utils.text("Create a Venture")])), React.createElement("div", {
+                            }), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[ViewCommon.text("Create a Venture")])), React.createElement("div", {
                               className: flex_
                             }), ReasonReact.element(/* None */0, /* None */0, MaterialUi.Button[/* make */7](/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onSignOut], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Sign Out"])));
             }),
@@ -57,6 +57,12 @@ function make(onSignOut, index, selected, _) {
         ];
 }
 
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
+
+exports.text = text;
+exports.extractString = extractString;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

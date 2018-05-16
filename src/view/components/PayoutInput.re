@@ -1,4 +1,4 @@
-let text = Utils.text;
+include ViewCommon;
 
 type action =
   | ChangeAmount(string)

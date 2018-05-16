@@ -49,8 +49,6 @@ let mapOption = fn =>
   | Some(a) => Some(fn(a))
   | None => None;
 
-let text = ReasonReact.string;
-
 let encodeFloat = Json.Encode.float;
 
 let decodeFloat = Json.Decode.float;

@@ -4,8 +4,8 @@
 var BTC = require("../../application/wallet/BTC.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../../utils/Utils.bs.js");
 var React = require("react");
+var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 function extractString($$event) {
@@ -33,7 +33,7 @@ function make(onSend, _) {
                                   onChange: (function (e) {
                                       return Curry._1(send, /* ChangeAmount */Block.__(0, [e.target.value]));
                                     })
-                                }), Utils.text("BTC")), Utils.text("Destination:"), React.createElement("input", {
+                                }), ViewCommon.text("BTC")), ViewCommon.text("Destination:"), React.createElement("input", {
                               value: state[/* destination */1],
                               onChange: (function (e) {
                                   return Curry._1(send, /* ChangeDestination */Block.__(1, [e.target.value]));
@@ -42,7 +42,7 @@ function make(onSend, _) {
                               onClick: (function () {
                                   return Curry._1(send, /* Submit */0);
                                 })
-                            }, Utils.text("Propose Payout")));
+                            }, ViewCommon.text("Propose Payout")));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -85,7 +85,7 @@ function make(onSend, _) {
         ];
 }
 
-var text = Utils.text;
+var text = ViewCommon.text;
 
 exports.text = text;
 exports.extractString = extractString;

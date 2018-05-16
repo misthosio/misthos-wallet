@@ -1,3 +1,5 @@
+include ViewCommon;
+
 type status =
   | None
   | CreatingVenture(string);
@@ -63,11 +65,11 @@ let make =
                  You can add and remove Partners once the Venture is created.
                  But first, let’s start with a name.
                 |js}
-                |> Utils.text
+                |> text
               )
             </MTypography>
             <MTypography variant=`Title>
-              ("Venture Name" |> Utils.text)
+              ("Venture Name" |> text)
             </MTypography>
             <MInput
               placeholder="Enter a Venture Name"
@@ -77,20 +79,20 @@ let make =
               fullWidth=true
             />
             <MButton fullWidth=true onClick=(_e => send(CreateVenture))>
-              ("create venture" |> Utils.text)
+              ("create venture" |> text)
             </MButton>
           </div>
         body2=
           <div className=Styles.infoBox>
             <MTypography variant=`Title>
-              ("What can you do with a venture?" |> Utils.text)
+              ("What can you do with a venture?" |> text)
             </MTypography>
             <MTypography variant=`Body2>
               (
                 {js|
                  • Your Venture can receive money from different sources, such as customers, clients, and investors
                 |js}
-                |> Utils.text
+                |> text
               )
             </MTypography>
             <MTypography variant=`Body2>
@@ -98,7 +100,7 @@ let make =
                 {js|
                  • Every Partner of the Venture has full transparency of income and payouts
                 |js}
-                |> Utils.text
+                |> text
               )
             </MTypography>
             <MTypography variant=`Body2>
@@ -106,7 +108,7 @@ let make =
                 {js|
                  • The team decides the Policies by which payouts take place
                 |js}
-                |> Utils.text
+                |> text
               )
             </MTypography>
           </div>

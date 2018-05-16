@@ -1,3 +1,5 @@
+include ViewCommon;
+
 open Session;
 
 let component = ReasonReact.statelessComponent("App");
@@ -18,11 +20,21 @@ let make = (~session, ~updateSession, _children) => {
     | (
         LoggedIn(session),
         Venture(selected, ManagePartners),
-        VentureLoaded(_, venture, commands),
+        VentureLoaded(ventureId, venture, commands),
       ) =>
       venture |> ViewModel.isPartner(session.userId) ?
         Some((
-          <ManagePartners venture commands session />,
+          <ManagePartnersModal
+            joinVentureUrl=(
+              Location.origin
+              ++ Router.Config.routeToUrl(
+                   JoinVenture(ventureId, session.userId),
+                 )
+            )
+            viewData=(venture |> ViewModel.managePartnersModal)
+            commands
+            session
+          />,
           onCloseModal(selected),
         )) :
         None
@@ -33,6 +45,17 @@ let make = (~session, ~updateSession, _children) => {
       ) =>
       venture |> ViewModel.isPartner(session.userId) ?
         Some((<Receive commands />, onCloseModal(selected))) : None
+    | (
+        LoggedIn(session),
+        Venture(selected, Payout),
+        VentureLoaded(_, venture, commands),
+      ) =>
+      venture |> ViewModel.isPartner(session.userId) ?
+        Some((
+          <PayoutModal viewData=(venture |> ViewModel.payoutModal) commands />,
+          onCloseModal(selected),
+        )) :
+        None
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
@@ -76,7 +99,7 @@ let make = (~session, ~updateSession, _children) => {
     | (LoggedIn(_), _, LoadingVenture(_)) =>
       <Spinner text="Loading venture" />
     | (LoggedIn(_), _, CreatingVenture) => <Spinner text="Creating venture" />
-    | (LoggedIn(_), _, None) => Utils.text("Not selected")
+    | (LoggedIn(_), _, None) => text("Not selected")
     };
   {
     ...component,

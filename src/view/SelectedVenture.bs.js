@@ -8,15 +8,15 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Body4 = require("./components/Body4.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
-var Payout = require("./components/Payout.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
 var MFabButton = require("./components/MFabButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
+var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
+var PayoutInput = require("./components/PayoutInput.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -59,36 +59,36 @@ function make(initialViewModel, session, commands, _) {
               var prospects = $$Array.of_list(List.map((function (prospect) {
                           return React.createElement("li", {
                                       key: PrimitiveTypes.UserId[/* toString */0](prospect[/* userId */1])
-                                    }, Utils.text("'" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* userId */1]) + ("' endorsed by: " + List.fold_left((function (state, partnerId) {
+                                    }, ViewCommon.text("'" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* userId */1]) + ("' endorsed by: " + List.fold_left((function (state, partnerId) {
                                                     return state + (partnerId + " ");
                                                   }), "", List.map(PrimitiveTypes.UserId[/* toString */0], prospect[/* endorsedBy */2]))))), List.mem(session[/* userId */0], prospect[/* endorsedBy */2]) === false ? React.createElement("button", {
                                             onClick: (function () {
                                                 return Curry._1(send, /* EndorsePartner */Block.__(0, [prospect[/* processId */0]]));
                                               })
-                                          }, Utils.text("Endorse Partner")) : null);
+                                          }, ViewCommon.text("Endorse Partner")) : null);
                         }), ViewModel.prospects(state[/* viewModel */0])));
               var removalProspects = $$Array.of_list(List.map((function (prospect) {
                           return React.createElement("li", {
                                       key: PrimitiveTypes.UserId[/* toString */0](prospect[/* userId */1])
-                                    }, Utils.text("'" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* userId */1]) + ("' endorsed by: " + List.fold_left((function (state, partnerId) {
+                                    }, ViewCommon.text("'" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* userId */1]) + ("' endorsed by: " + List.fold_left((function (state, partnerId) {
                                                     return state + (partnerId + " ");
                                                   }), "", List.map(PrimitiveTypes.UserId[/* toString */0], prospect[/* endorsedBy */2]))))), List.mem(session[/* userId */0], prospect[/* endorsedBy */2]) === false ? React.createElement("button", {
                                             onClick: (function () {
                                                 return Curry._1(send, /* EndorsePartnerRemoval */Block.__(1, [prospect[/* processId */0]]));
                                               })
-                                          }, Utils.text("Endorse Removal")) : null);
+                                          }, ViewCommon.text("Endorse Removal")) : null);
                         }), ViewModel.removalProspects(state[/* viewModel */0])));
               var match = ViewModel.transactions(state[/* viewModel */0]);
               var unconfirmed = match[1];
               var transactions = $$Array.of_list(List.append(List.mapi((function (iter, tx) {
                               var tmp;
-                              tmp = tx.tag ? Utils.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("Unconfirmed Income: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc"))));
+                              tmp = tx.tag ? ViewCommon.text("Unconfirmed Payout: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc")))) : ViewCommon.text("Unconfirmed Income: '" + (tx[0] + ("' - " + (BTC.format(tx[1]) + "btc"))));
                               return React.createElement("li", {
                                           key: String(iter)
                                         }, tmp);
                             }), unconfirmed), List.mapi((function (iter, tx) {
                               var tmp;
-                              tmp = tx.tag ? Utils.text("PAYOUT: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc")))) : Utils.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc"))));
+                              tmp = tx.tag ? ViewCommon.text("PAYOUT: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc")))) : ViewCommon.text("INCOME: " + (tx[2].toString() + (" - " + (BTC.format(tx[1]) + "btc"))));
                               return React.createElement("li", {
                                           key: String(iter + List.length(unconfirmed) | 0)
                                         }, tmp);
@@ -106,7 +106,7 @@ function make(initialViewModel, session, commands, _) {
                           var match$5 = List.mem(session[/* userId */0], payout[/* endorsedBy */2]);
                           return React.createElement("li", {
                                       key: PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0])
-                                    }, Utils.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' status: " + (tmp + (" endorsed by: " + (List.fold_left((function (state, partnerId) {
+                                    }, ViewCommon.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' status: " + (tmp + (" endorsed by: " + (List.fold_left((function (state, partnerId) {
                                                           return state + (partnerId + " ");
                                                         }), "", List.map(PrimitiveTypes.UserId[/* toString */0], payout[/* endorsedBy */2])) + (" rejected by: " + List.fold_left((function (state, partnerId) {
                                                             return state + (partnerId + " ");
@@ -114,11 +114,11 @@ function make(initialViewModel, session, commands, _) {
                                             onClick: (function () {
                                                 return Curry._1(send, /* EndorsePayout */Block.__(4, [payout[/* processId */0]]));
                                               })
-                                          }, Utils.text("Endorse Payout")) : null, typeof match$3 === "number" && !(match$4 || match$5) ? React.createElement("button", {
+                                          }, ViewCommon.text("Endorse Payout")) : null, typeof match$3 === "number" && !(match$4 || match$5) ? React.createElement("button", {
                                             onClick: (function () {
                                                 return Curry._1(send, /* RejectPayout */Block.__(3, [payout[/* processId */0]]));
                                               })
-                                          }, Utils.text("Reject Payout")) : null);
+                                          }, ViewCommon.text("Reject Payout")) : null);
                         }), ViewModel.payouts(state[/* viewModel */0])));
               var match$1 = state[/* selfRemoved */1];
               return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[/* :: */[
@@ -127,30 +127,30 @@ function make(initialViewModel, session, commands, _) {
                                   "Transactions",
                                   /* [] */0
                                 ]
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[Utils.text(ViewModel.ventureName(state[/* viewModel */0]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(ViewModel.ventureName(state[/* viewModel */0]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
                                           React.createElement("b", {
                                                 key: "currentSpendable"
-                                              }, Utils.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
-                                          Utils.text("BTC")
+                                              }, ViewCommon.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
+                                          ViewCommon.text("BTC")
                                         ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
                                           React.createElement("b", {
                                                 key: "reserved"
-                                              }, Utils.text(BTC.format(state[/* balance */2][/* reserved */1]))),
-                                          Utils.text(" BTC IN RESERVE")
+                                              }, ViewCommon.text(BTC.format(state[/* balance */2][/* reserved */1]))),
+                                          ViewCommon.text(" BTC IN RESERVE")
                                         ]))), React.createElement("div", {
                                   className: flexSpaceBetween
                                 }, ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),
                                             /* Receive */3
-                                          ]), /* array */[Utils.text("RECEIVE")])), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
+                                          ]), /* array */[ViewCommon.text("RECEIVE")])), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),
                                             /* Payout */2
-                                          ]), /* array */[Utils.text("PAY OUT")]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                                          ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, ViewCommon.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, ViewCommon.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),
                                             /* ManagePartners */1
-                                          ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
+                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, ViewCommon.text("Wallet:")), ReasonReact.element(/* None */0, /* None */0, PayoutInput.make((function (destinations) {
                                             return Curry._1(send, /* ProposePayout */Block.__(2, [destinations]));
-                                          }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payout processes:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, Utils.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
+                                          }), /* array */[])), React.createElement("h4", undefined, ViewCommon.text("Payout processes:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, ViewCommon.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -193,9 +193,12 @@ function make(initialViewModel, session, commands, _) {
         ];
 }
 
-var text = Utils.text;
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
 
 exports.text = text;
+exports.extractString = extractString;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

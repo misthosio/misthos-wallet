@@ -4,12 +4,12 @@
 var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var TitleBar = require("./components/TitleBar.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
@@ -53,9 +53,9 @@ function make(commands, _) {
                               className: container
                             }, match ? React.createElement("img", {
                                     src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
-                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */0]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(Js_option.getWithDefault("", state[/* address */0]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* GetIncomeAddress */0);
-                                        })], /* None */0, /* array */[Utils.text("Generate new income address")]))));
+                                        })], /* None */0, /* array */[ViewCommon.text("Generate new income address")]))));
             }),
           /* initialState */(function () {
               return /* record */[/* address : None */0];
@@ -82,9 +82,12 @@ function make(commands, _) {
         ];
 }
 
-var text = Utils.text;
+var text = ViewCommon.text;
+
+var extractString = ViewCommon.extractString;
 
 exports.text = text;
+exports.extractString = extractString;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

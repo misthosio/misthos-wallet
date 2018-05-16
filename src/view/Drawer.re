@@ -1,3 +1,5 @@
+include ViewCommon;
+
 let component = ReasonReact.statelessComponent("Drawer");
 
 module Styles = {
@@ -14,7 +16,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
         <VentureList ?selected index />
         <div className=Styles.flex_ />
         <LinkButton route=CreateVenture>
-          ("Create a Venture" |> Utils.text)
+          ("Create a Venture" |> text)
         </LinkButton>
         <div className=Styles.flex_ />
         <Button color=`Inherit onClick=onSignOut> "Sign Out" </Button>

@@ -1,5 +1,7 @@
 [@bs.module] external logo : string = "../assets/img/logo-big.svg";
 
+include ViewCommon;
+
 let component = ReasonReact.statelessComponent("PublicHome");
 
 module Styles = {
@@ -27,10 +29,10 @@ let make = (~onSignIn, _children) => {
         <Grid container=true direction=`Row justify=`Center>
           <Grid item=true xs=V10>
             <Typography variant=`Display4>
-              ("Distribute Funds" |> Utils.text)
+              ("Distribute Funds" |> text)
             </Typography>
             <Typography className=Styles.display4 variant=`Display4>
-              ("with misthos." |> Utils.text)
+              ("with misthos." |> text)
             </Typography>
           </Grid>
           <Grid item=true xs=V10>
@@ -39,12 +41,12 @@ let make = (~onSignIn, _children) => {
                 <Typography variant=`Display1>
                   (
                     "Misthos is the only multi-sig Bitcoin wallet that lets you change co-singers in a fast and friction-less way."
-                    |> Utils.text
+                    |> text
                   )
                 </Typography>
                 <br />
                 <Typography variant=`Display1>
-                  ("Use if for projects. Use if for payments." |> Utils.text)
+                  ("Use if for projects. Use if for payments." |> text)
                 </Typography>
               </Grid>
               <Grid item=true xs=V3>
