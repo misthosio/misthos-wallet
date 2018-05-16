@@ -159,85 +159,68 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     ];
   },
   reducer: (action, state) =>
-    switch (action) {
-    | CreateVenture(name) =>
-      state.ventureWorker^ |> VentureWorkerClient.create(~name);
-      ReasonReact.Update({...state, selectedVenture: CreatingVenture});
-    | VentureWorkerMessage(msg) =>
-      state.persistWorker^ |> PersistWorkerClient.ventureMessage(msg);
-      switch (msg, state.selectedVenture) {
-      | (UpdateIndex(index), _) =>
-        updateOtherTabs(msg);
-        ReasonReact.Update({...state, index: Some(index)});
-      | (VentureCreated(ventureId, events), _) =>
-        ReasonReact.UpdateWithSideEffects(
-          {
+    switch (state.session) {
+    | LoggedIn(sessionData) =>
+      switch (action) {
+      | CreateVenture(name) =>
+        state.ventureWorker^ |> VentureWorkerClient.create(~name);
+        ReasonReact.Update({...state, selectedVenture: CreatingVenture});
+      | VentureWorkerMessage(msg) =>
+        state.persistWorker^ |> PersistWorkerClient.ventureMessage(msg);
+        switch (msg, state.selectedVenture) {
+        | (UpdateIndex(index), _) =>
+          updateOtherTabs(msg);
+          ReasonReact.Update({...state, index: Some(index)});
+        | (VentureCreated(ventureId, events), _) =>
+          ReasonReact.UpdateWithSideEffects(
+            {
+              ...state,
+              selectedVenture:
+                VentureLoaded(
+                  ventureId,
+                  ViewModel.init(sessionData.userId, events),
+                  VentureWorkerClient.Cmd.make(
+                    state.ventureWorker^,
+                    ventureId,
+                  ),
+                ),
+            },
+            ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
+          )
+        | (VentureLoaded(ventureId, events, _), JoiningVenture(joiningId))
+            when VentureId.eq(ventureId, joiningId) =>
+          ReasonReact.UpdateWithSideEffects(
+            {
+              ...state,
+              selectedVenture:
+                VentureLoaded(
+                  ventureId,
+                  ViewModel.init(sessionData.userId, events),
+                  VentureWorkerClient.Cmd.make(
+                    state.ventureWorker^,
+                    ventureId,
+                  ),
+                ),
+            },
+            ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
+          )
+        | (VentureLoaded(ventureId, events, _), LoadingVenture(loadingId))
+            when VentureId.eq(ventureId, loadingId) =>
+          ReasonReact.Update({
             ...state,
             selectedVenture:
               VentureLoaded(
                 ventureId,
-                ViewModel.init(events),
+                ViewModel.init(sessionData.userId, events),
                 VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
               ),
-          },
-          ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
-        )
-      | (VentureLoaded(ventureId, events, _), JoiningVenture(joiningId))
-          when VentureId.eq(ventureId, joiningId) =>
-        ReasonReact.UpdateWithSideEffects(
-          {
-            ...state,
-            selectedVenture:
-              VentureLoaded(
-                ventureId,
-                ViewModel.init(events),
-                VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
-              ),
-          },
-          ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
-        )
-      | (VentureLoaded(ventureId, events, _), LoadingVenture(loadingId))
-          when VentureId.eq(ventureId, loadingId) =>
-        ReasonReact.Update({
-          ...state,
-          selectedVenture:
-            VentureLoaded(
-              ventureId,
-              ViewModel.init(events),
-              VentureWorkerClient.Cmd.make(state.ventureWorker^, ventureId),
-            ),
-        })
-      | (
-          NewItems(ventureId, newItems),
-          VentureLoaded(loadedId, viewModel, cmd),
-        )
-          when VentureId.eq(ventureId, loadedId) =>
-        updateOtherTabs(msg);
-        ReasonReact.Update({
-          ...state,
-          selectedVenture:
-            VentureLoaded(
-              ventureId,
-              viewModel |> ViewModel.applyAll(newItems),
-              cmd,
-            ),
-        });
-      | _ => ReasonReact.NoUpdate
-      };
-    | SyncWorkerMessage(msg) =>
-      state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
-      ReasonReact.NoUpdate;
-    | IncomeWorkerMessage(msg) =>
-      state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
-      ReasonReact.NoUpdate;
-    | TabSync(msg) =>
-      switch (msg) {
-      | NewItems(ventureId, newItems) =>
-        state.ventureWorker^
-        |. VentureWorkerClient.postMessage(SyncTabs(ventureId, newItems));
-        switch (state.selectedVenture) {
-        | VentureLoaded(loadedId, viewModel, cmd)
-            when VentureId.eq(loadedId, ventureId) =>
+          })
+        | (
+            NewItems(ventureId, newItems),
+            VentureLoaded(loadedId, viewModel, cmd),
+          )
+            when VentureId.eq(ventureId, loadedId) =>
+          updateOtherTabs(msg);
           ReasonReact.Update({
             ...state,
             selectedVenture:
@@ -246,13 +229,40 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 viewModel |> ViewModel.applyAll(newItems),
                 cmd,
               ),
-          })
+          });
         | _ => ReasonReact.NoUpdate
         };
-      | UpdateIndex(index) =>
-        ReasonReact.Update({...state, index: Some(index)})
-      | _ => ReasonReact.NoUpdate
+      | SyncWorkerMessage(msg) =>
+        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
+        ReasonReact.NoUpdate;
+      | IncomeWorkerMessage(msg) =>
+        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
+        ReasonReact.NoUpdate;
+      | TabSync(msg) =>
+        switch (msg) {
+        | NewItems(ventureId, newItems) =>
+          state.ventureWorker^
+          |. VentureWorkerClient.postMessage(SyncTabs(ventureId, newItems));
+          switch (state.selectedVenture) {
+          | VentureLoaded(loadedId, viewModel, cmd)
+              when VentureId.eq(loadedId, ventureId) =>
+            ReasonReact.Update({
+              ...state,
+              selectedVenture:
+                VentureLoaded(
+                  ventureId,
+                  viewModel |> ViewModel.applyAll(newItems),
+                  cmd,
+                ),
+            })
+          | _ => ReasonReact.NoUpdate
+          };
+        | UpdateIndex(index) =>
+          ReasonReact.Update({...state, index: Some(index)})
+        | _ => ReasonReact.NoUpdate
+        }
       }
+    | _ => ReasonReact.NoUpdate
     },
   render: ({state: {index, selectedVenture}, send}) =>
     children(~index, ~selectedVenture, ~createVenture=name =>

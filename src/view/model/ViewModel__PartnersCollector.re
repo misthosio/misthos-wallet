@@ -12,13 +12,15 @@ type prospect = {
 };
 
 type t = {
+  localUser: userId,
   partners: list(partner),
   prospects: list(prospect),
   removalProspects: list(prospect),
   partnerPolicy: Policy.t,
 };
 
-let make = () => {
+let make = localUser => {
+  localUser,
   partners: [],
   prospects: [],
   removalProspects: [],

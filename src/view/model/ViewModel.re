@@ -43,6 +43,7 @@ type payout = {
 module ItemsSet = Belt.Set.String;
 
 type t = {
+  localUser: userId,
   ventureId,
   name: string,
   processedItems: ItemsSet.t,
@@ -53,14 +54,15 @@ type t = {
   transactionCollector: TransactionCollector.t,
 };
 
-let make = () => {
+let make = localUser => {
+  localUser,
   name: "",
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   metaPolicy: Policy.unanimous,
   payouts: [],
   balanceCollector: BalanceCollector.make(),
-  partnersCollector: ManagePartners.make(),
+  partnersCollector: ManagePartners.make(localUser),
   transactionCollector: TransactionCollector.make(),
 };
 
@@ -138,7 +140,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
     };
   };
 
-let init = Array.fold_left((m, item) => m |> apply(item), make());
+let init = localUser =>
+  Array.fold_left((m, item) => m |> apply(item), make(localUser));
 
 let applyAll = (events, model) =>
   events |> Array.fold_left((m, item) => m |> apply(item), model);

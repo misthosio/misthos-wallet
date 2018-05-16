@@ -4,8 +4,9 @@
 var List = require("bs-platform/lib/js/list.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 
-function make() {
+function make(localUser) {
   return /* record */[
+          /* localUser */localUser,
           /* partners : [] */0,
           /* prospects : [] */0,
           /* removalProspects : [] */0,
@@ -17,15 +18,17 @@ function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
         return /* record */[
-                /* partners */state[/* partners */0],
-                /* prospects */state[/* prospects */1],
-                /* removalProspects */state[/* removalProspects */2],
+                /* localUser */state[/* localUser */0],
+                /* partners */state[/* partners */1],
+                /* prospects */state[/* prospects */2],
+                /* removalProspects */state[/* removalProspects */3],
                 /* partnerPolicy */$$event[0][/* metaPolicy */4]
               ];
     case 1 : 
         var match = $$event[0];
         return /* record */[
-                /* partners */state[/* partners */0],
+                /* localUser */state[/* localUser */0],
+                /* partners */state[/* partners */1],
                 /* prospects : :: */[
                   /* record */[
                     /* processId */match[/* processId */0],
@@ -35,17 +38,18 @@ function apply($$event, state) {
                       /* [] */0
                     ]
                   ],
-                  state[/* prospects */1]
+                  state[/* prospects */2]
                 ],
-                /* removalProspects */state[/* removalProspects */2],
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* removalProspects */state[/* removalProspects */3],
+                /* partnerPolicy */state[/* partnerPolicy */4]
               ];
     case 3 : 
         var match$1 = $$event[0];
         var supporterId = match$1[/* supporterId */1];
         var processId = match$1[/* processId */0];
         return /* record */[
-                /* partners */state[/* partners */0],
+                /* localUser */state[/* localUser */0],
+                /* partners */state[/* partners */1],
                 /* prospects */List.map((function (p) {
                         var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId);
                         if (match) {
@@ -60,31 +64,33 @@ function apply($$event, state) {
                         } else {
                           return p;
                         }
-                      }), state[/* prospects */1]),
-                /* removalProspects */state[/* removalProspects */2],
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                      }), state[/* prospects */2]),
+                /* removalProspects */state[/* removalProspects */3],
+                /* partnerPolicy */state[/* partnerPolicy */4]
               ];
     case 4 : 
         var data = $$event[0][/* data */2];
         return /* record */[
+                /* localUser */state[/* localUser */0],
                 /* partners : :: */[
                   /* record */[
                     /* userId */data[/* id */1],
                     /* name : None */0
                   ],
-                  state[/* partners */0]
+                  state[/* partners */1]
                 ],
                 /* prospects */List.filter((function (p) {
                           return PrimitiveTypes.UserId[/* neq */6](p[/* userId */1], data[/* id */1]);
-                        }))(state[/* prospects */1]),
-                /* removalProspects */state[/* removalProspects */2],
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                        }))(state[/* prospects */2]),
+                /* removalProspects */state[/* removalProspects */3],
+                /* partnerPolicy */state[/* partnerPolicy */4]
               ];
     case 5 : 
         var match$2 = $$event[0];
         return /* record */[
-                /* partners */state[/* partners */0],
-                /* prospects */state[/* prospects */1],
+                /* localUser */state[/* localUser */0],
+                /* partners */state[/* partners */1],
+                /* prospects */state[/* prospects */2],
                 /* removalProspects : :: */[
                   /* record */[
                     /* processId */match$2[/* processId */0],
@@ -94,17 +100,18 @@ function apply($$event, state) {
                       /* [] */0
                     ]
                   ],
-                  state[/* removalProspects */2]
+                  state[/* removalProspects */3]
                 ],
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                /* partnerPolicy */state[/* partnerPolicy */4]
               ];
     case 7 : 
         var match$3 = $$event[0];
         var supporterId$1 = match$3[/* supporterId */1];
         var processId$1 = match$3[/* processId */0];
         return /* record */[
-                /* partners */state[/* partners */0],
-                /* prospects */state[/* prospects */1],
+                /* localUser */state[/* localUser */0],
+                /* partners */state[/* partners */1],
+                /* prospects */state[/* prospects */2],
                 /* removalProspects */List.map((function (p) {
                         var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$1);
                         if (match) {
@@ -119,22 +126,23 @@ function apply($$event, state) {
                         } else {
                           return p;
                         }
-                      }), state[/* removalProspects */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                      }), state[/* removalProspects */3]),
+                /* partnerPolicy */state[/* partnerPolicy */4]
               ];
     case 8 : 
         var match$4 = $$event[0];
         var id = match$4[/* data */2][/* id */0];
         var processId$2 = match$4[/* processId */0];
         return /* record */[
+                /* localUser */state[/* localUser */0],
                 /* partners */List.filter((function (p) {
                           return PrimitiveTypes.UserId[/* neq */6](p[/* userId */0], id);
-                        }))(state[/* partners */0]),
-                /* prospects */state[/* prospects */1],
+                        }))(state[/* partners */1]),
+                /* prospects */state[/* prospects */2],
                 /* removalProspects */List.filter((function (p) {
                           return PrimitiveTypes.ProcessId[/* neq */6](p[/* processId */0], processId$2);
-                        }))(state[/* removalProspects */2]),
-                /* partnerPolicy */state[/* partnerPolicy */3]
+                        }))(state[/* removalProspects */3]),
+                /* partnerPolicy */state[/* partnerPolicy */4]
               ];
     default:
       return state;
@@ -142,21 +150,21 @@ function apply($$event, state) {
 }
 
 function partners(state) {
-  return state[/* partners */0];
+  return state[/* partners */1];
 }
 
 function prospects(state) {
-  return state[/* prospects */1];
+  return state[/* prospects */2];
 }
 
 function removalProspects(state) {
-  return state[/* removalProspects */2];
+  return state[/* removalProspects */3];
 }
 
 function isPartner(id, param) {
   return List.exists((function (param) {
                 return PrimitiveTypes.UserId[/* eq */5](param[/* userId */0], id);
-              }), param[/* partners */0]);
+              }), param[/* partners */1]);
 }
 
 exports.make = make;

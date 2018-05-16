@@ -14,34 +14,36 @@ var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector
 
 var Payout = /* module */[];
 
-function make() {
+function make(localUser) {
   return /* record */[
+          /* localUser */localUser,
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* name */"",
           /* processedItems */Belt_SetString.empty,
           /* metaPolicy */Policy.unanimous,
           /* payouts : [] */0,
           /* balanceCollector */ViewModel__BalanceCollector.make(/* () */0),
-          /* partnersCollector */ViewModel__PartnersCollector.make(/* () */0),
+          /* partnersCollector */ViewModel__PartnersCollector.make(localUser),
           /* transactionCollector */ViewModel__TransactionCollector.make(/* () */0)
         ];
 }
 
 function apply(param, state) {
-  var processedItems = state[/* processedItems */2];
+  var processedItems = state[/* processedItems */3];
   var hash = param[/* hash */1];
   var $$event = param[/* event */0];
   if (Belt_SetString.has(processedItems, hash)) {
     return state;
   } else {
-    var state_000 = /* ventureId */state[/* ventureId */0];
-    var state_001 = /* name */state[/* name */1];
-    var state_002 = /* processedItems */Belt_SetString.add(processedItems, hash);
-    var state_003 = /* metaPolicy */state[/* metaPolicy */3];
-    var state_004 = /* payouts */state[/* payouts */4];
-    var state_005 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */5]);
-    var state_006 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */6]);
-    var state_007 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */7]);
+    var state_000 = /* localUser */state[/* localUser */0];
+    var state_001 = /* ventureId */state[/* ventureId */1];
+    var state_002 = /* name */state[/* name */2];
+    var state_003 = /* processedItems */Belt_SetString.add(processedItems, hash);
+    var state_004 = /* metaPolicy */state[/* metaPolicy */4];
+    var state_005 = /* payouts */state[/* payouts */5];
+    var state_006 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */6]);
+    var state_007 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */7]);
+    var state_008 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */8]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -50,20 +52,22 @@ function apply(param, state) {
       state_004,
       state_005,
       state_006,
-      state_007
+      state_007,
+      state_008
     ];
     switch ($$event.tag | 0) {
       case 0 : 
           var match = $$event[0];
           return /* record */[
+                  state_000,
                   /* ventureId */match[/* ventureId */0],
                   /* name */match[/* ventureName */1],
-                  state_002,
+                  state_003,
                   /* metaPolicy */match[/* metaPolicy */4],
-                  state_004,
                   state_005,
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 21 : 
           var match$1 = $$event[0];
@@ -72,6 +76,7 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
+                  state_004,
                   /* payouts : :: */[
                     /* record */[
                       /* processId */match$1[/* processId */0],
@@ -83,11 +88,11 @@ function apply(param, state) {
                       /* rejectedBy : [] */0,
                       /* status : PayoutPending */0
                     ],
-                    state_004
+                    state_005
                   ],
-                  state_005,
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 22 : 
           var match$2 = $$event[0];
@@ -98,6 +103,7 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
+                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId);
                           if (match) {
@@ -114,10 +120,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_004),
-                  state_005,
+                        }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 23 : 
           var match$3 = $$event[0];
@@ -128,6 +134,7 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
+                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$1);
                           if (match) {
@@ -144,10 +151,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_004),
-                  state_005,
+                        }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 26 : 
           var match$4 = $$event[0];
@@ -158,6 +165,7 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
+                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$2);
                           if (match) {
@@ -171,10 +179,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_004),
-                  state_005,
+                        }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       case 28 : 
           var match$5 = $$event[0];
@@ -185,6 +193,7 @@ function apply(param, state) {
                   state_001,
                   state_002,
                   state_003,
+                  state_004,
                   /* payouts */List.map((function (p) {
                           var match = PrimitiveTypes.ProcessId[/* eq */5](p[/* processId */0], processId$3);
                           if (match) {
@@ -198,10 +207,10 @@ function apply(param, state) {
                           } else {
                             return p;
                           }
-                        }), state_004),
-                  state_005,
+                        }), state_005),
                   state_006,
-                  state_007
+                  state_007,
+                  state_008
                 ];
       default:
         return state$1;
@@ -209,12 +218,13 @@ function apply(param, state) {
   }
 }
 
-var partial_arg = make(/* () */0);
-
-function init(param) {
-  return $$Array.fold_left((function (m, item) {
-                return apply(item, m);
-              }), partial_arg, param);
+function init(localUser) {
+  var partial_arg = make(localUser);
+  return (function (param) {
+      return $$Array.fold_left((function (m, item) {
+                    return apply(item, m);
+                  }), partial_arg, param);
+    });
 }
 
 function applyAll(events, model) {
@@ -224,35 +234,35 @@ function applyAll(events, model) {
 }
 
 function ventureId(state) {
-  return state[/* ventureId */0];
+  return state[/* ventureId */1];
 }
 
 function partners(state) {
-  return state[/* partnersCollector */6][/* partners */0];
+  return state[/* partnersCollector */7][/* partners */1];
 }
 
 function prospects(state) {
-  return state[/* partnersCollector */6][/* prospects */1];
+  return state[/* partnersCollector */7][/* prospects */2];
 }
 
 function removalProspects(state) {
-  return state[/* partnersCollector */6][/* removalProspects */2];
+  return state[/* partnersCollector */7][/* removalProspects */3];
 }
 
 function ventureName(state) {
-  return state[/* name */1];
+  return state[/* name */2];
 }
 
 function payouts(state) {
-  return state[/* payouts */4];
+  return state[/* payouts */5];
 }
 
 function balance(state) {
-  return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */5]);
+  return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */6]);
 }
 
 function transactions(param) {
-  var transactionCollector = param[/* transactionCollector */7];
+  var transactionCollector = param[/* transactionCollector */8];
   return /* tuple */[
           transactionCollector[/* confirmedTxs */1],
           transactionCollector[/* unconfirmedTxs */2]
@@ -260,17 +270,17 @@ function transactions(param) {
 }
 
 function isPartner(id, param) {
-  return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */6]);
+  return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */7]);
 }
 
 function managePartnersModal(param) {
-  return param[/* partnersCollector */6];
+  return param[/* partnersCollector */7];
 }
 
 function payoutModal(param) {
   return /* record */[
-          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */5])[/* currentSpendable */0],
-          /* ventureName */param[/* name */1]
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
+          /* ventureName */param[/* name */2]
         ];
 }
 
@@ -305,4 +315,4 @@ exports.transactions = transactions;
 exports.isPartner = isPartner;
 exports.managePartnersModal = managePartnersModal;
 exports.payoutModal = payoutModal;
-/* partial_arg Not a pure module */
+/* Policy Not a pure module */

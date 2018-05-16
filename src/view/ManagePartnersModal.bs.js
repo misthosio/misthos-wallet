@@ -41,12 +41,12 @@ function make(joinVentureUrl, viewData, commands, session, _) {
               var state = param[/* state */1];
               var partners = $$Array.of_list(List.map((function (partner) {
                           return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
-                        }), state[/* viewData */0][/* partners */0]));
+                        }), state[/* viewData */0][/* partners */1]));
               var partnersOld = $$Array.of_list(List.map((function (m) {
                           var match = PrimitiveTypes.UserId[/* eq */5](state[/* currentUser */2], m[/* userId */0]);
                           var match$1 = List.exists((function (p) {
                                   return PrimitiveTypes.UserId[/* eq */5](p[/* userId */1], m[/* userId */0]);
-                                }), state[/* viewData */0][/* removalProspects */2]);
+                                }), state[/* viewData */0][/* removalProspects */3]);
                           return React.createElement("li", {
                                       key: PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])
                                     }, React.createElement("div", undefined, ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])), match || match$1 ? null : React.createElement("button", {
@@ -54,7 +54,7 @@ function make(joinVentureUrl, viewData, commands, session, _) {
                                                     return Curry._1(send, /* RemovePartner */Block.__(1, [m[/* userId */0]]));
                                                   })
                                               }, ViewCommon.text("Propose Removal"))));
-                        }), state[/* viewData */0][/* partners */0]));
+                        }), state[/* viewData */0][/* partners */1]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",
                                 /* :: */[
