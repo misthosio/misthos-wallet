@@ -2,10 +2,7 @@ open WalletTypes;
 
 let text = Utils.text;
 
-type state = {
-  selfRemoved: bool,
-  address: option(string),
-};
+type state = {address: option(string)};
 
 type action =
   | UpdateAddress(string)
@@ -19,31 +16,15 @@ module Styles = {
     style([display(`flex), flexDirection(`column), alignItems(`center)]);
 };
 
-let make =
-    (
-      ~venture as initialViewModel,
-      ~session: Session.Data.t,
-      ~commands: VentureWorkerClient.Cmd.t,
-      _children,
-    ) => {
+let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
   ...component,
-  initialState: () => {
-    selfRemoved:
-      initialViewModel |> ViewModel.isPartner(session.userId) == false,
-    address: None,
-  },
-  didMount: ({state: {selfRemoved}, send}) =>
-    selfRemoved == false ? send(GetIncomeAddress) : (),
-  willReceiveProps: ({state}) => {
-    ...state,
-    selfRemoved:
-      initialViewModel |> ViewModel.isPartner(session.userId) == false,
-  },
-  reducer: (action, state) =>
-    switch (state.selfRemoved, action) {
-    | (false, GetIncomeAddress) =>
+  initialState: () => {address: None},
+  didMount: ({send}) => send(GetIncomeAddress),
+  reducer: (action, _state) =>
+    switch (action) {
+    | GetIncomeAddress =>
       ReasonReact.UpdateWithSideEffects(
-        {...state, address: None},
+        {address: None},
         (
           ({send}) =>
             commands.exposeIncomeAddress(~accountIdx=AccountIndex.default)
@@ -53,9 +34,7 @@ let make =
             |> ignore
         ),
       )
-    | (_, UpdateAddress(address)) =>
-      ReasonReact.Update({...state, address: Some(address)})
-    | _ => ReasonReact.NoUpdate
+    | UpdateAddress(address) => ReasonReact.Update({address: Some(address)})
     },
   render: ({send, state}) =>
     <div>
@@ -70,10 +49,7 @@ let make =
                 ++ address
               )
             />
-          | None =>
-            <Spinner
-              text=(state.selfRemoved ? "READ ONLY" : "Generating new address")
-            />
+          | None => <Spinner text="Generating new address" />
           }
         )
         <MTypography variant=`Body2>

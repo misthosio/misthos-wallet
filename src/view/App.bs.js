@@ -9,6 +9,7 @@ var Layout = require("./Layout.bs.js");
 var Router = require("./Router.bs.js");
 var Receive = require("./Receive.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
+var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureStore = require("./VentureStore.bs.js");
@@ -48,12 +49,18 @@ function make(session, updateSession, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
                   return /* None */0;
                 } else {
-                  return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(selectedVenture[1], session$1, selectedVenture[2], /* array */[])),
-                            (function (param) {
-                                return onCloseModal(selected, param);
-                              })
-                          ]];
+                  var venture = selectedVenture[1];
+                  var match$1 = ViewModel.isPartner(session$1[/* userId */0], venture);
+                  if (match$1) {
+                    return /* Some */[/* tuple */[
+                              ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(venture, selectedVenture[2], session$1, /* array */[])),
+                              (function (param) {
+                                  return onCloseModal(selected, param);
+                                })
+                            ]];
+                  } else {
+                    return /* None */0;
+                  }
                 }
             case 1 : 
                 return /* None */0;
@@ -61,12 +68,17 @@ function make(session, updateSession, _) {
                 if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
                   return /* None */0;
                 } else {
-                  return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[1], session$1, selectedVenture[2], /* array */[])),
-                            (function (param) {
-                                return onCloseModal(selected, param);
-                              })
-                          ]];
+                  var match$2 = ViewModel.isPartner(session$1[/* userId */0], selectedVenture[1]);
+                  if (match$2) {
+                    return /* Some */[/* tuple */[
+                              ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[2], /* array */[])),
+                              (function (param) {
+                                  return onCloseModal(selected, param);
+                                })
+                            ]];
+                  } else {
+                    return /* None */0;
+                  }
                 }
             
           }

@@ -25,7 +25,7 @@ function changeNewPartnerId($$event) {
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
-function make(initialViewModel, session, commands, _) {
+function make(initialViewModel, commands, session, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -33,7 +33,8 @@ function make(initialViewModel, session, commands, _) {
           /* willReceiveProps */(function (param) {
               return /* record */[
                       /* viewModel */initialViewModel,
-                      /* prospectId */param[/* state */1][/* prospectId */1]
+                      /* prospectId */param[/* state */1][/* prospectId */1],
+                      /* currentUser */session[/* userId */0]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -48,7 +49,7 @@ function make(initialViewModel, session, commands, _) {
                           return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
                         }), ViewModel.partners(state[/* viewModel */0])));
               var partnersOld = $$Array.of_list(List.map((function (m) {
-                          var match = PrimitiveTypes.UserId[/* eq */5](session[/* userId */0], m[/* userId */0]);
+                          var match = PrimitiveTypes.UserId[/* eq */5](state[/* currentUser */2], m[/* userId */0]);
                           var match$1 = List.exists((function (p) {
                                   return PrimitiveTypes.UserId[/* eq */5](p[/* userId */1], m[/* userId */0]);
                                 }), ViewModel.removalProspects(state[/* viewModel */0]));
@@ -81,7 +82,8 @@ function make(initialViewModel, session, commands, _) {
           /* initialState */(function () {
               return /* record */[
                       /* viewModel */initialViewModel,
-                      /* prospectId */""
+                      /* prospectId */"",
+                      /* currentUser */session[/* userId */0]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -94,7 +96,8 @@ function make(initialViewModel, session, commands, _) {
                   Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
                   return /* Update */Block.__(0, [/* record */[
                               /* viewModel */state[/* viewModel */0],
-                              /* prospectId */""
+                              /* prospectId */"",
+                              /* currentUser */state[/* currentUser */2]
                             ]]);
                 }
               } else if (action.tag) {
@@ -103,7 +106,8 @@ function make(initialViewModel, session, commands, _) {
               } else {
                 return /* Update */Block.__(0, [/* record */[
                             /* viewModel */state[/* viewModel */0],
-                            /* prospectId */action[0]
+                            /* prospectId */action[0],
+                            /* currentUser */state[/* currentUser */2]
                           ]]);
               }
             }),
