@@ -24,7 +24,7 @@ let make = (~session, ~updateSession, _children) => {
       ) =>
       venture |> ViewModel.isPartner(session.userId) ?
         Some((
-          <ManagePartners
+          <ManagePartnersModal
             joinVentureUrl=(
               Location.origin
               ++ Router.Config.routeToUrl(

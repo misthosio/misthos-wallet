@@ -15,9 +15,9 @@ var PayoutModal = require("./PayoutModal.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureStore = require("./VentureStore.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
-var ManagePartners = require("./ManagePartners.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
+var ManagePartnersModal = require("./ManagePartnersModal.bs.js");
 
 var component = ReasonReact.statelessComponent("App");
 
@@ -54,7 +54,7 @@ function make(session, updateSession, _) {
                 var match = ViewModel.isPartner(session$1[/* userId */0], venture);
                 if (match) {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
+                            ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                                             selectedVenture[0],
                                             session$1[/* userId */0]
                                           ])), ViewModel.managePartnersModal(venture), selectedVenture[2], session$1, /* array */[])),

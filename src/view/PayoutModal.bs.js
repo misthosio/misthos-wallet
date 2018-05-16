@@ -38,14 +38,14 @@ function make(viewData, _, _$1) {
                                         key: "currentSpendable"
                                       }, ViewCommon.text(BTC.format(viewData[/* balance */0]))),
                                   ViewCommon.text("BTC")
-                                ])), ViewCommon.text("Proposed"), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
+                                ])), ViewCommon.text("Proposed recipients"), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
                                     -976970511,
                                     inputs[/* recipientAddress */0]
                                   ]], /* Some */[(function (e) {
                                       return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
                                     })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
                                     -976970511,
-                                    inputs[/* recipientAddress */0]
+                                    inputs[/* btcAmount */1]
                                   ]], /* Some */[(function (e) {
                                       return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
                                     })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])));

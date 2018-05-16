@@ -53,7 +53,7 @@ let make =
         </b>
         ("BTC" |> text)
       </MTypography>
-      (text("Proposed"))
+      (text("Proposed recipients"))
       <MInput
         placeholder="Recipient Address"
         value=(`String(inputs.recipientAddress))
@@ -63,7 +63,7 @@ let make =
       />
       <MInput
         placeholder="BTC amount"
-        value=(`String(inputs.recipientAddress))
+        value=(`String(inputs.btcAmount))
         onChange=(e => send(ChangeBTCAmount(extractString(e))))
         autoFocus=false
         fullWidth=true
