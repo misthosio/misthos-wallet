@@ -23,7 +23,12 @@ let make = (~session, ~updateSession, _children) => {
       venture |> ViewModel.isPartner(session.userId) ?
         Some((
           <ManagePartners
-            ventureId
+            joinVentureUrl=(
+              Location.origin
+              ++ Router.Config.routeToUrl(
+                   JoinVenture(ventureId, session.userId),
+                 )
+            )
             viewData=(venture |> ViewModel.managePartnersModal)
             commands
             session

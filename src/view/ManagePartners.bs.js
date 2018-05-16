@@ -9,7 +9,6 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
-var Router = require("./Router.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
@@ -24,7 +23,7 @@ function changeNewPartnerId($$event) {
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
-function make(ventureId, viewData, commands, session, _) {
+function make(joinVentureUrl, viewData, commands, session, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -73,10 +72,7 @@ function make(ventureId, viewData, commands, session, _) {
                                               return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [e.target.value]));
                                             })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePartner */0);
-                                            })], /* Some */[true], /* array */[Utils.text("Propose partner addition")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
-                                                      ventureId,
-                                                      session[/* userId */0]
-                                                    ])))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld)), /* array */[]));
+                                            })], /* Some */[true], /* array */[Utils.text("Propose partner addition")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(joinVentureUrl)]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

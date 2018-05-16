@@ -22,7 +22,7 @@ let component = ReasonReact.reducerComponent("ManagePartners");
 
 let make =
     (
-      ~ventureId: ventureId,
+      ~joinVentureUrl: string,
       ~viewData: ViewModel.ManagePartners.t,
       ~commands: VentureWorkerClient.Cmd.t,
       ~session: Session.Data.t,
@@ -121,13 +121,7 @@ let make =
             )
           </MTypography>
           <MTypography variant=`Body2>
-            (
-              Location.origin
-              ++ Router.Config.routeToUrl(
-                   JoinVenture(ventureId, session.userId),
-                 )
-              |> Utils.text
-            )
+            (joinVentureUrl |> Utils.text)
           </MTypography>
         </div>
       body2=

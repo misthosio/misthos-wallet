@@ -54,7 +54,10 @@ function make(session, updateSession, _) {
                 var match = ViewModel.isPartner(session$1[/* userId */0], venture);
                 if (match) {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(selectedVenture[0], ViewModel.managePartnersModal(venture), selectedVenture[2], session$1, /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, ManagePartners.make(window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
+                                            selectedVenture[0],
+                                            session$1[/* userId */0]
+                                          ])), ViewModel.managePartnersModal(venture), selectedVenture[2], session$1, /* array */[])),
                             (function (param) {
                                 return onCloseModal(selected, param);
                               })
