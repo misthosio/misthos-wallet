@@ -10,7 +10,6 @@ var MButton = require("./components/MButton.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var TitleBar = require("./components/TitleBar.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
-var ViewModel = require("./model/ViewModel.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
@@ -30,24 +29,14 @@ var container = Css.style(/* :: */[
 
 var Styles = /* module */[/* container */container];
 
-function make(initialViewModel, session, commands, _) {
+function make(commands, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */(function (param) {
-              return /* record */[
-                      /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
-                      /* address */param[/* state */1][/* address */1]
-                    ];
-            }),
+          /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (param) {
-              var match = param[/* state */1][/* selfRemoved */0] === false;
-              if (match) {
-                return Curry._1(param[/* send */3], /* GetIncomeAddress */0);
-              } else {
-                return /* () */0;
-              }
+              return Curry._1(param[/* send */3], /* GetIncomeAddress */0);
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
@@ -56,43 +45,28 @@ function make(initialViewModel, session, commands, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var state = param[/* state */1];
-              var match = state[/* address */1];
-              var tmp;
-              if (match) {
-                tmp = React.createElement("img", {
-                      src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
-                    });
-              } else {
-                var match$1 = state[/* selfRemoved */0];
-                tmp = ReasonReact.element(/* None */0, /* None */0, Spinner.make(match$1 ? "READ ONLY" : "Generating new address", /* array */[]));
-              }
+              var match = state[/* address */0];
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "Receive BTC",
                                     /* [] */0
                                   ]], /* array */[])), React.createElement("div", {
                               className: container
-                            }, tmp, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */1]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                            }, match ? React.createElement("img", {
+                                    src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
+                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(Js_option.getWithDefault("", state[/* address */0]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* GetIncomeAddress */0);
                                         })], /* None */0, /* array */[Utils.text("Generate new income address")]))));
             }),
           /* initialState */(function () {
-              return /* record */[
-                      /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
-                      /* address : None */0
-                    ];
+              return /* record */[/* address : None */0];
             }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */(function (action, state) {
-              var match = state[/* selfRemoved */0];
-              var exit = 0;
-              if (match || action) {
-                exit = 1;
+          /* reducer */(function (action, _) {
+              if (action) {
+                return /* Update */Block.__(0, [/* record */[/* address : Some */[action[0]]]]);
               } else {
                 return /* UpdateWithSideEffects */Block.__(2, [
-                          /* record */[
-                            /* selfRemoved */state[/* selfRemoved */0],
-                            /* address : None */0
-                          ],
+                          /* record */[/* address : None */0],
                           (function (param) {
                               var send = param[/* send */3];
                               Curry._1(commands[/* exposeIncomeAddress */9], WalletTypes.AccountIndex[/* default */9]).then((function (address) {
@@ -102,17 +76,6 @@ function make(initialViewModel, session, commands, _) {
                             })
                         ]);
               }
-              if (exit === 1) {
-                if (action) {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* selfRemoved */state[/* selfRemoved */0],
-                              /* address : Some */[action[0]]
-                            ]]);
-                } else {
-                  return /* NoUpdate */0;
-                }
-              }
-              
             }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]

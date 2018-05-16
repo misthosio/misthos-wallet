@@ -20,16 +20,19 @@ let make = (~session, ~updateSession, _children) => {
         Venture(selected, ManagePartners),
         VentureLoaded(_, venture, commands),
       ) =>
-      Some((
-        <ManagePartners venture commands session />,
-        onCloseModal(selected),
-      ))
+      venture |> ViewModel.isPartner(session.userId) ?
+        Some((
+          <ManagePartners venture commands session />,
+          onCloseModal(selected),
+        )) :
+        None
     | (
         LoggedIn(session),
         Venture(selected, Receive),
         VentureLoaded(_, venture, commands),
       ) =>
-      Some((<Receive venture commands session />, onCloseModal(selected)))
+      venture |> ViewModel.isPartner(session.userId) ?
+        Some((<Receive commands />, onCloseModal(selected))) : None
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>

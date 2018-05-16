@@ -5,6 +5,7 @@ let text = Utils.text;
 type state = {
   viewModel: ViewModel.t,
   prospectId: string,
+  currentUser: userId,
 };
 
 type action =
@@ -22,13 +23,21 @@ let component = ReasonReact.reducerComponent("ManagePartners");
 let make =
     (
       ~venture as initialViewModel,
-      ~session: Session.Data.t,
       ~commands: VentureWorkerClient.Cmd.t,
+      ~session: Session.Data.t,
       _children,
     ) => {
   ...component,
-  initialState: () => {viewModel: initialViewModel, prospectId: ""},
-  willReceiveProps: ({state}) => {...state, viewModel: initialViewModel},
+  initialState: () => {
+    viewModel: initialViewModel,
+    prospectId: "",
+    currentUser: session.userId,
+  },
+  willReceiveProps: ({state}) => {
+    ...state,
+    viewModel: initialViewModel,
+    currentUser: session.userId,
+  },
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
@@ -64,7 +73,7 @@ let make =
                    (text(m.userId |> UserId.toString))
                    (
                      switch (
-                       m.userId |> UserId.eq(session.userId),
+                       m.userId |> UserId.eq(state.currentUser),
                        ViewModel.removalProspects(state.viewModel)
                        |> List.exists((p: ViewModel.prospect) =>
                             UserId.eq(p.userId, m.userId)
