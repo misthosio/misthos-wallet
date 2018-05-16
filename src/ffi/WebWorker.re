@@ -52,12 +52,12 @@ module MakeClient = (Config: Config) => {
     if (syncId != emptySyncId) {
       switch (syncListeners^ |. Map.String.get(syncId)) {
       | Some(listener) =>
-        listener(. decodedMsg);
         syncListeners := syncListeners^ |. Map.String.remove(syncId);
+        listener(. decodedMsg);
       | _ => ()
       };
     };
-    msg##msg |> Config.decodeOutgoing |> onMessage;
+    decodedMsg |> onMessage;
   };
   let make = (~onMessage) => {
     let worker = Config.instance();

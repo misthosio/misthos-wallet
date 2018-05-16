@@ -41,12 +41,12 @@ function MakeClient(Config) {
     if (syncId !== emptySyncId) {
       var match = Belt_MapString.get(syncListeners[0], syncId);
       if (match) {
-        match[0](decodedMsg);
         syncListeners[0] = Belt_MapString.remove(syncListeners[0], syncId);
+        match[0](decodedMsg);
       }
       
     }
-    return Curry._1(onMessage, Curry._1(Config[/* decodeOutgoing */0], msg.msg));
+    return Curry._1(onMessage, decodedMsg);
   };
   var make = function (onMessage) {
     var worker = Curry._1(Config[/* instance */1], /* () */0);
