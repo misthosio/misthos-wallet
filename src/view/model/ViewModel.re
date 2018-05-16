@@ -4,19 +4,21 @@ open WalletTypes;
 
 module PartnersCollector = ViewModel__PartnersCollector;
 
+module ManagePartners = PartnersCollector;
+
 module BalanceCollector = ViewModel__BalanceCollector;
 
 module TransactionCollector = ViewModel__TransactionCollector;
 
 type balance = BalanceCollector.balance;
 
-type confirmedTx = TransactionCollector.confirmedTx;
-
-type unconfirmedTx = TransactionCollector.unconfirmedTx;
+type prospect = PartnersCollector.prospect;
 
 type partner = PartnersCollector.partner;
 
-type prospect = PartnersCollector.prospect;
+type confirmedTx = TransactionCollector.confirmedTx;
+
+type unconfirmedTx = TransactionCollector.unconfirmedTx;
 
 type payoutStatus =
   | PayoutPending
@@ -40,7 +42,7 @@ type t = {
   metaPolicy: Policy.t,
   payouts: list(payout),
   balanceCollector: BalanceCollector.t,
-  partnersCollector: PartnersCollector.t,
+  partnersCollector: ManagePartners.t,
   transactionCollector: TransactionCollector.t,
 };
 
@@ -51,7 +53,7 @@ let make = () => {
   metaPolicy: Policy.unanimous,
   payouts: [],
   balanceCollector: BalanceCollector.make(),
-  partnersCollector: PartnersCollector.make(),
+  partnersCollector: ManagePartners.make(),
   transactionCollector: TransactionCollector.make(),
 };
 
@@ -137,6 +139,8 @@ let applyAll = (events, model) =>
 let ventureId = state => state.ventureId;
 
 let partners = state => state.partnersCollector.partners;
+
+let managePartnersModal = ({partnersCollector}) => partnersCollector;
 
 let prospects = state => state.partnersCollector.prospects;
 

@@ -3,7 +3,7 @@ open PrimitiveTypes;
 let text = Utils.text;
 
 type state = {
-  viewModel: ViewModel.t,
+  viewData: ViewModel.ManagePartners.t,
   prospectId: string,
   currentUser: userId,
 };
@@ -22,20 +22,17 @@ let component = ReasonReact.reducerComponent("ManagePartners");
 
 let make =
     (
-      ~venture as initialViewModel,
+      ~ventureId: ventureId,
+      ~viewData: ViewModel.ManagePartners.t,
       ~commands: VentureWorkerClient.Cmd.t,
       ~session: Session.Data.t,
       _children,
     ) => {
   ...component,
-  initialState: () => {
-    viewModel: initialViewModel,
-    prospectId: "",
-    currentUser: session.userId,
-  },
+  initialState: () => {prospectId: "", currentUser: session.userId, viewData},
   willReceiveProps: ({state}) => {
     ...state,
-    viewModel: initialViewModel,
+    viewData,
     currentUser: session.userId,
   },
   reducer: (action, state) =>
@@ -57,7 +54,7 @@ let make =
     let partners =
       ReasonReact.array(
         Array.of_list(
-          ViewModel.partners(state.viewModel)
+          state.viewData.partners
           |> List.map((partner: ViewModel.partner) =>
                <Partner key=(partner.userId |> UserId.toString) partner />
              ),
@@ -66,7 +63,7 @@ let make =
     let partnersOld =
       ReasonReact.array(
         Array.of_list(
-          ViewModel.partners(state.viewModel)
+          state.viewData.partners
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
                  <div>
@@ -74,7 +71,7 @@ let make =
                    (
                      switch (
                        m.userId |> UserId.eq(state.currentUser),
-                       ViewModel.removalProspects(state.viewModel)
+                       state.viewData.removalProspects
                        |> List.exists((p: ViewModel.prospect) =>
                             UserId.eq(p.userId, m.userId)
                           ),
@@ -127,7 +124,7 @@ let make =
             (
               Location.origin
               ++ Router.Config.routeToUrl(
-                   JoinVenture(initialViewModel.ventureId, session.userId),
+                   JoinVenture(ventureId, session.userId),
                  )
               |> Utils.text
             )

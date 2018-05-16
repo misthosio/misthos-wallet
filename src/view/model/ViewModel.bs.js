@@ -229,6 +229,10 @@ function partners(state) {
   return state[/* partnersCollector */6][/* partners */0];
 }
 
+function managePartnersModal(param) {
+  return param[/* partnersCollector */6];
+}
+
 function prospects(state) {
   return state[/* partnersCollector */6][/* prospects */1];
 }
@@ -263,6 +267,8 @@ function isPartner(id, param) {
 
 var PartnersCollector = 0;
 
+var ManagePartners = 0;
+
 var BalanceCollector = 0;
 
 var TransactionCollector = 0;
@@ -270,6 +276,7 @@ var TransactionCollector = 0;
 var ItemsSet = 0;
 
 exports.PartnersCollector = PartnersCollector;
+exports.ManagePartners = ManagePartners;
 exports.BalanceCollector = BalanceCollector;
 exports.TransactionCollector = TransactionCollector;
 exports.ItemsSet = ItemsSet;
@@ -279,6 +286,7 @@ exports.init = init;
 exports.applyAll = applyAll;
 exports.ventureId = ventureId;
 exports.partners = partners;
+exports.managePartnersModal = managePartnersModal;
 exports.prospects = prospects;
 exports.removalProspects = removalProspects;
 exports.ventureName = ventureName;

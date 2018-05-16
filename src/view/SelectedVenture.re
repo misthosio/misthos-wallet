@@ -336,7 +336,7 @@ let make =
       body4=
         <div>
           <h3> (text("Wallet:")) </h3>
-          <Payout
+          <PayoutInput
             onSend=(destinations => send(ProposePayout(destinations)))
           />
           <h4> (text("Payout processes:")) </h4>

@@ -13,7 +13,6 @@ var Router = require("./Router.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
-var ViewModel = require("./model/ViewModel.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -25,14 +24,14 @@ function changeNewPartnerId($$event) {
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
-function make(initialViewModel, commands, session, _) {
+function make(ventureId, viewData, commands, session, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
               return /* record */[
-                      /* viewModel */initialViewModel,
+                      /* viewData */viewData,
                       /* prospectId */param[/* state */1][/* prospectId */1],
                       /* currentUser */session[/* userId */0]
                     ];
@@ -47,12 +46,12 @@ function make(initialViewModel, commands, session, _) {
               var state = param[/* state */1];
               var partners = $$Array.of_list(List.map((function (partner) {
                           return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
-                        }), ViewModel.partners(state[/* viewModel */0])));
+                        }), state[/* viewData */0][/* partners */0]));
               var partnersOld = $$Array.of_list(List.map((function (m) {
                           var match = PrimitiveTypes.UserId[/* eq */5](state[/* currentUser */2], m[/* userId */0]);
                           var match$1 = List.exists((function (p) {
                                   return PrimitiveTypes.UserId[/* eq */5](p[/* userId */1], m[/* userId */0]);
-                                }), ViewModel.removalProspects(state[/* viewModel */0]));
+                                }), state[/* viewData */0][/* removalProspects */2]);
                           return React.createElement("li", {
                                       key: PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])
                                     }, React.createElement("div", undefined, Utils.text(PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])), match || match$1 ? null : React.createElement("button", {
@@ -60,7 +59,7 @@ function make(initialViewModel, commands, session, _) {
                                                     return Curry._1(send, /* RemovePartner */Block.__(1, [m[/* userId */0]]));
                                                   })
                                               }, Utils.text("Propose Removal"))));
-                        }), ViewModel.partners(state[/* viewModel */0])));
+                        }), state[/* viewData */0][/* partners */0]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",
                                 /* :: */[
@@ -75,13 +74,13 @@ function make(initialViewModel, commands, session, _) {
                                             })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePartner */0);
                                             })], /* Some */[true], /* array */[Utils.text("Propose partner addition")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text(window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
-                                                      initialViewModel[/* ventureId */0],
+                                                      ventureId,
                                                       session[/* userId */0]
                                                     ])))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[Utils.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
-                      /* viewModel */initialViewModel,
+                      /* viewData */viewData,
                       /* prospectId */"",
                       /* currentUser */session[/* userId */0]
                     ];
@@ -95,7 +94,7 @@ function make(initialViewModel, commands, session, _) {
                 } else {
                   Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
                   return /* Update */Block.__(0, [/* record */[
-                              /* viewModel */state[/* viewModel */0],
+                              /* viewData */state[/* viewData */0],
                               /* prospectId */"",
                               /* currentUser */state[/* currentUser */2]
                             ]]);
@@ -105,7 +104,7 @@ function make(initialViewModel, commands, session, _) {
                 return /* NoUpdate */0;
               } else {
                 return /* Update */Block.__(0, [/* record */[
-                            /* viewModel */state[/* viewModel */0],
+                            /* viewData */state[/* viewData */0],
                             /* prospectId */action[0],
                             /* currentUser */state[/* currentUser */2]
                           ]]);

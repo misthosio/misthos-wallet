@@ -10,13 +10,13 @@ var Body4 = require("./components/Body4.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
-var Payout = require("./components/Payout.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
 var MFabButton = require("./components/MFabButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
+var PayoutInput = require("./components/PayoutInput.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -148,7 +148,7 @@ function make(initialViewModel, session, commands, _) {
                                           ]), /* array */[Utils.text("PAY OUT")]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, Utils.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, Utils.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, Utils.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             ViewModel.ventureId(state[/* viewModel */0]),
                                             /* ManagePartners */1
-                                          ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), ReasonReact.element(/* None */0, /* None */0, Payout.make((function (destinations) {
+                                          ]), /* Some */[true], /* array */[Utils.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h3", undefined, Utils.text("Wallet:")), ReasonReact.element(/* None */0, /* None */0, PayoutInput.make((function (destinations) {
                                             return Curry._1(send, /* ProposePayout */Block.__(2, [destinations]));
                                           }), /* array */[])), React.createElement("h4", undefined, Utils.text("Payout processes:")), React.createElement("ul", undefined, payouts), React.createElement("h4", undefined, Utils.text("Transactions:")), React.createElement("ul", undefined, transactions)), /* array */[]));
             }),
