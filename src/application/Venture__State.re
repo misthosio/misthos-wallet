@@ -72,8 +72,12 @@ let lastRemovalOfCustodian = (partnerId, {custodianRemovals}) =>
   | Not_found => None
   };
 
-let lastPartnerAccepted = (partnerId, {partnerAccepted}) =>
-  partnerAccepted |> List.assoc(partnerId);
+let lastPartnerAccepted = (partnerId, {partnerAccepted}) => {
+  Js.log("here");
+  let ret = partnerAccepted |> List.assoc(partnerId);
+  Js.log("there");
+  ret;
+};
 
 let apply = (event, state) =>
   switch (event) {
@@ -96,7 +100,7 @@ let apply = (event, state) =>
   | PartnerAccepted({data: {id}} as event) => {
       ...state,
       partnerIds: [id, ...state.partnerIds],
-      partnerAccepted: [(id, event)],
+      partnerAccepted: [(id, event), ...state.partnerAccepted],
     }
   | CustodianProposed({processId, data: {partnerApprovalProcess}}) => {
       ...state,
