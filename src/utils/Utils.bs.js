@@ -75,6 +75,19 @@ function encodeFloat(prim) {
   return prim;
 }
 
+function intersperse(fn, items) {
+  var param = List.rev(List.flatten(List.mapi((function (i, item) {
+                  return /* :: */[
+                          item,
+                          /* :: */[
+                            Curry._1(fn, String(i + List.length(items) | 0)),
+                            /* [] */0
+                          ]
+                        ];
+                }), items)));
+  return List.rev(param ? param[1] : /* [] */0);
+}
+
 var decodeFloat = Json_decode.$$float;
 
 exports.bufToHex = bufToHex;
@@ -92,4 +105,5 @@ exports.printError = printError;
 exports.mapOption = mapOption;
 exports.encodeFloat = encodeFloat;
 exports.decodeFloat = decodeFloat;
+exports.intersperse = intersperse;
 /* bigi Not a pure module */
