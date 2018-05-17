@@ -385,17 +385,24 @@ module AccountKeyChainActivated = {
 };
 
 module IncomeAddressExposed = {
-  type t = {address: Address.t};
-  let make = (~address) => {address: address};
+  type t = {
+    partnerId: userId,
+    address: Address.t,
+  };
+  let make = (~partnerId, ~address) => {partnerId, address};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("IncomeAddressExposed")),
+        ("partnerId", UserId.encode(event.partnerId)),
         ("address", Address.encode(event.address)),
       ])
     );
   let decode = raw =>
-    Json.Decode.{address: raw |> field("address", Address.decode)};
+    Json.Decode.{
+      partnerId: raw |> field("partnerId", UserId.decode),
+      address: raw |> field("address", Address.decode),
+    };
 };
 
 module IncomeDetected = {
@@ -703,7 +710,6 @@ let isSystemEvent =
   | CustodianRemovalAccepted(_)
   | PayoutAccepted(_)
   | AccountKeyChainIdentified(_)
-  | IncomeAddressExposed(_)
   | IncomeDetected(_)
   | TransactionConfirmed(_)
   | PayoutBroadcast(_)

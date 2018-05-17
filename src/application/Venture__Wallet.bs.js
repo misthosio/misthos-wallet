@@ -50,7 +50,7 @@ function exposeNextIncomeAddress(userId, accountIdx, param) {
   var ident = List.assoc(userId, List.assoc(accountIdx, match[/* activatedKeyChain */5]));
   var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, ident, match[/* keyChains */3]);
   var coordinates = Address.Coordinates[/* nextExternal */2](userId, match[/* exposedCoordinates */6], accountKeyChain);
-  return Event.IncomeAddressExposed[/* make */0](Address.make(coordinates, accountKeyChain));
+  return Event.IncomeAddressExposed[/* make */0](userId, Address.make(coordinates, accountKeyChain));
 }
 
 function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) {

@@ -884,7 +884,7 @@ function validateAccountKeyChainActivated(param, state, issuerId) {
 }
 
 function validateIncomeAddressExposed(param, param$1, _) {
-  var match = param[/* address */0];
+  var match = param[/* address */1];
   try {
     var generatedAddress = Address.find(match[/* coordinates */2], param$1[/* accountKeyChains */24]);
     if (match[/* displayAddress */5] === generatedAddress[/* displayAddress */5]) {

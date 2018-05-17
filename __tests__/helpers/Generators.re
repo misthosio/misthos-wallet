@@ -641,8 +641,11 @@ module Log = {
       Address.Coordinates.nextExternal(user.userId, exposed, keyChain);
     let address = keyChain |> Address.make(coordinates);
     l
-    |> appendSystemEvent(
-         IncomeAddressExposed(Event.incomeAddressExposed(~address)),
+    |> appendEvent(
+         user.issuerKeyPair,
+         IncomeAddressExposed(
+           Event.incomeAddressExposed(~partnerId=user.userId, ~address),
+         ),
        );
   };
   let withIncomeDetected = (~incomeAddress, {log} as l) => {

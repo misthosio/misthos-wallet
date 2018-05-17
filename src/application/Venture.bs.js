@@ -578,11 +578,11 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$8];
 function exec$9(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return apply(/* Some */[true], /* None */0, /* IncomeAddressExposed */Block.__(32, [exposeEvent]), venture).then((function (eta) {
+  return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(32, [exposeEvent]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
                 return Promise.resolve(/* Ok */[
-                            exposeEvent[/* address */0][/* displayAddress */5],
+                            exposeEvent[/* address */1][/* displayAddress */5],
                             param[0],
                             param[1]
                           ]);

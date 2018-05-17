@@ -27,7 +27,7 @@ function apply($$event, state) {
                 /* exposedAddresses */state[/* exposedAddresses */2]
               ];
     case 32 : 
-        var address = $$event[0][/* address */0];
+        var address = $$event[0][/* address */1];
         return /* record */[
                 /* network */state[/* network */0],
                 /* keyChains */state[/* keyChains */1],

@@ -56,6 +56,7 @@ let exposeNextIncomeAddress =
       accountKeyChain,
     );
   IncomeAddressExposed.make(
+    ~partnerId=userId,
     ~address=Address.make(coordinates, accountKeyChain),
   );
 };

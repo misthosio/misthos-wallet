@@ -767,8 +767,11 @@ var AccountKeyChainActivated = /* module */[
   /* decode */decode$13
 ];
 
-function make$8(address) {
-  return /* record */[/* address */address];
+function make$8(partnerId, address) {
+  return /* record */[
+          /* partnerId */partnerId,
+          /* address */address
+        ];
 }
 
 function encode$14($$event) {
@@ -779,16 +782,25 @@ function encode$14($$event) {
               ],
               /* :: */[
                 /* tuple */[
-                  "address",
-                  Address.encode($$event[/* address */0])
+                  "partnerId",
+                  PrimitiveTypes.UserId[/* encode */2]($$event[/* partnerId */0])
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "address",
+                    Address.encode($$event[/* address */1])
+                  ],
+                  /* [] */0
+                ]
               ]
             ]);
 }
 
 function decode$14(raw) {
-  return /* record */[/* address */Json_decode.field("address", Address.decode, raw)];
+  return /* record */[
+          /* partnerId */Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw),
+          /* address */Json_decode.field("address", Address.decode, raw)
+        ];
 }
 
 var IncomeAddressExposed = /* module */[
@@ -1100,7 +1112,6 @@ function isSystemEvent(param) {
     case 27 : 
     case 28 : 
     case 30 : 
-    case 32 : 
     case 33 : 
     case 34 : 
         return true;

@@ -596,7 +596,7 @@ module Cmd = {
         wallet |> Wallet.exposeNextIncomeAddress(userId, accountIdx);
       Js.Promise.(
         venture
-        |> apply(~systemEvent=true, IncomeAddressExposed(exposeEvent))
+        |> apply(IncomeAddressExposed(exposeEvent))
         |> then_(persist)
         |> then_(((v, c)) =>
              resolve(Ok(exposeEvent.address.displayAddress, v, c))

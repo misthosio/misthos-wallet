@@ -652,7 +652,7 @@ function withIncomeAddressExposed(user, l) {
                         keyChains,
                         activations,
                         /* :: */[
-                          $$event[0][/* address */0][/* coordinates */2],
+                          $$event[0][/* address */1][/* coordinates */2],
                           exposed
                         ]
                       ];
@@ -671,7 +671,7 @@ function withIncomeAddressExposed(user, l) {
   var keyChain = List.assoc(List.assoc(user[/* userId */0], match[1]), match[0]);
   var coordinates = Address.Coordinates[/* nextExternal */2](user[/* userId */0], match[2], keyChain);
   var address = Address.make(coordinates, keyChain);
-  return appendSystemEvent(/* IncomeAddressExposed */Block.__(32, [Curry._1(incomeAddressExposed, address)]), l);
+  return appendEvent(user[/* issuerKeyPair */2], /* IncomeAddressExposed */Block.__(32, [Curry._2(incomeAddressExposed, user[/* userId */0], address)]), l);
 }
 
 function withIncomeDetected(incomeAddress, l) {

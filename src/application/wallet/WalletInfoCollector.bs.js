@@ -160,7 +160,7 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates : :: */[
-                  $$event[0][/* address */0][/* coordinates */2],
+                  $$event[0][/* address */1][/* coordinates */2],
                   state[/* exposedCoordinates */6]
                 ]
               ];
