@@ -286,7 +286,7 @@ let addChangeOutput =
            |> BTC.plus(currentFee)
            |> BTC.plus(
                 Fee.outputCost(
-                  changeAddress.address,
+                  changeAddress.displayAddress,
                   fee,
                   network |> Network.bitcoinNetwork,
                 ),
@@ -303,14 +303,14 @@ let addChangeOutput =
       currentFee
       |> BTC.plus(
            Fee.outputCost(
-             changeAddress.address,
+             changeAddress.displayAddress,
              fee,
              network |> Network.bitcoinNetwork,
            ),
          );
     txBuilder
     |> B.TxBuilder.addOutput(
-         changeAddress.address,
+         changeAddress.displayAddress,
          totalInputs
          |> BTC.minus(outTotal)
          |> BTC.minus(currentFee)
@@ -405,7 +405,8 @@ let build =
       misthosFeeAddress,
       changeAddress:
         withChange ?
-          Some((changeAddress.address, changeAddress.coordinates)) : None,
+          Some((changeAddress.displayAddress, changeAddress.coordinates)) :
+          None,
     };
   } else {
     let (inputs, success) =
@@ -454,7 +455,8 @@ let build =
         misthosFeeAddress,
         changeAddress:
           withChange ?
-            Some((changeAddress.address, changeAddress.coordinates)) : None,
+            Some((changeAddress.displayAddress, changeAddress.coordinates)) :
+            None,
       };
     } else {
       raise(NotEnoughFunds);

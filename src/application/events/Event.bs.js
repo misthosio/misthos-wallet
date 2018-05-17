@@ -767,11 +767,8 @@ var AccountKeyChainActivated = /* module */[
   /* decode */decode$13
 ];
 
-function make$8(coordinates, address) {
-  return /* record */[
-          /* coordinates */coordinates,
-          /* address */address
-        ];
+function make$8(address) {
+  return /* record */[/* address */address];
 }
 
 function encode$14($$event) {
@@ -782,25 +779,16 @@ function encode$14($$event) {
               ],
               /* :: */[
                 /* tuple */[
-                  "coordinates",
-                  Address.Coordinates[/* encode */9]($$event[/* coordinates */0])
+                  "address",
+                  Address.encode($$event[/* address */0])
                 ],
-                /* :: */[
-                  /* tuple */[
-                    "address",
-                    $$event[/* address */1]
-                  ],
-                  /* [] */0
-                ]
+                /* [] */0
               ]
             ]);
 }
 
 function decode$14(raw) {
-  return /* record */[
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
-          /* address */Json_decode.field("address", Json_decode.string, raw)
-        ];
+  return /* record */[/* address */Json_decode.field("address", Address.decode, raw)];
 }
 
 var IncomeAddressExposed = /* module */[

@@ -260,9 +260,9 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
 }
 
 function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, network, txBuilder) {
-  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* address */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
-    var currentFee$1 = currentFee.plus(TransactionFee.outputCost(changeAddress[/* address */5], fee, Network.bitcoinNetwork(network)));
-    txBuilder.addOutput(changeAddress[/* address */5], BTC.toSatoshisFloat(totalInputs.minus(outTotal).minus(currentFee$1)));
+  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
+    var currentFee$1 = currentFee.plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network)));
+    txBuilder.addOutput(changeAddress[/* displayAddress */5], BTC.toSatoshisFloat(totalInputs.minus(outTotal).minus(currentFee$1)));
     return true;
   } else {
     return false;
@@ -313,7 +313,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
                       }))),
             /* misthosFeeAddress */misthosFeeAddress,
             /* changeAddress */withChange ? /* Some */[/* tuple */[
-                  changeAddress[/* address */5],
+                  changeAddress[/* displayAddress */5],
                   changeAddress[/* coordinates */2]
                 ]] : /* None */0
           ];
@@ -347,7 +347,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
                         }))),
               /* misthosFeeAddress */misthosFeeAddress,
               /* changeAddress */withChange$1 ? /* Some */[/* tuple */[
-                    changeAddress[/* address */5],
+                    changeAddress[/* displayAddress */5],
                     changeAddress[/* coordinates */2]
                   ]] : /* None */0
             ];

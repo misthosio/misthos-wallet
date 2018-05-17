@@ -38,7 +38,7 @@ describe("AddressCollector", (function () {
                                                 ],
                                                 /* witnessScript */"5121032a66ac40d30d81a2d0dca008ae11f0fed2a00896fe8e61350b2f9d0ca6256b6351ae",
                                                 /* redeemScript */"0020a598432cbaab0e4039f2e240a97097e4f9a1e1763edd7ae2ca0021b4268ba8fc",
-                                                /* address */"2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o"
+                                                /* displayAddress */"2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o"
                                               ], Jest.Expect[/* expect */0](Belt_MapString.getExn(constructState(log)[/* exposedAddresses */2], "2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o")));
                                   }));
                     }));

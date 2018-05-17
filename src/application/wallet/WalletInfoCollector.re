@@ -92,7 +92,7 @@ let apply = (event, state) =>
            |. List.removeAssoc(accountIdx, AccountIndex.eq),
       ],
     }
-  | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) => {
+  | IncomeAddressExposed(({address: {coordinates}}: IncomeAddressExposed.t)) => {
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
     }

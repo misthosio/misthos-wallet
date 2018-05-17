@@ -626,7 +626,7 @@ module Log = {
                  [(custodianId, identifier), ...activations],
                  exposed,
                )
-             | IncomeAddressExposed({coordinates}) => (
+             | IncomeAddressExposed({address: {coordinates}}) => (
                  keyChains,
                  activations,
                  [coordinates, ...exposed],
@@ -639,14 +639,10 @@ module Log = {
       activations |> List.assoc(user.userId) |. List.assoc(keyChains);
     let coordinates =
       Address.Coordinates.nextExternal(user.userId, exposed, keyChain);
+    let address = keyChain |> Address.make(coordinates);
     l
     |> appendSystemEvent(
-         IncomeAddressExposed(
-           Event.incomeAddressExposed(
-             ~coordinates,
-             ~address=Address.make(coordinates, keyChain).address,
-           ),
-         ),
+         IncomeAddressExposed(Event.incomeAddressExposed(~address)),
        );
   };
   let withIncomeDetected = (~incomeAddress, {log} as l) => {

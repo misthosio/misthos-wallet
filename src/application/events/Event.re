@@ -385,24 +385,17 @@ module AccountKeyChainActivated = {
 };
 
 module IncomeAddressExposed = {
-  type t = {
-    coordinates: Address.Coordinates.t,
-    address: string,
-  };
-  let make = (~coordinates, ~address) => {coordinates, address};
+  type t = {address: Address.t};
+  let make = (~address) => {address: address};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("IncomeAddressExposed")),
-        ("coordinates", Address.Coordinates.encode(event.coordinates)),
-        ("address", string(event.address)),
+        ("address", Address.encode(event.address)),
       ])
     );
   let decode = raw =>
-    Json.Decode.{
-      coordinates: raw |> field("coordinates", Address.Coordinates.decode),
-      address: raw |> field("address", string),
-    };
+    Json.Decode.{address: raw |> field("address", Address.decode)};
 };
 
 module IncomeDetected = {

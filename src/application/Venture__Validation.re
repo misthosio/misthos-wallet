@@ -669,14 +669,14 @@ let validateAccountKeyChainActivated =
 
 let validateIncomeAddressExposed =
     (
-      {coordinates, address}: IncomeAddressExposed.t,
+      {address: {coordinates, displayAddress}}: IncomeAddressExposed.t,
       {accountKeyChains},
       _issuerId,
     ) =>
   try (
     {
       let generatedAddress = accountKeyChains |> Address.find(coordinates);
-      if (address == generatedAddress.address) {
+      if (displayAddress == generatedAddress.displayAddress) {
         Ok;
       } else {
         BadData("Unknown Address");

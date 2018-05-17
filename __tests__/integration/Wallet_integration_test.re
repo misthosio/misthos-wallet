@@ -72,21 +72,21 @@ let () =
     beforeAllPromise(~timeout=40000, () =>
       Js.Promise.(
         Helpers.faucet([
-          (address1.address, address1Satoshis),
-          (address2.address, address2Satoshis),
-          (address3.address, address3Satoshis),
-          (address4.address, address4Satoshis),
+          (address1.address.displayAddress, address1Satoshis),
+          (address2.address.displayAddress, address2Satoshis),
+          (address3.address.displayAddress, address3Satoshis),
+          (address4.address.displayAddress, address4Satoshis),
         ])
         |> then_(utxos => {
              let walletOneAddresses = [
-               (address1.address, address1),
-               (address2.address, address2),
+               (address1.address.displayAddress, address1),
+               (address2.address.displayAddress, address2),
              ];
              let walletTwoAddresses = [
-               (address1.address, address1),
-               (address2.address, address2),
-               (address3.address, address3),
-               (address4.address, address4),
+               (address1.address.displayAddress, address1),
+               (address2.address.displayAddress, address2),
+               (address3.address.displayAddress, address3),
+               (address4.address.displayAddress, address4),
              ];
              utxos
              |> List.iter(({address, txId, txOutputN, amount}: utxo) => {
@@ -97,7 +97,7 @@ let () =
                       ~txId,
                       ~amount,
                       ~coordinates=
-                        (walletTwoAddresses |> List.assoc(address)).
+                        (walletTwoAddresses |> List.assoc(address)).address.
                           coordinates,
                     );
                   switch (walletOneAddresses |> List.mem_assoc(address)) {

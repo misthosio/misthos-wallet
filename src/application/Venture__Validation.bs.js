@@ -884,9 +884,10 @@ function validateAccountKeyChainActivated(param, state, issuerId) {
 }
 
 function validateIncomeAddressExposed(param, param$1, _) {
+  var match = param[/* address */0];
   try {
-    var generatedAddress = Address.find(param[/* coordinates */0], param$1[/* accountKeyChains */24]);
-    if (param[/* address */1] === generatedAddress[/* address */5]) {
+    var generatedAddress = Address.find(match[/* coordinates */2], param$1[/* accountKeyChains */24]);
+    if (match[/* displayAddress */5] === generatedAddress[/* displayAddress */5]) {
       return /* Ok */0;
     } else {
       return /* BadData */["Unknown Address"];

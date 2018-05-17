@@ -598,7 +598,9 @@ module Cmd = {
         venture
         |> apply(~systemEvent=true, IncomeAddressExposed(exposeEvent))
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(exposeEvent.address, v, c)))
+        |> then_(((v, c)) =>
+             resolve(Ok(exposeEvent.address.displayAddress, v, c))
+           )
       );
     };
   };

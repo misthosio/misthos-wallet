@@ -147,6 +147,57 @@ var Coordinates = /* module */[
   /* decode */decode
 ];
 
+function encode$1(address) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "nCoSigners",
+                address[/* nCoSigners */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "nPubKeys",
+                  address[/* nPubKeys */1]
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "coordinates",
+                    encode(address[/* coordinates */2])
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "witnessScript",
+                      address[/* witnessScript */3]
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "redeemScript",
+                        address[/* redeemScript */4]
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "displayAddress",
+                          address[/* displayAddress */5]
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function decode$1(raw) {
+  return /* record */[
+          /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
+          /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw),
+          /* coordinates */Json_decode.field("coordinates", decode, raw),
+          /* witnessScript */Json_decode.field("witnessScript", Json_decode.string, raw),
+          /* redeemScript */Json_decode.field("redeemScript", Json_decode.string, raw),
+          /* displayAddress */Json_decode.field("displayAddress", Json_decode.string, raw)
+        ];
+}
+
 function make(coordinates, param) {
   var custodianKeyChains = param[/* custodianKeyChains */3];
   var nCoSigners = param[/* nCoSigners */2];
@@ -164,14 +215,14 @@ function make(coordinates, param) {
                 }), keys)));
   var redeemScript = BitcoinjsLib.script.witnessScriptHash.output.encode(BitcoinjsLib.crypto.sha256(witnessScript));
   var outputScript = BitcoinjsLib.script.scriptHash.output.encode(BitcoinjsLib.crypto.hash160(redeemScript));
-  var address = BitcoinjsLib.address.fromOutputScript(outputScript, List.hd(keys).getNetwork());
+  var displayAddress = BitcoinjsLib.address.fromOutputScript(outputScript, List.hd(keys).getNetwork());
   return /* record */[
           /* nCoSigners */nCoSigners,
           /* nPubKeys */List.length(custodianKeyChains),
           /* coordinates */coordinates,
           /* witnessScript */Utils.bufToHex(witnessScript),
           /* redeemScript */Utils.bufToHex(redeemScript),
-          /* address */address
+          /* displayAddress */displayAddress
         ];
 }
 
@@ -180,6 +231,8 @@ function find(coordinates, keyChains) {
 }
 
 exports.Coordinates = Coordinates;
+exports.encode = encode$1;
+exports.decode = decode$1;
 exports.make = make;
 exports.find = find;
 /* Utils Not a pure module */

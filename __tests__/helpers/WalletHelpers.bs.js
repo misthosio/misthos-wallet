@@ -20,7 +20,7 @@ function testNextIncomeAddress(user, address, wallet) {
   var exposed = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
   var description = "the next address of '" + (PrimitiveTypes.UserId[/* toString */0](user[/* userId */0]) + ("' is '" + (address + "'")));
   Jest.test(description, (function () {
-          return Jest.Expect[/* toEqual */12](address, Jest.Expect[/* expect */0](exposed[/* address */1]));
+          return Jest.Expect[/* toEqual */12](address, Jest.Expect[/* expect */0](exposed[/* address */0][/* displayAddress */5]));
         }));
   return Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(32, [exposed]), wallet);
 }
@@ -49,7 +49,7 @@ function getExposedAddresses(param) {
   var match = param[/* walletInfoCollector */3];
   var accountKeyChains = match[/* keyChains */3];
   return List.map((function (a) {
-                return a[/* address */5];
+                return a[/* displayAddress */5];
               }), List.map((function (coordinates) {
                     return Address.find(coordinates, accountKeyChains);
                   }), match[/* exposedCoordinates */6]));
