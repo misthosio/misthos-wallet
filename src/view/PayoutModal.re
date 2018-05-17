@@ -22,6 +22,11 @@ type action =
 
 let component = ReasonReact.reducerComponent("Payout");
 
+module Styles = {
+  open Css;
+  let balance = style([fontSize(vw(2.0))]);
+};
+
 let make =
     (~viewData: View.t, ~commands: VentureWorkerClient.Cmd.t, _children) => {
   ...component,
@@ -74,40 +79,41 @@ let make =
              ),
         ),
       );
-    <div>
-      <TitleBar titles=["Create A Payout"] />
-      <MTypography variant=`Title>
-        (viewData.ventureName |> text)
-      </MTypography>
-      <MTypography variant=`Display2>
-        <b key="currentSpendable">
-          (viewData.balance |> BTC.format |> text)
-        </b>
-        ("BTC" |> text)
-      </MTypography>
-      (text("Proposed recipients"))
-      <ul>
-        destinationList
-        <li> (text("Network Fee - " ++ BTC.format(networkFee))) </li>
-        <li> (text("Misthos Fee - " ++ BTC.format(misthosFee))) </li>
-      </ul>
-      <MInput
-        placeholder="Recipient Address"
-        value=(`String(inputs.recipientAddress))
-        onChange=(e => send(ChangeRecipientAddress(extractString(e))))
-        autoFocus=false
-        fullWidth=true
-      />
-      <MInput
-        placeholder="BTC amount"
-        value=(`String(inputs.btcAmount))
-        onChange=(e => send(ChangeBTCAmount(extractString(e))))
-        autoFocus=false
-        fullWidth=true
-      />
-      <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
-        (text("Propose Payout"))
-      </MButton>
-    </div>;
+    <Body2
+      titles=["Create A Payout"]
+      body1=
+        <div>
+          <MTypography variant=`Title>
+            (viewData.ventureName |> text)
+          </MTypography>
+          <Balance currentSpendable=viewData.balance />
+          (text("Proposed recipients"))
+          <ul>
+            destinationList
+            <li> (text("Network Fee - " ++ BTC.format(networkFee))) </li>
+            <li> (text("Misthos Fee - " ++ BTC.format(misthosFee))) </li>
+          </ul>
+        </div>
+      body2=
+        <div>
+          <MInput
+            placeholder="Recipient Address"
+            value=(`String(inputs.recipientAddress))
+            onChange=(e => send(ChangeRecipientAddress(extractString(e))))
+            autoFocus=false
+            fullWidth=true
+          />
+          <MInput
+            placeholder="BTC amount"
+            value=(`String(inputs.btcAmount))
+            onChange=(e => send(ChangeBTCAmount(extractString(e))))
+            autoFocus=false
+            fullWidth=true
+          />
+          <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
+            (text("Propose Payout"))
+          </MButton>
+        </div>
+    />;
   },
 };
