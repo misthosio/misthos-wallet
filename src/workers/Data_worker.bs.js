@@ -52,6 +52,10 @@ function handleMsg(venturesPromise, doWork, msg) {
                                                       var id = param[/* id */0];
                                                       return p.then((function (ventures) {
                                                                     return WorkerUtils.loadVenture(id).then((function (venture) {
+                                                                                    Curry._2(doWork, storagePrefix$1, Belt_Map.mergeMany(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0), /* array */[/* tuple */[
+                                                                                                id,
+                                                                                                venture
+                                                                                              ]]));
                                                                                     return Promise.resolve(Belt_Map.set(ventures, id, venture));
                                                                                   })).catch((function (err) {
                                                                                   logError(err);
@@ -59,7 +63,6 @@ function handleMsg(venturesPromise, doWork, msg) {
                                                                                 }));
                                                                   }));
                                                     })).then((function (ventures) {
-                                                    Curry._2(doWork, storagePrefix$1, ventures);
                                                     return Promise.resolve(/* tuple */[
                                                                 storagePrefix$1,
                                                                 ventures

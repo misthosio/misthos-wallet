@@ -51,19 +51,21 @@ let handleMsg = (venturesPromise, doWork, msg) =>
                      p
                      |> then_(ventures =>
                           WorkerUtils.loadVenture(id)
-                          |> then_(venture =>
-                               ventures |. Map.set(id, venture) |> resolve
-                             )
+                          |> then_(venture => {
+                               doWork(
+                                 storagePrefix,
+                                 [|(id, venture)|]
+                                 |> Map.mergeMany(VentureId.makeMap()),
+                               );
+                               ventures |. Map.set(id, venture) |> resolve;
+                             })
                           |> catch(err => {
                                logError(err);
                                resolve(ventures);
                              })
                         )
                    )
-                |> then_(ventures => {
-                     doWork(storagePrefix, ventures);
-                     (storagePrefix, ventures) |> resolve;
-                   })
+                |> then_(ventures => (storagePrefix, ventures) |> resolve)
               );
          | VentureLoaded(ventureId, log, _) =>
            logMessage("Handling 'VentureLoaded'");
