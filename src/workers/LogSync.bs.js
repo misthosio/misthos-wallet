@@ -23,7 +23,7 @@ function postMessage$1(msg) {
   return /* () */0;
 }
 
-var logLabel = "[Data Worker]";
+var logLabel = "[Log Sync]";
 
 function logMessage(param) {
   return WorkerUtils.logMessage(logLabel, param);

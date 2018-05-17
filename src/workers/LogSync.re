@@ -11,7 +11,7 @@ open Belt;
 
 open PrimitiveTypes;
 
-let logLabel = "[Data Worker]";
+let logLabel = "[Log Sync]";
 
 let logMessage = WorkerUtils.logMessage(logLabel);
 
