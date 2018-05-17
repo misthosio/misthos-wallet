@@ -261,13 +261,13 @@ module Payout = {
         object_([
           ("type", string("PayoutBroadcast")),
           ("processId", ProcessId.encode(event.processId)),
-          ("transactionId", string(event.txId)),
+          ("txId", string(event.txId)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         processId: raw |> field("processId", ProcessId.decode),
-        txId: raw |> field("transactionId", string),
+        txId: raw |> field("txId", string),
       };
   };
   module BroadcastDuplicate = {

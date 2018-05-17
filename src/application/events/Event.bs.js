@@ -517,7 +517,7 @@ function encode$8($$event) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "transactionId",
+                    "txId",
                     $$event[/* txId */1]
                   ],
                   /* [] */0
@@ -529,7 +529,7 @@ function encode$8($$event) {
 function decode$8(raw) {
   return /* record */[
           /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
-          /* txId */Json_decode.field("transactionId", Json_decode.string, raw)
+          /* txId */Json_decode.field("txId", Json_decode.string, raw)
         ];
 }
 
