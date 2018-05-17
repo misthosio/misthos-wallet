@@ -21,7 +21,6 @@ type state = {
   session: Session.t,
   syncWorker: ref(SyncWorkerClient.t),
   dataWorker: ref(DataWorkerClient.t),
-  incomeWorker: ref(IncomeWorkerClient.t),
   persistWorker: ref(PersistWorkerClient.t),
   ventureWorker: ref(VentureWorkerClient.t),
 };
@@ -34,14 +33,12 @@ let loadVentureAndIndex =
         selectedVenture,
         ventureWorker,
         persistWorker,
-        incomeWorker,
         syncWorker,
         session: oldSession,
       },
     ) => {
   if (oldSession != session) {
     ventureWorker^ |> VentureWorkerClient.updateSession;
-    incomeWorker^ |> IncomeWorkerClient.updateSession;
     persistWorker^ |> PersistWorkerClient.updateSession;
     syncWorker^ |> SyncWorkerClient.updateSession;
   };
@@ -100,7 +97,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     selectedVenture: None,
     syncWorker: ref(SyncWorkerClient.make(~onMessage=Js.log)),
     dataWorker: ref(DataWorkerClient.make(~onMessage=Js.log)),
-    incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
+    /* incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)), */
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
@@ -145,18 +142,6 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           worker;
         },
         DataWorkerClient.terminate,
-      ),
-      Sub(
-        () => {
-          IncomeWorkerClient.terminate(state.incomeWorker^);
-          let worker =
-            IncomeWorkerClient.make(~onMessage=message =>
-              send(IncomeWorkerMessage(message))
-            );
-          state.incomeWorker := worker;
-          worker;
-        },
-        IncomeWorkerClient.terminate,
       ),
       Sub(() => state.persistWorker^, PersistWorkerClient.terminate),
       Sub(
