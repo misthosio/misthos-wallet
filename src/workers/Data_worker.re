@@ -32,12 +32,12 @@ let syncInterval = tenSecondsInMilliseconds;
 let handleMsg = (venturesPromise, doWork, msg) =>
   Js.Promise.(
     venturesPromise
-    |> then_(ventures =>
+    |> then_(((storagePrefix, ventures)) =>
          switch (msg) {
          | SessionPending =>
            logMessage("Handling 'SessionPending'");
-           VentureId.makeMap() |> resolve;
-         | SessionStarted(items) =>
+           (storagePrefix, VentureId.makeMap()) |> resolve;
+         | SessionStarted(items, storagePrefix) =>
            logMessage("Handling 'SessionStarted'");
            items |> WorkerLocalStorage.setBlockstackItems;
            Venture.Index.load()
@@ -53,37 +53,41 @@ let handleMsg = (venturesPromise, doWork, msg) =>
                 |> then_(ventures => {
                      let ventures =
                        ventures |> Map.mergeMany(VentureId.makeMap());
-                     doWork(ventures);
-                     ventures |> resolve;
+                     doWork(storagePrefix, ventures);
+                     (storagePrefix, ventures) |> resolve;
                    })
               );
          | VentureLoaded(ventureId, log, _) =>
            logMessage("Handling 'VentureLoaded'");
-           ventures |. Map.set(ventureId, log) |> resolve;
+           (storagePrefix, ventures |. Map.set(ventureId, log)) |> resolve;
          | VentureCreated(ventureId, log) =>
            logMessage("Handling 'VentureCreated'");
-           ventures |. Map.set(ventureId, log) |> resolve;
+           (storagePrefix, ventures |. Map.set(ventureId, log)) |> resolve;
          | NewItems(ventureId, items) =>
            logMessage("Handling 'NewItems'");
            let venture = ventures |. Map.getExn(ventureId);
-           ventures
-           |. Map.set(ventureId, venture |> EventLog.appendItems(items))
+           (
+             storagePrefix,
+             ventures
+             |. Map.set(ventureId, venture |> EventLog.appendItems(items)),
+           )
            |> resolve;
          | NewIncomeAddress(_, _)
-         | UpdateIndex(_) => ventures |> resolve
+         | UpdateIndex(_) => (storagePrefix, ventures) |> resolve
          }
        )
   );
 
 let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
 
-let venturesPromise: ref(Js.Promise.t(VentureId.map(EventLog.t))) =
-  ref(VentureId.makeMap() |> Js.Promise.resolve);
+let venturesPromise: ref(Js.Promise.t((string, VentureId.map(EventLog.t)))) =
+  ref(("", VentureId.makeMap()) |> Js.Promise.resolve);
 
 onMessage(
   self,
   msg => {
-    let doWork = ventures => IncomeCollection.doWork(ventures);
+    let doWork = (_storagePrefix, ventures) =>
+      IncomeCollection.doWork(ventures);
     venturesPromise :=
       handleMsg(
         venturesPromise^,
@@ -99,7 +103,9 @@ onMessage(
               () =>
                 Js.Promise.(
                   venturesPromise^
-                  |> then_(ventures => doWork(ventures) |> resolve)
+                  |> then_(((storagePrefix, ventures)) =>
+                       doWork(storagePrefix, ventures) |> resolve
+                     )
                   |> catchAndLogError
                 ),
               syncInterval,

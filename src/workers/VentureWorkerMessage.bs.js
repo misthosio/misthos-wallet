@@ -526,7 +526,13 @@ function encodeOutgoing(param) {
                           "blockstackItems",
                           WorkerLocalStorage.encodeItems(param[0])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "storagePrefix",
+                            param[1]
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]);
       case 1 : 
@@ -657,7 +663,11 @@ function decodeOutgoing(raw) {
         return /* SessionPending */0;
     case "SessionStarted" : 
         var blockstackItems = Json_decode.field("blockstackItems", WorkerLocalStorage.decodeItems, raw);
-        return /* SessionStarted */Block.__(0, [blockstackItems]);
+        var storagePrefix = Json_decode.field("storagePrefix", Json_decode.string, raw);
+        return /* SessionStarted */Block.__(0, [
+                  blockstackItems,
+                  storagePrefix
+                ]);
     case "UpdateIndex" : 
         return /* UpdateIndex */Block.__(2, [Json_decode.field("index", Venture.Index[/* decode */2], raw)]);
     case "VentureCreated" : 

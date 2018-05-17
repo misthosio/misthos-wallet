@@ -43,8 +43,11 @@ function sessionPending() {
   return postMessage$1(/* None */0, /* SessionPending */0);
 }
 
-function sessionStarted(blockstackItems) {
-  return postMessage$1(/* None */0, /* SessionStarted */Block.__(0, [blockstackItems]));
+function sessionStarted(blockstackItems, storagePrefix) {
+  return postMessage$1(/* None */0, /* SessionStarted */Block.__(0, [
+                blockstackItems,
+                storagePrefix
+              ]));
 }
 
 function indexUpdated(index) {
@@ -255,7 +258,7 @@ function updateSession(items, state) {
                       exit = 1;
                     }
                     if (exit === 1) {
-                      postMessage$1(/* None */0, /* SessionStarted */Block.__(0, [items]));
+                      sessionStarted(items, data[/* storagePrefix */3]);
                       Venture.Index[/* load */0](/* () */0).then((function (index) {
                               return Promise.resolve(postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [index])));
                             }));

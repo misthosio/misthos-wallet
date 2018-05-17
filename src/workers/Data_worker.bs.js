@@ -27,13 +27,19 @@ function catchAndLogError(param) {
 }
 
 function handleMsg(venturesPromise, doWork, msg) {
-  return venturesPromise.then((function (ventures) {
+  return venturesPromise.then((function (param) {
+                var ventures = param[1];
+                var storagePrefix = param[0];
                 if (typeof msg === "number") {
                   logMessage("Handling 'SessionPending'");
-                  return Promise.resolve(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0));
+                  return Promise.resolve(/* tuple */[
+                              storagePrefix,
+                              PrimitiveTypes.VentureId[/* makeMap */8](/* () */0)
+                            ]);
                 } else {
                   switch (msg.tag | 0) {
                     case 0 : 
+                        var storagePrefix$1 = msg[1];
                         logMessage("Handling 'SessionStarted'");
                         WorkerLocalStorage.setBlockstackItems(msg[0]);
                         return Venture.Index[/* load */0](/* () */0).then((function (index) {
@@ -47,24 +53,39 @@ function handleMsg(venturesPromise, doWork, msg) {
                                                                           }));
                                                             })))).then((function (ventures) {
                                                     var ventures$1 = Belt_Map.mergeMany(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0), ventures);
-                                                    Curry._1(doWork, ventures$1);
-                                                    return Promise.resolve(ventures$1);
+                                                    Curry._2(doWork, storagePrefix$1, ventures$1);
+                                                    return Promise.resolve(/* tuple */[
+                                                                storagePrefix$1,
+                                                                ventures$1
+                                                              ]);
                                                   }));
                                     }));
                     case 1 : 
                     case 2 : 
-                        return Promise.resolve(ventures);
+                        return Promise.resolve(/* tuple */[
+                                    storagePrefix,
+                                    ventures
+                                  ]);
                     case 3 : 
                         logMessage("Handling 'VentureLoaded'");
-                        return Promise.resolve(Belt_Map.set(ventures, msg[0], msg[1]));
+                        return Promise.resolve(/* tuple */[
+                                    storagePrefix,
+                                    Belt_Map.set(ventures, msg[0], msg[1])
+                                  ]);
                     case 4 : 
                         logMessage("Handling 'VentureCreated'");
-                        return Promise.resolve(Belt_Map.set(ventures, msg[0], msg[1]));
+                        return Promise.resolve(/* tuple */[
+                                    storagePrefix,
+                                    Belt_Map.set(ventures, msg[0], msg[1])
+                                  ]);
                     case 5 : 
                         var ventureId = msg[0];
                         logMessage("Handling 'NewItems'");
                         var venture = Belt_Map.getExn(ventures, ventureId);
-                        return Promise.resolve(Belt_Map.set(ventures, ventureId, Curry._2(EventLog.appendItems, msg[1], venture)));
+                        return Promise.resolve(/* tuple */[
+                                    storagePrefix,
+                                    Belt_Map.set(ventures, ventureId, Curry._2(EventLog.appendItems, msg[1], venture))
+                                  ]);
                     
                   }
                 }
@@ -73,15 +94,20 @@ function handleMsg(venturesPromise, doWork, msg) {
 
 var intervalId = [/* None */0];
 
-var venturesPromise = [Promise.resolve(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0))];
+var venturesPromise = [Promise.resolve(/* tuple */[
+        "",
+        PrimitiveTypes.VentureId[/* makeMap */8](/* () */0)
+      ])];
 
 self.onmessage = (function (msg) {
-    var doWork = IncomeCollection.doWork;
+    var doWork = function (_, ventures) {
+      return IncomeCollection.doWork(ventures);
+    };
     venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.msg));
     var id = intervalId[0];
     intervalId[0] = id ? id : /* Some */[setInterval((function () {
-                return catchAndLogError(venturesPromise[0].then((function (ventures) {
-                                  return Promise.resolve(IncomeCollection.doWork(ventures));
+                return catchAndLogError(venturesPromise[0].then((function (param) {
+                                  return Promise.resolve(IncomeCollection.doWork(param[1]));
                                 })));
               }), 10000)];
     return /* () */0;

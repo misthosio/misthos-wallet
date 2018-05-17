@@ -34,8 +34,8 @@ let logError = error => {
 
 module Notify = {
   let sessionPending = () => postMessage(SessionPending);
-  let sessionStarted = blockstackItems =>
-    postMessage(SessionStarted(blockstackItems));
+  let sessionStarted = (blockstackItems, storagePrefix) =>
+    postMessage(SessionStarted(blockstackItems, storagePrefix));
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, venture, newItems) =>
     postMessage(VentureLoaded(id, venture |> Venture.getEventLog, newItems));
@@ -205,7 +205,7 @@ module Handle = {
                  when UserId.eq(data.userId, oldData.userId) =>
                resolve(Some((data, threads)))
              | (Some(data), _) =>
-               Notify.sessionStarted(items);
+               Notify.sessionStarted(items, data.storagePrefix);
                Venture.Index.load()
                |> then_(index => index |> Notify.indexUpdated |> resolve)
                |> ignore;
