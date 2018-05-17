@@ -52,29 +52,16 @@ function scanTransactions(param) {
 }
 
 function findAddressesAndTxIds(log) {
-  var time1 = Date.now();
-  var ret = Curry._3(EventLog.reduce, (function (param, param$1) {
-          var $$event = param$1[/* event */0];
-          var transactions = param[1];
-          var addresses = param[0];
-          var time3 = Date.now();
-          AddressCollector.apply($$event, addresses);
-          var time4 = Date.now();
-          var time5 = Date.now();
-          TransactionCollector.apply($$event, transactions);
-          var time6 = Date.now();
-          console.log("addresses", time4 - time3, "transactions", time6 - time5);
-          return /* tuple */[
-                  AddressCollector.apply($$event, addresses),
-                  TransactionCollector.apply($$event, transactions)
-                ];
-        }), /* tuple */[
-        AddressCollector.make(/* () */0),
-        TransactionCollector.make(/* () */0)
-      ], log);
-  var time2 = Date.now();
-  console.log("time: ", time2 - time1);
-  return ret;
+  return Curry._3(EventLog.reduce, (function (param, param$1) {
+                var $$event = param$1[/* event */0];
+                return /* tuple */[
+                        AddressCollector.apply($$event, param[0]),
+                        TransactionCollector.apply($$event, param[1])
+                      ];
+              }), /* tuple */[
+              AddressCollector.make(/* () */0),
+              TransactionCollector.make(/* () */0)
+            ], log);
 }
 
 function filterUTXOs(knownTxs, utxos) {
