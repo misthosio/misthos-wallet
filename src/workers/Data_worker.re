@@ -86,8 +86,10 @@ let venturesPromise: ref(Js.Promise.t((string, VentureId.map(EventLog.t)))) =
 onMessage(
   self,
   msg => {
-    let doWork = (_storagePrefix, ventures) =>
+    let doWork = (storagePrefix, ventures) => {
       IncomeCollection.doWork(ventures);
+      LogSync.doWork(storagePrefix, ventures);
+    };
     venturesPromise :=
       handleMsg(
         venturesPromise^,

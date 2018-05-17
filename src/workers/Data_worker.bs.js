@@ -2,6 +2,7 @@
 'use strict';
 
 var Curry = require("bs-platform/lib/js/curry.js");
+var LogSync = require("./LogSync.bs.js");
 var Venture = require("../application/Venture.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
@@ -100,14 +101,15 @@ var venturesPromise = [Promise.resolve(/* tuple */[
       ])];
 
 self.onmessage = (function (msg) {
-    var doWork = function (_, ventures) {
-      return IncomeCollection.doWork(ventures);
+    var doWork = function (storagePrefix, ventures) {
+      IncomeCollection.doWork(ventures);
+      return LogSync.doWork(storagePrefix, ventures);
     };
     venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.msg));
     var id = intervalId[0];
     intervalId[0] = id ? id : /* Some */[setInterval((function () {
                 return catchAndLogError(venturesPromise[0].then((function (param) {
-                                  return Promise.resolve(IncomeCollection.doWork(param[1]));
+                                  return Promise.resolve(doWork(param[0], param[1]));
                                 })));
               }), 10000)];
     return /* () */0;

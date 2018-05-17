@@ -10,16 +10,13 @@ type selectedVenture =
 type action =
   | CreateVenture(string)
   | TabSync(VentureWorkerMessage.outgoing)
-  | SyncWorkerMessage(SyncWorkerMessage.outgoing)
   | DataWorkerMessage(DataWorkerMessage.outgoing)
-  | IncomeWorkerMessage(IncomeWorkerMessage.outgoing)
   | VentureWorkerMessage(VentureWorkerMessage.outgoing);
 
 type state = {
   index: option(Venture.Index.t),
   selectedVenture,
   session: Session.t,
-  syncWorker: ref(SyncWorkerClient.t),
   dataWorker: ref(DataWorkerClient.t),
   persistWorker: ref(PersistWorkerClient.t),
   ventureWorker: ref(VentureWorkerClient.t),
@@ -29,18 +26,11 @@ let loadVentureAndIndex =
     (
       session: Session.t,
       currentRoute,
-      {
-        selectedVenture,
-        ventureWorker,
-        persistWorker,
-        syncWorker,
-        session: oldSession,
-      },
+      {selectedVenture, ventureWorker, persistWorker, session: oldSession},
     ) => {
   if (oldSession != session) {
     ventureWorker^ |> VentureWorkerClient.updateSession;
     persistWorker^ |> PersistWorkerClient.updateSession;
-    syncWorker^ |> SyncWorkerClient.updateSession;
   };
   switch (session, currentRoute: Router.Config.route, selectedVenture) {
   | (LoggedIn(_), Venture(ventureId, _), VentureLoaded(loadedId, _, _))
@@ -95,7 +85,6 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     session: Unknown,
     index: None,
     selectedVenture: None,
-    syncWorker: ref(SyncWorkerClient.make(~onMessage=Js.log)),
     dataWorker: ref(DataWorkerClient.make(~onMessage=Js.log)),
     /* incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)), */
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
@@ -118,18 +107,6 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         },
         listener =>
           DomRe.window |> WindowRe.removeEventListener("storage", listener),
-      ),
-      Sub(
-        () => {
-          SyncWorkerClient.terminate(state.syncWorker^);
-          let worker =
-            SyncWorkerClient.make(~onMessage=message =>
-              send(SyncWorkerMessage(message))
-            );
-          state.syncWorker := worker;
-          worker;
-        },
-        SyncWorkerClient.terminate,
       ),
       Sub(
         () => {
@@ -233,13 +210,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           });
         | _ => ReasonReact.NoUpdate
         };
-      | SyncWorkerMessage(msg) =>
-        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
-        ReasonReact.NoUpdate;
       | DataWorkerMessage(msg) =>
-        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
-        ReasonReact.NoUpdate;
-      | IncomeWorkerMessage(msg) =>
         state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
         ReasonReact.NoUpdate;
       | TabSync(msg) =>
