@@ -1,12 +1,10 @@
 include ViewCommon;
 
+module ViewData = ViewModel.SelectedVentureView;
+
 open PrimitiveTypes;
 
-type state = {
-  viewModel: ViewModel.t,
-  selfRemoved: bool,
-  balance: ViewModel.balance,
-};
+type state = {viewData: ViewData.t};
 
 type action =
   | EndorsePartner(ProcessId.t)
@@ -25,26 +23,16 @@ module Styles = {
 
 let make =
     (
-      ~venture as initialViewModel,
+      ~viewData: ViewData.t,
       ~session: Session.Data.t,
       ~commands: VentureWorkerClient.Cmd.t,
       _children,
     ) => {
   ...component,
-  initialState: () => {
-    viewModel: initialViewModel,
-    selfRemoved:
-      initialViewModel |> ViewModel.isPartner(session.userId) == false,
-    balance: initialViewModel |> ViewModel.balance,
-  },
-  willReceiveProps: (_) => {
-    viewModel: initialViewModel,
-    selfRemoved:
-      initialViewModel |> ViewModel.isPartner(session.userId) == false,
-    balance: initialViewModel |> ViewModel.balance,
-  },
+  initialState: () => {viewData: viewData},
+  willReceiveProps: (_) => {viewData: viewData},
   reducer: (action, state) =>
-    switch (state.selfRemoved, action) {
+    switch (state.viewData.readOnly, action) {
     | (false, EndorsePartner(processId)) =>
       commands.endorsePartner(~processId);
       ReasonReact.NoUpdate;
@@ -66,12 +54,12 @@ let make =
       ReasonReact.NoUpdate;
     | _ => ReasonReact.NoUpdate
     },
-  render: ({send, state}) => {
+  render: ({send, state: {viewData}}) => {
     let partners =
       ReasonReact.array(
         Array.of_list(
-          ViewModel.partners(state.viewModel)
-          |> List.map((partner: ViewModel.partner) =>
+          viewData.partners
+          |> List.map((partner: ViewData.partner) =>
                <Partner key=(partner.userId |> UserId.toString) partner />
              ),
         ),
@@ -79,8 +67,8 @@ let make =
     let prospects =
       ReasonReact.array(
         Array.of_list(
-          ViewModel.prospects(state.viewModel)
-          |> List.map((prospect: ViewModel.prospect) =>
+          viewData.prospects
+          |> List.map((prospect: ViewData.prospect) =>
                <li key=(prospect.userId |> UserId.toString)>
                  (
                    text(
@@ -113,8 +101,8 @@ let make =
     let removalProspects =
       ReasonReact.array(
         Array.of_list(
-          ViewModel.removalProspects(state.viewModel)
-          |> List.map((prospect: ViewModel.prospect) =>
+          viewData.removalProspects
+          |> List.map((prospect: ViewData.prospect) =>
                <li key=(prospect.userId |> UserId.toString)>
                  (
                    text(
@@ -149,18 +137,17 @@ let make =
       ReasonReact.array(
         Array.of_list(
           {
-            let (confirmed, unconfirmed) =
-              state.viewModel |> ViewModel.transactions;
+            let (confirmed, unconfirmed) = viewData.transactions;
             List.append(
               unconfirmed
-              |> List.mapi((iter, tx: ViewModel.unconfirmedTx) =>
+              |> List.mapi((iter, tx: ViewData.unconfirmedTx) =>
                    <Transaction
                      tx=(Unconfirmed(tx))
                      key=(iter |> string_of_int)
                    />
                  ),
               confirmed
-              |> List.mapi((iter, tx: ViewModel.confirmedTx) =>
+              |> List.mapi((iter, tx: ViewData.confirmedTx) =>
                    <Transaction
                      tx=(Confirmed(tx))
                      key=(string_of_int(iter + List.length(unconfirmed)))
@@ -174,9 +161,8 @@ let make =
     let payouts =
       ReasonReact.array(
         Array.of_list(
-          state.viewModel
-          |> ViewModel.payouts
-          |> List.map((payout: ViewModel.payout) =>
+          viewData.payouts
+          |> List.map((payout: ViewData.payout) =>
                <li key=(payout.processId |> ProcessId.toString)>
                  (
                    text(
@@ -242,17 +228,17 @@ let make =
       body1=
         <div>
           <MTypography variant=`Title>
-            (ViewModel.ventureName(state.viewModel) |> text)
+            (viewData.ventureName |> text)
           </MTypography>
           <MTypography variant=`Display2>
             <b key="currentSpendable">
-              (state.balance.currentSpendable |> BTC.format |> text)
+              (viewData.balance.currentSpendable |> BTC.format |> text)
             </b>
             ("BTC" |> text)
           </MTypography>
           <MTypography variant=`Subheading>
             <b key="reserved">
-              (BTC.format(state.balance.reserved) |> text)
+              (BTC.format(viewData.balance.reserved) |> text)
             </b>
             (" BTC IN RESERVE" |> text)
           </MTypography>
@@ -260,20 +246,18 @@ let make =
       body2=
         <div className=Styles.flexSpaceBetween>
           <MFabButton
-            variant=Aqua
-            route=(Venture(ViewModel.ventureId(state.viewModel), Receive))>
+            variant=Aqua route=(Venture(viewData.ventureId, Receive))>
             ("RECEIVE" |> text)
           </MFabButton>
           <MFabButton
-            variant=Orange
-            route=(Venture(ViewModel.ventureId(state.viewModel), Payout))>
+            variant=Orange route=(Venture(viewData.ventureId, Payout))>
             ("PAY OUT" |> text)
           </MFabButton>
         </div>
       body3=
         <div>
           (
-            switch (state.selfRemoved) {
+            switch (viewData.readOnly) {
             | true =>
               <b>
                 (
@@ -292,9 +276,7 @@ let make =
           <ul> removalProspects </ul>
           <LinkButton
             fullWidth=true
-            route=(
-              Venture(ViewModel.ventureId(state.viewModel), ManagePartners)
-            )>
+            route=(Venture(viewData.ventureId, ManagePartners))>
             ("Add or Remove Partners" |> text)
           </LinkButton>
         </div>

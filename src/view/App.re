@@ -18,39 +18,32 @@ let make = (~session, ~updateSession, _children) => {
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _, _) => None
     | (
-        LoggedIn(session),
+        LoggedIn(_),
         Venture(selected, ManagePartners),
-        VentureLoaded(ventureId, venture, commands),
+        VentureLoaded(_, venture, commands),
       ) =>
-      venture |> ViewModel.isPartner(session.userId) ?
+      venture |> ViewModel.readOnly ?
         Some((
           <ManagePartnersModal
-            joinVentureUrl=(
-              Location.origin
-              ++ Router.Config.routeToUrl(
-                   JoinVenture(ventureId, session.userId),
-                 )
-            )
             viewData=(venture |> ViewModel.managePartnersModal)
             commands
-            session
           />,
           onCloseModal(selected),
         )) :
         None
     | (
-        LoggedIn(session),
+        LoggedIn(_),
         Venture(selected, Receive),
         VentureLoaded(_, venture, commands),
       ) =>
-      venture |> ViewModel.isPartner(session.userId) ?
+      venture |> ViewModel.readOnly ?
         Some((<Receive commands />, onCloseModal(selected))) : None
     | (
-        LoggedIn(session),
+        LoggedIn(_),
         Venture(selected, Payout),
         VentureLoaded(_, venture, commands),
       ) =>
-      venture |> ViewModel.isPartner(session.userId) ?
+      venture |> ViewModel.readOnly ?
         Some((
           <PayoutModal viewData=(venture |> ViewModel.payoutModal) commands />,
           onCloseModal(selected),
@@ -91,7 +84,11 @@ let make = (~session, ~updateSession, _children) => {
         Venture(_, _) | Home | JoinVenture(_),
         VentureLoaded(_ventureId, venture, commands),
       ) =>
-      <SelectedVenture venture commands session />
+      <SelectedVenture
+        viewData=(venture |> ViewModel.selectedVenture)
+        commands
+        session
+      />
     | (LoggedIn(_), CreateVenture, _) =>
       <VentureCreate selectedVenture onCreateVenture=createVenture />
     | (LoggedIn(_), _, JoiningVenture(_)) =>

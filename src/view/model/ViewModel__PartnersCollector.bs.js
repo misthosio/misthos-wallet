@@ -75,7 +75,8 @@ function apply($$event, state) {
                 /* partners : :: */[
                   /* record */[
                     /* userId */data[/* id */1],
-                    /* name : None */0
+                    /* name : None */0,
+                    /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0])
                   ],
                   state[/* partners */1]
                 ],
@@ -87,14 +88,26 @@ function apply($$event, state) {
               ];
     case 5 : 
         var match$2 = $$event[0];
+        var data$1 = match$2[/* data */5];
         return /* record */[
                 /* localUser */state[/* localUser */0],
-                /* partners */state[/* partners */1],
+                /* partners */List.map((function (p) {
+                        var match = PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], data$1[/* id */0]);
+                        if (match) {
+                          return /* record */[
+                                  /* userId */p[/* userId */0],
+                                  /* name */p[/* name */1],
+                                  /* canProposeRemoval */false
+                                ];
+                        } else {
+                          return p;
+                        }
+                      }), state[/* partners */1]),
                 /* prospects */state[/* prospects */2],
                 /* removalProspects : :: */[
                   /* record */[
                     /* processId */match$2[/* processId */0],
-                    /* userId */match$2[/* data */5][/* id */0],
+                    /* userId */data$1[/* id */0],
                     /* endorsedBy : :: */[
                       match$2[/* supporterId */3],
                       /* [] */0

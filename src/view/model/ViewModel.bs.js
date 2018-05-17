@@ -5,6 +5,7 @@ var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Policy = require("../../application/Policy.bs.js");
+var Router = require("../Router.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
@@ -12,7 +13,51 @@ var ViewModel__BalanceCollector = require("./ViewModel__BalanceCollector.bs.js")
 var ViewModel__PartnersCollector = require("./ViewModel__PartnersCollector.bs.js");
 var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
-var Payout = /* module */[];
+function readOnly(param) {
+  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */7]) === false;
+}
+
+function fromViewModelState(param) {
+  return /* record */[
+          /* partners */param[/* partnersCollector */7][/* partners */1],
+          /* joinVentureUrl */window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
+                  param[/* ventureId */1],
+                  param[/* localUser */0]
+                ]))
+        ];
+}
+
+var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState];
+
+function fromViewModelState$1(param) {
+  return /* record */[
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
+          /* ventureName */param[/* name */2]
+        ];
+}
+
+var PayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
+
+function fromViewModelState$2(param) {
+  var transactionCollector = param[/* transactionCollector */8];
+  var partnersCollector = param[/* partnersCollector */7];
+  return /* record */[
+          /* ventureId */param[/* ventureId */1],
+          /* ventureName */param[/* name */2],
+          /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
+          /* partners */partnersCollector[/* partners */1],
+          /* prospects */partnersCollector[/* prospects */2],
+          /* removalProspects */partnersCollector[/* removalProspects */3],
+          /* transactions : tuple */[
+            transactionCollector[/* confirmedTxs */1],
+            transactionCollector[/* unconfirmedTxs */2]
+          ],
+          /* payouts */param[/* payouts */5],
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])
+        ];
+}
+
+var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$2];
 
 function make(localUser) {
   return /* record */[
@@ -233,86 +278,33 @@ function applyAll(events, model) {
               }), model, events);
 }
 
-function ventureId(state) {
-  return state[/* ventureId */1];
-}
-
-function partners(state) {
-  return state[/* partnersCollector */7][/* partners */1];
-}
-
-function prospects(state) {
-  return state[/* partnersCollector */7][/* prospects */2];
-}
-
-function removalProspects(state) {
-  return state[/* partnersCollector */7][/* removalProspects */3];
-}
-
-function ventureName(state) {
-  return state[/* name */2];
-}
-
-function payouts(state) {
-  return state[/* payouts */5];
-}
-
-function balance(state) {
-  return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */6]);
-}
-
-function transactions(param) {
-  var transactionCollector = param[/* transactionCollector */8];
-  return /* tuple */[
-          transactionCollector[/* confirmedTxs */1],
-          transactionCollector[/* unconfirmedTxs */2]
-        ];
-}
-
-function isPartner(id, param) {
-  return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */7]);
-}
-
-function managePartnersModal(param) {
-  return param[/* partnersCollector */7];
-}
-
-function payoutModal(param) {
-  return /* record */[
-          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
-          /* ventureName */param[/* name */2]
-        ];
-}
+var ItemsSet = 0;
 
 var PartnersCollector = 0;
 
 var BalanceCollector = 0;
 
-var ManagePartners = 0;
-
 var TransactionCollector = 0;
 
-var ItemsSet = 0;
+var managePartnersModal = fromViewModelState;
 
+var payoutModal = fromViewModelState$1;
+
+var selectedVenture = fromViewModelState$2;
+
+exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
 exports.BalanceCollector = BalanceCollector;
-exports.ManagePartners = ManagePartners;
-exports.Payout = Payout;
 exports.TransactionCollector = TransactionCollector;
-exports.ItemsSet = ItemsSet;
+exports.readOnly = readOnly;
+exports.ManagePartnersView = ManagePartnersView;
+exports.managePartnersModal = managePartnersModal;
+exports.PayoutView = PayoutView;
+exports.payoutModal = payoutModal;
+exports.SelectedVentureView = SelectedVentureView;
+exports.selectedVenture = selectedVenture;
 exports.make = make;
 exports.apply = apply;
 exports.init = init;
 exports.applyAll = applyAll;
-exports.ventureId = ventureId;
-exports.partners = partners;
-exports.prospects = prospects;
-exports.removalProspects = removalProspects;
-exports.ventureName = ventureName;
-exports.payouts = payouts;
-exports.balance = balance;
-exports.transactions = transactions;
-exports.isPartner = isPartner;
-exports.managePartnersModal = managePartnersModal;
-exports.payoutModal = payoutModal;
 /* Policy Not a pure module */

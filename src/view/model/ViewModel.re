@@ -2,30 +2,13 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+module ItemsSet = Belt.Set.String;
+
 module PartnersCollector = ViewModel__PartnersCollector;
 
 module BalanceCollector = ViewModel__BalanceCollector;
 
-module ManagePartners = PartnersCollector;
-
-module Payout = {
-  type t = {
-    balance: BTC.t,
-    ventureName: string,
-  };
-};
-
 module TransactionCollector = ViewModel__TransactionCollector;
-
-type balance = BalanceCollector.balance;
-
-type prospect = PartnersCollector.prospect;
-
-type partner = PartnersCollector.partner;
-
-type confirmedTx = TransactionCollector.confirmedTx;
-
-type unconfirmedTx = TransactionCollector.unconfirmedTx;
 
 type payoutStatus =
   | PayoutPending
@@ -40,8 +23,6 @@ type payout = {
   status: payoutStatus,
 };
 
-module ItemsSet = Belt.Set.String;
-
 type t = {
   localUser: userId,
   ventureId,
@@ -50,9 +31,97 @@ type t = {
   metaPolicy: Policy.t,
   payouts: list(payout),
   balanceCollector: BalanceCollector.t,
-  partnersCollector: ManagePartners.t,
+  partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
 };
+
+let readOnly = ({localUser, partnersCollector}) =>
+  partnersCollector |> PartnersCollector.isPartner(localUser) == false;
+
+module ManagePartnersView = {
+  type partner = PartnersCollector.partner;
+  type t = {
+    partners: list(partner),
+    joinVentureUrl: string,
+  };
+  let fromViewModelState = ({ventureId, localUser, partnersCollector}) => {
+    partners: partnersCollector.partners,
+    joinVentureUrl:
+      Location.origin
+      ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
+  };
+};
+
+let managePartnersModal = ManagePartnersView.fromViewModelState;
+
+module PayoutView = {
+  type t = {
+    balance: BTC.t,
+    ventureName: string,
+  };
+  let fromViewModelState = ({name, balanceCollector}) => {
+    balance:
+      (
+        balanceCollector
+        |> BalanceCollector.accountBalance(AccountIndex.default)
+      ).
+        currentSpendable,
+    ventureName: name,
+  };
+};
+
+let payoutModal = PayoutView.fromViewModelState;
+
+module SelectedVentureView = {
+  type partner = PartnersCollector.partner;
+  type prospect = PartnersCollector.prospect;
+  type confirmedTx = TransactionCollector.confirmedTx;
+  type unconfirmedTx = TransactionCollector.unconfirmedTx;
+  type nonrec payoutStatus = payoutStatus;
+  type nonrec payout = payout;
+  type balance = BalanceCollector.balance;
+  type t = {
+    ventureId,
+    ventureName: string,
+    readOnly: bool,
+    partners: list(partner),
+    prospects: list(prospect),
+    removalProspects: list(prospect),
+    transactions: (list(confirmedTx), list(unconfirmedTx)),
+    payouts: list(payout),
+    balance,
+  };
+  let fromViewModelState =
+      (
+        {
+          ventureId,
+          name,
+          localUser,
+          partnersCollector,
+          transactionCollector,
+          payouts,
+          balanceCollector,
+        },
+      ) => {
+    ventureId,
+    ventureName: name,
+    readOnly:
+      partnersCollector |> PartnersCollector.isPartner(localUser) == false,
+    partners: partnersCollector.partners,
+    prospects: partnersCollector.prospects,
+    removalProspects: partnersCollector.removalProspects,
+    transactions: (
+      transactionCollector.confirmedTxs,
+      transactionCollector.unconfirmedTxs,
+    ),
+    payouts,
+    balance:
+      balanceCollector
+      |> BalanceCollector.accountBalance(AccountIndex.default),
+  };
+};
+
+let selectedVenture = SelectedVentureView.fromViewModelState;
 
 let make = localUser => {
   localUser,
@@ -62,7 +131,7 @@ let make = localUser => {
   metaPolicy: Policy.unanimous,
   payouts: [],
   balanceCollector: BalanceCollector.make(),
-  partnersCollector: ManagePartners.make(localUser),
+  partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
 };
 
@@ -145,38 +214,3 @@ let init = localUser =>
 
 let applyAll = (events, model) =>
   events |> Array.fold_left((m, item) => m |> apply(item), model);
-
-let ventureId = state => state.ventureId;
-
-let partners = state => state.partnersCollector.partners;
-
-let prospects = state => state.partnersCollector.prospects;
-
-let removalProspects = state => state.partnersCollector.removalProspects;
-
-let ventureName = state => state.name;
-
-let payouts = state => state.payouts;
-
-let balance = state =>
-  state.balanceCollector
-  |> BalanceCollector.accountBalance(AccountIndex.default);
-
-let transactions = ({transactionCollector}) => (
-  transactionCollector.confirmedTxs,
-  transactionCollector.unconfirmedTxs,
-);
-
-let isPartner = (id, {partnersCollector}) =>
-  partnersCollector |> PartnersCollector.isPartner(id);
-
-let managePartnersModal = ({partnersCollector}) => partnersCollector;
-
-let payoutModal = ({name, balanceCollector}) : Payout.t => {
-  balance:
-    (
-      balanceCollector |> BalanceCollector.accountBalance(AccountIndex.default)
-    ).
-      currentSpendable,
-  ventureName: name,
-};

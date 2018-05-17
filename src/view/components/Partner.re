@@ -21,7 +21,7 @@ module Styles = {
     ]);
 };
 
-let make = (~partner: ViewModel.partner, _children) => {
+let make = (~partner: ViewModel.ManagePartnersView.partner, _children) => {
   ...component,
   render: _self => {
     let userId = partner.userId |> UserId.toString;

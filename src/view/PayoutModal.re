@@ -1,6 +1,6 @@
 include ViewCommon;
 
-module View = ViewModel.Payout;
+module View = ViewModel.PayoutView;
 
 type inputs = {
   recipientAddress: string,
