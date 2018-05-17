@@ -38,6 +38,10 @@ function logError(error) {
   return /* () */0;
 }
 
+function sessionStarted() {
+  return postMessage$1(/* None */0, /* SessionStarted */0);
+}
+
 function indexUpdated(index) {
   return postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index]));
 }
@@ -85,6 +89,7 @@ function newItems(id, items) {
 }
 
 var Notify = /* module */[
+  /* sessionStarted */sessionStarted,
   /* indexUpdated */indexUpdated,
   /* ventureLoaded */ventureLoaded,
   /* ventureJoined */ventureJoined,
@@ -244,6 +249,7 @@ function updateSession(items, state) {
                       exit = 1;
                     }
                     if (exit === 1) {
+                      postMessage$1(/* None */0, /* SessionStarted */0);
                       Venture.Index[/* load */0](/* () */0).then((function (index) {
                               return Promise.resolve(postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index])));
                             }));

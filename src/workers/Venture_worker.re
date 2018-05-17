@@ -33,6 +33,7 @@ let logError = error => {
 };
 
 module Notify = {
+  let sessionStarted = () => postMessage(SessionStarted);
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, venture, newItems) =>
     postMessage(VentureLoaded(id, venture |> Venture.getAllItems, newItems));
@@ -202,6 +203,7 @@ module Handle = {
                  when UserId.eq(data.userId, oldData.userId) =>
                resolve(Some((data, threads)))
              | (Some(data), _) =>
+               Notify.sessionStarted();
                Venture.Index.load()
                |> then_(index => index |> Notify.indexUpdated |> resolve)
                |> ignore;

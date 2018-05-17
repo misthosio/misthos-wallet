@@ -117,7 +117,7 @@ function exposeIncomeAddress(worker, ventureId, accountIdx) {
                   ventureId,
                   accountIdx
                 ])).then((function (param) {
-                if (param.tag) {
+                if (typeof param === "number" || param.tag) {
                   return Promise.resolve("BAD");
                 } else {
                   return Promise.resolve(param[1]);

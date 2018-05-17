@@ -504,108 +504,118 @@ function decodeIncoming(raw) {
 }
 
 function encodeOutgoing(param) {
-  switch (param.tag | 0) {
-    case 0 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "NewIncomeAddress"
-                    ],
-                    /* :: */[
+  if (typeof param === "number") {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "SessionStarted"
+                ],
+                /* [] */0
+              ]);
+  } else {
+    switch (param.tag | 0) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "ventureId",
-                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                        "type",
+                        "NewIncomeAddress"
                       ],
                       /* :: */[
                         /* tuple */[
-                          "address",
-                          param[1]
-                        ],
-                        /* [] */0
-                      ]
-                    ]
-                  ]);
-    case 1 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "UpdateIndex"
-                    ],
-                    /* :: */[
-                      /* tuple */[
-                        "index",
-                        Venture.Index[/* encode */1](param[0])
-                      ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 2 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "VentureLoaded"
-                    ],
-                    /* :: */[
-                      /* tuple */[
-                        "ventureId",
-                        PrimitiveTypes.VentureId[/* encode */2](param[0])
-                      ],
-                      /* :: */[
-                        /* tuple */[
-                          "items",
-                          Json_encode.array(EventLog.encodeItem, param[1])
+                          "ventureId",
+                          PrimitiveTypes.VentureId[/* encode */2](param[0])
                         ],
                         /* :: */[
                           /* tuple */[
-                            "newItems",
-                            Json_encode.array(EventLog.encodeItem, param[2])
+                            "address",
+                            param[1]
                           ],
                           /* [] */0
                         ]
                       ]
-                    ]
-                  ]);
-    case 3 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "VentureCreated"
-                    ],
-                    /* :: */[
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "ventureId",
-                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                        "type",
+                        "UpdateIndex"
                       ],
                       /* :: */[
                         /* tuple */[
-                          "items",
-                          Json_encode.array(EventLog.encodeItem, param[1])
+                          "index",
+                          Venture.Index[/* encode */1](param[0])
                         ],
                         /* [] */0
                       ]
-                    ]
-                  ]);
-    case 4 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "NewItems"
-                    ],
-                    /* :: */[
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "ventureId",
-                        PrimitiveTypes.VentureId[/* encode */2](param[0])
+                        "type",
+                        "VentureLoaded"
                       ],
                       /* :: */[
                         /* tuple */[
-                          "items",
-                          Json_encode.array(EventLog.encodeItem, param[1])
+                          "ventureId",
+                          PrimitiveTypes.VentureId[/* encode */2](param[0])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "items",
+                            Json_encode.array(EventLog.encodeItem, param[1])
+                          ],
+                          /* :: */[
+                            /* tuple */[
+                              "newItems",
+                              Json_encode.array(EventLog.encodeItem, param[2])
+                            ],
+                            /* [] */0
+                          ]
+                        ]
                       ]
-                    ]
-                  ]);
-    
+                    ]);
+      case 3 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "VentureCreated"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "ventureId",
+                          PrimitiveTypes.VentureId[/* encode */2](param[0])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "items",
+                            Json_encode.array(EventLog.encodeItem, param[1])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]);
+      case 4 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "NewItems"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "ventureId",
+                          PrimitiveTypes.VentureId[/* encode */2](param[0])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "items",
+                            Json_encode.array(EventLog.encodeItem, param[1])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]);
+      
+    }
   }
 }
 
@@ -628,6 +638,8 @@ function decodeOutgoing(raw) {
                   ventureId$1,
                   items
                 ]);
+    case "SessionStarted" : 
+        return /* SessionStarted */0;
     case "UpdateIndex" : 
         return /* UpdateIndex */Block.__(1, [Json_decode.field("index", Venture.Index[/* decode */2], raw)]);
     case "VentureCreated" : 
