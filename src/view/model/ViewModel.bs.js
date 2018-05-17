@@ -35,7 +35,11 @@ function fromViewModelState$1(param) {
 var PayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
 function fromViewModelState$2(param) {
-  return /* record */[/* partners */param[/* partnersCollector */7][/* partners */1]];
+  var partnersCollector = param[/* partnersCollector */7];
+  return /* record */[
+          /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
+          /* partners */partnersCollector[/* partners */1]
+        ];
 }
 
 var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$2];
@@ -295,8 +299,8 @@ function transactions(param) {
         ];
 }
 
-function isPartner(id, param) {
-  return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */7]);
+function readOnly(param) {
+  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */7]) === false;
 }
 
 var ItemsSet = 0;
@@ -332,8 +336,8 @@ exports.ventureName = ventureName;
 exports.payouts = payouts;
 exports.balance = balance;
 exports.transactions = transactions;
-exports.isPartner = isPartner;
 exports.managePartnersModal = managePartnersModal;
 exports.payoutModal = payoutModal;
 exports.selectedVenture = selectedVenture;
+exports.readOnly = readOnly;
 /* Policy Not a pure module */

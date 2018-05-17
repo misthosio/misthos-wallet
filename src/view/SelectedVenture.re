@@ -7,7 +7,6 @@ open PrimitiveTypes;
 type state = {
   viewModel: ViewModel.t,
   viewData: ViewData.t,
-  selfRemoved: bool,
   balance: ViewModel.balance,
 };
 
@@ -38,19 +37,15 @@ let make =
   initialState: () => {
     viewModel: initialViewModel,
     viewData,
-    selfRemoved:
-      initialViewModel |> ViewModel.isPartner(session.userId) == false,
     balance: initialViewModel |> ViewModel.balance,
   },
   willReceiveProps: (_) => {
     viewModel: initialViewModel,
     viewData,
-    selfRemoved:
-      initialViewModel |> ViewModel.isPartner(session.userId) == false,
     balance: initialViewModel |> ViewModel.balance,
   },
   reducer: (action, state) =>
-    switch (state.selfRemoved, action) {
+    switch (state.viewData.readOnly, action) {
     | (false, EndorsePartner(processId)) =>
       commands.endorsePartner(~processId);
       ReasonReact.NoUpdate;
@@ -72,7 +67,7 @@ let make =
       ReasonReact.NoUpdate;
     | _ => ReasonReact.NoUpdate
     },
-  render: ({send, state}) => {
+  render: ({send, state: {viewData} as state}) => {
     let partners =
       ReasonReact.array(
         Array.of_list(
@@ -279,7 +274,7 @@ let make =
       body3=
         <div>
           (
-            switch (state.selfRemoved) {
+            switch (viewData.readOnly) {
             | true =>
               <b>
                 (

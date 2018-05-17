@@ -35,69 +35,64 @@ function make(session, updateSession, _) {
                     ])));
   };
   var modal = function (selectedVenture, currentRoute) {
-    if (typeof session === "number") {
+    if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag) {
       return /* None */0;
     } else {
-      var session$1 = session[0];
-      if (typeof currentRoute === "number" || currentRoute.tag) {
-        return /* None */0;
-      } else {
-        var selected = currentRoute[0];
-        switch (currentRoute[1]) {
-          case 0 : 
+      var selected = currentRoute[0];
+      switch (currentRoute[1]) {
+        case 0 : 
+            return /* None */0;
+        case 1 : 
+            if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
               return /* None */0;
-          case 1 : 
-              if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
-                return /* None */0;
+            } else {
+              var venture = selectedVenture[1];
+              var match = ViewModel.readOnly(venture);
+              if (match) {
+                return /* Some */[/* tuple */[
+                          ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), selectedVenture[2], /* array */[])),
+                          (function (param) {
+                              return onCloseModal(selected, param);
+                            })
+                        ]];
               } else {
-                var venture = selectedVenture[1];
-                var match = ViewModel.isPartner(session$1[/* userId */0], venture);
-                if (match) {
-                  return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), selectedVenture[2], /* array */[])),
-                            (function (param) {
-                                return onCloseModal(selected, param);
-                              })
-                          ]];
-                } else {
-                  return /* None */0;
-                }
-              }
-          case 2 : 
-              if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
                 return /* None */0;
-              } else {
-                var venture$1 = selectedVenture[1];
-                var match$1 = ViewModel.isPartner(session$1[/* userId */0], venture$1);
-                if (match$1) {
-                  return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, PayoutModal.make(ViewModel.payoutModal(venture$1), selectedVenture[2], /* array */[])),
-                            (function (param) {
-                                return onCloseModal(selected, param);
-                              })
-                          ]];
-                } else {
-                  return /* None */0;
-                }
               }
-          case 3 : 
-              if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+            }
+        case 2 : 
+            if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+              return /* None */0;
+            } else {
+              var venture$1 = selectedVenture[1];
+              var match$1 = ViewModel.readOnly(venture$1);
+              if (match$1) {
+                return /* Some */[/* tuple */[
+                          ReasonReact.element(/* None */0, /* None */0, PayoutModal.make(ViewModel.payoutModal(venture$1), selectedVenture[2], /* array */[])),
+                          (function (param) {
+                              return onCloseModal(selected, param);
+                            })
+                        ]];
+              } else {
                 return /* None */0;
-              } else {
-                var match$2 = ViewModel.isPartner(session$1[/* userId */0], selectedVenture[1]);
-                if (match$2) {
-                  return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[2], /* array */[])),
-                            (function (param) {
-                                return onCloseModal(selected, param);
-                              })
-                          ]];
-                } else {
-                  return /* None */0;
-                }
               }
-          
-        }
+            }
+        case 3 : 
+            if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+              return /* None */0;
+            } else {
+              var match$2 = ViewModel.readOnly(selectedVenture[1]);
+              if (match$2) {
+                return /* Some */[/* tuple */[
+                          ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[2], /* array */[])),
+                          (function (param) {
+                              return onCloseModal(selected, param);
+                            })
+                        ]];
+              } else {
+                return /* None */0;
+              }
+            }
+        
       }
     }
   };

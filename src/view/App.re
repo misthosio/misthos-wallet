@@ -18,11 +18,11 @@ let make = (~session, ~updateSession, _children) => {
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _, _) => None
     | (
-        LoggedIn(session),
+        LoggedIn(_),
         Venture(selected, ManagePartners),
         VentureLoaded(_, venture, commands),
       ) =>
-      venture |> ViewModel.isPartner(session.userId) ?
+      venture |> ViewModel.readOnly ?
         Some((
           <ManagePartnersModal
             viewData=(venture |> ViewModel.managePartnersModal)
@@ -32,18 +32,18 @@ let make = (~session, ~updateSession, _children) => {
         )) :
         None
     | (
-        LoggedIn(session),
+        LoggedIn(_),
         Venture(selected, Receive),
         VentureLoaded(_, venture, commands),
       ) =>
-      venture |> ViewModel.isPartner(session.userId) ?
+      venture |> ViewModel.readOnly ?
         Some((<Receive commands />, onCloseModal(selected))) : None
     | (
-        LoggedIn(session),
+        LoggedIn(_),
         Venture(selected, Payout),
         VentureLoaded(_, venture, commands),
       ) =>
-      venture |> ViewModel.isPartner(session.userId) ?
+      venture |> ViewModel.readOnly ?
         Some((
           <PayoutModal viewData=(venture |> ViewModel.payoutModal) commands />,
           onCloseModal(selected),

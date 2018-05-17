@@ -67,8 +67,13 @@ module PayoutView = {
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
-  type t = {partners: list(partner)};
-  let fromViewModelState = ({partnersCollector}) => {
+  type t = {
+    readOnly: bool,
+    partners: list(partner),
+  };
+  let fromViewModelState = ({localUser, partnersCollector}) => {
+    readOnly:
+      partnersCollector |> PartnersCollector.isPartner(localUser) == false,
     partners: partnersCollector.partners,
   };
 };
@@ -196,11 +201,11 @@ let transactions = ({transactionCollector}) => (
   transactionCollector.unconfirmedTxs,
 );
 
-let isPartner = (id, {partnersCollector}) =>
-  partnersCollector |> PartnersCollector.isPartner(id);
-
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 let payoutModal = PayoutView.fromViewModelState;
 
 let selectedVenture = SelectedVentureView.fromViewModelState;
+
+let readOnly = ({localUser, partnersCollector}) =>
+  partnersCollector |> PartnersCollector.isPartner(localUser) == false;
