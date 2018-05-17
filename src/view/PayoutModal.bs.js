@@ -2,20 +2,29 @@
 'use strict';
 
 var BTC = require("../application/wallet/BTC.bs.js");
+var Css = require("bs-css/src/Css.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Body2 = require("./components/Body2.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
+var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
-var TitleBar = require("./components/TitleBar.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 
 var component = ReasonReact.reducerComponent("Payout");
+
+var balance = Css.style(/* :: */[
+      Css.fontSize(Css.vw(2.0)),
+      /* [] */0
+    ]);
+
+var Styles = /* module */[/* balance */balance];
 
 function make(viewData, commands, _) {
   return /* record */[
@@ -36,27 +45,22 @@ function make(viewData, commands, _) {
               var destinationList = $$Array.of_list(List.map((function (param) {
                           return React.createElement("div", undefined, ViewCommon.text(param[0]), ViewCommon.text(BTC.format(param[1])));
                         }), match[/* destinations */1]));
-              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
-                                    "Create A Payout",
-                                    /* [] */0
-                                  ]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
-                                  React.createElement("b", {
-                                        key: "currentSpendable"
-                                      }, ViewCommon.text(BTC.format(viewData[/* balance */0]))),
-                                  ViewCommon.text("BTC")
-                                ])), ViewCommon.text("Proposed recipients"), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(match[/* networkFee */3]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(match[/* misthosFee */2])))), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
-                                    -976970511,
-                                    inputs[/* recipientAddress */0]
-                                  ]], /* Some */[(function (e) {
-                                      return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
-                                    })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
-                                    -976970511,
-                                    inputs[/* btcAmount */1]
-                                  ]], /* Some */[(function (e) {
-                                      return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
-                                    })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* ProposePayout */0);
-                                    })], /* Some */[true], /* array */[ViewCommon.text("Propose Payout")])));
+              return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
+                                "Create A Payout",
+                                /* [] */0
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */0], /* None */0, /* array */[])), ViewCommon.text("Proposed recipients"), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(match[/* networkFee */3]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(match[/* misthosFee */2]))))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
+                                            -976970511,
+                                            inputs[/* recipientAddress */0]
+                                          ]], /* Some */[(function (e) {
+                                              return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
+                                            })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
+                                            -976970511,
+                                            inputs[/* btcAmount */1]
+                                          ]], /* Some */[(function (e) {
+                                              return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
+                                            })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                              return Curry._1(send, /* ProposePayout */0);
+                                            })], /* Some */[true], /* array */[ViewCommon.text("Propose Payout")]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -119,5 +123,6 @@ exports.text = text;
 exports.extractString = extractString;
 exports.View = View;
 exports.component = component;
+exports.Styles = Styles;
 exports.make = make;
 /* component Not a pure module */

@@ -230,18 +230,10 @@ let make =
           <MTypography variant=`Title>
             (viewData.ventureName |> text)
           </MTypography>
-          <MTypography variant=`Display2>
-            <b key="currentSpendable">
-              (viewData.balance.currentSpendable |> BTC.format |> text)
-            </b>
-            ("BTC" |> text)
-          </MTypography>
-          <MTypography variant=`Subheading>
-            <b key="reserved">
-              (BTC.format(viewData.balance.reserved) |> text)
-            </b>
-            (" BTC IN RESERVE" |> text)
-          </MTypography>
+          <Balance
+            currentSpendable=viewData.balance.currentSpendable
+            reserved=viewData.balance.reserved
+          />
         </div>
       body2=
         <div className=Styles.flexSpaceBetween>

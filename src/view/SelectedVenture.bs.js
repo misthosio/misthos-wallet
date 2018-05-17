@@ -10,6 +10,7 @@ var Body4 = require("./components/Body4.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
+var Balance = require("./components/Balance.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var MDivider = require("./components/MDivider.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
@@ -119,17 +120,7 @@ function make(viewData, session, commands, _) {
                                   "Transactions",
                                   /* [] */0
                                 ]
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
-                                          React.createElement("b", {
-                                                key: "currentSpendable"
-                                              }, ViewCommon.text(BTC.format(viewData[/* balance */8][/* currentSpendable */0]))),
-                                          ViewCommon.text("BTC")
-                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
-                                          React.createElement("b", {
-                                                key: "reserved"
-                                              }, ViewCommon.text(BTC.format(viewData[/* balance */8][/* reserved */1]))),
-                                          ViewCommon.text(" BTC IN RESERVE")
-                                        ]))), React.createElement("div", {
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[]))), React.createElement("div", {
                                   className: flexSpaceBetween
                                 }, ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],

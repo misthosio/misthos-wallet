@@ -3,6 +3,8 @@
 
 var Styles = require("material-ui/styles");
 
+var sourceSansPro = "\"Source Sans Pro\", sans-serif";
+
 var oswald = "\"Oswald\", sans-serif";
 
 function space(factor) {
@@ -19,7 +21,7 @@ var theme = Styles.createMuiTheme({
         }
       },
       typography: {
-        fontFamily: "\"Source Sans Pro\", sans-serif",
+        fontFamily: sourceSansPro,
         display4: {
           fontFamily: oswald,
           textTransform: "uppercase",
@@ -116,6 +118,8 @@ function toJsUnsafe(prim) {
 }
 
 exports.toJsUnsafe = toJsUnsafe;
+exports.sourceSansPro = sourceSansPro;
+exports.oswald = oswald;
 exports.space = space;
 exports.theme = theme;
 /* theme Not a pure module */
