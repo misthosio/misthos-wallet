@@ -2,30 +2,13 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+module ItemsSet = Belt.Set.String;
+
 module PartnersCollector = ViewModel__PartnersCollector;
 
 module BalanceCollector = ViewModel__BalanceCollector;
 
-module ManagePartners = PartnersCollector;
-
-module Payout = {
-  type t = {
-    balance: BTC.t,
-    ventureName: string,
-  };
-};
-
 module TransactionCollector = ViewModel__TransactionCollector;
-
-type balance = BalanceCollector.balance;
-
-type prospect = PartnersCollector.prospect;
-
-type partner = PartnersCollector.partner;
-
-type confirmedTx = TransactionCollector.confirmedTx;
-
-type unconfirmedTx = TransactionCollector.unconfirmedTx;
 
 type payoutStatus =
   | PayoutPending
@@ -40,8 +23,6 @@ type payout = {
   status: payoutStatus,
 };
 
-module ItemsSet = Belt.Set.String;
-
 type t = {
   localUser: userId,
   ventureId,
@@ -50,9 +31,49 @@ type t = {
   metaPolicy: Policy.t,
   payouts: list(payout),
   balanceCollector: BalanceCollector.t,
-  partnersCollector: ManagePartners.t,
+  partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
 };
+
+module ManagePartnersView = {
+  type partner = PartnersCollector.partner;
+  type t = {
+    partners: list(partner),
+    joinVentureUrl: string,
+  };
+  let fromViewModelState = ({ventureId, localUser, partnersCollector}) => {
+    partners: partnersCollector.partners,
+    joinVentureUrl:
+      Location.origin
+      ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
+  };
+};
+
+module PayoutView = {
+  type t = {
+    balance: BTC.t,
+    ventureName: string,
+  };
+  let fromViewModelState = ({name, balanceCollector}) => {
+    balance:
+      (
+        balanceCollector
+        |> BalanceCollector.accountBalance(AccountIndex.default)
+      ).
+        currentSpendable,
+    ventureName: name,
+  };
+};
+
+type balance = BalanceCollector.balance;
+
+type prospect = PartnersCollector.prospect;
+
+type partner = PartnersCollector.partner;
+
+type confirmedTx = TransactionCollector.confirmedTx;
+
+type unconfirmedTx = TransactionCollector.unconfirmedTx;
 
 let make = localUser => {
   localUser,
@@ -62,7 +83,7 @@ let make = localUser => {
   metaPolicy: Policy.unanimous,
   payouts: [],
   balanceCollector: BalanceCollector.make(),
-  partnersCollector: ManagePartners.make(localUser),
+  partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
 };
 
@@ -170,13 +191,6 @@ let transactions = ({transactionCollector}) => (
 let isPartner = (id, {partnersCollector}) =>
   partnersCollector |> PartnersCollector.isPartner(id);
 
-let managePartnersModal = ({partnersCollector}) => partnersCollector;
+let managePartnersModal = ManagePartnersView.fromViewModelState;
 
-let payoutModal = ({name, balanceCollector}) : Payout.t => {
-  balance:
-    (
-      balanceCollector |> BalanceCollector.accountBalance(AccountIndex.default)
-    ).
-      currentSpendable,
-  ventureName: name,
-};
+let payoutModal = PayoutView.fromViewModelState;

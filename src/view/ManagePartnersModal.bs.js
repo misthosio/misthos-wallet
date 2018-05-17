@@ -19,7 +19,7 @@ var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
-function make(joinVentureUrl, viewData, commands, _) {
+function make(viewData, commands, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -27,7 +27,7 @@ function make(joinVentureUrl, viewData, commands, _) {
           /* willReceiveProps */(function (param) {
               return /* record */[
                       /* viewData */viewData,
-                      /* prospectId */param[/* state */1][/* prospectId */1]
+                      /* inputs */param[/* state */1][/* inputs */1]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -37,10 +37,11 @@ function make(joinVentureUrl, viewData, commands, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
-              var state = param[/* state */1];
+              var match = param[/* state */1];
+              var viewData = match[/* viewData */0];
               var partners = $$Array.of_list(List.map((function (partner) {
                           return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
-                        }), state[/* viewData */0][/* partners */1]));
+                        }), viewData[/* partners */0]));
               var partnersOld = $$Array.of_list(List.map((function (m) {
                           var match = m[/* canProposeRemoval */2];
                           return React.createElement("li", {
@@ -50,7 +51,7 @@ function make(joinVentureUrl, viewData, commands, _) {
                                                     return Curry._1(send, /* RemovePartner */Block.__(1, [m[/* userId */0]]));
                                                   })
                                               }, ViewCommon.text("Propose Removal")) : null));
-                        }), state[/* viewData */0][/* partners */1]));
+                        }), viewData[/* partners */0]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",
                                 /* :: */[
@@ -59,30 +60,30 @@ function make(joinVentureUrl, viewData, commands, _) {
                                 ]
                               ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 To propose adding a new partner to the venture,\n                 enter a valid Blockstack ID below. When enough partners endorse this proposal,\n                 the partner will be added.\n                ")])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                             -976970511,
-                                            state[/* prospectId */1]
+                                            match[/* inputs */1][/* prospectId */0]
                                           ]], /* Some */[(function (e) {
                                               return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
                                             })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePartner */0);
-                                            })], /* Some */[true], /* array */[ViewCommon.text("Propose partner addition")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(joinVentureUrl)]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld)), /* array */[]));
+                                            })], /* Some */[true], /* array */[ViewCommon.text("Propose partner addition")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld)), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
                       /* viewData */viewData,
-                      /* prospectId */""
+                      /* inputs : record */[/* prospectId */""]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               if (typeof action === "number") {
-                var prospectId = $$String.trim(state[/* prospectId */1]);
+                var prospectId = $$String.trim(state[/* inputs */1][/* prospectId */0]);
                 if (prospectId === "") {
                   return /* NoUpdate */0;
                 } else {
                   Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
                   return /* Update */Block.__(0, [/* record */[
                               /* viewData */state[/* viewData */0],
-                              /* prospectId */""
+                              /* inputs : record */[/* prospectId */""]
                             ]]);
                 }
               } else if (action.tag) {
@@ -91,7 +92,7 @@ function make(joinVentureUrl, viewData, commands, _) {
               } else {
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
-                            /* prospectId */action[0]
+                            /* inputs : record */[/* prospectId */action[0]]
                           ]]);
               }
             }),
@@ -104,8 +105,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ViewData = 0;
+
 exports.text = text;
 exports.extractString = extractString;
+exports.ViewData = ViewData;
 exports.component = component;
 exports.make = make;
 /* component Not a pure module */

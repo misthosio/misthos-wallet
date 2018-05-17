@@ -2,9 +2,13 @@ include ViewCommon;
 
 open PrimitiveTypes;
 
+module ViewData = ViewModel.ManagePartnersView;
+
+type inputs = {prospectId: string};
+
 type state = {
-  viewData: ViewModel.ManagePartners.t,
-  prospectId: string,
+  viewData: ViewData.t,
+  inputs,
 };
 
 type action =
@@ -15,35 +19,45 @@ type action =
 let component = ReasonReact.reducerComponent("ManagePartners");
 
 let make =
-    (
-      ~joinVentureUrl: string,
-      ~viewData: ViewModel.ManagePartners.t,
-      ~commands: VentureWorkerClient.Cmd.t,
-      _children,
-    ) => {
+    (~viewData: ViewData.t, ~commands: VentureWorkerClient.Cmd.t, _children) => {
   ...component,
-  initialState: () => {prospectId: "", viewData},
+  initialState: () => {
+    inputs: {
+      prospectId: "",
+    },
+    viewData,
+  },
   willReceiveProps: ({state}) => {...state, viewData},
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
-      ReasonReact.Update({...state, prospectId: text})
+      ReasonReact.Update({
+        ...state,
+        inputs: {
+          prospectId: text,
+        },
+      })
     | ProposePartner =>
-      switch (String.trim(state.prospectId)) {
+      switch (String.trim(state.inputs.prospectId)) {
       | "" => ReasonReact.NoUpdate
       | prospectId =>
         commands.proposePartner(~prospectId=prospectId |> UserId.fromString);
-        ReasonReact.Update({...state, prospectId: ""});
+        ReasonReact.Update({
+          ...state,
+          inputs: {
+            prospectId: "",
+          },
+        });
       }
     | RemovePartner(partnerId) =>
       commands.proposePartnerRemoval(~partnerId);
       ReasonReact.NoUpdate;
     },
-  render: ({send, state}) => {
+  render: ({send, state: {viewData, inputs}}) => {
     let partners =
       ReasonReact.array(
         Array.of_list(
-          state.viewData.partners
+          viewData.partners
           |> List.map((partner: ViewModel.partner) =>
                <Partner key=(partner.userId |> UserId.toString) partner />
              ),
@@ -52,7 +66,7 @@ let make =
     let partnersOld =
       ReasonReact.array(
         Array.of_list(
-          state.viewData.partners
+          viewData.partners
           |> List.map((m: ViewModel.partner) =>
                <li key=(m.userId |> UserId.toString)>
                  <div>
@@ -87,7 +101,7 @@ let make =
           </MTypography>
           <MInput
             placeholder="Enter a Blockstack ID"
-            value=(`String(state.prospectId))
+            value=(`String(inputs.prospectId))
             onChange=(e => send(ChangeNewPartnerId(extractString(e))))
             autoFocus=false
             fullWidth=true
@@ -103,7 +117,9 @@ let make =
               |> text
             )
           </MTypography>
-          <MTypography variant=`Body2> (joinVentureUrl |> text) </MTypography>
+          <MTypography variant=`Body2>
+            (viewData.joinVentureUrl |> text)
+          </MTypography>
         </div>
       body2=
         <div>

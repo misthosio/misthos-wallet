@@ -5,6 +5,7 @@ var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Policy = require("../../application/Policy.bs.js");
+var Router = require("../Router.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
@@ -12,7 +13,26 @@ var ViewModel__BalanceCollector = require("./ViewModel__BalanceCollector.bs.js")
 var ViewModel__PartnersCollector = require("./ViewModel__PartnersCollector.bs.js");
 var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
-var Payout = /* module */[];
+function fromViewModelState(param) {
+  return /* record */[
+          /* partners */param[/* partnersCollector */7][/* partners */1],
+          /* joinVentureUrl */window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
+                  param[/* ventureId */1],
+                  param[/* localUser */0]
+                ]))
+        ];
+}
+
+var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState];
+
+function fromViewModelState$1(param) {
+  return /* record */[
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
+          /* ventureName */param[/* name */2]
+        ];
+}
+
+var PayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
 function make(localUser) {
   return /* record */[
@@ -273,33 +293,24 @@ function isPartner(id, param) {
   return ViewModel__PartnersCollector.isPartner(id, param[/* partnersCollector */7]);
 }
 
-function managePartnersModal(param) {
-  return param[/* partnersCollector */7];
-}
-
-function payoutModal(param) {
-  return /* record */[
-          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
-          /* ventureName */param[/* name */2]
-        ];
-}
+var ItemsSet = 0;
 
 var PartnersCollector = 0;
 
 var BalanceCollector = 0;
 
-var ManagePartners = 0;
-
 var TransactionCollector = 0;
 
-var ItemsSet = 0;
+var managePartnersModal = fromViewModelState;
 
+var payoutModal = fromViewModelState$1;
+
+exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
 exports.BalanceCollector = BalanceCollector;
-exports.ManagePartners = ManagePartners;
-exports.Payout = Payout;
 exports.TransactionCollector = TransactionCollector;
-exports.ItemsSet = ItemsSet;
+exports.ManagePartnersView = ManagePartnersView;
+exports.PayoutView = PayoutView;
 exports.make = make;
 exports.apply = apply;
 exports.init = init;
