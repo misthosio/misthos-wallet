@@ -65,6 +65,14 @@ module PayoutView = {
   };
 };
 
+module SelectedVentureView = {
+  type partner = PartnersCollector.partner;
+  type t = {partners: list(partner)};
+  let fromViewModelState = ({partnersCollector}) => {
+    partners: partnersCollector.partners,
+  };
+};
+
 type balance = BalanceCollector.balance;
 
 type prospect = PartnersCollector.prospect;
@@ -194,3 +202,5 @@ let isPartner = (id, {partnersCollector}) =>
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 let payoutModal = PayoutView.fromViewModelState;
+
+let selectedVenture = SelectedVentureView.fromViewModelState;

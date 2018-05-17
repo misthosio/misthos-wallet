@@ -34,6 +34,12 @@ function fromViewModelState$1(param) {
 
 var PayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
+function fromViewModelState$2(param) {
+  return /* record */[/* partners */param[/* partnersCollector */7][/* partners */1]];
+}
+
+var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$2];
+
 function make(localUser) {
   return /* record */[
           /* localUser */localUser,
@@ -305,12 +311,15 @@ var managePartnersModal = fromViewModelState;
 
 var payoutModal = fromViewModelState$1;
 
+var selectedVenture = fromViewModelState$2;
+
 exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
 exports.BalanceCollector = BalanceCollector;
 exports.TransactionCollector = TransactionCollector;
 exports.ManagePartnersView = ManagePartnersView;
 exports.PayoutView = PayoutView;
+exports.SelectedVentureView = SelectedVentureView;
 exports.make = make;
 exports.apply = apply;
 exports.init = init;
@@ -326,4 +335,5 @@ exports.transactions = transactions;
 exports.isPartner = isPartner;
 exports.managePartnersModal = managePartnersModal;
 exports.payoutModal = payoutModal;
+exports.selectedVenture = selectedVenture;
 /* Policy Not a pure module */

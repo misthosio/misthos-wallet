@@ -84,7 +84,12 @@ let make = (~session, ~updateSession, _children) => {
         Venture(_, _) | Home | JoinVenture(_),
         VentureLoaded(_ventureId, venture, commands),
       ) =>
-      <SelectedVenture venture commands session />
+      <SelectedVenture
+        venture
+        viewData=(venture |> ViewModel.selectedVenture)
+        commands
+        session
+      />
     | (LoggedIn(_), CreateVenture, _) =>
       <VentureCreate selectedVenture onCreateVenture=createVenture />
     | (LoggedIn(_), _, JoiningVenture(_)) =>

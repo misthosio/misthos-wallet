@@ -1,9 +1,12 @@
 include ViewCommon;
 
+module ViewData = ViewModel.SelectedVentureView;
+
 open PrimitiveTypes;
 
 type state = {
   viewModel: ViewModel.t,
+  viewData: ViewData.t,
   selfRemoved: bool,
   balance: ViewModel.balance,
 };
@@ -26,6 +29,7 @@ module Styles = {
 let make =
     (
       ~venture as initialViewModel,
+      ~viewData: ViewData.t,
       ~session: Session.Data.t,
       ~commands: VentureWorkerClient.Cmd.t,
       _children,
@@ -33,12 +37,14 @@ let make =
   ...component,
   initialState: () => {
     viewModel: initialViewModel,
+    viewData,
     selfRemoved:
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
     balance: initialViewModel |> ViewModel.balance,
   },
   willReceiveProps: (_) => {
     viewModel: initialViewModel,
+    viewData,
     selfRemoved:
       initialViewModel |> ViewModel.isPartner(session.userId) == false,
     balance: initialViewModel |> ViewModel.balance,

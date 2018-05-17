@@ -36,7 +36,7 @@ var flexSpaceBetween = Css.style(/* :: */[
 
 var Styles = /* module */[/* flexSpaceBetween */flexSpaceBetween];
 
-function make(initialViewModel, session, commands, _) {
+function make(initialViewModel, viewData, session, commands, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -44,6 +44,7 @@ function make(initialViewModel, session, commands, _) {
           /* willReceiveProps */(function () {
               return /* record */[
                       /* viewModel */initialViewModel,
+                      /* viewData */viewData,
                       /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
                       /* balance */ViewModel.balance(initialViewModel)
                     ];
@@ -117,7 +118,7 @@ function make(initialViewModel, session, commands, _) {
                                               })
                                           }, ViewCommon.text("Reject Payout")) : null);
                         }), ViewModel.payouts(state[/* viewModel */0])));
-              var match$1 = state[/* selfRemoved */1];
+              var match$1 = state[/* selfRemoved */2];
               return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[/* :: */[
                                 "Partners",
                                 /* :: */[
@@ -127,12 +128,12 @@ function make(initialViewModel, session, commands, _) {
                               ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(ViewModel.ventureName(state[/* viewModel */0]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Display2 */-11760688, /* None */0, /* array */[
                                           React.createElement("b", {
                                                 key: "currentSpendable"
-                                              }, ViewCommon.text(BTC.format(state[/* balance */2][/* currentSpendable */0]))),
+                                              }, ViewCommon.text(BTC.format(state[/* balance */3][/* currentSpendable */0]))),
                                           ViewCommon.text("BTC")
                                         ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[
                                           React.createElement("b", {
                                                 key: "reserved"
-                                              }, ViewCommon.text(BTC.format(state[/* balance */2][/* reserved */1]))),
+                                              }, ViewCommon.text(BTC.format(state[/* balance */3][/* reserved */1]))),
                                           ViewCommon.text(" BTC IN RESERVE")
                                         ]))), React.createElement("div", {
                                   className: flexSpaceBetween
@@ -152,13 +153,14 @@ function make(initialViewModel, session, commands, _) {
           /* initialState */(function () {
               return /* record */[
                       /* viewModel */initialViewModel,
+                      /* viewData */viewData,
                       /* selfRemoved */ViewModel.isPartner(session[/* userId */0], initialViewModel) === false,
                       /* balance */ViewModel.balance(initialViewModel)
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              var match = state[/* selfRemoved */1];
+              var match = state[/* selfRemoved */2];
               if (match) {
                 return /* NoUpdate */0;
               } else {
@@ -194,8 +196,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ViewData = 0;
+
 exports.text = text;
 exports.extractString = extractString;
+exports.ViewData = ViewData;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;
