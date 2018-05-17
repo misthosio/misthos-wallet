@@ -73,7 +73,7 @@ function make(param, param$1, log) {
         }), /* record */[
         /* network : Regtest */0,
         /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
-        /* accountKeyChains : [] */0,
+        /* accountKeyChains */AccountKeyChain.Collection[/* empty */0],
         /* payoutTx : None */0,
         /* complete */false
       ], log);

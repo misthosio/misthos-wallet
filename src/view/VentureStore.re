@@ -10,16 +10,14 @@ type selectedVenture =
 type action =
   | CreateVenture(string)
   | TabSync(VentureWorkerMessage.outgoing)
-  | SyncWorkerMessage(SyncWorkerMessage.outgoing)
-  | IncomeWorkerMessage(IncomeWorkerMessage.outgoing)
+  | DataWorkerMessage(DataWorkerMessage.outgoing)
   | VentureWorkerMessage(VentureWorkerMessage.outgoing);
 
 type state = {
   index: option(Venture.Index.t),
   selectedVenture,
   session: Session.t,
-  syncWorker: ref(SyncWorkerClient.t),
-  incomeWorker: ref(IncomeWorkerClient.t),
+  dataWorker: ref(DataWorkerClient.t),
   persistWorker: ref(PersistWorkerClient.t),
   ventureWorker: ref(VentureWorkerClient.t),
 };
@@ -28,20 +26,11 @@ let loadVentureAndIndex =
     (
       session: Session.t,
       currentRoute,
-      {
-        selectedVenture,
-        ventureWorker,
-        persistWorker,
-        incomeWorker,
-        syncWorker,
-        session: oldSession,
-      },
+      {selectedVenture, ventureWorker, persistWorker, session: oldSession},
     ) => {
   if (oldSession != session) {
     ventureWorker^ |> VentureWorkerClient.updateSession;
-    incomeWorker^ |> IncomeWorkerClient.updateSession;
     persistWorker^ |> PersistWorkerClient.updateSession;
-    syncWorker^ |> SyncWorkerClient.updateSession;
   };
   switch (session, currentRoute: Router.Config.route, selectedVenture) {
   | (LoggedIn(_), Venture(ventureId, _), VentureLoaded(loadedId, _, _))
@@ -96,8 +85,8 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     session: Unknown,
     index: None,
     selectedVenture: None,
-    syncWorker: ref(SyncWorkerClient.make(~onMessage=Js.log)),
-    incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
+    dataWorker: ref(DataWorkerClient.make(~onMessage=Js.log)),
+    /* incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)), */
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
@@ -121,27 +110,15 @@ let make = (~currentRoute, ~session: Session.t, children) => {
       ),
       Sub(
         () => {
-          SyncWorkerClient.terminate(state.syncWorker^);
+          DataWorkerClient.terminate(state.dataWorker^);
           let worker =
-            SyncWorkerClient.make(~onMessage=message =>
-              send(SyncWorkerMessage(message))
+            DataWorkerClient.make(~onMessage=message =>
+              send(DataWorkerMessage(message))
             );
-          state.syncWorker := worker;
+          state.dataWorker := worker;
           worker;
         },
-        SyncWorkerClient.terminate,
-      ),
-      Sub(
-        () => {
-          IncomeWorkerClient.terminate(state.incomeWorker^);
-          let worker =
-            IncomeWorkerClient.make(~onMessage=message =>
-              send(IncomeWorkerMessage(message))
-            );
-          state.incomeWorker := worker;
-          worker;
-        },
-        IncomeWorkerClient.terminate,
+        DataWorkerClient.terminate,
       ),
       Sub(() => state.persistWorker^, PersistWorkerClient.terminate),
       Sub(
@@ -167,18 +144,19 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         ReasonReact.Update({...state, selectedVenture: CreatingVenture});
       | VentureWorkerMessage(msg) =>
         state.persistWorker^ |> PersistWorkerClient.ventureMessage(msg);
+        state.dataWorker^ |. DataWorkerClient.postMessage(msg);
         switch (msg, state.selectedVenture) {
         | (UpdateIndex(index), _) =>
           updateOtherTabs(msg);
           ReasonReact.Update({...state, index: Some(index)});
-        | (VentureCreated(ventureId, events), _) =>
+        | (VentureCreated(ventureId, log), _) =>
           ReasonReact.UpdateWithSideEffects(
             {
               ...state,
               selectedVenture:
                 VentureLoaded(
                   ventureId,
-                  ViewModel.init(sessionData.userId, events),
+                  ViewModel.init(sessionData.userId, log),
                   VentureWorkerClient.Cmd.make(
                     state.ventureWorker^,
                     ventureId,
@@ -187,7 +165,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             },
             ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
           )
-        | (VentureLoaded(ventureId, events, _), JoiningVenture(joiningId))
+        | (VentureLoaded(ventureId, log, _), JoiningVenture(joiningId))
             when VentureId.eq(ventureId, joiningId) =>
           ReasonReact.UpdateWithSideEffects(
             {
@@ -195,7 +173,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
               selectedVenture:
                 VentureLoaded(
                   ventureId,
-                  ViewModel.init(sessionData.userId, events),
+                  ViewModel.init(sessionData.userId, log),
                   VentureWorkerClient.Cmd.make(
                     state.ventureWorker^,
                     ventureId,
@@ -232,10 +210,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           });
         | _ => ReasonReact.NoUpdate
         };
-      | SyncWorkerMessage(msg) =>
-        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
-        ReasonReact.NoUpdate;
-      | IncomeWorkerMessage(msg) =>
+      | DataWorkerMessage(msg) =>
         state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
         ReasonReact.NoUpdate;
       | TabSync(msg) =>

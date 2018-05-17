@@ -43,7 +43,7 @@ let () = {
     let accountKeyChain1 = G.accountKeyChain([user1, user2]);
     let accountKeyChain2 = G.accountKeyChain(~keyChainIdx=1, [user1, user2]);
     let keyChains =
-      []
+      AccountKeyChain.Collection.empty
       |> AccountKeyChain.Collection.add(accountKeyChain2)
       |> AccountKeyChain.Collection.add(accountKeyChain1);
     test("lookup", () =>

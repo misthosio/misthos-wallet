@@ -47,6 +47,9 @@ function Make(funarg) {
   var appendItem = function (item, log) {
     return $$Array.append(log, /* array */[item]);
   };
+  var appendItems = function (items, log) {
+    return $$Array.append(log, items);
+  };
   var reduce = $$Array.fold_left;
   var findNewItems = function (other, log) {
     var existingHashes = Belt_SetString.fromArray($$Array.map((function (param) {
@@ -149,6 +152,7 @@ function Make(funarg) {
           items,
           append,
           appendItem,
+          appendItems,
           reduce,
           findNewItems,
           length,

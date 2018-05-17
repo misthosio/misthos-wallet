@@ -18,7 +18,7 @@ type t = {
 
 let make = () => {
   network: Network.Testnet,
-  accountKeyChains: [],
+  accountKeyChains: AccountKeyChain.Collection.empty,
   balance: [],
   payoutProcesses: [],
 };
@@ -31,7 +31,6 @@ let apply = (event: Event.t, state) =>
   | VentureCreated({network}) => {...state, network}
   | AccountCreationAccepted({data}) => {
       ...state,
-      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
       balance: [
         (data.accountIdx, {currentSpendable: BTC.zero, reserved: BTC.zero}),
         ...state.balance,

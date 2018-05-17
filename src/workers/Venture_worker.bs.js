@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
+var EventLog = require("../application/events/EventLog.bs.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -38,36 +39,47 @@ function logError(error) {
   return /* () */0;
 }
 
+function sessionPending() {
+  return postMessage$1(/* None */0, /* SessionPending */0);
+}
+
+function sessionStarted(blockstackItems, storagePrefix) {
+  return postMessage$1(/* None */0, /* SessionStarted */Block.__(0, [
+                blockstackItems,
+                storagePrefix
+              ]));
+}
+
 function indexUpdated(index) {
-  return postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index]));
+  return postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [index]));
 }
 
 function ventureLoaded(id, venture, newItems) {
-  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(2, [
+  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(3, [
                 id,
-                Venture.getAllItems(venture),
+                Venture.getEventLog(venture),
                 newItems
               ]));
 }
 
 function ventureJoined(id, venture) {
-  var items = Venture.getAllItems(venture);
-  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(2, [
+  var log = Venture.getEventLog(venture);
+  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(3, [
                 id,
-                items,
-                items
+                log,
+                Curry._1(EventLog.items, log)
               ]));
 }
 
 function ventureCreated(venture) {
-  return postMessage$1(/* None */0, /* VentureCreated */Block.__(3, [
+  return postMessage$1(/* None */0, /* VentureCreated */Block.__(4, [
                 Venture.getId(venture),
-                Venture.getAllItems(venture)
+                Venture.getEventLog(venture)
               ]));
 }
 
 function newIncomeAddress(syncId, ventureId, address) {
-  return postMessage$1(/* Some */[syncId], /* NewIncomeAddress */Block.__(0, [
+  return postMessage$1(/* Some */[syncId], /* NewIncomeAddress */Block.__(1, [
                 ventureId,
                 address
               ]));
@@ -75,7 +87,7 @@ function newIncomeAddress(syncId, ventureId, address) {
 
 function newItems(id, items) {
   if (items.length !== 0) {
-    return postMessage$1(/* None */0, /* NewItems */Block.__(4, [
+    return postMessage$1(/* None */0, /* NewItems */Block.__(5, [
                   id,
                   items
                 ]));
@@ -85,6 +97,8 @@ function newItems(id, items) {
 }
 
 var Notify = /* module */[
+  /* sessionPending */sessionPending,
+  /* sessionStarted */sessionStarted,
   /* indexUpdated */indexUpdated,
   /* ventureLoaded */ventureLoaded,
   /* ventureJoined */ventureJoined,
@@ -126,7 +140,7 @@ function withVenture($staropt$star, ventureAction, f, param) {
                                   match = /* tuple */[
                                     match$1[0],
                                     match$1[1].then((function (param) {
-                                            postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
+                                            postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
                                             return Promise.resolve(param[1]);
                                           }))
                                   ];
@@ -172,12 +186,12 @@ function withVenture($staropt$star, ventureAction, f, param) {
                                             switch (param.tag | 0) {
                                               case 0 : 
                                                   var venture = param[1];
-                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
+                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
                                                   ventureLoaded(ventureId$2, venture, param[2]);
                                                   return Promise.resolve(venture);
                                               case 1 : 
                                                   var venture$1 = param[1];
-                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
+                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
                                                   ventureJoined(ventureId$2, venture$1);
                                                   return Promise.resolve(venture$1);
                                               case 2 : 
@@ -244,8 +258,9 @@ function updateSession(items, state) {
                       exit = 1;
                     }
                     if (exit === 1) {
+                      sessionStarted(items, data[/* storagePrefix */3]);
                       Venture.Index[/* load */0](/* () */0).then((function (index) {
-                              return Promise.resolve(postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index])));
+                              return Promise.resolve(postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [index])));
                             }));
                       return Promise.resolve(/* Some */[/* tuple */[
                                     data,
@@ -254,6 +269,7 @@ function updateSession(items, state) {
                     }
                     
                   } else {
+                    postMessage$1(/* None */0, /* SessionPending */0);
                     return Promise.resolve(/* None */0);
                   }
                 }))];

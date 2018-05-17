@@ -1,20 +1,3 @@
-[%bs.raw {| self.localStorage = require("./fakeLocalStorage").localStorage |}];
-
-[%bs.raw
-  {| self.window = { localStorage: self.localStorage , location: { origin: self.origin } } |}
-];
-
-module Message = IncomeWorkerMessage;
-
-type self;
-
-[@bs.val] external self : self = "";
-
-[@bs.set]
-external onMessage :
-  (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
-  "onmessage";
-
 [@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
 
 let postMessage = msg =>
@@ -28,7 +11,11 @@ open Belt;
 
 open PrimitiveTypes;
 
-let logMessage = msg => Js.log("[Income Worker] - " ++ msg);
+let logLabel = "[Income Collection]";
+
+let logMessage = WorkerUtils.logMessage(logLabel);
+
+let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
 let scanTransactions =
     ((addresses: AddressCollector.t, transactions: TransactionCollector.t)) =>
@@ -46,14 +33,35 @@ let scanTransactions =
        )
   );
 
-let findAddressesAndTxIds =
-  EventLog.reduce(
-    ((addresses, transactions), {event}: EventLog.item) => (
-      addresses |> AddressCollector.apply(event),
-      transactions |> TransactionCollector.apply(event),
-    ),
-    (AddressCollector.make(), TransactionCollector.make()),
-  );
+let findAddressesAndTxIds = log => {
+  let time1 = Js.Date.now();
+  let ret =
+    log
+    |> EventLog.reduce(
+         ((addresses, transactions), {event}: EventLog.item) => {
+           let time3 = Js.Date.now();
+           addresses |> AddressCollector.apply(event) |> ignore;
+           let time4 = Js.Date.now();
+           let time5 = Js.Date.now();
+           transactions |> TransactionCollector.apply(event) |> ignore;
+           let time6 = Js.Date.now();
+           Js.log4(
+             "addresses",
+             time4 -. time3,
+             "transactions",
+             time6 -. time5,
+           );
+           (
+             addresses |> AddressCollector.apply(event),
+             transactions |> TransactionCollector.apply(event),
+           );
+         },
+         (AddressCollector.make(), TransactionCollector.make()),
+       );
+  let time2 = Js.Date.now();
+  Js.log2("time: ", time2 -. time1);
+  ret;
+};
 
 let filterUTXOs = (knownTxs, utxos) =>
   utxos
@@ -61,15 +69,14 @@ let filterUTXOs = (knownTxs, utxos) =>
        knownTxs |. Set.String.has(txId) ? None : Some(utxo)
      );
 
-let detectIncomeFromVenture = ventureId => {
+let detectIncomeFromVenture = (ventureId, eventLog) => {
   logMessage(
     "Detecting income for venture '" ++ VentureId.toString(ventureId) ++ "'",
   );
   Js.Promise.(
-    WorkerUtils.loadVenture(ventureId)
-    |> then_(eventLog =>
-         eventLog |> findAddressesAndTxIds |> scanTransactions
-       )
+    eventLog
+    |> findAddressesAndTxIds
+    |> scanTransactions
     |> then_(((utxos, txInfos, transactions: TransactionCollector.t)) => {
          let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
@@ -114,59 +121,8 @@ let detectIncomeFromVenture = ventureId => {
   );
 };
 
-let detectIncomeFromAll = () =>
-  Js.Promise.(
-    Session.getCurrentSession()
-    |> then_(
-         fun
-         | Session.LoggedIn(_data) =>
-           Venture.Index.load()
-           |> then_(index =>
-                index
-                |. List.forEach(({id}: Venture.Index.item) =>
-                     detectIncomeFromVenture(id) |> ignore
-                   )
-                |> resolve
-              )
-         | _ => resolve(),
-       )
-    |> catch(err => {
-         logMessage("Error while syncing:");
-         Js.log(err);
-         resolve();
-       })
-  );
-
-let tenSecondsInMilliseconds = 10000;
-
-let syncInterval = tenSecondsInMilliseconds;
-
-let handleMsg =
-  fun
-  | Message.UpdateSession(items) => {
-      logMessage("Handling 'UpdateSession'");
-      items |> WorkerLocalStorage.setBlockstackItems;
-      detectIncomeFromAll() |> ignore;
-      Js.Global.setInterval(
-        () => detectIncomeFromAll() |> ignore,
-        syncInterval,
-      );
-    };
-
-let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
-
-onMessage(
-  self,
-  msg => {
-    let newIntervalid =
-      handleMsg(msg##data##msg |> IncomeWorkerMessage.decodeIncoming);
-    intervalId^
-    |> Utils.mapOption(id =>
-         if (newIntervalid != id) {
-           Js.Global.clearInterval(id);
-         }
-       )
-    |> ignore;
-    intervalId := Some(newIntervalid);
-  },
-);
+let doWork = (ventures: VentureId.map(EventLog.t)) =>
+  ventures
+  |. Map.forEachU((. id, log) =>
+       detectIncomeFromVenture(id, log) |> catchAndLogError
+     );

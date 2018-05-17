@@ -1,20 +1,3 @@
-[%bs.raw {| self.localStorage = require("./fakeLocalStorage").localStorage |}];
-
-[%bs.raw
-  {| self.window = { localStorage: self.localStorage , location: { origin: self.origin } } |}
-];
-
-module Message = SyncWorkerMessage;
-
-type self;
-
-[@bs.val] external self : self = "";
-
-[@bs.set]
-external onMessage :
-  (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
-  "onmessage";
-
 [@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
 
 let postMessage = msg =>
@@ -24,9 +7,15 @@ let postMessage = msg =>
   }
   |> _postMessage;
 
+open Belt;
+
 open PrimitiveTypes;
 
-let logMessage = msg => Js.log("[Sync Worker] - " ++ msg);
+let logLabel = "[Data Worker]";
+
+let logMessage = WorkerUtils.logMessage(logLabel);
+
+let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
 let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
 
@@ -40,7 +29,7 @@ let determinPartnerIds =
       switch (event) {
       | PartnerAccepted({data}) => [data.id, ...ids]
       | PartnerRemovalAccepted({data}) =>
-        ids |> List.filter(id => UserId.neq(id, data.id))
+        ids |. List.keep(id => UserId.neq(id, data.id))
       | _ => ids
       },
     [],
@@ -117,71 +106,25 @@ let syncEventsFromPartner =
   )
   |> ignore;
 
-let syncEventsFromVenture = (ventureId, storagePrefix) => {
+let syncEventsFromVenture = (storagePrefix, ventureId, eventLog) => {
   logMessage(
     "Finding new events for venture '" ++ VentureId.toString(ventureId) ++ "'",
   );
-  Js.Promise.(
-    WorkerUtils.loadVenture(ventureId)
-    |> then_(eventLog => {
-         let summary = eventLog |> EventLog.getSummary;
-         let partnerKeys = eventLog |> determinPartnerIds;
-         partnerKeys
-         |> List.iter(
-              syncEventsFromPartner(
-                storagePrefix,
-                ventureId,
-                summary.knownItems,
-                eventLog,
-              ),
-            );
-         resolve();
-       })
-  );
+  let summary = eventLog |> EventLog.getSummary;
+  let partnerKeys = eventLog |> determinPartnerIds;
+  partnerKeys
+  |. List.forEach(
+       syncEventsFromPartner(
+         storagePrefix,
+         ventureId,
+         summary.knownItems,
+         eventLog,
+       ),
+     );
 };
 
-let findNewEventsForAll = () =>
-  Js.Promise.(
-    Session.getCurrentSession()
-    |> then_(
-         fun
-         | Session.LoggedIn({storagePrefix}) =>
-           Venture.Index.load()
-           |> then_(index =>
-                index
-                |> List.iter(({id}: Venture.Index.item) =>
-                     syncEventsFromVenture(id, storagePrefix) |> ignore
-                   )
-                |> resolve
-              )
-         | _ => resolve(),
-       )
-  );
-
-let handleMsg =
-  fun
-  | Message.UpdateSession(items) => {
-      logMessage("Handling 'UpdateSession'");
-      items |> WorkerLocalStorage.setBlockstackItems;
-      findNewEventsForAll() |> ignore;
-      Js.Global.setInterval(
-        () => findNewEventsForAll() |> ignore,
-        syncInterval,
-      );
-    };
-
-onMessage(
-  self,
-  msg => {
-    let newIntervalid =
-      handleMsg(msg##data##msg |> SyncWorkerMessage.decodeIncoming);
-    intervalId^
-    |> Utils.mapOption(id =>
-         if (newIntervalid != id) {
-           Js.Global.clearInterval(id);
-         }
-       )
-    |> ignore;
-    intervalId := Some(newIntervalid);
-  },
-);
+let doWork = (storagePrefix, ventures: VentureId.map(EventLog.t)) =>
+  ventures
+  |. Map.forEachU((. id, log) =>
+       log |> syncEventsFromVenture(storagePrefix, id)
+     );

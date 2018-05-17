@@ -52,7 +52,7 @@ let join:
 
 let getId: t => ventureId;
 
-let getAllItems: t => array(EventLog.item);
+let getEventLog: t => EventLog.t;
 
 let getSummary: t => EventLog.summary;
 

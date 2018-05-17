@@ -8,9 +8,9 @@ var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var WalletTypes = require("./WalletTypes.bs.js");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function encode(prim) {
   return prim;
@@ -80,44 +80,16 @@ function isConsistent(param) {
   }
 }
 
-function make$2() {
-  return /* [] */0;
-}
-
 function add(keyChain, collection) {
-  var accountIdx = keyChain[/* accountIdx */0];
-  var keyChains;
-  try {
-    keyChains = List.assoc(accountIdx, collection);
-  }
-  catch (exn){
-    if (exn === Caml_builtin_exceptions.not_found) {
-      keyChains = /* [] */0;
-    } else {
-      throw exn;
-    }
-  }
-  return /* :: */[
-          /* tuple */[
-            accountIdx,
-            /* :: */[
-              /* tuple */[
-                keyChain[/* identifier */1],
-                keyChain
-              ],
-              keyChains
-            ]
-          ],
-          List.remove_assoc(accountIdx, collection)
-        ];
+  return Belt_MapString.set(collection, keyChain[/* identifier */1], keyChain);
 }
 
-function lookup(accountIdx, accountKeyChainIdx, accounts) {
-  return List.assoc(accountKeyChainIdx, List.assoc(accountIdx, accounts));
+function lookup(_, identifier, keyChains) {
+  return Belt_MapString.getExn(keyChains, identifier);
 }
 
 var Collection = /* module */[
-  /* make */make$2,
+  /* empty */Belt_MapString.empty,
   /* add */add,
   /* lookup */lookup
 ];

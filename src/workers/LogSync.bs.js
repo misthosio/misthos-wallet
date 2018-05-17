@@ -2,26 +2,18 @@
 'use strict';
 
 var Json = require("bs-json/src/Json.js");
-var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../utils/Utils.bs.js");
-var Session = require("../application/Session.bs.js");
-var Venture = require("../application/Venture.bs.js");
-var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
-
-(( self.localStorage = require("./fakeLocalStorage").localStorage ));
-
-(( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
 function postMessage$1(msg) {
   postMessage({
@@ -31,9 +23,14 @@ function postMessage$1(msg) {
   return /* () */0;
 }
 
-function logMessage(msg) {
-  console.log("[Sync Worker] - " + msg);
-  return /* () */0;
+var logLabel = "[Data Worker]";
+
+function logMessage(param) {
+  return WorkerUtils.logMessage(logLabel, param);
+}
+
+function catchAndLogError(param) {
+  return WorkerUtils.catchAndLogError(logLabel, param);
 }
 
 var intervalId = [/* None */0];
@@ -48,9 +45,9 @@ var determinPartnerIds = Curry._2(EventLog.reduce, (function (ids, param) {
                     ];
           case 8 : 
               var data = $$event[0][/* data */2];
-              return List.filter((function (id) {
-                              return PrimitiveTypes.UserId[/* neq */6](id, data[/* id */0]);
-                            }))(ids);
+              return Belt_List.keep(ids, (function (id) {
+                            return PrimitiveTypes.UserId[/* neq */6](id, data[/* id */0]);
+                          }));
           default:
             return ids;
         }
@@ -100,68 +97,30 @@ function syncEventsFromPartner(storagePrefix, ventureId, knownItems, eventLog, u
   return /* () */0;
 }
 
-function syncEventsFromVenture(ventureId, storagePrefix) {
+function syncEventsFromVenture(storagePrefix, ventureId, eventLog) {
   logMessage("Finding new events for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                var summary = Curry._1(EventLog.getSummary, eventLog);
-                var partnerKeys = Curry._1(determinPartnerIds, eventLog);
-                var partial_arg = summary[/* knownItems */0];
-                List.iter((function (param) {
-                        return syncEventsFromPartner(storagePrefix, ventureId, partial_arg, eventLog, param);
-                      }), partnerKeys);
-                return Promise.resolve(/* () */0);
+  var summary = Curry._1(EventLog.getSummary, eventLog);
+  var partnerKeys = Curry._1(determinPartnerIds, eventLog);
+  var partial_arg = summary[/* knownItems */0];
+  return Belt_List.forEach(partnerKeys, (function (param) {
+                return syncEventsFromPartner(storagePrefix, ventureId, partial_arg, eventLog, param);
               }));
 }
 
-function findNewEventsForAll() {
-  return Session.getCurrentSession(/* () */0).then((function (param) {
-                if (typeof param === "number") {
-                  return Promise.resolve(/* () */0);
-                } else {
-                  var storagePrefix = param[0][/* storagePrefix */3];
-                  return Venture.Index[/* load */0](/* () */0).then((function (index) {
-                                return Promise.resolve(List.iter((function (param) {
-                                                  syncEventsFromVenture(param[/* id */0], storagePrefix);
-                                                  return /* () */0;
-                                                }), index));
-                              }));
-                }
+function doWork(storagePrefix, ventures) {
+  return Belt_Map.forEachU(ventures, (function (id, log) {
+                return syncEventsFromVenture(storagePrefix, id, log);
               }));
 }
-
-function handleMsg(param) {
-  logMessage("Handling 'UpdateSession'");
-  WorkerLocalStorage.setBlockstackItems(param[0]);
-  findNewEventsForAll(/* () */0);
-  return setInterval((function () {
-                findNewEventsForAll(/* () */0);
-                return /* () */0;
-              }), 10000);
-}
-
-self.onmessage = (function (msg) {
-    var newIntervalid = handleMsg(msg.data.msg);
-    Utils.mapOption((function (id) {
-            if (Caml_obj.caml_notequal(newIntervalid, id)) {
-              clearInterval(id);
-              return /* () */0;
-            } else {
-              return 0;
-            }
-          }), intervalId[0]);
-    intervalId[0] = /* Some */[newIntervalid];
-    return /* () */0;
-  });
-
-var Message = 0;
 
 var tenSecondsInMilliseconds = 10000;
 
 var syncInterval = 10000;
 
-exports.Message = Message;
 exports.postMessage = postMessage$1;
+exports.logLabel = logLabel;
 exports.logMessage = logMessage;
+exports.catchAndLogError = catchAndLogError;
 exports.intervalId = intervalId;
 exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
 exports.syncInterval = syncInterval;
@@ -171,6 +130,5 @@ exports.getLogFromUser = getLogFromUser;
 exports.findNewItemsFromPartner = findNewItemsFromPartner;
 exports.syncEventsFromPartner = syncEventsFromPartner;
 exports.syncEventsFromVenture = syncEventsFromVenture;
-exports.findNewEventsForAll = findNewEventsForAll;
-exports.handleMsg = handleMsg;
-/*  Not a pure module */
+exports.doWork = doWork;
+/* determinPartnerIds Not a pure module */

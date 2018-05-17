@@ -4,11 +4,8 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../application/events/Event.bs.js");
-var Utils = require("../utils/Utils.bs.js");
 var Network = require("../application/wallet/Network.bs.js");
-var Session = require("../application/Session.bs.js");
-var Venture = require("../application/Venture.bs.js");
-var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
@@ -16,13 +13,8 @@ var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var AddressCollector = require("../application/wallet/AddressCollector.bs.js");
-var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var TransactionCollector = require("../application/wallet/TransactionCollector.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
-
-(( self.localStorage = require("./fakeLocalStorage").localStorage ));
-
-(( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
 function postMessage$1(msg) {
   postMessage({
@@ -32,9 +24,14 @@ function postMessage$1(msg) {
   return /* () */0;
 }
 
-function logMessage(msg) {
-  console.log("[Income Worker] - " + msg);
-  return /* () */0;
+var logLabel = "[Income Collection]";
+
+function logMessage(param) {
+  return WorkerUtils.logMessage(logLabel, param);
+}
+
+function catchAndLogError(param) {
+  return WorkerUtils.catchAndLogError(logLabel, param);
 }
 
 function scanTransactions(param) {
@@ -54,16 +51,31 @@ function scanTransactions(param) {
               }));
 }
 
-var findAddressesAndTxIds = Curry._2(EventLog.reduce, (function (param, param$1) {
-        var $$event = param$1[/* event */0];
-        return /* tuple */[
-                AddressCollector.apply($$event, param[0]),
-                TransactionCollector.apply($$event, param[1])
-              ];
-      }), /* tuple */[
-      AddressCollector.make(/* () */0),
-      TransactionCollector.make(/* () */0)
-    ]);
+function findAddressesAndTxIds(log) {
+  var time1 = Date.now();
+  var ret = Curry._3(EventLog.reduce, (function (param, param$1) {
+          var $$event = param$1[/* event */0];
+          var transactions = param[1];
+          var addresses = param[0];
+          var time3 = Date.now();
+          AddressCollector.apply($$event, addresses);
+          var time4 = Date.now();
+          var time5 = Date.now();
+          TransactionCollector.apply($$event, transactions);
+          var time6 = Date.now();
+          console.log("addresses", time4 - time3, "transactions", time6 - time5);
+          return /* tuple */[
+                  AddressCollector.apply($$event, addresses),
+                  TransactionCollector.apply($$event, transactions)
+                ];
+        }), /* tuple */[
+        AddressCollector.make(/* () */0),
+        TransactionCollector.make(/* () */0)
+      ], log);
+  var time2 = Date.now();
+  console.log("time: ", time2 - time1);
+  return ret;
+}
 
 function filterUTXOs(knownTxs, utxos) {
   return Belt_List.keepMapU(utxos, (function (utxo) {
@@ -76,11 +88,9 @@ function filterUTXOs(knownTxs, utxos) {
               }));
 }
 
-function detectIncomeFromVenture(ventureId) {
+function detectIncomeFromVenture(ventureId, eventLog) {
   logMessage("Detecting income for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                  return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog));
-                })).then((function (param) {
+  return scanTransactions(findAddressesAndTxIds(eventLog)).then((function (param) {
                 var utxos = filterUTXOs(param[2][/* knownIncomeTxs */2], param[0]);
                 var events = Belt_List.mapU(utxos, (function (utxo) {
                         return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
@@ -108,67 +118,19 @@ function detectIncomeFromVenture(ventureId) {
               }));
 }
 
-function detectIncomeFromAll() {
-  return Session.getCurrentSession(/* () */0).then((function (param) {
-                  if (typeof param === "number") {
-                    return Promise.resolve(/* () */0);
-                  } else {
-                    return Venture.Index[/* load */0](/* () */0).then((function (index) {
-                                  return Promise.resolve(Belt_List.forEach(index, (function (param) {
-                                                    detectIncomeFromVenture(param[/* id */0]);
-                                                    return /* () */0;
-                                                  })));
-                                }));
-                  }
-                })).catch((function (err) {
-                logMessage("Error while syncing:");
-                console.log(err);
-                return Promise.resolve(/* () */0);
+function doWork(ventures) {
+  return Belt_Map.forEachU(ventures, (function (id, log) {
+                return catchAndLogError(detectIncomeFromVenture(id, log));
               }));
 }
 
-function handleMsg(param) {
-  logMessage("Handling 'UpdateSession'");
-  WorkerLocalStorage.setBlockstackItems(param[0]);
-  detectIncomeFromAll(/* () */0);
-  return setInterval((function () {
-                detectIncomeFromAll(/* () */0);
-                return /* () */0;
-              }), 10000);
-}
-
-var intervalId = [/* None */0];
-
-self.onmessage = (function (msg) {
-    var newIntervalid = handleMsg(msg.data.msg);
-    Utils.mapOption((function (id) {
-            if (Caml_obj.caml_notequal(newIntervalid, id)) {
-              clearInterval(id);
-              return /* () */0;
-            } else {
-              return 0;
-            }
-          }), intervalId[0]);
-    intervalId[0] = /* Some */[newIntervalid];
-    return /* () */0;
-  });
-
-var Message = 0;
-
-var tenSecondsInMilliseconds = 10000;
-
-var syncInterval = 10000;
-
-exports.Message = Message;
 exports.postMessage = postMessage$1;
+exports.logLabel = logLabel;
 exports.logMessage = logMessage;
+exports.catchAndLogError = catchAndLogError;
 exports.scanTransactions = scanTransactions;
 exports.findAddressesAndTxIds = findAddressesAndTxIds;
 exports.filterUTXOs = filterUTXOs;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
-exports.detectIncomeFromAll = detectIncomeFromAll;
-exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
-exports.syncInterval = syncInterval;
-exports.handleMsg = handleMsg;
-exports.intervalId = intervalId;
-/*  Not a pure module */
+exports.doWork = doWork;
+/* Event Not a pure module */
