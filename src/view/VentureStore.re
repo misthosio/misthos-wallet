@@ -11,6 +11,7 @@ type action =
   | CreateVenture(string)
   | TabSync(VentureWorkerMessage.outgoing)
   | SyncWorkerMessage(SyncWorkerMessage.outgoing)
+  | DataWorkerMessage(DataWorkerMessage.outgoing)
   | IncomeWorkerMessage(IncomeWorkerMessage.outgoing)
   | VentureWorkerMessage(VentureWorkerMessage.outgoing);
 
@@ -19,6 +20,7 @@ type state = {
   selectedVenture,
   session: Session.t,
   syncWorker: ref(SyncWorkerClient.t),
+  dataWorker: ref(DataWorkerClient.t),
   incomeWorker: ref(IncomeWorkerClient.t),
   persistWorker: ref(PersistWorkerClient.t),
   ventureWorker: ref(VentureWorkerClient.t),
@@ -97,6 +99,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     index: None,
     selectedVenture: None,
     syncWorker: ref(SyncWorkerClient.make(~onMessage=Js.log)),
+    dataWorker: ref(DataWorkerClient.make(~onMessage=Js.log)),
     incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)),
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
@@ -130,6 +133,18 @@ let make = (~currentRoute, ~session: Session.t, children) => {
           worker;
         },
         SyncWorkerClient.terminate,
+      ),
+      Sub(
+        () => {
+          DataWorkerClient.terminate(state.dataWorker^);
+          let worker =
+            DataWorkerClient.make(~onMessage=message =>
+              send(DataWorkerMessage(message))
+            );
+          state.dataWorker := worker;
+          worker;
+        },
+        DataWorkerClient.terminate,
       ),
       Sub(
         () => {
@@ -167,6 +182,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         ReasonReact.Update({...state, selectedVenture: CreatingVenture});
       | VentureWorkerMessage(msg) =>
         state.persistWorker^ |> PersistWorkerClient.ventureMessage(msg);
+        state.dataWorker^ |. DataWorkerClient.postMessage(msg);
         switch (msg, state.selectedVenture) {
         | (UpdateIndex(index), _) =>
           updateOtherTabs(msg);
@@ -233,6 +249,9 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         | _ => ReasonReact.NoUpdate
         };
       | SyncWorkerMessage(msg) =>
+        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
+        ReasonReact.NoUpdate;
+      | DataWorkerMessage(msg) =>
         state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
         ReasonReact.NoUpdate;
       | IncomeWorkerMessage(msg) =>

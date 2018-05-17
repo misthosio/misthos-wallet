@@ -30,7 +30,7 @@ type incoming =
 type encodedIncoming = Js.Json.t;
 
 type outgoing =
-  | SessionStarted
+  | SessionStarted(blockstackItems)
   | NewIncomeAddress(ventureId, string)
   | UpdateIndex(Venture.Index.t)
   | VentureLoaded(ventureId, array(EventLog.item), array(EventLog.item))
@@ -278,8 +278,13 @@ let decodeIncoming = raw => {
 
 let encodeOutgoing =
   fun
-  | SessionStarted =>
-    Json.Encode.(object_([("type", string("SessionStarted"))]))
+  | SessionStarted(blockstackItems) =>
+    Json.Encode.(
+      object_([
+        ("type", string("SessionStarted")),
+        ("blockstackItems", WorkerLocalStorage.encodeItems(blockstackItems)),
+      ])
+    )
   | UpdateIndex(index) =>
     Json.Encode.(
       object_([
@@ -324,7 +329,11 @@ let encodeOutgoing =
 let decodeOutgoing = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
-  | "SessionStarted" => SessionStarted
+  | "SessionStarted" =>
+    let blockstackItems =
+      raw
+      |> Json.Decode.field("blockstackItems", WorkerLocalStorage.decodeItems);
+    SessionStarted(blockstackItems);
   | "VentureCreated" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =

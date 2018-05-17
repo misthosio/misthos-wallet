@@ -38,16 +38,16 @@ function logError(error) {
   return /* () */0;
 }
 
-function sessionStarted() {
-  return postMessage$1(/* None */0, /* SessionStarted */0);
+function sessionStarted(blockstackItems) {
+  return postMessage$1(/* None */0, /* SessionStarted */Block.__(0, [blockstackItems]));
 }
 
 function indexUpdated(index) {
-  return postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index]));
+  return postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [index]));
 }
 
 function ventureLoaded(id, venture, newItems) {
-  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(2, [
+  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(3, [
                 id,
                 Venture.getAllItems(venture),
                 newItems
@@ -56,7 +56,7 @@ function ventureLoaded(id, venture, newItems) {
 
 function ventureJoined(id, venture) {
   var items = Venture.getAllItems(venture);
-  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(2, [
+  return postMessage$1(/* None */0, /* VentureLoaded */Block.__(3, [
                 id,
                 items,
                 items
@@ -64,14 +64,14 @@ function ventureJoined(id, venture) {
 }
 
 function ventureCreated(venture) {
-  return postMessage$1(/* None */0, /* VentureCreated */Block.__(3, [
+  return postMessage$1(/* None */0, /* VentureCreated */Block.__(4, [
                 Venture.getId(venture),
                 Venture.getAllItems(venture)
               ]));
 }
 
 function newIncomeAddress(syncId, ventureId, address) {
-  return postMessage$1(/* Some */[syncId], /* NewIncomeAddress */Block.__(0, [
+  return postMessage$1(/* Some */[syncId], /* NewIncomeAddress */Block.__(1, [
                 ventureId,
                 address
               ]));
@@ -79,7 +79,7 @@ function newIncomeAddress(syncId, ventureId, address) {
 
 function newItems(id, items) {
   if (items.length !== 0) {
-    return postMessage$1(/* None */0, /* NewItems */Block.__(4, [
+    return postMessage$1(/* None */0, /* NewItems */Block.__(5, [
                   id,
                   items
                 ]));
@@ -131,7 +131,7 @@ function withVenture($staropt$star, ventureAction, f, param) {
                                   match = /* tuple */[
                                     match$1[0],
                                     match$1[1].then((function (param) {
-                                            postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
+                                            postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
                                             return Promise.resolve(param[1]);
                                           }))
                                   ];
@@ -177,12 +177,12 @@ function withVenture($staropt$star, ventureAction, f, param) {
                                             switch (param.tag | 0) {
                                               case 0 : 
                                                   var venture = param[1];
-                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
+                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
                                                   ventureLoaded(ventureId$2, venture, param[2]);
                                                   return Promise.resolve(venture);
                                               case 1 : 
                                                   var venture$1 = param[1];
-                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [param[0]]));
+                                                  postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
                                                   ventureJoined(ventureId$2, venture$1);
                                                   return Promise.resolve(venture$1);
                                               case 2 : 
@@ -249,9 +249,9 @@ function updateSession(items, state) {
                       exit = 1;
                     }
                     if (exit === 1) {
-                      postMessage$1(/* None */0, /* SessionStarted */0);
+                      postMessage$1(/* None */0, /* SessionStarted */Block.__(0, [items]));
                       Venture.Index[/* load */0](/* () */0).then((function (index) {
-                              return Promise.resolve(postMessage$1(/* None */0, /* UpdateIndex */Block.__(1, [index])));
+                              return Promise.resolve(postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [index])));
                             }));
                       return Promise.resolve(/* Some */[/* tuple */[
                                     data,

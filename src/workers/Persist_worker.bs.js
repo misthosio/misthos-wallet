@@ -320,22 +320,18 @@ function persistVenture(ventureId) {
 function handleMessage(param) {
   if (param.tag) {
     var match = VentureWorkerMessage.decodeOutgoing(param[0]);
-    if (typeof match === "number") {
-      return /* () */0;
-    } else {
-      switch (match.tag | 0) {
-        case 2 : 
-            if (match[2].length !== 0) {
-              return persistVenture(match[0]);
-            } else {
-              return /* () */0;
-            }
-        case 3 : 
-        case 4 : 
+    switch (match.tag | 0) {
+      case 3 : 
+          if (match[2].length !== 0) {
             return persistVenture(match[0]);
-        default:
-          return /* () */0;
-      }
+          } else {
+            return /* () */0;
+          }
+      case 4 : 
+      case 5 : 
+          return persistVenture(match[0]);
+      default:
+        return /* () */0;
     }
   } else {
     logMessage("Handling 'UpdateSession'");

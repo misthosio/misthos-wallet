@@ -33,7 +33,8 @@ let logError = error => {
 };
 
 module Notify = {
-  let sessionStarted = () => postMessage(SessionStarted);
+  let sessionStarted = blockstackItems =>
+    postMessage(SessionStarted(blockstackItems));
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, venture, newItems) =>
     postMessage(VentureLoaded(id, venture |> Venture.getAllItems, newItems));
@@ -203,7 +204,7 @@ module Handle = {
                  when UserId.eq(data.userId, oldData.userId) =>
                resolve(Some((data, threads)))
              | (Some(data), _) =>
-               Notify.sessionStarted();
+               Notify.sessionStarted(items);
                Venture.Index.load()
                |> then_(index => index |> Notify.indexUpdated |> resolve)
                |> ignore;
