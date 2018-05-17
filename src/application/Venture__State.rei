@@ -12,7 +12,7 @@ let ventureName: t => string;
 
 let currentPolicy: (string, t) => Policy.t;
 
-let currentPartners: t => array(userId);
+let currentPartners: t => UserId.set;
 
 let isPartner: (userId, t) => bool;
 

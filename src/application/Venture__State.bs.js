@@ -2,8 +2,8 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Event = require("./events/Event.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -13,7 +13,7 @@ function make() {
           /* ventureName */"",
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* policies : [] */0,
-          /* partnerIds : [] */0,
+          /* currentPartners */PrimitiveTypes.UserId[/* emptySet */9],
           /* custodianProcesses : [] */0,
           /* partnerRemovalProcesses : [] */0,
           /* custodianRemovalProcesses : [] */0,
@@ -33,15 +33,15 @@ function ventureName(param) {
 }
 
 function currentPartners(param) {
-  return $$Array.of_list(param[/* partnerIds */3]);
+  return param[/* currentPartners */3];
+}
+
+function isPartner(userId, param) {
+  return Belt_Set.has(param[/* currentPartners */3], userId);
 }
 
 function currentPolicy(processName, param) {
   return List.assoc(processName, param[/* policies */2]);
-}
-
-function isPartner(id, param) {
-  return List.mem(id, param[/* partnerIds */3]);
 }
 
 function custodianProcessForPartnerProcess(processId, param) {
@@ -148,7 +148,7 @@ function apply($$event, state) {
                         ])
                   ]
                 ],
-                /* partnerIds */state[/* partnerIds */3],
+                /* currentPartners */state[/* currentPartners */3],
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
@@ -164,10 +164,7 @@ function apply($$event, state) {
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds : :: */[
-                  id,
-                  state[/* partnerIds */3]
-                ],
+                /* currentPartners */Belt_Set.add(state[/* currentPartners */3], id),
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
@@ -188,7 +185,7 @@ function apply($$event, state) {
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds */state[/* partnerIds */3],
+                /* currentPartners */state[/* currentPartners */3],
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses : :: */[
                   /* tuple */[
@@ -206,14 +203,11 @@ function apply($$event, state) {
     case 8 : 
         var $$event$2 = $$event[0];
         var id$1 = $$event$2[/* data */3][/* id */0];
-        var partial_arg = PrimitiveTypes.UserId[/* neq */6];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds */List.filter((function (param) {
-                          return partial_arg(id$1, param);
-                        }))(state[/* partnerIds */3]),
+                /* currentPartners */Belt_Set.remove(state[/* currentPartners */3], id$1),
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
@@ -234,7 +228,7 @@ function apply($$event, state) {
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds */state[/* partnerIds */3],
+                /* currentPartners */state[/* currentPartners */3],
                 /* custodianProcesses : :: */[
                   /* tuple */[
                     match$2[/* processId */0],
@@ -255,7 +249,7 @@ function apply($$event, state) {
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds */state[/* partnerIds */3],
+                /* currentPartners */state[/* currentPartners */3],
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
@@ -276,7 +270,7 @@ function apply($$event, state) {
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds */state[/* partnerIds */3],
+                /* currentPartners */state[/* currentPartners */3],
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses : :: */[
@@ -299,7 +293,7 @@ function apply($$event, state) {
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* partnerIds */state[/* partnerIds */3],
+                /* currentPartners */state[/* currentPartners */3],
                 /* custodianProcesses */state[/* custodianProcesses */4],
                 /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],

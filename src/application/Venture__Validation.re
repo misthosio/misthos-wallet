@@ -391,23 +391,19 @@ let validateProposal =
   } else {
     let proposalsThere =
       dependsOnProposals
-      |> Array.fold_left(
-           (res, processId) =>
-             (
-               completedProcesses
-               |> List.mem(processId)
-               || processes
-               |> List.mem_assoc(processId)
-             )
-             && res,
-           true,
+      |. Belt.Set.reduce(true, (res, processId) =>
+           (
+             completedProcesses
+             |> List.mem(processId)
+             || processes
+             |> List.mem_assoc(processId)
+           )
+           && res
          );
     let completionsThere =
       dependsOnCompletions
-      |> Array.fold_left(
-           (res, processId) =>
-             completedProcesses |> List.mem(processId) && res,
-           true,
+      |. Belt.Set.reduce(true, (res, processId) =>
+           completedProcesses |> List.mem(processId) && res
          );
     switch (proposalsThere, completionsThere) {
     | (true, true) => validateData(data, state)
@@ -466,10 +462,8 @@ let validateAcceptance =
         PolicyNotFulfilled;
       } else {
         dependsOnCompletions
-        |> Array.fold_left(
-             (res, processId) =>
-               completedProcesses |> List.mem(processId) && res,
-             true,
+        |. Belt.Set.reduce(true, (res, processId) =>
+             completedProcesses |> List.mem(processId) && res
            ) ?
           Ok : DependencyNotMet;
       };

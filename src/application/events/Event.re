@@ -1,3 +1,5 @@
+open Belt;
+
 open PrimitiveTypes;
 
 open WalletTypes;
@@ -538,7 +540,8 @@ let makePartnerProposed =
     |> Js.Option.getWithDefault([||]);
   PartnerProposed(
     Partner.Proposed.make(
-      ~dependsOnCompletions,
+      ~dependsOnCompletions=
+        dependsOnCompletions |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
@@ -560,7 +563,9 @@ let makePartnerRemovalProposed =
     ) =>
   PartnerRemovalProposed(
     Partner.Removal.Proposed.make(
-      ~dependsOnCompletions=[|lastPartnerAccepted.processId|],
+      ~dependsOnCompletions=
+        [|lastPartnerAccepted.processId|]
+        |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
@@ -607,7 +612,8 @@ let makeCustodianProposed =
        });
   CustodianProposed(
     Custodian.Proposed.make(
-      ~dependsOnProposals=[|partnerApprovalProcess|],
+      ~dependsOnProposals=
+        [|partnerApprovalProcess|] |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
@@ -632,7 +638,8 @@ let makeCustodianRemovalProposed =
   let {processId: lastCustodianProcess, data: {partnerId: custodianId}}: Custodian.Accepted.t = custodianAccepted;
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOnCompletions=[|lastCustodianProcess|],
+      ~dependsOnCompletions=
+        [|lastCustodianProcess|] |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
       ~supporterId,
       ~policy,

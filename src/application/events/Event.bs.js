@@ -9,6 +9,7 @@ var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Policy = require("../Policy.bs.js");
 var Address = require("../wallet/Address.bs.js");
 var Network = require("../wallet/Network.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var EventTypes = require("./EventTypes.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -942,7 +943,7 @@ function makePartnerProposed(eligibleWhenProposing, supporterId, prospectId, pro
   var dependsOnCompletions = Js_option.getWithDefault(/* array */[], Utils.mapOption((function (p) {
               return /* array */[p];
             }), lastPartnerRemovalProcess));
-  return /* PartnerProposed */Block.__(1, [Curry._6(Proposed[/* make */0], /* None */0, /* Some */[dependsOnCompletions], eligibleWhenProposing, supporterId, policy, /* record */[
+  return /* PartnerProposed */Block.__(1, [Curry._6(Proposed[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], dependsOnCompletions)], eligibleWhenProposing, supporterId, policy, /* record */[
                   /* lastPartnerRemovalProcess */lastPartnerRemovalProcess,
                   /* id */prospectId,
                   /* pubKey */prospectPubKey
@@ -950,7 +951,7 @@ function makePartnerProposed(eligibleWhenProposing, supporterId, prospectId, pro
 }
 
 function makePartnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, supporterId, policy) {
-  return /* PartnerRemovalProposed */Block.__(5, [Curry._6(Proposed$1[/* make */0], /* None */0, /* Some */[/* array */[lastPartnerAccepted[/* processId */0]]], eligibleWhenProposing, supporterId, policy, /* record */[
+  return /* PartnerRemovalProposed */Block.__(5, [Curry._6(Proposed$1[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[lastPartnerAccepted[/* processId */0]])], eligibleWhenProposing, supporterId, policy, /* record */[
                   /* id */lastPartnerAccepted[/* data */3][/* id */1],
                   /* lastPartnerProcess */lastPartnerAccepted[/* processId */0]
                 ])]);
@@ -975,7 +976,7 @@ function makeCustodianProposed(eligibleWhenProposing, lastCustodianRemovalAccept
           }
           return param[/* processId */0];
         }), lastCustodianRemovalAccepted);
-  return /* CustodianProposed */Block.__(13, [Curry._6(Proposed$3[/* make */0], /* Some */[/* array */[partnerApprovalProcess]], /* None */0, eligibleWhenProposing, supporterId, policy, /* record */[
+  return /* CustodianProposed */Block.__(13, [Curry._6(Proposed$3[/* make */0], /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[partnerApprovalProcess])], /* None */0, eligibleWhenProposing, supporterId, policy, /* record */[
                   /* partnerId */partnerId,
                   /* partnerApprovalProcess */partnerApprovalProcess,
                   /* lastCustodianRemovalProcess */lastCustodianRemovalProcess,
@@ -985,7 +986,7 @@ function makeCustodianProposed(eligibleWhenProposing, lastCustodianRemovalAccept
 
 function makeCustodianRemovalProposed(eligibleWhenProposing, custodianAccepted, supporterId, accountIdx, policy) {
   var lastCustodianProcess = custodianAccepted[/* processId */0];
-  return /* CustodianRemovalProposed */Block.__(17, [Curry._6(Proposed$4[/* make */0], /* None */0, /* Some */[/* array */[lastCustodianProcess]], eligibleWhenProposing, supporterId, policy, /* record */[
+  return /* CustodianRemovalProposed */Block.__(17, [Curry._6(Proposed$4[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[lastCustodianProcess])], eligibleWhenProposing, supporterId, policy, /* record */[
                   /* custodianId */custodianAccepted[/* data */3][/* partnerId */0],
                   /* accountIdx */accountIdx,
                   /* lastCustodianProcess */lastCustodianProcess

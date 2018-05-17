@@ -8,9 +8,11 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../../src/application/events/Event.bs.js");
 var Helpers = require("../helpers/Helpers.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Generators = require("../helpers/Generators.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
+var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
 var PayoutTransaction = require("../../src/application/wallet/PayoutTransaction.bs.js");
 
@@ -180,10 +182,10 @@ describe("integration", (function () {
                                           return /* () */0;
                                         }
                                       }), utxos);
-                                var param = Venture__Wallet.preparePayoutTx(/* array */[
-                                      userA[/* userId */0],
-                                      userB[/* userId */0]
-                                    ], userA, accountIdx, /* :: */[
+                                var param = Venture__Wallet.preparePayoutTx(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                                          userA[/* userId */0],
+                                          userB[/* userId */0]
+                                        ]), userA, accountIdx, /* :: */[
                                       /* tuple */[
                                         Helpers.faucetAddress,
                                         oneKeyChainSpendAmount
@@ -223,11 +225,11 @@ describe("integration", (function () {
                             }));
               }));
         return Jest.testPromise(/* Some */[80000], "2 of 3 wallet", (function () {
-                      var param = Venture__Wallet.preparePayoutTx(/* array */[
-                            userA[/* userId */0],
-                            userB[/* userId */0],
-                            userC[/* userId */0]
-                          ], userA, accountIdx, /* :: */[
+                      var param = Venture__Wallet.preparePayoutTx(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                                userA[/* userId */0],
+                                userB[/* userId */0],
+                                userC[/* userId */0]
+                              ]), userA, accountIdx, /* :: */[
                             /* tuple */[
                               Helpers.faucetAddress,
                               twoKeyChainSpendAmount

@@ -2,12 +2,12 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
@@ -586,20 +586,20 @@ function validateProposal($staropt$star, processName, dataList, param, state, is
   } else if (PrimitiveTypes.UserId[/* neq */6](issuerId, supporterId)) {
     return /* InvalidIssuer */2;
   } else {
-    var proposalsThere = $$Array.fold_left((function (res, processId) {
+    var proposalsThere = Belt_Set.reduce(param[/* dependsOnProposals */1], true, (function (res, processId) {
             if (List.mem(processId, completedProcesses) || List.mem_assoc(processId, processes)) {
               return res;
             } else {
               return false;
             }
-          }), true, param[/* dependsOnProposals */1]);
-    var completionsThere = $$Array.fold_left((function (res, processId) {
+          }));
+    var completionsThere = Belt_Set.reduce(param[/* dependsOnCompletions */2], true, (function (res, processId) {
             if (List.mem(processId, completedProcesses)) {
               return res;
             } else {
               return false;
             }
-          }), true, param[/* dependsOnCompletions */2]);
+          }));
     if (proposalsThere && completionsThere) {
       return Curry._2(validateData, data, state);
     } else {
@@ -652,13 +652,13 @@ function validateAcceptance(param, dataList, eq, param$1, _) {
     } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* currentPartners */7], match[/* supporterIds */0]) === false) {
       return /* PolicyNotFulfilled */6;
     } else {
-      var match$1 = $$Array.fold_left((function (res, processId) {
+      var match$1 = Belt_Set.reduce(param[/* dependsOnCompletions */1], true, (function (res, processId) {
               if (List.mem(processId, completedProcesses)) {
                 return res;
               } else {
                 return false;
               }
-            }), true, param[/* dependsOnCompletions */1]);
+            }));
       if (match$1) {
         return /* Ok */0;
       } else {

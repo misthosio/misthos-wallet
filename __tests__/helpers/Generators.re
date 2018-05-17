@@ -243,7 +243,8 @@ module Log = {
            },
          [],
        )
-    |> Array.of_list;
+    |> Array.of_list
+    |> Belt.Set.mergeMany(UserId.emptySet);
   let reduce = (f, s, {log}) => EventLog.reduce(f, s, log);
   let ventureId = ({ventureId}) => ventureId;
   let systemIssuer = ({systemIssuer}) => systemIssuer;
@@ -438,7 +439,8 @@ module Log = {
       supporter.issuerKeyPair,
       AccountCreationProposed(
         Event.accountCreationProposed(
-          ~eligibleWhenProposing=[|supporter.userId|],
+          ~eligibleWhenProposing=
+            [|supporter.userId|] |> Belt.Set.mergeMany(UserId.emptySet),
           supporter,
         ),
       ),

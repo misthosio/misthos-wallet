@@ -4,6 +4,8 @@ open Jest;
 
 open Expect;
 
+open PrimitiveTypes;
+
 open WalletTypes;
 
 open Event;
@@ -116,7 +118,9 @@ let () =
                 });
              oneKeyChainWallet^
              |> Wallet.preparePayoutTx(
-                  ~eligibleWhenProposing=[|userA.userId, userB.userId|],
+                  ~eligibleWhenProposing=
+                    [|userA.userId, userB.userId|]
+                    |> Belt.Set.mergeMany(UserId.emptySet),
                   userA,
                   accountIdx,
                   [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
@@ -191,11 +195,9 @@ let () =
       Js.Promise.(
         twoKeyChainWallet^
         |> Wallet.preparePayoutTx(
-             ~eligibleWhenProposing=[|
-               userA.userId,
-               userB.userId,
-               userC.userId,
-             |],
+             ~eligibleWhenProposing=
+               [|userA.userId, userB.userId, userC.userId|]
+               |> Belt.Set.mergeMany(UserId.emptySet),
              userA,
              accountIdx,
              [(Helpers.faucetAddress, twoKeyChainSpendAmount)],

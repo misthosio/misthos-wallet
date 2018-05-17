@@ -15,6 +15,7 @@ var Crypto = require("crypto");
 var Address = require("../../src/application/wallet/Address.bs.js");
 var Network = require("../../src/application/wallet/Network.bs.js");
 var V4 = require("uuid/v4");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
 var UserInfo = require("../../src/application/UserInfo.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
@@ -206,24 +207,24 @@ var Event$1 = /* module */[
 ];
 
 function eligblePartners(param) {
-  return $$Array.of_list(Curry._3(EventLog.reduce, (function (res, param) {
-                    var $$event = param[/* event */0];
-                    switch ($$event.tag | 0) {
-                      case 4 : 
-                          return /* :: */[
-                                  $$event[0][/* data */3][/* id */1],
-                                  res
-                                ];
-                      case 8 : 
-                          var id = $$event[0][/* data */3][/* id */0];
-                          var partial_arg = PrimitiveTypes.UserId[/* neq */6];
-                          return List.filter((function (param) {
-                                          return partial_arg(id, param);
-                                        }))(res);
-                      default:
-                        return res;
-                    }
-                  }), /* [] */0, param[/* log */3]));
+  return Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(Curry._3(EventLog.reduce, (function (res, param) {
+                        var $$event = param[/* event */0];
+                        switch ($$event.tag | 0) {
+                          case 4 : 
+                              return /* :: */[
+                                      $$event[0][/* data */3][/* id */1],
+                                      res
+                                    ];
+                          case 8 : 
+                              var id = $$event[0][/* data */3][/* id */0];
+                              var partial_arg = PrimitiveTypes.UserId[/* neq */6];
+                              return List.filter((function (param) {
+                                              return partial_arg(id, param);
+                                            }))(res);
+                          default:
+                            return res;
+                        }
+                      }), /* [] */0, param[/* log */3])));
 }
 
 function reduce(f, s, param) {
@@ -418,7 +419,7 @@ function withPartnerRemoved(user, supporters, log) {
 }
 
 function withAccountCreationProposed(supporter) {
-  var partial_arg = /* AccountCreationProposed */Block.__(9, [accountCreationProposed(/* array */[supporter[/* userId */0]], supporter)]);
+  var partial_arg = /* AccountCreationProposed */Block.__(9, [accountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[supporter[/* userId */0]]), supporter)]);
   var partial_arg$1 = supporter[/* issuerKeyPair */2];
   return (function (param) {
       return appendEvent(partial_arg$1, partial_arg, param);

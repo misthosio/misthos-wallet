@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../events/EventLog.bs.js");
 var WalletTypes = require("../wallet/WalletTypes.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
@@ -99,20 +100,20 @@ function make(param, param$1, log) {
               if (typeof match$1 === "number") {
                 tmp$1 = match$1 === 0 ? /* Some */[/* tuple */[
                       env$1[0],
-                      Event.makePartnerProposed(/* array */[env$1[1]], env$1[1], env$1[1], env$1[2], /* None */0, env$1[3])
+                      Event.makePartnerProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], env$1[2], /* None */0, env$1[3])
                     ]] : /* None */0;
               } else {
                 switch (match$1.tag | 0) {
                   case 1 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeAccountCreationProposed(/* array */[env$1[1]], env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */9], env$1[3])
+                          Event.makeAccountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */9], env$1[3])
                         ]];
                       break;
                   case 3 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeCustodianProposed(/* array */[env$1[1]], /* None */0, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
+                          Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), /* None */0, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
                         ]];
                       break;
                   default:
