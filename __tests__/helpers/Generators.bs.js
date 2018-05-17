@@ -295,7 +295,7 @@ function withPartnerProposed($staropt$star, issuer, $staropt$star$1, supporter, 
             var $$event = param[/* event */0];
             if ($$event.tag === 8) {
               var $$event$1 = $$event[0];
-              if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* id */0], prospect[/* userId */0])) {
+              if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */3][/* id */0], prospect[/* userId */0])) {
                 return /* Some */[$$event$1];
               } else {
                 return res;
@@ -357,7 +357,7 @@ function withPartnerRemovalProposed(supporter, toBeRemoved, l) {
               var $$event = param[/* event */0];
               if ($$event.tag === 4) {
                 var $$event$1 = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* id */1], toBeRemoved[/* userId */0])) {
+                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */3][/* id */1], toBeRemoved[/* userId */0])) {
                   return /* Some */[$$event$1];
                 } else {
                   return res;
@@ -425,7 +425,7 @@ function withCustodianProposed(supporter, custodian, l) {
           switch ($$event.tag | 0) {
             case 1 : 
                 var proposal = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */5][/* id */1], custodian[/* userId */0])) {
+                if (PrimitiveTypes.UserId[/* eq */5](proposal[/* data */6][/* id */1], custodian[/* userId */0])) {
                   return /* tuple */[
                           /* Some */[proposal],
                           custodianRemoved
@@ -438,7 +438,7 @@ function withCustodianProposed(supporter, custodian, l) {
                 }
             case 20 : 
                 var removal = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5](removal[/* data */2][/* custodianId */0], custodian[/* userId */0])) {
+                if (PrimitiveTypes.UserId[/* eq */5](removal[/* data */3][/* custodianId */0], custodian[/* userId */0])) {
                   return /* tuple */[
                           partnerProposal,
                           /* Some */[removal]
@@ -494,7 +494,7 @@ function withCustodianRemovalProposed(supporter, toBeRemoved, l) {
               var $$event = param[/* event */0];
               if ($$event.tag === 16) {
                 var $$event$1 = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* partnerId */0], toBeRemoved[/* userId */0])) {
+                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */3][/* partnerId */0], toBeRemoved[/* userId */0])) {
                   return /* Some */[$$event$1];
                 } else {
                   return res;
@@ -541,7 +541,7 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
             var match = $$event[0];
             return /* :: */[
                     /* tuple */[
-                      match[/* data */2][/* partnerId */0],
+                      match[/* data */3][/* partnerId */0],
                       match[/* processId */0]
                     ],
                     res
@@ -563,7 +563,7 @@ function withAccountKeyChainIdentified(l) {
           switch ($$event.tag | 0) {
             case 8 : 
                 try {
-                  return List.remove_assoc($$event[0][/* data */2][/* id */0], res);
+                  return List.remove_assoc($$event[0][/* data */3][/* id */0], res);
                 }
                 catch (exn){
                   if (exn === Caml_builtin_exceptions.not_found) {
@@ -574,7 +574,7 @@ function withAccountKeyChainIdentified(l) {
                 }
             case 20 : 
                 try {
-                  return List.remove_assoc($$event[0][/* data */2][/* custodianId */0], res);
+                  return List.remove_assoc($$event[0][/* data */3][/* custodianId */0], res);
                 }
                 catch (exn$1){
                   if (exn$1 === Caml_builtin_exceptions.not_found) {

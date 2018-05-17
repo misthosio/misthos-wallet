@@ -35,7 +35,7 @@ function apply($$event, state) {
                 /* accountKeyChains */state[/* accountKeyChains */1],
                 /* balance : :: */[
                   /* tuple */[
-                    $$event[0][/* data */2][/* accountIdx */0],
+                    $$event[0][/* data */3][/* accountIdx */0],
                     /* record */[
                       /* currentSpendable */BTC.zero,
                       /* reserved */BTC.zero
@@ -47,7 +47,7 @@ function apply($$event, state) {
               ];
     case 21 : 
         var match = $$event[0];
-        var data = match[/* data */5];
+        var data = match[/* data */6];
         var balance = List.assoc(data[/* accountIdx */0], state[/* balance */2]);
         var payoutSummary = PayoutTransaction.summary(state[/* network */0], data[/* payoutTx */1]);
         return /* record */[

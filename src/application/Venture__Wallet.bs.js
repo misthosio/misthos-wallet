@@ -64,7 +64,7 @@ function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) 
           }), payoutTx[/* changeAddress */3]);
     var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], walletInfoCollector[/* keyChains */3], payoutTx, network);
     var payoutTx$1 = match ? match[0] : payoutTx;
-    return /* Ok */[Curry._5(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, userId, param$1[/* payoutPolicy */2], /* record */[
+    return /* Ok */[Curry._6(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, /* None */0, userId, param$1[/* payoutPolicy */2], /* record */[
                   /* accountIdx */accountIdx,
                   /* payoutTx */payoutTx$1,
                   /* changeAddressCoordinates */changeAddressCoordinates

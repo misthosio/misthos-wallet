@@ -32,9 +32,9 @@ function apply($$event, state) {
                 /* prospects : :: */[
                   /* record */[
                     /* processId */match[/* processId */0],
-                    /* userId */match[/* data */5][/* id */1],
+                    /* userId */match[/* data */6][/* id */1],
                     /* endorsedBy : :: */[
-                      match[/* supporterId */3],
+                      match[/* supporterId */4],
                       /* [] */0
                     ]
                   ],
@@ -69,7 +69,7 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */4]
               ];
     case 4 : 
-        var data = $$event[0][/* data */2];
+        var data = $$event[0][/* data */3];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners : :: */[
@@ -88,7 +88,7 @@ function apply($$event, state) {
               ];
     case 5 : 
         var match$2 = $$event[0];
-        var data$1 = match$2[/* data */5];
+        var data$1 = match$2[/* data */6];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */List.map((function (p) {
@@ -109,7 +109,7 @@ function apply($$event, state) {
                     /* processId */match$2[/* processId */0],
                     /* userId */data$1[/* id */0],
                     /* endorsedBy : :: */[
-                      match$2[/* supporterId */3],
+                      match$2[/* supporterId */4],
                       /* [] */0
                     ]
                   ],
@@ -144,7 +144,7 @@ function apply($$event, state) {
               ];
     case 8 : 
         var match$4 = $$event[0];
-        var id = match$4[/* data */2][/* id */0];
+        var id = match$4[/* data */3][/* id */0];
         var processId$2 = match$4[/* processId */0];
         return /* record */[
                 /* localUser */state[/* localUser */0],

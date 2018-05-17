@@ -16,7 +16,7 @@ describe("With 1 partner and a proposal", (function () {
         var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */5](log));
         return WatcherHelpers.testWatcherHasEventPending("AccountCreationAccepted", watcher, Generators.Log[/* systemIssuer */2](log), (function (param) {
                       if (param.tag === 12) {
-                        return Caml_obj.caml_equal(param[0][/* data */2], proposal[/* data */5]);
+                        return Caml_obj.caml_equal(param[0][/* data */3], proposal[/* data */6]);
                       } else {
                         return false;
                       }

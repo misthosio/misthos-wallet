@@ -16,7 +16,7 @@ function update($$event, param) {
   var accounts = param[/* accounts */0];
   var accounts$1;
   accounts$1 = $$event.tag === 12 ? /* :: */[
-      $$event[0][/* data */2][/* accountIdx */0],
+      $$event[0][/* data */3][/* accountIdx */0],
       accounts
     ] : accounts;
   return /* record */[

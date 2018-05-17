@@ -931,7 +931,7 @@ var BadData = Caml_exceptions.create("Event.BadData");
 
 function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
   var lastPartnerRemovalProcess = Utils.mapOption((function (param) {
-          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* id */0], prospectId)) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */3][/* id */0], prospectId)) {
             throw [
                   BadData,
                   "The provided PartnerRemovalAccepted wasn't for the same partner"
@@ -942,7 +942,7 @@ function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemova
   var dependsOnCompletions = Js_option.getWithDefault(/* array */[], Utils.mapOption((function (p) {
               return /* array */[p];
             }), lastPartnerRemovalProcess));
-  return /* PartnerProposed */Block.__(1, [Curry._5(Proposed[/* make */0], /* None */0, /* Some */[dependsOnCompletions], supporterId, policy, /* record */[
+  return /* PartnerProposed */Block.__(1, [Curry._6(Proposed[/* make */0], /* None */0, /* Some */[dependsOnCompletions], /* None */0, supporterId, policy, /* record */[
                   /* lastPartnerRemovalProcess */lastPartnerRemovalProcess,
                   /* id */prospectId,
                   /* pubKey */prospectPubKey
@@ -950,24 +950,24 @@ function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemova
 }
 
 function makePartnerRemovalProposed(lastPartnerAccepted, supporterId, policy) {
-  return /* PartnerRemovalProposed */Block.__(5, [Curry._5(Proposed$1[/* make */0], /* None */0, /* Some */[/* array */[lastPartnerAccepted[/* processId */0]]], supporterId, policy, /* record */[
-                  /* id */lastPartnerAccepted[/* data */2][/* id */1],
+  return /* PartnerRemovalProposed */Block.__(5, [Curry._6(Proposed$1[/* make */0], /* None */0, /* Some */[/* array */[lastPartnerAccepted[/* processId */0]]], /* None */0, supporterId, policy, /* record */[
+                  /* id */lastPartnerAccepted[/* data */3][/* id */1],
                   /* lastPartnerProcess */lastPartnerAccepted[/* processId */0]
                 ])]);
 }
 
 function makeAccountCreationProposed(supporterId, name, accountIdx, policy) {
-  return /* AccountCreationProposed */Block.__(9, [Curry._5(Proposed$2[/* make */0], /* None */0, /* None */0, supporterId, policy, /* record */[
+  return /* AccountCreationProposed */Block.__(9, [Curry._6(Proposed$2[/* make */0], /* None */0, /* None */0, /* None */0, supporterId, policy, /* record */[
                   /* accountIdx */accountIdx,
                   /* name */name
                 ])]);
 }
 
 function makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposed, supporterId, accountIdx, policy) {
-  var partnerId = partnerProposed[/* data */5][/* id */1];
+  var partnerId = partnerProposed[/* data */6][/* id */1];
   var partnerApprovalProcess = partnerProposed[/* processId */0];
   var lastCustodianRemovalProcess = Utils.mapOption((function (param) {
-          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* custodianId */0], partnerId)) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */3][/* custodianId */0], partnerId)) {
             throw [
                   BadData,
                   "The provided CustodianRemovalAccepted wasn't for the same custodian"
@@ -975,7 +975,7 @@ function makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposed, su
           }
           return param[/* processId */0];
         }), lastCustodianRemovalAccepted);
-  return /* CustodianProposed */Block.__(13, [Curry._5(Proposed$3[/* make */0], /* Some */[/* array */[partnerApprovalProcess]], /* None */0, supporterId, policy, /* record */[
+  return /* CustodianProposed */Block.__(13, [Curry._6(Proposed$3[/* make */0], /* Some */[/* array */[partnerApprovalProcess]], /* None */0, /* None */0, supporterId, policy, /* record */[
                   /* partnerId */partnerId,
                   /* partnerApprovalProcess */partnerApprovalProcess,
                   /* lastCustodianRemovalProcess */lastCustodianRemovalProcess,
@@ -985,8 +985,8 @@ function makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposed, su
 
 function makeCustodianRemovalProposed(custodianAccepted, supporterId, accountIdx, policy) {
   var lastCustodianProcess = custodianAccepted[/* processId */0];
-  return /* CustodianRemovalProposed */Block.__(17, [Curry._5(Proposed$4[/* make */0], /* None */0, /* Some */[/* array */[lastCustodianProcess]], supporterId, policy, /* record */[
-                  /* custodianId */custodianAccepted[/* data */2][/* partnerId */0],
+  return /* CustodianRemovalProposed */Block.__(17, [Curry._6(Proposed$4[/* make */0], /* None */0, /* Some */[/* array */[lastCustodianProcess]], /* None */0, supporterId, policy, /* record */[
+                  /* custodianId */custodianAccepted[/* data */3][/* partnerId */0],
                   /* accountIdx */accountIdx,
                   /* lastCustodianProcess */lastCustodianProcess
                 ])]);

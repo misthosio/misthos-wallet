@@ -160,9 +160,9 @@ function apply(param, state) {
                   /* payouts : :: */[
                     /* record */[
                       /* processId */match$1[/* processId */0],
-                      /* payoutTx */match$1[/* data */5][/* payoutTx */1],
+                      /* payoutTx */match$1[/* data */6][/* payoutTx */1],
                       /* endorsedBy : :: */[
-                        match$1[/* supporterId */3],
+                        match$1[/* supporterId */4],
                         /* [] */0
                       ],
                       /* rejectedBy : [] */0,

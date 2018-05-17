@@ -33,7 +33,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
           var partners = param[0];
           switch ($$event.tag | 0) {
             case 4 : 
-                var data = $$event[0][/* data */2];
+                var data = $$event[0][/* data */3];
                 return /* tuple */[
                         /* :: */[
                           data[/* id */1],
@@ -51,7 +51,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                       ];
             case 5 : 
                 var match = $$event[0];
-                var id = match[/* data */5][/* id */0];
+                var id = match[/* data */6][/* id */0];
                 var removals;
                 try {
                   removals = List.assoc(id, removalProcesses);
@@ -121,7 +121,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                         ]
                       ];
             case 8 : 
-                var id$3 = $$event[0][/* data */2][/* id */0];
+                var id$3 = $$event[0][/* data */3][/* id */0];
                 var removals$3 = List.assoc(id$3, removalProcesses);
                 var partial_arg = PrimitiveTypes.UserId[/* neq */6];
                 return /* tuple */[
@@ -143,7 +143,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                       ];
             case 17 : 
                 var match$1 = $$event[0];
-                var custodianId = match$1[/* data */5][/* custodianId */0];
+                var custodianId = match$1[/* data */6][/* custodianId */0];
                 var removals$4;
                 try {
                   removals$4 = List.assoc(custodianId, removalProcesses);
@@ -213,7 +213,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                         ]
                       ];
             case 20 : 
-                var custodianId$1 = $$event[0][/* data */2][/* custodianId */0];
+                var custodianId$1 = $$event[0][/* data */3][/* custodianId */0];
                 var removals$7 = List.assoc(custodianId$1, removalProcesses);
                 var partial_arg$1 = PrimitiveTypes.UserId[/* neq */6];
                 return /* tuple */[

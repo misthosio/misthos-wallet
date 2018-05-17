@@ -64,7 +64,7 @@ function make(proposal, log) {
                     var init$1 = self$1[state][0];
                     tmp = /* record */[
                       /* eligable : :: */[
-                        $$event[0][/* data */2][/* id */1],
+                        $$event[0][/* data */3][/* id */1],
                         self$1[state][0][/* eligable */0]
                       ],
                       /* endorsements */init$1[/* endorsements */1],
@@ -93,7 +93,7 @@ function make(proposal, log) {
                     break;
                 case 8 : 
                     var $$event$3 = $$event[0];
-                    var id = $$event$3[/* data */2][/* id */0];
+                    var id = $$event$3[/* data */3][/* id */0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$3[/* processId */0], env$1[0][/* processId */0])) {
                       self$1[completed][0] = true;
                       tmp = self$1[state][0];
@@ -150,10 +150,10 @@ function make(proposal, log) {
       self[state] = [/* record */[
           /* eligable : [] */0,
           /* endorsements : :: */[
-            env$1[1][/* supporterId */3],
+            env$1[1][/* supporterId */4],
             /* [] */0
           ],
-          /* policy */env$1[1][/* policy */4],
+          /* policy */env$1[1][/* policy */5],
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* creatorId */PrimitiveTypes.UserId[/* fromString */1]("")
         ]];

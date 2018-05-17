@@ -197,7 +197,7 @@ describe("integration", (function () {
                                   return Promise.all(/* tuple */[
                                               Promise.resolve($$event[/* processId */0]),
                                               Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
-                                                        $$event[/* data */5][/* payoutTx */1],
+                                                        $$event[/* data */6][/* payoutTx */1],
                                                         /* [] */0
                                                       ], /* Regtest */0))
                                             ]);
@@ -233,7 +233,7 @@ describe("integration", (function () {
                       var tmp;
                       if (param) {
                         var $$event = param[0];
-                        var data = $$event[/* data */5];
+                        var data = $$event[/* data */6];
                         var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* walletInfoCollector */3][/* keyChains */3], data[/* payoutTx */1], /* Regtest */0));
                         tmp = Promise.all(/* tuple */[
                               Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),
