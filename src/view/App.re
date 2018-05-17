@@ -23,32 +23,32 @@ let make = (~session, ~updateSession, _children) => {
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
+        None :
         Some((
           <ManagePartnersModal
             viewData=(venture |> ViewModel.managePartnersModal)
             commands
           />,
           onCloseModal(selected),
-        )) :
-        None
+        ))
     | (
         LoggedIn(_),
         Venture(selected, Receive),
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
-        Some((<Receive commands />, onCloseModal(selected))) : None
+        None : Some((<Receive commands />, onCloseModal(selected)))
     | (
         LoggedIn(_),
         Venture(selected, Payout),
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
+        None :
         Some((
           <PayoutModal viewData=(venture |> ViewModel.payoutModal) commands />,
           onCloseModal(selected),
-        )) :
-        None
+        ))
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>

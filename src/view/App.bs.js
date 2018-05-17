@@ -49,14 +49,14 @@ function make(session, updateSession, _) {
               var venture = selectedVenture[1];
               var match = ViewModel.readOnly(venture);
               if (match) {
+                return /* None */0;
+              } else {
                 return /* Some */[/* tuple */[
                           ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), selectedVenture[2], /* array */[])),
                           (function (param) {
                               return onCloseModal(selected, param);
                             })
                         ]];
-              } else {
-                return /* None */0;
               }
             }
         case 2 : 
@@ -66,14 +66,14 @@ function make(session, updateSession, _) {
               var venture$1 = selectedVenture[1];
               var match$1 = ViewModel.readOnly(venture$1);
               if (match$1) {
+                return /* None */0;
+              } else {
                 return /* Some */[/* tuple */[
                           ReasonReact.element(/* None */0, /* None */0, PayoutModal.make(ViewModel.payoutModal(venture$1), selectedVenture[2], /* array */[])),
                           (function (param) {
                               return onCloseModal(selected, param);
                             })
                         ]];
-              } else {
-                return /* None */0;
               }
             }
         case 3 : 
@@ -82,14 +82,14 @@ function make(session, updateSession, _) {
             } else {
               var match$2 = ViewModel.readOnly(selectedVenture[1]);
               if (match$2) {
+                return /* None */0;
+              } else {
                 return /* Some */[/* tuple */[
                           ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[2], /* array */[])),
                           (function (param) {
                               return onCloseModal(selected, param);
                             })
                         ]];
-              } else {
-                return /* None */0;
               }
             }
         
