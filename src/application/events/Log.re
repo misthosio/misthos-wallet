@@ -39,6 +39,7 @@ module Make = (Event: Encodable) => {
     (item, Array.append(log, [|item|]));
   };
   let appendItem = (item, log) => Array.append(log, [|item|]);
+  let appendItems = (items, log) => Array.append(log, items);
   let reduce = (reducer, start, log) =>
     log |> Array.fold_left(reducer, start);
   let findNewItems = (~other, log) => {

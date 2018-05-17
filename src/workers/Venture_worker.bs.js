@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
+var EventLog = require("../application/events/EventLog.bs.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -38,6 +39,10 @@ function logError(error) {
   return /* () */0;
 }
 
+function sessionPending() {
+  return postMessage$1(/* None */0, /* SessionPending */0);
+}
+
 function sessionStarted(blockstackItems) {
   return postMessage$1(/* None */0, /* SessionStarted */Block.__(0, [blockstackItems]));
 }
@@ -49,24 +54,24 @@ function indexUpdated(index) {
 function ventureLoaded(id, venture, newItems) {
   return postMessage$1(/* None */0, /* VentureLoaded */Block.__(3, [
                 id,
-                Venture.getAllItems(venture),
+                Venture.getEventLog(venture),
                 newItems
               ]));
 }
 
 function ventureJoined(id, venture) {
-  var items = Venture.getAllItems(venture);
+  var log = Venture.getEventLog(venture);
   return postMessage$1(/* None */0, /* VentureLoaded */Block.__(3, [
                 id,
-                items,
-                items
+                log,
+                Curry._1(EventLog.items, log)
               ]));
 }
 
 function ventureCreated(venture) {
   return postMessage$1(/* None */0, /* VentureCreated */Block.__(4, [
                 Venture.getId(venture),
-                Venture.getAllItems(venture)
+                Venture.getEventLog(venture)
               ]));
 }
 
@@ -89,6 +94,7 @@ function newItems(id, items) {
 }
 
 var Notify = /* module */[
+  /* sessionPending */sessionPending,
   /* sessionStarted */sessionStarted,
   /* indexUpdated */indexUpdated,
   /* ventureLoaded */ventureLoaded,
@@ -260,6 +266,7 @@ function updateSession(items, state) {
                     }
                     
                   } else {
+                    postMessage$1(/* None */0, /* SessionPending */0);
                     return Promise.resolve(/* None */0);
                   }
                 }))];

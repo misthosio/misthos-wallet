@@ -210,7 +210,7 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
   };
 
 let init = localUser =>
-  Array.fold_left((m, item) => m |> apply(item), make(localUser));
+  EventLog.reduce((m, item) => m |> apply(item), make(localUser));
 
 let applyAll = (events, model) =>
   events |> Array.fold_left((m, item) => m |> apply(item), model);

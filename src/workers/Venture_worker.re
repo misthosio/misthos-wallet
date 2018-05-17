@@ -33,20 +33,21 @@ let logError = error => {
 };
 
 module Notify = {
+  let sessionPending = () => postMessage(SessionPending);
   let sessionStarted = blockstackItems =>
     postMessage(SessionStarted(blockstackItems));
   let indexUpdated = index => postMessage(UpdateIndex(index));
   let ventureLoaded = (id, venture, newItems) =>
-    postMessage(VentureLoaded(id, venture |> Venture.getAllItems, newItems));
+    postMessage(VentureLoaded(id, venture |> Venture.getEventLog, newItems));
   let ventureJoined = (id, venture) => {
-    let items = venture |> Venture.getAllItems;
-    postMessage(VentureLoaded(id, items, items));
+    let log = venture |> Venture.getEventLog;
+    postMessage(VentureLoaded(id, log, log |> EventLog.items));
   };
   let ventureCreated = venture =>
     postMessage(
       VentureCreated(
         venture |> Venture.getId,
-        venture |> Venture.getAllItems,
+        venture |> Venture.getEventLog,
       ),
     );
   let newIncomeAddress = (syncId, ventureId, address) =>
@@ -209,7 +210,9 @@ module Handle = {
                |> then_(index => index |> Notify.indexUpdated |> resolve)
                |> ignore;
                resolve(Some((data, [])));
-             | _ => resolve(None)
+             | _ =>
+               Notify.sessionPending();
+               resolve(None);
              }
            ),
     };

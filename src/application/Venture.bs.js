@@ -295,8 +295,8 @@ function getSummary(param) {
   return Curry._1(EventLog.getSummary, param[/* log */2]);
 }
 
-function getAllItems(param) {
-  return Curry._1(EventLog.items, param[/* log */2]);
+function getEventLog(param) {
+  return param[/* log */2];
 }
 
 function exec(session, ventureName) {
@@ -669,7 +669,7 @@ exports.NotPersistingNewEvents = NotPersistingNewEvents;
 exports.load = load;
 exports.join = join;
 exports.getId = getId;
-exports.getAllItems = getAllItems;
+exports.getEventLog = getEventLog;
 exports.getSummary = getSummary;
 exports.Cmd = Cmd;
 /* Event Not a pure module */

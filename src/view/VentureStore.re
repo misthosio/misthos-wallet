@@ -187,14 +187,14 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         | (UpdateIndex(index), _) =>
           updateOtherTabs(msg);
           ReasonReact.Update({...state, index: Some(index)});
-        | (VentureCreated(ventureId, events), _) =>
+        | (VentureCreated(ventureId, log), _) =>
           ReasonReact.UpdateWithSideEffects(
             {
               ...state,
               selectedVenture:
                 VentureLoaded(
                   ventureId,
-                  ViewModel.init(sessionData.userId, events),
+                  ViewModel.init(sessionData.userId, log),
                   VentureWorkerClient.Cmd.make(
                     state.ventureWorker^,
                     ventureId,
@@ -203,7 +203,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             },
             ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
           )
-        | (VentureLoaded(ventureId, events, _), JoiningVenture(joiningId))
+        | (VentureLoaded(ventureId, log, _), JoiningVenture(joiningId))
             when VentureId.eq(ventureId, joiningId) =>
           ReasonReact.UpdateWithSideEffects(
             {
@@ -211,7 +211,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
               selectedVenture:
                 VentureLoaded(
                   ventureId,
-                  ViewModel.init(sessionData.userId, events),
+                  ViewModel.init(sessionData.userId, log),
                   VentureWorkerClient.Cmd.make(
                     state.ventureWorker^,
                     ventureId,

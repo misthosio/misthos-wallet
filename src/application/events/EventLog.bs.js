@@ -17,30 +17,33 @@ var append = include[2];
 
 var appendItem = include[3];
 
-var reduce = include[4];
+var appendItems = include[4];
 
-var findNewItems = include[5];
+var reduce = include[5];
 
-var length = include[6];
+var findNewItems = include[6];
 
-var encode = include[7];
+var length = include[7];
 
-var decode = include[8];
+var encode = include[8];
 
-var encodeItem = include[9];
+var decode = include[9];
 
-var decodeItem = include[10];
+var encodeItem = include[10];
 
-var getSummary = include[11];
+var decodeItem = include[11];
 
-var encodeSummary = include[12];
+var getSummary = include[12];
 
-var decodeSummary = include[13];
+var encodeSummary = include[13];
+
+var decodeSummary = include[14];
 
 exports.make = make;
 exports.items = items;
 exports.append = append;
 exports.appendItem = appendItem;
+exports.appendItems = appendItems;
 exports.reduce = reduce;
 exports.findNewItems = findNewItems;
 exports.length = length;

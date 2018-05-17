@@ -39,6 +39,9 @@ let handleMsg = (venturesPromise, msg) =>
     venturesPromise
     |> then_(ventures =>
          switch (msg) {
+         | SessionPending =>
+           logMessage("Handling 'SessionPending'");
+           VentureId.makeMap() |> resolve;
          | SessionStarted(items) =>
            logMessage("Handling 'SessionStarted'");
            items |> WorkerLocalStorage.setBlockstackItems;
@@ -48,9 +51,7 @@ let handleMsg = (venturesPromise, msg) =>
                   index
                   |. List.map(({id}: Venture.Index.item) =>
                        WorkerUtils.loadVenture(id)
-                       |> then_(venture =>
-                            (id, venture |> EventLog.items) |> resolve
-                          )
+                       |> then_(venture => (id, venture) |> resolve)
                      )
                   |> List.toArray,
                 )
@@ -58,17 +59,17 @@ let handleMsg = (venturesPromise, msg) =>
                      ventures |> Map.mergeMany(VentureId.makeMap()) |> resolve
                    )
               );
-         | VentureLoaded(ventureId, items, _) =>
+         | VentureLoaded(ventureId, log, _) =>
            logMessage("Handling 'VentureLoaded'");
-           ventures |. Map.set(ventureId, items) |> resolve;
-         | VentureCreated(ventureId, items) =>
+           ventures |. Map.set(ventureId, log) |> resolve;
+         | VentureCreated(ventureId, log) =>
            logMessage("Handling 'VentureCreated'");
-           ventures |. Map.set(ventureId, items) |> resolve;
+           ventures |. Map.set(ventureId, log) |> resolve;
          | NewItems(ventureId, items) =>
            logMessage("Handling 'NewItems'");
            let venture = ventures |. Map.getExn(ventureId);
            ventures
-           |. Map.set(ventureId, Js.Array.concat(venture, items))
+           |. Map.set(ventureId, venture |> EventLog.appendItems(items))
            |> resolve;
          | NewIncomeAddress(_, _)
          | UpdateIndex(_) => ventures |> resolve
@@ -78,7 +79,7 @@ let handleMsg = (venturesPromise, msg) =>
 
 let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
 
-let venturesPromise: ref(Js.Promise.t(VentureId.map(array(EventLog.item)))) =
+let venturesPromise: ref(Js.Promise.t(VentureId.map(EventLog.t))) =
   ref(VentureId.makeMap() |> Js.Promise.resolve);
 
 onMessage(self, msg =>

@@ -30,7 +30,7 @@ describe("findNewItems", (function () {
                       var other = Curry._3(TestLog[/* append */2], keyPair, " that yellow snow", Curry._3(TestLog[/* append */2], keyPair, " eat", Curry._3(TestLog[/* append */2], keyPair, " and don't you", log)[1])[1])[1];
                       var result = $$Array.fold_left((function (state, param) {
                               return state + param[/* event */0];
-                            }), "", Curry._2(TestLog[/* findNewItems */5], other, log));
+                            }), "", Curry._2(TestLog[/* findNewItems */6], other, log));
                       return Jest.Expect[/* toEqual */12](" and don't you eat that yellow snow", Jest.Expect[/* expect */0](result));
                     }));
       }));

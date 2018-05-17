@@ -227,7 +227,7 @@ let getId = ({id}) => id;
 
 let getSummary = ({log}) => log |> EventLog.getSummary;
 
-let getAllItems = ({log}) => log |> EventLog.items;
+let getEventLog = ({log}) => log;
 
 module Cmd = {
   module Create = {

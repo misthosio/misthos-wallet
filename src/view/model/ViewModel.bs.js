@@ -4,8 +4,10 @@
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Policy = require("../../application/Policy.bs.js");
 var Router = require("../Router.bs.js");
+var EventLog = require("../../application/events/EventLog.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
@@ -264,12 +266,9 @@ function apply(param, state) {
 }
 
 function init(localUser) {
-  var partial_arg = make(localUser);
-  return (function (param) {
-      return $$Array.fold_left((function (m, item) {
-                    return apply(item, m);
-                  }), partial_arg, param);
-    });
+  return Curry._2(EventLog.reduce, (function (m, item) {
+                return apply(item, m);
+              }), make(localUser));
 }
 
 function applyAll(events, model) {

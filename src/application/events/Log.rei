@@ -19,6 +19,7 @@ module Make:
     let items: t => array(item);
     let append: (Bitcoin.ECPair.t, Event.t, t) => (item, t);
     let appendItem: (item, t) => t;
+    let appendItems: (array(item), t) => t;
     let reduce: (('s, item) => 's, 's, t) => 's;
     let findNewItems: (~other: t, t) => array(item);
     let length: t => int;
