@@ -13,20 +13,11 @@ external onMessage :
   (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
   "onmessage";
 
-[@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
-
 open Belt;
 
 open PrimitiveTypes;
 
 open VentureWorkerMessage;
-
-let postMessage = msg =>
-  {
-    "msg": msg |> VentureWorkerMessage.encodeIncoming,
-    "syncId": WebWorker.emptySyncId,
-  }
-  |> _postMessage;
 
 let logLabel = "[Data Worker]";
 

@@ -9,7 +9,6 @@ var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
-var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -105,8 +104,8 @@ function detectIncomeFromVenture(ventureId, eventLog) {
 }
 
 function doWork(ventures) {
-  return Belt_Array.forEachU(Belt_Map.toArray(ventures), (function (param) {
-                return catchAndLogError(detectIncomeFromVenture(param[0], param[1]));
+  return Belt_Map.forEachU(ventures, (function (id, log) {
+                return catchAndLogError(detectIncomeFromVenture(id, log));
               }));
 }
 

@@ -102,7 +102,6 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
 
 let doWork = (ventures: VentureId.map(EventLog.t)) =>
   ventures
-  |> Map.toArray
-  |. Array.forEachU((. (id, log)) =>
+  |. Map.forEachU((. id, log) =>
        detectIncomeFromVenture(id, log) |> catchAndLogError
      );

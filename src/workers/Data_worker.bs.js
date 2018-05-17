@@ -6,25 +6,15 @@ var Venture = require("../application/Venture.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var WebWorker = require("../ffi/WebWorker.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var IncomeCollection = require("./IncomeCollection.bs.js");
 var DataWorkerMessage = require("./DataWorkerMessage.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
-var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
 
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
-
-function postMessage$1(msg) {
-  postMessage({
-        msg: VentureWorkerMessage.encodeIncoming(msg),
-        syncId: WebWorker.emptySyncId
-      });
-  return /* () */0;
-}
 
 var logLabel = "[Data Worker]";
 
@@ -101,7 +91,6 @@ var tenSecondsInMilliseconds = 10000;
 
 var syncInterval = 10000;
 
-exports.postMessage = postMessage$1;
 exports.logLabel = logLabel;
 exports.logMessage = logMessage;
 exports.catchAndLogError = catchAndLogError;
