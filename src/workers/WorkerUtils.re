@@ -14,3 +14,18 @@ let loadVenture = ventureId =>
          }
        )
   );
+
+let logMessage = (label, msg) => Js.log(label ++ " - " ++ msg);
+
+let logError = (label, error) => {
+  Js.Console.error(label ++ " - Encountered an unhandled exception");
+  Js.Console.error(error);
+};
+
+let catchAndLogError = (label, promise) =>
+  promise
+  |> Js.Promise.catch(err => {
+       logError(label, err);
+       Js.Promise.resolve();
+     })
+  |> ignore;

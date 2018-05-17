@@ -20,6 +20,28 @@ function loadVenture(ventureId) {
               }));
 }
 
+function logMessage(label, msg) {
+  console.log(label + (" - " + msg));
+  return /* () */0;
+}
+
+function logError(label, error) {
+  console.error(label + " - Encountered an unhandled exception");
+  console.error(error);
+  return /* () */0;
+}
+
+function catchAndLogError(label, promise) {
+  promise.catch((function (err) {
+          logError(label, err);
+          return Promise.resolve(/* () */0);
+        }));
+  return /* () */0;
+}
+
 exports.CouldNotLoadVenture = CouldNotLoadVenture;
 exports.loadVenture = loadVenture;
+exports.logMessage = logMessage;
+exports.logError = logError;
+exports.catchAndLogError = catchAndLogError;
 /* EventLog Not a pure module */

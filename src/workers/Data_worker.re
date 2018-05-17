@@ -28,13 +28,17 @@ let postMessage = msg =>
   }
   |> _postMessage;
 
-let logMessage = msg => Js.log("[Data Worker] - " ++ msg);
+let logLabel = "[Data Worker]";
+
+let logMessage = WorkerUtils.logMessage(logLabel);
+
+let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
 let tenSecondsInMilliseconds = 10000;
 
 let syncInterval = tenSecondsInMilliseconds;
 
-let handleMsg = (venturesPromise, msg) =>
+let handleMsg = (venturesPromise, doWork, msg) =>
   Js.Promise.(
     venturesPromise
     |> then_(ventures =>
@@ -55,9 +59,12 @@ let handleMsg = (venturesPromise, msg) =>
                      )
                   |> List.toArray,
                 )
-                |> then_(ventures =>
-                     ventures |> Map.mergeMany(VentureId.makeMap()) |> resolve
-                   )
+                |> then_(ventures => {
+                     let ventures =
+                       ventures |> Map.mergeMany(VentureId.makeMap());
+                     doWork(ventures);
+                     ventures |> resolve;
+                   })
               );
          | VentureLoaded(ventureId, log, _) =>
            logMessage("Handling 'VentureLoaded'");
@@ -82,18 +89,33 @@ let intervalId: ref(option(Js.Global.intervalId)) = ref(None);
 let venturesPromise: ref(Js.Promise.t(VentureId.map(EventLog.t))) =
   ref(VentureId.makeMap() |> Js.Promise.resolve);
 
-onMessage(self, msg =>
-  venturesPromise :=
-    handleMsg(
-      venturesPromise^,
-      msg##data##msg |> DataWorkerMessage.decodeIncoming,
-    )
+onMessage(
+  self,
+  msg => {
+    let doWork = ventures => IncomeCollection.doWork(ventures);
+    venturesPromise :=
+      handleMsg(
+        venturesPromise^,
+        doWork,
+        msg##data##msg |> DataWorkerMessage.decodeIncoming,
+      );
+    intervalId :=
+      (
+        switch (intervalId^) {
+        | None =>
+          Some(
+            Js.Global.setInterval(
+              () =>
+                Js.Promise.(
+                  venturesPromise^
+                  |> then_(ventures => doWork(ventures) |> resolve)
+                  |> catchAndLogError
+                ),
+              syncInterval,
+            ),
+          )
+        | id => id
+        }
+      );
+  },
 );
-/* intervalId^ */
-/* |> Utils.mapOption(id => */
-/*      if (newIntervalid != id) { */
-/*        Js.Global.clearInterval(id); */
-/*      } */
-/*    ) */
-/* |> ignore; */
-/* intervalId := Some(newIntervalid); */

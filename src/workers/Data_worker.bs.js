@@ -9,6 +9,7 @@ var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var WebWorker = require("../ffi/WebWorker.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var IncomeCollection = require("./IncomeCollection.bs.js");
 var DataWorkerMessage = require("./DataWorkerMessage.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
@@ -25,12 +26,17 @@ function postMessage$1(msg) {
   return /* () */0;
 }
 
-function logMessage(msg) {
-  console.log("[Data Worker] - " + msg);
-  return /* () */0;
+var logLabel = "[Data Worker]";
+
+function logMessage(param) {
+  return WorkerUtils.logMessage(logLabel, param);
 }
 
-function handleMsg(venturesPromise, msg) {
+function catchAndLogError(param) {
+  return WorkerUtils.catchAndLogError(logLabel, param);
+}
+
+function handleMsg(venturesPromise, doWork, msg) {
   return venturesPromise.then((function (ventures) {
                 if (typeof msg === "number") {
                   logMessage("Handling 'SessionPending'");
@@ -50,7 +56,9 @@ function handleMsg(venturesPromise, msg) {
                                                                                       ]);
                                                                           }));
                                                             })))).then((function (ventures) {
-                                                    return Promise.resolve(Belt_Map.mergeMany(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0), ventures));
+                                                    var ventures$1 = Belt_Map.mergeMany(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0), ventures);
+                                                    Curry._1(doWork, ventures$1);
+                                                    return Promise.resolve(ventures$1);
                                                   }));
                                     }));
                     case 1 : 
@@ -78,7 +86,14 @@ var intervalId = [/* None */0];
 var venturesPromise = [Promise.resolve(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0))];
 
 self.onmessage = (function (msg) {
-    venturesPromise[0] = handleMsg(venturesPromise[0], DataWorkerMessage.decodeIncoming(msg.data.msg));
+    var doWork = IncomeCollection.doWork;
+    venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.msg));
+    var id = intervalId[0];
+    intervalId[0] = id ? id : /* Some */[setInterval((function () {
+                return catchAndLogError(venturesPromise[0].then((function (ventures) {
+                                  return Promise.resolve(IncomeCollection.doWork(ventures));
+                                })));
+              }), 10000)];
     return /* () */0;
   });
 
@@ -87,7 +102,9 @@ var tenSecondsInMilliseconds = 10000;
 var syncInterval = 10000;
 
 exports.postMessage = postMessage$1;
+exports.logLabel = logLabel;
 exports.logMessage = logMessage;
+exports.catchAndLogError = catchAndLogError;
 exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
 exports.syncInterval = syncInterval;
 exports.handleMsg = handleMsg;
