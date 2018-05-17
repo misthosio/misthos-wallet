@@ -85,7 +85,6 @@ let make = (~session, ~updateSession, _children) => {
         VentureLoaded(_ventureId, venture, commands),
       ) =>
       <SelectedVenture
-        venture
         viewData=(venture |> ViewModel.selectedVenture)
         commands
         session

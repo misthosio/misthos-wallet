@@ -67,14 +67,50 @@ module PayoutView = {
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
+  type prospect = PartnersCollector.prospect;
+  type confirmedTx = TransactionCollector.confirmedTx;
+  type unconfirmedTx = TransactionCollector.unconfirmedTx;
+  type nonrec payoutStatus = payoutStatus;
+  type nonrec payout = payout;
+  type balance = BalanceCollector.balance;
   type t = {
+    ventureId,
+    ventureName: string,
     readOnly: bool,
     partners: list(partner),
+    prospects: list(prospect),
+    removalProspects: list(prospect),
+    transactions: (list(confirmedTx), list(unconfirmedTx)),
+    payouts: list(payout),
+    balance,
   };
-  let fromViewModelState = ({localUser, partnersCollector}) => {
+  let fromViewModelState =
+      (
+        {
+          ventureId,
+          name,
+          localUser,
+          partnersCollector,
+          transactionCollector,
+          payouts,
+          balanceCollector,
+        },
+      ) => {
+    ventureId,
+    ventureName: name,
     readOnly:
       partnersCollector |> PartnersCollector.isPartner(localUser) == false,
     partners: partnersCollector.partners,
+    prospects: partnersCollector.prospects,
+    removalProspects: partnersCollector.removalProspects,
+    transactions: (
+      transactionCollector.confirmedTxs,
+      transactionCollector.unconfirmedTxs,
+    ),
+    payouts,
+    balance:
+      balanceCollector
+      |> BalanceCollector.accountBalance(AccountIndex.default),
   };
 };
 
@@ -179,27 +215,6 @@ let init = localUser =>
 
 let applyAll = (events, model) =>
   events |> Array.fold_left((m, item) => m |> apply(item), model);
-
-let ventureId = state => state.ventureId;
-
-let partners = state => state.partnersCollector.partners;
-
-let prospects = state => state.partnersCollector.prospects;
-
-let removalProspects = state => state.partnersCollector.removalProspects;
-
-let ventureName = state => state.name;
-
-let payouts = state => state.payouts;
-
-let balance = state =>
-  state.balanceCollector
-  |> BalanceCollector.accountBalance(AccountIndex.default);
-
-let transactions = ({transactionCollector}) => (
-  transactionCollector.confirmedTxs,
-  transactionCollector.unconfirmedTxs,
-);
 
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 

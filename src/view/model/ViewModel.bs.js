@@ -35,10 +35,21 @@ function fromViewModelState$1(param) {
 var PayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
 function fromViewModelState$2(param) {
+  var transactionCollector = param[/* transactionCollector */8];
   var partnersCollector = param[/* partnersCollector */7];
   return /* record */[
+          /* ventureId */param[/* ventureId */1],
+          /* ventureName */param[/* name */2],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
-          /* partners */partnersCollector[/* partners */1]
+          /* partners */partnersCollector[/* partners */1],
+          /* prospects */partnersCollector[/* prospects */2],
+          /* removalProspects */partnersCollector[/* removalProspects */3],
+          /* transactions : tuple */[
+            transactionCollector[/* confirmedTxs */1],
+            transactionCollector[/* unconfirmedTxs */2]
+          ],
+          /* payouts */param[/* payouts */5],
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])
         ];
 }
 
@@ -263,42 +274,6 @@ function applyAll(events, model) {
               }), model, events);
 }
 
-function ventureId(state) {
-  return state[/* ventureId */1];
-}
-
-function partners(state) {
-  return state[/* partnersCollector */7][/* partners */1];
-}
-
-function prospects(state) {
-  return state[/* partnersCollector */7][/* prospects */2];
-}
-
-function removalProspects(state) {
-  return state[/* partnersCollector */7][/* removalProspects */3];
-}
-
-function ventureName(state) {
-  return state[/* name */2];
-}
-
-function payouts(state) {
-  return state[/* payouts */5];
-}
-
-function balance(state) {
-  return ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], state[/* balanceCollector */6]);
-}
-
-function transactions(param) {
-  var transactionCollector = param[/* transactionCollector */8];
-  return /* tuple */[
-          transactionCollector[/* confirmedTxs */1],
-          transactionCollector[/* unconfirmedTxs */2]
-        ];
-}
-
 function readOnly(param) {
   return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */7]) === false;
 }
@@ -328,14 +303,6 @@ exports.make = make;
 exports.apply = apply;
 exports.init = init;
 exports.applyAll = applyAll;
-exports.ventureId = ventureId;
-exports.partners = partners;
-exports.prospects = prospects;
-exports.removalProspects = removalProspects;
-exports.ventureName = ventureName;
-exports.payouts = payouts;
-exports.balance = balance;
-exports.transactions = transactions;
 exports.managePartnersModal = managePartnersModal;
 exports.payoutModal = payoutModal;
 exports.selectedVenture = selectedVenture;
