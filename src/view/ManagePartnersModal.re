@@ -58,7 +58,7 @@ let make =
       ReasonReact.array(
         Array.of_list(
           viewData.partners
-          |> List.map((partner: ViewModel.partner) =>
+          |> List.map((partner: ViewData.partner) =>
                <Partner key=(partner.userId |> UserId.toString) partner />
              ),
         ),
@@ -67,7 +67,7 @@ let make =
       ReasonReact.array(
         Array.of_list(
           viewData.partners
-          |> List.map((m: ViewModel.partner) =>
+          |> List.map((m: ViewData.partner) =>
                <li key=(m.userId |> UserId.toString)>
                  <div>
                    (text(m.userId |> UserId.toString))

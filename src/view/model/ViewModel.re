@@ -35,6 +35,9 @@ type t = {
   transactionCollector: TransactionCollector.t,
 };
 
+let readOnly = ({localUser, partnersCollector}) =>
+  partnersCollector |> PartnersCollector.isPartner(localUser) == false;
+
 module ManagePartnersView = {
   type partner = PartnersCollector.partner;
   type t = {
@@ -48,6 +51,8 @@ module ManagePartnersView = {
       ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
   };
 };
+
+let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 module PayoutView = {
   type t = {
@@ -64,6 +69,8 @@ module PayoutView = {
     ventureName: name,
   };
 };
+
+let payoutModal = PayoutView.fromViewModelState;
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
@@ -114,15 +121,7 @@ module SelectedVentureView = {
   };
 };
 
-type balance = BalanceCollector.balance;
-
-type prospect = PartnersCollector.prospect;
-
-type partner = PartnersCollector.partner;
-
-type confirmedTx = TransactionCollector.confirmedTx;
-
-type unconfirmedTx = TransactionCollector.unconfirmedTx;
+let selectedVenture = SelectedVentureView.fromViewModelState;
 
 let make = localUser => {
   localUser,
@@ -215,12 +214,3 @@ let init = localUser =>
 
 let applyAll = (events, model) =>
   events |> Array.fold_left((m, item) => m |> apply(item), model);
-
-let managePartnersModal = ManagePartnersView.fromViewModelState;
-
-let payoutModal = PayoutView.fromViewModelState;
-
-let selectedVenture = SelectedVentureView.fromViewModelState;
-
-let readOnly = ({localUser, partnersCollector}) =>
-  partnersCollector |> PartnersCollector.isPartner(localUser) == false;

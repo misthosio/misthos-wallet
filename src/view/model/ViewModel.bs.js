@@ -13,6 +13,10 @@ var ViewModel__BalanceCollector = require("./ViewModel__BalanceCollector.bs.js")
 var ViewModel__PartnersCollector = require("./ViewModel__PartnersCollector.bs.js");
 var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
+function readOnly(param) {
+  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */7]) === false;
+}
+
 function fromViewModelState(param) {
   return /* record */[
           /* partners */param[/* partnersCollector */7][/* partners */1],
@@ -274,10 +278,6 @@ function applyAll(events, model) {
               }), model, events);
 }
 
-function readOnly(param) {
-  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */7]) === false;
-}
-
 var ItemsSet = 0;
 
 var PartnersCollector = 0;
@@ -296,15 +296,15 @@ exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
 exports.BalanceCollector = BalanceCollector;
 exports.TransactionCollector = TransactionCollector;
+exports.readOnly = readOnly;
 exports.ManagePartnersView = ManagePartnersView;
+exports.managePartnersModal = managePartnersModal;
 exports.PayoutView = PayoutView;
+exports.payoutModal = payoutModal;
 exports.SelectedVentureView = SelectedVentureView;
+exports.selectedVenture = selectedVenture;
 exports.make = make;
 exports.apply = apply;
 exports.init = init;
 exports.applyAll = applyAll;
-exports.managePartnersModal = managePartnersModal;
-exports.payoutModal = payoutModal;
-exports.selectedVenture = selectedVenture;
-exports.readOnly = readOnly;
 /* Policy Not a pure module */

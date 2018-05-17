@@ -140,14 +140,14 @@ let make =
             let (confirmed, unconfirmed) = viewData.transactions;
             List.append(
               unconfirmed
-              |> List.mapi((iter, tx: ViewModel.unconfirmedTx) =>
+              |> List.mapi((iter, tx: ViewData.unconfirmedTx) =>
                    <Transaction
                      tx=(Unconfirmed(tx))
                      key=(iter |> string_of_int)
                    />
                  ),
               confirmed
-              |> List.mapi((iter, tx: ViewModel.confirmedTx) =>
+              |> List.mapi((iter, tx: ViewData.confirmedTx) =>
                    <Transaction
                      tx=(Confirmed(tx))
                      key=(string_of_int(iter + List.length(unconfirmed)))

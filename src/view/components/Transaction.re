@@ -24,8 +24,8 @@ module Styles = {
 };
 
 type tx =
-  | Confirmed(ViewModel.confirmedTx)
-  | Unconfirmed(ViewModel.unconfirmedTx);
+  | Confirmed(ViewModel.SelectedVentureView.confirmedTx)
+  | Unconfirmed(ViewModel.SelectedVentureView.unconfirmedTx);
 
 let make = (~tx: tx, _children) => {
   ...component,
