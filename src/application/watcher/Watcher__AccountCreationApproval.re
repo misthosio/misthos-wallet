@@ -3,7 +3,7 @@ open Event;
 open PrimitiveTypes;
 
 type state = {
-  eligable: list(userId),
+  eligible: list(userId),
   endorsements: list(userId),
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
@@ -13,7 +13,7 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
   let process = {
     val state =
       ref({
-        eligable: [],
+        eligible: [],
         endorsements: [proposal.supporterId],
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
@@ -31,11 +31,11 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
             }
           | PartnerAccepted({data}) => {
               ...state^,
-              eligable: [data.id, ...state^.eligable],
+              eligible: [data.id, ...state^.eligible],
             }
           | PartnerRemovalAccepted({data: {id}}) => {
               ...state^,
-              eligable: state^.eligable |> List.filter(UserId.neq(id)),
+              eligible: state^.eligible |> List.filter(UserId.neq(id)),
             }
           | AccountCreationEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
@@ -53,7 +53,7 @@ let make = (proposal: AccountCreation.Proposed.t, log) => {
       if (completed^ == false
           && state^.policy
           |> Policy.fulfilled(
-               ~eligable=state^.eligable,
+               ~eligible=state^.eligible,
                ~endorsed=state^.endorsements,
              )) {
         result :=

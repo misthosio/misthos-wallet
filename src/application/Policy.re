@@ -1,26 +1,26 @@
 open PrimitiveTypes;
 
-let filterUsers = (~eligable, ~endorsed) =>
-  endorsed |> List.filter(user => eligable |> List.mem(user));
+let filterUsers = (~eligible, ~endorsed) =>
+  endorsed |> List.filter(user => eligible |> List.mem(user));
 
 module Unanimous = {
-  let fulfilled = (~eligable: list(userId), ~endorsed: list(userId)) => {
-    let endorsed = filterUsers(~eligable, ~endorsed);
-    eligable
+  let fulfilled = (~eligible: list(userId), ~endorsed: list(userId)) => {
+    let endorsed = filterUsers(~eligible, ~endorsed);
+    eligible
     |> List.length == (endorsed |> List.length)
-    && eligable
+    && eligible
     |> List.length > 0;
   };
   let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
 };
 
 module UnanimousMinusOne = {
-  let fulfilled = (~eligable: list(userId), ~endorsed: list(userId)) => {
-    let endorsed = filterUsers(~eligable, ~endorsed);
+  let fulfilled = (~eligible: list(userId), ~endorsed: list(userId)) => {
+    let endorsed = filterUsers(~eligible, ~endorsed);
     endorsed
-    |> List.length >= List.length(eligable)
+    |> List.length >= List.length(eligible)
     - 1
-    && eligable
+    && eligible
     |> List.length > 0;
   };
   let encode = _p =>

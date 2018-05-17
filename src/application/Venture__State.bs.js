@@ -2,6 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Event = require("./events/Event.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
@@ -29,6 +30,10 @@ function systemIssuer(param) {
 
 function ventureName(param) {
   return param[/* ventureName */0];
+}
+
+function currentPartners(param) {
+  return $$Array.of_list(param[/* partnerIds */3]);
 }
 
 function currentPolicy(processName, param) {
@@ -320,6 +325,7 @@ exports.make = make;
 exports.systemIssuer = systemIssuer;
 exports.ventureName = ventureName;
 exports.currentPolicy = currentPolicy;
+exports.currentPartners = currentPartners;
 exports.isPartner = isPartner;
 exports.custodianAcceptedFor = custodianAcceptedFor;
 exports.lastRemovalOfPartner = lastRemovalOfPartner;

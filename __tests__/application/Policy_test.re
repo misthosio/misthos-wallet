@@ -11,7 +11,7 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
+             ~eligible=["a" |> UserId.fromString, "b" |> UserId.fromString],
              ~endorsed=["a" |> UserId.fromString, "b" |> UserId.fromString],
            ),
       )
@@ -22,15 +22,15 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
+             ~eligible=["a" |> UserId.fromString, "b" |> UserId.fromString],
              ~endorsed=["a" |> UserId.fromString, "c" |> UserId.fromString],
            ),
       )
       |> toBe(false);
     });
-    test("at least one eligable", () => {
+    test("at least one eligible", () => {
       let p = Policy.unanimous;
-      expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
+      expect(p |> Policy.fulfilled(~eligible=[], ~endorsed=[]))
       |> toBe(false);
     });
   });
@@ -40,7 +40,7 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
+             ~eligible=["a" |> UserId.fromString, "b" |> UserId.fromString],
              ~endorsed=["a" |> UserId.fromString, "b" |> UserId.fromString],
            ),
       )
@@ -51,7 +51,7 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
+             ~eligible=["a" |> UserId.fromString, "b" |> UserId.fromString],
              ~endorsed=["a" |> UserId.fromString, "c" |> UserId.fromString],
            ),
       )
@@ -62,7 +62,7 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=[
+             ~eligible=[
                "a" |> UserId.fromString,
                "b" |> UserId.fromString,
                "c" |> UserId.fromString,
@@ -72,9 +72,9 @@ let () = {
       )
       |> toBe(false);
     });
-    test("at least one eligable", () => {
+    test("at least one eligible", () => {
       let p = Policy.unanimousMinusOne;
-      expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
+      expect(p |> Policy.fulfilled(~eligible=[], ~endorsed=[]))
       |> toBe(false);
     });
   });

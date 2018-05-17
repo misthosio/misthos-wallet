@@ -9,21 +9,21 @@ describe("nextIncomeAddress", (function () {
         var userC = Fixtures.threeUserSessions[2];
         var userB = Fixtures.threeUserSessions[1];
         var userA = Fixtures.threeUserSessions[0];
-        var log = Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */33](Generators.Log[/* withCustodianKeyChain */32](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */32](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */27](userB, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */28](userB, /* :: */[
                                   userA,
                                   /* :: */[
                                     userB,
                                     /* [] */0
                                   ]
-                                ], Generators.Log[/* withPartner */15](userB, /* :: */[
+                                ], Generators.Log[/* withPartner */16](userB, /* :: */[
                                       userA,
                                       /* [] */0
-                                    ], Generators.Log[/* withCustodian */27](userA, /* :: */[
+                                    ], Generators.Log[/* withCustodian */28](userA, /* :: */[
                                           userA,
                                           /* [] */0
-                                        ], Generators.Log[/* withAccount */23](userA, Generators.Log[/* withFirstPartner */16](userA)(Fixtures.createVenture(userA)))))))))));
+                                        ], Generators.Log[/* withAccount */24](userA, Generators.Log[/* withFirstPartner */17](userA)(Fixtures.createVenture(userA)))))))))));
         WalletHelpers.testNextIncomeAddress(userA, "2NCAxqkK9bhRQWssyrMqJhXS65xmUCWraXT", WalletHelpers.testNextIncomeAddress(userB, "2NGFyACMJG6KJ9Db92n9MM2nNtR4r4tUNFW", WalletHelpers.testNextIncomeAddress(userA, "2MtvnaAWnfkSBU7NbpSfMRrCKSTgLeRVd93", WalletHelpers.constructState(log))));
-        var log$1 = Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userC, Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */33](Generators.Log[/* withCustodianKeyChain */32](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */27](userC, /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userC, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */28](userC, /* :: */[
                                   userA,
                                   /* :: */[
                                     userB,
@@ -32,7 +32,7 @@ describe("nextIncomeAddress", (function () {
                                       /* [] */0
                                     ]
                                   ]
-                                ], Generators.Log[/* withPartner */15](userC, /* :: */[
+                                ], Generators.Log[/* withPartner */16](userC, /* :: */[
                                       userA,
                                       /* :: */[
                                         userB,

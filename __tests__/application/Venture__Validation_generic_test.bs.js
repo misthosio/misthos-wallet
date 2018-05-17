@@ -13,14 +13,14 @@ var Venture__Validation = require("../../src/application/Venture__Validation.bs.
 describe("CreateVenture", (function () {
         describe("as first event", (function () {
                 var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
-                var log = Generators.Log[/* createVenture */10](user1);
-                return ValidationHelpers.testValidationResult(Venture__Validation.make(/* () */0), Generators.Log[/* lastItem */3](log), /* Ok */0);
+                var log = Generators.Log[/* createVenture */11](user1);
+                return ValidationHelpers.testValidationResult(Venture__Validation.make(/* () */0), Generators.Log[/* lastItem */4](log), /* Ok */0);
               }));
         describe("not as first event", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
-                var log = Generators.Log[/* createVenture */10](match[0]);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* appendEvent */6](user2[/* issuerKeyPair */2], /* VentureCreated */Block.__(0, [Generators.Event[/* createVenture */0](user2)]), log)), /* BadData */["Venture is already created"]);
+                var log = Generators.Log[/* createVenture */11](match[0]);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* appendEvent */7](user2[/* issuerKeyPair */2], /* VentureCreated */Block.__(0, [Generators.Event[/* createVenture */0](user2)]), log)), /* BadData */["Venture is already created"]);
               }));
         return /* () */0;
       }));
@@ -30,21 +30,21 @@ describe("Any proposal type", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                var eta = Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user2);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](log), /* Ignore */1);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](log), /* Ignore */1);
               }));
         describe("with the wrong policy", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var log = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                var log = Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var arg = /* Some */[Policy.unanimousMinusOne];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Curry._1((function (param, param$1) {
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1) {
                                         return Curry._5(func, param, param$1, arg, user1, user2);
                                       })(/* None */0, /* None */0), log)), /* PolicyMissmatch */5);
               }));
@@ -53,9 +53,9 @@ describe("Any proposal type", (function () {
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var log = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
-                var func = Generators.Log[/* withPartnerProposed */11];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Curry._1((function (param, param$1, param$2) {
+                var log = Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                var func = Generators.Log[/* withPartnerProposed */12];
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
                                         return Curry._5(func, param, param$1, param$2, user2, user3);
                                       })(/* None */0, /* None */0, /* None */0), log)), /* InvalidIssuer */2);
               }));
@@ -64,10 +64,10 @@ describe("Any proposal type", (function () {
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var log = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                var log = Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var arg = /* Some */[user1[/* issuerKeyPair */2]];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Curry._1((function (param, param$1) {
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1) {
                                         return Curry._5(func, param, arg, param$1, user2, user3);
                                       })(/* None */0, /* None */0), log)), /* InvalidIssuer */2);
               }));
@@ -75,13 +75,13 @@ describe("Any proposal type", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                var eta = Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user2);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var func$1 = Generators.Log[/* withPartnerProposed */11];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Curry._1((function (param, param$1, param$2) {
+                var func$1 = Generators.Log[/* withPartnerProposed */12];
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
                                         return Curry._5(func$1, param, param$1, param$2, user1, user2);
                                       })(/* None */0, /* None */0, /* None */0), log)), /* BadData */["This proposal already exists"]);
               }));
@@ -90,16 +90,16 @@ describe("Any proposal type", (function () {
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var eta = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var func$1 = Generators.Log[/* withPartnerProposed */11];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Curry._1((function (param, param$1, param$2) {
+                var func$1 = Generators.Log[/* withPartnerProposed */12];
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
                                         return Curry._5(func$1, param, param$1, param$2, user2, user3);
                                       })(/* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
@@ -112,108 +112,108 @@ describe("Any rejection type", (function () {
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var eta = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* appendEvent */6](user2[/* issuerKeyPair */2], Event.makePartnerRejected(PrimitiveTypes.ProcessId[/* make */10](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* appendEvent */7](user2[/* issuerKeyPair */2], Event.makePartnerRejected(PrimitiveTypes.ProcessId[/* make */10](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
               }));
         describe("when the rejector is not a partner", (function () {
                 var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](match[1], /* :: */[
+                var eta = Generators.Log[/* withPartner */16](match[1], /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerRejected */13](/* None */0, user3, proposal)(log)), /* InvalidIssuer */2);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRejected */14](/* None */0, user3, proposal)(log)), /* InvalidIssuer */2);
               }));
         describe("when the rejector is not the signer", (function () {
                 var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var eta = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerRejected */13](/* Some */[user1[/* issuerKeyPair */2]], user2, proposal)(log)), /* InvalidIssuer */2);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRejected */14](/* Some */[user1[/* issuerKeyPair */2]], user2, proposal)(log)), /* InvalidIssuer */2);
               }));
         describe("when the rejection has already been submitted", (function () {
                 var match = Generators.fourUserSessions(/* () */0);
                 var user4 = match[3];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](match[2], /* :: */[
+                var eta = Generators.Log[/* withPartner */16](match[2], /* :: */[
                       user1,
                       /* :: */[
                         user2,
                         /* [] */0
                       ]
-                    ], Generators.Log[/* withPartner */15](user2, /* :: */[
+                    ], Generators.Log[/* withPartner */16](user2, /* :: */[
                           user1,
                           /* [] */0
-                        ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1))));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                        ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user4);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                var log$1 = Generators.Log[/* withPartnerRejected */13](/* None */0, user2, proposal)(log);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log$1), Generators.Log[/* lastItem */3](log$1), /* Ignore */1);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                var log$1 = Generators.Log[/* withPartnerRejected */14](/* None */0, user2, proposal)(log);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log$1), Generators.Log[/* lastItem */4](log$1), /* Ignore */1);
               }));
         describe("when the rejector has already endorsed", (function () {
                 var match = Generators.fourUserSessions(/* () */0);
                 var user4 = match[3];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](match[2], /* :: */[
+                var eta = Generators.Log[/* withPartner */16](match[2], /* :: */[
                       user1,
                       /* :: */[
                         user2,
                         /* [] */0
                       ]
-                    ], Generators.Log[/* withPartner */15](user2, /* :: */[
+                    ], Generators.Log[/* withPartner */16](user2, /* :: */[
                           user1,
                           /* [] */0
-                        ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1))));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                        ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user4);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */12](/* None */0, user2, proposal)(log);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log$1), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerRejected */13](/* None */0, user2, proposal)(log$1)), /* AlreadyEndorsed */4);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user2, proposal)(log);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log$1), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRejected */14](/* None */0, user2, proposal)(log$1)), /* AlreadyEndorsed */4);
               }));
         describe("when the rejection is fine", (function () {
                 var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var eta = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerRejected */13](/* None */0, user2, proposal)(log)), /* Ok */0);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRejected */14](/* None */0, user2, proposal)(log)), /* Ok */0);
               }));
         return /* () */0;
       }));
@@ -224,85 +224,85 @@ describe("Any endorsement type", (function () {
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var eta = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* appendEvent */6](user2[/* issuerKeyPair */2], Event.makePartnerEndorsed(PrimitiveTypes.ProcessId[/* make */10](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* appendEvent */7](user2[/* issuerKeyPair */2], Event.makePartnerEndorsed(PrimitiveTypes.ProcessId[/* make */10](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
               }));
         describe("when the supporter is not a partner", (function () {
                 var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](match[1], /* :: */[
+                var eta = Generators.Log[/* withPartner */16](match[1], /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerEndorsed */12](/* None */0, user3, proposal)(log)), /* InvalidIssuer */2);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerEndorsed */13](/* None */0, user3, proposal)(log)), /* InvalidIssuer */2);
               }));
         describe("when the supporter is not the signer", (function () {
                 var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var eta = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerEndorsed */12](/* Some */[user1[/* issuerKeyPair */2]], user2, proposal)(log)), /* InvalidIssuer */2);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerEndorsed */13](/* Some */[user1[/* issuerKeyPair */2]], user2, proposal)(log)), /* InvalidIssuer */2);
               }));
         describe("when the endorsement has already been submitted", (function () {
                 var match = Generators.fourUserSessions(/* () */0);
                 var user4 = match[3];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](match[2], /* :: */[
+                var eta = Generators.Log[/* withPartner */16](match[2], /* :: */[
                       user1,
                       /* :: */[
                         user2,
                         /* [] */0
                       ]
-                    ], Generators.Log[/* withPartner */15](user2, /* :: */[
+                    ], Generators.Log[/* withPartner */16](user2, /* :: */[
                           user1,
                           /* [] */0
-                        ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1))));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                        ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user4);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                var log$1 = Generators.Log[/* withPartnerEndorsed */12](/* None */0, user2, proposal)(log);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log$1), Generators.Log[/* lastItem */3](log$1), /* Ignore */1);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user2, proposal)(log);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log$1), Generators.Log[/* lastItem */4](log$1), /* Ignore */1);
               }));
         describe("when the endorsement is fine", (function () {
                 var match = Generators.threeUserSessions(/* () */0);
                 var user3 = match[2];
                 var user2 = match[1];
                 var user1 = match[0];
-                var eta = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var eta = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-                var func = Generators.Log[/* withPartnerProposed */11];
+                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                var func = Generators.Log[/* withPartnerProposed */12];
                 var log = Curry._1((function (param, param$1, param$2) {
                           return Curry._5(func, param, param$1, param$2, user1, user3);
                         })(/* None */0, /* None */0, /* None */0), eta);
-                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */4](log));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withPartnerEndorsed */12](/* None */0, user2, proposal)(log)), /* Ok */0);
+                var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerEndorsed */13](/* None */0, user2, proposal)(log)), /* Ok */0);
               }));
         return /* () */0;
       }));

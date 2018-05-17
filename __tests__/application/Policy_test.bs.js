@@ -52,7 +52,7 @@ describe("Unanimous", (function () {
                                     return Policy.fulfilled(param)(arg, arg$1);
                                   })(Policy.unanimous)));
               }));
-        return Jest.test("at least one eligable", (function () {
+        return Jest.test("at least one eligible", (function () {
                       return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                           return Policy.fulfilled(param)(/* [] */0, /* [] */0);
                                         })(Policy.unanimous)));
@@ -128,7 +128,7 @@ describe("UnanimousMinusOne", (function () {
                                     return Policy.fulfilled(param)(arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
-        return Jest.test("at least one eligable", (function () {
+        return Jest.test("at least one eligible", (function () {
                       return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                           return Policy.fulfilled(param)(/* [] */0, /* [] */0);
                                         })(Policy.unanimousMinusOne)));

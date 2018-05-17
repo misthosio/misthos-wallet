@@ -11,7 +11,7 @@ var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
 
 function constructState(log) {
-  return Generators.Log[/* reduce */0]((function (s, param) {
+  return Generators.Log[/* reduce */1]((function (s, param) {
                 return Venture__Wallet.apply(param[/* event */0], s);
               }), Venture__Wallet.make(/* () */0), log);
 }
@@ -28,10 +28,10 @@ function testNextIncomeAddress(user, address, wallet) {
 function collectNextTwoAddresses(user, param) {
   var wallet = param[0];
   var exposed1 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
-  var log = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(32, [exposed1]), param[1]);
+  var log = Generators.Log[/* appendSystemEvent */8](/* IncomeAddressExposed */Block.__(32, [exposed1]), param[1]);
   var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(32, [exposed1]), wallet);
   var exposed2 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet$1);
-  var log$1 = Generators.Log[/* appendSystemEvent */7](/* IncomeAddressExposed */Block.__(32, [exposed2]), log);
+  var log$1 = Generators.Log[/* appendSystemEvent */8](/* IncomeAddressExposed */Block.__(32, [exposed2]), log);
   var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(32, [exposed2]), wallet$1);
   return /* tuple */[
           /* tuple */[

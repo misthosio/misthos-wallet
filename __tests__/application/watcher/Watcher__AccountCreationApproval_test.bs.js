@@ -11,10 +11,10 @@ var Watcher__AccountCreationApproval = require("../../../src/application/watcher
 
 describe("With 1 partner and a proposal", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
-        var log = Generators.Log[/* withAccountCreationProposed */21](user1)(Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-        var proposal = Event.getAccountCreationProposedExn(Generators.Log[/* lastEvent */4](log));
-        var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */5](log));
-        return WatcherHelpers.testWatcherHasEventPending("AccountCreationAccepted", watcher, Generators.Log[/* systemIssuer */2](log), (function (param) {
+        var log = Generators.Log[/* withAccountCreationProposed */22](user1)(Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+        var proposal = Event.getAccountCreationProposedExn(Generators.Log[/* lastEvent */5](log));
+        var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */6](log));
+        return WatcherHelpers.testWatcherHasEventPending("AccountCreationAccepted", watcher, Generators.Log[/* systemIssuer */3](log), (function (param) {
                       if (param.tag === 12) {
                         return Caml_obj.caml_equal(param[0][/* data */3], proposal[/* data */6]);
                       } else {
@@ -25,11 +25,11 @@ describe("With 1 partner and a proposal", (function () {
 
 describe("Completes when the account is accepted", (function () {
         var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
-        var log = Generators.Log[/* withAccountCreationProposed */21](user1)(Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
-        var proposal = Event.getAccountCreationProposedExn(Generators.Log[/* lastEvent */4](log));
-        var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */5](log));
-        var log$1 = Generators.Log[/* withAccountCreationAccepted */22](proposal)(log);
-        Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */3](log$1));
+        var log = Generators.Log[/* withAccountCreationProposed */22](user1)(Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+        var proposal = Event.getAccountCreationProposedExn(Generators.Log[/* lastEvent */5](log));
+        var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */6](log));
+        var log$1 = Generators.Log[/* withAccountCreationAccepted */23](proposal)(log);
+        Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */4](log$1));
         return WatcherHelpers.testWatcherHasCompleted(watcher);
       }));
 

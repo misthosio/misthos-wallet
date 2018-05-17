@@ -458,7 +458,7 @@ let validateAcceptance =
       if (eq(data, dataList |> List.assoc(processId) |> snd) == false) {
         BadData("Data doesn't match proposal");
       } else if (Policy.fulfilled(
-                   ~eligable=currentPartners,
+                   ~eligible=currentPartners,
                    ~endorsed=supporterIds,
                    policy,
                  )

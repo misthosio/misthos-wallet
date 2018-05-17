@@ -34,6 +34,8 @@ let systemIssuer = ({systemIssuer}) => systemIssuer;
 
 let ventureName = ({ventureName}) => ventureName;
 
+let currentPartners = ({partnerIds}) => partnerIds |> Array.of_list;
+
 let currentPolicy = (processName, {policies}) =>
   policies |> List.assoc(processName);
 

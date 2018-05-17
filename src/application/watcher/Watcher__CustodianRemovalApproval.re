@@ -4,7 +4,7 @@ open PrimitiveTypes;
 
 type state = {
   dependencyMet: bool,
-  eligable: list(userId),
+  eligible: list(userId),
   endorsements: list(userId),
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
@@ -15,7 +15,7 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
     val state =
       ref({
         dependencyMet: false,
-        eligable: [],
+        eligible: [],
         endorsements: [proposal.supporterId],
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
@@ -33,11 +33,11 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
             }
           | PartnerAccepted({data}) => {
               ...state^,
-              eligable: [data.id, ...state^.eligable],
+              eligible: [data.id, ...state^.eligible],
             }
           | PartnerRemovalAccepted({data: {id}}) => {
               ...state^,
-              eligable: state^.eligable |> List.filter(UserId.neq(id)),
+              eligible: state^.eligible |> List.filter(UserId.neq(id)),
             }
           | CustodianAccepted({processId})
               when ProcessId.eq(processId, proposal.data.lastCustodianProcess) => {
@@ -61,7 +61,7 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
           && state^.dependencyMet == true
           && state^.policy
           |> Policy.fulfilled(
-               ~eligable=state^.eligable,
+               ~eligible=state^.eligible,
                ~endorsed=state^.endorsements,
              )) {
         result :=

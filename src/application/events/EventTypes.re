@@ -4,7 +4,7 @@ type proposal('a) = {
   processId,
   dependsOnProposals: array(processId),
   dependsOnCompletions: array(processId),
-  eligableWhenProposing: array(userId),
+  eligibleWhenProposing: array(userId),
   supporterId: userId,
   policy: Policy.t,
   data: 'a,
@@ -23,7 +23,7 @@ type endorsement = {
 type acceptance('a) = {
   processId,
   dependsOnCompletions: array(processId),
-  eligableWhenProposing: array(userId),
+  eligibleWhenProposing: array(userId),
   data: 'a,
 };
 
@@ -41,7 +41,7 @@ module type ProposedEvent =
       (
         ~dependsOnProposals: array(processId)=?,
         ~dependsOnCompletions: array(processId)=?,
-        ~eligableWhenProposing: array(userId)=?,
+        ~eligibleWhenProposing: array(userId),
         ~supporterId: userId,
         ~policy: Policy.t,
         Data.t
@@ -59,13 +59,13 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
          (
            ~dependsOnProposals=[||],
            ~dependsOnCompletions=[||],
-           ~eligableWhenProposing=[||],
+           ~eligibleWhenProposing,
            ~supporterId,
            ~policy,
            data,
          ) => {
        processId: ProcessId.make(),
-       eligableWhenProposing,
+       eligibleWhenProposing,
        dependsOnProposals,
        dependsOnCompletions,
        supporterId,
@@ -86,8 +86,8 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
              array(ProcessId.encode, event.dependsOnCompletions),
            ),
            (
-             "eligableWhenProposing",
-             array(UserId.encode, event.eligableWhenProposing),
+             "eligibleWhenProposing",
+             array(UserId.encode, event.eligibleWhenProposing),
            ),
            ("supporterId", UserId.encode(event.supporterId)),
            ("policy", Policy.encode(event.policy)),
@@ -101,8 +101,8 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
            raw |> field("dependsOnProposals", array(ProcessId.decode)),
          dependsOnCompletions:
            raw |> field("dependsOnCompletions", array(ProcessId.decode)),
-         eligableWhenProposing:
-           raw |> field("eligableWhenProposing", array(UserId.decode)),
+         eligibleWhenProposing:
+           raw |> field("eligibleWhenProposing", array(UserId.decode)),
          supporterId: raw |> field("supporterId", UserId.decode),
          policy: raw |> field("policy", Policy.decode),
          data: raw |> field("data", Data.decode),
@@ -179,7 +179,7 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
      let fromProposal =
          (
            {
-             eligableWhenProposing,
+             eligibleWhenProposing,
              dependsOnProposals,
              dependsOnCompletions,
              processId,
@@ -187,7 +187,7 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
            }:
              proposal(Data.t),
          ) => {
-       eligableWhenProposing,
+       eligibleWhenProposing,
        dependsOnCompletions:
          dependsOnProposals |> Array.append(dependsOnCompletions),
        processId,
@@ -203,8 +203,8 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
              array(ProcessId.encode, event.dependsOnCompletions),
            ),
            (
-             "eligableWhenProposing",
-             array(UserId.encode, event.eligableWhenProposing),
+             "eligibleWhenProposing",
+             array(UserId.encode, event.eligibleWhenProposing),
            ),
            ("data", Data.encode(event.data)),
          ])
@@ -214,8 +214,8 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
          processId: raw |> field("processId", ProcessId.decode),
          dependsOnCompletions:
            raw |> field("dependsOnCompletions", array(ProcessId.decode)),
-         eligableWhenProposing:
-           raw |> field("eligableWhenProposing", array(UserId.decode)),
+         eligibleWhenProposing:
+           raw |> field("eligibleWhenProposing", array(UserId.decode)),
          data: raw |> field("data", Data.decode),
        };
    });
@@ -231,7 +231,7 @@ module type Process =
         (
           ~dependsOnProposals: array(processId)=?,
           ~dependsOnCompletions: array(processId)=?,
-          ~eligableWhenProposing: array(userId)=?,
+          ~eligibleWhenProposing: array(userId),
           ~supporterId: userId,
           ~policy: Policy.t,
           Data.t

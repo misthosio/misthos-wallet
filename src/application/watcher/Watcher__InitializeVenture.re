@@ -66,6 +66,7 @@ let make =
             Some((
               issuerKeyPair,
               Event.makePartnerProposed(
+                ~eligibleWhenProposing=[|creatorId|],
                 ~supporterId=creatorId,
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
@@ -77,6 +78,7 @@ let make =
             Some((
               issuerKeyPair,
               Event.makeAccountCreationProposed(
+                ~eligibleWhenProposing=[|creatorId|],
                 ~supporterId=creatorId,
                 ~name=defaultAccountName,
                 ~accountIdx=AccountIndex.default,
@@ -87,6 +89,7 @@ let make =
             Some((
               issuerKeyPair,
               Event.makeCustodianProposed(
+                ~eligibleWhenProposing=[|creatorId|],
                 ~lastCustodianRemovalAccepted=None,
                 ~partnerProposed,
                 ~supporterId=creatorId,

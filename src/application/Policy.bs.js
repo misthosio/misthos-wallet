@@ -7,16 +7,16 @@ var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
-function filterUsers(eligable, endorsed) {
+function filterUsers(eligible, endorsed) {
   return List.filter((function (user) {
-                  return List.mem(user, eligable);
+                  return List.mem(user, eligible);
                 }))(endorsed);
 }
 
-function fulfilled(eligable, endorsed) {
-  var endorsed$1 = filterUsers(eligable, endorsed);
-  if (List.length(eligable) === List.length(endorsed$1)) {
-    return List.length(eligable) > 0;
+function fulfilled(eligible, endorsed) {
+  var endorsed$1 = filterUsers(eligible, endorsed);
+  if (List.length(eligible) === List.length(endorsed$1)) {
+    return List.length(eligible) > 0;
   } else {
     return false;
   }
@@ -37,10 +37,10 @@ var Unanimous = /* module */[
   /* encode */encode
 ];
 
-function fulfilled$1(eligable, endorsed) {
-  var endorsed$1 = filterUsers(eligable, endorsed);
-  if (List.length(endorsed$1) >= (List.length(eligable) - 1 | 0)) {
-    return List.length(eligable) > 0;
+function fulfilled$1(eligible, endorsed) {
+  var endorsed$1 = filterUsers(eligible, endorsed);
+  if (List.length(endorsed$1) >= (List.length(eligible) - 1 | 0)) {
+    return List.length(eligible) > 0;
   } else {
     return false;
   }

@@ -512,6 +512,7 @@ exception BadData(string);
 
 let makePartnerProposed =
     (
+      ~eligibleWhenProposing,
       ~supporterId,
       ~prospectId,
       ~prospectPubKey,
@@ -538,6 +539,7 @@ let makePartnerProposed =
   PartnerProposed(
     Partner.Proposed.make(
       ~dependsOnCompletions,
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Partner.Data.{
@@ -550,10 +552,16 @@ let makePartnerProposed =
 };
 
 let makePartnerRemovalProposed =
-    (~lastPartnerAccepted: Partner.Accepted.t, ~supporterId, ~policy) =>
+    (
+      ~eligibleWhenProposing,
+      ~lastPartnerAccepted: Partner.Accepted.t,
+      ~supporterId,
+      ~policy,
+    ) =>
   PartnerRemovalProposed(
     Partner.Removal.Proposed.make(
       ~dependsOnCompletions=[|lastPartnerAccepted.processId|],
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Partner.Removal.Data.{
@@ -563,9 +571,11 @@ let makePartnerRemovalProposed =
     ),
   );
 
-let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
+let makeAccountCreationProposed =
+    (~eligibleWhenProposing, ~supporterId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(
     AccountCreation.Proposed.make(
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       AccountCreation.Data.{accountIdx, name},
@@ -574,6 +584,7 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
 
 let makeCustodianProposed =
     (
+      ~eligibleWhenProposing,
       ~lastCustodianRemovalAccepted,
       ~partnerProposed: Partner.Proposed.t,
       ~supporterId,
@@ -597,6 +608,7 @@ let makeCustodianProposed =
   CustodianProposed(
     Custodian.Proposed.make(
       ~dependsOnProposals=[|partnerApprovalProcess|],
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Custodian.Data.{
@@ -611,6 +623,7 @@ let makeCustodianProposed =
 
 let makeCustodianRemovalProposed =
     (
+      ~eligibleWhenProposing,
       ~custodianAccepted: Custodian.Accepted.t,
       ~supporterId,
       ~accountIdx,
@@ -620,6 +633,7 @@ let makeCustodianRemovalProposed =
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
       ~dependsOnCompletions=[|lastCustodianProcess|],
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Custodian.Removal.Data.{lastCustodianProcess, custodianId, accountIdx},

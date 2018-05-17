@@ -11,15 +11,14 @@ var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 
 function makeProposal(name) {
   return (function (Data) {
-      var make = function ($staropt$star, $staropt$star$1, $staropt$star$2, supporterId, policy, data) {
+      var make = function ($staropt$star, $staropt$star$1, eligibleWhenProposing, supporterId, policy, data) {
         var dependsOnProposals = $staropt$star ? $staropt$star[0] : /* array */[];
         var dependsOnCompletions = $staropt$star$1 ? $staropt$star$1[0] : /* array */[];
-        var eligableWhenProposing = $staropt$star$2 ? $staropt$star$2[0] : /* array */[];
         return /* record */[
                 /* processId */PrimitiveTypes.ProcessId[/* make */10](/* () */0),
                 /* dependsOnProposals */dependsOnProposals,
                 /* dependsOnCompletions */dependsOnCompletions,
-                /* eligableWhenProposing */eligableWhenProposing,
+                /* eligibleWhenProposing */eligibleWhenProposing,
                 /* supporterId */supporterId,
                 /* policy */policy,
                 /* data */data
@@ -48,8 +47,8 @@ function makeProposal(name) {
                           ],
                           /* :: */[
                             /* tuple */[
-                              "eligableWhenProposing",
-                              Json_encode.array(PrimitiveTypes.UserId[/* encode */2], $$event[/* eligableWhenProposing */3])
+                              "eligibleWhenProposing",
+                              Json_encode.array(PrimitiveTypes.UserId[/* encode */2], $$event[/* eligibleWhenProposing */3])
                             ],
                             /* :: */[
                               /* tuple */[
@@ -88,7 +87,7 @@ function makeProposal(name) {
                 /* dependsOnCompletions */Json_decode.field("dependsOnCompletions", (function (param) {
                         return Json_decode.array(partial_arg$1, param);
                       }), raw),
-                /* eligableWhenProposing */Json_decode.field("eligableWhenProposing", (function (param) {
+                /* eligibleWhenProposing */Json_decode.field("eligibleWhenProposing", (function (param) {
                         return Json_decode.array(partial_arg$2, param);
                       }), raw),
                 /* supporterId */Json_decode.field("supporterId", PrimitiveTypes.UserId[/* decode */3], raw),
@@ -192,7 +191,7 @@ function makeAcceptance(name) {
         return /* record */[
                 /* processId */param[/* processId */0],
                 /* dependsOnCompletions */$$Array.append(param[/* dependsOnCompletions */2], param[/* dependsOnProposals */1]),
-                /* eligableWhenProposing */param[/* eligableWhenProposing */3],
+                /* eligibleWhenProposing */param[/* eligibleWhenProposing */3],
                 /* data */param[/* data */6]
               ];
       };
@@ -214,8 +213,8 @@ function makeAcceptance(name) {
                         ],
                         /* :: */[
                           /* tuple */[
-                            "eligableWhenProposing",
-                            Json_encode.array(PrimitiveTypes.UserId[/* encode */2], $$event[/* eligableWhenProposing */2])
+                            "eligibleWhenProposing",
+                            Json_encode.array(PrimitiveTypes.UserId[/* encode */2], $$event[/* eligibleWhenProposing */2])
                           ],
                           /* :: */[
                             /* tuple */[
@@ -237,7 +236,7 @@ function makeAcceptance(name) {
                 /* dependsOnCompletions */Json_decode.field("dependsOnCompletions", (function (param) {
                         return Json_decode.array(partial_arg, param);
                       }), raw),
-                /* eligableWhenProposing */Json_decode.field("eligableWhenProposing", (function (param) {
+                /* eligibleWhenProposing */Json_decode.field("eligibleWhenProposing", (function (param) {
                         return Json_decode.array(partial_arg$1, param);
                       }), raw),
                 /* data */Json_decode.field("data", Data[/* decode */1], raw)

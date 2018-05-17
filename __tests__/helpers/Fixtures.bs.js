@@ -54,7 +54,7 @@ var threeUserSessionsArray = /* array */[
 
 function createVenture(user) {
   var init = Generators.Event[/* createVenture */0](user);
-  return Generators.Log[/* make */9](user, /* record */[
+  return Generators.Log[/* make */10](user, /* record */[
               /* ventureId */PrimitiveTypes.VentureId[/* fromString */1]("fixedVentureId"),
               /* ventureName */init[/* ventureName */1],
               /* creatorId */init[/* creatorId */2],
@@ -146,7 +146,7 @@ function withCached($staropt$star, scope, description, sessionsGenerator, genera
     var match$2 = match[0];
     match$1 = /* tuple */[
       match$2[0],
-      Generators.Log[/* fromEventLog */8](match$2[1]),
+      Generators.Log[/* fromEventLog */9](match$2[1]),
       true
     ];
   } else {
@@ -163,7 +163,7 @@ function withCached($staropt$star, scope, description, sessionsGenerator, genera
   var log = match$1[1];
   var sessions$1 = match$1[0];
   if (match$1[2] === false) {
-    writeFixture(cacheFileName, sessions$1, Generators.Log[/* eventLog */5](log));
+    writeFixture(cacheFileName, sessions$1, Generators.Log[/* eventLog */6](log));
   }
   describe(description, (function () {
           return Curry._2(testBody, sessions$1, log);

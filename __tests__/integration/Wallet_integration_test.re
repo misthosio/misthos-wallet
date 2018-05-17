@@ -116,6 +116,7 @@ let () =
                 });
              oneKeyChainWallet^
              |> Wallet.preparePayoutTx(
+                  ~eligibleWhenProposing=[|userA.userId, userB.userId|],
                   userA,
                   accountIdx,
                   [(Helpers.faucetAddress, oneKeyChainSpendAmount)],
@@ -190,6 +191,11 @@ let () =
       Js.Promise.(
         twoKeyChainWallet^
         |> Wallet.preparePayoutTx(
+             ~eligibleWhenProposing=[|
+               userA.userId,
+               userB.userId,
+               userC.userId,
+             |],
              userA,
              accountIdx,
              [(Helpers.faucetAddress, twoKeyChainSpendAmount)],

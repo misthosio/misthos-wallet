@@ -53,7 +53,7 @@ function make(proposal, log) {
                     var init = self$1[state][0];
                     tmp = /* record */[
                       /* dependencyMet */init[/* dependencyMet */0],
-                      /* eligable */init[/* eligable */1],
+                      /* eligible */init[/* eligible */1],
                       /* endorsements */init[/* endorsements */2],
                       /* policy */init[/* policy */3],
                       /* systemIssuer */$$event[0][/* systemIssuer */5]
@@ -63,9 +63,9 @@ function make(proposal, log) {
                     var init$1 = self$1[state][0];
                     tmp = /* record */[
                       /* dependencyMet */init$1[/* dependencyMet */0],
-                      /* eligable : :: */[
+                      /* eligible : :: */[
                         $$event[0][/* data */3][/* id */1],
-                        self$1[state][0][/* eligable */1]
+                        self$1[state][0][/* eligible */1]
                       ],
                       /* endorsements */init$1[/* endorsements */2],
                       /* policy */init$1[/* policy */3],
@@ -78,9 +78,9 @@ function make(proposal, log) {
                     var partial_arg = PrimitiveTypes.UserId[/* neq */6];
                     tmp = /* record */[
                       /* dependencyMet */init$2[/* dependencyMet */0],
-                      /* eligable */List.filter((function (param) {
+                      /* eligible */List.filter((function (param) {
                                 return partial_arg(id, param);
-                              }))(self$1[state][0][/* eligable */1]),
+                              }))(self$1[state][0][/* eligible */1]),
                       /* endorsements */init$2[/* endorsements */2],
                       /* policy */init$2[/* policy */3],
                       /* systemIssuer */init$2[/* systemIssuer */4]
@@ -91,7 +91,7 @@ function make(proposal, log) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[
                         /* dependencyMet */true,
-                        /* eligable */init$3[/* eligable */1],
+                        /* eligible */init$3[/* eligible */1],
                         /* endorsements */init$3[/* endorsements */2],
                         /* policy */init$3[/* policy */3],
                         /* systemIssuer */init$3[/* systemIssuer */4]
@@ -106,7 +106,7 @@ function make(proposal, log) {
                       var init$4 = self$1[state][0];
                       tmp = /* record */[
                         /* dependencyMet */init$4[/* dependencyMet */0],
-                        /* eligable */init$4[/* eligable */1],
+                        /* eligible */init$4[/* eligible */1],
                         /* endorsements : :: */[
                           $$event$1[/* supporterId */1],
                           self$1[state][0][/* endorsements */2]
@@ -135,7 +135,7 @@ function make(proposal, log) {
               if (self$1[completed][0] === false) {
                 var tmp$2 = false;
                 if (self$1[state][0][/* dependencyMet */0] === true) {
-                  var arg = self$1[state][0][/* eligable */1];
+                  var arg = self$1[state][0][/* eligible */1];
                   var arg$1 = self$1[state][0][/* endorsements */2];
                   tmp$2 = (function (param) {
                         return Policy.fulfilled(param)(arg, arg$1);
@@ -168,7 +168,7 @@ function make(proposal, log) {
       var self = CamlinternalOO.create_object_opt(0, $$class);
       self[state] = [/* record */[
           /* dependencyMet */false,
-          /* eligable : [] */0,
+          /* eligible : [] */0,
           /* endorsements : :: */[
             env$1[1][/* supporterId */4],
             /* [] */0

@@ -67,6 +67,7 @@ type preparePayoutResult =
 
 let preparePayoutTx =
     (
+      ~eligibleWhenProposing,
       {userId, masterKeyChain, network}: Session.Data.t,
       accountIdx,
       destinations,
@@ -113,6 +114,7 @@ let preparePayoutTx =
       Ok(
         Event.Payout.(
           Proposed.make(
+            ~eligibleWhenProposing,
             ~supporterId=userId,
             ~policy=payoutPolicy,
             Data.{accountIdx, payoutTx, changeAddressCoordinates},
