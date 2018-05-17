@@ -16,7 +16,7 @@ let make = () => {
   network: Regtest,
   unused: Network.inputSet(),
   reserved: Network.inputSet(),
-  keyChains: AccountKeyChain.Collection.make(),
+  keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
 };
 

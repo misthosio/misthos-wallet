@@ -10,7 +10,7 @@ var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.j
 function make() {
   return /* record */[
           /* network : Testnet */1,
-          /* accountKeyChains : [] */0,
+          /* accountKeyChains */AccountKeyChain.Collection[/* empty */0],
           /* balance : [] */0,
           /* payoutProcesses : [] */0
         ];
@@ -30,19 +30,12 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */3]
               ];
     case 12 : 
-        var data = $$event[0][/* data */2];
         return /* record */[
                 /* network */state[/* network */0],
-                /* accountKeyChains : :: */[
-                  /* tuple */[
-                    data[/* accountIdx */0],
-                    /* [] */0
-                  ],
-                  state[/* accountKeyChains */1]
-                ],
+                /* accountKeyChains */state[/* accountKeyChains */1],
                 /* balance : :: */[
                   /* tuple */[
-                    data[/* accountIdx */0],
+                    $$event[0][/* data */2][/* accountIdx */0],
                     /* record */[
                       /* currentSpendable */BTC.zero,
                       /* reserved */BTC.zero
@@ -54,28 +47,28 @@ function apply($$event, state) {
               ];
     case 21 : 
         var match = $$event[0];
-        var data$1 = match[/* data */5];
-        var balance = List.assoc(data$1[/* accountIdx */0], state[/* balance */2]);
-        var payoutSummary = PayoutTransaction.summary(state[/* network */0], data$1[/* payoutTx */1]);
+        var data = match[/* data */5];
+        var balance = List.assoc(data[/* accountIdx */0], state[/* balance */2]);
+        var payoutSummary = PayoutTransaction.summary(state[/* network */0], data[/* payoutTx */1]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* accountKeyChains */state[/* accountKeyChains */1],
                 /* balance : :: */[
                   /* tuple */[
-                    data$1[/* accountIdx */0],
+                    data[/* accountIdx */0],
                     /* record */[
                       /* currentSpendable */balance[/* currentSpendable */0].minus(payoutSummary[/* reserved */0]),
                       /* reserved */balance[/* reserved */1].plus(payoutSummary[/* reserved */0])
                     ]
                   ],
-                  List.remove_assoc(data$1[/* accountIdx */0], state[/* balance */2])
+                  List.remove_assoc(data[/* accountIdx */0], state[/* balance */2])
                 ],
                 /* payoutProcesses : :: */[
                   /* tuple */[
                     match[/* processId */0],
                     /* tuple */[
-                      data$1[/* accountIdx */0],
-                      data$1[/* payoutTx */1]
+                      data[/* accountIdx */0],
+                      data[/* payoutTx */1]
                     ]
                   ],
                   state[/* payoutProcesses */3]

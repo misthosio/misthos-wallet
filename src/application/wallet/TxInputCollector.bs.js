@@ -15,7 +15,7 @@ function make() {
           /* network : Regtest */0,
           /* unused */Network.inputSet(/* () */0),
           /* reserved */Network.inputSet(/* () */0),
-          /* keyChains */AccountKeyChain.Collection[/* make */0](/* () */0),
+          /* keyChains */AccountKeyChain.Collection[/* empty */0],
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0)
         ];
 }

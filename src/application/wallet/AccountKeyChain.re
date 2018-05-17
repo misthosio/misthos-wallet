@@ -51,21 +51,13 @@ let isConsistent = ({custodianKeyChains, identifier, nCoSigners}) =>
   |> Identifier.eq(Identifier.make(nCoSigners, custodianKeyChains));
 
 module Collection = {
-  type collection = list((accountIdx, list((Identifier.t, t))));
-  type t = collection;
-  let make = () => [];
-  let add = ({accountIdx, identifier} as keyChain, collection) => {
-    let keyChains =
-      try (collection |> List.assoc(accountIdx)) {
-      | Not_found => []
-      };
-    [
-      (accountIdx, [(identifier, keyChain), ...keyChains]),
-      ...collection |> List.remove_assoc(accountIdx),
-    ];
-  };
-  let lookup = (accountIdx, accountKeyChainIdx, accounts: t) =>
-    accounts |> List.assoc(accountIdx) |> List.assoc(accountKeyChainIdx);
+  open Belt;
+  type nonrec t = Map.String.t(t);
+  let empty = Map.String.empty;
+  let add = ({identifier} as keyChain, collection) =>
+    collection |. Map.String.set(identifier, keyChain);
+  let lookup = (_accountIdx, identifier, keyChains: t) =>
+    keyChains |. Map.String.getExn(identifier);
 };
 
 let encode = keyChain =>

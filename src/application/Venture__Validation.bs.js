@@ -50,7 +50,7 @@ function make() {
             /* pubKey */""
           ],
           /* custodianKeyChains : [] */0,
-          /* accountKeyChains : [] */0
+          /* accountKeyChains */AccountKeyChain.Collection[/* empty */0]
         ];
 }
 
@@ -251,21 +251,13 @@ function apply(param, state) {
         return newrecord$6;
     case 12 : 
         var acceptance$2 = $$event[0];
-        var data$1 = acceptance$2[/* data */2];
         var newrecord$7 = Caml_array.caml_array_dup(completeProcess(acceptance$2, newrecord));
         newrecord$7[/* currentCustodians */16] = /* :: */[
           /* tuple */[
-            data$1[/* accountIdx */0],
+            acceptance$2[/* data */2][/* accountIdx */0],
             /* [] */0
           ],
           newrecord[/* currentCustodians */16]
-        ];
-        newrecord$7[/* accountKeyChains */24] = /* :: */[
-          /* tuple */[
-            data$1[/* accountIdx */0],
-            /* [] */0
-          ],
-          newrecord[/* accountKeyChains */24]
         ];
         return newrecord$7;
     case 13 : 

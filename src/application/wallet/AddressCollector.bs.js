@@ -8,7 +8,7 @@ var AccountKeyChain = require("./AccountKeyChain.bs.js");
 function make() {
   return /* record */[
           /* network : Regtest */0,
-          /* keyChains */AccountKeyChain.Collection[/* make */0](/* () */0),
+          /* keyChains */AccountKeyChain.Collection[/* empty */0],
           /* exposedAddresses */Belt_MapString.empty
         ];
 }

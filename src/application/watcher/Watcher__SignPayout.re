@@ -51,7 +51,7 @@ let make =
          {
            network: Network.Regtest,
            ventureId: VentureId.fromString(""),
-           accountKeyChains: [],
+           accountKeyChains: AccountKeyChain.Collection.empty,
            payoutTx: None,
            complete: false,
          },

@@ -51,16 +51,31 @@ function scanTransactions(param) {
               }));
 }
 
-var findAddressesAndTxIds = Curry._2(EventLog.reduce, (function (param, param$1) {
-        var $$event = param$1[/* event */0];
-        return /* tuple */[
-                AddressCollector.apply($$event, param[0]),
-                TransactionCollector.apply($$event, param[1])
-              ];
-      }), /* tuple */[
-      AddressCollector.make(/* () */0),
-      TransactionCollector.make(/* () */0)
-    ]);
+function findAddressesAndTxIds(log) {
+  var time1 = Date.now();
+  var ret = Curry._3(EventLog.reduce, (function (param, param$1) {
+          var $$event = param$1[/* event */0];
+          var transactions = param[1];
+          var addresses = param[0];
+          var time3 = Date.now();
+          AddressCollector.apply($$event, addresses);
+          var time4 = Date.now();
+          var time5 = Date.now();
+          TransactionCollector.apply($$event, transactions);
+          var time6 = Date.now();
+          console.log("addresses", time4 - time3, "transactions", time6 - time5);
+          return /* tuple */[
+                  AddressCollector.apply($$event, addresses),
+                  TransactionCollector.apply($$event, transactions)
+                ];
+        }), /* tuple */[
+        AddressCollector.make(/* () */0),
+        TransactionCollector.make(/* () */0)
+      ], log);
+  var time2 = Date.now();
+  console.log("time: ", time2 - time1);
+  return ret;
+}
 
 function filterUTXOs(knownTxs, utxos) {
   return Belt_List.keepMapU(utxos, (function (utxo) {
@@ -75,7 +90,7 @@ function filterUTXOs(knownTxs, utxos) {
 
 function detectIncomeFromVenture(ventureId, eventLog) {
   logMessage("Detecting income for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  return scanTransactions(Curry._1(findAddressesAndTxIds, eventLog)).then((function (param) {
+  return scanTransactions(findAddressesAndTxIds(eventLog)).then((function (param) {
                 var utxos = filterUTXOs(param[2][/* knownIncomeTxs */2], param[0]);
                 var events = Belt_List.mapU(utxos, (function (utxo) {
                         return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
@@ -118,4 +133,4 @@ exports.findAddressesAndTxIds = findAddressesAndTxIds;
 exports.filterUTXOs = filterUTXOs;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
 exports.doWork = doWork;
-/* findAddressesAndTxIds Not a pure module */
+/* Event Not a pure module */

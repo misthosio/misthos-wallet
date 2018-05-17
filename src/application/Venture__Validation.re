@@ -68,7 +68,7 @@ let make = () => {
     lastPartnerRemovalProcess: None,
   },
   custodianKeyChains: [],
-  accountKeyChains: [],
+  accountKeyChains: AccountKeyChain.Collection.empty,
 };
 
 let addProcess =
@@ -217,7 +217,6 @@ let apply = ({hash, event}: EventLog.item, state) => {
     };
   | AccountCreationAccepted({data} as acceptance) => {
       ...completeProcess(acceptance, state),
-      accountKeyChains: [(data.accountIdx, []), ...state.accountKeyChains],
       currentCustodians: [(data.accountIdx, []), ...state.currentCustodians],
     }
   | PayoutAccepted(acceptance) => completeProcess(acceptance, state)

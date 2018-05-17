@@ -10,7 +10,7 @@ type t = {
 
 let make = () => {
   network: Regtest,
-  keyChains: AccountKeyChain.Collection.make(),
+  keyChains: AccountKeyChain.Collection.empty,
   exposedAddresses: Map.String.empty,
 };
 

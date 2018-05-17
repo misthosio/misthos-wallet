@@ -33,14 +33,35 @@ let scanTransactions =
        )
   );
 
-let findAddressesAndTxIds =
-  EventLog.reduce(
-    ((addresses, transactions), {event}: EventLog.item) => (
-      addresses |> AddressCollector.apply(event),
-      transactions |> TransactionCollector.apply(event),
-    ),
-    (AddressCollector.make(), TransactionCollector.make()),
-  );
+let findAddressesAndTxIds = log => {
+  let time1 = Js.Date.now();
+  let ret =
+    log
+    |> EventLog.reduce(
+         ((addresses, transactions), {event}: EventLog.item) => {
+           let time3 = Js.Date.now();
+           addresses |> AddressCollector.apply(event) |> ignore;
+           let time4 = Js.Date.now();
+           let time5 = Js.Date.now();
+           transactions |> TransactionCollector.apply(event) |> ignore;
+           let time6 = Js.Date.now();
+           Js.log4(
+             "addresses",
+             time4 -. time3,
+             "transactions",
+             time6 -. time5,
+           );
+           (
+             addresses |> AddressCollector.apply(event),
+             transactions |> TransactionCollector.apply(event),
+           );
+         },
+         (AddressCollector.make(), TransactionCollector.make()),
+       );
+  let time2 = Js.Date.now();
+  Js.log2("time: ", time2 -. time1);
+  ret;
+};
 
 let filterUTXOs = (knownTxs, utxos) =>
   utxos
