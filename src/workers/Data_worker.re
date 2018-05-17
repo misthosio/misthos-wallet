@@ -23,6 +23,8 @@ let logLabel = "[Data Worker]";
 
 let logMessage = WorkerUtils.logMessage(logLabel);
 
+let logError = WorkerUtils.logError(logLabel);
+
 let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
 let tenSecondsInMilliseconds = 10000;
@@ -42,17 +44,23 @@ let handleMsg = (venturesPromise, doWork, msg) =>
            items |> WorkerLocalStorage.setBlockstackItems;
            Venture.Index.load()
            |> then_(index =>
-                all(
-                  index
-                  |. List.map(({id}: Venture.Index.item) =>
-                       WorkerUtils.loadVenture(id)
-                       |> then_(venture => (id, venture) |> resolve)
-                     )
-                  |> List.toArray,
-                )
+                index
+                |. List.reduce(
+                     resolve(VentureId.makeMap()),
+                     (p, {id}: Venture.Index.item) =>
+                     p
+                     |> then_(ventures =>
+                          WorkerUtils.loadVenture(id)
+                          |> then_(venture =>
+                               ventures |. Map.set(id, venture) |> resolve
+                             )
+                          |> catch(err => {
+                               logError(err);
+                               resolve(ventures);
+                             })
+                        )
+                   )
                 |> then_(ventures => {
-                     let ventures =
-                       ventures |> Map.mergeMany(VentureId.makeMap());
                      doWork(storagePrefix, ventures);
                      (storagePrefix, ventures) |> resolve;
                    })

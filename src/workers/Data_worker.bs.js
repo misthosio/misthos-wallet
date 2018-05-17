@@ -23,6 +23,10 @@ function logMessage(param) {
   return WorkerUtils.logMessage(logLabel, param);
 }
 
+function logError(param) {
+  return WorkerUtils.logError(logLabel, param);
+}
+
 function catchAndLogError(param) {
   return WorkerUtils.catchAndLogError(logLabel, param);
 }
@@ -44,20 +48,21 @@ function handleMsg(venturesPromise, doWork, msg) {
                         logMessage("Handling 'SessionStarted'");
                         WorkerLocalStorage.setBlockstackItems(msg[0]);
                         return Venture.Index[/* load */0](/* () */0).then((function (index) {
-                                      return Promise.all(Belt_List.toArray(Belt_List.map(index, (function (param) {
-                                                              var id = param[/* id */0];
-                                                              return WorkerUtils.loadVenture(id).then((function (venture) {
-                                                                            return Promise.resolve(/* tuple */[
-                                                                                        id,
-                                                                                        venture
-                                                                                      ]);
-                                                                          }));
-                                                            })))).then((function (ventures) {
-                                                    var ventures$1 = Belt_Map.mergeMany(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0), ventures);
-                                                    Curry._2(doWork, storagePrefix$1, ventures$1);
+                                      return Belt_List.reduce(index, Promise.resolve(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0)), (function (p, param) {
+                                                      var id = param[/* id */0];
+                                                      return p.then((function (ventures) {
+                                                                    return WorkerUtils.loadVenture(id).then((function (venture) {
+                                                                                    return Promise.resolve(Belt_Map.set(ventures, id, venture));
+                                                                                  })).catch((function (err) {
+                                                                                  logError(err);
+                                                                                  return Promise.resolve(ventures);
+                                                                                }));
+                                                                  }));
+                                                    })).then((function (ventures) {
+                                                    Curry._2(doWork, storagePrefix$1, ventures);
                                                     return Promise.resolve(/* tuple */[
                                                                 storagePrefix$1,
-                                                                ventures$1
+                                                                ventures
                                                               ]);
                                                   }));
                                     }));
@@ -121,6 +126,7 @@ var syncInterval = 10000;
 
 exports.logLabel = logLabel;
 exports.logMessage = logMessage;
+exports.logError = logError;
 exports.catchAndLogError = catchAndLogError;
 exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
 exports.syncInterval = syncInterval;
