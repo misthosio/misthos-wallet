@@ -1,10 +1,12 @@
+open Belt;
+
 open Event;
 
 open PrimitiveTypes;
 
 type state = {
-  eligible: list(userId),
-  endorsements: list(userId),
+  eligibilityCollector: EligibilityCollector.t,
+  endorsements: UserId.set,
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
 };
@@ -13,8 +15,9 @@ let make = (proposal: Custodian.Proposed.t, log) => {
   let process = {
     val state =
       ref({
-        eligible: [],
-        endorsements: [proposal.supporterId],
+        eligibilityCollector:
+          EligibilityCollector.make(proposal.eligibleWhenProposing),
+        endorsements: UserId.emptySet |. Set.add(proposal.supporterId),
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
       });
@@ -23,15 +26,17 @@ let make = (proposal: Custodian.Proposed.t, log) => {
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
       state :=
+        {
+          ...state^,
+          eligibilityCollector:
+            state^.eligibilityCollector |> EligibilityCollector.apply(event),
+        };
+      state :=
         (
           switch (event) {
           | VentureCreated(event) => {
               ...state^,
               systemIssuer: event.systemIssuer,
-            }
-          | PartnerAccepted({data}) => {
-              ...state^,
-              eligible: [data.id, ...state^.eligible],
             }
           | PartnerRemovalAccepted({data: {lastPartnerProcess}})
               when
@@ -41,14 +46,10 @@ let make = (proposal: Custodian.Proposed.t, log) => {
                 ) =>
             completed := true;
             state^;
-          | PartnerRemovalAccepted({data: {id}}) => {
-              ...state^,
-              eligible: state^.eligible |> List.filter(UserId.neq(id)),
-            }
           | CustodianEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: [event.supporterId, ...state^.endorsements],
+              endorsements: state^.endorsements |. Set.add(event.supporterId),
             }
           | CustodianAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
@@ -61,7 +62,9 @@ let make = (proposal: Custodian.Proposed.t, log) => {
       if (completed^ == false
           && state^.policy
           |> Policy.fulfilled(
-               ~eligible=state^.eligible,
+               ~eligible=
+                 state^.eligibilityCollector
+                 |> EligibilityCollector.currentEligible,
                ~endorsed=state^.endorsements,
              )) {
         result :=

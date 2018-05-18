@@ -17,7 +17,7 @@ type t = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   knownItems: list(string),
-  currentPartners: list(userId),
+  currentPartners: UserId.set,
   currentPartnerPubKeys: list((string, userId)),
   partnerData: list((processId, (userId, Partner.Data.t))),
   partnerAccepted: list((userId, processId)),
@@ -46,7 +46,7 @@ let make = () => {
   accountKeyChainValidator: AccountKeyChainValidator.make(),
   systemPubKey: "",
   knownItems: [],
-  currentPartners: [],
+  currentPartners: UserId.emptySet,
   currentPartnerPubKeys: [],
   metaPolicy: Policy.unanimous,
   partnerData: [],
@@ -196,7 +196,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerAccepted({processId, data} as acceptance) => {
       ...completeProcess(acceptance, state),
-      currentPartners: [data.id, ...state.currentPartners],
+      currentPartners: state.currentPartners |. Belt.Set.add(data.id),
       currentPartnerPubKeys: [
         (data.pubKey, data.id),
         ...state.currentPartnerPubKeys,
@@ -210,7 +210,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       |> fst;
     {
       ...completeProcess(acceptance, state),
-      currentPartners: state.currentPartners |> List.filter(UserId.neq(id)),
+      currentPartners: state.currentPartners |. Belt.Set.remove(id),
       currentPartnerPubKeys:
         state.currentPartnerPubKeys |> List.remove_assoc(pubKey),
       partnerRemovals: [(id, processId), ...state.partnerRemovals],
@@ -455,7 +455,10 @@ let validateAcceptance =
         BadData("Data doesn't match proposal");
       } else if (Policy.fulfilled(
                    ~eligible=currentPartners,
-                   ~endorsed=supporterIds,
+                   ~endorsed=
+                     supporterIds
+                     |> Array.of_list
+                     |> Belt.Set.mergeMany(UserId.emptySet),
                    policy,
                  )
                  == false) {
@@ -477,7 +480,7 @@ let validatePartnerData =
       {id, lastPartnerRemovalProcess}: Partner.Data.t,
       {partnerRemovals, currentPartners},
     ) =>
-  if (currentPartners |> List.mem(id)) {
+  if (currentPartners |. Belt.Set.has(id)) {
     BadData("Partner already exists");
   } else {
     let partnerRemovalProcess =
@@ -496,7 +499,7 @@ let validatePartnerRemovalData =
       {id, lastPartnerProcess}: Partner.Removal.Data.t,
       {partnerAccepted, currentPartners},
     ) =>
-  if (currentPartners |> List.mem(id) == false) {
+  if (currentPartners |. Belt.Set.has(id) == false) {
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
   } else {
     try (

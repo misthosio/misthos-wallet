@@ -1,27 +1,19 @@
+open Belt;
+
 open PrimitiveTypes;
 
-let filterUsers = (~eligible, ~endorsed) =>
-  endorsed |> List.filter(user => eligible |> List.mem(user));
-
 module Unanimous = {
-  let fulfilled = (~eligible: list(userId), ~endorsed: list(userId)) => {
-    let endorsed = filterUsers(~eligible, ~endorsed);
-    eligible
-    |> List.length == (endorsed |> List.length)
-    && eligible
-    |> List.length > 0;
+  let fulfilled = (~eligible: UserId.set, ~endorsed: UserId.set) => {
+    let endorsed = Set.intersect(eligible, endorsed);
+    endorsed |> Set.size >= Set.size(eligible) && eligible |> Set.size > 0;
   };
   let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
 };
 
 module UnanimousMinusOne = {
-  let fulfilled = (~eligible: list(userId), ~endorsed: list(userId)) => {
-    let endorsed = filterUsers(~eligible, ~endorsed);
-    endorsed
-    |> List.length >= List.length(eligible)
-    - 1
-    && eligible
-    |> List.length > 0;
+  let fulfilled = (~eligible: UserId.set, ~endorsed: UserId.set) => {
+    let endorsed = Set.intersect(eligible, endorsed);
+    endorsed |> Set.size >= Set.size(eligible) - 1 && eligible |> Set.size > 0;
   };
   let encode = _p =>
     Json.Encode.(object_([("type", string("UnanimousMinusOne"))]));

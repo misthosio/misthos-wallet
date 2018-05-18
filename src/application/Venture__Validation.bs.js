@@ -2,6 +2,7 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
@@ -29,7 +30,7 @@ function make() {
           /* systemPubKey */"",
           /* metaPolicy */Policy.unanimous,
           /* knownItems : [] */0,
-          /* currentPartners : [] */0,
+          /* currentPartners */PrimitiveTypes.UserId[/* emptySet */9],
           /* currentPartnerPubKeys : [] */0,
           /* partnerData : [] */0,
           /* partnerAccepted : [] */0,
@@ -182,10 +183,7 @@ function apply(param, state) {
         var acceptance = $$event[0];
         var data = acceptance[/* data */3];
         var newrecord$3 = Caml_array.caml_array_dup(completeProcess(acceptance, newrecord));
-        newrecord$3[/* currentPartners */7] = /* :: */[
-          data[/* id */1],
-          newrecord[/* currentPartners */7]
-        ];
+        newrecord$3[/* currentPartners */7] = Belt_Set.add(newrecord[/* currentPartners */7], data[/* id */1]);
         newrecord$3[/* currentPartnerPubKeys */8] = /* :: */[
           /* tuple */[
             data[/* pubKey */2],
@@ -222,10 +220,7 @@ function apply(param, state) {
                   return PrimitiveTypes.UserId[/* eq */5](param[1], id);
                 }), newrecord[/* currentPartnerPubKeys */8])[0];
         var newrecord$5 = Caml_array.caml_array_dup(completeProcess(acceptance$1, newrecord));
-        var partial_arg = PrimitiveTypes.UserId[/* neq */6];
-        newrecord$5[/* currentPartners */7] = List.filter((function (param) {
-                  return partial_arg(id, param);
-                }))(newrecord[/* currentPartners */7]);
+        newrecord$5[/* currentPartners */7] = Belt_Set.remove(newrecord[/* currentPartners */7], id);
         newrecord$5[/* currentPartnerPubKeys */8] = List.remove_assoc(pubKey, newrecord[/* currentPartnerPubKeys */8]);
         newrecord$5[/* partnerRemovals */12] = /* :: */[
           /* tuple */[
@@ -353,12 +348,12 @@ function apply(param, state) {
           ],
           newrecord[/* custodianRemovals */15]
         ];
-        var partial_arg$1 = PrimitiveTypes.UserId[/* neq */6];
+        var partial_arg = PrimitiveTypes.UserId[/* neq */6];
         newrecord$11[/* currentCustodians */16] = /* :: */[
           /* tuple */[
             accountIdx$1,
             List.filter((function (param) {
-                      return partial_arg$1(custodianId, param);
+                      return partial_arg(custodianId, param);
                     }))(List.assoc(accountIdx$1, newrecord[/* currentCustodians */16]))
           ],
           List.remove_assoc(accountIdx$1, newrecord[/* currentCustodians */16])
@@ -649,7 +644,7 @@ function validateAcceptance(param, dataList, eq, param$1, _) {
     var match = List.assoc(processId, param$1[/* processes */19]);
     if (Curry._2(eq, param[/* data */3], List.assoc(processId, dataList)[1]) === false) {
       return /* BadData */["Data doesn't match proposal"];
-    } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* currentPartners */7], match[/* supporterIds */0]) === false) {
+    } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* currentPartners */7], Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(match[/* supporterIds */0]))) === false) {
       return /* PolicyNotFulfilled */6;
     } else {
       var match$1 = Belt_Set.reduce(param[/* dependsOnCompletions */1], true, (function (res, processId) {
@@ -677,7 +672,7 @@ function validateAcceptance(param, dataList, eq, param$1, _) {
 
 function validatePartnerData(param, param$1) {
   var id = param[/* id */1];
-  if (List.mem(id, param$1[/* currentPartners */7])) {
+  if (Belt_Set.has(param$1[/* currentPartners */7], id)) {
     return /* BadData */["Partner already exists"];
   } else {
     var partnerRemovalProcess;
@@ -701,7 +696,7 @@ function validatePartnerData(param, param$1) {
 
 function validatePartnerRemovalData(param, param$1) {
   var id = param[/* id */0];
-  if (List.mem(id, param$1[/* currentPartners */7]) === false) {
+  if (Belt_Set.has(param$1[/* currentPartners */7], id) === false) {
     return /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](id) + "' doesn't exist")];
   } else {
     try {
