@@ -28,6 +28,11 @@ let fromFloat = btcFloat =>
 let timesRounded = (n, btc) =>
   btc |> timesFloat(n) |> BigNumber.integerValue(BigNumber.RoundingMode.ceil);
 
+let dividedByRounded = (n, btc) =>
+  btc
+  |> dividedByFloat(n)
+  |> BigNumber.integerValue(BigNumber.RoundingMode.floor);
+
 let encode = toJSON;
 
 let decode = raw => BigNumber.make(`String(Json.Decode.string(raw)));

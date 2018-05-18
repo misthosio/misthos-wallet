@@ -38,6 +38,10 @@ function timesRounded(n, btc) {
   return btc.times(n).integerValue(BignumberJs.ROUND_CEIL);
 }
 
+function dividedByRounded(n, btc) {
+  return btc.dividedBy(n).integerValue(BignumberJs.ROUND_FLOOR);
+}
+
 function encode(prim) {
   return prim.toJSON();
 }
@@ -58,6 +62,7 @@ exports.fromString = fromString;
 exports.format = format;
 exports.fromFloat = fromFloat;
 exports.timesRounded = timesRounded;
+exports.dividedByRounded = dividedByRounded;
 exports.encode = encode;
 exports.decode = decode;
 /* zero Not a pure module */

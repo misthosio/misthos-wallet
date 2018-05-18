@@ -177,39 +177,93 @@ describe("build", (function () {
                                                 ]), changeAddress, /* Regtest */0);
                                 }), /* () */0));
               }));
-        return Jest.test("summary", (function () {
-                      var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
-                                /* tuple */[
-                                  "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                                  BTC.fromSatoshis(/* int64 */[
-                                        /* hi */0,
-                                        /* lo */9800
-                                      ])
-                                ],
-                                /* [] */0
-                              ], BTC.fromSatoshis(/* int64 */[
-                                    /* hi */0,
-                                    /* lo */1
-                                  ]), changeAddress, /* Regtest */0));
-                      return Jest.Expect[/* toEqual */12](/* record */[
-                                  /* reserved */BTC.fromSatoshis(/* int64 */[
-                                        /* hi */0,
-                                        /* lo */15000
-                                      ]),
-                                  /* spentWithFees */BTC.fromSatoshis(/* int64 */[
-                                        /* hi */0,
-                                        /* lo */10370
-                                      ]),
-                                  /* misthosFee */BTC.fromSatoshis(/* int64 */[
-                                        /* hi */0,
-                                        /* lo */285
-                                      ]),
-                                  /* networkFee */BTC.fromSatoshis(/* int64 */[
-                                        /* hi */0,
-                                        /* lo */285
-                                      ])
-                                ], Jest.Expect[/* expect */0](summary));
-                    }));
+        Jest.test("summary", (function () {
+                var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
+                          /* tuple */[
+                            "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                            BTC.fromSatoshis(/* int64 */[
+                                  /* hi */0,
+                                  /* lo */9800
+                                ])
+                          ],
+                          /* [] */0
+                        ], BTC.fromSatoshis(/* int64 */[
+                              /* hi */0,
+                              /* lo */1
+                            ]), changeAddress, /* Regtest */0));
+                return Jest.Expect[/* toEqual */12](/* record */[
+                            /* reserved */BTC.fromSatoshis(/* int64 */[
+                                  /* hi */0,
+                                  /* lo */15000
+                                ]),
+                            /* spentWithFees */BTC.fromSatoshis(/* int64 */[
+                                  /* hi */0,
+                                  /* lo */10370
+                                ]),
+                            /* misthosFee */BTC.fromSatoshis(/* int64 */[
+                                  /* hi */0,
+                                  /* lo */285
+                                ]),
+                            /* networkFee */BTC.fromSatoshis(/* int64 */[
+                                  /* hi */0,
+                                  /* lo */285
+                                ])
+                          ], Jest.Expect[/* expect */0](summary));
+              }));
+        describe("max", (function () {
+                var max = PayoutTransaction.max(inputs, "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", /* [] */0, BTC.fromSatoshis(/* int64 */[
+                          /* hi */0,
+                          /* lo */1
+                        ]), /* Regtest */0);
+                Jest.test("sending max amount works", (function () {
+                        var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
+                                  /* tuple */[
+                                    "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                                    max
+                                  ],
+                                  /* [] */0
+                                ], BTC.fromSatoshis(/* int64 */[
+                                      /* hi */0,
+                                      /* lo */1
+                                    ]), changeAddress, /* Regtest */0));
+                        return Jest.Expect[/* toEqual */12](/* record */[
+                                    /* reserved */BTC.fromSatoshis(/* int64 */[
+                                          /* hi */0,
+                                          /* lo */15000
+                                        ]),
+                                    /* spentWithFees */BTC.fromSatoshis(/* int64 */[
+                                          /* hi */0,
+                                          /* lo */15000
+                                        ]),
+                                    /* misthosFee */BTC.fromSatoshis(/* int64 */[
+                                          /* hi */0,
+                                          /* lo */415
+                                        ]),
+                                    /* networkFee */BTC.fromSatoshis(/* int64 */[
+                                          /* hi */0,
+                                          /* lo */285
+                                        ])
+                                  ], Jest.Expect[/* expect */0](summary));
+                      }));
+                return Jest.test("Spending more than max will throw an exception", (function () {
+                              return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function () {
+                                                return PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
+                                                            /* tuple */[
+                                                              "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                                                              max.plus(BTC.fromSatoshis(/* int64 */[
+                                                                        /* hi */0,
+                                                                        /* lo */50
+                                                                      ]))
+                                                            ],
+                                                            /* [] */0
+                                                          ], BTC.fromSatoshis(/* int64 */[
+                                                                /* hi */0,
+                                                                /* lo */1
+                                                              ]), changeAddress, /* Regtest */0);
+                                              }), /* () */0));
+                            }));
+              }));
+        return /* () */0;
       }));
 
 /*  Not a pure module */

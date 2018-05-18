@@ -10,6 +10,7 @@ var Address = require("./Address.bs.js");
 var Network = require("./Network.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
@@ -356,6 +357,43 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
   }
 }
 
+function max(allInputs, targetDestination, destinations, satsPerByte, network) {
+  var inputs = Belt_List.keepMapU(Belt_Set.toList(allInputs), (function (input) {
+          var match = TransactionFee.canPayForItself(satsPerByte, input);
+          if (match) {
+            return /* Some */[input];
+          } else {
+            return /* None */0;
+          }
+        }));
+  var outputs_000 = /* tuple */[
+    targetDestination,
+    BTC.zero
+  ];
+  var outputs_001 = /* :: */[
+    /* tuple */[
+      Network.incomeAddress(network),
+      BTC.zero
+    ],
+    destinations
+  ];
+  var outputs = /* :: */[
+    outputs_000,
+    outputs_001
+  ];
+  var fee = TransactionFee.estimate(Belt_List.map(outputs, (function (prim) {
+              return prim[0];
+            })), inputs, satsPerByte, Network.bitcoinNetwork(network));
+  var totalInputValue = Belt_List.reduce(inputs, BTC.zero, (function (res, input) {
+          return res.plus(input[/* value */3]);
+        }));
+  var totalOutValue = Belt_List.reduce(destinations, BTC.zero, (function (res, param) {
+          return res.plus(param[1]);
+        }));
+  var rest = totalInputValue.minus(totalOutValue.plus(fee));
+  return BTC.dividedByRounded(1 + 2.9 / 100, rest);
+}
+
 function findSignatures(_allSigs, needed, foundSigIdxs, foundSigs, network) {
   while(true) {
     var allSigs = _allSigs;
@@ -473,6 +511,7 @@ exports.NoSignaturesForInput = NoSignaturesForInput;
 exports.summary = summary;
 exports.txInputForChangeAddress = txInputForChangeAddress;
 exports.build = build;
+exports.max = max;
 exports.getSignedExn = getSignedExn;
 exports.signPayout = signPayout;
 exports.finalize = finalize;
