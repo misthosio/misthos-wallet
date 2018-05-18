@@ -46,7 +46,7 @@ function collectNextTwoAddresses(user, param) {
 }
 
 function getExposedAddresses(param) {
-  var match = param[/* txInputCollector */3];
+  var match = param[/* walletInfoCollector */3];
   var accountKeyChains = match[/* keyChains */3];
   return List.map((function (a) {
                 return a[/* address */5];

@@ -6,20 +6,21 @@ type t = {
   ventureId,
   network: Network.t,
   payoutPolicy: Policy.t,
-  txInputCollector: TxInputCollector.t,
+  walletInfoCollector: WalletInfoCollector.t,
 };
 
 let make = () => {
   network: Network.Testnet,
   ventureId: VentureId.fromString(""),
-  txInputCollector: TxInputCollector.make(),
+  walletInfoCollector: WalletInfoCollector.make(),
   payoutPolicy: Policy.unanimous,
 };
 
 let apply = (event: Event.t, state) => {
   let state = {
     ...state,
-    txInputCollector: state.txInputCollector |> TxInputCollector.apply(event),
+    walletInfoCollector:
+      state.walletInfoCollector |> WalletInfoCollector.apply(event),
   };
   switch (event) {
   | VentureCreated({ventureId, metaPolicy, network}) => {
@@ -37,7 +38,7 @@ let exposeNextIncomeAddress =
       userId,
       accountIdx,
       {
-        txInputCollector: {
+        walletInfoCollector: {
           exposedCoordinates,
           activatedKeyChain,
           keyChains: accountKeyChains,
@@ -73,8 +74,8 @@ let preparePayoutTx =
       {
         ventureId,
         payoutPolicy,
-        txInputCollector:
-          {keyChains: accountKeyChains, unused: inputs} as txInputCollector,
+        walletInfoCollector:
+          {keyChains: accountKeyChains, unused: inputs} as walletInfoCollector,
       },
     ) =>
   try (
@@ -82,13 +83,14 @@ let preparePayoutTx =
       let payoutTx =
         PayoutTransaction.build(
           ~mandatoryInputs=
-            txInputCollector |> TxInputCollector.oldInputs(accountIdx, userId),
+            walletInfoCollector
+            |> WalletInfoCollector.oldInputs(accountIdx, userId),
           ~allInputs=inputs,
           ~destinations,
           ~satsPerByte,
           ~changeAddress=
-            txInputCollector
-            |> TxInputCollector.nextChangeAddress(accountIdx, userId),
+            walletInfoCollector
+            |> WalletInfoCollector.nextChangeAddress(accountIdx, userId),
           ~network,
         );
       let changeAddressCoordinates =
