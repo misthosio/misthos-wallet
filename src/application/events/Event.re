@@ -196,32 +196,18 @@ module Payout = {
     type t = {
       accountIdx,
       payoutTx: PayoutTransaction.t,
-      changeAddressCoordinates: option(Address.Coordinates.t),
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
           ("payoutTx", PayoutTransaction.encode(event.payoutTx)),
-          (
-            "changeAddressCoordinates",
-            nullable(
-              Address.Coordinates.encode,
-              event.changeAddressCoordinates,
-            ),
-          ),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
         payoutTx: raw |> field("payoutTx", PayoutTransaction.decode),
-        changeAddressCoordinates:
-          raw
-          |> field(
-               "changeAddressCoordinates",
-               optional(Address.Coordinates.decode),
-             ),
       };
   };
   include (val EventTypes.makeProcess("Payout"))(Data);

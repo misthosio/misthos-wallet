@@ -12,7 +12,7 @@ type t = {
   txHex: string,
   usedInputs: array(input),
   misthosFeeAddress: string,
-  changeAddress: option((string, Address.Coordinates.t)),
+  changeAddress: option(Address.t),
 };
 
 type summary = {
@@ -24,8 +24,7 @@ type summary = {
 
 let summary: (Network.t, t) => summary;
 
-let txInputForChangeAddress:
-  (~txId: string, AccountKeyChain.Collection.t, Network.t, t) => option(input);
+let txInputForChangeAddress: (~txId: string, Network.t, t) => option(input);
 
 let build:
   (

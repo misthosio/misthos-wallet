@@ -16,7 +16,7 @@ type t = {
   txHex: string,
   usedInputs: array(input),
   misthosFeeAddress: string,
-  changeAddress: option((string, Address.Coordinates.t)),
+  changeAddress: option(Address.t),
 };
 
 type summary = {
@@ -56,8 +56,10 @@ let summary =
   let networkFee = totalIn |> BTC.minus(totalOut);
   let changeOut =
     changeAddress
-    |> Utils.mapOption(((changeAddress, _)) =>
-         outs |> List.find(((a, _)) => a == changeAddress) |> snd
+    |> Utils.mapOption((changeAddress: Address.t) =>
+         outs
+         |> List.find(((a, _)) => a == changeAddress.displayAddress)
+         |> snd
        )
     |> Js.Option.getWithDefault(BTC.zero);
   let misthosFee =
@@ -70,16 +72,9 @@ let summary =
   };
 };
 
-let txInputForChangeAddress =
-    (~txId, accountKeyChains, network, {changeAddress, txHex}) =>
+let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
   changeAddress
-  |> Utils.mapOption(((address, coordinates)) => {
-       let keyChain =
-         accountKeyChains
-         |> AccountKeyChain.Collection.lookup(
-              coordinates |> Address.Coordinates.accountIdx,
-              coordinates |> Address.Coordinates.keyChainIdent,
-            );
+  |> Utils.mapOption((address: Address.t) => {
        let tx = B.Transaction.fromHex(txHex);
        let (idx, value) =
          tx##outs
@@ -89,7 +84,7 @@ let txInputForChangeAddress =
                 out##script,
                 network |> Network.bitcoinNetwork,
               )
-              == address ?
+              == address.displayAddress ?
                 Some((i, BTC.fromSatoshisFloat(out##value))) : None
             )
          |> List.find(Js.Option.isSome)
@@ -98,10 +93,10 @@ let txInputForChangeAddress =
          txId,
          txOutputN: idx,
          value,
-         nCoSigners: keyChain.nCoSigners,
-         nPubKeys: keyChain.custodianKeyChains |> List.length,
-         address,
-         coordinates,
+         nCoSigners: address.nCoSigners,
+         nPubKeys: address.nPubKeys,
+         address: address.displayAddress,
+         coordinates: address.coordinates,
        };
      });
 
@@ -111,13 +106,7 @@ let encode = payout =>
       ("txHex", string(payout.txHex)),
       ("usedInputs", array(Network.encodeInput, payout.usedInputs)),
       ("misthosFeeAddress", string(payout.misthosFeeAddress)),
-      (
-        "changeAddress",
-        nullable(
-          tuple2(string, Address.Coordinates.encode),
-          payout.changeAddress,
-        ),
-      ),
+      ("changeAddress", nullable(Address.encode, payout.changeAddress)),
     ])
   );
 
@@ -126,12 +115,7 @@ let decode = raw =>
     txHex: raw |> field("txHex", string),
     usedInputs: raw |> field("usedInputs", array(Network.decodeInput)),
     misthosFeeAddress: raw |> field("misthosFeeAddress", string),
-    changeAddress:
-      raw
-      |> field(
-           "changeAddress",
-           optional(tuple2(string, Address.Coordinates.decode)),
-         ),
+    changeAddress: raw |> field("changeAddress", optional(Address.decode)),
   };
 
 type signResult =
@@ -403,10 +387,7 @@ let build =
         |> Array.map(((_, input)) => input),
       txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
       misthosFeeAddress,
-      changeAddress:
-        withChange ?
-          Some((changeAddress.displayAddress, changeAddress.coordinates)) :
-          None,
+      changeAddress: withChange ? Some(changeAddress) : None,
     };
   } else {
     let (inputs, success) =
@@ -453,10 +434,7 @@ let build =
           |> Array.map(((_, input)) => input),
         txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
         misthosFeeAddress,
-        changeAddress:
-          withChange ?
-            Some((changeAddress.displayAddress, changeAddress.coordinates)) :
-            None,
+        changeAddress: withChange ? Some(changeAddress) : None,
       };
     } else {
       raise(NotEnoughFunds);

@@ -94,9 +94,6 @@ let preparePayoutTx =
             |> WalletInfoCollector.nextChangeAddress(accountIdx, userId),
           ~network,
         );
-      let changeAddressCoordinates =
-        payoutTx.changeAddress
-        |> Utils.mapOption(((_, coordinates)) => coordinates);
       let payoutTx =
         switch (
           PayoutTransaction.signPayout(
@@ -117,7 +114,7 @@ let preparePayoutTx =
             ~eligibleWhenProposing,
             ~supporterId=userId,
             ~policy=payoutPolicy,
-            Data.{accountIdx, payoutTx, changeAddressCoordinates},
+            Data.{accountIdx, payoutTx},
           )
         ),
       );

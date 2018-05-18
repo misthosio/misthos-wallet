@@ -411,25 +411,15 @@ function encode$6($$event) {
                   "payoutTx",
                   PayoutTransaction.encode($$event[/* payoutTx */1])
                 ],
-                /* :: */[
-                  /* tuple */[
-                    "changeAddressCoordinates",
-                    Json_encode.nullable(Address.Coordinates[/* encode */9], $$event[/* changeAddressCoordinates */2])
-                  ],
-                  /* [] */0
-                ]
+                /* [] */0
               ]
             ]);
 }
 
 function decode$6(raw) {
-  var partial_arg = Address.Coordinates[/* decode */10];
   return /* record */[
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
-          /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw),
-          /* changeAddressCoordinates */Json_decode.field("changeAddressCoordinates", (function (param) {
-                  return Json_decode.optional(partial_arg, param);
-                }), raw)
+          /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw)
         ];
 }
 

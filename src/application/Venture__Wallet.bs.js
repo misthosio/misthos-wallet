@@ -4,7 +4,6 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
-var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
@@ -59,15 +58,11 @@ function preparePayoutTx(eligibleWhenProposing, param, accountIdx, destinations,
   var userId = param[/* userId */0];
   try {
     var payoutTx = PayoutTransaction.build(WalletInfoCollector.oldInputs(accountIdx, userId, walletInfoCollector), walletInfoCollector[/* unused */1], destinations, satsPerByte, WalletInfoCollector.nextChangeAddress(accountIdx, userId, walletInfoCollector), network);
-    var changeAddressCoordinates = Utils.mapOption((function (param) {
-            return param[1];
-          }), payoutTx[/* changeAddress */3]);
     var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], walletInfoCollector[/* keyChains */3], payoutTx, network);
     var payoutTx$1 = match ? match[0] : payoutTx;
     return /* Ok */[Curry._6(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, eligibleWhenProposing, userId, param$1[/* payoutPolicy */2], /* record */[
                   /* accountIdx */accountIdx,
-                  /* payoutTx */payoutTx$1,
-                  /* changeAddressCoordinates */changeAddressCoordinates
+                  /* payoutTx */payoutTx$1
                 ])];
   }
   catch (exn){
