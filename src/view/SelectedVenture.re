@@ -9,7 +9,6 @@ type state = {viewData: ViewData.t};
 type action =
   | EndorsePartner(ProcessId.t)
   | EndorsePartnerRemoval(ProcessId.t)
-  | ProposePayout(list((string, BTC.t)))
   | RejectPayout(ProcessId.t)
   | EndorsePayout(ProcessId.t);
 
@@ -38,13 +37,6 @@ let make =
       ReasonReact.NoUpdate;
     | (false, EndorsePartnerRemoval(processId)) =>
       commands.endorsePartnerRemoval(~processId);
-      ReasonReact.NoUpdate;
-    | (false, ProposePayout(destinations)) =>
-      commands.proposePayout(
-        ~accountIdx=WalletTypes.AccountIndex.default,
-        ~destinations,
-        ~fee=BTC.fromSatoshis(100L),
-      );
       ReasonReact.NoUpdate;
     | (false, RejectPayout(processId)) =>
       commands.rejectPayout(~processId);
@@ -274,10 +266,6 @@ let make =
         </div>
       body4=
         <div>
-          <h3> (text("Wallet:")) </h3>
-          <PayoutInput
-            onSend=(destinations => send(ProposePayout(destinations)))
-          />
           <h4> (text("Payout processes:")) </h4>
           <ul> payouts </ul>
           <MaterialUi.List> transactions </MaterialUi.List>
