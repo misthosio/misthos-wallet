@@ -30,6 +30,8 @@ external make : ([@bs.unwrap] [ | `String(string) | `Float(float)]) => t =
 
 [@bs.send.pipe: t] external integerValue : RoundingMode.t => t = "";
 
+[@bs.send] external isNaN : t => bool = "";
+
 [@bs.send] external toString : t => string = "";
 
 [@bs.send] external toJSON : t => Js.Json.t = "";

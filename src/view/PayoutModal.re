@@ -2,6 +2,8 @@ include ViewCommon;
 
 module View = ViewModel.PayoutView;
 
+let defaultFee = BTC.fromSatoshis(100L);
+
 type inputs = {
   recipientAddress: string,
   btcAmount: string,
@@ -10,6 +12,8 @@ type inputs = {
 type state = {
   viewData: View.t,
   destinations: list((string, BTC.t)),
+  inputDestination: string,
+  inputAmount: BTC.t,
   summary: PayoutTransaction.summary,
   inputs,
 };
@@ -33,34 +37,84 @@ let make =
     viewData,
     destinations: [],
     summary: viewData.initialSummary,
+    inputDestination: "",
+    inputAmount: BTC.zero,
     inputs: {
       recipientAddress: "",
       btcAmount: "",
     },
   },
-  reducer: (action, state) =>
+  reducer: (action, {viewData} as state) =>
     switch (action) {
     | ChangeRecipientAddress(address) =>
+      let (summary, inputDestination, inputAmount, btcAmount) =
+        if (address |> viewData.isAddressValid) {
+          let max = viewData.max(address, [], defaultFee);
+          let (inputAmount, btcAmount) =
+            state.inputAmount |> BTC.gt(max) ?
+              (max, max |> BTC.format) :
+              (state.inputAmount, state.inputs.btcAmount);
+          (
+            viewData.summary([(address, inputAmount)], defaultFee),
+            address,
+            inputAmount,
+            btcAmount,
+          );
+        } else {
+          (state.summary, "", state.inputAmount, state.inputs.btcAmount);
+        };
       ReasonReact.Update({
         ...state,
+        summary,
+        inputDestination,
+        inputAmount,
         inputs: {
-          ...state.inputs,
           recipientAddress: address,
+          btcAmount,
         },
-      })
+      });
     | ChangeBTCAmount(amount) =>
+      let (summary, inputAmount, btcAmount) = {
+        let inputAmount = BTC.fromString(amount);
+        let (inputAmount, btcAmount) =
+          inputAmount |> BTC.isNaN ?
+            (state.inputAmount, state.inputs.btcAmount) :
+            (inputAmount, amount);
+        if (state.inputDestination != "") {
+          let max = viewData.max(state.inputDestination, [], defaultFee);
+          let (inputAmount, btcAmount) =
+            inputAmount |> BTC.gt(max) ?
+              (max, max |> BTC.format) : (inputAmount, btcAmount);
+          if (state.inputDestination != "") {
+            (
+              viewData.summary(
+                [(state.inputDestination, inputAmount)],
+                defaultFee,
+              ),
+              inputAmount,
+              btcAmount,
+            );
+          } else {
+            (state.summary, inputAmount, btcAmount);
+          };
+        } else {
+          (state.summary, inputAmount, btcAmount);
+        };
+      };
       ReasonReact.Update({
         ...state,
+        inputAmount,
+        summary,
         inputs: {
           ...state.inputs,
-          btcAmount: amount,
+          btcAmount,
         },
-      })
+      });
     | ProposePayout =>
       commands.proposePayout(
         ~accountIdx=WalletTypes.AccountIndex.default,
         ~destinations=state.destinations,
-        ~fee=BTC.fromSatoshis(100L),
+        ~fee=defaultFee,
       );
       ReasonReact.NoUpdate;
     },

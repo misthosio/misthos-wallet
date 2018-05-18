@@ -23,7 +23,7 @@ var zero = new BignumberJs.BigNumber(0);
 var satoshisPerBTC = new BignumberJs.BigNumber("1e8");
 
 function fromString(btcString) {
-  return new BignumberJs.BigNumber(btcString).times(satoshisPerBTC);
+  return new BignumberJs.BigNumber(btcString).times(satoshisPerBTC).integerValue(BignumberJs.ROUND_FLOOR);
 }
 
 function format(btc) {

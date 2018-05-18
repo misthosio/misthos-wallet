@@ -17,6 +17,11 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 
+var defaultFee = BTC.fromSatoshis(/* int64 */[
+      /* hi */0,
+      /* lo */100
+    ]);
+
 var component = ReasonReact.reducerComponent("Payout");
 
 var balance = Css.style(/* :: */[
@@ -40,8 +45,8 @@ function make(viewData, commands, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              var inputs = match[/* inputs */3];
-              var summary = match[/* summary */2];
+              var inputs = match[/* inputs */5];
+              var summary = match[/* summary */4];
               var viewData = match[/* viewData */0];
               var destinationList = $$Array.of_list(List.map((function (param) {
                           return React.createElement("div", undefined, ViewCommon.text(param[0]), ViewCommon.text(BTC.format(param[1])));
@@ -67,6 +72,8 @@ function make(viewData, commands, _) {
               return /* record */[
                       /* viewData */viewData,
                       /* destinations : [] */0,
+                      /* inputDestination */"",
+                      /* inputAmount */BTC.zero,
                       /* summary */viewData[/* initialSummary */2],
                       /* inputs : record */[
                         /* recipientAddress */"",
@@ -76,32 +83,113 @@ function make(viewData, commands, _) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
+              var viewData = state[/* viewData */0];
               if (typeof action === "number") {
-                Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], state[/* destinations */1], BTC.fromSatoshis(/* int64 */[
-                          /* hi */0,
-                          /* lo */100
-                        ]));
+                Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], state[/* destinations */1], defaultFee);
                 return /* NoUpdate */0;
               } else if (action.tag) {
-                var init = state[/* inputs */3];
+                var amount = action[0];
+                var inputAmount = BTC.fromString(amount);
+                var match = inputAmount.isNaN();
+                var match$1 = match ? /* tuple */[
+                    state[/* inputAmount */3],
+                    state[/* inputs */5][/* btcAmount */1]
+                  ] : /* tuple */[
+                    inputAmount,
+                    amount
+                  ];
+                var btcAmount = match$1[1];
+                var inputAmount$1 = match$1[0];
+                var match$2;
+                if (state[/* inputDestination */2] !== "") {
+                  var max = Curry._3(viewData[/* max */4], state[/* inputDestination */2], /* [] */0, defaultFee);
+                  var match$3 = inputAmount$1.gt(max);
+                  var match$4 = match$3 ? /* tuple */[
+                      max,
+                      BTC.format(max)
+                    ] : /* tuple */[
+                      inputAmount$1,
+                      btcAmount
+                    ];
+                  var btcAmount$1 = match$4[1];
+                  var inputAmount$2 = match$4[0];
+                  match$2 = state[/* inputDestination */2] !== "" ? /* tuple */[
+                      Curry._2(viewData[/* summary */5], /* :: */[
+                            /* tuple */[
+                              state[/* inputDestination */2],
+                              inputAmount$2
+                            ],
+                            /* [] */0
+                          ], defaultFee),
+                      inputAmount$2,
+                      btcAmount$1
+                    ] : /* tuple */[
+                      state[/* summary */4],
+                      inputAmount$2,
+                      btcAmount$1
+                    ];
+                } else {
+                  match$2 = /* tuple */[
+                    state[/* summary */4],
+                    inputAmount$1,
+                    btcAmount
+                  ];
+                }
+                var init = state[/* inputs */5];
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
                             /* destinations */state[/* destinations */1],
-                            /* summary */state[/* summary */2],
+                            /* inputDestination */state[/* inputDestination */2],
+                            /* inputAmount */match$2[1],
+                            /* summary */match$2[0],
                             /* inputs : record */[
                               /* recipientAddress */init[/* recipientAddress */0],
-                              /* btcAmount */action[0]
+                              /* btcAmount */match$2[2]
                             ]
                           ]]);
               } else {
-                var init$1 = state[/* inputs */3];
+                var address = action[0];
+                var match$5;
+                if (Curry._1(viewData[/* isAddressValid */3], address)) {
+                  var max$1 = Curry._3(viewData[/* max */4], address, /* [] */0, defaultFee);
+                  var match$6 = state[/* inputAmount */3].gt(max$1);
+                  var match$7 = match$6 ? /* tuple */[
+                      max$1,
+                      BTC.format(max$1)
+                    ] : /* tuple */[
+                      state[/* inputAmount */3],
+                      state[/* inputs */5][/* btcAmount */1]
+                    ];
+                  var inputAmount$3 = match$7[0];
+                  match$5 = /* tuple */[
+                    Curry._2(viewData[/* summary */5], /* :: */[
+                          /* tuple */[
+                            address,
+                            inputAmount$3
+                          ],
+                          /* [] */0
+                        ], defaultFee),
+                    address,
+                    inputAmount$3,
+                    match$7[1]
+                  ];
+                } else {
+                  match$5 = /* tuple */[
+                    state[/* summary */4],
+                    "",
+                    state[/* inputAmount */3],
+                    state[/* inputs */5][/* btcAmount */1]
+                  ];
+                }
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
                             /* destinations */state[/* destinations */1],
-                            /* summary */state[/* summary */2],
+                            /* inputDestination */match$5[1],
+                            /* inputAmount */match$5[2],
+                            /* summary */match$5[0],
                             /* inputs : record */[
-                              /* recipientAddress */action[0],
-                              /* btcAmount */init$1[/* btcAmount */1]
+                              /* recipientAddress */address,
+                              /* btcAmount */match$5[3]
                             ]
                           ]]);
               }
@@ -120,7 +208,8 @@ var View = 0;
 exports.text = text;
 exports.extractString = extractString;
 exports.View = View;
+exports.defaultFee = defaultFee;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;
-/* component Not a pure module */
+/* defaultFee Not a pure module */
