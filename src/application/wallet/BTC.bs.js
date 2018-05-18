@@ -23,7 +23,7 @@ var zero = new BignumberJs.BigNumber(0);
 var satoshisPerBTC = new BignumberJs.BigNumber("1e8");
 
 function fromString(btcString) {
-  return new BignumberJs.BigNumber(btcString).times(satoshisPerBTC);
+  return new BignumberJs.BigNumber(btcString).times(satoshisPerBTC).integerValue(BignumberJs.ROUND_FLOOR);
 }
 
 function format(btc) {
@@ -36,6 +36,10 @@ function fromFloat(btcFloat) {
 
 function timesRounded(n, btc) {
   return btc.times(n).integerValue(BignumberJs.ROUND_CEIL);
+}
+
+function dividedByRounded(n, btc) {
+  return btc.dividedBy(n).integerValue(BignumberJs.ROUND_FLOOR);
 }
 
 function encode(prim) {
@@ -58,6 +62,7 @@ exports.fromString = fromString;
 exports.format = format;
 exports.fromFloat = fromFloat;
 exports.timesRounded = timesRounded;
+exports.dividedByRounded = dividedByRounded;
 exports.encode = encode;
 exports.decode = decode;
 /* zero Not a pure module */

@@ -169,4 +169,62 @@ let () =
            },
          );
     });
+    describe("max", () => {
+      let destinations = [
+        ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(5000L)),
+      ];
+      let max =
+        PayoutTransaction.max(
+          ~allInputs=inputs,
+          ~targetDestination="mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+          ~destinations,
+          ~satsPerByte=BTC.fromSatoshis(1L),
+          ~network=Network.Regtest,
+        );
+      test("sending max amount works", () => {
+        let summary =
+          PayoutTransaction.build(
+            ~mandatoryInputs=Network.inputSet(),
+            ~allInputs=inputs,
+            ~destinations=[
+              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", max),
+              ...destinations,
+            ],
+            ~satsPerByte=BTC.fromSatoshis(1L),
+            ~changeAddress,
+            ~network=Network.Regtest,
+          )
+          |> PayoutTransaction.summary(Network.Regtest);
+        expect(summary)
+        |> toEqual(
+             PayoutTransaction.{
+               reserved: BTC.fromSatoshis(15000L),
+               spentWithFees: BTC.fromSatoshis(15000L),
+               misthosFee: BTC.fromSatoshis(414L),
+               networkFee: BTC.fromSatoshis(323L),
+             },
+           );
+      });
+      test("Spending more than max will throw an exception", () =>
+        expectFn(
+          () =>
+            PayoutTransaction.build(
+              ~mandatoryInputs=Network.inputSet(),
+              ~allInputs=inputs,
+              ~destinations=[
+                (
+                  "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                  max |> BTC.plus(BTC.fromSatoshis(50L)),
+                ),
+                ...destinations,
+              ],
+              ~satsPerByte=BTC.fromSatoshis(1L),
+              ~changeAddress,
+              ~network=Network.Regtest,
+            ),
+          (),
+        )
+        |> toThrow
+      );
+    });
   });

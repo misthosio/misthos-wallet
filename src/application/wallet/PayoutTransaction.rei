@@ -38,6 +38,16 @@ let build:
   ) =>
   t;
 
+let max:
+  (
+    ~allInputs: Network.inputSet,
+    ~targetDestination: string,
+    ~destinations: list((string, BTC.t)),
+    ~satsPerByte: BTC.t,
+    ~network: Network.t
+  ) =>
+  BTC.t;
+
 type signResult =
   | Signed(t)
   | NotSigned;

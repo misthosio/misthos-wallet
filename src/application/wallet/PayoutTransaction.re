@@ -462,6 +462,47 @@ let build =
   };
 };
 
+let max =
+    (~allInputs, ~targetDestination, ~destinations, ~satsPerByte, ~network) => {
+  open Belt;
+  let inputs =
+    allInputs
+    |> Set.toList
+    |. List.keepMapU((. input) =>
+         TransactionFee.canPayForItself(satsPerByte, input) ?
+           Some(input) : None
+       );
+  let outputs =
+    if (targetDestination != "") {
+      [
+        (targetDestination, BTC.zero),
+        (Network.incomeAddress(network), BTC.zero),
+        ...destinations,
+      ];
+    } else {
+      [(Network.incomeAddress(network), BTC.zero), ...destinations];
+    };
+  let fee =
+    Fee.estimate(
+      outputs |. List.map(fst),
+      inputs,
+      satsPerByte,
+      network |> Network.bitcoinNetwork,
+    );
+  let totalInputValue =
+    inputs
+    |. List.reduce(BTC.zero, (res, input) => res |> BTC.plus(input.value));
+  let totalOutValue =
+    destinations
+    |. List.reduce(BTC.zero, (res, (_, outVal)) => res |> BTC.plus(outVal));
+  let totalOutMisthosFee =
+    totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
+  let rest = totalInputValue |> BTC.minus(totalOutValue |> BTC.plus(fee));
+  rest
+  |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.)
+  |> BTC.minus(totalOutMisthosFee);
+};
+
 let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>
   switch (needed, allSigs) {
   | (0, _)

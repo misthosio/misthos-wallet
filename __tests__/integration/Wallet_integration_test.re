@@ -203,7 +203,7 @@ let () =
                   ~ventureId,
                   ~userId=userB.userId,
                   ~masterKeyChain=userB.masterKeyChain,
-                  ~accountKeyChains=wallet.txInputCollector.keyChains,
+                  ~accountKeyChains=wallet.walletInfoCollector.keyChains,
                   ~payoutTx=data.payoutTx,
                   ~network=Network.Regtest,
                 )

@@ -33,6 +33,7 @@ type t = {
   balanceCollector: BalanceCollector.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
+  walletInfoCollector: WalletInfoCollector.t,
 };
 
 let readOnly = ({localUser, partnersCollector}) =>
@@ -56,10 +57,17 @@ let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 module PayoutView = {
   type t = {
-    balance: BTC.t,
+    ventureId,
     ventureName: string,
+    balance: BTC.t,
+    initialSummary: PayoutTransaction.summary,
+    isAddressValid: string => bool,
+    max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
+    summary: (list((string, BTC.t)), BTC.t) => PayoutTransaction.summary,
   };
-  let fromViewModelState = ({name, balanceCollector}) => {
+  let fromViewModelState =
+      ({ventureId, localUser, name, balanceCollector, walletInfoCollector}) => {
+    ventureId,
     balance:
       (
         balanceCollector
@@ -67,6 +75,50 @@ module PayoutView = {
       ).
         currentSpendable,
     ventureName: name,
+    initialSummary: {
+      reserved: BTC.zero,
+      spentWithFees: BTC.zero,
+      misthosFee: BTC.zero,
+      networkFee: BTC.zero,
+    },
+    isAddressValid: address =>
+      try (
+        {
+          Bitcoin.Address.toOutputScript(
+            address,
+            walletInfoCollector.network |> Network.bitcoinNetwork,
+          )
+          |> ignore;
+          true;
+        }
+      ) {
+      | _ => false
+      },
+    max: (targetDestination, destinations, fee) =>
+      PayoutTransaction.max(
+        ~allInputs=walletInfoCollector.unused,
+        ~targetDestination,
+        ~destinations,
+        ~satsPerByte=fee,
+        ~network=walletInfoCollector.network,
+      ),
+    summary: (destinations, fee) =>
+      PayoutTransaction.build(
+        ~mandatoryInputs=
+          walletInfoCollector
+          |> WalletInfoCollector.oldInputs(AccountIndex.default, localUser),
+        ~allInputs=walletInfoCollector.unused,
+        ~destinations,
+        ~satsPerByte=fee,
+        ~changeAddress=
+          walletInfoCollector
+          |> WalletInfoCollector.nextChangeAddress(
+               AccountIndex.default,
+               localUser,
+             ),
+        ~network=walletInfoCollector.network,
+      )
+      |> PayoutTransaction.summary(walletInfoCollector.network),
   };
 };
 
@@ -133,6 +185,7 @@ let make = localUser => {
   balanceCollector: BalanceCollector.make(),
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
+  walletInfoCollector: WalletInfoCollector.make(),
 };
 
 let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
@@ -147,6 +200,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.partnersCollector |> PartnersCollector.apply(event),
       transactionCollector:
         state.transactionCollector |> TransactionCollector.apply(event),
+      walletInfoCollector:
+        state.walletInfoCollector |> WalletInfoCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {
