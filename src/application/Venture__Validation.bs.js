@@ -644,7 +644,7 @@ function validateAcceptance(param, dataList, eq, param$1, _) {
     var match = List.assoc(processId, param$1[/* processes */19]);
     if (Curry._2(eq, param[/* data */3], List.assoc(processId, dataList)[1]) === false) {
       return /* BadData */["Data doesn't match proposal"];
-    } else if (Policy.fulfilled(match[/* policy */1])(param$1[/* currentPartners */7], Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(match[/* supporterIds */0]))) === false) {
+    } else if (Policy.fulfilled(match[/* policy */1])(Belt_Set.intersect(param$1[/* currentPartners */7], param[/* eligibleWhenProposing */2]), Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(match[/* supporterIds */0]))) === false) {
       return /* PolicyNotFulfilled */6;
     } else {
       var match$1 = Belt_Set.reduce(param[/* dependsOnCompletions */1], true, (function (res, processId) {

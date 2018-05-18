@@ -442,7 +442,8 @@ let validateEndorsement =
 
 let validateAcceptance =
     (
-      {processId, data, dependsOnCompletions}: EventTypes.acceptance('a),
+      {processId, data, dependsOnCompletions, eligibleWhenProposing}:
+        EventTypes.acceptance('a),
       dataList: list((processId, (userId, 'a))),
       eq: ('a, 'a) => bool,
       {processes, currentPartners, completedProcesses},
@@ -454,7 +455,11 @@ let validateAcceptance =
       if (eq(data, dataList |> List.assoc(processId) |> snd) == false) {
         BadData("Data doesn't match proposal");
       } else if (Policy.fulfilled(
-                   ~eligible=currentPartners,
+                   ~eligible=
+                     Belt.Set.intersect(
+                       currentPartners,
+                       eligibleWhenProposing,
+                     ),
                    ~endorsed=
                      supporterIds
                      |> Array.of_list
