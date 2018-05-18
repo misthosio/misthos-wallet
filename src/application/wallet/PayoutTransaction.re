@@ -495,8 +495,12 @@ let max =
   let totalOutValue =
     destinations
     |. List.reduce(BTC.zero, (res, (_, outVal)) => res |> BTC.plus(outVal));
+  let totalOutMisthosFee =
+    totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
   let rest = totalInputValue |> BTC.minus(totalOutValue |> BTC.plus(fee));
-  rest |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.);
+  rest
+  |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.)
+  |> BTC.minus(totalOutMisthosFee);
 };
 
 let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>

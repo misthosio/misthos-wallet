@@ -394,8 +394,9 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
   var totalOutValue = Belt_List.reduce(destinations, BTC.zero, (function (res, param) {
           return res.plus(param[1]);
         }));
+  var totalOutMisthosFee = BTC.timesRounded(2.9 / 100, totalOutValue);
   var rest = totalInputValue.minus(totalOutValue.plus(fee));
-  return BTC.dividedByRounded(1 + 2.9 / 100, rest);
+  return BTC.dividedByRounded(1 + 2.9 / 100, rest).minus(totalOutMisthosFee);
 }
 
 function findSignatures(_allSigs, needed, foundSigIdxs, foundSigs, network) {

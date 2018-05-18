@@ -170,11 +170,14 @@ let () =
          );
     });
     describe("max", () => {
+      let destinations = [
+        ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(5000L)),
+      ];
       let max =
         PayoutTransaction.max(
           ~allInputs=inputs,
           ~targetDestination="mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-          ~destinations=[],
+          ~destinations,
           ~satsPerByte=BTC.fromSatoshis(1L),
           ~network=Network.Regtest,
         );
@@ -183,7 +186,10 @@ let () =
           PayoutTransaction.build(
             ~mandatoryInputs=Network.inputSet(),
             ~allInputs=inputs,
-            ~destinations=[("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", max)],
+            ~destinations=[
+              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", max),
+              ...destinations,
+            ],
             ~satsPerByte=BTC.fromSatoshis(1L),
             ~changeAddress,
             ~network=Network.Regtest,
@@ -194,8 +200,8 @@ let () =
              PayoutTransaction.{
                reserved: BTC.fromSatoshis(15000L),
                spentWithFees: BTC.fromSatoshis(15000L),
-               misthosFee: BTC.fromSatoshis(415L),
-               networkFee: BTC.fromSatoshis(285L),
+               misthosFee: BTC.fromSatoshis(414L),
+               networkFee: BTC.fromSatoshis(323L),
              },
            );
       });
@@ -210,6 +216,7 @@ let () =
                   "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                   max |> BTC.plus(BTC.fromSatoshis(50L)),
                 ),
+                ...destinations,
               ],
               ~satsPerByte=BTC.fromSatoshis(1L),
               ~changeAddress,

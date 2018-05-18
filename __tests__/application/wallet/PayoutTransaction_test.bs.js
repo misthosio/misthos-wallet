@@ -211,7 +211,18 @@ describe("build", (function () {
                           ], Jest.Expect[/* expect */0](summary));
               }));
         describe("max", (function () {
-                var max = PayoutTransaction.max(inputs, "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", /* [] */0, BTC.fromSatoshis(/* int64 */[
+                var destinations_000 = /* tuple */[
+                  "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                  BTC.fromSatoshis(/* int64 */[
+                        /* hi */0,
+                        /* lo */5000
+                      ])
+                ];
+                var destinations = /* :: */[
+                  destinations_000,
+                  /* [] */0
+                ];
+                var max = PayoutTransaction.max(inputs, "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", destinations, BTC.fromSatoshis(/* int64 */[
                           /* hi */0,
                           /* lo */1
                         ]), /* Regtest */0);
@@ -221,7 +232,7 @@ describe("build", (function () {
                                     "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                     max
                                   ],
-                                  /* [] */0
+                                  destinations
                                 ], BTC.fromSatoshis(/* int64 */[
                                       /* hi */0,
                                       /* lo */1
@@ -237,11 +248,11 @@ describe("build", (function () {
                                         ]),
                                     /* misthosFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */415
+                                          /* lo */414
                                         ]),
                                     /* networkFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */285
+                                          /* lo */323
                                         ])
                                   ], Jest.Expect[/* expect */0](summary));
                       }));
@@ -255,7 +266,7 @@ describe("build", (function () {
                                                                         /* lo */50
                                                                       ]))
                                                             ],
-                                                            /* [] */0
+                                                            destinations
                                                           ], BTC.fromSatoshis(/* int64 */[
                                                                 /* hi */0,
                                                                 /* lo */1
