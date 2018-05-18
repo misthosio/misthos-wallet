@@ -2,7 +2,11 @@ open Belt;
 
 open PrimitiveTypes;
 
+open WalletTypes;
+
 open Event;
+
+open Address;
 
 type t = {
   network: Network.t,
@@ -10,6 +14,38 @@ type t = {
   reserved: Network.inputSet,
   keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
+  activatedKeyChain:
+    list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
+  exposedCoordinates: list(Address.Coordinates.t),
+};
+
+let currentKeyChainIdent = (accountIdx, userId, {activatedKeyChain}) =>
+  activatedKeyChain
+  |. List.getAssoc(accountIdx, AccountIndex.eq)
+  |> Js.Option.getExn
+  |. List.getAssoc(userId, UserId.eq)
+  |> Js.Option.getExn;
+
+let oldInputs = (accountIdx, userId, {unused} as collector) =>
+  unused
+  |. Belt.Set.keepU((. i: Network.txInput) =>
+       i.coordinates
+       |> Coordinates.keyChainIdent
+       |> AccountKeyChain.Identifier.neq(
+            currentKeyChainIdent(accountIdx, userId, collector),
+          )
+     );
+
+let nextChangeAddress = (accountIdx, userId, collector) => {
+  let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
+  let accountKeyChain =
+    collector.keyChains
+    |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
+  let coordinates =
+    collector.exposedCoordinates |> Coordinates.allForAccount(accountIdx);
+  let nextChangeCoordinates =
+    Coordinates.nextInternal(userId, coordinates, accountKeyChain);
+  Address.find(nextChangeCoordinates, collector.keyChains);
 };
 
 let make = () => {
@@ -18,14 +54,42 @@ let make = () => {
   reserved: Network.inputSet(),
   keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
+  activatedKeyChain: [],
+  exposedCoordinates: [],
 };
 
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
+  | AccountCreationAccepted(
+      ({data: {accountIdx}}: AccountCreation.Accepted.t),
+    ) => {
+      ...state,
+      activatedKeyChain: [(accountIdx, []), ...state.activatedKeyChain],
+    }
   | AccountKeyChainIdentified({keyChain}) => {
       ...state,
       keyChains: state.keyChains |> AccountKeyChain.Collection.add(keyChain),
+    }
+  | AccountKeyChainActivated({accountIdx, custodianId, identifier}) => {
+      ...state,
+      activatedKeyChain: [
+        (
+          accountIdx,
+          [
+            (custodianId, identifier),
+            ...state.activatedKeyChain
+               |. List.getAssoc(accountIdx, AccountIndex.eq)
+               |> Js.Option.getExn,
+          ],
+        ),
+        ...state.activatedKeyChain
+           |. List.removeAssoc(accountIdx, AccountIndex.eq),
+      ],
+    }
+  | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) => {
+      ...state,
+      exposedCoordinates: [coordinates, ...state.exposedCoordinates],
     }
   | IncomeDetected({address, txId, txOutputN, amount, coordinates}) =>
     let keyChain =
@@ -48,11 +112,16 @@ let apply = (event, state) =>
              nPubKeys: keyChain.custodianKeyChains |> List.length,
            }),
     };
-  | PayoutProposed({data: {payoutTx}, processId}) => {
+  | PayoutProposed({data: {payoutTx, changeAddressCoordinates}, processId}) => {
       ...state,
       unused: state.unused |. Set.removeMany(payoutTx.usedInputs),
       reserved: state.reserved |. Set.mergeMany(payoutTx.usedInputs),
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
+      exposedCoordinates:
+        switch (changeAddressCoordinates) {
+        | None => state.exposedCoordinates
+        | Some(coordinates) => [coordinates, ...state.exposedCoordinates]
+        },
     }
   | PayoutBroadcast({processId, txId}) =>
     let payoutTx: PayoutTransaction.t =

@@ -7,7 +7,6 @@ var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
-var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./wallet/AccountKeyChain.bs.js");
 var TxInputCollector = require("./wallet/TxInputCollector.bs.js");
@@ -18,9 +17,7 @@ function make() {
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* network : Testnet */1,
           /* payoutPolicy */Policy.unanimous,
-          /* txInputCollector */TxInputCollector.make(/* () */0),
-          /* activatedKeyChain : [] */0,
-          /* exposedCoordinates : [] */0
+          /* txInputCollector */TxInputCollector.make(/* () */0)
         ];
 }
 
@@ -29,123 +26,44 @@ function apply($$event, state) {
   var state_001 = /* network */state[/* network */1];
   var state_002 = /* payoutPolicy */state[/* payoutPolicy */2];
   var state_003 = /* txInputCollector */TxInputCollector.apply($$event, state[/* txInputCollector */3]);
-  var state_004 = /* activatedKeyChain */state[/* activatedKeyChain */4];
-  var state_005 = /* exposedCoordinates */state[/* exposedCoordinates */5];
   var state$1 = /* record */[
     state_000,
     state_001,
     state_002,
-    state_003,
-    state_004,
-    state_005
+    state_003
   ];
-  switch ($$event.tag | 0) {
-    case 0 : 
-        var match = $$event[0];
-        return /* record */[
-                /* ventureId */match[/* ventureId */0],
-                /* network */match[/* network */6],
-                /* payoutPolicy */match[/* metaPolicy */4],
-                state_003,
-                state_004,
-                state_005
-              ];
-    case 12 : 
-        return /* record */[
-                state_000,
-                state_001,
-                state_002,
-                state_003,
-                /* activatedKeyChain : :: */[
-                  /* tuple */[
-                    $$event[0][/* data */2][/* accountIdx */0],
-                    /* [] */0
-                  ],
-                  state_004
-                ],
-                state_005
-              ];
-    case 21 : 
-        var match$1 = $$event[0][/* data */5][/* changeAddressCoordinates */2];
-        return /* record */[
-                state_000,
-                state_001,
-                state_002,
-                state_003,
-                state_004,
-                /* exposedCoordinates */match$1 ? /* :: */[
-                    match$1[0],
-                    state_005
-                  ] : state_005
-              ];
-    case 31 : 
-        var match$2 = $$event[0];
-        var accountIdx = match$2[/* accountIdx */0];
-        return /* record */[
-                state_000,
-                state_001,
-                state_002,
-                state_003,
-                /* activatedKeyChain : :: */[
-                  /* tuple */[
-                    accountIdx,
-                    /* :: */[
-                      /* tuple */[
-                        match$2[/* custodianId */1],
-                        match$2[/* identifier */2]
-                      ],
-                      List.assoc(accountIdx, state_004)
-                    ]
-                  ],
-                  List.remove_assoc(accountIdx, state_004)
-                ],
-                state_005
-              ];
-    case 32 : 
-        return /* record */[
-                state_000,
-                state_001,
-                state_002,
-                state_003,
-                state_004,
-                /* exposedCoordinates : :: */[
-                  $$event[0][/* coordinates */0],
-                  state_005
-                ]
-              ];
-    default:
-      return state$1;
+  if ($$event.tag) {
+    return state$1;
+  } else {
+    var match = $$event[0];
+    return /* record */[
+            /* ventureId */match[/* ventureId */0],
+            /* network */match[/* network */6],
+            /* payoutPolicy */match[/* metaPolicy */4],
+            state_003
+          ];
   }
 }
 
 function exposeNextIncomeAddress(userId, accountIdx, param) {
-  var ident = List.assoc(userId, List.assoc(accountIdx, param[/* activatedKeyChain */4]));
-  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, ident, param[/* txInputCollector */3][/* keyChains */3]);
-  var coordinates = Address.Coordinates[/* nextExternal */2](userId, param[/* exposedCoordinates */5], accountKeyChain);
+  var match = param[/* txInputCollector */3];
+  var ident = List.assoc(userId, List.assoc(accountIdx, match[/* activatedKeyChain */5]));
+  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, ident, match[/* keyChains */3]);
+  var coordinates = Address.Coordinates[/* nextExternal */2](userId, match[/* exposedCoordinates */6], accountKeyChain);
   return Event.IncomeAddressExposed[/* make */0](coordinates, Address.make(coordinates, accountKeyChain)[/* address */5]);
 }
 
 function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) {
-  var match = param$1[/* txInputCollector */3];
-  var accountKeyChains = match[/* keyChains */3];
-  var inputs = match[/* unused */1];
+  var txInputCollector = param$1[/* txInputCollector */3];
   var network = param[/* network */5];
   var userId = param[/* userId */0];
-  var keyChainIdent = List.assoc(userId, List.assoc(accountIdx, param$1[/* activatedKeyChain */4]));
-  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, accountKeyChains);
-  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(param$1[/* exposedCoordinates */5]);
-  var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
-  var oldInputs = Belt_Set.keepU(inputs, (function (i) {
-          return AccountKeyChain.Identifier[/* neq */3](keyChainIdent, Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6]));
-        }));
-  var changeAddress = Address.find(nextChangeCoordinates, accountKeyChains);
   try {
-    var payoutTx = PayoutTransaction.build(oldInputs, inputs, destinations, satsPerByte, changeAddress, network);
-    var changeAddressCoordinates = Utils.mapOption((function () {
-            return nextChangeCoordinates;
+    var payoutTx = PayoutTransaction.build(TxInputCollector.oldInputs(accountIdx, userId, txInputCollector), txInputCollector[/* unused */1], destinations, satsPerByte, TxInputCollector.nextChangeAddress(accountIdx, userId, txInputCollector), network);
+    var changeAddressCoordinates = Utils.mapOption((function (param) {
+            return param[1];
           }), payoutTx[/* changeAddress */3]);
-    var match$1 = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], accountKeyChains, payoutTx, network);
-    var payoutTx$1 = match$1 ? match$1[0] : payoutTx;
+    var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], txInputCollector[/* keyChains */3], payoutTx, network);
+    var payoutTx$1 = match ? match[0] : payoutTx;
     return /* Ok */[Curry._5(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, userId, param$1[/* payoutPolicy */2], /* record */[
                   /* accountIdx */accountIdx,
                   /* payoutTx */payoutTx$1,

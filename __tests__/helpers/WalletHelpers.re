@@ -47,7 +47,7 @@ let collectNextTwoAddresses = (user: Session.Data.t, (wallet, log)) => {
 
 let getExposedAddresses =
     (
-      {exposedCoordinates, txInputCollector: {keyChains: accountKeyChains}}: Wallet.t,
+      {txInputCollector: {exposedCoordinates, keyChains: accountKeyChains}}: Wallet.t,
     ) =>
   exposedCoordinates
   |> List.map(coordinates => accountKeyChains |> Address.find(coordinates))

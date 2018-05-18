@@ -46,12 +46,13 @@ function collectNextTwoAddresses(user, param) {
 }
 
 function getExposedAddresses(param) {
-  var accountKeyChains = param[/* txInputCollector */3][/* keyChains */3];
+  var match = param[/* txInputCollector */3];
+  var accountKeyChains = match[/* keyChains */3];
   return List.map((function (a) {
                 return a[/* address */5];
               }), List.map((function (coordinates) {
                     return Address.find(coordinates, accountKeyChains);
-                  }), param[/* exposedCoordinates */5]));
+                  }), match[/* exposedCoordinates */6]));
 }
 
 var Wallet = 0;
