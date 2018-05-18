@@ -154,8 +154,6 @@ let signPayout =
       ~payoutTx as payout: t,
       ~network: Network.t,
     ) => {
-  Js.log2("sign payout", payout |> encode |> Json.stringify);
-  Js.log2("txhex:", payout.txHex);
   let txB =
     B.TxBuilder.fromTransactionWithNetwork(
       B.Transaction.fromHex(payout.txHex),
@@ -164,7 +162,6 @@ let signPayout =
   let signed =
     payout.usedInputs
     |> Array.mapi((idx, input: input) => {
-         Js.log2("signing input:", idx);
          let inputs = txB##inputs;
          let txBInput = inputs[idx];
          let needsSigning =
@@ -178,28 +175,9 @@ let signPayout =
              |> List.length < input.nCoSigners
            | None => true
            };
-         Js.log2("needs signing:", needsSigning);
-         Js.log2("nCoSigners:", input.nCoSigners);
          if (needsSigning) {
            try (
              {
-               let custodianKeyChains =
-                 (
-                   accountKeyChains
-                   |> AccountKeyChain.Collection.lookup(
-                        input.coordinates |> Address.Coordinates.accountIdx,
-                        input.coordinates |> Address.Coordinates.keyChainIdent,
-                      ): AccountKeyChain.t
-                 ).
-                   custodianKeyChains;
-               custodianKeyChains
-               |> List.iter(((userId, keyChain)) =>
-                    Js.log3(
-                      "key chain:",
-                      userId,
-                      keyChain |> CustodianKeyChain.encode |> Json.stringify,
-                    )
-                  );
                let custodianPubChain =
                  (
                    accountKeyChains
@@ -219,13 +197,6 @@ let signPayout =
                      CustodianKeyChain.keyChainIdx(custodianPubChain),
                    ~masterKeyChain,
                  );
-               Js.log2(
-                 "user xpub:",
-                 CustodianKeyChain.hdNode(
-                   custodianKeyChain |> CustodianKeyChain.toPublicKeyChain,
-                 )
-                 |> Bitcoin.HDNode.toBase58,
-               );
                let (coSignerIdx, chainIdx, addressIdx) = (
                  input.coordinates |> Address.Coordinates.coSignerIdx,
                  input.coordinates |> Address.Coordinates.chainIdx,

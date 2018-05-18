@@ -2,7 +2,6 @@
 'use strict';
 
 var BTC = require("./BTC.bs.js");
-var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Utils = require("../../utils/Utils.bs.js");
@@ -153,29 +152,18 @@ function getSignedExn(result) {
 }
 
 function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, network) {
-  console.log("sign payout", Json.stringify(encode(payout)));
-  console.log("txhex:", payout[/* txHex */0]);
   var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(payout[/* txHex */0]), Network.bitcoinNetwork(network));
   var signed = $$Array.mapi((function (idx, input) {
-          console.log("signing input:", idx);
           var inputs = txB.inputs;
           var txBInput = Caml_array.caml_array_get(inputs, idx);
           var match = txBInput.signatures;
           var needsSigning = (match == null) ? true : List.length(List.filter((function (s) {
                           return Js_option.isSome((s == null) ? /* None */0 : [s]);
                         }))($$Array.to_list(match))) < input[/* nCoSigners */4];
-          console.log("needs signing:", needsSigning);
-          console.log("nCoSigners:", input[/* nCoSigners */4]);
           if (needsSigning) {
             try {
-              var custodianKeyChains = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3];
-              List.iter((function (param) {
-                      console.log("key chain:", param[0], Json.stringify(CustodianKeyChain.encode(param[1])));
-                      return /* () */0;
-                    }), custodianKeyChains);
               var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
-              console.log("user xpub:", CustodianKeyChain.hdNode(CustodianKeyChain.toPublicKeyChain(custodianKeyChain)).toBase58());
               var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
               var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
               var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
