@@ -40,8 +40,9 @@ function fromViewModelState$1(param) {
   var walletInfoCollector = param[/* walletInfoCollector */9];
   var localUser = param[/* localUser */0];
   return /* record */[
-          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
+          /* ventureId */param[/* ventureId */1],
           /* ventureName */param[/* name */2],
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
           /* initialSummary : record */[
             /* reserved */BTC.zero,
             /* spentWithFees */BTC.zero,

@@ -22,6 +22,7 @@ type action =
   | ChangeRecipientAddress(string)
   | ChangeBTCAmount(string)
   | EnterMax
+  | AddAnother
   | ProposePayout;
 
 let component = ReasonReact.reducerComponent("Payout");
@@ -50,13 +51,16 @@ let make =
     | ChangeRecipientAddress(address) =>
       let (summary, inputDestination, inputAmount, btcAmount) =
         if (address |> viewData.isAddressValid) {
-          let max = viewData.max(address, [], defaultFee);
+          let max = viewData.max(address, state.destinations, defaultFee);
           let (inputAmount, btcAmount) =
             state.inputAmount |> BTC.gt(max) ?
               (max, max |> BTC.format) :
               (state.inputAmount, state.inputs.btcAmount);
           (
-            viewData.summary([(address, inputAmount)], defaultFee),
+            viewData.summary(
+              [(address, inputAmount), ...state.destinations],
+              defaultFee,
+            ),
             address,
             inputAmount,
             btcAmount,
@@ -82,13 +86,18 @@ let make =
             (state.inputAmount, state.inputs.btcAmount) :
             (inputAmount, amount);
         if (state.inputDestination != "") {
-          let max = viewData.max(state.inputDestination, [], defaultFee);
+          let max =
+            viewData.max(
+              state.inputDestination,
+              state.destinations,
+              defaultFee,
+            );
           let (inputAmount, btcAmount) =
             inputAmount |> BTC.gt(max) ?
               (max, max |> BTC.format) : (inputAmount, btcAmount);
           (
             viewData.summary(
-              [(state.inputDestination, inputAmount)],
+              [(state.inputDestination, inputAmount), ...state.destinations],
               defaultFee,
             ),
             inputAmount,
@@ -108,30 +117,60 @@ let make =
         },
       });
     | ProposePayout =>
+      let destinations =
+        if (state.inputDestination != ""
+            && state.inputAmount
+            |> BTC.gt(BTC.zero)) {
+          [
+            (state.inputDestination, state.inputAmount),
+            ...state.destinations,
+          ];
+        } else {
+          state.destinations;
+        };
       commands.proposePayout(
         ~accountIdx=WalletTypes.AccountIndex.default,
-        ~destinations=state.destinations,
+        ~destinations,
         ~fee=defaultFee,
       );
+      Router.goTo(Venture(viewData.ventureId, None));
       ReasonReact.NoUpdate;
+    | AddAnother =>
+      if (state.inputDestination != ""
+          && state.inputAmount
+          |> BTC.gt(BTC.zero)) {
+        ReasonReact.Update({
+          ...state,
+          destinations: [
+            (state.inputDestination, state.inputAmount),
+            ...state.destinations,
+          ],
+          inputDestination: "",
+          inputAmount: BTC.zero,
+          inputs: {
+            recipientAddress: "",
+            btcAmount: "",
+          },
+        });
+      } else {
+        ReasonReact.NoUpdate;
+      }
     | EnterMax =>
-      let max = viewData.max(state.inputDestination, [], defaultFee);
-      ReasonReact.Update({
-        ...state,
-        inputAmount: max,
-        inputs: {
-          ...state.inputs,
-          btcAmount: max |> BTC.format,
-        },
-      });
+      let max =
+        viewData.max(state.inputDestination, state.destinations, defaultFee);
+      ReasonReact.SideEffects(
+        (({send}) => send(ChangeBTCAmount(max |> BTC.format))),
+      );
     },
   render: ({send, state: {viewData, inputs, destinations, summary}}) => {
     let destinationList =
       ReasonReact.array(
         Array.of_list(
           destinations
-          |> List.map(((address, amount)) =>
-               <div> (text(address)) (text(BTC.format(amount))) </div>
+          |> List.mapi((idx, (address, amount)) =>
+               <div key=(idx |> string_of_int)>
+                 (text(address ++ " - " ++ BTC.format(amount)))
+               </div>
              ),
         ),
       );
@@ -172,6 +211,9 @@ let make =
           />
           <MButton fullWidth=true onClick=(_e => send(EnterMax))>
             (text("Max"))
+          </MButton>
+          <MButton fullWidth=true onClick=(_e => send(AddAnother))>
+            (text("Add Another"))
           </MButton>
           <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
             (text("Propose Payout"))

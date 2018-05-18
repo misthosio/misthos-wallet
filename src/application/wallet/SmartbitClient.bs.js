@@ -92,11 +92,9 @@ function getTransactionInfo(config, transactions) {
 
 function broadcastTransaction(config, transaction) {
   var txHex = transaction.toHex();
-  console.log("broadcasting transaction");
   return fetch("https://" + (config[/* subdomain */0] + ".smartbit.com.au/v1/blockchain/pushtx"), Fetch.RequestInit[/* make */0](/* Some */[/* Post */2], /* None */0, /* Some */["{\"hex\":\"" + (String(txHex) + "\"}")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0)).then((function (prim) {
                   return prim.json();
                 })).then((function (res) {
-                console.log("broadcast result:", res);
                 var err = Json_decode.optional((function (param) {
                         return Json_decode.field("error", (function (param) {
                                       return Json_decode.field("message", Json_decode.string, param);

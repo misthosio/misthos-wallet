@@ -57,15 +57,17 @@ let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 module PayoutView = {
   type t = {
-    balance: BTC.t,
+    ventureId,
     ventureName: string,
+    balance: BTC.t,
     initialSummary: PayoutTransaction.summary,
     isAddressValid: string => bool,
     max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
     summary: (list((string, BTC.t)), BTC.t) => PayoutTransaction.summary,
   };
   let fromViewModelState =
-      ({localUser, name, balanceCollector, walletInfoCollector}) => {
+      ({ventureId, localUser, name, balanceCollector, walletInfoCollector}) => {
+    ventureId,
     balance:
       (
         balanceCollector
