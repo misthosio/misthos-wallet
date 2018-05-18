@@ -65,7 +65,9 @@ function make(viewData, commands, _) {
                                           ]], /* Some */[(function (e) {
                                               return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
                                             })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                              return Curry._1(send, /* ProposePayout */0);
+                                              return Curry._1(send, /* EnterMax */0);
+                                            })], /* Some */[true], /* array */[ViewCommon.text("Max")])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                              return Curry._1(send, /* ProposePayout */1);
                                             })], /* Some */[true], /* array */[ViewCommon.text("Propose Payout")]))), /* array */[]));
             }),
           /* initialState */(function () {
@@ -85,8 +87,24 @@ function make(viewData, commands, _) {
           /* reducer */(function (action, state) {
               var viewData = state[/* viewData */0];
               if (typeof action === "number") {
-                Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], state[/* destinations */1], defaultFee);
-                return /* NoUpdate */0;
+                if (action === 0) {
+                  var max = Curry._3(viewData[/* max */4], state[/* inputDestination */2], /* [] */0, defaultFee);
+                  var init = state[/* inputs */5];
+                  return /* Update */Block.__(0, [/* record */[
+                              /* viewData */state[/* viewData */0],
+                              /* destinations */state[/* destinations */1],
+                              /* inputDestination */state[/* inputDestination */2],
+                              /* inputAmount */max,
+                              /* summary */state[/* summary */4],
+                              /* inputs : record */[
+                                /* recipientAddress */init[/* recipientAddress */0],
+                                /* btcAmount */BTC.format(max)
+                              ]
+                            ]]);
+                } else {
+                  Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], state[/* destinations */1], defaultFee);
+                  return /* NoUpdate */0;
+                }
               } else if (action.tag) {
                 var amount = action[0];
                 var inputAmount = BTC.fromString(amount);
@@ -102,32 +120,27 @@ function make(viewData, commands, _) {
                 var inputAmount$1 = match$1[0];
                 var match$2;
                 if (state[/* inputDestination */2] !== "") {
-                  var max = Curry._3(viewData[/* max */4], state[/* inputDestination */2], /* [] */0, defaultFee);
-                  var match$3 = inputAmount$1.gt(max);
+                  var max$1 = Curry._3(viewData[/* max */4], state[/* inputDestination */2], /* [] */0, defaultFee);
+                  var match$3 = inputAmount$1.gt(max$1);
                   var match$4 = match$3 ? /* tuple */[
-                      max,
-                      BTC.format(max)
+                      max$1,
+                      BTC.format(max$1)
                     ] : /* tuple */[
                       inputAmount$1,
                       btcAmount
                     ];
-                  var btcAmount$1 = match$4[1];
                   var inputAmount$2 = match$4[0];
-                  match$2 = state[/* inputDestination */2] !== "" ? /* tuple */[
-                      Curry._2(viewData[/* summary */5], /* :: */[
-                            /* tuple */[
-                              state[/* inputDestination */2],
-                              inputAmount$2
-                            ],
-                            /* [] */0
-                          ], defaultFee),
-                      inputAmount$2,
-                      btcAmount$1
-                    ] : /* tuple */[
-                      state[/* summary */4],
-                      inputAmount$2,
-                      btcAmount$1
-                    ];
+                  match$2 = /* tuple */[
+                    Curry._2(viewData[/* summary */5], /* :: */[
+                          /* tuple */[
+                            state[/* inputDestination */2],
+                            inputAmount$2
+                          ],
+                          /* [] */0
+                        ], defaultFee),
+                    inputAmount$2,
+                    match$4[1]
+                  ];
                 } else {
                   match$2 = /* tuple */[
                     state[/* summary */4],
@@ -135,7 +148,7 @@ function make(viewData, commands, _) {
                     btcAmount
                   ];
                 }
-                var init = state[/* inputs */5];
+                var init$1 = state[/* inputs */5];
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
                             /* destinations */state[/* destinations */1],
@@ -143,7 +156,7 @@ function make(viewData, commands, _) {
                             /* inputAmount */match$2[1],
                             /* summary */match$2[0],
                             /* inputs : record */[
-                              /* recipientAddress */init[/* recipientAddress */0],
+                              /* recipientAddress */init$1[/* recipientAddress */0],
                               /* btcAmount */match$2[2]
                             ]
                           ]]);
@@ -151,11 +164,11 @@ function make(viewData, commands, _) {
                 var address = action[0];
                 var match$5;
                 if (Curry._1(viewData[/* isAddressValid */3], address)) {
-                  var max$1 = Curry._3(viewData[/* max */4], address, /* [] */0, defaultFee);
-                  var match$6 = state[/* inputAmount */3].gt(max$1);
+                  var max$2 = Curry._3(viewData[/* max */4], address, /* [] */0, defaultFee);
+                  var match$6 = state[/* inputAmount */3].gt(max$2);
                   var match$7 = match$6 ? /* tuple */[
-                      max$1,
-                      BTC.format(max$1)
+                      max$2,
+                      BTC.format(max$2)
                     ] : /* tuple */[
                       state[/* inputAmount */3],
                       state[/* inputs */5][/* btcAmount */1]

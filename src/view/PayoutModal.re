@@ -21,6 +21,7 @@ type state = {
 type action =
   | ChangeRecipientAddress(string)
   | ChangeBTCAmount(string)
+  | EnterMax
   | ProposePayout;
 
 let component = ReasonReact.reducerComponent("Payout");
@@ -85,18 +86,14 @@ let make =
           let (inputAmount, btcAmount) =
             inputAmount |> BTC.gt(max) ?
               (max, max |> BTC.format) : (inputAmount, btcAmount);
-          if (state.inputDestination != "") {
-            (
-              viewData.summary(
-                [(state.inputDestination, inputAmount)],
-                defaultFee,
-              ),
-              inputAmount,
-              btcAmount,
-            );
-          } else {
-            (state.summary, inputAmount, btcAmount);
-          };
+          (
+            viewData.summary(
+              [(state.inputDestination, inputAmount)],
+              defaultFee,
+            ),
+            inputAmount,
+            btcAmount,
+          );
         } else {
           (state.summary, inputAmount, btcAmount);
         };
@@ -117,6 +114,16 @@ let make =
         ~fee=defaultFee,
       );
       ReasonReact.NoUpdate;
+    | EnterMax =>
+      let max = viewData.max(state.inputDestination, [], defaultFee);
+      ReasonReact.Update({
+        ...state,
+        inputAmount: max,
+        inputs: {
+          ...state.inputs,
+          btcAmount: max |> BTC.format,
+        },
+      });
     },
   render: ({send, state: {viewData, inputs, destinations, summary}}) => {
     let destinationList =
@@ -163,6 +170,9 @@ let make =
             autoFocus=false
             fullWidth=true
           />
+          <MButton fullWidth=true onClick=(_e => send(EnterMax))>
+            (text("Max"))
+          </MButton>
           <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
             (text("Propose Payout"))
           </MButton>

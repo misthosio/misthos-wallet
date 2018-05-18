@@ -472,11 +472,16 @@ let max =
          TransactionFee.canPayForItself(satsPerByte, input) ?
            Some(input) : None
        );
-  let outputs = [
-    (targetDestination, BTC.zero),
-    (Network.incomeAddress(network), BTC.zero),
-    ...destinations,
-  ];
+  let outputs =
+    if (targetDestination != "") {
+      [
+        (targetDestination, BTC.zero),
+        (Network.incomeAddress(network), BTC.zero),
+        ...destinations,
+      ];
+    } else {
+      [(Network.incomeAddress(network), BTC.zero), ...destinations];
+    };
   let fee =
     Fee.estimate(
       outputs |. List.map(fst),

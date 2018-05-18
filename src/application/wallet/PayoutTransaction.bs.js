@@ -366,21 +366,25 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
             return /* None */0;
           }
         }));
-  var outputs_000 = /* tuple */[
-    targetDestination,
-    BTC.zero
-  ];
-  var outputs_001 = /* :: */[
-    /* tuple */[
-      Network.incomeAddress(network),
-      BTC.zero
-    ],
-    destinations
-  ];
-  var outputs = /* :: */[
-    outputs_000,
-    outputs_001
-  ];
+  var outputs = targetDestination !== "" ? /* :: */[
+      /* tuple */[
+        targetDestination,
+        BTC.zero
+      ],
+      /* :: */[
+        /* tuple */[
+          Network.incomeAddress(network),
+          BTC.zero
+        ],
+        destinations
+      ]
+    ] : /* :: */[
+      /* tuple */[
+        Network.incomeAddress(network),
+        BTC.zero
+      ],
+      destinations
+    ];
   var fee = TransactionFee.estimate(Belt_List.map(outputs, (function (prim) {
               return prim[0];
             })), inputs, satsPerByte, Network.bitcoinNetwork(network));
