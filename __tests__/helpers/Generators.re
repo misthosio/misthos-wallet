@@ -43,6 +43,13 @@ let threeUserSessionsFromArray = sessions => (
   sessions[2],
 );
 
+let fourUserSessionsFromArray = sessions => (
+  sessions[0],
+  sessions[1],
+  sessions[2],
+  sessions[3],
+);
+
 let twoUserSessions = () => (
   userSession("user1" |> UserId.fromString),
   userSession("user2" |> UserId.fromString),
