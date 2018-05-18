@@ -40,7 +40,8 @@ function make(viewData, commands, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              var inputs = match[/* inputs */4];
+              var inputs = match[/* inputs */3];
+              var summary = match[/* summary */2];
               var viewData = match[/* viewData */0];
               var destinationList = $$Array.of_list(List.map((function (param) {
                           return React.createElement("div", undefined, ViewCommon.text(param[0]), ViewCommon.text(BTC.format(param[1])));
@@ -48,7 +49,7 @@ function make(viewData, commands, _) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Create A Payout",
                                 /* [] */0
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */0], /* None */0, /* array */[])), ViewCommon.text("Proposed recipients"), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(match[/* networkFee */3]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(match[/* misthosFee */2]))))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */0], /* None */0, /* array */[])), ViewCommon.text("Proposed recipients"), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(summary[/* networkFee */3]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(summary[/* misthosFee */2]))))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
                                             -976970511,
                                             inputs[/* recipientAddress */0]
                                           ]], /* Some */[(function (e) {
@@ -66,8 +67,7 @@ function make(viewData, commands, _) {
               return /* record */[
                       /* viewData */viewData,
                       /* destinations : [] */0,
-                      /* misthosFee */BTC.zero,
-                      /* networkFee */BTC.zero,
+                      /* summary */viewData[/* initialSummary */2],
                       /* inputs : record */[
                         /* recipientAddress */"",
                         /* btcAmount */""
@@ -83,24 +83,22 @@ function make(viewData, commands, _) {
                         ]));
                 return /* NoUpdate */0;
               } else if (action.tag) {
-                var init = state[/* inputs */4];
+                var init = state[/* inputs */3];
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
                             /* destinations */state[/* destinations */1],
-                            /* misthosFee */state[/* misthosFee */2],
-                            /* networkFee */state[/* networkFee */3],
+                            /* summary */state[/* summary */2],
                             /* inputs : record */[
                               /* recipientAddress */init[/* recipientAddress */0],
                               /* btcAmount */action[0]
                             ]
                           ]]);
               } else {
-                var init$1 = state[/* inputs */4];
+                var init$1 = state[/* inputs */3];
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
                             /* destinations */state[/* destinations */1],
-                            /* misthosFee */state[/* misthosFee */2],
-                            /* networkFee */state[/* networkFee */3],
+                            /* summary */state[/* summary */2],
                             /* inputs : record */[
                               /* recipientAddress */action[0],
                               /* btcAmount */init$1[/* btcAmount */1]

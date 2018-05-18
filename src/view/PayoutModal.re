@@ -10,8 +10,7 @@ type inputs = {
 type state = {
   viewData: View.t,
   destinations: list((string, BTC.t)),
-  misthosFee: BTC.t,
-  networkFee: BTC.t,
+  summary: PayoutTransaction.summary,
   inputs,
 };
 
@@ -33,8 +32,7 @@ let make =
   initialState: () => {
     viewData,
     destinations: [],
-    misthosFee: BTC.zero,
-    networkFee: BTC.zero,
+    summary: viewData.initialSummary,
     inputs: {
       recipientAddress: "",
       btcAmount: "",
@@ -66,10 +64,7 @@ let make =
       );
       ReasonReact.NoUpdate;
     },
-  render:
-    (
-      {send, state: {viewData, inputs, destinations, networkFee, misthosFee}},
-    ) => {
+  render: ({send, state: {viewData, inputs, destinations, summary}}) => {
     let destinationList =
       ReasonReact.array(
         Array.of_list(
@@ -90,8 +85,12 @@ let make =
           (text("Proposed recipients"))
           <ul>
             destinationList
-            <li> (text("Network Fee - " ++ BTC.format(networkFee))) </li>
-            <li> (text("Misthos Fee - " ++ BTC.format(misthosFee))) </li>
+            <li>
+              (text("Network Fee - " ++ BTC.format(summary.networkFee)))
+            </li>
+            <li>
+              (text("Misthos Fee - " ++ BTC.format(summary.misthosFee)))
+            </li>
           </ul>
         </div>
       body2=
