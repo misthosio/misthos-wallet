@@ -36,13 +36,35 @@ jobs:
       inputs:
       - name: pipeline-tasks
       - name: repo
+      outputs:
+      - name: bundled-code
       run:
         path: pipeline-tasks/ci/tasks/run-tests.sh
+  - {get: version, params: {pre: 'rc'} }
+  - task: bundle-code
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: bundled-code
+      outputs:
+      - name: bundled-code-with-version
+      run:
+        path: pipeline-tasks/ci/tasks/run-tests.sh
+  - aggregate:
+    - { put: version, params: {file: version/number} }
+    - put: misthos-code
+      params:
+        file: bundled-code-with-version/misthos-code-*.tgz
+
 - name: build
   plan:
   - aggregate:
     - {get: repo, trigger: true, passed: [test]}
-    - {get: version, trigger: false}
+    - {get: version, trigger: false, passed: [test], params: { bump: final} }
     - {get: pipeline-tasks}
   - task: build
     config:
@@ -140,6 +162,12 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: testnet
     private_key: ((github-ssh-key.private_key))
+- name: misthos-code
+  type: gcs-resource
+  source:
+    bucket: artifact-cache
+    json_key: ((gcp-service-account))
+    regexp: misthos-code-v(.*).tgz
 - name: misthos-build
   type: gcs-resource
   source:
