@@ -5,42 +5,51 @@ var Fixtures = require("../helpers/Fixtures.bs.js");
 var Generators = require("../helpers/Generators.bs.js");
 var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
 
-describe("nextIncomeAddress", (function () {
-        var userC = Fixtures.threeUserSessions[2];
-        var userB = Fixtures.threeUserSessions[1];
-        var userA = Fixtures.threeUserSessions[0];
-        var log = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */28](userB, /* :: */[
-                                  userA,
-                                  /* :: */[
-                                    userB,
-                                    /* [] */0
-                                  ]
-                                ], Generators.Log[/* withPartner */16](userB, /* :: */[
-                                      userA,
-                                      /* [] */0
-                                    ], Generators.Log[/* withCustodian */28](userA, /* :: */[
-                                          userA,
-                                          /* [] */0
-                                        ], Generators.Log[/* withAccount */24](userA, Generators.Log[/* withFirstPartner */17](userA)(Fixtures.createVenture(userA)))))))))));
-        WalletHelpers.testNextIncomeAddress(userA, "2NCAxqkK9bhRQWssyrMqJhXS65xmUCWraXT", WalletHelpers.testNextIncomeAddress(userB, "2NGFyACMJG6KJ9Db92n9MM2nNtR4r4tUNFW", WalletHelpers.testNextIncomeAddress(userA, "2MtvnaAWnfkSBU7NbpSfMRrCKSTgLeRVd93", WalletHelpers.constructState(log))));
-        var log$1 = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userC, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */28](userC, /* :: */[
-                                  userA,
-                                  /* :: */[
-                                    userB,
-                                    /* :: */[
-                                      userC,
-                                      /* [] */0
-                                    ]
-                                  ]
-                                ], Generators.Log[/* withPartner */16](userC, /* :: */[
-                                      userA,
-                                      /* :: */[
-                                        userB,
-                                        /* [] */0
-                                      ]
-                                    ], log)))))));
-        WalletHelpers.testNextIncomeAddress(userC, "2N85sud6RgkaAEPitqdrNXsMbADYzXCWc7T", WalletHelpers.testNextIncomeAddress(userB, "2N1sd2funBMd3ntLSbJrALAz3CJxEVsAPV7", WalletHelpers.testNextIncomeAddress(userC, "2NCGfPo6ehd2cgwFNE2ocqUFpv8rtcN3TGj", WalletHelpers.constructState(log$1))));
-        return /* () */0;
+describe("Venture__Wallet", (function () {
+        return Fixtures.withCached(/* None */0, "Venture__Wallet", "nextIncomeAddress", (function () {
+                      return Fixtures.threeUserSessionsArray;
+                    }), (function (sessions) {
+                      var match = Generators.threeUserSessionsFromArray(sessions);
+                      var user2 = match[1];
+                      var user1 = match[0];
+                      return Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */28](user2, /* :: */[
+                                                      user1,
+                                                      /* :: */[
+                                                        user2,
+                                                        /* [] */0
+                                                      ]
+                                                    ], Generators.Log[/* withPartner */16](user2, /* :: */[
+                                                          user1,
+                                                          /* [] */0
+                                                        ], Generators.Log[/* withCustodian */28](user1, /* :: */[
+                                                              user1,
+                                                              /* [] */0
+                                                            ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Fixtures.createVenture(user1)))))))))));
+                    }), (function (sessions, log) {
+                      var match = Generators.threeUserSessionsFromArray(sessions);
+                      var user3 = match[2];
+                      var user2 = match[1];
+                      var user1 = match[0];
+                      WalletHelpers.testNextIncomeAddress(user1, "2NCAxqkK9bhRQWssyrMqJhXS65xmUCWraXT", WalletHelpers.testNextIncomeAddress(user2, "2NGFyACMJG6KJ9Db92n9MM2nNtR4r4tUNFW", WalletHelpers.testNextIncomeAddress(user1, "2MtvnaAWnfkSBU7NbpSfMRrCKSTgLeRVd93", WalletHelpers.constructState(log))));
+                      var log$1 = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */28](user3, /* :: */[
+                                                user1,
+                                                /* :: */[
+                                                  user2,
+                                                  /* :: */[
+                                                    user3,
+                                                    /* [] */0
+                                                  ]
+                                                ]
+                                              ], Generators.Log[/* withPartner */16](user3, /* :: */[
+                                                    user1,
+                                                    /* :: */[
+                                                      user2,
+                                                      /* [] */0
+                                                    ]
+                                                  ], log)))))));
+                      WalletHelpers.testNextIncomeAddress(user3, "2N85sud6RgkaAEPitqdrNXsMbADYzXCWc7T", WalletHelpers.testNextIncomeAddress(user2, "2N1sd2funBMd3ntLSbJrALAz3CJxEVsAPV7", WalletHelpers.testNextIncomeAddress(user3, "2NCGfPo6ehd2cgwFNE2ocqUFpv8rtcN3TGj", WalletHelpers.constructState(log$1))));
+                      return /* () */0;
+                    }));
       }));
 
 /*  Not a pure module */

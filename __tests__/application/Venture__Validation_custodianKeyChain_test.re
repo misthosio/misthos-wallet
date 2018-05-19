@@ -9,9 +9,9 @@ open Event;
 open ValidationHelpers;
 
 let () =
-  describe("CustodianKeyChainUpdate", () => {
+  describe("CustodianKeyChainUpdated", () => {
     F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
+      ~scope="CustodianKeyChainUpdated",
       "when everything is fine",
       () => G.withUserSessions(2),
       sessions => {
@@ -33,7 +33,7 @@ let () =
       },
     );
     F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
+      ~scope="CustodianKeyChainUpdated",
       "when the signer doesn't match the custodianId",
       () => G.withUserSessions(2),
       sessions => {
@@ -56,7 +56,7 @@ let () =
       },
     );
     F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
+      ~scope="CustodianKeyChainUpdated",
       "when the custodianApprovalProcess doesn't exist",
       () => G.withUserSessions(2),
       sessions => {
@@ -88,7 +88,7 @@ let () =
       },
     );
     F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
+      ~scope="CustodianKeyChainUpdated",
       "when the custodianApprovalProcess isn't completed",
       () => G.withUserSessions(2),
       sessions => {
@@ -121,7 +121,7 @@ let () =
       },
     );
     F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
+      ~scope="CustodianKeyChainUpdated",
       "when the custodian approval process is for another user",
       () => G.withUserSessions(2),
       sessions => {
@@ -157,7 +157,7 @@ let () =
       },
     );
     F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
+      ~scope="CustodianKeyChainUpdated",
       "when the account doesn't exist",
       () => G.withUserSessions(2),
       sessions => {
@@ -191,7 +191,7 @@ let () =
       },
     );
     F.withCached(
-      ~scope="Watcher__CustodianKeyChain",
+      ~scope="CustodianKeyChainUpdated",
       "when the key chain index isn't in order",
       () => G.withUserSessions(2),
       sessions => {

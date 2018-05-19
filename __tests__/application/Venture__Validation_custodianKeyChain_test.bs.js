@@ -9,8 +9,8 @@ var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var ValidationHelpers = require("../helpers/ValidationHelpers.bs.js");
 var Venture__Validation = require("../../src/application/Venture__Validation.bs.js");
 
-describe("CustodianKeyChainUpdate", (function () {
-        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when everything is fine", (function () {
+describe("CustodianKeyChainUpdated", (function () {
+        Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when everything is fine", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -23,7 +23,7 @@ describe("CustodianKeyChainUpdate", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, match[0], log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the signer doesn't match the custodianId", (function () {
+        Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the signer doesn't match the custodianId", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -39,7 +39,7 @@ describe("CustodianKeyChainUpdate", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* Some */[match[1]], match[0], log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the custodianApprovalProcess doesn't exist", (function () {
+        Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the custodianApprovalProcess doesn't exist", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -59,7 +59,7 @@ describe("CustodianKeyChainUpdate", (function () {
                             /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 0, user1)
                           ], /* BadData */["Bad custodianApprovalProcess"]);
               }));
-        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the custodianApprovalProcess isn't completed", (function () {
+        Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the custodianApprovalProcess isn't completed", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -77,7 +77,7 @@ describe("CustodianKeyChainUpdate", (function () {
                             /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 0, user1)
                           ], /* BadData */["Bad custodianApprovalProcess"]);
               }));
-        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the custodian approval process is for another user", (function () {
+        Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the custodian approval process is for another user", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -103,7 +103,7 @@ describe("CustodianKeyChainUpdate", (function () {
                             /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log$1), 0, user1)
                           ], /* BadData */["CustodianApprovalProcess is for another partner"]);
               }));
-        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the account doesn't exist", (function () {
+        Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the account doesn't exist", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -124,7 +124,7 @@ describe("CustodianKeyChainUpdate", (function () {
                             /* keyChain */Generators.custodianKeyChain(/* Some */[WalletTypes.AccountIndex[/* fromInt */1](1)], Generators.Log[/* ventureId */2](log), 0, user1)
                           ], /* BadData */["Account doesn't exist"]);
               }));
-        return Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the key chain index isn't in order", (function () {
+        return Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the key chain index isn't in order", (function () {
                       return Generators.withUserSessions(2);
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
