@@ -27,9 +27,9 @@ let logError = WorkerUtils.logError(logLabel);
 
 let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
-let tenSecondsInMilliseconds = 10000;
+let fiveSecondsInMilliseconds = 5000;
 
-let syncInterval = tenSecondsInMilliseconds;
+let syncInterval = fiveSecondsInMilliseconds;
 
 let handleMsg = (venturesPromise, doWork, msg) =>
   Js.Promise.(
