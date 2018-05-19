@@ -40,6 +40,18 @@ function testWatcherHasEventPending(eventName, watcher, expectedIssuer, eventTes
               }));
 }
 
+var G = 0;
+
+var E = 0;
+
+var L = 0;
+
+var F = 0;
+
+exports.G = G;
+exports.E = E;
+exports.L = L;
+exports.F = F;
 exports.testWatcherHasCompleted = testWatcherHasCompleted;
 exports.testWatcherHasNotCompleted = testWatcherHasNotCompleted;
 exports.testWatcherHasNoEventPending = testWatcherHasNoEventPending;

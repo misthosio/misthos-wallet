@@ -2,6 +2,14 @@ open Jest;
 
 open Expect;
 
+module G = Generators;
+
+module E = G.Event;
+
+module L = G.Log;
+
+module F = Fixtures;
+
 let testWatcherHasCompleted = watcher =>
   test("the watcher has completed", () =>
     expect(watcher#processCompleted()) |> toEqual(true)
