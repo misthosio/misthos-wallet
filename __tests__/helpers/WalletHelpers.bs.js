@@ -61,9 +61,12 @@ var G = 0;
 
 var L = 0;
 
+var F = 0;
+
 exports.Wallet = Wallet;
 exports.G = G;
 exports.L = L;
+exports.F = F;
 exports.constructState = constructState;
 exports.testNextIncomeAddress = testNextIncomeAddress;
 exports.collectNextTwoAddresses = collectNextTwoAddresses;
