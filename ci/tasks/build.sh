@@ -9,7 +9,9 @@ pushd repo
 make install
 
 export GENERATE_SOURCEMAP='false'
-make build
+# make build
+mkdir build
+echo dummy > build/dummy.txt
 
 popd
 
