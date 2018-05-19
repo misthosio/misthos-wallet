@@ -77,7 +77,7 @@ function make(selected, index, _) {
                                                                   id,
                                                                   /* None */0
                                                                 ]), /* Some */[match ? linkSelected : link], /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* array */[]))]));
-                          }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* array */[]));
+                          }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
               ViewCommon.text("ventures:");
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "My Ventures",

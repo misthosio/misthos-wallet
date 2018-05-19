@@ -160,23 +160,23 @@ function make(session, updateSession, _) {
       if (typeof session === "number") {
         if (session !== 1) {
           if (session >= 3) {
-            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("\n             You have signed in with a blockstack user that doesn\'t have a registered blockstack.id,\n             make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.\n             ", /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("\n             You have signed in with a blockstack user that doesn\'t have a registered blockstack.id,\n             make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.\n             ", /* None */0, /* array */[]));
           } else {
-            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading", /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading", /* None */0, /* array */[]));
           }
         } else {
-          return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Waiting for BlockStack session", /* array */[]));
+          return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Waiting for BlockStack session", /* None */0, /* array */[]));
         }
       } else if (typeof selectedVenture === "number") {
         if (selectedVenture === 0) {
           return ViewCommon.text("Not selected");
         } else {
-          return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* array */[]));
+          return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* None */0, /* array */[]));
         }
       } else if (selectedVenture.tag) {
-        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* array */[]));
+        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* None */0, /* array */[]));
       } else {
-        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* array */[]));
+        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* None */0, /* array */[]));
       }
     }
     
