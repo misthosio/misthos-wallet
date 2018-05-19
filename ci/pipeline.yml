@@ -11,6 +11,7 @@ jobs:
   - aggregate:
     - {get: repo, trigger: true}
     - {get: pipeline-tasks}
+    - {get: version, trigger: false, params: {bump: patch}}
   - task: test
     config:
       platform: linux
@@ -24,6 +25,7 @@ jobs:
       - name: repo
       run:
         path: pipeline-tasks/ci/tasks/run-tests.sh
+  - {put: version, params: {file: version/number}}
 - name: build-and-push-to-staging
   plan:
   - aggregate:
@@ -74,6 +76,19 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: master
     private_key: ((github-ssh-key.private_key))
+# - name: misthos-build
+#   type: gcs-resource
+#   source:
+#     bucket: releases
+#     json_key: ((gcp-service-account))
+#     regexp: misthos-build-(.*).tgz
+- name: version
+  type: semver
+  source:
+    driver: gcs
+    bucket: artifact-cache
+    key: misthos-build-version
+    json_key: ((gcp-service-account))
 - name: pipeline-ci-image
   type: git
   source:
@@ -95,3 +110,9 @@ resources:
     username: ((docker-hub-username))
     password: ((docker-hub-password))
     repository: misthosio/misthos-web-pipeline
+
+resource_types:
+  - name: gcs-resource
+    type: docker-image
+    source:
+      repository: frodenas/gcs-resource
