@@ -17,7 +17,7 @@ let () = {
   let keyA = ECPair.makeRandomWithNetwork(Networks.testnet);
   let keyB = ECPair.makeRandomWithNetwork(Networks.testnet);
   let tenSats = BTC.fromSatoshis(10L);
-  describe("faucet", () =>
+  Skip.describe("faucet", () =>
     testPromise("Can fund an address", () =>
       Js.Promise.(
         Helpers.faucet([

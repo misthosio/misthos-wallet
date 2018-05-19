@@ -20,7 +20,7 @@ var tenSats = BTC.fromSatoshis(/* int64 */[
       /* lo */10
     ]);
 
-describe("faucet", (function () {
+describe.skip("faucet", (function () {
         return Jest.testPromise(/* None */0, "Can fund an address", (function () {
                       return Helpers.faucet(/* :: */[
                                       /* tuple */[
