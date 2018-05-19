@@ -191,7 +191,7 @@ resources:
   type: git
   source:
     uri: git@github.com:misthosio/misthos.git
-    branch: master
+    branch: pipeline-iteration
     paths: [ci/tasks/*, Makefile]
     private_key: ((github-ssh-key.private_key))
 - name: docker-image-ci
