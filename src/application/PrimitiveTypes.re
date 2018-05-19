@@ -16,6 +16,8 @@ module Base = {
     );
   type map('v) = Belt.Map.t(Comparator.t, 'v, Comparator.identity);
   let makeMap = () => Belt.Map.make(~id=(module Comparator));
+  type set = Belt.Set.t(Comparator.t, Comparator.identity);
+  let emptySet = Belt.Set.make(~id=(module Comparator));
 };
 
 module type PrimitiveType = {
@@ -34,6 +36,8 @@ module type PrimitiveType = {
   };
   type map('v) = Belt.Map.t(t, 'v, Comparator.identity);
   let makeMap: unit => map('v);
+  type set = Belt.Set.t(Comparator.t, Comparator.identity);
+  let emptySet: set;
 };
 
 module VentureId = {

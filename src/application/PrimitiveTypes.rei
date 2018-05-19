@@ -14,6 +14,8 @@ module type PrimitiveType = {
   };
   type map('v) = Belt.Map.t(t, 'v, Comparator.identity);
   let makeMap: unit => map('v);
+  type set = Belt.Set.t(Comparator.t, Comparator.identity);
+  let emptySet: set;
 };
 
 module VentureId: {include PrimitiveType; let make: unit => t;};
