@@ -1,3 +1,5 @@
+open Belt;
+
 open PrimitiveTypes;
 
 open WalletTypes;
@@ -194,32 +196,18 @@ module Payout = {
     type t = {
       accountIdx,
       payoutTx: PayoutTransaction.t,
-      changeAddressCoordinates: option(Address.Coordinates.t),
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("accountIdx", AccountIndex.encode(event.accountIdx)),
           ("payoutTx", PayoutTransaction.encode(event.payoutTx)),
-          (
-            "changeAddressCoordinates",
-            nullable(
-              Address.Coordinates.encode,
-              event.changeAddressCoordinates,
-            ),
-          ),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         accountIdx: raw |> field("accountIdx", AccountIndex.decode),
         payoutTx: raw |> field("payoutTx", PayoutTransaction.decode),
-        changeAddressCoordinates:
-          raw
-          |> field(
-               "changeAddressCoordinates",
-               optional(Address.Coordinates.decode),
-             ),
       };
   };
   include (val EventTypes.makeProcess("Payout"))(Data);
@@ -261,13 +249,13 @@ module Payout = {
         object_([
           ("type", string("PayoutBroadcast")),
           ("processId", ProcessId.encode(event.processId)),
-          ("transactionId", string(event.txId)),
+          ("txId", string(event.txId)),
         ])
       );
     let decode = raw =>
       Json.Decode.{
         processId: raw |> field("processId", ProcessId.decode),
-        txId: raw |> field("transactionId", string),
+        txId: raw |> field("txId", string),
       };
   };
   module BroadcastDuplicate = {
@@ -386,22 +374,22 @@ module AccountKeyChainActivated = {
 
 module IncomeAddressExposed = {
   type t = {
-    coordinates: Address.Coordinates.t,
-    address: string,
+    partnerId: userId,
+    address: Address.t,
   };
-  let make = (~coordinates, ~address) => {coordinates, address};
+  let make = (~partnerId, ~address) => {partnerId, address};
   let encode = event =>
     Json.Encode.(
       object_([
         ("type", string("IncomeAddressExposed")),
-        ("coordinates", Address.Coordinates.encode(event.coordinates)),
-        ("address", string(event.address)),
+        ("partnerId", UserId.encode(event.partnerId)),
+        ("address", Address.encode(event.address)),
       ])
     );
   let decode = raw =>
     Json.Decode.{
-      coordinates: raw |> field("coordinates", Address.Coordinates.decode),
-      address: raw |> field("address", string),
+      partnerId: raw |> field("partnerId", UserId.decode),
+      address: raw |> field("address", Address.decode),
     };
 };
 
@@ -512,6 +500,7 @@ exception BadData(string);
 
 let makePartnerProposed =
     (
+      ~eligibleWhenProposing,
       ~supporterId,
       ~prospectId,
       ~prospectPubKey,
@@ -537,7 +526,9 @@ let makePartnerProposed =
     |> Js.Option.getWithDefault([||]);
   PartnerProposed(
     Partner.Proposed.make(
-      ~dependsOnCompletions,
+      ~dependsOnCompletions=
+        dependsOnCompletions |> Set.mergeMany(ProcessId.emptySet),
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Partner.Data.{
@@ -550,10 +541,18 @@ let makePartnerProposed =
 };
 
 let makePartnerRemovalProposed =
-    (~lastPartnerAccepted: Partner.Accepted.t, ~supporterId, ~policy) =>
+    (
+      ~eligibleWhenProposing,
+      ~lastPartnerAccepted: Partner.Accepted.t,
+      ~supporterId,
+      ~policy,
+    ) =>
   PartnerRemovalProposed(
     Partner.Removal.Proposed.make(
-      ~dependsOnCompletions=[|lastPartnerAccepted.processId|],
+      ~dependsOnCompletions=
+        [|lastPartnerAccepted.processId|]
+        |> Set.mergeMany(ProcessId.emptySet),
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Partner.Removal.Data.{
@@ -563,9 +562,11 @@ let makePartnerRemovalProposed =
     ),
   );
 
-let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
+let makeAccountCreationProposed =
+    (~eligibleWhenProposing, ~supporterId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(
     AccountCreation.Proposed.make(
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       AccountCreation.Data.{accountIdx, name},
@@ -574,6 +575,7 @@ let makeAccountCreationProposed = (~supporterId, ~name, ~accountIdx, ~policy) =>
 
 let makeCustodianProposed =
     (
+      ~eligibleWhenProposing,
       ~lastCustodianRemovalAccepted,
       ~partnerProposed: Partner.Proposed.t,
       ~supporterId,
@@ -596,7 +598,9 @@ let makeCustodianProposed =
        });
   CustodianProposed(
     Custodian.Proposed.make(
-      ~dependsOnProposals=[|partnerApprovalProcess|],
+      ~dependsOnProposals=
+        [|partnerApprovalProcess|] |> Set.mergeMany(ProcessId.emptySet),
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Custodian.Data.{
@@ -611,6 +615,7 @@ let makeCustodianProposed =
 
 let makeCustodianRemovalProposed =
     (
+      ~eligibleWhenProposing,
       ~custodianAccepted: Custodian.Accepted.t,
       ~supporterId,
       ~accountIdx,
@@ -619,7 +624,9 @@ let makeCustodianRemovalProposed =
   let {processId: lastCustodianProcess, data: {partnerId: custodianId}}: Custodian.Accepted.t = custodianAccepted;
   CustodianRemovalProposed(
     Custodian.Removal.Proposed.make(
-      ~dependsOnCompletions=[|lastCustodianProcess|],
+      ~dependsOnCompletions=
+        [|lastCustodianProcess|] |> Set.mergeMany(ProcessId.emptySet),
+      ~eligibleWhenProposing,
       ~supporterId,
       ~policy,
       Custodian.Removal.Data.{lastCustodianProcess, custodianId, accountIdx},
@@ -710,7 +717,6 @@ let isSystemEvent =
   | CustodianRemovalAccepted(_)
   | PayoutAccepted(_)
   | AccountKeyChainIdentified(_)
-  | IncomeAddressExposed(_)
   | IncomeDetected(_)
   | TransactionConfirmed(_)
   | PayoutBroadcast(_)

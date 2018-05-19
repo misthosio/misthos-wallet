@@ -5,6 +5,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../events/EventLog.bs.js");
 var WalletTypes = require("../wallet/WalletTypes.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
@@ -51,7 +52,7 @@ function make(param, param$1, log) {
               if (typeof match === "number") {
                 if (match === 0 && $$event.tag === 1) {
                   var $$event$1 = $$event[0];
-                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */5][/* id */1], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1]) : self$1[state][0];
+                  tmp = PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */6][/* id */1], env$1[1]) ? /* PartnerProposed */Block.__(0, [$$event$1]) : self$1[state][0];
                 } else {
                   tmp = self$1[state][0];
                 }
@@ -68,7 +69,7 @@ function make(param, param$1, log) {
                   case 1 : 
                       if ($$event.tag === 9) {
                         var $$event$2 = $$event[0];
-                        tmp = WalletTypes.AccountIndex[/* eq */7]($$event$2[/* data */5][/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) ? /* AccountCreationProposed */Block.__(2, [
+                        tmp = WalletTypes.AccountIndex[/* eq */7]($$event$2[/* data */6][/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) ? /* AccountCreationProposed */Block.__(2, [
                               $$event$2[/* processId */0],
                               match[0]
                             ]) : self$1[state][0];
@@ -82,7 +83,7 @@ function make(param, param$1, log) {
                   case 3 : 
                       if ($$event.tag === 13) {
                         var $$event$3 = $$event[0];
-                        tmp = PrimitiveTypes.UserId[/* eq */5]($$event$3[/* data */5][/* partnerId */0], env$1[1]) ? /* CustodianProposed */Block.__(4, [$$event$3[/* processId */0]]) : self$1[state][0];
+                        tmp = PrimitiveTypes.UserId[/* eq */5]($$event$3[/* data */6][/* partnerId */0], env$1[1]) ? /* CustodianProposed */Block.__(4, [$$event$3[/* processId */0]]) : self$1[state][0];
                       } else {
                         tmp = self$1[state][0];
                       }
@@ -99,20 +100,20 @@ function make(param, param$1, log) {
               if (typeof match$1 === "number") {
                 tmp$1 = match$1 === 0 ? /* Some */[/* tuple */[
                       env$1[0],
-                      Event.makePartnerProposed(env$1[1], env$1[1], env$1[2], /* None */0, env$1[3])
+                      Event.makePartnerProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], env$1[2], /* None */0, env$1[3])
                     ]] : /* None */0;
               } else {
                 switch (match$1.tag | 0) {
                   case 1 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeAccountCreationProposed(env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */9], env$1[3])
+                          Event.makeAccountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */9], env$1[3])
                         ]];
                       break;
                   case 3 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeCustodianProposed(/* None */0, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
+                          Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), /* None */0, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
                         ]];
                       break;
                   default:

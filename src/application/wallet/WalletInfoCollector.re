@@ -92,7 +92,7 @@ let apply = (event, state) =>
            |. List.removeAssoc(accountIdx, AccountIndex.eq),
       ],
     }
-  | IncomeAddressExposed(({coordinates}: IncomeAddressExposed.t)) => {
+  | IncomeAddressExposed(({address: {coordinates}}: IncomeAddressExposed.t)) => {
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
     }
@@ -117,15 +117,21 @@ let apply = (event, state) =>
              nPubKeys: keyChain.custodianKeyChains |> List.length,
            }),
     };
-  | PayoutProposed({data: {payoutTx, changeAddressCoordinates}, processId}) => {
+  | PayoutProposed({
+      data: {payoutTx: {usedInputs, changeAddress} as payoutTx},
+      processId,
+    }) => {
       ...state,
-      unused: state.unused |. Set.removeMany(payoutTx.usedInputs),
-      reserved: state.reserved |. Set.mergeMany(payoutTx.usedInputs),
+      unused: state.unused |. Set.removeMany(usedInputs),
+      reserved: state.reserved |. Set.mergeMany(usedInputs),
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
       exposedCoordinates:
-        switch (changeAddressCoordinates) {
+        switch (changeAddress) {
         | None => state.exposedCoordinates
-        | Some(coordinates) => [coordinates, ...state.exposedCoordinates]
+        | Some(changeAddress) => [
+            changeAddress.coordinates,
+            ...state.exposedCoordinates,
+          ]
         },
     }
   | PayoutBroadcast({processId, txId}) =>
@@ -137,11 +143,7 @@ let apply = (event, state) =>
       unused:
         switch (
           payoutTx
-          |> PayoutTransaction.txInputForChangeAddress(
-               ~txId,
-               state.keyChains,
-               state.network,
-             )
+          |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
         ) {
         | Some(input) => state.unused |. Set.add(input)
         | None => state.unused

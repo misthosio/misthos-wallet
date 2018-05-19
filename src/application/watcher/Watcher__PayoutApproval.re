@@ -1,10 +1,12 @@
+open Belt;
+
 open Event;
 
 open PrimitiveTypes;
 
 type state = {
-  eligable: list(userId),
-  endorsements: list(userId),
+  eligibilityCollector: EligibilityCollector.t,
+  endorsements: UserId.set,
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
 };
@@ -13,8 +15,9 @@ let make = (proposal: Payout.Proposed.t, log) => {
   let process = {
     val state =
       ref({
-        eligable: [],
-        endorsements: [proposal.supporterId],
+        eligibilityCollector:
+          EligibilityCollector.make(proposal.eligibleWhenProposing),
+        endorsements: UserId.emptySet |. Set.add(proposal.supporterId),
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
       });
@@ -23,24 +26,22 @@ let make = (proposal: Payout.Proposed.t, log) => {
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
       state :=
+        {
+          ...state^,
+          eligibilityCollector:
+            state^.eligibilityCollector |> EligibilityCollector.apply(event),
+        };
+      state :=
         (
           switch (event) {
           | VentureCreated(event) => {
               ...state^,
               systemIssuer: event.systemIssuer,
             }
-          | PartnerAccepted({data}) => {
-              ...state^,
-              eligable: [data.id, ...state^.eligable],
-            }
-          | PartnerRemovalAccepted({data: {id}}) => {
-              ...state^,
-              eligable: state^.eligable |> List.filter(UserId.neq(id)),
-            }
           | PayoutEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
-              endorsements: [event.supporterId, ...state^.endorsements],
+              endorsements: state^.endorsements |. Set.add(event.supporterId),
             }
           | PayoutAccepted(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
@@ -53,7 +54,9 @@ let make = (proposal: Payout.Proposed.t, log) => {
       if (completed^ == false
           && state^.policy
           |> Policy.fulfilled(
-               ~eligable=state^.eligable,
+               ~eligible=
+                 state^.eligibilityCollector
+                 |> EligibilityCollector.currentEligible,
                ~endorsed=state^.endorsements,
              )) {
         result :=

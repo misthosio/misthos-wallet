@@ -8,9 +8,11 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../../src/application/events/Event.bs.js");
 var Helpers = require("../helpers/Helpers.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Generators = require("../helpers/Generators.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
+var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
 var PayoutTransaction = require("../../src/application/wallet/PayoutTransaction.bs.js");
 
@@ -21,21 +23,21 @@ describe("integration", (function () {
         var userC = match[2];
         var userB = match[1];
         var userA = match[0];
-        var log = Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */33](Generators.Log[/* withCustodianKeyChain */32](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */32](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */27](userB, /* :: */[
+        var log = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userB, Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userA, Generators.Log[/* withCustodian */28](userB, /* :: */[
                                   userA,
                                   /* :: */[
                                     userB,
                                     /* [] */0
                                   ]
-                                ], Generators.Log[/* withPartner */15](userB, /* :: */[
+                                ], Generators.Log[/* withPartner */16](userB, /* :: */[
                                       userA,
                                       /* [] */0
-                                    ], Generators.Log[/* withCustodian */27](userA, /* :: */[
+                                    ], Generators.Log[/* withCustodian */28](userA, /* :: */[
                                           userA,
                                           /* [] */0
-                                        ], Generators.Log[/* withAccount */23](userA, Generators.Log[/* withFirstPartner */16](userA)(Generators.Log[/* createVenture */10](userA)))))))))));
+                                        ], Generators.Log[/* withAccount */24](userA, Generators.Log[/* withFirstPartner */17](userA)(Generators.Log[/* createVenture */11](userA)))))))))));
         var accountIdx = WalletTypes.AccountIndex[/* default */9];
-        var ventureId = Generators.Log[/* ventureId */1](log);
+        var ventureId = Generators.Log[/* ventureId */2](log);
         var wallet = WalletHelpers.constructState(log);
         var match$1 = WalletHelpers.collectNextTwoAddresses(userA, /* tuple */[
               wallet,
@@ -45,13 +47,13 @@ describe("integration", (function () {
         var match$3 = match$1[0];
         var address2 = match$3[1];
         var address1 = match$3[0];
-        var log$1 = Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userC, Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */33](Generators.Log[/* withCustodianKeyChain */32](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */27](userC, /* :: */[
+        var log$1 = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userC, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userB, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, userA, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, userC, Generators.Log[/* withCustodian */28](userC, /* :: */[
                                   userA,
                                   /* :: */[
                                     userB,
                                     /* [] */0
                                   ]
-                                ], Generators.Log[/* withPartner */15](userC, /* :: */[
+                                ], Generators.Log[/* withPartner */16](userC, /* :: */[
                                       userA,
                                       /* :: */[
                                         userB,
@@ -102,22 +104,22 @@ describe("integration", (function () {
         Jest.beforeAllPromise(/* Some */[40000], (function () {
                 return Helpers.faucet(/* :: */[
                                 /* tuple */[
-                                  address1[/* address */1],
+                                  address1[/* address */1][/* displayAddress */5],
                                   address1Satoshis
                                 ],
                                 /* :: */[
                                   /* tuple */[
-                                    address2[/* address */1],
+                                    address2[/* address */1][/* displayAddress */5],
                                     address2Satoshis
                                   ],
                                   /* :: */[
                                     /* tuple */[
-                                      address3[/* address */1],
+                                      address3[/* address */1][/* displayAddress */5],
                                       address3Satoshis
                                     ],
                                     /* :: */[
                                       /* tuple */[
-                                        address4[/* address */1],
+                                        address4[/* address */1][/* displayAddress */5],
                                         address4Satoshis
                                       ],
                                       /* [] */0
@@ -126,12 +128,12 @@ describe("integration", (function () {
                                 ]
                               ]).then((function (utxos) {
                                 var walletOneAddresses_000 = /* tuple */[
-                                  address1[/* address */1],
+                                  address1[/* address */1][/* displayAddress */5],
                                   address1
                                 ];
                                 var walletOneAddresses_001 = /* :: */[
                                   /* tuple */[
-                                    address2[/* address */1],
+                                    address2[/* address */1][/* displayAddress */5],
                                     address2
                                   ],
                                   /* [] */0
@@ -141,22 +143,22 @@ describe("integration", (function () {
                                   walletOneAddresses_001
                                 ];
                                 var walletTwoAddresses_000 = /* tuple */[
-                                  address1[/* address */1],
+                                  address1[/* address */1][/* displayAddress */5],
                                   address1
                                 ];
                                 var walletTwoAddresses_001 = /* :: */[
                                   /* tuple */[
-                                    address2[/* address */1],
+                                    address2[/* address */1][/* displayAddress */5],
                                     address2
                                   ],
                                   /* :: */[
                                     /* tuple */[
-                                      address3[/* address */1],
+                                      address3[/* address */1][/* displayAddress */5],
                                       address3
                                     ],
                                     /* :: */[
                                       /* tuple */[
-                                        address4[/* address */1],
+                                        address4[/* address */1][/* displayAddress */5],
                                         address4
                                       ],
                                       /* [] */0
@@ -169,7 +171,7 @@ describe("integration", (function () {
                                 ];
                                 List.iter((function (param) {
                                         var address = param[/* address */2];
-                                        var incomeEvent = Event.IncomeDetected[/* make */0](param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* coordinates */0], address, param[/* txId */0], param[/* amount */3]);
+                                        var incomeEvent = Event.IncomeDetected[/* make */0](param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, param[/* txId */0], param[/* amount */3]);
                                         var match = List.mem_assoc(address, walletOneAddresses);
                                         if (match) {
                                           oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(33, [incomeEvent]), oneKeyChainWallet[0]);
@@ -180,7 +182,10 @@ describe("integration", (function () {
                                           return /* () */0;
                                         }
                                       }), utxos);
-                                var param = Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
+                                var param = Venture__Wallet.preparePayoutTx(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                                          userA[/* userId */0],
+                                          userB[/* userId */0]
+                                        ]), userA, accountIdx, /* :: */[
                                       /* tuple */[
                                         Helpers.faucetAddress,
                                         oneKeyChainSpendAmount
@@ -197,7 +202,7 @@ describe("integration", (function () {
                                   return Promise.all(/* tuple */[
                                               Promise.resolve($$event[/* processId */0]),
                                               Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
-                                                        $$event[/* data */5][/* payoutTx */1],
+                                                        $$event[/* data */6][/* payoutTx */1],
                                                         /* [] */0
                                                       ], /* Regtest */0))
                                             ]);
@@ -220,7 +225,11 @@ describe("integration", (function () {
                             }));
               }));
         return Jest.testPromise(/* Some */[80000], "2 of 3 wallet", (function () {
-                      var param = Venture__Wallet.preparePayoutTx(userA, accountIdx, /* :: */[
+                      var param = Venture__Wallet.preparePayoutTx(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                                userA[/* userId */0],
+                                userB[/* userId */0],
+                                userC[/* userId */0]
+                              ]), userA, accountIdx, /* :: */[
                             /* tuple */[
                               Helpers.faucetAddress,
                               twoKeyChainSpendAmount
@@ -233,7 +242,7 @@ describe("integration", (function () {
                       var tmp;
                       if (param) {
                         var $$event = param[0];
-                        var data = $$event[/* data */5];
+                        var data = $$event[/* data */6];
                         var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, userB[/* userId */0], userB[/* masterKeyChain */4], wallet$2[/* walletInfoCollector */3][/* keyChains */3], data[/* payoutTx */1], /* Regtest */0));
                         tmp = Promise.all(/* tuple */[
                               Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),

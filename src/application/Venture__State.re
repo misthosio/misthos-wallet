@@ -6,7 +6,7 @@ type t = {
   ventureName: string,
   systemIssuer: Bitcoin.ECPair.t,
   policies: list((string, Policy.t)),
-  partnerIds: list(userId),
+  currentPartners: UserId.set,
   custodianProcesses: list((processId, processId)),
   partnerRemovalProcesses: list((processId, userId)),
   custodianRemovalProcesses: list((userId, processId)),
@@ -20,7 +20,7 @@ let make = () => {
   ventureName: "",
   systemIssuer: Bitcoin.ECPair.makeRandom(),
   policies: [],
-  partnerIds: [],
+  currentPartners: UserId.emptySet,
   custodianProcesses: [],
   partnerRemovalProcesses: [],
   custodianRemovalProcesses: [],
@@ -34,10 +34,13 @@ let systemIssuer = ({systemIssuer}) => systemIssuer;
 
 let ventureName = ({ventureName}) => ventureName;
 
+let currentPartners = ({currentPartners}) => currentPartners;
+
+let isPartner = (userId, {currentPartners}) =>
+  currentPartners |. Belt.Set.has(userId);
+
 let currentPolicy = (processName, {policies}) =>
   policies |> List.assoc(processName);
-
-let isPartner = (id, {partnerIds}) => partnerIds |> List.mem(id);
 
 let custodianProcessForPartnerProcess = (processId, {custodianProcesses}) =>
   custodianProcesses
@@ -99,7 +102,7 @@ let apply = (event, state) =>
     }
   | PartnerAccepted({data: {id}} as event) => {
       ...state,
-      partnerIds: [id, ...state.partnerIds],
+      currentPartners: state.currentPartners |. Belt.Set.add(id),
       partnerAccepted: [(id, event), ...state.partnerAccepted],
     }
   | CustodianProposed({processId, data: {partnerApprovalProcess}}) => {
@@ -140,7 +143,7 @@ let apply = (event, state) =>
     }
   | PartnerRemovalAccepted({data: {id}} as event) => {
       ...state,
-      partnerIds: state.partnerIds |> List.filter(UserId.neq(id)),
+      currentPartners: state.currentPartners |. Belt.Set.remove(id),
       partnerRemovals: [(id, event), ...state.partnerRemovals],
     }
   | _ => state

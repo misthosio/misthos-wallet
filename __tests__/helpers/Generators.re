@@ -43,6 +43,13 @@ let threeUserSessionsFromArray = sessions => (
   sessions[2],
 );
 
+let fourUserSessionsFromArray = sessions => (
+  sessions[0],
+  sessions[1],
+  sessions[2],
+  sessions[3],
+);
+
 let twoUserSessions = () => (
   userSession("user1" |> UserId.fromString),
   userSession("user2" |> UserId.fromString),
@@ -97,12 +104,14 @@ module Event = {
     );
   let partnerProposed =
       (
+        ~eligibleWhenProposing,
         ~policy=Policy.unanimous,
         ~lastRemovalAccepted,
         supporterSession: Session.Data.t,
         prospectSession: Session.Data.t,
       ) =>
     AppEvent.makePartnerProposed(
+      ~eligibleWhenProposing,
       ~supporterId=supporterSession.userId,
       ~prospectId=prospectSession.userId,
       ~prospectPubKey=
@@ -121,8 +130,13 @@ module Event = {
     |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
   let partnerRemovalProposed =
-      (~lastPartnerAccepted, supporterSession: Session.Data.t) =>
+      (
+        ~eligibleWhenProposing,
+        ~lastPartnerAccepted,
+        supporterSession: Session.Data.t,
+      ) =>
     AppEvent.makePartnerRemovalProposed(
+      ~eligibleWhenProposing,
       ~lastPartnerAccepted,
       ~supporterId=supporterSession.userId,
       ~policy=Policy.unanimousMinusOne,
@@ -139,8 +153,10 @@ module Event = {
     )
     |> AppEvent.getPartnerRemovalEndorsedExn;
   let partnerRemovalAccepted = AppEvent.Partner.Removal.Accepted.fromProposal;
-  let accountCreationProposed = ({userId}: Session.Data.t) =>
+  let accountCreationProposed =
+      (~eligibleWhenProposing, {userId}: Session.Data.t) =>
     AppEvent.makeAccountCreationProposed(
+      ~eligibleWhenProposing,
       ~supporterId=userId,
       ~name="test",
       ~accountIdx=AccountIndex.default,
@@ -150,11 +166,13 @@ module Event = {
   let accountCreationAccepted = AppEvent.AccountCreation.Accepted.fromProposal;
   let custodianProposed =
       (
+        ~eligibleWhenProposing,
         ~lastCustodianRemovalAccepted,
         {userId}: Session.Data.t,
         partnerProposal: AppEvent.Partner.Proposed.t,
       ) =>
     Event.makeCustodianProposed(
+      ~eligibleWhenProposing,
       ~lastCustodianRemovalAccepted,
       ~partnerProposed=partnerProposal,
       ~supporterId=userId,
@@ -168,8 +186,13 @@ module Event = {
     |> AppEvent.getCustodianEndorsedExn;
   let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
   let custodianRemovalProposed =
-      (~custodianAccepted, supporterSession: Session.Data.t) =>
+      (
+        ~eligibleWhenProposing,
+        ~custodianAccepted,
+        supporterSession: Session.Data.t,
+      ) =>
     AppEvent.makeCustodianRemovalProposed(
+      ~eligibleWhenProposing,
       ~custodianAccepted,
       ~supporterId=supporterSession.userId,
       ~accountIdx=AccountIndex.default,
@@ -215,6 +238,20 @@ module Log = {
     lastItem: EventLog.item,
     log: EventLog.t,
   };
+  let eligblePartners = ({log}) =>
+    log
+    |> EventLog.reduce(
+         (res, {event}: EventLog.item) =>
+           switch (event) {
+           | PartnerAccepted({data: {id}}) => [id, ...res]
+           | PartnerRemovalAccepted({data: {id}}) =>
+             res |> List.filter(UserId.neq(id))
+           | _ => res
+           },
+         [],
+       )
+    |> Array.of_list
+    |> Belt.Set.mergeMany(UserId.emptySet);
   let reduce = (f, s, {log}) => EventLog.reduce(f, s, log);
   let ventureId = ({ventureId}) => ventureId;
   let systemIssuer = ({systemIssuer}) => systemIssuer;
@@ -300,6 +337,7 @@ module Log = {
       issuer,
       PartnerProposed(
         Event.partnerProposed(
+          ~eligibleWhenProposing=eligblePartners(l),
           ~policy,
           ~lastRemovalAccepted,
           supporter,
@@ -368,7 +406,11 @@ module Log = {
     |> appendEvent(
          supporter.issuerKeyPair,
          PartnerRemovalProposed(
-           Event.partnerRemovalProposed(~lastPartnerAccepted, supporter),
+           Event.partnerRemovalProposed(
+             ~eligibleWhenProposing=eligblePartners(l),
+             ~lastPartnerAccepted,
+             supporter,
+           ),
          ),
        );
   };
@@ -402,7 +444,13 @@ module Log = {
   let withAccountCreationProposed = (~supporter: Session.Data.t) =>
     appendEvent(
       supporter.issuerKeyPair,
-      AccountCreationProposed(Event.accountCreationProposed(supporter)),
+      AccountCreationProposed(
+        Event.accountCreationProposed(
+          ~eligibleWhenProposing=
+            [|supporter.userId|] |> Belt.Set.mergeMany(UserId.emptySet),
+          supporter,
+        ),
+      ),
     );
   let withAccountCreationAccepted = proposal =>
     appendSystemEvent(
@@ -438,6 +486,7 @@ module Log = {
       supporter.issuerKeyPair,
       CustodianProposed(
         Event.custodianProposed(
+          ~eligibleWhenProposing=eligblePartners(l),
           ~lastCustodianRemovalAccepted,
           supporter,
           partnerProposed |> Js.Option.getExn,
@@ -488,7 +537,11 @@ module Log = {
     |> appendEvent(
          supporter.issuerKeyPair,
          CustodianRemovalProposed(
-           Event.custodianRemovalProposed(~custodianAccepted, supporter),
+           Event.custodianRemovalProposed(
+             ~eligibleWhenProposing=eligblePartners(l),
+             ~custodianAccepted,
+             supporter,
+           ),
          ),
        );
   };
@@ -626,7 +679,7 @@ module Log = {
                  [(custodianId, identifier), ...activations],
                  exposed,
                )
-             | IncomeAddressExposed({coordinates}) => (
+             | IncomeAddressExposed({address: {coordinates}}) => (
                  keyChains,
                  activations,
                  [coordinates, ...exposed],
@@ -639,13 +692,12 @@ module Log = {
       activations |> List.assoc(user.userId) |. List.assoc(keyChains);
     let coordinates =
       Address.Coordinates.nextExternal(user.userId, exposed, keyChain);
+    let address = keyChain |> Address.make(coordinates);
     l
-    |> appendSystemEvent(
+    |> appendEvent(
+         user.issuerKeyPair,
          IncomeAddressExposed(
-           Event.incomeAddressExposed(
-             ~coordinates,
-             ~address=Address.make(coordinates, keyChain).address,
-           ),
+           Event.incomeAddressExposed(~partnerId=user.userId, ~address),
          ),
        );
   };
@@ -659,8 +711,13 @@ module Log = {
                  None,
                  counter - 1,
                )
-             | (0, IncomeAddressExposed({address, coordinates})) => (
-                 Some(Event.incomeDetected(~address, ~coordinates)),
+             | (0, IncomeAddressExposed({address})) => (
+                 Some(
+                   Event.incomeDetected(
+                     ~address=address.displayAddress,
+                     ~coordinates=address.coordinates,
+                   ),
+                 ),
                  (-1),
                )
              | _ => (res, counter)

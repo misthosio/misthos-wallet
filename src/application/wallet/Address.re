@@ -104,8 +104,30 @@ type t = {
   coordinates: Coordinates.t,
   witnessScript: string,
   redeemScript: string,
-  address: string,
+  displayAddress: string,
 };
+
+let encode = address =>
+  Json.Encode.(
+    object_([
+      ("nCoSigners", int(address.nCoSigners)),
+      ("nPubKeys", int(address.nPubKeys)),
+      ("coordinates", Coordinates.encode(address.coordinates)),
+      ("witnessScript", string(address.witnessScript)),
+      ("redeemScript", string(address.redeemScript)),
+      ("displayAddress", string(address.displayAddress)),
+    ])
+  );
+
+let decode = raw =>
+  Json.Decode.{
+    nCoSigners: raw |> field("nCoSigners", int),
+    nPubKeys: raw |> field("nPubKeys", int),
+    coordinates: raw |> field("coordinates", Coordinates.decode),
+    witnessScript: raw |> field("witnessScript", string),
+    redeemScript: raw |> field("redeemScript", string),
+    displayAddress: raw |> field("displayAddress", string),
+  };
 
 let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) => {
   let keys =
@@ -139,7 +161,7 @@ let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) =>
   let redeemScript =
     WitnessScriptHash.Output.encode(Crypto.sha256FromBuffer(witnessScript));
   let outputScript = ScriptHash.Output.encode(Crypto.hash160(redeemScript));
-  let address =
+  let displayAddress =
     Address.fromOutputScript(
       outputScript,
       keys |> List.hd |> ECPair.getNetwork,
@@ -150,7 +172,7 @@ let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) =>
     nPubKeys: custodianKeyChains |> List.length,
     witnessScript: Utils.bufToHex(witnessScript),
     redeemScript: Utils.bufToHex(redeemScript),
-    address,
+    displayAddress,
   };
 };
 

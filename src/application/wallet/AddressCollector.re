@@ -21,14 +21,10 @@ let apply = (event, state) =>
       ...state,
       keyChains: state.keyChains |> AccountKeyChain.Collection.add(keyChain),
     }
-  | IncomeAddressExposed({address, coordinates}) => {
+  | IncomeAddressExposed({address: {displayAddress} as address}) => {
       ...state,
       exposedAddresses:
-        state.exposedAddresses
-        |. Map.String.set(
-             address,
-             state.keyChains |> Address.find(coordinates),
-           ),
+        state.exposedAddresses |. Map.String.set(displayAddress, address),
     }
   | _ => state
   };

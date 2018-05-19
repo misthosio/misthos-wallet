@@ -56,8 +56,8 @@ let exposeNextIncomeAddress =
       accountKeyChain,
     );
   IncomeAddressExposed.make(
-    ~coordinates,
-    ~address=Address.make(coordinates, accountKeyChain).address,
+    ~partnerId=userId,
+    ~address=Address.make(coordinates, accountKeyChain),
   );
 };
 
@@ -67,6 +67,7 @@ type preparePayoutResult =
 
 let preparePayoutTx =
     (
+      ~eligibleWhenProposing,
       {userId, masterKeyChain, network}: Session.Data.t,
       accountIdx,
       destinations,
@@ -93,9 +94,6 @@ let preparePayoutTx =
             |> WalletInfoCollector.nextChangeAddress(accountIdx, userId),
           ~network,
         );
-      let changeAddressCoordinates =
-        payoutTx.changeAddress
-        |> Utils.mapOption(((_, coordinates)) => coordinates);
       let payoutTx =
         switch (
           PayoutTransaction.signPayout(
@@ -113,9 +111,10 @@ let preparePayoutTx =
       Ok(
         Event.Payout.(
           Proposed.make(
+            ~eligibleWhenProposing,
             ~supporterId=userId,
             ~policy=payoutPolicy,
-            Data.{accountIdx, payoutTx, changeAddressCoordinates},
+            Data.{accountIdx, payoutTx},
           )
         ),
       );

@@ -9,7 +9,7 @@ var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var AddressCollector = require("../../../src/application/wallet/AddressCollector.bs.js");
 
 function constructState(log) {
-  return Generators.Log[/* reduce */0]((function (state, param) {
+  return Generators.Log[/* reduce */1]((function (state, param) {
                 return AddressCollector.apply(param[/* event */0], state);
               }), AddressCollector.make(/* () */0), log);
 }
@@ -20,10 +20,10 @@ describe("AddressCollector", (function () {
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user1 = match[0];
-                      return Generators.Log[/* withIncomeAddressExposed */35](user1, Generators.Log[/* withAccountKeyChainActivated */34](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */33](Generators.Log[/* withCustodianKeyChain */32](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */27](user1, /* :: */[
+                      return Generators.Log[/* withIncomeAddressExposed */36](user1, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */28](user1, /* :: */[
                                                   user1,
                                                   /* [] */0
-                                                ], Generators.Log[/* withAccount */23](user1, Generators.Log[/* withFirstPartner */16](user1)(Fixtures.createVenture(user1))))))));
+                                                ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Fixtures.createVenture(user1))))))));
                     }), (function (_, log) {
                       return Jest.test("has the address", (function () {
                                     return Jest.Expect[/* toEqual */12](/* record */[
@@ -38,7 +38,7 @@ describe("AddressCollector", (function () {
                                                 ],
                                                 /* witnessScript */"5121032a66ac40d30d81a2d0dca008ae11f0fed2a00896fe8e61350b2f9d0ca6256b6351ae",
                                                 /* redeemScript */"0020a598432cbaab0e4039f2e240a97097e4f9a1e1763edd7ae2ca0021b4268ba8fc",
-                                                /* address */"2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o"
+                                                /* displayAddress */"2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o"
                                               ], Jest.Expect[/* expect */0](Belt_MapString.getExn(constructState(log)[/* exposedAddresses */2], "2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o")));
                                   }));
                     }));

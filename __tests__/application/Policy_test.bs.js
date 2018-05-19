@@ -3,134 +3,88 @@
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Policy = require("../../src/application/Policy.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 
 describe("Unanimous", (function () {
         Jest.test("fulfilled", (function () {
-                var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("b"),
-                  /* [] */0
-                ];
-                var arg = /* :: */[
-                  arg_000,
-                  arg_001
-                ];
-                var arg_000$1 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001$1 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("b"),
-                  /* [] */0
-                ];
-                var arg$1 = /* :: */[
-                  arg_000$1,
-                  arg_001$1
-                ];
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
                                   })(Policy.unanimous)));
               }));
         Jest.test("not fulfilled", (function () {
-                var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("b"),
-                  /* [] */0
-                ];
-                var arg = /* :: */[
-                  arg_000,
-                  arg_001
-                ];
-                var arg_000$1 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001$1 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("c"),
-                  /* [] */0
-                ];
-                var arg$1 = /* :: */[
-                  arg_000$1,
-                  arg_001$1
-                ];
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("c")
+                    ]);
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
                                   })(Policy.unanimous)));
               }));
-        return Jest.test("at least one eligable", (function () {
+        return Jest.test("at least one eligible", (function () {
+                      var arg = PrimitiveTypes.UserId[/* emptySet */9];
+                      var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
                       return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                          return Policy.fulfilled(param)(/* [] */0, /* [] */0);
+                                          return Policy.fulfilled(param)(arg, arg$1);
                                         })(Policy.unanimous)));
                     }));
       }));
 
 describe("UnanimousMinusOne", (function () {
         Jest.test("fulfilled", (function () {
-                var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("b"),
-                  /* [] */0
-                ];
-                var arg = /* :: */[
-                  arg_000,
-                  arg_001
-                ];
-                var arg_000$1 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001$1 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("b"),
-                  /* [] */0
-                ];
-                var arg$1 = /* :: */[
-                  arg_000$1,
-                  arg_001$1
-                ];
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
         Jest.test("fullfilled with minus 1 votes", (function () {
-                var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("b"),
-                  /* [] */0
-                ];
-                var arg = /* :: */[
-                  arg_000,
-                  arg_001
-                ];
-                var arg_000$1 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001$1 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("c"),
-                  /* [] */0
-                ];
-                var arg$1 = /* :: */[
-                  arg_000$1,
-                  arg_001$1
-                ];
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("c")
+                    ]);
                 return Jest.Expect[/* toBe */2](true, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
         Jest.test("not fullfilled", (function () {
-                var arg_000 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg_001 = /* :: */[
-                  PrimitiveTypes.UserId[/* fromString */1]("b"),
-                  /* :: */[
-                    PrimitiveTypes.UserId[/* fromString */1]("c"),
-                    /* [] */0
-                  ]
-                ];
-                var arg = /* :: */[
-                  arg_000,
-                  arg_001
-                ];
-                var arg_000$1 = PrimitiveTypes.UserId[/* fromString */1]("a");
-                var arg$1 = /* :: */[
-                  arg_000$1,
-                  /* [] */0
-                ];
+                var arg = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
+                      PrimitiveTypes.UserId[/* fromString */1]("a"),
+                      PrimitiveTypes.UserId[/* fromString */1]("b"),
+                      PrimitiveTypes.UserId[/* fromString */1]("c")
+                    ]);
+                var arg$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[PrimitiveTypes.UserId[/* fromString */1]("a")]);
                 return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
                                     return Policy.fulfilled(param)(arg, arg$1);
                                   })(Policy.unanimousMinusOne)));
               }));
-        return Jest.test("at least one eligable", (function () {
+        return Jest.test("at least one eligible", (function () {
+                      var arg = PrimitiveTypes.UserId[/* emptySet */9];
+                      var arg$1 = PrimitiveTypes.UserId[/* emptySet */9];
                       return Jest.Expect[/* toBe */2](false, Jest.Expect[/* expect */0]((function (param) {
-                                          return Policy.fulfilled(param)(/* [] */0, /* [] */0);
+                                          return Policy.fulfilled(param)(arg, arg$1);
                                         })(Policy.unanimousMinusOne)));
                     }));
       }));

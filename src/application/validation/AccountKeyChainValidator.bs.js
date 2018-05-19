@@ -39,7 +39,7 @@ function update($$event, param) {
         match = /* tuple */[
           /* :: */[
             /* tuple */[
-              $$event[0][/* data */2][/* accountIdx */0],
+              $$event[0][/* data */3][/* accountIdx */0],
               /* [] */0
             ],
             identified

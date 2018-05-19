@@ -24,7 +24,7 @@ var class_tables = [
 ];
 
 function make(param, param$1, log) {
-  var accountIdx = param$1[/* data */2][/* accountIdx */0];
+  var accountIdx = param$1[/* data */3][/* accountIdx */0];
   var issuerKeyPair = param[/* issuerKeyPair */2];
   var localUserId = param[/* userId */0];
   var identifiedEvent = function (keyChains, state) {
@@ -96,7 +96,7 @@ function make(param, param$1, log) {
                     ];
                     break;
                 case 4 : 
-                    if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* data */2][/* id */1], env$1[0])) {
+                    if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* data */3][/* id */1], env$1[0])) {
                       var init$1 = self$1[state][0];
                       tmp = /* record */[
                         /* systemIssuer */init$1[/* systemIssuer */0],
@@ -112,7 +112,7 @@ function make(param, param$1, log) {
                     }
                     break;
                 case 8 : 
-                    if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* data */2][/* id */0], env$1[0])) {
+                    if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* data */3][/* id */0], env$1[0])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
                         /* systemIssuer */init$2[/* systemIssuer */0],
@@ -128,7 +128,7 @@ function make(param, param$1, log) {
                     }
                     break;
                 case 20 : 
-                    var match = $$event[0][/* data */2];
+                    var match = $$event[0][/* data */3];
                     var removedAccount = match[/* accountIdx */1];
                     if (WalletTypes.AccountIndex[/* eq */7](removedAccount, removedAccount)) {
                       try {

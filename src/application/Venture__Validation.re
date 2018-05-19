@@ -17,7 +17,7 @@ type t = {
   systemPubKey: string,
   metaPolicy: Policy.t,
   knownItems: list(string),
-  currentPartners: list(userId),
+  currentPartners: UserId.set,
   currentPartnerPubKeys: list((string, userId)),
   partnerData: list((processId, (userId, Partner.Data.t))),
   partnerAccepted: list((userId, processId)),
@@ -46,7 +46,7 @@ let make = () => {
   accountKeyChainValidator: AccountKeyChainValidator.make(),
   systemPubKey: "",
   knownItems: [],
-  currentPartners: [],
+  currentPartners: UserId.emptySet,
   currentPartnerPubKeys: [],
   metaPolicy: Policy.unanimous,
   partnerData: [],
@@ -196,7 +196,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PayoutEndorsed(endorsement) => endorseProcess(endorsement, state)
   | PartnerAccepted({processId, data} as acceptance) => {
       ...completeProcess(acceptance, state),
-      currentPartners: [data.id, ...state.currentPartners],
+      currentPartners: state.currentPartners |. Belt.Set.add(data.id),
       currentPartnerPubKeys: [
         (data.pubKey, data.id),
         ...state.currentPartnerPubKeys,
@@ -210,7 +210,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       |> fst;
     {
       ...completeProcess(acceptance, state),
-      currentPartners: state.currentPartners |> List.filter(UserId.neq(id)),
+      currentPartners: state.currentPartners |. Belt.Set.remove(id),
       currentPartnerPubKeys:
         state.currentPartnerPubKeys |> List.remove_assoc(pubKey),
       partnerRemovals: [(id, processId), ...state.partnerRemovals],
@@ -391,23 +391,19 @@ let validateProposal =
   } else {
     let proposalsThere =
       dependsOnProposals
-      |> Array.fold_left(
-           (res, processId) =>
-             (
-               completedProcesses
-               |> List.mem(processId)
-               || processes
-               |> List.mem_assoc(processId)
-             )
-             && res,
-           true,
+      |. Belt.Set.reduce(true, (res, processId) =>
+           (
+             completedProcesses
+             |> List.mem(processId)
+             || processes
+             |> List.mem_assoc(processId)
+           )
+           && res
          );
     let completionsThere =
       dependsOnCompletions
-      |> Array.fold_left(
-           (res, processId) =>
-             completedProcesses |> List.mem(processId) && res,
-           true,
+      |. Belt.Set.reduce(true, (res, processId) =>
+           completedProcesses |> List.mem(processId) && res
          );
     switch (proposalsThere, completionsThere) {
     | (true, true) => validateData(data, state)
@@ -446,7 +442,8 @@ let validateEndorsement =
 
 let validateAcceptance =
     (
-      {processId, data, dependsOnCompletions}: EventTypes.acceptance('a),
+      {processId, data, dependsOnCompletions, eligibleWhenProposing}:
+        EventTypes.acceptance('a),
       dataList: list((processId, (userId, 'a))),
       eq: ('a, 'a) => bool,
       {processes, currentPartners, completedProcesses},
@@ -458,18 +455,23 @@ let validateAcceptance =
       if (eq(data, dataList |> List.assoc(processId) |> snd) == false) {
         BadData("Data doesn't match proposal");
       } else if (Policy.fulfilled(
-                   ~eligable=currentPartners,
-                   ~endorsed=supporterIds,
+                   ~eligible=
+                     Belt.Set.intersect(
+                       currentPartners,
+                       eligibleWhenProposing,
+                     ),
+                   ~endorsed=
+                     supporterIds
+                     |> Array.of_list
+                     |> Belt.Set.mergeMany(UserId.emptySet),
                    policy,
                  )
                  == false) {
         PolicyNotFulfilled;
       } else {
         dependsOnCompletions
-        |> Array.fold_left(
-             (res, processId) =>
-               completedProcesses |> List.mem(processId) && res,
-             true,
+        |. Belt.Set.reduce(true, (res, processId) =>
+             completedProcesses |> List.mem(processId) && res
            ) ?
           Ok : DependencyNotMet;
       };
@@ -483,7 +485,7 @@ let validatePartnerData =
       {id, lastPartnerRemovalProcess}: Partner.Data.t,
       {partnerRemovals, currentPartners},
     ) =>
-  if (currentPartners |> List.mem(id)) {
+  if (currentPartners |. Belt.Set.has(id)) {
     BadData("Partner already exists");
   } else {
     let partnerRemovalProcess =
@@ -502,7 +504,7 @@ let validatePartnerRemovalData =
       {id, lastPartnerProcess}: Partner.Removal.Data.t,
       {partnerAccepted, currentPartners},
     ) =>
-  if (currentPartners |> List.mem(id) == false) {
+  if (currentPartners |. Belt.Set.has(id) == false) {
     BadData("Partner with Id '" ++ UserId.toString(id) ++ "' doesn't exist");
   } else {
     try (
@@ -669,14 +671,14 @@ let validateAccountKeyChainActivated =
 
 let validateIncomeAddressExposed =
     (
-      {coordinates, address}: IncomeAddressExposed.t,
+      {address: {coordinates, displayAddress}}: IncomeAddressExposed.t,
       {accountKeyChains},
       _issuerId,
     ) =>
   try (
     {
       let generatedAddress = accountKeyChains |> Address.find(coordinates);
-      if (address == generatedAddress.address) {
+      if (displayAddress == generatedAddress.displayAddress) {
         Ok;
       } else {
         BadData("Unknown Address");

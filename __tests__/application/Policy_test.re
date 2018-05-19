@@ -2,6 +2,8 @@ open Jest;
 
 open Expect;
 
+open Belt;
+
 open PrimitiveTypes;
 
 let () = {
@@ -11,8 +13,12 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
-             ~endorsed=["a" |> UserId.fromString, "b" |> UserId.fromString],
+             ~eligible=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
            ),
       )
       |> toBe(true);
@@ -22,15 +28,25 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
-             ~endorsed=["a" |> UserId.fromString, "c" |> UserId.fromString],
+             ~eligible=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString, "c" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
            ),
       )
       |> toBe(false);
     });
-    test("at least one eligable", () => {
+    test("at least one eligible", () => {
       let p = Policy.unanimous;
-      expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
+      expect(
+        p
+        |> Policy.fulfilled(
+             ~eligible=UserId.emptySet,
+             ~endorsed=UserId.emptySet,
+           ),
+      )
       |> toBe(false);
     });
   });
@@ -40,8 +56,12 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
-             ~endorsed=["a" |> UserId.fromString, "b" |> UserId.fromString],
+             ~eligible=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
            ),
       )
       |> toBe(true);
@@ -51,8 +71,12 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=["a" |> UserId.fromString, "b" |> UserId.fromString],
-             ~endorsed=["a" |> UserId.fromString, "c" |> UserId.fromString],
+             ~eligible=
+               [|"a" |> UserId.fromString, "b" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString, "c" |> UserId.fromString|]
+               |> Set.mergeMany(UserId.emptySet),
            ),
       )
       |> toBe(true);
@@ -62,19 +86,28 @@ let () = {
       expect(
         p
         |> Policy.fulfilled(
-             ~eligable=[
-               "a" |> UserId.fromString,
-               "b" |> UserId.fromString,
-               "c" |> UserId.fromString,
-             ],
-             ~endorsed=["a" |> UserId.fromString],
+             ~eligible=
+               [|
+                 "a" |> UserId.fromString,
+                 "b" |> UserId.fromString,
+                 "c" |> UserId.fromString,
+               |]
+               |> Set.mergeMany(UserId.emptySet),
+             ~endorsed=
+               [|"a" |> UserId.fromString|] |> Set.mergeMany(UserId.emptySet),
            ),
       )
       |> toBe(false);
     });
-    test("at least one eligable", () => {
+    test("at least one eligible", () => {
       let p = Policy.unanimousMinusOne;
-      expect(p |> Policy.fulfilled(~eligable=[], ~endorsed=[]))
+      expect(
+        p
+        |> Policy.fulfilled(
+             ~eligible=UserId.emptySet,
+             ~endorsed=UserId.emptySet,
+           ),
+      )
       |> toBe(false);
     });
   });

@@ -68,7 +68,7 @@ function apply($$event, state) {
     case 21 : 
         var match = $$event[0];
         return /* record */[
-                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */0], match[/* processId */0], match[/* data */5][/* payoutTx */1]),
+                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */0], match[/* processId */0], match[/* data */6][/* payoutTx */1]),
                 /* confirmedTxs */state[/* confirmedTxs */1],
                 /* unconfirmedTxs */state[/* unconfirmedTxs */2],
                 /* network */state[/* network */3]

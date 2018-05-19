@@ -391,6 +391,7 @@ module Cmd = {
                | UserInfo.Public.Ok(info) => {
                    let partnerProposed =
                      Event.makePartnerProposed(
+                       ~eligibleWhenProposing=state |> State.currentPartners,
                        ~supporterId=session.userId,
                        ~prospectId,
                        ~prospectPubKey=info.appPubKey,
@@ -403,6 +404,7 @@ module Cmd = {
                      |> Event.getPartnerProposedExn;
                    let custodianProposal =
                      Event.makeCustodianProposed(
+                       ~eligibleWhenProposing=state |> State.currentPartners,
                        ~lastCustodianRemovalAccepted=
                          state |> State.lastRemovalOfCustodian(prospectId),
                        ~partnerProposed,
@@ -495,6 +497,7 @@ module Cmd = {
               venture
               |> apply(
                    Event.makeCustodianRemovalProposed(
+                     ~eligibleWhenProposing=state |> State.currentPartners,
                      ~custodianAccepted,
                      ~supporterId=session.userId,
                      ~accountIdx=AccountIndex.default,
@@ -513,6 +516,7 @@ module Cmd = {
                |> apply(
                     ~collector=c,
                     Event.makePartnerRemovalProposed(
+                      ~eligibleWhenProposing=state |> State.currentPartners,
                       ~lastPartnerAccepted=
                         state |> State.lastPartnerAccepted(partnerId),
                       ~supporterId=session.userId,
@@ -596,9 +600,11 @@ module Cmd = {
         wallet |> Wallet.exposeNextIncomeAddress(userId, accountIdx);
       Js.Promise.(
         venture
-        |> apply(~systemEvent=true, IncomeAddressExposed(exposeEvent))
+        |> apply(IncomeAddressExposed(exposeEvent))
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(exposeEvent.address, v, c)))
+        |> then_(((v, c)) =>
+             resolve(Ok(exposeEvent.address.displayAddress, v, c))
+           )
       );
     };
   };
@@ -607,10 +613,22 @@ module Cmd = {
       | Ok(t, array(EventLog.item))
       | NotEnoughFunds;
     let exec =
-        (~accountIdx, ~destinations, ~fee, {wallet, session} as venture) => {
+        (
+          ~accountIdx,
+          ~destinations,
+          ~fee,
+          {state, wallet, session} as venture,
+        ) => {
       logMessage("Executing 'ProposePayout' command");
       Js.Promise.(
-        Wallet.preparePayoutTx(session, accountIdx, destinations, fee, wallet)
+        Wallet.preparePayoutTx(
+          ~eligibleWhenProposing=state |> State.currentPartners,
+          session,
+          accountIdx,
+          destinations,
+          fee,
+          wallet,
+        )
         |> (
           fun
           | Wallet.Ok(proposal) =>

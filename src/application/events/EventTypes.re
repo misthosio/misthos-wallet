@@ -1,9 +1,12 @@
+open Belt;
+
 open PrimitiveTypes;
 
 type proposal('a) = {
   processId,
-  dependsOnProposals: array(processId),
-  dependsOnCompletions: array(processId),
+  dependsOnProposals: ProcessId.set,
+  dependsOnCompletions: ProcessId.set,
+  eligibleWhenProposing: UserId.set,
   supporterId: userId,
   policy: Policy.t,
   data: 'a,
@@ -21,7 +24,8 @@ type endorsement = {
 
 type acceptance('a) = {
   processId,
-  dependsOnCompletions: array(processId),
+  dependsOnCompletions: ProcessId.set,
+  eligibleWhenProposing: UserId.set,
   data: 'a,
 };
 
@@ -37,8 +41,9 @@ module type ProposedEvent =
     type t = proposal(Data.t);
     let make:
       (
-        ~dependsOnProposals: array(processId)=?,
-        ~dependsOnCompletions: array(processId)=?,
+        ~dependsOnProposals: ProcessId.set=?,
+        ~dependsOnCompletions: ProcessId.set=?,
+        ~eligibleWhenProposing: UserId.set,
         ~supporterId: userId,
         ~policy: Policy.t,
         Data.t
@@ -54,13 +59,15 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
      type t = proposal(Data.t);
      let make =
          (
-           ~dependsOnProposals=[||],
-           ~dependsOnCompletions=[||],
+           ~dependsOnProposals=ProcessId.emptySet,
+           ~dependsOnCompletions=ProcessId.emptySet,
+           ~eligibleWhenProposing,
            ~supporterId,
            ~policy,
            data,
          ) => {
        processId: ProcessId.make(),
+       eligibleWhenProposing,
        dependsOnProposals,
        dependsOnCompletions,
        supporterId,
@@ -74,11 +81,18 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
            ("processId", ProcessId.encode(event.processId)),
            (
              "dependsOnProposals",
-             array(ProcessId.encode, event.dependsOnProposals),
+             array(ProcessId.encode, event.dependsOnProposals |> Set.toArray),
            ),
            (
              "dependsOnCompletions",
-             array(ProcessId.encode, event.dependsOnCompletions),
+             array(
+               ProcessId.encode,
+               event.dependsOnCompletions |> Set.toArray,
+             ),
+           ),
+           (
+             "eligibleWhenProposing",
+             array(UserId.encode, event.eligibleWhenProposing |> Set.toArray),
            ),
            ("supporterId", UserId.encode(event.supporterId)),
            ("policy", Policy.encode(event.policy)),
@@ -89,9 +103,17 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
        Json.Decode.{
          processId: raw |> field("processId", ProcessId.decode),
          dependsOnProposals:
-           raw |> field("dependsOnProposals", array(ProcessId.decode)),
+           raw
+           |> field("dependsOnProposals", array(ProcessId.decode))
+           |> Set.mergeMany(ProcessId.emptySet),
          dependsOnCompletions:
-           raw |> field("dependsOnCompletions", array(ProcessId.decode)),
+           raw
+           |> field("dependsOnCompletions", array(ProcessId.decode))
+           |> Set.mergeMany(ProcessId.emptySet),
+         eligibleWhenProposing:
+           raw
+           |> field("eligibleWhenProposing", array(UserId.decode))
+           |> Set.mergeMany(UserId.emptySet),
          supporterId: raw |> field("supporterId", UserId.decode),
          policy: raw |> field("policy", Policy.decode),
          data: raw |> field("data", Data.decode),
@@ -167,11 +189,18 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
      type t = acceptance(Data.t);
      let fromProposal =
          (
-           {dependsOnProposals, dependsOnCompletions, processId, data}:
+           {
+             eligibleWhenProposing,
+             dependsOnProposals,
+             dependsOnCompletions,
+             processId,
+             data,
+           }:
              proposal(Data.t),
          ) => {
+       eligibleWhenProposing,
        dependsOnCompletions:
-         dependsOnProposals |> Array.append(dependsOnCompletions),
+         dependsOnProposals |> Set.union(dependsOnCompletions),
        processId,
        data,
      };
@@ -182,7 +211,14 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
            ("processId", ProcessId.encode(event.processId)),
            (
              "dependsOnCompletions",
-             array(ProcessId.encode, event.dependsOnCompletions),
+             array(
+               ProcessId.encode,
+               event.dependsOnCompletions |> Set.toArray,
+             ),
+           ),
+           (
+             "eligibleWhenProposing",
+             array(UserId.encode, event.eligibleWhenProposing |> Set.toArray),
            ),
            ("data", Data.encode(event.data)),
          ])
@@ -191,7 +227,13 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
        Json.Decode.{
          processId: raw |> field("processId", ProcessId.decode),
          dependsOnCompletions:
-           raw |> field("dependsOnCompletions", array(ProcessId.decode)),
+           raw
+           |> field("dependsOnCompletions", array(ProcessId.decode))
+           |> Set.mergeMany(ProcessId.emptySet),
+         eligibleWhenProposing:
+           raw
+           |> field("eligibleWhenProposing", array(UserId.decode))
+           |> Set.mergeMany(UserId.emptySet),
          data: raw |> field("data", Data.decode),
        };
    });
@@ -205,8 +247,9 @@ module type Process =
       type t = proposal(Data.t);
       let make:
         (
-          ~dependsOnProposals: array(processId)=?,
-          ~dependsOnCompletions: array(processId)=?,
+          ~dependsOnProposals: ProcessId.set=?,
+          ~dependsOnCompletions: ProcessId.set=?,
+          ~eligibleWhenProposing: UserId.set,
           ~supporterId: userId,
           ~policy: Policy.t,
           Data.t

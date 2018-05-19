@@ -13,49 +13,49 @@ describe("CustodianProposed", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var log = Generators.Log[/* withPartner */15](user2, /* :: */[
+                var log = Generators.Log[/* withPartner */16](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withCustodian */27](user1, /* :: */[
+                    ], Generators.Log[/* withCustodian */28](user1, /* :: */[
                           user1,
                           /* [] */0
-                        ], Generators.Log[/* withAccount */23](user1, Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)))));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withCustodianProposed */24](user1, user2, log)), /* Ok */0);
+                        ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)))));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */25](user1, user2, log)), /* Ok */0);
               }));
         describe("when proposing a custodian after removal", (function () {
                 var match = Generators.twoUserSessions(/* () */0);
                 var user2 = match[1];
                 var user1 = match[0];
-                var log = Generators.Log[/* withCustodianRemoved */31](user2, /* :: */[
+                var log = Generators.Log[/* withCustodianRemoved */32](user2, /* :: */[
                       user1,
                       /* :: */[
                         user2,
                         /* [] */0
                       ]
-                    ], Generators.Log[/* withCustodian */27](user2, /* :: */[
+                    ], Generators.Log[/* withCustodian */28](user2, /* :: */[
                           user1,
                           /* :: */[
                             user2,
                             /* [] */0
                           ]
-                        ], Generators.Log[/* withPartner */15](user2, /* :: */[
+                        ], Generators.Log[/* withPartner */16](user2, /* :: */[
                               user1,
                               /* [] */0
-                            ], Generators.Log[/* withCustodian */27](user1, /* :: */[
+                            ], Generators.Log[/* withCustodian */28](user1, /* :: */[
                                   user1,
                                   /* [] */0
-                                ], Generators.Log[/* withAccount */23](user1, Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)))))));
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */3](Generators.Log[/* withCustodianProposed */24](user1, user2, log)), /* Ok */0);
+                                ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)))))));
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */25](user1, user2, log)), /* Ok */0);
               }));
         describe("validateCustodianData", (function () {
                 describe("when the custodian is not a partner", (function () {
                         var match = Generators.threeUserSessions(/* () */0);
                         var user1 = match[0];
-                        var log = Generators.Log[/* withPartner */15](match[1], /* :: */[
+                        var log = Generators.Log[/* withPartner */16](match[1], /* :: */[
                               user1,
                               /* [] */0
-                            ], Generators.Log[/* withAccount */23](user1, Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1))));
-                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */4](log));
+                            ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
+                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */5](log));
                         return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log), /* record */[
                                     /* partnerId */match[2][/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
@@ -67,10 +67,10 @@ describe("CustodianProposed", (function () {
                         var match = Generators.twoUserSessions(/* () */0);
                         var user2 = match[1];
                         var user1 = match[0];
-                        var log = Generators.Log[/* withPartner */15](user2, /* :: */[
+                        var log = Generators.Log[/* withPartner */16](user2, /* :: */[
                               user1,
                               /* [] */0
-                            ], Generators.Log[/* withAccount */23](user1, Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1))));
+                            ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
                         return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log), /* record */[
                                     /* partnerId */user2[/* userId */0],
                                     /* partnerApprovalProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0),
@@ -81,8 +81,8 @@ describe("CustodianProposed", (function () {
                 describe("when the account doesn't exist", (function () {
                         var match = Generators.twoUserSessions(/* () */0);
                         var user1 = match[0];
-                        var log = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
-                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */4](log));
+                        var log = Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */5](log));
                         return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log), /* record */[
                                     /* partnerId */user1[/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
@@ -94,18 +94,18 @@ describe("CustodianProposed", (function () {
                         var match = Generators.twoUserSessions(/* () */0);
                         var user2 = match[1];
                         var user1 = match[0];
-                        var log = Generators.Log[/* withPartner */15](user2, /* :: */[
+                        var log = Generators.Log[/* withPartner */16](user2, /* :: */[
                               user1,
                               /* [] */0
-                            ], Generators.Log[/* withCustodian */27](user1, /* :: */[
+                            ], Generators.Log[/* withCustodian */28](user1, /* :: */[
                                   user1,
                                   /* [] */0
-                                ], Generators.Log[/* withAccount */23](user1, Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)))));
-                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */4](log));
-                        var log$1 = Generators.Log[/* withCustodianRemoved */31](user2, /* :: */[
+                                ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)))));
+                        var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */5](log));
+                        var log$1 = Generators.Log[/* withCustodianRemoved */32](user2, /* :: */[
                               user1,
                               /* [] */0
-                            ], Generators.Log[/* withCustodian */27](user2, /* :: */[
+                            ], Generators.Log[/* withCustodian */28](user2, /* :: */[
                                   user1,
                                   /* :: */[
                                     user2,

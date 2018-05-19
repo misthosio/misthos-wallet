@@ -28,7 +28,7 @@ let testNextIncomeAddress = (user: Session.Data.t, address, wallet) => {
     ++ address
     ++ "'";
   test(description, () =>
-    expect(exposed.address) |> toEqual(address)
+    expect(exposed.address.displayAddress) |> toEqual(address)
   );
   wallet |> Wallet.apply(IncomeAddressExposed(exposed));
 };
@@ -53,4 +53,4 @@ let getExposedAddresses =
     ) =>
   exposedCoordinates
   |> List.map(coordinates => accountKeyChains |> Address.find(coordinates))
-  |> List.map((a: Address.t) => a.address);
+  |> List.map((a: Address.t) => a.displayAddress);

@@ -47,10 +47,9 @@ function summary(network, param) {
           return total.plus(out[1]);
         }), BTC.zero, outs);
   var networkFee = totalIn.minus(totalOut);
-  var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (param) {
-              var changeAddress = param[0];
+  var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (changeAddress) {
               return List.find((function (param) {
-                              return param[0] === changeAddress;
+                              return param[0] === changeAddress[/* displayAddress */5];
                             }), outs)[1];
             }), param[/* changeAddress */3]));
   var misthosFee = List.find((function (param) {
@@ -64,15 +63,12 @@ function summary(network, param) {
         ];
 }
 
-function txInputForChangeAddress(txId, accountKeyChains, network, param) {
+function txInputForChangeAddress(txId, network, param) {
   var txHex = param[/* txHex */0];
-  return Utils.mapOption((function (param) {
-                var coordinates = param[1];
-                var address = param[0];
-                var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), accountKeyChains);
+  return Utils.mapOption((function (address) {
                 var tx = BitcoinjsLib.Transaction.fromHex(txHex);
                 var match = Js_option.getExn(List.find(Js_option.isSome, List.mapi((function (i, out) {
-                                var match = BitcoinjsLib.address.fromOutputScript(out.script, Network.bitcoinNetwork(network)) === address;
+                                var match = BitcoinjsLib.address.fromOutputScript(out.script, Network.bitcoinNetwork(network)) === address[/* displayAddress */5];
                                 if (match) {
                                   return /* Some */[/* tuple */[
                                             i,
@@ -85,17 +81,16 @@ function txInputForChangeAddress(txId, accountKeyChains, network, param) {
                 return /* record */[
                         /* txId */txId,
                         /* txOutputN */match[0],
-                        /* address */address,
+                        /* address */address[/* displayAddress */5],
                         /* value */match[1],
-                        /* nCoSigners */keyChain[/* nCoSigners */2],
-                        /* nPubKeys */List.length(keyChain[/* custodianKeyChains */3]),
-                        /* coordinates */coordinates
+                        /* nCoSigners */address[/* nCoSigners */0],
+                        /* nPubKeys */address[/* nPubKeys */1],
+                        /* coordinates */address[/* coordinates */2]
                       ];
               }), param[/* changeAddress */3]);
 }
 
 function encode(payout) {
-  var partial_arg = Address.Coordinates[/* encode */9];
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "txHex",
@@ -114,11 +109,7 @@ function encode(payout) {
                   /* :: */[
                     /* tuple */[
                       "changeAddress",
-                      Json_encode.nullable((function (param) {
-                              return Json_encode.tuple2((function (prim) {
-                                            return prim;
-                                          }), partial_arg, param);
-                            }), payout[/* changeAddress */3])
+                      Json_encode.nullable(Address.encode, payout[/* changeAddress */3])
                     ],
                     /* [] */0
                   ]
@@ -128,10 +119,6 @@ function encode(payout) {
 }
 
 function decode(raw) {
-  var partial_arg = Address.Coordinates[/* decode */10];
-  var partial_arg$1 = function (param) {
-    return Json_decode.tuple2(Json_decode.string, partial_arg, param);
-  };
   return /* record */[
           /* txHex */Json_decode.field("txHex", Json_decode.string, raw),
           /* usedInputs */Json_decode.field("usedInputs", (function (param) {
@@ -139,7 +126,7 @@ function decode(raw) {
                 }), raw),
           /* misthosFeeAddress */Json_decode.field("misthosFeeAddress", Json_decode.string, raw),
           /* changeAddress */Json_decode.field("changeAddress", (function (param) {
-                  return Json_decode.optional(partial_arg$1, param);
+                  return Json_decode.optional(Address.decode, param);
                 }), raw)
         ];
 }
@@ -260,9 +247,9 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
 }
 
 function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, network, txBuilder) {
-  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* address */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
-    var currentFee$1 = currentFee.plus(TransactionFee.outputCost(changeAddress[/* address */5], fee, Network.bitcoinNetwork(network)));
-    txBuilder.addOutput(changeAddress[/* address */5], BTC.toSatoshisFloat(totalInputs.minus(outTotal).minus(currentFee$1)));
+  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
+    var currentFee$1 = currentFee.plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network)));
+    txBuilder.addOutput(changeAddress[/* displayAddress */5], BTC.toSatoshisFloat(totalInputs.minus(outTotal).minus(currentFee$1)));
     return true;
   } else {
     return false;
@@ -312,10 +299,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
                         return Caml_primitive.caml_int_compare(param[0], param$1[0]);
                       }))),
             /* misthosFeeAddress */misthosFeeAddress,
-            /* changeAddress */withChange ? /* Some */[/* tuple */[
-                  changeAddress[/* address */5],
-                  changeAddress[/* coordinates */2]
-                ]] : /* None */0
+            /* changeAddress */withChange ? /* Some */[changeAddress] : /* None */0
           ];
   } else {
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
@@ -346,10 +330,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
                           return Caml_primitive.caml_int_compare(param[0], param$1[0]);
                         }))),
               /* misthosFeeAddress */misthosFeeAddress,
-              /* changeAddress */withChange$1 ? /* Some */[/* tuple */[
-                    changeAddress[/* address */5],
-                    changeAddress[/* coordinates */2]
-                  ]] : /* None */0
+              /* changeAddress */withChange$1 ? /* Some */[changeAddress] : /* None */0
             ];
     } else {
       throw NotEnoughFunds;

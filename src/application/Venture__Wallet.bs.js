@@ -4,7 +4,6 @@
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
-var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
@@ -50,24 +49,20 @@ function exposeNextIncomeAddress(userId, accountIdx, param) {
   var ident = List.assoc(userId, List.assoc(accountIdx, match[/* activatedKeyChain */5]));
   var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, ident, match[/* keyChains */3]);
   var coordinates = Address.Coordinates[/* nextExternal */2](userId, match[/* exposedCoordinates */6], accountKeyChain);
-  return Event.IncomeAddressExposed[/* make */0](coordinates, Address.make(coordinates, accountKeyChain)[/* address */5]);
+  return Event.IncomeAddressExposed[/* make */0](userId, Address.make(coordinates, accountKeyChain));
 }
 
-function preparePayoutTx(param, accountIdx, destinations, satsPerByte, param$1) {
+function preparePayoutTx(eligibleWhenProposing, param, accountIdx, destinations, satsPerByte, param$1) {
   var walletInfoCollector = param$1[/* walletInfoCollector */3];
   var network = param[/* network */5];
   var userId = param[/* userId */0];
   try {
     var payoutTx = PayoutTransaction.build(WalletInfoCollector.oldInputs(accountIdx, userId, walletInfoCollector), walletInfoCollector[/* unused */1], destinations, satsPerByte, WalletInfoCollector.nextChangeAddress(accountIdx, userId, walletInfoCollector), network);
-    var changeAddressCoordinates = Utils.mapOption((function (param) {
-            return param[1];
-          }), payoutTx[/* changeAddress */3]);
     var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], walletInfoCollector[/* keyChains */3], payoutTx, network);
     var payoutTx$1 = match ? match[0] : payoutTx;
-    return /* Ok */[Curry._5(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, userId, param$1[/* payoutPolicy */2], /* record */[
+    return /* Ok */[Curry._6(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, eligibleWhenProposing, userId, param$1[/* payoutPolicy */2], /* record */[
                   /* accountIdx */accountIdx,
-                  /* payoutTx */payoutTx$1,
-                  /* changeAddressCoordinates */changeAddressCoordinates
+                  /* payoutTx */payoutTx$1
                 ])];
   }
   catch (exn){

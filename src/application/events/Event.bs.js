@@ -9,6 +9,7 @@ var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Policy = require("../Policy.bs.js");
 var Address = require("../wallet/Address.bs.js");
 var Network = require("../wallet/Network.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var EventTypes = require("./EventTypes.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -410,25 +411,15 @@ function encode$6($$event) {
                   "payoutTx",
                   PayoutTransaction.encode($$event[/* payoutTx */1])
                 ],
-                /* :: */[
-                  /* tuple */[
-                    "changeAddressCoordinates",
-                    Json_encode.nullable(Address.Coordinates[/* encode */9], $$event[/* changeAddressCoordinates */2])
-                  ],
-                  /* [] */0
-                ]
+                /* [] */0
               ]
             ]);
 }
 
 function decode$6(raw) {
-  var partial_arg = Address.Coordinates[/* decode */10];
   return /* record */[
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
-          /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw),
-          /* changeAddressCoordinates */Json_decode.field("changeAddressCoordinates", (function (param) {
-                  return Json_decode.optional(partial_arg, param);
-                }), raw)
+          /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw)
         ];
 }
 
@@ -517,7 +508,7 @@ function encode$8($$event) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "transactionId",
+                    "txId",
                     $$event[/* txId */1]
                   ],
                   /* [] */0
@@ -529,7 +520,7 @@ function encode$8($$event) {
 function decode$8(raw) {
   return /* record */[
           /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
-          /* txId */Json_decode.field("transactionId", Json_decode.string, raw)
+          /* txId */Json_decode.field("txId", Json_decode.string, raw)
         ];
 }
 
@@ -767,9 +758,9 @@ var AccountKeyChainActivated = /* module */[
   /* decode */decode$13
 ];
 
-function make$8(coordinates, address) {
+function make$8(partnerId, address) {
   return /* record */[
-          /* coordinates */coordinates,
+          /* partnerId */partnerId,
           /* address */address
         ];
 }
@@ -782,13 +773,13 @@ function encode$14($$event) {
               ],
               /* :: */[
                 /* tuple */[
-                  "coordinates",
-                  Address.Coordinates[/* encode */9]($$event[/* coordinates */0])
+                  "partnerId",
+                  PrimitiveTypes.UserId[/* encode */2]($$event[/* partnerId */0])
                 ],
                 /* :: */[
                   /* tuple */[
                     "address",
-                    $$event[/* address */1]
+                    Address.encode($$event[/* address */1])
                   ],
                   /* [] */0
                 ]
@@ -798,8 +789,8 @@ function encode$14($$event) {
 
 function decode$14(raw) {
   return /* record */[
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
-          /* address */Json_decode.field("address", Json_decode.string, raw)
+          /* partnerId */Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw),
+          /* address */Json_decode.field("address", Address.decode, raw)
         ];
 }
 
@@ -929,9 +920,9 @@ var Transaction = /* module */[/* Confirmed */Confirmed];
 
 var BadData = Caml_exceptions.create("Event.BadData");
 
-function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
+function makePartnerProposed(eligibleWhenProposing, supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
   var lastPartnerRemovalProcess = Utils.mapOption((function (param) {
-          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* id */0], prospectId)) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */3][/* id */0], prospectId)) {
             throw [
                   BadData,
                   "The provided PartnerRemovalAccepted wasn't for the same partner"
@@ -942,32 +933,32 @@ function makePartnerProposed(supporterId, prospectId, prospectPubKey, lastRemova
   var dependsOnCompletions = Js_option.getWithDefault(/* array */[], Utils.mapOption((function (p) {
               return /* array */[p];
             }), lastPartnerRemovalProcess));
-  return /* PartnerProposed */Block.__(1, [Curry._5(Proposed[/* make */0], /* None */0, /* Some */[dependsOnCompletions], supporterId, policy, /* record */[
+  return /* PartnerProposed */Block.__(1, [Curry._6(Proposed[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], dependsOnCompletions)], eligibleWhenProposing, supporterId, policy, /* record */[
                   /* lastPartnerRemovalProcess */lastPartnerRemovalProcess,
                   /* id */prospectId,
                   /* pubKey */prospectPubKey
                 ])]);
 }
 
-function makePartnerRemovalProposed(lastPartnerAccepted, supporterId, policy) {
-  return /* PartnerRemovalProposed */Block.__(5, [Curry._5(Proposed$1[/* make */0], /* None */0, /* Some */[/* array */[lastPartnerAccepted[/* processId */0]]], supporterId, policy, /* record */[
-                  /* id */lastPartnerAccepted[/* data */2][/* id */1],
+function makePartnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, supporterId, policy) {
+  return /* PartnerRemovalProposed */Block.__(5, [Curry._6(Proposed$1[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[lastPartnerAccepted[/* processId */0]])], eligibleWhenProposing, supporterId, policy, /* record */[
+                  /* id */lastPartnerAccepted[/* data */3][/* id */1],
                   /* lastPartnerProcess */lastPartnerAccepted[/* processId */0]
                 ])]);
 }
 
-function makeAccountCreationProposed(supporterId, name, accountIdx, policy) {
-  return /* AccountCreationProposed */Block.__(9, [Curry._5(Proposed$2[/* make */0], /* None */0, /* None */0, supporterId, policy, /* record */[
+function makeAccountCreationProposed(eligibleWhenProposing, supporterId, name, accountIdx, policy) {
+  return /* AccountCreationProposed */Block.__(9, [Curry._6(Proposed$2[/* make */0], /* None */0, /* None */0, eligibleWhenProposing, supporterId, policy, /* record */[
                   /* accountIdx */accountIdx,
                   /* name */name
                 ])]);
 }
 
-function makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposed, supporterId, accountIdx, policy) {
-  var partnerId = partnerProposed[/* data */5][/* id */1];
+function makeCustodianProposed(eligibleWhenProposing, lastCustodianRemovalAccepted, partnerProposed, supporterId, accountIdx, policy) {
+  var partnerId = partnerProposed[/* data */6][/* id */1];
   var partnerApprovalProcess = partnerProposed[/* processId */0];
   var lastCustodianRemovalProcess = Utils.mapOption((function (param) {
-          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* custodianId */0], partnerId)) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */3][/* custodianId */0], partnerId)) {
             throw [
                   BadData,
                   "The provided CustodianRemovalAccepted wasn't for the same custodian"
@@ -975,7 +966,7 @@ function makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposed, su
           }
           return param[/* processId */0];
         }), lastCustodianRemovalAccepted);
-  return /* CustodianProposed */Block.__(13, [Curry._5(Proposed$3[/* make */0], /* Some */[/* array */[partnerApprovalProcess]], /* None */0, supporterId, policy, /* record */[
+  return /* CustodianProposed */Block.__(13, [Curry._6(Proposed$3[/* make */0], /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[partnerApprovalProcess])], /* None */0, eligibleWhenProposing, supporterId, policy, /* record */[
                   /* partnerId */partnerId,
                   /* partnerApprovalProcess */partnerApprovalProcess,
                   /* lastCustodianRemovalProcess */lastCustodianRemovalProcess,
@@ -983,10 +974,10 @@ function makeCustodianProposed(lastCustodianRemovalAccepted, partnerProposed, su
                 ])]);
 }
 
-function makeCustodianRemovalProposed(custodianAccepted, supporterId, accountIdx, policy) {
+function makeCustodianRemovalProposed(eligibleWhenProposing, custodianAccepted, supporterId, accountIdx, policy) {
   var lastCustodianProcess = custodianAccepted[/* processId */0];
-  return /* CustodianRemovalProposed */Block.__(17, [Curry._5(Proposed$4[/* make */0], /* None */0, /* Some */[/* array */[lastCustodianProcess]], supporterId, policy, /* record */[
-                  /* custodianId */custodianAccepted[/* data */2][/* partnerId */0],
+  return /* CustodianRemovalProposed */Block.__(17, [Curry._6(Proposed$4[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[lastCustodianProcess])], eligibleWhenProposing, supporterId, policy, /* record */[
+                  /* custodianId */custodianAccepted[/* data */3][/* partnerId */0],
                   /* accountIdx */accountIdx,
                   /* lastCustodianProcess */lastCustodianProcess
                 ])]);
@@ -1112,7 +1103,6 @@ function isSystemEvent(param) {
     case 27 : 
     case 28 : 
     case 30 : 
-    case 32 : 
     case 33 : 
     case 34 : 
         return true;

@@ -12,6 +12,8 @@ let ventureName: t => string;
 
 let currentPolicy: (string, t) => Policy.t;
 
+let currentPartners: t => UserId.set;
+
 let isPartner: (userId, t) => bool;
 
 let custodianAcceptedFor: (userId, t) => option(Custodian.Accepted.t);

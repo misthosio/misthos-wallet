@@ -66,6 +66,8 @@ let make =
             Some((
               issuerKeyPair,
               Event.makePartnerProposed(
+                ~eligibleWhenProposing=
+                  [|creatorId|] |> Belt.Set.mergeMany(UserId.emptySet),
                 ~supporterId=creatorId,
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
@@ -77,6 +79,8 @@ let make =
             Some((
               issuerKeyPair,
               Event.makeAccountCreationProposed(
+                ~eligibleWhenProposing=
+                  [|creatorId|] |> Belt.Set.mergeMany(UserId.emptySet),
                 ~supporterId=creatorId,
                 ~name=defaultAccountName,
                 ~accountIdx=AccountIndex.default,
@@ -87,6 +91,8 @@ let make =
             Some((
               issuerKeyPair,
               Event.makeCustodianProposed(
+                ~eligibleWhenProposing=
+                  [|creatorId|] |> Belt.Set.mergeMany(UserId.emptySet),
                 ~lastCustodianRemovalAccepted=None,
                 ~partnerProposed,
                 ~supporterId=creatorId,
