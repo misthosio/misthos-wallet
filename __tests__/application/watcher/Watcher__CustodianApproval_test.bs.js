@@ -129,14 +129,5 @@ describe("With 2 users and a proposal and a removal", (function () {
 
 var CustodianApproval = 0;
 
-var G = 0;
-
-var E = 0;
-
-var L = 0;
-
 exports.CustodianApproval = CustodianApproval;
-exports.G = G;
-exports.E = E;
-exports.L = L;
 /*  Not a pure module */

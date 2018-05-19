@@ -35,14 +35,5 @@ describe("Completes when the account is accepted", (function () {
 
 var AccountCreationApproval = 0;
 
-var G = 0;
-
-var E = 0;
-
-var L = 0;
-
 exports.AccountCreationApproval = AccountCreationApproval;
-exports.G = G;
-exports.E = E;
-exports.L = L;
 /*  Not a pure module */

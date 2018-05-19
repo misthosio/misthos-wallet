@@ -134,14 +134,5 @@ describe("With 2 users and a removal and a proposal", (function () {
 
 var PartnerApproval = 0;
 
-var G = 0;
-
-var E = 0;
-
-var L = 0;
-
 exports.PartnerApproval = PartnerApproval;
-exports.G = G;
-exports.E = E;
-exports.L = L;
 /*  Not a pure module */

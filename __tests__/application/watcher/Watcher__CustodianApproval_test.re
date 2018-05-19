@@ -4,12 +4,6 @@ open Jest;
 
 module CustodianApproval = Watcher__CustodianApproval;
 
-module G = Generators;
-
-module E = G.Event;
-
-module L = G.Log;
-
 open WatcherHelpers;
 
 let () = {

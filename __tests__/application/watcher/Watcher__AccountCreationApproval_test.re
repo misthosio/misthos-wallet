@@ -4,12 +4,6 @@ open Jest;
 
 module AccountCreationApproval = Watcher__AccountCreationApproval;
 
-module G = Generators;
-
-module E = G.Event;
-
-module L = G.Log;
-
 open WatcherHelpers;
 
 let () = {
