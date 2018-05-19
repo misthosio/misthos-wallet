@@ -65,7 +65,7 @@ jobs:
   - aggregate:
     - {get: repo, passed: [test]}
     - {get: misthos-code, trigger: true, passed: [test]}
-    - {get: version, passed: [test], params: { bump: final} }
+    - {get: version, params: { bump: final} }
     - {get: pipeline-tasks}
   - task: build
     config:
