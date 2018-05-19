@@ -11,7 +11,7 @@ open Belt;
 
 open PrimitiveTypes;
 
-let logLabel = "[Income Collection]";
+let logLabel = "[Wallet Sync]";
 
 let logMessage = WorkerUtils.logMessage(logLabel);
 
@@ -101,7 +101,7 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
   );
 };
 
-let collectIncome = (ventures: VentureId.map(EventLog.t)) =>
+let syncWallets = (ventures: VentureId.map(EventLog.t)) =>
   ventures
   |. Map.forEachU((. id, log) =>
        detectIncomeFromVenture(id, log) |> catchAndLogError

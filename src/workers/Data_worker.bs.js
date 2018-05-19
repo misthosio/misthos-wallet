@@ -7,9 +7,9 @@ var Venture = require("../application/Venture.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var WalletSync = require("./WalletSync.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var IncomeCollection = require("./IncomeCollection.bs.js");
 var DataWorkerMessage = require("./DataWorkerMessage.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 
@@ -110,7 +110,7 @@ var venturesPromise = [Promise.resolve(/* tuple */[
 
 self.onmessage = (function (msg) {
     var doWork = function (storagePrefix, ventures) {
-      IncomeCollection.collectIncome(ventures);
+      WalletSync.syncWallets(ventures);
       return LogSync.syncLogs(storagePrefix, ventures);
     };
     venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.msg));

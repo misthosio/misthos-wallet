@@ -24,7 +24,7 @@ function postMessage$1(msg) {
   return /* () */0;
 }
 
-var logLabel = "[Income Collection]";
+var logLabel = "[Wallet Sync]";
 
 function logMessage(param) {
   return WorkerUtils.logMessage(logLabel, param);
@@ -105,7 +105,7 @@ function detectIncomeFromVenture(ventureId, eventLog) {
               }));
 }
 
-function collectIncome(ventures) {
+function syncWallets(ventures) {
   return Belt_Map.forEachU(ventures, (function (id, log) {
                 return catchAndLogError(detectIncomeFromVenture(id, log));
               }));
@@ -119,5 +119,5 @@ exports.scanTransactions = scanTransactions;
 exports.findAddressesAndTxIds = findAddressesAndTxIds;
 exports.filterUTXOs = filterUTXOs;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
-exports.collectIncome = collectIncome;
+exports.syncWallets = syncWallets;
 /* Event Not a pure module */
