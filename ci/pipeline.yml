@@ -1,7 +1,7 @@
 ---
 groups:
 - name: misthos-web
-  jobs: [test,build]
+  jobs: [test,build,deploy-staging]
 - name: pipeline-image
   jobs: [build-task-image]
 
@@ -11,7 +11,6 @@ jobs:
   - aggregate:
     - {get: repo, trigger: true}
     - {get: pipeline-tasks}
-    - {get: version, trigger: false, params: {bump: patch}}
   - task: test
     config:
       platform: linux
@@ -25,12 +24,11 @@ jobs:
       - name: repo
       run:
         path: pipeline-tasks/ci/tasks/run-tests.sh
-  - {put: version, params: {file: version/number}}
 - name: build
   plan:
   - aggregate:
     - {get: repo, trigger: true, passed: [test]}
-    - {get: version, passed: [test]}
+    - {get: version, trigger: false, params: {bump: patch}}
     - {get: pipeline-tasks}
   - task: build
     config:
@@ -48,44 +46,31 @@ jobs:
       - name: build
       run:
         path: pipeline-tasks/ci/tasks/build.sh
-  - put: misthos-build
-    params:
-      file: build/misthos-build-*.tgz
+  - aggregate:
+    - {put: version, params: {file: version/number}}
+    - put: misthos-build
+      params:
+        file: build/misthos-build-*.tgz
 
-# - name: build-and-push-to-staging
-#   plan:
-#   - aggregate:
-#     - {get: repo, trigger: true, passed: [test]}
-#     - {get: pipeline-tasks}
-#   - task: build
-#     config:
-#       platform: linux
-#       image_resource:
-#         type: docker-image
-#         source: {repository: misthosio/misthos-web-pipeline}
-#       caches:
-#       - path: deps
-#       inputs:
-#       - name: pipeline-tasks
-#       - name: repo
-#       outputs:
-#       - name: build
-#       run:
-#         path: pipeline-tasks/ci/tasks/build.sh
-#   - task: deploy-staging
-#     config:
-#       platform: linux
-#       image_resource:
-#         type: docker-image
-#         source: {repository: misthosio/misthos-web-pipeline}
-#       inputs:
-#       - name: pipeline-tasks
-#       - name: repo
-#       - name: build
-#       params:
-#           GCP_SERVICE_ACCOUNT: ((gcp-service-account))
-#       run:
-#         path: pipeline-tasks/ci/tasks/deploy-staging.sh
+- name: deploy-staging
+  plan:
+  - aggregate:
+    - {get: misthos-build, trigger: true, passed: [build]}
+    - {get: pipeline-tasks}
+  - task: deploy-staging
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-build
+      params:
+          GCP_SERVICE_ACCOUNT: ((gcp-service-account))
+      run:
+        path: pipeline-tasks/ci/tasks/deploy-staging.sh
+
 - name: build-task-image
   serial: true
   plan:
