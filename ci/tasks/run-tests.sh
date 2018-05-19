@@ -7,7 +7,7 @@ set -e
 pushd repo
 
 make install
-# make ci
+make ci
 
 popd
 
