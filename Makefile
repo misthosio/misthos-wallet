@@ -8,7 +8,7 @@ test-unit:
 	node_modules/.bin/jest --clearCache
 	yarn test --testPathIgnorePatterns "/integration/"
 
-test-all:
+test:
 	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
 	yarn test --runInBand
