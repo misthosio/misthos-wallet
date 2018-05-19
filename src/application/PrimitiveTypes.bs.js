@@ -5,6 +5,7 @@ var $$String = require("bs-platform/lib/js/string.js");
 var Belt_Id = require("bs-platform/lib/js/belt_Id.js");
 var V4 = require("uuid/v4");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 
 function encode(id) {
@@ -30,6 +31,8 @@ var Comparator = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
 function makeMap() {
   return Belt_Map.make(Comparator);
 }
+
+var emptySet = Belt_Set.make(Comparator);
 
 function make() {
   return V4();
@@ -61,6 +64,7 @@ var VentureId = [
   neq,
   Comparator,
   makeMap,
+  emptySet,
   make
 ];
 
@@ -81,7 +85,8 @@ var UserId = [
   eq,
   neq,
   Comparator,
-  makeMap
+  makeMap,
+  emptySet
 ];
 
 function ProcessId_000(prim) {
@@ -102,6 +107,7 @@ var ProcessId = [
   neq,
   Comparator,
   makeMap,
+  emptySet,
   make$1
 ];
 
@@ -123,6 +129,7 @@ var LabelId = [
   neq,
   Comparator,
   makeMap,
+  emptySet,
   make$2
 ];
 

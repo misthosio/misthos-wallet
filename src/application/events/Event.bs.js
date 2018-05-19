@@ -23,7 +23,7 @@ var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
 
 function make(ventureName, creatorId, creatorPubKey, metaPolicy, network) {
   return /* record */[
-          /* ventureId */PrimitiveTypes.VentureId[/* make */9](/* () */0),
+          /* ventureId */PrimitiveTypes.VentureId[/* make */10](/* () */0),
           /* ventureName */ventureName,
           /* creatorId */creatorId,
           /* creatorPubKey */creatorPubKey,

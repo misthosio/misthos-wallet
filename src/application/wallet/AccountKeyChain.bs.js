@@ -2,13 +2,17 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var WalletTypes = require("./WalletTypes.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
 
@@ -80,6 +84,12 @@ function isConsistent(param) {
   }
 }
 
+function custodians(param) {
+  return Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(List.map((function (prim) {
+                        return prim[0];
+                      }), param[/* custodianKeyChains */3])));
+}
+
 function add(keyChain, collection) {
   return Belt_MapString.set(collection, keyChain[/* identifier */1], keyChain);
 }
@@ -88,10 +98,22 @@ function lookup(_, identifier, keyChains) {
   return Belt_MapString.getExn(keyChains, identifier);
 }
 
+function withCustodians(testCustodians, collection) {
+  return Belt_SetString.fromArray(Belt_Array.keepMapU(Belt_MapString.valuesToArray(collection), (function (keyChain) {
+                    var match = Belt_Set.eq(custodians(keyChain), testCustodians);
+                    if (match) {
+                      return /* Some */[keyChain[/* identifier */1]];
+                    } else {
+                      return /* None */0;
+                    }
+                  })));
+}
+
 var Collection = /* module */[
   /* empty */Belt_MapString.empty,
   /* add */add,
-  /* lookup */lookup
+  /* lookup */lookup,
+  /* withCustodians */withCustodians
 ];
 
 function encode$1(keyChain) {
@@ -144,6 +166,7 @@ exports.Identifier = Identifier;
 exports.defaultCoSignerList = defaultCoSignerList;
 exports.make = make$1;
 exports.isConsistent = isConsistent;
+exports.custodians = custodians;
 exports.Collection = Collection;
 exports.encode = encode$1;
 exports.decode = decode;

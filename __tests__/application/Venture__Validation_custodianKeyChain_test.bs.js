@@ -41,7 +41,7 @@ describe("CustodianKeyChainUpdate", (function () {
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user1, Venture__Validation.validateCustodianKeyChainUpdated, param, param$1);
                             }), ValidationHelpers.constructState(log), /* record */[
-                            /* custodianApprovalProcess */PrimitiveTypes.ProcessId[/* make */9](/* () */0),
+                            /* custodianApprovalProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0),
                             /* custodianId */user1[/* userId */0],
                             /* keyChain */Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */1](log), 0, user1)
                           ], /* BadData */["Bad custodianApprovalProcess"]);

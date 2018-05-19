@@ -127,7 +127,7 @@ describe(" AccountKeyChainIdentified", (function () {
                                   }), ValidationHelpers.constructState(log), /* record */[/* keyChain */AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], /* :: */[
                                         /* tuple */[
                                           user1[/* userId */0],
-                                          Generators.custodianKeyChain(/* None */0, PrimitiveTypes.VentureId[/* make */9](/* () */0), 1, user1)
+                                          Generators.custodianKeyChain(/* None */0, PrimitiveTypes.VentureId[/* make */10](/* () */0), 1, user1)
                                         ],
                                         /* [] */0
                                       ])], /* BadData */["Bad CustodianKeyChain"]);

@@ -198,6 +198,14 @@ module Event = {
       ~sequence,
     );
   let incomeAddressExposed = AppEvent.IncomeAddressExposed.make;
+  let incomeDetected = (~address, ~coordinates) =>
+    AppEvent.IncomeDetected.make(
+      ~address,
+      ~coordinates,
+      ~txOutputN=0,
+      ~txId=Uuid.v4(),
+      ~amount=BTC.fromSatoshis(10000000L),
+    );
 };
 
 module Log = {
@@ -640,5 +648,26 @@ module Log = {
            ),
          ),
        );
+  };
+  let withIncomeDetected = (~incomeAddress, {log} as l) => {
+    let (incomeDetected, _) =
+      log
+      |> EventLog.reduce(
+           ((res, counter), {event}) =>
+             switch (counter, event) {
+             | (counter, IncomeAddressExposed(_)) when counter > 0 => (
+                 None,
+                 counter - 1,
+               )
+             | (0, IncomeAddressExposed({address, coordinates})) => (
+                 Some(Event.incomeDetected(~address, ~coordinates)),
+                 (-1),
+               )
+             | _ => (res, counter)
+             },
+           (None, incomeAddress),
+         );
+    l
+    |> appendSystemEvent(IncomeDetected(incomeDetected |> Js.Option.getExn));
   };
 };

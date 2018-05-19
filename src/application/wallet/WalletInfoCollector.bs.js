@@ -8,6 +8,7 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("./WalletTypes.bs.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var PayoutTransaction = require("./PayoutTransaction.bs.js");
@@ -17,8 +18,13 @@ function currentKeyChainIdent(accountIdx, userId, param) {
 }
 
 function oldInputs(accountIdx, userId, collector) {
+  var keyChains = collector[/* keyChains */3];
+  var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
+  var currentKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, keyChains);
+  var custodians = AccountKeyChain.custodians(currentKeyChain);
+  var currentKeyChainIdents = AccountKeyChain.Collection[/* withCustodians */3](custodians, keyChains);
   return Belt_Set.keepU(collector[/* unused */1], (function (i) {
-                return AccountKeyChain.Identifier[/* neq */3](currentKeyChainIdent(accountIdx, userId, collector), Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6]));
+                return Belt_SetString.has(currentKeyChainIdents, Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6])) === false;
               }));
 }
 

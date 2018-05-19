@@ -12,6 +12,8 @@ module G = Generators;
 
 module L = G.Log;
 
+module F = Fixtures;
+
 let constructState = log =>
   log |> L.reduce((s, {event}) => s |> Wallet.apply(event), Wallet.make());
 

@@ -106,7 +106,7 @@ describe("PartnerRemovalProposal", (function () {
                         var log = Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1));
                         return ValidationHelpers.testDataValidation(Venture__Validation.validatePartnerRemovalData, ValidationHelpers.constructState(log), /* record */[
                                     /* id */user2[/* userId */0],
-                                    /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */9](/* () */0)
+                                    /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0)
                                   ], /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](user2[/* userId */0]) + "' doesn't exist")]);
                       }));
                 describe("when lastPartnerProcess doesn't match", (function () {
@@ -119,7 +119,7 @@ describe("PartnerRemovalProposal", (function () {
                             ], Generators.Log[/* withFirstPartner */16](user1)(Generators.Log[/* createVenture */10](user1)));
                         return ValidationHelpers.testDataValidation(Venture__Validation.validatePartnerRemovalData, ValidationHelpers.constructState(log), /* record */[
                                     /* id */user2[/* userId */0],
-                                    /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */9](/* () */0)
+                                    /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0)
                                   ], /* BadData */["lastPartnerProcess doesn't match"]);
                       }));
                 return /* () */0;
