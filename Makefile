@@ -27,7 +27,7 @@ ci:
 	node_modules/.bin/bsb -make-world
 	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
-	CI=true yarn test
+	CI=true yarn test --runInBand
 	./scripts/stop_bitcoind.sh
 
 .PHONY: ci build
