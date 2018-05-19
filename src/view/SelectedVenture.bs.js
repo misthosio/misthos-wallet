@@ -7,6 +7,7 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Body4 = require("./components/Body4.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Balance = require("./components/Balance.bs.js");
@@ -22,16 +23,6 @@ var Transaction = require("./components/Transaction.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
 var component = ReasonReact.reducerComponent("SelectedVenture");
-
-var flexSpaceBetween = Css.style(/* :: */[
-      Css.display(/* flex */-1010954439),
-      /* :: */[
-        Css.justifyContent(/* spaceBetween */516682146),
-        /* [] */0
-      ]
-    ]);
-
-var Styles = /* module */[/* flexSpaceBetween */flexSpaceBetween];
 
 function make(viewData, session, commands, _) {
   return /* record */[
@@ -118,11 +109,19 @@ function make(viewData, session, commands, _) {
                                   /* [] */0
                                 ]
                               ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[]))), React.createElement("div", {
-                                  className: flexSpaceBetween
+                                  className: Css.style(/* :: */[
+                                        Css.display(/* flex */-1010954439),
+                                        /* [] */0
+                                      ])
                                 }, ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* Receive */3
-                                          ]), /* array */[ViewCommon.text("RECEIVE")])), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
+                                          ]), /* array */[ViewCommon.text("RECEIVE")])), React.createElement("div", {
+                                      className: Css.style(/* :: */[
+                                            Css.width(Css.px(Theme.space(8))),
+                                            /* [] */0
+                                          ])
+                                    }), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* Payout */2
                                           ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, ViewCommon.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, ViewCommon.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
@@ -171,6 +170,5 @@ exports.text = text;
 exports.extractString = extractString;
 exports.ViewData = ViewData;
 exports.component = component;
-exports.Styles = Styles;
 exports.make = make;
 /* component Not a pure module */

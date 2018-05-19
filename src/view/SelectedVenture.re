@@ -14,12 +14,6 @@ type action =
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
 
-module Styles = {
-  open Css;
-  let flexSpaceBetween =
-    style([display(`flex), justifyContent(`spaceBetween)]);
-};
-
 let make =
     (
       ~viewData: ViewData.t,
@@ -228,11 +222,12 @@ let make =
           />
         </div>
       body2=
-        <div className=Styles.flexSpaceBetween>
+        <div className=Css.(style([display(`flex)]))>
           <MFabButton
             variant=Aqua route=(Venture(viewData.ventureId, Receive))>
             ("RECEIVE" |> text)
           </MFabButton>
+          <div className=Css.(style([width(px(Theme.space(8)))])) />
           <MFabButton
             variant=Orange route=(Venture(viewData.ventureId, Payout))>
             ("PAY OUT" |> text)

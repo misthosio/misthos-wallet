@@ -50,7 +50,7 @@ function make(selectedVenture, onCreateVenture, _) {
               var send = param[/* send */3];
               var exit = 0;
               if (typeof selectedVenture === "number" && selectedVenture !== 0) {
-                return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* array */[]));
+                return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* None */0, /* array */[]));
               } else {
                 exit = 1;
               }

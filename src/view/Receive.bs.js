@@ -27,7 +27,27 @@ var container = Css.style(/* :: */[
       ]
     ]);
 
-var Styles = /* module */[/* container */container];
+var spinner = Css.style(/* :: */[
+      Css.height(Css.px(269)),
+      /* :: */[
+        Css.display(/* flex */-1010954439),
+        /* :: */[
+          Css.flexDirection(/* column */-963948842),
+          /* :: */[
+            Css.alignItems(Css.center),
+            /* :: */[
+              Css.justifyContent(/* spaceAround */-485895757),
+              /* [] */0
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var Styles = /* module */[
+  /* container */container,
+  /* spinner */spinner
+];
 
 function make(commands, _) {
   return /* record */[
@@ -52,8 +72,9 @@ function make(commands, _) {
                                   ]], /* array */[])), React.createElement("div", {
                               className: container
                             }, match ? React.createElement("img", {
+                                    height: "250px",
                                     src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
-                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(Js_option.getWithDefault("", state[/* address */0]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(Js_option.getWithDefault("", state[/* address */0]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* GetIncomeAddress */0);
                                         })], /* None */0, /* array */[ViewCommon.text("Generate new income address")]))));
             }),
