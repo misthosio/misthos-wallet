@@ -124,7 +124,7 @@ resources:
 - name: repo
   type: git
   source:
-    ignore_paths: [infra/*, ci/*]
+    ignore_paths: [infra/*, ci/*, Makefile]
     uri: git@github.com:misthosio/misthos.git
     branch: master
     private_key: ((github-ssh-key.private_key))
@@ -165,7 +165,7 @@ resources:
   source:
     uri: git@github.com:misthosio/misthos.git
     branch: master
-    paths: [ci/tasks/*]
+    paths: [ci/tasks/*, Makefile]
     private_key: ((github-ssh-key.private_key))
 - name: docker-image-ci
   type: docker-image
