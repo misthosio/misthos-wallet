@@ -110,8 +110,8 @@ var venturesPromise = [Promise.resolve(/* tuple */[
 
 self.onmessage = (function (msg) {
     var doWork = function (storagePrefix, ventures) {
-      IncomeCollection.doWork(ventures);
-      return LogSync.doWork(storagePrefix, ventures);
+      IncomeCollection.collectIncome(ventures);
+      return LogSync.syncLogs(storagePrefix, ventures);
     };
     venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.msg));
     var id = intervalId[0];
@@ -119,19 +119,19 @@ self.onmessage = (function (msg) {
                 return catchAndLogError(venturesPromise[0].then((function (param) {
                                   return Promise.resolve(doWork(param[0], param[1]));
                                 })));
-              }), 10000)];
+              }), 5000)];
     return /* () */0;
   });
 
-var tenSecondsInMilliseconds = 10000;
+var fiveSecondsInMilliseconds = 5000;
 
-var syncInterval = 10000;
+var syncInterval = 5000;
 
 exports.logLabel = logLabel;
 exports.logMessage = logMessage;
 exports.logError = logError;
 exports.catchAndLogError = catchAndLogError;
-exports.tenSecondsInMilliseconds = tenSecondsInMilliseconds;
+exports.fiveSecondsInMilliseconds = fiveSecondsInMilliseconds;
 exports.syncInterval = syncInterval;
 exports.handleMsg = handleMsg;
 exports.intervalId = intervalId;

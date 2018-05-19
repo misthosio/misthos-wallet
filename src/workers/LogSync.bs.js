@@ -107,7 +107,7 @@ function syncEventsFromVenture(storagePrefix, ventureId, eventLog) {
               }));
 }
 
-function doWork(storagePrefix, ventures) {
+function syncLogs(storagePrefix, ventures) {
   return Belt_Map.forEachU(ventures, (function (id, log) {
                 return syncEventsFromVenture(storagePrefix, id, log);
               }));
@@ -130,5 +130,5 @@ exports.getLogFromUser = getLogFromUser;
 exports.findNewItemsFromPartner = findNewItemsFromPartner;
 exports.syncEventsFromPartner = syncEventsFromPartner;
 exports.syncEventsFromVenture = syncEventsFromVenture;
-exports.doWork = doWork;
+exports.syncLogs = syncLogs;
 /* determinPartnerIds Not a pure module */

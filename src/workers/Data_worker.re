@@ -97,8 +97,8 @@ onMessage(
   self,
   msg => {
     let doWork = (storagePrefix, ventures) => {
-      IncomeCollection.doWork(ventures);
-      LogSync.doWork(storagePrefix, ventures);
+      IncomeCollection.collectIncome(ventures);
+      LogSync.syncLogs(storagePrefix, ventures);
     };
     venturesPromise :=
       handleMsg(

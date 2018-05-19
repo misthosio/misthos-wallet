@@ -123,7 +123,7 @@ let syncEventsFromVenture = (storagePrefix, ventureId, eventLog) => {
      );
 };
 
-let doWork = (storagePrefix, ventures: VentureId.map(EventLog.t)) =>
+let syncLogs = (storagePrefix, ventures: VentureId.map(EventLog.t)) =>
   ventures
   |. Map.forEachU((. id, log) =>
        log |> syncEventsFromVenture(storagePrefix, id)

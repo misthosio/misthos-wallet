@@ -105,7 +105,7 @@ function detectIncomeFromVenture(ventureId, eventLog) {
               }));
 }
 
-function doWork(ventures) {
+function collectIncome(ventures) {
   return Belt_Map.forEachU(ventures, (function (id, log) {
                 return catchAndLogError(detectIncomeFromVenture(id, log));
               }));
@@ -119,5 +119,5 @@ exports.scanTransactions = scanTransactions;
 exports.findAddressesAndTxIds = findAddressesAndTxIds;
 exports.filterUTXOs = filterUTXOs;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
-exports.doWork = doWork;
+exports.collectIncome = collectIncome;
 /* Event Not a pure module */
