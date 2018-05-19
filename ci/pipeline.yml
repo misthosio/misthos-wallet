@@ -10,14 +10,14 @@ jobs:
   public: true
   plan:
     - { get: misthos-build, trigger: true,  passed: [deploy-testnet] }
-    - { get: version, trigger: true, params: {bump: minor}, passed: [deploy-testnet] }
+    - { get: version, params: {bump: minor}, passed: [deploy-testnet] }
     - { put: version,                 params: {file: version/number} }
 
 - name: bump-patch
   public: true
   plan:
     - { get: misthos-build, trigger: true, passed: [build] }
-    - { get: version, trigger: true, params: {bump: patch}, passed: [build] }
+    - { get: version, params: {bump: patch}, passed: [build] }
     - { put: version,                params: {file: version/number} }
 
 - name: test
