@@ -5,6 +5,6 @@ resource "google_storage_bucket" "misthos-artifact-cache" {
 
 resource "google_storage_bucket_iam_member" "cache-concourse" {
   bucket = "${google_storage_bucket.misthos-artifact-cache.name}"
-  role   = "roles/storage.objectAdmin"
+  role   = "roles/storage.admin"
   member = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
 }
