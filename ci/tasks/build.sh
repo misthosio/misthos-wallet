@@ -6,12 +6,10 @@ set -e
 
 pushd repo
 
-# make install
+make install
 
 export GENERATE_SOURCEMAP='false'
-# make build
-mkdir build
-echo dummy > build/dummy.txt
+make build
 
 popd
 
