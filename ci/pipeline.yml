@@ -90,7 +90,7 @@ resources:
 - name: misthos-build
   type: gcs-resource
   source:
-    bucket: releases
+    bucket: artifact-cache
     json_key: ((gcp-service-account))
     regexp: misthos-build-(.*).tgz
 - name: version
