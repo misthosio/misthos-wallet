@@ -62,17 +62,21 @@ let rec fetchAll = (link, decoder, collector) =>
   );
 
 let getUTXOs = (config, addresses) =>
-  fetchAll(
-    Some(
-      "https://"
-      ++ config.subdomain
-      ++ ".smartbit.com.au/v1/blockchain/address/"
-      ++ List.fold_left((res, a) => a ++ "," ++ res, "", addresses)
-      ++ "/unspent?limit=1000",
-    ),
-    decodeUTXOs,
-    [],
-  );
+  if (addresses |> Belt.List.length == 0) {
+    Js.Promise.resolve([]);
+  } else {
+    fetchAll(
+      Some(
+        "https://"
+        ++ config.subdomain
+        ++ ".smartbit.com.au/v1/blockchain/address/"
+        ++ List.fold_left((res, a) => a ++ "," ++ res, "", addresses)
+        ++ "/unspent?limit=1000",
+      ),
+      decodeUTXOs,
+      [],
+    );
+  };
 
 let getTransactionInfo = (config, transactions) =>
   if (transactions |> Belt.Set.String.isEmpty) {
