@@ -1,19 +1,17 @@
 #!/bin/bash
 
-cp -r deps/* repo
 
 set -e
 
-pushd repo
+tar -zxvf misthos-code/misthos-code-*.tgz
 
-make install
+pushd repo
 
 export GENERATE_SOURCEMAP='false'
 make build
 
 popd
 
-cp -r repo/node_modules deps
 tar -zcvf "misthos-build-v$(cat version/number).tgz" repo/build
 mv ./*.tgz build
 

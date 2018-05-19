@@ -63,8 +63,9 @@ jobs:
 - name: build
   plan:
   - aggregate:
-    - {get: repo, trigger: true, passed: [test]}
-    - {get: version, trigger: false, passed: [test], params: { bump: final} }
+    - {get: repo, passed: [test]}
+    - {get: misthos-code, trigger: true, passed: [test]}
+    - {get: version, passed: [test], params: { bump: final} }
     - {get: pipeline-tasks}
   - task: build
     config:
@@ -72,11 +73,9 @@ jobs:
       image_resource:
         type: docker-image
         source: {repository: misthosio/misthos-web-pipeline}
-      caches:
-      - path: deps
       inputs:
       - name: pipeline-tasks
-      - name: repo
+      - name: misthos-code
       - name: version
       outputs:
       - name: build
