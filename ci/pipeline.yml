@@ -40,7 +40,7 @@ jobs:
   plan:
   - aggregate:
     - {get: repo, trigger: true, passed: [test]}
-    - {get: version, trigger: false}
+    - {get: version, trigger: false, params: {bump: patch}}
     - {get: pipeline-tasks}
   - task: build
     config:
