@@ -48,12 +48,13 @@ jobs:
         type: docker-image
         source: {repository: misthosio/misthos-web-pipeline}
       inputs:
+      - name: version
       - name: pipeline-tasks
       - name: bundled-code
       outputs:
       - name: bundled-code-with-version
       run:
-        path: pipeline-tasks/ci/tasks/run-tests.sh
+        path: pipeline-tasks/ci/tasks/version-bundled-code.sh
   - aggregate:
     - { put: version, params: {file: version/number} }
     - put: misthos-code

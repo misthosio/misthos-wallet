@@ -3,7 +3,7 @@
 
 set -e
 
-tar -zxvf misthos-code/misthos-code-*.tgz
+tar -zxvf misthos-code/misthos-code-*.tgz > /dev/null
 
 pushd repo
 
