@@ -86,7 +86,7 @@ jobs:
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: staging-branch
-    params: {repository: repo, tag: version/version}
+    params: {repository: repo, tag: version/version, tag_prefix: "v"}
 
 - name: deploy-testnet
   plan:
@@ -110,7 +110,7 @@ jobs:
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: testnet-branch
-    params: {repository: repo, tag: version/version}
+    params: {repository: repo, tag: version/version, tag_prefix: "v"}
 
 - name: build-task-image
   serial: true
