@@ -14,6 +14,6 @@ make build
 popd
 
 cp -r repo/node_modules deps
-tar -zcvf "misthos-build-$(cat version/number).tgz" repo/build
+tar -zcvf "misthos-build-v$(cat version/number).tgz" repo/build
 mv ./*.tgz build
 
