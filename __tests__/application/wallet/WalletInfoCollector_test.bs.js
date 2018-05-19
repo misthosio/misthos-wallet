@@ -41,8 +41,8 @@ describe("WalletInfoCollector", (function () {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user1 = match[0];
                       var info = constructState(log);
-                      return Jest.test("2 input is old", (function () {
-                                    return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldInputs(WalletTypes.AccountIndex[/* default */9], user1[/* userId */0], info))));
+                      return Jest.test("1 input is old", (function () {
+                                    return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldInputs(WalletTypes.AccountIndex[/* default */9], user1[/* userId */0], info))));
                                   }));
                     }));
       }));

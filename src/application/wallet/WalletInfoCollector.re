@@ -26,15 +26,20 @@ let currentKeyChainIdent = (accountIdx, userId, {activatedKeyChain}) =>
   |. List.getAssoc(userId, UserId.eq)
   |> Js.Option.getExn;
 
-let oldInputs = (accountIdx, userId, {unused} as collector) =>
+let oldInputs = (accountIdx, userId, {keyChains, unused} as collector) => {
+  let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
+  let currentKeyChain =
+    keyChains |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
+  let custodians = currentKeyChain |> AccountKeyChain.custodians;
+  let currentKeyChainIdents =
+    keyChains |> AccountKeyChain.Collection.withCustodians(custodians);
   unused
   |. Belt.Set.keepU((. i: Network.txInput) =>
        i.coordinates
        |> Coordinates.keyChainIdent
-       |> AccountKeyChain.Identifier.neq(
-            currentKeyChainIdent(accountIdx, userId, collector),
-          )
+       |> Set.String.has(currentKeyChainIdents) == false
      );
+};
 
 let nextChangeAddress = (accountIdx, userId, collector) => {
   let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);

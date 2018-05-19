@@ -50,6 +50,12 @@ let isConsistent = ({custodianKeyChains, identifier, nCoSigners}) =>
   && identifier
   |> Identifier.eq(Identifier.make(nCoSigners, custodianKeyChains));
 
+let custodians = ({custodianKeyChains}) =>
+  custodianKeyChains
+  |> List.map(fst)
+  |> Array.of_list
+  |> Belt.Set.mergeMany(UserId.emptySet);
+
 module Collection = {
   open Belt;
   type nonrec t = Map.String.t(t);
@@ -58,6 +64,14 @@ module Collection = {
     collection |. Map.String.set(identifier, keyChain);
   let lookup = (_accountIdx, identifier, keyChains: t) =>
     keyChains |. Map.String.getExn(identifier);
+  let withCustodians = (testCustodians, collection) =>
+    collection
+    |> Map.String.valuesToArray
+    |. Array.keepMapU((. keyChain) =>
+         testCustodians |> Set.eq(keyChain |> custodians) ?
+           Some(keyChain.identifier) : None
+       )
+    |> Set.String.fromArray;
 };
 
 let encode = keyChain =>

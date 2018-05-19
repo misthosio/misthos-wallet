@@ -51,7 +51,7 @@ let () =
       (sessions, log) => {
         let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let info = log |> constructState;
-        test("2 input is old", () =>
+        test("1 input is old", () =>
           expect(
             info
             |> WalletInfoCollector.oldInputs(
@@ -60,7 +60,7 @@ let () =
                )
             |> Set.size,
           )
-          |> toEqual(2)
+          |> toEqual(1)
         );
       },
     )
