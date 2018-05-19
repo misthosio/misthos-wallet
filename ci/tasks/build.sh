@@ -6,7 +6,7 @@ set -e
 
 pushd repo
 
-make install
+# make install
 
 export GENERATE_SOURCEMAP='false'
 # make build
@@ -16,6 +16,6 @@ echo dummy > build/dummy.txt
 popd
 
 cp -r repo/node_modules deps
-tar -zcvf "misthos-build-$(cat version/number).tgz" build
+tar -zcvf "misthos-build-$(cat version/number).tgz" repo/build
 mv ./*.tgz build
 
