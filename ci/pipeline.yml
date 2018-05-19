@@ -52,12 +52,12 @@ jobs:
       params:
         file: build/misthos-build-*.tgz
 
-- name: deploy-staging
+- name: deploy-testnet
   plan:
   - aggregate:
     - {get: misthos-build, trigger: true, passed: [build]}
     - {get: pipeline-tasks}
-  - task: deploy-staging
+  - task: deploy-testnet
     config:
       platform: linux
       image_resource:
@@ -68,8 +68,9 @@ jobs:
       - name: misthos-build
       params:
           GCP_SERVICE_ACCOUNT: ((gcp-service-account))
+          DEPLOY_ENVIRONMENT: testnet
       run:
-        path: pipeline-tasks/ci/tasks/deploy-staging.sh
+        path: pipeline-tasks/ci/tasks/deploy.sh
 
 - name: build-task-image
   serial: true
