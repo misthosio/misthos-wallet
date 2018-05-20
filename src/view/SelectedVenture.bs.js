@@ -41,7 +41,7 @@ function make(viewData, session, commands, _) {
               var send = param[/* send */3];
               var viewData = param[/* state */1][/* viewData */0];
               var partners = $$Array.of_list(List.map((function (partner) {
-                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
+                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* None */0, /* array */[]));
                         }), viewData[/* partners */3]));
               var prospects = $$Array.of_list(List.map((function (prospect) {
                           return React.createElement("li", {

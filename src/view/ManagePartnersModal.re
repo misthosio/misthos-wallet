@@ -2,6 +2,8 @@ include ViewCommon;
 
 open PrimitiveTypes;
 
+[@bs.module] external remove : string = "../assets/img/remove-partner.svg";
+
 module ViewData = ViewModel.ManagePartnersView;
 
 type inputs = {prospectId: string};
@@ -58,31 +60,24 @@ let make =
       ReasonReact.array(
         Array.of_list(
           viewData.partners
-          |> List.map((partner: ViewData.partner) =>
-               <Partner key=(partner.userId |> UserId.toString) partner />
-             ),
-        ),
-      );
-    let partnersOld =
-      ReasonReact.array(
-        Array.of_list(
-          viewData.partners
-          |> List.map((m: ViewData.partner) =>
-               <li key=(m.userId |> UserId.toString)>
-                 <div>
-                   (text(m.userId |> UserId.toString))
-                   (
-                     switch (m.canProposeRemoval) {
-                     | true =>
-                       <button onClick=(_e => send(RemovePartner(m.userId)))>
-                         (text("Propose Removal"))
-                       </button>
-                     | _ => ReasonReact.null
-                     }
-                   )
-                 </div>
-               </li>
-             ),
+          |> List.map((partner: ViewData.partner) => {
+               let button =
+                 partner.canProposeRemoval ?
+                   Some(
+                     MaterialUi.(
+                       <IconButton
+                         onClick=(_e => send(RemovePartner(partner.userId)))>
+                         <img src=remove alt="Remove" />
+                       </IconButton>
+                     ),
+                   ) :
+                   None;
+               <Partner
+                 key=(partner.userId |> UserId.toString)
+                 partner
+                 ?button
+               />;
+             }),
         ),
       );
     <Body2
@@ -134,7 +129,6 @@ let make =
             )
           </MTypography>
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
-          <ul> partnersOld </ul>
         </div>
     />;
   },

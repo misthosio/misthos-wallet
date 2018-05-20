@@ -21,7 +21,8 @@ module Styles = {
     ]);
 };
 
-let make = (~partner: ViewModel.ManagePartnersView.partner, _children) => {
+let make =
+    (~partner: ViewModel.ManagePartnersView.partner, ~button=?, _children) => {
   ...component,
   render: _self => {
     let userId = partner.userId |> UserId.toString;
@@ -36,6 +37,13 @@ let make = (~partner: ViewModel.ManagePartnersView.partner, _children) => {
           (userId.[0] |> String.make(1) |> String.uppercase |> text)
         </Avatar>
         <ListItemText primary ?secondary />
+        (
+          switch (button) {
+          | None => ReasonReact.null
+          | Some(action) =>
+            <ListItemSecondaryAction> action </ListItemSecondaryAction>
+          }
+        )
       </ListItem>
     );
   },
