@@ -91,7 +91,7 @@ jobs:
   - aggregate:
     - {get: misthos-build, trigger: true, passed: [build]}
     - {get: repo, trigger: false, passed: [build]}
-    - {get: version, trigger: false, passed: [build]}
+    - {get: version, trigger: false, passed: [build], params: { bump: final}}
     - {get: pipeline-tasks}
   - task: deploy-staging
     config:
@@ -114,7 +114,7 @@ jobs:
   plan:
   - aggregate:
     - {get: misthos-build, trigger: false, passed: [deploy-staging]}
-    - {get: version, trigger: false, passed: [deploy-staging]}
+    - {get: version, trigger: false, passed: [deploy-staging], params: { bump: final}}
     - {get: repo, trigger: false, passed: [deploy-staging]}
     - {get: pipeline-tasks}
   - task: deploy-testnet
