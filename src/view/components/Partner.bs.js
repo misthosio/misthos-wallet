@@ -49,7 +49,7 @@ var Styles = /* module */[
   /* avatar */avatar
 ];
 
-function make(partner, _) {
+function make(partner, button, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -72,7 +72,8 @@ function make(partner, _) {
                 ];
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.Avatar[/* make */1](/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[match$1[0]], match$1[1], /* None */0, /* array */[]))
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[match$1[0]], match$1[1], /* None */0, /* array */[])),
+                              button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemSecondaryAction[/* make */1](/* None */0, /* None */0, /* array */[button[0]])) : null
                             ]));
             }),
           /* initialState */component[/* initialState */10],

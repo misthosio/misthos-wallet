@@ -16,6 +16,7 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var RemovePartnerSvg = require("../assets/img/remove-partner.svg");
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
@@ -40,17 +41,14 @@ function make(viewData, commands, _) {
               var match = param[/* state */1];
               var viewData = match[/* viewData */0];
               var partners = $$Array.of_list(List.map((function (partner) {
-                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, /* array */[]));
-                        }), viewData[/* partners */0]));
-              var partnersOld = $$Array.of_list(List.map((function (m) {
-                          var match = m[/* canProposeRemoval */2];
-                          return React.createElement("li", {
-                                      key: PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])
-                                    }, React.createElement("div", undefined, ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](m[/* userId */0])), match ? React.createElement("button", {
-                                                onClick: (function () {
-                                                    return Curry._1(send, /* RemovePartner */Block.__(1, [m[/* userId */0]]));
-                                                  })
-                                              }, ViewCommon.text("Propose Removal")) : null));
+                          var match = partner[/* canProposeRemoval */2];
+                          var button = match ? /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.IconButton[/* make */3](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
+                                            return Curry._1(send, /* RemovePartner */Block.__(1, [partner[/* userId */0]]));
+                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
+                                              alt: "Remove",
+                                              src: RemovePartnerSvg
+                                            })]))] : /* None */0;
+                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, button, /* array */[]));
                         }), viewData[/* partners */0]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",
@@ -65,7 +63,7 @@ function make(viewData, commands, _) {
                                               return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
                                             })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePartner */0);
-                                            })], /* Some */[true], /* array */[ViewCommon.text("Propose partner addition")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("ul", undefined, partnersOld)), /* array */[]));
+                                            })], /* Some */[true], /* array */[ViewCommon.text("Propose partner addition")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
