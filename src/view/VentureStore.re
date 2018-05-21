@@ -86,7 +86,6 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     index: None,
     selectedVenture: None,
     dataWorker: ref(DataWorkerClient.make(~onMessage=Js.log)),
-    /* incomeWorker: ref(IncomeWorkerClient.make(~onMessage=Js.log)), */
     persistWorker: ref(PersistWorkerClient.make(~onMessage=Js.log)),
     ventureWorker: ref(VentureWorkerClient.make(~onMessage=Js.log)),
   },
