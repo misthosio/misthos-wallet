@@ -25,7 +25,8 @@ var include = WebWorker.MakeClient([
 var postMessage = include[1];
 
 function updateSession(worker) {
-  return Curry._2(postMessage, worker, /* UpdateSession */Block.__(0, [WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]));
+  Curry._2(postMessage, worker, /* UpdateSession */Block.__(0, [WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]));
+  return /* () */0;
 }
 
 function ventureMessage(msg, worker) {

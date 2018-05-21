@@ -7,10 +7,9 @@ var Utils = require("../../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
 var Router = require("../Router.bs.js");
+var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
-var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js");
 
 var component = ReasonReact.statelessComponent("Transaction");
 
@@ -67,13 +66,13 @@ function make(tx, _) {
               var secondary = dfmt(tx[/* date */4]);
               var amount$1 = afmt(tx[/* amount */3]);
               var partial_arg = tx[/* detailsLink */5];
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                   return Router.clickToRoute(partial_arg, param);
-                                })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
+                                })], /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
                                               className: primary
                                             }, primary$1, React.createElement("span", {
                                                   className: amount(tx[/* txType */0])
-                                                }, amount$1))], secondary, /* None */0, /* None */0, /* array */[]))]));
+                                                }, amount$1))], secondary, /* None */0, /* array */[]))]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

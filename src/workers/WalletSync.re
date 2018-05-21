@@ -1,10 +1,7 @@
-[@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
+[@bs.val] external _postMessage : WebWorker.message => unit = "postMessage";
 
 let postMessage = msg =>
-  {
-    "msg": msg |> VentureWorkerMessage.encodeIncoming,
-    "syncId": WebWorker.emptySyncId,
-  }
+  {"payload": msg |> VentureWorkerMessage.encodeIncoming, "correlationId": ""}
   |> _postMessage;
 
 open Belt;

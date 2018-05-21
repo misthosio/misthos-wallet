@@ -113,7 +113,7 @@ self.onmessage = (function (msg) {
       WalletSync.syncWallets(ventures);
       return LogSync.syncLogs(storagePrefix, ventures);
     };
-    venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.msg));
+    venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.payload));
     var id = intervalId[0];
     intervalId[0] = id ? id : /* Some */[setInterval((function () {
                 return catchAndLogError(venturesPromise[0].then((function (param) {

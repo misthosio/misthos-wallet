@@ -12,18 +12,19 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": WebWorker.message} => unit)) => unit =
   "onmessage";
 
 [@bs.set]
 external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
 
-[@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
+[@bs.val] external _postMessage : WebWorker.message => unit = "postMessage";
 
 open PrimitiveTypes;
 
-let postMessage = (~syncId=WebWorker.emptySyncId, msg) =>
-  {"msg": msg |> Message.encodeOutgoing, "syncId": syncId} |> _postMessage;
+let postMessage = (~correlationId="", msg) =>
+  {"payload": msg |> Message.encodeOutgoing, "correlationId": correlationId}
+  |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
@@ -50,8 +51,8 @@ module Notify = {
         venture |> Venture.getEventLog,
       ),
     );
-  let newIncomeAddress = (syncId, ventureId, address) =>
-    postMessage(~syncId, NewIncomeAddress(ventureId, address));
+  let newIncomeAddress = (correlationId, ventureId, address) =>
+    postMessage(~correlationId, NewIncomeAddress(ventureId, address));
   let newItems = (id, items) =>
     switch (items) {
     | [||] => ()
@@ -90,7 +91,8 @@ module Handle = {
            | Venture.CouldNotLoad(error) => raise(DeadThread(error)),
          )
     );
-  let withVenture = (~notify=false, ventureAction, f, {venturesThread}) => {
+  let withVenture =
+      (~notify=false, ventureAction, f, correlationId, {venturesThread}) => {
     let venturesThread =
       Js.Promise.(
         venturesThread
@@ -169,7 +171,7 @@ module Handle = {
                       (
                         ventureId,
                         ventureThread
-                        |> then_(f)
+                        |> then_(f(correlationId))
                         |> catch(err => {
                              logError(err);
                              loadAndNotify(~notify=true, data, ventureId);
@@ -184,7 +186,7 @@ module Handle = {
       );
     {venturesThread: venturesThread};
   };
-  let updateSession = (items, state) => {
+  let updateSession = (items, _cId, state) => {
     logMessage("Handling 'UpdateSession'");
     items |> WorkerLocalStorage.setBlockstackItems;
     let sessionThread =
@@ -219,17 +221,17 @@ module Handle = {
   };
   let load = ventureId => {
     logMessage("Handling 'Load'");
-    withVenture(~notify=true, Load(ventureId), Js.Promise.resolve);
+    withVenture(~notify=true, Load(ventureId), (_) => Js.Promise.resolve);
   };
   let joinVia = (ventureId, userId) => {
     logMessage("Handling 'JoinVia'");
-    withVenture(JoinVia(ventureId, userId), Js.Promise.resolve);
+    withVenture(JoinVia(ventureId, userId), (_) => Js.Promise.resolve);
   };
   let create = name => {
     logMessage("Handling 'Create'");
     withVenture(
       Create(name),
-      venture => {
+      (_cId, venture) => {
         Notify.ventureCreated(venture);
         Js.Promise.resolve(venture);
       },
@@ -237,7 +239,7 @@ module Handle = {
   };
   let proposePartner = (ventureId, prospectId) => {
     logMessage("Handling 'ProposePartner'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePartner.(
           venture
@@ -256,7 +258,7 @@ module Handle = {
   };
   let rejectPartner = (ventureId, processId) => {
     logMessage("Handling 'RejectPartner'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.RejectPartner.(
           venture
@@ -274,7 +276,7 @@ module Handle = {
   };
   let endorsePartner = (ventureId, processId) => {
     logMessage("Handling 'EndorsePartner'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePartner.(
           venture
@@ -292,7 +294,7 @@ module Handle = {
   };
   let proposePartnerRemoval = (ventureId, partnerId) => {
     logMessage("Handling 'ProposePartnerRemoval'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePartnerRemoval.(
           venture
@@ -311,7 +313,7 @@ module Handle = {
   };
   let rejectPartnerRemoval = (ventureId, processId) => {
     logMessage("Handling 'RejectPartnerRemoval'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.RejectPartnerRemoval.(
           venture
@@ -329,7 +331,7 @@ module Handle = {
   };
   let endorsePartnerRemoval = (ventureId, processId) => {
     logMessage("Handling 'EndorsePartnerRemoval'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePartnerRemoval.(
           venture
@@ -347,7 +349,7 @@ module Handle = {
   };
   let proposePayout = (ventureId, accountIdx, destinations, fee) => {
     logMessage("Handling 'ProposePayout'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePayout.(
           venture
@@ -369,7 +371,7 @@ module Handle = {
   };
   let rejectPayout = (ventureId, processId) => {
     logMessage("Handling 'RejectPayout'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.RejectPayout.(
           venture
@@ -387,7 +389,7 @@ module Handle = {
   };
   let endorsePayout = (ventureId, processId) => {
     logMessage("Handling 'EndorsePayout'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePayout.(
           venture
@@ -403,9 +405,9 @@ module Handle = {
       )
     );
   };
-  let exposeIncomeAddress = (syncId, ventureId, accountIdx) => {
+  let exposeIncomeAddress = (ventureId, accountIdx) => {
     logMessage("Handling 'ExposeIncomeAddress'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.ExposeIncomeAddress.(
           venture
@@ -413,7 +415,7 @@ module Handle = {
           |> then_(
                fun
                | Ok(address, venture, newItems) => {
-                   Notify.newIncomeAddress(syncId, ventureId, address);
+                   Notify.newIncomeAddress(correlationId, ventureId, address);
                    Notify.newItems(ventureId, newItems);
                    venture |> resolve;
                  },
@@ -424,7 +426,7 @@ module Handle = {
   };
   let syncWallet = (ventureId, events, confs) => {
     logMessage("Handling 'SynchWallet'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeWallet.(
           venture
@@ -442,7 +444,7 @@ module Handle = {
   };
   let newItemsDetected = (ventureId, items) => {
     logMessage("Handling 'NewItemsDetected'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeLogs.(
           venture
@@ -469,7 +471,7 @@ module Handle = {
   };
   let syncTabs = (ventureId, items) => {
     logMessage("Handling 'SyncTabs'");
-    withVenture(~notify=true, Reload(ventureId), venture =>
+    withVenture(~notify=true, Reload(ventureId), (_cId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeLogs.(
           venture
@@ -496,7 +498,7 @@ module Handle = {
   };
 };
 
-let handleMessage = syncId =>
+let handleMessage =
   fun
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
@@ -521,7 +523,7 @@ let handleMessage = syncId =>
   | Message.EndorsePayout(ventureId, processId) =>
     Handle.endorsePayout(ventureId, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
-    Handle.exposeIncomeAddress(syncId, ventureId, accountIdx)
+    Handle.exposeIncomeAddress(ventureId, accountIdx)
   | SyncWallet(ventureId, income, confs) =>
     Handle.syncWallet(ventureId, income, confs)
   | NewItemsDetected(ventureId, items) =>
@@ -536,7 +538,7 @@ onMessage(self, msg =>
   workerState :=
     workerState^
     |> handleMessage(
-         msg##data##syncId,
-         msg##data##msg |> VentureWorkerMessage.decodeIncoming,
+         msg##data##payload |> VentureWorkerMessage.decodeIncoming,
+         msg##data##correlationId,
        )
 );

@@ -13,7 +13,8 @@ let updateSession = worker =>
        PersistWorkerMessage.UpdateSession(
          WorkerLocalStorage.readBlockstackItemsFromStorage(),
        ),
-     );
+     )
+  |> ignore;
 
 let ventureMessage = (msg, worker) =>
   PersistWorkerMessage.VentureWorkerMessage(

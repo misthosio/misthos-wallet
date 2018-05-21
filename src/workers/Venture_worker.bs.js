@@ -8,7 +8,6 @@ var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
-var WebWorker = require("../ffi/WebWorker.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
@@ -20,10 +19,10 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 (( self.window = { localStorage: self.localStorage , location: { origin: self.origin } } ));
 
 function postMessage$1($staropt$star, msg) {
-  var syncId = $staropt$star ? $staropt$star[0] : WebWorker.emptySyncId;
+  var correlationId = $staropt$star ? $staropt$star[0] : "";
   postMessage({
-        msg: VentureWorkerMessage.encodeOutgoing(msg),
-        syncId: syncId
+        payload: VentureWorkerMessage.encodeOutgoing(msg),
+        correlationId: correlationId
       });
   return /* () */0;
 }
@@ -78,8 +77,8 @@ function ventureCreated(venture) {
               ]));
 }
 
-function newIncomeAddress(syncId, ventureId, address) {
-  return postMessage$1(/* Some */[syncId], /* NewIncomeAddress */Block.__(1, [
+function newIncomeAddress(correlationId, ventureId, address) {
+  return postMessage$1(/* Some */[correlationId], /* NewIncomeAddress */Block.__(1, [
                 ventureId,
                 address
               ]));
@@ -127,7 +126,7 @@ function loadAndNotify(notify, $staropt$star, data, ventureId) {
               }));
 }
 
-function withVenture($staropt$star, ventureAction, f, param) {
+function withVenture($staropt$star, ventureAction, f, correlationId, param) {
   var notify = $staropt$star ? $staropt$star[0] : false;
   var venturesThread = param[/* venturesThread */0].then((function (threads) {
           return Promise.resolve(Utils.mapOption((function (param) {
@@ -207,12 +206,13 @@ function withVenture($staropt$star, ventureAction, f, param) {
                               
                             }
                             var ventureId$3 = match[0];
+                            var partial_arg = Curry._1(f, correlationId);
                             return /* tuple */[
                                     data,
                                     /* :: */[
                                       /* tuple */[
                                         ventureId$3,
-                                        match[1].then(Curry.__1(f)).catch((function (err) {
+                                        match[1].then(Curry.__1(partial_arg)).catch((function (err) {
                                                 logError(err);
                                                 return loadAndNotify(true, /* None */0, data, ventureId$3);
                                               }))
@@ -225,7 +225,7 @@ function withVenture($staropt$star, ventureAction, f, param) {
   return /* record */[/* venturesThread */venturesThread];
 }
 
-function updateSession(items, state) {
+function updateSession(items, _, state) {
   logMessage("Handling 'UpdateSession'");
   WorkerLocalStorage.setBlockstackItems(items);
   var sessionThread = Session.getCurrentSession(/* () */0).then((function (param) {
@@ -279,10 +279,12 @@ function load(ventureId) {
   logMessage("Handling 'Load'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   var partial_arg$1 = /* Some */[true];
-  return (function (param) {
-      return withVenture(partial_arg$1, partial_arg, (function (prim) {
-                    return Promise.resolve(prim);
-                  }), param);
+  return (function (param, param$1) {
+      return withVenture(partial_arg$1, partial_arg, (function () {
+                    return (function (prim) {
+                        return Promise.resolve(prim);
+                      });
+                  }), param, param$1);
     });
 }
 
@@ -292,29 +294,31 @@ function joinVia(ventureId, userId) {
       ventureId,
       userId
     ]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (prim) {
-                    return Promise.resolve(prim);
-                  }), param);
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function () {
+                    return (function (prim) {
+                        return Promise.resolve(prim);
+                      });
+                  }), param, param$1);
     });
 }
 
 function create(name) {
   logMessage("Handling 'Create'");
   var partial_arg = /* Create */Block.__(0, [name]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     ventureCreated(venture);
                     return Promise.resolve(venture);
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function proposePartner(ventureId, prospectId) {
   logMessage("Handling 'ProposePartner'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* ProposePartner */3][/* exec */0], prospectId, venture).then((function (param) {
                                   if (typeof param === "number") {
                                     return Promise.resolve(venture);
@@ -323,41 +327,41 @@ function proposePartner(ventureId, prospectId) {
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function rejectPartner(ventureId, processId) {
   logMessage("Handling 'RejectPartner'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartner */4][/* exec */0], processId, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function endorsePartner(ventureId, processId) {
   logMessage("Handling 'EndorsePartner'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartner */5][/* exec */0], processId, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function proposePartnerRemoval(ventureId, partnerId) {
   logMessage("Handling 'ProposePartnerRemoval'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* ProposePartnerRemoval */6][/* exec */0], partnerId, venture).then((function (param) {
                                   if (param) {
                                     newItems(ventureId, param[1]);
@@ -366,41 +370,41 @@ function proposePartnerRemoval(ventureId, partnerId) {
                                     return Promise.resolve(venture);
                                   }
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function rejectPartnerRemoval(ventureId, processId) {
   logMessage("Handling 'RejectPartnerRemoval'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartnerRemoval */7][/* exec */0], processId, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function endorsePartnerRemoval(ventureId, processId) {
   logMessage("Handling 'EndorsePartnerRemoval'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */8][/* exec */0], processId, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function proposePayout(ventureId, accountIdx, destinations, fee) {
   logMessage("Handling 'ProposePayout'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._4(Venture.Cmd[/* ProposePayout */10][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
                                   if (param) {
                                     newItems(ventureId, param[1]);
@@ -410,68 +414,68 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
                                     return Promise.resolve(venture);
                                   }
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function rejectPayout(ventureId, processId) {
   logMessage("Handling 'RejectPayout'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPayout */11][/* exec */0], processId, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function endorsePayout(ventureId, processId) {
   logMessage("Handling 'EndorsePayout'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePayout */12][/* exec */0], processId, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
-function exposeIncomeAddress(syncId, ventureId, accountIdx) {
+function exposeIncomeAddress(ventureId, accountIdx) {
   logMessage("Handling 'ExposeIncomeAddress'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */9][/* exec */0], accountIdx, venture).then((function (param) {
-                                  newIncomeAddress(syncId, ventureId, param[0]);
+                                  newIncomeAddress(correlationId, ventureId, param[0]);
                                   newItems(ventureId, param[2]);
                                   return Promise.resolve(param[1]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function syncWallet(ventureId, events, confs) {
   logMessage("Handling 'SynchWallet'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._3(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, confs, venture).then((function (param) {
                                   newItems(ventureId, param[1]);
                                   return Promise.resolve(param[0]);
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
 function newItemsDetected(ventureId, items) {
   logMessage("Handling 'NewItemsDetected'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
-  return (function (param) {
-      return withVenture(/* None */0, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
                                     logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
@@ -482,7 +486,7 @@ function newItemsDetected(ventureId, items) {
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
@@ -490,8 +494,8 @@ function syncTabs(ventureId, items) {
   logMessage("Handling 'SyncTabs'");
   var partial_arg = /* Reload */Block.__(2, [ventureId]);
   var partial_arg$1 = /* Some */[true];
-  return (function (param) {
-      return withVenture(partial_arg$1, partial_arg, (function (venture) {
+  return (function (param, param$1) {
+      return withVenture(partial_arg$1, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
                                   if (param.tag) {
                                     logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
@@ -502,7 +506,7 @@ function syncTabs(ventureId, items) {
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
-                  }), param);
+                  }), param, param$1);
     });
 }
 
@@ -528,12 +532,12 @@ var Handle = /* module */[
   /* syncTabs */syncTabs
 ];
 
-function handleMessage(syncId, param) {
+function handleMessage(param) {
   switch (param.tag | 0) {
     case 0 : 
         var partial_arg = param[0];
-        return (function (param) {
-            return updateSession(partial_arg, param);
+        return (function (param, param$1) {
+            return updateSession(partial_arg, param, param$1);
           });
     case 1 : 
         return create(param[0]);
@@ -560,7 +564,7 @@ function handleMessage(syncId, param) {
     case 12 : 
         return endorsePayout(param[0], param[1]);
     case 13 : 
-        return exposeIncomeAddress(syncId, param[0], param[1]);
+        return exposeIncomeAddress(param[0], param[1]);
     case 14 : 
         return newItemsDetected(param[0], param[1]);
     case 15 : 
@@ -576,7 +580,7 @@ var cleanState = /* record */[/* venturesThread */Promise.resolve(/* None */0)];
 var workerState = [cleanState];
 
 self.onmessage = (function (msg) {
-    workerState[0] = handleMessage(msg.data.syncId, VentureWorkerMessage.decodeIncoming(msg.data.msg))(workerState[0]);
+    workerState[0] = handleMessage(VentureWorkerMessage.decodeIncoming(msg.data.payload))(msg.data.correlationId, workerState[0]);
     return /* () */0;
   });
 

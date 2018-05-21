@@ -100,21 +100,21 @@ let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
 
 module Cmd = {
   type t = {
-    proposePartner: (~prospectId: userId) => unit,
-    endorsePartner: (~processId: processId) => unit,
-    rejectPartner: (~processId: processId) => unit,
-    proposePartnerRemoval: (~partnerId: userId) => unit,
-    rejectPartnerRemoval: (~processId: processId) => unit,
-    endorsePartnerRemoval: (~processId: processId) => unit,
+    proposePartner: (~prospectId: userId) => WebWorker.msgId,
+    endorsePartner: (~processId: processId) => WebWorker.msgId,
+    rejectPartner: (~processId: processId) => WebWorker.msgId,
+    proposePartnerRemoval: (~partnerId: userId) => WebWorker.msgId,
+    rejectPartnerRemoval: (~processId: processId) => WebWorker.msgId,
+    endorsePartnerRemoval: (~processId: processId) => WebWorker.msgId,
     proposePayout:
       (
         ~accountIdx: accountIdx,
         ~destinations: list((string, BTC.t)),
         ~fee: BTC.t
       ) =>
-      unit,
-    endorsePayout: (~processId: processId) => unit,
-    rejectPayout: (~processId: processId) => unit,
+      WebWorker.msgId,
+    endorsePayout: (~processId: processId) => WebWorker.msgId,
+    rejectPayout: (~processId: processId) => WebWorker.msgId,
     exposeIncomeAddress: (~accountIdx: accountIdx) => Js.Promise.t(string),
   };
   let make = (worker, ventureId) => {

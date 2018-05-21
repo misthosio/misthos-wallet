@@ -7,7 +7,6 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var WebWorker = require("../ffi/WebWorker.bs.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -17,8 +16,8 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 
 function postMessage$1(msg) {
   postMessage({
-        msg: VentureWorkerMessage.encodeIncoming(msg),
-        syncId: WebWorker.emptySyncId
+        payload: VentureWorkerMessage.encodeIncoming(msg),
+        correlationId: ""
       });
   return /* () */0;
 }

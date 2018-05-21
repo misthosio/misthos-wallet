@@ -5,39 +5,35 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var V4 = require("uuid/v4");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 
-var emptySyncId = "";
-
 function MakeClient(Config) {
   var syncListeners = [Belt_MapString.empty];
   var postMessage = function (worker, msg) {
+    var msgId = V4();
     worker.postMessage({
-          msg: Curry._1(Config[/* encodeIncoming */1], msg),
-          syncId: emptySyncId
+          payload: Curry._1(Config[/* encodeIncoming */1], msg),
+          correlationId: msgId
         });
-    return /* () */0;
+    return msgId;
   };
   var postMessageSync = function (worker, msg) {
-    var syncId = V4();
+    var msgId = V4();
     var ret = new Promise((function (resolve, _) {
-            syncListeners[0] = Belt_MapString.set(syncListeners[0], syncId, resolve);
+            syncListeners[0] = Belt_MapString.set(syncListeners[0], msgId, resolve);
             return /* () */0;
           }));
     worker.postMessage({
-          msg: Curry._1(Config[/* encodeIncoming */1], msg),
-          syncId: syncId
+          payload: Curry._1(Config[/* encodeIncoming */1], msg),
+          correlationId: msgId
         });
     return ret;
   };
   var handleMessage = function (onMessage, msg) {
-    var decodedMsg = Curry._1(Config[/* decodeOutgoing */0], msg.msg);
-    var syncId = msg.syncId;
-    if (syncId !== emptySyncId) {
-      var match = Belt_MapString.get(syncListeners[0], syncId);
-      if (match) {
-        syncListeners[0] = Belt_MapString.remove(syncListeners[0], syncId);
-        match[0](decodedMsg);
-      }
-      
+    var decodedMsg = Curry._1(Config[/* decodeOutgoing */0], msg.payload);
+    var msgId = msg.correlationId;
+    var match = Belt_MapString.get(syncListeners[0], msgId);
+    if (match) {
+      syncListeners[0] = Belt_MapString.remove(syncListeners[0], msgId);
+      match[0](decodedMsg);
     }
     return Curry._1(onMessage, decodedMsg);
   };
@@ -57,6 +53,5 @@ function MakeClient(Config) {
         ];
 }
 
-exports.emptySyncId = emptySyncId;
 exports.MakeClient = MakeClient;
 /* uuid/v4 Not a pure module */

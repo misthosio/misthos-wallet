@@ -10,7 +10,7 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": WebWorker.message} => unit)) => unit =
   "onmessage";
 
 open Belt;
@@ -104,7 +104,7 @@ onMessage(
       handleMsg(
         venturesPromise^,
         doWork,
-        msg##data##msg |> DataWorkerMessage.decodeIncoming,
+        msg##data##payload |> DataWorkerMessage.decodeIncoming,
       );
     intervalId :=
       (
