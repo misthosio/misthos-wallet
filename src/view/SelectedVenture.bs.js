@@ -65,15 +65,15 @@ function make(viewData, session, commands, _) {
                                               })
                                           }, ViewCommon.text("Endorse Removal")) : null);
                         }), viewData[/* removalProspects */5]));
-              var match = viewData[/* transactions */6];
-              var unconfirmed = match[1];
+              var unconfirmed = viewData[/* unconfirmedTxs */6];
+              var confirmed = viewData[/* confirmedTxs */7];
               var transactions = $$Array.of_list(Utils.intersperse((function (key) {
                           return ReasonReact.element(/* Some */[key], /* None */0, MDivider.make(/* array */[]));
                         }), List.append(List.mapi((function (iter, tx) {
-                                  return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(/* Unconfirmed */Block.__(1, [tx]), /* array */[]));
+                                  return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(tx, /* array */[]));
                                 }), unconfirmed), List.mapi((function (iter, tx) {
-                                  return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(/* Confirmed */Block.__(0, [tx]), /* array */[]));
-                                }), match[0]))));
+                                  return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(tx, /* array */[]));
+                                }), confirmed))));
               var payouts = $$Array.of_list(List.map((function (payout) {
                           var match = payout[/* status */4];
                           var tmp;
@@ -100,15 +100,15 @@ function make(viewData, session, commands, _) {
                                                 return Curry._1(send, /* RejectPayout */Block.__(2, [payout[/* processId */0]]));
                                               })
                                           }, ViewCommon.text("Reject Payout")) : null);
-                        }), viewData[/* payouts */7]));
-              var match$1 = viewData[/* readOnly */2];
+                        }), viewData[/* payouts */8]));
+              var match = viewData[/* readOnly */2];
               return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[/* :: */[
                                 "Partners",
                                 /* :: */[
                                   "Transactions",
                                   /* [] */0
                                 ]
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[]))), React.createElement("div", {
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */9][/* currentSpendable */0], /* Some */[viewData[/* balance */9][/* reserved */1]], /* array */[]))), React.createElement("div", {
                                   className: Css.style(/* :: */[
                                         Css.display(/* flex */-1010954439),
                                         /* [] */0
@@ -124,7 +124,7 @@ function make(viewData, session, commands, _) {
                                     }), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* CreatePayout */2
-                                          ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match$1 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, ViewCommon.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, ViewCommon.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                                          ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, ViewCommon.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, ViewCommon.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* ManagePartners */1
                                           ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h4", undefined, ViewCommon.text("Payout processes:")), React.createElement("ul", undefined, payouts), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));

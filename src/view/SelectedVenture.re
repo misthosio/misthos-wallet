@@ -123,19 +123,17 @@ let make =
       ReasonReact.array(
         Array.of_list(
           {
-            let (confirmed, unconfirmed) = viewData.transactions;
+            let unconfirmed = viewData.unconfirmedTxs;
+            let confirmed = viewData.confirmedTxs;
             List.append(
               unconfirmed
-              |> List.mapi((iter, tx: ViewData.unconfirmedTx) =>
-                   <Transaction
-                     tx=(Unconfirmed(tx))
-                     key=(iter |> string_of_int)
-                   />
+              |> List.mapi((iter, tx: ViewData.txData) =>
+                   <Transaction tx key=(iter |> string_of_int) />
                  ),
               confirmed
-              |> List.mapi((iter, tx: ViewData.confirmedTx) =>
+              |> List.mapi((iter, tx: ViewData.txData) =>
                    <Transaction
-                     tx=(Confirmed(tx))
+                     tx
                      key=(string_of_int(iter + List.length(unconfirmed)))
                    />
                  ),

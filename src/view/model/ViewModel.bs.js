@@ -80,10 +80,8 @@ function fromViewModelState$2(param) {
           /* partners */partnersCollector[/* partners */1],
           /* prospects */partnersCollector[/* prospects */2],
           /* removalProspects */partnersCollector[/* removalProspects */3],
-          /* transactions : tuple */[
-            transactionCollector[/* confirmedTxs */1],
-            transactionCollector[/* unconfirmedTxs */2]
-          ],
+          /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */3],
+          /* confirmedTxs */transactionCollector[/* confirmedTxs */2],
           /* payouts */param[/* payouts */5],
           /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])
         ];

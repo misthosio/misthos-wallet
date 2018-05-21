@@ -128,8 +128,9 @@ let payoutModal = PayoutView.fromViewModelState;
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
   type prospect = PartnersCollector.prospect;
-  type confirmedTx = TransactionCollector.confirmedTx;
-  type unconfirmedTx = TransactionCollector.unconfirmedTx;
+  type txType = TransactionCollector.txType;
+  type txStatus = TransactionCollector.txStatus;
+  type txData = TransactionCollector.txData;
   type nonrec payoutStatus = payoutStatus;
   type nonrec payout = payout;
   type balance = BalanceCollector.balance;
@@ -140,7 +141,8 @@ module SelectedVentureView = {
     partners: list(partner),
     prospects: list(prospect),
     removalProspects: list(prospect),
-    transactions: (list(confirmedTx), list(unconfirmedTx)),
+    unconfirmedTxs: list(txData),
+    confirmedTxs: list(txData),
     payouts: list(payout),
     balance,
   };
@@ -163,10 +165,8 @@ module SelectedVentureView = {
     partners: partnersCollector.partners,
     prospects: partnersCollector.prospects,
     removalProspects: partnersCollector.removalProspects,
-    transactions: (
-      transactionCollector.confirmedTxs,
-      transactionCollector.unconfirmedTxs,
-    ),
+    confirmedTxs: transactionCollector.confirmedTxs,
+    unconfirmedTxs: transactionCollector.unconfirmedTxs,
     payouts,
     balance:
       balanceCollector

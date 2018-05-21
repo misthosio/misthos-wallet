@@ -2,22 +2,33 @@ open Belt;
 
 open PrimitiveTypes;
 
-type confirmedTx =
-  | ConfirmedIncome(string, BTC.t, Js.Date.t)
-  | ConfirmedPayout(string, BTC.t, Js.Date.t);
+type txType =
+  | Income
+  | Payout;
 
-type unconfirmedTx =
-  | UnconfirmedIncome(string, BTC.t)
-  | UnconfirmedPayout(string, BTC.t);
+type txStatus =
+  | Confirmed
+  | Unconfirmed;
+
+type txData = {
+  txType,
+  status: txStatus,
+  txId: string,
+  amount: BTC.t,
+  date: option(Js.Date.t),
+  detailsLink: Router.Config.route,
+};
 
 type t = {
+  ventureId,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
-  confirmedTxs: list(confirmedTx),
-  unconfirmedTxs: list(unconfirmedTx),
+  confirmedTxs: list(txData),
+  unconfirmedTxs: list(txData),
   network: Network.t,
 };
 
 let make = () => {
+  ventureId: VentureId.fromString(""),
   network: Regtest,
   confirmedTxs: [],
   unconfirmedTxs: [],
@@ -31,34 +42,19 @@ let mapConfirmation =
     ) => {
   let newTxs =
     unconfirmedTxs
-    |. List.keepMap(
-         fun
-         | UnconfirmedIncome(incomeTx, amount) when incomeTx == txId =>
-           Some(
-             ConfirmedIncome(
-               txId,
-               amount,
-               Js.Date.fromFloat(unixTime *. 1000.),
-             ),
-           )
-         | UnconfirmedPayout(payoutTx, amount) when payoutTx == txId =>
-           Some(
-             ConfirmedPayout(
-               txId,
-               amount,
-               Js.Date.fromFloat(unixTime *. 1000.),
-             ),
-           )
-         | _ => None,
+    |. List.keepMap(({txId: dataId} as data) =>
+         if (dataId == txId) {
+           Some({
+             ...data,
+             date: Some(Js.Date.fromFloat(unixTime *. 1000.)),
+             status: Confirmed,
+           });
+         } else {
+           None;
+         }
        );
   let newUnconf =
-    unconfirmedTxs
-    |. List.keep(
-         fun
-         | UnconfirmedIncome(incomeTx, _) when incomeTx == txId => false
-         | UnconfirmedPayout(payoutTx, _) when payoutTx == txId => false
-         | _ => true,
-       );
+    unconfirmedTxs |. List.keep(({txId: dataId}) => dataId != txId);
   {
     ...state,
     unconfirmedTxs: newUnconf,
@@ -68,11 +64,18 @@ let mapConfirmation =
 
 let apply = (event: Event.t, state) =>
   switch (event) {
-  | VentureCreated({network}) => {...state, network}
+  | VentureCreated({network, ventureId}) => {...state, network, ventureId}
   | IncomeDetected({txId, amount}) => {
       ...state,
       unconfirmedTxs: [
-        UnconfirmedIncome(txId, amount),
+        {
+          txId,
+          txType: Income,
+          status: Unconfirmed,
+          amount,
+          date: None,
+          detailsLink: Venture(state.ventureId, None),
+        },
         ...state.unconfirmedTxs,
       ],
     }
@@ -86,10 +89,15 @@ let apply = (event: Event.t, state) =>
     {
       ...state,
       unconfirmedTxs: [
-        UnconfirmedPayout(
+        {
           txId,
-          PayoutTransaction.summary(state.network, payoutTx).spentWithFees,
-        ),
+          txType: Income,
+          status: Unconfirmed,
+          amount:
+            PayoutTransaction.summary(state.network, payoutTx).spentWithFees,
+          date: None,
+          detailsLink: Venture(state.ventureId, Payout(processId)),
+        },
         ...state.unconfirmedTxs,
       ],
     };
