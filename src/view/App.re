@@ -7,7 +7,7 @@ let component = ReasonReact.statelessComponent("App");
 let make = (~session, ~updateSession, _children) => {
   let onSignIn = _e => updateSession(SessionStore.SignIn);
   let onSignOut = _e => updateSession(SessionStore.SignOut);
-  let onCloseModal = (ventureId, _) =>
+  let onCloseModal = (ventureId, _e) =>
     Router.Config.routeToUrl(Venture(ventureId, None))
     |> ReasonReact.Router.push;
   let modal =
