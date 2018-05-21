@@ -72,7 +72,7 @@ function make(session, updateSession, _) {
                   return /* None */0;
                 } else {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.payoutModal(venture$1), selectedVenture[2], /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), selectedVenture[2], /* array */[])),
                             (function (param) {
                                 return onCloseModal(selected, param);
                               })
@@ -100,12 +100,13 @@ function make(session, updateSession, _) {
       } else if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
         return /* None */0;
       } else {
-        var match$4 = ViewModel.readOnly(selectedVenture[1]);
+        var venture$2 = selectedVenture[1];
+        var match$4 = ViewModel.readOnly(venture$2);
         if (match$4) {
           return /* None */0;
         } else {
           return /* Some */[/* tuple */[
-                    ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(/* array */[])),
+                    ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(ViewModel.viewPayoutModal(match[0], venture$2), /* array */[])),
                     (function (param) {
                         return onCloseModal(selected, param);
                       })

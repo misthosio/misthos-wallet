@@ -142,71 +142,71 @@ let make =
           },
         ),
       );
-    let payouts =
-      ReasonReact.array(
-        Array.of_list(
-          viewData.payouts
-          |> List.map((payout: ViewData.payout) =>
-               <li key=(payout.processId |> ProcessId.toString)>
-                 (
-                   text(
-                     "'"
-                     ++ (payout.processId |> ProcessId.toString)
-                     ++ "' status: "
-                     ++ (
-                       switch (payout.status) {
-                       | PayoutPending => "pending"
-                       | PayoutCompleted(id) =>
-                         "completed (txId: " ++ id ++ ")"
-                       | PayoutFailed(reason) =>
-                         "failed (error: '" ++ reason ++ "')"
-                       }
-                     )
-                     ++ " endorsed by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          payout.endorsedBy |> List.map(UserId.toString),
-                        )
-                     ++ " rejected by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          payout.rejectedBy |> List.map(UserId.toString),
-                        ),
-                   )
-                 )
-                 (
-                   switch (
-                     payout.status,
-                     payout.endorsedBy |> List.mem(session.userId),
-                   ) {
-                   | (PayoutPending, false) =>
-                     <button
-                       onClick=(_e => send(EndorsePayout(payout.processId)))>
-                       (text("Endorse Payout"))
-                     </button>
-                   | _ => ReasonReact.null
-                   }
-                 )
-                 (
-                   switch (
-                     payout.status,
-                     payout.rejectedBy |> List.mem(session.userId),
-                     payout.endorsedBy |> List.mem(session.userId),
-                   ) {
-                   | (PayoutPending, false, false) =>
-                     <button
-                       onClick=(_e => send(RejectPayout(payout.processId)))>
-                       (text("Reject Payout"))
-                     </button>
-                   | _ => ReasonReact.null
-                   }
-                 )
-               </li>
-             ),
-        ),
-      );
+    /* let payouts = */
+    /*   ReasonReact.array( */
+    /*     Array.of_list( */
+    /*       viewData.payouts */
+    /*       |> List.map((payout: ViewData.payout) => */
+    /*            <li key=(payout.processId |> ProcessId.toString)> */
+    /*              ( */
+    /*                text( */
+    /*                  "'" */
+    /*                  ++ (payout.processId |> ProcessId.toString) */
+    /*                  ++ "' status: " */
+    /*                  ++ ( */
+    /*                    switch (payout.status) { */
+    /*                    | PayoutPending => "pending" */
+    /*                    | PayoutCompleted(id) => */
+    /*                      "completed (txId: " ++ id ++ ")" */
+    /*                    | PayoutFailed(reason) => */
+    /*                      "failed (error: '" ++ reason ++ "')" */
+    /*                    } */
+    /*                  ) */
+    /*                  ++ " endorsed by: " */
+    /*                  ++ List.fold_left( */
+    /*                       (state, partnerId) => state ++ partnerId ++ " ", */
+    /*                       "", */
+    /*                       payout.endorsedBy |> List.map(UserId.toString), */
+    /*                     ) */
+    /*                  ++ " rejected by: " */
+    /*                  ++ List.fold_left( */
+    /*                       (state, partnerId) => state ++ partnerId ++ " ", */
+    /*                       "", */
+    /*                       payout.rejectedBy |> List.map(UserId.toString), */
+    /*                     ), */
+    /*                ) */
+    /*              ) */
+    /*              ( */
+    /*                switch ( */
+    /*                  payout.status, */
+    /*                  payout.endorsedBy |> List.mem(session.userId), */
+    /*                ) { */
+    /*                | (PayoutPending, false) => */
+    /*                  <button */
+    /*                    onClick=(_e => send(EndorsePayout(payout.processId)))> */
+    /*                    (text("Endorse Payout")) */
+    /*                  </button> */
+    /*                | _ => ReasonReact.null */
+    /*                } */
+    /*              ) */
+    /*              ( */
+    /*                switch ( */
+    /*                  payout.status, */
+    /*                  payout.rejectedBy |> List.mem(session.userId), */
+    /*                  payout.endorsedBy |> List.mem(session.userId), */
+    /*                ) { */
+    /*                | (PayoutPending, false, false) => */
+    /*                  <button */
+    /*                    onClick=(_e => send(RejectPayout(payout.processId)))> */
+    /*                    (text("Reject Payout")) */
+    /*                  </button> */
+    /*                | _ => ReasonReact.null */
+    /*                } */
+    /*              ) */
+    /*            </li> */
+    /*          ), */
+    /*     ), */
+    /*   ); */
     <Body4
       titles=["Partners", "Transactions"]
       body1=
@@ -260,7 +260,7 @@ let make =
       body4=
         <div>
           <h4> (text("Payout processes:")) </h4>
-          <ul> payouts </ul>
+          /* <ul> payouts </ul> */
           <MaterialUi.List> transactions </MaterialUi.List>
         </div>
     />;

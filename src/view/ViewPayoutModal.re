@@ -1,5 +1,10 @@
 include ViewCommon;
 
+module ViewData = ViewModel.ViewPayoutView;
+
 let component = ReasonReact.statelessComponent("Drawer");
 
-let make = _children => {...component, render: _self => text("hello")};
+let make = (~viewData, _children) => {
+  ...component,
+  render: _self => <div> ("hello" |> text) </div>,
+};

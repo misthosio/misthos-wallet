@@ -74,33 +74,6 @@ function make(viewData, session, commands, _) {
                                 }), unconfirmed), List.mapi((function (iter, tx) {
                                   return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(tx, /* array */[]));
                                 }), confirmed))));
-              var payouts = $$Array.of_list(List.map((function (payout) {
-                          var match = payout[/* status */4];
-                          var tmp;
-                          tmp = typeof match === "number" ? "pending" : (
-                              match.tag ? "failed (error: '" + (match[0] + "')") : "completed (txId: " + (match[0] + ")")
-                            );
-                          var match$1 = payout[/* status */4];
-                          var match$2 = List.mem(session[/* userId */0], payout[/* endorsedBy */2]);
-                          var match$3 = payout[/* status */4];
-                          var match$4 = List.mem(session[/* userId */0], payout[/* rejectedBy */3]);
-                          var match$5 = List.mem(session[/* userId */0], payout[/* endorsedBy */2]);
-                          return React.createElement("li", {
-                                      key: PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0])
-                                    }, ViewCommon.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' status: " + (tmp + (" endorsed by: " + (List.fold_left((function (state, partnerId) {
-                                                          return state + (partnerId + " ");
-                                                        }), "", List.map(PrimitiveTypes.UserId[/* toString */0], payout[/* endorsedBy */2])) + (" rejected by: " + List.fold_left((function (state, partnerId) {
-                                                            return state + (partnerId + " ");
-                                                          }), "", List.map(PrimitiveTypes.UserId[/* toString */0], payout[/* rejectedBy */3]))))))))), typeof match$1 === "number" && !match$2 ? React.createElement("button", {
-                                            onClick: (function () {
-                                                return Curry._1(send, /* EndorsePayout */Block.__(3, [payout[/* processId */0]]));
-                                              })
-                                          }, ViewCommon.text("Endorse Payout")) : null, typeof match$3 === "number" && !(match$4 || match$5) ? React.createElement("button", {
-                                            onClick: (function () {
-                                                return Curry._1(send, /* RejectPayout */Block.__(2, [payout[/* processId */0]]));
-                                              })
-                                          }, ViewCommon.text("Reject Payout")) : null);
-                        }), viewData[/* payouts */8]));
               var match = viewData[/* readOnly */2];
               return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[/* :: */[
                                 "Partners",
@@ -108,7 +81,7 @@ function make(viewData, session, commands, _) {
                                   "Transactions",
                                   /* [] */0
                                 ]
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */9][/* currentSpendable */0], /* Some */[viewData[/* balance */9][/* reserved */1]], /* array */[]))), React.createElement("div", {
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[]))), React.createElement("div", {
                                   className: Css.style(/* :: */[
                                         Css.display(/* flex */-1010954439),
                                         /* [] */0
@@ -127,7 +100,7 @@ function make(viewData, session, commands, _) {
                                           ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), React.createElement("h4", undefined, ViewCommon.text("Prospects:")), React.createElement("ul", undefined, prospects), React.createElement("h4", undefined, ViewCommon.text("To be removed:")), React.createElement("ul", undefined, removalProspects), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* ManagePartners */1
-                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h4", undefined, ViewCommon.text("Payout processes:")), React.createElement("ul", undefined, payouts), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
+                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, React.createElement("h4", undefined, ViewCommon.text("Payout processes:")), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* viewData */viewData];

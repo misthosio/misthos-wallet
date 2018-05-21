@@ -1,6 +1,6 @@
 include ViewCommon;
 
-module View = ViewModel.PayoutView;
+module View = ViewModel.CreatePayoutView;
 
 let defaultFee = BTC.fromSatoshis(100L);
 

@@ -47,18 +47,24 @@ let make = (~session, ~updateSession, _children) => {
         None :
         Some((
           <CreatePayoutModal
-            viewData=(venture |> ViewModel.payoutModal)
+            viewData=(venture |> ViewModel.createPayoutModal)
             commands
           />,
           onCloseModal(selected),
         ))
     | (
         LoggedIn(_),
-        Venture(selected, Payout(_processId)),
+        Venture(selected, Payout(processId)),
         VentureLoaded(_, venture, _commands),
       ) =>
       venture |> ViewModel.readOnly ?
-        None : Some((<ViewPayoutModal />, onCloseModal(selected)))
+        None :
+        Some((
+          <ViewPayoutModal
+            viewData=(venture |> ViewModel.viewPayoutModal(processId))
+          />,
+          onCloseModal(selected),
+        ))
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>

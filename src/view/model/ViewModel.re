@@ -10,18 +10,7 @@ module BalanceCollector = ViewModel__BalanceCollector;
 
 module TransactionCollector = ViewModel__TransactionCollector;
 
-type payoutStatus =
-  | PayoutPending
-  | PayoutCompleted(string)
-  | PayoutFailed(string);
-
-type payout = {
-  processId,
-  payoutTx: PayoutTransaction.t,
-  endorsedBy: list(userId),
-  rejectedBy: list(userId),
-  status: payoutStatus,
-};
+module TxDetailsCollector = ViewModel__TxDetailsCollector;
 
 type t = {
   localUser: userId,
@@ -29,10 +18,10 @@ type t = {
   name: string,
   processedItems: ItemsSet.t,
   metaPolicy: Policy.t,
-  payouts: list(payout),
   balanceCollector: BalanceCollector.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
+  txDetailsCollector: TxDetailsCollector.t,
   walletInfoCollector: WalletInfoCollector.t,
 };
 
@@ -55,7 +44,7 @@ module ManagePartnersView = {
 
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
-module PayoutView = {
+module CreatePayoutView = {
   type t = {
     ventureId,
     ventureName: string,
@@ -123,7 +112,36 @@ module PayoutView = {
   };
 };
 
-let payoutModal = PayoutView.fromViewModelState;
+let createPayoutModal = CreatePayoutView.fromViewModelState;
+
+module ViewPayoutView = {
+  type payoutStatus = TxDetailsCollector.payoutStatus;
+  type voteStatus = TxDetailsCollector.voteStatus;
+  type voter = TxDetailsCollector.voter;
+  type t = TxDetailsCollector.payout;
+  /* let fromViewModelState = (processId, {txDetailsCollector}) => */
+  /*   txDetailsCollector |> TxDetailsCollector.getPayout(processId); */
+  let fromViewModelState =
+      (processId, {ventureId, localUser, partnersCollector}) =>
+    TxDetailsCollector.{
+      processId: ProcessId.make(),
+      status: PendingApproval,
+      canEndorse: false,
+      canReject: false,
+      summary: {
+        reserved: BTC.zero,
+        destinations: [],
+        spentWithFees: BTC.zero,
+        misthosFee: BTC.zero,
+        networkFee: BTC.zero,
+      },
+      voters: [],
+      txId: None,
+      date: None,
+    };
+};
+
+let viewPayoutModal = ViewPayoutView.fromViewModelState;
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
@@ -131,8 +149,8 @@ module SelectedVentureView = {
   type txType = TransactionCollector.txType;
   type txStatus = TransactionCollector.txStatus;
   type txData = TransactionCollector.txData;
-  type nonrec payoutStatus = payoutStatus;
-  type nonrec payout = payout;
+  /* type nonrec payoutStatus = payoutStatus; */
+  /* type nonrec payout = payout; */
   type balance = BalanceCollector.balance;
   type t = {
     ventureId,
@@ -143,7 +161,7 @@ module SelectedVentureView = {
     removalProspects: list(prospect),
     unconfirmedTxs: list(txData),
     confirmedTxs: list(txData),
-    payouts: list(payout),
+    /* payouts: list(payout), */
     balance,
   };
   let fromViewModelState =
@@ -154,7 +172,7 @@ module SelectedVentureView = {
           localUser,
           partnersCollector,
           transactionCollector,
-          payouts,
+          /* payouts, */
           balanceCollector,
         },
       ) => {
@@ -167,7 +185,6 @@ module SelectedVentureView = {
     removalProspects: partnersCollector.removalProspects,
     confirmedTxs: transactionCollector.confirmedTxs,
     unconfirmedTxs: transactionCollector.unconfirmedTxs,
-    payouts,
     balance:
       balanceCollector
       |> BalanceCollector.accountBalance(AccountIndex.default),
@@ -182,10 +199,10 @@ let make = localUser => {
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   metaPolicy: Policy.unanimous,
-  payouts: [],
   balanceCollector: BalanceCollector.make(),
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
+  txDetailsCollector: TxDetailsCollector.make(localUser),
   walletInfoCollector: WalletInfoCollector.make(),
 };
 
@@ -201,6 +218,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.partnersCollector |> PartnersCollector.apply(event),
       transactionCollector:
         state.transactionCollector |> TransactionCollector.apply(event),
+      txDetailsCollector:
+        state.txDetailsCollector |> TxDetailsCollector.apply(event),
       walletInfoCollector:
         state.walletInfoCollector |> WalletInfoCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
@@ -211,55 +230,6 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         ventureId,
         name: ventureName,
         metaPolicy,
-      }
-    | PayoutProposed({processId, supporterId, data}) => {
-        ...state,
-        payouts: [
-          {
-            processId,
-            payoutTx: data.payoutTx,
-            endorsedBy: [supporterId],
-            rejectedBy: [],
-            status: PayoutPending,
-          },
-          ...state.payouts,
-        ],
-      }
-    | PayoutRejected({processId, rejectorId}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, rejectedBy: [rejectorId, ...p.rejectedBy]} : p
-             ),
-      }
-    | PayoutEndorsed({processId, supporterId}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
-             ),
-      }
-    | PayoutBroadcast({processId, txId}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, status: PayoutCompleted(txId)} : p
-             ),
-      }
-    | PayoutBroadcastFailed({processId, errorMessage}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, status: PayoutFailed(errorMessage)} : p
-             ),
       }
     | _ => state
     };
