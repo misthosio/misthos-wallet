@@ -118,7 +118,7 @@ describe("build", (function () {
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
                               /* hi */0,
-                              /* lo */9500
+                              /* lo */9700
                             ])
                       ],
                       /* [] */0
@@ -208,11 +208,11 @@ describe("build", (function () {
                             ],
                             /* spentWithFees */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
-                                  /* lo */10370
+                                  /* lo */10174
                                 ]),
                             /* misthosFee */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
-                                  /* lo */285
+                                  /* lo */89
                                 ]),
                             /* networkFee */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
@@ -274,11 +274,11 @@ describe("build", (function () {
                                         ]),
                                     /* misthosFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */414
+                                          /* lo */131
                                         ]),
                                     /* networkFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */323
+                                          /* lo */321
                                         ])
                                   ], Jest.Expect[/* expect */0](summary));
                       }));

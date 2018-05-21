@@ -63,8 +63,8 @@ let () =
         let address4Satoshis = BTC.fromSatoshis(15000L);
         let oneKeyChainWalletTotal =
           address1Satoshis |> BTC.plus(address2Satoshis);
-        let oneKeyChainSpendAmount = BTC.fromSatoshis(6000L);
-        let misthosFeePercent = 2.9;
+        let oneKeyChainSpendAmount = BTC.fromSatoshis(6100L);
+        let misthosFeePercent = PayoutTransaction.misthosFeePercent;
         let oneKeyChainExpectedFee =
           BTC.fromSatoshis(1892L)
           |> BTC.plus(

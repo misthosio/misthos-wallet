@@ -6,6 +6,8 @@ exception NotEnoughSignatures;
 
 exception NoSignaturesForInput;
 
+let misthosFeePercent: float;
+
 type input = Network.txInput;
 
 type t = {

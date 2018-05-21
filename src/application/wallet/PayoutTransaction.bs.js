@@ -293,7 +293,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
           txB.addOutput(param[0], BTC.toSatoshisFloat(value));
           return total.plus(value);
         }), BTC.zero, destinations);
-  var misthosFee = BTC.timesRounded(2.9 / 100, outTotalWithoutFee);
+  var misthosFee = BTC.timesRounded(0.9 / 100, outTotalWithoutFee);
   var misthosFeeAddress = Network.incomeAddress(network);
   txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
   var outTotal = outTotalWithoutFee.plus(misthosFee);
@@ -391,9 +391,9 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
   var totalOutValue = Belt_List.reduce(destinations, BTC.zero, (function (res, param) {
           return res.plus(param[1]);
         }));
-  var totalOutMisthosFee = BTC.timesRounded(2.9 / 100, totalOutValue);
+  var totalOutMisthosFee = BTC.timesRounded(0.9 / 100, totalOutValue);
   var rest = totalInputValue.minus(totalOutValue.plus(fee));
-  return BTC.dividedByRounded(1 + 2.9 / 100, rest).minus(totalOutMisthosFee);
+  return BTC.dividedByRounded(1 + 0.9 / 100, rest).minus(totalOutMisthosFee);
 }
 
 function findSignatures(_allSigs, needed, foundSigIdxs, foundSigs, network) {
@@ -507,9 +507,12 @@ function finalize(signedTransactions, network) {
   }
 }
 
+var misthosFeePercent = 0.9;
+
 exports.NotEnoughFunds = NotEnoughFunds;
 exports.NotEnoughSignatures = NotEnoughSignatures;
 exports.NoSignaturesForInput = NoSignaturesForInput;
+exports.misthosFeePercent = misthosFeePercent;
 exports.summary = summary;
 exports.txInputForChangeAddress = txInputForChangeAddress;
 exports.build = build;

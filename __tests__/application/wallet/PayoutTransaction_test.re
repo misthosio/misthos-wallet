@@ -96,7 +96,7 @@ let () =
           ~mandatoryInputs=Network.inputSet(),
           ~allInputs=inputs,
           ~destinations=[
-            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9500L)),
+            ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9700L)),
           ],
           ~satsPerByte=BTC.fromSatoshis(1L),
           ~changeAddress,
@@ -169,8 +169,8 @@ let () =
                  BTC.fromSatoshis(9800L),
                ),
              ],
-             spentWithFees: BTC.fromSatoshis(10370L),
-             misthosFee: BTC.fromSatoshis(285L),
+             spentWithFees: BTC.fromSatoshis(10174L),
+             misthosFee: BTC.fromSatoshis(89L),
              networkFee: BTC.fromSatoshis(285L),
            },
          );
@@ -213,8 +213,8 @@ let () =
                  ),
                ],
                spentWithFees: BTC.fromSatoshis(15000L),
-               misthosFee: BTC.fromSatoshis(414L),
-               networkFee: BTC.fromSatoshis(323L),
+               misthosFee: BTC.fromSatoshis(131L),
+               networkFee: BTC.fromSatoshis(321L),
              },
            );
       });

@@ -98,12 +98,12 @@ describe("Wallet_integration", (function () {
                       var oneKeyChainWalletTotal = address1Satoshis.plus(address2Satoshis);
                       var oneKeyChainSpendAmount = BTC.fromSatoshis(/* int64 */[
                             /* hi */0,
-                            /* lo */6000
+                            /* lo */6100
                           ]);
                       var oneKeyChainExpectedFee = BTC.fromSatoshis(/* int64 */[
                               /* hi */0,
                               /* lo */1892
-                            ]).plus(BTC.timesRounded(2.9 / 100, oneKeyChainSpendAmount));
+                            ]).plus(BTC.timesRounded(PayoutTransaction.misthosFeePercent / 100, oneKeyChainSpendAmount));
                       var twoKeyChainWalletTotal = oneKeyChainWalletTotal.plus(address3Satoshis).plus(address4Satoshis).minus(oneKeyChainSpendAmount).minus(oneKeyChainExpectedFee);
                       var twoKeyChainSpendAmount = BTC.fromSatoshis(/* int64 */[
                             /* hi */0,
@@ -269,7 +269,7 @@ describe("Wallet_integration", (function () {
                                                   var expectedFee = BTC.fromSatoshis(/* int64 */[
                                                           /* hi */0,
                                                           /* lo */5810
-                                                        ]).plus(BTC.timesRounded(2.9 / 100, twoKeyChainSpendAmount));
+                                                        ]).plus(BTC.timesRounded(PayoutTransaction.misthosFeePercent / 100, twoKeyChainSpendAmount));
                                                   return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                                 return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
                                                                                           return total.plus(utxo[/* amount */3]);
