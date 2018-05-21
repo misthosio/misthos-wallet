@@ -22,6 +22,17 @@ function getPayout(processId, param) {
   return Belt_Map.getExn(param[/* payouts */2], processId);
 }
 
+function payoutsPendingApproval(param) {
+  return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* payouts */2])), (function (payout) {
+                var match = payout[/* status */1];
+                if (typeof match === "number" && match === 0) {
+                  return true;
+                } else {
+                  return false;
+                }
+              }));
+}
+
 function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
@@ -160,7 +171,7 @@ function apply($$event, state) {
                         return Utils.mapOption((function (payout) {
                                       return /* record */[
                                               /* processId */payout[/* processId */0],
-                                              /* status : Broadcast */2,
+                                              /* status : Unconfirmed */2,
                                               /* canEndorse */payout[/* canEndorse */2],
                                               /* canReject */payout[/* canReject */3],
                                               /* summary */payout[/* summary */4],
@@ -228,5 +239,6 @@ function apply($$event, state) {
 
 exports.make = make;
 exports.getPayout = getPayout;
+exports.payoutsPendingApproval = payoutsPendingApproval;
 exports.apply = apply;
 /* Utils Not a pure module */

@@ -7,7 +7,7 @@ open Event;
 type payoutStatus =
   | PendingApproval
   | Accepted
-  | Broadcast
+  | Unconfirmed
   | Confirmed
   | Failed(string);
 
@@ -47,6 +47,17 @@ let make = localUser => {
 };
 
 let getPayout = (processId, {payouts}) => payouts |. Map.getExn(processId);
+
+let payoutsPendingApproval = ({payouts}) =>
+  payouts
+  |. Map.valuesToArray
+  |> List.fromArray
+  |. List.keepU((. payout) =>
+       switch (payout.status) {
+       | PendingApproval => true
+       | _ => false
+       }
+     );
 
 let apply = (event, state) =>
   switch (event) {
@@ -161,7 +172,7 @@ let apply = (event, state) =>
         |. Map.update(
              processId,
              Utils.mapOption(payout =>
-               {...payout, txId: Some(txId), status: Broadcast}
+               {...payout, txId: Some(txId), status: Unconfirmed}
              ),
            ),
     }

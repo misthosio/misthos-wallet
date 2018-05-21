@@ -55,7 +55,7 @@ let make =
         switch (status) {
         | PendingApproval => "PendingApproval" |> text
         | Accepted => "Accepted" |> text
-        | Broadcast => "Broadcast" |> text
+        | Unconfirmed => "Unconfirmed" |> text
         | Confirmed => "Confirmed" |> text
         | Failed(errorMessage) =>
           "Failed with reason: " ++ errorMessage |> text

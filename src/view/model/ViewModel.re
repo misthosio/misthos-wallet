@@ -131,8 +131,8 @@ module SelectedVentureView = {
   type txType = TransactionCollector.txType;
   type txStatus = TransactionCollector.txStatus;
   type txData = TransactionCollector.txData;
-  /* type nonrec payoutStatus = payoutStatus; */
-  /* type nonrec payout = payout; */
+  type payoutStatus = TxDetailsCollector.payoutStatus;
+  type payout = TxDetailsCollector.payout;
   type balance = BalanceCollector.balance;
   type t = {
     ventureId,
@@ -143,7 +143,7 @@ module SelectedVentureView = {
     removalProspects: list(prospect),
     unconfirmedTxs: list(txData),
     confirmedTxs: list(txData),
-    /* payouts: list(payout), */
+    payoutsPendingApproval: list(payout),
     balance,
   };
   let fromViewModelState =
@@ -154,7 +154,7 @@ module SelectedVentureView = {
           localUser,
           partnersCollector,
           transactionCollector,
-          /* payouts, */
+          txDetailsCollector,
           balanceCollector,
         },
       ) => {
@@ -165,6 +165,8 @@ module SelectedVentureView = {
     partners: partnersCollector.partners,
     prospects: partnersCollector.prospects,
     removalProspects: partnersCollector.removalProspects,
+    payoutsPendingApproval:
+      txDetailsCollector |> TxDetailsCollector.payoutsPendingApproval,
     confirmedTxs: transactionCollector.confirmedTxs,
     unconfirmedTxs: transactionCollector.unconfirmedTxs,
     balance:

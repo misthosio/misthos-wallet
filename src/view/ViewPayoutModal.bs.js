@@ -67,7 +67,7 @@ function make(viewData, commands, _) {
                       payoutStatus = ViewCommon.text("Accepted");
                       break;
                   case 2 : 
-                      payoutStatus = ViewCommon.text("Broadcast");
+                      payoutStatus = ViewCommon.text("Unconfirmed");
                       break;
                   case 3 : 
                       payoutStatus = ViewCommon.text("Confirmed");

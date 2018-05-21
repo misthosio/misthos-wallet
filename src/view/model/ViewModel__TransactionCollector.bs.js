@@ -11,14 +11,14 @@ function make() {
   return /* record */[
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
-          /* confirmedTxs : [] */0,
           /* unconfirmedTxs : [] */0,
+          /* confirmedTxs : [] */0,
           /* network : Regtest */0
         ];
 }
 
 function mapConfirmation(param, state) {
-  var unconfirmedTxs = state[/* unconfirmedTxs */3];
+  var unconfirmedTxs = state[/* unconfirmedTxs */2];
   var unixTime = param[/* unixTime */2];
   var txId = param[/* txId */0];
   var newTxs = Belt_List.keepMap(unconfirmedTxs, (function (data) {
@@ -41,8 +41,8 @@ function mapConfirmation(param, state) {
   return /* record */[
           /* ventureId */state[/* ventureId */0],
           /* payoutProcesses */state[/* payoutProcesses */1],
-          /* confirmedTxs */Belt_List.concat(newTxs, state[/* confirmedTxs */2]),
           /* unconfirmedTxs */newUnconf,
+          /* confirmedTxs */Belt_List.concat(newTxs, state[/* confirmedTxs */3]),
           /* network */state[/* network */4]
         ];
 }
@@ -54,8 +54,8 @@ function apply($$event, state) {
         return /* record */[
                 /* ventureId */match[/* ventureId */0],
                 /* payoutProcesses */state[/* payoutProcesses */1],
-                /* confirmedTxs */state[/* confirmedTxs */2],
-                /* unconfirmedTxs */state[/* unconfirmedTxs */3],
+                /* unconfirmedTxs */state[/* unconfirmedTxs */2],
+                /* confirmedTxs */state[/* confirmedTxs */3],
                 /* network */match[/* network */6]
               ];
     case 21 : 
@@ -63,8 +63,8 @@ function apply($$event, state) {
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */1], match$1[/* processId */0], match$1[/* data */6][/* payoutTx */1]),
-                /* confirmedTxs */state[/* confirmedTxs */2],
-                /* unconfirmedTxs */state[/* unconfirmedTxs */3],
+                /* unconfirmedTxs */state[/* unconfirmedTxs */2],
+                /* confirmedTxs */state[/* confirmedTxs */3],
                 /* network */state[/* network */4]
               ];
     case 26 : 
@@ -74,7 +74,6 @@ function apply($$event, state) {
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* payoutProcesses */state[/* payoutProcesses */1],
-                /* confirmedTxs */state[/* confirmedTxs */2],
                 /* unconfirmedTxs : :: */[
                   /* record */[
                     /* txType : Payout */1,
@@ -87,8 +86,9 @@ function apply($$event, state) {
                         /* Payout */[processId]
                       ])
                   ],
-                  state[/* unconfirmedTxs */3]
+                  state[/* unconfirmedTxs */2]
                 ],
+                /* confirmedTxs */state[/* confirmedTxs */3],
                 /* network */state[/* network */4]
               ];
     case 33 : 
@@ -96,7 +96,6 @@ function apply($$event, state) {
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* payoutProcesses */state[/* payoutProcesses */1],
-                /* confirmedTxs */state[/* confirmedTxs */2],
                 /* unconfirmedTxs : :: */[
                   /* record */[
                     /* txType : Income */0,
@@ -109,8 +108,9 @@ function apply($$event, state) {
                         /* None */0
                       ])
                   ],
-                  state[/* unconfirmedTxs */3]
+                  state[/* unconfirmedTxs */2]
                 ],
+                /* confirmedTxs */state[/* confirmedTxs */3],
                 /* network */state[/* network */4]
               ];
     case 34 : 

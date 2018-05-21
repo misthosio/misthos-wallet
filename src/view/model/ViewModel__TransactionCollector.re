@@ -22,8 +22,8 @@ type txData = {
 type t = {
   ventureId,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
-  confirmedTxs: list(txData),
   unconfirmedTxs: list(txData),
+  confirmedTxs: list(txData),
   network: Network.t,
 };
 

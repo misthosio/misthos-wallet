@@ -86,8 +86,9 @@ function fromViewModelState$3(param) {
           /* partners */partnersCollector[/* partners */1],
           /* prospects */partnersCollector[/* prospects */2],
           /* removalProspects */partnersCollector[/* removalProspects */3],
-          /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */3],
-          /* confirmedTxs */transactionCollector[/* confirmedTxs */2],
+          /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */2],
+          /* confirmedTxs */transactionCollector[/* confirmedTxs */3],
+          /* payoutsPendingApproval */ViewModel__TxDetailsCollector.payoutsPendingApproval(param[/* txDetailsCollector */8]),
           /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */5])
         ];
 }
