@@ -57,9 +57,8 @@ let make = (~session, ~updateSession, _children) => {
         Venture(selected, Payout(_processId)),
         VentureLoaded(_, venture, _commands),
       ) =>
-      Js.log("ViewPayout");
       venture |> ViewModel.readOnly ?
-        None : Some((<ViewPayoutModal />, onCloseModal(selected)));
+        None : Some((<ViewPayoutModal />, onCloseModal(selected)))
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>

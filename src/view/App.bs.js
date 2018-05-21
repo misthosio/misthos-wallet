@@ -100,7 +100,6 @@ function make(session, updateSession, _) {
       } else if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
         return /* None */0;
       } else {
-        console.log("ViewPayout");
         var match$4 = ViewModel.readOnly(selectedVenture[1]);
         if (match$4) {
           return /* None */0;
