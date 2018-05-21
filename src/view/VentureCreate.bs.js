@@ -31,10 +31,6 @@ var infoBox = Css.style(/* :: */[
 
 var Styles = /* module */[/* infoBox */infoBox];
 
-function formText($$event) {
-  return $$event.target.value;
-}
-
 function make(selectedVenture, onCreateVenture, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -62,7 +58,7 @@ function make(selectedVenture, onCreateVenture, _) {
                                               -976970511,
                                               param[/* state */1][/* newVenture */0]
                                             ]], /* Some */[(function (e) {
-                                                return Curry._1(send, /* ChangeNewVenture */[e.target.value]);
+                                                return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
                                               })], /* Some */[true], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                 return Curry._1(send, /* CreateVenture */0);
                                               })], /* Some */[true], /* array */[ViewCommon.text("create venture")]))), React.createElement("div", {
@@ -101,6 +97,5 @@ exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
 exports.Styles = Styles;
-exports.formText = formText;
 exports.make = make;
 /* component Not a pure module */

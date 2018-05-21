@@ -27,10 +27,6 @@ module Styles = {
     ]);
 };
 
-let formText = event => ReactDOMRe.domElementToObj(
-                          ReactEventRe.Form.target(event),
-                        )##value;
-
 let make =
     (
       ~selectedVenture: VentureStore.selectedVenture,
@@ -74,7 +70,7 @@ let make =
             <MInput
               placeholder="Enter a Venture Name"
               value=(`String(state.newVenture))
-              onChange=(e => send(ChangeNewVenture(formText(e))))
+              onChange=(e => send(ChangeNewVenture(extractString(e))))
               autoFocus=true
               fullWidth=true
             />
