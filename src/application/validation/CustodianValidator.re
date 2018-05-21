@@ -43,8 +43,6 @@ let update = (event, {custodians}) => {
     areCurrent: (accountIdx, testCustodians) => {
       let accountCustodians = custodians |> List.assoc(accountIdx);
       testCustodians
-      |> List.length == (accountCustodians |> List.length)
-      && testCustodians
       |> List.map(c => accountCustodians |> List.mem(c))
       |> List.fold_left((r, v) => r && v, true);
     },

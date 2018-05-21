@@ -65,19 +65,15 @@ function update($$event, param) {
           /* custodians */custodians$1,
           /* areCurrent */(function (accountIdx, testCustodians) {
               var accountCustodians = List.assoc(accountIdx, custodians$1);
-              if (List.length(testCustodians) === List.length(accountCustodians)) {
-                return List.fold_left((function (r, v) {
-                              if (r) {
-                                return v;
-                              } else {
-                                return false;
-                              }
-                            }), true, List.map((function (c) {
-                                  return List.mem(c, accountCustodians);
-                                }), testCustodians));
-              } else {
-                return false;
-              }
+              return List.fold_left((function (r, v) {
+                            if (r) {
+                              return v;
+                            } else {
+                              return false;
+                            }
+                          }), true, List.map((function (c) {
+                                return List.mem(c, accountCustodians);
+                              }), testCustodians));
             }),
           /* isCustodian */(function (accountIdx, testCustodian) {
               return List.mem(testCustodian, List.assoc(accountIdx, custodians$1));
