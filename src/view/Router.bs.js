@@ -150,6 +150,11 @@ function goTo(route) {
   return ReasonReact.Router[/* push */0](routeToUrl(route));
 }
 
+function clickToRoute(route, $$event) {
+  $$event.preventDefault();
+  return goTo(route);
+}
+
 var Container = include[0];
 
 var Link = include[1];
@@ -158,4 +163,5 @@ exports.Config = Config;
 exports.Container = Container;
 exports.Link = Link;
 exports.goTo = goTo;
+exports.clickToRoute = clickToRoute;
 /* include Not a pure module */

@@ -37,7 +37,11 @@ let make = (~tx: ViewData.txData, _children) => {
       afmt(tx.amount),
     );
     MaterialUi.(
-      <ListItem dense=true disableGutters=true>
+      <ListItem
+        dense=true
+        disableGutters=true
+        button=true
+        onClick=(Router.clickToRoute(tx.detailsLink))>
         /* <ListItemIcon> <Avatar> ("F" |> Utils.text) </Avatar> </ListItemIcon> */
 
           <ListItemText

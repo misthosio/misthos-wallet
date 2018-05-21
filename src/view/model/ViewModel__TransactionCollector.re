@@ -91,7 +91,7 @@ let apply = (event: Event.t, state) =>
       unconfirmedTxs: [
         {
           txId,
-          txType: Income,
+          txType: Payout,
           status: Unconfirmed,
           amount:
             PayoutTransaction.summary(state.network, payoutTx).spentWithFees,

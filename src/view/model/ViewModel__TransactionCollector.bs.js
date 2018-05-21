@@ -77,7 +77,7 @@ function apply($$event, state) {
                 /* confirmedTxs */state[/* confirmedTxs */2],
                 /* unconfirmedTxs : :: */[
                   /* record */[
-                    /* txType : Income */0,
+                    /* txType : Payout */1,
                     /* status : Unconfirmed */1,
                     /* txId */match$2[/* txId */1],
                     /* amount */PayoutTransaction.summary(state[/* network */4], payoutTx)[/* spentWithFees */2],
