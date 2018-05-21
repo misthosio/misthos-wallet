@@ -10,18 +10,7 @@ module BalanceCollector = ViewModel__BalanceCollector;
 
 module TransactionCollector = ViewModel__TransactionCollector;
 
-type payoutStatus =
-  | PayoutPending
-  | PayoutCompleted(string)
-  | PayoutFailed(string);
-
-type payout = {
-  processId,
-  payoutTx: PayoutTransaction.t,
-  endorsedBy: list(userId),
-  rejectedBy: list(userId),
-  status: payoutStatus,
-};
+module TxDetailsCollector = ViewModel__TxDetailsCollector;
 
 type t = {
   localUser: userId,
@@ -29,10 +18,10 @@ type t = {
   name: string,
   processedItems: ItemsSet.t,
   metaPolicy: Policy.t,
-  payouts: list(payout),
   balanceCollector: BalanceCollector.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
+  txDetailsCollector: TxDetailsCollector.t,
   walletInfoCollector: WalletInfoCollector.t,
 };
 
@@ -55,7 +44,7 @@ module ManagePartnersView = {
 
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
-module PayoutView = {
+module CreatePayoutView = {
   type t = {
     ventureId,
     ventureName: string,
@@ -77,6 +66,7 @@ module PayoutView = {
     ventureName: name,
     initialSummary: {
       reserved: BTC.zero,
+      destinations: [],
       spentWithFees: BTC.zero,
       misthosFee: BTC.zero,
       networkFee: BTC.zero,
@@ -122,15 +112,27 @@ module PayoutView = {
   };
 };
 
-let payoutModal = PayoutView.fromViewModelState;
+let createPayoutModal = CreatePayoutView.fromViewModelState;
+
+module ViewPayoutView = {
+  type payoutStatus = TxDetailsCollector.payoutStatus;
+  type voteStatus = TxDetailsCollector.voteStatus;
+  type voter = TxDetailsCollector.voter;
+  type t = TxDetailsCollector.payout;
+  let fromViewModelState = (processId, {txDetailsCollector}) =>
+    txDetailsCollector |> TxDetailsCollector.getPayout(processId);
+};
+
+let viewPayoutModal = ViewPayoutView.fromViewModelState;
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
   type prospect = PartnersCollector.prospect;
-  type confirmedTx = TransactionCollector.confirmedTx;
-  type unconfirmedTx = TransactionCollector.unconfirmedTx;
-  type nonrec payoutStatus = payoutStatus;
-  type nonrec payout = payout;
+  type txType = TransactionCollector.txType;
+  type txStatus = TransactionCollector.txStatus;
+  type txData = TransactionCollector.txData;
+  type payoutStatus = TxDetailsCollector.payoutStatus;
+  type payout = TxDetailsCollector.payout;
   type balance = BalanceCollector.balance;
   type t = {
     ventureId,
@@ -139,8 +141,9 @@ module SelectedVentureView = {
     partners: list(partner),
     prospects: list(prospect),
     removalProspects: list(prospect),
-    transactions: (list(confirmedTx), list(unconfirmedTx)),
-    payouts: list(payout),
+    unconfirmedTxs: list(txData),
+    confirmedTxs: list(txData),
+    payoutsPendingApproval: list(payout),
     balance,
   };
   let fromViewModelState =
@@ -151,7 +154,7 @@ module SelectedVentureView = {
           localUser,
           partnersCollector,
           transactionCollector,
-          payouts,
+          txDetailsCollector,
           balanceCollector,
         },
       ) => {
@@ -162,11 +165,10 @@ module SelectedVentureView = {
     partners: partnersCollector.partners,
     prospects: partnersCollector.prospects,
     removalProspects: partnersCollector.removalProspects,
-    transactions: (
-      transactionCollector.confirmedTxs,
-      transactionCollector.unconfirmedTxs,
-    ),
-    payouts,
+    payoutsPendingApproval:
+      txDetailsCollector |> TxDetailsCollector.payoutsPendingApproval,
+    confirmedTxs: transactionCollector.confirmedTxs,
+    unconfirmedTxs: transactionCollector.unconfirmedTxs,
     balance:
       balanceCollector
       |> BalanceCollector.accountBalance(AccountIndex.default),
@@ -181,10 +183,10 @@ let make = localUser => {
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   metaPolicy: Policy.unanimous,
-  payouts: [],
   balanceCollector: BalanceCollector.make(),
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
+  txDetailsCollector: TxDetailsCollector.make(localUser),
   walletInfoCollector: WalletInfoCollector.make(),
 };
 
@@ -200,6 +202,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.partnersCollector |> PartnersCollector.apply(event),
       transactionCollector:
         state.transactionCollector |> TransactionCollector.apply(event),
+      txDetailsCollector:
+        state.txDetailsCollector |> TxDetailsCollector.apply(event),
       walletInfoCollector:
         state.walletInfoCollector |> WalletInfoCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
@@ -210,55 +214,6 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         ventureId,
         name: ventureName,
         metaPolicy,
-      }
-    | PayoutProposed({processId, supporterId, data}) => {
-        ...state,
-        payouts: [
-          {
-            processId,
-            payoutTx: data.payoutTx,
-            endorsedBy: [supporterId],
-            rejectedBy: [],
-            status: PayoutPending,
-          },
-          ...state.payouts,
-        ],
-      }
-    | PayoutRejected({processId, rejectorId}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, rejectedBy: [rejectorId, ...p.rejectedBy]} : p
-             ),
-      }
-    | PayoutEndorsed({processId, supporterId}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, endorsedBy: [supporterId, ...p.endorsedBy]} : p
-             ),
-      }
-    | PayoutBroadcast({processId, txId}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, status: PayoutCompleted(txId)} : p
-             ),
-      }
-    | PayoutBroadcastFailed({processId, errorMessage}) => {
-        ...state,
-        payouts:
-          state.payouts
-          |> List.map((p: payout) =>
-               ProcessId.eq(p.processId, processId) ?
-                 {...p, status: PayoutFailed(errorMessage)} : p
-             ),
       }
     | _ => state
     };

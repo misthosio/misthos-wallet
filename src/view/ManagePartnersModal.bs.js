@@ -48,7 +48,7 @@ function make(viewData, commands, _) {
                                               alt: "Remove",
                                               src: RemovePartnerSvg
                                             })]))] : /* None */0;
-                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner, button, /* array */[]));
+                          return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], button, /* array */[]));
                         }), viewData[/* partners */0]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",

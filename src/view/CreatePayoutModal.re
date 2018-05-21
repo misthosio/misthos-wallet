@@ -1,6 +1,6 @@
 include ViewCommon;
 
-module View = ViewModel.PayoutView;
+module View = ViewModel.CreatePayoutView;
 
 let defaultFee = BTC.fromSatoshis(100L);
 
@@ -25,7 +25,7 @@ type action =
   | AddAnother
   | ProposePayout;
 
-let component = ReasonReact.reducerComponent("Payout");
+let component = ReasonReact.reducerComponent("CreatePayout");
 
 module Styles = {
   open Css;

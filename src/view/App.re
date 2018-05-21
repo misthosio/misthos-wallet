@@ -40,13 +40,30 @@ let make = (~session, ~updateSession, _children) => {
         None : Some((<Receive commands />, onCloseModal(selected)))
     | (
         LoggedIn(_),
-        Venture(selected, Payout),
+        Venture(selected, CreatePayout),
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <PayoutModal viewData=(venture |> ViewModel.payoutModal) commands />,
+          <CreatePayoutModal
+            viewData=(venture |> ViewModel.createPayoutModal)
+            commands
+          />,
+          onCloseModal(selected),
+        ))
+    | (
+        LoggedIn(_),
+        Venture(selected, Payout(processId)),
+        VentureLoaded(_, venture, commands),
+      ) =>
+      venture |> ViewModel.readOnly ?
+        None :
+        Some((
+          <ViewPayoutModal
+            viewData=(venture |> ViewModel.viewPayoutModal(processId))
+            commands
+          />,
           onCloseModal(selected),
         ))
     | (LoggedIn(_), _, _) => None

@@ -17,6 +17,7 @@ type t = {
 
 type summary = {
   reserved: BTC.t,
+  destinations: list((string, BTC.t)),
   spentWithFees: BTC.t,
   misthosFee: BTC.t,
   networkFee: BTC.t,

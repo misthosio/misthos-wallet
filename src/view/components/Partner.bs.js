@@ -49,7 +49,7 @@ var Styles = /* module */[
   /* avatar */avatar
 ];
 
-function make(partner, button, _) {
+function make(partnerId, name, button, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -61,10 +61,9 @@ function make(partner, button, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var userId = PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0]);
-              var match = partner[/* name */1];
-              var match$1 = match ? /* tuple */[
-                  ViewCommon.text(match[0]),
+              var userId = PrimitiveTypes.UserId[/* toString */0](partnerId);
+              var match = name ? /* tuple */[
+                  ViewCommon.text(name[0]),
                   /* Some */[ViewCommon.text(userId)]
                 ] : /* tuple */[
                   ViewCommon.text(userId),
@@ -72,7 +71,7 @@ function make(partner, button, _) {
                 ];
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.Avatar[/* make */1](/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[match$1[0]], match$1[1], /* None */0, /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[match[0]], match[1], /* None */0, /* array */[])),
                               button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemSecondaryAction[/* make */1](/* None */0, /* None */0, /* array */[button[0]])) : null
                             ]));
             }),

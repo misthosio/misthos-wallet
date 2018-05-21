@@ -196,6 +196,16 @@ describe("build", (function () {
                                   /* hi */0,
                                   /* lo */15000
                                 ]),
+                            /* destinations : :: */[
+                              /* tuple */[
+                                "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                                BTC.fromSatoshis(/* int64 */[
+                                      /* hi */0,
+                                      /* lo */9800
+                                    ])
+                              ],
+                              /* [] */0
+                            ],
                             /* spentWithFees */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
                                   /* lo */10370
@@ -222,7 +232,7 @@ describe("build", (function () {
                   destinations_000,
                   /* [] */0
                 ];
-                var max = PayoutTransaction.max(inputs, "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", destinations, BTC.fromSatoshis(/* int64 */[
+                var outMax = PayoutTransaction.max(inputs, "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", destinations, BTC.fromSatoshis(/* int64 */[
                           /* hi */0,
                           /* lo */1
                         ]), /* Regtest */0);
@@ -230,7 +240,7 @@ describe("build", (function () {
                         var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
                                   /* tuple */[
                                     "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                                    max
+                                    outMax
                                   ],
                                   destinations
                                 ], BTC.fromSatoshis(/* int64 */[
@@ -242,6 +252,22 @@ describe("build", (function () {
                                           /* hi */0,
                                           /* lo */15000
                                         ]),
+                                    /* destinations : :: */[
+                                      /* tuple */[
+                                        "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                                        outMax
+                                      ],
+                                      /* :: */[
+                                        /* tuple */[
+                                          "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                                          BTC.fromSatoshis(/* int64 */[
+                                                /* hi */0,
+                                                /* lo */5000
+                                              ])
+                                        ],
+                                        /* [] */0
+                                      ]
+                                    ],
                                     /* spentWithFees */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
                                           /* lo */15000
@@ -261,7 +287,7 @@ describe("build", (function () {
                                                 return PayoutTransaction.build(Network.inputSet(/* () */0), inputs, /* :: */[
                                                             /* tuple */[
                                                               "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                                                              max.plus(BTC.fromSatoshis(/* int64 */[
+                                                              outMax.plus(BTC.fromSatoshis(/* int64 */[
                                                                         /* hi */0,
                                                                         /* lo */50
                                                                       ]))

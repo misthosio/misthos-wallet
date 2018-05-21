@@ -32,6 +32,7 @@ var NotEnoughSignatures = Caml_exceptions.create("PayoutTransaction.NotEnoughSig
 var NoSignaturesForInput = Caml_exceptions.create("PayoutTransaction.NoSignaturesForInput");
 
 function summary(network, param) {
+  var changeAddress = param[/* changeAddress */3];
   var misthosFeeAddress = param[/* misthosFeeAddress */2];
   var totalIn = $$Array.fold_left((function (total, input) {
           return total.plus(input[/* value */3]);
@@ -46,17 +47,32 @@ function summary(network, param) {
   var totalOut = List.fold_left((function (total, out) {
           return total.plus(out[1]);
         }), BTC.zero, outs);
+  var cAddress = Js_option.getWithDefault("", Utils.mapOption((function (a) {
+              return a[/* displayAddress */5];
+            }), changeAddress));
+  var destinations = Belt_List.keepMapU(outs, (function (param) {
+          var address = param[0];
+          if (address !== misthosFeeAddress && address !== cAddress) {
+            return /* Some */[/* tuple */[
+                      address,
+                      param[1]
+                    ]];
+          } else {
+            return /* None */0;
+          }
+        }));
   var networkFee = totalIn.minus(totalOut);
   var changeOut = Js_option.getWithDefault(BTC.zero, Utils.mapOption((function (changeAddress) {
               return List.find((function (param) {
                               return param[0] === changeAddress[/* displayAddress */5];
                             }), outs)[1];
-            }), param[/* changeAddress */3]));
+            }), changeAddress));
   var misthosFee = List.find((function (param) {
             return param[0] === misthosFeeAddress;
           }), outs)[1];
   return /* record */[
           /* reserved */totalIn,
+          /* destinations */destinations,
           /* spentWithFees */totalOut.plus(networkFee).minus(changeOut),
           /* misthosFee */misthosFee,
           /* networkFee */networkFee

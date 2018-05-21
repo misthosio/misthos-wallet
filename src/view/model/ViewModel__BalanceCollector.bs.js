@@ -86,7 +86,7 @@ function apply($$event, state) {
                   /* tuple */[
                     accountIdx,
                     /* record */[
-                      /* currentSpendable */balance$1[/* currentSpendable */0].plus(payoutSummary$1[/* reserved */0]).minus(payoutSummary$1[/* spentWithFees */1]),
+                      /* currentSpendable */balance$1[/* currentSpendable */0].plus(payoutSummary$1[/* reserved */0]).minus(payoutSummary$1[/* spentWithFees */2]),
                       /* reserved */balance$1[/* reserved */1].minus(payoutSummary$1[/* reserved */0])
                     ]
                   ],

@@ -3,8 +3,10 @@
 
 var BTC = require("../../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
+var Utils = require("../../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
+var Router = require("../Router.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -49,37 +51,28 @@ function make(tx, _) {
               var afmt = function (amount) {
                 return ViewCommon.text(BTC.format(amount) + " BTC");
               };
-              var inOut;
-              inOut = tx[0].tag ? /* Payout */1 : /* Income */0;
-              var match;
-              if (tx.tag) {
-                var utx = tx[0];
-                match = utx.tag ? /* tuple */[
-                    ViewCommon.text("UNCONFIRMED PAYOUT"),
-                    /* None */0,
-                    afmt(utx[1])
-                  ] : /* tuple */[
-                    ViewCommon.text("UNCONFIRMED INCOME"),
-                    /* None */0,
-                    afmt(utx[1])
-                  ];
-              } else {
-                var ctx = tx[0];
-                match = ctx.tag ? /* tuple */[
-                    ViewCommon.text("PAYOUT"),
-                    /* Some */[ViewCommon.text(ctx[2].toString())],
-                    afmt(ctx[1])
-                  ] : /* tuple */[
-                    ViewCommon.text("INCOME"),
-                    /* Some */[ViewCommon.text(ctx[2].toString())],
-                    afmt(ctx[1])
-                  ];
-              }
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
+              var dfmt = function (param) {
+                return Utils.mapOption((function (date) {
+                              return ViewCommon.text(date.toString());
+                            }), param);
+              };
+              var match = tx[/* status */1];
+              var match$1 = tx[/* txType */0];
+              var primary$1 = match ? (
+                  match$1 ? ViewCommon.text("UNCONFIRMED PAYOUT") : ViewCommon.text("UNCONFIRMED INCOME")
+                ) : (
+                  match$1 ? ViewCommon.text("PAYOUT") : ViewCommon.text("INCOME")
+                );
+              var secondary = dfmt(tx[/* date */4]);
+              var amount$1 = afmt(tx[/* amount */3]);
+              var partial_arg = tx[/* detailsLink */5];
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+                                  return Router.clickToRoute(partial_arg, param);
+                                })], /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
                                               className: primary
-                                            }, match[0], React.createElement("span", {
-                                                  className: amount(inOut)
-                                                }, match[2]))], match[1], /* None */0, /* array */[]))]));
+                                            }, primary$1, React.createElement("span", {
+                                                  className: amount(tx[/* txType */0])
+                                                }, amount$1))], secondary, /* None */0, /* array */[]))]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -93,8 +86,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var ViewData = 0;
+
 exports.text = text;
 exports.extractString = extractString;
+exports.ViewData = ViewData;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

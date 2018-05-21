@@ -49,14 +49,29 @@ function routeFromUrl(url) {
                                   /* ManagePartners */1
                                 ]);
                       }
-                  case "payout" : 
-                      if (match$2[1]) {
-                        return /* Home */0;
+                  case "payouts" : 
+                      var match$4 = match$2[1];
+                      if (match$4) {
+                        var processId = match$4[0];
+                        if (processId === "new") {
+                          if (match$4[1]) {
+                            return /* Home */0;
+                          } else {
+                            return /* Venture */Block.__(0, [
+                                      PrimitiveTypes.VentureId[/* fromString */1](id),
+                                      /* CreatePayout */2
+                                    ]);
+                          }
+                        } else if (match$4[1]) {
+                          return /* Home */0;
+                        } else {
+                          return /* Venture */Block.__(0, [
+                                    PrimitiveTypes.VentureId[/* fromString */1](id),
+                                    /* Payout */[PrimitiveTypes.ProcessId[/* fromString */1](processId)]
+                                  ]);
+                        }
                       } else {
-                        return /* Venture */Block.__(0, [
-                                  PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  /* Payout */2
-                                ]);
+                        return /* Home */0;
                       }
                   case "receive" : 
                       if (match$2[1]) {
@@ -104,17 +119,22 @@ function routeToUrl(route) {
   } else if (route.tag) {
     return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](route[0]) + ("/joinvia/" + PrimitiveTypes.UserId[/* toString */0](route[1])));
   } else {
+    var match = route[1];
     var id = route[0];
-    switch (route[1]) {
-      case 0 : 
-          return "/ventures/" + PrimitiveTypes.VentureId[/* toString */0](id);
-      case 1 : 
-          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/partners");
-      case 2 : 
-          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/payout");
-      case 3 : 
-          return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/receive");
-      
+    if (typeof match === "number") {
+      switch (match) {
+        case 0 : 
+            return "/ventures/" + PrimitiveTypes.VentureId[/* toString */0](id);
+        case 1 : 
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/partners");
+        case 2 : 
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/payouts/new");
+        case 3 : 
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/receive");
+        
+      }
+    } else {
+      return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + ("/payouts/" + PrimitiveTypes.ProcessId[/* toString */0](match[0])));
     }
   }
 }
@@ -130,6 +150,11 @@ function goTo(route) {
   return ReasonReact.Router[/* push */0](routeToUrl(route));
 }
 
+function clickToRoute(route, $$event) {
+  $$event.preventDefault();
+  return goTo(route);
+}
+
 var Container = include[0];
 
 var Link = include[1];
@@ -138,4 +163,5 @@ exports.Config = Config;
 exports.Container = Container;
 exports.Link = Link;
 exports.goTo = goTo;
+exports.clickToRoute = clickToRoute;
 /* include Not a pure module */

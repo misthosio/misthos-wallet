@@ -21,6 +21,7 @@ type t = {
 
 type summary = {
   reserved: BTC.t,
+  destinations: list((string, BTC.t)),
   spentWithFees: BTC.t,
   misthosFee: BTC.t,
   networkFee: BTC.t,
@@ -53,6 +54,21 @@ let summary =
          (total, out) => total |> BTC.plus(out |> snd),
          BTC.zero,
        );
+  let cAddress =
+    changeAddress
+    |> Utils.mapOption((a: Address.t) => a.displayAddress)
+    |> Js.Option.getWithDefault("");
+  let destinations =
+    Belt.(
+      outs
+      |. List.keepMapU((. (address, value)) =>
+           if (address != misthosFeeAddress && address != cAddress) {
+             Some((address, value));
+           } else {
+             None;
+           }
+         )
+    );
   let networkFee = totalIn |> BTC.minus(totalOut);
   let changeOut =
     changeAddress
@@ -66,6 +82,7 @@ let summary =
     outs |> List.find(((a, _)) => a == misthosFeeAddress) |> snd;
   {
     reserved: totalIn,
+    destinations,
     spentWithFees: totalOut |> BTC.plus(networkFee) |> BTC.minus(changeOut),
     misthosFee,
     networkFee,

@@ -46,7 +46,11 @@ let make =
         Array.of_list(
           viewData.partners
           |> List.map((partner: ViewData.partner) =>
-               <Partner key=(partner.userId |> UserId.toString) partner />
+               <Partner
+                 key=(partner.userId |> UserId.toString)
+                 partnerId=partner.userId
+                 name=?partner.name
+               />
              ),
         ),
       );
@@ -119,94 +123,51 @@ let make =
              ),
         ),
       );
+    let payouts =
+      viewData.payoutsPendingApproval
+      |> List.map((payout: ViewData.payout) =>
+           MaterialUi.(
+             <ListItem
+               button=true
+               onClick=(
+                 Router.clickToRoute(
+                   Venture(viewData.ventureId, Payout(payout.processId)),
+                 )
+               )
+               key=(payout.processId |> ProcessId.toString)>
+               (
+                 text(
+                   "'"
+                   ++ (payout.processId |> ProcessId.toString)
+                   ++ "' - "
+                   ++ BTC.format(payout.summary.spentWithFees),
+                 )
+               )
+             </ListItem>
+           )
+         );
     let transactions =
       ReasonReact.array(
         Array.of_list(
           {
-            let (confirmed, unconfirmed) = viewData.transactions;
-            List.append(
+            let unconfirmed = viewData.unconfirmedTxs;
+            let confirmed = viewData.confirmedTxs;
+            Belt.List.concatMany([|
+              payouts,
               unconfirmed
-              |> List.mapi((iter, tx: ViewData.unconfirmedTx) =>
-                   <Transaction
-                     tx=(Unconfirmed(tx))
-                     key=(iter |> string_of_int)
-                   />
+              |> List.mapi((iter, tx: ViewData.txData) =>
+                   <Transaction tx key=(iter |> string_of_int) />
                  ),
               confirmed
-              |> List.mapi((iter, tx: ViewData.confirmedTx) =>
+              |> List.mapi((iter, tx: ViewData.txData) =>
                    <Transaction
-                     tx=(Confirmed(tx))
+                     tx
                      key=(string_of_int(iter + List.length(unconfirmed)))
                    />
                  ),
-            )
+            |])
             |> Utils.intersperse(key => <MDivider key />);
           },
-        ),
-      );
-    let payouts =
-      ReasonReact.array(
-        Array.of_list(
-          viewData.payouts
-          |> List.map((payout: ViewData.payout) =>
-               <li key=(payout.processId |> ProcessId.toString)>
-                 (
-                   text(
-                     "'"
-                     ++ (payout.processId |> ProcessId.toString)
-                     ++ "' status: "
-                     ++ (
-                       switch (payout.status) {
-                       | PayoutPending => "pending"
-                       | PayoutCompleted(id) =>
-                         "completed (txId: " ++ id ++ ")"
-                       | PayoutFailed(reason) =>
-                         "failed (error: '" ++ reason ++ "')"
-                       }
-                     )
-                     ++ " endorsed by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          payout.endorsedBy |> List.map(UserId.toString),
-                        )
-                     ++ " rejected by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          payout.rejectedBy |> List.map(UserId.toString),
-                        ),
-                   )
-                 )
-                 (
-                   switch (
-                     payout.status,
-                     payout.endorsedBy |> List.mem(session.userId),
-                   ) {
-                   | (PayoutPending, false) =>
-                     <button
-                       onClick=(_e => send(EndorsePayout(payout.processId)))>
-                       (text("Endorse Payout"))
-                     </button>
-                   | _ => ReasonReact.null
-                   }
-                 )
-                 (
-                   switch (
-                     payout.status,
-                     payout.rejectedBy |> List.mem(session.userId),
-                     payout.endorsedBy |> List.mem(session.userId),
-                   ) {
-                   | (PayoutPending, false, false) =>
-                     <button
-                       onClick=(_e => send(RejectPayout(payout.processId)))>
-                       (text("Reject Payout"))
-                     </button>
-                   | _ => ReasonReact.null
-                   }
-                 )
-               </li>
-             ),
         ),
       );
     <Body4
@@ -229,7 +190,7 @@ let make =
           </MFabButton>
           <div className=Css.(style([width(px(Theme.space(8)))])) />
           <MFabButton
-            variant=Orange route=(Venture(viewData.ventureId, Payout))>
+            variant=Orange route=(Venture(viewData.ventureId, CreatePayout))>
             ("PAY OUT" |> text)
           </MFabButton>
         </div>
@@ -259,12 +220,7 @@ let make =
             ("Add or Remove Partners" |> text)
           </LinkButton>
         </div>
-      body4=
-        <div>
-          <h4> (text("Payout processes:")) </h4>
-          <ul> payouts </ul>
-          <MaterialUi.List> transactions </MaterialUi.List>
-        </div>
+      body4=<div> <MaterialUi.List> transactions </MaterialUi.List> </div>
     />;
   },
 };

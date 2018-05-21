@@ -9,9 +9,10 @@ var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.j
 
 function make() {
   return /* record */[
+          /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
-          /* confirmedTxs : [] */0,
           /* unconfirmedTxs : [] */0,
+          /* confirmedTxs : [] */0,
           /* network : Regtest */0
         ];
 }
@@ -20,87 +21,97 @@ function mapConfirmation(param, state) {
   var unconfirmedTxs = state[/* unconfirmedTxs */2];
   var unixTime = param[/* unixTime */2];
   var txId = param[/* txId */0];
-  var newTxs = Belt_List.keepMap(unconfirmedTxs, (function (param) {
-          if (param.tag) {
-            if (param[0] === txId) {
-              return /* Some */[/* ConfirmedPayout */Block.__(1, [
-                          txId,
-                          param[1],
-                          new Date(unixTime * 1000)
-                        ])];
-            } else {
-              return /* None */0;
-            }
-          } else if (param[0] === txId) {
-            return /* Some */[/* ConfirmedIncome */Block.__(0, [
-                        txId,
-                        param[1],
-                        new Date(unixTime * 1000)
-                      ])];
+  var newTxs = Belt_List.keepMap(unconfirmedTxs, (function (data) {
+          if (data[/* txId */2] === txId) {
+            return /* Some */[/* record */[
+                      /* txType */data[/* txType */0],
+                      /* status : Confirmed */0,
+                      /* txId */data[/* txId */2],
+                      /* amount */data[/* amount */3],
+                      /* date : Some */[new Date(unixTime * 1000)],
+                      /* detailsLink */data[/* detailsLink */5]
+                    ]];
           } else {
             return /* None */0;
           }
         }));
   var newUnconf = Belt_List.keep(unconfirmedTxs, (function (param) {
-          if (param[0] === txId) {
-            return false;
-          } else {
-            return true;
-          }
+          return param[/* txId */2] !== txId;
         }));
   return /* record */[
-          /* payoutProcesses */state[/* payoutProcesses */0],
-          /* confirmedTxs */Belt_List.concat(newTxs, state[/* confirmedTxs */1]),
+          /* ventureId */state[/* ventureId */0],
+          /* payoutProcesses */state[/* payoutProcesses */1],
           /* unconfirmedTxs */newUnconf,
-          /* network */state[/* network */3]
+          /* confirmedTxs */Belt_List.concat(newTxs, state[/* confirmedTxs */3]),
+          /* network */state[/* network */4]
         ];
 }
 
 function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
-        return /* record */[
-                /* payoutProcesses */state[/* payoutProcesses */0],
-                /* confirmedTxs */state[/* confirmedTxs */1],
-                /* unconfirmedTxs */state[/* unconfirmedTxs */2],
-                /* network */$$event[0][/* network */6]
-              ];
-    case 21 : 
         var match = $$event[0];
         return /* record */[
-                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */0], match[/* processId */0], match[/* data */6][/* payoutTx */1]),
-                /* confirmedTxs */state[/* confirmedTxs */1],
+                /* ventureId */match[/* ventureId */0],
+                /* payoutProcesses */state[/* payoutProcesses */1],
                 /* unconfirmedTxs */state[/* unconfirmedTxs */2],
-                /* network */state[/* network */3]
+                /* confirmedTxs */state[/* confirmedTxs */3],
+                /* network */match[/* network */6]
+              ];
+    case 21 : 
+        var match$1 = $$event[0];
+        return /* record */[
+                /* ventureId */state[/* ventureId */0],
+                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */1], match$1[/* processId */0], match$1[/* data */6][/* payoutTx */1]),
+                /* unconfirmedTxs */state[/* unconfirmedTxs */2],
+                /* confirmedTxs */state[/* confirmedTxs */3],
+                /* network */state[/* network */4]
               ];
     case 26 : 
-        var match$1 = $$event[0];
-        var payoutTx = Belt_Map.getExn(state[/* payoutProcesses */0], match$1[/* processId */0]);
+        var match$2 = $$event[0];
+        var processId = match$2[/* processId */0];
+        var payoutTx = Belt_Map.getExn(state[/* payoutProcesses */1], processId);
         return /* record */[
-                /* payoutProcesses */state[/* payoutProcesses */0],
-                /* confirmedTxs */state[/* confirmedTxs */1],
+                /* ventureId */state[/* ventureId */0],
+                /* payoutProcesses */state[/* payoutProcesses */1],
                 /* unconfirmedTxs : :: */[
-                  /* UnconfirmedPayout */Block.__(1, [
-                      match$1[/* txId */1],
-                      PayoutTransaction.summary(state[/* network */3], payoutTx)[/* spentWithFees */1]
-                    ]),
+                  /* record */[
+                    /* txType : Payout */1,
+                    /* status : Unconfirmed */1,
+                    /* txId */match$2[/* txId */1],
+                    /* amount */PayoutTransaction.summary(state[/* network */4], payoutTx)[/* spentWithFees */2],
+                    /* date : None */0,
+                    /* detailsLink : Venture */Block.__(0, [
+                        state[/* ventureId */0],
+                        /* Payout */[processId]
+                      ])
+                  ],
                   state[/* unconfirmedTxs */2]
                 ],
-                /* network */state[/* network */3]
+                /* confirmedTxs */state[/* confirmedTxs */3],
+                /* network */state[/* network */4]
               ];
     case 33 : 
-        var match$2 = $$event[0];
+        var match$3 = $$event[0];
         return /* record */[
-                /* payoutProcesses */state[/* payoutProcesses */0],
-                /* confirmedTxs */state[/* confirmedTxs */1],
+                /* ventureId */state[/* ventureId */0],
+                /* payoutProcesses */state[/* payoutProcesses */1],
                 /* unconfirmedTxs : :: */[
-                  /* UnconfirmedIncome */Block.__(0, [
-                      match$2[/* txId */2],
-                      match$2[/* amount */4]
-                    ]),
+                  /* record */[
+                    /* txType : Income */0,
+                    /* status : Unconfirmed */1,
+                    /* txId */match$3[/* txId */2],
+                    /* amount */match$3[/* amount */4],
+                    /* date : None */0,
+                    /* detailsLink : Venture */Block.__(0, [
+                        state[/* ventureId */0],
+                        /* None */0
+                      ])
+                  ],
                   state[/* unconfirmedTxs */2]
                 ],
-                /* network */state[/* network */3]
+                /* confirmedTxs */state[/* confirmedTxs */3],
+                /* network */state[/* network */4]
               ];
     case 34 : 
         return mapConfirmation($$event[0], state);
