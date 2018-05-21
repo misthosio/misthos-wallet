@@ -12,6 +12,7 @@ var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var LoggedInHome = require("./LoggedInHome.bs.js");
 var VentureStore = require("./VentureStore.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
@@ -133,7 +134,7 @@ function make(session, updateSession, _) {
     }
     
   };
-  var body = function (selectedVenture, createVenture, currentRoute) {
+  var body = function (index, selectedVenture, createVenture, currentRoute) {
     var exit = 0;
     var exit$1 = 0;
     if (typeof session === "number") {
@@ -188,7 +189,7 @@ function make(session, updateSession, _) {
         }
       } else if (typeof selectedVenture === "number") {
         if (selectedVenture === 0) {
-          return ViewCommon.text("Not selected");
+          return ReasonReact.element(/* None */0, /* None */0, LoggedInHome.make(index, /* array */[]));
         } else {
           return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* None */0, /* array */[]));
         }
@@ -213,7 +214,7 @@ function make(session, updateSession, _) {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Curry._1(Router.Container[/* make */1], (function (currentRoute) {
                                 return ReasonReact.element(/* None */0, /* None */0, VentureStore.make(currentRoute, session, (function (index, selectedVenture, createVenture) {
-                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(selectedVenture, currentRoute), body(selectedVenture, createVenture, currentRoute)));
+                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(selectedVenture, currentRoute), body(index, selectedVenture, createVenture, currentRoute)));
                                                 })));
                               })));
             }),

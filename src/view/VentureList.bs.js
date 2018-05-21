@@ -10,7 +10,6 @@ var React = require("react");
 var Colors = require("./Colors.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var TitleBar = require("./components/TitleBar.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -78,11 +77,7 @@ function make(selected, index, _) {
                                                                   /* None */0
                                                                 ]), /* Some */[match ? linkSelected : link], /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* array */[]))]));
                           }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
-              ViewCommon.text("ventures:");
-              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
-                                    "My Ventures",
-                                    /* [] */0
-                                  ]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
+              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

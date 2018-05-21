@@ -55,10 +55,6 @@ let make = (~selected=?, ~index, _children) => {
           ),
         )
       };
-    let _status = text("ventures:");
-    <div>
-      <TitleBar titles=["My Ventures"] />
-      <MaterialUi.List dense=true> ventureList </MaterialUi.List>
-    </div>;
+    <div> <MaterialUi.List dense=true> ventureList </MaterialUi.List> </div>;
   },
 };
