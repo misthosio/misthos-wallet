@@ -62,6 +62,7 @@ let make = (~session, ~updateSession, _children) => {
     };
   let body =
       (
+        index,
         selectedVenture: VentureStore.selectedVenture,
         createVenture,
         currentRoute: Router.Config.route,
@@ -96,7 +97,7 @@ let make = (~session, ~updateSession, _children) => {
     | (LoggedIn(_), _, LoadingVenture(_)) =>
       <Spinner text="Loading venture" />
     | (LoggedIn(_), _, CreatingVenture) => <Spinner text="Creating venture" />
-    | (LoggedIn(_), _, None) => text("Not selected")
+    | (LoggedIn(_), _, None) => <LoggedInHome index />
     };
   {
     ...component,
@@ -112,7 +113,7 @@ let make = (~session, ~updateSession, _children) => {
                           modal=(currentRoute |> modal(selectedVenture))>
                           ...(
                                currentRoute
-                               |> body(selectedVenture, createVenture)
+                               |> body(index, selectedVenture, createVenture)
                              )
                         </Layout>
                     )
