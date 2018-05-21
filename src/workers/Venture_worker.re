@@ -103,10 +103,16 @@ module Handle = {
                    venture,
                    newItems,
                  );
+                 Notify.result(correlationId, Ok);
                };
                resolve(venture);
              }
-           | Venture.CouldNotLoad(error) => raise(DeadThread(error)),
+           | Venture.CouldNotLoad(error) => {
+               if (notify) {
+                 Notify.result(correlationId, CouldNotLoadVenture);
+               };
+               raise(DeadThread(error));
+             },
          )
     );
   let withVenture =
@@ -129,10 +135,16 @@ module Handle = {
                              fun
                              | Ok(index, venture) => {
                                  Notify.indexUpdated(correlationId, index);
+                                 Notify.result(correlationId, Ok);
                                  venture |> resolve;
                                }
-                             | CouldNotPersist(error) =>
-                               raise(DeadThread(error)),
+                             | CouldNotPersist(error) => {
+                                 Notify.result(
+                                   correlationId,
+                                   CouldNotPersistVenture,
+                                 );
+                                 raise(DeadThread(error));
+                               },
                            ),
                       );
                     | Load(ventureId) =>
@@ -193,6 +205,7 @@ module Handle = {
                                    ventureId,
                                    venture,
                                  );
+                                 Notify.result(correlationId, Ok);
                                  venture |> resolve;
                                }
                              | Venture.AlreadyLoaded(index, venture, newItems) => {
@@ -203,10 +216,16 @@ module Handle = {
                                    venture,
                                    newItems,
                                  );
+                                 Notify.result(correlationId, Ok);
                                  venture |> resolve;
                                }
-                             | Venture.CouldNotJoin(error) =>
-                               raise(DeadThread(error)),
+                             | Venture.CouldNotJoin(error) => {
+                                 Notify.result(
+                                   correlationId,
+                                   CouldNotJoinVenture,
+                                 );
+                                 raise(DeadThread(error));
+                               },
                            ),
                       )
                     };

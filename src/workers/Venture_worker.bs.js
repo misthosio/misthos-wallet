@@ -124,6 +124,9 @@ function loadAndNotify(notify, $staropt$star, data, correlationId, ventureId) {
   var persist = $staropt$star ? $staropt$star[0] : true;
   return Venture.load(/* Some */[persist], data, ventureId).then((function (param) {
                 if (param.tag) {
+                  if (notify) {
+                    result(correlationId, /* CouldNotLoadVenture */2);
+                  }
                   throw [
                         DeadThread,
                         param[0]
@@ -132,6 +135,7 @@ function loadAndNotify(notify, $staropt$star, data, correlationId, ventureId) {
                   var venture = param[0];
                   if (notify) {
                     ventureLoaded(correlationId, ventureId, venture, param[1]);
+                    result(correlationId, /* Ok */0);
                   }
                   return Promise.resolve(venture);
                 }
@@ -152,12 +156,14 @@ function withVenture($staropt$star, ventureAction, f, correlationId, param) {
                                     match$1[0],
                                     match$1[1].then((function (param) {
                                             if (param.tag) {
+                                              result(correlationId, /* CouldNotPersistVenture */1);
                                               throw [
                                                     DeadThread,
                                                     param[0]
                                                   ];
                                             } else {
                                               postMessage$1(correlationId, /* UpdateIndex */Block.__(2, [param[0]]));
+                                              result(correlationId, /* Ok */0);
                                               return Promise.resolve(param[1]);
                                             }
                                           }))
@@ -207,13 +213,16 @@ function withVenture($staropt$star, ventureAction, f, correlationId, param) {
                                                   var venture = param[1];
                                                   postMessage$1(correlationId, /* UpdateIndex */Block.__(2, [param[0]]));
                                                   ventureLoaded(correlationId, ventureId$2, venture, param[2]);
+                                                  result(correlationId, /* Ok */0);
                                                   return Promise.resolve(venture);
                                               case 1 : 
                                                   var venture$1 = param[1];
                                                   postMessage$1(correlationId, /* UpdateIndex */Block.__(2, [param[0]]));
                                                   ventureJoined(correlationId, ventureId$2, venture$1);
+                                                  result(correlationId, /* Ok */0);
                                                   return Promise.resolve(venture$1);
                                               case 2 : 
+                                                  result(correlationId, /* CouldNotJoinVenture */3);
                                                   throw [
                                                         DeadThread,
                                                         param[0]
@@ -363,7 +372,7 @@ function rejectPartner(ventureId, processId) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            324,
+                                            343,
                                             15
                                           ]
                                         ];
@@ -387,7 +396,7 @@ function endorsePartner(ventureId, processId) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            342,
+                                            361,
                                             15
                                           ]
                                         ];
@@ -428,7 +437,7 @@ function rejectPartnerRemoval(ventureId, processId) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            379,
+                                            398,
                                             15
                                           ]
                                         ];
@@ -452,7 +461,7 @@ function endorsePartnerRemoval(ventureId, processId) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            397,
+                                            416,
                                             15
                                           ]
                                         ];
@@ -479,7 +488,7 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            415,
+                                            434,
                                             15
                                           ]
                                         ];
@@ -503,7 +512,7 @@ function rejectPayout(ventureId, processId) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            437,
+                                            456,
                                             15
                                           ]
                                         ];
@@ -527,7 +536,7 @@ function endorsePayout(ventureId, processId) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            455,
+                                            474,
                                             15
                                           ]
                                         ];
@@ -551,7 +560,7 @@ function exposeIncomeAddress(ventureId, accountIdx) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            473,
+                                            492,
                                             15
                                           ]
                                         ];
@@ -576,7 +585,7 @@ function syncWallet(ventureId, events, confs) {
                                           Caml_builtin_exceptions.match_failure,
                                           [
                                             "Venture_worker.re",
-                                            492,
+                                            511,
                                             15
                                           ]
                                         ];
@@ -608,7 +617,7 @@ function newItemsDetected(ventureId, items) {
                                               Caml_builtin_exceptions.match_failure,
                                               [
                                                 "Venture_worker.re",
-                                                510,
+                                                529,
                                                 15
                                               ]
                                             ];
@@ -639,7 +648,7 @@ function syncTabs(ventureId, items) {
                                               Caml_builtin_exceptions.match_failure,
                                               [
                                                 "Venture_worker.re",
-                                                537,
+                                                556,
                                                 15
                                               ]
                                             ];
