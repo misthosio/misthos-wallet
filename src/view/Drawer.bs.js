@@ -3,6 +3,7 @@
 
 var Css = require("bs-css/src/Css.js");
 var React = require("react");
+var TitleBar = require("./components/TitleBar.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -43,7 +44,10 @@ function make(onSignOut, index, selected, _) {
           /* render */(function () {
               return React.createElement("div", {
                           className: container
-                        }, ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[])), React.createElement("div", {
+                        }, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
+                                    "My Ventures",
+                                    /* [] */0
+                                  ]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[])), React.createElement("div", {
                               className: flex_
                             }), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[ViewCommon.text("Create a Venture")])), React.createElement("div", {
                               className: flex_

@@ -13,6 +13,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
   render: _self =>
     MaterialUi.(
       <div className=Styles.container>
+        <TitleBar titles=["My Ventures"] />
         <VentureList ?selected index />
         <div className=Styles.flex_ />
         <LinkButton route=CreateVenture>
