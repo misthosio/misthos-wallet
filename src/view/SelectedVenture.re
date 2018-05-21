@@ -46,7 +46,11 @@ let make =
         Array.of_list(
           viewData.partners
           |> List.map((partner: ViewData.partner) =>
-               <Partner key=(partner.userId |> UserId.toString) partner />
+               <Partner
+                 key=(partner.userId |> UserId.toString)
+                 partnerId=partner.userId
+                 name=?partner.name
+               />
              ),
         ),
       );

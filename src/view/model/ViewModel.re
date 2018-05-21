@@ -119,26 +119,8 @@ module ViewPayoutView = {
   type voteStatus = TxDetailsCollector.voteStatus;
   type voter = TxDetailsCollector.voter;
   type t = TxDetailsCollector.payout;
-  /* let fromViewModelState = (processId, {txDetailsCollector}) => */
-  /*   txDetailsCollector |> TxDetailsCollector.getPayout(processId); */
-  let fromViewModelState =
-      (processId, {ventureId, localUser, partnersCollector}) =>
-    TxDetailsCollector.{
-      processId: ProcessId.make(),
-      status: PendingApproval,
-      canEndorse: false,
-      canReject: false,
-      summary: {
-        reserved: BTC.zero,
-        destinations: [],
-        spentWithFees: BTC.zero,
-        misthosFee: BTC.zero,
-        networkFee: BTC.zero,
-      },
-      voters: [],
-      txId: None,
-      date: None,
-    };
+  let fromViewModelState = (processId, {txDetailsCollector}) =>
+    txDetailsCollector |> TxDetailsCollector.getPayout(processId);
 };
 
 let viewPayoutModal = ViewPayoutView.fromViewModelState;

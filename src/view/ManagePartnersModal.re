@@ -74,7 +74,8 @@ let make =
                    None;
                <Partner
                  key=(partner.userId |> UserId.toString)
-                 partner
+                 partnerId=partner.userId
+                 name=?partner.name
                  ?button
                />;
              }),

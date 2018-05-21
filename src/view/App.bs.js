@@ -106,7 +106,7 @@ function make(session, updateSession, _) {
           return /* None */0;
         } else {
           return /* Some */[/* tuple */[
-                    ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(ViewModel.viewPayoutModal(match[0], venture$2), /* array */[])),
+                    ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(ViewModel.viewPayoutModal(match[0], venture$2), selectedVenture[2], /* array */[])),
                     (function (param) {
                         return onCloseModal(selected, param);
                       })

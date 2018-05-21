@@ -21,13 +21,12 @@ module Styles = {
     ]);
 };
 
-let make =
-    (~partner: ViewModel.ManagePartnersView.partner, ~button=?, _children) => {
+let make = (~partnerId: userId, ~name=?, ~button=?, _children) => {
   ...component,
   render: _self => {
-    let userId = partner.userId |> UserId.toString;
+    let userId = partnerId |> UserId.toString;
     let (primary, secondary) =
-      switch (partner.name) {
+      switch (name) {
       | Some(name) => (name |> text, Some(userId |> text))
       | None => (userId |> text, None)
       };

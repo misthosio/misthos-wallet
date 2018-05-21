@@ -70,23 +70,8 @@ function fromViewModelState$1(param) {
 
 var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
-function fromViewModelState$2(_, _$1) {
-  return /* record */[
-          /* processId */PrimitiveTypes.ProcessId[/* make */10](/* () */0),
-          /* status : PendingApproval */0,
-          /* canEndorse */false,
-          /* canReject */false,
-          /* summary : record */[
-            /* reserved */BTC.zero,
-            /* destinations : [] */0,
-            /* spentWithFees */BTC.zero,
-            /* misthosFee */BTC.zero,
-            /* networkFee */BTC.zero
-          ],
-          /* voters : [] */0,
-          /* txId : None */0,
-          /* date : None */0
-        ];
+function fromViewModelState$2(processId, param) {
+  return ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]);
 }
 
 var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$2];

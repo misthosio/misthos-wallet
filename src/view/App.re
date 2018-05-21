@@ -55,13 +55,14 @@ let make = (~session, ~updateSession, _children) => {
     | (
         LoggedIn(_),
         Venture(selected, Payout(processId)),
-        VentureLoaded(_, venture, _commands),
+        VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
         None :
         Some((
           <ViewPayoutModal
             viewData=(venture |> ViewModel.viewPayoutModal(processId))
+            commands
           />,
           onCloseModal(selected),
         ))
