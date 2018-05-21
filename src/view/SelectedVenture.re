@@ -229,7 +229,7 @@ let make =
           </MFabButton>
           <div className=Css.(style([width(px(Theme.space(8)))])) />
           <MFabButton
-            variant=Orange route=(Venture(viewData.ventureId, Payout))>
+            variant=Orange route=(Venture(viewData.ventureId, CreatePayout))>
             ("PAY OUT" |> text)
           </MFabButton>
         </div>

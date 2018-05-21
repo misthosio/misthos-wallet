@@ -40,7 +40,7 @@ let make = (~session, ~updateSession, _children) => {
         None : Some((<Receive commands />, onCloseModal(selected)))
     | (
         LoggedIn(_),
-        Venture(selected, Payout),
+        Venture(selected, CreatePayout),
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
