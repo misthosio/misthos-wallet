@@ -45,6 +45,7 @@ function fromViewModelState$1(param) {
           /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
           /* initialSummary : record */[
             /* reserved */BTC.zero,
+            /* destinations : [] */0,
             /* spentWithFees */BTC.zero,
             /* misthosFee */BTC.zero,
             /* networkFee */BTC.zero

@@ -82,7 +82,7 @@ function apply($$event, state) {
                 /* unconfirmedTxs : :: */[
                   /* UnconfirmedPayout */Block.__(1, [
                       match$1[/* txId */1],
-                      PayoutTransaction.summary(state[/* network */3], payoutTx)[/* spentWithFees */1]
+                      PayoutTransaction.summary(state[/* network */3], payoutTx)[/* spentWithFees */2]
                     ]),
                   state[/* unconfirmedTxs */2]
                 ],

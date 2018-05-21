@@ -163,6 +163,12 @@ let () =
       |> toEqual(
            PayoutTransaction.{
              reserved: BTC.fromSatoshis(15000L),
+             destinations: [
+               (
+                 "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                 BTC.fromSatoshis(9800L),
+               ),
+             ],
              spentWithFees: BTC.fromSatoshis(10370L),
              misthosFee: BTC.fromSatoshis(285L),
              networkFee: BTC.fromSatoshis(285L),
@@ -173,7 +179,7 @@ let () =
       let destinations = [
         ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(5000L)),
       ];
-      let max =
+      let outMax =
         PayoutTransaction.max(
           ~allInputs=inputs,
           ~targetDestination="mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
@@ -187,7 +193,7 @@ let () =
             ~mandatoryInputs=Network.inputSet(),
             ~allInputs=inputs,
             ~destinations=[
-              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", max),
+              ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", outMax),
               ...destinations,
             ],
             ~satsPerByte=BTC.fromSatoshis(1L),
@@ -199,6 +205,13 @@ let () =
         |> toEqual(
              PayoutTransaction.{
                reserved: BTC.fromSatoshis(15000L),
+               destinations: [
+                 ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", outMax),
+                 (
+                   "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
+                   BTC.fromSatoshis(5000L),
+                 ),
+               ],
                spentWithFees: BTC.fromSatoshis(15000L),
                misthosFee: BTC.fromSatoshis(414L),
                networkFee: BTC.fromSatoshis(323L),
@@ -214,7 +227,7 @@ let () =
               ~destinations=[
                 (
                   "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
-                  max |> BTC.plus(BTC.fromSatoshis(50L)),
+                  outMax |> BTC.plus(BTC.fromSatoshis(50L)),
                 ),
                 ...destinations,
               ],

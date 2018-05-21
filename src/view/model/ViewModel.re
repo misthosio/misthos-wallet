@@ -77,6 +77,7 @@ module PayoutView = {
     ventureName: name,
     initialSummary: {
       reserved: BTC.zero,
+      destinations: [],
       spentWithFees: BTC.zero,
       misthosFee: BTC.zero,
       networkFee: BTC.zero,
