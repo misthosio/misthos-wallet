@@ -25,7 +25,7 @@ type action =
   | AddAnother
   | ProposePayout;
 
-let component = ReasonReact.reducerComponent("Payout");
+let component = ReasonReact.reducerComponent("CreatePayout");
 
 module Styles = {
   open Css;

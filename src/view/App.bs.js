@@ -11,12 +11,13 @@ var Spinner = require("./components/Spinner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
-var PayoutModal = require("./PayoutModal.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureStore = require("./VentureStore.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
+var ViewPayoutModal = require("./ViewPayoutModal.bs.js");
+var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
 var ManagePartnersModal = require("./ManagePartnersModal.bs.js");
 
 var component = ReasonReact.statelessComponent("App");
@@ -39,8 +40,8 @@ function make(session, updateSession, _) {
       return /* None */0;
     } else {
       var match = currentRoute[1];
+      var selected = currentRoute[0];
       if (typeof match === "number") {
-        var selected = currentRoute[0];
         switch (match) {
           case 0 : 
               return /* None */0;
@@ -71,7 +72,7 @@ function make(session, updateSession, _) {
                   return /* None */0;
                 } else {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, PayoutModal.make(ViewModel.payoutModal(venture$1), selectedVenture[2], /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.payoutModal(venture$1), selectedVenture[2], /* array */[])),
                             (function (param) {
                                 return onCloseModal(selected, param);
                               })
@@ -96,8 +97,21 @@ function make(session, updateSession, _) {
               }
           
         }
-      } else {
+      } else if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
         return /* None */0;
+      } else {
+        console.log("ViewPayout");
+        var match$4 = ViewModel.readOnly(selectedVenture[1]);
+        if (match$4) {
+          return /* None */0;
+        } else {
+          return /* Some */[/* tuple */[
+                    ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(/* array */[])),
+                    (function (param) {
+                        return onCloseModal(selected, param);
+                      })
+                  ]];
+        }
       }
     }
   };

@@ -23,7 +23,7 @@ var defaultFee = BTC.fromSatoshis(/* int64 */[
       /* lo */100
     ]);
 
-var component = ReasonReact.reducerComponent("Payout");
+var component = ReasonReact.reducerComponent("CreatePayout");
 
 var balance = Css.style(/* :: */[
       Css.fontSize(Css.vw(2.0)),
