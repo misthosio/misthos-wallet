@@ -9,13 +9,13 @@ module type Config = {
   let instance: unit => t;
 };
 
+type correlationId = string;
+
 type message = {
   .
   "payload": Js.Json.t,
-  "correlationId": string,
+  "correlationId": correlationId,
 };
-
-type msgId = string;
 
 module MakeClient = (Config: Config) => {
   type listener = (. Config.outgoing) => unit;

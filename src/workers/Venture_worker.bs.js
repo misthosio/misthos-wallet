@@ -139,8 +139,15 @@ function withVenture($staropt$star, ventureAction, f, correlationId, param) {
                                   match = /* tuple */[
                                     match$1[0],
                                     match$1[1].then((function (param) {
-                                            postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
-                                            return Promise.resolve(param[1]);
+                                            if (param.tag) {
+                                              throw [
+                                                    DeadThread,
+                                                    param[0]
+                                                  ];
+                                            } else {
+                                              postMessage$1(/* None */0, /* UpdateIndex */Block.__(2, [param[0]]));
+                                              return Promise.resolve(param[1]);
+                                            }
                                           }))
                                   ];
                                   break;
@@ -320,7 +327,7 @@ function proposePartner(ventureId, prospectId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* ProposePartner */3][/* exec */0], prospectId, venture).then((function (param) {
-                                  if (typeof param === "number") {
+                                  if (typeof param === "number" || param.tag) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(ventureId, param[1]);
@@ -337,8 +344,19 @@ function rejectPartner(ventureId, processId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartner */4][/* exec */0], processId, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            272,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -350,8 +368,19 @@ function endorsePartner(ventureId, processId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartner */5][/* exec */0], processId, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            290,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -363,11 +392,11 @@ function proposePartnerRemoval(ventureId, partnerId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* ProposePartnerRemoval */6][/* exec */0], partnerId, venture).then((function (param) {
-                                  if (param) {
+                                  if (typeof param === "number" || param.tag) {
+                                    return Promise.resolve(venture);
+                                  } else {
                                     newItems(ventureId, param[1]);
                                     return Promise.resolve(param[0]);
-                                  } else {
-                                    return Promise.resolve(venture);
                                   }
                                 }));
                   }), param, param$1);
@@ -380,8 +409,19 @@ function rejectPartnerRemoval(ventureId, processId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartnerRemoval */7][/* exec */0], processId, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            327,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -393,8 +433,19 @@ function endorsePartnerRemoval(ventureId, processId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */8][/* exec */0], processId, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            345,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -406,12 +457,21 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._4(Venture.Cmd[/* ProposePayout */10][/* exec */0], accountIdx, destinations, fee, venture).then((function (param) {
-                                  if (param) {
-                                    newItems(ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
-                                  } else {
+                                  if (typeof param === "number") {
                                     logMessage("Not enough funds");
                                     return Promise.resolve(venture);
+                                  } else if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            363,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
                                   }
                                 }));
                   }), param, param$1);
@@ -424,8 +484,19 @@ function rejectPayout(ventureId, processId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPayout */11][/* exec */0], processId, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            385,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -437,8 +508,19 @@ function endorsePayout(ventureId, processId) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePayout */12][/* exec */0], processId, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            403,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -450,9 +532,20 @@ function exposeIncomeAddress(ventureId, accountIdx) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */9][/* exec */0], accountIdx, venture).then((function (param) {
-                                  newIncomeAddress(correlationId, ventureId, param[0]);
-                                  newItems(ventureId, param[2]);
-                                  return Promise.resolve(param[1]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            421,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newIncomeAddress(correlationId, ventureId, param[0]);
+                                    newItems(ventureId, param[2]);
+                                    return Promise.resolve(param[1]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -464,8 +557,19 @@ function syncWallet(ventureId, events, confs) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._3(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], events, confs, venture).then((function (param) {
-                                  newItems(ventureId, param[1]);
-                                  return Promise.resolve(param[0]);
+                                  if (param.tag) {
+                                    throw [
+                                          Caml_builtin_exceptions.match_failure,
+                                          [
+                                            "Venture_worker.re",
+                                            440,
+                                            15
+                                          ]
+                                        ];
+                                  } else {
+                                    newItems(ventureId, param[1]);
+                                    return Promise.resolve(param[0]);
+                                  }
                                 }));
                   }), param, param$1);
     });
@@ -477,13 +581,24 @@ function newItemsDetected(ventureId, items) {
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
-                                  if (param.tag) {
-                                    logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
-                                    newItems(ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
-                                  } else {
-                                    newItems(ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
+                                  switch (param.tag | 0) {
+                                    case 0 : 
+                                        newItems(ventureId, param[1]);
+                                        return Promise.resolve(param[0]);
+                                    case 1 : 
+                                        logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
+                                        newItems(ventureId, param[1]);
+                                        return Promise.resolve(param[0]);
+                                    case 2 : 
+                                        throw [
+                                              Caml_builtin_exceptions.match_failure,
+                                              [
+                                                "Venture_worker.re",
+                                                458,
+                                                15
+                                              ]
+                                            ];
+                                    
                                   }
                                 }));
                   }), param, param$1);
@@ -497,13 +612,24 @@ function syncTabs(ventureId, items) {
   return (function (param, param$1) {
       return withVenture(partial_arg$1, partial_arg, (function (_, venture) {
                     return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
-                                  if (param.tag) {
-                                    logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
-                                    newItems(ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
-                                  } else {
-                                    newItems(ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
+                                  switch (param.tag | 0) {
+                                    case 0 : 
+                                        newItems(ventureId, param[1]);
+                                        return Promise.resolve(param[0]);
+                                    case 1 : 
+                                        logMessage("There were " + (String(param[2].length) + " conflicts while syncing"));
+                                        newItems(ventureId, param[1]);
+                                        return Promise.resolve(param[0]);
+                                    case 2 : 
+                                        throw [
+                                              Caml_builtin_exceptions.match_failure,
+                                              [
+                                                "Venture_worker.re",
+                                                485,
+                                                15
+                                              ]
+                                            ];
+                                    
                                   }
                                 }));
                   }), param, param$1);

@@ -29,6 +29,13 @@ type incoming =
 
 type encodedIncoming = Js.Json.t;
 
+type error =
+  | CouldNotPersist
+  | CouldNotLoadVenture
+  | CouldNotJoinVenture
+  | CouldNotFindUserInfo
+  | BadInput;
+
 type outgoing =
   | SessionStarted(blockstackItems, string)
   | SessionPending
@@ -36,7 +43,8 @@ type outgoing =
   | UpdateIndex(Venture.Index.t)
   | VentureLoaded(ventureId, EventLog.t, array(EventLog.item))
   | VentureCreated(ventureId, EventLog.t)
-  | NewItems(ventureId, array(EventLog.item));
+  | NewItems(ventureId, array(EventLog.item))
+  | CmdCompleted(WebWorker.correlationId, option(error));
 
 type encodedOutgoing = Js.Json.t;
 

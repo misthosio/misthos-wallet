@@ -12,6 +12,7 @@ var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var DataWorkerMessage = require("./DataWorkerMessage.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 (( self.localStorage = require("./fakeLocalStorage").localStorage ));
 
@@ -95,6 +96,15 @@ function handleMsg(venturesPromise, doWork, msg) {
                                     storagePrefix,
                                     Belt_Map.set(ventures, ventureId, Curry._2(EventLog.appendItems, msg[1], venture))
                                   ]);
+                    case 6 : 
+                        throw [
+                              Caml_builtin_exceptions.match_failure,
+                              [
+                                "Data_worker.re",
+                                38,
+                                9
+                              ]
+                            ];
                     
                   }
                 }

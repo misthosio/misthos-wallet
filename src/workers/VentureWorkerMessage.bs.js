@@ -13,6 +13,7 @@ var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage");
 
@@ -635,6 +636,15 @@ function encodeOutgoing(param) {
                         ]
                       ]
                     ]);
+      case 6 : 
+          throw [
+                Caml_builtin_exceptions.match_failure,
+                [
+                  "VentureWorkerMessage.re",
+                  289,
+                  2
+                ]
+              ];
       
     }
   }

@@ -102,15 +102,20 @@ module Handle = {
                   let (ventureId, ventureThread) =
                     switch (ventureAction) {
                     | Create(name) =>
-                      let (ventureId, venturePromise) =
-                        Venture.Cmd.Create.exec(data, ~name);
+                      open Venture.Cmd.Create;
+                      let (ventureId, venturePromise) = exec(data, ~name);
                       (
                         ventureId,
                         venturePromise
-                        |> then_(((index, venture)) => {
-                             Notify.indexUpdated(index);
-                             venture |> resolve;
-                           }),
+                        |> then_(
+                             fun
+                             | Ok(index, venture) => {
+                                 Notify.indexUpdated(index);
+                                 venture |> resolve;
+                               }
+                             | CouldNotPersist(error) =>
+                               raise(DeadThread(error)),
+                           ),
                       );
                     | Load(ventureId) =>
                       try (

@@ -100,21 +100,21 @@ let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
 
 module Cmd = {
   type t = {
-    proposePartner: (~prospectId: userId) => WebWorker.msgId,
-    endorsePartner: (~processId: processId) => WebWorker.msgId,
-    rejectPartner: (~processId: processId) => WebWorker.msgId,
-    proposePartnerRemoval: (~partnerId: userId) => WebWorker.msgId,
-    rejectPartnerRemoval: (~processId: processId) => WebWorker.msgId,
-    endorsePartnerRemoval: (~processId: processId) => WebWorker.msgId,
+    proposePartner: (~prospectId: userId) => WebWorker.correlationId,
+    endorsePartner: (~processId: processId) => WebWorker.correlationId,
+    rejectPartner: (~processId: processId) => WebWorker.correlationId,
+    proposePartnerRemoval: (~partnerId: userId) => WebWorker.correlationId,
+    rejectPartnerRemoval: (~processId: processId) => WebWorker.correlationId,
+    endorsePartnerRemoval: (~processId: processId) => WebWorker.correlationId,
     proposePayout:
       (
         ~accountIdx: accountIdx,
         ~destinations: list((string, BTC.t)),
         ~fee: BTC.t
       ) =>
-      WebWorker.msgId,
-    endorsePayout: (~processId: processId) => WebWorker.msgId,
-    rejectPayout: (~processId: processId) => WebWorker.msgId,
+      WebWorker.correlationId,
+    endorsePayout: (~processId: processId) => WebWorker.correlationId,
+    rejectPayout: (~processId: processId) => WebWorker.correlationId,
     exposeIncomeAddress: (~accountIdx: accountIdx) => Js.Promise.t(string),
   };
   let make = (worker, ventureId) => {
