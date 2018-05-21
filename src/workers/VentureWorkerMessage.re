@@ -29,8 +29,9 @@ type incoming =
 
 type encodedIncoming = Js.Json.t;
 
-type error =
-  | CouldNotPersist
+type cmdResponse =
+  | Ok
+  | CouldNotPersistVenture
   | CouldNotLoadVenture
   | CouldNotJoinVenture
   | CouldNotFindUserInfo
@@ -44,7 +45,7 @@ type outgoing =
   | VentureLoaded(ventureId, EventLog.t, array(EventLog.item))
   | VentureCreated(ventureId, EventLog.t)
   | NewItems(ventureId, array(EventLog.item))
-  | CmdCompleted(WebWorker.correlationId, option(error));
+  | CmdCompleted(WebWorker.correlationId, cmdResponse);
 
 type encodedOutgoing = Js.Json.t;
 
