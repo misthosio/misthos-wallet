@@ -69,12 +69,6 @@ function handleMsg(venturesPromise, doWork, msg) {
                                                               ]);
                                                   }));
                                     }));
-                    case 1 : 
-                    case 2 : 
-                        return Promise.resolve(/* tuple */[
-                                    storagePrefix,
-                                    ventures
-                                  ]);
                     case 3 : 
                         logMessage("Handling 'VentureLoaded'");
                         return Promise.resolve(/* tuple */[
@@ -95,7 +89,11 @@ function handleMsg(venturesPromise, doWork, msg) {
                                     storagePrefix,
                                     Belt_Map.set(ventures, ventureId, Curry._2(EventLog.appendItems, msg[1], venture))
                                   ]);
-                    
+                    default:
+                      return Promise.resolve(/* tuple */[
+                                  storagePrefix,
+                                  ventures
+                                ]);
                   }
                 }
               }));
@@ -113,7 +111,7 @@ self.onmessage = (function (msg) {
       WalletSync.syncWallets(ventures);
       return LogSync.syncLogs(storagePrefix, ventures);
     };
-    venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.msg));
+    venturesPromise[0] = handleMsg(venturesPromise[0], doWork, DataWorkerMessage.decodeIncoming(msg.data.payload));
     var id = intervalId[0];
     intervalId[0] = id ? id : /* Some */[setInterval((function () {
                 return catchAndLogError(venturesPromise[0].then((function (param) {

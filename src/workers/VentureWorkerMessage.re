@@ -29,6 +29,16 @@ type incoming =
 
 type encodedIncoming = Js.Json.t;
 
+type cmdSuccess =
+  | ProcessStarted(processId);
+
+type cmdError =
+  | CouldNotPersistVenture;
+
+type cmdResponse =
+  | Ok(cmdSuccess)
+  | Error(cmdError);
+
 type outgoing =
   | SessionStarted(blockstackItems, string)
   | SessionPending
@@ -36,11 +46,77 @@ type outgoing =
   | UpdateIndex(Venture.Index.t)
   | VentureLoaded(ventureId, EventLog.t, array(EventLog.item))
   | VentureCreated(ventureId, EventLog.t)
-  | NewItems(ventureId, array(EventLog.item));
+  | NewItems(ventureId, array(EventLog.item))
+  | CmdCompleted(ventureId, WebWorker.correlationId, cmdResponse);
 
 type encodedOutgoing = Js.Json.t;
 
 exception UnknownMessage(Js.Json.t);
+
+let encodeSuccess =
+  fun
+  | ProcessStarted(processId) =>
+    Json.Encode.(
+      object_([
+        ("type", string("ProcessStarted")),
+        ("processId", ProcessId.encode(processId)),
+      ])
+    );
+
+let decodeSuccess = raw => {
+  let type_ = raw |> Json.Decode.(field("type", string));
+  switch (type_) {
+  | "ProcessStarted" =>
+    let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
+    ProcessStarted(processId);
+  | _ => raise(UnknownMessage(raw))
+  };
+};
+
+let encodeError =
+  fun
+  | CouldNotPersistVenture =>
+    Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]));
+
+/* | CouldNotLoadVenture => */
+/*   Json.Encode.(object_([("type", string("CouldNotLoadVenture"))])) */
+/* | CouldNotJoinVenture => */
+/*   Json.Encode.(object_([("type", string("CouldNotJoinVenture"))])); */
+let decodeError = raw => {
+  let type_ = raw |> Json.Decode.(field("type", string));
+  switch (type_) {
+  | "CouldNotPersistVenture" => CouldNotPersistVenture
+  /* | "CouldNotLoadVenture" => CouldNotLoadVenture */
+  /* | "CouldNotJoinVenture" => CouldNotJoinVenture */
+  | _ => raise(UnknownMessage(raw))
+  };
+};
+
+let encodeResponse =
+  fun
+  | Ok(cmdSuccess) =>
+    Json.Encode.(
+      object_([
+        ("type", string("Ok")),
+        ("cmdSuccess", encodeSuccess(cmdSuccess)),
+      ])
+    )
+  | Error(cmdError) =>
+    Json.Encode.(
+      object_([
+        ("type", string("Error")),
+        ("cmdError", encodeError(cmdError)),
+      ])
+    );
+
+let decodeResponse = raw => {
+  let type_ = raw |> Json.Decode.(field("type", string));
+  switch (type_) {
+  | "Ok" => Ok(raw |> Json.Decode.field("cmdSuccess", decodeSuccess))
+  | "Error" => Error(raw |> Json.Decode.field("cmdError", decodeError))
+  | _ => raise(UnknownMessage(raw))
+  };
+};
 
 let encodeIncoming =
   fun
@@ -328,6 +404,15 @@ let encodeOutgoing =
         ("ventureId", VentureId.encode(ventureId)),
         ("items", array(EventLog.encodeItem, items)),
       ])
+    )
+  | CmdCompleted(ventureId, correlationId, response) =>
+    Json.Encode.(
+      object_([
+        ("type", string("CmdCompleted")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("correlationId", string(correlationId)),
+        ("response", encodeResponse(response)),
+      ])
     );
 
 let decodeOutgoing = raw => {
@@ -359,6 +444,11 @@ let decodeOutgoing = raw => {
     let items =
       Json.Decode.(raw |> field("items", array(EventLog.decodeItem)));
     NewItems(ventureId, items);
+  | "CmdCompleted" =>
+    let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
+    let correlationId = raw |> Json.Decode.(field("correlationId", string));
+    let response = raw |> Json.Decode.field("response", decodeResponse);
+    CmdCompleted(ventureId, correlationId, response);
   | "UpdateIndex" =>
     UpdateIndex(raw |> Json.Decode.field("index", Venture.Index.decode))
   | _ => raise(UnknownMessage(raw))

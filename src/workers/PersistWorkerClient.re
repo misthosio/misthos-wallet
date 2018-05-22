@@ -6,17 +6,3 @@ module Config = {
 };
 
 include WebWorker.MakeClient(Config);
-
-let updateSession = worker =>
-  worker
-  |. postMessage(
-       PersistWorkerMessage.UpdateSession(
-         WorkerLocalStorage.readBlockstackItemsFromStorage(),
-       ),
-     );
-
-let ventureMessage = (msg, worker) =>
-  PersistWorkerMessage.VentureWorkerMessage(
-    msg |> VentureWorkerMessage.encodeOutgoing,
-  )
-  |> postMessage(worker);

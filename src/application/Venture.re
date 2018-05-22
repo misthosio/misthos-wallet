@@ -140,11 +140,12 @@ let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
         (id |> VentureId.toString) ++ "/log.json",
         log |> EventLog.encode |> Json.stringify,
       )
-      |> then_(() => resolve((venture, collector)));
+      |> then_(() => resolve(Js.Result.Ok((venture, collector))))
+      |> catch(err => Js.Result.Error(err) |> resolve);
     } else if (collector |> Array.length != 0) {
       raise(NotPersistingNewEvents);
     } else {
-      resolve((venture, collector));
+      resolve(Js.Result.Ok((venture, collector)));
     }
   );
 
@@ -169,7 +170,11 @@ let load =
          }
        )
     |> then_(persist(~shouldPersist))
-    |> then_(((v, c)) => Ok(v, c) |> resolve)
+    |> then_(
+         fun
+         | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+         | Js.Result.Error(err) => CouldNotLoad(err) |> resolve,
+       )
     |> catch(err => CouldNotLoad(err) |> resolve)
   );
 };
@@ -211,12 +216,15 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
                 }
               )
            |> then_(persist)
-           |> then_(((venture, _)) =>
-                Index.add(
-                  ~ventureId=venture.id,
-                  ~ventureName=venture.state |> State.ventureName,
-                )
-                |> then_(index => resolve(Joined(index, venture)))
+           |> then_(
+                fun
+                | Js.Result.Ok((venture, _)) =>
+                  Index.add(
+                    ~ventureId=venture.id,
+                    ~ventureName=venture.state |> State.ventureName,
+                  )
+                  |> then_(index => resolve(Joined(index, venture)))
+                | Js.Result.Error(err) => CouldNotJoin(err) |> resolve,
               )
            |> catch(err => CouldNotJoin(err) |> resolve)
          }
@@ -231,7 +239,9 @@ let getEventLog = ({log}) => log;
 
 module Cmd = {
   module Create = {
-    type result = (Index.t, t);
+    type result =
+      | Ok(Index.t, t)
+      | CouldNotPersist(Js.Promise.error);
     let exec = (session: Session.Data.t, ~name as ventureName) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
@@ -242,15 +252,25 @@ module Cmd = {
           ~metaPolicy=defaultPolicy,
           ~network=session.network,
         );
-      Js.(
+      (
         ventureCreated.ventureId,
-        Promise.all2((
-          Index.add(~ventureId=ventureCreated.ventureId, ~ventureName),
-          make(session, ventureCreated.ventureId)
-          |> apply(VentureCreated(ventureCreated))
-          |> Promise.then_(persist)
-          |> Promise.then_(((v, _)) => v |> Promise.resolve),
-        )),
+        make(session, ventureCreated.ventureId)
+        |> Js.Promise.(
+             makeResult =>
+               makeResult
+               |> apply(VentureCreated(ventureCreated))
+               |> then_(persist)
+               |> then_(
+                    fun
+                    | Js.Result.Ok((venture, _)) =>
+                      Index.add(
+                        ~ventureId=venture.id,
+                        ~ventureName=venture.state |> State.ventureName,
+                      )
+                      |> then_(index => resolve(Ok(index, venture)))
+                    | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+                  )
+           ),
       );
     };
   };
@@ -261,7 +281,8 @@ module Cmd = {
           t,
           array(EventLog.item),
           array((EventLog.item, Validation.result)),
-        );
+        )
+      | CouldNotPersist(Js.Promise.error);
     let exec = (newItems, {session} as venture) => {
       let ({log, validation, state, wallet, watchers}, collector, conflicts) =
         newItems
@@ -321,21 +342,25 @@ module Cmd = {
              )
              |> persist
            )
-        |> then_(((venture, collector)) =>
-             (
-               switch (conflicts) {
-               | [||] => Ok(venture, collector)
-               | conflicts => WithConflicts(venture, collector, conflicts)
-               }
-             )
-             |> resolve
+        |> then_(
+             fun
+             | Js.Result.Ok((venture, collector)) =>
+               (
+                 switch (conflicts) {
+                 | [||] => Ok(venture, collector)
+                 | conflicts => WithConflicts(venture, collector, conflicts)
+                 }
+               )
+               |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
            )
       );
     };
   };
   module SynchronizeWallet = {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (incomeEvents, txConfs, venture) => {
       logMessage("Synchronizing wallet");
       Js.Promise.(
@@ -368,17 +393,20 @@ module Cmd = {
              txConfs,
            )
         |> then_(persist)
-        |> then_(((venture, collector)) =>
-             Ok(venture, collector) |> resolve
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
            )
       );
     };
   };
   module ProposePartner = {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | PartnerAlreadyExists
-      | NoUserInfo;
+      | NoUserInfo
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~prospectId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
       if (state |> State.isPartner(prospectId)) {
@@ -425,7 +453,13 @@ module Cmd = {
                            )
                       )
                    |> then_(persist)
-                   |> then_(((v, c)) => resolve(Ok(v, c)));
+                   |> then_(
+                        fun
+                        | Js.Result.Ok((v, c)) =>
+                          Ok(partnerProposed.processId, v, c) |> resolve
+                        | Js.Result.Error(err) =>
+                          CouldNotPersist(err) |> resolve,
+                      );
                  }
                | UserInfo.Public.NotFound => resolve(NoUserInfo),
              )
@@ -435,7 +469,8 @@ module Cmd = {
   };
   module RejectPartner = {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPartner' command");
       Js.Promise.(
@@ -447,13 +482,18 @@ module Cmd = {
              ),
            )
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(v, c)))
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
       );
     };
   };
   module EndorsePartner = {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartner' command");
       let custodianProcessId =
@@ -477,14 +517,19 @@ module Cmd = {
                 )
            )
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(v, c)))
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
       );
     };
   };
   module ProposePartnerRemoval = {
     type result =
-      | Ok(t, array(EventLog.item))
-      | PartnerDoesNotExist;
+      | Ok(processId, t, array(EventLog.item))
+      | PartnerDoesNotExist
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~partnerId, {state, session} as venture) => {
       logMessage("Executing 'ProposePartnerRemoval' command");
       if (state |> State.isPartner(partnerId) == false) {
@@ -511,32 +556,36 @@ module Cmd = {
             | None => (venture, [||]) |> resolve
             }
           )
-          |> then_(((v, c)) =>
+          |> then_(((v, c)) => {
+               let proposal =
+                 Event.makePartnerRemovalProposed(
+                   ~eligibleWhenProposing=state |> State.currentPartners,
+                   ~lastPartnerAccepted=
+                     state |> State.lastPartnerAccepted(partnerId),
+                   ~supporterId=session.userId,
+                   ~policy=
+                     state
+                     |> State.currentPolicy(Event.Partner.Removal.processName),
+                 )
+                 |> Event.getPartnerRemovalProposedExn;
                v
-               |> apply(
-                    ~collector=c,
-                    Event.makePartnerRemovalProposed(
-                      ~eligibleWhenProposing=state |> State.currentPartners,
-                      ~lastPartnerAccepted=
-                        state |> State.lastPartnerAccepted(partnerId),
-                      ~supporterId=session.userId,
-                      ~policy=
-                        state
-                        |> State.currentPolicy(
-                             Event.Partner.Removal.processName,
-                           ),
-                    ),
-                  )
-             )
-          |> then_(persist)
-          |> then_(((v, c)) => resolve(Ok(v, c)))
+               |> apply(~collector=c, PartnerRemovalProposed(proposal))
+               |> then_(persist)
+               |> then_(
+                    fun
+                    | Js.Result.Ok((v, c)) =>
+                      Ok(proposal.processId, v, c) |> resolve
+                    | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+                  );
+             })
         );
       };
     };
   };
   module RejectPartnerRemoval = {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPartnerRemoval' command");
       Js.Promise.(
@@ -548,13 +597,18 @@ module Cmd = {
              ),
            )
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(v, c)))
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
       );
     };
   };
   module EndorsePartnerRemoval = {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'EndorsePartnerRemoval' command");
       Js.Promise.(
@@ -587,13 +641,18 @@ module Cmd = {
                 )
            )
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(v, c)))
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
       );
     };
   };
   module ExposeIncomeAddress = {
     type result =
-      | Ok(string, t, array(EventLog.item));
+      | Ok(string, t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~accountIdx, {wallet, session: {userId}} as venture) => {
       logMessage("Executing 'GetIncomeAddress' command");
       let exposeEvent =
@@ -602,16 +661,20 @@ module Cmd = {
         venture
         |> apply(IncomeAddressExposed(exposeEvent))
         |> then_(persist)
-        |> then_(((v, c)) =>
-             resolve(Ok(exposeEvent.address.displayAddress, v, c))
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) =>
+               Ok(exposeEvent.address.displayAddress, v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
            )
       );
     };
   };
   module ProposePayout = {
     type result =
-      | Ok(t, array(EventLog.item))
-      | NotEnoughFunds;
+      | Ok(processId, t, array(EventLog.item))
+      | NotEnoughFunds
+      | CouldNotPersist(Js.Promise.error);
     let exec =
         (
           ~accountIdx,
@@ -635,7 +698,12 @@ module Cmd = {
             venture
             |> apply(PayoutProposed(proposal))
             |> then_(persist)
-            |> then_(((v, c)) => resolve(Ok(v, c)))
+            |> then_(
+                 fun
+                 | Js.Result.Ok((v, c)) =>
+                   Ok(proposal.processId, v, c) |> resolve
+                 | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+               )
           | Wallet.NotEnoughFunds => NotEnoughFunds |> resolve
         )
       );
@@ -643,7 +711,8 @@ module Cmd = {
   };
   module RejectPayout = {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'RejectPayout' command");
       Js.Promise.(
@@ -652,13 +721,18 @@ module Cmd = {
              Event.makePayoutRejected(~processId, ~rejectorId=session.userId),
            )
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(v, c)))
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
       );
     };
   };
   module EndorsePayout = {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec = (~processId, {session} as venture) => {
       logMessage("Executing 'EndorsePayout' command");
       Js.Promise.(
@@ -670,7 +744,11 @@ module Cmd = {
              ),
            )
         |> then_(persist)
-        |> then_(((v, c)) => resolve(Ok(v, c)))
+        |> then_(
+             fun
+             | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+             | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+           )
       );
     };
   };

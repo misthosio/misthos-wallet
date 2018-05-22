@@ -12,18 +12,19 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (self, [@bs.uncurry] ({. "data": WebWorker.payload} => unit)) => unit =
+  (self, [@bs.uncurry] ({. "data": WebWorker.message} => unit)) => unit =
   "onmessage";
 
 [@bs.set]
 external onError : (self, [@bs.uncurry] ('a => unit)) => unit = "onerror";
 
-[@bs.val] external _postMessage : WebWorker.payload => unit = "postMessage";
+[@bs.val] external _postMessage : WebWorker.message => unit = "postMessage";
 
 open PrimitiveTypes;
 
-let postMessage = (~syncId=WebWorker.emptySyncId, msg) =>
-  {"msg": msg |> Message.encodeOutgoing, "syncId": syncId} |> _postMessage;
+let postMessage = (~correlationId, msg) =>
+  {"payload": msg |> Message.encodeOutgoing, "correlationId": correlationId}
+  |> _postMessage;
 
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
@@ -33,15 +34,36 @@ let logError = error => {
 };
 
 module Notify = {
-  let sessionPending = () => postMessage(SessionPending);
-  let sessionStarted = (blockstackItems, storagePrefix) =>
-    postMessage(SessionStarted(blockstackItems, storagePrefix));
-  let indexUpdated = index => postMessage(UpdateIndex(index));
-  let ventureLoaded = (id, venture, newItems) =>
-    postMessage(VentureLoaded(id, venture |> Venture.getEventLog, newItems));
-  let ventureJoined = (id, venture) => {
+  let cmdSuccess = (ventureId, correlationId, response) =>
+    postMessage(
+      ~correlationId,
+      CmdCompleted(ventureId, correlationId, Ok(response)),
+    );
+  let cmdError = (ventureId, correlationId, response) =>
+    postMessage(
+      ~correlationId,
+      CmdCompleted(ventureId, correlationId, Error(response)),
+    );
+  let sessionPending = correlationId =>
+    postMessage(~correlationId, SessionPending);
+  let sessionStarted = (correlationId, blockstackItems, storagePrefix) =>
+    postMessage(
+      ~correlationId,
+      SessionStarted(blockstackItems, storagePrefix),
+    );
+  let indexUpdated = (correlationId, index) =>
+    postMessage(~correlationId, UpdateIndex(index));
+  let ventureLoaded = (correlationId, id, venture, newItems) =>
+    postMessage(
+      ~correlationId,
+      VentureLoaded(id, venture |> Venture.getEventLog, newItems),
+    );
+  let ventureJoined = (correlationId, id, venture) => {
     let log = venture |> Venture.getEventLog;
-    postMessage(VentureLoaded(id, log, log |> EventLog.items));
+    postMessage(
+      ~correlationId,
+      VentureLoaded(id, log, log |> EventLog.items),
+    );
   };
   let ventureCreated = venture =>
     postMessage(
@@ -50,12 +72,12 @@ module Notify = {
         venture |> Venture.getEventLog,
       ),
     );
-  let newIncomeAddress = (syncId, ventureId, address) =>
-    postMessage(~syncId, NewIncomeAddress(ventureId, address));
-  let newItems = (id, items) =>
+  let newIncomeAddress = (correlationId, ventureId, address) =>
+    postMessage(~correlationId, NewIncomeAddress(ventureId, address));
+  let newItems = (correlationId, id, items) =>
     switch (items) {
     | [||] => ()
-    | items => postMessage(NewItems(id, items))
+    | items => postMessage(~correlationId, NewItems(id, items))
     };
 };
 
@@ -76,21 +98,31 @@ module Handle = {
     | Load(ventureId)
     | Reload(ventureId)
     | JoinVia(ventureId, userId);
-  let loadAndNotify = (~notify, ~persist=true, data, ventureId) =>
+  let loadAndNotify = (~notify, ~persist=true, data, correlationId, ventureId) =>
     Js.Promise.(
       Venture.load(~persist, data, ~ventureId)
       |> then_(
            fun
            | Venture.Ok(venture, newItems) => {
                if (notify) {
-                 Notify.ventureLoaded(ventureId, venture, newItems);
+                 Notify.ventureLoaded(
+                   correlationId,
+                   ventureId,
+                   venture,
+                   newItems,
+                 );
                };
                resolve(venture);
              }
-           | Venture.CouldNotLoad(error) => raise(DeadThread(error)),
+           | Venture.CouldNotLoad(error) =>
+             /* if (notify) { */
+             /*   Notify.cmdError(ventureId, correlationId, CouldNotLoadVenture); */
+             /* }; */
+             raise(DeadThread(error)),
          )
     );
-  let withVenture = (~notify=false, ventureAction, f, {venturesThread}) => {
+  let withVenture =
+      (~notify=false, ventureAction, f, correlationId, {venturesThread}) => {
     let venturesThread =
       Js.Promise.(
         venturesThread
@@ -100,15 +132,26 @@ module Handle = {
                   let (ventureId, ventureThread) =
                     switch (ventureAction) {
                     | Create(name) =>
-                      let (ventureId, venturePromise) =
-                        Venture.Cmd.Create.exec(data, ~name);
+                      open Venture.Cmd.Create;
+                      let (ventureId, venturePromise) = exec(data, ~name);
                       (
                         ventureId,
                         venturePromise
-                        |> then_(((index, venture)) => {
-                             Notify.indexUpdated(index);
-                             venture |> resolve;
-                           }),
+                        |> then_(
+                             fun
+                             | Ok(index, venture) => {
+                                 Notify.indexUpdated(correlationId, index);
+                                 venture |> resolve;
+                               }
+                             | CouldNotPersist(error) => {
+                                 Notify.cmdError(
+                                   ventureId,
+                                   correlationId,
+                                   CouldNotPersistVenture,
+                                 );
+                                 raise(DeadThread(error));
+                               },
+                           ),
                       );
                     | Load(ventureId) =>
                       try (
@@ -117,17 +160,32 @@ module Handle = {
                         |> List.assoc(ventureId)
                         |> then_(venture => {
                              if (notify) {
-                               Notify.ventureLoaded(ventureId, venture, [||]);
+                               Notify.ventureLoaded(
+                                 correlationId,
+                                 ventureId,
+                                 venture,
+                                 [||],
+                               );
                              };
                              resolve(venture);
                            })
                         |> catch((_) =>
-                             loadAndNotify(~notify, data, ventureId)
+                             loadAndNotify(
+                               ~notify,
+                               data,
+                               correlationId,
+                               ventureId,
+                             )
                            ),
                       ) {
                       | Not_found => (
                           ventureId,
-                          loadAndNotify(~notify, data, ventureId),
+                          loadAndNotify(
+                            ~notify,
+                            data,
+                            correlationId,
+                            ventureId,
+                          ),
                         )
                       }
                     | Reload(ventureId) => (
@@ -136,6 +194,7 @@ module Handle = {
                           ~notify,
                           ~persist=false,
                           data,
+                          correlationId,
                           ventureId,
                         ),
                       )
@@ -145,13 +204,18 @@ module Handle = {
                         |> then_(
                              fun
                              | Venture.Joined(index, venture) => {
-                                 Notify.indexUpdated(index);
-                                 Notify.ventureJoined(ventureId, venture);
+                                 Notify.indexUpdated(correlationId, index);
+                                 Notify.ventureJoined(
+                                   correlationId,
+                                   ventureId,
+                                   venture,
+                                 );
                                  venture |> resolve;
                                }
                              | Venture.AlreadyLoaded(index, venture, newItems) => {
-                                 Notify.indexUpdated(index);
+                                 Notify.indexUpdated(correlationId, index);
                                  Notify.ventureLoaded(
+                                   correlationId,
                                    ventureId,
                                    venture,
                                    newItems,
@@ -159,6 +223,11 @@ module Handle = {
                                  venture |> resolve;
                                }
                              | Venture.CouldNotJoin(error) =>
+                               /* Notify.cmdError( */
+                               /*   ventureId, */
+                               /*   correlationId, */
+                               /*   CouldNotJoinVenture, */
+                               /* ); */
                                raise(DeadThread(error)),
                            ),
                       )
@@ -169,10 +238,15 @@ module Handle = {
                       (
                         ventureId,
                         ventureThread
-                        |> then_(f)
+                        |> then_(f(correlationId))
                         |> catch(err => {
                              logError(err);
-                             loadAndNotify(~notify=true, data, ventureId);
+                             loadAndNotify(
+                               ~notify=true,
+                               data,
+                               correlationId,
+                               ventureId,
+                             );
                            }),
                       ),
                       ...ventures |> List.remove_assoc(ventureId),
@@ -184,7 +258,7 @@ module Handle = {
       );
     {venturesThread: venturesThread};
   };
-  let updateSession = (items, state) => {
+  let updateSession = (items, correlationId, state) => {
     logMessage("Handling 'UpdateSession'");
     items |> WorkerLocalStorage.setBlockstackItems;
     let sessionThread =
@@ -205,13 +279,19 @@ module Handle = {
                  when UserId.eq(data.userId, oldData.userId) =>
                resolve(Some((data, threads)))
              | (Some(data), _) =>
-               Notify.sessionStarted(items, data.storagePrefix);
+               Notify.sessionStarted(
+                 correlationId,
+                 items,
+                 data.storagePrefix,
+               );
                Venture.Index.load()
-               |> then_(index => index |> Notify.indexUpdated |> resolve)
+               |> then_(index =>
+                    index |> Notify.indexUpdated(correlationId) |> resolve
+                  )
                |> ignore;
                resolve(Some((data, [])));
              | _ =>
-               Notify.sessionPending();
+               Notify.sessionPending(correlationId);
                resolve(None);
              }
            ),
@@ -219,33 +299,38 @@ module Handle = {
   };
   let load = ventureId => {
     logMessage("Handling 'Load'");
-    withVenture(~notify=true, Load(ventureId), Js.Promise.resolve);
+    withVenture(~notify=true, Load(ventureId), (_) => Js.Promise.resolve);
   };
   let joinVia = (ventureId, userId) => {
     logMessage("Handling 'JoinVia'");
-    withVenture(JoinVia(ventureId, userId), Js.Promise.resolve);
+    withVenture(JoinVia(ventureId, userId), (_) => Js.Promise.resolve);
   };
   let create = name => {
     logMessage("Handling 'Create'");
     withVenture(
       Create(name),
-      venture => {
-        Notify.ventureCreated(venture);
+      (correlationId, venture) => {
+        Notify.ventureCreated(~correlationId, venture);
         Js.Promise.resolve(venture);
       },
     );
   };
   let proposePartner = (ventureId, prospectId) => {
     logMessage("Handling 'ProposePartner'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePartner.(
           venture
           |> exec(~prospectId)
           |> then_(
                fun
-               | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+               | Ok(processId, venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessStarted(processId),
+                   );
                    venture |> resolve;
                  }
                | _ => venture |> resolve,
@@ -256,7 +341,7 @@ module Handle = {
   };
   let rejectPartner = (ventureId, processId) => {
     logMessage("Handling 'RejectPartner'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.RejectPartner.(
           venture
@@ -264,7 +349,15 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -274,7 +367,7 @@ module Handle = {
   };
   let endorsePartner = (ventureId, processId) => {
     logMessage("Handling 'EndorsePartner'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePartner.(
           venture
@@ -282,7 +375,15 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -292,18 +393,31 @@ module Handle = {
   };
   let proposePartnerRemoval = (ventureId, partnerId) => {
     logMessage("Handling 'ProposePartnerRemoval'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePartnerRemoval.(
           venture
           |> exec(~partnerId)
           |> then_(
                fun
-               | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+               | Ok(processId, venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessStarted(processId),
+                   );
                    venture |> resolve;
                  }
-               | _ => venture |> resolve,
+               | PartnerDoesNotExist => venture |> resolve
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 },
              )
         )
       )
@@ -311,7 +425,7 @@ module Handle = {
   };
   let rejectPartnerRemoval = (ventureId, processId) => {
     logMessage("Handling 'RejectPartnerRemoval'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.RejectPartnerRemoval.(
           venture
@@ -319,7 +433,15 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -329,7 +451,7 @@ module Handle = {
   };
   let endorsePartnerRemoval = (ventureId, processId) => {
     logMessage("Handling 'EndorsePartnerRemoval'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePartnerRemoval.(
           venture
@@ -337,7 +459,15 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -347,19 +477,32 @@ module Handle = {
   };
   let proposePayout = (ventureId, accountIdx, destinations, fee) => {
     logMessage("Handling 'ProposePayout'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.ProposePayout.(
           venture
           |> exec(~accountIdx, ~destinations, ~fee)
           |> then_(
                fun
-               | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+               | Ok(processId, venture, newItems) => {
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessStarted(processId),
+                   );
                    venture |> resolve;
                  }
                | NotEnoughFunds => {
                    logMessage("Not enough funds");
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -369,7 +512,7 @@ module Handle = {
   };
   let rejectPayout = (ventureId, processId) => {
     logMessage("Handling 'RejectPayout'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.RejectPayout.(
           venture
@@ -377,7 +520,15 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -387,7 +538,7 @@ module Handle = {
   };
   let endorsePayout = (ventureId, processId) => {
     logMessage("Handling 'EndorsePayout'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.EndorsePayout.(
           venture
@@ -395,7 +546,15 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -403,9 +562,9 @@ module Handle = {
       )
     );
   };
-  let exposeIncomeAddress = (syncId, ventureId, accountIdx) => {
+  let exposeIncomeAddress = (ventureId, accountIdx) => {
     logMessage("Handling 'ExposeIncomeAddress'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.ExposeIncomeAddress.(
           venture
@@ -413,8 +572,16 @@ module Handle = {
           |> then_(
                fun
                | Ok(address, venture, newItems) => {
-                   Notify.newIncomeAddress(syncId, ventureId, address);
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newIncomeAddress(correlationId, ventureId, address);
+                   Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -424,7 +591,7 @@ module Handle = {
   };
   let syncWallet = (ventureId, events, confs) => {
     logMessage("Handling 'SynchWallet'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeWallet.(
           venture
@@ -432,9 +599,10 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
-                 },
+                 }
+               | CouldNotPersist(_err) => venture |> resolve,
              )
         )
       )
@@ -442,7 +610,7 @@ module Handle = {
   };
   let newItemsDetected = (ventureId, items) => {
     logMessage("Handling 'NewItemsDetected'");
-    withVenture(Load(ventureId), venture =>
+    withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeLogs.(
           venture
@@ -450,7 +618,7 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
                  }
                | WithConflicts(venture, newItems, conflicts) => {
@@ -459,9 +627,10 @@ module Handle = {
                      ++ (conflicts |> Array.length |> string_of_int)
                      ++ " conflicts while syncing",
                    );
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
-                 },
+                 }
+               | CouldNotPersist(_err) => venture |> resolve,
              )
         )
       )
@@ -469,7 +638,7 @@ module Handle = {
   };
   let syncTabs = (ventureId, items) => {
     logMessage("Handling 'SyncTabs'");
-    withVenture(~notify=true, Reload(ventureId), venture =>
+    withVenture(~notify=true, Reload(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeLogs.(
           venture
@@ -477,7 +646,7 @@ module Handle = {
           |> then_(
                fun
                | Ok(venture, newItems) => {
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
                  }
                | WithConflicts(venture, newItems, conflicts) => {
@@ -486,9 +655,10 @@ module Handle = {
                      ++ (conflicts |> Array.length |> string_of_int)
                      ++ " conflicts while syncing",
                    );
-                   Notify.newItems(ventureId, newItems);
+                   Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
-                 },
+                 }
+               | CouldNotPersist(_err) => venture |> resolve,
              )
         )
       )
@@ -496,7 +666,7 @@ module Handle = {
   };
 };
 
-let handleMessage = syncId =>
+let handleMessage =
   fun
   | Message.UpdateSession(items) => Handle.updateSession(items)
   | Message.Load(ventureId) => Handle.load(ventureId)
@@ -521,7 +691,7 @@ let handleMessage = syncId =>
   | Message.EndorsePayout(ventureId, processId) =>
     Handle.endorsePayout(ventureId, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
-    Handle.exposeIncomeAddress(syncId, ventureId, accountIdx)
+    Handle.exposeIncomeAddress(ventureId, accountIdx)
   | SyncWallet(ventureId, income, confs) =>
     Handle.syncWallet(ventureId, income, confs)
   | NewItemsDetected(ventureId, items) =>
@@ -536,7 +706,7 @@ onMessage(self, msg =>
   workerState :=
     workerState^
     |> handleMessage(
-         msg##data##syncId,
-         msg##data##msg |> VentureWorkerMessage.decodeIncoming,
+         msg##data##payload |> VentureWorkerMessage.decodeIncoming,
+         msg##data##correlationId,
        )
 );

@@ -8,9 +8,7 @@ type state = {viewData: ViewData.t};
 
 type action =
   | EndorsePartner(ProcessId.t)
-  | EndorsePartnerRemoval(ProcessId.t)
-  | RejectPayout(ProcessId.t)
-  | EndorsePayout(ProcessId.t);
+  | EndorsePartnerRemoval(ProcessId.t);
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
 
@@ -27,16 +25,10 @@ let make =
   reducer: (action, state) =>
     switch (state.viewData.readOnly, action) {
     | (false, EndorsePartner(processId)) =>
-      commands.endorsePartner(~processId);
+      commands.endorsePartner(~processId) |> ignore;
       ReasonReact.NoUpdate;
     | (false, EndorsePartnerRemoval(processId)) =>
-      commands.endorsePartnerRemoval(~processId);
-      ReasonReact.NoUpdate;
-    | (false, RejectPayout(processId)) =>
-      commands.rejectPayout(~processId);
-      ReasonReact.NoUpdate;
-    | (false, EndorsePayout(processId)) =>
-      commands.endorsePayout(~processId);
+      commands.endorsePartnerRemoval(~processId) |> ignore;
       ReasonReact.NoUpdate;
     | _ => ReasonReact.NoUpdate
     },

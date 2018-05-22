@@ -127,6 +127,7 @@ let broadcastTransaction = (config, transaction) => {
          )
          |> resolve;
        })
+    |> catch(err => WalletTypes.FetchError(err) |> resolve)
   );
 };
 

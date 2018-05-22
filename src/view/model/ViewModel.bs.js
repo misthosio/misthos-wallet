@@ -21,12 +21,35 @@ var ViewModel__TxDetailsCollector = require("./ViewModel__TxDetailsCollector.bs.
 var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
 function readOnly(param) {
-  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */6]) === false;
+  return ViewModel__PartnersCollector.isPartner(param[/* localUser */0], param[/* partnersCollector */7]) === false;
+}
+
+function captureResponse(correlationId, response, state) {
+  return /* record */[
+          /* localUser */state[/* localUser */0],
+          /* ventureId */state[/* ventureId */1],
+          /* lastResponse : Some */[/* tuple */[
+              correlationId,
+              response
+            ]],
+          /* name */state[/* name */3],
+          /* processedItems */state[/* processedItems */4],
+          /* metaPolicy */state[/* metaPolicy */5],
+          /* balanceCollector */state[/* balanceCollector */6],
+          /* partnersCollector */state[/* partnersCollector */7],
+          /* transactionCollector */state[/* transactionCollector */8],
+          /* txDetailsCollector */state[/* txDetailsCollector */9],
+          /* walletInfoCollector */state[/* walletInfoCollector */10]
+        ];
+}
+
+function lastResponse(param) {
+  return param[/* lastResponse */2];
 }
 
 function fromViewModelState(param) {
   return /* record */[
-          /* partners */param[/* partnersCollector */6][/* partners */1],
+          /* partners */param[/* partnersCollector */7][/* partners */1],
           /* joinVentureUrl */window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                   param[/* ventureId */1],
                   param[/* localUser */0]
@@ -37,12 +60,12 @@ function fromViewModelState(param) {
 var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState];
 
 function fromViewModelState$1(param) {
-  var walletInfoCollector = param[/* walletInfoCollector */9];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
   var localUser = param[/* localUser */0];
   return /* record */[
           /* ventureId */param[/* ventureId */1],
-          /* ventureName */param[/* name */2],
-          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */5])[/* currentSpendable */0],
+          /* ventureName */param[/* name */3],
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
           /* initialSummary : record */[
             /* reserved */BTC.zero,
             /* destinations : [] */0,
@@ -71,25 +94,25 @@ function fromViewModelState$1(param) {
 var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
 function fromViewModelState$2(processId, param) {
-  return ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]);
+  return ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */9]);
 }
 
 var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$2];
 
 function fromViewModelState$3(param) {
-  var transactionCollector = param[/* transactionCollector */7];
-  var partnersCollector = param[/* partnersCollector */6];
+  var transactionCollector = param[/* transactionCollector */8];
+  var partnersCollector = param[/* partnersCollector */7];
   return /* record */[
           /* ventureId */param[/* ventureId */1],
-          /* ventureName */param[/* name */2],
+          /* ventureName */param[/* name */3],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
           /* partners */partnersCollector[/* partners */1],
           /* prospects */partnersCollector[/* prospects */2],
           /* removalProspects */partnersCollector[/* removalProspects */3],
           /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */2],
           /* confirmedTxs */transactionCollector[/* confirmedTxs */3],
-          /* payoutsPendingApproval */ViewModel__TxDetailsCollector.payoutsPendingApproval(param[/* txDetailsCollector */8]),
-          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */5])
+          /* payoutsPendingApproval */ViewModel__TxDetailsCollector.payoutsPendingApproval(param[/* txDetailsCollector */9]),
+          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])
         ];
 }
 
@@ -99,6 +122,7 @@ function make(localUser) {
   return /* record */[
           /* localUser */localUser,
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
+          /* lastResponse : None */0,
           /* name */"",
           /* processedItems */Belt_SetString.empty,
           /* metaPolicy */Policy.unanimous,
@@ -111,7 +135,7 @@ function make(localUser) {
 }
 
 function apply(param, state) {
-  var processedItems = state[/* processedItems */3];
+  var processedItems = state[/* processedItems */4];
   var hash = param[/* hash */1];
   var $$event = param[/* event */0];
   if (Belt_SetString.has(processedItems, hash)) {
@@ -119,14 +143,15 @@ function apply(param, state) {
   } else {
     var state_000 = /* localUser */state[/* localUser */0];
     var state_001 = /* ventureId */state[/* ventureId */1];
-    var state_002 = /* name */state[/* name */2];
-    var state_003 = /* processedItems */Belt_SetString.add(processedItems, hash);
-    var state_004 = /* metaPolicy */state[/* metaPolicy */4];
-    var state_005 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */5]);
-    var state_006 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */6]);
-    var state_007 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */7]);
-    var state_008 = /* txDetailsCollector */ViewModel__TxDetailsCollector.apply($$event, state[/* txDetailsCollector */8]);
-    var state_009 = /* walletInfoCollector */WalletInfoCollector.apply($$event, state[/* walletInfoCollector */9]);
+    var state_002 = /* lastResponse */state[/* lastResponse */2];
+    var state_003 = /* name */state[/* name */3];
+    var state_004 = /* processedItems */Belt_SetString.add(processedItems, hash);
+    var state_005 = /* metaPolicy */state[/* metaPolicy */5];
+    var state_006 = /* balanceCollector */ViewModel__BalanceCollector.apply($$event, state[/* balanceCollector */6]);
+    var state_007 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */7]);
+    var state_008 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */8]);
+    var state_009 = /* txDetailsCollector */ViewModel__TxDetailsCollector.apply($$event, state[/* txDetailsCollector */9]);
+    var state_010 = /* walletInfoCollector */WalletInfoCollector.apply($$event, state[/* walletInfoCollector */10]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -137,7 +162,8 @@ function apply(param, state) {
       state_006,
       state_007,
       state_008,
-      state_009
+      state_009,
+      state_010
     ];
     if ($$event.tag) {
       return state$1;
@@ -146,14 +172,15 @@ function apply(param, state) {
       return /* record */[
               state_000,
               /* ventureId */match[/* ventureId */0],
+              state_002,
               /* name */match[/* ventureName */1],
-              state_003,
+              state_004,
               /* metaPolicy */match[/* metaPolicy */4],
-              state_005,
               state_006,
               state_007,
               state_008,
-              state_009
+              state_009,
+              state_010
             ];
     }
   }
@@ -195,6 +222,8 @@ exports.BalanceCollector = BalanceCollector;
 exports.TransactionCollector = TransactionCollector;
 exports.TxDetailsCollector = TxDetailsCollector;
 exports.readOnly = readOnly;
+exports.captureResponse = captureResponse;
+exports.lastResponse = lastResponse;
 exports.ManagePartnersView = ManagePartnersView;
 exports.managePartnersModal = managePartnersModal;
 exports.CreatePayoutView = CreatePayoutView;

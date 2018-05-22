@@ -17,7 +17,8 @@ let updateSession = worker =>
        VentureWorkerMessage.UpdateSession(
          WorkerLocalStorage.readBlockstackItemsFromStorage(),
        ),
-     );
+     )
+  |> ignore;
 
 let create = (~name, worker) =>
   worker |. postMessage(VentureWorkerMessage.Create(name));
@@ -100,21 +101,21 @@ let exposeIncomeAddress = (worker, ventureId, ~accountIdx) =>
 
 module Cmd = {
   type t = {
-    proposePartner: (~prospectId: userId) => unit,
-    endorsePartner: (~processId: processId) => unit,
-    rejectPartner: (~processId: processId) => unit,
-    proposePartnerRemoval: (~partnerId: userId) => unit,
-    rejectPartnerRemoval: (~processId: processId) => unit,
-    endorsePartnerRemoval: (~processId: processId) => unit,
+    proposePartner: (~prospectId: userId) => WebWorker.correlationId,
+    endorsePartner: (~processId: processId) => WebWorker.correlationId,
+    rejectPartner: (~processId: processId) => WebWorker.correlationId,
+    proposePartnerRemoval: (~partnerId: userId) => WebWorker.correlationId,
+    rejectPartnerRemoval: (~processId: processId) => WebWorker.correlationId,
+    endorsePartnerRemoval: (~processId: processId) => WebWorker.correlationId,
     proposePayout:
       (
         ~accountIdx: accountIdx,
         ~destinations: list((string, BTC.t)),
         ~fee: BTC.t
       ) =>
-      unit,
-    endorsePayout: (~processId: processId) => unit,
-    rejectPayout: (~processId: processId) => unit,
+      WebWorker.correlationId,
+    endorsePayout: (~processId: processId) => WebWorker.correlationId,
+    rejectPayout: (~processId: processId) => WebWorker.correlationId,
     exposeIncomeAddress: (~accountIdx: accountIdx) => Js.Promise.t(string),
   };
   let make = (worker, ventureId) => {

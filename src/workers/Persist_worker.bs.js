@@ -11,7 +11,7 @@ var Blockstack = require("blockstack");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
-var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
+var PersistWorkerMessage = require("./PersistWorkerMessage.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 var EncryptionJs = require("blockstack/lib/encryption.js");
 
@@ -318,38 +318,32 @@ function persistVenture(ventureId) {
 }
 
 function handleMessage(param) {
-  if (param.tag) {
-    var match = VentureWorkerMessage.decodeOutgoing(param[0]);
-    if (typeof match === "number") {
-      return /* () */0;
-    } else {
-      switch (match.tag | 0) {
-        case 3 : 
-            if (match[2].length !== 0) {
-              return persistVenture(match[0]);
-            } else {
-              return /* () */0;
-            }
-        case 4 : 
-        case 5 : 
-            return persistVenture(match[0]);
-        default:
-          return /* () */0;
-      }
-    }
+  if (typeof param === "number") {
+    return /* () */0;
   } else {
-    logMessage("Handling 'UpdateSession'");
-    return WorkerLocalStorage.setBlockstackItems(param[0]);
+    switch (param.tag | 0) {
+      case 0 : 
+          logMessage("Handling 'SessionStarted'");
+          return WorkerLocalStorage.setBlockstackItems(param[0]);
+      case 3 : 
+          if (param[2].length !== 0) {
+            return persistVenture(param[0]);
+          } else {
+            return /* () */0;
+          }
+      case 4 : 
+      case 5 : 
+          return persistVenture(param[0]);
+      default:
+        return /* () */0;
+    }
   }
 }
 
 self.onmessage = (function (msg) {
-    return handleMessage(msg.data.msg);
+    return handleMessage(PersistWorkerMessage.decodeIncoming(msg.data.payload));
   });
 
-var Message = 0;
-
-exports.Message = Message;
 exports.logMessage = logMessage;
 exports.determinPartnerKeysAndRemovals = determinPartnerKeysAndRemovals;
 exports.persistLogString = persistLogString;

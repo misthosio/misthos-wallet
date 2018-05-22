@@ -9,50 +9,51 @@ module type Config = {
   let instance: unit => t;
 };
 
-type payload = {
-  .
-  "msg": Js.Json.t,
-  "syncId": string,
-};
+type correlationId = string;
 
-let emptySyncId = "";
+type message = {
+  .
+  "payload": Js.Json.t,
+  "correlationId": correlationId,
+};
 
 module MakeClient = (Config: Config) => {
   type listener = (. Config.outgoing) => unit;
   let syncListeners: ref(Map.String.t(listener)) = ref(Map.String.empty);
   type t = Config.t;
   [@bs.set]
-  external _onMessage : (t, {. "data": payload} => unit) => unit =
+  external _onMessage : (t, {. "data": message} => unit) => unit =
     "onmessage";
   [@bs.send] external terminate : t => unit = "terminate";
-  [@bs.send] external _postMessage : (t, payload) => unit = "postMessage";
-  let postMessage = (worker, msg) =>
+  [@bs.send] external _postMessage : (t, message) => unit = "postMessage";
+  let postMessage = (worker, msg) => {
+    let msgId = Uuid.v4();
     _postMessage(
       worker,
-      {"msg": msg |> Config.encodeIncoming, "syncId": emptySyncId},
+      {"payload": msg |> Config.encodeIncoming, "correlationId": msgId},
     );
+    msgId;
+  };
   let postMessageSync = (worker, msg) => {
-    let syncId = Uuid.v4();
+    let msgId = Uuid.v4();
     let ret =
       Js.Promise.make((~resolve, ~reject as _) =>
-        syncListeners := syncListeners^ |. Map.String.set(syncId, resolve)
+        syncListeners := syncListeners^ |. Map.String.set(msgId, resolve)
       );
     _postMessage(
       worker,
-      {"msg": msg |> Config.encodeIncoming, "syncId": syncId},
+      {"payload": msg |> Config.encodeIncoming, "correlationId": msgId},
     );
     ret;
   };
   let handleMessage = (onMessage, msg) => {
-    let decodedMsg = msg##msg |> Config.decodeOutgoing;
-    let syncId = msg##syncId;
-    if (syncId != emptySyncId) {
-      switch (syncListeners^ |. Map.String.get(syncId)) {
-      | Some(listener) =>
-        syncListeners := syncListeners^ |. Map.String.remove(syncId);
-        listener(. decodedMsg);
-      | _ => ()
-      };
+    let decodedMsg = msg##payload |> Config.decodeOutgoing;
+    let msgId = msg##correlationId;
+    switch (syncListeners^ |. Map.String.get(msgId)) {
+    | Some(listener) =>
+      syncListeners := syncListeners^ |. Map.String.remove(msgId);
+      listener(. decodedMsg);
+    | _ => ()
     };
     decodedMsg |> onMessage;
   };

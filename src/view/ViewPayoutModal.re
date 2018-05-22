@@ -99,7 +99,7 @@ let make =
               if (canEndorse) {
                 <MButton
                   fullWidth=true
-                  onClick=(_e => commands.endorsePayout(~processId))>
+                  onClick=(_e => commands.endorsePayout(~processId) |> ignore)>
                   (text("Endorse Payout"))
                 </MButton>;
               } else {
@@ -110,7 +110,7 @@ let make =
               if (canReject) {
                 <MButton
                   fullWidth=true
-                  onClick=(_e => commands.rejectPayout(~processId))>
+                  onClick=(_e => commands.rejectPayout(~processId) |> ignore)>
                   (text("Reject Payout"))
                 </MButton>;
               } else {

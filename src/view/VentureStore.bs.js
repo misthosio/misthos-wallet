@@ -19,18 +19,17 @@ function loadVentureAndIndex(session, currentRoute, param) {
   var selectedVenture = param[/* selectedVenture */1];
   if (Caml_obj.caml_notequal(param[/* session */2], session)) {
     VentureWorkerClient.updateSession(ventureWorker[0]);
-    PersistWorkerClient.updateSession(param[/* persistWorker */4][0]);
   }
   if (typeof session === "number" || typeof currentRoute === "number") {
     return /* None */0;
   } else if (currentRoute.tag) {
     var ventureId = currentRoute[0];
     VentureWorkerClient.joinVia(ventureId, currentRoute[1], ventureWorker[0]);
-    return /* JoiningVenture */Block.__(0, [ventureId]);
+    return /* JoiningVenture */Block.__(1, [ventureId]);
   } else {
     var ventureId$1 = currentRoute[0];
     var exit = 0;
-    if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+    if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
       exit = 1;
     } else {
       var loadedId = selectedVenture[0];
@@ -38,14 +37,14 @@ function loadVentureAndIndex(session, currentRoute, param) {
         return selectedVenture;
       } else if (PrimitiveTypes.VentureId[/* neq */6](ventureId$1, loadedId)) {
         VentureWorkerClient.load(ventureId$1, ventureWorker[0]);
-        return /* LoadingVenture */Block.__(1, [ventureId$1]);
+        return /* LoadingVenture */Block.__(2, [ventureId$1]);
       } else {
         exit = 1;
       }
     }
     if (exit === 1) {
       VentureWorkerClient.load(ventureId$1, ventureWorker[0]);
-      return /* LoadingVenture */Block.__(1, [ventureId$1]);
+      return /* LoadingVenture */Block.__(2, [ventureId$1]);
     }
     
   }
@@ -132,10 +131,10 @@ function make(currentRoute, session, children) {
                 var sessionData = match[0];
                 switch (action.tag | 0) {
                   case 0 : 
-                      VentureWorkerClient.create(action[0], state[/* ventureWorker */5][0]);
+                      var createCmdId = VentureWorkerClient.create(action[0], state[/* ventureWorker */5][0]);
                       return /* Update */Block.__(0, [/* record */[
                                   /* index */state[/* index */0],
-                                  /* selectedVenture : CreatingVenture */1,
+                                  /* selectedVenture : CreatingVenture */Block.__(0, [/* Pending */Block.__(0, [createCmdId])]),
                                   /* session */state[/* session */2],
                                   /* dataWorker */state[/* dataWorker */3],
                                   /* persistWorker */state[/* persistWorker */4],
@@ -164,12 +163,12 @@ function make(currentRoute, session, children) {
                                       newItems
                                     ]));
                               var match$1 = state[/* selectedVenture */1];
-                              if (typeof match$1 === "number" || !(match$1.tag === 2 && PrimitiveTypes.VentureId[/* eq */5](match$1[0], ventureId))) {
+                              if (typeof match$1 === "number" || !(match$1.tag === 3 && PrimitiveTypes.VentureId[/* eq */5](match$1[0], ventureId))) {
                                 return /* NoUpdate */0;
                               } else {
                                 return /* Update */Block.__(0, [/* record */[
                                             /* index */state[/* index */0],
-                                            /* selectedVenture : VentureLoaded */Block.__(2, [
+                                            /* selectedVenture : VentureLoaded */Block.__(3, [
                                                 ventureId,
                                                 ViewModel.applyAll(newItems, match$1[1]),
                                                 match$1[2]
@@ -189,7 +188,7 @@ function make(currentRoute, session, children) {
                       return /* NoUpdate */0;
                   case 3 : 
                       var msg$1 = action[0];
-                      PersistWorkerClient.ventureMessage(msg$1, state[/* persistWorker */4][0]);
+                      Curry._2(PersistWorkerClient.postMessage, state[/* persistWorker */4][0], msg$1);
                       Curry._2(DataWorkerClient.postMessage, state[/* dataWorker */3][0], msg$1);
                       var match$2 = state[/* selectedVenture */1];
                       if (typeof msg$1 === "number") {
@@ -213,12 +212,12 @@ function make(currentRoute, session, children) {
                                 return /* NoUpdate */0;
                               } else {
                                 switch (match$2.tag | 0) {
-                                  case 0 : 
+                                  case 1 : 
                                       if (PrimitiveTypes.VentureId[/* eq */5](ventureId$1, match$2[0])) {
                                         return /* UpdateWithSideEffects */Block.__(2, [
                                                   /* record */[
                                                     /* index */state[/* index */0],
-                                                    /* selectedVenture : VentureLoaded */Block.__(2, [
+                                                    /* selectedVenture : VentureLoaded */Block.__(3, [
                                                         ventureId$1,
                                                         Curry._1(ViewModel.init(sessionData[/* userId */0]), log),
                                                         VentureWorkerClient.Cmd[/* make */0](state[/* ventureWorker */5][0], ventureId$1)
@@ -238,11 +237,11 @@ function make(currentRoute, session, children) {
                                       } else {
                                         return /* NoUpdate */0;
                                       }
-                                  case 1 : 
+                                  case 2 : 
                                       if (PrimitiveTypes.VentureId[/* eq */5](ventureId$1, match$2[0])) {
                                         return /* Update */Block.__(0, [/* record */[
                                                     /* index */state[/* index */0],
-                                                    /* selectedVenture : VentureLoaded */Block.__(2, [
+                                                    /* selectedVenture : VentureLoaded */Block.__(3, [
                                                         ventureId$1,
                                                         Curry._1(ViewModel.init(sessionData[/* userId */0]), log),
                                                         VentureWorkerClient.Cmd[/* make */0](state[/* ventureWorker */5][0], ventureId$1)
@@ -264,7 +263,7 @@ function make(currentRoute, session, children) {
                               return /* UpdateWithSideEffects */Block.__(2, [
                                         /* record */[
                                           /* index */state[/* index */0],
-                                          /* selectedVenture : VentureLoaded */Block.__(2, [
+                                          /* selectedVenture : VentureLoaded */Block.__(3, [
                                               ventureId$2,
                                               Curry._1(ViewModel.init(sessionData[/* userId */0]), msg$1[1]),
                                               VentureWorkerClient.Cmd[/* make */0](state[/* ventureWorker */5][0], ventureId$2)
@@ -282,7 +281,7 @@ function make(currentRoute, session, children) {
                                           })
                                       ]);
                           case 5 : 
-                              if (typeof match$2 === "number" || match$2.tag !== 2) {
+                              if (typeof match$2 === "number" || match$2.tag !== 3) {
                                 return /* NoUpdate */0;
                               } else {
                                 var ventureId$3 = msg$1[0];
@@ -290,7 +289,7 @@ function make(currentRoute, session, children) {
                                   updateOtherTabs(msg$1);
                                   return /* Update */Block.__(0, [/* record */[
                                               /* index */state[/* index */0],
-                                              /* selectedVenture : VentureLoaded */Block.__(2, [
+                                              /* selectedVenture : VentureLoaded */Block.__(3, [
                                                   ventureId$3,
                                                   ViewModel.applyAll(msg$1[1], match$2[1]),
                                                   match$2[2]
@@ -302,6 +301,51 @@ function make(currentRoute, session, children) {
                                             ]]);
                                 } else {
                                   return /* NoUpdate */0;
+                                }
+                              }
+                          case 6 : 
+                              var response = msg$1[2];
+                              var correlationId = msg$1[1];
+                              if (typeof match$2 === "number") {
+                                return /* NoUpdate */0;
+                              } else {
+                                switch (match$2.tag | 0) {
+                                  case 0 : 
+                                      var match$3 = match$2[0];
+                                      if (typeof match$3 === "number" || match$3.tag || correlationId !== match$3[0]) {
+                                        return /* NoUpdate */0;
+                                      } else {
+                                        var tmp;
+                                        tmp = response.tag ? /* Error */Block.__(1, [response[0]]) : /* Success */Block.__(2, [response[0]]);
+                                        return /* Update */Block.__(0, [/* record */[
+                                                    /* index */state[/* index */0],
+                                                    /* selectedVenture : CreatingVenture */Block.__(0, [tmp]),
+                                                    /* session */state[/* session */2],
+                                                    /* dataWorker */state[/* dataWorker */3],
+                                                    /* persistWorker */state[/* persistWorker */4],
+                                                    /* ventureWorker */state[/* ventureWorker */5]
+                                                  ]]);
+                                      }
+                                  case 3 : 
+                                      var loadedId = match$2[0];
+                                      if (PrimitiveTypes.VentureId[/* eq */5](msg$1[0], loadedId)) {
+                                        return /* Update */Block.__(0, [/* record */[
+                                                    /* index */state[/* index */0],
+                                                    /* selectedVenture : VentureLoaded */Block.__(3, [
+                                                        loadedId,
+                                                        ViewModel.captureResponse(correlationId, response, match$2[1]),
+                                                        match$2[2]
+                                                      ]),
+                                                    /* session */state[/* session */2],
+                                                    /* dataWorker */state[/* dataWorker */3],
+                                                    /* persistWorker */state[/* persistWorker */4],
+                                                    /* ventureWorker */state[/* ventureWorker */5]
+                                                  ]]);
+                                      } else {
+                                        return /* NoUpdate */0;
+                                      }
+                                  default:
+                                    return /* NoUpdate */0;
                                 }
                               }
                           default:

@@ -214,18 +214,20 @@ function persist($staropt$star, param) {
   var shouldPersist = $staropt$star ? $staropt$star[0] : true;
   if (shouldPersist && collector.length > 0) {
     return Blockstack$1.putFile(PrimitiveTypes.VentureId[/* toString */0](venture[/* id */1]) + "/log.json", Json.stringify(Curry._1(EventLog.encode, venture[/* log */2]))).then((function () {
-                  return Promise.resolve(/* tuple */[
-                              venture,
-                              collector
-                            ]);
+                    return Promise.resolve(/* Ok */Block.__(0, [/* tuple */[
+                                    venture,
+                                    collector
+                                  ]]));
+                  })).catch((function (err) {
+                  return Promise.resolve(/* Error */Block.__(1, [err]));
                 }));
   } else if (collector.length !== 0) {
     throw NotPersistingNewEvents;
   } else {
-    return Promise.resolve(/* tuple */[
-                venture,
-                collector
-              ]);
+    return Promise.resolve(/* Ok */Block.__(0, [/* tuple */[
+                    venture,
+                    collector
+                  ]]));
   }
 }
 
@@ -242,10 +244,15 @@ function load($staropt$star, session, ventureId) {
                     })).then((function (param) {
                     return persist(partial_arg, param);
                   })).then((function (param) {
-                  return Promise.resolve(/* Ok */Block.__(0, [
-                                param[0],
-                                param[1]
-                              ]));
+                  if (param.tag) {
+                    return Promise.resolve(/* CouldNotLoad */Block.__(1, [param[0]]));
+                  } else {
+                    var match = param[0];
+                    return Promise.resolve(/* Ok */Block.__(0, [
+                                  match[0],
+                                  match[1]
+                                ]));
+                  }
                 })).catch((function (err) {
                 return Promise.resolve(/* CouldNotLoad */Block.__(1, [err]));
               }));
@@ -263,13 +270,17 @@ function join(session, userId, ventureId) {
                                     })).then((function (eta) {
                                     return persist(/* None */0, eta);
                                   })).then((function (param) {
-                                  var venture = param[0];
-                                  return Venture__Index.add(venture[/* id */1], Venture__State.ventureName(venture[/* state */3])).then((function (index) {
-                                                return Promise.resolve(/* Joined */Block.__(1, [
-                                                              index,
-                                                              venture
-                                                            ]));
-                                              }));
+                                  if (param.tag) {
+                                    return Promise.resolve(/* CouldNotJoin */Block.__(2, [param[0]]));
+                                  } else {
+                                    var venture = param[0][0];
+                                    return Venture__Index.add(venture[/* id */1], Venture__State.ventureName(venture[/* state */3])).then((function (index) {
+                                                  return Promise.resolve(/* Joined */Block.__(1, [
+                                                                index,
+                                                                venture
+                                                              ]));
+                                                }));
+                                  }
                                 })).catch((function (err) {
                                 return Promise.resolve(/* CouldNotJoin */Block.__(2, [err]));
                               }));
@@ -302,16 +313,24 @@ function getEventLog(param) {
 function exec(session, ventureName) {
   logMessage("Executing 'Create' command");
   var ventureCreated = Event.VentureCreated[/* make */0](ventureName, session[/* userId */0], Utils.publicKeyFromKeyPair(session[/* issuerKeyPair */2]), Policy.unanimous, session[/* network */5]);
+  var makeResult = make(session, ventureCreated[/* ventureId */0]);
   return /* tuple */[
           ventureCreated[/* ventureId */0],
-          Promise.all(/* tuple */[
-                Venture__Index.add(ventureCreated[/* ventureId */0], ventureName),
-                apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), make(session, ventureCreated[/* ventureId */0])).then((function (eta) {
-                          return persist(/* None */0, eta);
-                        })).then((function (param) {
-                        return Promise.resolve(param[0]);
-                      }))
-              ])
+          apply(/* None */0, /* None */0, /* VentureCreated */Block.__(0, [ventureCreated]), makeResult).then((function (eta) {
+                    return persist(/* None */0, eta);
+                  })).then((function (param) {
+                  if (param.tag) {
+                    return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                  } else {
+                    var venture = param[0][0];
+                    return Venture__Index.add(venture[/* id */1], Venture__State.ventureName(venture[/* state */3])).then((function (index) {
+                                  return Promise.resolve(/* Ok */Block.__(0, [
+                                                index,
+                                                venture
+                                              ]));
+                                }));
+                  }
+                }))
         ];
 }
 
@@ -407,16 +426,21 @@ function exec$1(newItems, venture) {
                               match[3]
                             ]);
                 })).then((function (param) {
-                var collector = param[1];
-                var venture = param[0];
-                return Promise.resolve(conflicts.length !== 0 ? /* WithConflicts */Block.__(1, [
-                                venture,
-                                collector,
-                                conflicts
-                              ]) : /* Ok */Block.__(0, [
-                                venture,
-                                collector
-                              ]));
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(2, [param[0]]));
+                } else {
+                  var match = param[0];
+                  var collector = match[1];
+                  var venture = match[0];
+                  return Promise.resolve(conflicts.length !== 0 ? /* WithConflicts */Block.__(1, [
+                                  venture,
+                                  collector,
+                                  conflicts
+                                ]) : /* Ok */Block.__(0, [
+                                  venture,
+                                  collector
+                                ]));
+                }
               }));
 }
 
@@ -439,10 +463,15 @@ function exec$2(incomeEvents, txConfs, venture) {
                   }), __x, txConfs).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 
@@ -464,10 +493,16 @@ function exec$3(prospectId, venture) {
                                     })).then((function (eta) {
                                     return persist(/* None */0, eta);
                                   })).then((function (param) {
-                                  return Promise.resolve(/* Ok */[
-                                              param[0],
-                                              param[1]
-                                            ]);
+                                  if (param.tag) {
+                                    return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                                  } else {
+                                    var match = param[0];
+                                    return Promise.resolve(/* Ok */Block.__(0, [
+                                                  partnerProposed[/* processId */0],
+                                                  match[0],
+                                                  match[1]
+                                                ]));
+                                  }
                                 }));
                   } else {
                     return Promise.resolve(/* NoUserInfo */1);
@@ -483,10 +518,15 @@ function exec$4(processId, venture) {
   return apply(/* None */0, /* None */0, Event.makePartnerRejected(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 
@@ -501,10 +541,15 @@ function exec$5(processId, venture) {
                   })).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 
@@ -519,19 +564,26 @@ function exec$6(partnerId, venture) {
   } else {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     return (
-                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */7][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
-                          venture,
-                          /* array */[]
-                        ])
-                ).then((function (param) {
-                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)), param[0]);
-                    })).then((function (eta) {
-                    return persist(/* None */0, eta);
-                  })).then((function (param) {
-                  return Promise.resolve(/* Ok */[
-                              param[0],
-                              param[1]
-                            ]);
+              match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */7][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
+                      venture,
+                      /* array */[]
+                    ])
+            ).then((function (param) {
+                  var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)));
+                  return apply(/* None */0, /* Some */[param[1]], /* PartnerRemovalProposed */Block.__(5, [proposal]), param[0]).then((function (eta) {
+                                  return persist(/* None */0, eta);
+                                })).then((function (param) {
+                                if (param.tag) {
+                                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                                } else {
+                                  var match = param[0];
+                                  return Promise.resolve(/* Ok */Block.__(0, [
+                                                proposal[/* processId */0],
+                                                match[0],
+                                                match[1]
+                                              ]));
+                                }
+                              }));
                 }));
   }
 }
@@ -543,10 +595,15 @@ function exec$7(processId, venture) {
   return apply(/* None */0, /* None */0, Event.makePartnerRemovalRejected(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 
@@ -566,10 +623,15 @@ function exec$8(processId, venture) {
                   })).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 
@@ -581,11 +643,16 @@ function exec$9(accountIdx, venture) {
   return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(32, [exposeEvent]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            exposeEvent[/* address */1][/* displayAddress */5],
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                exposeEvent[/* address */1][/* displayAddress */5],
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 
@@ -595,13 +662,20 @@ function exec$10(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
   var param = Venture__Wallet.preparePayoutTx(Venture__State.currentPartners(venture[/* state */3]), venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]);
   if (param) {
-    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [param[0]]), venture).then((function (eta) {
+    var proposal = param[0];
+    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [proposal]), venture).then((function (eta) {
                     return persist(/* None */0, eta);
                   })).then((function (param) {
-                  return Promise.resolve(/* Ok */[
-                              param[0],
-                              param[1]
-                            ]);
+                  if (param.tag) {
+                    return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                  } else {
+                    var match = param[0];
+                    return Promise.resolve(/* Ok */Block.__(0, [
+                                  proposal[/* processId */0],
+                                  match[0],
+                                  match[1]
+                                ]));
+                  }
                 }));
   } else {
     return Promise.resolve(/* NotEnoughFunds */0);
@@ -615,10 +689,15 @@ function exec$11(processId, venture) {
   return apply(/* None */0, /* None */0, Event.makePayoutRejected(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 
@@ -629,10 +708,15 @@ function exec$12(processId, venture) {
   return apply(/* None */0, /* None */0, Event.makePayoutEndorsed(processId, venture[/* session */0][/* userId */0]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
-                return Promise.resolve(/* Ok */[
-                            param[0],
-                            param[1]
-                          ]);
+                if (param.tag) {
+                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                } else {
+                  var match = param[0];
+                  return Promise.resolve(/* Ok */Block.__(0, [
+                                match[0],
+                                match[1]
+                              ]));
+                }
               }));
 }
 

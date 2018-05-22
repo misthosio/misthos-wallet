@@ -8,7 +8,6 @@ var Network = require("../application/wallet/Network.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var WebWorker = require("../ffi/WebWorker.bs.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -18,8 +17,8 @@ var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 
 function postMessage$1(msg) {
   postMessage({
-        msg: VentureWorkerMessage.encodeIncoming(msg),
-        syncId: WebWorker.emptySyncId
+        payload: VentureWorkerMessage.encodeIncoming(msg),
+        correlationId: ""
       });
   return /* () */0;
 }

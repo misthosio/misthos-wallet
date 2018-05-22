@@ -25,10 +25,17 @@ let make = (~session, ~updateSession, _children) => {
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <ManagePartnersModal
-            viewData=(venture |> ViewModel.managePartnersModal)
-            commands
-          />,
+          <CommandExecutor
+            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            ...(
+                 (~commands, ~cmdStatus) =>
+                   <ManagePartnersModal
+                     viewData=(venture |> ViewModel.managePartnersModal)
+                     commands
+                     cmdStatus
+                   />
+               )
+          </CommandExecutor>,
           onCloseModal(selected),
         ))
     | (
@@ -41,15 +48,27 @@ let make = (~session, ~updateSession, _children) => {
     | (
         LoggedIn(_),
         Venture(selected, CreatePayout),
-        VentureLoaded(_, venture, commands),
+        VentureLoaded(ventureId, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <CreatePayoutModal
-            viewData=(venture |> ViewModel.createPayoutModal)
+          <CommandExecutor
             commands
-          />,
+            lastResponse=(venture |> ViewModel.lastResponse)
+            onProcessStarted=(
+              processId =>
+                Router.goTo(Venture(ventureId, Payout(processId)))
+            )>
+            ...(
+                 (~commands, ~cmdStatus) =>
+                   <CreatePayoutModal
+                     viewData=(venture |> ViewModel.createPayoutModal)
+                     commands
+                     cmdStatus
+                   />
+               )
+          </CommandExecutor>,
           onCloseModal(selected),
         ))
     | (
@@ -107,13 +126,18 @@ let make = (~session, ~updateSession, _children) => {
         commands
         session
       />
-    | (LoggedIn(_), CreateVenture, _) =>
-      <VentureCreate selectedVenture onCreateVenture=createVenture />
+    | (LoggedIn(_), CreateVenture, _)
+    | (LoggedIn(_), _, CreatingVenture(_)) =>
+      let cmdStatus =
+        switch (selectedVenture) {
+        | CreatingVenture(cmdStatus) => cmdStatus
+        | _ => Idle
+        };
+      <VentureCreate cmdStatus onCreateVenture=createVenture />;
     | (LoggedIn(_), _, JoiningVenture(_)) =>
       <Spinner text="Joining venture" />
     | (LoggedIn(_), _, LoadingVenture(_)) =>
       <Spinner text="Loading venture" />
-    | (LoggedIn(_), _, CreatingVenture) => <Spinner text="Creating venture" />
     | (LoggedIn(_), _, None) => <LoggedInHome index />
     };
   {

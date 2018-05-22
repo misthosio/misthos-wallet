@@ -58,7 +58,9 @@ let getSummary: t => EventLog.summary;
 
 module Cmd: {
   module Create: {
-    type result = (Index.t, t);
+    type result =
+      | Ok(Index.t, t)
+      | CouldNotPersist(Js.Promise.error);
     let exec:
       (Session.Data.t, ~name: string) => (ventureId, Js.Promise.t(result));
   };
@@ -69,12 +71,14 @@ module Cmd: {
           t,
           array(EventLog.item),
           array((EventLog.item, Validation.result)),
-        );
+        )
+      | CouldNotPersist(Js.Promise.error);
     let exec: (array(EventLog.item), t) => Js.Promise.t(result);
   };
   module SynchronizeWallet: {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec:
       (
         list(Event.IncomeDetected.t),
@@ -85,46 +89,54 @@ module Cmd: {
   };
   module ProposePartner: {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | PartnerAlreadyExists
-      | NoUserInfo;
+      | NoUserInfo
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };
   module RejectPartner: {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePartner: {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ProposePartnerRemoval: {
     type result =
-      | Ok(t, array(EventLog.item))
-      | PartnerDoesNotExist;
+      | Ok(processId, t, array(EventLog.item))
+      | PartnerDoesNotExist
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~partnerId: userId, t) => Js.Promise.t(result);
   };
   module RejectPartnerRemoval: {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePartnerRemoval: {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module ExposeIncomeAddress: {
     type result =
-      | Ok(string, t, array(EventLog.item));
+      | Ok(string, t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~accountIdx: accountIdx, t) => Js.Promise.t(result);
   };
   module ProposePayout: {
     type result =
-      | Ok(t, array(EventLog.item))
-      | NotEnoughFunds;
+      | Ok(processId, t, array(EventLog.item))
+      | NotEnoughFunds
+      | CouldNotPersist(Js.Promise.error);
     let exec:
       (
         ~accountIdx: accountIdx,
@@ -136,12 +148,14 @@ module Cmd: {
   };
   module RejectPayout: {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
   module EndorsePayout: {
     type result =
-      | Ok(t, array(EventLog.item));
+      | Ok(t, array(EventLog.item))
+      | CouldNotPersist(Js.Promise.error);
     let exec: (~processId: processId, t) => Js.Promise.t(result);
   };
 };
