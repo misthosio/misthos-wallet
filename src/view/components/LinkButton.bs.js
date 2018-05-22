@@ -24,7 +24,7 @@ function make(route, $staropt$star, children) {
               return ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function ($$event) {
                                   $$event.preventDefault();
                                   return ReasonReact.Router[/* push */0](href);
-                                })], /* Some */[fullWidth], /* array */[children]));
+                                })], /* None */0, /* Some */[fullWidth], /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

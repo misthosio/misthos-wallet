@@ -20,7 +20,7 @@ function margin(tf, bf) {
 
 var Styles = /* module */[/* margin */margin];
 
-function make(placeholder, value, onChange, autoFocus, fullWidth, $staropt$star, _) {
+function make(placeholder, value, onChange, autoFocus, fullWidth, endAdornment, $staropt$star, _) {
   var ensuring = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -33,7 +33,7 @@ function make(placeholder, value, onChange, autoFocus, fullWidth, $staropt$star,
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, autoFocus, /* Some */[margin(ensuring ? 4 : 3, 0)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, fullWidth, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onChange, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, placeholder, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, value, /* None */0, /* None */0, /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, autoFocus, /* Some */[margin(ensuring ? 4 : 3, 0)], /* None */0, /* None */0, /* None */0, endAdornment, /* None */0, fullWidth, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onChange, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, placeholder, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, value, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

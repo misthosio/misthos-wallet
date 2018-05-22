@@ -59,9 +59,9 @@ function make(selectedVenture, onCreateVenture, _) {
                                               param[/* state */1][/* newVenture */0]
                                             ]], /* Some */[(function (e) {
                                                 return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
-                                              })], /* Some */[true], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                              })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                 return Curry._1(send, /* CreateVenture */0);
-                                              })], /* Some */[true], /* array */[ViewCommon.text("create venture")]))), React.createElement("div", {
+                                              })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("create venture")]))), React.createElement("div", {
                                     className: infoBox
                                   }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("What can you do with a venture?")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Your Venture can receive money from different sources, such as customers, clients, and investors\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Every Partner of the Venture has full transparency of income and payouts\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • The team decides the Policies by which payouts take place\n                ")]))), /* array */[]));
               }

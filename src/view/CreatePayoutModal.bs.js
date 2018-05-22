@@ -17,6 +17,7 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
+var MaterialUi_InputAdornment = require("@jsiebern/bs-material-ui/src/MaterialUi_InputAdornment.bs.js");
 
 var defaultFee = BTC.fromSatoshis(/* int64 */[
       /* hi */0,
@@ -25,12 +26,9 @@ var defaultFee = BTC.fromSatoshis(/* int64 */[
 
 var component = ReasonReact.reducerComponent("CreatePayout");
 
-var balance = Css.style(/* :: */[
-      Css.fontSize(Css.vw(2.0)),
-      /* [] */0
-    ]);
+var max = Css.style(/* [] */0);
 
-var Styles = /* module */[/* balance */balance];
+var Styles = /* module */[/* max */max];
 
 function make(viewData, commands, _) {
   return /* record */[
@@ -62,18 +60,18 @@ function make(viewData, commands, _) {
                                             inputs[/* recipientAddress */0]
                                           ]], /* Some */[(function (e) {
                                               return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
-                                            })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
+                                            })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
                                             -976970511,
                                             inputs[/* btcAmount */1]
                                           ]], /* Some */[(function (e) {
                                               return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
-                                            })], /* Some */[false], /* Some */[true], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                              return Curry._1(send, /* EnterMax */0);
-                                            })], /* Some */[true], /* array */[ViewCommon.text("Max")])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                            })], /* Some */[false], /* Some */[true], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_InputAdornment.make(/* None */0, /* None */0, /* None */0, /* Some */[/* End */3455931], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                                  return Curry._1(send, /* EnterMax */0);
+                                                                })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* array */[ViewCommon.text("Max")]))]))], /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* AddAnother */1);
-                                            })], /* Some */[true], /* array */[ViewCommon.text("Add Another")])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* array */[ViewCommon.text("+ add another recipient")])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePayout */2);
-                                            })], /* Some */[true], /* array */[ViewCommon.text("Propose Payout")]))), /* array */[]));
+                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Propose Payout")]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

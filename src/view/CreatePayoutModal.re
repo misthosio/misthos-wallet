@@ -29,7 +29,7 @@ let component = ReasonReact.reducerComponent("CreatePayout");
 
 module Styles = {
   open Css;
-  let balance = style([fontSize(vw(2.0))]);
+  let max = style([]);
 };
 
 let make =
@@ -208,12 +208,20 @@ let make =
             onChange=(e => send(ChangeBTCAmount(extractString(e))))
             autoFocus=false
             fullWidth=true
+            ensuring=true
+            endAdornment=MaterialUi.(
+                           <InputAdornment position=`End>
+                             <MButton
+                               size=`Small
+                               variant=Flat
+                               onClick=(_e => send(EnterMax))>
+                               (text("Max"))
+                             </MButton>
+                           </InputAdornment>
+                         )
           />
-          <MButton fullWidth=true onClick=(_e => send(EnterMax))>
-            (text("Max"))
-          </MButton>
-          <MButton fullWidth=true onClick=(_e => send(AddAnother))>
-            (text("Add Another"))
+          <MButton variant=Flat onClick=(_e => send(AddAnother))>
+            (text("+ add another recipient"))
           </MButton>
           <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
             (text("Propose Payout"))

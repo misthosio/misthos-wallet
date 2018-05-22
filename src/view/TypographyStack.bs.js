@@ -40,7 +40,7 @@ function make() {
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Button */242538002], /* None */0, /* None */0, /* array */[ViewCommon.text("Button")]))
                                       ])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V6 */5], /* None */0, /* None */0, /* None */0, /* array */[
-                                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Button")])),
+                                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Button")])),
                                         ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* TypographyStack */2, /* None */0, /* array */[ViewCommon.text("LinkButton")])),
                                         React.createElement("br", undefined),
                                         ReasonReact.element(/* None */0, /* None */0, Link.make(/* TypographyStack */2, /* None */0, /* array */[ViewCommon.text("Link")]))
