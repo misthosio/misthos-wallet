@@ -307,7 +307,7 @@ module Handle = {
     withVenture(
       Create(name),
       (correlationId, venture) => {
-        Notify.ventureCreated(venture);
+        Notify.ventureCreated(~correlationId, venture);
         Notify.result(correlationId, Ok);
         Js.Promise.resolve(venture);
       },
@@ -344,6 +344,10 @@ module Handle = {
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
+                   venture |> resolve;
                  },
              )
         )
@@ -361,6 +365,10 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
                    venture |> resolve;
                  },
              )
@@ -381,7 +389,11 @@ module Handle = {
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
                  }
-               | _ => venture |> resolve,
+               | PartnerDoesNotExist => venture |> resolve
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
+                   venture |> resolve;
+                 },
              )
         )
       )
@@ -398,6 +410,10 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
                    venture |> resolve;
                  },
              )
@@ -416,6 +432,10 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
                    venture |> resolve;
                  },
              )
@@ -439,6 +459,10 @@ module Handle = {
                | NotEnoughFunds => {
                    logMessage("Not enough funds");
                    venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
+                   venture |> resolve;
                  },
              )
         )
@@ -457,6 +481,10 @@ module Handle = {
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
+                   venture |> resolve;
                  },
              )
         )
@@ -474,6 +502,11 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.result(correlationId, Ok);
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
                    venture |> resolve;
                  },
              )
@@ -494,6 +527,10 @@ module Handle = {
                    Notify.newIncomeAddress(correlationId, ventureId, address);
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.result(correlationId, CouldNotPersistVenture);
+                   venture |> resolve;
                  },
              )
         )
@@ -512,7 +549,8 @@ module Handle = {
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
-                 },
+                 }
+               | CouldNotPersist(_err) => venture |> resolve,
              )
         )
       )
@@ -539,7 +577,8 @@ module Handle = {
                    );
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
-                 },
+                 }
+               | CouldNotPersist(_err) => venture |> resolve,
              )
         )
       )
@@ -566,7 +605,8 @@ module Handle = {
                    );
                    Notify.newItems(correlationId, ventureId, newItems);
                    venture |> resolve;
-                 },
+                 }
+               | CouldNotPersist(_err) => venture |> resolve,
              )
         )
       )
