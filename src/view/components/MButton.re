@@ -37,12 +37,16 @@ let make =
       ~size=?,
       ~fullWidth=false,
       ~variant=Outlined,
+      ~className="",
       children,
     ) => {
   ...component,
   render: _self =>
     <MaterialUi.Button
-      ?size className=(Styles.button(fullWidth, variant)) ?color ?onClick>
+      ?size
+      className=(Styles.button(fullWidth, variant) ++ " " ++ className)
+      ?color
+      ?onClick>
       children
     </MaterialUi.Button>,
 };

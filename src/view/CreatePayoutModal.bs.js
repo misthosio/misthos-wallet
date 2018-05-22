@@ -32,9 +32,38 @@ var defaultFee = BTC.fromSatoshis(/* int64 */[
 
 var component = ReasonReact.reducerComponent("CreatePayout");
 
-var max = Css.style(/* [] */0);
+var maxButton = Css.style(/* :: */[
+      Css.important(Css.paddingLeft(Css.px(4))),
+      /* :: */[
+        Css.important(Css.paddingRight(Css.px(4))),
+        /* :: */[
+          Css.color(Css.rgba(0, 0, 0, 0.54)),
+          /* :: */[
+            Css.unsafe("minWidth", "min-content"),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
 
-var Styles = /* module */[/* max */max];
+var maxWidth = Css.style(/* :: */[
+      Css.maxWidth(/* `percent */[
+            -119887163,
+            99.0
+          ]),
+      /* [] */0
+    ]);
+
+var buttonPadding = Css.style(/* :: */[
+      Css.paddingLeft(Css.px(4)),
+      /* [] */0
+    ]);
+
+var Styles = /* module */[
+  /* maxButton */maxButton,
+  /* maxWidth */maxWidth,
+  /* buttonPadding */buttonPadding
+];
 
 function make(viewData, commands, cmdStatus, _) {
   return /* record */[
@@ -72,9 +101,9 @@ function make(viewData, commands, cmdStatus, _) {
               }
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
                           return ReasonReact.element(/* Some */[String(idx)], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text(param[0]))])),
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(param[1]) + " BTC")])),
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
+                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text(param[0]))])),
+                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(param[1]) + " BTC")])),
+                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
                                                                   console.log("TODO");
                                                                   return /* () */0;
                                                                 })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
@@ -98,23 +127,23 @@ function make(viewData, commands, cmdStatus, _) {
                                               return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
                                             })], /* Some */[false], /* Some */[true], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_InputAdornment.make(/* None */0, /* None */0, /* None */0, /* Some */[/* End */3455931], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                                   return Curry._1(send, /* EnterMax */0);
-                                                                })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* array */[ViewCommon.text("Max")]))]))], /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                                })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* array */[ViewCommon.text("Max")]))]))], /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* AddAnother */1);
-                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Add to Summary")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Table.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableBody.make(/* None */0, /* None */0, /* array */[
+                                            })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Add to Summary")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Table.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableBody.make(/* None */0, /* None */0, /* array */[
                                                     destinationList,
                                                     ReasonReact.element(/* Some */["networkFee"], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("NETWORK FEE"))])),
-                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* networkFee */4]) + " BTC")])),
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[maxWidth], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("NETWORK FEE"))])),
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* networkFee */4]) + " BTC")])),
                                                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))
                                                             ])),
                                                     ReasonReact.element(/* Some */["misthosFee"], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("MISTHOS FEE"))])),
-                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")])),
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("MISTHOS FEE"))])),
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")])),
                                                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))
                                                             ]))
                                                   ]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePayout */2);
-                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Propose Payout")])), feedback), /* array */[]));
+                                            })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Propose Payout")])), feedback), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
