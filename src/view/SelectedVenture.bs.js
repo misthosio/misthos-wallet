@@ -45,12 +45,12 @@ function make(viewData, _) {
                           partial_arg_000,
                           partial_arg_001
                         ]);
-                      var match = prospect[/* processType */2];
+                      var match = prospect[/* data */4][/* processType */1];
                       return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](prospect[/* processId */0])], /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                           return Router.clickToRoute(partial_arg, param);
                                         })], /* None */0, /* array */[ViewCommon.text((
                                             match ? "Addition" : "Removal"
-                                          ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* userId */1]) + "' proposed")))]));
+                                          ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */4][/* userId */0]) + "' proposed")))]));
                     }), viewData[/* prospects */4]);
               var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
                               return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* array */[]));

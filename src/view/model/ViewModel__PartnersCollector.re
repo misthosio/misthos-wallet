@@ -8,37 +8,21 @@ type partner = {
   canProposeRemoval: bool,
 };
 
-type voteStatus =
-  | Pending
-  | Endorsed
-  | Rejected;
-
-type voter = {
-  userId,
-  voteStatus,
-};
-
 type processType =
   | Removal
   | Addition;
 
-type processStatus =
-  | Completed
-  | InProgress;
-
-type prospect = {
-  processId,
+type data = {
   userId,
   processType,
-  processStatus,
-  voters: list(voter),
-  canVote: bool,
 };
+
+type partnerProcess = ProcessCollector.process(data);
 
 type t = {
   localUser: userId,
   partners: list(partner),
-  prospects: ProcessId.map(prospect),
+  prospects: ProcessCollector.collection(data),
   partnerPolicy: Policy.t,
 };
 
@@ -49,9 +33,9 @@ let prospectsPendingApproval = ({prospects}) =>
   prospects
   |. Map.valuesToArray
   |> List.fromArray
-  |. List.keepU((. prospect) =>
-       switch (prospect.processStatus) {
-       | InProgress => true
+  |. List.keepU((. prospect: partnerProcess) =>
+       switch (prospect.status) {
+       | PendingApproval => true
        | _ => false
        }
      );
@@ -66,80 +50,27 @@ let make = localUser => {
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({metaPolicy}) => {...state, partnerPolicy: metaPolicy}
-  | PartnerProposed({eligibleWhenProposing, processId, supporterId, data}) => {
+  | PartnerProposed(proposal) => {
       ...state,
       prospects:
         state.prospects
-        |. Map.set(
-             processId,
-             {
-               processStatus: InProgress,
-               processType: Addition,
-               canVote:
-                 UserId.neq(supporterId, state.localUser)
-                 && eligibleWhenProposing
-                 |. Set.has(state.localUser),
-               processId,
-               userId: data.id,
-               voters:
-                 eligibleWhenProposing
-                 |> Set.toList
-                 |. List.mapU((. userId) =>
-                      {
-                        userId,
-                        voteStatus:
-                          UserId.eq(supporterId, userId) ? Endorsed : Pending,
-                      }
-                    ),
-             },
+        |> ProcessCollector.addProposal(state.localUser, proposal, data =>
+             {userId: data.id, processType: Addition}
            ),
     }
-  | PartnerRejected({processId, rejectorId}) => {
+  | PartnerRejected(rejection) => {
       ...state,
       prospects:
         state.prospects
-        |. Map.update(
-             processId,
-             Utils.mapOption(prospect =>
-               {
-                 ...prospect,
-                 canVote:
-                   prospect.canVote && UserId.neq(rejectorId, state.localUser),
-                 voters:
-                   prospect.voters
-                   |. List.mapU((. {userId, voteStatus}) =>
-                        UserId.eq(userId, rejectorId) ?
-                          {userId, voteStatus: Rejected} :
-                          {userId, voteStatus}
-                      ),
-               }
-             ),
-           ),
+        |> ProcessCollector.addRejection(state.localUser, rejection),
     }
-  | PartnerEndorsed({processId, supporterId}) => {
+  | PartnerEndorsed(endorsement) => {
       ...state,
       prospects:
         state.prospects
-        |. Map.update(
-             processId,
-             Utils.mapOption(prospect =>
-               {
-                 ...prospect,
-                 canVote:
-                   prospect.canVote
-                   && UserId.neq(supporterId, state.localUser),
-                 voters:
-                   prospect.voters
-                   |. List.mapU((. {userId, voteStatus}) =>
-                        UserId.eq(userId, supporterId) ?
-                          {userId, voteStatus: Endorsed} :
-                          {userId, voteStatus}
-                      ),
-               }
-             ),
-           ),
+        |> ProcessCollector.addEndorsement(state.localUser, endorsement),
     }
-  | PartnerAccepted({processId, data}) => {
+  | PartnerAccepted({data} as acceptance) => {
       ...state,
       partners: [
         {
@@ -150,110 +81,40 @@ let apply = (event: Event.t, state) =>
         ...state.partners,
       ],
       prospects:
-        state.prospects
-        |. Map.update(
-             processId,
-             Utils.mapOption(prospect =>
-               {...prospect, processStatus: Completed}
-             ),
-           ),
+        state.prospects |> ProcessCollector.addAcceptance(acceptance),
     }
-  | PartnerRemovalProposed({
-      eligibleWhenProposing,
-      processId,
-      supporterId,
-      data,
-    }) => {
+  | PartnerRemovalProposed(proposal) => {
       ...state,
       partners:
         state.partners
         |. List.map((p: partner) =>
-             UserId.eq(p.userId, data.id) ?
+             UserId.eq(p.userId, proposal.data.id) ?
                {...p, canProposeRemoval: false} : p
            ),
       prospects:
         state.prospects
-        |. Map.set(
-             processId,
-             {
-               processStatus: InProgress,
-               processType: Removal,
-               canVote:
-                 UserId.neq(supporterId, state.localUser)
-                 && eligibleWhenProposing
-                 |. Set.has(state.localUser),
-               processId,
-               userId: data.id,
-               voters:
-                 eligibleWhenProposing
-                 |> Set.toList
-                 |. List.mapU((. userId) =>
-                      {
-                        userId,
-                        voteStatus:
-                          UserId.eq(supporterId, userId) ? Endorsed : Pending,
-                      }
-                    ),
-             },
+        |> ProcessCollector.addProposal(state.localUser, proposal, data =>
+             {userId: data.id, processType: Removal}
            ),
     }
-  | PartnerRemovalRejected({processId, rejectorId}) => {
+  | PartnerRemovalRejected(rejection) => {
       ...state,
       prospects:
         state.prospects
-        |. Map.update(
-             processId,
-             Utils.mapOption(prospect =>
-               {
-                 ...prospect,
-                 canVote:
-                   prospect.canVote && UserId.neq(rejectorId, state.localUser),
-                 voters:
-                   prospect.voters
-                   |. List.mapU((. {userId, voteStatus}) =>
-                        UserId.eq(userId, rejectorId) ?
-                          {userId, voteStatus: Rejected} :
-                          {userId, voteStatus}
-                      ),
-               }
-             ),
-           ),
+        |> ProcessCollector.addRejection(state.localUser, rejection),
     }
-  | PartnerRemovalEndorsed({processId, supporterId}) => {
+  | PartnerRemovalEndorsed(endorsement) => {
       ...state,
       prospects:
         state.prospects
-        |. Map.update(
-             processId,
-             Utils.mapOption(prospect =>
-               {
-                 ...prospect,
-                 canVote:
-                   prospect.canVote
-                   && UserId.neq(supporterId, state.localUser),
-                 voters:
-                   prospect.voters
-                   |. List.mapU((. {userId, voteStatus}) =>
-                        UserId.eq(userId, supporterId) ?
-                          {userId, voteStatus: Endorsed} :
-                          {userId, voteStatus}
-                      ),
-               }
-             ),
-           ),
+        |> ProcessCollector.addEndorsement(state.localUser, endorsement),
     }
-  | PartnerRemovalAccepted({processId, data: {id}}) => {
+  | PartnerRemovalAccepted({data: {id}} as acceptance) => {
       ...state,
       partners:
         state.partners |. List.keep((p: partner) => UserId.neq(p.userId, id)),
       prospects:
-        state.prospects
-        |. Map.update(
-             processId,
-             Utils.mapOption(prospect =>
-               {...prospect, processStatus: Completed}
-             ),
-           ),
+        state.prospects |> ProcessCollector.addAcceptance(acceptance),
     }
   | _ => state
   };

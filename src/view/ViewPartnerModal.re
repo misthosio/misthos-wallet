@@ -26,7 +26,7 @@ let make =
     ) => {
   ...component,
   render: (_) => {
-    let {processId, userId, voters, canVote, processType, processStatus}: ViewData.t = viewData;
+    let {processId, voters, canVote, status, data: {userId, processType}}: ViewData.t = viewData;
     let (onEndorse, onReject) =
       switch (processType) {
       | Addition => (
@@ -68,9 +68,11 @@ let make =
           (
             "Status: "
             ++ (
-              switch (processStatus) {
-              | InProgress => "pending"
-              | Completed => "completed"
+              switch (status) {
+              | PendingApproval => "PendingApproval"
+              | Accepted => "Accepted"
+              | Rejected => "Rejected"
+              | Aborted => "Aborted"
               }
             )
             |> text

@@ -24,13 +24,13 @@ let make = (~viewData: ViewData.t, _children) => {
                (
                  text(
                    (
-                     switch (prospect.processType) {
+                     switch (prospect.data.processType) {
                      | Removal => "Removal"
                      | Addition => "Addition"
                      }
                    )
                    ++ " of '"
-                   ++ UserId.toString(prospect.userId)
+                   ++ UserId.toString(prospect.data.userId)
                    ++ "' proposed",
                  )
                )

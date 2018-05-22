@@ -36,8 +36,8 @@ let addProposal =
     (
       localUser,
       {eligibleWhenProposing, processId, supporterId, data}: proposal('a),
-      map,
       makeData: 'a => 'data,
+      map,
     ) =>
   map
   |. Map.set(

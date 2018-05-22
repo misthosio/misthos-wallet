@@ -55,16 +55,16 @@ let apply = (event, state) =>
   | PayoutProposed(proposal) => {
       ...state,
       payouts:
-        ProcessCollector.addProposal(
-          state.localUser, proposal, state.payouts, data =>
-          {
-            txId: None,
-            date: None,
-            payoutStatus: PendingApproval,
-            summary:
-              data.payoutTx |> PayoutTransaction.summary(state.network),
-          }
-        ),
+        state.payouts
+        |> ProcessCollector.addProposal(state.localUser, proposal, data =>
+             {
+               txId: None,
+               date: None,
+               payoutStatus: PendingApproval,
+               summary:
+                 data.payoutTx |> PayoutTransaction.summary(state.network),
+             }
+           ),
     }
   | PayoutRejected(rejection) => {
       ...state,

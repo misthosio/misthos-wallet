@@ -47,14 +47,14 @@ function apply($$event, state) {
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
-                /* payouts */ProcessCollector.addProposal(state[/* localUser */1], $$event[0], state[/* payouts */2], (function (data) {
+                /* payouts */ProcessCollector.addProposal(state[/* localUser */1], $$event[0], (function (data) {
                         return /* record */[
                                 /* payoutStatus : PendingApproval */0,
                                 /* summary */PayoutTransaction.summary(state[/* network */0], data[/* payoutTx */1]),
                                 /* txId : None */0,
                                 /* date : None */0
                               ];
-                      })),
+                      }), state[/* payouts */2]),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];

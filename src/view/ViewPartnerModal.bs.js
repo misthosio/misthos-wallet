@@ -28,10 +28,11 @@ function make(viewData, commands, cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var processType = viewData[/* processType */2];
-              var userId = viewData[/* userId */1];
+              var match = viewData[/* data */4];
+              var processType = match[/* processType */1];
+              var userId = match[/* userId */0];
               var processId = viewData[/* processId */0];
-              var match = processType ? /* tuple */[
+              var match$1 = processType ? /* tuple */[
                   (function () {
                       return Curry._1(commands[/* endorsePartner */1], processId);
                     }),
@@ -65,13 +66,27 @@ function make(viewData, commands, cmdStatus, _) {
               };
               var voters = $$Array.of_list(List.map((function (param) {
                           return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Partner.make(param[/* userId */0], /* None */0, /* None */0, /* array */[])), voteStatus(param[/* voteStatus */1]));
-                        }), viewData[/* voters */4]));
+                        }), viewData[/* voters */3]));
+              var tmp;
+              switch (viewData[/* status */1]) {
+                case 0 : 
+                    tmp = "PendingApproval";
+                    break;
+                case 1 : 
+                    tmp = "Accepted";
+                    break;
+                case 2 : 
+                    tmp = "Rejected";
+                    break;
+                case 3 : 
+                    tmp = "Aborted";
+                    break;
+                
+              }
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Proposed Partner " + processTypeString,
                                 /* [] */0
-                              ]], React.createElement("div", undefined, ViewCommon.text("Status: " + (
-                                      viewData[/* processStatus */3] ? "pending" : "completed"
-                                    )), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[voters])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */5], match[0], match[1], cmdStatus, /* array */[]))), /* array */[]));
+                              ]], React.createElement("div", undefined, ViewCommon.text("Status: " + tmp), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[voters])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */2], match$1[0], match$1[1], cmdStatus, /* array */[]))), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

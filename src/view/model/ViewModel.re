@@ -54,9 +54,9 @@ module ManagePartnersView = {
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 module ViewPartnerView = {
-  type voteStatus = PartnersCollector.voteStatus;
-  type voter = PartnersCollector.voter;
-  type t = PartnersCollector.prospect;
+  type voteStatus = ProcessCollector.voteStatus;
+  type voter = ProcessCollector.voter;
+  type t = PartnersCollector.partnerProcess;
   let fromViewModelState = (userId, {partnersCollector}) =>
     partnersCollector |> PartnersCollector.getProspect(userId);
 };
@@ -146,7 +146,7 @@ let viewPayoutModal = ViewPayoutView.fromViewModelState;
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
-  type prospect = PartnersCollector.prospect;
+  type prospect = PartnersCollector.partnerProcess;
   type txType = TransactionCollector.txType;
   type txStatus = TransactionCollector.txStatus;
   type txData = TransactionCollector.txData;

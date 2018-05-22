@@ -10,7 +10,7 @@ var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 
 var make = PrimitiveTypes.ProcessId[/* makeMap */8];
 
-function addProposal(localUser, param, map, makeData) {
+function addProposal(localUser, param, makeData, map) {
   var supporterId = param[/* supporterId */4];
   var eligibleWhenProposing = param[/* eligibleWhenProposing */3];
   var processId = param[/* processId */0];
