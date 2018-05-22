@@ -6,6 +6,7 @@ var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
 
@@ -14,7 +15,8 @@ function make(localUser) {
           /* network : Regtest */0,
           /* localUser */localUser,
           /* payouts */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
-          /* txIdToProcessIdMap */Belt_MapString.empty
+          /* txIdToProcessIdMap */Belt_MapString.empty,
+          /* txIds */Belt_SetString.empty
         ];
 }
 
@@ -40,7 +42,8 @@ function apply($$event, state) {
                 /* network */$$event[0][/* network */6],
                 /* localUser */state[/* localUser */1],
                 /* payouts */state[/* payouts */2],
-                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3]
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txIds */state[/* txIds */4]
               ];
     case 21 : 
         var match = $$event[0];
@@ -66,7 +69,8 @@ function apply($$event, state) {
                       /* txId : None */0,
                       /* date : None */0
                     ]),
-                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3]
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txIds */state[/* txIds */4]
               ];
     case 22 : 
         var match$1 = $$event[0];
@@ -102,7 +106,8 @@ function apply($$event, state) {
                                             ];
                                     }), param);
                       })),
-                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3]
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txIds */state[/* txIds */4]
               ];
     case 23 : 
         var match$2 = $$event[0];
@@ -138,7 +143,8 @@ function apply($$event, state) {
                                             ];
                                     }), param);
                       })),
-                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3]
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txIds */state[/* txIds */4]
               ];
     case 24 : 
         return /* record */[
@@ -158,7 +164,8 @@ function apply($$event, state) {
                                             ];
                                     }), param);
                       })),
-                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3]
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txIds */state[/* txIds */4]
               ];
     case 26 : 
         var match$3 = $$event[0];
@@ -169,9 +176,10 @@ function apply($$event, state) {
                 /* localUser */state[/* localUser */1],
                 /* payouts */Belt_Map.update(state[/* payouts */2], processId$1, (function (param) {
                         return Utils.mapOption((function (payout) {
+                                      var match = Belt_SetString.has(state[/* txIds */4], txId);
                                       return /* record */[
                                               /* processId */payout[/* processId */0],
-                                              /* status : Unconfirmed */2,
+                                              /* status */match ? /* Confirmed */3 : /* Unconfirmed */2,
                                               /* canEndorse */payout[/* canEndorse */2],
                                               /* canReject */payout[/* canReject */3],
                                               /* summary */payout[/* summary */4],
@@ -181,7 +189,8 @@ function apply($$event, state) {
                                             ];
                                     }), param);
                       })),
-                /* txIdToProcessIdMap */Belt_MapString.set(state[/* txIdToProcessIdMap */3], txId, processId$1)
+                /* txIdToProcessIdMap */Belt_MapString.set(state[/* txIdToProcessIdMap */3], txId, processId$1),
+                /* txIds */state[/* txIds */4]
               ];
     case 28 : 
         var match$4 = $$event[0];
@@ -203,12 +212,14 @@ function apply($$event, state) {
                                             ];
                                     }), param);
                       })),
-                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3]
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txIds */state[/* txIds */4]
               ];
     case 34 : 
         var match$5 = $$event[0];
         var unixTime = match$5[/* unixTime */2];
-        var processId$2 = Belt_MapString.get(state[/* txIdToProcessIdMap */3], match$5[/* txId */0]);
+        var txId$1 = match$5[/* txId */0];
+        var processId$2 = Belt_MapString.get(state[/* txIdToProcessIdMap */3], txId$1);
         if (processId$2) {
           return /* record */[
                   /* network */state[/* network */0],
@@ -227,7 +238,8 @@ function apply($$event, state) {
                                               ];
                                       }), param);
                         })),
-                  /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3]
+                  /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                  /* txIds */Belt_SetString.add(state[/* txIds */4], txId$1)
                 ];
         } else {
           return state;

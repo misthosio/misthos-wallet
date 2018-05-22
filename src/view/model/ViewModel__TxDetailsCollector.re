@@ -37,6 +37,7 @@ type t = {
   localUser: userId,
   payouts: ProcessId.map(payout),
   txIdToProcessIdMap: Map.String.t(processId),
+  txIds: Set.String.t,
 };
 
 let make = localUser => {
@@ -44,6 +45,7 @@ let make = localUser => {
   localUser,
   payouts: ProcessId.makeMap(),
   txIdToProcessIdMap: Map.String.empty,
+  txIds: Set.String.empty,
 };
 
 let getPayout = (processId, {payouts}) => payouts |. Map.getExn(processId);
@@ -172,7 +174,13 @@ let apply = (event, state) =>
         |. Map.update(
              processId,
              Utils.mapOption(payout =>
-               {...payout, txId: Some(txId), status: Unconfirmed}
+               {
+                 ...payout,
+                 txId: Some(txId),
+                 status:
+                   state.txIds |. Set.String.has(txId) ?
+                     Confirmed : Unconfirmed,
+               }
              ),
            ),
     }
@@ -182,6 +190,7 @@ let apply = (event, state) =>
     | None => state
     | Some(processId) => {
         ...state,
+        txIds: state.txIds |. Set.String.add(txId),
         payouts:
           state.payouts
           |. Map.update(
