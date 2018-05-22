@@ -11,30 +11,19 @@ type payoutStatus =
   | Confirmed
   | Failed(string);
 
-type voteStatus =
-  | Pending
-  | Endorsed
-  | Rejected;
-
-type voter = {
-  userId,
-  voteStatus,
-};
-
-type payout = {
-  processId,
-  status: payoutStatus,
-  canVote: bool,
+type data = {
+  payoutStatus,
   summary: PayoutTransaction.summary,
-  voters: list(voter),
   txId: option(string),
   date: option(Js.Date.t),
 };
 
+type payoutProcess = ProcessCollector.process(data);
+
 type t = {
   network: Network.t,
   localUser: userId,
-  payouts: ProcessId.map(payout),
+  payouts: ProcessCollector.collection(data),
   txIdToProcessIdMap: Map.String.t(processId),
   txIds: Set.String.t,
 };
@@ -42,7 +31,7 @@ type t = {
 let make = localUser => {
   network: Regtest,
   localUser,
-  payouts: ProcessId.makeMap(),
+  payouts: ProcessCollector.make(),
   txIdToProcessIdMap: Map.String.empty,
   txIds: Set.String.empty,
 };
@@ -53,7 +42,7 @@ let payoutsPendingApproval = ({payouts}) =>
   payouts
   |. Map.valuesToArray
   |> List.fromArray
-  |. List.keepU((. payout) =>
+  |. List.keepU((. payout: payoutProcess) =>
        switch (payout.status) {
        | PendingApproval => true
        | _ => false
@@ -63,89 +52,39 @@ let payoutsPendingApproval = ({payouts}) =>
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
-  | PayoutProposed({processId, eligibleWhenProposing, supporterId, data}) => {
+  | PayoutProposed(proposal) => {
       ...state,
       payouts:
-        state.payouts
-        |. Map.set(
-             processId,
-             {
-               processId,
-               txId: None,
-               date: None,
-               canVote:
-                 UserId.neq(supporterId, state.localUser)
-                 && eligibleWhenProposing
-                 |. Set.has(state.localUser),
-               status: PendingApproval,
-               summary:
-                 data.payoutTx |> PayoutTransaction.summary(state.network),
-               voters:
-                 eligibleWhenProposing
-                 |> Set.toList
-                 |. List.mapU((. userId) =>
-                      {
-                        userId,
-                        voteStatus:
-                          UserId.eq(supporterId, userId) ? Endorsed : Pending,
-                      }
-                    ),
-             },
-           ),
+        ProcessCollector.addProposal(
+          state.localUser, proposal, state.payouts, data =>
+          {
+            txId: None,
+            date: None,
+            payoutStatus: PendingApproval,
+            summary:
+              data.payoutTx |> PayoutTransaction.summary(state.network),
+          }
+        ),
     }
-  | PayoutRejected({processId, rejectorId}) => {
+  | PayoutRejected(rejection) => {
       ...state,
       payouts:
         state.payouts
-        |. Map.update(
-             processId,
-             Utils.mapOption(payout =>
-               {
-                 ...payout,
-                 canVote:
-                   payout.canVote && UserId.neq(rejectorId, state.localUser),
-                 voters:
-                   payout.voters
-                   |. List.mapU((. {userId, voteStatus}) =>
-                        UserId.eq(userId, rejectorId) ?
-                          {userId, voteStatus: Rejected} :
-                          {userId, voteStatus}
-                      ),
-               }
-             ),
-           ),
+        |> ProcessCollector.addRejection(state.localUser, rejection),
     }
-  | PayoutEndorsed({processId, supporterId}) => {
+  | PayoutEndorsed(endorsement) => {
       ...state,
       payouts:
         state.payouts
-        |. Map.update(
-             processId,
-             Utils.mapOption(payout =>
-               {
-                 ...payout,
-                 canVote:
-                   payout.canVote && UserId.neq(supporterId, state.localUser),
-                 voters:
-                   payout.voters
-                   |. List.mapU((. {userId, voteStatus}) =>
-                        UserId.eq(userId, supporterId) ?
-                          {userId, voteStatus: Endorsed} :
-                          {userId, voteStatus}
-                      ),
-               }
-             ),
-           ),
+        |> ProcessCollector.addEndorsement(state.localUser, endorsement),
     }
-  | PayoutAccepted({processId}) => {
+  | PayoutAccepted({processId} as accepted) => {
       ...state,
       payouts:
         state.payouts
-        |. Map.update(
-             processId,
-             Utils.mapOption(payout =>
-               {...payout, canVote: false, status: Accepted}
-             ),
+        |> ProcessCollector.addAcceptance(accepted)
+        |> ProcessCollector.updateData(processId, data =>
+             {...data, payoutStatus: Accepted}
            ),
     }
   | PayoutBroadcast({processId, txId}) => {
@@ -154,49 +93,41 @@ let apply = (event, state) =>
         state.txIdToProcessIdMap |. Map.String.set(txId, processId),
       payouts:
         state.payouts
-        |. Map.update(
-             processId,
-             Utils.mapOption(payout =>
-               {
-                 ...payout,
-                 txId: Some(txId),
-                 status:
-                   state.txIds |. Set.String.has(txId) ?
-                     Confirmed : Unconfirmed,
-               }
-             ),
+        |> ProcessCollector.updateData(processId, data =>
+             {
+               ...data,
+               txId: Some(txId),
+               payoutStatus:
+                 state.txIds |. Set.String.has(txId) ?
+                   Confirmed : Unconfirmed,
+             }
            ),
     }
   | TransactionConfirmed({txId, unixTime}) =>
     let processId = state.txIdToProcessIdMap |. Map.String.get(txId);
-    switch (processId) {
-    | None => {...state, txIds: state.txIds |. Set.String.add(txId)}
-    | Some(processId) => {
-        ...state,
-        txIds: state.txIds |. Set.String.add(txId),
-        payouts:
+    {
+      ...state,
+      txIds: state.txIds |. Set.String.add(txId),
+      payouts:
+        switch (processId) {
+        | None => state.payouts
+        | Some(processId) =>
           state.payouts
-          |. Map.update(
-               processId,
-               Utils.mapOption(payout =>
-                 {
-                   ...payout,
-                   date: Some(Js.Date.fromFloat(unixTime *. 1000.)),
-                   status: Confirmed,
-                 }
-               ),
-             ),
-      }
+          |> ProcessCollector.updateData(processId, data =>
+               {
+                 ...data,
+                 date: Some(Js.Date.fromFloat(unixTime *. 1000.)),
+                 payoutStatus: Confirmed,
+               }
+             )
+        },
     };
   | PayoutBroadcastFailed({processId, errorMessage}) => {
       ...state,
       payouts:
         state.payouts
-        |. Map.update(
-             processId,
-             Utils.mapOption(payout =>
-               {...payout, status: Failed(errorMessage)}
-             ),
+        |> ProcessCollector.updateData(processId, data =>
+             {...data, payoutStatus: Failed(errorMessage)}
            ),
     }
   | _ => state

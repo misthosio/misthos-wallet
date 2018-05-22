@@ -135,9 +135,9 @@ let createPayoutModal = CreatePayoutView.fromViewModelState;
 
 module ViewPayoutView = {
   type payoutStatus = TxDetailsCollector.payoutStatus;
-  type voteStatus = TxDetailsCollector.voteStatus;
-  type voter = TxDetailsCollector.voter;
-  type t = TxDetailsCollector.payout;
+  type voteStatus = ProcessCollector.voteStatus;
+  type voter = ProcessCollector.voter;
+  type t = TxDetailsCollector.payoutProcess;
   let fromViewModelState = (processId, {txDetailsCollector}) =>
     txDetailsCollector |> TxDetailsCollector.getPayout(processId);
 };
@@ -151,7 +151,7 @@ module SelectedVentureView = {
   type txStatus = TransactionCollector.txStatus;
   type txData = TransactionCollector.txData;
   type payoutStatus = TxDetailsCollector.payoutStatus;
-  type payout = TxDetailsCollector.payout;
+  type payoutProcess = TxDetailsCollector.payoutProcess;
   type balance = BalanceCollector.balance;
   type t = {
     ventureId,
@@ -161,7 +161,7 @@ module SelectedVentureView = {
     prospects: list(prospect),
     unconfirmedTxs: list(txData),
     confirmedTxs: list(txData),
-    payoutsPendingApproval: list(payout),
+    payoutsPendingApproval: list(payoutProcess),
     balance,
   };
   let fromViewModelState =

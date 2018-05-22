@@ -55,22 +55,22 @@ let make = (~viewData: ViewData.t, _children) => {
       );
     let payouts =
       viewData.payoutsPendingApproval
-      |> List.map((payout: ViewData.payout) =>
+      |> List.map(({processId, data: {summary}}: ViewData.payoutProcess) =>
            MaterialUi.(
              <ListItem
                button=true
                onClick=(
                  Router.clickToRoute(
-                   Venture(viewData.ventureId, Payout(payout.processId)),
+                   Venture(viewData.ventureId, Payout(processId)),
                  )
                )
-               key=(payout.processId |> ProcessId.toString)>
+               key=(processId |> ProcessId.toString)>
                (
                  text(
                    "'"
-                   ++ (payout.processId |> ProcessId.toString)
+                   ++ (processId |> ProcessId.toString)
                    ++ "' - "
-                   ++ BTC.format(payout.summary.spentWithFees),
+                   ++ BTC.format(summary.spentWithFees),
                  )
                )
              </ListItem>

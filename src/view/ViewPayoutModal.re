@@ -23,7 +23,12 @@ let make =
   {
     ...component,
     render: _self => {
-      let {processId, txId, date, status, summary, voters, canVote}: ViewData.t = viewData;
+      let {
+        processId,
+        voters,
+        canVote,
+        data: {summary, payoutStatus: status, txId, date},
+      }: ViewData.t = viewData;
       let destinationList =
         ReasonReact.array(
           Array.of_list(

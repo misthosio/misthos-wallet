@@ -10,10 +10,10 @@ var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Partner = require("./components/Partner.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
 
 var component = ReasonReact.statelessComponent("Drawer");
@@ -46,8 +46,9 @@ function make(viewData, commands, cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var summary = viewData[/* summary */3];
-              var status = viewData[/* status */1];
+              var match = viewData[/* data */4];
+              var summary = match[/* summary */1];
+              var status = match[/* payoutStatus */0];
               var processId = viewData[/* processId */0];
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
                           return React.createElement("div", {
@@ -56,7 +57,7 @@ function make(viewData, commands, cmdStatus, _) {
                         }), summary[/* destinations */1]));
               var voters = $$Array.of_list(List.map((function (param) {
                           return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Partner.make(param[/* userId */0], /* None */0, /* None */0, /* array */[])), voteStatus(param[/* voteStatus */1]));
-                        }), viewData[/* voters */4]));
+                        }), viewData[/* voters */3]));
               var payoutStatus;
               if (typeof status === "number") {
                 switch (status) {
@@ -79,13 +80,13 @@ function make(viewData, commands, cmdStatus, _) {
               }
               var transactionId = Js_option.getWithDefault(null, Utils.mapOption((function (txId) {
                           return ViewCommon.text("Transaction ID: " + txId);
-                        }), viewData[/* txId */5]));
+                        }), match[/* txId */2]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Payout Details",
                                 /* [] */0
                               ]], React.createElement("div", undefined, Js_option.getWithDefault(null, Utils.mapOption((function (date) {
                                             return ViewCommon.text(date.toString());
-                                          }), viewData[/* date */6])), payoutStatus, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Payout")])), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(summary[/* networkFee */4]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(summary[/* misthosFee */3]))), React.createElement("li", undefined, ViewCommon.text("Total payout- " + BTC.format(summary[/* spentWithFees */2])))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsements")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[voters])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", viewData[/* canVote */2], (function () {
+                                          }), match[/* date */3])), payoutStatus, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Payout")])), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(summary[/* networkFee */4]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(summary[/* misthosFee */3]))), React.createElement("li", undefined, ViewCommon.text("Total payout- " + BTC.format(summary[/* spentWithFees */2])))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsements")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[voters])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", viewData[/* canVote */2], (function () {
                                             return Curry._1(commands[/* endorsePayout */7], processId);
                                           }), (function () {
                                             return Curry._1(commands[/* rejectPayout */8], processId);
