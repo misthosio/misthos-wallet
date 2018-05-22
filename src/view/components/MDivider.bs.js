@@ -3,8 +3,8 @@
 
 var Css = require("bs-css/src/Css.js");
 var Colors = require("../Colors.bs.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var MaterialUi_Divider = require("@jsiebern/bs-material-ui/src/MaterialUi_Divider.bs.js");
 
 var component = ReasonReact.statelessComponent("MDivider");
 
@@ -33,10 +33,10 @@ function make() {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Divider[/* make */1](/* None */0, /* Some */[divider], /* Some */[/* `String */[
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Divider.make(/* None */0, /* Some */[divider], /* Some */[/* `String */[
                                 -976970511,
                                 "li"
-                              ]], /* None */0, /* None */0, /* None */0, /* array */[]));
+                              ]], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

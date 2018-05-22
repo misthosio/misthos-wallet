@@ -204,33 +204,6 @@ let make =
             (viewData.ventureName |> text)
           </MTypography>
           <Balance currentSpendable=viewData.balance />
-          <MTypography variant=`Title>
-            (text("Proposed recipients"))
-          </MTypography>
-          MaterialUi.(
-            <Table>
-              <TableBody>
-                destinationList
-                <TableRow key="networkFee">
-                  <TableCell> <b> ("NETWORK FEE" |> text) </b> </TableCell>
-                  <TableCell numeric=true>
-                    (BTC.format(summary.networkFee) ++ " BTC" |> text)
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-                <TableRow key="misthosFee">
-                  <TableCell> <b> ("MISTHOS FEE" |> text) </b> </TableCell>
-                  <TableCell numeric=true>
-                    (BTC.format(summary.misthosFee) ++ " BTC" |> text)
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableBody>
-            </Table>
-          )
-        </div>
-      body2=
-        <div>
           <MInput
             placeholder="Recipient Address"
             value=(`String(inputs.recipientAddress))
@@ -256,9 +229,34 @@ let make =
                            </InputAdornment>
                          )
           />
-          <MButton variant=Flat onClick=(_e => send(AddAnother))>
-            (text("+ add another recipient"))
+          <MButton fullWidth=true onClick=(_e => send(AddAnother))>
+            (text("Add to Summary"))
           </MButton>
+        </div>
+      body2=
+        <div>
+          <MTypography variant=`Title> (text("Summary")) </MTypography>
+          MaterialUi.(
+            <Table>
+              <TableBody>
+                destinationList
+                <TableRow key="networkFee">
+                  <TableCell> <b> ("NETWORK FEE" |> text) </b> </TableCell>
+                  <TableCell numeric=true>
+                    (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+                <TableRow key="misthosFee">
+                  <TableCell> <b> ("MISTHOS FEE" |> text) </b> </TableCell>
+                  <TableCell numeric=true>
+                    (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableBody>
+            </Table>
+          )
           <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
             (text("Propose Payout"))
           </MButton>
