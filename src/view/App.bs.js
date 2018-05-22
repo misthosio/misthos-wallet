@@ -131,14 +131,14 @@ function make(session, updateSession, _) {
         return /* None */0;
       } else {
         var venture$3 = selectedVenture[1];
-        var partnerId = match[0];
+        var processId = match[0];
         var match$5 = ViewModel.readOnly(venture$3);
         if (match$5) {
           return /* None */0;
         } else {
           return /* Some */[/* tuple */[
                     ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), /* None */0, (function (commands, cmdStatus) {
-                                return ReasonReact.element(/* None */0, /* None */0, ViewPartnerModal.make(ViewModel.viewPartnerModal(partnerId, venture$3), commands, cmdStatus, /* array */[]));
+                                return ReasonReact.element(/* None */0, /* None */0, ViewPartnerModal.make(ViewModel.viewPartnerModal(processId, venture$3), commands, cmdStatus, /* array */[]));
                               }))),
                     (function (param) {
                         return onCloseModal(selected, param);

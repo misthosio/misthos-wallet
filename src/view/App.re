@@ -40,7 +40,7 @@ let make = (~session, ~updateSession, _children) => {
         ))
     | (
         LoggedIn(_),
-        Venture(selected, Partner(partnerId)),
+        Venture(selected, Partner(processId)),
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
@@ -54,7 +54,7 @@ let make = (~session, ~updateSession, _children) => {
                      commands
                      cmdStatus
                      viewData=(
-                       venture |> ViewModel.viewPartnerModal(partnerId)
+                       venture |> ViewModel.viewPartnerModal(processId)
                      )
                    />
                )

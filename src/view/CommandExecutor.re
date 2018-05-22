@@ -72,6 +72,7 @@ let make =
           | Ok(ProcessStarted(processId)) =>
             onProcessStarted |> Utils.mapOption(fn => fn(processId)) |> ignore;
             Success(ProcessStarted(processId));
+          | Ok(success) => Success(success)
           | Error(err) => Error(err)
           }
         | _ => cmdStatus

@@ -30,14 +30,14 @@ function make(endorseText, rejectText, canEndorse, canReject, onEndorse, onRejec
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
+              var cmdStatus = match[/* cmdStatus */1];
               var state = match[/* buttonState */0];
               var tmp;
               var exit = 0;
-              var tmp$1 = match[/* cmdStatus */1];
-              if (typeof tmp$1 === "number") {
+              if (typeof cmdStatus === "number") {
                 exit = 1;
               } else {
-                switch (tmp$1.tag | 0) {
+                switch (cmdStatus.tag | 0) {
                   case 0 : 
                       if (state >= 2) {
                         switch (state - 2 | 0) {
@@ -65,7 +65,18 @@ function make(endorseText, rejectText, canEndorse, canReject, onEndorse, onRejec
                       ];
                       break;
                   case 2 : 
-                      exit = 1;
+                      switch (cmdStatus[0].tag | 0) {
+                        case 0 : 
+                            exit = 1;
+                            break;
+                        case 1 : 
+                            tmp = /* array */[ViewCommon.text("You successfully endorsed")];
+                            break;
+                        case 2 : 
+                            tmp = /* array */[ViewCommon.text("You successfully rejected")];
+                            break;
+                        
+                      }
                       break;
                   
                 }

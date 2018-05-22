@@ -6,7 +6,6 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var component = ReasonReact.reducerComponent("CommandExecuter");
 
@@ -52,10 +51,10 @@ function make(commands, lastResponse, onProcessStarted, children) {
                   if (response.tag) {
                     tmp = /* Error */Block.__(1, [response[0]]);
                   } else {
-                    var match$1 = response[0];
-                    switch (match$1.tag | 0) {
+                    var success = response[0];
+                    switch (success.tag | 0) {
                       case 0 : 
-                          var processId = match$1[0];
+                          var processId = success[0];
                           Utils.mapOption((function (fn) {
                                   return Curry._1(fn, processId);
                                 }), onProcessStarted);
@@ -63,14 +62,8 @@ function make(commands, lastResponse, onProcessStarted, children) {
                           break;
                       case 1 : 
                       case 2 : 
-                          throw [
-                                Caml_builtin_exceptions.match_failure,
-                                [
-                                  "CommandExecutor.re",
-                                  71,
-                                  10
-                                ]
-                              ];
+                          tmp = /* Success */Block.__(2, [success]);
+                          break;
                       
                     }
                   }

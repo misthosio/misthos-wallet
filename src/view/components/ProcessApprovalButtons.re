@@ -77,6 +77,12 @@ let make =
               (text("Try Again"))
             </MButton>,
           |]
+        | (Success(ProcessEndorsed(_)), _, _) => [|
+            text("You successfully endorsed"),
+          |]
+        | (Success(ProcessRejected(_)), _, _) => [|
+            text("You successfully rejected"),
+          |]
         | (_, NoDecision, true) => [|
             <MButton fullWidth=true onClick=(_e => send(Reject))>
               (text(rejectText))

@@ -48,7 +48,7 @@ function routeFromUrl(url) {
                         } else {
                           return /* Venture */Block.__(0, [
                                     PrimitiveTypes.VentureId[/* fromString */1](id),
-                                    /* Partner */Block.__(0, [PrimitiveTypes.UserId[/* fromString */1](match$4[0])])
+                                    /* Partner */Block.__(0, [PrimitiveTypes.ProcessId[/* fromString */1](match$4[0])])
                                   ]);
                         }
                       } else {
@@ -144,7 +144,7 @@ function routeToUrl(route) {
     } else if (match.tag) {
       return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + ("/payouts/" + PrimitiveTypes.ProcessId[/* toString */0](match[0])));
     } else {
-      return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + ("/partners/" + PrimitiveTypes.UserId[/* toString */0](match[0])));
+      return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + ("/partners/" + PrimitiveTypes.ProcessId[/* toString */0](match[0])));
     }
   }
 }

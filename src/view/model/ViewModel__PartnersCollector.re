@@ -22,10 +22,15 @@ type processType =
   | Removal
   | Addition;
 
+type processStatus =
+  | Completed
+  | InProgress;
+
 type prospect = {
   processId,
   userId,
   processType,
+  processStatus,
   voters: list(voter),
   canEndorse: bool,
   canReject: bool,
@@ -34,21 +39,27 @@ type prospect = {
 type t = {
   localUser: userId,
   partners: list(partner),
-  currentProcesses: UserId.map(processId),
   prospects: ProcessId.map(prospect),
   partnerPolicy: Policy.t,
 };
 
-let getProspect = (userId, {currentProcesses, prospects}) =>
-  currentProcesses |. Map.getExn(userId) |> Map.getExn(prospects);
+let getProspect = (processId, {prospects}) =>
+  prospects |. Map.getExn(processId);
 
 let prospectsPendingApproval = ({prospects}) =>
-  prospects |. Map.valuesToArray |> List.fromArray;
+  prospects
+  |. Map.valuesToArray
+  |> List.fromArray
+  |. List.keepU((. prospect) =>
+       switch (prospect.processStatus) {
+       | InProgress => true
+       | _ => false
+       }
+     );
 
 let make = localUser => {
   localUser,
   partners: [],
-  currentProcesses: UserId.makeMap(),
   prospects: ProcessId.makeMap(),
   partnerPolicy: Policy.Unanimous,
 };
@@ -58,12 +69,12 @@ let apply = (event: Event.t, state) =>
   | VentureCreated({metaPolicy}) => {...state, partnerPolicy: metaPolicy}
   | PartnerProposed({eligibleWhenProposing, processId, supporterId, data}) => {
       ...state,
-      currentProcesses: state.currentProcesses |. Map.set(data.id, processId),
       prospects:
         state.prospects
         |. Map.set(
              processId,
              {
+               processStatus: InProgress,
                processType: Addition,
                canEndorse:
                  UserId.neq(supporterId, state.localUser)
@@ -150,8 +161,14 @@ let apply = (event: Event.t, state) =>
         },
         ...state.partners,
       ],
-      prospects: state.prospects |. Map.remove(processId),
-      currentProcesses: state.currentProcesses |. Map.remove(data.id),
+      prospects:
+        state.prospects
+        |. Map.update(
+             processId,
+             Utils.mapOption(prospect =>
+               {...prospect, processStatus: Completed}
+             ),
+           ),
     }
   | PartnerRemovalProposed({
       eligibleWhenProposing,
@@ -166,12 +183,12 @@ let apply = (event: Event.t, state) =>
              UserId.eq(p.userId, data.id) ?
                {...p, canProposeRemoval: false} : p
            ),
-      currentProcesses: state.currentProcesses |. Map.set(data.id, processId),
       prospects:
         state.prospects
         |. Map.set(
              processId,
              {
+               processStatus: InProgress,
                processType: Removal,
                canEndorse:
                  UserId.neq(supporterId, state.localUser)
@@ -252,8 +269,14 @@ let apply = (event: Event.t, state) =>
       ...state,
       partners:
         state.partners |. List.keep((p: partner) => UserId.neq(p.userId, id)),
-      prospects: state.prospects |. Map.remove(processId),
-      currentProcesses: state.currentProcesses |. Map.remove(id),
+      prospects:
+        state.prospects
+        |. Map.update(
+             processId,
+             Utils.mapOption(prospect =>
+               {...prospect, processStatus: Completed}
+             ),
+           ),
     }
   | _ => state
   };

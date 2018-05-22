@@ -15,7 +15,7 @@ type action =
   | Endorse
   | Reject;
 
-let component = ReasonReact.statelessComponent("ManagePartners");
+let component = ReasonReact.statelessComponent("ViewPartner");
 
 let make =
     (
@@ -26,7 +26,15 @@ let make =
     ) => {
   ...component,
   render: (_) => {
-    let {processId, userId, voters, canEndorse, canReject, processType}: ViewData.t = viewData;
+    let {
+      processId,
+      userId,
+      voters,
+      canEndorse,
+      canReject,
+      processType,
+      processStatus,
+    }: ViewData.t = viewData;
     let (onEndorse, onReject) =
       switch (processType) {
       | Addition => (
@@ -65,7 +73,16 @@ let make =
       titles=["Proposed Partner " ++ processTypeString]
       body1=
         <div>
-          ("Status: Pending" |> text)
+          (
+            "Status: "
+            ++ (
+              switch (processStatus) {
+              | InProgress => "pending"
+              | Completed => "completed"
+              }
+            )
+            |> text
+          )
           <MTypography variant=`Title>
             ("Proposed Partner " ++ processTypeString |> text)
           </MTypography>

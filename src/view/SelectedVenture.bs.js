@@ -40,7 +40,7 @@ function make(viewData, _) {
           /* render */(function () {
               var prospects = List.map((function (prospect) {
                       var partial_arg_000 = viewData[/* ventureId */0];
-                      var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* userId */1]]);
+                      var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* processId */0]]);
                       var partial_arg = /* Venture */Block.__(0, [
                           partial_arg_000,
                           partial_arg_001

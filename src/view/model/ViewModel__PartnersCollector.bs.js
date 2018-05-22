@@ -7,19 +7,25 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 
-function getProspect(userId, param) {
-  return Belt_Map.getExn(param[/* prospects */3], Belt_Map.getExn(param[/* currentProcesses */2], userId));
+function getProspect(processId, param) {
+  return Belt_Map.getExn(param[/* prospects */2], processId);
 }
 
 function prospectsPendingApproval(param) {
-  return Belt_List.fromArray(Belt_Map.valuesToArray(param[/* prospects */3]));
+  return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* prospects */2])), (function (prospect) {
+                var match = prospect[/* processStatus */3];
+                if (match) {
+                  return true;
+                } else {
+                  return false;
+                }
+              }));
 }
 
 function make(localUser) {
   return /* record */[
           /* localUser */localUser,
           /* partners : [] */0,
-          /* currentProcesses */PrimitiveTypes.UserId[/* makeMap */8](/* () */0),
           /* prospects */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* partnerPolicy : Unanimous */0
         ];
@@ -31,24 +37,22 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* currentProcesses */state[/* currentProcesses */2],
-                /* prospects */state[/* prospects */3],
+                /* prospects */state[/* prospects */2],
                 /* partnerPolicy */$$event[0][/* metaPolicy */4]
               ];
     case 1 : 
         var match = $$event[0];
-        var data = match[/* data */6];
         var supporterId = match[/* supporterId */4];
         var eligibleWhenProposing = match[/* eligibleWhenProposing */3];
         var processId = match[/* processId */0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* currentProcesses */Belt_Map.set(state[/* currentProcesses */2], data[/* id */1], processId),
-                /* prospects */Belt_Map.set(state[/* prospects */3], processId, /* record */[
+                /* prospects */Belt_Map.set(state[/* prospects */2], processId, /* record */[
                       /* processId */processId,
-                      /* userId */data[/* id */1],
+                      /* userId */match[/* data */6][/* id */1],
                       /* processType : Addition */1,
+                      /* processStatus : InProgress */1,
                       /* voters */Belt_List.mapU(Belt_Set.toList(eligibleWhenProposing), (function (userId) {
                               var match = PrimitiveTypes.UserId[/* eq */5](supporterId, userId);
                               return /* record */[
@@ -59,7 +63,7 @@ function apply($$event, state) {
                       /* canEndorse */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */0]),
                       /* canReject */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */0])
                     ]),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 2 : 
         var match$1 = $$event[0];
@@ -67,14 +71,14 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* currentProcesses */state[/* currentProcesses */2],
-                /* prospects */Belt_Map.update(state[/* prospects */3], match$1[/* processId */0], (function (param) {
+                /* prospects */Belt_Map.update(state[/* prospects */2], match$1[/* processId */0], (function (param) {
                         return Utils.mapOption((function (prospect) {
                                       return /* record */[
                                               /* processId */prospect[/* processId */0],
                                               /* userId */prospect[/* userId */1],
                                               /* processType */prospect[/* processType */2],
-                                              /* voters */Belt_List.mapU(prospect[/* voters */3], (function (param) {
+                                              /* processStatus */prospect[/* processStatus */3],
+                                              /* voters */Belt_List.mapU(prospect[/* voters */4], (function (param) {
                                                       var userId = param[/* userId */0];
                                                       var match = PrimitiveTypes.UserId[/* eq */5](userId, rejectorId);
                                                       if (match) {
@@ -89,12 +93,12 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */4] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */0])
+                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */0]),
+                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 3 : 
         var match$2 = $$event[0];
@@ -102,14 +106,14 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* currentProcesses */state[/* currentProcesses */2],
-                /* prospects */Belt_Map.update(state[/* prospects */3], match$2[/* processId */0], (function (param) {
+                /* prospects */Belt_Map.update(state[/* prospects */2], match$2[/* processId */0], (function (param) {
                         return Utils.mapOption((function (prospect) {
                                       return /* record */[
                                               /* processId */prospect[/* processId */0],
                                               /* userId */prospect[/* userId */1],
                                               /* processType */prospect[/* processType */2],
-                                              /* voters */Belt_List.mapU(prospect[/* voters */3], (function (param) {
+                                              /* processStatus */prospect[/* processStatus */3],
+                                              /* voters */Belt_List.mapU(prospect[/* voters */4], (function (param) {
                                                       var userId = param[/* userId */0];
                                                       var match = PrimitiveTypes.UserId[/* eq */5](userId, supporterId$1);
                                                       if (match) {
@@ -124,40 +128,51 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */4] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */0])
+                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */0]),
+                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 4 : 
         var match$3 = $$event[0];
-        var data$1 = match$3[/* data */3];
+        var data = match$3[/* data */3];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners : :: */[
                   /* record */[
-                    /* userId */data$1[/* id */1],
+                    /* userId */data[/* id */1],
                     /* name : None */0,
-                    /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data$1[/* id */1], state[/* localUser */0])
+                    /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0])
                   ],
                   state[/* partners */1]
                 ],
-                /* currentProcesses */Belt_Map.remove(state[/* currentProcesses */2], data$1[/* id */1]),
-                /* prospects */Belt_Map.remove(state[/* prospects */3], match$3[/* processId */0]),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* prospects */Belt_Map.update(state[/* prospects */2], match$3[/* processId */0], (function (param) {
+                        return Utils.mapOption((function (prospect) {
+                                      return /* record */[
+                                              /* processId */prospect[/* processId */0],
+                                              /* userId */prospect[/* userId */1],
+                                              /* processType */prospect[/* processType */2],
+                                              /* processStatus : Completed */0,
+                                              /* voters */prospect[/* voters */4],
+                                              /* canEndorse */prospect[/* canEndorse */5],
+                                              /* canReject */prospect[/* canReject */6]
+                                            ];
+                                    }), param);
+                      })),
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 5 : 
         var match$4 = $$event[0];
-        var data$2 = match$4[/* data */6];
+        var data$1 = match$4[/* data */6];
         var supporterId$2 = match$4[/* supporterId */4];
         var eligibleWhenProposing$1 = match$4[/* eligibleWhenProposing */3];
         var processId$1 = match$4[/* processId */0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */Belt_List.map(state[/* partners */1], (function (p) {
-                        var match = PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], data$2[/* id */0]);
+                        var match = PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], data$1[/* id */0]);
                         if (match) {
                           return /* record */[
                                   /* userId */p[/* userId */0],
@@ -168,11 +183,11 @@ function apply($$event, state) {
                           return p;
                         }
                       })),
-                /* currentProcesses */Belt_Map.set(state[/* currentProcesses */2], data$2[/* id */0], processId$1),
-                /* prospects */Belt_Map.set(state[/* prospects */3], processId$1, /* record */[
+                /* prospects */Belt_Map.set(state[/* prospects */2], processId$1, /* record */[
                       /* processId */processId$1,
-                      /* userId */data$2[/* id */0],
+                      /* userId */data$1[/* id */0],
                       /* processType : Removal */0,
+                      /* processStatus : InProgress */1,
                       /* voters */Belt_List.mapU(Belt_Set.toList(eligibleWhenProposing$1), (function (userId) {
                               var match = PrimitiveTypes.UserId[/* eq */5](supporterId$2, userId);
                               return /* record */[
@@ -183,7 +198,7 @@ function apply($$event, state) {
                       /* canEndorse */PrimitiveTypes.UserId[/* neq */6](supporterId$2, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing$1, state[/* localUser */0]),
                       /* canReject */PrimitiveTypes.UserId[/* neq */6](supporterId$2, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing$1, state[/* localUser */0])
                     ]),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 6 : 
         var match$5 = $$event[0];
@@ -191,14 +206,14 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* currentProcesses */state[/* currentProcesses */2],
-                /* prospects */Belt_Map.update(state[/* prospects */3], match$5[/* processId */0], (function (param) {
+                /* prospects */Belt_Map.update(state[/* prospects */2], match$5[/* processId */0], (function (param) {
                         return Utils.mapOption((function (prospect) {
                                       return /* record */[
                                               /* processId */prospect[/* processId */0],
                                               /* userId */prospect[/* userId */1],
                                               /* processType */prospect[/* processType */2],
-                                              /* voters */Belt_List.mapU(prospect[/* voters */3], (function (param) {
+                                              /* processStatus */prospect[/* processStatus */3],
+                                              /* voters */Belt_List.mapU(prospect[/* voters */4], (function (param) {
                                                       var userId = param[/* userId */0];
                                                       var match = PrimitiveTypes.UserId[/* eq */5](userId, rejectorId$1);
                                                       if (match) {
@@ -213,12 +228,12 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */4] && PrimitiveTypes.UserId[/* neq */6](rejectorId$1, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId$1, state[/* localUser */0])
+                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId$1, state[/* localUser */0]),
+                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](rejectorId$1, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 7 : 
         var match$6 = $$event[0];
@@ -226,14 +241,14 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* currentProcesses */state[/* currentProcesses */2],
-                /* prospects */Belt_Map.update(state[/* prospects */3], match$6[/* processId */0], (function (param) {
+                /* prospects */Belt_Map.update(state[/* prospects */2], match$6[/* processId */0], (function (param) {
                         return Utils.mapOption((function (prospect) {
                                       return /* record */[
                                               /* processId */prospect[/* processId */0],
                                               /* userId */prospect[/* userId */1],
                                               /* processType */prospect[/* processType */2],
-                                              /* voters */Belt_List.mapU(prospect[/* voters */3], (function (param) {
+                                              /* processStatus */prospect[/* processStatus */3],
+                                              /* voters */Belt_List.mapU(prospect[/* voters */4], (function (param) {
                                                       var userId = param[/* userId */0];
                                                       var match = PrimitiveTypes.UserId[/* eq */5](userId, supporterId$3);
                                                       if (match) {
@@ -248,12 +263,12 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */4] && PrimitiveTypes.UserId[/* neq */6](supporterId$3, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$3, state[/* localUser */0])
+                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$3, state[/* localUser */0]),
+                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](supporterId$3, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 8 : 
         var match$7 = $$event[0];
@@ -263,9 +278,20 @@ function apply($$event, state) {
                 /* partners */Belt_List.keep(state[/* partners */1], (function (p) {
                         return PrimitiveTypes.UserId[/* neq */6](p[/* userId */0], id);
                       })),
-                /* currentProcesses */Belt_Map.remove(state[/* currentProcesses */2], id),
-                /* prospects */Belt_Map.remove(state[/* prospects */3], match$7[/* processId */0]),
-                /* partnerPolicy */state[/* partnerPolicy */4]
+                /* prospects */Belt_Map.update(state[/* prospects */2], match$7[/* processId */0], (function (param) {
+                        return Utils.mapOption((function (prospect) {
+                                      return /* record */[
+                                              /* processId */prospect[/* processId */0],
+                                              /* userId */prospect[/* userId */1],
+                                              /* processType */prospect[/* processType */2],
+                                              /* processStatus : Completed */0,
+                                              /* voters */prospect[/* voters */4],
+                                              /* canEndorse */prospect[/* canEndorse */5],
+                                              /* canReject */prospect[/* canReject */6]
+                                            ];
+                                    }), param);
+                      })),
+                /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     default:
       return state;

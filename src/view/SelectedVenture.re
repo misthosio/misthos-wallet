@@ -17,7 +17,7 @@ let make = (~viewData: ViewData.t, _children) => {
                button=true
                onClick=(
                  Router.clickToRoute(
-                   Venture(viewData.ventureId, Partner(prospect.userId)),
+                   Venture(viewData.ventureId, Partner(prospect.processId)),
                  )
                )
                key=(prospect.processId |> ProcessId.toString)>
