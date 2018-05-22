@@ -78,16 +78,10 @@ let encodeError =
   | CouldNotPersistVenture =>
     Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]));
 
-/* | CouldNotLoadVenture => */
-/*   Json.Encode.(object_([("type", string("CouldNotLoadVenture"))])) */
-/* | CouldNotJoinVenture => */
-/*   Json.Encode.(object_([("type", string("CouldNotJoinVenture"))])); */
 let decodeError = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
   | "CouldNotPersistVenture" => CouldNotPersistVenture
-  /* | "CouldNotLoadVenture" => CouldNotLoadVenture */
-  /* | "CouldNotJoinVenture" => CouldNotJoinVenture */
   | _ => raise(UnknownMessage(raw))
   };
 };
