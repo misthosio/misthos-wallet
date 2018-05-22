@@ -37,11 +37,19 @@ function logError(error) {
   return /* () */0;
 }
 
-function result(ventureId, correlationId, response) {
+function cmdSuccess(ventureId, correlationId, response) {
   return postMessage$1(correlationId, /* CmdCompleted */Block.__(6, [
                 ventureId,
                 correlationId,
-                response
+                /* Ok */Block.__(0, [response])
+              ]));
+}
+
+function cmdError(ventureId, correlationId, response) {
+  return postMessage$1(correlationId, /* CmdCompleted */Block.__(6, [
+                ventureId,
+                correlationId,
+                /* Error */Block.__(1, [response])
               ]));
 }
 
@@ -108,7 +116,8 @@ function newItems(correlationId, id, items) {
 }
 
 var Notify = /* module */[
-  /* result */result,
+  /* cmdSuccess */cmdSuccess,
+  /* cmdError */cmdError,
   /* sessionPending */sessionPending,
   /* sessionStarted */sessionStarted,
   /* indexUpdated */indexUpdated,
@@ -125,9 +134,6 @@ function loadAndNotify(notify, $staropt$star, data, correlationId, ventureId) {
   var persist = $staropt$star ? $staropt$star[0] : true;
   return Venture.load(/* Some */[persist], data, ventureId).then((function (param) {
                 if (param.tag) {
-                  if (notify) {
-                    result(ventureId, correlationId, /* CouldNotLoadVenture */1);
-                  }
                   throw [
                         DeadThread,
                         param[0]
@@ -157,7 +163,7 @@ function withVenture($staropt$star, ventureAction, f, correlationId, param) {
                                     ventureId,
                                     match$1[1].then((function (param) {
                                             if (param.tag) {
-                                              result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                              cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                               throw [
                                                     DeadThread,
                                                     param[0]
@@ -219,7 +225,6 @@ function withVenture($staropt$star, ventureAction, f, correlationId, param) {
                                                   ventureJoined(correlationId, ventureId$3, venture$1);
                                                   return Promise.resolve(venture$1);
                                               case 2 : 
-                                                  result(ventureId$3, correlationId, /* CouldNotJoinVenture */2);
                                                   throw [
                                                         DeadThread,
                                                         param[0]
@@ -364,7 +369,7 @@ function rejectPartner(ventureId, processId) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartner */4][/* exec */0], processId, venture).then((function (param) {
                                   if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
@@ -382,7 +387,7 @@ function endorsePartner(ventureId, processId) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartner */5][/* exec */0], processId, venture).then((function (param) {
                                   if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
@@ -402,7 +407,7 @@ function proposePartnerRemoval(ventureId, partnerId) {
                                   if (typeof param === "number") {
                                     return Promise.resolve(venture);
                                   } else if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
@@ -420,7 +425,7 @@ function rejectPartnerRemoval(ventureId, processId) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPartnerRemoval */7][/* exec */0], processId, venture).then((function (param) {
                                   if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
@@ -438,7 +443,7 @@ function endorsePartnerRemoval(ventureId, processId) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePartnerRemoval */8][/* exec */0], processId, venture).then((function (param) {
                                   if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
@@ -459,11 +464,11 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
                                     logMessage("Not enough funds");
                                     return Promise.resolve(venture);
                                   } else if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[2]);
-                                    result(ventureId, correlationId, /* Ok */[/* ProcessStarted */[param[0]]]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */[param[0]]);
                                     return Promise.resolve(param[1]);
                                   }
                                 }));
@@ -478,7 +483,7 @@ function rejectPayout(ventureId, processId) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* RejectPayout */11][/* exec */0], processId, venture).then((function (param) {
                                   if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
@@ -496,7 +501,7 @@ function endorsePayout(ventureId, processId) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* EndorsePayout */12][/* exec */0], processId, venture).then((function (param) {
                                   if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
@@ -514,7 +519,7 @@ function exposeIncomeAddress(ventureId, accountIdx) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
                     return Curry._2(Venture.Cmd[/* ExposeIncomeAddress */9][/* exec */0], accountIdx, venture).then((function (param) {
                                   if (param.tag) {
-                                    result(ventureId, correlationId, /* CouldNotPersistVenture */0);
+                                    cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
                                     newIncomeAddress(correlationId, ventureId, param[0]);

@@ -18,7 +18,8 @@ type commands = {
 type cmdStatus =
   | Idle
   | Pending(WebWorker.correlationId)
-  | Response(VentureWorkerMessage.cmdResponse);
+  | Error(VentureWorkerMessage.cmdError)
+  | Success(VentureWorkerMessage.cmdSuccess);
 
 type state = {cmdStatus};
 
@@ -49,10 +50,10 @@ let make =
             when correlationId == responseId =>
           switch ((response: VentureWorkerMessage.cmdResponse)) {
           | Ok(ProcessStarted(processId)) =>
-            onProcessStarted |> Utils.mapOption(fn => fn(processId)) |> ignore
-          | _ => ()
-          };
-          Response(response);
+            onProcessStarted |> Utils.mapOption(fn => fn(processId)) |> ignore;
+            Success(ProcessStarted(processId));
+          | Error(err) => Error(err)
+          }
         | _ => cmdStatus
         },
     },

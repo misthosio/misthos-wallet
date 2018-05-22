@@ -48,10 +48,23 @@ function make(viewData, commands, cmdStatus, _) {
               var inputs = match[/* inputs */5];
               var summary = match[/* summary */4];
               var viewData = match[/* viewData */0];
-              var spinner;
-              spinner = typeof cmdStatus === "number" ? null : (
-                  cmdStatus.tag ? ViewCommon.text("done") : ReasonReact.element(/* None */0, /* None */0, Spinner.make("waiting for result", /* None */0, /* array */[]))
-                );
+              var feedback;
+              if (typeof cmdStatus === "number") {
+                feedback = null;
+              } else {
+                switch (cmdStatus.tag | 0) {
+                  case 0 : 
+                      feedback = ReasonReact.element(/* None */0, /* None */0, Spinner.make("waiting for result", /* None */0, /* array */[]));
+                      break;
+                  case 1 : 
+                      feedback = ViewCommon.text("Could not execute teh command");
+                      break;
+                  case 2 : 
+                      feedback = null;
+                      break;
+                  
+                }
+              }
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
                           return ReasonReact.element(/* Some */[String(idx)], /* None */0, MaterialUi.TableRow[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi.TableCell[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text(param[0]))])),
@@ -96,7 +109,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               return Curry._1(send, /* AddAnother */1);
                                             })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* array */[ViewCommon.text("+ add another recipient")])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePayout */2);
-                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Propose Payout")])), spinner), /* array */[]));
+                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Propose Payout")])), feedback), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

@@ -12,6 +12,8 @@ var Config = /* module */[
   /* UnknownMessage */VentureWorkerMessage.UnknownMessage,
   /* encodeSuccess */VentureWorkerMessage.encodeSuccess,
   /* decodeSuccess */VentureWorkerMessage.decodeSuccess,
+  /* encodeError */VentureWorkerMessage.encodeError,
+  /* decodeError */VentureWorkerMessage.decodeError,
   /* encodeResponse */VentureWorkerMessage.encodeResponse,
   /* decodeResponse */VentureWorkerMessage.decodeResponse,
   /* encodeIncoming */VentureWorkerMessage.encodeIncoming,

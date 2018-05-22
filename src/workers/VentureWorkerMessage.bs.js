@@ -45,35 +45,43 @@ function decodeSuccess(raw) {
   }
 }
 
+function encodeError() {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "CouldNotPersistVenture"
+              ],
+              /* [] */0
+            ]);
+}
+
+function decodeError(raw) {
+  var type_ = Json_decode.field("type", Json_decode.string, raw);
+  if (type_ === "CouldNotPersistVenture") {
+    return /* CouldNotPersistVenture */0;
+  } else {
+    throw [
+          UnknownMessage,
+          raw
+        ];
+  }
+}
+
 function encodeResponse(param) {
-  if (typeof param === "number") {
-    switch (param) {
-      case 0 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "CouldNotPersistVenture"
-                      ],
-                      /* [] */0
-                    ]);
-      case 1 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "CouldNotLoadVenture"
-                      ],
-                      /* [] */0
-                    ]);
-      case 2 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "CouldNotJoinVenture"
-                      ],
-                      /* [] */0
-                    ]);
-      
-    }
+  if (param.tag) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "Error"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "cmdError",
+                    encodeError(param[0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
   } else {
     return Json_encode.object_(/* :: */[
                 /* tuple */[
@@ -94,14 +102,10 @@ function encodeResponse(param) {
 function decodeResponse(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
-    case "CouldNotJoinVenture" : 
-        return /* CouldNotJoinVenture */2;
-    case "CouldNotLoadVenture" : 
-        return /* CouldNotLoadVenture */1;
-    case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */0;
+    case "Error" : 
+        return /* Error */Block.__(1, [Json_decode.field("cmdError", decodeError, raw)]);
     case "Ok" : 
-        return /* Ok */[Json_decode.field("cmdSuccess", decodeSuccess, raw)];
+        return /* Ok */Block.__(0, [Json_decode.field("cmdSuccess", decodeSuccess, raw)]);
     default:
       throw [
             UnknownMessage,
@@ -828,6 +832,8 @@ function decodeOutgoing(raw) {
 exports.UnknownMessage = UnknownMessage;
 exports.encodeSuccess = encodeSuccess;
 exports.decodeSuccess = decodeSuccess;
+exports.encodeError = encodeError;
+exports.decodeError = decodeError;
 exports.encodeResponse = encodeResponse;
 exports.decodeResponse = decodeResponse;
 exports.encodeIncoming = encodeIncoming;

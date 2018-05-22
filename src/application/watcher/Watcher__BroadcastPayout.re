@@ -113,6 +113,15 @@ let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
                           ),
                         ),
                       );
+                    | WalletTypes.FetchError(_error) => (
+                        systemIssuer,
+                        PayoutBroadcastFailed(
+                          Payout.BroadcastFailed.make(
+                            ~processId=payoutProcess,
+                            ~errorMessage="Fetch error",
+                          ),
+                        ),
+                      )
                     }
                   )
                   |> resolve;

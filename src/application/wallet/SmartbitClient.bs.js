@@ -98,21 +98,23 @@ function getTransactionInfo(config, transactions) {
 function broadcastTransaction(config, transaction) {
   var txHex = transaction.toHex();
   return fetch("https://" + (config[/* subdomain */0] + ".smartbit.com.au/v1/blockchain/pushtx"), Fetch.RequestInit[/* make */0](/* Some */[/* Post */2], /* None */0, /* Some */["{\"hex\":\"" + (String(txHex) + "\"}")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0)(/* () */0)).then((function (prim) {
-                  return prim.json();
-                })).then((function (res) {
-                var err = Json_decode.optional((function (param) {
-                        return Json_decode.field("error", (function (param) {
-                                      return Json_decode.field("message", Json_decode.string, param);
-                                    }), param);
-                      }), res);
-                var tmp;
-                if (err) {
-                  var err$1 = err[0];
-                  tmp = (/transaction already in block chain/).test(err$1) ? /* AlreadyInBlockchain */0 : /* Error */Block.__(1, [err$1]);
-                } else {
-                  tmp = /* Ok */Block.__(0, [Json_decode.field("txid", Json_decode.string, res)]);
-                }
-                return Promise.resolve(tmp);
+                    return prim.json();
+                  })).then((function (res) {
+                  var err = Json_decode.optional((function (param) {
+                          return Json_decode.field("error", (function (param) {
+                                        return Json_decode.field("message", Json_decode.string, param);
+                                      }), param);
+                        }), res);
+                  var tmp;
+                  if (err) {
+                    var err$1 = err[0];
+                    tmp = (/transaction already in block chain/).test(err$1) ? /* AlreadyInBlockchain */0 : /* Error */Block.__(1, [err$1]);
+                  } else {
+                    tmp = /* Ok */Block.__(0, [Json_decode.field("txid", Json_decode.string, res)]);
+                  }
+                  return Promise.resolve(tmp);
+                })).catch((function (err) {
+                return Promise.resolve(/* FetchError */Block.__(2, [err]));
               }));
 }
 

@@ -34,10 +34,15 @@ let logError = error => {
 };
 
 module Notify = {
-  let result = (ventureId, correlationId, response) =>
+  let cmdSuccess = (ventureId, correlationId, response) =>
     postMessage(
       ~correlationId,
-      CmdCompleted(ventureId, correlationId, response),
+      CmdCompleted(ventureId, correlationId, Ok(response)),
+    );
+  let cmdError = (ventureId, correlationId, response) =>
+    postMessage(
+      ~correlationId,
+      CmdCompleted(ventureId, correlationId, Error(response)),
     );
   let sessionPending = correlationId =>
     postMessage(~correlationId, SessionPending);
@@ -109,12 +114,11 @@ module Handle = {
                };
                resolve(venture);
              }
-           | Venture.CouldNotLoad(error) => {
-               if (notify) {
-                 Notify.result(ventureId, correlationId, CouldNotLoadVenture);
-               };
-               raise(DeadThread(error));
-             },
+           | Venture.CouldNotLoad(error) =>
+             /* if (notify) { */
+             /*   Notify.cmdError(ventureId, correlationId, CouldNotLoadVenture); */
+             /* }; */
+             raise(DeadThread(error)),
          )
     );
   let withVenture =
@@ -140,7 +144,7 @@ module Handle = {
                                  venture |> resolve;
                                }
                              | CouldNotPersist(error) => {
-                                 Notify.result(
+                                 Notify.cmdError(
                                    ventureId,
                                    correlationId,
                                    CouldNotPersistVenture,
@@ -218,14 +222,13 @@ module Handle = {
                                  );
                                  venture |> resolve;
                                }
-                             | Venture.CouldNotJoin(error) => {
-                                 Notify.result(
-                                   ventureId,
-                                   correlationId,
-                                   CouldNotJoinVenture,
-                                 );
-                                 raise(DeadThread(error));
-                               },
+                             | Venture.CouldNotJoin(error) =>
+                               /* Notify.cmdError( */
+                               /*   ventureId, */
+                               /*   correlationId, */
+                               /*   CouldNotJoinVenture, */
+                               /* ); */
+                               raise(DeadThread(error)),
                            ),
                       )
                     };
@@ -345,7 +348,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -371,7 +374,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -398,7 +401,7 @@ module Handle = {
                  }
                | PartnerDoesNotExist => venture |> resolve
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -424,7 +427,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -450,7 +453,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -473,10 +476,10 @@ module Handle = {
                fun
                | Ok(processId, venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
-                   Notify.result(
+                   Notify.cmdSuccess(
                      ventureId,
                      correlationId,
-                     Ok(ProcessStarted(processId)),
+                     ProcessStarted(processId),
                    );
                    venture |> resolve;
                  }
@@ -485,7 +488,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -511,7 +514,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -537,7 +540,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,
@@ -564,7 +567,7 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(
+                   Notify.cmdError(
                      ventureId,
                      correlationId,
                      CouldNotPersistVenture,

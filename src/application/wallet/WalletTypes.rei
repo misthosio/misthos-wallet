@@ -15,7 +15,8 @@ type txInfo = {
 type broadcastResult =
   | Ok(string)
   | AlreadyInBlockchain
-  | Error(string);
+  | Error(string)
+  | FetchError(Js.Promise.error);
 
 module type NetworkClient = {
   let network: Bitcoin.Networks.t;

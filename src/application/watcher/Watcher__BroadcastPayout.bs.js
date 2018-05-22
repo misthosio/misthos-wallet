@@ -156,18 +156,30 @@ function make(param, log) {
                                               env$1[1],
                                               /* PayoutBroadcastDuplicate */Block.__(27, [Curry._1(Event.Payout[/* BroadcastDuplicate */9][/* make */0], env$1[0])])
                                             ];
-                                          } else if (result.tag) {
-                                            var errorMessage = result[0];
-                                            Utils.printError("Broadcasting transaction failed", errorMessage);
-                                            tmp = /* tuple */[
-                                              env$1[1],
-                                              /* PayoutBroadcastFailed */Block.__(28, [Curry._2(Event.Payout[/* BroadcastFailed */10][/* make */0], env$1[0], errorMessage)])
-                                            ];
                                           } else {
-                                            tmp = /* tuple */[
-                                              env$1[1],
-                                              /* PayoutBroadcast */Block.__(26, [Curry._2(Event.Payout[/* Broadcast */8][/* make */0], env$1[0], result[0])])
-                                            ];
+                                            switch (result.tag | 0) {
+                                              case 0 : 
+                                                  tmp = /* tuple */[
+                                                    env$1[1],
+                                                    /* PayoutBroadcast */Block.__(26, [Curry._2(Event.Payout[/* Broadcast */8][/* make */0], env$1[0], result[0])])
+                                                  ];
+                                                  break;
+                                              case 1 : 
+                                                  var errorMessage = result[0];
+                                                  Utils.printError("Broadcasting transaction failed", errorMessage);
+                                                  tmp = /* tuple */[
+                                                    env$1[1],
+                                                    /* PayoutBroadcastFailed */Block.__(28, [Curry._2(Event.Payout[/* BroadcastFailed */10][/* make */0], env$1[0], errorMessage)])
+                                                  ];
+                                                  break;
+                                              case 2 : 
+                                                  tmp = /* tuple */[
+                                                    env$1[1],
+                                                    /* PayoutBroadcastFailed */Block.__(28, [Curry._2(Event.Payout[/* BroadcastFailed */10][/* make */0], env$1[0], "Fetch error")])
+                                                  ];
+                                                  break;
+                                              
+                                            }
                                           }
                                           return Promise.resolve(tmp);
                                         }));

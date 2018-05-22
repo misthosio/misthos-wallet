@@ -32,11 +32,12 @@ type encodedIncoming = Js.Json.t;
 type cmdSuccess =
   | ProcessStarted(processId);
 
+type cmdError =
+  | CouldNotPersistVenture;
+
 type cmdResponse =
   | Ok(cmdSuccess)
-  | CouldNotPersistVenture
-  | CouldNotLoadVenture
-  | CouldNotJoinVenture;
+  | Error(cmdError);
 
 type outgoing =
   | SessionStarted(blockstackItems, string)
@@ -72,6 +73,25 @@ let decodeSuccess = raw => {
   };
 };
 
+let encodeError =
+  fun
+  | CouldNotPersistVenture =>
+    Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]));
+
+/* | CouldNotLoadVenture => */
+/*   Json.Encode.(object_([("type", string("CouldNotLoadVenture"))])) */
+/* | CouldNotJoinVenture => */
+/*   Json.Encode.(object_([("type", string("CouldNotJoinVenture"))])); */
+let decodeError = raw => {
+  let type_ = raw |> Json.Decode.(field("type", string));
+  switch (type_) {
+  | "CouldNotPersistVenture" => CouldNotPersistVenture
+  /* | "CouldNotLoadVenture" => CouldNotLoadVenture */
+  /* | "CouldNotJoinVenture" => CouldNotJoinVenture */
+  | _ => raise(UnknownMessage(raw))
+  };
+};
+
 let encodeResponse =
   fun
   | Ok(cmdSuccess) =>
@@ -81,20 +101,19 @@ let encodeResponse =
         ("cmdSuccess", encodeSuccess(cmdSuccess)),
       ])
     )
-  | CouldNotPersistVenture =>
-    Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]))
-  | CouldNotLoadVenture =>
-    Json.Encode.(object_([("type", string("CouldNotLoadVenture"))]))
-  | CouldNotJoinVenture =>
-    Json.Encode.(object_([("type", string("CouldNotJoinVenture"))]));
+  | Error(cmdError) =>
+    Json.Encode.(
+      object_([
+        ("type", string("Error")),
+        ("cmdError", encodeError(cmdError)),
+      ])
+    );
 
 let decodeResponse = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
   | "Ok" => Ok(raw |> Json.Decode.field("cmdSuccess", decodeSuccess))
-  | "CouldNotPersistVenture" => CouldNotPersistVenture
-  | "CouldNotLoadVenture" => CouldNotLoadVenture
-  | "CouldNotJoinVenture" => CouldNotJoinVenture
+  | "Error" => Error(raw |> Json.Decode.field("cmdError", decodeError))
   | _ => raise(UnknownMessage(raw))
   };
 };

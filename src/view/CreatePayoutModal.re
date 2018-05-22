@@ -169,11 +169,12 @@ let make =
       );
     },
   render: ({send, state: {viewData, inputs, destinations, summary}}) => {
-    let spinner =
+    let feedback =
       switch (cmdStatus) {
-      | Idle => ReasonReact.null
       | Pending(_) => <Spinner text="waiting for result" />
-      | Response(_) => "done" |> text
+      | Error(CouldNotPersistVenture) =>
+        "Could not execute teh command" |> text
+      | _ => ReasonReact.null
       };
     let destinationList =
       ReasonReact.array(
@@ -262,7 +263,7 @@ let make =
           <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
             (text("Propose Payout"))
           </MButton>
-          spinner
+          feedback
         </div>
     />;
   },

@@ -28,13 +28,15 @@ function make(commands, lastResponse, onProcessStarted, children) {
                 var match = lastResponse[0];
                 if (cmdStatus[0] === match[0]) {
                   var response = match[1];
-                  if (typeof response !== "number") {
+                  if (response.tag) {
+                    tmp = /* Error */Block.__(1, [response[0]]);
+                  } else {
                     var processId = response[0][0];
                     Utils.mapOption((function (fn) {
                             return Curry._1(fn, processId);
                           }), onProcessStarted);
+                    tmp = /* Success */Block.__(2, [/* ProcessStarted */[processId]]);
                   }
-                  tmp = /* Response */Block.__(1, [response]);
                 } else {
                   tmp = cmdStatus;
                 }
