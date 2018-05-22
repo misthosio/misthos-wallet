@@ -56,8 +56,7 @@ function apply($$event, state) {
                 /* payouts */Belt_Map.set(state[/* payouts */2], processId, /* record */[
                       /* processId */processId,
                       /* status : PendingApproval */0,
-                      /* canEndorse */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */1]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */1]),
-                      /* canReject */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */1]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */1]),
+                      /* canVote */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */1]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */1]),
                       /* summary */PayoutTransaction.summary(state[/* network */0], match[/* data */6][/* payoutTx */1]),
                       /* voters */Belt_List.mapU(Belt_Set.toList(eligibleWhenProposing), (function (userId) {
                               var match = PrimitiveTypes.UserId[/* eq */5](supporterId, userId);
@@ -83,10 +82,9 @@ function apply($$event, state) {
                                       return /* record */[
                                               /* processId */payout[/* processId */0],
                                               /* status */payout[/* status */1],
-                                              /* canEndorse */payout[/* canEndorse */2] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */1]),
-                                              /* canReject */payout[/* canReject */3] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */1]),
-                                              /* summary */payout[/* summary */4],
-                                              /* voters */Belt_List.mapU(payout[/* voters */5], (function (param) {
+                                              /* canVote */payout[/* canVote */2] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */1]),
+                                              /* summary */payout[/* summary */3],
+                                              /* voters */Belt_List.mapU(payout[/* voters */4], (function (param) {
                                                       var userId = param[/* userId */0];
                                                       var match = PrimitiveTypes.UserId[/* eq */5](userId, rejectorId);
                                                       if (match) {
@@ -101,8 +99,8 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* txId */payout[/* txId */6],
-                                              /* date */payout[/* date */7]
+                                              /* txId */payout[/* txId */5],
+                                              /* date */payout[/* date */6]
                                             ];
                                     }), param);
                       })),
@@ -120,10 +118,9 @@ function apply($$event, state) {
                                       return /* record */[
                                               /* processId */payout[/* processId */0],
                                               /* status */payout[/* status */1],
-                                              /* canEndorse */payout[/* canEndorse */2] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */1]),
-                                              /* canReject */payout[/* canReject */3] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */1]),
-                                              /* summary */payout[/* summary */4],
-                                              /* voters */Belt_List.mapU(payout[/* voters */5], (function (param) {
+                                              /* canVote */payout[/* canVote */2] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */1]),
+                                              /* summary */payout[/* summary */3],
+                                              /* voters */Belt_List.mapU(payout[/* voters */4], (function (param) {
                                                       var userId = param[/* userId */0];
                                                       var match = PrimitiveTypes.UserId[/* eq */5](userId, supporterId$1);
                                                       if (match) {
@@ -138,8 +135,8 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* txId */payout[/* txId */6],
-                                              /* date */payout[/* date */7]
+                                              /* txId */payout[/* txId */5],
+                                              /* date */payout[/* date */6]
                                             ];
                                     }), param);
                       })),
@@ -155,12 +152,11 @@ function apply($$event, state) {
                                       return /* record */[
                                               /* processId */payout[/* processId */0],
                                               /* status : Accepted */1,
-                                              /* canEndorse */false,
-                                              /* canReject */false,
-                                              /* summary */payout[/* summary */4],
-                                              /* voters */payout[/* voters */5],
-                                              /* txId */payout[/* txId */6],
-                                              /* date */payout[/* date */7]
+                                              /* canVote */false,
+                                              /* summary */payout[/* summary */3],
+                                              /* voters */payout[/* voters */4],
+                                              /* txId */payout[/* txId */5],
+                                              /* date */payout[/* date */6]
                                             ];
                                     }), param);
                       })),
@@ -180,12 +176,11 @@ function apply($$event, state) {
                                       return /* record */[
                                               /* processId */payout[/* processId */0],
                                               /* status */match ? /* Confirmed */3 : /* Unconfirmed */2,
-                                              /* canEndorse */payout[/* canEndorse */2],
-                                              /* canReject */payout[/* canReject */3],
-                                              /* summary */payout[/* summary */4],
-                                              /* voters */payout[/* voters */5],
+                                              /* canVote */payout[/* canVote */2],
+                                              /* summary */payout[/* summary */3],
+                                              /* voters */payout[/* voters */4],
                                               /* txId : Some */[txId],
-                                              /* date */payout[/* date */7]
+                                              /* date */payout[/* date */6]
                                             ];
                                     }), param);
                       })),
@@ -203,12 +198,11 @@ function apply($$event, state) {
                                       return /* record */[
                                               /* processId */payout[/* processId */0],
                                               /* status : Failed */[errorMessage],
-                                              /* canEndorse */payout[/* canEndorse */2],
-                                              /* canReject */payout[/* canReject */3],
-                                              /* summary */payout[/* summary */4],
-                                              /* voters */payout[/* voters */5],
-                                              /* txId */payout[/* txId */6],
-                                              /* date */payout[/* date */7]
+                                              /* canVote */payout[/* canVote */2],
+                                              /* summary */payout[/* summary */3],
+                                              /* voters */payout[/* voters */4],
+                                              /* txId */payout[/* txId */5],
+                                              /* date */payout[/* date */6]
                                             ];
                                     }), param);
                       })),
@@ -229,11 +223,10 @@ function apply($$event, state) {
                                         return /* record */[
                                                 /* processId */payout[/* processId */0],
                                                 /* status : Confirmed */3,
-                                                /* canEndorse */payout[/* canEndorse */2],
-                                                /* canReject */payout[/* canReject */3],
-                                                /* summary */payout[/* summary */4],
-                                                /* voters */payout[/* voters */5],
-                                                /* txId */payout[/* txId */6],
+                                                /* canVote */payout[/* canVote */2],
+                                                /* summary */payout[/* summary */3],
+                                                /* voters */payout[/* voters */4],
+                                                /* txId */payout[/* txId */5],
                                                 /* date : Some */[new Date(unixTime * 1000)]
                                               ];
                                       }), param);

@@ -26,15 +26,7 @@ let make =
     ) => {
   ...component,
   render: (_) => {
-    let {
-      processId,
-      userId,
-      voters,
-      canEndorse,
-      canReject,
-      processType,
-      processStatus,
-    }: ViewData.t = viewData;
+    let {processId, userId, voters, canVote, processType, processStatus}: ViewData.t = viewData;
     let (onEndorse, onReject) =
       switch (processType) {
       | Addition => (
@@ -97,8 +89,7 @@ let make =
           <ProcessApprovalButtons
             endorseText=("Endorse Partner " ++ processTypeString)
             rejectText=("Reject Partner " ++ processTypeString)
-            canEndorse
-            canReject
+            canVote
             onEndorse
             onReject
             cmdStatus

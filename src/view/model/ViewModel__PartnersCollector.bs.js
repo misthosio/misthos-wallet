@@ -60,8 +60,7 @@ function apply($$event, state) {
                                       /* voteStatus */match ? /* Endorsed */1 : /* Pending */0
                                     ];
                             })),
-                      /* canEndorse */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */0]),
-                      /* canReject */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */0])
+                      /* canVote */PrimitiveTypes.UserId[/* neq */6](supporterId, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing, state[/* localUser */0])
                     ]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
@@ -93,8 +92,7 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */0])
+                                              /* canVote */prospect[/* canVote */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
@@ -128,8 +126,7 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */0])
+                                              /* canVote */prospect[/* canVote */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$1, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
@@ -156,8 +153,7 @@ function apply($$event, state) {
                                               /* processType */prospect[/* processType */2],
                                               /* processStatus : Completed */0,
                                               /* voters */prospect[/* voters */4],
-                                              /* canEndorse */prospect[/* canEndorse */5],
-                                              /* canReject */prospect[/* canReject */6]
+                                              /* canVote */prospect[/* canVote */5]
                                             ];
                                     }), param);
                       })),
@@ -195,8 +191,7 @@ function apply($$event, state) {
                                       /* voteStatus */match ? /* Endorsed */1 : /* Pending */0
                                     ];
                             })),
-                      /* canEndorse */PrimitiveTypes.UserId[/* neq */6](supporterId$2, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing$1, state[/* localUser */0]),
-                      /* canReject */PrimitiveTypes.UserId[/* neq */6](supporterId$2, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing$1, state[/* localUser */0])
+                      /* canVote */PrimitiveTypes.UserId[/* neq */6](supporterId$2, state[/* localUser */0]) && Belt_Set.has(eligibleWhenProposing$1, state[/* localUser */0])
                     ]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
@@ -228,8 +223,7 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId$1, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](rejectorId$1, state[/* localUser */0])
+                                              /* canVote */prospect[/* canVote */5] && PrimitiveTypes.UserId[/* neq */6](rejectorId$1, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
@@ -263,8 +257,7 @@ function apply($$event, state) {
                                                               ];
                                                       }
                                                     })),
-                                              /* canEndorse */prospect[/* canEndorse */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$3, state[/* localUser */0]),
-                                              /* canReject */prospect[/* canReject */6] && PrimitiveTypes.UserId[/* neq */6](supporterId$3, state[/* localUser */0])
+                                              /* canVote */prospect[/* canVote */5] && PrimitiveTypes.UserId[/* neq */6](supporterId$3, state[/* localUser */0])
                                             ];
                                     }), param);
                       })),
@@ -286,8 +279,7 @@ function apply($$event, state) {
                                               /* processType */prospect[/* processType */2],
                                               /* processStatus : Completed */0,
                                               /* voters */prospect[/* voters */4],
-                                              /* canEndorse */prospect[/* canEndorse */5],
-                                              /* canReject */prospect[/* canReject */6]
+                                              /* canVote */prospect[/* canVote */5]
                                             ];
                                     }), param);
                       })),

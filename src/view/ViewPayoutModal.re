@@ -23,16 +23,7 @@ let make =
   {
     ...component,
     render: _self => {
-      let {
-        processId,
-        txId,
-        date,
-        status,
-        summary,
-        voters,
-        canEndorse,
-        canReject,
-      }: ViewData.t = viewData;
+      let {processId, txId, date, status, summary, voters, canVote}: ViewData.t = viewData;
       let destinationList =
         ReasonReact.array(
           Array.of_list(
@@ -103,8 +94,7 @@ let make =
             <ProcessApprovalButtons
               endorseText="Endorse Payout"
               rejectText="Reject Payout"
-              canEndorse
-              canReject
+              canVote
               onEndorse=(() => commands.endorsePayout(~processId))
               onReject=(() => commands.rejectPayout(~processId))
               cmdStatus

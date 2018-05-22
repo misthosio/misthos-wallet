@@ -24,8 +24,7 @@ type voter = {
 type payout = {
   processId,
   status: payoutStatus,
-  canEndorse: bool,
-  canReject: bool,
+  canVote: bool,
   summary: PayoutTransaction.summary,
   voters: list(voter),
   txId: option(string),
@@ -74,11 +73,7 @@ let apply = (event, state) =>
                processId,
                txId: None,
                date: None,
-               canEndorse:
-                 UserId.neq(supporterId, state.localUser)
-                 && eligibleWhenProposing
-                 |. Set.has(state.localUser),
-               canReject:
+               canVote:
                  UserId.neq(supporterId, state.localUser)
                  && eligibleWhenProposing
                  |. Set.has(state.localUser),
@@ -107,11 +102,8 @@ let apply = (event, state) =>
              Utils.mapOption(payout =>
                {
                  ...payout,
-                 canEndorse:
-                   payout.canEndorse
-                   && UserId.neq(rejectorId, state.localUser),
-                 canReject:
-                   payout.canReject && UserId.neq(rejectorId, state.localUser),
+                 canVote:
+                   payout.canVote && UserId.neq(rejectorId, state.localUser),
                  voters:
                    payout.voters
                    |. List.mapU((. {userId, voteStatus}) =>
@@ -132,12 +124,8 @@ let apply = (event, state) =>
              Utils.mapOption(payout =>
                {
                  ...payout,
-                 canEndorse:
-                   payout.canEndorse
-                   && UserId.neq(supporterId, state.localUser),
-                 canReject:
-                   payout.canReject
-                   && UserId.neq(supporterId, state.localUser),
+                 canVote:
+                   payout.canVote && UserId.neq(supporterId, state.localUser),
                  voters:
                    payout.voters
                    |. List.mapU((. {userId, voteStatus}) =>
@@ -156,12 +144,7 @@ let apply = (event, state) =>
         |. Map.update(
              processId,
              Utils.mapOption(payout =>
-               {
-                 ...payout,
-                 canEndorse: false,
-                 canReject: false,
-                 status: Accepted,
-               }
+               {...payout, canVote: false, status: Accepted}
              ),
            ),
     }

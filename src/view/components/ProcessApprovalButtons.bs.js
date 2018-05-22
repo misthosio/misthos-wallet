@@ -11,7 +11,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
-function make(endorseText, rejectText, canEndorse, canReject, onEndorse, onReject, cmdStatus, _) {
+function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -84,9 +84,14 @@ function make(endorseText, rejectText, canEndorse, canReject, onEndorse, onRejec
               if (exit === 1) {
                 switch (state) {
                   case 0 : 
-                      tmp = canReject ? /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                      tmp = canVote ? /* array */[
+                          ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                        return Curry._1(send, /* Endorse */1);
+                                      })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text(endorseText)])),
+                          ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                         return Curry._1(send, /* Reject */3);
-                                      })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text(rejectText)]))] : /* array */[null];
+                                      })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text(rejectText)]))
+                        ] : /* array */[null];
                       break;
                   case 1 : 
                       tmp = /* array */[
@@ -117,14 +122,7 @@ function make(endorseText, rejectText, canEndorse, canReject, onEndorse, onRejec
                   
                 }
               }
-              return Belt_Array.concatMany(/* array */[
-                          state !== 0 ? /* array */[null] : (
-                              canEndorse ? /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                return Curry._1(send, /* Endorse */1);
-                                              })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text(endorseText)]))] : /* array */[null]
-                            ),
-                          tmp
-                        ]);
+              return Belt_Array.concatMany(/* array */[tmp]);
             }),
           /* initialState */(function () {
               return /* record */[

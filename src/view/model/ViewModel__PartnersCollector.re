@@ -32,8 +32,7 @@ type prospect = {
   processType,
   processStatus,
   voters: list(voter),
-  canEndorse: bool,
-  canReject: bool,
+  canVote: bool,
 };
 
 type t = {
@@ -76,11 +75,7 @@ let apply = (event: Event.t, state) =>
              {
                processStatus: InProgress,
                processType: Addition,
-               canEndorse:
-                 UserId.neq(supporterId, state.localUser)
-                 && eligibleWhenProposing
-                 |. Set.has(state.localUser),
-               canReject:
+               canVote:
                  UserId.neq(supporterId, state.localUser)
                  && eligibleWhenProposing
                  |. Set.has(state.localUser),
@@ -108,12 +103,8 @@ let apply = (event: Event.t, state) =>
              Utils.mapOption(prospect =>
                {
                  ...prospect,
-                 canEndorse:
-                   prospect.canEndorse
-                   && UserId.neq(rejectorId, state.localUser),
-                 canReject:
-                   prospect.canReject
-                   && UserId.neq(rejectorId, state.localUser),
+                 canVote:
+                   prospect.canVote && UserId.neq(rejectorId, state.localUser),
                  voters:
                    prospect.voters
                    |. List.mapU((. {userId, voteStatus}) =>
@@ -134,11 +125,8 @@ let apply = (event: Event.t, state) =>
              Utils.mapOption(prospect =>
                {
                  ...prospect,
-                 canEndorse:
-                   prospect.canEndorse
-                   && UserId.neq(supporterId, state.localUser),
-                 canReject:
-                   prospect.canReject
+                 canVote:
+                   prospect.canVote
                    && UserId.neq(supporterId, state.localUser),
                  voters:
                    prospect.voters
@@ -190,11 +178,7 @@ let apply = (event: Event.t, state) =>
              {
                processStatus: InProgress,
                processType: Removal,
-               canEndorse:
-                 UserId.neq(supporterId, state.localUser)
-                 && eligibleWhenProposing
-                 |. Set.has(state.localUser),
-               canReject:
+               canVote:
                  UserId.neq(supporterId, state.localUser)
                  && eligibleWhenProposing
                  |. Set.has(state.localUser),
@@ -222,12 +206,8 @@ let apply = (event: Event.t, state) =>
              Utils.mapOption(prospect =>
                {
                  ...prospect,
-                 canEndorse:
-                   prospect.canEndorse
-                   && UserId.neq(rejectorId, state.localUser),
-                 canReject:
-                   prospect.canReject
-                   && UserId.neq(rejectorId, state.localUser),
+                 canVote:
+                   prospect.canVote && UserId.neq(rejectorId, state.localUser),
                  voters:
                    prospect.voters
                    |. List.mapU((. {userId, voteStatus}) =>
@@ -248,11 +228,8 @@ let apply = (event: Event.t, state) =>
              Utils.mapOption(prospect =>
                {
                  ...prospect,
-                 canEndorse:
-                   prospect.canEndorse
-                   && UserId.neq(supporterId, state.localUser),
-                 canReject:
-                   prospect.canReject
+                 canVote:
+                   prospect.canVote
                    && UserId.neq(supporterId, state.localUser),
                  voters:
                    prospect.voters

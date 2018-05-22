@@ -27,8 +27,7 @@ let make =
     (
       ~endorseText,
       ~rejectText,
-      ~canEndorse,
-      ~canReject,
+      ~canVote,
       ~onEndorse,
       ~onReject,
       ~cmdStatus: CommandExecutor.cmdStatus,
@@ -56,15 +55,7 @@ let make =
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
     ReasonReact.array(
       Array.concatMany([|
-        switch (state, canEndorse) {
-        | (NoDecision, true) => [|
-            <MButton fullWidth=true onClick=(_e => send(Endorse))>
-              (text(endorseText))
-            </MButton>,
-          |]
-        | _ => [|ReasonReact.null|]
-        },
-        switch (cmdStatus, state, canReject) {
+        switch (cmdStatus, state, canVote) {
         | (Pending(_), EndorsementSubmited, _) => [|
             <Spinner text="Your endorsement is being submitted" />,
           |]
@@ -84,6 +75,9 @@ let make =
             text("You successfully rejected"),
           |]
         | (_, NoDecision, true) => [|
+            <MButton fullWidth=true onClick=(_e => send(Endorse))>
+              (text(endorseText))
+            </MButton>,
             <MButton fullWidth=true onClick=(_e => send(Reject))>
               (text(rejectText))
             </MButton>,

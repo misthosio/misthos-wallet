@@ -64,7 +64,7 @@ function make(viewData, _) {
                         ]);
                       return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0])], /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                           return Router.clickToRoute(partial_arg, param);
-                                        })], /* None */0, /* array */[ViewCommon.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' - " + BTC.format(payout[/* summary */4][/* spentWithFees */2]))))]));
+                                        })], /* None */0, /* array */[ViewCommon.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](payout[/* processId */0]) + ("' - " + BTC.format(payout[/* summary */3][/* spentWithFees */2]))))]));
                     }), viewData[/* payoutsPendingApproval */7]);
               var unconfirmed = viewData[/* unconfirmedTxs */5];
               var confirmed = viewData[/* confirmedTxs */6];
