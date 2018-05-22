@@ -187,7 +187,7 @@ let apply = (event, state) =>
   | TransactionConfirmed({txId, unixTime}) =>
     let processId = state.txIdToProcessIdMap |. Map.String.get(txId);
     switch (processId) {
-    | None => state
+    | None => {...state, txIds: state.txIds |. Set.String.add(txId)}
     | Some(processId) => {
         ...state,
         txIds: state.txIds |. Set.String.add(txId),

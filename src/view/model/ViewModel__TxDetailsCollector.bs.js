@@ -242,7 +242,13 @@ function apply($$event, state) {
                   /* txIds */Belt_SetString.add(state[/* txIds */4], txId$1)
                 ];
         } else {
-          return state;
+          return /* record */[
+                  /* network */state[/* network */0],
+                  /* localUser */state[/* localUser */1],
+                  /* payouts */state[/* payouts */2],
+                  /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                  /* txIds */Belt_SetString.add(state[/* txIds */4], txId$1)
+                ];
         }
     default:
       return state;
