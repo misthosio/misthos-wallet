@@ -5,7 +5,12 @@ module ViewData = ViewModel.ViewPayoutView;
 let component = ReasonReact.statelessComponent("Drawer");
 
 let make =
-    (~viewData: ViewData.t, ~commands: VentureWorkerClient.Cmd.t, _children) => {
+    (
+      ~viewData: ViewData.t,
+      ~commands: CommandExecutor.commands,
+      ~cmdStatus,
+      _children,
+    ) => {
   let voteStatus = (status: ViewData.voteStatus) =>
     (
       switch (status) {
@@ -95,28 +100,15 @@ let make =
               ("Endorsements" |> text)
             </MTypography>
             <MaterialUi.List disablePadding=true> voters </MaterialUi.List>
-            (
-              if (canEndorse) {
-                <MButton
-                  fullWidth=true
-                  onClick=(_e => commands.endorsePayout(~processId) |> ignore)>
-                  (text("Endorse Payout"))
-                </MButton>;
-              } else {
-                ReasonReact.null;
-              }
-            )
-            (
-              if (canReject) {
-                <MButton
-                  fullWidth=true
-                  onClick=(_e => commands.rejectPayout(~processId) |> ignore)>
-                  (text("Reject Payout"))
-                </MButton>;
-              } else {
-                ReasonReact.null;
-              }
-            )
+            <ProcessApprovalButtons
+              endorseText="Endorse Payout"
+              rejectText="Reject Payout"
+              canEndorse
+              canReject
+              onEndorse=(() => commands.endorsePayout(~processId))
+              onReject=(() => commands.rejectPayout(~processId))
+              cmdStatus
+            />
           </div>
       />;
     },

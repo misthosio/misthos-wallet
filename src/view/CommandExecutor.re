@@ -8,6 +8,12 @@ type action =
   | CommandExecuted(WebWorker.correlationId);
 
 type commands = {
+  proposePartner: (~prospectId: userId) => unit,
+  endorsePartner: (~processId: processId) => unit,
+  rejectPartner: (~processId: processId) => unit,
+  proposePartnerRemoval: (~partnerId: userId) => unit,
+  endorsePartnerRemoval: (~processId: processId) => unit,
+  rejectPartnerRemoval: (~processId: processId) => unit,
   proposePayout:
     (
       ~accountIdx: accountIdx,
@@ -15,12 +21,8 @@ type commands = {
       ~fee: BTC.t
     ) =>
     unit,
-  proposePartner: (~prospectId: userId) => unit,
-  endorsePartner: (~processId: processId) => unit,
-  rejectPartner: (~processId: processId) => unit,
-  proposePartnerRemoval: (~partnerId: userId) => unit,
-  endorsePartnerRemoval: (~processId: processId) => unit,
-  rejectPartnerRemoval: (~processId: processId) => unit,
+  endorsePayout: (~processId: processId) => unit,
+  rejectPayout: (~processId: processId) => unit,
 };
 
 type cmdStatus =
@@ -41,13 +43,7 @@ let make =
       children,
     ) => {
   let wrapCommands = send => {
-    proposePayout: (~accountIdx, ~destinations, ~fee) =>
-      send(
-        CommandExecuted(
-          commands.proposePayout(~accountIdx, ~destinations, ~fee),
-        ),
-      ),
-    proposePartner: (~prospectId: userId) =>
+    proposePartner: (~prospectId) =>
       send(CommandExecuted(commands.proposePartner(~prospectId))),
     endorsePartner: (~processId) =>
       send(CommandExecuted(commands.endorsePartner(~processId))),
@@ -59,6 +55,16 @@ let make =
       send(CommandExecuted(commands.endorsePartnerRemoval(~processId))),
     rejectPartnerRemoval: (~processId) =>
       send(CommandExecuted(commands.rejectPartnerRemoval(~processId))),
+    proposePayout: (~accountIdx, ~destinations, ~fee) =>
+      send(
+        CommandExecuted(
+          commands.proposePayout(~accountIdx, ~destinations, ~fee),
+        ),
+      ),
+    endorsePayout: (~processId) =>
+      send(CommandExecuted(commands.endorsePayout(~processId))),
+    rejectPayout: (~processId) =>
+      send(CommandExecuted(commands.rejectPayout(~processId))),
   };
   {
     ...component,

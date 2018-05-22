@@ -96,14 +96,14 @@ function make(viewData, commands, cmdStatus, _) {
                 if (prospectId === "") {
                   return /* NoUpdate */0;
                 } else {
-                  Curry._1(commands[/* proposePartner */1], PrimitiveTypes.UserId[/* fromString */1](prospectId));
+                  Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
                   return /* Update */Block.__(0, [/* record */[
                               /* viewData */state[/* viewData */0],
                               /* inputs : record */[/* prospectId */""]
                             ]]);
                 }
               } else if (action.tag) {
-                Curry._1(commands[/* proposePartnerRemoval */4], action[0]);
+                Curry._1(commands[/* proposePartnerRemoval */3], action[0]);
                 return /* NoUpdate */0;
               } else {
                 return /* Update */Block.__(0, [/* record */[

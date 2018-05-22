@@ -102,10 +102,19 @@ let make = (~session, ~updateSession, _children) => {
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <ViewPayoutModal
-            viewData=(venture |> ViewModel.viewPayoutModal(processId))
-            commands
-          />,
+          <CommandExecutor
+            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            ...(
+                 (~commands, ~cmdStatus) =>
+                   <ViewPayoutModal
+                     viewData=(
+                       venture |> ViewModel.viewPayoutModal(processId)
+                     )
+                     commands
+                     cmdStatus
+                   />
+               )
+          </CommandExecutor>,
           onCloseModal(selected),
         ))
     | (LoggedIn(_), _, _) => None

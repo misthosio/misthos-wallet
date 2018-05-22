@@ -12,9 +12,6 @@ var component = ReasonReact.reducerComponent("CommandExecuter");
 function make(commands, lastResponse, onProcessStarted, children) {
   var wrapCommands = function (send) {
     return /* record */[
-            /* proposePayout */(function (accountIdx, destinations, fee) {
-                return Curry._1(send, /* CommandExecuted */[Curry._3(commands[/* proposePayout */6], accountIdx, destinations, fee)]);
-              }),
             /* proposePartner */(function (prospectId) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* proposePartner */0], prospectId)]);
               }),
@@ -32,6 +29,15 @@ function make(commands, lastResponse, onProcessStarted, children) {
               }),
             /* rejectPartnerRemoval */(function (processId) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* rejectPartnerRemoval */4], processId)]);
+              }),
+            /* proposePayout */(function (accountIdx, destinations, fee) {
+                return Curry._1(send, /* CommandExecuted */[Curry._3(commands[/* proposePayout */6], accountIdx, destinations, fee)]);
+              }),
+            /* endorsePayout */(function (processId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* endorsePayout */7], processId)]);
+              }),
+            /* rejectPayout */(function (processId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* rejectPayout */8], processId)]);
               })
           ];
   };
