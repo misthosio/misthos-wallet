@@ -40,7 +40,12 @@ let make = (~tx: ViewData.txData, _children) => {
       <ListItem
         dense=true
         disableGutters=true
-        button=true
+        button=(
+          switch (tx.txType) {
+          | Payout => true
+          | _ => false
+          }
+        )
         onClick=(Router.clickToRoute(tx.detailsLink))>
         /* <ListItemIcon> <Avatar> ("F" |> Utils.text) </Avatar> </ListItemIcon> */
 
