@@ -4,6 +4,7 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
 
@@ -13,7 +14,8 @@ function make() {
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* unconfirmedTxs : [] */0,
           /* confirmedTxs : [] */0,
-          /* network : Regtest */0
+          /* network : Regtest */0,
+          /* txIds */Belt_SetString.empty
         ];
 }
 
@@ -43,7 +45,8 @@ function mapConfirmation(param, state) {
           /* payoutProcesses */state[/* payoutProcesses */1],
           /* unconfirmedTxs */newUnconf,
           /* confirmedTxs */Belt_List.concat(newTxs, state[/* confirmedTxs */3]),
-          /* network */state[/* network */4]
+          /* network */state[/* network */4],
+          /* txIds */Belt_SetString.add(state[/* txIds */5], txId)
         ];
 }
 
@@ -56,7 +59,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */1],
                 /* unconfirmedTxs */state[/* unconfirmedTxs */2],
                 /* confirmedTxs */state[/* confirmedTxs */3],
-                /* network */match[/* network */6]
+                /* network */match[/* network */6],
+                /* txIds */state[/* txIds */5]
               ];
     case 21 : 
         var match$1 = $$event[0];
@@ -65,34 +69,57 @@ function apply($$event, state) {
                 /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */1], match$1[/* processId */0], match$1[/* data */6][/* payoutTx */1]),
                 /* unconfirmedTxs */state[/* unconfirmedTxs */2],
                 /* confirmedTxs */state[/* confirmedTxs */3],
-                /* network */state[/* network */4]
+                /* network */state[/* network */4],
+                /* txIds */state[/* txIds */5]
               ];
     case 26 : 
         var match$2 = $$event[0];
+        var txId = match$2[/* txId */1];
         var processId = match$2[/* processId */0];
         var payoutTx = Belt_Map.getExn(state[/* payoutProcesses */1], processId);
-        return /* record */[
-                /* ventureId */state[/* ventureId */0],
-                /* payoutProcesses */state[/* payoutProcesses */1],
-                /* unconfirmedTxs : :: */[
-                  /* record */[
-                    /* txType : Payout */1,
-                    /* status : Unconfirmed */1,
-                    /* txId */match$2[/* txId */1],
-                    /* amount */PayoutTransaction.summary(state[/* network */4], payoutTx)[/* spentWithFees */2],
-                    /* date : None */0,
-                    /* detailsLink : Venture */Block.__(0, [
-                        state[/* ventureId */0],
-                        /* Payout */Block.__(1, [processId])
-                      ])
+        var match$3 = Belt_SetString.has(state[/* txIds */5], txId);
+        var payout_001 = /* status */match$3 ? /* Confirmed */0 : /* Unconfirmed */1;
+        var payout_003 = /* amount */PayoutTransaction.summary(state[/* network */4], payoutTx)[/* spentWithFees */2];
+        var payout_005 = /* detailsLink : Venture */Block.__(0, [
+            state[/* ventureId */0],
+            /* Payout */Block.__(1, [processId])
+          ]);
+        var payout = /* record */[
+          /* txType : Payout */1,
+          payout_001,
+          /* txId */txId,
+          payout_003,
+          /* date : None */0,
+          payout_005
+        ];
+        var match$4 = payout_001;
+        if (match$4) {
+          return /* record */[
+                  /* ventureId */state[/* ventureId */0],
+                  /* payoutProcesses */state[/* payoutProcesses */1],
+                  /* unconfirmedTxs : :: */[
+                    payout,
+                    state[/* unconfirmedTxs */2]
                   ],
-                  state[/* unconfirmedTxs */2]
-                ],
-                /* confirmedTxs */state[/* confirmedTxs */3],
-                /* network */state[/* network */4]
-              ];
+                  /* confirmedTxs */state[/* confirmedTxs */3],
+                  /* network */state[/* network */4],
+                  /* txIds */state[/* txIds */5]
+                ];
+        } else {
+          return /* record */[
+                  /* ventureId */state[/* ventureId */0],
+                  /* payoutProcesses */state[/* payoutProcesses */1],
+                  /* unconfirmedTxs */state[/* unconfirmedTxs */2],
+                  /* confirmedTxs : :: */[
+                    payout,
+                    state[/* confirmedTxs */3]
+                  ],
+                  /* network */state[/* network */4],
+                  /* txIds */state[/* txIds */5]
+                ];
+        }
     case 33 : 
-        var match$3 = $$event[0];
+        var match$5 = $$event[0];
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* payoutProcesses */state[/* payoutProcesses */1],
@@ -100,8 +127,8 @@ function apply($$event, state) {
                   /* record */[
                     /* txType : Income */0,
                     /* status : Unconfirmed */1,
-                    /* txId */match$3[/* txId */2],
-                    /* amount */match$3[/* amount */4],
+                    /* txId */match$5[/* txId */2],
+                    /* amount */match$5[/* amount */4],
                     /* date : None */0,
                     /* detailsLink : Venture */Block.__(0, [
                         state[/* ventureId */0],
@@ -111,7 +138,8 @@ function apply($$event, state) {
                   state[/* unconfirmedTxs */2]
                 ],
                 /* confirmedTxs */state[/* confirmedTxs */3],
-                /* network */state[/* network */4]
+                /* network */state[/* network */4],
+                /* txIds */state[/* txIds */5]
               ];
     case 34 : 
         return mapConfirmation($$event[0], state);
