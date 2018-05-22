@@ -10,10 +10,12 @@ var React = require("react");
 var Colors = require("./Colors.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
+var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
+var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js");
 
 var component = ReasonReact.statelessComponent("VentureList");
 
@@ -66,18 +68,18 @@ function make(selected, index, _) {
                             var id = param[/* id */0];
                             var ids = PrimitiveTypes.VentureId[/* toString */0](id);
                             var match = Caml_obj.caml_equal(/* Some */[id], selected);
-                            return ReasonReact.element(/* Some */[ids], /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[false], /* None */0, /* Some */[/* `String */[
+                            return ReasonReact.element(/* Some */[ids], /* None */0, MaterialUi_ListItem.make(/* Some */[false], /* None */0, /* Some */[/* `String */[
                                               -976970511,
                                               "li"
                                             ]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
                                               -976970511,
                                               ids
-                                            ]], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, Link.make(/* Venture */Block.__(0, [
+                                            ]], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, Link.make(/* Venture */Block.__(0, [
                                                                   id,
                                                                   /* None */0
-                                                                ]), /* Some */[match ? linkSelected : link], /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* array */[]))]));
+                                                                ]), /* Some */[match ? linkSelected : link], /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* array */[]))]));
                           }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
-              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
+              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

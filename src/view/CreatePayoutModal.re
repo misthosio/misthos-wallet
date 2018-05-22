@@ -31,7 +31,15 @@ let component = ReasonReact.reducerComponent("CreatePayout");
 
 module Styles = {
   open Css;
-  let max = style([]);
+  let maxButton =
+    style([
+      important(paddingLeft(px(4))),
+      important(paddingRight(px(4))),
+      color(rgba(0, 0, 0, 0.54)),
+      unsafe("minWidth", "min-content"),
+    ]);
+  let maxWidth = style([maxWidth(`percent(99.0))]);
+  let buttonPadding = style([paddingLeft(px(4))]);
 };
 
 let make =
@@ -182,11 +190,13 @@ let make =
           |> List.mapi((idx, (address, amount)) =>
                MaterialUi.(
                  <TableRow key=(idx |> string_of_int)>
-                   <TableCell> <b> (address |> text) </b> </TableCell>
-                   <TableCell numeric=true>
+                   <TableCell padding=`None>
+                     <b> (address |> text) </b>
+                   </TableCell>
+                   <TableCell numeric=true padding=`None>
                      (BTC.format(amount) ++ " BTC" |> text)
                    </TableCell>
-                   <TableCell>
+                   <TableCell numeric=true padding=`None>
                      <IconButton onClick=(_e => Js.log("TODO"))>
                        <img src=remove alt="Remove" />
                      </IconButton>
@@ -204,33 +214,6 @@ let make =
             (viewData.ventureName |> text)
           </MTypography>
           <Balance currentSpendable=viewData.balance />
-          <MTypography variant=`Title>
-            (text("Proposed recipients"))
-          </MTypography>
-          MaterialUi.(
-            <Table>
-              <TableBody>
-                destinationList
-                <TableRow key="networkFee">
-                  <TableCell> <b> ("NETWORK FEE" |> text) </b> </TableCell>
-                  <TableCell numeric=true>
-                    (BTC.format(summary.networkFee) ++ " BTC" |> text)
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-                <TableRow key="misthosFee">
-                  <TableCell> <b> ("MISTHOS FEE" |> text) </b> </TableCell>
-                  <TableCell numeric=true>
-                    (BTC.format(summary.misthosFee) ++ " BTC" |> text)
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableBody>
-            </Table>
-          )
-        </div>
-      body2=
-        <div>
           <MInput
             placeholder="Recipient Address"
             value=(`String(inputs.recipientAddress))
@@ -248,6 +231,7 @@ let make =
             endAdornment=MaterialUi.(
                            <InputAdornment position=`End>
                              <MButton
+                               className=Styles.maxButton
                                size=`Small
                                variant=Flat
                                onClick=(_e => send(EnterMax))>
@@ -256,9 +240,38 @@ let make =
                            </InputAdornment>
                          )
           />
-          <MButton variant=Flat onClick=(_e => send(AddAnother))>
-            (text("+ add another recipient"))
+          <MButton fullWidth=true onClick=(_e => send(AddAnother))>
+            (text("Add to Summary"))
           </MButton>
+        </div>
+      body2=
+        <div>
+          <MTypography variant=`Title> (text("Summary")) </MTypography>
+          MaterialUi.(
+            <Table>
+              <TableBody>
+                destinationList
+                <TableRow key="networkFee">
+                  <TableCell className=Styles.maxWidth padding=`None>
+                    <b> ("NETWORK FEE" |> text) </b>
+                  </TableCell>
+                  <TableCell numeric=true padding=`None>
+                    (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+                <TableRow key="misthosFee">
+                  <TableCell padding=`None>
+                    <b> ("MISTHOS FEE" |> text) </b>
+                  </TableCell>
+                  <TableCell numeric=true padding=`None>
+                    (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableBody>
+            </Table>
+          )
           <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
             (text("Propose Payout"))
           </MButton>

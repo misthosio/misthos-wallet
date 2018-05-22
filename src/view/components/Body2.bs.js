@@ -44,7 +44,7 @@ function make($staropt$star, body1, body2, _) {
           /* render */(function () {
               return React.createElement("div", {
                           className: grid
-                        }, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* Some */[area("title")], /* Some */[titles], /* array */[])), React.createElement("div", {
+                        }, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* Some */[area("title")], /* Some */[titles], /* None */0, /* array */[])), React.createElement("div", {
                               key: "body1",
                               className: area("body1")
                             }, body1), React.createElement("div", {
