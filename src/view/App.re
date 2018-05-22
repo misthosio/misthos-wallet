@@ -40,6 +40,29 @@ let make = (~session, ~updateSession, _children) => {
         ))
     | (
         LoggedIn(_),
+        Venture(selected, Partner(partnerId)),
+        VentureLoaded(_, venture, commands),
+      ) =>
+      venture |> ViewModel.readOnly ?
+        None :
+        Some((
+          <CommandExecutor
+            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            ...(
+                 (~commands, ~cmdStatus) =>
+                   <ViewPartnerModal
+                     commands
+                     cmdStatus
+                     viewData=(
+                       venture |> ViewModel.viewPartnerModal(partnerId)
+                     )
+                   />
+               )
+          </CommandExecutor>,
+          onCloseModal(selected),
+        ))
+    | (
+        LoggedIn(_),
         Venture(selected, Receive),
         VentureLoaded(_, venture, commands),
       ) =>
@@ -117,14 +140,13 @@ let make = (~session, ~updateSession, _children) => {
     | (LoginPending, _, _) =>
       <Spinner text="Waiting for BlockStack session" />
     | (
-        LoggedIn(session),
+        LoggedIn(_),
         Venture(_, _) | Home | JoinVenture(_),
         VentureLoaded(_ventureId, venture, commands),
       ) =>
       <SelectedVenture
         viewData=(venture |> ViewModel.selectedVenture)
         commands
-        session
       />
     | (LoggedIn(_), CreateVenture, _)
     | (LoggedIn(_), _, CreatingVenture(_)) =>

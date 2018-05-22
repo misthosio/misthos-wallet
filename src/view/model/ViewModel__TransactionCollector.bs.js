@@ -83,7 +83,7 @@ function apply($$event, state) {
                     /* date : None */0,
                     /* detailsLink : Venture */Block.__(0, [
                         state[/* ventureId */0],
-                        /* Payout */[processId]
+                        /* Payout */Block.__(1, [processId])
                       ])
                   ],
                   state[/* unconfirmedTxs */2]
