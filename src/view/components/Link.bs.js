@@ -2,8 +2,8 @@
 'use strict';
 
 var Router = require("../Router.bs.js");
+var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 
 var component = ReasonReact.statelessComponent("Link");
 
@@ -20,9 +20,9 @@ function make(route, className, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var href = Router.Config[/* routeToUrl */1](route);
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(className, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[href], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Button[/* make */7](className, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[href], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                   return Router.clickToRoute(route, param);
-                                })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+                                })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
