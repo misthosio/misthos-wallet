@@ -4,7 +4,7 @@
   {| self.window = { localStorage: self.localStorage , location: { origin: self.origin } } |}
 ];
 
-module Message = PersistWorkerMessage;
+open VentureWorkerMessage;
 
 type self;
 
@@ -12,21 +12,7 @@ type self;
 
 [@bs.set]
 external onMessage :
-  (
-    self,
-    [@bs.uncurry] (
-      {
-        .
-        "data": {
-          .
-          "msg": Message.incoming,
-          "syncId": string,
-        },
-      } =>
-      unit
-    )
-  ) =>
-  unit =
+  (self, [@bs.uncurry] ({. "data": WebWorker.message} => unit)) => unit =
   "onmessage";
 
 open PrimitiveTypes;
@@ -257,17 +243,16 @@ let persistVenture = ventureId => {
 
 let handleMessage =
   fun
-  | Message.UpdateSession(items) => {
-      logMessage("Handling 'UpdateSession'");
+  | SessionStarted(items, _storagePrefix) => {
+      logMessage("Handling 'SessionStarted'");
       items |> WorkerLocalStorage.setBlockstackItems;
     }
-  | VentureWorkerMessage(raw) =>
-    switch (raw |> VentureWorkerMessage.decodeOutgoing) {
-    | VentureLoaded(ventureId, _, newItems) when newItems |> Array.length > 0 =>
-      persistVenture(ventureId)
-    | VentureCreated(ventureId, _) => persistVenture(ventureId)
-    | NewItems(ventureId, _) => persistVenture(ventureId)
-    | _ => ()
-    };
+  | VentureLoaded(ventureId, _, newItems) when newItems |> Array.length > 0 =>
+    persistVenture(ventureId)
+  | VentureCreated(ventureId, _) => persistVenture(ventureId)
+  | NewItems(ventureId, _) => persistVenture(ventureId)
+  | _ => ();
 
-onMessage(self, msg => handleMessage(msg##data##msg));
+onMessage(self, msg =>
+  handleMessage(msg##data##payload |> PersistWorkerMessage.decodeIncoming)
+);

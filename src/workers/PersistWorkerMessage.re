@@ -1,11 +1,11 @@
-open WorkerLocalStorage;
+type incoming = VentureWorkerMessage.outgoing;
 
-type incoming =
-  | UpdateSession(blockstackItems)
-  | VentureWorkerMessage(Js.Json.t);
+type outgoing = VentureWorkerMessage.incoming;
 
-type outgoing = unit;
+let encodeIncoming = VentureWorkerMessage.encodeOutgoing;
 
-external encodeIncoming : incoming => Js.Json.t = "%identity";
+let decodeIncoming = VentureWorkerMessage.decodeOutgoing;
 
-external decodeOutgoing : Js.Json.t => outgoing = "%identity";
+type encodedOutgoing = VentureWorkerMessage.encodedIncoming;
+
+let decodeOutgoing = VentureWorkerMessage.decodeIncoming;

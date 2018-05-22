@@ -34,8 +34,11 @@ let logError = error => {
 };
 
 module Notify = {
-  let result = (correlationId, response) =>
-    postMessage(~correlationId, CmdCompleted(correlationId, response));
+  let result = (ventureId, correlationId, response) =>
+    postMessage(
+      ~correlationId,
+      CmdCompleted(ventureId, correlationId, response),
+    );
   let sessionPending = correlationId =>
     postMessage(~correlationId, SessionPending);
   let sessionStarted = (correlationId, blockstackItems, storagePrefix) =>
@@ -103,13 +106,13 @@ module Handle = {
                    venture,
                    newItems,
                  );
-                 Notify.result(correlationId, Ok);
+                 Notify.result(ventureId, correlationId, Ok);
                };
                resolve(venture);
              }
            | Venture.CouldNotLoad(error) => {
                if (notify) {
-                 Notify.result(correlationId, CouldNotLoadVenture);
+                 Notify.result(ventureId, correlationId, CouldNotLoadVenture);
                };
                raise(DeadThread(error));
              },
@@ -135,11 +138,12 @@ module Handle = {
                              fun
                              | Ok(index, venture) => {
                                  Notify.indexUpdated(correlationId, index);
-                                 Notify.result(correlationId, Ok);
+                                 Notify.result(ventureId, correlationId, Ok);
                                  venture |> resolve;
                                }
                              | CouldNotPersist(error) => {
                                  Notify.result(
+                                   ventureId,
                                    correlationId,
                                    CouldNotPersistVenture,
                                  );
@@ -160,7 +164,7 @@ module Handle = {
                                  venture,
                                  [||],
                                );
-                               Notify.result(correlationId, Ok);
+                               Notify.result(ventureId, correlationId, Ok);
                              };
                              resolve(venture);
                            })
@@ -205,7 +209,7 @@ module Handle = {
                                    ventureId,
                                    venture,
                                  );
-                                 Notify.result(correlationId, Ok);
+                                 Notify.result(ventureId, correlationId, Ok);
                                  venture |> resolve;
                                }
                              | Venture.AlreadyLoaded(index, venture, newItems) => {
@@ -216,11 +220,12 @@ module Handle = {
                                    venture,
                                    newItems,
                                  );
-                                 Notify.result(correlationId, Ok);
+                                 Notify.result(ventureId, correlationId, Ok);
                                  venture |> resolve;
                                }
                              | Venture.CouldNotJoin(error) => {
                                  Notify.result(
+                                   ventureId,
                                    correlationId,
                                    CouldNotJoinVenture,
                                  );
@@ -308,7 +313,7 @@ module Handle = {
       Create(name),
       (correlationId, venture) => {
         Notify.ventureCreated(~correlationId, venture);
-        Notify.result(correlationId, Ok);
+        Notify.result(venture |> Venture.getId, correlationId, Ok);
         Js.Promise.resolve(venture);
       },
     );
@@ -346,7 +351,11 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -368,7 +377,11 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -391,7 +404,11 @@ module Handle = {
                  }
                | PartnerDoesNotExist => venture |> resolve
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -413,7 +430,11 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -435,7 +456,11 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -461,7 +486,11 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -483,7 +512,11 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -502,11 +535,15 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
-                   Notify.result(correlationId, Ok);
+                   Notify.result(ventureId, correlationId, Ok);
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )
@@ -529,7 +566,11 @@ module Handle = {
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
-                   Notify.result(correlationId, CouldNotPersistVenture);
+                   Notify.result(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
                    venture |> resolve;
                  },
              )

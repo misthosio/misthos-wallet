@@ -83,6 +83,7 @@ let handleMsg = (venturesPromise, doWork, msg) =>
            )
            |> resolve;
          | NewIncomeAddress(_, _)
+         | CmdCompleted(_, _, _)
          | UpdateIndex(_) => (storagePrefix, ventures) |> resolve
          }
        )

@@ -35,7 +35,12 @@ module Styles = {
 };
 
 let make =
-    (~viewData: View.t, ~commands: VentureWorkerClient.Cmd.t, _children) => {
+    (
+      ~viewData: View.t,
+      ~commands: CommandExecutor.commands,
+      ~cmdStatus: CommandExecutor.cmdStatus,
+      _children,
+    ) => {
   ...component,
   initialState: () => {
     viewData,
@@ -135,7 +140,7 @@ let make =
         ~destinations,
         ~fee=defaultFee,
       );
-      Router.goTo(Venture(viewData.ventureId, None));
+      /* Router.goTo(Venture(viewData.ventureId, None)); */
       ReasonReact.NoUpdate;
     | AddAnother =>
       if (state.inputDestination != ""
@@ -165,6 +170,12 @@ let make =
       );
     },
   render: ({send, state: {viewData, inputs, destinations, summary}}) => {
+    let spinner =
+      switch (cmdStatus) {
+      | Idle => ReasonReact.null
+      | Pending(_) => <Spinner text="waiting for result" />
+      | Response(_) => "done" |> text
+      };
     let destinationList =
       ReasonReact.array(
         Array.of_list(
@@ -252,6 +263,7 @@ let make =
           <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
             (text("Propose Payout"))
           </MButton>
+          spinner
         </div>
     />;
   },

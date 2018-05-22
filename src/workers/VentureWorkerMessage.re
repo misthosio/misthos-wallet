@@ -45,11 +45,31 @@ type outgoing =
   | VentureLoaded(ventureId, EventLog.t, array(EventLog.item))
   | VentureCreated(ventureId, EventLog.t)
   | NewItems(ventureId, array(EventLog.item))
-  | CmdCompleted(WebWorker.correlationId, cmdResponse);
+  | CmdCompleted(ventureId, WebWorker.correlationId, cmdResponse);
 
 type encodedOutgoing = Js.Json.t;
 
 exception UnknownMessage(Js.Json.t);
+
+let encodeResponse =
+  fun
+  | Ok => Json.Encode.string("Ok")
+  | CouldNotPersistVenture => Json.Encode.string("CouldNotPersistVenture")
+  | CouldNotLoadVenture => Json.Encode.string("CouldNotLoadVenture")
+  | CouldNotJoinVenture => Json.Encode.string("CouldNotJoinVenture")
+  | CouldNotFindUserInfo => Json.Encode.string("CouldNotFindUserInfo")
+  | BadInput => Json.Encode.string("BadInput");
+
+let decodeResponse = raw =>
+  switch (raw |> Json.Decode.string) {
+  | "Ok" => Ok
+  | "CouldNotPersistVenture" => CouldNotPersistVenture
+  | "CouldNotLoadVenture" => CouldNotLoadVenture
+  | "CouldNotJoinVenture" => CouldNotJoinVenture
+  | "CouldNotFindUserInfo" => CouldNotFindUserInfo
+  | "BadInput" => BadInput
+  | _ => raise(UnknownMessage(raw))
+  };
 
 let encodeIncoming =
   fun
@@ -337,6 +357,15 @@ let encodeOutgoing =
         ("ventureId", VentureId.encode(ventureId)),
         ("items", array(EventLog.encodeItem, items)),
       ])
+    )
+  | CmdCompleted(ventureId, correlationId, response) =>
+    Json.Encode.(
+      object_([
+        ("type", string("CmdCompleted")),
+        ("ventureId", VentureId.encode(ventureId)),
+        ("correlationId", string(correlationId)),
+        ("response", encodeResponse(response)),
+      ])
     );
 
 let decodeOutgoing = raw => {
@@ -368,6 +397,11 @@ let decodeOutgoing = raw => {
     let items =
       Json.Decode.(raw |> field("items", array(EventLog.decodeItem)));
     NewItems(ventureId, items);
+  | "CmdCompleted" =>
+    let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
+    let correlationId = raw |> Json.Decode.(field("correlationId", string));
+    let response = raw |> Json.Decode.field("response", decodeResponse);
+    CmdCompleted(ventureId, correlationId, response);
   | "UpdateIndex" =>
     UpdateIndex(raw |> Json.Decode.field("index", Venture.Index.decode))
   | _ => raise(UnknownMessage(raw))

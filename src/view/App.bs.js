@@ -15,6 +15,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var LoggedInHome = require("./LoggedInHome.bs.js");
 var VentureStore = require("./VentureStore.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
+var CommandExecutor = require("./CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
 var ViewPayoutModal = require("./ViewPayoutModal.bs.js");
@@ -73,7 +74,9 @@ function make(session, updateSession, _) {
                   return /* None */0;
                 } else {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), selectedVenture[2], /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$1), (function (commands, cmdStatus) {
+                                        return ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), commands, cmdStatus, /* array */[]));
+                                      }))),
                             (function (param) {
                                 return onCloseModal(selected, param);
                               })

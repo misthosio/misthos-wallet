@@ -19,7 +19,6 @@ function loadVentureAndIndex(session, currentRoute, param) {
   var selectedVenture = param[/* selectedVenture */1];
   if (Caml_obj.caml_notequal(param[/* session */2], session)) {
     VentureWorkerClient.updateSession(ventureWorker[0]);
-    PersistWorkerClient.updateSession(param[/* persistWorker */4][0]);
   }
   if (typeof session === "number" || typeof currentRoute === "number") {
     return /* None */0;
@@ -189,7 +188,7 @@ function make(currentRoute, session, children) {
                       return /* NoUpdate */0;
                   case 3 : 
                       var msg$1 = action[0];
-                      PersistWorkerClient.ventureMessage(msg$1, state[/* persistWorker */4][0]);
+                      Curry._2(PersistWorkerClient.postMessage, state[/* persistWorker */4][0], msg$1);
                       Curry._2(DataWorkerClient.postMessage, state[/* dataWorker */3][0], msg$1);
                       var match$2 = state[/* selectedVenture */1];
                       if (typeof msg$1 === "number") {
@@ -293,6 +292,28 @@ function make(currentRoute, session, children) {
                                               /* selectedVenture : VentureLoaded */Block.__(2, [
                                                   ventureId$3,
                                                   ViewModel.applyAll(msg$1[1], match$2[1]),
+                                                  match$2[2]
+                                                ]),
+                                              /* session */state[/* session */2],
+                                              /* dataWorker */state[/* dataWorker */3],
+                                              /* persistWorker */state[/* persistWorker */4],
+                                              /* ventureWorker */state[/* ventureWorker */5]
+                                            ]]);
+                                } else {
+                                  return /* NoUpdate */0;
+                                }
+                              }
+                          case 6 : 
+                              if (typeof match$2 === "number" || match$2.tag !== 2) {
+                                return /* NoUpdate */0;
+                              } else {
+                                var loadedId = match$2[0];
+                                if (PrimitiveTypes.VentureId[/* eq */5](msg$1[0], loadedId)) {
+                                  return /* Update */Block.__(0, [/* record */[
+                                              /* index */state[/* index */0],
+                                              /* selectedVenture : VentureLoaded */Block.__(2, [
+                                                  loadedId,
+                                                  ViewModel.captureResponse(msg$1[1], msg$1[2], match$2[1]),
                                                   match$2[2]
                                                 ]),
                                               /* session */state[/* session */2],

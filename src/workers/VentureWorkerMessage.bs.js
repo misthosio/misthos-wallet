@@ -13,9 +13,49 @@ var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage");
+
+function encodeResponse(param) {
+  switch (param) {
+    case 0 : 
+        return "Ok";
+    case 1 : 
+        return "CouldNotPersistVenture";
+    case 2 : 
+        return "CouldNotLoadVenture";
+    case 3 : 
+        return "CouldNotJoinVenture";
+    case 4 : 
+        return "CouldNotFindUserInfo";
+    case 5 : 
+        return "BadInput";
+    
+  }
+}
+
+function decodeResponse(raw) {
+  var match = Json_decode.string(raw);
+  switch (match) {
+    case "BadInput" : 
+        return /* BadInput */5;
+    case "CouldNotFindUserInfo" : 
+        return /* CouldNotFindUserInfo */4;
+    case "CouldNotJoinVenture" : 
+        return /* CouldNotJoinVenture */3;
+    case "CouldNotLoadVenture" : 
+        return /* CouldNotLoadVenture */2;
+    case "CouldNotPersistVenture" : 
+        return /* CouldNotPersistVenture */1;
+    case "Ok" : 
+        return /* Ok */0;
+    default:
+      throw [
+            UnknownMessage,
+            raw
+          ];
+  }
+}
 
 function encodeIncoming(param) {
   switch (param.tag | 0) {
@@ -637,14 +677,31 @@ function encodeOutgoing(param) {
                       ]
                     ]);
       case 6 : 
-          throw [
-                Caml_builtin_exceptions.match_failure,
-                [
-                  "VentureWorkerMessage.re",
-                  290,
-                  2
-                ]
-              ];
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "CmdCompleted"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "ventureId",
+                          PrimitiveTypes.VentureId[/* encode */2](param[0])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "correlationId",
+                            param[1]
+                          ],
+                          /* :: */[
+                            /* tuple */[
+                              "response",
+                              encodeResponse(param[2])
+                            ],
+                            /* [] */0
+                          ]
+                        ]
+                      ]
+                    ]);
       
     }
   }
@@ -653,20 +710,29 @@ function encodeOutgoing(param) {
 function decodeOutgoing(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
-    case "NewIncomeAddress" : 
+    case "CmdCompleted" : 
         var ventureId = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var correlationId = Json_decode.field("correlationId", Json_decode.string, raw);
+        var response = Json_decode.field("response", decodeResponse, raw);
+        return /* CmdCompleted */Block.__(6, [
+                  ventureId,
+                  correlationId,
+                  response
+                ]);
+    case "NewIncomeAddress" : 
+        var ventureId$1 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var address = Json_decode.field("address", Json_decode.string, raw);
         return /* NewIncomeAddress */Block.__(1, [
-                  ventureId,
+                  ventureId$1,
                   address
                 ]);
     case "NewItems" : 
-        var ventureId$1 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$2 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var items = Json_decode.field("items", (function (param) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* NewItems */Block.__(5, [
-                  ventureId$1,
+                  ventureId$2,
                   items
                 ]);
     case "SessionPending" : 
@@ -681,20 +747,20 @@ function decodeOutgoing(raw) {
     case "UpdateIndex" : 
         return /* UpdateIndex */Block.__(2, [Json_decode.field("index", Venture.Index[/* decode */2], raw)]);
     case "VentureCreated" : 
-        var ventureId$2 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$3 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var log = Json_decode.field("log", EventLog.decode, raw);
         return /* VentureCreated */Block.__(4, [
-                  ventureId$2,
+                  ventureId$3,
                   log
                 ]);
     case "VentureLoaded" : 
-        var ventureId$3 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
+        var ventureId$4 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
         var log$1 = Json_decode.field("log", EventLog.decode, raw);
         var newItems = Json_decode.field("newItems", (function (param) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
         return /* VentureLoaded */Block.__(3, [
-                  ventureId$3,
+                  ventureId$4,
                   log$1,
                   newItems
                 ]);
@@ -707,6 +773,8 @@ function decodeOutgoing(raw) {
 }
 
 exports.UnknownMessage = UnknownMessage;
+exports.encodeResponse = encodeResponse;
+exports.decodeResponse = decodeResponse;
 exports.encodeIncoming = encodeIncoming;
 exports.decodeIncoming = decodeIncoming;
 exports.encodeOutgoing = encodeOutgoing;

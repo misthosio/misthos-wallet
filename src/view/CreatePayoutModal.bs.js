@@ -10,9 +10,9 @@ var Body2 = require("./components/Body2.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
-var Router = require("./Router.bs.js");
 var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
+var Spinner = require("./components/Spinner.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -31,7 +31,7 @@ var max = Css.style(/* [] */0);
 
 var Styles = /* module */[/* max */max];
 
-function make(viewData, commands, _) {
+function make(viewData, commands, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -48,6 +48,10 @@ function make(viewData, commands, _) {
               var inputs = match[/* inputs */5];
               var summary = match[/* summary */4];
               var viewData = match[/* viewData */0];
+              var spinner;
+              spinner = typeof cmdStatus === "number" ? null : (
+                  cmdStatus.tag ? ViewCommon.text("done") : ReasonReact.element(/* None */0, /* None */0, Spinner.make("waiting for result", /* None */0, /* array */[]))
+                );
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
                           return ReasonReact.element(/* Some */[String(idx)], /* None */0, MaterialUi.TableRow[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi.TableCell[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text(param[0]))])),
@@ -92,7 +96,7 @@ function make(viewData, commands, _) {
                                               return Curry._1(send, /* AddAnother */1);
                                             })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* array */[ViewCommon.text("+ add another recipient")])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ProposePayout */2);
-                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Propose Payout")]))), /* array */[]));
+                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Propose Payout")])), spinner), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -147,11 +151,7 @@ function make(viewData, commands, _) {
                           ],
                           state[/* destinations */1]
                         ] : state[/* destinations */1];
-                      Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], destinations, defaultFee);
-                      Router.goTo(/* Venture */Block.__(0, [
-                              viewData[/* ventureId */0],
-                              /* None */0
-                            ]));
+                      Curry._3(commands[/* proposePayout */0], WalletTypes.AccountIndex[/* default */9], destinations, defaultFee);
                       return /* NoUpdate */0;
                   
                 }

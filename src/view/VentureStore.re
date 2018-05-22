@@ -26,11 +26,10 @@ let loadVentureAndIndex =
     (
       session: Session.t,
       currentRoute,
-      {selectedVenture, ventureWorker, persistWorker, session: oldSession},
+      {selectedVenture, ventureWorker, session: oldSession},
     ) => {
   if (oldSession != session) {
     ventureWorker^ |> VentureWorkerClient.updateSession;
-    persistWorker^ |> PersistWorkerClient.updateSession;
   };
   switch (session, currentRoute: Router.Config.route, selectedVenture) {
   | (LoggedIn(_), Venture(ventureId, _), VentureLoaded(loadedId, _, _))
@@ -142,7 +141,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         state.ventureWorker^ |> VentureWorkerClient.create(~name);
         ReasonReact.Update({...state, selectedVenture: CreatingVenture});
       | VentureWorkerMessage(msg) =>
-        state.persistWorker^ |> PersistWorkerClient.ventureMessage(msg);
+        state.persistWorker^ |. PersistWorkerClient.postMessage(msg);
         state.dataWorker^ |. DataWorkerClient.postMessage(msg);
         switch (msg, state.selectedVenture) {
         | (UpdateIndex(index), _) =>
@@ -207,6 +206,21 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 cmd,
               ),
           });
+        | (
+            CmdCompleted(ventureId, correlationId, response),
+            VentureLoaded(loadedId, viewModel, cmd),
+          )
+            when VentureId.eq(ventureId, loadedId) =>
+          ReasonReact.Update({
+            ...state,
+            selectedVenture:
+              VentureLoaded(
+                loadedId,
+                viewModel
+                |> ViewModel.captureResponse(correlationId, response),
+                cmd,
+              ),
+          })
         | _ => ReasonReact.NoUpdate
         };
       | DataWorkerMessage(msg) =>

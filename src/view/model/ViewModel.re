@@ -15,6 +15,8 @@ module TxDetailsCollector = ViewModel__TxDetailsCollector;
 type t = {
   localUser: userId,
   ventureId,
+  lastResponse:
+    option((WebWorker.correlationId, VentureWorkerMessage.cmdResponse)),
   name: string,
   processedItems: ItemsSet.t,
   metaPolicy: Policy.t,
@@ -27,6 +29,13 @@ type t = {
 
 let readOnly = ({localUser, partnersCollector}) =>
   partnersCollector |> PartnersCollector.isPartner(localUser) == false;
+
+let captureResponse = (correlationId, response, state) => {
+  ...state,
+  lastResponse: Some((correlationId, response)),
+};
+
+let lastResponse = ({lastResponse}) => lastResponse;
 
 module ManagePartnersView = {
   type partner = PartnersCollector.partner;
@@ -179,6 +188,7 @@ let selectedVenture = SelectedVentureView.fromViewModelState;
 
 let make = localUser => {
   localUser,
+  lastResponse: None,
   name: "",
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),

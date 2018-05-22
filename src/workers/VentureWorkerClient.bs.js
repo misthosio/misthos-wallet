@@ -10,6 +10,8 @@ var Venture_workerBsJs = require("./Venture_worker.bs.js");
 
 var Config = /* module */[
   /* UnknownMessage */VentureWorkerMessage.UnknownMessage,
+  /* encodeResponse */VentureWorkerMessage.encodeResponse,
+  /* decodeResponse */VentureWorkerMessage.decodeResponse,
   /* encodeIncoming */VentureWorkerMessage.encodeIncoming,
   /* decodeIncoming */VentureWorkerMessage.decodeIncoming,
   /* encodeOutgoing */VentureWorkerMessage.encodeOutgoing,
@@ -29,7 +31,8 @@ var postMessage = include[1];
 var postMessageSync = include[2];
 
 function updateSession(worker) {
-  return Curry._2(postMessage, worker, /* UpdateSession */Block.__(0, [WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]));
+  Curry._2(postMessage, worker, /* UpdateSession */Block.__(0, [WorkerLocalStorage.readBlockstackItemsFromStorage(/* () */0)]));
+  return /* () */0;
 }
 
 function create(name, worker) {
