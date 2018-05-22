@@ -40,6 +40,7 @@ module Styles = {
     ]);
   let maxWidth = style([maxWidth(`percent(99.0))]);
   let buttonPadding = style([paddingLeft(px(4))]);
+  let noBorder = style([borderColor(`transparent)]);
 };
 
 let make =
@@ -190,13 +191,15 @@ let make =
           |> List.mapi((idx, (address, amount)) =>
                MaterialUi.(
                  <TableRow key=(idx |> string_of_int)>
-                   <TableCell padding=`None>
+                   <TableCell className=Styles.noBorder padding=`None>
                      <b> (address |> text) </b>
                    </TableCell>
-                   <TableCell numeric=true padding=`None>
+                   <TableCell
+                     numeric=true className=Styles.noBorder padding=`None>
                      (BTC.format(amount) ++ " BTC" |> text)
                    </TableCell>
-                   <TableCell numeric=true padding=`None>
+                   <TableCell
+                     numeric=true className=Styles.noBorder padding=`None>
                      <IconButton onClick=(_e => Js.log("TODO"))>
                        <img src=remove alt="Remove" />
                      </IconButton>
@@ -252,22 +255,26 @@ let make =
               <TableBody>
                 destinationList
                 <TableRow key="networkFee">
-                  <TableCell className=Styles.maxWidth padding=`None>
+                  <TableCell
+                    className=(Styles.maxWidth ++ " " ++ Styles.noBorder)
+                    padding=`None>
                     <b> ("NETWORK FEE" |> text) </b>
                   </TableCell>
-                  <TableCell numeric=true padding=`None>
+                  <TableCell
+                    numeric=true className=Styles.noBorder padding=`None>
                     (BTC.format(summary.networkFee) ++ " BTC" |> text)
                   </TableCell>
-                  <TableCell />
+                  <TableCell className=Styles.noBorder />
                 </TableRow>
                 <TableRow key="misthosFee">
-                  <TableCell padding=`None>
+                  <TableCell className=Styles.noBorder padding=`None>
                     <b> ("MISTHOS FEE" |> text) </b>
                   </TableCell>
-                  <TableCell numeric=true padding=`None>
+                  <TableCell
+                    numeric=true className=Styles.noBorder padding=`None>
                     (BTC.format(summary.misthosFee) ++ " BTC" |> text)
                   </TableCell>
-                  <TableCell />
+                  <TableCell className=Styles.noBorder />
                 </TableRow>
               </TableBody>
             </Table>

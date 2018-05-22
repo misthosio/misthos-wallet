@@ -12,30 +12,33 @@ let make = (~viewData: ViewData.t, _children) => {
     let prospects =
       viewData.prospects
       |> List.map((prospect: ViewData.prospect) =>
-           MaterialUi.(
-             <ListItem
-               button=true
-               onClick=(
-                 Router.clickToRoute(
-                   Venture(viewData.ventureId, Partner(prospect.processId)),
-                 )
+           <AlertListItem
+             icon=(
+               switch (prospect.data.processType) {
+               | Removal => Minus
+               | Addition => Plus
+               }
+             )
+             onClick=(
+               Router.clickToRoute(
+                 Venture(viewData.ventureId, Partner(prospect.processId)),
                )
-               key=(prospect.processId |> ProcessId.toString)>
-               (
-                 text(
-                   (
-                     switch (prospect.data.processType) {
-                     | Removal => "Removal"
-                     | Addition => "Addition"
-                     }
-                   )
-                   ++ " of '"
-                   ++ UserId.toString(prospect.data.userId)
-                   ++ "' proposed",
+             )
+             key=(prospect.processId |> ProcessId.toString)
+             text=(
+               text(
+                 (
+                   switch (prospect.data.processType) {
+                   | Removal => "Removal"
+                   | Addition => "Addition"
+                   }
                  )
+                 ++ " of '"
+                 ++ UserId.toString(prospect.data.userId)
+                 ++ "' proposed",
                )
-             </ListItem>
-           )
+             )
+           />
          );
     let partners =
       ReasonReact.array(
@@ -149,7 +152,10 @@ let make = (~viewData: ViewData.t, _children) => {
           </LinkButton>
         </div>
       body4=MaterialUi.(
-              <div> <List> payouts </List> <List> transactions </List> </div>
+              <div>
+                <List disablePadding=true> payouts </List>
+                <List disablePadding=true> transactions </List>
+              </div>
             )
     />;
   },
