@@ -6,29 +6,42 @@ var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
-var Glamor = require("glamor");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
 
 var component = ReasonReact.statelessComponent("TitleBar");
 
-var barGrid = Glamor.css({
-      display: "grid",
-      gridGap: "0 20px",
-      gridTemplateAreas: "\". title1 . title2 .\" \"line line line line line\"",
-      gridTemplateColumns: "minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr)",
-      gridTemplateRows: "auto 4px",
-      width: "100%"
-    });
-
-var bar = Css.style(/* :: */[
-      Css.backgroundColor(Colors.black),
-      /* :: */[
-        Css.display(Css.grid),
-        /* [] */0
-      ]
-    ]);
+function bar(titlesCount, gap) {
+  return Css.style(/* :: */[
+              Css.display(Css.grid),
+              /* :: */[
+                Css.unsafe("gridGap", gap ? "0 20px" : "0"),
+                /* :: */[
+                  Css.unsafe("gridTemplateAreas", titlesCount !== 1 ? "\". title1 . title2 .\" \"line line line line line\"" : "\". title1 title1 title1 .\" \"line line line line line\""),
+                  /* :: */[
+                    Css.unsafe("gridTemplateColumns", "minmax(0, 1fr) minmax(min-content, 4fr) 1fr minmax(min-content, 4fr) minmax(0, 1fr)"),
+                    /* :: */[
+                      Css.unsafe("gridTemplateRows", "auto 4px"),
+                      /* :: */[
+                        Css.width(/* `percent */[
+                              -119887163,
+                              100.0
+                            ]),
+                        /* :: */[
+                          Css.backgroundColor(Colors.black),
+                          /* :: */[
+                            Css.display(Css.grid),
+                            /* [] */0
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
 
 var title = Css.style(/* :: */[
       Css.padding2(Css.px(7), Css.px(0)),
@@ -44,22 +57,23 @@ var gradient = Css.style(/* :: */[
     ]);
 
 function area(area$1) {
-  return Glamor.css({
-              gridArea: area$1
-            });
+  return Css.style(/* :: */[
+              Css.unsafe("gridArea", area$1),
+              /* [] */0
+            ]);
 }
 
 var Styles = /* module */[
-  /* barGrid */barGrid,
   /* bar */bar,
   /* title */title,
   /* gradient */gradient,
   /* area */area
 ];
 
-function make($staropt$star, $staropt$star$1, _) {
+function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
   var className = $staropt$star ? $staropt$star[0] : "";
   var titles = $staropt$star$1 ? $staropt$star$1[0] : /* [] */0;
+  var gap = $staropt$star$2 ? $staropt$star$2[0] : true;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -72,7 +86,7 @@ function make($staropt$star, $staropt$star$1, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return React.createElement("div", {
-                          className: bar + (" " + (barGrid + (" " + className)))
+                          className: bar(List.length(titles), gap) + (" " + className)
                         }, $$Array.of_list(List.mapi((function (i, title$1) {
                                     var si = String(i + 1 | 0);
                                     return React.createElement("div", {

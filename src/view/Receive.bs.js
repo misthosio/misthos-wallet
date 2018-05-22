@@ -69,7 +69,7 @@ function make(commands, _) {
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "Receive BTC",
                                     /* [] */0
-                                  ]], /* array */[])), React.createElement("div", {
+                                  ]], /* None */0, /* array */[])), React.createElement("div", {
                               className: container
                             }, match ? React.createElement("img", {
                                     height: "250px",

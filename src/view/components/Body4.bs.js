@@ -50,7 +50,7 @@ function make($staropt$star, body1, body2, body3, body4, _) {
                             }, body1), React.createElement("div", {
                               key: "body2",
                               className: area("body2")
-                            }, body2), ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* Some */[area("title")], /* Some */[titles], /* array */[])), React.createElement("div", {
+                            }, body2), ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* Some */[area("title")], /* Some */[titles], /* None */0, /* array */[])), React.createElement("div", {
                               key: "body3",
                               className: area("body3")
                             }, body3), React.createElement("div", {

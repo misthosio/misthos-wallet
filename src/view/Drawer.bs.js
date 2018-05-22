@@ -47,7 +47,7 @@ function make(onSignOut, index, selected, _) {
                         }, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "My Ventures",
                                     /* [] */0
-                                  ]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[])), React.createElement("div", {
+                                  ]], /* Some */[false], /* array */[])), ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[])), React.createElement("div", {
                               className: flex_
                             }), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[ViewCommon.text("Create a Venture")])), React.createElement("div", {
                               className: flex_
