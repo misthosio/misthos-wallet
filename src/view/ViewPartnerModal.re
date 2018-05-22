@@ -43,24 +43,6 @@ let make =
       | Addition => "Addition"
       | Removal => "Removal"
       };
-    let voteStatus = (status: ViewData.voteStatus) =>
-      (
-        switch (status) {
-        | Pending => "Pending"
-        | Endorsed => "Endorsed"
-        | Rejected => "Rejected"
-        }
-      )
-      |> text;
-    let voters =
-      ReasonReact.array(
-        Array.of_list(
-          voters
-          |> List.map(({userId, voteStatus: status}: ViewData.voter) =>
-               <div> <Partner partnerId=userId /> (status |> voteStatus) </div>
-             ),
-        ),
-      );
     <Body2
       titles=["Proposed Partner " ++ processTypeString]
       body1=
@@ -84,10 +66,7 @@ let make =
         </div>
       body2=
         <div>
-          <MTypography variant=`Title>
-            ("Endorsement Status" |> text)
-          </MTypography>
-          <MaterialUi.List disablePadding=true> voters </MaterialUi.List>
+          <Voters voters />
           <ProcessApprovalButtons
             endorseText=("Endorse Partner " ++ processTypeString)
             rejectText=("Reject Partner " ++ processTypeString)

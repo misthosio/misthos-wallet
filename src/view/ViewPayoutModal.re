@@ -11,101 +11,74 @@ let make =
       ~cmdStatus,
       _children,
     ) => {
-  let voteStatus = (status: ViewData.voteStatus) =>
-    (
+  ...component,
+  render: _self => {
+    let {
+      processId,
+      voters,
+      canVote,
+      data: {summary, payoutStatus: status, txId, date},
+    }: ViewData.t = viewData;
+    let destinationList =
+      ReasonReact.array(
+        Array.of_list(
+          summary.destinations
+          |> List.mapi((idx, (address, amount)) =>
+               <div key=(idx |> string_of_int)>
+                 (text(address ++ " - " ++ BTC.format(amount)))
+               </div>
+             ),
+        ),
+      );
+    let payoutStatus =
       switch (status) {
-      | Pending => "Pending"
-      | Endorsed => "Endorsed"
-      | Rejected => "Rejected"
-      }
-    )
-    |> text;
-  {
-    ...component,
-    render: _self => {
-      let {
-        processId,
-        voters,
-        canVote,
-        data: {summary, payoutStatus: status, txId, date},
-      }: ViewData.t = viewData;
-      let destinationList =
-        ReasonReact.array(
-          Array.of_list(
-            summary.destinations
-            |> List.mapi((idx, (address, amount)) =>
-                 <div key=(idx |> string_of_int)>
-                   (text(address ++ " - " ++ BTC.format(amount)))
-                 </div>
-               ),
-          ),
-        );
-      let voters =
-        ReasonReact.array(
-          Array.of_list(
-            voters
-            |> List.map(({userId, voteStatus: status}: ViewData.voter) =>
-                 <div>
-                   <Partner partnerId=userId />
-                   (status |> voteStatus)
-                 </div>
-               ),
-          ),
-        );
-      let payoutStatus =
-        switch (status) {
-        | PendingApproval => "PendingApproval" |> text
-        | Accepted => "Accepted" |> text
-        | Unconfirmed => "Unconfirmed" |> text
-        | Confirmed => "Confirmed" |> text
-        | Failed(errorMessage) =>
-          "Failed with reason: " ++ errorMessage |> text
-        };
-      let transactionId =
-        txId
-        |> Utils.mapOption(txId => "Transaction ID: " ++ txId |> text)
-        |> Js.Option.getWithDefault(ReasonReact.null);
-      <Body2
-        titles=["Payout Details"]
-        body1=
-          <div>
-            (
-              date
-              |> Utils.mapOption(date => Js.Date.toString(date) |> text)
-              |> Js.Option.getWithDefault(ReasonReact.null)
-            )
-            payoutStatus
-            <MTypography variant=`Title> ("Payout" |> text) </MTypography>
-            <ul>
-              destinationList
-              <li>
-                (text("Network Fee - " ++ BTC.format(summary.networkFee)))
-              </li>
-              <li>
-                (text("Misthos Fee - " ++ BTC.format(summary.misthosFee)))
-              </li>
-              <li>
-                (text("Total payout- " ++ BTC.format(summary.spentWithFees)))
-              </li>
-            </ul>
-            transactionId
-          </div>
-        body2=
-          <div>
-            <MTypography variant=`Title>
-              ("Endorsements" |> text)
-            </MTypography>
-            <MaterialUi.List disablePadding=true> voters </MaterialUi.List>
-            <ProcessApprovalButtons
-              endorseText="Endorse Payout"
-              rejectText="Reject Payout"
-              canVote
-              onEndorse=(() => commands.endorsePayout(~processId))
-              onReject=(() => commands.rejectPayout(~processId))
-              cmdStatus
-            />
-          </div>
-      />;
-    },
-  };
+      | PendingApproval => "PendingApproval" |> text
+      | Accepted => "Accepted" |> text
+      | Unconfirmed => "Unconfirmed" |> text
+      | Confirmed => "Confirmed" |> text
+      | Failed(errorMessage) => "Failed with reason: " ++ errorMessage |> text
+      };
+    let transactionId =
+      txId
+      |> Utils.mapOption(txId => "Transaction ID: " ++ txId |> text)
+      |> Js.Option.getWithDefault(ReasonReact.null);
+    <Body2
+      titles=["Payout Details"]
+      body1=
+        <div>
+          (
+            date
+            |> Utils.mapOption(date => Js.Date.toString(date) |> text)
+            |> Js.Option.getWithDefault(ReasonReact.null)
+          )
+          payoutStatus
+          <MTypography variant=`Title> ("Payout" |> text) </MTypography>
+          <ul>
+            destinationList
+            <li>
+              (text("Network Fee - " ++ BTC.format(summary.networkFee)))
+            </li>
+            <li>
+              (text("Misthos Fee - " ++ BTC.format(summary.misthosFee)))
+            </li>
+            <li>
+              (text("Total payout- " ++ BTC.format(summary.spentWithFees)))
+            </li>
+          </ul>
+          transactionId
+        </div>
+      body2=
+        <div>
+          <Voters voters />
+          <ProcessApprovalButtons
+            endorseText="Endorse Payout"
+            rejectText="Reject Payout"
+            canVote
+            onEndorse=(() => commands.endorsePayout(~processId))
+            onReject=(() => commands.rejectPayout(~processId))
+            cmdStatus
+          />
+        </div>
+    />;
+  },
 };
