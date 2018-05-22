@@ -24,7 +24,6 @@ var Transaction = require("./components/Transaction.bs.js");
 var AlertListItem = require("./components/AlertListItem.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
-var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
 
 var component = ReasonReact.statelessComponent("SelectedVenture");
 
@@ -41,18 +40,19 @@ function make(viewData, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var prospects = List.map((function (prospect) {
+                      var match = prospect[/* data */4][/* processType */1];
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* processId */0]]);
                       var partial_arg = /* Venture */Block.__(0, [
                           partial_arg_000,
                           partial_arg_001
                         ]);
-                      var match = prospect[/* data */4][/* processType */1];
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](prospect[/* processId */0])], /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
-                                          return Router.clickToRoute(partial_arg, param);
-                                        })], /* None */0, /* None */0, /* array */[ViewCommon.text((
-                                            match ? "Addition" : "Removal"
-                                          ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */4][/* userId */0]) + "' proposed")))]));
+                      var match$1 = prospect[/* data */4][/* processType */1];
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](prospect[/* processId */0])], /* None */0, AlertListItem.make(match ? /* Plus */0 : /* Minus */1, (function (param) {
+                                        return Router.clickToRoute(partial_arg, param);
+                                      }), ViewCommon.text((
+                                          match$1 ? "Addition" : "Removal"
+                                        ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */4][/* userId */0]) + "' proposed"))), /* array */[]));
                     }), viewData[/* prospects */4]);
               var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
                               return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* array */[]));
@@ -107,7 +107,7 @@ function make(viewData, _) {
                                           ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* ManagePartners */1
-                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[payouts])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
+                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[payouts])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
