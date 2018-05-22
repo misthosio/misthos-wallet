@@ -6,9 +6,9 @@ var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
 
 var component = ReasonReact.statelessComponent("TitleBar");
 
@@ -92,7 +92,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                     return React.createElement("div", {
                                                 key: si,
                                                 className: area("title" + si) + (" " + title)
-                                              }, ReasonReact.element(/* None */0, /* None */0, MaterialUi.Typography[/* make */7](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* array */[ViewCommon.text(title$1)])));
+                                              }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Headline */579538228], /* None */0, /* None */0, /* array */[ViewCommon.text(title$1)])));
                                   }), titles)), React.createElement("div", {
                               key: "line",
                               className: gradient + (" " + area("line"))

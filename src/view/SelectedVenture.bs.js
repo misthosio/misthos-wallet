@@ -17,12 +17,14 @@ var MDivider = require("./components/MDivider.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var LinkButton = require("./components/LinkButton.bs.js");
 var MFabButton = require("./components/MFabButton.bs.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Transaction = require("./components/Transaction.bs.js");
+var AlertListItem = require("./components/AlertListItem.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
+var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
 
 var component = ReasonReact.statelessComponent("SelectedVenture");
 
@@ -46,33 +48,32 @@ function make(viewData, _) {
                           partial_arg_001
                         ]);
                       var match = prospect[/* data */4][/* processType */1];
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](prospect[/* processId */0])], /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](prospect[/* processId */0])], /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                           return Router.clickToRoute(partial_arg, param);
-                                        })], /* None */0, /* array */[ViewCommon.text((
+                                        })], /* None */0, /* None */0, /* array */[ViewCommon.text((
                                             match ? "Addition" : "Removal"
                                           ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */4][/* userId */0]) + "' proposed")))]));
                     }), viewData[/* prospects */4]);
               var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
                               return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* array */[]));
                             }), viewData[/* partners */3])));
-              var payouts = List.map((function (param) {
-                      var processId = param[/* processId */0];
-                      var partial_arg_000 = viewData[/* ventureId */0];
-                      var partial_arg_001 = /* Payout */Block.__(1, [processId]);
-                      var partial_arg = /* Venture */Block.__(0, [
-                          partial_arg_000,
-                          partial_arg_001
-                        ]);
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](processId)], /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
-                                          return Router.clickToRoute(partial_arg, param);
-                                        })], /* None */0, /* array */[ViewCommon.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](processId) + ("' - " + BTC.format(param[/* data */4][/* summary */1][/* spentWithFees */2]))))]));
-                    }), viewData[/* payoutsPendingApproval */7]);
+              var payouts = $$Array.of_list(List.map((function (param) {
+                          var processId = param[/* processId */0];
+                          var partial_arg_000 = viewData[/* ventureId */0];
+                          var partial_arg_001 = /* Payout */Block.__(1, [processId]);
+                          var partial_arg = /* Venture */Block.__(0, [
+                              partial_arg_000,
+                              partial_arg_001
+                            ]);
+                          return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](processId)], /* None */0, AlertListItem.make(/* ArrowUp */2, (function (param) {
+                                            return Router.clickToRoute(partial_arg, param);
+                                          }), ViewCommon.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](processId) + ("' - " + BTC.format(param[/* data */4][/* summary */1][/* spentWithFees */2])))), /* array */[]));
+                        }), viewData[/* payoutsPendingApproval */7]));
               var unconfirmed = viewData[/* unconfirmedTxs */5];
               var confirmed = viewData[/* confirmedTxs */6];
               var transactions = $$Array.of_list(Utils.intersperse((function (key) {
                           return ReasonReact.element(/* Some */[key], /* None */0, MDivider.make(/* array */[]));
                         }), Belt_List.concatMany(/* array */[
-                            payouts,
                             List.mapi((function (iter, tx) {
                                     return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(tx, /* array */[]));
                                   }), unconfirmed),
@@ -103,10 +104,10 @@ function make(viewData, _) {
                                     }), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* CreatePayout */2
-                                          ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[partners])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                                          ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
                                             viewData[/* ventureId */0],
                                             /* ManagePartners */1
-                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
+                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[payouts])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
