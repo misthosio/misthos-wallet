@@ -89,7 +89,7 @@ module Cmd: {
   };
   module ProposePartner: {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | PartnerAlreadyExists
       | NoUserInfo
       | CouldNotPersist(Js.Promise.error);
@@ -109,7 +109,7 @@ module Cmd: {
   };
   module ProposePartnerRemoval: {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | PartnerDoesNotExist
       | CouldNotPersist(Js.Promise.error);
     let exec: (~partnerId: userId, t) => Js.Promise.t(result);

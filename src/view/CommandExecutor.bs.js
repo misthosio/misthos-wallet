@@ -11,9 +11,17 @@ var component = ReasonReact.reducerComponent("CommandExecuter");
 
 function make(commands, lastResponse, onProcessStarted, children) {
   var wrapCommands = function (send) {
-    return /* record */[/* proposePayout */(function (accountIdx, destinations, fee) {
+    return /* record */[
+            /* proposePayout */(function (accountIdx, destinations, fee) {
                 return Curry._1(send, /* CommandExecuted */[Curry._3(commands[/* proposePayout */6], accountIdx, destinations, fee)]);
-              })];
+              }),
+            /* proposePartner */(function (prospectId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* proposePartner */0], prospectId)]);
+              }),
+            /* proposePartnerRemoval */(function (partnerId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* proposePartnerRemoval */3], partnerId)]);
+              })
+          ];
   };
   return /* record */[
           /* debugName */component[/* debugName */0],

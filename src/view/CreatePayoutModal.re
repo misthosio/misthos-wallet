@@ -172,8 +172,7 @@ let make =
     let feedback =
       switch (cmdStatus) {
       | Pending(_) => <Spinner text="waiting for result" />
-      | Error(CouldNotPersistVenture) =>
-        "Could not execute teh command" |> text
+      | Error(_) => "Could not execute teh command" |> text
       | _ => ReasonReact.null
       };
     let destinationList =

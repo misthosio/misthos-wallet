@@ -57,7 +57,9 @@ function make(session, updateSession, _) {
                   return /* None */0;
                 } else {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), selectedVenture[2], /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture), /* None */0, (function (commands, cmdStatus) {
+                                        return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), commands, cmdStatus, /* array */[]));
+                                      }))),
                             (function (param) {
                                 return onCloseModal(selected, param);
                               })

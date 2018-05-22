@@ -498,6 +498,7 @@ function exec$3(prospectId, venture) {
                                   } else {
                                     var match = param[0];
                                     return Promise.resolve(/* Ok */Block.__(0, [
+                                                  partnerProposed[/* processId */0],
                                                   match[0],
                                                   match[1]
                                                 ]));
@@ -563,24 +564,26 @@ function exec$6(partnerId, venture) {
   } else {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     return (
-                  match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */7][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
-                          venture,
-                          /* array */[]
-                        ])
-                ).then((function (param) {
-                      return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)), param[0]);
-                    })).then((function (eta) {
-                    return persist(/* None */0, eta);
-                  })).then((function (param) {
-                  if (param.tag) {
-                    return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
-                  } else {
-                    var match = param[0];
-                    return Promise.resolve(/* Ok */Block.__(0, [
-                                  match[0],
-                                  match[1]
-                                ]));
-                  }
+              match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */7][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
+                      venture,
+                      /* array */[]
+                    ])
+            ).then((function (param) {
+                  var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)));
+                  return apply(/* None */0, /* Some */[param[1]], /* PartnerRemovalProposed */Block.__(5, [proposal]), param[0]).then((function (eta) {
+                                  return persist(/* None */0, eta);
+                                })).then((function (param) {
+                                if (param.tag) {
+                                  return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                                } else {
+                                  var match = param[0];
+                                  return Promise.resolve(/* Ok */Block.__(0, [
+                                                proposal[/* processId */0],
+                                                match[0],
+                                                match[1]
+                                              ]));
+                                }
+                              }));
                 }));
   }
 }

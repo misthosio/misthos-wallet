@@ -324,8 +324,13 @@ module Handle = {
           |> exec(~prospectId)
           |> then_(
                fun
-               | Ok(venture, newItems) => {
+               | Ok(processId, venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessStarted(processId),
+                   );
                    venture |> resolve;
                  }
                | _ => venture |> resolve,
@@ -395,8 +400,13 @@ module Handle = {
           |> exec(~partnerId)
           |> then_(
                fun
-               | Ok(venture, newItems) => {
+               | Ok(processId, venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessStarted(processId),
+                   );
                    venture |> resolve;
                  }
                | PartnerDoesNotExist => venture |> resolve

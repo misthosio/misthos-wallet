@@ -128,22 +128,12 @@ function make(viewData, session, commands, _) {
               var match = state[/* viewData */0][/* readOnly */2];
               if (match) {
                 return /* NoUpdate */0;
+              } else if (action.tag) {
+                Curry._1(commands[/* endorsePartnerRemoval */5], action[0]);
+                return /* NoUpdate */0;
               } else {
-                switch (action.tag | 0) {
-                  case 0 : 
-                      Curry._1(commands[/* endorsePartner */1], action[0]);
-                      return /* NoUpdate */0;
-                  case 1 : 
-                      Curry._1(commands[/* endorsePartnerRemoval */5], action[0]);
-                      return /* NoUpdate */0;
-                  case 2 : 
-                      Curry._1(commands[/* rejectPayout */8], action[0]);
-                      return /* NoUpdate */0;
-                  case 3 : 
-                      Curry._1(commands[/* endorsePayout */7], action[0]);
-                      return /* NoUpdate */0;
-                  
-                }
+                Curry._1(commands[/* endorsePartner */1], action[0]);
+                return /* NoUpdate */0;
               }
             }),
           /* subscriptions */component[/* subscriptions */13],

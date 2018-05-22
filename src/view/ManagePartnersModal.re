@@ -21,7 +21,12 @@ type action =
 let component = ReasonReact.reducerComponent("ManagePartners");
 
 let make =
-    (~viewData: ViewData.t, ~commands: VentureWorkerClient.Cmd.t, _children) => {
+    (
+      ~viewData: ViewData.t,
+      ~commands: CommandExecutor.commands,
+      ~cmdStatus: CommandExecutor.cmdStatus,
+      _children,
+    ) => {
   ...component,
   initialState: () => {
     inputs: {
@@ -56,6 +61,12 @@ let make =
       ReasonReact.NoUpdate;
     },
   render: ({send, state: {viewData, inputs}}) => {
+    let feedback =
+      switch (cmdStatus) {
+      | Pending(_) => <Spinner text="waiting for result" />
+      | Error(_) => "Could not execute teh command" |> text
+      | _ => ReasonReact.null
+      };
     let partners =
       ReasonReact.array(
         Array.of_list(
@@ -116,6 +127,7 @@ let make =
           <MTypography variant=`Body2>
             (viewData.joinVentureUrl |> text)
           </MTypography>
+          feedback
         </div>
       body2=
         <div>

@@ -354,8 +354,9 @@ function proposePartner(ventureId, prospectId) {
                                   if (typeof param === "number" || param.tag) {
                                     return Promise.resolve(venture);
                                   } else {
-                                    newItems(correlationId, ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
+                                    newItems(correlationId, ventureId, param[2]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */[param[0]]);
+                                    return Promise.resolve(param[1]);
                                   }
                                 }));
                   }), param, param$1);
@@ -410,8 +411,9 @@ function proposePartnerRemoval(ventureId, partnerId) {
                                     cmdError(ventureId, correlationId, /* CouldNotPersistVenture */0);
                                     return Promise.resolve(venture);
                                   } else {
-                                    newItems(correlationId, ventureId, param[1]);
-                                    return Promise.resolve(param[0]);
+                                    newItems(correlationId, ventureId, param[2]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */[param[0]]);
+                                    return Promise.resolve(param[1]);
                                   }
                                 }));
                   }), param, param$1);

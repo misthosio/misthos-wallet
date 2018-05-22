@@ -403,7 +403,7 @@ module Cmd = {
   };
   module ProposePartner = {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | PartnerAlreadyExists
       | NoUserInfo
       | CouldNotPersist(Js.Promise.error);
@@ -455,7 +455,8 @@ module Cmd = {
                    |> then_(persist)
                    |> then_(
                         fun
-                        | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+                        | Js.Result.Ok((v, c)) =>
+                          Ok(partnerProposed.processId, v, c) |> resolve
                         | Js.Result.Error(err) =>
                           CouldNotPersist(err) |> resolve,
                       );
@@ -526,7 +527,7 @@ module Cmd = {
   };
   module ProposePartnerRemoval = {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | PartnerDoesNotExist
       | CouldNotPersist(Js.Promise.error);
     let exec = (~partnerId, {state, session} as venture) => {
@@ -555,29 +556,28 @@ module Cmd = {
             | None => (venture, [||]) |> resolve
             }
           )
-          |> then_(((v, c)) =>
+          |> then_(((v, c)) => {
+               let proposal =
+                 Event.makePartnerRemovalProposed(
+                   ~eligibleWhenProposing=state |> State.currentPartners,
+                   ~lastPartnerAccepted=
+                     state |> State.lastPartnerAccepted(partnerId),
+                   ~supporterId=session.userId,
+                   ~policy=
+                     state
+                     |> State.currentPolicy(Event.Partner.Removal.processName),
+                 )
+                 |> Event.getPartnerRemovalProposedExn;
                v
-               |> apply(
-                    ~collector=c,
-                    Event.makePartnerRemovalProposed(
-                      ~eligibleWhenProposing=state |> State.currentPartners,
-                      ~lastPartnerAccepted=
-                        state |> State.lastPartnerAccepted(partnerId),
-                      ~supporterId=session.userId,
-                      ~policy=
-                        state
-                        |> State.currentPolicy(
-                             Event.Partner.Removal.processName,
-                           ),
-                    ),
-                  )
-             )
-          |> then_(persist)
-          |> then_(
-               fun
-               | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
-               | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
-             )
+               |> apply(~collector=c, PartnerRemovalProposed(proposal))
+               |> then_(persist)
+               |> then_(
+                    fun
+                    | Js.Result.Ok((v, c)) =>
+                      Ok(proposal.processId, v, c) |> resolve
+                    | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+                  );
+             })
         );
       };
     };

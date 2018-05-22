@@ -25,10 +25,17 @@ let make = (~session, ~updateSession, _children) => {
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <ManagePartnersModal
-            viewData=(venture |> ViewModel.managePartnersModal)
-            commands
-          />,
+          <CommandExecutor
+            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            ...(
+                 (~commands, ~cmdStatus) =>
+                   <ManagePartnersModal
+                     viewData=(venture |> ViewModel.managePartnersModal)
+                     commands
+                     cmdStatus
+                   />
+               )
+          </CommandExecutor>,
           onCloseModal(selected),
         ))
     | (

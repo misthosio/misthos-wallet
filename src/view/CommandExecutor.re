@@ -1,5 +1,7 @@
 include ViewCommon;
 
+open PrimitiveTypes;
+
 open WalletTypes;
 
 type action =
@@ -13,6 +15,8 @@ type commands = {
       ~fee: BTC.t
     ) =>
     unit,
+  proposePartner: (~prospectId: userId) => unit,
+  proposePartnerRemoval: (~partnerId: userId) => unit,
 };
 
 type cmdStatus =
@@ -39,6 +43,10 @@ let make =
           commands.proposePayout(~accountIdx, ~destinations, ~fee),
         ),
       ),
+    proposePartner: (~prospectId: userId) =>
+      send(CommandExecuted(commands.proposePartner(~prospectId))),
+    proposePartnerRemoval: (~partnerId: userId) =>
+      send(CommandExecuted(commands.proposePartnerRemoval(~partnerId))),
   };
   {
     ...component,
