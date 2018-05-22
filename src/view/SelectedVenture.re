@@ -4,30 +4,11 @@ module ViewData = ViewModel.SelectedVentureView;
 
 open PrimitiveTypes;
 
-type state = {viewData: ViewData.t};
+let component = ReasonReact.statelessComponent("SelectedVenture");
 
-type action =
-  | EndorsePartner(ProcessId.t)
-  | EndorsePartnerRemoval(ProcessId.t);
-
-let component = ReasonReact.reducerComponent("SelectedVenture");
-
-let make =
-    (~viewData: ViewData.t, ~commands: VentureWorkerClient.Cmd.t, _children) => {
+let make = (~viewData: ViewData.t, _children) => {
   ...component,
-  initialState: () => {viewData: viewData},
-  willReceiveProps: (_) => {viewData: viewData},
-  reducer: (action, state) =>
-    switch (state.viewData.readOnly, action) {
-    | (false, EndorsePartner(processId)) =>
-      commands.endorsePartner(~processId) |> ignore;
-      ReasonReact.NoUpdate;
-    | (false, EndorsePartnerRemoval(processId)) =>
-      commands.endorsePartnerRemoval(~processId) |> ignore;
-      ReasonReact.NoUpdate;
-    | _ => ReasonReact.NoUpdate
-    },
-  render: ({state: {viewData}}) => {
+  render: (_) => {
     let prospects =
       viewData.prospects
       |> List.map((prospect: ViewData.prospect) =>

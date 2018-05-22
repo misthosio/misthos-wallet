@@ -198,7 +198,7 @@ function make(session, updateSession, _) {
         if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
           exit$1 = 2;
         } else {
-          return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(ViewModel.selectedVenture(selectedVenture[1]), selectedVenture[2], /* array */[]));
+          return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(ViewModel.selectedVenture(selectedVenture[1]), /* array */[]));
         }
       }
       

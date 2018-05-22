@@ -142,12 +142,9 @@ let make = (~session, ~updateSession, _children) => {
     | (
         LoggedIn(_),
         Venture(_, _) | Home | JoinVenture(_),
-        VentureLoaded(_ventureId, venture, commands),
+        VentureLoaded(_ventureId, venture, _),
       ) =>
-      <SelectedVenture
-        viewData=(venture |> ViewModel.selectedVenture)
-        commands
-      />
+      <SelectedVenture viewData=(venture |> ViewModel.selectedVenture) />
     | (LoggedIn(_), CreateVenture, _)
     | (LoggedIn(_), _, CreatingVenture(_)) =>
       let cmdStatus =

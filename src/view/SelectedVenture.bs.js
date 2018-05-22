@@ -7,7 +7,6 @@ var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Body4 = require("./components/Body4.bs.js");
-var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
@@ -25,23 +24,20 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Transaction = require("./components/Transaction.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
-var component = ReasonReact.reducerComponent("SelectedVenture");
+var component = ReasonReact.statelessComponent("SelectedVenture");
 
-function make(viewData, commands, _) {
+function make(viewData, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */(function () {
-              return /* record */[/* viewData */viewData];
-            }),
+          /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */component[/* didMount */4],
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function (param) {
-              var viewData = param[/* state */1][/* viewData */0];
+          /* render */(function () {
               var prospects = List.map((function (prospect) {
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* userId */1]]);
@@ -111,22 +107,9 @@ function make(viewData, commands, _) {
                                             /* ManagePartners */1
                                           ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[transactions]))), /* array */[]));
             }),
-          /* initialState */(function () {
-              return /* record */[/* viewData */viewData];
-            }),
+          /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */(function (action, state) {
-              var match = state[/* viewData */0][/* readOnly */2];
-              if (match) {
-                return /* NoUpdate */0;
-              } else if (action.tag) {
-                Curry._1(commands[/* endorsePartnerRemoval */5], action[0]);
-                return /* NoUpdate */0;
-              } else {
-                Curry._1(commands[/* endorsePartner */1], action[0]);
-                return /* NoUpdate */0;
-              }
-            }),
+          /* reducer */component[/* reducer */12],
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
