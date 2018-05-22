@@ -30,7 +30,9 @@ type incoming =
 type encodedIncoming = Js.Json.t;
 
 type cmdSuccess =
-  | ProcessStarted(processId);
+  | ProcessStarted(processId)
+  | ProcessEndorsed(processId)
+  | ProcessRejected(processId);
 
 type cmdError =
   | CouldNotPersistVenture;
@@ -61,6 +63,20 @@ let encodeSuccess =
         ("type", string("ProcessStarted")),
         ("processId", ProcessId.encode(processId)),
       ])
+    )
+  | ProcessRejected(processId) =>
+    Json.Encode.(
+      object_([
+        ("type", string("ProcessRejected")),
+        ("processId", ProcessId.encode(processId)),
+      ])
+    )
+  | ProcessEndorsed(processId) =>
+    Json.Encode.(
+      object_([
+        ("type", string("ProcessEndorsed")),
+        ("processId", ProcessId.encode(processId)),
+      ])
     );
 
 let decodeSuccess = raw => {
@@ -69,6 +85,12 @@ let decodeSuccess = raw => {
   | "ProcessStarted" =>
     let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
     ProcessStarted(processId);
+  | "ProcessEndorsed" =>
+    let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
+    ProcessEndorsed(processId);
+  | "ProcessRejected" =>
+    let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
+    ProcessRejected(processId);
   | _ => raise(UnknownMessage(raw))
   };
 };

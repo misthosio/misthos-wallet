@@ -103,7 +103,7 @@ function make(viewData, commands, cmdStatus, _) {
                             ]]);
                 }
               } else if (action.tag) {
-                Curry._1(commands[/* proposePartnerRemoval */2], action[0]);
+                Curry._1(commands[/* proposePartnerRemoval */4], action[0]);
                 return /* NoUpdate */0;
               } else {
                 return /* Update */Block.__(0, [/* record */[

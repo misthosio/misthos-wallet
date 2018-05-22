@@ -355,7 +355,7 @@ function proposePartner(ventureId, prospectId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[2]);
-                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */[param[0]]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */Block.__(0, [param[0]]));
                                     return Promise.resolve(param[1]);
                                   }
                                 }));
@@ -374,6 +374,7 @@ function rejectPartner(ventureId, processId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessRejected */Block.__(2, [processId]));
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
@@ -392,6 +393,7 @@ function endorsePartner(ventureId, processId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessEndorsed */Block.__(1, [processId]));
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
@@ -412,7 +414,7 @@ function proposePartnerRemoval(ventureId, partnerId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[2]);
-                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */[param[0]]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */Block.__(0, [param[0]]));
                                     return Promise.resolve(param[1]);
                                   }
                                 }));
@@ -431,6 +433,7 @@ function rejectPartnerRemoval(ventureId, processId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessRejected */Block.__(2, [processId]));
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
@@ -449,6 +452,7 @@ function endorsePartnerRemoval(ventureId, processId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessEndorsed */Block.__(1, [processId]));
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
@@ -470,7 +474,7 @@ function proposePayout(ventureId, accountIdx, destinations, fee) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[2]);
-                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */[param[0]]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessStarted */Block.__(0, [param[0]]));
                                     return Promise.resolve(param[1]);
                                   }
                                 }));
@@ -489,6 +493,7 @@ function rejectPayout(ventureId, processId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessRejected */Block.__(2, [processId]));
                                     return Promise.resolve(param[0]);
                                   }
                                 }));
@@ -507,6 +512,7 @@ function endorsePayout(ventureId, processId) {
                                     return Promise.resolve(venture);
                                   } else {
                                     newItems(correlationId, ventureId, param[1]);
+                                    cmdSuccess(ventureId, correlationId, /* ProcessEndorsed */Block.__(1, [processId]));
                                     return Promise.resolve(param[0]);
                                   }
                                 }));

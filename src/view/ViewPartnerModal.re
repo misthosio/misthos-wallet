@@ -26,7 +26,18 @@ let make =
     ) => {
   ...component,
   render: (_) => {
-    let {userId, voters, canEndorse, canReject, processType}: ViewData.t = viewData;
+    let {processId, userId, voters, canEndorse, canReject, processType}: ViewData.t = viewData;
+    let (onEndorse, onReject) =
+      switch (processType) {
+      | Addition => (
+          (() => commands.endorsePartner(~processId)),
+          (() => commands.rejectPartner(~processId)),
+        )
+      | Removal => (
+          (() => commands.endorsePartnerRemoval(~processId)),
+          (() => commands.rejectPartnerRemoval(~processId)),
+        )
+      };
     let processTypeString =
       switch (processType) {
       | Addition => "Addition"
@@ -71,8 +82,8 @@ let make =
             rejectText=("Reject Partner " ++ processTypeString)
             canEndorse
             canReject
-            onEndorse=(() => ())
-            onReject=(() => ())
+            onEndorse
+            onReject
             cmdStatus
           />
         </div>

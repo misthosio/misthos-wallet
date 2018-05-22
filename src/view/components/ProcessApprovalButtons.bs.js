@@ -8,7 +8,6 @@ var Spinner = require("./Spinner.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
@@ -29,29 +28,16 @@ function make(endorseText, rejectText, canEndorse, canReject, onEndorse, onRejec
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
+              var send = param[/* send */3];
               var match = param[/* state */1];
               var state = match[/* buttonState */0];
-              var send = param[/* send */3];
-              var cmdStatus = match[/* cmdStatus */1];
-              if (typeof cmdStatus !== "number") {
-                switch (cmdStatus.tag | 0) {
-                  case 0 : 
-                      ReasonReact.element(/* None */0, /* None */0, Spinner.make("waiting for result", /* None */0, /* array */[]));
-                      break;
-                  case 1 : 
-                      ViewCommon.text("Could not execute teh command");
-                      break;
-                  case 2 : 
-                      break;
-                  
-                }
-              }
               var tmp;
               var exit = 0;
-              if (typeof cmdStatus === "number") {
+              var tmp$1 = match[/* cmdStatus */1];
+              if (typeof tmp$1 === "number") {
                 exit = 1;
               } else {
-                switch (cmdStatus.tag | 0) {
+                switch (tmp$1.tag | 0) {
                   case 0 : 
                       if (state >= 2) {
                         switch (state - 2 | 0) {
@@ -159,14 +145,10 @@ function make(endorseText, rejectText, canEndorse, canReject, onEndorse, onRejec
                                 })
                             ]);
                 case 3 : 
-                    throw [
-                          Caml_builtin_exceptions.match_failure,
-                          [
-                            "ProcessApprovalButtons.re",
-                            41,
-                            4
-                          ]
-                        ];
+                    return /* Update */Block.__(0, [/* record */[
+                                /* buttonState : ConfirmReject */3,
+                                /* cmdStatus */state[/* cmdStatus */1]
+                              ]]);
                 case 4 : 
                     return /* UpdateWithSideEffects */Block.__(2, [
                               /* record */[

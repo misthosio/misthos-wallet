@@ -4,6 +4,7 @@
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Body2 = require("./components/Body2.bs.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Partner = require("./components/Partner.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
@@ -15,7 +16,7 @@ var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js"
 
 var component = ReasonReact.statelessComponent("ManagePartners");
 
-function make(viewData, _, cmdStatus, _$1) {
+function make(viewData, commands, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -27,8 +28,25 @@ function make(viewData, _, cmdStatus, _$1) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
+              var processType = viewData[/* processType */2];
               var userId = viewData[/* userId */1];
-              var processTypeString = viewData[/* processType */2] ? "Addition" : "Removal";
+              var processId = viewData[/* processId */0];
+              var match = processType ? /* tuple */[
+                  (function () {
+                      return Curry._1(commands[/* endorsePartner */2], processId);
+                    }),
+                  (function () {
+                      return Curry._1(commands[/* rejectPartner */3], processId);
+                    })
+                ] : /* tuple */[
+                  (function () {
+                      return Curry._1(commands[/* endorsePartnerRemoval */5], processId);
+                    }),
+                  (function () {
+                      return Curry._1(commands[/* rejectPartnerRemoval */6], processId);
+                    })
+                ];
+              var processTypeString = processType ? "Addition" : "Removal";
               var voteStatus = function (status) {
                 var tmp;
                 switch (status) {
@@ -51,11 +69,7 @@ function make(viewData, _, cmdStatus, _$1) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Proposed Partner " + processTypeString,
                                 /* [] */0
-                              ]], React.createElement("div", undefined, ViewCommon.text("Status: Pending"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[voters])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canEndorse */4], viewData[/* canReject */5], (function () {
-                                            return /* () */0;
-                                          }), (function () {
-                                            return /* () */0;
-                                          }), cmdStatus, /* array */[]))), /* array */[]));
+                              ]], React.createElement("div", undefined, ViewCommon.text("Status: Pending"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[voters])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canEndorse */4], viewData[/* canReject */5], match[0], match[1], cmdStatus, /* array */[]))), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

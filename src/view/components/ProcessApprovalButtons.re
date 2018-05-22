@@ -40,6 +40,7 @@ let make =
   reducer: (action, state) =>
     switch (action) {
     | Endorse => ReasonReact.Update({...state, buttonState: ConfirmEndorse})
+    | Reject => ReasonReact.Update({...state, buttonState: ConfirmReject})
     | ConfirmEndorse =>
       ReasonReact.UpdateWithSideEffects(
         {...state, buttonState: EndorsementSubmited},
@@ -52,13 +53,7 @@ let make =
       )
     | Cancel => ReasonReact.Update({cmdStatus: Idle, buttonState: NoDecision})
     },
-  render: ({send, state: {buttonState as state, cmdStatus}}) => {
-    let feedback =
-      switch (cmdStatus) {
-      | Pending(_) => <Spinner text="waiting for result" />
-      | Error(_) => "Could not execute teh command" |> text
-      | _ => ReasonReact.null
-      };
+  render: ({send, state: {buttonState: state, cmdStatus}}) =>
     ReasonReact.array(
       Array.concatMany([|
         switch (state, canEndorse) {
@@ -108,6 +103,5 @@ let make =
         | _ => [|ReasonReact.null|]
         },
       |]),
-    );
-  },
+    ),
 };

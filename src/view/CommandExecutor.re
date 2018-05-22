@@ -16,7 +16,11 @@ type commands = {
     ) =>
     unit,
   proposePartner: (~prospectId: userId) => unit,
+  endorsePartner: (~processId: processId) => unit,
+  rejectPartner: (~processId: processId) => unit,
   proposePartnerRemoval: (~partnerId: userId) => unit,
+  endorsePartnerRemoval: (~processId: processId) => unit,
+  rejectPartnerRemoval: (~processId: processId) => unit,
 };
 
 type cmdStatus =
@@ -45,8 +49,16 @@ let make =
       ),
     proposePartner: (~prospectId: userId) =>
       send(CommandExecuted(commands.proposePartner(~prospectId))),
+    endorsePartner: (~processId) =>
+      send(CommandExecuted(commands.endorsePartner(~processId))),
+    rejectPartner: (~processId) =>
+      send(CommandExecuted(commands.rejectPartner(~processId))),
     proposePartnerRemoval: (~partnerId: userId) =>
       send(CommandExecuted(commands.proposePartnerRemoval(~partnerId))),
+    endorsePartnerRemoval: (~processId) =>
+      send(CommandExecuted(commands.endorsePartnerRemoval(~processId))),
+    rejectPartnerRemoval: (~processId) =>
+      send(CommandExecuted(commands.rejectPartnerRemoval(~processId))),
   };
   {
     ...component,
