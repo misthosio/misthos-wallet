@@ -31,7 +31,7 @@ var infoBox = Css.style(/* :: */[
 
 var Styles = /* module */[/* infoBox */infoBox];
 
-function make(selectedVenture, onCreateVenture, _) {
+function make(onCreateVenture, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -44,28 +44,36 @@ function make(selectedVenture, onCreateVenture, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
-              var exit = 0;
-              if (typeof selectedVenture === "number" && selectedVenture !== 0) {
-                return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* None */0, /* array */[]));
+              var feedback;
+              if (typeof cmdStatus === "number") {
+                feedback = null;
               } else {
-                exit = 1;
+                switch (cmdStatus.tag | 0) {
+                  case 0 : 
+                      feedback = ReasonReact.element(/* None */0, /* None */0, Spinner.make("waiting for result", /* None */0, /* array */[]));
+                      break;
+                  case 1 : 
+                      feedback = ViewCommon.text("Could not execute teh command");
+                      break;
+                  case 2 : 
+                      feedback = null;
+                      break;
+                  
+                }
               }
-              if (exit === 1) {
-                return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
-                                  "Create a Venture",
-                                  /* [] */0
-                                ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 Set up a new Venture with yourself as the initial Partner.\n                 You can add and remove Partners once the Venture is created.\n                 But first, let’s start with a name.\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Venture Name")])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Venture Name"], /* Some */[/* `String */[
-                                              -976970511,
-                                              param[/* state */1][/* newVenture */0]
-                                            ]], /* Some */[(function (e) {
-                                                return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
-                                              })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                return Curry._1(send, /* CreateVenture */0);
-                                              })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("create venture")]))), React.createElement("div", {
-                                    className: infoBox
-                                  }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("What can you do with a venture?")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Your Venture can receive money from different sources, such as customers, clients, and investors\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Every Partner of the Venture has full transparency of income and payouts\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • The team decides the Policies by which payouts take place\n                ")]))), /* array */[]));
-              }
-              
+              return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
+                                "Create a Venture",
+                                /* [] */0
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 Set up a new Venture with yourself as the initial Partner.\n                 You can add and remove Partners once the Venture is created.\n                 But first, let’s start with a name.\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Venture Name")])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Venture Name"], /* Some */[/* `String */[
+                                            -976970511,
+                                            param[/* state */1][/* newVenture */0]
+                                          ]], /* Some */[(function (e) {
+                                              return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
+                                            })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                              return Curry._1(send, /* CreateVenture */0);
+                                            })], /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("create venture")])), feedback), React.createElement("div", {
+                                  className: infoBox
+                                }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("What can you do with a venture?")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Your Venture can receive money from different sources, such as customers, clients, and investors\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Every Partner of the Venture has full transparency of income and payouts\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • The team decides the Policies by which payouts take place\n                ")]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* newVenture */""];

@@ -2,7 +2,7 @@ open PrimitiveTypes;
 
 type selectedVenture =
   | None
-  | CreatingVenture
+  | CreatingVenture(CommandStatus.t)
   | JoiningVenture(ventureId)
   | LoadingVenture(ventureId)
   | VentureLoaded(ventureId, ViewModel.t, VentureWorkerClient.Cmd.t);
@@ -138,15 +138,31 @@ let make = (~currentRoute, ~session: Session.t, children) => {
     | LoggedIn(sessionData) =>
       switch (action) {
       | CreateVenture(name) =>
-        state.ventureWorker^ |> VentureWorkerClient.create(~name);
-        ReasonReact.Update({...state, selectedVenture: CreatingVenture});
+        let createCmdId =
+          state.ventureWorker^ |> VentureWorkerClient.create(~name);
+        ReasonReact.Update({
+          ...state,
+          selectedVenture: CreatingVenture(Pending(createCmdId)),
+        });
       | VentureWorkerMessage(msg) =>
-        state.persistWorker^ |. PersistWorkerClient.postMessage(msg);
-        state.dataWorker^ |. DataWorkerClient.postMessage(msg);
+        state.persistWorker^ |. PersistWorkerClient.postMessage(msg) |> ignore;
+        state.dataWorker^ |. DataWorkerClient.postMessage(msg) |> ignore;
         switch (msg, state.selectedVenture) {
-        | (UpdateIndex(index), _) =>
-          updateOtherTabs(msg);
-          ReasonReact.Update({...state, index: Some(index)});
+        | (
+            CmdCompleted(_, correlationId, response),
+            CreatingVenture(Pending(createCmdId)),
+          )
+            when correlationId == createCmdId =>
+          ReasonReact.Update({
+            ...state,
+            selectedVenture:
+              CreatingVenture(
+                switch (response) {
+                | Ok(success) => Success(success)
+                | Error(error) => Error(error)
+                },
+              ),
+          })
         | (VentureCreated(ventureId, log), _) =>
           ReasonReact.UpdateWithSideEffects(
             {
@@ -163,6 +179,9 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             },
             ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
           )
+        | (UpdateIndex(index), _) =>
+          updateOtherTabs(msg);
+          ReasonReact.Update({...state, index: Some(index)});
         | (VentureLoaded(ventureId, log, _), JoiningVenture(joiningId))
             when VentureId.eq(ventureId, joiningId) =>
           ReasonReact.UpdateWithSideEffects(
@@ -224,13 +243,14 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         | _ => ReasonReact.NoUpdate
         };
       | DataWorkerMessage(msg) =>
-        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg);
+        state.ventureWorker^ |. VentureWorkerClient.postMessage(msg) |> ignore;
         ReasonReact.NoUpdate;
       | TabSync(msg) =>
         switch (msg) {
         | NewItems(ventureId, newItems) =>
           state.ventureWorker^
-          |. VentureWorkerClient.postMessage(SyncTabs(ventureId, newItems));
+          |. VentureWorkerClient.postMessage(SyncTabs(ventureId, newItems))
+          |> ignore;
           switch (state.selectedVenture) {
           | VentureLoaded(loadedId, viewModel, cmd)
               when VentureId.eq(loadedId, ventureId) =>

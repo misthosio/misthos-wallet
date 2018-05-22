@@ -127,12 +127,23 @@ let make = (~session, ~updateSession, _children) => {
         session
       />
     | (LoggedIn(_), CreateVenture, _) =>
-      <VentureCreate selectedVenture onCreateVenture=createVenture />
+      let cmdStatus =
+        switch (selectedVenture) {
+        | CreatingVenture(cmdStatus) => cmdStatus
+        | _ => Idle
+        };
+      <VentureCreate cmdStatus onCreateVenture=createVenture />;
+    | (LoggedIn(_), _, CreatingVenture(_)) =>
+      let cmdStatus =
+        switch (selectedVenture) {
+        | CreatingVenture(cmdStatus) => cmdStatus
+        | _ => Idle
+        };
+      <VentureCreate cmdStatus onCreateVenture=createVenture />;
     | (LoggedIn(_), _, JoiningVenture(_)) =>
       <Spinner text="Joining venture" />
     | (LoggedIn(_), _, LoadingVenture(_)) =>
       <Spinner text="Loading venture" />
-    | (LoggedIn(_), _, CreatingVenture) => <Spinner text="Creating venture" />
     | (LoggedIn(_), _, None) => <LoggedInHome index />
     };
   {

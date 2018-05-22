@@ -48,7 +48,7 @@ function make(session, updateSession, _) {
           case 0 : 
               return /* None */0;
           case 1 : 
-              if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+              if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                 return /* None */0;
               } else {
                 var venture = selectedVenture[1];
@@ -67,7 +67,7 @@ function make(session, updateSession, _) {
                 }
               }
           case 2 : 
-              if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+              if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                 return /* None */0;
               } else {
                 var venture$1 = selectedVenture[1];
@@ -92,7 +92,7 @@ function make(session, updateSession, _) {
                 }
               }
           case 3 : 
-              if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+              if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                 return /* None */0;
               } else {
                 var match$3 = ViewModel.readOnly(selectedVenture[1]);
@@ -109,7 +109,7 @@ function make(session, updateSession, _) {
               }
           
         }
-      } else if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+      } else if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
         return /* None */0;
       } else {
         var venture$2 = selectedVenture[1];
@@ -162,7 +162,9 @@ function make(session, updateSession, _) {
               exit$2 = 3;
               break;
           case 1 : 
-              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(selectedVenture, createVenture, /* array */[]));
+              var cmdStatus;
+              cmdStatus = typeof selectedVenture === "number" || selectedVenture.tag ? /* Idle */0 : selectedVenture[0];
+              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(createVenture, cmdStatus, /* array */[]));
           case 2 : 
               exit$1 = 2;
               break;
@@ -172,7 +174,7 @@ function make(session, updateSession, _) {
         exit$2 = 3;
       }
       if (exit$2 === 3) {
-        if (typeof selectedVenture === "number" || selectedVenture.tag !== 2) {
+        if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
           exit = 1;
         } else {
           return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(ViewModel.selectedVenture(selectedVenture[1]), session[0], selectedVenture[2], /* array */[]));
@@ -199,15 +201,19 @@ function make(session, updateSession, _) {
           return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Waiting for BlockStack session", /* None */0, /* array */[]));
         }
       } else if (typeof selectedVenture === "number") {
-        if (selectedVenture === 0) {
-          return ReasonReact.element(/* None */0, /* None */0, LoggedInHome.make(index, /* array */[]));
-        } else {
-          return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Creating venture", /* None */0, /* array */[]));
-        }
-      } else if (selectedVenture.tag) {
-        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* None */0, /* array */[]));
+        return ReasonReact.element(/* None */0, /* None */0, LoggedInHome.make(index, /* array */[]));
       } else {
-        return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* None */0, /* array */[]));
+        switch (selectedVenture.tag | 0) {
+          case 0 : 
+              var cmdStatus$1;
+              cmdStatus$1 = typeof selectedVenture === "number" || selectedVenture.tag ? /* Idle */0 : selectedVenture[0];
+              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(createVenture, cmdStatus$1, /* array */[]));
+          case 1 : 
+              return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* None */0, /* array */[]));
+          case 2 : 
+              return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* None */0, /* array */[]));
+          
+        }
       }
     }
     
