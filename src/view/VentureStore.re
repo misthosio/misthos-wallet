@@ -36,13 +36,15 @@ let loadVentureAndIndex =
       when VentureId.eq(ventureId, loadedId) => selectedVenture
   | (LoggedIn(_), Venture(ventureId, _), VentureLoaded(loadedId, _, _))
       when VentureId.neq(ventureId, loadedId) =>
-    ventureWorker^ |> VentureWorkerClient.load(~ventureId);
+    ventureWorker^ |> VentureWorkerClient.load(~ventureId) |> ignore;
     LoadingVenture(ventureId);
   | (LoggedIn(_), Venture(ventureId, _), _) =>
-    ventureWorker^ |> VentureWorkerClient.load(~ventureId);
+    ventureWorker^ |> VentureWorkerClient.load(~ventureId) |> ignore;
     LoadingVenture(ventureId);
   | (LoggedIn(_sessionData), JoinVenture(ventureId, userId), _) =>
-    ventureWorker^ |> VentureWorkerClient.joinVia(~ventureId, ~userId);
+    ventureWorker^
+    |> VentureWorkerClient.joinVia(~ventureId, ~userId)
+    |> ignore;
     JoiningVenture(ventureId);
   | _ => None
   };

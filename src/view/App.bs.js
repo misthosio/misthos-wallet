@@ -148,48 +148,48 @@ function make(session, updateSession, _) {
   var body = function (index, selectedVenture, createVenture, currentRoute) {
     var exit = 0;
     var exit$1 = 0;
+    var exit$2 = 0;
     if (typeof session === "number") {
       if (session !== 2) {
-        exit$1 = 2;
+        exit$2 = 3;
       } else {
         return ReasonReact.element(/* None */0, /* None */0, PublicHome.make(onSignIn, /* array */[]));
       }
     } else {
-      var exit$2 = 0;
+      var exit$3 = 0;
       if (typeof currentRoute === "number") {
         switch (currentRoute) {
           case 0 : 
-              exit$2 = 3;
+              exit$3 = 4;
               break;
           case 1 : 
-              var cmdStatus;
-              cmdStatus = typeof selectedVenture === "number" || selectedVenture.tag ? /* Idle */0 : selectedVenture[0];
-              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(createVenture, cmdStatus, /* array */[]));
+              exit = 1;
+              break;
           case 2 : 
-              exit$1 = 2;
+              exit$2 = 3;
               break;
           
         }
       } else {
-        exit$2 = 3;
+        exit$3 = 4;
       }
-      if (exit$2 === 3) {
+      if (exit$3 === 4) {
         if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
-          exit = 1;
+          exit$1 = 2;
         } else {
           return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(ViewModel.selectedVenture(selectedVenture[1]), session[0], selectedVenture[2], /* array */[]));
         }
       }
       
     }
-    if (exit$1 === 2) {
+    if (exit$2 === 3) {
       if (typeof currentRoute === "number" && currentRoute >= 2) {
         return ReasonReact.element(/* None */0, /* None */0, TypographyStack.make(/* array */[]));
       } else {
-        exit = 1;
+        exit$1 = 2;
       }
     }
-    if (exit === 1) {
+    if (exit$1 === 2) {
       if (typeof session === "number") {
         if (session !== 1) {
           if (session >= 3) {
@@ -205,9 +205,8 @@ function make(session, updateSession, _) {
       } else {
         switch (selectedVenture.tag | 0) {
           case 0 : 
-              var cmdStatus$1;
-              cmdStatus$1 = typeof selectedVenture === "number" || selectedVenture.tag ? /* Idle */0 : selectedVenture[0];
-              return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(createVenture, cmdStatus$1, /* array */[]));
+              exit = 1;
+              break;
           case 1 : 
               return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* None */0, /* array */[]));
           case 2 : 
@@ -215,6 +214,11 @@ function make(session, updateSession, _) {
           
         }
       }
+    }
+    if (exit === 1) {
+      var cmdStatus;
+      cmdStatus = typeof selectedVenture === "number" || selectedVenture.tag ? /* Idle */0 : selectedVenture[0];
+      return ReasonReact.element(/* None */0, /* None */0, VentureCreate.make(createVenture, cmdStatus, /* array */[]));
     }
     
   };

@@ -126,13 +126,7 @@ let make = (~session, ~updateSession, _children) => {
         commands
         session
       />
-    | (LoggedIn(_), CreateVenture, _) =>
-      let cmdStatus =
-        switch (selectedVenture) {
-        | CreatingVenture(cmdStatus) => cmdStatus
-        | _ => Idle
-        };
-      <VentureCreate cmdStatus onCreateVenture=createVenture />;
+    | (LoggedIn(_), CreateVenture, _)
     | (LoggedIn(_), _, CreatingVenture(_)) =>
       let cmdStatus =
         switch (selectedVenture) {
