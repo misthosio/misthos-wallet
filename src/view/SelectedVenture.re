@@ -54,28 +54,31 @@ let make = (~viewData: ViewData.t, _children) => {
         ),
       );
     let payouts =
-      viewData.payoutsPendingApproval
-      |> List.map(({processId, data: {summary}}: ViewData.payoutProcess) =>
-           MaterialUi.(
-             <ListItem
-               button=true
-               onClick=(
-                 Router.clickToRoute(
-                   Venture(viewData.ventureId, Payout(processId)),
+      ReasonReact.array(
+        Array.of_list(
+          viewData.payoutsPendingApproval
+          |> List.map(
+               ({processId, data: {summary}}: ViewData.payoutProcess) =>
+               <AlertListItem
+                 icon=ArrowUp
+                 onClick=(
+                   Router.clickToRoute(
+                     Venture(viewData.ventureId, Payout(processId)),
+                   )
                  )
-               )
-               key=(processId |> ProcessId.toString)>
-               (
-                 text(
-                   "'"
-                   ++ (processId |> ProcessId.toString)
-                   ++ "' - "
-                   ++ BTC.format(summary.spentWithFees),
+                 key=(processId |> ProcessId.toString)
+                 text=(
+                   text(
+                     "'"
+                     ++ (processId |> ProcessId.toString)
+                     ++ "' - "
+                     ++ BTC.format(summary.spentWithFees),
+                   )
                  )
-               )
-             </ListItem>
-           )
-         );
+               />
+             ),
+        ),
+      );
     let transactions =
       ReasonReact.array(
         Array.of_list(
@@ -83,7 +86,6 @@ let make = (~viewData: ViewData.t, _children) => {
             let unconfirmed = viewData.unconfirmedTxs;
             let confirmed = viewData.confirmedTxs;
             Belt.List.concatMany([|
-              payouts,
               unconfirmed
               |> List.mapi((iter, tx: ViewData.txData) =>
                    <Transaction tx key=(iter |> string_of_int) />
@@ -146,7 +148,9 @@ let make = (~viewData: ViewData.t, _children) => {
             ("Add or Remove Partners" |> text)
           </LinkButton>
         </div>
-      body4=<div> <MaterialUi.List> transactions </MaterialUi.List> </div>
+      body4=MaterialUi.(
+              <div> <List> payouts </List> <List> transactions </List> </div>
+            )
     />;
   },
 };
