@@ -1,5 +1,7 @@
 include ViewCommon;
 
+[@bs.module] external remove : string = "../assets/img/remove.svg";
+
 module View = ViewModel.CreatePayoutView;
 
 let defaultFee = BTC.fromSatoshis(100L);
@@ -168,9 +170,19 @@ let make =
         Array.of_list(
           destinations
           |> List.mapi((idx, (address, amount)) =>
-               <div key=(idx |> string_of_int)>
-                 (text(address ++ " - " ++ BTC.format(amount)))
-               </div>
+               MaterialUi.(
+                 <TableRow key=(idx |> string_of_int)>
+                   <TableCell> <b> (address |> text) </b> </TableCell>
+                   <TableCell numeric=true>
+                     (BTC.format(amount) ++ " BTC" |> text)
+                   </TableCell>
+                   <TableCell>
+                     <IconButton onClick=(_e => Js.log("TODO"))>
+                       <img src=remove alt="Remove" />
+                     </IconButton>
+                   </TableCell>
+                 </TableRow>
+               )
              ),
         ),
       );
@@ -182,16 +194,30 @@ let make =
             (viewData.ventureName |> text)
           </MTypography>
           <Balance currentSpendable=viewData.balance />
-          (text("Proposed recipients"))
-          <ul>
-            destinationList
-            <li>
-              (text("Network Fee - " ++ BTC.format(summary.networkFee)))
-            </li>
-            <li>
-              (text("Misthos Fee - " ++ BTC.format(summary.misthosFee)))
-            </li>
-          </ul>
+          <MTypography variant=`Title>
+            (text("Proposed recipients"))
+          </MTypography>
+          MaterialUi.(
+            <Table>
+              <TableBody>
+                destinationList
+                <TableRow key="networkFee">
+                  <TableCell> <b> ("NETWORK FEE" |> text) </b> </TableCell>
+                  <TableCell numeric=true>
+                    (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+                <TableRow key="misthosFee">
+                  <TableCell> <b> ("MISTHOS FEE" |> text) </b> </TableCell>
+                  <TableCell numeric=true>
+                    (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableBody>
+            </Table>
+          )
         </div>
       body2=
         <div>
