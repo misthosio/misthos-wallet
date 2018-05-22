@@ -26,6 +26,7 @@ module Styles = {
       borderWidth(px(2)),
       unsafe("borderImageSlice", "1"),
       unsafe("borderImageSource", Colors.uGradientAqua),
+      marginBottom(px(Theme.space(1))),
     ]);
   let icon =
     style([unsafe("width", "min-content"), backgroundColor(`transparent)]);

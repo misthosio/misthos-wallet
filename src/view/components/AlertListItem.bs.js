@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
@@ -26,7 +27,10 @@ var alert = Css.style(/* :: */[
           Css.unsafe("borderImageSlice", "1"),
           /* :: */[
             Css.unsafe("borderImageSource", Colors.uGradientAqua),
-            /* [] */0
+            /* :: */[
+              Css.marginBottom(Css.px(Theme.space(1))),
+              /* [] */0
+            ]
           ]
         ]
       ]
