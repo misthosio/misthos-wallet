@@ -350,6 +350,11 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessRejected(processId),
+                   );
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
@@ -376,6 +381,11 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessEndorsed(processId),
+                   );
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
@@ -434,6 +444,11 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessRejected(processId),
+                   );
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
@@ -460,6 +475,11 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessEndorsed(processId),
+                   );
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
@@ -521,6 +541,11 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessRejected(processId),
+                   );
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {
@@ -547,6 +572,11 @@ module Handle = {
                fun
                | Ok(venture, newItems) => {
                    Notify.newItems(correlationId, ventureId, newItems);
+                   Notify.cmdSuccess(
+                     ventureId,
+                     correlationId,
+                     ProcessEndorsed(processId),
+                   );
                    venture |> resolve;
                  }
                | CouldNotPersist(_err) => {

@@ -4,115 +4,53 @@ module ViewData = ViewModel.SelectedVentureView;
 
 open PrimitiveTypes;
 
-type state = {viewData: ViewData.t};
+let component = ReasonReact.statelessComponent("SelectedVenture");
 
-type action =
-  | EndorsePartner(ProcessId.t)
-  | EndorsePartnerRemoval(ProcessId.t);
-
-let component = ReasonReact.reducerComponent("SelectedVenture");
-
-let make =
-    (
-      ~viewData: ViewData.t,
-      ~session: Session.Data.t,
-      ~commands: VentureWorkerClient.Cmd.t,
-      _children,
-    ) => {
+let make = (~viewData: ViewData.t, _children) => {
   ...component,
-  initialState: () => {viewData: viewData},
-  willReceiveProps: (_) => {viewData: viewData},
-  reducer: (action, state) =>
-    switch (state.viewData.readOnly, action) {
-    | (false, EndorsePartner(processId)) =>
-      commands.endorsePartner(~processId) |> ignore;
-      ReasonReact.NoUpdate;
-    | (false, EndorsePartnerRemoval(processId)) =>
-      commands.endorsePartnerRemoval(~processId) |> ignore;
-      ReasonReact.NoUpdate;
-    | _ => ReasonReact.NoUpdate
-    },
-  render: ({send, state: {viewData}}) => {
+  render: (_) => {
+    let prospects =
+      viewData.prospects
+      |> List.map((prospect: ViewData.prospect) =>
+           MaterialUi.(
+             <ListItem
+               button=true
+               onClick=(
+                 Router.clickToRoute(
+                   Venture(viewData.ventureId, Partner(prospect.processId)),
+                 )
+               )
+               key=(prospect.processId |> ProcessId.toString)>
+               (
+                 text(
+                   (
+                     switch (prospect.processType) {
+                     | Removal => "Removal"
+                     | Addition => "Addition"
+                     }
+                   )
+                   ++ " of '"
+                   ++ UserId.toString(prospect.userId)
+                   ++ "' proposed",
+                 )
+               )
+             </ListItem>
+           )
+         );
     let partners =
       ReasonReact.array(
         Array.of_list(
-          viewData.partners
-          |> List.map((partner: ViewData.partner) =>
-               <Partner
-                 key=(partner.userId |> UserId.toString)
-                 partnerId=partner.userId
-                 name=?partner.name
-               />
-             ),
-        ),
-      );
-    let prospects =
-      ReasonReact.array(
-        Array.of_list(
-          viewData.prospects
-          |> List.map((prospect: ViewData.prospect) =>
-               <li key=(prospect.userId |> UserId.toString)>
-                 (
-                   text(
-                     "'"
-                     ++ (prospect.userId |> UserId.toString)
-                     ++ "' endorsed by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          prospect.endorsedBy |> List.map(UserId.toString),
-                        ),
-                   )
-                 )
-                 (
-                   if (prospect.endorsedBy |> List.mem(session.userId) == false) {
-                     <button
-                       onClick=(
-                         _e => send(EndorsePartner(prospect.processId))
-                       )>
-                       (text("Endorse Partner"))
-                     </button>;
-                   } else {
-                     ReasonReact.null;
-                   }
-                 )
-               </li>
-             ),
-        ),
-      );
-    let removalProspects =
-      ReasonReact.array(
-        Array.of_list(
-          viewData.removalProspects
-          |> List.map((prospect: ViewData.prospect) =>
-               <li key=(prospect.userId |> UserId.toString)>
-                 (
-                   text(
-                     "'"
-                     ++ (prospect.userId |> UserId.toString)
-                     ++ "' endorsed by: "
-                     ++ List.fold_left(
-                          (state, partnerId) => state ++ partnerId ++ " ",
-                          "",
-                          prospect.endorsedBy |> List.map(UserId.toString),
-                        ),
-                   )
-                 )
-                 (
-                   if (prospect.endorsedBy |> List.mem(session.userId) == false) {
-                     <button
-                       onClick=(
-                         _e =>
-                           send(EndorsePartnerRemoval(prospect.processId))
-                       )>
-                       (text("Endorse Removal"))
-                     </button>;
-                   } else {
-                     ReasonReact.null;
-                   }
-                 )
-               </li>
-             ),
+          Belt.List.concat(
+            prospects,
+            viewData.partners
+            |> List.map((partner: ViewData.partner) =>
+                 <Partner
+                   key=(partner.userId |> UserId.toString)
+                   partnerId=partner.userId
+                   name=?partner.name
+                 />
+               ),
+          ),
         ),
       );
     let payouts =
@@ -202,10 +140,6 @@ let make =
             }
           )
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
-          <h4> (text("Prospects:")) </h4>
-          <ul> prospects </ul>
-          <h4> (text("To be removed:")) </h4>
-          <ul> removalProspects </ul>
           <LinkButton
             fullWidth=true
             route=(Venture(viewData.ventureId, ManagePartners))>

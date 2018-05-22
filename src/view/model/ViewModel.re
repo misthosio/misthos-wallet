@@ -53,6 +53,16 @@ module ManagePartnersView = {
 
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
+module ViewPartnerView = {
+  type voteStatus = PartnersCollector.voteStatus;
+  type voter = PartnersCollector.voter;
+  type t = PartnersCollector.prospect;
+  let fromViewModelState = (userId, {partnersCollector}) =>
+    partnersCollector |> PartnersCollector.getProspect(userId);
+};
+
+let viewPartnerModal = ViewPartnerView.fromViewModelState;
+
 module CreatePayoutView = {
   type t = {
     ventureId,
@@ -149,7 +159,6 @@ module SelectedVentureView = {
     readOnly: bool,
     partners: list(partner),
     prospects: list(prospect),
-    removalProspects: list(prospect),
     unconfirmedTxs: list(txData),
     confirmedTxs: list(txData),
     payoutsPendingApproval: list(payout),
@@ -172,8 +181,7 @@ module SelectedVentureView = {
     readOnly:
       partnersCollector |> PartnersCollector.isPartner(localUser) == false,
     partners: partnersCollector.partners,
-    prospects: partnersCollector.prospects,
-    removalProspects: partnersCollector.removalProspects,
+    prospects: partnersCollector |> PartnersCollector.prospectsPendingApproval,
     payoutsPendingApproval:
       txDetailsCollector |> TxDetailsCollector.payoutsPendingApproval,
     confirmedTxs: transactionCollector.confirmedTxs,

@@ -18,8 +18,20 @@ function make(commands, lastResponse, onProcessStarted, children) {
             /* proposePartner */(function (prospectId) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* proposePartner */0], prospectId)]);
               }),
+            /* endorsePartner */(function (processId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* endorsePartner */1], processId)]);
+              }),
+            /* rejectPartner */(function (processId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* rejectPartner */2], processId)]);
+              }),
             /* proposePartnerRemoval */(function (partnerId) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* proposePartnerRemoval */3], partnerId)]);
+              }),
+            /* endorsePartnerRemoval */(function (processId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* endorsePartnerRemoval */5], processId)]);
+              }),
+            /* rejectPartnerRemoval */(function (processId) {
+                return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* rejectPartnerRemoval */4], processId)]);
               })
           ];
   };
@@ -39,11 +51,21 @@ function make(commands, lastResponse, onProcessStarted, children) {
                   if (response.tag) {
                     tmp = /* Error */Block.__(1, [response[0]]);
                   } else {
-                    var processId = response[0][0];
-                    Utils.mapOption((function (fn) {
-                            return Curry._1(fn, processId);
-                          }), onProcessStarted);
-                    tmp = /* Success */Block.__(2, [/* ProcessStarted */[processId]]);
+                    var success = response[0];
+                    switch (success.tag | 0) {
+                      case 0 : 
+                          var processId = success[0];
+                          Utils.mapOption((function (fn) {
+                                  return Curry._1(fn, processId);
+                                }), onProcessStarted);
+                          tmp = /* Success */Block.__(2, [/* ProcessStarted */Block.__(0, [processId])]);
+                          break;
+                      case 1 : 
+                      case 2 : 
+                          tmp = /* Success */Block.__(2, [success]);
+                          break;
+                      
+                    }
                   }
                 } else {
                   tmp = cmdStatus;

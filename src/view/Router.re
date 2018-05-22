@@ -5,6 +5,7 @@ module Config = {
     | None
     | ManagePartners
     | CreatePayout
+    | Partner(processId)
     | Payout(processId)
     | Receive;
   type route =
@@ -17,6 +18,11 @@ module Config = {
     switch (url.path) {
     | ["ventures", "new"] => CreateVenture
     | ["ventures", id] => Venture(id |> VentureId.fromString, None)
+    | ["ventures", id, "partners", processId] =>
+      Venture(
+        id |> VentureId.fromString,
+        Partner(processId |> ProcessId.fromString),
+      )
     | ["ventures", id, "partners"] =>
       Venture(id |> VentureId.fromString, ManagePartners)
     | ["ventures", id, "payouts", "new"] =>
@@ -40,6 +46,11 @@ module Config = {
     | Venture(id, None) => "/ventures/" ++ (id |> VentureId.toString)
     | Venture(id, ManagePartners) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/partners"
+    | Venture(id, Partner(processId)) =>
+      "/ventures/"
+      ++ (id |> VentureId.toString)
+      ++ "/partners/"
+      ++ (processId |> ProcessId.toString)
     | Venture(id, CreatePayout) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/payouts/new"
     | Venture(id, Payout(processId)) =>

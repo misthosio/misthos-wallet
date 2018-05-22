@@ -17,31 +17,70 @@ var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage");
 
 function encodeSuccess(param) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "type",
-                "ProcessStarted"
-              ],
-              /* :: */[
-                /* tuple */[
-                  "processId",
-                  PrimitiveTypes.ProcessId[/* encode */2](param[0])
-                ],
-                /* [] */0
-              ]
-            ]);
+  switch (param.tag | 0) {
+    case 0 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "ProcessStarted"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "processId",
+                        PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 1 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "ProcessEndorsed"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "processId",
+                        PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "ProcessRejected"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "processId",
+                        PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    
+  }
 }
 
 function decodeSuccess(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
-  if (type_ === "ProcessStarted") {
-    var processId = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
-    return /* ProcessStarted */[processId];
-  } else {
-    throw [
-          UnknownMessage,
-          raw
-        ];
+  switch (type_) {
+    case "ProcessEndorsed" : 
+        var processId = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
+        return /* ProcessEndorsed */Block.__(1, [processId]);
+    case "ProcessRejected" : 
+        var processId$1 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
+        return /* ProcessRejected */Block.__(2, [processId$1]);
+    case "ProcessStarted" : 
+        var processId$2 = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
+        return /* ProcessStarted */Block.__(0, [processId$2]);
+    default:
+      throw [
+            UnknownMessage,
+            raw
+          ];
   }
 }
 

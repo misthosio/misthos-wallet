@@ -59,7 +59,13 @@ function fromViewModelState(param) {
 
 var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState];
 
-function fromViewModelState$1(param) {
+function fromViewModelState$1(userId, param) {
+  return ViewModel__PartnersCollector.getProspect(userId, param[/* partnersCollector */7]);
+}
+
+var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$1];
+
+function fromViewModelState$2(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var localUser = param[/* localUser */0];
   return /* record */[
@@ -91,15 +97,15 @@ function fromViewModelState$1(param) {
         ];
 }
 
-var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$1];
+var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$2];
 
-function fromViewModelState$2(processId, param) {
+function fromViewModelState$3(processId, param) {
   return ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */9]);
 }
 
-var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$2];
+var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
 
-function fromViewModelState$3(param) {
+function fromViewModelState$4(param) {
   var transactionCollector = param[/* transactionCollector */8];
   var partnersCollector = param[/* partnersCollector */7];
   return /* record */[
@@ -107,8 +113,7 @@ function fromViewModelState$3(param) {
           /* ventureName */param[/* name */3],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
           /* partners */partnersCollector[/* partners */1],
-          /* prospects */partnersCollector[/* prospects */2],
-          /* removalProspects */partnersCollector[/* removalProspects */3],
+          /* prospects */ViewModel__PartnersCollector.prospectsPendingApproval(partnersCollector),
           /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */2],
           /* confirmedTxs */transactionCollector[/* confirmedTxs */3],
           /* payoutsPendingApproval */ViewModel__TxDetailsCollector.payoutsPendingApproval(param[/* txDetailsCollector */9]),
@@ -116,7 +121,7 @@ function fromViewModelState$3(param) {
         ];
 }
 
-var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$3];
+var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$4];
 
 function make(localUser) {
   return /* record */[
@@ -210,11 +215,13 @@ var TxDetailsCollector = 0;
 
 var managePartnersModal = fromViewModelState;
 
-var createPayoutModal = fromViewModelState$1;
+var viewPartnerModal = fromViewModelState$1;
 
-var viewPayoutModal = fromViewModelState$2;
+var createPayoutModal = fromViewModelState$2;
 
-var selectedVenture = fromViewModelState$3;
+var viewPayoutModal = fromViewModelState$3;
+
+var selectedVenture = fromViewModelState$4;
 
 exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
@@ -226,6 +233,8 @@ exports.captureResponse = captureResponse;
 exports.lastResponse = lastResponse;
 exports.ManagePartnersView = ManagePartnersView;
 exports.managePartnersModal = managePartnersModal;
+exports.ViewPartnerView = ViewPartnerView;
+exports.viewPartnerModal = viewPartnerModal;
 exports.CreatePayoutView = CreatePayoutView;
 exports.createPayoutModal = createPayoutModal;
 exports.ViewPayoutView = ViewPayoutView;

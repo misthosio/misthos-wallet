@@ -19,6 +19,7 @@ var CommandExecutor = require("./CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
 var ViewPayoutModal = require("./ViewPayoutModal.bs.js");
+var ViewPartnerModal = require("./ViewPartnerModal.bs.js");
 var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
 var ManagePartnersModal = require("./ManagePartnersModal.bs.js");
 
@@ -80,7 +81,7 @@ function make(session, updateSession, _) {
                             ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$1), /* Some */[(function (processId) {
                                           return Router.goTo(/* Venture */Block.__(0, [
                                                         ventureId,
-                                                        /* Payout */[processId]
+                                                        /* Payout */Block.__(1, [processId])
                                                       ]));
                                         })], (function (commands, cmdStatus) {
                                         return ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), commands, cmdStatus, /* array */[]));
@@ -109,16 +110,36 @@ function make(session, updateSession, _) {
               }
           
         }
+      } else if (match.tag) {
+        if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
+          return /* None */0;
+        } else {
+          var venture$2 = selectedVenture[1];
+          var match$4 = ViewModel.readOnly(venture$2);
+          if (match$4) {
+            return /* None */0;
+          } else {
+            return /* Some */[/* tuple */[
+                      ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(ViewModel.viewPayoutModal(match[0], venture$2), selectedVenture[2], /* array */[])),
+                      (function (param) {
+                          return onCloseModal(selected, param);
+                        })
+                    ]];
+          }
+        }
       } else if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
         return /* None */0;
       } else {
-        var venture$2 = selectedVenture[1];
-        var match$4 = ViewModel.readOnly(venture$2);
-        if (match$4) {
+        var venture$3 = selectedVenture[1];
+        var processId = match[0];
+        var match$5 = ViewModel.readOnly(venture$3);
+        if (match$5) {
           return /* None */0;
         } else {
           return /* Some */[/* tuple */[
-                    ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(ViewModel.viewPayoutModal(match[0], venture$2), selectedVenture[2], /* array */[])),
+                    ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), /* None */0, (function (commands, cmdStatus) {
+                                return ReasonReact.element(/* None */0, /* None */0, ViewPartnerModal.make(ViewModel.viewPartnerModal(processId, venture$3), commands, cmdStatus, /* array */[]));
+                              }))),
                     (function (param) {
                         return onCloseModal(selected, param);
                       })
@@ -177,7 +198,7 @@ function make(session, updateSession, _) {
         if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
           exit$1 = 2;
         } else {
-          return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(ViewModel.selectedVenture(selectedVenture[1]), session[0], selectedVenture[2], /* array */[]));
+          return ReasonReact.element(/* None */0, /* None */0, SelectedVenture.make(ViewModel.selectedVenture(selectedVenture[1]), /* array */[]));
         }
       }
       
