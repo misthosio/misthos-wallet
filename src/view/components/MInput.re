@@ -16,6 +16,7 @@ let make =
       ~onChange=?,
       ~autoFocus=?,
       ~fullWidth=?,
+      ~endAdornment=?,
       ~ensuring=false,
       _children,
     ) => {
@@ -28,5 +29,6 @@ let make =
       ?onChange
       ?autoFocus
       ?fullWidth
+      ?endAdornment
     />,
 };

@@ -50,10 +50,10 @@ let make = (~drawer, ~modal, children) => {
     | OpenDrawer => ReasonReact.Update({drawerOpen: true})
     | CloseDrawer => ReasonReact.Update({drawerOpen: false})
     },
-  render: ({send, state}) =>
+  render: ({send, state}) => {
+    let theme = Theme.theme |> Theme.toJsUnsafe;
     MaterialUi.(
-      <MuiThemeProvider
-        theme=(`ObjectGeneric(Theme.theme |> Theme.toJsUnsafe))>
+      <MuiThemeProvider theme=(`ObjectGeneric(theme))>
         <CssBaseline>
           <div className=Styles.container>
             (
@@ -70,10 +70,10 @@ let make = (~drawer, ~modal, children) => {
                     </IconButton>
                   </Toolbar>
                   <Drawer
-                    theme=(Theme.theme |> Theme.toJsUnsafe)
+                    theme
                     variant=`Temporary
                     anchor=`Right
-                    onClose=(() => send(CloseDrawer))
+                    onClose=((_) => send(CloseDrawer))
                     _open=state.drawerOpen>
                     <div
                       className=Styles.drawer
@@ -90,7 +90,7 @@ let make = (~drawer, ~modal, children) => {
               switch (modal) {
               | None => ReasonReact.null
               | Some((modal, onClose)) =>
-                <Modal _open=true onClose>
+                <Modal _open=true onBackdropClick=onClose>
                   <Paper className=Styles.modal>
                     <Toolbar>
                       <div className=Styles.flex_ />
@@ -110,5 +110,6 @@ let make = (~drawer, ~modal, children) => {
           </div>
         </CssBaseline>
       </MuiThemeProvider>
-    ),
+    );
+  },
 };

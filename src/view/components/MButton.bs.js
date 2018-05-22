@@ -2,41 +2,68 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var List = require("bs-platform/lib/js/list.js");
 var Theme = require("../Theme.bs.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 
 var component = ReasonReact.statelessComponent("MButton");
 
-function button(fullWidth) {
-  return Css.style(/* :: */[
-              Css.borderRadius(Css.px(25)),
-              /* :: */[
-                Css.border(Css.px(2), /* solid */12956715, Css.black),
-                /* :: */[
-                  Css.paddingLeft(Css.px(25)),
+function button(fullWidth, variant) {
+  var baseRules_000 = Css.width(fullWidth ? /* `percent */[
+          -119887163,
+          100.0
+        ] : Css.auto);
+  var baseRules_001 = /* :: */[
+    Css.margin2(Css.px(Theme.space(5)), Css.px(0)),
+    /* [] */0
+  ];
+  var baseRules = /* :: */[
+    baseRules_000,
+    baseRules_001
+  ];
+  var variantRules = variant ? /* :: */[
+      Css.borderRadius(Css.px(25)),
+      /* :: */[
+        Css.border(Css.px(2), /* solid */12956715, Css.black),
+        /* :: */[
+          Css.paddingLeft(Css.px(25)),
+          /* :: */[
+            Css.paddingRight(Css.px(25)),
+            /* [] */0
+          ]
+        ]
+      ]
+    ] : /* :: */[
+      Css.textDecoration(Css.underline),
+      /* :: */[
+        Css.hover(/* :: */[
+              Css.textDecoration(Css.underline),
+              /* [] */0
+            ]),
+        /* :: */[
+          Css.paddingLeft(Css.px(10)),
+          /* :: */[
+            Css.paddingRight(Css.px(10)),
+            /* [] */0
+          ]
+        ]
+      ]
+    ];
+  return Css.style(List.flatten(/* :: */[
+                  baseRules,
                   /* :: */[
-                    Css.paddingRight(Css.px(25)),
-                    /* :: */[
-                      Css.margin2(Css.px(Theme.space(5)), Css.px(0)),
-                      /* :: */[
-                        Css.width(fullWidth ? /* `percent */[
-                                -119887163,
-                                100.0
-                              ] : Css.auto),
-                        /* [] */0
-                      ]
-                    ]
+                    variantRules,
+                    /* [] */0
                   ]
-                ]
-              ]
-            ]);
+                ]));
 }
 
 var Styles = /* module */[/* button */button];
 
-function make(color, onClick, $staropt$star, children) {
+function make(color, onClick, size, $staropt$star, $staropt$star$1, children) {
   var fullWidth = $staropt$star ? $staropt$star[0] : false;
+  var variant = $staropt$star$1 ? $staropt$star$1[0] : /* Outlined */1;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -48,7 +75,7 @@ function make(color, onClick, $staropt$star, children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.Button[/* make */7](/* Some */[button(fullWidth)], color, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant)], color, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
