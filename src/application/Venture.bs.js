@@ -659,7 +659,8 @@ function exec$10(accountIdx, destinations, fee, venture) {
   logMessage("Executing 'ProposePayout' command");
   var param = Venture__Wallet.preparePayoutTx(Venture__State.currentPartners(venture[/* state */3]), venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]);
   if (param) {
-    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [param[0]]), venture).then((function (eta) {
+    var proposal = param[0];
+    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [proposal]), venture).then((function (eta) {
                     return persist(/* None */0, eta);
                   })).then((function (param) {
                   if (param.tag) {
@@ -667,6 +668,7 @@ function exec$10(accountIdx, destinations, fee, venture) {
                   } else {
                     var match = param[0];
                     return Promise.resolve(/* Ok */Block.__(0, [
+                                  proposal[/* processId */0],
                                   match[0],
                                   match[1]
                                 ]));

@@ -16,39 +16,92 @@ var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 
 var UnknownMessage = Caml_exceptions.create("VentureWorkerMessage.UnknownMessage");
 
+function encodeSuccess(param) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "ProcessStarted"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "processId",
+                  PrimitiveTypes.ProcessId[/* encode */2](param[0])
+                ],
+                /* [] */0
+              ]
+            ]);
+}
+
+function decodeSuccess(raw) {
+  var type_ = Json_decode.field("type", Json_decode.string, raw);
+  if (type_ === "ProcessStarted") {
+    var processId = Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw);
+    return /* ProcessStarted */[processId];
+  } else {
+    throw [
+          UnknownMessage,
+          raw
+        ];
+  }
+}
+
 function encodeResponse(param) {
-  switch (param) {
-    case 0 : 
-        return "Ok";
-    case 1 : 
-        return "CouldNotPersistVenture";
-    case 2 : 
-        return "CouldNotLoadVenture";
-    case 3 : 
-        return "CouldNotJoinVenture";
-    case 4 : 
-        return "CouldNotFindUserInfo";
-    case 5 : 
-        return "BadInput";
-    
+  if (typeof param === "number") {
+    switch (param) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "CouldNotPersistVenture"
+                      ],
+                      /* [] */0
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "CouldNotLoadVenture"
+                      ],
+                      /* [] */0
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "CouldNotJoinVenture"
+                      ],
+                      /* [] */0
+                    ]);
+      
+    }
+  } else {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "Ok"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "cmdSuccess",
+                    encodeSuccess(param[0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
   }
 }
 
 function decodeResponse(raw) {
-  var match = Json_decode.string(raw);
-  switch (match) {
-    case "BadInput" : 
-        return /* BadInput */5;
-    case "CouldNotFindUserInfo" : 
-        return /* CouldNotFindUserInfo */4;
+  var type_ = Json_decode.field("type", Json_decode.string, raw);
+  switch (type_) {
     case "CouldNotJoinVenture" : 
-        return /* CouldNotJoinVenture */3;
+        return /* CouldNotJoinVenture */2;
     case "CouldNotLoadVenture" : 
-        return /* CouldNotLoadVenture */2;
+        return /* CouldNotLoadVenture */1;
     case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */1;
+        return /* CouldNotPersistVenture */0;
     case "Ok" : 
-        return /* Ok */0;
+        return /* Ok */[Json_decode.field("cmdSuccess", decodeSuccess, raw)];
     default:
       throw [
             UnknownMessage,
@@ -773,6 +826,8 @@ function decodeOutgoing(raw) {
 }
 
 exports.UnknownMessage = UnknownMessage;
+exports.encodeSuccess = encodeSuccess;
+exports.decodeSuccess = decodeSuccess;
 exports.encodeResponse = encodeResponse;
 exports.decodeResponse = decodeResponse;
 exports.encodeIncoming = encodeIncoming;

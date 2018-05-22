@@ -3,12 +3,13 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../utils/Utils.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.reducerComponent("CommandExecuter");
 
-function make(commands, lastResponse, children) {
+function make(commands, lastResponse, onProcessStarted, children) {
   var wrapCommands = function (send) {
     return /* record */[/* proposePayout */(function (accountIdx, destinations, fee) {
                 return Curry._1(send, /* CommandExecuted */[Curry._3(commands[/* proposePayout */6], accountIdx, destinations, fee)]);
@@ -25,7 +26,18 @@ function make(commands, lastResponse, children) {
                 tmp = cmdStatus;
               } else {
                 var match = lastResponse[0];
-                tmp = cmdStatus[0] === match[0] ? /* Response */Block.__(1, [match[1]]) : cmdStatus;
+                if (cmdStatus[0] === match[0]) {
+                  var response = match[1];
+                  if (typeof response !== "number") {
+                    var processId = response[0][0];
+                    Utils.mapOption((function (fn) {
+                            return Curry._1(fn, processId);
+                          }), onProcessStarted);
+                  }
+                  tmp = /* Response */Block.__(1, [response]);
+                } else {
+                  tmp = cmdStatus;
+                }
               }
               return /* record */[/* cmdStatus */tmp];
             }),

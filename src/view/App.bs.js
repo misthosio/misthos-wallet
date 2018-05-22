@@ -69,12 +69,18 @@ function make(session, updateSession, _) {
                 return /* None */0;
               } else {
                 var venture$1 = selectedVenture[1];
+                var ventureId = selectedVenture[0];
                 var match$2 = ViewModel.readOnly(venture$1);
                 if (match$2) {
                   return /* None */0;
                 } else {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$1), (function (commands, cmdStatus) {
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$1), /* Some */[(function (processId) {
+                                          return Router.goTo(/* Venture */Block.__(0, [
+                                                        ventureId,
+                                                        /* Payout */[processId]
+                                                      ]));
+                                        })], (function (commands, cmdStatus) {
                                         return ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), commands, cmdStatus, /* array */[]));
                                       }))),
                             (function (param) {

@@ -10,6 +10,8 @@ var Venture_workerBsJs = require("./Venture_worker.bs.js");
 
 var Config = /* module */[
   /* UnknownMessage */VentureWorkerMessage.UnknownMessage,
+  /* encodeSuccess */VentureWorkerMessage.encodeSuccess,
+  /* decodeSuccess */VentureWorkerMessage.decodeSuccess,
   /* encodeResponse */VentureWorkerMessage.encodeResponse,
   /* decodeResponse */VentureWorkerMessage.decodeResponse,
   /* encodeIncoming */VentureWorkerMessage.encodeIncoming,

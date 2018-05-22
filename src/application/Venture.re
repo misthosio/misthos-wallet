@@ -672,7 +672,7 @@ module Cmd = {
   };
   module ProposePayout = {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | NotEnoughFunds
       | CouldNotPersist(Js.Promise.error);
     let exec =
@@ -700,7 +700,8 @@ module Cmd = {
             |> then_(persist)
             |> then_(
                  fun
-                 | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
+                 | Js.Result.Ok((v, c)) =>
+                   Ok(proposal.processId, v, c) |> resolve
                  | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
                )
           | Wallet.NotEnoughFunds => NotEnoughFunds |> resolve

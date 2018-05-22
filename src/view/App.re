@@ -41,13 +41,18 @@ let make = (~session, ~updateSession, _children) => {
     | (
         LoggedIn(_),
         Venture(selected, CreatePayout),
-        VentureLoaded(_, venture, commands),
+        VentureLoaded(ventureId, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
         None :
         Some((
           <CommandExecutor
-            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            commands
+            lastResponse=(venture |> ViewModel.lastResponse)
+            onProcessStarted=(
+              processId =>
+                Router.goTo(Venture(ventureId, Payout(processId)))
+            )>
             ...(
                  (~commands, ~cmdStatus) =>
                    <CreatePayoutModal

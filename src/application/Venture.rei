@@ -134,7 +134,7 @@ module Cmd: {
   };
   module ProposePayout: {
     type result =
-      | Ok(t, array(EventLog.item))
+      | Ok(processId, t, array(EventLog.item))
       | NotEnoughFunds
       | CouldNotPersist(Js.Promise.error);
     let exec:

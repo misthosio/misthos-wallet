@@ -24,7 +24,13 @@ type state = {cmdStatus};
 
 let component = ReasonReact.reducerComponent("CommandExecuter");
 
-let make = (~commands: VentureWorkerClient.Cmd.t, ~lastResponse, children) => {
+let make =
+    (
+      ~commands: VentureWorkerClient.Cmd.t,
+      ~lastResponse,
+      ~onProcessStarted=?,
+      children,
+    ) => {
   let wrapCommands = send => {
     proposePayout: (~accountIdx, ~destinations, ~fee) =>
       send(
@@ -41,7 +47,12 @@ let make = (~commands: VentureWorkerClient.Cmd.t, ~lastResponse, children) => {
         switch (cmdStatus, lastResponse) {
         | (Pending(correlationId), Some((responseId, response)))
             when correlationId == responseId =>
-          Response(response)
+          switch ((response: VentureWorkerMessage.cmdResponse)) {
+          | Ok(ProcessStarted(processId)) =>
+            onProcessStarted |> Utils.mapOption(fn => fn(processId)) |> ignore
+          | _ => ()
+          };
+          Response(response);
         | _ => cmdStatus
         },
     },

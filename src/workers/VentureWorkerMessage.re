@@ -29,13 +29,14 @@ type incoming =
 
 type encodedIncoming = Js.Json.t;
 
+type cmdSuccess =
+  | ProcessStarted(processId);
+
 type cmdResponse =
-  | Ok
+  | Ok(cmdSuccess)
   | CouldNotPersistVenture
   | CouldNotLoadVenture
-  | CouldNotJoinVenture
-  | CouldNotFindUserInfo
-  | BadInput;
+  | CouldNotJoinVenture;
 
 type outgoing =
   | SessionStarted(blockstackItems, string)
@@ -51,25 +52,52 @@ type encodedOutgoing = Js.Json.t;
 
 exception UnknownMessage(Js.Json.t);
 
+let encodeSuccess =
+  fun
+  | ProcessStarted(processId) =>
+    Json.Encode.(
+      object_([
+        ("type", string("ProcessStarted")),
+        ("processId", ProcessId.encode(processId)),
+      ])
+    );
+
+let decodeSuccess = raw => {
+  let type_ = raw |> Json.Decode.(field("type", string));
+  switch (type_) {
+  | "ProcessStarted" =>
+    let processId = raw |> Json.Decode.field("processId", ProcessId.decode);
+    ProcessStarted(processId);
+  | _ => raise(UnknownMessage(raw))
+  };
+};
+
 let encodeResponse =
   fun
-  | Ok => Json.Encode.string("Ok")
-  | CouldNotPersistVenture => Json.Encode.string("CouldNotPersistVenture")
-  | CouldNotLoadVenture => Json.Encode.string("CouldNotLoadVenture")
-  | CouldNotJoinVenture => Json.Encode.string("CouldNotJoinVenture")
-  | CouldNotFindUserInfo => Json.Encode.string("CouldNotFindUserInfo")
-  | BadInput => Json.Encode.string("BadInput");
+  | Ok(cmdSuccess) =>
+    Json.Encode.(
+      object_([
+        ("type", string("Ok")),
+        ("cmdSuccess", encodeSuccess(cmdSuccess)),
+      ])
+    )
+  | CouldNotPersistVenture =>
+    Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]))
+  | CouldNotLoadVenture =>
+    Json.Encode.(object_([("type", string("CouldNotLoadVenture"))]))
+  | CouldNotJoinVenture =>
+    Json.Encode.(object_([("type", string("CouldNotJoinVenture"))]));
 
-let decodeResponse = raw =>
-  switch (raw |> Json.Decode.string) {
-  | "Ok" => Ok
+let decodeResponse = raw => {
+  let type_ = raw |> Json.Decode.(field("type", string));
+  switch (type_) {
+  | "Ok" => Ok(raw |> Json.Decode.field("cmdSuccess", decodeSuccess))
   | "CouldNotPersistVenture" => CouldNotPersistVenture
   | "CouldNotLoadVenture" => CouldNotLoadVenture
   | "CouldNotJoinVenture" => CouldNotJoinVenture
-  | "CouldNotFindUserInfo" => CouldNotFindUserInfo
-  | "BadInput" => BadInput
   | _ => raise(UnknownMessage(raw))
   };
+};
 
 let encodeIncoming =
   fun

@@ -140,7 +140,6 @@ let make =
         ~destinations,
         ~fee=defaultFee,
       );
-      /* Router.goTo(Venture(viewData.ventureId, None)); */
       ReasonReact.NoUpdate;
     | AddAnother =>
       if (state.inputDestination != ""
