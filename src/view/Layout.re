@@ -92,10 +92,12 @@ let make = (~drawer, ~modal, children) => {
               | Some((modal, onClose)) =>
                 <Modal _open=true onBackdropClick=onClose>
                   <Paper className=Styles.modal>
-                    <Toolbar> <div className=Styles.flex_ /> </Toolbar>
-                    <IconButton color=`Inherit onClick=onClose>
-                      <img src=close alt="close" />
-                    </IconButton>
+                    <Toolbar>
+                      <div className=Styles.flex_ />
+                      <IconButton color=`Inherit onClick=onClose>
+                        <img src=close alt="close" />
+                      </IconButton>
+                    </Toolbar>
                     modal
                   </Paper>
                 </Modal>
