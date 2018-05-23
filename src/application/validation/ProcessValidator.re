@@ -6,7 +6,8 @@ open Event;
 
 type status =
   | InProgress
-  | Accepted;
+  | Accepted
+  | Denied;
 
 type approvalProcess = {
   status,
@@ -79,6 +80,13 @@ let addAcceptance = ({processId}: EventTypes.acceptance('a), map) =>
   |. Map.update(
        processId,
        Utils.mapOption(process => {...process, status: Accepted}),
+     );
+
+let addDenial = ({processId}: EventTypes.denial, map) =>
+  map
+  |. Map.update(
+       processId,
+       Utils.mapOption(process => {...process, status: Denied}),
      );
 
 let update = (event, {currentPartners, processes} as state) => {
@@ -181,6 +189,26 @@ let update = (event, {currentPartners, processes} as state) => {
     | PayoutAccepted(acceptance) => {
         ...state,
         processes: processes |> addAcceptance(acceptance),
+      }
+    | PartnerDenied(denial) => {
+        ...state,
+        processes: processes |> addDenial(denial),
+      }
+    | PartnerRemovalDenied(denial) => {
+        ...state,
+        processes: processes |> addDenial(denial),
+      }
+    | CustodianDenied(denial) => {
+        ...state,
+        processes: processes |> addDenial(denial),
+      }
+    | CustodianRemovalDenied(denial) => {
+        ...state,
+        processes: processes |> addDenial(denial),
+      }
+    | PayoutDenied(denial) => {
+        ...state,
+        processes: processes |> addDenial(denial),
       }
     | VentureCreated(_)
     | PayoutSigned(_)

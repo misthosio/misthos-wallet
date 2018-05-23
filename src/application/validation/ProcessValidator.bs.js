@@ -6,7 +6,6 @@ var Policy = require("../Policy.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function make() {
   return /* record */[
@@ -87,6 +86,20 @@ function addAcceptance(param, map) {
               }));
 }
 
+function addDenial(param, map) {
+  return Belt_Map.update(map, param[/* processId */0], (function (param) {
+                return Utils.mapOption((function ($$process) {
+                              return /* record */[
+                                      /* status : Denied */2,
+                                      /* supporterIds */$$process[/* supporterIds */1],
+                                      /* rejectorIds */$$process[/* rejectorIds */2],
+                                      /* eligibleWhenProposing */$$process[/* eligibleWhenProposing */3],
+                                      /* policy */$$process[/* policy */4]
+                                    ];
+                            }), param);
+              }));
+}
+
 function update($$event, state) {
   var currentPartners = state[/* currentPartners */1];
   var processes = state[/* processes */0];
@@ -147,14 +160,14 @@ function update($$event, state) {
     case 18 : 
     case 23 : 
     case 28 : 
-        exit = 4;
+        exit = 5;
         break;
     case 5 : 
     case 10 : 
     case 19 : 
     case 24 : 
     case 29 : 
-        exit = 5;
+        exit = 4;
         break;
     default:
       match = state;
@@ -198,7 +211,7 @@ function update($$event, state) {
         break;
     case 4 : 
         match = /* record */[
-          /* processes */addAcceptance($$event[0], processes),
+          /* processes */addDenial($$event[0], processes),
           /* currentPartners */state[/* currentPartners */1],
           /* exists */state[/* exists */2],
           /* completed */state[/* completed */3],
@@ -209,14 +222,17 @@ function update($$event, state) {
         ];
         break;
     case 5 : 
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              [
-                "ProcessValidator.re",
-                86,
-                4
-              ]
-            ];
+        match = /* record */[
+          /* processes */addAcceptance($$event[0], processes),
+          /* currentPartners */state[/* currentPartners */1],
+          /* exists */state[/* exists */2],
+          /* completed */state[/* completed */3],
+          /* isEligible */state[/* isEligible */4],
+          /* didVote */state[/* didVote */5],
+          /* policyFulfilled */state[/* policyFulfilled */6],
+          /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
+        ];
+        break;
     
   }
   var currentPartners$1 = match[/* currentPartners */1];
@@ -229,10 +245,10 @@ function update($$event, state) {
             }),
           /* completed */(function (processId) {
               var match = Belt_Map.getExn(processes$1, processId)[/* status */0];
-              if (match) {
-                return true;
-              } else {
+              if (match !== 1) {
                 return false;
+              } else {
+                return true;
               }
             }),
           /* isEligible */(function (processId, partnerId) {
@@ -270,5 +286,6 @@ exports.addProposal = addProposal;
 exports.addEndorsement = addEndorsement;
 exports.addRejection = addRejection;
 exports.addAcceptance = addAcceptance;
+exports.addDenial = addDenial;
 exports.update = update;
 /* Utils Not a pure module */
