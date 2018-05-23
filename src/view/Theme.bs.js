@@ -75,7 +75,7 @@ var theme = Styles.createMuiTheme({
           color: "#000000",
           letterSpacing: "0.5px",
           fontWeight: 600,
-          lineHeight: "36px"
+          lineHeight: "normal"
         },
         body2: {
           fontSize: "16px",

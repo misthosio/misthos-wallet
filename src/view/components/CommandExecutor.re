@@ -106,19 +106,30 @@ module Status = {
       switch (cmdStatus) {
       | Idle => ReasonReact.null
       | Pending(_) =>
-        <Spinner
-          text=(
-            "Your "
-            ++ (
-              switch (action) {
-              | Proposal => "proposal"
-              | Endorsement => "endorsement"
-              | Rejection => "rejection"
-              }
+        ReasonReact.array([|
+          <MTypography variant=`Body2>
+            (
+              "Your "
+              ++ (
+                switch (action) {
+                | Proposal => "proposal"
+                | Endorsement => "endorsement"
+                | Rejection => "rejection"
+                }
+              )
+              ++ " is being submitted"
+              |> text
             )
-            ++ " is being submitted"
-          )
-        />
+          </MTypography>,
+          <MaterialUi.LinearProgress
+            className=Css.(
+                        style([
+                          marginTop(px(Theme.space(1))),
+                          backgroundColor(Colors.misthosTeal),
+                        ])
+                      )
+          />,
+        |])
       | Error(error) =>
         switch (error, onRetry) {
         | (CouldNotPersistVenture, Some(onRetry)) =>
