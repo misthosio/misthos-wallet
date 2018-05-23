@@ -63,7 +63,9 @@ function apply($$event, state) {
                     /* name : None */0,
                     /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0])
                   ],
-                  state[/* partners */1]
+                  Belt_List.keepU(state[/* partners */1], (function (param) {
+                          return PrimitiveTypes.UserId[/* neq */6](param[/* userId */0], data[/* id */1]);
+                        }))
                 ],
                 /* prospects */ProcessCollector.addAcceptance(acceptance, state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]

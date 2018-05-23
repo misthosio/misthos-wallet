@@ -78,7 +78,10 @@ let apply = (event: Event.t, state) =>
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
         },
-        ...state.partners,
+        ...state.partners
+           |. List.keepU((. {userId}: partner) =>
+                UserId.neq(userId, data.id)
+              ),
       ],
       prospects:
         state.prospects |> ProcessCollector.addAcceptance(acceptance),
