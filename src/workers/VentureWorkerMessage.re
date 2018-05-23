@@ -35,6 +35,8 @@ type cmdSuccess =
   | ProcessRejected(processId);
 
 type cmdError =
+  | PartnerAlreadyExists
+  | CouldNotFindUserInfo
   | CouldNotPersistVenture;
 
 type cmdResponse =
@@ -97,12 +99,18 @@ let decodeSuccess = raw => {
 
 let encodeError =
   fun
+  | PartnerAlreadyExists =>
+    Json.Encode.(object_([("type", string("PartnerAlreadyExists"))]))
+  | CouldNotFindUserInfo =>
+    Json.Encode.(object_([("type", string("CouldNotFindUserInfo"))]))
   | CouldNotPersistVenture =>
     Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]));
 
 let decodeError = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
+  | "PartnerAlreadyExists" => PartnerAlreadyExists
+  | "CouldNotFindUserInfo" => CouldNotFindUserInfo
   | "CouldNotPersistVenture" => CouldNotPersistVenture
   | _ => raise(UnknownMessage(raw))
   };

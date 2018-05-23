@@ -119,16 +119,21 @@ module Status = {
             ++ " is being submitted"
           )
         />
-      | Error(CouldNotPersistVenture) =>
-        switch (onRetry) {
-        | Some(onRetry) =>
+      | Error(error) =>
+        switch (error, onRetry) {
+        | (CouldNotPersistVenture, Some(onRetry)) =>
           ReasonReact.array([|
             "RED: your submission could not be persisted" |> text,
             <MButton fullWidth=true onClick=(_e => onRetry())>
               (text("Try Again"))
             </MButton>,
           |])
-        | None => "RED: your submission could not be persisted" |> text
+        | (CouldNotPersistVenture, None) =>
+          "RED: your submission could not be persisted" |> text
+        | (CouldNotFindUserInfo, _) =>
+          "RED: Id doesn't exist or user has never logged in" |> text
+        | (PartnerAlreadyExists, _) =>
+          "RED: User is already a partner of this venture" |> text
         }
       | Success(ProcessStarted(_)) =>
         "GREEN: Your proposal has been submited" |> text

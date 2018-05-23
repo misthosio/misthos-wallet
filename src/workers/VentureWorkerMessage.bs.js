@@ -84,25 +84,50 @@ function decodeSuccess(raw) {
   }
 }
 
-function encodeError() {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "type",
-                "CouldNotPersistVenture"
-              ],
-              /* [] */0
-            ]);
+function encodeError(param) {
+  switch (param) {
+    case 0 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "PartnerAlreadyExists"
+                    ],
+                    /* [] */0
+                  ]);
+    case 1 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "CouldNotFindUserInfo"
+                    ],
+                    /* [] */0
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "CouldNotPersistVenture"
+                    ],
+                    /* [] */0
+                  ]);
+    
+  }
 }
 
 function decodeError(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
-  if (type_ === "CouldNotPersistVenture") {
-    return /* CouldNotPersistVenture */0;
-  } else {
-    throw [
-          UnknownMessage,
-          raw
-        ];
+  switch (type_) {
+    case "CouldNotFindUserInfo" : 
+        return /* CouldNotFindUserInfo */1;
+    case "CouldNotPersistVenture" : 
+        return /* CouldNotPersistVenture */2;
+    case "PartnerAlreadyExists" : 
+        return /* PartnerAlreadyExists */0;
+    default:
+      throw [
+            UnknownMessage,
+            raw
+          ];
   }
 }
 

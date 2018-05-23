@@ -135,16 +135,24 @@ function make$1(cmdStatus, action, onRetry, _) {
                       }
                       return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Your " + (tmp + " is being submitted"), /* None */0, /* array */[]));
                   case 1 : 
-                      if (onRetry) {
-                        var onRetry$1 = onRetry[0];
-                        return /* array */[
-                                ViewCommon.text("RED: your submission could not be persisted"),
-                                ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                              return Curry._1(onRetry$1, /* () */0);
-                                            })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))
-                              ];
-                      } else {
-                        return ViewCommon.text("RED: your submission could not be persisted");
+                      switch (cmdStatus[0]) {
+                        case 0 : 
+                            return ViewCommon.text("RED: User is already a partner of this venture");
+                        case 1 : 
+                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                        case 2 : 
+                            if (onRetry) {
+                              var onRetry$1 = onRetry[0];
+                              return /* array */[
+                                      ViewCommon.text("RED: your submission could not be persisted"),
+                                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                    return Curry._1(onRetry$1, /* () */0);
+                                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))
+                                    ];
+                            } else {
+                              return ViewCommon.text("RED: your submission could not be persisted");
+                            }
+                        
                       }
                   case 2 : 
                       switch (cmdStatus[0].tag | 0) {

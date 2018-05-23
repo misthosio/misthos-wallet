@@ -333,7 +333,30 @@ module Handle = {
                    );
                    venture |> resolve;
                  }
-               | _ => venture |> resolve,
+               | PartnerAlreadyExists => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     PartnerAlreadyExists,
+                   );
+                   venture |> resolve;
+                 }
+               | NoUserInfo => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotFindUserInfo,
+                   );
+                   venture |> resolve;
+                 }
+               | CouldNotPersist(_err) => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     CouldNotPersistVenture,
+                   );
+                   venture |> resolve;
+                 },
              )
         )
       )
