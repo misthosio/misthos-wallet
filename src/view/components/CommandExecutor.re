@@ -132,6 +132,8 @@ module Status = {
           "RED: your submission could not be persisted" |> text
         | (CouldNotFindUserInfo, _) =>
           "RED: Id doesn't exist or user has never logged in" |> text
+        | (PartnerAlreadyProposed, _) =>
+          "RED: This user has already been proposed to join" |> text
         | (PartnerAlreadyExists, _) =>
           "RED: User is already a partner of this venture" |> text
         }

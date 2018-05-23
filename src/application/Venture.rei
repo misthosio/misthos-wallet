@@ -91,6 +91,7 @@ module Cmd: {
   module ProposePartner: {
     type result =
       | Ok(processId, t, array(EventLog.item))
+      | ProposalAlreadyExists
       | PartnerAlreadyExists
       | NoUserInfo
       | CouldNotPersist(Js.Promise.error);

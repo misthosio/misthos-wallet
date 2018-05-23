@@ -482,30 +482,34 @@ function exec$3(prospectId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePartner' command");
   if (Venture__State.isPartner(prospectId, state)) {
-    return Promise.resolve(/* PartnerAlreadyExists */0);
+    return Promise.resolve(/* PartnerAlreadyExists */1);
   } else {
     return UserInfo.Public[/* read */4](prospectId).then((function (param) {
                   if (param) {
                     var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(Venture__State.currentPartners(state), session[/* userId */0], prospectId, param[0][/* appPubKey */0], Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state)));
-                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
-                    return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposed]), venture).then((function (param) {
-                                      return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(15, [custodianProposal]), param[0]);
-                                    })).then((function (eta) {
-                                    return persist(/* None */0, eta);
-                                  })).then((function (param) {
-                                  if (param.tag) {
-                                    return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
-                                  } else {
-                                    var match = param[0];
-                                    return Promise.resolve(/* Ok */Block.__(0, [
-                                                  partnerProposed[/* processId */0],
-                                                  match[0],
-                                                  match[1]
-                                                ]));
-                                  }
-                                }));
+                    if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
+                      var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
+                      return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposed]), venture).then((function (param) {
+                                        return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(15, [custodianProposal]), param[0]);
+                                      })).then((function (eta) {
+                                      return persist(/* None */0, eta);
+                                    })).then((function (param) {
+                                    if (param.tag) {
+                                      return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                                    } else {
+                                      var match = param[0];
+                                      return Promise.resolve(/* Ok */Block.__(0, [
+                                                    partnerProposed[/* processId */0],
+                                                    match[0],
+                                                    match[1]
+                                                  ]));
+                                    }
+                                  }));
+                    } else {
+                      return Promise.resolve(/* ProposalAlreadyExists */0);
+                    }
                   } else {
-                    return Promise.resolve(/* NoUserInfo */1);
+                    return Promise.resolve(/* NoUserInfo */2);
                   }
                 }));
   }

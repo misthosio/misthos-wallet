@@ -98,11 +98,19 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "CouldNotFindUserInfo"
+                      "PartnerAlreadyProposed"
                     ],
                     /* [] */0
                   ]);
     case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "CouldNotFindUserInfo"
+                    ],
+                    /* [] */0
+                  ]);
+    case 3 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -118,11 +126,13 @@ function decodeError(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "CouldNotFindUserInfo" : 
-        return /* CouldNotFindUserInfo */1;
+        return /* CouldNotFindUserInfo */2;
     case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */2;
+        return /* CouldNotPersistVenture */3;
     case "PartnerAlreadyExists" : 
         return /* PartnerAlreadyExists */0;
+    case "PartnerAlreadyProposed" : 
+        return /* PartnerAlreadyProposed */1;
     default:
       throw [
             UnknownMessage,

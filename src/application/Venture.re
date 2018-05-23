@@ -404,6 +404,7 @@ module Cmd = {
   module ProposePartner = {
     type result =
       | Ok(processId, t, array(EventLog.item))
+      | ProposalAlreadyExists
       | PartnerAlreadyExists
       | NoUserInfo
       | CouldNotPersist(Js.Promise.error);
@@ -430,36 +431,40 @@ module Cmd = {
                          state |> State.lastRemovalOfPartner(prospectId),
                      )
                      |> Event.getPartnerProposedExn;
-                   let custodianProposal =
-                     Event.makeCustodianProposed(
-                       ~eligibleWhenProposing=state |> State.currentPartners,
-                       ~lastCustodianRemovalAccepted=
-                         state |> State.lastRemovalOfCustodian(prospectId),
-                       ~partnerProposed,
-                       ~supporterId=session.userId,
-                       ~accountIdx=AccountIndex.default,
-                       ~policy=
-                         state
-                         |> State.currentPolicy(Event.Custodian.processName),
-                     )
-                     |> Event.getCustodianProposedExn;
-                   venture
-                   |> apply(Event.PartnerProposed(partnerProposed))
-                   |> then_(((v, c)) =>
-                        v
-                        |> apply(
-                             ~collector=c,
-                             Event.CustodianProposed(custodianProposal),
-                           )
-                      )
-                   |> then_(persist)
-                   |> then_(
-                        fun
-                        | Js.Result.Ok((v, c)) =>
-                          Ok(partnerProposed.processId, v, c) |> resolve
-                        | Js.Result.Error(err) =>
-                          CouldNotPersist(err) |> resolve,
-                      );
+                   if (state |> State.isPartnerProposalUnique(partnerProposed)) {
+                     let custodianProposal =
+                       Event.makeCustodianProposed(
+                         ~eligibleWhenProposing=state |> State.currentPartners,
+                         ~lastCustodianRemovalAccepted=
+                           state |> State.lastRemovalOfCustodian(prospectId),
+                         ~partnerProposed,
+                         ~supporterId=session.userId,
+                         ~accountIdx=AccountIndex.default,
+                         ~policy=
+                           state
+                           |> State.currentPolicy(Event.Custodian.processName),
+                       )
+                       |> Event.getCustodianProposedExn;
+                     venture
+                     |> apply(Event.PartnerProposed(partnerProposed))
+                     |> then_(((v, c)) =>
+                          v
+                          |> apply(
+                               ~collector=c,
+                               Event.CustodianProposed(custodianProposal),
+                             )
+                        )
+                     |> then_(persist)
+                     |> then_(
+                          fun
+                          | Js.Result.Ok((v, c)) =>
+                            Ok(partnerProposed.processId, v, c) |> resolve
+                          | Js.Result.Error(err) =>
+                            CouldNotPersist(err) |> resolve,
+                        );
+                   } else {
+                     ProposalAlreadyExists |> resolve;
+                   };
                  }
                | UserInfo.Public.NotFound => resolve(NoUserInfo),
              )
