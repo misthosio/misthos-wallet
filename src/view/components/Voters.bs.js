@@ -3,12 +3,12 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
-var React = require("react");
 var Partner = require("./Partner.bs.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
+var StatusChip = require("./StatusChip.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 
 var component = ReasonReact.statelessComponent("Voters");
 
@@ -24,28 +24,34 @@ function make(voters, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var voteStatus = function (status) {
-                var tmp;
-                switch (status) {
-                  case 0 : 
-                      tmp = "Pending";
-                      break;
-                  case 1 : 
-                      tmp = "Endorsed";
-                      break;
-                  case 2 : 
-                      tmp = "Rejected";
-                      break;
-                  
-                }
-                return ViewCommon.text(tmp);
-              };
               var voters$1 = $$Array.of_list(List.map((function (param) {
-                          return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Partner.make(param[/* userId */0], /* None */0, /* None */0, /* array */[])), voteStatus(param[/* voteStatus */1]));
+                          var match;
+                          switch (param[/* voteStatus */1]) {
+                            case 0 : 
+                                match = /* tuple */[
+                                  "Pending",
+                                  /* Pending */0
+                                ];
+                                break;
+                            case 1 : 
+                                match = /* tuple */[
+                                  "Endorsed",
+                                  /* Success */2
+                                ];
+                                break;
+                            case 2 : 
+                                match = /* tuple */[
+                                  "Rejected",
+                                  /* Failure */1
+                                ];
+                                break;
+                            
+                          }
+                          return ReasonReact.element(/* None */0, /* None */0, Partner.make(param[/* userId */0], /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match[1], match[0], /* array */[]))], /* array */[]));
                         }), voters));
               return /* array */[
                       ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])),
-                      ReasonReact.element(/* None */0, /* None */0, MaterialUi.List[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[voters$1]))
+                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[voters$1]))
                     ];
             }),
           /* initialState */component[/* initialState */10],

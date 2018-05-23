@@ -5,15 +5,19 @@ var Css = require("bs-css/src/Css.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
-var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var MaterialUi_Avatar = require("@jsiebern/bs-material-ui/src/MaterialUi_Avatar.bs.js");
+var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
+var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
+var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js");
 var ArrowRightSvg = require("../../assets/img/arrow-right.svg");
 var PlusCircleSvg = require("../../assets/img/plus-circle.svg");
 var MinusCircleSvg = require("../../assets/img/minus-circle.svg");
+var MaterialUi_ListItemSecondaryAction = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemSecondaryAction.bs.js");
 var ArrowUpCircleSvg = require("../../assets/img/arrow-up-circle.svg");
 
-var component = ReasonReact.statelessComponent("Transaction");
+var component = ReasonReact.statelessComponent("AlertListItem");
 
 var alert = Css.style(/* :: */[
       Css.borderStyle(Css.solid),
@@ -79,13 +83,13 @@ function make(icon$1, onClick, primary, secondary, _) {
                     break;
                 
               }
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* Some */[true], /* Some */[alert], /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.Avatar[/* make */1](/* None */0, /* None */0, /* Some */[icon], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* Some */[alert], /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[icon], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
                                               alt: match[1],
                                               src: match[0]
                                             })])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[primary], secondary, /* None */0, /* array */[])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemSecondaryAction[/* make */1](/* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.IconButton[/* make */3](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[primary], secondary, /* None */0, /* None */0, /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
                                                         alt: "arrow-right-icon",
                                                         src: ArrowRightSvg
                                                       })]))]))
@@ -103,11 +107,8 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
-var ViewData = 0;
-
 exports.text = text;
 exports.extractString = extractString;
-exports.ViewData = ViewData;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

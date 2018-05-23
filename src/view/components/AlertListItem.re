@@ -1,13 +1,11 @@
 include ViewCommon;
 
-module ViewData = ViewModel.SelectedVentureView;
-
 type icon =
   | Plus
   | Minus
   | ArrowUp;
 
-let component = ReasonReact.statelessComponent("Transaction");
+let component = ReasonReact.statelessComponent("AlertListItem");
 
 [@bs.module] external plus : string = "../../assets/img/plus-circle.svg";
 

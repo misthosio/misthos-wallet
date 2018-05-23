@@ -5,22 +5,22 @@ let component = ReasonReact.statelessComponent("Voters");
 let make = (~voters: list(ProcessCollector.voter), _children) => {
   ...component,
   render: (_) => {
-    let voteStatus = (status: ProcessCollector.voteStatus) =>
-      (
-        switch (status) {
-        | Pending => "Pending"
-        | Endorsed => "Endorsed"
-        | Rejected => "Rejected"
-        }
-      )
-      |> text;
     let voters =
       ReasonReact.array(
         Array.of_list(
           voters
-          |> List.map(({userId, voteStatus: status}: ProcessCollector.voter) =>
-               <div> <Partner partnerId=userId /> (status |> voteStatus) </div>
-             ),
+          |> List.map(({userId, voteStatus: status}: ProcessCollector.voter) => {
+               let (label, status: StatusChip.status) =
+                 switch (status) {
+                 | Pending => ("Pending", Pending)
+                 | Endorsed => ("Endorsed", Success)
+                 | Rejected => ("Rejected", Failure)
+                 };
+               <Partner
+                 partnerId=userId
+                 button={<StatusChip label status />}
+               />;
+             }),
         ),
       );
     ReasonReact.array([|
