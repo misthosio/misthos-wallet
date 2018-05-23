@@ -16,6 +16,11 @@ function fulfilled(eligible, endorsed) {
   }
 }
 
+function canBeFulfilled(eligible, rejected) {
+  var releventRejections = Belt_Set.intersect(eligible, rejected);
+  return Belt_Set.size(releventRejections) === 0;
+}
+
 function encode() {
   return Json_encode.object_(/* :: */[
               /* tuple */[
@@ -28,6 +33,7 @@ function encode() {
 
 var Unanimous = /* module */[
   /* fulfilled */fulfilled,
+  /* canBeFulfilled */canBeFulfilled,
   /* encode */encode
 ];
 
@@ -38,6 +44,11 @@ function fulfilled$1(eligible, endorsed) {
   } else {
     return false;
   }
+}
+
+function canBeFulfilled$1(eligible, rejected) {
+  var releventRejections = Belt_Set.intersect(eligible, rejected);
+  return Belt_Set.size(releventRejections) <= 1;
 }
 
 function encode$1() {
@@ -52,6 +63,7 @@ function encode$1() {
 
 var UnanimousMinusOne = /* module */[
   /* fulfilled */fulfilled$1,
+  /* canBeFulfilled */canBeFulfilled$1,
   /* encode */encode$1
 ];
 
@@ -60,6 +72,14 @@ function fulfilled$2(param) {
     return fulfilled$1;
   } else {
     return fulfilled;
+  }
+}
+
+function canBeFulfilled$2(param) {
+  if (param) {
+    return canBeFulfilled$1;
+  } else {
+    return canBeFulfilled;
   }
 }
 
@@ -101,6 +121,7 @@ exports.UnanimousMinusOne = UnanimousMinusOne;
 exports.unanimous = unanimous;
 exports.unanimousMinusOne = unanimousMinusOne;
 exports.fulfilled = fulfilled$2;
+exports.canBeFulfilled = canBeFulfilled$2;
 exports.eq = eq;
 exports.neq = neq;
 exports.encode = encode$2;

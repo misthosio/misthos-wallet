@@ -7,6 +7,10 @@ module Unanimous = {
     let endorsed = Set.intersect(eligible, endorsed);
     endorsed |> Set.size >= Set.size(eligible) && eligible |> Set.size > 0;
   };
+  let canBeFulfilled = (~eligible: UserId.set, ~rejected: UserId.set) => {
+    let releventRejections = Set.intersect(eligible, rejected);
+    releventRejections |> Set.size == 0;
+  };
   let encode = _p => Json.Encode.(object_([("type", string("Unanimous"))]));
 };
 
@@ -14,6 +18,10 @@ module UnanimousMinusOne = {
   let fulfilled = (~eligible: UserId.set, ~endorsed: UserId.set) => {
     let endorsed = Set.intersect(eligible, endorsed);
     endorsed |> Set.size >= Set.size(eligible) - 1 && eligible |> Set.size > 0;
+  };
+  let canBeFulfilled = (~eligible: UserId.set, ~rejected: UserId.set) => {
+    let releventRejections = Set.intersect(eligible, rejected);
+    releventRejections |> Set.size <= 1;
   };
   let encode = _p =>
     Json.Encode.(object_([("type", string("UnanimousMinusOne"))]));
@@ -31,6 +39,11 @@ let fulfilled =
   fun
   | Unanimous => Unanimous.fulfilled
   | UnanimousMinusOne => UnanimousMinusOne.fulfilled;
+
+let canBeFulfilled =
+  fun
+  | Unanimous => Unanimous.canBeFulfilled
+  | UnanimousMinusOne => UnanimousMinusOne.canBeFulfilled;
 
 let eq = (p1, p2) => p1 == p2;
 
