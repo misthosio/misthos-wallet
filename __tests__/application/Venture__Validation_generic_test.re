@@ -102,31 +102,6 @@ let () = {
     );
     F.withCached(
       ~scope="Any proposal type",
-      "when the proposal was already submitted by this partner",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        L.(
-          createVenture(user1)
-          |> withFirstPartner(user1)
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-        );
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withPartnerProposed(~supporter=user1, ~prospect=user2)
-            |> lastItem
-          ),
-          Validation.BadData("This proposal already exists"),
-        );
-      },
-    );
-    F.withCached(
-      ~scope="Any proposal type",
       "when the same proposal was already made by another partner",
       () => G.withUserSessions(3),
       sessions => {

@@ -525,20 +525,9 @@ function defaultDataValidator(_, _$1) {
   return /* Ok */0;
 }
 
-function validateProposal($staropt$star, _, dataList, param, state, issuerId) {
-  var data = param[/* data */6];
-  var supporterId = param[/* supporterId */4];
+function validateProposal($staropt$star, _, _$1, param, state, issuerId) {
   var validateData = $staropt$star ? $staropt$star[0] : defaultDataValidator;
-  if (List.exists((function (param) {
-            var match = param[1];
-            if (PrimitiveTypes.UserId[/* eq */5](match[0], supporterId)) {
-              return Caml_obj.caml_equal(match[1], data);
-            } else {
-              return false;
-            }
-          }), dataList)) {
-    return /* BadData */["This proposal already exists"];
-  } else if (PrimitiveTypes.UserId[/* neq */6](issuerId, supporterId)) {
+  if (PrimitiveTypes.UserId[/* neq */6](issuerId, param[/* supporterId */4])) {
     return /* InvalidIssuer */2;
   } else {
     var partial_arg = /* Some */[param[/* dependsOnCompletions */2]];
@@ -546,7 +535,7 @@ function validateProposal($staropt$star, _, dataList, param, state, issuerId) {
     var test = function (param) {
       return ensureDependencies(partial_arg$1, partial_arg, param);
     };
-    return returnResult(andThen(Curry._1(validateData, data), /* tuple */[
+    return returnResult(andThen(Curry._1(validateData, param[/* data */6]), /* tuple */[
                     Curry._1(test, state),
                     state
                   ]));

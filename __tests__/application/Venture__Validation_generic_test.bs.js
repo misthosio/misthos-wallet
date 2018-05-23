@@ -70,25 +70,6 @@ describe("Any proposal type", (function () {
                                         return Curry._5(func, param, arg, param$1, user2, user3);
                                       })(/* None */0, /* None */0), log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, "Any proposal type", "when the proposal was already submitted by this partner", (function () {
-                return Generators.withUserSessions(2);
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user2 = match[1];
-                var user1 = match[0];
-                var func = Generators.Log[/* withPartnerProposed */12];
-                return Curry._1((function (param, param$1, param$2) {
-                                return Curry._5(func, param, param$1, param$2, user1, user2);
-                              })(/* None */0, /* None */0, /* None */0), Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user2 = match[1];
-                var user1 = match[0];
-                var func = Generators.Log[/* withPartnerProposed */12];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
-                                        return Curry._5(func, param, param$1, param$2, user1, user2);
-                                      })(/* None */0, /* None */0, /* None */0), log)), /* BadData */["This proposal already exists"]);
-              }));
         return Fixtures.withCached(/* None */0, "Any proposal type", "when the same proposal was already made by another partner", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {

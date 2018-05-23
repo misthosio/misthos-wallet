@@ -352,12 +352,7 @@ let validateProposal =
       state,
       issuerId,
     ) =>
-  if (dataList
-      |> List.exists(((_, (previousSupporter, previousData))) =>
-           UserId.eq(previousSupporter, supporterId) && previousData == data
-         )) {
-    BadData("This proposal already exists");
-  } else if (UserId.neq(issuerId, supporterId)) {
+  if (UserId.neq(issuerId, supporterId)) {
     InvalidIssuer;
   } else {
     state
