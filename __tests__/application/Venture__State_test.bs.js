@@ -126,7 +126,7 @@ describe("custodianAcceptedFor", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var log = Generators.Log[/* withCustodian */29](user2, /* :: */[
+        var log = Generators.Log[/* withCustodian */31](user2, /* :: */[
               user1,
               /* :: */[
                 user2,
@@ -141,7 +141,7 @@ describe("custodianAcceptedFor", (function () {
         Jest.test("Remembers the latest CustodianAccepted events", (function () {
                 return Jest.Expect[/* toEqual */12](/* Some */[custodianAccepted], Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state)));
               }));
-        var log$1 = Generators.Log[/* withCustodianRemoved */33](user2, /* :: */[
+        var log$1 = Generators.Log[/* withCustodianRemoved */35](user2, /* :: */[
               user1,
               /* [] */0
             ], log);
@@ -155,7 +155,7 @@ describe("RemovalProcessMapping", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var log = Generators.Log[/* withCustodianRemovalProposed */30](user1, user2, Generators.Log[/* withCustodian */29](user2, /* :: */[
+        var log = Generators.Log[/* withCustodianRemovalProposed */32](user1, user2, Generators.Log[/* withCustodian */31](user2, /* :: */[
                   user1,
                   /* :: */[
                     user2,

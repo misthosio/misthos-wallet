@@ -15,13 +15,13 @@ describe("CustodianKeyChainUpdated", (function () {
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withCustodian */29](user1, /* :: */[
+                return Generators.Log[/* withCustodian */31](user1, /* :: */[
                             user1,
                             /* [] */0
                           ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */34](/* None */0, /* None */0, match[0], log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, match[0], log)), /* Ok */0);
               }));
         Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the signer doesn't match the custodianId", (function () {
                 return Generators.withUserSessions(2);
@@ -31,20 +31,20 @@ describe("CustodianKeyChainUpdated", (function () {
                 return Generators.Log[/* withPartner */17](match[1], /* :: */[
                             user1,
                             /* [] */0
-                          ], Generators.Log[/* withCustodian */29](user1, /* :: */[
+                          ], Generators.Log[/* withCustodian */31](user1, /* :: */[
                                 user1,
                                 /* [] */0
                               ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */34](/* None */0, /* Some */[match[1]], match[0], log)), /* InvalidIssuer */2);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* Some */[match[1]], match[0], log)), /* InvalidIssuer */2);
               }));
         Fixtures.withCached(/* None */0, "CustodianKeyChainUpdated", "when the custodianApprovalProcess doesn't exist", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withCustodian */29](user1, /* :: */[
+                return Generators.Log[/* withCustodian */31](user1, /* :: */[
                             user1,
                             /* [] */0
                           ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
@@ -82,7 +82,7 @@ describe("CustodianKeyChainUpdated", (function () {
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withCustodian */29](user1, /* :: */[
+                return Generators.Log[/* withCustodian */31](user1, /* :: */[
                             user1,
                             /* [] */0
                           ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
@@ -108,7 +108,7 @@ describe("CustodianKeyChainUpdated", (function () {
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withCustodian */29](user1, /* :: */[
+                return Generators.Log[/* withCustodian */31](user1, /* :: */[
                             user1,
                             /* [] */0
                           ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
@@ -129,7 +129,7 @@ describe("CustodianKeyChainUpdated", (function () {
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user1 = match[0];
-                      return Generators.Log[/* withCustodian */29](user1, /* :: */[
+                      return Generators.Log[/* withCustodian */31](user1, /* :: */[
                                   user1,
                                   /* [] */0
                                 ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));

@@ -471,8 +471,10 @@ module Cmd = {
     type result =
       | Ok(t, array(EventLog.item))
       | CouldNotPersist(Js.Promise.error);
-    let exec = (~processId, {session} as venture) => {
+    let exec = (~processId, {state, session} as venture) => {
       logMessage("Executing 'RejectPartner' command");
+      let custodianProcessId =
+        state |> State.custodianProcessForPartnerProcess(processId);
       Js.Promise.(
         venture
         |> apply(
@@ -480,6 +482,16 @@ module Cmd = {
                ~processId,
                ~rejectorId=session.userId,
              ),
+           )
+        |> then_(((v, c)) =>
+             v
+             |> apply(
+                  ~collector=c,
+                  Event.makeCustodianRejected(
+                    ~processId=custodianProcessId,
+                    ~rejectorId=session.userId,
+                  ),
+                )
            )
         |> then_(persist)
         |> then_(

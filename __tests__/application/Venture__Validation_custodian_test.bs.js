@@ -18,7 +18,7 @@ describe("CustodianProposed", (function () {
                 return Generators.Log[/* withPartner */17](match[1], /* :: */[
                             user1,
                             /* [] */0
-                          ], Generators.Log[/* withCustodian */29](user1, /* :: */[
+                          ], Generators.Log[/* withCustodian */31](user1, /* :: */[
                                 user1,
                                 /* [] */0
                               ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -32,13 +32,13 @@ describe("CustodianProposed", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user2 = match[1];
                 var user1 = match[0];
-                return Generators.Log[/* withCustodianRemoved */33](user2, /* :: */[
+                return Generators.Log[/* withCustodianRemoved */35](user2, /* :: */[
                             user1,
                             /* :: */[
                               user2,
                               /* [] */0
                             ]
-                          ], Generators.Log[/* withCustodian */29](user2, /* :: */[
+                          ], Generators.Log[/* withCustodian */31](user2, /* :: */[
                                 user1,
                                 /* :: */[
                                   user2,
@@ -47,7 +47,7 @@ describe("CustodianProposed", (function () {
                               ], Generators.Log[/* withPartner */17](user2, /* :: */[
                                     user1,
                                     /* [] */0
-                                  ], Generators.Log[/* withCustodian */29](user1, /* :: */[
+                                  ], Generators.Log[/* withCustodian */31](user1, /* :: */[
                                         user1,
                                         /* [] */0
                                       ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))))));
@@ -117,7 +117,7 @@ describe("CustodianProposed", (function () {
                               return Generators.Log[/* withPartner */17](match[1], /* :: */[
                                           user1,
                                           /* [] */0
-                                        ], Generators.Log[/* withCustodian */29](user1, /* :: */[
+                                        ], Generators.Log[/* withCustodian */31](user1, /* :: */[
                                               user1,
                                               /* [] */0
                                             ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -126,10 +126,10 @@ describe("CustodianProposed", (function () {
                               var user2 = match[1];
                               var user1 = match[0];
                               var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                              var log$1 = Generators.Log[/* withCustodianRemoved */33](user2, /* :: */[
+                              var log$1 = Generators.Log[/* withCustodianRemoved */35](user2, /* :: */[
                                     user1,
                                     /* [] */0
-                                  ], Generators.Log[/* withCustodian */29](user2, /* :: */[
+                                  ], Generators.Log[/* withCustodian */31](user2, /* :: */[
                                         user1,
                                         /* :: */[
                                           user2,

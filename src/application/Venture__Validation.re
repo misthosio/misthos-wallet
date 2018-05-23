@@ -242,7 +242,12 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PayoutSigned(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
-  | PayoutBroadcastFailed(_) => state
+  | PayoutBroadcastFailed(_)
+  | PartnerDenied(_)
+  | PartnerRemovalDenied(_)
+  | CustodianDenied(_)
+  | CustodianRemovalDenied(_)
+  | PayoutDenied(_) => state
   };
 };
 

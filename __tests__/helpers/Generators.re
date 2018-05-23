@@ -185,7 +185,12 @@ module Event = {
       (supporter: Session.Data.t, {processId}: AppEvent.Custodian.Proposed.t) =>
     AppEvent.makeCustodianEndorsed(~processId, ~supporterId=supporter.userId)
     |> AppEvent.getCustodianEndorsedExn;
+  let custodianRejected =
+      (rejector: Session.Data.t, {processId}: AppEvent.Custodian.Proposed.t) =>
+    AppEvent.makeCustodianRejected(~processId, ~rejectorId=rejector.userId)
+    |> AppEvent.getCustodianRejectedExn;
   let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
+  let custodianDenied = AppEvent.Custodian.Denied.fromProposal;
   let custodianRemovalProposed =
       (
         ~eligibleWhenProposing,
@@ -503,8 +508,15 @@ module Log = {
       supporter.issuerKeyPair,
       CustodianEndorsed(Event.custodianEndorsed(supporter, proposal)),
     );
+  let withCustodianRejected = (rejector: Session.Data.t, proposal) =>
+    appendEvent(
+      rejector.issuerKeyPair,
+      CustodianRejected(Event.custodianRejected(rejector, proposal)),
+    );
   let withCustodianAccepted = proposal =>
     appendSystemEvent(CustodianAccepted(Event.custodianAccepted(proposal)));
+  let withCustodianDenied = proposal =>
+    appendSystemEvent(CustodianDenied(Event.custodianDenied(proposal)));
   let withCustodian = (user, ~supporters, log) =>
     switch (supporters) {
     | [first, ...rest] =>

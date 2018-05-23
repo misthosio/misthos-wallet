@@ -20,13 +20,13 @@ function apply($$event, state) {
                 /* keyChains */state[/* keyChains */1],
                 /* exposedAddresses */state[/* exposedAddresses */2]
               ];
-    case 31 : 
+    case 35 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* keyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* keyChains */1]),
                 /* exposedAddresses */state[/* exposedAddresses */2]
               ];
-    case 33 : 
+    case 37 : 
         var address = $$event[0][/* address */1];
         return /* record */[
                 /* network */state[/* network */0],

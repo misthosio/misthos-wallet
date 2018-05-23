@@ -102,15 +102,6 @@ function update($$event, state) {
           /* policyFulfilled */state[/* policyFulfilled */6]
         ];
         break;
-    case 5 : 
-        throw [
-              Caml_builtin_exceptions.match_failure,
-              [
-                "ProcessValidator.re",
-                84,
-                4
-              ]
-            ];
     case 9 : 
         var acceptance$1 = $$event[0];
         match = /* record */[
@@ -125,33 +116,40 @@ function update($$event, state) {
         break;
     case 1 : 
     case 6 : 
-    case 10 : 
-    case 14 : 
-    case 18 : 
-    case 22 : 
+    case 11 : 
+    case 15 : 
+    case 20 : 
+    case 25 : 
         exit = 1;
         break;
     case 2 : 
     case 7 : 
-    case 11 : 
-    case 15 : 
-    case 19 : 
-    case 23 : 
+    case 12 : 
+    case 16 : 
+    case 21 : 
+    case 26 : 
         exit = 2;
         break;
     case 3 : 
     case 8 : 
-    case 12 : 
-    case 16 : 
-    case 20 : 
-    case 24 : 
-        exit = 3;
-        break;
     case 13 : 
     case 17 : 
-    case 21 : 
-    case 25 : 
+    case 22 : 
+    case 27 : 
+        exit = 3;
+        break;
+    case 14 : 
+    case 18 : 
+    case 23 : 
+    case 28 : 
         exit = 4;
+        break;
+    case 5 : 
+    case 10 : 
+    case 19 : 
+    case 24 : 
+    case 29 : 
+        exit = 5;
         break;
     default:
       match = state;
@@ -201,6 +199,15 @@ function update($$event, state) {
           /* policyFulfilled */state[/* policyFulfilled */6]
         ];
         break;
+    case 5 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              [
+                "ProcessValidator.re",
+                84,
+                4
+              ]
+            ];
     
   }
   var currentPartners$1 = match[/* currentPartners */1];

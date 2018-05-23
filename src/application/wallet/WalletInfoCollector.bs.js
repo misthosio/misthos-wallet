@@ -60,7 +60,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 13 : 
+    case 14 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -76,7 +76,7 @@ function apply($$event, state) {
                 ],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 22 : 
+    case 25 : 
         var match = $$event[0];
         var payoutTx = match[/* data */6][/* payoutTx */1];
         var changeAddress = payoutTx[/* changeAddress */3];
@@ -93,7 +93,7 @@ function apply($$event, state) {
                     state[/* exposedCoordinates */6]
                   ] : state[/* exposedCoordinates */6]
               ];
-    case 27 : 
+    case 31 : 
         var match$1 = $$event[0];
         var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */4], match$1[/* processId */0]);
         var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], state[/* network */0], payoutTx$1);
@@ -106,7 +106,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 29 : 
+    case 33 : 
         var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */4], $$event[0][/* processId */0]);
         return /* record */[
                 /* network */state[/* network */0],
@@ -117,7 +117,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 31 : 
+    case 35 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -127,7 +127,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 32 : 
+    case 36 : 
         var match$3 = $$event[0];
         var accountIdx = match$3[/* accountIdx */0];
         return /* record */[
@@ -151,7 +151,7 @@ function apply($$event, state) {
                 ],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 33 : 
+    case 37 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -164,7 +164,7 @@ function apply($$event, state) {
                   state[/* exposedCoordinates */6]
                 ]
               ];
-    case 34 : 
+    case 38 : 
         var match$4 = $$event[0];
         var coordinates = match$4[/* coordinates */1];
         var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3]);

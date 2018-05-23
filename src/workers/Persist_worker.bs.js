@@ -141,7 +141,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                           List.remove_assoc(id$3, removalProcesses)
                         ]
                       ];
-            case 18 : 
+            case 20 : 
                 var match$1 = $$event[0];
                 var custodianId = match$1[/* data */6][/* custodianId */0];
                 var removals$4;
@@ -176,7 +176,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                           List.remove_assoc(custodianId, removalProcesses)
                         ]
                       ];
-            case 19 : 
+            case 21 : 
                 var id$4 = List.assoc($$event[0][/* processId */0], processLookup);
                 var removals$5 = List.assoc(id$4, removalProcesses);
                 return /* tuple */[
@@ -194,7 +194,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                           List.remove_assoc(id$4, removalProcesses)
                         ]
                       ];
-            case 20 : 
+            case 22 : 
                 var id$5 = List.assoc($$event[0][/* processId */0], processLookup);
                 var removals$6 = List.assoc(id$5, removalProcesses);
                 return /* tuple */[
@@ -212,7 +212,7 @@ function determinPartnerKeysAndRemovals(eventLog) {
                           List.remove_assoc(id$5, removalProcesses)
                         ]
                       ];
-            case 21 : 
+            case 23 : 
                 var custodianId$1 = $$event[0][/* data */2][/* custodianId */0];
                 var removals$7 = List.assoc(custodianId$1, removalProcesses);
                 var partial_arg$1 = PrimitiveTypes.UserId[/* neq */6];

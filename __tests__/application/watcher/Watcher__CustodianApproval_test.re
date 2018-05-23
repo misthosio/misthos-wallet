@@ -175,4 +175,57 @@ let () =
         );
       },
     );
+    F.withCached(
+      ~scope="Watcher__CustodianApproval",
+      "Process gets denied when it has been rejected",
+      () => G.withUserSessions(3),
+      sessions => {
+        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withCustodianProposed(~supporter=user1, ~custodian=user3)
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+        let log = log |> L.withCustodianRejected(user2, proposal);
+        let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
+        testWatcherHasEventPending(
+          "CustodianDenied",
+          watcher,
+          log |> L.systemIssuer,
+          fun
+          | CustodianDenied(_) => true
+          | _ => false,
+        );
+      },
+    );
+    F.withCached(
+      ~scope="Watcher__CustodianApproval",
+      "Completes when the custodian is denied",
+      () => G.withUserSessions(3),
+      sessions => {
+        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withCustodianProposed(~supporter=user1, ~custodian=user3)
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+        let log = log |> L.withCustodianRejected(user2, proposal);
+        let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
+        let log = log |> L.withCustodianDenied(proposal);
+        watcher#receive(log |> L.lastItem);
+        testWatcherHasCompleted(watcher);
+      },
+    );
   });
