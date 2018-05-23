@@ -7,6 +7,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
+var Router = require("./Router.bs.js");
 var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MenuSvg = require("../assets/img/menu.svg");
@@ -170,10 +171,12 @@ function make(drawer$1, modal$1, children) {
                                               className: container
                                             }, drawer$1 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi.AppBar[/* make */5](/* Some */[appBar], /* None */0, /* Some */[/* Static */982536398], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi.Toolbar[/* make */1](/* None */0, /* None */0, /* None */0, /* array */[
-                                                                  React.createElement("img", {
-                                                                        alt: "logo",
-                                                                        src: LogoSolidSvg
-                                                                      }),
+                                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi.IconButton[/* make */3](/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
+                                                                                return Router.goTo(/* Home */0);
+                                                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
+                                                                                  alt: "logo",
+                                                                                  src: LogoSolidSvg
+                                                                                })])),
                                                                   React.createElement("div", {
                                                                         className: flex_
                                                                       }),
