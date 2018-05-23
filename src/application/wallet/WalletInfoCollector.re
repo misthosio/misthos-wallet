@@ -134,6 +134,14 @@ let apply = (event, state) =>
           ]
         },
     }
+  | PayoutDenied({processId}) =>
+    let payoutTx: PayoutTransaction.t =
+      state.payoutProcesses |. Map.getExn(processId);
+    {
+      ...state,
+      unused: state.unused |. Set.mergeMany(payoutTx.usedInputs),
+      reserved: state.reserved |. Set.removeMany(payoutTx.usedInputs),
+    };
   | PayoutBroadcast({processId, txId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
