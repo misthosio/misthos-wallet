@@ -29,23 +29,23 @@ function initWatcherFor(session, param, log) {
         return /* Some */[Watcher__PartnerApproval.make($$event[0], log)];
     case 4 : 
         return /* Some */[Watcher__AutoEndorseCustodianSelf.make(session, $$event[0], log)];
-    case 5 : 
+    case 6 : 
         return /* Some */[Watcher__PartnerRemovalApproval.make($$event[0], log)];
-    case 9 : 
+    case 10 : 
         return /* Some */[Watcher__AccountCreationApproval.make($$event[0], log)];
-    case 12 : 
-        return /* Some */[Watcher__AccountKeyChain.make(session, $$event[0], log)];
     case 13 : 
+        return /* Some */[Watcher__AccountKeyChain.make(session, $$event[0], log)];
+    case 14 : 
         return /* Some */[Watcher__CustodianApproval.make($$event[0], log)];
-    case 16 : 
-        return /* Some */[Watcher__CustodianKeyChain.make(session, $$event[0], log)];
     case 17 : 
+        return /* Some */[Watcher__CustodianKeyChain.make(session, $$event[0], log)];
+    case 18 : 
         return /* Some */[Watcher__CustodianRemovalApproval.make($$event[0], log)];
-    case 21 : 
+    case 22 : 
         return /* Some */[Watcher__PayoutApproval.make($$event[0], log)];
-    case 23 : 
-        return /* Some */[Watcher__SignPayout.make(session, $$event[0], log)];
     case 24 : 
+        return /* Some */[Watcher__SignPayout.make(session, $$event[0], log)];
+    case 25 : 
         return /* Some */[Watcher__BroadcastPayout.make($$event[0], log)];
     default:
       return /* None */0;

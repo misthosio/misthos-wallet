@@ -465,6 +465,7 @@ type t =
   | PartnerRejected(Partner.Rejected.t)
   | PartnerEndorsed(Partner.Endorsed.t)
   | PartnerAccepted(Partner.Accepted.t)
+  | PartnerDenied(Partner.Denied.t)
   | PartnerRemovalProposed(Partner.Removal.Proposed.t)
   | PartnerRemovalRejected(Partner.Removal.Rejected.t)
   | PartnerRemovalEndorsed(Partner.Removal.Endorsed.t)
@@ -671,6 +672,7 @@ let encode =
   | PartnerRejected(event) => Partner.Rejected.encode(event)
   | PartnerEndorsed(event) => Partner.Endorsed.encode(event)
   | PartnerAccepted(event) => Partner.Accepted.encode(event)
+  | PartnerDenied(event) => Partner.Denied.encode(event)
   | PartnerRemovalProposed(event) => Partner.Removal.Proposed.encode(event)
   | PartnerRemovalRejected(event) => Partner.Removal.Rejected.encode(event)
   | PartnerRemovalEndorsed(event) => Partner.Removal.Endorsed.encode(event)
@@ -734,6 +736,7 @@ let decode = raw => {
   | "PartnerRejected" => PartnerRejected(Partner.Rejected.decode(raw))
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsed.decode(raw))
   | "PartnerAccepted" => PartnerAccepted(Partner.Accepted.decode(raw))
+  | "PartnerDenied" => PartnerDenied(Partner.Denied.decode(raw))
   | "PartnerRemovalProposed" =>
     PartnerRemovalProposed(Partner.Removal.Proposed.decode(raw))
   | "PartnerRemovalRejected" =>

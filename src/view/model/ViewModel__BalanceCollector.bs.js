@@ -29,7 +29,7 @@ function apply($$event, state) {
                 /* balance */state[/* balance */2],
                 /* payoutProcesses */state[/* payoutProcesses */3]
               ];
-    case 12 : 
+    case 13 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* accountKeyChains */state[/* accountKeyChains */1],
@@ -45,7 +45,7 @@ function apply($$event, state) {
                 ],
                 /* payoutProcesses */state[/* payoutProcesses */3]
               ];
-    case 21 : 
+    case 22 : 
         var match = $$event[0];
         var data = match[/* data */6];
         var balance = List.assoc(data[/* accountIdx */0], state[/* balance */2]);
@@ -74,7 +74,7 @@ function apply($$event, state) {
                   state[/* payoutProcesses */3]
                 ]
               ];
-    case 26 : 
+    case 27 : 
         var match$1 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */3]);
         var accountIdx = match$1[0];
         var balance$1 = List.assoc(accountIdx, state[/* balance */2]);
@@ -94,7 +94,7 @@ function apply($$event, state) {
                 ],
                 /* payoutProcesses */state[/* payoutProcesses */3]
               ];
-    case 28 : 
+    case 29 : 
         var match$2 = List.assoc($$event[0][/* processId */0], state[/* payoutProcesses */3]);
         var accountIdx$1 = match$2[0];
         var balance$2 = List.assoc(accountIdx$1, state[/* balance */2]);
@@ -114,14 +114,14 @@ function apply($$event, state) {
                 ],
                 /* payoutProcesses */state[/* payoutProcesses */3]
               ];
-    case 30 : 
+    case 31 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* accountKeyChains */1]),
                 /* balance */state[/* balance */2],
                 /* payoutProcesses */state[/* payoutProcesses */3]
               ];
-    case 33 : 
+    case 34 : 
         var match$3 = $$event[0];
         var accountIdx$2 = Address.Coordinates[/* accountIdx */3](match$3[/* coordinates */1]);
         var balance$3 = List.assoc(accountIdx$2, state[/* balance */2]);

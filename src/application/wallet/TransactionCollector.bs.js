@@ -14,14 +14,14 @@ function make() {
 
 function apply($$event, state) {
   switch ($$event.tag | 0) {
-    case 26 : 
+    case 27 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* transactionsOfInterest */Belt_SetString.add(state[/* transactionsOfInterest */1], $$event[0][/* txId */1]),
                 /* knownIncomeTxs */state[/* knownIncomeTxs */2],
                 /* confirmedTransactions */state[/* confirmedTransactions */3]
               ];
-    case 33 : 
+    case 34 : 
         var txId = $$event[0][/* txId */2];
         return /* record */[
                 /* network */state[/* network */0],
@@ -29,7 +29,7 @@ function apply($$event, state) {
                 /* knownIncomeTxs */Belt_SetString.add(state[/* knownIncomeTxs */2], txId),
                 /* confirmedTransactions */state[/* confirmedTransactions */3]
               ];
-    case 34 : 
+    case 35 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* transactionsOfInterest */state[/* transactionsOfInterest */1],

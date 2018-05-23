@@ -450,7 +450,7 @@ function exec$2(incomeEvents, txConfs, venture) {
   logMessage("Synchronizing wallet");
   var __x = List.fold_left((function (p, $$event) {
           return p.then((function (param) {
-                        return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(33, [$$event]), param[0]);
+                        return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(34, [$$event]), param[0]);
                       }));
         }), Promise.resolve(/* tuple */[
             venture,
@@ -458,7 +458,7 @@ function exec$2(incomeEvents, txConfs, venture) {
           ]), incomeEvents);
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
-                                  return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(34, [$$event]), param[0]);
+                                  return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(35, [$$event]), param[0]);
                                 }));
                   }), __x, txConfs).then((function (eta) {
                   return persist(/* None */0, eta);
@@ -489,7 +489,7 @@ function exec$3(prospectId, venture) {
                     var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(Venture__State.currentPartners(state), session[/* userId */0], prospectId, param[0][/* appPubKey */0], Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state)));
                     var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
                     return apply(/* None */0, /* None */0, /* PartnerProposed */Block.__(1, [partnerProposed]), venture).then((function (param) {
-                                      return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(13, [custodianProposal]), param[0]);
+                                      return apply(/* None */0, /* Some */[param[1]], /* CustodianProposed */Block.__(14, [custodianProposal]), param[0]);
                                     })).then((function (eta) {
                                     return persist(/* None */0, eta);
                                   })).then((function (param) {
@@ -570,7 +570,7 @@ function exec$6(partnerId, venture) {
                     ])
             ).then((function (param) {
                   var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */8][/* processName */1], state)));
-                  return apply(/* None */0, /* Some */[param[1]], /* PartnerRemovalProposed */Block.__(5, [proposal]), param[0]).then((function (eta) {
+                  return apply(/* None */0, /* Some */[param[1]], /* PartnerRemovalProposed */Block.__(6, [proposal]), param[0]).then((function (eta) {
                                   return persist(/* None */0, eta);
                                 })).then((function (param) {
                                 if (param.tag) {
@@ -640,7 +640,7 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$8];
 function exec$9(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(32, [exposeEvent]), venture).then((function (eta) {
+  return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(33, [exposeEvent]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
                 if (param.tag) {
@@ -663,7 +663,7 @@ function exec$10(accountIdx, destinations, fee, venture) {
   var param = Venture__Wallet.preparePayoutTx(Venture__State.currentPartners(venture[/* state */3]), venture[/* session */0], accountIdx, destinations, fee, venture[/* wallet */5]);
   if (param) {
     var proposal = param[0];
-    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(21, [proposal]), venture).then((function (eta) {
+    return apply(/* None */0, /* None */0, /* PayoutProposed */Block.__(22, [proposal]), venture).then((function (eta) {
                     return persist(/* None */0, eta);
                   })).then((function (param) {
                   if (param.tag) {

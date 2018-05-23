@@ -109,6 +109,15 @@ function apply(param, state) {
         ];
         return newrecord$3;
     case 5 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              [
+                "Venture__Validation.re",
+                79,
+                2
+              ]
+            ];
+    case 6 : 
         var match$3 = $$event[0];
         var newrecord$4 = Caml_array.caml_array_dup(newrecord);
         newrecord$4[/* partnerRemovalData */11] = /* :: */[
@@ -122,7 +131,7 @@ function apply(param, state) {
           newrecord[/* partnerRemovalData */11]
         ];
         return newrecord$4;
-    case 8 : 
+    case 9 : 
         var match$4 = $$event[0];
         var id = match$4[/* data */2][/* id */0];
         var pubKey = List.find((function (param) {
@@ -139,7 +148,7 @@ function apply(param, state) {
           newrecord[/* partnerRemovals */12]
         ];
         return newrecord$5;
-    case 9 : 
+    case 10 : 
         var match$5 = $$event[0];
         var newrecord$6 = Caml_array.caml_array_dup(newrecord);
         newrecord$6[/* accountCreationData */17] = /* :: */[
@@ -153,7 +162,7 @@ function apply(param, state) {
           newrecord[/* accountCreationData */17]
         ];
         return newrecord$6;
-    case 12 : 
+    case 13 : 
         var newrecord$7 = Caml_array.caml_array_dup(newrecord);
         newrecord$7[/* currentCustodians */16] = /* :: */[
           /* tuple */[
@@ -163,7 +172,7 @@ function apply(param, state) {
           newrecord[/* currentCustodians */16]
         ];
         return newrecord$7;
-    case 13 : 
+    case 14 : 
         var match$6 = $$event[0];
         var newrecord$8 = Caml_array.caml_array_dup(newrecord);
         newrecord$8[/* custodianData */13] = /* :: */[
@@ -177,7 +186,7 @@ function apply(param, state) {
           newrecord[/* custodianData */13]
         ];
         return newrecord$8;
-    case 16 : 
+    case 17 : 
         var match$7 = $$event[0][/* data */2];
         var accountIdx = match$7[/* accountIdx */3];
         var partnerId = match$7[/* partnerId */0];
@@ -228,7 +237,7 @@ function apply(param, state) {
           List.remove_assoc(partnerId, newrecord[/* custodianKeyChains */20])
         ];
         return newrecord$9;
-    case 17 : 
+    case 18 : 
         var match$8 = $$event[0];
         var newrecord$10 = Caml_array.caml_array_dup(newrecord);
         newrecord$10[/* custodianRemovalData */14] = /* :: */[
@@ -242,7 +251,7 @@ function apply(param, state) {
           newrecord[/* custodianRemovalData */14]
         ];
         return newrecord$10;
-    case 20 : 
+    case 21 : 
         var match$9 = $$event[0];
         var match$10 = match$9[/* data */2];
         var accountIdx$1 = match$10[/* accountIdx */1];
@@ -266,7 +275,7 @@ function apply(param, state) {
           List.remove_assoc(accountIdx$1, newrecord[/* currentCustodians */16])
         ];
         return newrecord$11;
-    case 21 : 
+    case 22 : 
         var match$11 = $$event[0];
         var newrecord$12 = Caml_array.caml_array_dup(newrecord);
         newrecord$12[/* payoutData */18] = /* :: */[
@@ -280,7 +289,7 @@ function apply(param, state) {
           newrecord[/* payoutData */18]
         ];
         return newrecord$12;
-    case 29 : 
+    case 30 : 
         var match$12 = $$event[0];
         var keyChain = match$12[/* keyChain */2];
         var custodianId$1 = match$12[/* custodianId */1];
@@ -324,24 +333,24 @@ function apply(param, state) {
           List.remove_assoc(custodianId$1, newrecord[/* custodianKeyChains */20])
         ];
         return newrecord$13;
-    case 30 : 
+    case 31 : 
         var newrecord$14 = Caml_array.caml_array_dup(newrecord);
         newrecord$14[/* accountKeyChains */21] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], newrecord[/* accountKeyChains */21]);
         return newrecord$14;
     case 2 : 
     case 3 : 
-    case 6 : 
     case 7 : 
-    case 10 : 
+    case 8 : 
     case 11 : 
-    case 14 : 
+    case 12 : 
     case 15 : 
-    case 18 : 
+    case 16 : 
     case 19 : 
-    case 22 : 
+    case 20 : 
     case 23 : 
     case 24 : 
-    case 31 : 
+    case 25 : 
+    case 32 : 
         return newrecord;
     default:
       return newrecord;
@@ -849,6 +858,15 @@ function validateEvent(param) {
               });
           });
     case 5 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              [
+                "Venture__Validation.re",
+                598,
+                2
+              ]
+            ];
+    case 6 : 
         var proposal$1 = param[0];
         return (function (state) {
             var partial_arg = state[/* partnerRemovalData */11];
@@ -858,12 +876,12 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$1, state, param);
               });
           });
-    case 6 : 
+    case 7 : 
         var partial_arg$1 = param[0];
         return (function (param, param$1) {
             return validateRejection(partial_arg$1, param, param$1);
           });
-    case 8 : 
+    case 9 : 
         var acceptance$1 = param[0];
         return (function (state) {
             var partial_arg = Event.Partner[/* Removal */8][/* dataEq */2];
@@ -872,7 +890,7 @@ function validateEvent(param) {
                 return validateAcceptance(acceptance$1, partial_arg$1, partial_arg, state, param);
               });
           });
-    case 9 : 
+    case 10 : 
         var proposal$2 = param[0];
         return (function (state) {
             var partial_arg = state[/* accountCreationData */17];
@@ -882,12 +900,12 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$2, state, param);
               });
           });
-    case 10 : 
+    case 11 : 
         var partial_arg$2 = param[0];
         return (function (param, param$1) {
             return validateRejection(partial_arg$2, param, param$1);
           });
-    case 12 : 
+    case 13 : 
         var acceptance$2 = param[0];
         return (function (state) {
             var partial_arg = Event.AccountCreation[/* dataEq */2];
@@ -896,7 +914,7 @@ function validateEvent(param) {
                 return validateAcceptance(acceptance$2, partial_arg$1, partial_arg, state, param);
               });
           });
-    case 13 : 
+    case 14 : 
         var proposal$3 = param[0];
         return (function (state) {
             var partial_arg = state[/* custodianData */13];
@@ -906,12 +924,12 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$3, state, param);
               });
           });
-    case 14 : 
+    case 15 : 
         var partial_arg$3 = param[0];
         return (function (param, param$1) {
             return validateRejection(partial_arg$3, param, param$1);
           });
-    case 16 : 
+    case 17 : 
         var acceptance$3 = param[0];
         return (function (state) {
             var partial_arg = Event.Custodian[/* dataEq */2];
@@ -920,7 +938,7 @@ function validateEvent(param) {
                 return validateAcceptance(acceptance$3, partial_arg$1, partial_arg, state, param);
               });
           });
-    case 17 : 
+    case 18 : 
         var proposal$4 = param[0];
         return (function (state) {
             var partial_arg = state[/* custodianRemovalData */14];
@@ -930,12 +948,12 @@ function validateEvent(param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$4, state, param);
               });
           });
-    case 18 : 
+    case 19 : 
         var partial_arg$4 = param[0];
         return (function (param, param$1) {
             return validateRejection(partial_arg$4, param, param$1);
           });
-    case 20 : 
+    case 21 : 
         var acceptance$4 = param[0];
         return (function (state) {
             var partial_arg = Event.Custodian[/* Removal */8][/* dataEq */2];
@@ -944,7 +962,7 @@ function validateEvent(param) {
                 return validateAcceptance(acceptance$4, partial_arg$1, partial_arg, state, param);
               });
           });
-    case 21 : 
+    case 22 : 
         var proposal$5 = param[0];
         return (function (state) {
             var partial_arg = state[/* payoutData */18];
@@ -953,12 +971,12 @@ function validateEvent(param) {
                 return validateProposal(/* None */0, partial_arg$1, partial_arg, proposal$5, state, param);
               });
           });
-    case 22 : 
+    case 23 : 
         var partial_arg$5 = param[0];
         return (function (param, param$1) {
             return validateRejection(partial_arg$5, param, param$1);
           });
-    case 24 : 
+    case 25 : 
         var acceptance$5 = param[0];
         return (function (state) {
             var partial_arg = Event.Payout[/* dataEq */2];
@@ -967,47 +985,47 @@ function validateEvent(param) {
                 return validateAcceptance(acceptance$5, partial_arg$1, partial_arg, state, param);
               });
           });
-    case 25 : 
-        return (function (_, _$1) {
-            return /* Ok */0;
-          });
     case 26 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });
     case 27 : 
         return (function (_, _$1) {
-            return /* Ignore */1;
+            return /* Ok */0;
           });
     case 28 : 
         return (function (_, _$1) {
-            return /* Ok */0;
+            return /* Ignore */1;
           });
     case 29 : 
+        return (function (_, _$1) {
+            return /* Ok */0;
+          });
+    case 30 : 
         var partial_arg$6 = param[0];
         return (function (param, param$1) {
             return validateCustodianKeyChainUpdated(partial_arg$6, param, param$1);
           });
-    case 30 : 
+    case 31 : 
         var partial_arg$7 = param[0];
         return (function (param, param$1) {
             return validateAccountKeyChainIdentified(partial_arg$7, param, param$1);
           });
-    case 31 : 
+    case 32 : 
         var partial_arg$8 = param[0];
         return (function (param, param$1) {
             return validateAccountKeyChainActivated(partial_arg$8, param, param$1);
           });
-    case 32 : 
+    case 33 : 
         var partial_arg$9 = param[0];
         return (function (param, param$1) {
             return validateIncomeAddressExposed(partial_arg$9, param, param$1);
           });
-    case 33 : 
+    case 34 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });
-    case 34 : 
+    case 35 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });

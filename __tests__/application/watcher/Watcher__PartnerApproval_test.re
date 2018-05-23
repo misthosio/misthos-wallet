@@ -149,4 +149,55 @@ let () =
         );
       },
     );
+    F.withCached(
+      ~scope="Watcher__PartnerApproval",
+      "Process gets denied when it has been rejected",
+      () => G.withUserSessions(3),
+      sessions => {
+        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+        let log = log |> L.withPartnerRejected(user2, proposal);
+        let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
+        testWatcherHasEventPending(
+          "PartnerDenied",
+          watcher,
+          log |> L.systemIssuer,
+          fun
+          | PartnerDenied(_) => true
+          | _ => false,
+        );
+      },
+    );
+    F.withCached(
+      ~scope="Watcher__PartnerApproval",
+      "Completes when the partner is denied",
+      () => G.withUserSessions(3),
+      sessions => {
+        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+        let log = log |> L.withPartnerRejected(user2, proposal);
+        let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
+        let log = log |> L.withPartnerDenied(proposal);
+        watcher#receive(log |> L.lastItem);
+        testWatcherHasCompleted(watcher);
+      },
+    );
   });

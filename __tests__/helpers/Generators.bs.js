@@ -137,6 +137,8 @@ function partnerRejected(rejector, param) {
 
 var partnerAccepted = Event.Partner[/* Accepted */6][/* fromProposal */0];
 
+var partnerDenied = Event.Partner[/* Denied */7][/* fromProposal */0];
+
 function partnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, supporterSession) {
   return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, supporterSession[/* userId */0], Policy.unanimousMinusOne));
 }
@@ -197,6 +199,7 @@ var Event$1 = /* module */[
   /* partnerEndorsed */partnerEndorsed,
   /* partnerRejected */partnerRejected,
   /* partnerAccepted */partnerAccepted,
+  /* partnerDenied */partnerDenied,
   /* partnerRemovalProposed */partnerRemovalProposed,
   /* partnerRemovalEndorsed */partnerRemovalEndorsed,
   /* partnerRemovalAccepted */partnerRemovalAccepted,
@@ -356,6 +359,13 @@ function withPartnerRejected(issuer, supporter, proposal) {
 
 function withPartnerAccepted(proposal) {
   var partial_arg = /* PartnerAccepted */Block.__(4, [Curry._1(partnerAccepted, proposal)]);
+  return (function (param) {
+      return appendSystemEvent(partial_arg, param);
+    });
+}
+
+function withPartnerDenied(proposal) {
+  var partial_arg = /* PartnerDenied */Block.__(5, [Curry._1(partnerDenied, proposal)]);
   return (function (param) {
       return appendSystemEvent(partial_arg, param);
     });
@@ -758,6 +768,7 @@ var Log = /* module */[
   /* withPartnerEndorsed */withPartnerEndorsed,
   /* withPartnerRejected */withPartnerRejected,
   /* withPartnerAccepted */withPartnerAccepted,
+  /* withPartnerDenied */withPartnerDenied,
   /* withPartner */withPartner,
   /* withFirstPartner */withFirstPartner,
   /* withPartnerRemovalProposed */withPartnerRemovalProposed,

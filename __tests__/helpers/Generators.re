@@ -129,6 +129,7 @@ module Event = {
     AppEvent.makePartnerRejected(~processId, ~rejectorId=rejector.userId)
     |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
+  let partnerDenied = AppEvent.Partner.Denied.fromProposal;
   let partnerRemovalProposed =
       (
         ~eligibleWhenProposing,
@@ -371,6 +372,8 @@ module Log = {
   };
   let withPartnerAccepted = proposal =>
     appendSystemEvent(PartnerAccepted(Event.partnerAccepted(proposal)));
+  let withPartnerDenied = proposal =>
+    appendSystemEvent(PartnerDenied(Event.partnerDenied(proposal)));
   let withPartner = (user, ~supporters, log) =>
     switch (supporters) {
     | [first, ...rest] =>

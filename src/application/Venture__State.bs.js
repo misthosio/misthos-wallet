@@ -179,7 +179,7 @@ function apply($$event, state) {
                   state[/* partnerAccepted */10]
                 ]
               ];
-    case 5 : 
+    case 6 : 
         var match$1 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -200,7 +200,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */9],
                 /* partnerAccepted */state[/* partnerAccepted */10]
               ];
-    case 8 : 
+    case 9 : 
         var $$event$2 = $$event[0];
         var id$1 = $$event$2[/* data */2][/* id */0];
         return /* record */[
@@ -222,7 +222,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */9],
                 /* partnerAccepted */state[/* partnerAccepted */10]
               ];
-    case 13 : 
+    case 14 : 
         var match$2 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -243,7 +243,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */9],
                 /* partnerAccepted */state[/* partnerAccepted */10]
               ];
-    case 16 : 
+    case 17 : 
         var $$event$3 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -264,7 +264,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */9],
                 /* partnerAccepted */state[/* partnerAccepted */10]
               ];
-    case 17 : 
+    case 18 : 
         var match$3 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
@@ -285,7 +285,7 @@ function apply($$event, state) {
                 /* custodianRemovals */state[/* custodianRemovals */9],
                 /* partnerAccepted */state[/* partnerAccepted */10]
               ];
-    case 20 : 
+    case 21 : 
         var $$event$4 = $$event[0];
         var match$4 = $$event$4[/* data */2];
         var lastCustodianProcess = match$4[/* lastCustodianProcess */2];

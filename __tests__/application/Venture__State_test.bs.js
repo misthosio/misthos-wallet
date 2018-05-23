@@ -35,10 +35,10 @@ describe("isPartner", (function () {
         var user3 = match[2];
         var user2 = match[1];
         var user1 = match[0];
-        var log = Generators.Log[/* withPartner */16](user2, /* :: */[
+        var log = Generators.Log[/* withPartner */17](user2, /* :: */[
               user1,
               /* [] */0
-            ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+            ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
         Jest.test("tracks current partners", (function () {
                 var state = constructState(log);
                 return Jest.Expect[/* toEqual */12](/* :: */[
@@ -64,13 +64,13 @@ describe("isPartner", (function () {
                                   ])));
               }));
         return Jest.test("tracks partner when they are removed", (function () {
-                      var log$1 = Generators.Log[/* withPartnerRemoved */21](user2, /* :: */[
+                      var log$1 = Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
                             user1,
                             /* :: */[
                               user3,
                               /* [] */0
                             ]
-                          ], Generators.Log[/* withPartner */16](user3, /* :: */[
+                          ], Generators.Log[/* withPartner */17](user3, /* :: */[
                                 user1,
                                 /* :: */[
                                   user2,
@@ -106,14 +106,14 @@ describe("ProcessMapping", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var eta = Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+        var eta = Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1));
         var func = Generators.Log[/* withPartnerProposed */12];
         var log = Curry._1((function (param, param$1, param$2) {
                   return Curry._5(func, param, param$1, param$2, user1, user2);
                 })(/* None */0, /* None */0, /* None */0), eta);
         var match$1 = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
         var partnerProcess = match$1[/* processId */0];
-        var log$1 = Generators.Log[/* withCustodianProposed */25](user1, user2, log);
+        var log$1 = Generators.Log[/* withCustodianProposed */26](user1, user2, log);
         var match$2 = Event.getCustodianProposedExn(Generators.Log[/* lastEvent */5](log$1));
         var custodianProcess = match$2[/* processId */0];
         var state = constructState(log$1);
@@ -126,22 +126,22 @@ describe("custodianAcceptedFor", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var log = Generators.Log[/* withCustodian */28](user2, /* :: */[
+        var log = Generators.Log[/* withCustodian */29](user2, /* :: */[
               user1,
               /* :: */[
                 user2,
                 /* [] */0
               ]
-            ], Generators.Log[/* withPartner */16](user2, /* :: */[
+            ], Generators.Log[/* withPartner */17](user2, /* :: */[
                   user1,
                   /* [] */0
-                ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
+                ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
         var custodianAccepted = Event.getCustodianAcceptedExn(Generators.Log[/* lastEvent */5](log));
         var state = constructState(log);
         Jest.test("Remembers the latest CustodianAccepted events", (function () {
                 return Jest.Expect[/* toEqual */12](/* Some */[custodianAccepted], Jest.Expect[/* expect */0](Venture__State.custodianAcceptedFor(user2[/* userId */0], state)));
               }));
-        var log$1 = Generators.Log[/* withCustodianRemoved */32](user2, /* :: */[
+        var log$1 = Generators.Log[/* withCustodianRemoved */33](user2, /* :: */[
               user1,
               /* [] */0
             ], log);
@@ -155,19 +155,19 @@ describe("RemovalProcessMapping", (function () {
         var match = Generators.twoUserSessions(/* () */0);
         var user2 = match[1];
         var user1 = match[0];
-        var log = Generators.Log[/* withCustodianRemovalProposed */29](user1, user2, Generators.Log[/* withCustodian */28](user2, /* :: */[
+        var log = Generators.Log[/* withCustodianRemovalProposed */30](user1, user2, Generators.Log[/* withCustodian */29](user2, /* :: */[
                   user1,
                   /* :: */[
                     user2,
                     /* [] */0
                   ]
-                ], Generators.Log[/* withPartner */16](user2, /* :: */[
+                ], Generators.Log[/* withPartner */17](user2, /* :: */[
                       user1,
                       /* [] */0
-                    ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)))));
+                    ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
         var match$1 = Event.getCustodianRemovalProposedExn(Generators.Log[/* lastEvent */5](log));
         var custodianRemovalProcess = match$1[/* processId */0];
-        var log$1 = Generators.Log[/* withPartnerRemovalProposed */18](user1, user2, log);
+        var log$1 = Generators.Log[/* withPartnerRemovalProposed */19](user1, user2, log);
         var match$2 = Event.getPartnerRemovalProposedExn(Generators.Log[/* lastEvent */5](log$1));
         var partnerRemovalProcess = match$2[/* processId */0];
         var state = constructState(log$1);

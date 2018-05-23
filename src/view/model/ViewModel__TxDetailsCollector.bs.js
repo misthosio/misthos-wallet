@@ -43,7 +43,7 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];
-    case 21 : 
+    case 22 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
@@ -58,7 +58,7 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];
-    case 22 : 
+    case 23 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
@@ -66,7 +66,7 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];
-    case 23 : 
+    case 24 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
@@ -74,7 +74,7 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];
-    case 24 : 
+    case 25 : 
         var accepted = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -90,7 +90,7 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];
-    case 26 : 
+    case 27 : 
         var match = $$event[0];
         var txId = match[/* txId */1];
         var processId = match[/* processId */0];
@@ -109,7 +109,7 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */Belt_MapString.set(state[/* txIdToProcessIdMap */3], txId, processId),
                 /* txIds */state[/* txIds */4]
               ];
-    case 28 : 
+    case 29 : 
         var match$1 = $$event[0];
         var errorMessage = match$1[/* errorMessage */1];
         return /* record */[
@@ -126,7 +126,7 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];
-    case 34 : 
+    case 35 : 
         var match$2 = $$event[0];
         var unixTime = match$2[/* unixTime */2];
         var txId$1 = match$2[/* txId */0];
