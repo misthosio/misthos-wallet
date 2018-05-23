@@ -72,7 +72,6 @@ function updateState(state) {
   var btcAmount = match[/* btcAmount */1];
   var recipientAddress = match[/* recipientAddress */0];
   var inputAmount = state[/* inputAmount */3];
-  var inputDestination = state[/* inputDestination */2];
   var destinations = state[/* destinations */1];
   var viewData = state[/* viewData */0];
   var match$1 = Curry._1(viewData[/* isAddressValid */4], recipientAddress) ? /* tuple */[
@@ -80,12 +79,12 @@ function updateState(state) {
       recipientAddress,
       true
     ] : /* tuple */[
-      inputDestination,
-      inputDestination,
+      recipientAddress,
+      "",
       false
     ];
   var addressValid = match$1[2];
-  var inputDestination$1 = match$1[1];
+  var inputDestination = match$1[1];
   var recipientAddress$1 = match$1[0];
   var newInputAmount = BTC.fromString(btcAmount);
   var match$2 = btcAmount === "" ? /* tuple */[
@@ -102,8 +101,8 @@ function updateState(state) {
     );
   var inputAmount$1 = match$2[1];
   var btcAmount$1 = match$2[0];
-  if (inputAmount$1.gt(BTC.zero) && inputDestination$1 !== "") {
-    var max = Curry._3(viewData[/* max */5], inputDestination$1, destinations, defaultFee);
+  if (inputAmount$1.gt(BTC.zero) && inputDestination !== "") {
+    var max = Curry._3(viewData[/* max */5], inputDestination, destinations, defaultFee);
     var match$3 = inputAmount$1.gt(max);
     var match$4 = match$3 ? /* tuple */[
         max,
@@ -116,12 +115,12 @@ function updateState(state) {
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
-            /* inputDestination */inputDestination$1,
+            /* inputDestination */inputDestination,
             /* inputAmount */inputAmount$2,
             /* addressValid */addressValid,
             /* summary */Curry._2(viewData[/* summary */6], /* :: */[
                   /* tuple */[
-                    inputDestination$1,
+                    inputDestination,
                     inputAmount$2
                   ],
                   destinations
@@ -135,7 +134,7 @@ function updateState(state) {
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
-            /* inputDestination */inputDestination$1,
+            /* inputDestination */inputDestination,
             /* inputAmount */inputAmount$1,
             /* addressValid */addressValid,
             /* summary */Curry._2(viewData[/* summary */6], destinations, defaultFee),
@@ -201,7 +200,7 @@ function make(viewData, commands, cmdStatus, _) {
                                             inputs[/* recipientAddress */0]
                                           ]], /* Some */[(function (e) {
                                               return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
-                                            })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
+                                            })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* array */[])), match[/* addressValid */4] === false ? ViewCommon.text("Address is BAD") : null, ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
                                             -976970511,
                                             inputs[/* btcAmount */1]
                                           ]], /* Some */[(function (e) {

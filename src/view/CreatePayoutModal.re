@@ -50,7 +50,6 @@ let updateState =
       {
         viewData,
         inputAmount,
-        inputDestination,
         destinations,
         inputs: {btcAmount, recipientAddress},
       } as state,
@@ -59,7 +58,7 @@ let updateState =
     if (recipientAddress |> viewData.isAddressValid) {
       (recipientAddress, recipientAddress, true);
     } else {
-      (inputDestination, inputDestination, false);
+      (recipientAddress, "", false);
     };
   let newInputAmount = BTC.fromString(btcAmount);
   let (btcAmount, inputAmount) =
@@ -209,7 +208,8 @@ let make =
         (({send}) => send(ChangeBTCAmount(max |> BTC.format))),
       );
     },
-  render: ({send, state: {viewData, inputs, destinations, summary}}) => {
+  render:
+    ({send, state: {viewData, addressValid, inputs, destinations, summary}}) => {
     let feedback =
       switch (cmdStatus) {
       | Pending(_) => <Spinner text="waiting for result" />
@@ -257,6 +257,13 @@ let make =
             autoFocus=false
             fullWidth=true
           />
+          (
+            if (addressValid == false) {
+              "Address is BAD" |> text;
+            } else {
+              ReasonReact.null;
+            }
+          )
           <MInput
             placeholder="BTC amount"
             value=(`String(inputs.btcAmount))
