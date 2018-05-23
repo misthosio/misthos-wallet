@@ -23,14 +23,14 @@ function update($$event, param) {
     case 12 : 
         custodians$1 = /* :: */[
           /* tuple */[
-            $$event[0][/* data */3][/* accountIdx */0],
+            $$event[0][/* data */2][/* accountIdx */0],
             /* [] */0
           ],
           custodians
         ];
         break;
     case 16 : 
-        var match = $$event[0][/* data */3];
+        var match = $$event[0][/* data */2];
         var accountIdx = match[/* accountIdx */3];
         custodians$1 = /* :: */[
           /* tuple */[
@@ -44,7 +44,7 @@ function update($$event, param) {
         ];
         break;
     case 20 : 
-        var match$1 = $$event[0][/* data */3];
+        var match$1 = $$event[0][/* data */2];
         var accountIdx$1 = match$1[/* accountIdx */1];
         var custodianId = match$1[/* custodianId */0];
         var partial_arg = PrimitiveTypes.UserId[/* neq */6];

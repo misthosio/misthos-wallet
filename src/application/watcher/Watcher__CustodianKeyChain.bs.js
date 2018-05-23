@@ -20,7 +20,7 @@ var class_tables = [
 ];
 
 function make(param, param$1, log) {
-  var match = param$1[/* data */3];
+  var match = param$1[/* data */2];
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",
@@ -54,7 +54,7 @@ function make(param, param$1, log) {
                     ];
                     break;
                 case 8 : 
-                    var match = $$event[0][/* data */3];
+                    var match = $$event[0][/* data */2];
                     if (PrimitiveTypes.UserId[/* eq */5](env$1[1], match[/* id */0]) && PrimitiveTypes.ProcessId[/* eq */5](match[/* lastPartnerProcess */1], env$1[5])) {
                       var init$1 = self$1[state][0];
                       tmp = /* record */[
@@ -77,7 +77,7 @@ function make(param, param$1, log) {
                     }
                     break;
                 case 12 : 
-                    if (Caml_obj.caml_equal($$event[0][/* data */3][/* accountIdx */0], env$1[6])) {
+                    if (Caml_obj.caml_equal($$event[0][/* data */2][/* accountIdx */0], env$1[6])) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$3[/* ventureId */0],
@@ -93,7 +93,7 @@ function make(param, param$1, log) {
                     }
                     break;
                 case 20 : 
-                    var match$1 = $$event[0][/* data */3];
+                    var match$1 = $$event[0][/* data */2];
                     if (PrimitiveTypes.UserId[/* eq */5](match$1[/* custodianId */0], env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](match$1[/* lastCustodianProcess */2], env$1[4]) && WalletTypes.AccountIndex[/* eq */7](match$1[/* accountIdx */1], env$1[6])) {
                       var init$4 = self$1[state][0];
                       tmp = /* record */[

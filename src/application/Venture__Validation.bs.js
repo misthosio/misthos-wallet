@@ -90,7 +90,7 @@ function apply(param, state) {
         return newrecord$2;
     case 4 : 
         var match$2 = $$event[0];
-        var data = match$2[/* data */3];
+        var data = match$2[/* data */2];
         var newrecord$3 = Caml_array.caml_array_dup(newrecord);
         newrecord$3[/* currentPartners */7] = Belt_Set.add(newrecord[/* currentPartners */7], data[/* id */1]);
         newrecord$3[/* currentPartnerPubKeys */8] = /* :: */[
@@ -124,7 +124,7 @@ function apply(param, state) {
         return newrecord$4;
     case 8 : 
         var match$4 = $$event[0];
-        var id = match$4[/* data */3][/* id */0];
+        var id = match$4[/* data */2][/* id */0];
         var pubKey = List.find((function (param) {
                   return PrimitiveTypes.UserId[/* eq */5](param[1], id);
                 }), newrecord[/* currentPartnerPubKeys */8])[0];
@@ -157,7 +157,7 @@ function apply(param, state) {
         var newrecord$7 = Caml_array.caml_array_dup(newrecord);
         newrecord$7[/* currentCustodians */16] = /* :: */[
           /* tuple */[
-            $$event[0][/* data */3][/* accountIdx */0],
+            $$event[0][/* data */2][/* accountIdx */0],
             /* [] */0
           ],
           newrecord[/* currentCustodians */16]
@@ -178,7 +178,7 @@ function apply(param, state) {
         ];
         return newrecord$8;
     case 16 : 
-        var match$7 = $$event[0][/* data */3];
+        var match$7 = $$event[0][/* data */2];
         var accountIdx = match$7[/* accountIdx */3];
         var partnerId = match$7[/* partnerId */0];
         var userChains;
@@ -244,7 +244,7 @@ function apply(param, state) {
         return newrecord$10;
     case 20 : 
         var match$9 = $$event[0];
-        var match$10 = match$9[/* data */3];
+        var match$10 = match$9[/* data */2];
         var accountIdx$1 = match$10[/* accountIdx */1];
         var custodianId = match$10[/* custodianId */0];
         var newrecord$11 = Caml_array.caml_array_dup(newrecord);
@@ -581,7 +581,7 @@ function validateEndorsement(param, state, issuerId) {
 function validateAcceptance(param, dataList, eq, state, _) {
   var dependsOnCompletions = param[/* dependsOnCompletions */1];
   var processId = param[/* processId */0];
-  if (Curry._2(eq, param[/* data */3], List.assoc(processId, dataList)[1]) === false) {
+  if (Curry._2(eq, param[/* data */2], List.assoc(processId, dataList)[1]) === false) {
     return /* BadData */["Data doesn't match proposal"];
   } else {
     return returnResult(andThen((function (eta) {
@@ -1055,7 +1055,7 @@ function validate(state, param) {
       if (match) {
         if (issuerPubKey !== state[/* systemPubKey */5]) {
           return /* InvalidIssuer */2;
-        } else if ($$event.tag === 4 && !(match$1 || !(Caml_obj.caml_equal($$event[0][/* data */3], state[/* creatorData */19]) && List.length(state[/* partnerData */9]) === 1))) {
+        } else if ($$event.tag === 4 && !(match$1 || !(Caml_obj.caml_equal($$event[0][/* data */2], state[/* creatorData */19]) && List.length(state[/* partnerData */9]) === 1))) {
           return /* Ok */0;
         } else {
           exit = 1;

@@ -93,7 +93,7 @@ function update($$event, state) {
         var acceptance = $$event[0];
         match = /* record */[
           /* processes */addAcceptance(acceptance, processes),
-          /* currentPartners */Belt_Set.add(currentPartners, acceptance[/* data */3][/* id */1]),
+          /* currentPartners */Belt_Set.add(currentPartners, acceptance[/* data */2][/* id */1]),
           /* exists */state[/* exists */2],
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],
@@ -105,7 +105,7 @@ function update($$event, state) {
         var acceptance$1 = $$event[0];
         match = /* record */[
           /* processes */addAcceptance(acceptance$1, processes),
-          /* currentPartners */Belt_Set.remove(currentPartners, acceptance$1[/* data */3][/* id */0]),
+          /* currentPartners */Belt_Set.remove(currentPartners, acceptance$1[/* data */2][/* id */0]),
           /* exists */state[/* exists */2],
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],

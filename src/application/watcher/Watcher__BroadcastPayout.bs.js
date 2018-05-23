@@ -86,7 +86,7 @@ function make(param, log) {
         }), /* tuple */[
         true,
         /* :: */[
-          param[/* data */3][/* payoutTx */1],
+          param[/* data */2][/* payoutTx */1],
           /* [] */0
         ],
         BitcoinjsLib.ECPair.makeRandom(),

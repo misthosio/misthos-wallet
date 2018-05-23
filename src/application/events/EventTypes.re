@@ -25,7 +25,6 @@ type endorsement = {
 type acceptance('a) = {
   processId,
   dependsOnCompletions: ProcessId.set,
-  eligibleWhenProposing: UserId.set,
   data: 'a,
 };
 
@@ -189,16 +188,9 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
      type t = acceptance(Data.t);
      let fromProposal =
          (
-           {
-             eligibleWhenProposing,
-             dependsOnProposals,
-             dependsOnCompletions,
-             processId,
-             data,
-           }:
+           {dependsOnProposals, dependsOnCompletions, processId, data}:
              proposal(Data.t),
          ) => {
-       eligibleWhenProposing,
        dependsOnCompletions:
          dependsOnProposals |> Set.union(dependsOnCompletions),
        processId,
@@ -216,10 +208,6 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
                event.dependsOnCompletions |> Set.toArray,
              ),
            ),
-           (
-             "eligibleWhenProposing",
-             array(UserId.encode, event.eligibleWhenProposing |> Set.toArray),
-           ),
            ("data", Data.encode(event.data)),
          ])
        );
@@ -230,10 +218,6 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
            raw
            |> field("dependsOnCompletions", array(ProcessId.decode))
            |> Set.mergeMany(ProcessId.emptySet),
-         eligibleWhenProposing:
-           raw
-           |> field("eligibleWhenProposing", array(UserId.decode))
-           |> Set.mergeMany(UserId.emptySet),
          data: raw |> field("data", Data.decode),
        };
    });

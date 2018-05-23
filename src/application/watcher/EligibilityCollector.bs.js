@@ -20,12 +20,12 @@ function apply($$event, state) {
     case 4 : 
         return /* record */[
                 /* eligible */state[/* eligible */0],
-                /* currentPartners */Belt_Set.add(state[/* currentPartners */1], $$event[0][/* data */3][/* id */1])
+                /* currentPartners */Belt_Set.add(state[/* currentPartners */1], $$event[0][/* data */2][/* id */1])
               ];
     case 8 : 
         return /* record */[
                 /* eligible */state[/* eligible */0],
-                /* currentPartners */Belt_Set.remove(state[/* currentPartners */1], $$event[0][/* data */3][/* id */0])
+                /* currentPartners */Belt_Set.remove(state[/* currentPartners */1], $$event[0][/* data */2][/* id */0])
               ];
     default:
       return state;

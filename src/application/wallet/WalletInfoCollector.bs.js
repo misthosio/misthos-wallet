@@ -69,7 +69,7 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain : :: */[
                   /* tuple */[
-                    $$event[0][/* data */3][/* accountIdx */0],
+                    $$event[0][/* data */2][/* accountIdx */0],
                     /* [] */0
                   ],
                   state[/* activatedKeyChain */5]

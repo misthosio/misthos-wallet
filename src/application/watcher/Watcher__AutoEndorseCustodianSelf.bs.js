@@ -16,7 +16,7 @@ var class_tables = [
 ];
 
 function make(param, param$1, log) {
-  var acceptedPartnerId = param$1[/* data */3][/* id */1];
+  var acceptedPartnerId = param$1[/* data */2][/* id */1];
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",

@@ -35,7 +35,7 @@ function apply($$event, state) {
                 /* accountKeyChains */state[/* accountKeyChains */1],
                 /* balance : :: */[
                   /* tuple */[
-                    $$event[0][/* data */3][/* accountIdx */0],
+                    $$event[0][/* data */2][/* accountIdx */0],
                     /* record */[
                       /* currentSpendable */BTC.zero,
                       /* reserved */BTC.zero

@@ -922,7 +922,7 @@ var BadData = Caml_exceptions.create("Event.BadData");
 
 function makePartnerProposed(eligibleWhenProposing, supporterId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
   var lastPartnerRemovalProcess = Utils.mapOption((function (param) {
-          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */3][/* id */0], prospectId)) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* id */0], prospectId)) {
             throw [
                   BadData,
                   "The provided PartnerRemovalAccepted wasn't for the same partner"
@@ -942,7 +942,7 @@ function makePartnerProposed(eligibleWhenProposing, supporterId, prospectId, pro
 
 function makePartnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, supporterId, policy) {
   return /* PartnerRemovalProposed */Block.__(5, [Curry._6(Proposed$1[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[lastPartnerAccepted[/* processId */0]])], eligibleWhenProposing, supporterId, policy, /* record */[
-                  /* id */lastPartnerAccepted[/* data */3][/* id */1],
+                  /* id */lastPartnerAccepted[/* data */2][/* id */1],
                   /* lastPartnerProcess */lastPartnerAccepted[/* processId */0]
                 ])]);
 }
@@ -958,7 +958,7 @@ function makeCustodianProposed(eligibleWhenProposing, lastCustodianRemovalAccept
   var partnerId = partnerProposed[/* data */6][/* id */1];
   var partnerApprovalProcess = partnerProposed[/* processId */0];
   var lastCustodianRemovalProcess = Utils.mapOption((function (param) {
-          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */3][/* custodianId */0], partnerId)) {
+          if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* custodianId */0], partnerId)) {
             throw [
                   BadData,
                   "The provided CustodianRemovalAccepted wasn't for the same custodian"
@@ -977,7 +977,7 @@ function makeCustodianProposed(eligibleWhenProposing, lastCustodianRemovalAccept
 function makeCustodianRemovalProposed(eligibleWhenProposing, custodianAccepted, supporterId, accountIdx, policy) {
   var lastCustodianProcess = custodianAccepted[/* processId */0];
   return /* CustodianRemovalProposed */Block.__(17, [Curry._6(Proposed$4[/* make */0], /* None */0, /* Some */[Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], /* array */[lastCustodianProcess])], eligibleWhenProposing, supporterId, policy, /* record */[
-                  /* custodianId */custodianAccepted[/* data */3][/* partnerId */0],
+                  /* custodianId */custodianAccepted[/* data */2][/* partnerId */0],
                   /* accountIdx */accountIdx,
                   /* lastCustodianProcess */lastCustodianProcess
                 ])]);

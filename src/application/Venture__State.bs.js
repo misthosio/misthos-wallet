@@ -159,7 +159,7 @@ function apply($$event, state) {
               ];
     case 4 : 
         var $$event$1 = $$event[0];
-        var id = $$event$1[/* data */3][/* id */1];
+        var id = $$event$1[/* data */2][/* id */1];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
@@ -202,7 +202,7 @@ function apply($$event, state) {
               ];
     case 8 : 
         var $$event$2 = $$event[0];
-        var id$1 = $$event$2[/* data */3][/* id */0];
+        var id$1 = $$event$2[/* data */2][/* id */0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
@@ -255,7 +255,7 @@ function apply($$event, state) {
                 /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
                 /* custodianAccepted : :: */[
                   /* tuple */[
-                    $$event$3[/* data */3][/* partnerId */0],
+                    $$event$3[/* data */2][/* partnerId */0],
                     $$event$3
                   ],
                   state[/* custodianAccepted */7]
@@ -287,7 +287,7 @@ function apply($$event, state) {
               ];
     case 20 : 
         var $$event$4 = $$event[0];
-        var match$4 = $$event$4[/* data */3];
+        var match$4 = $$event$4[/* data */2];
         var lastCustodianProcess = match$4[/* lastCustodianProcess */2];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],

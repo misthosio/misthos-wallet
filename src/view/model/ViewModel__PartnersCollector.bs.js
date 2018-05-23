@@ -54,7 +54,7 @@ function apply($$event, state) {
               ];
     case 4 : 
         var acceptance = $$event[0];
-        var data = acceptance[/* data */3];
+        var data = acceptance[/* data */2];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners : :: */[
@@ -102,7 +102,7 @@ function apply($$event, state) {
         break;
     case 8 : 
         var acceptance$1 = $$event[0];
-        var id = acceptance$1[/* data */3][/* id */0];
+        var id = acceptance$1[/* data */2][/* id */0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */Belt_List.keep(state[/* partners */1], (function (p) {

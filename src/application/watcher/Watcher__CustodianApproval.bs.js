@@ -67,7 +67,7 @@ function make(proposal, log) {
                     ];
                     break;
                 case 8 : 
-                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */3][/* lastPartnerProcess */1], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
+                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
                       self$1[completed][0] = true;
                       tmp = self$1[state][0];
                     } else {
