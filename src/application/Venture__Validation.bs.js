@@ -366,6 +366,8 @@ function resultToString(param) {
       case 6 : 
           return "PolicyNotFulfilled";
       case 7 : 
+          return "PrematureDenial";
+      case 8 : 
           return "DependencyNotMet";
       
     }
@@ -410,6 +412,15 @@ function policyFulfilled(processId, param) {
   }
 }
 
+function policyCanNotBeFulfilled(processId, param) {
+  var match = Curry._1(param[/* processValidator */4][/* canPolicyBeFulfilled */7], processId);
+  if (match) {
+    return /* PrematureDenial */7;
+  } else {
+    return /* Ok */0;
+  }
+}
+
 function ensureDependencies($staropt$star, $staropt$star$1, param) {
   var processValidator = param[/* processValidator */4];
   var proposals = $staropt$star ? $staropt$star[0] : PrimitiveTypes.ProcessId[/* emptySet */9];
@@ -418,7 +429,7 @@ function ensureDependencies($staropt$star, $staropt$star$1, param) {
   if (match) {
     return /* Ok */0;
   } else {
-    return /* DependencyNotMet */7;
+    return /* DependencyNotMet */8;
   }
 }
 
@@ -598,6 +609,16 @@ function validateAcceptance(param, dataList, eq, state, _) {
                         state
                       ])));
   }
+}
+
+function validateDenial(param, state, _) {
+  var processId = param[/* processId */0];
+  return returnResult(andThen((function (param) {
+                    return policyCanNotBeFulfilled(processId, param);
+                  }), /* tuple */[
+                  processExists(processId, state),
+                  state
+                ]));
 }
 
 function validatePartnerData(param, param$1) {
@@ -819,7 +840,6 @@ function validateIncomeAddressExposed(param, param$1, _) {
 }
 
 function validateEvent(param) {
-  var exit = 0;
   switch (param.tag | 0) {
     case 0 : 
         return (function (_, _$1) {
@@ -849,6 +869,11 @@ function validateEvent(param) {
                 return validateAcceptance(acceptance, partial_arg$1, partial_arg, state, param);
               });
           });
+    case 5 : 
+        var partial_arg$1 = param[0];
+        return (function (param, param$1) {
+            return validateDenial(partial_arg$1, param, param$1);
+          });
     case 6 : 
         var proposal$1 = param[0];
         return (function (state) {
@@ -860,9 +885,9 @@ function validateEvent(param) {
               });
           });
     case 7 : 
-        var partial_arg$1 = param[0];
+        var partial_arg$2 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$1, param, param$1);
+            return validateRejection(partial_arg$2, param, param$1);
           });
     case 9 : 
         var acceptance$1 = param[0];
@@ -872,6 +897,11 @@ function validateEvent(param) {
             return (function (param) {
                 return validateAcceptance(acceptance$1, partial_arg$1, partial_arg, state, param);
               });
+          });
+    case 10 : 
+        var partial_arg$3 = param[0];
+        return (function (param, param$1) {
+            return validateDenial(partial_arg$3, param, param$1);
           });
     case 11 : 
         var proposal$2 = param[0];
@@ -884,9 +914,9 @@ function validateEvent(param) {
               });
           });
     case 12 : 
-        var partial_arg$2 = param[0];
+        var partial_arg$4 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$2, param, param$1);
+            return validateRejection(partial_arg$4, param, param$1);
           });
     case 14 : 
         var acceptance$2 = param[0];
@@ -908,9 +938,9 @@ function validateEvent(param) {
               });
           });
     case 16 : 
-        var partial_arg$3 = param[0];
+        var partial_arg$5 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$3, param, param$1);
+            return validateRejection(partial_arg$5, param, param$1);
           });
     case 18 : 
         var acceptance$3 = param[0];
@@ -920,6 +950,11 @@ function validateEvent(param) {
             return (function (param) {
                 return validateAcceptance(acceptance$3, partial_arg$1, partial_arg, state, param);
               });
+          });
+    case 19 : 
+        var partial_arg$6 = param[0];
+        return (function (param, param$1) {
+            return validateDenial(partial_arg$6, param, param$1);
           });
     case 20 : 
         var proposal$4 = param[0];
@@ -932,9 +967,9 @@ function validateEvent(param) {
               });
           });
     case 21 : 
-        var partial_arg$4 = param[0];
+        var partial_arg$7 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$4, param, param$1);
+            return validateRejection(partial_arg$7, param, param$1);
           });
     case 23 : 
         var acceptance$4 = param[0];
@@ -944,6 +979,11 @@ function validateEvent(param) {
             return (function (param) {
                 return validateAcceptance(acceptance$4, partial_arg$1, partial_arg, state, param);
               });
+          });
+    case 24 : 
+        var partial_arg$8 = param[0];
+        return (function (param, param$1) {
+            return validateDenial(partial_arg$8, param, param$1);
           });
     case 25 : 
         var proposal$5 = param[0];
@@ -955,9 +995,9 @@ function validateEvent(param) {
               });
           });
     case 26 : 
-        var partial_arg$5 = param[0];
+        var partial_arg$9 = param[0];
         return (function (param, param$1) {
-            return validateRejection(partial_arg$5, param, param$1);
+            return validateRejection(partial_arg$9, param, param$1);
           });
     case 28 : 
         var acceptance$5 = param[0];
@@ -968,13 +1008,11 @@ function validateEvent(param) {
                 return validateAcceptance(acceptance$5, partial_arg$1, partial_arg, state, param);
               });
           });
-    case 5 : 
-    case 10 : 
-    case 19 : 
-    case 24 : 
     case 29 : 
-        exit = 1;
-        break;
+        var partial_arg$10 = param[0];
+        return (function (param, param$1) {
+            return validateDenial(partial_arg$10, param, param$1);
+          });
     case 30 : 
         return (function (_, _$1) {
             return /* Ok */0;
@@ -992,24 +1030,24 @@ function validateEvent(param) {
             return /* Ok */0;
           });
     case 34 : 
-        var partial_arg$6 = param[0];
+        var partial_arg$11 = param[0];
         return (function (param, param$1) {
-            return validateCustodianKeyChainUpdated(partial_arg$6, param, param$1);
+            return validateCustodianKeyChainUpdated(partial_arg$11, param, param$1);
           });
     case 35 : 
-        var partial_arg$7 = param[0];
+        var partial_arg$12 = param[0];
         return (function (param, param$1) {
-            return validateAccountKeyChainIdentified(partial_arg$7, param, param$1);
+            return validateAccountKeyChainIdentified(partial_arg$12, param, param$1);
           });
     case 36 : 
-        var partial_arg$8 = param[0];
+        var partial_arg$13 = param[0];
         return (function (param, param$1) {
-            return validateAccountKeyChainActivated(partial_arg$8, param, param$1);
+            return validateAccountKeyChainActivated(partial_arg$13, param, param$1);
           });
     case 37 : 
-        var partial_arg$9 = param[0];
+        var partial_arg$14 = param[0];
         return (function (param, param$1) {
-            return validateIncomeAddressExposed(partial_arg$9, param, param$1);
+            return validateIncomeAddressExposed(partial_arg$14, param, param$1);
           });
     case 38 : 
         return (function (_, _$1) {
@@ -1020,22 +1058,11 @@ function validateEvent(param) {
             return /* Ok */0;
           });
     default:
-      var partial_arg$10 = param[0];
+      var partial_arg$15 = param[0];
       return (function (param, param$1) {
-          return validateEndorsement(partial_arg$10, param, param$1);
+          return validateEndorsement(partial_arg$15, param, param$1);
         });
   }
-  if (exit === 1) {
-    throw [
-          Caml_builtin_exceptions.match_failure,
-          [
-            "Venture__Validation.re",
-            603,
-            2
-          ]
-        ];
-  }
-  
 }
 
 function validate(state, param) {
@@ -1102,6 +1129,7 @@ exports.processExists = processExists;
 exports.isEligible = isEligible;
 exports.hasYetToVote = hasYetToVote;
 exports.policyFulfilled = policyFulfilled;
+exports.policyCanNotBeFulfilled = policyCanNotBeFulfilled;
 exports.ensureDependencies = ensureDependencies;
 exports.accountExists = accountExists;
 exports.isCustodian = isCustodian;
@@ -1117,6 +1145,7 @@ exports.validateProposal = validateProposal;
 exports.validateRejection = validateRejection;
 exports.validateEndorsement = validateEndorsement;
 exports.validateAcceptance = validateAcceptance;
+exports.validateDenial = validateDenial;
 exports.validatePartnerData = validatePartnerData;
 exports.validatePartnerRemovalData = validatePartnerRemovalData;
 exports.validateCustodianData = validateCustodianData;

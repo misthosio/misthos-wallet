@@ -26,6 +26,9 @@ function make() {
             }),
           /* policyFulfilled */(function () {
               return false;
+            }),
+          /* canPolicyBeFulfilled */(function () {
+              return false;
             })
         ];
 }
@@ -99,7 +102,8 @@ function update($$event, state) {
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],
           /* didVote */state[/* didVote */5],
-          /* policyFulfilled */state[/* policyFulfilled */6]
+          /* policyFulfilled */state[/* policyFulfilled */6],
+          /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
     case 9 : 
@@ -111,7 +115,8 @@ function update($$event, state) {
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],
           /* didVote */state[/* didVote */5],
-          /* policyFulfilled */state[/* policyFulfilled */6]
+          /* policyFulfilled */state[/* policyFulfilled */6],
+          /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
     case 1 : 
@@ -163,7 +168,8 @@ function update($$event, state) {
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],
           /* didVote */state[/* didVote */5],
-          /* policyFulfilled */state[/* policyFulfilled */6]
+          /* policyFulfilled */state[/* policyFulfilled */6],
+          /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
     case 2 : 
@@ -174,7 +180,8 @@ function update($$event, state) {
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],
           /* didVote */state[/* didVote */5],
-          /* policyFulfilled */state[/* policyFulfilled */6]
+          /* policyFulfilled */state[/* policyFulfilled */6],
+          /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
     case 3 : 
@@ -185,7 +192,8 @@ function update($$event, state) {
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],
           /* didVote */state[/* didVote */5],
-          /* policyFulfilled */state[/* policyFulfilled */6]
+          /* policyFulfilled */state[/* policyFulfilled */6],
+          /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
     case 4 : 
@@ -196,7 +204,8 @@ function update($$event, state) {
           /* completed */state[/* completed */3],
           /* isEligible */state[/* isEligible */4],
           /* didVote */state[/* didVote */5],
-          /* policyFulfilled */state[/* policyFulfilled */6]
+          /* policyFulfilled */state[/* policyFulfilled */6],
+          /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
     case 5 : 
@@ -204,7 +213,7 @@ function update($$event, state) {
               Caml_builtin_exceptions.match_failure,
               [
                 "ProcessValidator.re",
-                84,
+                86,
                 4
               ]
             ];
@@ -243,6 +252,14 @@ function update($$event, state) {
               var arg = Belt_Set.intersect(currentPartners$1, match[/* eligibleWhenProposing */3]);
               return (function (param) {
                           return Policy.fulfilled(param)(arg, supporterIds);
+                        })(match[/* policy */4]);
+            }),
+          /* canPolicyBeFulfilled */(function (processId) {
+              var match = Belt_Map.getExn(processes$1, processId);
+              var rejectorIds = match[/* rejectorIds */2];
+              var arg = Belt_Set.intersect(currentPartners$1, match[/* eligibleWhenProposing */3]);
+              return (function (param) {
+                          return Policy.canBeFulfilled(param)(arg, rejectorIds);
                         })(match[/* policy */4]);
             })
         ];

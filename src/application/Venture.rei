@@ -22,6 +22,7 @@ module Validation: {
     | NotEligible
     | AlreadyVoted
     | PolicyNotFulfilled
+    | PrematureDenial
     | DependencyNotMet
     | BadData(string);
   let resultToString: result => string;

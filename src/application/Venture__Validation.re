@@ -259,6 +259,7 @@ type result =
   | NotEligible
   | AlreadyVoted
   | PolicyNotFulfilled
+  | PrematureDenial
   | DependencyNotMet
   | BadData(string);
 
@@ -271,6 +272,7 @@ let resultToString =
   | NotEligible => "NotEligible"
   | AlreadyVoted => "AlreadyVoted"
   | PolicyNotFulfilled => "PolicyNotFulfilled"
+  | PrematureDenial => "PrematureDenial"
   | DependencyNotMet => "DependencyNotMet"
   | BadData(description) => "BadData('" ++ description ++ "')";
 
@@ -285,6 +287,9 @@ let hasYetToVote = (processId, voterId, {processValidator}) =>
 
 let policyFulfilled = (processId, {processValidator}) =>
   processValidator.policyFulfilled(processId) ? Ok : PolicyNotFulfilled;
+
+let policyCanNotBeFulfilled = (processId, {processValidator}) =>
+  processValidator.canPolicyBeFulfilled(processId) ? PrematureDenial : Ok;
 
 let ensureDependencies =
     (
@@ -403,6 +408,12 @@ let validateAcceptance =
     |> andThen(ensureDependencies(~completions=dependsOnCompletions))
     |> returnResult;
   };
+
+let validateDenial = ({processId}: EventTypes.denial, state, _issuerId) =>
+  state
+  |> test(processExists(processId))
+  |> andThen(policyCanNotBeFulfilled(processId))
+  |> returnResult;
 
 let validatePartnerData =
     (
@@ -722,6 +733,11 @@ let validateEvent =
       state =>
         validateAcceptance(acceptance, state.payoutData, Payout.dataEq, state)
     )
+  | PartnerDenied(denial) => validateDenial(denial)
+  | PartnerRemovalDenied(denial) => validateDenial(denial)
+  | CustodianDenied(denial) => validateDenial(denial)
+  | CustodianRemovalDenied(denial) => validateDenial(denial)
+  | PayoutDenied(denial) => validateDenial(denial)
   | CustodianKeyChainUpdated(update) =>
     validateCustodianKeyChainUpdated(update)
   | AccountKeyChainIdentified(update) =>

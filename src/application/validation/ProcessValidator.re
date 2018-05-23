@@ -24,6 +24,7 @@ type t = {
   isEligible: (processId, userId) => bool,
   didVote: (processId, userId) => bool,
   policyFulfilled: processId => bool,
+  canPolicyBeFulfilled: processId => bool,
 };
 
 let make = () => {
@@ -34,6 +35,7 @@ let make = () => {
   isEligible: (_, _) => false,
   didVote: (_, _) => false,
   policyFulfilled: (_) => false,
+  canPolicyBeFulfilled: (_) => false,
 };
 
 let addProposal =
@@ -215,6 +217,15 @@ let update = (event, {currentPartners, processes} as state) => {
       |> Policy.fulfilled(
            ~eligible=Set.intersect(currentPartners, eligibleWhenProposing),
            ~endorsed=supporterIds,
+         );
+    },
+    canPolicyBeFulfilled: processId => {
+      let {policy, eligibleWhenProposing, rejectorIds} =
+        processes |. Map.getExn(processId);
+      policy
+      |> Policy.canBeFulfilled(
+           ~eligible=Set.intersect(currentPartners, eligibleWhenProposing),
+           ~rejected=rejectorIds,
          );
     },
   };
