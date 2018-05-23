@@ -27,6 +27,8 @@ type summary = {
 
 let summary: (Network.t, t) => summary;
 
+let collide: (t, t) => bool;
+
 let txInputForChangeAddress: (~txId: string, Network.t, t) => option(input);
 
 let build:

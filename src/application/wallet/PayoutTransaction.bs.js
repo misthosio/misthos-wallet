@@ -12,12 +12,14 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 var TransactionFee = require("./TransactionFee.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
@@ -79,6 +81,14 @@ function summary(network, param) {
         ];
 }
 
+function collide(param, param$1) {
+  return Belt_SetString.size(Belt_SetString.intersect(Belt_SetString.fromArray(Belt_Array.mapU(param[/* usedInputs */1], (function (param) {
+                            return param[/* txId */0] + ("-" + String(param[/* txOutputN */1]));
+                          }))), Belt_SetString.fromArray(Belt_Array.mapU(param$1[/* usedInputs */1], (function (param) {
+                            return param[/* txId */0] + ("-" + String(param[/* txOutputN */1]));
+                          }))))) > 0;
+}
+
 function txInputForChangeAddress(txId, network, param) {
   var txHex = param[/* txHex */0];
   return Utils.mapOption((function (address) {
@@ -104,47 +114,6 @@ function txInputForChangeAddress(txId, network, param) {
                         /* coordinates */address[/* coordinates */2]
                       ];
               }), param[/* changeAddress */3]);
-}
-
-function encode(payout) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "txHex",
-                payout[/* txHex */0]
-              ],
-              /* :: */[
-                /* tuple */[
-                  "usedInputs",
-                  Json_encode.array(Network.encodeInput, payout[/* usedInputs */1])
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "misthosFeeAddress",
-                    payout[/* misthosFeeAddress */2]
-                  ],
-                  /* :: */[
-                    /* tuple */[
-                      "changeAddress",
-                      Json_encode.nullable(Address.encode, payout[/* changeAddress */3])
-                    ],
-                    /* [] */0
-                  ]
-                ]
-              ]
-            ]);
-}
-
-function decode(raw) {
-  return /* record */[
-          /* txHex */Json_decode.field("txHex", Json_decode.string, raw),
-          /* usedInputs */Json_decode.field("usedInputs", (function (param) {
-                  return Json_decode.array(Network.decodeInput, param);
-                }), raw),
-          /* misthosFeeAddress */Json_decode.field("misthosFeeAddress", Json_decode.string, raw),
-          /* changeAddress */Json_decode.field("changeAddress", (function (param) {
-                  return Json_decode.optional(Address.decode, param);
-                }), raw)
-        ];
 }
 
 function getSignedExn(result) {
@@ -507,6 +476,47 @@ function finalize(signedTransactions, network) {
   }
 }
 
+function encode(payout) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "txHex",
+                payout[/* txHex */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "usedInputs",
+                  Json_encode.array(Network.encodeInput, payout[/* usedInputs */1])
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "misthosFeeAddress",
+                    payout[/* misthosFeeAddress */2]
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "changeAddress",
+                      Json_encode.nullable(Address.encode, payout[/* changeAddress */3])
+                    ],
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function decode(raw) {
+  return /* record */[
+          /* txHex */Json_decode.field("txHex", Json_decode.string, raw),
+          /* usedInputs */Json_decode.field("usedInputs", (function (param) {
+                  return Json_decode.array(Network.decodeInput, param);
+                }), raw),
+          /* misthosFeeAddress */Json_decode.field("misthosFeeAddress", Json_decode.string, raw),
+          /* changeAddress */Json_decode.field("changeAddress", (function (param) {
+                  return Json_decode.optional(Address.decode, param);
+                }), raw)
+        ];
+}
+
 var misthosFeePercent = 0.9;
 
 exports.NotEnoughFunds = NotEnoughFunds;
@@ -514,6 +524,7 @@ exports.NotEnoughSignatures = NotEnoughSignatures;
 exports.NoSignaturesForInput = NoSignaturesForInput;
 exports.misthosFeePercent = misthosFeePercent;
 exports.summary = summary;
+exports.collide = collide;
 exports.txInputForChangeAddress = txInputForChangeAddress;
 exports.build = build;
 exports.max = max;

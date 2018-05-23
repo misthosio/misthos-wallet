@@ -89,6 +89,23 @@ let summary =
   };
 };
 
+let collide = ({usedInputs: inputsA}, {usedInputs: inputsB}) =>
+  Belt.(
+    inputsA
+    |. Array.mapU((. {txId, txOutputN}: input) =>
+         txId ++ "-" ++ string_of_int(txOutputN)
+       )
+    |> Set.String.fromArray
+    |. Set.String.intersect(
+         inputsB
+         |. Array.mapU((. {txId, txOutputN}: input) =>
+              txId ++ "-" ++ string_of_int(txOutputN)
+            )
+         |> Set.String.fromArray,
+       )
+    |> Set.String.size > 0
+  );
+
 let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
   changeAddress
   |> Utils.mapOption((address: Address.t) => {
@@ -116,24 +133,6 @@ let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
          coordinates: address.coordinates,
        };
      });
-
-let encode = payout =>
-  Json.Encode.(
-    object_([
-      ("txHex", string(payout.txHex)),
-      ("usedInputs", array(Network.encodeInput, payout.usedInputs)),
-      ("misthosFeeAddress", string(payout.misthosFeeAddress)),
-      ("changeAddress", nullable(Address.encode, payout.changeAddress)),
-    ])
-  );
-
-let decode = raw =>
-  Json.Decode.{
-    txHex: raw |> field("txHex", string),
-    usedInputs: raw |> field("usedInputs", array(Network.decodeInput)),
-    misthosFeeAddress: raw |> field("misthosFeeAddress", string),
-    changeAddress: raw |> field("changeAddress", optional(Address.decode)),
-  };
 
 type signResult =
   | Signed(t)
@@ -616,4 +615,22 @@ let finalize = (signedTransactions, network) =>
     txB |> B.TxBuilder.build;
   | _ => %assert
          "finalize"
+  };
+
+let encode = payout =>
+  Json.Encode.(
+    object_([
+      ("txHex", string(payout.txHex)),
+      ("usedInputs", array(Network.encodeInput, payout.usedInputs)),
+      ("misthosFeeAddress", string(payout.misthosFeeAddress)),
+      ("changeAddress", nullable(Address.encode, payout.changeAddress)),
+    ])
+  );
+
+let decode = raw =>
+  Json.Decode.{
+    txHex: raw |> field("txHex", string),
+    usedInputs: raw |> field("usedInputs", array(Network.decodeInput)),
+    misthosFeeAddress: raw |> field("misthosFeeAddress", string),
+    changeAddress: raw |> field("changeAddress", optional(Address.decode)),
   };
