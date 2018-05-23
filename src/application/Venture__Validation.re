@@ -346,7 +346,7 @@ let validateProposal =
     (
       ~validateData: ('a, t) => result=defaultDataValidator,
       _processName,
-      dataList: list((processId, (userId, 'a))),
+      _dataList: list((processId, (userId, 'a))),
       {supporterId, data, dependsOnProposals, dependsOnCompletions}:
         EventTypes.proposal('a),
       state,
