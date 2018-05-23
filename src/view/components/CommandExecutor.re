@@ -93,3 +93,54 @@ let make =
       children(~commands=wrapCommands(send), ~cmdStatus),
   };
 };
+
+module Status = {
+  type action =
+    | Proposal
+    | Endorsement
+    | Rejection;
+  let component = ReasonReact.statelessComponent("CommandStatus");
+  let make = (~cmdStatus, ~action, ~onRetry=?, _children) => {
+    ...component,
+    render: (_) =>
+      switch (cmdStatus) {
+      | Idle => ReasonReact.null
+      | Pending(_) =>
+        <Spinner
+          text=(
+            "Your "
+            ++ (
+              switch (action) {
+              | Proposal => "proposal"
+              | Endorsement => "endorsement"
+              | Rejection => "rejection"
+              }
+            )
+            ++ " is being submitted"
+          )
+        />
+      | Error(error) =>
+        switch (error, onRetry) {
+        | (CouldNotPersistVenture, Some(onRetry)) =>
+          ReasonReact.array([|
+            "RED: your submission could not be persisted" |> text,
+            <MButton fullWidth=true onClick=(_e => onRetry())>
+              (text("Try Again"))
+            </MButton>,
+          |])
+        | (CouldNotPersistVenture, None) =>
+          "RED: your submission could not be persisted" |> text
+        | (CouldNotFindUserInfo, _) =>
+          "RED: Id doesn't exist or user has never logged in" |> text
+        | (PartnerAlreadyExists, _) =>
+          "RED: User is already a partner of this venture" |> text
+        }
+      | Success(ProcessStarted(_)) =>
+        "GREEN: Your proposal has been submited" |> text
+      | Success(ProcessEndorsed(_)) =>
+        "GREEN: Your endorsement has been submited" |> text
+      | Success(ProcessRejected(_)) =>
+        "GREEN: Your rejection has been submited" |> text
+      },
+  };
+};
