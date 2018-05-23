@@ -852,7 +852,7 @@ function validateEvent(param) {
         var proposal$1 = param[0];
         return (function (state) {
             var partial_arg = state[/* partnerRemovalData */11];
-            var partial_arg$1 = Event.Partner[/* Removal */7][/* processName */1];
+            var partial_arg$1 = Event.Partner[/* Removal */8][/* processName */1];
             var partial_arg$2 = /* Some */[validatePartnerRemovalData];
             return (function (param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$1, state, param);
@@ -866,7 +866,7 @@ function validateEvent(param) {
     case 8 : 
         var acceptance$1 = param[0];
         return (function (state) {
-            var partial_arg = Event.Partner[/* Removal */7][/* dataEq */2];
+            var partial_arg = Event.Partner[/* Removal */8][/* dataEq */2];
             var partial_arg$1 = state[/* partnerRemovalData */11];
             return (function (param) {
                 return validateAcceptance(acceptance$1, partial_arg$1, partial_arg, state, param);
@@ -924,7 +924,7 @@ function validateEvent(param) {
         var proposal$4 = param[0];
         return (function (state) {
             var partial_arg = state[/* custodianRemovalData */14];
-            var partial_arg$1 = Event.Custodian[/* Removal */7][/* processName */1];
+            var partial_arg$1 = Event.Custodian[/* Removal */8][/* processName */1];
             var partial_arg$2 = /* Some */[validateCustodianRemovalData];
             return (function (param) {
                 return validateProposal(partial_arg$2, partial_arg$1, partial_arg, proposal$4, state, param);
@@ -938,7 +938,7 @@ function validateEvent(param) {
     case 20 : 
         var acceptance$4 = param[0];
         return (function (state) {
-            var partial_arg = Event.Custodian[/* Removal */7][/* dataEq */2];
+            var partial_arg = Event.Custodian[/* Removal */8][/* dataEq */2];
             var partial_arg$1 = state[/* custodianRemovalData */14];
             return (function (param) {
                 return validateAcceptance(acceptance$4, partial_arg$1, partial_arg, state, param);

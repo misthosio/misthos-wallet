@@ -125,7 +125,7 @@ function make(proposal, log) {
               if (tmp$1) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */4],
-                    /* CustodianRemovalAccepted */Block.__(20, [Curry._1(Event.Custodian[/* Removal */7][/* Accepted */6][/* fromProposal */0], env$1[0])])
+                    /* CustodianRemovalAccepted */Block.__(20, [Curry._1(Event.Custodian[/* Removal */8][/* Accepted */6][/* fromProposal */0], env$1[0])])
                   ]];
                 return /* () */0;
               } else {

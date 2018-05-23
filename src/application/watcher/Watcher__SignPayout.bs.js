@@ -82,7 +82,7 @@ function make(param, param$1, log) {
     var match = PayoutTransaction.signPayout(state[/* ventureId */1], userId, param[/* masterKeyChain */4], state[/* accountKeyChains */2], Js_option.getExn(state[/* payoutTx */3]), state[/* network */0]);
     signEvent = match ? /* Some */[/* tuple */[
           param[/* issuerKeyPair */2],
-          /* PayoutSigned */Block.__(25, [Curry._3(Event.Payout[/* Signature */7][/* make */0], payoutProcess, userId, match[0])])
+          /* PayoutSigned */Block.__(25, [Curry._3(Event.Payout[/* Signature */8][/* make */0], payoutProcess, userId, match[0])])
         ]] : /* None */0;
   } else {
     signEvent = /* None */0;

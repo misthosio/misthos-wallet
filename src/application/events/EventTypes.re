@@ -28,6 +28,8 @@ type acceptance('a) = {
   data: 'a,
 };
 
+type denial = {processId};
+
 module type EventData = {
   type t;
   let encode: t => Js.Json.t;
@@ -222,6 +224,31 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
        };
    });
 
+module type DeniedEvent = {
+  type t = denial;
+  let fromProposal: proposal('a) => t;
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
+};
+
+let makeDenial = (name: string) : (module DeniedEvent) =>
+  (module
+   {
+     type t = denial;
+     let fromProposal = ({processId}: proposal('a)) => {
+       processId: processId,
+     };
+     let encode = (event: t) =>
+       Json.Encode.(
+         object_([
+           ("type", string(name)),
+           ("processId", ProcessId.encode(event.processId)),
+         ])
+       );
+     let decode = raw =>
+       Json.Decode.{processId: raw |> field("processId", ProcessId.decode)};
+   });
+
 module type Process =
   (Data: EventData) =>
   {
@@ -260,6 +287,12 @@ module type Process =
       let encode: t => Js.Json.t;
       let decode: Js.Json.t => t;
     };
+    module Denied: {
+      type t = denial;
+      let fromProposal: proposal('a) => t;
+      let encode: t => Js.Json.t;
+      let decode: Js.Json.t => t;
+    };
   };
 
 let makeProcess = (name: string) : (module Process) =>
@@ -270,6 +303,7 @@ let makeProcess = (name: string) : (module Process) =>
      module Rejected = (val makeRejection(name ++ "Rejected"));
      module Endorsed = (val makeEndorsement(name ++ "Endorsed"));
      module Accepted = (val makeAcceptance(name ++ "Accepted"))(Data);
+     module Denied = (val makeDenial(name ++ "Denied"));
      let dataEq = (dataA, dataB) =>
        Data.encode(dataA) == Data.encode(dataB);
    });

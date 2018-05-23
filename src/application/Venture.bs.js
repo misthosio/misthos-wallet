@@ -564,12 +564,12 @@ function exec$6(partnerId, venture) {
   } else {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     return (
-              match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */7][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
+              match ? apply(/* None */0, /* None */0, Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */8][/* processName */1], state)), venture) : Promise.resolve(/* tuple */[
                       venture,
                       /* array */[]
                     ])
             ).then((function (param) {
-                  var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */7][/* processName */1], state)));
+                  var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */8][/* processName */1], state)));
                   return apply(/* None */0, /* Some */[param[1]], /* PartnerRemovalProposed */Block.__(5, [proposal]), param[0]).then((function (eta) {
                                   return persist(/* None */0, eta);
                                 })).then((function (param) {

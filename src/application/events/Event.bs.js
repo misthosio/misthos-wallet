@@ -194,6 +194,8 @@ var Removal_001 = /* processName */include$1[0];
 
 var Removal_002 = /* dataEq */include$1[1];
 
+var Removal_007 = /* Denied */include$1[6];
+
 var Removal = /* module */[
   /* Data */Data$1,
   Removal_001,
@@ -201,12 +203,15 @@ var Removal = /* module */[
   /* Proposed */Proposed$1,
   /* Rejected */Rejected$1,
   /* Endorsed */Endorsed$1,
-  /* Accepted */Accepted$1
+  /* Accepted */Accepted$1,
+  Removal_007
 ];
 
 var Partner_001 = /* processName */include[0];
 
 var Partner_002 = /* dataEq */include[1];
+
+var Partner_007 = /* Denied */include[6];
 
 var Partner = /* module */[
   /* Data */Data,
@@ -216,6 +221,7 @@ var Partner = /* module */[
   /* Rejected */Rejected,
   /* Endorsed */Endorsed,
   /* Accepted */Accepted,
+  Partner_007,
   /* Removal */Removal
 ];
 
@@ -261,6 +267,8 @@ var AccountCreation_001 = /* processName */include$2[0];
 
 var AccountCreation_002 = /* dataEq */include$2[1];
 
+var AccountCreation_007 = /* Denied */include$2[6];
+
 var AccountCreation = /* module */[
   /* Data */Data$2,
   AccountCreation_001,
@@ -268,7 +276,8 @@ var AccountCreation = /* module */[
   /* Proposed */Proposed$2,
   /* Rejected */Rejected$2,
   /* Endorsed */Endorsed$2,
-  /* Accepted */Accepted$2
+  /* Accepted */Accepted$2,
+  AccountCreation_007
 ];
 
 function encode$4($$event) {
@@ -375,6 +384,8 @@ var Removal_001$1 = /* processName */include$4[0];
 
 var Removal_002$1 = /* dataEq */include$4[1];
 
+var Removal_007$1 = /* Denied */include$4[6];
+
 var Removal$1 = /* module */[
   /* Data */Data$4,
   Removal_001$1,
@@ -382,12 +393,15 @@ var Removal$1 = /* module */[
   /* Proposed */Proposed$4,
   /* Rejected */Rejected$4,
   /* Endorsed */Endorsed$4,
-  /* Accepted */Accepted$4
+  /* Accepted */Accepted$4,
+  Removal_007$1
 ];
 
 var Custodian_001 = /* processName */include$3[0];
 
 var Custodian_002 = /* dataEq */include$3[1];
+
+var Custodian_007 = /* Denied */include$3[6];
 
 var Custodian = /* module */[
   /* Data */Data$3,
@@ -397,6 +411,7 @@ var Custodian = /* module */[
   /* Rejected */Rejected$3,
   /* Endorsed */Endorsed$3,
   /* Accepted */Accepted$3,
+  Custodian_007,
   /* Removal */Removal$1
 ];
 
@@ -606,6 +621,8 @@ var Payout_001 = /* processName */include$5[0];
 
 var Payout_002 = /* dataEq */include$5[1];
 
+var Payout_007 = /* Denied */include$5[6];
+
 var Payout = /* module */[
   /* Data */Data$5,
   Payout_001,
@@ -614,6 +631,7 @@ var Payout = /* module */[
   /* Rejected */Rejected$5,
   /* Endorsed */Endorsed$5,
   /* Accepted */Accepted$5,
+  Payout_007,
   /* Signature */Signature,
   /* Broadcast */Broadcast,
   /* BroadcastDuplicate */BroadcastDuplicate,
