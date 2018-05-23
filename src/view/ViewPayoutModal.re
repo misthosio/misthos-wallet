@@ -1,3 +1,5 @@
+open PrimitiveTypes;
+
 include ViewCommon;
 
 module ViewData = ViewModel.ViewPayoutView;
@@ -14,6 +16,7 @@ let make =
   ...component,
   render: _self => {
     let {
+      proposedBy,
       processId,
       voters,
       canVote,
@@ -46,6 +49,7 @@ let make =
       titles=["Payout Details"]
       body1=
         <div>
+          ("Proposed by " ++ UserId.toString(proposedBy) |> text)
           (
             date
             |> Utils.mapOption(date => Js.Date.toString(date) |> text)

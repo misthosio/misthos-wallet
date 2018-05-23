@@ -13,6 +13,7 @@ var Js_option = require("bs-platform/lib/js/js_option.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
 
 var component = ReasonReact.statelessComponent("Drawer");
@@ -64,7 +65,7 @@ function make(viewData, commands, cmdStatus, _) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Payout Details",
                                 /* [] */0
-                              ]], React.createElement("div", undefined, Js_option.getWithDefault(null, Utils.mapOption((function (date) {
+                              ]], React.createElement("div", undefined, ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](viewData[/* proposedBy */2])), Js_option.getWithDefault(null, Utils.mapOption((function (date) {
                                             return ViewCommon.text(date.toString());
                                           }), match[/* date */3])), payoutStatus, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Payout")])), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(summary[/* networkFee */4]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(summary[/* misthosFee */3]))), React.createElement("li", undefined, ViewCommon.text("Total payout- " + BTC.format(summary[/* spentWithFees */2])))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", viewData[/* canVote */3], (function () {
                                             return Curry._1(commands[/* endorsePayout */7], processId);
