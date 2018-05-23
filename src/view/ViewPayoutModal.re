@@ -38,7 +38,8 @@ let make =
         switch (status) {
         | PendingApproval => ("Pending Approval", Pending)
         | Accepted => ("Accepted", Success)
-        | Unconfirmed => ("Unconfirmed", Success)
+        | Denied => ("Denied", Failure)
+        | Unconfirmed => ("Unconfirmed", Pending)
         | Confirmed => ("Confirmed", Success)
         | Failed(_) => ("Failed", Failure)
         };

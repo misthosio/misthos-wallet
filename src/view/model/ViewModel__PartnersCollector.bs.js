@@ -111,6 +111,10 @@ function apply($$event, state) {
                 /* prospects */ProcessCollector.addAcceptance(acceptance$1, state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
+    case 5 : 
+    case 10 : 
+        exit = 3;
+        break;
     default:
       return state;
   }
@@ -127,6 +131,13 @@ function apply($$event, state) {
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
                 /* prospects */ProcessCollector.addEndorsement(state[/* localUser */0], $$event[0], state[/* prospects */2]),
+                /* partnerPolicy */state[/* partnerPolicy */3]
+              ];
+    case 3 : 
+        return /* record */[
+                /* localUser */state[/* localUser */0],
+                /* partners */state[/* partners */1],
+                /* prospects */ProcessCollector.addDenial($$event[0], state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     

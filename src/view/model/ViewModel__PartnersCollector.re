@@ -83,6 +83,10 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> ProcessCollector.addAcceptance(acceptance),
     }
+  | PartnerDenied(denial) => {
+      ...state,
+      prospects: state.prospects |> ProcessCollector.addDenial(denial),
+    }
   | PartnerRemovalProposed(proposal) => {
       ...state,
       partners:
@@ -115,6 +119,10 @@ let apply = (event: Event.t, state) =>
         state.partners |. List.keep((p: partner) => UserId.neq(p.userId, id)),
       prospects:
         state.prospects |> ProcessCollector.addAcceptance(acceptance),
+    }
+  | PartnerRemovalDenied(denial) => {
+      ...state,
+      prospects: state.prospects |> ProcessCollector.addDenial(denial),
     }
   | _ => state
   };
