@@ -71,25 +71,25 @@ let make =
       ReasonReact.array(
         Array.of_list(
           viewData.partners
-          |> List.map((partner: ViewData.partner) => {
-               let button =
-                 partner.canProposeRemoval ?
-                   Some(
-                     MaterialUi.(
-                       <IconButton
-                         onClick=(_e => send(RemovePartner(partner.userId)))>
-                         <img src=remove alt="Remove" />
-                       </IconButton>
-                     ),
-                   ) :
-                   None;
-               <Partner
-                 key=(partner.userId |> UserId.toString)
-                 partnerId=partner.userId
-                 name=?partner.name
-                 ?button
-               />;
-             }),
+          |. Belt.List.keepMapU((. partner: ViewData.partner) =>
+               partner.canProposeRemoval ?
+                 Some(
+                   <Partner
+                     key=(partner.userId |> UserId.toString)
+                     partnerId=partner.userId
+                     name=?partner.name
+                     button=MaterialUi.(
+                              <IconButton
+                                onClick=(
+                                  _e => send(RemovePartner(partner.userId))
+                                )>
+                                <img src=remove alt="Remove" />
+                              </IconButton>
+                            )
+                   />,
+                 ) :
+                 None
+             ),
         ),
       );
     <Body2
