@@ -11,7 +11,6 @@ type t = {
   accountKeyChainValidator: AccountKeyChainValidator.t,
   processValidator: ProcessValidator.t,
   systemPubKey: string,
-  metaPolicy: Policy.t,
   knownItems: list(string),
   currentPartners: UserId.set,
   currentPartnerPubKeys: list((string, userId)),
@@ -26,7 +25,6 @@ type t = {
   currentCustodians: list((accountIdx, list(userId))),
   accountCreationData: list((processId, (userId, AccountCreation.Data.t))),
   payoutData: list((processId, (userId, Payout.Data.t))),
-  policies: list((string, Policy.t)),
   creatorData: Partner.Data.t,
   custodianKeyChains:
     list((userId, list((accountIdx, list(CustodianKeyChain.public))))),
@@ -43,7 +41,6 @@ let make = () => {
   knownItems: [],
   currentPartners: UserId.emptySet,
   currentPartnerPubKeys: [],
-  metaPolicy: Policy.unanimous,
   partnerData: [],
   partnerAccepted: [],
   partnerRemovalData: [],
@@ -54,7 +51,6 @@ let make = () => {
   currentCustodians: [],
   accountCreationData: [],
   payoutData: [],
-  policies: [],
   creatorData: {
     id: UserId.fromString(""),
     pubKey: "",
@@ -81,21 +77,9 @@ let apply = ({hash, event}: EventLog.item, state) => {
       state.accountKeyChainValidator |> AccountKeyChainValidator.update(event),
   };
   switch (event) {
-  | VentureCreated({metaPolicy, systemIssuer, creatorId, creatorPubKey}) => {
+  | VentureCreated({systemIssuer, creatorId, creatorPubKey}) => {
       ...state,
       systemPubKey: systemIssuer |> Utils.publicKeyFromKeyPair,
-      metaPolicy,
-      policies: [
-        (Partner.Removal.processName, Policy.UnanimousMinusOne),
-        (Custodian.Removal.processName, Policy.UnanimousMinusOne),
-        ...[
-             Partner.processName,
-             AccountCreation.processName,
-             Custodian.processName,
-             Payout.processName,
-           ]
-           |> List.map(n => (n, metaPolicy)),
-      ],
       creatorData:
         Partner.Data.{
           id: creatorId,
