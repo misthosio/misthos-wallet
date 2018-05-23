@@ -2,7 +2,7 @@ open PrimitiveTypes;
 
 type selectedVenture =
   | None
-  | CreatingVenture(CommandStatus.t)
+  | CreatingVenture(CommandExecutor.cmdStatus)
   | JoiningVenture(ventureId)
   | LoadingVenture(ventureId)
   | VentureLoaded(ventureId, ViewModel.t, VentureWorkerClient.Cmd.t);

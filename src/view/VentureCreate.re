@@ -27,7 +27,8 @@ module Styles = {
     ]);
 };
 
-let make = (~onCreateVenture, ~cmdStatus: CommandStatus.t, _children) => {
+let make =
+    (~onCreateVenture, ~cmdStatus: CommandExecutor.cmdStatus, _children) => {
   ...component,
   initialState: () => {newVenture: ""},
   reducer: (action, state) =>
