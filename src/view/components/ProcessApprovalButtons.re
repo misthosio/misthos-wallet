@@ -55,26 +55,8 @@ let make =
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
     ReasonReact.array(
       Array.concatMany([|
-        switch (cmdStatus, state, canVote) {
-        | (Pending(_), EndorsementSubmited, _) => [|
-            <Spinner text="Your endorsement is being submitted" />,
-          |]
-        | (Pending(_), RejectionSubmited, _) => [|
-            <Spinner text="Your rejection is being submitted" />,
-          |]
-        | (Error(_), _, _) => [|
-            text("something went wrong"),
-            <MButton fullWidth=true onClick=(_e => send(Cancel))>
-              (text("Try Again"))
-            </MButton>,
-          |]
-        | (Success(ProcessEndorsed(_)), _, _) => [|
-            text("You successfully endorsed"),
-          |]
-        | (Success(ProcessRejected(_)), _, _) => [|
-            text("You successfully rejected"),
-          |]
-        | (_, NoDecision, true) => [|
+        switch (state, canVote) {
+        | (NoDecision, true) => [|
             <MButton fullWidth=true onClick=(_e => send(Endorse))>
               (text(endorseText))
             </MButton>,
@@ -82,7 +64,8 @@ let make =
               (text(rejectText))
             </MButton>,
           |]
-        | (_, ConfirmReject, _) => [|
+        | (NoDecision, false) => [|ReasonReact.null|]
+        | (ConfirmReject, _) => [|
             text("Confirm your rejection"),
             <MButton fullWidth=true onClick=(_e => send(ConfirmReject))>
               (text("yes"))
@@ -91,7 +74,7 @@ let make =
               (text("No"))
             </MButton>,
           |]
-        | (_, ConfirmEndorse, _) => [|
+        | (ConfirmEndorse, _) => [|
             text("Confirm your endorsement "),
             <MButton fullWidth=true onClick=(_e => send(ConfirmEndorse))>
               (text("yes"))
@@ -100,7 +83,20 @@ let make =
               (text("No"))
             </MButton>,
           |]
-        | _ => [|ReasonReact.null|]
+        | (EndorsementSubmited, _) => [|
+            <CommandExecutor.Status
+              cmdStatus
+              action=Endorsement
+              onRetry=(() => send(Cancel))
+            />,
+          |]
+        | (RejectionSubmited, _) => [|
+            <CommandExecutor.Status
+              cmdStatus
+              action=Rejection
+              onRetry=(() => send(Cancel))
+            />,
+          |]
         },
       |]),
     ),

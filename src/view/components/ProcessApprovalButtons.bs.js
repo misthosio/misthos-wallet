@@ -4,10 +4,10 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var MButton = require("./MButton.bs.js");
-var Spinner = require("./Spinner.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var CommandExecutor = require("./CommandExecutor.bs.js");
 
 var component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
@@ -31,96 +31,51 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
               var send = param[/* send */3];
               var match = param[/* state */1];
               var cmdStatus = match[/* cmdStatus */1];
-              var state = match[/* buttonState */0];
               var tmp;
-              var exit = 0;
-              if (typeof cmdStatus === "number") {
-                exit = 1;
-              } else {
-                switch (cmdStatus.tag | 0) {
-                  case 0 : 
-                      if (state >= 2) {
-                        switch (state - 2 | 0) {
-                          case 0 : 
-                              tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, Spinner.make("Your endorsement is being submitted", /* None */0, /* array */[]))];
-                              break;
-                          case 1 : 
-                              exit = 1;
-                              break;
-                          case 2 : 
-                              tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, Spinner.make("Your rejection is being submitted", /* None */0, /* array */[]))];
-                              break;
-                          
-                        }
-                      } else {
-                        exit = 1;
-                      }
-                      break;
-                  case 1 : 
-                      tmp = /* array */[
-                        ViewCommon.text("something went wrong"),
+              switch (match[/* buttonState */0]) {
+                case 0 : 
+                    tmp = canVote ? /* array */[
                         ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* Cancel */0);
-                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))
-                      ];
-                      break;
-                  case 2 : 
-                      switch (cmdStatus[0].tag | 0) {
-                        case 0 : 
-                            exit = 1;
-                            break;
-                        case 1 : 
-                            tmp = /* array */[ViewCommon.text("You successfully endorsed")];
-                            break;
-                        case 2 : 
-                            tmp = /* array */[ViewCommon.text("You successfully rejected")];
-                            break;
-                        
-                      }
-                      break;
-                  
-                }
-              }
-              if (exit === 1) {
-                switch (state) {
-                  case 0 : 
-                      tmp = canVote ? /* array */[
-                          ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                        return Curry._1(send, /* Endorse */1);
-                                      })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(endorseText)])),
-                          ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                        return Curry._1(send, /* Reject */3);
-                                      })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(rejectText)]))
-                        ] : /* array */[null];
-                      break;
-                  case 1 : 
-                      tmp = /* array */[
-                        ViewCommon.text("Confirm your endorsement "),
+                                      return Curry._1(send, /* Endorse */1);
+                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(endorseText)])),
                         ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* ConfirmEndorse */2);
-                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
-                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* Cancel */0);
-                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
-                      ];
-                      break;
-                  case 3 : 
-                      tmp = /* array */[
-                        ViewCommon.text("Confirm your rejection"),
-                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* ConfirmReject */4);
-                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
-                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* Cancel */0);
-                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
-                      ];
-                      break;
-                  case 2 : 
-                  case 4 : 
-                      tmp = /* array */[null];
-                      break;
-                  
-                }
+                                      return Curry._1(send, /* Reject */3);
+                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(rejectText)]))
+                      ] : /* array */[null];
+                    break;
+                case 1 : 
+                    tmp = /* array */[
+                      ViewCommon.text("Confirm your endorsement "),
+                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                    return Curry._1(send, /* ConfirmEndorse */2);
+                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
+                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                    return Curry._1(send, /* Cancel */0);
+                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
+                    ];
+                    break;
+                case 2 : 
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Endorsement */1, /* Some */[(function () {
+                                    return Curry._1(send, /* Cancel */0);
+                                  })], /* array */[]))];
+                    break;
+                case 3 : 
+                    tmp = /* array */[
+                      ViewCommon.text("Confirm your rejection"),
+                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                    return Curry._1(send, /* ConfirmReject */4);
+                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
+                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                    return Curry._1(send, /* Cancel */0);
+                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
+                    ];
+                    break;
+                case 4 : 
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Rejection */2, /* Some */[(function () {
+                                    return Curry._1(send, /* Cancel */0);
+                                  })], /* array */[]))];
+                    break;
+                
               }
               return Belt_Array.concatMany(/* array */[tmp]);
             }),

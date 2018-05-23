@@ -61,12 +61,6 @@ let make =
       ReasonReact.NoUpdate;
     },
   render: ({send, state: {viewData, inputs}}) => {
-    let feedback =
-      switch (cmdStatus) {
-      | Pending(_) => <Spinner text="waiting for result" />
-      | Error(_) => "Could not execute teh command" |> text
-      | _ => ReasonReact.null
-      };
     let partners =
       ReasonReact.array(
         Array.of_list(
@@ -116,6 +110,7 @@ let make =
           <MButton fullWidth=true onClick=(_e => send(ProposePartner))>
             (text("Propose partner addition"))
           </MButton>
+          <CommandExecutor.Status cmdStatus action=Proposal />
           <MTypography variant=`Body2>
             (
               {js|
@@ -127,7 +122,6 @@ let make =
           <MTypography variant=`Body2>
             (viewData.joinVentureUrl |> text)
           </MTypography>
-          feedback
         </div>
       body2=
         <div>
