@@ -7,23 +7,22 @@ type variant =
 module Styles = {
   open Css;
   let button = (fullWidth, variant) => {
-    let baseRules = [
-      width(fullWidth ? `percent(100.0) : auto),
-      margin2(~v=px(Theme.space(5)), ~h=px(0)),
-    ];
+    let baseRules = [width(fullWidth ? `percent(100.0) : auto)];
     let variantRules =
       switch (variant) {
       | Flat => [
           textDecoration(underline),
           hover([textDecoration(underline)]),
-          paddingLeft(px(10)),
-          paddingRight(px(10)),
+          paddingLeft(px(Theme.space(1))),
+          paddingRight(px(Theme.space(1))),
+          unsafe("minWidth", "min-content"),
         ]
       | Outlined => [
           borderRadius(px(25)),
           border(px(2), `solid, black),
           paddingLeft(px(25)),
           paddingRight(px(25)),
+          margin2(~v=px(Theme.space(5)), ~h=px(0)),
         ]
       };
     style([baseRules, variantRules] |> List.flatten);

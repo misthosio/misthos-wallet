@@ -14,13 +14,9 @@ function button(fullWidth, variant) {
           -119887163,
           100.0
         ] : Css.auto);
-  var baseRules_001 = /* :: */[
-    Css.margin2(Css.px(Theme.space(5)), Css.px(0)),
-    /* [] */0
-  ];
   var baseRules = /* :: */[
     baseRules_000,
-    baseRules_001
+    /* [] */0
   ];
   var variantRules = variant ? /* :: */[
       Css.borderRadius(Css.px(25)),
@@ -30,7 +26,10 @@ function button(fullWidth, variant) {
           Css.paddingLeft(Css.px(25)),
           /* :: */[
             Css.paddingRight(Css.px(25)),
-            /* [] */0
+            /* :: */[
+              Css.margin2(Css.px(Theme.space(5)), Css.px(0)),
+              /* [] */0
+            ]
           ]
         ]
       ]
@@ -42,10 +41,13 @@ function button(fullWidth, variant) {
               /* [] */0
             ]),
         /* :: */[
-          Css.paddingLeft(Css.px(10)),
+          Css.paddingLeft(Css.px(Theme.space(1))),
           /* :: */[
-            Css.paddingRight(Css.px(10)),
-            /* [] */0
+            Css.paddingRight(Css.px(Theme.space(1))),
+            /* :: */[
+              Css.unsafe("minWidth", "min-content"),
+              /* [] */0
+            ]
           ]
         ]
       ]

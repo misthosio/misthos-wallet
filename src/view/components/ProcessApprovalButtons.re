@@ -23,6 +23,12 @@ type action =
 
 let component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
+module Styles = {
+  open Css;
+  let gray = style([color(rgba(0, 0, 0, 0.38))]);
+  let inlineConfirm = style([display(`flex), alignItems(`baseline)]);
+};
+
 let make =
     (
       ~endorseText,
@@ -60,28 +66,33 @@ let make =
             <MButton fullWidth=true onClick=(_e => send(Endorse))>
               (text(endorseText))
             </MButton>,
-            <MButton fullWidth=true onClick=(_e => send(Reject))>
+            <MButton
+              className=Styles.gray variant=Flat onClick=(_e => send(Reject))>
               (text(rejectText))
             </MButton>,
           |]
         | (NoDecision, false) => [|ReasonReact.null|]
         | (ConfirmReject, _) => [|
-            text("Confirm your rejection"),
-            <MButton fullWidth=true onClick=(_e => send(ConfirmReject))>
-              (text("yes"))
-            </MButton>,
-            <MButton fullWidth=true onClick=(_e => send(Cancel))>
-              (text("No"))
-            </MButton>,
+            <MTypography className=Styles.inlineConfirm variant=`Body2>
+              (rejectText |> text)
+              <MButton variant=Flat onClick=(_e => send(ConfirmReject))>
+                (text("yes"))
+              </MButton>
+              <MButton variant=Flat onClick=(_e => send(Cancel))>
+                (text("No"))
+              </MButton>
+            </MTypography>,
           |]
         | (ConfirmEndorse, _) => [|
-            text("Confirm your endorsement "),
-            <MButton fullWidth=true onClick=(_e => send(ConfirmEndorse))>
-              (text("yes"))
-            </MButton>,
-            <MButton fullWidth=true onClick=(_e => send(Cancel))>
-              (text("No"))
-            </MButton>,
+            <MTypography className=Styles.inlineConfirm variant=`Body2>
+              (endorseText |> text)
+              <MButton variant=Flat onClick=(_e => send(ConfirmEndorse))>
+                (text("yes"))
+              </MButton>
+              <MButton variant=Flat onClick=(_e => send(Cancel))>
+                (text("No"))
+              </MButton>
+            </MTypography>,
           |]
         | (EndorsementSubmited, _) => [|
             <CommandExecutor.Status

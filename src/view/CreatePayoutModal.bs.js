@@ -34,17 +34,8 @@ var defaultFee = BTC.fromSatoshis(/* int64 */[
 var component = ReasonReact.reducerComponent("CreatePayout");
 
 var maxButton = Css.style(/* :: */[
-      Css.important(Css.paddingLeft(Css.px(4))),
-      /* :: */[
-        Css.important(Css.paddingRight(Css.px(4))),
-        /* :: */[
-          Css.color(Css.rgba(0, 0, 0, 0.54)),
-          /* :: */[
-            Css.unsafe("minWidth", "min-content"),
-            /* [] */0
-          ]
-        ]
-      ]
+      Css.color(Css.rgba(0, 0, 0, 0.54)),
+      /* [] */0
     ]);
 
 var maxWidth = Css.style(/* :: */[

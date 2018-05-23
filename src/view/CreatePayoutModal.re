@@ -33,13 +33,7 @@ let component = ReasonReact.reducerComponent("CreatePayout");
 
 module Styles = {
   open Css;
-  let maxButton =
-    style([
-      important(paddingLeft(px(4))),
-      important(paddingRight(px(4))),
-      color(rgba(0, 0, 0, 0.54)),
-      unsafe("minWidth", "min-content"),
-    ]);
+  let maxButton = style([color(rgba(0, 0, 0, 0.54))]);
   let maxWidth = style([maxWidth(`percent(99.0))]);
   let buttonPadding = style([paddingLeft(px(4))]);
   let noBorder = style([borderColor(`transparent)]);
