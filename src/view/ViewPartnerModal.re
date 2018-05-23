@@ -50,44 +50,31 @@ let make =
       | Addition => "Addition"
       | Removal => "Removal"
       };
-    let (label, status: StatusChip.status) =
-      switch (status) {
-      | PendingApproval => ("Pending Approval", Pending)
-      | Accepted => ("Accepted", Success)
-      | Rejected => ("Rejected", Failure)
-      | Aborted => ("Aborted", Failure)
-      };
+    let statusChip = {
+      let (label, status: StatusChip.status) =
+        switch (status) {
+        | PendingApproval => ("Pending Approval", Pending)
+        | Accepted => ("Accepted", Success)
+        | Rejected => ("Rejected", Failure)
+        | Aborted => ("Aborted", Failure)
+        };
+      <StatusChip status label />;
+    };
     <Body2
       titles=["Proposed Partner " ++ processTypeString]
       body1=
         <div>
-<<<<<<< 9279c54747243f054163d37dd468606ce3697fab
-=======
-          <MTypography variant=`Body2>
-            ("Status: " |> text)
-            <StatusChip status label />
-          </MTypography>
->>>>>>> Added StatusChip for displaying process status
           <MTypography variant=`Title>
-            ("Proposed Partner " ++ processTypeString |> text)
+            ("Proposed partner addition" |> text)
           </MTypography>
           <Partner key=(userId |> UserId.toString) partnerId=userId />
-<<<<<<< 9279c54747243f054163d37dd468606ce3697fab
-          ("Proposed by " ++ UserId.toString(proposedBy) |> text)
-          (
-            "Status: "
-            ++ (
-              switch (status) {
-              | PendingApproval => "PendingApproval"
-              | Accepted => "Accepted"
-              | Rejected => "Rejected"
-              | Aborted => "Aborted"
-              }
-            )
-            |> text
-          )
-=======
->>>>>>> Added StatusChip for displaying process status
+          <MTypography variant=`Body2>
+            ("Proposed by " ++ UserId.toString(proposedBy) |> text)
+          </MTypography>
+          <MTypography variant=`Body2>
+            ("Status: " |> text)
+            statusChip
+          </MTypography>
         </div>
       body2=
         <div>

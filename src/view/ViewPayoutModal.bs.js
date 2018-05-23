@@ -10,13 +10,14 @@ var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Voters = require("./components/Voters.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
 
-var component = ReasonReact.statelessComponent("Drawer");
+var component = ReasonReact.statelessComponent("ViewPayoutModal");
 
 function make(viewData, commands, cmdStatus, _) {
   return /* record */[
@@ -39,26 +40,42 @@ function make(viewData, commands, cmdStatus, _) {
                                       key: String(idx)
                                     }, ViewCommon.text(param[0] + (" - " + BTC.format(param[1]))));
                         }), summary[/* destinations */1]));
-              var payoutStatus;
+              var match$1;
               if (typeof status === "number") {
                 switch (status) {
                   case 0 : 
-                      payoutStatus = ViewCommon.text("PendingApproval");
+                      match$1 = /* tuple */[
+                        "Pending Approval",
+                        /* Pending */0
+                      ];
                       break;
                   case 1 : 
-                      payoutStatus = ViewCommon.text("Accepted");
+                      match$1 = /* tuple */[
+                        "Accepted",
+                        /* Success */2
+                      ];
                       break;
                   case 2 : 
-                      payoutStatus = ViewCommon.text("Unconfirmed");
+                      match$1 = /* tuple */[
+                        "Unconfirmed",
+                        /* Success */2
+                      ];
                       break;
                   case 3 : 
-                      payoutStatus = ViewCommon.text("Confirmed");
+                      match$1 = /* tuple */[
+                        "Confirmed",
+                        /* Success */2
+                      ];
                       break;
                   
                 }
               } else {
-                payoutStatus = ViewCommon.text("Failed with reason: " + status[0]);
+                match$1 = /* tuple */[
+                  "Failed",
+                  /* Failure */1
+                ];
               }
+              var payoutStatus = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$1[1], match$1[0], /* array */[]));
               var transactionId = Js_option.getWithDefault(null, Utils.mapOption((function (txId) {
                           return ViewCommon.text("Transaction ID: " + txId);
                         }), match[/* txId */2]));
@@ -67,7 +84,10 @@ function make(viewData, commands, cmdStatus, _) {
                                 /* [] */0
                               ]], React.createElement("div", undefined, ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](viewData[/* proposedBy */2])), Js_option.getWithDefault(null, Utils.mapOption((function (date) {
                                             return ViewCommon.text(date.toString());
-                                          }), match[/* date */3])), payoutStatus, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Payout")])), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(summary[/* networkFee */4]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(summary[/* misthosFee */3]))), React.createElement("li", undefined, ViewCommon.text("Total payout- " + BTC.format(summary[/* spentWithFees */2])))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", viewData[/* canVote */3], (function () {
+                                          }), match[/* date */3])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[
+                                          ViewCommon.text("Status: "),
+                                          payoutStatus
+                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Payout")])), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(summary[/* networkFee */4]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(summary[/* misthosFee */3]))), React.createElement("li", undefined, ViewCommon.text("Total payout- " + BTC.format(summary[/* spentWithFees */2])))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", viewData[/* canVote */3], (function () {
                                             return Curry._1(commands[/* endorsePayout */7], processId);
                                           }), (function () {
                                             return Curry._1(commands[/* rejectPayout */8], processId);

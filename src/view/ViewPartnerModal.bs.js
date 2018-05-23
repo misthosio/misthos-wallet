@@ -6,6 +6,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Voters = require("./components/Voters.bs.js");
 var Partner = require("./components/Partner.bs.js");
+var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -46,26 +47,42 @@ function make(viewData, commands, cmdStatus, _) {
                     })
                 ];
               var processTypeString = processType ? "Addition" : "Removal";
-              var tmp;
+              var match$2;
               switch (viewData[/* status */1]) {
                 case 0 : 
-                    tmp = "PendingApproval";
+                    match$2 = /* tuple */[
+                      "Pending Approval",
+                      /* Pending */0
+                    ];
                     break;
                 case 1 : 
-                    tmp = "Accepted";
+                    match$2 = /* tuple */[
+                      "Accepted",
+                      /* Success */2
+                    ];
                     break;
                 case 2 : 
-                    tmp = "Rejected";
+                    match$2 = /* tuple */[
+                      "Rejected",
+                      /* Failure */1
+                    ];
                     break;
                 case 3 : 
-                    tmp = "Aborted";
+                    match$2 = /* tuple */[
+                      "Aborted",
+                      /* Failure */1
+                    ];
                     break;
                 
               }
+              var statusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$2[1], match$2[0], /* array */[]));
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Proposed Partner " + processTypeString,
                                 /* [] */0
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[])), ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](viewData[/* proposedBy */2])), ViewCommon.text("Status: " + tmp)), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */3], match$1[0], match$1[1], cmdStatus, /* array */[]))), /* array */[]));
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed partner addition")])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](viewData[/* proposedBy */2]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[
+                                          ViewCommon.text("Status: "),
+                                          statusChip
+                                        ]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */3], match$1[0], match$1[1], cmdStatus, /* array */[]))), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
