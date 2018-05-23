@@ -45,7 +45,7 @@ var Styles = /* module */[
   /* icon */icon
 ];
 
-function make(icon$1, onClick, text, _) {
+function make(icon$1, onClick, primary, secondary, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -84,7 +84,7 @@ function make(icon$1, onClick, text, _) {
                                               alt: match[1],
                                               src: match[0]
                                             })])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[text], /* None */0, /* None */0, /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[primary], secondary, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemSecondaryAction[/* make */1](/* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi.IconButton[/* make */3](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
                                                         alt: "arrow-right-icon",
                                                         src: ArrowRightSvg

@@ -23,6 +23,7 @@ type status =
 type process('data) = {
   processId,
   status,
+  proposedBy: userId,
   canVote: bool,
   voters: list(voter),
   data: 'data,
@@ -45,6 +46,7 @@ let addProposal =
        {
          processId,
          status: PendingApproval,
+         proposedBy: supporterId,
          canVote:
            UserId.neq(supporterId, localUser)
            && eligibleWhenProposing

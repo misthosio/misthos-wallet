@@ -26,7 +26,14 @@ let make =
     ) => {
   ...component,
   render: (_) => {
-    let {processId, voters, canVote, status, data: {userId, processType}}: ViewData.t = viewData;
+    let {
+      proposedBy,
+      processId,
+      voters,
+      canVote,
+      status,
+      data: {userId, processType},
+    }: ViewData.t = viewData;
     let (onEndorse, onReject) =
       switch (processType) {
       | Addition => (
@@ -47,6 +54,11 @@ let make =
       titles=["Proposed Partner " ++ processTypeString]
       body1=
         <div>
+          <MTypography variant=`Title>
+            ("Proposed Partner " ++ processTypeString |> text)
+          </MTypography>
+          <Partner key=(userId |> UserId.toString) partnerId=userId />
+          ("Proposed by " ++ UserId.toString(proposedBy) |> text)
           (
             "Status: "
             ++ (
@@ -59,10 +71,6 @@ let make =
             )
             |> text
           )
-          <MTypography variant=`Title>
-            ("Proposed Partner " ++ processTypeString |> text)
-          </MTypography>
-          <Partner key=(userId |> UserId.toString) partnerId=userId />
         </div>
       body2=
         <div>
