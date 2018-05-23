@@ -26,7 +26,7 @@ function make(viewData, commands, cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = viewData[/* data */4];
+              var match = viewData[/* data */5];
               var processType = match[/* processType */1];
               var userId = match[/* userId */0];
               var processId = viewData[/* processId */0];
@@ -65,7 +65,7 @@ function make(viewData, commands, cmdStatus, _) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Proposed Partner " + processTypeString,
                                 /* [] */0
-                              ]], React.createElement("div", undefined, ViewCommon.text("Status: " + tmp), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */3], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */2], match$1[0], match$1[1], cmdStatus, /* array */[]))), /* array */[]));
+                              ]], React.createElement("div", undefined, ViewCommon.text("Status: " + tmp), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* array */[]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */3], match$1[0], match$1[1], cmdStatus, /* array */[]))), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

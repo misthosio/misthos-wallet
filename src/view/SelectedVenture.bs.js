@@ -40,19 +40,19 @@ function make(viewData, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var prospects = List.map((function (prospect) {
-                      var match = prospect[/* data */4][/* processType */1];
+                      var match = prospect[/* data */5][/* processType */1];
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* processId */0]]);
                       var partial_arg = /* Venture */Block.__(0, [
                           partial_arg_000,
                           partial_arg_001
                         ]);
-                      var match$1 = prospect[/* data */4][/* processType */1];
+                      var match$1 = prospect[/* data */5][/* processType */1];
                       return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](prospect[/* processId */0])], /* None */0, AlertListItem.make(match ? /* Plus */0 : /* Minus */1, (function (param) {
                                         return Router.clickToRoute(partial_arg, param);
                                       }), ViewCommon.text((
                                           match$1 ? "Addition" : "Removal"
-                                        ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */4][/* userId */0]) + "' proposed"))), /* array */[]));
+                                        ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */5][/* userId */0]) + "'"))), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](prospect[/* proposedBy */2]))], /* array */[]));
                     }), viewData[/* prospects */4]);
               var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
                               return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* array */[]));
@@ -67,7 +67,7 @@ function make(viewData, _) {
                             ]);
                           return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](processId)], /* None */0, AlertListItem.make(/* ArrowUp */2, (function (param) {
                                             return Router.clickToRoute(partial_arg, param);
-                                          }), ViewCommon.text("'" + (PrimitiveTypes.ProcessId[/* toString */0](processId) + ("' - " + BTC.format(param[/* data */4][/* summary */1][/* spentWithFees */2])))), /* array */[]));
+                                          }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */1][/* spentWithFees */2]) + " BTC")), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))], /* array */[]));
                         }), viewData[/* payoutsPendingApproval */7]));
               var unconfirmed = viewData[/* unconfirmedTxs */5];
               var confirmed = viewData[/* confirmedTxs */6];

@@ -32,7 +32,7 @@ module Styles = {
     style([unsafe("width", "min-content"), backgroundColor(`transparent)]);
 };
 
-let make = (~icon: icon, ~onClick, ~text, _children) => {
+let make = (~icon: icon, ~onClick, ~primary, ~secondary=?, _children) => {
   ...component,
   render: _self => {
     let (src, alt) =
@@ -44,7 +44,7 @@ let make = (~icon: icon, ~onClick, ~text, _children) => {
     MaterialUi.(
       <ListItem className=Styles.alert dense=true button=true onClick>
         <Avatar className=Styles.icon> <img src alt /> </Avatar>
-        <ListItemText primary=text />
+        <ListItemText primary ?secondary />
         <ListItemSecondaryAction>
           <IconButton onClick>
             <img src=arrowRight alt="arrow-right-icon" />

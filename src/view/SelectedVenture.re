@@ -25,7 +25,7 @@ let make = (~viewData: ViewData.t, _children) => {
                )
              )
              key=(prospect.processId |> ProcessId.toString)
-             text=(
+             primary=(
                text(
                  (
                    switch (prospect.data.processType) {
@@ -35,8 +35,11 @@ let make = (~viewData: ViewData.t, _children) => {
                  )
                  ++ " of '"
                  ++ UserId.toString(prospect.data.userId)
-                 ++ "' proposed",
+                 ++ "'",
                )
+             )
+             secondary=(
+               text("proposed by " ++ UserId.toString(prospect.proposedBy))
              )
            />
          );
@@ -61,7 +64,9 @@ let make = (~viewData: ViewData.t, _children) => {
         Array.of_list(
           viewData.payoutsPendingApproval
           |> List.map(
-               ({processId, data: {summary}}: ViewData.payoutProcess) =>
+               (
+                 {proposedBy, processId, data: {summary}}: ViewData.payoutProcess,
+               ) =>
                <AlertListItem
                  icon=ArrowUp
                  onClick=(
@@ -70,13 +75,15 @@ let make = (~viewData: ViewData.t, _children) => {
                    )
                  )
                  key=(processId |> ProcessId.toString)
-                 text=(
+                 primary=(
                    text(
-                     "'"
-                     ++ (processId |> ProcessId.toString)
-                     ++ "' - "
-                     ++ BTC.format(summary.spentWithFees),
+                     "Payout of "
+                     ++ BTC.format(summary.spentWithFees)
+                     ++ " BTC",
                    )
+                 )
+                 secondary=(
+                   text("proposed by " ++ UserId.toString(proposedBy))
                  )
                />
              ),

@@ -17,6 +17,7 @@ function addProposal(localUser, param, makeData, map) {
   return Belt_Map.set(map, processId, /* record */[
               /* processId */processId,
               /* status : PendingApproval */0,
+              /* proposedBy */supporterId,
               /* canVote */PrimitiveTypes.UserId[/* neq */6](supporterId, localUser) && Belt_Set.has(eligibleWhenProposing, localUser),
               /* voters */Belt_List.mapU(Belt_Set.toList(eligibleWhenProposing), (function (userId) {
                       var match = PrimitiveTypes.UserId[/* eq */5](supporterId, userId);
@@ -36,8 +37,9 @@ function addRejection(localUser, param, map) {
                               return /* record */[
                                       /* processId */$$process[/* processId */0],
                                       /* status */$$process[/* status */1],
-                                      /* canVote */$$process[/* canVote */2] && PrimitiveTypes.UserId[/* neq */6](rejectorId, localUser),
-                                      /* voters */Belt_List.mapU($$process[/* voters */3], (function (param) {
+                                      /* proposedBy */$$process[/* proposedBy */2],
+                                      /* canVote */$$process[/* canVote */3] && PrimitiveTypes.UserId[/* neq */6](rejectorId, localUser),
+                                      /* voters */Belt_List.mapU($$process[/* voters */4], (function (param) {
                                               var userId = param[/* userId */0];
                                               var match = PrimitiveTypes.UserId[/* eq */5](userId, rejectorId);
                                               if (match) {
@@ -52,7 +54,7 @@ function addRejection(localUser, param, map) {
                                                       ];
                                               }
                                             })),
-                                      /* data */$$process[/* data */4]
+                                      /* data */$$process[/* data */5]
                                     ];
                             }), param);
               }));
@@ -65,8 +67,9 @@ function addEndorsement(localUser, param, map) {
                               return /* record */[
                                       /* processId */$$process[/* processId */0],
                                       /* status */$$process[/* status */1],
-                                      /* canVote */$$process[/* canVote */2] && PrimitiveTypes.UserId[/* neq */6](supporterId, localUser),
-                                      /* voters */Belt_List.mapU($$process[/* voters */3], (function (param) {
+                                      /* proposedBy */$$process[/* proposedBy */2],
+                                      /* canVote */$$process[/* canVote */3] && PrimitiveTypes.UserId[/* neq */6](supporterId, localUser),
+                                      /* voters */Belt_List.mapU($$process[/* voters */4], (function (param) {
                                               var userId = param[/* userId */0];
                                               var match = PrimitiveTypes.UserId[/* eq */5](userId, supporterId);
                                               if (match) {
@@ -81,7 +84,7 @@ function addEndorsement(localUser, param, map) {
                                                       ];
                                               }
                                             })),
-                                      /* data */$$process[/* data */4]
+                                      /* data */$$process[/* data */5]
                                     ];
                             }), param);
               }));
@@ -93,9 +96,10 @@ function addAcceptance(param, map) {
                               return /* record */[
                                       /* processId */payout[/* processId */0],
                                       /* status : Accepted */1,
+                                      /* proposedBy */payout[/* proposedBy */2],
                                       /* canVote */false,
-                                      /* voters */payout[/* voters */3],
-                                      /* data */payout[/* data */4]
+                                      /* voters */payout[/* voters */4],
+                                      /* data */payout[/* data */5]
                                     ];
                             }), param);
               }));
@@ -107,9 +111,10 @@ function updateData(processId, fn, map) {
                               return /* record */[
                                       /* processId */$$process[/* processId */0],
                                       /* status */$$process[/* status */1],
-                                      /* canVote */$$process[/* canVote */2],
-                                      /* voters */$$process[/* voters */3],
-                                      /* data */Curry._1(fn, $$process[/* data */4])
+                                      /* proposedBy */$$process[/* proposedBy */2],
+                                      /* canVote */$$process[/* canVote */3],
+                                      /* voters */$$process[/* voters */4],
+                                      /* data */Curry._1(fn, $$process[/* data */5])
                                     ];
                             }), param);
               }));
