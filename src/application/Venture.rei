@@ -21,7 +21,6 @@ module Validation: {
     | UnknownProcessId
     | NotEligible
     | AlreadyVoted
-    | PolicyMissmatch
     | PolicyNotFulfilled
     | DependencyNotMet
     | BadData(string);

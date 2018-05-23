@@ -2,7 +2,6 @@
 'use strict';
 
 var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
@@ -44,8 +43,6 @@ function make() {
           /* currentCustodians : [] */0,
           /* accountCreationData : [] */0,
           /* payoutData : [] */0,
-          /* processes : [] */0,
-          /* completedProcesses : [] */0,
           /* policies : [] */0,
           /* creatorData : record */[
             /* lastPartnerRemovalProcess : None */0,
@@ -55,62 +52,6 @@ function make() {
           /* custodianKeyChains : [] */0,
           /* accountKeyChains */AccountKeyChain.Collection[/* empty */0]
         ];
-}
-
-function addProcess(param, state) {
-  var newrecord = Caml_array.caml_array_dup(state);
-  newrecord[/* processes */20] = /* :: */[
-    /* tuple */[
-      param[/* processId */0],
-      /* record */[
-        /* supporterIds : :: */[
-          param[/* supporterId */4],
-          /* [] */0
-        ],
-        /* policy */param[/* policy */5]
-      ]
-    ],
-    state[/* processes */20]
-  ];
-  return newrecord;
-}
-
-function endorseProcess(param, state) {
-  var supporterId = param[/* supporterId */1];
-  var processId = param[/* processId */0];
-  var newrecord = Caml_array.caml_array_dup(state);
-  newrecord[/* processes */20] = List.map((function (param) {
-          var $$process = param[1];
-          var pId = param[0];
-          var match = PrimitiveTypes.ProcessId[/* eq */5](pId, processId);
-          if (match) {
-            return /* tuple */[
-                    pId,
-                    /* record */[
-                      /* supporterIds : :: */[
-                        supporterId,
-                        $$process[/* supporterIds */0]
-                      ],
-                      /* policy */$$process[/* policy */1]
-                    ]
-                  ];
-          } else {
-            return /* tuple */[
-                    pId,
-                    $$process
-                  ];
-          }
-        }), state[/* processes */20]);
-  return newrecord;
-}
-
-function completeProcess(param, state) {
-  var newrecord = Caml_array.caml_array_dup(state);
-  newrecord[/* completedProcesses */21] = /* :: */[
-    param[/* processId */0],
-    state[/* completedProcesses */21]
-  ];
-  return newrecord;
 }
 
 function apply(param, state) {
@@ -132,7 +73,7 @@ function apply(param, state) {
         var newrecord$1 = Caml_array.caml_array_dup(newrecord);
         newrecord$1[/* systemPubKey */5] = Utils.publicKeyFromKeyPair(match[/* systemIssuer */5]);
         newrecord$1[/* metaPolicy */6] = metaPolicy;
-        newrecord$1[/* policies */22] = /* :: */[
+        newrecord$1[/* policies */20] = /* :: */[
           /* tuple */[
             Event.Partner[/* Removal */7][/* processName */1],
             /* UnanimousMinusOne */1
@@ -162,30 +103,30 @@ function apply(param, state) {
                 ])
           ]
         ];
-        newrecord$1[/* creatorData */23] = /* record */[
+        newrecord$1[/* creatorData */21] = /* record */[
           /* lastPartnerRemovalProcess : None */0,
           /* id */match[/* creatorId */2],
           /* pubKey */match[/* creatorPubKey */3]
         ];
         return newrecord$1;
     case 1 : 
-        var proposal = $$event[0];
-        var newrecord$2 = Caml_array.caml_array_dup(addProcess(proposal, newrecord));
+        var match$1 = $$event[0];
+        var newrecord$2 = Caml_array.caml_array_dup(newrecord);
         newrecord$2[/* partnerData */10] = /* :: */[
           /* tuple */[
-            proposal[/* processId */0],
+            match$1[/* processId */0],
             /* tuple */[
-              proposal[/* supporterId */4],
-              proposal[/* data */6]
+              match$1[/* supporterId */4],
+              match$1[/* data */6]
             ]
           ],
           newrecord[/* partnerData */10]
         ];
         return newrecord$2;
     case 4 : 
-        var acceptance = $$event[0];
-        var data = acceptance[/* data */3];
-        var newrecord$3 = Caml_array.caml_array_dup(completeProcess(acceptance, newrecord));
+        var match$2 = $$event[0];
+        var data = match$2[/* data */3];
+        var newrecord$3 = Caml_array.caml_array_dup(newrecord);
         newrecord$3[/* currentPartners */8] = Belt_Set.add(newrecord[/* currentPartners */8], data[/* id */1]);
         newrecord$3[/* currentPartnerPubKeys */9] = /* :: */[
           /* tuple */[
@@ -197,89 +138,87 @@ function apply(param, state) {
         newrecord$3[/* partnerAccepted */11] = /* :: */[
           /* tuple */[
             data[/* id */1],
-            acceptance[/* processId */0]
+            match$2[/* processId */0]
           ],
           newrecord[/* partnerAccepted */11]
         ];
         return newrecord$3;
     case 5 : 
-        var proposal$1 = $$event[0];
-        var newrecord$4 = Caml_array.caml_array_dup(addProcess(proposal$1, newrecord));
+        var match$3 = $$event[0];
+        var newrecord$4 = Caml_array.caml_array_dup(newrecord);
         newrecord$4[/* partnerRemovalData */12] = /* :: */[
           /* tuple */[
-            proposal$1[/* processId */0],
+            match$3[/* processId */0],
             /* tuple */[
-              proposal$1[/* supporterId */4],
-              proposal$1[/* data */6]
+              match$3[/* supporterId */4],
+              match$3[/* data */6]
             ]
           ],
           newrecord[/* partnerRemovalData */12]
         ];
         return newrecord$4;
     case 8 : 
-        var acceptance$1 = $$event[0];
-        var id = acceptance$1[/* data */3][/* id */0];
+        var match$4 = $$event[0];
+        var id = match$4[/* data */3][/* id */0];
         var pubKey = List.find((function (param) {
                   return PrimitiveTypes.UserId[/* eq */5](param[1], id);
                 }), newrecord[/* currentPartnerPubKeys */9])[0];
-        var newrecord$5 = Caml_array.caml_array_dup(completeProcess(acceptance$1, newrecord));
+        var newrecord$5 = Caml_array.caml_array_dup(newrecord);
         newrecord$5[/* currentPartners */8] = Belt_Set.remove(newrecord[/* currentPartners */8], id);
         newrecord$5[/* currentPartnerPubKeys */9] = List.remove_assoc(pubKey, newrecord[/* currentPartnerPubKeys */9]);
         newrecord$5[/* partnerRemovals */13] = /* :: */[
           /* tuple */[
             id,
-            acceptance$1[/* processId */0]
+            match$4[/* processId */0]
           ],
           newrecord[/* partnerRemovals */13]
         ];
         return newrecord$5;
     case 9 : 
-        var proposal$2 = $$event[0];
-        var newrecord$6 = Caml_array.caml_array_dup(addProcess(proposal$2, newrecord));
+        var match$5 = $$event[0];
+        var newrecord$6 = Caml_array.caml_array_dup(newrecord);
         newrecord$6[/* accountCreationData */18] = /* :: */[
           /* tuple */[
-            proposal$2[/* processId */0],
+            match$5[/* processId */0],
             /* tuple */[
-              proposal$2[/* supporterId */4],
-              proposal$2[/* data */6]
+              match$5[/* supporterId */4],
+              match$5[/* data */6]
             ]
           ],
           newrecord[/* accountCreationData */18]
         ];
         return newrecord$6;
     case 12 : 
-        var acceptance$2 = $$event[0];
-        var newrecord$7 = Caml_array.caml_array_dup(completeProcess(acceptance$2, newrecord));
+        var newrecord$7 = Caml_array.caml_array_dup(newrecord);
         newrecord$7[/* currentCustodians */17] = /* :: */[
           /* tuple */[
-            acceptance$2[/* data */3][/* accountIdx */0],
+            $$event[0][/* data */3][/* accountIdx */0],
             /* [] */0
           ],
           newrecord[/* currentCustodians */17]
         ];
         return newrecord$7;
     case 13 : 
-        var proposal$3 = $$event[0];
-        var newrecord$8 = Caml_array.caml_array_dup(addProcess(proposal$3, newrecord));
+        var match$6 = $$event[0];
+        var newrecord$8 = Caml_array.caml_array_dup(newrecord);
         newrecord$8[/* custodianData */14] = /* :: */[
           /* tuple */[
-            proposal$3[/* processId */0],
+            match$6[/* processId */0],
             /* tuple */[
-              proposal$3[/* supporterId */4],
-              proposal$3[/* data */6]
+              match$6[/* supporterId */4],
+              match$6[/* data */6]
             ]
           ],
           newrecord[/* custodianData */14]
         ];
         return newrecord$8;
     case 16 : 
-        var acceptance$3 = $$event[0];
-        var match$1 = acceptance$3[/* data */3];
-        var accountIdx = match$1[/* accountIdx */3];
-        var partnerId = match$1[/* partnerId */0];
+        var match$7 = $$event[0][/* data */3];
+        var accountIdx = match$7[/* accountIdx */3];
+        var partnerId = match$7[/* partnerId */0];
         var userChains;
         try {
-          userChains = List.assoc(partnerId, newrecord[/* custodianKeyChains */24]);
+          userChains = List.assoc(partnerId, newrecord[/* custodianKeyChains */22]);
         }
         catch (exn){
           if (exn === Caml_builtin_exceptions.not_found) {
@@ -299,7 +238,7 @@ function apply(param, state) {
             throw exn$1;
           }
         }
-        var newrecord$9 = Caml_array.caml_array_dup(completeProcess(acceptance$3, newrecord));
+        var newrecord$9 = Caml_array.caml_array_dup(newrecord);
         newrecord$9[/* currentCustodians */17] = /* :: */[
           /* tuple */[
             accountIdx,
@@ -310,7 +249,7 @@ function apply(param, state) {
           ],
           List.remove_assoc(accountIdx, newrecord[/* currentCustodians */17])
         ];
-        newrecord$9[/* custodianKeyChains */24] = /* :: */[
+        newrecord$9[/* custodianKeyChains */22] = /* :: */[
           /* tuple */[
             partnerId,
             /* :: */[
@@ -321,33 +260,33 @@ function apply(param, state) {
               List.remove_assoc(accountIdx, userChains)
             ]
           ],
-          List.remove_assoc(partnerId, newrecord[/* custodianKeyChains */24])
+          List.remove_assoc(partnerId, newrecord[/* custodianKeyChains */22])
         ];
         return newrecord$9;
     case 17 : 
-        var proposal$4 = $$event[0];
-        var newrecord$10 = Caml_array.caml_array_dup(addProcess(proposal$4, newrecord));
+        var match$8 = $$event[0];
+        var newrecord$10 = Caml_array.caml_array_dup(newrecord);
         newrecord$10[/* custodianRemovalData */15] = /* :: */[
           /* tuple */[
-            proposal$4[/* processId */0],
+            match$8[/* processId */0],
             /* tuple */[
-              proposal$4[/* supporterId */4],
-              proposal$4[/* data */6]
+              match$8[/* supporterId */4],
+              match$8[/* data */6]
             ]
           ],
           newrecord[/* custodianRemovalData */15]
         ];
         return newrecord$10;
     case 20 : 
-        var acceptance$4 = $$event[0];
-        var match$2 = acceptance$4[/* data */3];
-        var accountIdx$1 = match$2[/* accountIdx */1];
-        var custodianId = match$2[/* custodianId */0];
-        var newrecord$11 = Caml_array.caml_array_dup(completeProcess(acceptance$4, newrecord));
+        var match$9 = $$event[0];
+        var match$10 = match$9[/* data */3];
+        var accountIdx$1 = match$10[/* accountIdx */1];
+        var custodianId = match$10[/* custodianId */0];
+        var newrecord$11 = Caml_array.caml_array_dup(newrecord);
         newrecord$11[/* custodianRemovals */16] = /* :: */[
           /* tuple */[
             custodianId,
-            acceptance$4[/* processId */0]
+            match$9[/* processId */0]
           ],
           newrecord[/* custodianRemovals */16]
         ];
@@ -363,35 +302,26 @@ function apply(param, state) {
         ];
         return newrecord$11;
     case 21 : 
-        var proposal$5 = $$event[0];
-        var newrecord$12 = Caml_array.caml_array_dup(addProcess(proposal$5, newrecord));
+        var match$11 = $$event[0];
+        var newrecord$12 = Caml_array.caml_array_dup(newrecord);
         newrecord$12[/* payoutData */19] = /* :: */[
           /* tuple */[
-            proposal$5[/* processId */0],
+            match$11[/* processId */0],
             /* tuple */[
-              proposal$5[/* supporterId */4],
-              proposal$5[/* data */6]
+              match$11[/* supporterId */4],
+              match$11[/* data */6]
             ]
           ],
           newrecord[/* payoutData */19]
         ];
         return newrecord$12;
-    case 3 : 
-    case 7 : 
-    case 11 : 
-    case 15 : 
-    case 19 : 
-    case 23 : 
-        return endorseProcess($$event[0], newrecord);
-    case 24 : 
-        return completeProcess($$event[0], newrecord);
     case 29 : 
-        var match$3 = $$event[0];
-        var keyChain = match$3[/* keyChain */2];
-        var custodianId$1 = match$3[/* custodianId */1];
+        var match$12 = $$event[0];
+        var keyChain = match$12[/* keyChain */2];
+        var custodianId$1 = match$12[/* custodianId */1];
         var userChains$1;
         try {
-          userChains$1 = List.assoc(custodianId$1, newrecord[/* custodianKeyChains */24]);
+          userChains$1 = List.assoc(custodianId$1, newrecord[/* custodianKeyChains */22]);
         }
         catch (exn$2){
           if (exn$2 === Caml_builtin_exceptions.not_found) {
@@ -412,7 +342,7 @@ function apply(param, state) {
           }
         }
         var newrecord$13 = Caml_array.caml_array_dup(newrecord);
-        newrecord$13[/* custodianKeyChains */24] = /* :: */[
+        newrecord$13[/* custodianKeyChains */22] = /* :: */[
           /* tuple */[
             custodianId$1,
             /* :: */[
@@ -426,19 +356,26 @@ function apply(param, state) {
               /* [] */0
             ]
           ],
-          List.remove_assoc(custodianId$1, newrecord[/* custodianKeyChains */24])
+          List.remove_assoc(custodianId$1, newrecord[/* custodianKeyChains */22])
         ];
         return newrecord$13;
     case 30 : 
         var newrecord$14 = Caml_array.caml_array_dup(newrecord);
-        newrecord$14[/* accountKeyChains */25] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], newrecord[/* accountKeyChains */25]);
+        newrecord$14[/* accountKeyChains */23] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], newrecord[/* accountKeyChains */23]);
         return newrecord$14;
     case 2 : 
+    case 3 : 
     case 6 : 
+    case 7 : 
     case 10 : 
+    case 11 : 
     case 14 : 
+    case 15 : 
     case 18 : 
+    case 19 : 
     case 22 : 
+    case 23 : 
+    case 24 : 
     case 31 : 
         return newrecord;
     default:
@@ -462,10 +399,8 @@ function resultToString(param) {
       case 5 : 
           return "AlreadyVoted";
       case 6 : 
-          return "PolicyMissmatch";
-      case 7 : 
           return "PolicyNotFulfilled";
-      case 8 : 
+      case 7 : 
           return "DependencyNotMet";
       
     }
@@ -475,7 +410,7 @@ function resultToString(param) {
 }
 
 function processExists(processId, param) {
-  var match = Curry._1(param[/* processValidator */4][/* exists */1], processId);
+  var match = Curry._1(param[/* processValidator */4][/* exists */2], processId);
   if (match) {
     return /* Ok */0;
   } else {
@@ -484,7 +419,7 @@ function processExists(processId, param) {
 }
 
 function isEligible(processId, voterId, param) {
-  var match = Curry._2(param[/* processValidator */4][/* isEligible */2], processId, voterId);
+  var match = Curry._2(param[/* processValidator */4][/* isEligible */4], processId, voterId);
   if (match) {
     return /* Ok */0;
   } else {
@@ -493,11 +428,32 @@ function isEligible(processId, voterId, param) {
 }
 
 function hasYetToVote(processId, voterId, param) {
-  var match = Curry._2(param[/* processValidator */4][/* didVote */3], processId, voterId);
+  var match = Curry._2(param[/* processValidator */4][/* didVote */5], processId, voterId);
   if (match) {
     return /* AlreadyVoted */5;
   } else {
     return /* Ok */0;
+  }
+}
+
+function policyFulfilled(processId, param) {
+  var match = Curry._1(param[/* processValidator */4][/* policyFulfilled */6], processId);
+  if (match) {
+    return /* Ok */0;
+  } else {
+    return /* PolicyNotFulfilled */6;
+  }
+}
+
+function ensureDependencies($staropt$star, $staropt$star$1, param) {
+  var processValidator = param[/* processValidator */4];
+  var proposals = $staropt$star ? $staropt$star[0] : PrimitiveTypes.ProcessId[/* emptySet */9];
+  var completions = $staropt$star$1 ? $staropt$star$1[0] : PrimitiveTypes.ProcessId[/* emptySet */9];
+  var match = Belt_Set.every(proposals, processValidator[/* exists */2]) && Belt_Set.every(completions, processValidator[/* completed */3]);
+  if (match) {
+    return /* Ok */0;
+  } else {
+    return /* DependencyNotMet */7;
   }
 }
 
@@ -593,9 +549,7 @@ function defaultDataValidator(_, _$1) {
   return /* Ok */0;
 }
 
-function validateProposal($staropt$star, processName, dataList, param, state, issuerId) {
-  var completedProcesses = state[/* completedProcesses */21];
-  var processes = state[/* processes */20];
+function validateProposal($staropt$star, _, dataList, param, state, issuerId) {
   var data = param[/* data */6];
   var supporterId = param[/* supporterId */4];
   var validateData = $staropt$star ? $staropt$star[0] : defaultDataValidator;
@@ -608,30 +562,18 @@ function validateProposal($staropt$star, processName, dataList, param, state, is
             }
           }), dataList)) {
     return /* BadData */["This proposal already exists"];
-  } else if (Policy.neq(param[/* policy */5], List.assoc(processName, state[/* policies */22]))) {
-    return /* PolicyMissmatch */6;
   } else if (PrimitiveTypes.UserId[/* neq */6](issuerId, supporterId)) {
     return /* InvalidIssuer */2;
   } else {
-    var proposalsThere = Belt_Set.reduce(param[/* dependsOnProposals */1], true, (function (res, processId) {
-            if (List.mem(processId, completedProcesses) || List.mem_assoc(processId, processes)) {
-              return res;
-            } else {
-              return false;
-            }
-          }));
-    var completionsThere = Belt_Set.reduce(param[/* dependsOnCompletions */2], true, (function (res, processId) {
-            if (List.mem(processId, completedProcesses)) {
-              return res;
-            } else {
-              return false;
-            }
-          }));
-    if (proposalsThere && completionsThere) {
-      return Curry._2(validateData, data, state);
-    } else {
-      return /* DependencyNotMet */8;
-    }
+    var partial_arg = /* Some */[param[/* dependsOnCompletions */2]];
+    var partial_arg$1 = /* Some */[param[/* dependsOnProposals */1]];
+    var test = function (param) {
+      return ensureDependencies(partial_arg$1, partial_arg, param);
+    };
+    return returnResult(andThen(Curry._1(validateData, data), /* tuple */[
+                    Curry._1(test, state),
+                    state
+                  ]));
   }
 }
 
@@ -671,36 +613,25 @@ function validateEndorsement(param, state, issuerId) {
   }
 }
 
-function validateAcceptance(param, dataList, eq, param$1, _) {
-  var completedProcesses = param$1[/* completedProcesses */21];
+function validateAcceptance(param, dataList, eq, state, _) {
+  var dependsOnCompletions = param[/* dependsOnCompletions */1];
   var processId = param[/* processId */0];
-  try {
-    var match = List.assoc(processId, param$1[/* processes */20]);
-    if (Curry._2(eq, param[/* data */3], List.assoc(processId, dataList)[1]) === false) {
-      return /* BadData */["Data doesn't match proposal"];
-    } else if (Policy.fulfilled(match[/* policy */1])(Belt_Set.intersect(param$1[/* currentPartners */8], param[/* eligibleWhenProposing */2]), Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(match[/* supporterIds */0]))) === false) {
-      return /* PolicyNotFulfilled */7;
-    } else {
-      var match$1 = Belt_Set.reduce(param[/* dependsOnCompletions */1], true, (function (res, processId) {
-              if (List.mem(processId, completedProcesses)) {
-                return res;
-              } else {
-                return false;
-              }
-            }));
-      if (match$1) {
-        return /* Ok */0;
-      } else {
-        return /* DependencyNotMet */8;
-      }
-    }
-  }
-  catch (exn){
-    if (exn === Caml_builtin_exceptions.not_found) {
-      return /* UnknownProcessId */3;
-    } else {
-      throw exn;
-    }
+  if (Curry._2(eq, param[/* data */3], List.assoc(processId, dataList)[1]) === false) {
+    return /* BadData */["Data doesn't match proposal"];
+  } else {
+    return returnResult(andThen((function (eta) {
+                      var arg = /* Some */[dependsOnCompletions];
+                      return (function (param) {
+                                    return (function (param$1) {
+                                        return ensureDependencies(param, arg, param$1);
+                                      });
+                                  })(/* None */0)(eta);
+                    }), andThen((function (param) {
+                          return policyFulfilled(processId, param);
+                        }), /* tuple */[
+                        processExists(processId, state),
+                        state
+                      ])));
   }
 }
 
@@ -828,9 +759,10 @@ function validateAccountCreationData(param, param$1) {
   }
 }
 
-function validateCustodianKeyChainUpdated(param, param$1, issuerId) {
-  var completedProcesses = param$1[/* completedProcesses */21];
-  var custodianData = param$1[/* custodianData */14];
+function validateCustodianKeyChainUpdated(param, state, issuerId) {
+  var custodianKeyChains = state[/* custodianKeyChains */22];
+  var custodianData = state[/* custodianData */14];
+  var processValidator = state[/* processValidator */4];
   var keyChain = param[/* keyChain */2];
   var custodianId = param[/* custodianId */1];
   var custodianApprovalProcess = param[/* custodianApprovalProcess */0];
@@ -838,33 +770,23 @@ function validateCustodianKeyChainUpdated(param, param$1, issuerId) {
     return /* InvalidIssuer */2;
   } else {
     var accountIdx = CustodianKeyChain.accountIdx(keyChain);
-    var pId;
-    try {
-      pId = List.find((function (param) {
-                return WalletTypes.AccountIndex[/* eq */7](param[1][1][/* accountIdx */0], accountIdx);
-              }), param$1[/* accountCreationData */18])[0];
-    }
-    catch (exn){
-      if (exn === Caml_builtin_exceptions.not_found) {
-        pId = PrimitiveTypes.ProcessId[/* fromString */1]("impossible");
-      } else {
-        throw exn;
-      }
-    }
-    if (List.mem(pId, completedProcesses) === false) {
-      return /* BadData */["Account doesn't exist"];
-    } else if (List.mem_assoc(custodianApprovalProcess, custodianData) === false || List.mem(custodianApprovalProcess, completedProcesses) === false) {
-      return /* BadData */["Bad custodianApprovalProcess"];
-    } else {
-      var match = List.assoc(custodianApprovalProcess, custodianData);
-      if (PrimitiveTypes.UserId[/* neq */6](match[1][/* partnerId */0], custodianId)) {
-        return /* BadData */["CustodianApprovalProcess is for another partner"];
-      } else if (WalletTypes.CustodianKeyChainIndex[/* neq */7](CustodianKeyChain.keyChainIdx(keyChain), WalletTypes.CustodianKeyChainIndex[/* fromInt */1](List.length(List.assoc(accountIdx, List.assoc(custodianId, param$1[/* custodianKeyChains */24])))))) {
-        return /* BadData */["CustodianKeyChainIndex isn't in order"];
-      } else {
-        return /* Ok */0;
-      }
-    }
+    return returnResult(andThen((function () {
+                      if (List.mem_assoc(custodianApprovalProcess, custodianData) === false || Curry._1(processValidator[/* completed */3], custodianApprovalProcess) === false) {
+                        return /* BadData */["Bad custodianApprovalProcess"];
+                      } else {
+                        var match = List.assoc(custodianApprovalProcess, custodianData);
+                        if (PrimitiveTypes.UserId[/* neq */6](match[1][/* partnerId */0], custodianId)) {
+                          return /* BadData */["CustodianApprovalProcess is for another partner"];
+                        } else if (WalletTypes.CustodianKeyChainIndex[/* neq */7](CustodianKeyChain.keyChainIdx(keyChain), WalletTypes.CustodianKeyChainIndex[/* fromInt */1](List.length(List.assoc(accountIdx, List.assoc(custodianId, custodianKeyChains)))))) {
+                          return /* BadData */["CustodianKeyChainIndex isn't in order"];
+                        } else {
+                          return /* Ok */0;
+                        }
+                      }
+                    }), /* tuple */[
+                    accountExists(accountIdx, state),
+                    state
+                  ]));
   }
 }
 
@@ -915,7 +837,7 @@ function validateAccountKeyChainActivated(param, state, issuerId) {
 function validateIncomeAddressExposed(param, param$1, _) {
   var match = param[/* address */1];
   try {
-    var generatedAddress = Address.find(match[/* coordinates */2], param$1[/* accountKeyChains */25]);
+    var generatedAddress = Address.find(match[/* coordinates */2], param$1[/* accountKeyChains */23]);
     if (match[/* displayAddress */5] === generatedAddress[/* displayAddress */5]) {
       return /* Ok */0;
     } else {
@@ -1144,7 +1066,7 @@ function validate(state, param) {
     var exit$1 = 0;
     switch ($$event.tag | 0) {
       case 0 : 
-          var match$2 = PrimitiveTypes.UserId[/* eq */5](state[/* creatorData */23][/* id */1], PrimitiveTypes.UserId[/* fromString */1](""));
+          var match$2 = PrimitiveTypes.UserId[/* eq */5](state[/* creatorData */21][/* id */1], PrimitiveTypes.UserId[/* fromString */1](""));
           if (match$2) {
             return /* Ok */0;
           } else {
@@ -1155,7 +1077,7 @@ function validate(state, param) {
             exit$1 = 3;
           } else if (match$1) {
             exit = 2;
-          } else if (Caml_obj.caml_equal($$event[0][/* data */6], state[/* creatorData */23]) && issuerPubKey === state[/* creatorData */23][/* pubKey */2] && List.length(state[/* partnerData */10]) === 0) {
+          } else if (Caml_obj.caml_equal($$event[0][/* data */6], state[/* creatorData */21]) && issuerPubKey === state[/* creatorData */21][/* pubKey */2] && List.length(state[/* partnerData */10]) === 0) {
             return /* Ok */0;
           } else {
             exit$1 = 3;
@@ -1168,7 +1090,7 @@ function validate(state, param) {
       if (match) {
         if (issuerPubKey !== state[/* systemPubKey */5]) {
           return /* InvalidIssuer */2;
-        } else if ($$event.tag === 4 && !(match$1 || !(Caml_obj.caml_equal($$event[0][/* data */3], state[/* creatorData */23]) && List.length(state[/* partnerData */10]) === 1))) {
+        } else if ($$event.tag === 4 && !(match$1 || !(Caml_obj.caml_equal($$event[0][/* data */3], state[/* creatorData */21]) && List.length(state[/* partnerData */10]) === 1))) {
           return /* Ok */0;
         } else {
           exit = 1;
@@ -1190,14 +1112,13 @@ function validate(state, param) {
 }
 
 exports.make = make;
-exports.addProcess = addProcess;
-exports.endorseProcess = endorseProcess;
-exports.completeProcess = completeProcess;
 exports.apply = apply;
 exports.resultToString = resultToString;
 exports.processExists = processExists;
 exports.isEligible = isEligible;
 exports.hasYetToVote = hasYetToVote;
+exports.policyFulfilled = policyFulfilled;
+exports.ensureDependencies = ensureDependencies;
 exports.accountExists = accountExists;
 exports.isCustodian = isCustodian;
 exports.currentCustodians = currentCustodians;

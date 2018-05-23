@@ -56,31 +56,6 @@ let () = {
     );
     F.withCached(
       ~scope="Any proposal type",
-      "with the wrong policy",
-      () => G.withUserSessions(2),
-      sessions => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
-        L.(createVenture(user1) |> withFirstPartner(user1));
-      },
-      (sessions, log) => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        testValidationResult(
-          log |> constructState,
-          L.(
-            log
-            |> withPartnerProposed(
-                 ~policy=Policy.unanimousMinusOne,
-                 ~supporter=user1,
-                 ~prospect=user2,
-               )
-            |> lastItem
-          ),
-          Validation.PolicyMissmatch,
-        );
-      },
-    );
-    F.withCached(
-      ~scope="Any proposal type",
       "when the supporter is a non-partner",
       () => G.withUserSessions(3),
       sessions => {

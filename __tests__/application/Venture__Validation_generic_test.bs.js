@@ -4,7 +4,6 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../../src/application/events/Event.bs.js");
-var Policy = require("../../src/application/Policy.bs.js");
 var Fixtures = require("../helpers/Fixtures.bs.js");
 var Generators = require("../helpers/Generators.bs.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
@@ -39,22 +38,6 @@ describe("Any proposal type", (function () {
                               })(/* None */0, /* None */0, /* None */0), Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
               }), (function (_, log) {
                 return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](log), /* Ignore */1);
-              }));
-        Fixtures.withCached(/* None */0, "Any proposal type", "with the wrong policy", (function () {
-                return Generators.withUserSessions(2);
-              }), (function (sessions) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user1 = match[0];
-                return Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
-              }), (function (sessions, log) {
-                var match = Generators.twoUserSessionsFromArray(sessions);
-                var user2 = match[1];
-                var user1 = match[0];
-                var func = Generators.Log[/* withPartnerProposed */12];
-                var arg = /* Some */[Policy.unanimousMinusOne];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1) {
-                                        return Curry._5(func, param, param$1, arg, user1, user2);
-                                      })(/* None */0, /* None */0), log)), /* PolicyMissmatch */6);
               }));
         Fixtures.withCached(/* None */0, "Any proposal type", "when the supporter is a non-partner", (function () {
                 return Generators.withUserSessions(3);
@@ -477,7 +460,7 @@ describe("Any acceptance type", (function () {
                                     ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
                     }), (function (_, log) {
                       var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
-                      return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerAccepted */15](proposal)(log)), /* PolicyNotFulfilled */7);
+                      return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerAccepted */15](proposal)(log)), /* PolicyNotFulfilled */6);
                     }));
       }));
 
