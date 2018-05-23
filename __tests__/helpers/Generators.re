@@ -238,7 +238,7 @@ module Log = {
     lastItem: EventLog.item,
     log: EventLog.t,
   };
-  let eligblePartners = ({log}) =>
+  let eligiblePartners = ({log}) =>
     log
     |> EventLog.reduce(
          (res, {event}: EventLog.item) =>
@@ -337,7 +337,7 @@ module Log = {
       issuer,
       PartnerProposed(
         Event.partnerProposed(
-          ~eligibleWhenProposing=eligblePartners(l),
+          ~eligibleWhenProposing=eligiblePartners(l),
           ~policy,
           ~lastRemovalAccepted,
           supporter,
@@ -407,7 +407,7 @@ module Log = {
          supporter.issuerKeyPair,
          PartnerRemovalProposed(
            Event.partnerRemovalProposed(
-             ~eligibleWhenProposing=eligblePartners(l),
+             ~eligibleWhenProposing=eligiblePartners(l),
              ~lastPartnerAccepted,
              supporter,
            ),
@@ -486,7 +486,7 @@ module Log = {
       supporter.issuerKeyPair,
       CustodianProposed(
         Event.custodianProposed(
-          ~eligibleWhenProposing=eligblePartners(l),
+          ~eligibleWhenProposing=eligiblePartners(l),
           ~lastCustodianRemovalAccepted,
           supporter,
           partnerProposed |> Js.Option.getExn,
@@ -538,7 +538,7 @@ module Log = {
          supporter.issuerKeyPair,
          CustodianRemovalProposed(
            Event.custodianRemovalProposed(
-             ~eligibleWhenProposing=eligblePartners(l),
+             ~eligibleWhenProposing=eligiblePartners(l),
              ~custodianAccepted,
              supporter,
            ),
