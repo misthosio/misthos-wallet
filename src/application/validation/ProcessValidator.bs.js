@@ -7,14 +7,25 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 
 function make() {
-  return /* record */[/* processes */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0)];
+  return /* record */[
+          /* processes */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
+          /* exists */(function () {
+              return false;
+            }),
+          /* isEligible */(function (_, _$1) {
+              return false;
+            }),
+          /* didVote */(function (_, _$1) {
+              return false;
+            })
+        ];
 }
 
 function addProposal(param, map) {
   return Belt_Map.set(map, param[/* processId */0], /* record */[
               /* status : InProgress */0,
-              /* supporterIds */Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[param[/* supporterId */4]]),
-              /* rejectorIds */PrimitiveTypes.UserId[/* emptySet */9],
+              /* voterIds */Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[param[/* supporterId */4]]),
+              /* eligibleWhenProposing */param[/* eligibleWhenProposing */3],
               /* policy */param[/* policy */5]
             ]);
 }
@@ -25,8 +36,8 @@ function addEndorsement(param, map) {
                 return Utils.mapOption((function ($$process) {
                               return /* record */[
                                       /* status */$$process[/* status */0],
-                                      /* supporterIds */Belt_Set.add($$process[/* supporterIds */1], supporterId),
-                                      /* rejectorIds */$$process[/* rejectorIds */2],
+                                      /* voterIds */Belt_Set.add($$process[/* voterIds */1], supporterId),
+                                      /* eligibleWhenProposing */$$process[/* eligibleWhenProposing */2],
                                       /* policy */$$process[/* policy */3]
                                     ];
                             }), param);
@@ -39,8 +50,8 @@ function addRejection(param, map) {
                 return Utils.mapOption((function ($$process) {
                               return /* record */[
                                       /* status */$$process[/* status */0],
-                                      /* supporterIds */$$process[/* supporterIds */1],
-                                      /* rejectorIds */Belt_Set.add($$process[/* rejectorIds */2], rejectorId),
+                                      /* voterIds */Belt_Set.add($$process[/* voterIds */1], rejectorId),
+                                      /* eligibleWhenProposing */$$process[/* eligibleWhenProposing */2],
                                       /* policy */$$process[/* policy */3]
                                     ];
                             }), param);
@@ -52,8 +63,8 @@ function addAcceptance(param, map) {
                 return Utils.mapOption((function ($$process) {
                               return /* record */[
                                       /* status : Accepted */1,
-                                      /* supporterIds */$$process[/* supporterIds */1],
-                                      /* rejectorIds */$$process[/* rejectorIds */2],
+                                      /* voterIds */$$process[/* voterIds */1],
+                                      /* eligibleWhenProposing */$$process[/* eligibleWhenProposing */2],
                                       /* policy */$$process[/* policy */3]
                                     ];
                             }), param);
@@ -99,7 +110,18 @@ function update($$event, param) {
     default:
       processes$1 = processes;
   }
-  return /* record */[/* processes */processes$1];
+  return /* record */[
+          /* processes */processes$1,
+          /* exists */(function (param) {
+              return Belt_Map.has(processes$1, param);
+            }),
+          /* isEligible */(function (processId, partnerId) {
+              return Belt_Set.has(Belt_Map.getExn(processes$1, processId)[/* eligibleWhenProposing */2], partnerId);
+            }),
+          /* didVote */(function (processId, partnerId) {
+              return Belt_Set.has(Belt_Map.getExn(processes$1, processId)[/* voterIds */1], partnerId);
+            })
+        ];
 }
 
 exports.make = make;

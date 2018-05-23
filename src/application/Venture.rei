@@ -19,7 +19,8 @@ module Validation: {
     | Ignore
     | InvalidIssuer
     | UnknownProcessId
-    | AlreadyEndorsed
+    | NotEligible
+    | AlreadyVoted
     | PolicyMissmatch
     | PolicyNotFulfilled
     | DependencyNotMet

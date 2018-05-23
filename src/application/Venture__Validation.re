@@ -14,6 +14,7 @@ type t = {
   custodianValidator: CustodianValidator.t,
   custodianKeyChainValidator: CustodianKeyChainValidator.t,
   accountKeyChainValidator: AccountKeyChainValidator.t,
+  processValidator: ProcessValidator.t,
   systemPubKey: string,
   metaPolicy: Policy.t,
   knownItems: list(string),
@@ -44,6 +45,7 @@ let make = () => {
   custodianValidator: CustodianValidator.make(),
   custodianKeyChainValidator: CustodianKeyChainValidator.make(),
   accountKeyChainValidator: AccountKeyChainValidator.make(),
+  processValidator: ProcessValidator.make(),
   systemPubKey: "",
   knownItems: [],
   currentPartners: UserId.emptySet,
@@ -113,6 +115,8 @@ let apply = ({hash, event}: EventLog.item, state) => {
     knownItems: [hash, ...state.knownItems],
     accountValidator:
       state.accountValidator |> AccountValidator.update(event),
+    processValidator:
+      state.processValidator |> ProcessValidator.update(event),
     custodianValidator:
       state.custodianValidator |> CustodianValidator.update(event),
     custodianKeyChainValidator:
@@ -312,7 +316,8 @@ type result =
   | Ignore
   | InvalidIssuer
   | UnknownProcessId
-  | AlreadyEndorsed
+  | NotEligible
+  | AlreadyVoted
   | PolicyMissmatch
   | PolicyNotFulfilled
   | DependencyNotMet
@@ -324,11 +329,21 @@ let resultToString =
   | Ignore => "Ignore"
   | InvalidIssuer => "InvalidIssuer"
   | UnknownProcessId => "UnknownProcessId"
-  | AlreadyEndorsed => "AlreadyEndorsed"
+  | NotEligible => "NotEligible"
+  | AlreadyVoted => "AlreadyVoted"
   | PolicyMissmatch => "PolicyMissmatch"
   | PolicyNotFulfilled => "PolicyNotFulfilled"
   | DependencyNotMet => "DependencyNotMet"
   | BadData(description) => "BadData('" ++ description ++ "')";
+
+let processExists = (processId, {processValidator}) =>
+  processValidator.exists(processId) ? Ok : UnknownProcessId;
+
+let isEligible = (processId, voterId, {processValidator}) =>
+  processValidator.isEligible(processId, voterId) ? Ok : NotEligible;
+
+let hasYetToVote = (processId, voterId, {processValidator}) =>
+  processValidator.didVote(processId, voterId) ? AlreadyVoted : Ok;
 
 let accountExists = (accountIdx, {accountValidator}) =>
   accountValidator.exists(accountIdx) ?
@@ -412,33 +427,24 @@ let validateProposal =
   };
 
 let validateRejection =
-    ({processId, rejectorId}: EventTypes.rejection, {processes}, issuerId) =>
-  try (
-    {
-      let {supporterIds} = processes |> List.assoc(processId);
-      if (UserId.neq(issuerId, rejectorId)) {
-        InvalidIssuer;
-      } else if (supporterIds |> List.mem(rejectorId)) {
-        AlreadyEndorsed;
-      } else {
-        Ok;
-      };
-    }
-  ) {
-  | Not_found => UnknownProcessId
-  };
+    ({processId, rejectorId}: EventTypes.rejection, state, issuerId) =>
+  UserId.neq(issuerId, rejectorId) ?
+    InvalidIssuer :
+    state
+    |> test(processExists(processId))
+    |> andThen(isEligible(processId, rejectorId))
+    |> andThen(hasYetToVote(processId, rejectorId))
+    |> returnResult;
 
 let validateEndorsement =
-    (
-      {processId, supporterId}: EventTypes.endorsement,
-      {processes},
-      issuerId,
-    ) =>
-  if (processes |> List.mem_assoc(processId)) {
-    UserId.neq(issuerId, supporterId) ? InvalidIssuer : Ok;
-  } else {
-    UnknownProcessId;
-  };
+    ({processId, supporterId}: EventTypes.endorsement, state, issuerId) =>
+  UserId.neq(issuerId, supporterId) ?
+    InvalidIssuer :
+    state
+    |> test(processExists(processId))
+    |> andThen(isEligible(processId, supporterId))
+    |> andThen(hasYetToVote(processId, supporterId))
+    |> returnResult;
 
 let validateAcceptance =
     (

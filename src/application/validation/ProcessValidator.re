@@ -10,24 +10,42 @@ type status =
 
 type approvalProcess = {
   status,
-  supporterIds: UserId.set,
-  rejectorIds: UserId.set,
+  /* supporterIds: UserId.set, */
+  /* rejectorIds: UserId.set, */
+  voterIds: UserId.set,
+  eligibleWhenProposing: UserId.set,
   policy: Policy.t,
 };
 
-type t = {processes: ProcessId.map(approvalProcess)};
+type t = {
+  processes: ProcessId.map(approvalProcess),
+  exists: processId => bool,
+  isEligible: (processId, userId) => bool,
+  didVote: (processId, userId) => bool,
+  /* didReject: (processId, userId) => bool, */
+};
 
-let make = () => {processes: ProcessId.makeMap()};
+let make = () => {
+  processes: ProcessId.makeMap(),
+  exists: (_) => false,
+  isEligible: (_, _) => false,
+  didVote: (_, _) => false,
+  /* didReject: (_, _) => false, */
+};
 
 let addProposal =
-    ({processId, policy, supporterId}: EventTypes.proposal('a), map) =>
+    (
+      {processId, policy, supporterId, eligibleWhenProposing}:
+        EventTypes.proposal('a),
+      map,
+    ) =>
   map
   |. Map.set(
        processId,
        {
          status: InProgress,
-         supporterIds: [|supporterId|] |> Set.mergeMany(UserId.emptySet),
-         rejectorIds: UserId.emptySet,
+         voterIds: [|supporterId|] |> Set.mergeMany(UserId.emptySet),
+         eligibleWhenProposing,
          policy,
        },
      );
@@ -36,8 +54,8 @@ let addEndorsement = ({processId, supporterId}: EventTypes.endorsement, map) =>
   map
   |. Map.update(
        processId,
-       Utils.mapOption(({supporterIds} as process) =>
-         {...process, supporterIds: supporterIds |. Set.add(supporterId)}
+       Utils.mapOption(({voterIds} as process) =>
+         {...process, voterIds: voterIds |. Set.add(supporterId)}
        ),
      );
 
@@ -45,8 +63,8 @@ let addRejection = ({processId, rejectorId}: EventTypes.rejection, map) =>
   map
   |. Map.update(
        processId,
-       Utils.mapOption(({rejectorIds} as process) =>
-         {...process, rejectorIds: rejectorIds |. Set.add(rejectorId)}
+       Utils.mapOption(({voterIds} as process) =>
+         {...process, voterIds: voterIds |. Set.add(rejectorId)}
        ),
      );
 
@@ -108,5 +126,15 @@ let update = (event, {processes}) => {
     | IncomeDetected(_)
     | TransactionConfirmed(_) => processes
     };
-  {processes: processes};
+  {
+    processes,
+    exists: Map.has(processes),
+    isEligible: (processId, partnerId) =>
+      (processes |. Map.getExn(processId)).eligibleWhenProposing
+      |. Set.has(partnerId),
+    didVote: (processId, partnerId) =>
+      (processes |. Map.getExn(processId)).voterIds |. Set.has(partnerId),
+    /* didReject: (processId, partnerId) => */
+    /*   (processes |. Map.getExn(processId)).rejectorIds |. Set.has(partnerId), */
+  };
 };
