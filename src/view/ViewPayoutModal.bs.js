@@ -2,22 +2,47 @@
 'use strict';
 
 var BTC = require("../application/wallet/BTC.bs.js");
+var Css = require("bs-css/src/Css.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Body2 = require("./components/Body2.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Voters = require("./components/Voters.bs.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
+var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
+var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
+var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
+var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
 
 var component = ReasonReact.statelessComponent("ViewPayoutModal");
+
+var total = Css.style(/* :: */[
+      Css.display(/* flex */-1010954439),
+      /* :: */[
+        Css.justifyContent(Css.spaceBetween),
+        /* :: */[
+          Css.alignItems(/* baseline */287825029),
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var noBorder = Css.style(/* :: */[
+      Css.borderColor(/* transparent */582626130),
+      /* [] */0
+    ]);
+
+var Styles = /* module */[
+  /* total */total,
+  /* noBorder */noBorder
+];
 
 function make(viewData, commands, cmdStatus, _) {
   return /* record */[
@@ -32,13 +57,16 @@ function make(viewData, commands, cmdStatus, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var match = viewData[/* data */5];
+              var date = match[/* date */3];
+              var txId = match[/* txId */2];
               var summary = match[/* summary */1];
               var status = match[/* payoutStatus */0];
               var processId = viewData[/* processId */0];
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
-                          return React.createElement("div", {
-                                      key: String(idx)
-                                    }, ViewCommon.text(param[0] + (" - " + BTC.format(param[1]))));
+                          return ReasonReact.element(/* Some */[String(idx)], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text(param[0]))])),
+                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(param[1]) + " BTC")]))
+                                        ]));
                         }), summary[/* destinations */1]));
               var match$1;
               if (typeof status === "number") {
@@ -82,18 +110,26 @@ function make(viewData, commands, cmdStatus, _) {
                 ];
               }
               var payoutStatus = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$1[1], match$1[0], /* array */[]));
-              var transactionId = Js_option.getWithDefault(null, Utils.mapOption((function (txId) {
-                          return ViewCommon.text("Transaction ID: " + txId);
-                        }), match[/* txId */2]));
+              var transactionId = txId ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(txId[0])]))) : null;
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Payout Details",
                                 /* [] */0
-                              ]], React.createElement("div", undefined, ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](viewData[/* proposedBy */2])), Js_option.getWithDefault(null, Utils.mapOption((function (date) {
-                                            return ViewCommon.text(date.toString());
-                                          }), match[/* date */3])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[date ? ViewCommon.text("Payout completed on " + date[0].toString()) : ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](viewData[/* proposedBy */2]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[
                                           ViewCommon.text("Status: "),
                                           payoutStatus
-                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Payout")])), React.createElement("ul", undefined, destinationList, React.createElement("li", undefined, ViewCommon.text("Network Fee - " + BTC.format(summary[/* networkFee */4]))), React.createElement("li", undefined, ViewCommon.text("Misthos Fee - " + BTC.format(summary[/* misthosFee */3]))), React.createElement("li", undefined, ViewCommon.text("Total payout- " + BTC.format(summary[/* spentWithFees */2])))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", viewData[/* canVote */3], (function () {
+                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Payout")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Table.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableBody.make(/* None */0, /* None */0, /* array */[
+                                                    destinationList,
+                                                    ReasonReact.element(/* Some */["networkFee"], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("NETWORK FEE"))])),
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* networkFee */4]) + " BTC")]))
+                                                            ])),
+                                                    ReasonReact.element(/* Some */["misthosFee"], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("MISTHOS FEE"))])),
+                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")]))
+                                                            ]))
+                                                  ]))])), React.createElement("div", {
+                                      className: total
+                                    }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* Some */[total], /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")]))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", viewData[/* canVote */3], (function () {
                                             return Curry._1(commands[/* endorsePayout */7], processId);
                                           }), (function () {
                                             return Curry._1(commands[/* rejectPayout */8], processId);
@@ -117,5 +153,6 @@ exports.text = text;
 exports.extractString = extractString;
 exports.ViewData = ViewData;
 exports.component = component;
+exports.Styles = Styles;
 exports.make = make;
 /* component Not a pure module */

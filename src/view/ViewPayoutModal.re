@@ -6,6 +6,17 @@ module ViewData = ViewModel.ViewPayoutView;
 
 let component = ReasonReact.statelessComponent("ViewPayoutModal");
 
+module Styles = {
+  open Css;
+  let total =
+    style([
+      display(`flex),
+      justifyContent(spaceBetween),
+      alignItems(`baseline),
+    ]);
+  let noBorder = style([borderColor(`transparent)]);
+};
+
 let make =
     (
       ~viewData: ViewData.t,
@@ -27,9 +38,17 @@ let make =
         Array.of_list(
           summary.destinations
           |> List.mapi((idx, (address, amount)) =>
-               <div key=(idx |> string_of_int)>
-                 (text(address ++ " - " ++ BTC.format(amount)))
-               </div>
+               MaterialUi.(
+                 <TableRow key=(idx |> string_of_int)>
+                   <TableCell className=Styles.noBorder padding=`None>
+                     <b> (address |> text) </b>
+                   </TableCell>
+                   <TableCell
+                     numeric=true className=Styles.noBorder padding=`None>
+                     (BTC.format(amount) ++ " BTC" |> text)
+                   </TableCell>
+                 </TableRow>
+               )
              ),
         ),
       );
@@ -46,36 +65,69 @@ let make =
       <StatusChip label status />;
     };
     let transactionId =
-      txId
-      |> Utils.mapOption(txId => "Transaction ID: " ++ txId |> text)
-      |> Js.Option.getWithDefault(ReasonReact.null);
+      switch (txId) {
+      | Some(txId) =>
+        <div>
+          <MTypography variant=`Title>
+            ("Transaction ID" |> text)
+          </MTypography>
+          <MTypography variant=`Body2> (txId |> text) </MTypography>
+        </div>
+      | None => ReasonReact.null
+      };
     <Body2
       titles=["Payout Details"]
       body1=
         <div>
-          ("Proposed by " ++ UserId.toString(proposedBy) |> text)
-          (
-            date
-            |> Utils.mapOption(date => Js.Date.toString(date) |> text)
-            |> Js.Option.getWithDefault(ReasonReact.null)
-          )
+          <MTypography variant=`Body2>
+            (
+              switch (date) {
+              | Some(date) =>
+                "Payout completed on " ++ Js.Date.toString(date) |> text
+              | None => "Proposed by " ++ UserId.toString(proposedBy) |> text
+              }
+            )
+          </MTypography>
           <MTypography variant=`Body2>
             ("Status: " |> text)
             payoutStatus
           </MTypography>
           <MTypography variant=`Title> ("Payout" |> text) </MTypography>
-          <ul>
-            destinationList
-            <li>
-              (text("Network Fee - " ++ BTC.format(summary.networkFee)))
-            </li>
-            <li>
-              (text("Misthos Fee - " ++ BTC.format(summary.misthosFee)))
-            </li>
-            <li>
-              (text("Total payout- " ++ BTC.format(summary.spentWithFees)))
-            </li>
-          </ul>
+          MaterialUi.(
+            <Table>
+              <TableBody>
+                destinationList
+                <TableRow key="networkFee">
+                  <TableCell className=Styles.noBorder padding=`None>
+                    <b> ("NETWORK FEE" |> text) </b>
+                  </TableCell>
+                  <TableCell
+                    numeric=true className=Styles.noBorder padding=`None>
+                    (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                  </TableCell>
+                </TableRow>
+                <TableRow key="misthosFee">
+                  <TableCell className=Styles.noBorder padding=`None>
+                    <b> ("MISTHOS FEE" |> text) </b>
+                  </TableCell>
+                  <TableCell
+                    numeric=true className=Styles.noBorder padding=`None>
+                    (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          )
+          MaterialUi.(
+            <div className=Styles.total>
+              <Typography variant=`Body2>
+                ("TOTAL PAYOUT" |> text)
+              </Typography>
+              <MTypography className=Styles.total variant=`Subheading>
+                (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
+              </MTypography>
+            </div>
+          )
           transactionId
         </div>
       body2=
