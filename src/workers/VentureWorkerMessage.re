@@ -36,6 +36,7 @@ type cmdSuccess =
 
 type cmdError =
   | PartnerAlreadyExists
+  | PartnerAlreadyProposed
   | CouldNotFindUserInfo
   | CouldNotPersistVenture;
 
@@ -101,6 +102,8 @@ let encodeError =
   fun
   | PartnerAlreadyExists =>
     Json.Encode.(object_([("type", string("PartnerAlreadyExists"))]))
+  | PartnerAlreadyProposed =>
+    Json.Encode.(object_([("type", string("PartnerAlreadyProposed"))]))
   | CouldNotFindUserInfo =>
     Json.Encode.(object_([("type", string("CouldNotFindUserInfo"))]))
   | CouldNotPersistVenture =>
@@ -109,6 +112,7 @@ let encodeError =
 let decodeError = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
+  | "PartnerAlreadyProposed" => PartnerAlreadyProposed
   | "PartnerAlreadyExists" => PartnerAlreadyExists
   | "CouldNotFindUserInfo" => CouldNotFindUserInfo
   | "CouldNotPersistVenture" => CouldNotPersistVenture

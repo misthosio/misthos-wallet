@@ -54,7 +54,7 @@ function apply($$event, state) {
               ];
     case 4 : 
         var acceptance = $$event[0];
-        var data = acceptance[/* data */3];
+        var data = acceptance[/* data */2];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners : :: */[
@@ -63,12 +63,14 @@ function apply($$event, state) {
                     /* name : None */0,
                     /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0])
                   ],
-                  state[/* partners */1]
+                  Belt_List.keepU(state[/* partners */1], (function (param) {
+                          return PrimitiveTypes.UserId[/* neq */6](param[/* userId */0], data[/* id */1]);
+                        }))
                 ],
                 /* prospects */ProcessCollector.addAcceptance(acceptance, state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
-    case 5 : 
+    case 6 : 
         var proposal = $$event[0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
@@ -93,16 +95,16 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 2 : 
-    case 6 : 
+    case 7 : 
         exit = 1;
         break;
     case 3 : 
-    case 7 : 
+    case 8 : 
         exit = 2;
         break;
-    case 8 : 
+    case 9 : 
         var acceptance$1 = $$event[0];
-        var id = acceptance$1[/* data */3][/* id */0];
+        var id = acceptance$1[/* data */2][/* id */0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */Belt_List.keep(state[/* partners */1], (function (p) {
@@ -111,6 +113,10 @@ function apply($$event, state) {
                 /* prospects */ProcessCollector.addAcceptance(acceptance$1, state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
+    case 5 : 
+    case 10 : 
+        exit = 3;
+        break;
     default:
       return state;
   }
@@ -127,6 +133,13 @@ function apply($$event, state) {
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
                 /* prospects */ProcessCollector.addEndorsement(state[/* localUser */0], $$event[0], state[/* prospects */2]),
+                /* partnerPolicy */state[/* partnerPolicy */3]
+              ];
+    case 3 : 
+        return /* record */[
+                /* localUser */state[/* localUser */0],
+                /* partners */state[/* partners */1],
+                /* prospects */ProcessCollector.addDenial($$event[0], state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     

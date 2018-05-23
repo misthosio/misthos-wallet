@@ -38,7 +38,7 @@ function make(param, log) {
                         match[/* systemIssuer */5],
                         match[/* network */6]
                       ];
-            case 25 : 
+            case 30 : 
                 var match$1 = $$event[0];
                 if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
                   return /* tuple */[
@@ -54,9 +54,9 @@ function make(param, log) {
                   exit = 1;
                 }
                 break;
-            case 26 : 
-            case 27 : 
-            case 28 : 
+            case 31 : 
+            case 32 : 
+            case 33 : 
                 exit$1 = 2;
                 break;
             default:
@@ -86,7 +86,7 @@ function make(param, log) {
         }), /* tuple */[
         true,
         /* :: */[
-          param[/* data */3][/* payoutTx */1],
+          param[/* data */2][/* payoutTx */1],
           /* [] */0
         ],
         BitcoinjsLib.ECPair.makeRandom(),
@@ -119,8 +119,8 @@ function make(param, log) {
               var $$event = param[/* event */0];
               var exit = 0;
               switch ($$event.tag | 0) {
-                case 26 : 
-                case 28 : 
+                case 31 : 
+                case 33 : 
                     exit = 1;
                     break;
                 default:
@@ -154,14 +154,14 @@ function make(param, log) {
                                           if (typeof result === "number") {
                                             tmp = /* tuple */[
                                               env$1[1],
-                                              /* PayoutBroadcastDuplicate */Block.__(27, [Curry._1(Event.Payout[/* BroadcastDuplicate */9][/* make */0], env$1[0])])
+                                              /* PayoutBroadcastDuplicate */Block.__(32, [Curry._1(Event.Payout[/* BroadcastDuplicate */10][/* make */0], env$1[0])])
                                             ];
                                           } else {
                                             switch (result.tag | 0) {
                                               case 0 : 
                                                   tmp = /* tuple */[
                                                     env$1[1],
-                                                    /* PayoutBroadcast */Block.__(26, [Curry._2(Event.Payout[/* Broadcast */8][/* make */0], env$1[0], result[0])])
+                                                    /* PayoutBroadcast */Block.__(31, [Curry._2(Event.Payout[/* Broadcast */9][/* make */0], env$1[0], result[0])])
                                                   ];
                                                   break;
                                               case 1 : 
@@ -169,13 +169,13 @@ function make(param, log) {
                                                   Utils.printError("Broadcasting transaction failed", errorMessage);
                                                   tmp = /* tuple */[
                                                     env$1[1],
-                                                    /* PayoutBroadcastFailed */Block.__(28, [Curry._2(Event.Payout[/* BroadcastFailed */10][/* make */0], env$1[0], errorMessage)])
+                                                    /* PayoutBroadcastFailed */Block.__(33, [Curry._2(Event.Payout[/* BroadcastFailed */11][/* make */0], env$1[0], errorMessage)])
                                                   ];
                                                   break;
                                               case 2 : 
                                                   tmp = /* tuple */[
                                                     env$1[1],
-                                                    /* PayoutBroadcastFailed */Block.__(28, [Curry._2(Event.Payout[/* BroadcastFailed */10][/* make */0], env$1[0], "Fetch error")])
+                                                    /* PayoutBroadcastFailed */Block.__(33, [Curry._2(Event.Payout[/* BroadcastFailed */11][/* make */0], env$1[0], "Fetch error")])
                                                   ];
                                                   break;
                                               

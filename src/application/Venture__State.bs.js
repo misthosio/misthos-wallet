@@ -3,6 +3,7 @@
 
 var List = require("bs-platform/lib/js/list.js");
 var Event = require("./events/Event.bs.js");
+var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
@@ -13,6 +14,7 @@ function make() {
           /* ventureName */"",
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* policies : [] */0,
+          /* activePartnerProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* currentPartners */PrimitiveTypes.UserId[/* emptySet */9],
           /* custodianProcesses : [] */0,
           /* partnerRemovalProcesses : [] */0,
@@ -33,11 +35,17 @@ function ventureName(param) {
 }
 
 function currentPartners(param) {
-  return param[/* currentPartners */3];
+  return param[/* currentPartners */4];
 }
 
 function isPartner(userId, param) {
-  return Belt_Set.has(param[/* currentPartners */3], userId);
+  return Belt_Set.has(param[/* currentPartners */4], userId);
+}
+
+function isPartnerProposalUnique(proposal, param) {
+  return Belt_Map.someU(param[/* activePartnerProcesses */3], (function (_, param) {
+                return PrimitiveTypes.UserId[/* eq */5](param[/* data */6][/* id */1], proposal[/* data */6][/* id */1]);
+              })) === false;
 }
 
 function currentPolicy(processName, param) {
@@ -47,12 +55,12 @@ function currentPolicy(processName, param) {
 function custodianProcessForPartnerProcess(processId, param) {
   return List.find((function (param) {
                   return PrimitiveTypes.ProcessId[/* eq */5](processId, param[1]);
-                }), param[/* custodianProcesses */4])[0];
+                }), param[/* custodianProcesses */5])[0];
 }
 
 function custodianAcceptedFor(partnerId, param) {
   try {
-    return /* Some */[List.assoc(partnerId, param[/* custodianAccepted */7])];
+    return /* Some */[List.assoc(partnerId, param[/* custodianAccepted */8])];
   }
   catch (exn){
     if (exn === Caml_builtin_exceptions.not_found) {
@@ -65,8 +73,8 @@ function custodianAcceptedFor(partnerId, param) {
 
 function custodianRemovalProcessForPartnerRemovalProcess(processId, param) {
   try {
-    var custodianId = List.assoc(processId, param[/* partnerRemovalProcesses */5]);
-    return /* Some */[List.assoc(custodianId, param[/* custodianRemovalProcesses */6])];
+    var custodianId = List.assoc(processId, param[/* partnerRemovalProcesses */6]);
+    return /* Some */[List.assoc(custodianId, param[/* custodianRemovalProcesses */7])];
   }
   catch (exn){
     if (exn === Caml_builtin_exceptions.not_found) {
@@ -79,7 +87,7 @@ function custodianRemovalProcessForPartnerRemovalProcess(processId, param) {
 
 function lastRemovalOfPartner(partnerId, param) {
   try {
-    return /* Some */[List.assoc(partnerId, param[/* partnerRemovals */8])];
+    return /* Some */[List.assoc(partnerId, param[/* partnerRemovals */9])];
   }
   catch (exn){
     if (exn === Caml_builtin_exceptions.not_found) {
@@ -92,7 +100,7 @@ function lastRemovalOfPartner(partnerId, param) {
 
 function lastRemovalOfCustodian(partnerId, param) {
   try {
-    return /* Some */[List.assoc(partnerId, param[/* custodianRemovals */9])];
+    return /* Some */[List.assoc(partnerId, param[/* custodianRemovals */10])];
   }
   catch (exn){
     if (exn === Caml_builtin_exceptions.not_found) {
@@ -105,7 +113,7 @@ function lastRemovalOfCustodian(partnerId, param) {
 
 function lastPartnerAccepted(partnerId, param) {
   console.log("here");
-  var ret = List.assoc(partnerId, param[/* partnerAccepted */10]);
+  var ret = List.assoc(partnerId, param[/* partnerAccepted */11]);
   console.log("there");
   return ret;
 }
@@ -120,12 +128,12 @@ function apply($$event, state) {
                 /* systemIssuer */match[/* systemIssuer */5],
                 /* policies : :: */[
                   /* tuple */[
-                    Event.Partner[/* Removal */7][/* processName */1],
+                    Event.Partner[/* Removal */8][/* processName */1],
                     /* UnanimousMinusOne */1
                   ],
                   /* :: */[
                     /* tuple */[
-                      Event.Custodian[/* Removal */7][/* processName */1],
+                      Event.Custodian[/* Removal */8][/* processName */1],
                       /* UnanimousMinusOne */1
                     ],
                     List.map((function (n) {
@@ -148,159 +156,198 @@ function apply($$event, state) {
                         ])
                   ]
                 ],
-                /* currentPartners */state[/* currentPartners */3],
-                /* custodianProcesses */state[/* custodianProcesses */4],
-                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
-                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
-                /* custodianAccepted */state[/* custodianAccepted */7],
-                /* partnerRemovals */state[/* partnerRemovals */8],
-                /* custodianRemovals */state[/* custodianRemovals */9],
-                /* partnerAccepted */state[/* partnerAccepted */10]
+                /* activePartnerProcesses */state[/* activePartnerProcesses */3],
+                /* currentPartners */state[/* currentPartners */4],
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
+                /* custodianAccepted */state[/* custodianAccepted */8],
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 4 : 
-        var $$event$1 = $$event[0];
-        var id = $$event$1[/* data */3][/* id */1];
+    case 1 : 
+        var proposal = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* currentPartners */Belt_Set.add(state[/* currentPartners */3], id),
-                /* custodianProcesses */state[/* custodianProcesses */4],
-                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
-                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
-                /* custodianAccepted */state[/* custodianAccepted */7],
-                /* partnerRemovals */state[/* partnerRemovals */8],
-                /* custodianRemovals */state[/* custodianRemovals */9],
+                /* activePartnerProcesses */Belt_Map.set(state[/* activePartnerProcesses */3], proposal[/* processId */0], proposal),
+                /* currentPartners */state[/* currentPartners */4],
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
+                /* custodianAccepted */state[/* custodianAccepted */8],
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
+              ];
+    case 4 : 
+        var $$event$1 = $$event[0];
+        var id = $$event$1[/* data */2][/* id */1];
+        return /* record */[
+                /* ventureName */state[/* ventureName */0],
+                /* systemIssuer */state[/* systemIssuer */1],
+                /* policies */state[/* policies */2],
+                /* activePartnerProcesses */Belt_Map.remove(state[/* activePartnerProcesses */3], $$event$1[/* processId */0]),
+                /* currentPartners */Belt_Set.add(state[/* currentPartners */4], id),
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
+                /* custodianAccepted */state[/* custodianAccepted */8],
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
                 /* partnerAccepted : :: */[
                   /* tuple */[
                     id,
                     $$event$1
                   ],
-                  state[/* partnerAccepted */10]
+                  state[/* partnerAccepted */11]
                 ]
               ];
     case 5 : 
+        return /* record */[
+                /* ventureName */state[/* ventureName */0],
+                /* systemIssuer */state[/* systemIssuer */1],
+                /* policies */state[/* policies */2],
+                /* activePartnerProcesses */Belt_Map.remove(state[/* activePartnerProcesses */3], $$event[0][/* processId */0]),
+                /* currentPartners */state[/* currentPartners */4],
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
+                /* custodianAccepted */state[/* custodianAccepted */8],
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
+              ];
+    case 6 : 
         var match$1 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* currentPartners */state[/* currentPartners */3],
-                /* custodianProcesses */state[/* custodianProcesses */4],
+                /* activePartnerProcesses */state[/* activePartnerProcesses */3],
+                /* currentPartners */state[/* currentPartners */4],
+                /* custodianProcesses */state[/* custodianProcesses */5],
                 /* partnerRemovalProcesses : :: */[
                   /* tuple */[
                     match$1[/* processId */0],
                     match$1[/* data */6][/* id */0]
                   ],
-                  state[/* partnerRemovalProcesses */5]
+                  state[/* partnerRemovalProcesses */6]
                 ],
-                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
-                /* custodianAccepted */state[/* custodianAccepted */7],
-                /* partnerRemovals */state[/* partnerRemovals */8],
-                /* custodianRemovals */state[/* custodianRemovals */9],
-                /* partnerAccepted */state[/* partnerAccepted */10]
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
+                /* custodianAccepted */state[/* custodianAccepted */8],
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 8 : 
+    case 9 : 
         var $$event$2 = $$event[0];
-        var id$1 = $$event$2[/* data */3][/* id */0];
+        var id$1 = $$event$2[/* data */2][/* id */0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* currentPartners */Belt_Set.remove(state[/* currentPartners */3], id$1),
-                /* custodianProcesses */state[/* custodianProcesses */4],
-                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
-                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
-                /* custodianAccepted */state[/* custodianAccepted */7],
+                /* activePartnerProcesses */state[/* activePartnerProcesses */3],
+                /* currentPartners */Belt_Set.remove(state[/* currentPartners */4], id$1),
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
+                /* custodianAccepted */state[/* custodianAccepted */8],
                 /* partnerRemovals : :: */[
                   /* tuple */[
                     id$1,
                     $$event$2
                   ],
-                  state[/* partnerRemovals */8]
+                  state[/* partnerRemovals */9]
                 ],
-                /* custodianRemovals */state[/* custodianRemovals */9],
-                /* partnerAccepted */state[/* partnerAccepted */10]
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 13 : 
+    case 15 : 
         var match$2 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* currentPartners */state[/* currentPartners */3],
+                /* activePartnerProcesses */state[/* activePartnerProcesses */3],
+                /* currentPartners */state[/* currentPartners */4],
                 /* custodianProcesses : :: */[
                   /* tuple */[
                     match$2[/* processId */0],
                     match$2[/* data */6][/* partnerApprovalProcess */1]
                   ],
-                  state[/* custodianProcesses */4]
+                  state[/* custodianProcesses */5]
                 ],
-                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
-                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
-                /* custodianAccepted */state[/* custodianAccepted */7],
-                /* partnerRemovals */state[/* partnerRemovals */8],
-                /* custodianRemovals */state[/* custodianRemovals */9],
-                /* partnerAccepted */state[/* partnerAccepted */10]
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
+                /* custodianAccepted */state[/* custodianAccepted */8],
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 16 : 
+    case 18 : 
         var $$event$3 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* currentPartners */state[/* currentPartners */3],
-                /* custodianProcesses */state[/* custodianProcesses */4],
-                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
-                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
+                /* activePartnerProcesses */state[/* activePartnerProcesses */3],
+                /* currentPartners */state[/* currentPartners */4],
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
                 /* custodianAccepted : :: */[
                   /* tuple */[
-                    $$event$3[/* data */3][/* partnerId */0],
+                    $$event$3[/* data */2][/* partnerId */0],
                     $$event$3
                   ],
-                  state[/* custodianAccepted */7]
+                  state[/* custodianAccepted */8]
                 ],
-                /* partnerRemovals */state[/* partnerRemovals */8],
-                /* custodianRemovals */state[/* custodianRemovals */9],
-                /* partnerAccepted */state[/* partnerAccepted */10]
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 17 : 
+    case 20 : 
         var match$3 = $$event[0];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* currentPartners */state[/* currentPartners */3],
-                /* custodianProcesses */state[/* custodianProcesses */4],
-                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
+                /* activePartnerProcesses */state[/* activePartnerProcesses */3],
+                /* currentPartners */state[/* currentPartners */4],
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
                 /* custodianRemovalProcesses : :: */[
                   /* tuple */[
                     match$3[/* data */6][/* custodianId */0],
                     match$3[/* processId */0]
                   ],
-                  state[/* custodianRemovalProcesses */6]
+                  state[/* custodianRemovalProcesses */7]
                 ],
-                /* custodianAccepted */state[/* custodianAccepted */7],
-                /* partnerRemovals */state[/* partnerRemovals */8],
-                /* custodianRemovals */state[/* custodianRemovals */9],
-                /* partnerAccepted */state[/* partnerAccepted */10]
+                /* custodianAccepted */state[/* custodianAccepted */8],
+                /* partnerRemovals */state[/* partnerRemovals */9],
+                /* custodianRemovals */state[/* custodianRemovals */10],
+                /* partnerAccepted */state[/* partnerAccepted */11]
               ];
-    case 20 : 
+    case 23 : 
         var $$event$4 = $$event[0];
-        var match$4 = $$event$4[/* data */3];
+        var match$4 = $$event$4[/* data */2];
         var lastCustodianProcess = match$4[/* lastCustodianProcess */2];
         return /* record */[
                 /* ventureName */state[/* ventureName */0],
                 /* systemIssuer */state[/* systemIssuer */1],
                 /* policies */state[/* policies */2],
-                /* currentPartners */state[/* currentPartners */3],
-                /* custodianProcesses */state[/* custodianProcesses */4],
-                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */5],
-                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */6],
+                /* activePartnerProcesses */state[/* activePartnerProcesses */3],
+                /* currentPartners */state[/* currentPartners */4],
+                /* custodianProcesses */state[/* custodianProcesses */5],
+                /* partnerRemovalProcesses */state[/* partnerRemovalProcesses */6],
+                /* custodianRemovalProcesses */state[/* custodianRemovalProcesses */7],
                 /* custodianAccepted */List.filter((function (param) {
                           return PrimitiveTypes.ProcessId[/* neq */6](param[1][/* processId */0], lastCustodianProcess);
-                        }))(state[/* custodianAccepted */7]),
-                /* partnerRemovals */state[/* partnerRemovals */8],
+                        }))(state[/* custodianAccepted */8]),
+                /* partnerRemovals */state[/* partnerRemovals */9],
                 /* custodianRemovals : :: */[
                   /* tuple */[
                     match$4[/* custodianId */0],
@@ -308,7 +355,7 @@ function apply($$event, state) {
                   ],
                   /* [] */0
                 ],
-                /* partnerAccepted */state[/* partnerAccepted */10]
+                /* partnerAccepted */state[/* partnerAccepted */11]
               ];
     default:
       return state;
@@ -321,6 +368,7 @@ exports.ventureName = ventureName;
 exports.currentPolicy = currentPolicy;
 exports.currentPartners = currentPartners;
 exports.isPartner = isPartner;
+exports.isPartnerProposalUnique = isPartnerProposalUnique;
 exports.custodianAcceptedFor = custodianAcceptedFor;
 exports.lastRemovalOfPartner = lastRemovalOfPartner;
 exports.lastRemovalOfCustodian = lastRemovalOfCustodian;

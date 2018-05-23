@@ -7,6 +7,7 @@ open Event;
 type payoutStatus =
   | PendingApproval
   | Accepted
+  | Denied
   | Unconfirmed
   | Confirmed
   | Failed(string);
@@ -85,6 +86,15 @@ let apply = (event, state) =>
         |> ProcessCollector.addAcceptance(accepted)
         |> ProcessCollector.updateData(processId, data =>
              {...data, payoutStatus: Accepted}
+           ),
+    }
+  | PayoutDenied({processId} as denial) => {
+      ...state,
+      payouts:
+        state.payouts
+        |> ProcessCollector.addDenial(denial)
+        |> ProcessCollector.updateData(processId, data =>
+             {...data, payoutStatus: Denied}
            ),
     }
   | PayoutBroadcast({processId, txId}) => {

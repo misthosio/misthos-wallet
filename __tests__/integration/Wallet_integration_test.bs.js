@@ -26,19 +26,19 @@ describe("Wallet_integration", (function () {
                       var match = Generators.threeUserSessionsFromArray(sessions);
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */28](user2, /* :: */[
+                      return Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */31](user2, /* :: */[
                                                       user1,
                                                       /* :: */[
                                                         user2,
                                                         /* [] */0
                                                       ]
-                                                    ], Generators.Log[/* withPartner */16](user2, /* :: */[
+                                                    ], Generators.Log[/* withPartner */17](user2, /* :: */[
                                                           user1,
                                                           /* [] */0
-                                                        ], Generators.Log[/* withCustodian */28](user1, /* :: */[
+                                                        ], Generators.Log[/* withCustodian */31](user1, /* :: */[
                                                               user1,
                                                               /* [] */0
-                                                            ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)))))))))));
+                                                            ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))))))))));
                     }), (function (sessions, log) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
                       var user3 = match[2];
@@ -55,13 +55,13 @@ describe("Wallet_integration", (function () {
                       var match$3 = match$1[0];
                       var address2 = match$3[1];
                       var address1 = match$3[0];
-                      var log$1 = Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */28](user3, /* :: */[
+                      var log$1 = Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */31](user3, /* :: */[
                                                 user1,
                                                 /* :: */[
                                                   user2,
                                                   /* [] */0
                                                 ]
-                                              ], Generators.Log[/* withPartner */16](user3, /* :: */[
+                                              ], Generators.Log[/* withPartner */17](user3, /* :: */[
                                                     user1,
                                                     /* :: */[
                                                       user2,
@@ -182,11 +182,11 @@ describe("Wallet_integration", (function () {
                                                       var incomeEvent = Event.IncomeDetected[/* make */0](param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, param[/* txId */0], param[/* amount */3]);
                                                       var match = List.mem_assoc(address, walletOneAddresses);
                                                       if (match) {
-                                                        oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(33, [incomeEvent]), oneKeyChainWallet[0]);
-                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(33, [incomeEvent]), twoKeyChainWallet[0]);
+                                                        oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(38, [incomeEvent]), oneKeyChainWallet[0]);
+                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(38, [incomeEvent]), twoKeyChainWallet[0]);
                                                         return /* () */0;
                                                       } else {
-                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(33, [incomeEvent]), twoKeyChainWallet[0]);
+                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(38, [incomeEvent]), twoKeyChainWallet[0]);
                                                         return /* () */0;
                                                       }
                                                     }), utxos);
@@ -205,8 +205,8 @@ describe("Wallet_integration", (function () {
                                                       ]), oneKeyChainWallet[0]);
                                               if (param) {
                                                 var $$event = param[0];
-                                                oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), oneKeyChainWallet[0]);
-                                                twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0]);
+                                                oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(25, [$$event]), oneKeyChainWallet[0]);
+                                                twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutProposed */Block.__(25, [$$event]), twoKeyChainWallet[0]);
                                                 return Promise.all(/* tuple */[
                                                             Promise.resolve($$event[/* processId */0]),
                                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
@@ -220,8 +220,8 @@ describe("Wallet_integration", (function () {
                                             })).then((function (param) {
                                             var txId = param[1];
                                             var processId = param[0];
-                                            oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(26, [Curry._2(Event.Payout[/* Broadcast */8][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
-                                            twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(26, [Curry._2(Event.Payout[/* Broadcast */8][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
+                                            oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(31, [Curry._2(Event.Payout[/* Broadcast */9][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
+                                            twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(31, [Curry._2(Event.Payout[/* Broadcast */9][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
                                             return Promise.resolve(/* () */0);
                                           }));
                             }));
@@ -253,7 +253,7 @@ describe("Wallet_integration", (function () {
                                       var data = $$event[/* data */6];
                                       var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], wallet$2[/* walletInfoCollector */3][/* keyChains */3], data[/* payoutTx */1], /* Regtest */0));
                                       tmp = Promise.all(/* tuple */[
-                                            Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(21, [$$event]), twoKeyChainWallet[0])),
+                                            Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(25, [$$event]), twoKeyChainWallet[0])),
                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
                                                       data[/* payoutTx */1],
                                                       /* :: */[

@@ -20,10 +20,10 @@ describe("AddressCollector", (function () {
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user1 = match[0];
-                      return Generators.Log[/* withIncomeAddressExposed */36](user1, Generators.Log[/* withAccountKeyChainActivated */35](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */34](Generators.Log[/* withCustodianKeyChain */33](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */28](user1, /* :: */[
+                      return Generators.Log[/* withIncomeAddressExposed */39](user1, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */31](user1, /* :: */[
                                                   user1,
                                                   /* [] */0
-                                                ], Generators.Log[/* withAccount */24](user1, Generators.Log[/* withFirstPartner */17](user1)(Fixtures.createVenture(user1))))))));
+                                                ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1))))))));
                     }), (function (_, log) {
                       return Jest.test("has the address", (function () {
                                     return Jest.Expect[/* toEqual */12](/* record */[

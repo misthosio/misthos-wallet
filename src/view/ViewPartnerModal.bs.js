@@ -63,13 +63,7 @@ function make(viewData, commands, cmdStatus, _) {
                     break;
                 case 2 : 
                     match$2 = /* tuple */[
-                      "Rejected",
-                      /* Failure */1
-                    ];
-                    break;
-                case 3 : 
-                    match$2 = /* tuple */[
-                      "Aborted",
+                      "Denied",
                       /* Failure */1
                     ];
                     break;

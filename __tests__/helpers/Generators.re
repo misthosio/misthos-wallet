@@ -129,6 +129,7 @@ module Event = {
     AppEvent.makePartnerRejected(~processId, ~rejectorId=rejector.userId)
     |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
+  let partnerDenied = AppEvent.Partner.Denied.fromProposal;
   let partnerRemovalProposed =
       (
         ~eligibleWhenProposing,
@@ -184,7 +185,12 @@ module Event = {
       (supporter: Session.Data.t, {processId}: AppEvent.Custodian.Proposed.t) =>
     AppEvent.makeCustodianEndorsed(~processId, ~supporterId=supporter.userId)
     |> AppEvent.getCustodianEndorsedExn;
+  let custodianRejected =
+      (rejector: Session.Data.t, {processId}: AppEvent.Custodian.Proposed.t) =>
+    AppEvent.makeCustodianRejected(~processId, ~rejectorId=rejector.userId)
+    |> AppEvent.getCustodianRejectedExn;
   let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
+  let custodianDenied = AppEvent.Custodian.Denied.fromProposal;
   let custodianRemovalProposed =
       (
         ~eligibleWhenProposing,
@@ -238,7 +244,7 @@ module Log = {
     lastItem: EventLog.item,
     log: EventLog.t,
   };
-  let eligblePartners = ({log}) =>
+  let eligiblePartners = ({log}) =>
     log
     |> EventLog.reduce(
          (res, {event}: EventLog.item) =>
@@ -337,7 +343,7 @@ module Log = {
       issuer,
       PartnerProposed(
         Event.partnerProposed(
-          ~eligibleWhenProposing=eligblePartners(l),
+          ~eligibleWhenProposing=eligiblePartners(l),
           ~policy,
           ~lastRemovalAccepted,
           supporter,
@@ -371,6 +377,8 @@ module Log = {
   };
   let withPartnerAccepted = proposal =>
     appendSystemEvent(PartnerAccepted(Event.partnerAccepted(proposal)));
+  let withPartnerDenied = proposal =>
+    appendSystemEvent(PartnerDenied(Event.partnerDenied(proposal)));
   let withPartner = (user, ~supporters, log) =>
     switch (supporters) {
     | [first, ...rest] =>
@@ -407,7 +415,7 @@ module Log = {
          supporter.issuerKeyPair,
          PartnerRemovalProposed(
            Event.partnerRemovalProposed(
-             ~eligibleWhenProposing=eligblePartners(l),
+             ~eligibleWhenProposing=eligiblePartners(l),
              ~lastPartnerAccepted,
              supporter,
            ),
@@ -486,7 +494,7 @@ module Log = {
       supporter.issuerKeyPair,
       CustodianProposed(
         Event.custodianProposed(
-          ~eligibleWhenProposing=eligblePartners(l),
+          ~eligibleWhenProposing=eligiblePartners(l),
           ~lastCustodianRemovalAccepted,
           supporter,
           partnerProposed |> Js.Option.getExn,
@@ -500,8 +508,15 @@ module Log = {
       supporter.issuerKeyPair,
       CustodianEndorsed(Event.custodianEndorsed(supporter, proposal)),
     );
+  let withCustodianRejected = (rejector: Session.Data.t, proposal) =>
+    appendEvent(
+      rejector.issuerKeyPair,
+      CustodianRejected(Event.custodianRejected(rejector, proposal)),
+    );
   let withCustodianAccepted = proposal =>
     appendSystemEvent(CustodianAccepted(Event.custodianAccepted(proposal)));
+  let withCustodianDenied = proposal =>
+    appendSystemEvent(CustodianDenied(Event.custodianDenied(proposal)));
   let withCustodian = (user, ~supporters, log) =>
     switch (supporters) {
     | [first, ...rest] =>
@@ -538,7 +553,7 @@ module Log = {
          supporter.issuerKeyPair,
          CustodianRemovalProposed(
            Event.custodianRemovalProposed(
-             ~eligibleWhenProposing=eligblePartners(l),
+             ~eligibleWhenProposing=eligiblePartners(l),
              ~custodianAccepted,
              supporter,
            ),

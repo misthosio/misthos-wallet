@@ -137,6 +137,8 @@ function partnerRejected(rejector, param) {
 
 var partnerAccepted = Event.Partner[/* Accepted */6][/* fromProposal */0];
 
+var partnerDenied = Event.Partner[/* Denied */7][/* fromProposal */0];
+
 function partnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, supporterSession) {
   return Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(eligibleWhenProposing, lastPartnerAccepted, supporterSession[/* userId */0], Policy.unanimousMinusOne));
 }
@@ -145,7 +147,7 @@ function partnerRemovalEndorsed(supporter, param) {
   return Event.getPartnerRemovalEndorsedExn(Event.makePartnerRemovalEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
-var partnerRemovalAccepted = Event.Partner[/* Removal */7][/* Accepted */6][/* fromProposal */0];
+var partnerRemovalAccepted = Event.Partner[/* Removal */8][/* Accepted */6][/* fromProposal */0];
 
 function accountCreationProposed(eligibleWhenProposing, param) {
   return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
@@ -161,7 +163,13 @@ function custodianEndorsed(supporter, param) {
   return Event.getCustodianEndorsedExn(Event.makeCustodianEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
+function custodianRejected(rejector, param) {
+  return Event.getCustodianRejectedExn(Event.makeCustodianRejected(param[/* processId */0], rejector[/* userId */0]));
+}
+
 var custodianAccepted = Event.Custodian[/* Accepted */6][/* fromProposal */0];
+
+var custodianDenied = Event.Custodian[/* Denied */7][/* fromProposal */0];
 
 function custodianRemovalProposed(eligibleWhenProposing, custodianAccepted, supporterSession) {
   return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(eligibleWhenProposing, custodianAccepted, supporterSession[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimousMinusOne));
@@ -171,7 +179,7 @@ function custodianRemovalEndorsed(supporter, param) {
   return Event.getCustodianRemovalEndorsedExn(Event.makeCustodianRemovalEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
-var custodianRemovalAccepted = Event.Custodian[/* Removal */7][/* Accepted */6][/* fromProposal */0];
+var custodianRemovalAccepted = Event.Custodian[/* Removal */8][/* Accepted */6][/* fromProposal */0];
 
 var custodianKeyChainUpdated = Event.CustodianKeyChainUpdated[/* make */0];
 
@@ -197,6 +205,7 @@ var Event$1 = /* module */[
   /* partnerEndorsed */partnerEndorsed,
   /* partnerRejected */partnerRejected,
   /* partnerAccepted */partnerAccepted,
+  /* partnerDenied */partnerDenied,
   /* partnerRemovalProposed */partnerRemovalProposed,
   /* partnerRemovalEndorsed */partnerRemovalEndorsed,
   /* partnerRemovalAccepted */partnerRemovalAccepted,
@@ -204,7 +213,9 @@ var Event$1 = /* module */[
   /* accountCreationAccepted */accountCreationAccepted,
   /* custodianProposed */custodianProposed,
   /* custodianEndorsed */custodianEndorsed,
+  /* custodianRejected */custodianRejected,
   /* custodianAccepted */custodianAccepted,
+  /* custodianDenied */custodianDenied,
   /* custodianRemovalProposed */custodianRemovalProposed,
   /* custodianRemovalEndorsed */custodianRemovalEndorsed,
   /* custodianRemovalAccepted */custodianRemovalAccepted,
@@ -215,17 +226,17 @@ var Event$1 = /* module */[
   /* incomeDetected */incomeDetected
 ];
 
-function eligblePartners(param) {
+function eligiblePartners(param) {
   return Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(Curry._3(EventLog.reduce, (function (res, param) {
                         var $$event = param[/* event */0];
                         switch ($$event.tag | 0) {
                           case 4 : 
                               return /* :: */[
-                                      $$event[0][/* data */3][/* id */1],
+                                      $$event[0][/* data */2][/* id */1],
                                       res
                                     ];
-                          case 8 : 
-                              var id = $$event[0][/* data */3][/* id */0];
+                          case 9 : 
+                              var id = $$event[0][/* data */2][/* id */0];
                               var partial_arg = PrimitiveTypes.UserId[/* neq */6];
                               return List.filter((function (param) {
                                               return partial_arg(id, param);
@@ -324,9 +335,9 @@ function withPartnerProposed($staropt$star, issuer, $staropt$star$1, supporter, 
   var issuer$1 = issuer ? issuer[0] : supporter[/* issuerKeyPair */2];
   var lastRemovalAccepted = withLastRemoval ? Curry._3(EventLog.reduce, (function (res, param) {
             var $$event = param[/* event */0];
-            if ($$event.tag === 8) {
+            if ($$event.tag === 9) {
               var $$event$1 = $$event[0];
-              if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */3][/* id */0], prospect[/* userId */0])) {
+              if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* id */0], prospect[/* userId */0])) {
                 return /* Some */[$$event$1];
               } else {
                 return res;
@@ -335,7 +346,7 @@ function withPartnerProposed($staropt$star, issuer, $staropt$star$1, supporter, 
               return res;
             }
           }), /* None */0, l[/* log */3]) : /* None */0;
-  return appendEvent(issuer$1, /* PartnerProposed */Block.__(1, [partnerProposed(eligblePartners(l), /* Some */[policy], lastRemovalAccepted, supporter, prospect)]), l);
+  return appendEvent(issuer$1, /* PartnerProposed */Block.__(1, [partnerProposed(eligiblePartners(l), /* Some */[policy], lastRemovalAccepted, supporter, prospect)]), l);
 }
 
 function withPartnerEndorsed(issuer, supporter, proposal) {
@@ -356,6 +367,13 @@ function withPartnerRejected(issuer, supporter, proposal) {
 
 function withPartnerAccepted(proposal) {
   var partial_arg = /* PartnerAccepted */Block.__(4, [Curry._1(partnerAccepted, proposal)]);
+  return (function (param) {
+      return appendSystemEvent(partial_arg, param);
+    });
+}
+
+function withPartnerDenied(proposal) {
+  var partial_arg = /* PartnerDenied */Block.__(5, [Curry._1(partnerDenied, proposal)]);
   return (function (param) {
       return appendSystemEvent(partial_arg, param);
     });
@@ -388,7 +406,7 @@ function withPartnerRemovalProposed(supporter, toBeRemoved, l) {
               var $$event = param[/* event */0];
               if ($$event.tag === 4) {
                 var $$event$1 = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */3][/* id */1], toBeRemoved[/* userId */0])) {
+                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* id */1], toBeRemoved[/* userId */0])) {
                   return /* Some */[$$event$1];
                 } else {
                   return res;
@@ -397,11 +415,11 @@ function withPartnerRemovalProposed(supporter, toBeRemoved, l) {
                 return res;
               }
             }), /* None */0, l[/* log */3]));
-  return appendEvent(supporter[/* issuerKeyPair */2], /* PartnerRemovalProposed */Block.__(5, [partnerRemovalProposed(eligblePartners(l), lastPartnerAccepted, supporter)]), l);
+  return appendEvent(supporter[/* issuerKeyPair */2], /* PartnerRemovalProposed */Block.__(6, [partnerRemovalProposed(eligiblePartners(l), lastPartnerAccepted, supporter)]), l);
 }
 
 function withPartnerRemovalEndorsed(supporter, proposal) {
-  var partial_arg = /* PartnerRemovalEndorsed */Block.__(7, [partnerRemovalEndorsed(supporter, proposal)]);
+  var partial_arg = /* PartnerRemovalEndorsed */Block.__(8, [partnerRemovalEndorsed(supporter, proposal)]);
   var partial_arg$1 = supporter[/* issuerKeyPair */2];
   return (function (param) {
       return appendEvent(partial_arg$1, partial_arg, param);
@@ -409,7 +427,7 @@ function withPartnerRemovalEndorsed(supporter, proposal) {
 }
 
 function withPartnerRemovalAccepted(proposal) {
-  var partial_arg = /* PartnerRemovalAccepted */Block.__(8, [Curry._1(partnerRemovalAccepted, proposal)]);
+  var partial_arg = /* PartnerRemovalAccepted */Block.__(9, [Curry._1(partnerRemovalAccepted, proposal)]);
   return (function (param) {
       return appendSystemEvent(partial_arg, param);
     });
@@ -428,7 +446,7 @@ function withPartnerRemoved(user, supporters, log) {
 }
 
 function withAccountCreationProposed(supporter) {
-  var partial_arg = /* AccountCreationProposed */Block.__(9, [accountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[supporter[/* userId */0]]), supporter)]);
+  var partial_arg = /* AccountCreationProposed */Block.__(11, [accountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[supporter[/* userId */0]]), supporter)]);
   var partial_arg$1 = supporter[/* issuerKeyPair */2];
   return (function (param) {
       return appendEvent(partial_arg$1, partial_arg, param);
@@ -436,7 +454,7 @@ function withAccountCreationProposed(supporter) {
 }
 
 function withAccountCreationAccepted(proposal) {
-  var partial_arg = /* AccountCreationAccepted */Block.__(12, [Curry._1(accountCreationAccepted, proposal)]);
+  var partial_arg = /* AccountCreationAccepted */Block.__(14, [Curry._1(accountCreationAccepted, proposal)]);
   return (function (param) {
       return appendSystemEvent(partial_arg, param);
     });
@@ -467,9 +485,9 @@ function withCustodianProposed(supporter, custodian, l) {
                           custodianRemoved
                         ];
                 }
-            case 20 : 
+            case 23 : 
                 var removal = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5](removal[/* data */3][/* custodianId */0], custodian[/* userId */0])) {
+                if (PrimitiveTypes.UserId[/* eq */5](removal[/* data */2][/* custodianId */0], custodian[/* userId */0])) {
                   return /* tuple */[
                           partnerProposal,
                           /* Some */[removal]
@@ -490,19 +508,34 @@ function withCustodianProposed(supporter, custodian, l) {
         /* None */0,
         /* None */0
       ], l[/* log */3]);
-  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianProposed */Block.__(13, [custodianProposed(eligblePartners(l), match[1], supporter, Js_option.getExn(match[0]))]), l);
+  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianProposed */Block.__(15, [custodianProposed(eligiblePartners(l), match[1], supporter, Js_option.getExn(match[0]))]), l);
 }
 
 function withCustodianEndorsed(supporter, proposal) {
-  var partial_arg = /* CustodianEndorsed */Block.__(15, [custodianEndorsed(supporter, proposal)]);
+  var partial_arg = /* CustodianEndorsed */Block.__(17, [custodianEndorsed(supporter, proposal)]);
   var partial_arg$1 = supporter[/* issuerKeyPair */2];
   return (function (param) {
       return appendEvent(partial_arg$1, partial_arg, param);
     });
 }
 
+function withCustodianRejected(rejector, proposal) {
+  var partial_arg = /* CustodianRejected */Block.__(16, [custodianRejected(rejector, proposal)]);
+  var partial_arg$1 = rejector[/* issuerKeyPair */2];
+  return (function (param) {
+      return appendEvent(partial_arg$1, partial_arg, param);
+    });
+}
+
 function withCustodianAccepted(proposal) {
-  var partial_arg = /* CustodianAccepted */Block.__(16, [Curry._1(custodianAccepted, proposal)]);
+  var partial_arg = /* CustodianAccepted */Block.__(18, [Curry._1(custodianAccepted, proposal)]);
+  return (function (param) {
+      return appendSystemEvent(partial_arg, param);
+    });
+}
+
+function withCustodianDenied(proposal) {
+  var partial_arg = /* CustodianDenied */Block.__(19, [Curry._1(custodianDenied, proposal)]);
   return (function (param) {
       return appendSystemEvent(partial_arg, param);
     });
@@ -523,9 +556,9 @@ function withCustodian(user, supporters, log) {
 function withCustodianRemovalProposed(supporter, toBeRemoved, l) {
   var custodianAccepted = Js_option.getExn(Curry._3(EventLog.reduce, (function (res, param) {
               var $$event = param[/* event */0];
-              if ($$event.tag === 16) {
+              if ($$event.tag === 18) {
                 var $$event$1 = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */3][/* partnerId */0], toBeRemoved[/* userId */0])) {
+                if (PrimitiveTypes.UserId[/* eq */5]($$event$1[/* data */2][/* partnerId */0], toBeRemoved[/* userId */0])) {
                   return /* Some */[$$event$1];
                 } else {
                   return res;
@@ -534,11 +567,11 @@ function withCustodianRemovalProposed(supporter, toBeRemoved, l) {
                 return res;
               }
             }), /* None */0, l[/* log */3]));
-  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianRemovalProposed */Block.__(17, [custodianRemovalProposed(eligblePartners(l), custodianAccepted, supporter)]), l);
+  return appendEvent(supporter[/* issuerKeyPair */2], /* CustodianRemovalProposed */Block.__(20, [custodianRemovalProposed(eligiblePartners(l), custodianAccepted, supporter)]), l);
 }
 
 function withCustodianRemovalEndorsed(supporter, proposal) {
-  var partial_arg = /* CustodianRemovalEndorsed */Block.__(19, [custodianRemovalEndorsed(supporter, proposal)]);
+  var partial_arg = /* CustodianRemovalEndorsed */Block.__(22, [custodianRemovalEndorsed(supporter, proposal)]);
   var partial_arg$1 = supporter[/* issuerKeyPair */2];
   return (function (param) {
       return appendEvent(partial_arg$1, partial_arg, param);
@@ -546,7 +579,7 @@ function withCustodianRemovalEndorsed(supporter, proposal) {
 }
 
 function withCustodianRemovalAccepted(proposal) {
-  var partial_arg = /* CustodianRemovalAccepted */Block.__(20, [Curry._1(custodianRemovalAccepted, proposal)]);
+  var partial_arg = /* CustodianRemovalAccepted */Block.__(23, [Curry._1(custodianRemovalAccepted, proposal)]);
   return (function (param) {
       return appendSystemEvent(partial_arg, param);
     });
@@ -568,11 +601,11 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
   var keyChainIdx = $staropt$star ? $staropt$star[0] : 0;
   var custodianProcesses = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
-          if ($$event.tag === 16) {
+          if ($$event.tag === 18) {
             var match = $$event[0];
             return /* :: */[
                     /* tuple */[
-                      match[/* data */3][/* partnerId */0],
+                      match[/* data */2][/* partnerId */0],
                       match[/* processId */0]
                     ],
                     res
@@ -585,16 +618,16 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
   var issuerKeyPair = Js_option.getWithDefault(custodian[/* issuerKeyPair */2], Utils.mapOption((function (issuer) {
               return issuer[/* issuerKeyPair */2];
             }), issuer));
-  return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(29, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
+  return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(34, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
 }
 
 function withAccountKeyChainIdentified(l) {
   var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           switch ($$event.tag | 0) {
-            case 8 : 
+            case 9 : 
                 try {
-                  return List.remove_assoc($$event[0][/* data */3][/* id */0], res);
+                  return List.remove_assoc($$event[0][/* data */2][/* id */0], res);
                 }
                 catch (exn){
                   if (exn === Caml_builtin_exceptions.not_found) {
@@ -603,9 +636,9 @@ function withAccountKeyChainIdentified(l) {
                     throw exn;
                   }
                 }
-            case 20 : 
+            case 23 : 
                 try {
-                  return List.remove_assoc($$event[0][/* data */3][/* custodianId */0], res);
+                  return List.remove_assoc($$event[0][/* data */2][/* custodianId */0], res);
                 }
                 catch (exn$1){
                   if (exn$1 === Caml_builtin_exceptions.not_found) {
@@ -614,7 +647,7 @@ function withAccountKeyChainIdentified(l) {
                     throw exn$1;
                   }
                 }
-            case 29 : 
+            case 34 : 
                 var match = $$event[0];
                 var custodianId = match[/* custodianId */1];
                 return /* :: */[
@@ -629,20 +662,20 @@ function withAccountKeyChainIdentified(l) {
           }
         }), /* [] */0, l[/* log */3]);
   var accountKeyChain = accountKeyChainFrom(keyChains);
-  return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(30, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
+  return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(35, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
 }
 
 function withAccountKeyChainActivated($staropt$star, user, l) {
   var sequence = $staropt$star ? $staropt$star[0] : 0;
   var identifier = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
-          if ($$event.tag === 30) {
+          if ($$event.tag === 35) {
             return $$event[0][/* keyChain */0][/* identifier */1];
           } else {
             return res;
           }
         }), "", l[/* log */3]);
-  return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(31, [accountKeyChainActivated(/* Some */[sequence], user, identifier)]), l);
+  return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(36, [accountKeyChainActivated(/* Some */[sequence], user, identifier)]), l);
 }
 
 function withIncomeAddressExposed(user, l) {
@@ -652,7 +685,7 @@ function withIncomeAddressExposed(user, l) {
           var activations = param[1];
           var keyChains = param[0];
           switch ($$event.tag | 0) {
-            case 30 : 
+            case 35 : 
                 var keyChain = $$event[0][/* keyChain */0];
                 return /* tuple */[
                         /* :: */[
@@ -665,7 +698,7 @@ function withIncomeAddressExposed(user, l) {
                         activations,
                         exposed
                       ];
-            case 31 : 
+            case 36 : 
                 var match = $$event[0];
                 return /* tuple */[
                         keyChains,
@@ -678,7 +711,7 @@ function withIncomeAddressExposed(user, l) {
                         ],
                         exposed
                       ];
-            case 32 : 
+            case 37 : 
                 return /* tuple */[
                         keyChains,
                         activations,
@@ -702,7 +735,7 @@ function withIncomeAddressExposed(user, l) {
   var keyChain = List.assoc(List.assoc(user[/* userId */0], match[1]), match[0]);
   var coordinates = Address.Coordinates[/* nextExternal */2](user[/* userId */0], match[2], keyChain);
   var address = Address.make(coordinates, keyChain);
-  return appendEvent(user[/* issuerKeyPair */2], /* IncomeAddressExposed */Block.__(32, [Curry._2(incomeAddressExposed, user[/* userId */0], address)]), l);
+  return appendEvent(user[/* issuerKeyPair */2], /* IncomeAddressExposed */Block.__(37, [Curry._2(incomeAddressExposed, user[/* userId */0], address)]), l);
 }
 
 function withIncomeDetected(incomeAddress, l) {
@@ -710,7 +743,7 @@ function withIncomeDetected(incomeAddress, l) {
           var $$event = param$1[/* event */0];
           var counter = param[1];
           var res = param[0];
-          if ($$event.tag === 32) {
+          if ($$event.tag === 37) {
             if (counter > 0) {
               return /* tuple */[
                       /* None */0,
@@ -738,11 +771,11 @@ function withIncomeDetected(incomeAddress, l) {
         /* None */0,
         incomeAddress
       ], l[/* log */3]);
-  return appendSystemEvent(/* IncomeDetected */Block.__(33, [Js_option.getExn(match[0])]), l);
+  return appendSystemEvent(/* IncomeDetected */Block.__(38, [Js_option.getExn(match[0])]), l);
 }
 
 var Log = /* module */[
-  /* eligblePartners */eligblePartners,
+  /* eligiblePartners */eligiblePartners,
   /* reduce */reduce,
   /* ventureId */ventureId,
   /* systemIssuer */systemIssuer,
@@ -758,6 +791,7 @@ var Log = /* module */[
   /* withPartnerEndorsed */withPartnerEndorsed,
   /* withPartnerRejected */withPartnerRejected,
   /* withPartnerAccepted */withPartnerAccepted,
+  /* withPartnerDenied */withPartnerDenied,
   /* withPartner */withPartner,
   /* withFirstPartner */withFirstPartner,
   /* withPartnerRemovalProposed */withPartnerRemovalProposed,
@@ -769,7 +803,9 @@ var Log = /* module */[
   /* withAccount */withAccount,
   /* withCustodianProposed */withCustodianProposed,
   /* withCustodianEndorsed */withCustodianEndorsed,
+  /* withCustodianRejected */withCustodianRejected,
   /* withCustodianAccepted */withCustodianAccepted,
+  /* withCustodianDenied */withCustodianDenied,
   /* withCustodian */withCustodian,
   /* withCustodianRemovalProposed */withCustodianRemovalProposed,
   /* withCustodianRemovalEndorsed */withCustodianRemovalEndorsed,

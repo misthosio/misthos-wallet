@@ -7,6 +7,7 @@ open PrimitiveTypes;
 type state = {
   eligibilityCollector: EligibilityCollector.t,
   endorsements: UserId.set,
+  rejections: UserId.set,
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
   creatorId: userId,
@@ -19,6 +20,7 @@ let make = (proposal: Partner.Proposed.t, log) => {
         eligibilityCollector:
           EligibilityCollector.make(proposal.eligibleWhenProposing),
         endorsements: UserId.emptySet |. Set.add(proposal.supporterId),
+        rejections: UserId.emptySet,
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
         creatorId: UserId.fromString(""),
@@ -46,28 +48,55 @@ let make = (proposal: Partner.Proposed.t, log) => {
               ...state^,
               endorsements: state^.endorsements |. Set.add(event.supporterId),
             }
+          | PartnerRejected(event)
+              when ProcessId.eq(event.processId, proposal.processId) => {
+              ...state^,
+              rejections: state^.rejections |. Set.add(event.rejectorId),
+            }
           | PartnerAccepted(event)
+              when ProcessId.eq(event.processId, proposal.processId) =>
+            completed := true;
+            state^;
+          | PartnerDenied(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;
             state^;
           | _ => state^
           }
         );
-      result := None;
-      if (completed^ == false
-          && state^.policy
-          |> Policy.fulfilled(
-               ~eligible=
-                 state^.eligibilityCollector
-                 |> EligibilityCollector.currentEligible,
-               ~endorsed=state^.endorsements,
-             )) {
-        result :=
-          Some((
-            state^.systemIssuer,
-            PartnerAccepted(Partner.Accepted.fromProposal(proposal)),
-          ));
-      };
+      result :=
+        (
+          switch (
+            completed^,
+            state^.policy
+            |> Policy.canBeFulfilled(
+                 ~eligible=
+                   state^.eligibilityCollector
+                   |> EligibilityCollector.currentEligible,
+                 ~rejected=state^.rejections,
+               ),
+            state^.policy
+            |> Policy.fulfilled(
+                 ~eligible=
+                   state^.eligibilityCollector
+                   |> EligibilityCollector.currentEligible,
+                 ~endorsed=state^.endorsements,
+               ),
+          ) {
+          | (true, _, _) => None
+          | (_, false, _) =>
+            Some((
+              state^.systemIssuer,
+              PartnerDenied(Partner.Denied.fromProposal(proposal)),
+            ))
+          | (_, _, true) =>
+            Some((
+              state^.systemIssuer,
+              PartnerAccepted(Partner.Accepted.fromProposal(proposal)),
+            ))
+          | _ => None
+          }
+        );
       if (proposal.data.id == state^.creatorId && log |> EventLog.length == 2) {
         result :=
           Some((

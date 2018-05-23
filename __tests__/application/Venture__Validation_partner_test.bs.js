@@ -14,7 +14,7 @@ describe("PartnerProposal", (function () {
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                return Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user2 = match[1];
@@ -29,10 +29,10 @@ describe("PartnerProposal", (function () {
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withPartner */16](match[1], /* :: */[
+                return Generators.Log[/* withPartner */17](match[1], /* :: */[
                             user1,
                             /* [] */0
-                          ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                          ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user2 = match[1];
@@ -56,13 +56,13 @@ describe("PartnerProposal", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user2 = match[1];
                 var user1 = match[0];
-                return Generators.Log[/* withPartnerRemoved */21](user2, /* :: */[
+                return Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
                             user1,
                             /* [] */0
-                          ], Generators.Log[/* withPartner */16](user2, /* :: */[
+                          ], Generators.Log[/* withPartner */17](user2, /* :: */[
                                 user1,
                                 /* [] */0
-                              ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1))));
+                              ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user2 = match[1];
@@ -79,22 +79,22 @@ describe("PartnerProposal", (function () {
                       var user3 = match[2];
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withPartnerRemoved */21](user2, /* :: */[
+                      return Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
                                   user1,
                                   /* :: */[
                                     user3,
                                     /* [] */0
                                   ]
-                                ], Generators.Log[/* withPartner */16](user3, /* :: */[
+                                ], Generators.Log[/* withPartner */17](user3, /* :: */[
                                       user1,
                                       /* :: */[
                                         user2,
                                         /* [] */0
                                       ]
-                                    ], Generators.Log[/* withPartner */16](user2, /* :: */[
+                                    ], Generators.Log[/* withPartner */17](user2, /* :: */[
                                           user1,
                                           /* [] */0
-                                        ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)))));
+                                        ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
                     }), (function (sessions, log) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
                       var user3 = match[2];
@@ -115,13 +115,13 @@ describe("PartnerRemovalProposal", (function () {
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withPartner */16](match[1], /* :: */[
+                return Generators.Log[/* withPartner */17](match[1], /* :: */[
                             user1,
                             /* [] */0
-                          ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                          ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRemovalProposed */18](match[0], match[1], log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRemovalProposed */19](match[0], match[1], log)), /* Ok */0);
               }));
         describe("validatePartnerRemovalData", (function () {
                 Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the prospect is not a partner", (function () {
@@ -129,7 +129,7 @@ describe("PartnerRemovalProposal", (function () {
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
                         var user1 = match[0];
-                        return Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1));
+                        return Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1));
                       }), (function (sessions, log) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
                         var user2 = match[1];
@@ -143,10 +143,10 @@ describe("PartnerRemovalProposal", (function () {
                             }), (function (sessions) {
                               var match = Generators.twoUserSessionsFromArray(sessions);
                               var user1 = match[0];
-                              return Generators.Log[/* withPartner */16](match[1], /* :: */[
+                              return Generators.Log[/* withPartner */17](match[1], /* :: */[
                                           user1,
                                           /* [] */0
-                                        ], Generators.Log[/* withFirstPartner */17](user1)(Generators.Log[/* createVenture */11](user1)));
+                                        ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
                             }), (function (sessions, log) {
                               var match = Generators.twoUserSessionsFromArray(sessions);
                               return ValidationHelpers.testDataValidation(Venture__Validation.validatePartnerRemovalData, ValidationHelpers.constructState(log), /* record */[

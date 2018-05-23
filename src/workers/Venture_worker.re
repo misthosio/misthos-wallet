@@ -333,6 +333,14 @@ module Handle = {
                    );
                    venture |> resolve;
                  }
+               | ProposalAlreadyExists => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     PartnerAlreadyProposed,
+                   );
+                   venture |> resolve;
+                 }
                | PartnerAlreadyExists => {
                    Notify.cmdError(
                      ventureId,

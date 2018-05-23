@@ -57,11 +57,17 @@ function make(viewData, commands, cmdStatus, _) {
                       break;
                   case 2 : 
                       match$1 = /* tuple */[
-                        "Unconfirmed",
-                        /* Success */2
+                        "Denied",
+                        /* Failure */1
                       ];
                       break;
                   case 3 : 
+                      match$1 = /* tuple */[
+                        "Unconfirmed",
+                        /* Pending */0
+                      ];
+                      break;
+                  case 4 : 
                       match$1 = /* tuple */[
                         "Confirmed",
                         /* Success */2

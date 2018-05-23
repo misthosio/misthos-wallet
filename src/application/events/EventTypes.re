@@ -25,9 +25,10 @@ type endorsement = {
 type acceptance('a) = {
   processId,
   dependsOnCompletions: ProcessId.set,
-  eligibleWhenProposing: UserId.set,
   data: 'a,
 };
+
+type denial = {processId};
 
 module type EventData = {
   type t;
@@ -189,16 +190,9 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
      type t = acceptance(Data.t);
      let fromProposal =
          (
-           {
-             eligibleWhenProposing,
-             dependsOnProposals,
-             dependsOnCompletions,
-             processId,
-             data,
-           }:
+           {dependsOnProposals, dependsOnCompletions, processId, data}:
              proposal(Data.t),
          ) => {
-       eligibleWhenProposing,
        dependsOnCompletions:
          dependsOnProposals |> Set.union(dependsOnCompletions),
        processId,
@@ -216,10 +210,6 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
                event.dependsOnCompletions |> Set.toArray,
              ),
            ),
-           (
-             "eligibleWhenProposing",
-             array(UserId.encode, event.eligibleWhenProposing |> Set.toArray),
-           ),
            ("data", Data.encode(event.data)),
          ])
        );
@@ -230,12 +220,33 @@ let makeAcceptance = (name: string) : (module AcceptedEvent) =>
            raw
            |> field("dependsOnCompletions", array(ProcessId.decode))
            |> Set.mergeMany(ProcessId.emptySet),
-         eligibleWhenProposing:
-           raw
-           |> field("eligibleWhenProposing", array(UserId.decode))
-           |> Set.mergeMany(UserId.emptySet),
          data: raw |> field("data", Data.decode),
        };
+   });
+
+module type DeniedEvent = {
+  type t = denial;
+  let fromProposal: proposal('a) => t;
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
+};
+
+let makeDenial = (name: string) : (module DeniedEvent) =>
+  (module
+   {
+     type t = denial;
+     let fromProposal = ({processId}: proposal('a)) => {
+       processId: processId,
+     };
+     let encode = (event: t) =>
+       Json.Encode.(
+         object_([
+           ("type", string(name)),
+           ("processId", ProcessId.encode(event.processId)),
+         ])
+       );
+     let decode = raw =>
+       Json.Decode.{processId: raw |> field("processId", ProcessId.decode)};
    });
 
 module type Process =
@@ -276,6 +287,12 @@ module type Process =
       let encode: t => Js.Json.t;
       let decode: Js.Json.t => t;
     };
+    module Denied: {
+      type t = denial;
+      let fromProposal: proposal('a) => t;
+      let encode: t => Js.Json.t;
+      let decode: Js.Json.t => t;
+    };
   };
 
 let makeProcess = (name: string) : (module Process) =>
@@ -286,6 +303,7 @@ let makeProcess = (name: string) : (module Process) =>
      module Rejected = (val makeRejection(name ++ "Rejected"));
      module Endorsed = (val makeEndorsement(name ++ "Endorsed"));
      module Accepted = (val makeAcceptance(name ++ "Accepted"))(Data);
+     module Denied = (val makeDenial(name ++ "Denied"));
      let dataEq = (dataA, dataB) =>
        Data.encode(dataA) == Data.encode(dataB);
    });

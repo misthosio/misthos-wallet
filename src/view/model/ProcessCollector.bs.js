@@ -105,6 +105,21 @@ function addAcceptance(param, map) {
               }));
 }
 
+function addDenial(param, map) {
+  return Belt_Map.update(map, param[/* processId */0], (function (param) {
+                return Utils.mapOption((function (payout) {
+                              return /* record */[
+                                      /* processId */payout[/* processId */0],
+                                      /* status : Denied */2,
+                                      /* proposedBy */payout[/* proposedBy */2],
+                                      /* canVote */false,
+                                      /* voters */payout[/* voters */4],
+                                      /* data */payout[/* data */5]
+                                    ];
+                            }), param);
+              }));
+}
+
 function updateData(processId, fn, map) {
   return Belt_Map.update(map, processId, (function (param) {
                 return Utils.mapOption((function ($$process) {
@@ -125,5 +140,6 @@ exports.addProposal = addProposal;
 exports.addRejection = addRejection;
 exports.addEndorsement = addEndorsement;
 exports.addAcceptance = addAcceptance;
+exports.addDenial = addDenial;
 exports.updateData = updateData;
 /* Utils Not a pure module */

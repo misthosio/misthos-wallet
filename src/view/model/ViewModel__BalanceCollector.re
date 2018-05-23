@@ -79,6 +79,25 @@ let apply = (event: Event.t, state) =>
         ...state.balance |> List.remove_assoc(data.accountIdx),
       ],
     };
+  | PayoutDenied({processId}) =>
+    let (accountIdx, payoutTx) =
+      state.payoutProcesses |> List.assoc(processId);
+    let balance = state.balance |> List.assoc(accountIdx);
+    let payoutSummary = payoutTx |> PayoutTransaction.summary(state.network);
+    {
+      ...state,
+      balance: [
+        (
+          accountIdx,
+          {
+            currentSpendable:
+              balance.currentSpendable |> BTC.plus(payoutSummary.reserved),
+            reserved: balance.reserved |> BTC.minus(payoutSummary.reserved),
+          },
+        ),
+        ...state.balance |> List.remove_assoc(accountIdx),
+      ],
+    };
   | PayoutBroadcast({processId}) =>
     let (accountIdx, payoutTx) =
       state.payoutProcesses |> List.assoc(processId);

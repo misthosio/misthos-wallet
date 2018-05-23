@@ -53,11 +53,13 @@ function make(proposal, log) {
               self$1[state][0] = /* record */[
                 /* eligibilityCollector */EligibilityCollector.apply($$event, self$1[state][0][/* eligibilityCollector */0]),
                 /* endorsements */init[/* endorsements */1],
-                /* policy */init[/* policy */2],
-                /* systemIssuer */init[/* systemIssuer */3],
-                /* creatorId */init[/* creatorId */4]
+                /* rejections */init[/* rejections */2],
+                /* policy */init[/* policy */3],
+                /* systemIssuer */init[/* systemIssuer */4],
+                /* creatorId */init[/* creatorId */5]
               ];
               var tmp;
+              var exit = 0;
               switch ($$event.tag | 0) {
                 case 0 : 
                     var $$event$1 = $$event[0];
@@ -65,56 +67,85 @@ function make(proposal, log) {
                     tmp = /* record */[
                       /* eligibilityCollector */init$1[/* eligibilityCollector */0],
                       /* endorsements */init$1[/* endorsements */1],
-                      /* policy */init$1[/* policy */2],
+                      /* rejections */init$1[/* rejections */2],
+                      /* policy */init$1[/* policy */3],
                       /* systemIssuer */$$event$1[/* systemIssuer */5],
                       /* creatorId */$$event$1[/* creatorId */2]
                     ];
                     break;
-                case 3 : 
+                case 2 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
                         /* eligibilityCollector */init$2[/* eligibilityCollector */0],
-                        /* endorsements */Belt_Set.add(self$1[state][0][/* endorsements */1], $$event$2[/* supporterId */1]),
-                        /* policy */init$2[/* policy */2],
-                        /* systemIssuer */init$2[/* systemIssuer */3],
-                        /* creatorId */init$2[/* creatorId */4]
+                        /* endorsements */init$2[/* endorsements */1],
+                        /* rejections */Belt_Set.add(self$1[state][0][/* rejections */2], $$event$2[/* rejectorId */1]),
+                        /* policy */init$2[/* policy */3],
+                        /* systemIssuer */init$2[/* systemIssuer */4],
+                        /* creatorId */init$2[/* creatorId */5]
+                      ];
+                    } else {
+                      tmp = self$1[state][0];
+                    }
+                    break;
+                case 3 : 
+                    var $$event$3 = $$event[0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event$3[/* processId */0], env$1[0][/* processId */0])) {
+                      var init$3 = self$1[state][0];
+                      tmp = /* record */[
+                        /* eligibilityCollector */init$3[/* eligibilityCollector */0],
+                        /* endorsements */Belt_Set.add(self$1[state][0][/* endorsements */1], $$event$3[/* supporterId */1]),
+                        /* rejections */init$3[/* rejections */2],
+                        /* policy */init$3[/* policy */3],
+                        /* systemIssuer */init$3[/* systemIssuer */4],
+                        /* creatorId */init$3[/* creatorId */5]
                       ];
                     } else {
                       tmp = self$1[state][0];
                     }
                     break;
                 case 4 : 
-                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* processId */0])) {
-                      self$1[completed][0] = true;
-                      tmp = self$1[state][0];
-                    } else {
-                      tmp = self$1[state][0];
-                    }
+                case 5 : 
+                    exit = 1;
                     break;
                 default:
                   tmp = self$1[state][0];
               }
+              if (exit === 1) {
+                if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* processId */0])) {
+                  self$1[completed][0] = true;
+                  tmp = self$1[state][0];
+                } else {
+                  tmp = self$1[state][0];
+                }
+              }
               self$1[state][0] = tmp;
-              self$1[result][0] = /* None */0;
-              var tmp$1 = false;
-              if (self$1[completed][0] === false) {
-                var arg = EligibilityCollector.currentEligible(self$1[state][0][/* eligibilityCollector */0]);
-                var arg$1 = self$1[state][0][/* endorsements */1];
-                tmp$1 = (function (param) {
-                      return Policy.fulfilled(param)(arg, arg$1);
-                    })(self$1[state][0][/* policy */2]);
-              }
-              if (tmp$1) {
+              var match = self$1[completed][0];
+              var arg = EligibilityCollector.currentEligible(self$1[state][0][/* eligibilityCollector */0]);
+              var arg$1 = self$1[state][0][/* rejections */2];
+              var match$1 = (function (param) {
+                    return Policy.canBeFulfilled(param)(arg, arg$1);
+                  })(self$1[state][0][/* policy */3]);
+              var arg$2 = EligibilityCollector.currentEligible(self$1[state][0][/* eligibilityCollector */0]);
+              var arg$3 = self$1[state][0][/* endorsements */1];
+              var match$2 = (function (param) {
+                    return Policy.fulfilled(param)(arg$2, arg$3);
+                  })(self$1[state][0][/* policy */3]);
+              self$1[result][0] = match ? /* None */0 : (
+                  match$1 ? (
+                      match$2 ? /* Some */[/* tuple */[
+                            self$1[state][0][/* systemIssuer */4],
+                            /* PartnerAccepted */Block.__(4, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
+                          ]] : /* None */0
+                    ) : /* Some */[/* tuple */[
+                        self$1[state][0][/* systemIssuer */4],
+                        /* PartnerDenied */Block.__(5, [Curry._1(Event.Partner[/* Denied */7][/* fromProposal */0], env$1[0])])
+                      ]]
+                );
+              if (Caml_obj.caml_equal(env$1[0][/* data */6][/* id */1], self$1[state][0][/* creatorId */5]) && Curry._1(EventLog.length, env$1[1]) === 2) {
                 self$1[result][0] = /* Some */[/* tuple */[
-                    self$1[state][0][/* systemIssuer */3],
-                    /* PartnerAccepted */Block.__(4, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
-                  ]];
-              }
-              if (Caml_obj.caml_equal(env$1[0][/* data */6][/* id */1], self$1[state][0][/* creatorId */4]) && Curry._1(EventLog.length, env$1[1]) === 2) {
-                self$1[result][0] = /* Some */[/* tuple */[
-                    self$1[state][0][/* systemIssuer */3],
+                    self$1[state][0][/* systemIssuer */4],
                     /* PartnerAccepted */Block.__(4, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
                   ]];
                 return /* () */0;
@@ -138,6 +169,7 @@ function make(proposal, log) {
       self[state] = [/* record */[
           /* eligibilityCollector */EligibilityCollector.make(env$1[1][/* eligibleWhenProposing */3]),
           /* endorsements */Belt_Set.add(PrimitiveTypes.UserId[/* emptySet */9], env$1[1][/* supporterId */4]),
+          /* rejections */PrimitiveTypes.UserId[/* emptySet */9],
           /* policy */env$1[1][/* policy */5],
           /* systemIssuer */BitcoinjsLib.ECPair.makeRandom(),
           /* creatorId */PrimitiveTypes.UserId[/* fromString */1]("")

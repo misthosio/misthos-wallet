@@ -19,9 +19,10 @@ module Validation: {
     | Ignore
     | InvalidIssuer
     | UnknownProcessId
-    | AlreadyEndorsed
-    | PolicyMissmatch
+    | NotEligible
+    | AlreadyVoted
     | PolicyNotFulfilled
+    | PrematureDenial
     | DependencyNotMet
     | BadData(string);
   let resultToString: result => string;
@@ -90,6 +91,7 @@ module Cmd: {
   module ProposePartner: {
     type result =
       | Ok(processId, t, array(EventLog.item))
+      | ProposalAlreadyExists
       | PartnerAlreadyExists
       | NoUserInfo
       | CouldNotPersist(Js.Promise.error);

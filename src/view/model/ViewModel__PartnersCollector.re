@@ -78,10 +78,17 @@ let apply = (event: Event.t, state) =>
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
         },
-        ...state.partners,
+        ...state.partners
+           |. List.keepU((. {userId}: partner) =>
+                UserId.neq(userId, data.id)
+              ),
       ],
       prospects:
         state.prospects |> ProcessCollector.addAcceptance(acceptance),
+    }
+  | PartnerDenied(denial) => {
+      ...state,
+      prospects: state.prospects |> ProcessCollector.addDenial(denial),
     }
   | PartnerRemovalProposed(proposal) => {
       ...state,
@@ -115,6 +122,10 @@ let apply = (event: Event.t, state) =>
         state.partners |. List.keep((p: partner) => UserId.neq(p.userId, id)),
       prospects:
         state.prospects |> ProcessCollector.addAcceptance(acceptance),
+    }
+  | PartnerRemovalDenied(denial) => {
+      ...state,
+      prospects: state.prospects |> ProcessCollector.addDenial(denial),
     }
   | _ => state
   };

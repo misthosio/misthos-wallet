@@ -139,8 +139,10 @@ function make$1(cmdStatus, action, onRetry, _) {
                         case 0 : 
                             return ViewCommon.text("RED: User is already a partner of this venture");
                         case 1 : 
-                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                            return ViewCommon.text("RED: This user has already been proposed to join");
                         case 2 : 
+                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                        case 3 : 
                             if (onRetry) {
                               var onRetry$1 = onRetry[0];
                               return /* array */[

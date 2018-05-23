@@ -191,7 +191,6 @@ function makeAcceptance(name) {
         return /* record */[
                 /* processId */param[/* processId */0],
                 /* dependsOnCompletions */Belt_Set.union(param[/* dependsOnCompletions */2], param[/* dependsOnProposals */1]),
-                /* eligibleWhenProposing */param[/* eligibleWhenProposing */3],
                 /* data */param[/* data */6]
               ];
       };
@@ -213,16 +212,10 @@ function makeAcceptance(name) {
                         ],
                         /* :: */[
                           /* tuple */[
-                            "eligibleWhenProposing",
-                            Json_encode.array(PrimitiveTypes.UserId[/* encode */2], Belt_Set.toArray($$event[/* eligibleWhenProposing */2]))
+                            "data",
+                            Curry._1(Data[/* encode */0], $$event[/* data */2])
                           ],
-                          /* :: */[
-                            /* tuple */[
-                              "data",
-                              Curry._1(Data[/* encode */0], $$event[/* data */3])
-                            ],
-                            /* [] */0
-                          ]
+                          /* [] */0
                         ]
                       ]
                     ]
@@ -230,14 +223,10 @@ function makeAcceptance(name) {
       };
       var decode = function (raw) {
         var partial_arg = PrimitiveTypes.ProcessId[/* decode */3];
-        var partial_arg$1 = PrimitiveTypes.UserId[/* decode */3];
         return /* record */[
                 /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
                 /* dependsOnCompletions */Belt_Set.mergeMany(PrimitiveTypes.ProcessId[/* emptySet */9], Json_decode.field("dependsOnCompletions", (function (param) {
                             return Json_decode.array(partial_arg, param);
-                          }), raw)),
-                /* eligibleWhenProposing */Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Json_decode.field("eligibleWhenProposing", (function (param) {
-                            return Json_decode.array(partial_arg$1, param);
                           }), raw)),
                 /* data */Json_decode.field("data", Data[/* decode */1], raw)
               ];
@@ -250,6 +239,35 @@ function makeAcceptance(name) {
     });
 }
 
+function makeDenial(name) {
+  var fromProposal = function (param) {
+    return /* record */[/* processId */param[/* processId */0]];
+  };
+  var encode = function ($$event) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  name
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "processId",
+                    PrimitiveTypes.ProcessId[/* encode */2]($$event[/* processId */0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  };
+  var decode = function (raw) {
+    return /* record */[/* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw)];
+  };
+  return /* module */[
+          /* fromProposal */fromProposal,
+          /* encode */encode,
+          /* decode */decode
+        ];
+}
+
 function makeProcess(name) {
   return (function (funarg) {
       var processName = name + "ApprovalProcess";
@@ -257,6 +275,7 @@ function makeProcess(name) {
       var Rejected = makeRejection(name + "Rejected");
       var Endorsed = makeEndorsement(name + "Endorsed");
       var Accepted = makeAcceptance(name + "Accepted")(funarg);
+      var Denied = makeDenial(name + "Denied");
       var dataEq = function (dataA, dataB) {
         return Caml_obj.caml_equal(Curry._1(funarg[/* encode */0], dataA), Curry._1(funarg[/* encode */0], dataB));
       };
@@ -266,7 +285,8 @@ function makeProcess(name) {
               /* Proposed */Proposed,
               /* Rejected */Rejected,
               /* Endorsed */Endorsed,
-              /* Accepted */Accepted
+              /* Accepted */Accepted,
+              /* Denied */Denied
             ];
     });
 }
@@ -275,5 +295,6 @@ exports.makeProposal = makeProposal;
 exports.makeRejection = makeRejection;
 exports.makeEndorsement = makeEndorsement;
 exports.makeAcceptance = makeAcceptance;
+exports.makeDenial = makeDenial;
 exports.makeProcess = makeProcess;
 /* Policy Not a pure module */

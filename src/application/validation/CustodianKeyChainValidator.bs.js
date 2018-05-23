@@ -18,16 +18,16 @@ function update($$event, param) {
   var keyChains = param[/* keyChains */0];
   var keyChains$1;
   switch ($$event.tag | 0) {
-    case 12 : 
+    case 14 : 
         keyChains$1 = /* :: */[
           /* tuple */[
-            $$event[0][/* data */3][/* accountIdx */0],
+            $$event[0][/* data */2][/* accountIdx */0],
             /* [] */0
           ],
           keyChains
         ];
         break;
-    case 29 : 
+    case 34 : 
         var match = $$event[0];
         var keyChain = match[/* keyChain */2];
         var custodianId = match[/* custodianId */1];
