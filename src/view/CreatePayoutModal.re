@@ -16,6 +16,7 @@ type state = {
   destinations: list((string, BTC.t)),
   inputDestination: string,
   inputAmount: BTC.t,
+  addressValid: bool,
   summary: PayoutTransaction.summary,
   inputs,
 };
@@ -23,8 +24,9 @@ type state = {
 type action =
   | ChangeRecipientAddress(string)
   | ChangeBTCAmount(string)
+  | RemoveDestination(int)
   | EnterMax
-  | AddAnother
+  | AddToSummary
   | ProposePayout;
 
 let component = ReasonReact.reducerComponent("CreatePayout");
@@ -43,6 +45,68 @@ module Styles = {
   let noBorder = style([borderColor(`transparent)]);
 };
 
+let updateState =
+    (
+      {
+        viewData,
+        inputAmount,
+        inputDestination,
+        destinations,
+        inputs: {btcAmount, recipientAddress},
+      } as state,
+    ) => {
+  let (recipientAddress, inputDestination, addressValid) =
+    if (recipientAddress |> viewData.isAddressValid) {
+      (recipientAddress, recipientAddress, true);
+    } else {
+      (inputDestination, inputDestination, false);
+    };
+  let newInputAmount = BTC.fromString(btcAmount);
+  let (btcAmount, inputAmount) =
+    if (btcAmount == "") {
+      ("", BTC.zero);
+    } else if (newInputAmount |> BTC.isNaN) {
+      (inputAmount |> BTC.format, inputAmount);
+    } else {
+      (btcAmount, newInputAmount);
+    };
+  if (inputAmount |> BTC.gt(BTC.zero) && inputDestination != "") {
+    let max = viewData.max(inputDestination, destinations, defaultFee);
+    let (inputAmount, btcAmount) =
+      inputAmount |> BTC.gt(max) ?
+        (max, max |> BTC.format) : (inputAmount, btcAmount);
+    {
+      ...state,
+      viewData,
+      inputAmount,
+      inputDestination,
+      addressValid,
+      summary:
+        viewData.summary(
+          [(inputDestination, inputAmount), ...destinations],
+          defaultFee,
+        ),
+      inputs: {
+        btcAmount,
+        recipientAddress,
+      },
+    };
+  } else {
+    {
+      ...state,
+      viewData,
+      inputAmount,
+      inputDestination,
+      addressValid,
+      summary: viewData.summary(destinations, defaultFee),
+      inputs: {
+        btcAmount,
+        recipientAddress,
+      },
+    };
+  };
+};
+
 let make =
     (
       ~viewData: View.t,
@@ -54,6 +118,7 @@ let make =
   initialState: () => {
     viewData,
     destinations: [],
+    addressValid: true,
     summary: viewData.initialSummary,
     inputDestination: "",
     inputAmount: BTC.zero,
@@ -64,74 +129,41 @@ let make =
   },
   reducer: (action, {viewData} as state) =>
     switch (action) {
+    | RemoveDestination(removeIdx) =>
+      ReasonReact.Update(
+        {
+          ...state,
+          destinations:
+            state.destinations
+            |. Belt.List.mapWithIndexU((. idx, destination) =>
+                 idx == removeIdx ? None : Some(destination)
+               )
+            |. Belt.List.keepMapU((. d) => d),
+        }
+        |> updateState,
+      )
     | ChangeRecipientAddress(address) =>
-      let (summary, inputDestination, inputAmount, btcAmount) =
-        if (address |> viewData.isAddressValid) {
-          let max = viewData.max(address, state.destinations, defaultFee);
-          let (inputAmount, btcAmount) =
-            state.inputAmount |> BTC.gt(max) ?
-              (max, max |> BTC.format) :
-              (state.inputAmount, state.inputs.btcAmount);
-          (
-            viewData.summary(
-              [(address, inputAmount), ...state.destinations],
-              defaultFee,
-            ),
-            address,
-            inputAmount,
-            btcAmount,
-          );
-        } else {
-          (state.summary, "", state.inputAmount, state.inputs.btcAmount);
-        };
-      ReasonReact.Update({
-        ...state,
-        summary,
-        inputDestination,
-        inputAmount,
-        inputs: {
-          recipientAddress: address,
-          btcAmount,
-        },
-      });
+      ReasonReact.Update(
+        {
+          ...state,
+          inputs: {
+            ...state.inputs,
+            recipientAddress: address,
+          },
+        }
+        |> updateState,
+      )
     | ChangeBTCAmount(amount) =>
-      let (summary, inputAmount, btcAmount) = {
-        let inputAmount = BTC.fromString(amount);
-        let (inputAmount, btcAmount) =
-          inputAmount |> BTC.isNaN ?
-            (state.inputAmount, state.inputs.btcAmount) :
-            (inputAmount, amount);
-        if (state.inputDestination != "") {
-          let max =
-            viewData.max(
-              state.inputDestination,
-              state.destinations,
-              defaultFee,
-            );
-          let (inputAmount, btcAmount) =
-            inputAmount |> BTC.gt(max) ?
-              (max, max |> BTC.format) : (inputAmount, btcAmount);
-          (
-            viewData.summary(
-              [(state.inputDestination, inputAmount), ...state.destinations],
-              defaultFee,
-            ),
-            inputAmount,
-            btcAmount,
-          );
-        } else {
-          (state.summary, inputAmount, btcAmount);
-        };
-      };
-      ReasonReact.Update({
-        ...state,
-        inputAmount,
-        summary,
-        inputs: {
-          ...state.inputs,
-          btcAmount,
-        },
-      });
+      ReasonReact.Update(
+        {
+          ...state,
+          inputs: {
+            ...state.inputs,
+            btcAmount: amount,
+          },
+        }
+        |> updateState,
+      )
     | ProposePayout =>
       let destinations =
         if (state.inputDestination != ""
@@ -150,7 +182,7 @@ let make =
         ~fee=defaultFee,
       );
       ReasonReact.NoUpdate;
-    | AddAnother =>
+    | AddToSummary =>
       if (state.inputDestination != ""
           && state.inputAmount
           |> BTC.gt(BTC.zero)) {
@@ -200,7 +232,8 @@ let make =
                    </TableCell>
                    <TableCell
                      numeric=true className=Styles.noBorder padding=`None>
-                     <IconButton onClick=(_e => Js.log("TODO"))>
+                     <IconButton
+                       onClick=(_e => send(RemoveDestination(idx)))>
                        <img src=remove alt="Remove" />
                      </IconButton>
                    </TableCell>
@@ -243,7 +276,7 @@ let make =
                            </InputAdornment>
                          )
           />
-          <MButton fullWidth=true onClick=(_e => send(AddAnother))>
+          <MButton fullWidth=true onClick=(_e => send(AddToSummary))>
             (text("Add to Summary"))
           </MButton>
         </div>

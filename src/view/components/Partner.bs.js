@@ -4,15 +4,12 @@
 var Css = require("bs-css/src/Css.js");
 var Theme = require("../Theme.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var MaterialUi = require("@jsiebern/bs-material-ui/src/MaterialUi.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
-var MaterialUi_Avatar = require("@jsiebern/bs-material-ui/src/MaterialUi_Avatar.bs.js");
-var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
-var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js");
 var AvatarBgSvg = require("../../assets/img/avatar-bg.svg");
-var MaterialUi_ListItemSecondaryAction = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemSecondaryAction.bs.js");
 
 var component = ReasonReact.statelessComponent("Partner");
 
@@ -72,10 +69,10 @@ function make(partnerId, name, button, _) {
                   ViewCommon.text(userId),
                   /* None */0
                 ];
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[match[0]], match[1], /* None */0, /* None */0, /* array */[])),
-                              button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : null
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItem[/* make */1](/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.Avatar[/* make */1](/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemText[/* make */1](/* None */0, /* None */0, /* None */0, /* Some */[match[0]], match[1], /* None */0, /* array */[])),
+                              button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi.ListItemSecondaryAction[/* make */1](/* None */0, /* None */0, /* array */[button[0]])) : null
                             ]));
             }),
           /* initialState */component[/* initialState */10],
