@@ -50,14 +50,29 @@ let make =
       | Addition => "Addition"
       | Removal => "Removal"
       };
+    let (label, status: StatusChip.status) =
+      switch (status) {
+      | PendingApproval => ("Pending Approval", Pending)
+      | Accepted => ("Accepted", Success)
+      | Rejected => ("Rejected", Failure)
+      | Aborted => ("Aborted", Failure)
+      };
     <Body2
       titles=["Proposed Partner " ++ processTypeString]
       body1=
         <div>
+<<<<<<< 9279c54747243f054163d37dd468606ce3697fab
+=======
+          <MTypography variant=`Body2>
+            ("Status: " |> text)
+            <StatusChip status label />
+          </MTypography>
+>>>>>>> Added StatusChip for displaying process status
           <MTypography variant=`Title>
             ("Proposed Partner " ++ processTypeString |> text)
           </MTypography>
           <Partner key=(userId |> UserId.toString) partnerId=userId />
+<<<<<<< 9279c54747243f054163d37dd468606ce3697fab
           ("Proposed by " ++ UserId.toString(proposedBy) |> text)
           (
             "Status: "
@@ -71,6 +86,8 @@ let make =
             )
             |> text
           )
+=======
+>>>>>>> Added StatusChip for displaying process status
         </div>
       body2=
         <div>

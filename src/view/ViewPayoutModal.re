@@ -4,7 +4,7 @@ include ViewCommon;
 
 module ViewData = ViewModel.ViewPayoutView;
 
-let component = ReasonReact.statelessComponent("Drawer");
+let component = ReasonReact.statelessComponent("ViewPayoutModal");
 
 let make =
     (
@@ -33,14 +33,17 @@ let make =
              ),
         ),
       );
-    let payoutStatus =
-      switch (status) {
-      | PendingApproval => "PendingApproval" |> text
-      | Accepted => "Accepted" |> text
-      | Unconfirmed => "Unconfirmed" |> text
-      | Confirmed => "Confirmed" |> text
-      | Failed(errorMessage) => "Failed with reason: " ++ errorMessage |> text
-      };
+    let payoutStatus = {
+      let (label, status: StatusChip.status) =
+        switch (status) {
+        | PendingApproval => ("Pending Approval", Pending)
+        | Accepted => ("Accepted", Success)
+        | Unconfirmed => ("Unconfirmed", Success)
+        | Confirmed => ("Confirmed", Success)
+        | Failed(_) => ("Failed", Failure)
+        };
+      <StatusChip label status />;
+    };
     let transactionId =
       txId
       |> Utils.mapOption(txId => "Transaction ID: " ++ txId |> text)
@@ -55,7 +58,10 @@ let make =
             |> Utils.mapOption(date => Js.Date.toString(date) |> text)
             |> Js.Option.getWithDefault(ReasonReact.null)
           )
-          payoutStatus
+          <MTypography variant=`Body2>
+            ("Status: " |> text)
+            payoutStatus
+          </MTypography>
           <MTypography variant=`Title> ("Payout" |> text) </MTypography>
           <ul>
             destinationList
