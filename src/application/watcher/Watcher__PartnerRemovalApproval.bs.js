@@ -135,11 +135,11 @@ function make(proposal, log) {
                   match$1 ? (
                       match$2 ? /* Some */[/* tuple */[
                             self$1[state][0][/* systemIssuer */4],
-                            /* PartnerRemovalAccepted */Block.__(9, [Curry._1(Event.Partner[/* Removal */8][/* Accepted */6][/* fromProposal */0], env$1[0])])
+                            /* PartnerRemovalAccepted */Block.__(9, [Curry._1(Event.Partner[/* Removal */9][/* Accepted */6][/* fromProposal */0], env$1[0])])
                           ]] : /* None */0
                     ) : /* Some */[/* tuple */[
                         self$1[state][0][/* systemIssuer */4],
-                        /* PartnerRemovalDenied */Block.__(10, [Curry._1(Event.Partner[/* Removal */8][/* Denied */7][/* fromProposal */0], env$1[0])])
+                        /* PartnerRemovalDenied */Block.__(10, [Curry._1(Event.Partner[/* Removal */9][/* Denied */7][/* fromProposal */0], env$1[0])])
                       ]]
                 );
               return /* () */0;

@@ -48,7 +48,7 @@ function initWatcherFor(session, param, log) {
         return /* Some */[Watcher__SignPayout.make(session, $$event[0], log)];
     case 28 : 
         return /* Some */[Watcher__FinalizePayout.make($$event[0], log)];
-    case 31 : 
+    case 32 : 
         return /* Some */[Watcher__BroadcastPayout.make($$event[0], log)];
     default:
       return /* None */0;

@@ -37,7 +37,7 @@ function make(param, log) {
                         match[/* systemIssuer */5],
                         match[/* network */6]
                       ];
-            case 30 : 
+            case 31 : 
                 var match$1 = $$event[0];
                 if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
                   return /* tuple */[
@@ -53,7 +53,7 @@ function make(param, log) {
                   exit = 1;
                 }
                 break;
-            case 31 : 
+            case 32 : 
                 if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], payoutProcess)) {
                   return /* tuple */[
                           false,
@@ -110,7 +110,7 @@ function make(param, log) {
           receive,
           (function (self$1, param) {
               var $$event = param[/* event */0];
-              if ($$event.tag === 31 && PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], self$1[env][0])) {
+              if ($$event.tag === 32 && PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], self$1[env][0])) {
                 self$1[finalTransaction][0] = /* None */0;
                 return /* () */0;
               } else {
@@ -131,7 +131,7 @@ function make(param, log) {
               return Utils.mapOption((function (tx) {
                             return Promise.resolve(/* tuple */[
                                         env$1[4],
-                                        /* PayoutFinalized */Block.__(31, [Curry._3(Event.Payout[/* Finalized */9][/* make */0], env$1[0], tx.getId(), /* record */[
+                                        /* PayoutFinalized */Block.__(32, [Curry._3(Event.Payout[/* Finalized */10][/* make */0], env$1[0], tx.getId(), /* record */[
                                                   /* txHex */tx.toHex(),
                                                   /* usedInputs */env$1[1],
                                                   /* misthosFeeAddress */env$1[2],

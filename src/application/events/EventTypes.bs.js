@@ -268,6 +268,35 @@ function makeDenial(name) {
         ];
 }
 
+function makeAbort(name) {
+  var fromProposal = function (param) {
+    return /* record */[/* processId */param[/* processId */0]];
+  };
+  var encode = function ($$event) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  name
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "processId",
+                    PrimitiveTypes.ProcessId[/* encode */2]($$event[/* processId */0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  };
+  var decode = function (raw) {
+    return /* record */[/* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw)];
+  };
+  return /* module */[
+          /* fromProposal */fromProposal,
+          /* encode */encode,
+          /* decode */decode
+        ];
+}
+
 function makeProcess(name) {
   return (function (funarg) {
       var processName = name + "ApprovalProcess";
@@ -276,6 +305,7 @@ function makeProcess(name) {
       var Endorsed = makeEndorsement(name + "Endorsed");
       var Accepted = makeAcceptance(name + "Accepted")(funarg);
       var Denied = makeDenial(name + "Denied");
+      var Aborted = makeAbort(name + "Aborted");
       var dataEq = function (dataA, dataB) {
         return Caml_obj.caml_equal(Curry._1(funarg[/* encode */0], dataA), Curry._1(funarg[/* encode */0], dataB));
       };
@@ -286,7 +316,8 @@ function makeProcess(name) {
               /* Rejected */Rejected,
               /* Endorsed */Endorsed,
               /* Accepted */Accepted,
-              /* Denied */Denied
+              /* Denied */Denied,
+              /* Aborted */Aborted
             ];
     });
 }
@@ -296,5 +327,6 @@ exports.makeRejection = makeRejection;
 exports.makeEndorsement = makeEndorsement;
 exports.makeAcceptance = makeAcceptance;
 exports.makeDenial = makeDenial;
+exports.makeAbort = makeAbort;
 exports.makeProcess = makeProcess;
 /* Policy Not a pure module */

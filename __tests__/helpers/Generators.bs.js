@@ -147,7 +147,7 @@ function partnerRemovalEndorsed(supporter, param) {
   return Event.getPartnerRemovalEndorsedExn(Event.makePartnerRemovalEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
-var partnerRemovalAccepted = Event.Partner[/* Removal */8][/* Accepted */6][/* fromProposal */0];
+var partnerRemovalAccepted = Event.Partner[/* Removal */9][/* Accepted */6][/* fromProposal */0];
 
 function accountCreationProposed(eligibleWhenProposing, param) {
   return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
@@ -183,7 +183,7 @@ function custodianRemovalEndorsed(supporter, param) {
   return Event.getCustodianRemovalEndorsedExn(Event.makeCustodianRemovalEndorsed(param[/* processId */0], supporter[/* userId */0]));
 }
 
-var custodianRemovalAccepted = Event.Custodian[/* Removal */8][/* Accepted */6][/* fromProposal */0];
+var custodianRemovalAccepted = Event.Custodian[/* Removal */9][/* Accepted */6][/* fromProposal */0];
 
 var custodianKeyChainUpdated = Event.CustodianKeyChainUpdated[/* make */0];
 
@@ -631,7 +631,7 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
   var issuerKeyPair = Js_option.getWithDefault(custodian[/* issuerKeyPair */2], Utils.mapOption((function (issuer) {
               return issuer[/* issuerKeyPair */2];
             }), issuer));
-  return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(35, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
+  return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(36, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
 }
 
 function withAccountKeyChainIdentified(l) {
@@ -660,7 +660,7 @@ function withAccountKeyChainIdentified(l) {
                     throw exn$1;
                   }
                 }
-            case 35 : 
+            case 36 : 
                 var match = $$event[0];
                 var custodianId = match[/* custodianId */1];
                 return /* :: */[
@@ -675,20 +675,20 @@ function withAccountKeyChainIdentified(l) {
           }
         }), /* [] */0, l[/* log */3]);
   var accountKeyChain = accountKeyChainFrom(keyChains);
-  return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(36, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
+  return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(37, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
 }
 
 function withAccountKeyChainActivated($staropt$star, user, l) {
   var sequence = $staropt$star ? $staropt$star[0] : 0;
   var identifier = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
-          if ($$event.tag === 36) {
+          if ($$event.tag === 37) {
             return $$event[0][/* keyChain */0][/* identifier */1];
           } else {
             return res;
           }
         }), "", l[/* log */3]);
-  return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(37, [accountKeyChainActivated(/* Some */[sequence], user, identifier)]), l);
+  return appendEvent(user[/* issuerKeyPair */2], /* AccountKeyChainActivated */Block.__(38, [accountKeyChainActivated(/* Some */[sequence], user, identifier)]), l);
 }
 
 function withIncomeAddressExposed(user, l) {
@@ -698,7 +698,7 @@ function withIncomeAddressExposed(user, l) {
           var activations = param[1];
           var keyChains = param[0];
           switch ($$event.tag | 0) {
-            case 36 : 
+            case 37 : 
                 var keyChain = $$event[0][/* keyChain */0];
                 return /* tuple */[
                         /* :: */[
@@ -711,7 +711,7 @@ function withIncomeAddressExposed(user, l) {
                         activations,
                         exposed
                       ];
-            case 37 : 
+            case 38 : 
                 var match = $$event[0];
                 return /* tuple */[
                         keyChains,
@@ -724,7 +724,7 @@ function withIncomeAddressExposed(user, l) {
                         ],
                         exposed
                       ];
-            case 38 : 
+            case 39 : 
                 return /* tuple */[
                         keyChains,
                         activations,
@@ -748,7 +748,7 @@ function withIncomeAddressExposed(user, l) {
   var keyChain = List.assoc(List.assoc(user[/* userId */0], match[1]), match[0]);
   var coordinates = Address.Coordinates[/* nextExternal */2](user[/* userId */0], match[2], keyChain);
   var address = Address.make(coordinates, keyChain);
-  return appendEvent(user[/* issuerKeyPair */2], /* IncomeAddressExposed */Block.__(38, [Curry._2(incomeAddressExposed, user[/* userId */0], address)]), l);
+  return appendEvent(user[/* issuerKeyPair */2], /* IncomeAddressExposed */Block.__(39, [Curry._2(incomeAddressExposed, user[/* userId */0], address)]), l);
 }
 
 function withIncomeDetected(incomeAddress, l) {
@@ -756,7 +756,7 @@ function withIncomeDetected(incomeAddress, l) {
           var $$event = param$1[/* event */0];
           var counter = param[1];
           var res = param[0];
-          if ($$event.tag === 38) {
+          if ($$event.tag === 39) {
             if (counter > 0) {
               return /* tuple */[
                       /* None */0,
@@ -784,7 +784,7 @@ function withIncomeDetected(incomeAddress, l) {
         /* None */0,
         incomeAddress
       ], l[/* log */3]);
-  return appendSystemEvent(/* IncomeDetected */Block.__(39, [Js_option.getExn(match[0])]), l);
+  return appendSystemEvent(/* IncomeDetected */Block.__(40, [Js_option.getExn(match[0])]), l);
 }
 
 var Log = /* module */[

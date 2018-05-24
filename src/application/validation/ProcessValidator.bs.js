@@ -166,7 +166,7 @@ function update($$event, state) {
     case 10 : 
     case 19 : 
     case 24 : 
-    case 29 : 
+    case 30 : 
         exit = 4;
         break;
     default:

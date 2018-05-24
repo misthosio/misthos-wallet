@@ -100,7 +100,7 @@ function make(proposal, log) {
                     }
                     break;
                 case 28 : 
-                case 29 : 
+                case 30 : 
                     exit = 1;
                     break;
                 default:
@@ -134,7 +134,7 @@ function make(proposal, log) {
                           ]] : /* None */0
                     ) : /* Some */[/* tuple */[
                         self$1[state][0][/* systemIssuer */4],
-                        /* PayoutDenied */Block.__(29, [Curry._1(Event.Payout[/* Denied */7][/* fromProposal */0], env$1[0])])
+                        /* PayoutDenied */Block.__(30, [Curry._1(Event.Payout[/* Denied */7][/* fromProposal */0], env$1[0])])
                       ]]
                 );
               return /* () */0;

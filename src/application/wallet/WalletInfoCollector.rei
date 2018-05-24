@@ -14,6 +14,10 @@ let network: t => Network.t;
 
 let apply: (Event.t, t) => t;
 
+let totalUnusedBTC: t => BTC.t;
+
+let totalReservedBTC: t => BTC.t;
+
 let currentKeyChainIdent:
   (accountIdx, userId, t) => AccountKeyChain.Identifier.t;
 

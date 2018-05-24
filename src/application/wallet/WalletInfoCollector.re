@@ -19,6 +19,19 @@ type t = {
   exposedCoordinates: list(Address.Coordinates.t),
 };
 
+let totalUnusedBTC = ({unused}) =>
+  unused
+  |. Set.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
+       res |> BTC.plus(value)
+     );
+
+let totalReservedBTC = ({reserved}) =>
+  reserved
+  |. Map.keysToArray
+  |. Array.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
+       res |> BTC.plus(value)
+     );
+
 let currentKeyChainIdent = (accountIdx, userId, {activatedKeyChain}) =>
   activatedKeyChain
   |. List.getAssoc(accountIdx, AccountIndex.eq)
