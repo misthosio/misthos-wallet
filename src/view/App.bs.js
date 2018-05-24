@@ -11,6 +11,7 @@ var Spinner = require("./components/Spinner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var BlankScreen = require("./BlankScreen.bs.js");
 var JoinVenture = require("./JoinVenture.bs.js");
 var LoadVenture = require("./LoadVenture.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -236,10 +237,10 @@ function make(session, updateSession, _) {
           if (session >= 3) {
             return ReasonReact.element(/* None */0, /* None */0, Spinner.make("\n             You have signed in with a blockstack user that doesn\'t have a registered blockstack.id,\n             make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.\n             ", /* None */0, /* array */[]));
           } else {
-            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading", /* None */0, /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, BlankScreen.make("Loading", /* array */[]));
           }
         } else {
-          return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Waiting for BlockStack session", /* None */0, /* array */[]));
+          return ReasonReact.element(/* None */0, /* None */0, BlankScreen.make("Waiting for BlockStack session", /* array */[]));
         }
       } else if (typeof selectedVenture === "number") {
         return ReasonReact.element(/* None */0, /* None */0, LoggedInHome.make(index, /* array */[]));
