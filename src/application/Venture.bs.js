@@ -455,7 +455,7 @@ function exec$2(incomeEvents, txConfs, venture) {
   logMessage("Synchronizing wallet");
   var __x = List.fold_left((function (p, $$event) {
           return p.then((function (param) {
-                        return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(39, [$$event]), param[0]);
+                        return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(40, [$$event]), param[0]);
                       }));
         }), Promise.resolve(/* tuple */[
             venture,
@@ -463,7 +463,7 @@ function exec$2(incomeEvents, txConfs, venture) {
           ]), incomeEvents);
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
-                                  return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(40, [$$event]), param[0]);
+                                  return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(41, [$$event]), param[0]);
                                 }));
                   }), __x, txConfs).then((function (eta) {
                   return persist(/* None */0, eta);
@@ -582,7 +582,7 @@ function exec$6(partnerId, venture) {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     var tmp;
     if (match) {
-      var custodianRemoval = Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */8][/* processName */1], state)));
+      var custodianRemoval = Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */9][/* processName */1], state)));
       tmp = apply(/* None */0, /* None */0, /* CustodianRemovalProposed */Block.__(20, [custodianRemoval]), venture).then((function (param) {
               return apply(/* None */0, /* Some */[param[1]], Event.makeCustodianRemovalEndorsed(custodianRemoval[/* processId */0], session[/* userId */0]), param[0]);
             }));
@@ -593,7 +593,7 @@ function exec$6(partnerId, venture) {
           ]);
     }
     return tmp.then((function (param) {
-                  var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */8][/* processName */1], state)));
+                  var proposal = Event.getPartnerRemovalProposedExn(Event.makePartnerRemovalProposed(Venture__State.currentPartners(state), Venture__State.lastPartnerAccepted(partnerId, state), session[/* userId */0], Venture__State.currentPolicy(Event.Partner[/* Removal */9][/* processName */1], state)));
                   return apply(/* None */0, /* Some */[param[1]], /* PartnerRemovalProposed */Block.__(6, [proposal]), param[0]).then((function (param) {
                                     return apply(/* None */0, /* Some */[param[1]], Event.makePartnerRemovalEndorsed(proposal[/* processId */0], session[/* userId */0]), param[0]);
                                   })).then((function (eta) {
@@ -666,7 +666,7 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$8];
 function exec$9(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(38, [exposeEvent]), venture).then((function (eta) {
+  return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(39, [exposeEvent]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
                 if (param.tag) {

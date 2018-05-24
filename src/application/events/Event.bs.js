@@ -198,6 +198,8 @@ var Removal_001 = /* processName */include$1[0];
 
 var Removal_002 = /* dataEq */include$1[1];
 
+var Removal_008 = /* Aborted */include$1[7];
+
 var Removal = /* module */[
   /* Data */Data$1,
   Removal_001,
@@ -206,12 +208,15 @@ var Removal = /* module */[
   /* Rejected */Rejected$1,
   /* Endorsed */Endorsed$1,
   /* Accepted */Accepted$1,
-  /* Denied */Denied$1
+  /* Denied */Denied$1,
+  Removal_008
 ];
 
 var Partner_001 = /* processName */include[0];
 
 var Partner_002 = /* dataEq */include[1];
+
+var Partner_008 = /* Aborted */include[7];
 
 var Partner = /* module */[
   /* Data */Data,
@@ -222,6 +227,7 @@ var Partner = /* module */[
   /* Endorsed */Endorsed,
   /* Accepted */Accepted,
   /* Denied */Denied,
+  Partner_008,
   /* Removal */Removal
 ];
 
@@ -269,6 +275,8 @@ var AccountCreation_002 = /* dataEq */include$2[1];
 
 var AccountCreation_007 = /* Denied */include$2[6];
 
+var AccountCreation_008 = /* Aborted */include$2[7];
+
 var AccountCreation = /* module */[
   /* Data */Data$2,
   AccountCreation_001,
@@ -277,7 +285,8 @@ var AccountCreation = /* module */[
   /* Rejected */Rejected$2,
   /* Endorsed */Endorsed$2,
   /* Accepted */Accepted$2,
-  AccountCreation_007
+  AccountCreation_007,
+  AccountCreation_008
 ];
 
 function encode$4($$event) {
@@ -388,6 +397,8 @@ var Removal_001$1 = /* processName */include$4[0];
 
 var Removal_002$1 = /* dataEq */include$4[1];
 
+var Removal_008$1 = /* Aborted */include$4[7];
+
 var Removal$1 = /* module */[
   /* Data */Data$4,
   Removal_001$1,
@@ -396,12 +407,15 @@ var Removal$1 = /* module */[
   /* Rejected */Rejected$4,
   /* Endorsed */Endorsed$4,
   /* Accepted */Accepted$4,
-  /* Denied */Denied$3
+  /* Denied */Denied$3,
+  Removal_008$1
 ];
 
 var Custodian_001 = /* processName */include$3[0];
 
 var Custodian_002 = /* dataEq */include$3[1];
+
+var Custodian_008 = /* Aborted */include$3[7];
 
 var Custodian = /* module */[
   /* Data */Data$3,
@@ -412,6 +426,7 @@ var Custodian = /* module */[
   /* Endorsed */Endorsed$3,
   /* Accepted */Accepted$3,
   /* Denied */Denied$2,
+  Custodian_008,
   /* Removal */Removal$1
 ];
 
@@ -454,6 +469,8 @@ var Endorsed$5 = include$5[4];
 var Accepted$5 = include$5[5];
 
 var Denied$4 = include$5[6];
+
+var Aborted = include$5[7];
 
 function make$1(processId, custodianId, payoutTx) {
   return /* record */[
@@ -682,6 +699,7 @@ var Payout = /* module */[
   /* Endorsed */Endorsed$5,
   /* Accepted */Accepted$5,
   /* Denied */Denied$4,
+  /* Aborted */Aborted,
   /* Signed */Signed,
   /* Finalized */Finalized,
   /* Broadcast */Broadcast,
@@ -1153,28 +1171,30 @@ function encode$18(param) {
     case 28 : 
         return Curry._1(Accepted$5[/* encode */1], param[0]);
     case 29 : 
-        return Curry._1(Denied$4[/* encode */1], param[0]);
+        return Curry._1(Aborted[/* encode */1], param[0]);
     case 30 : 
-        return encode$7(param[0]);
+        return Curry._1(Denied$4[/* encode */1], param[0]);
     case 31 : 
-        return encode$8(param[0]);
+        return encode$7(param[0]);
     case 32 : 
-        return encode$9(param[0]);
+        return encode$8(param[0]);
     case 33 : 
-        return encode$10(param[0]);
+        return encode$9(param[0]);
     case 34 : 
-        return encode$11(param[0]);
+        return encode$10(param[0]);
     case 35 : 
-        return encode$12(param[0]);
+        return encode$11(param[0]);
     case 36 : 
-        return encode$13(param[0]);
+        return encode$12(param[0]);
     case 37 : 
-        return encode$14(param[0]);
+        return encode$13(param[0]);
     case 38 : 
-        return encode$15(param[0]);
+        return encode$14(param[0]);
     case 39 : 
-        return encode$16(param[0]);
+        return encode$15(param[0]);
     case 40 : 
+        return encode$16(param[0]);
+    case 41 : 
         return encode$17(param[0]);
     
   }
@@ -1193,13 +1213,14 @@ function isSystemEvent(param) {
     case 24 : 
     case 28 : 
     case 29 : 
-    case 31 : 
+    case 30 : 
     case 32 : 
     case 33 : 
     case 34 : 
-    case 36 : 
-    case 39 : 
+    case 35 : 
+    case 37 : 
     case 40 : 
+    case 41 : 
         return true;
     default:
       return false;
@@ -1220,9 +1241,9 @@ function decode$18(raw) {
     case "AccountCreationRejected" : 
         return /* AccountCreationRejected */Block.__(12, [Curry._1(Rejected$2[/* decode */2], raw)]);
     case "AccountKeyChainActivated" : 
-        return /* AccountKeyChainActivated */Block.__(37, [decode$14(raw)]);
+        return /* AccountKeyChainActivated */Block.__(38, [decode$14(raw)]);
     case "AccountKeyChainIdentified" : 
-        return /* AccountKeyChainIdentified */Block.__(36, [decode$13(raw)]);
+        return /* AccountKeyChainIdentified */Block.__(37, [decode$13(raw)]);
     case "CustodianAccepted" : 
         return /* CustodianAccepted */Block.__(18, [Curry._1(Accepted$3[/* decode */2], raw)]);
     case "CustodianDenied" : 
@@ -1230,7 +1251,7 @@ function decode$18(raw) {
     case "CustodianEndorsed" : 
         return /* CustodianEndorsed */Block.__(17, [Curry._1(Endorsed$3[/* decode */2], raw)]);
     case "CustodianKeyChainUpdated" : 
-        return /* CustodianKeyChainUpdated */Block.__(35, [decode$12(raw)]);
+        return /* CustodianKeyChainUpdated */Block.__(36, [decode$12(raw)]);
     case "CustodianProposed" : 
         return /* CustodianProposed */Block.__(15, [Curry._1(Proposed$3[/* decode */2], raw)]);
     case "CustodianRejected" : 
@@ -1246,9 +1267,9 @@ function decode$18(raw) {
     case "CustodianRemovalRejected" : 
         return /* CustodianRemovalRejected */Block.__(21, [Curry._1(Rejected$4[/* decode */2], raw)]);
     case "IncomeAddressExposed" : 
-        return /* IncomeAddressExposed */Block.__(38, [decode$15(raw)]);
+        return /* IncomeAddressExposed */Block.__(39, [decode$15(raw)]);
     case "IncomeDetected" : 
-        return /* IncomeDetected */Block.__(39, [decode$16(raw)]);
+        return /* IncomeDetected */Block.__(40, [decode$16(raw)]);
     case "PartnerAccepted" : 
         return /* PartnerAccepted */Block.__(4, [Curry._1(Accepted[/* decode */2], raw)]);
     case "PartnerDenied" : 
@@ -1269,28 +1290,30 @@ function decode$18(raw) {
         return /* PartnerRemovalProposed */Block.__(6, [Curry._1(Proposed$1[/* decode */2], raw)]);
     case "PartnerRemovalRejected" : 
         return /* PartnerRemovalRejected */Block.__(7, [Curry._1(Rejected$1[/* decode */2], raw)]);
+    case "PayoutAborted" : 
+        return /* PayoutAborted */Block.__(29, [Curry._1(Aborted[/* decode */2], raw)]);
     case "PayoutAccepted" : 
         return /* PayoutAccepted */Block.__(28, [Curry._1(Accepted$5[/* decode */2], raw)]);
     case "PayoutBroadcast" : 
-        return /* PayoutBroadcast */Block.__(32, [decode$9(raw)]);
+        return /* PayoutBroadcast */Block.__(33, [decode$9(raw)]);
     case "PayoutBroadcastDuplicate" : 
-        return /* PayoutBroadcastDuplicate */Block.__(33, [decode$10(raw)]);
+        return /* PayoutBroadcastDuplicate */Block.__(34, [decode$10(raw)]);
     case "PayoutBroadcastFailed" : 
-        return /* PayoutBroadcastFailed */Block.__(34, [decode$11(raw)]);
+        return /* PayoutBroadcastFailed */Block.__(35, [decode$11(raw)]);
     case "PayoutDenied" : 
-        return /* PayoutDenied */Block.__(29, [Curry._1(Denied$4[/* decode */2], raw)]);
+        return /* PayoutDenied */Block.__(30, [Curry._1(Denied$4[/* decode */2], raw)]);
     case "PayoutEndorsed" : 
         return /* PayoutEndorsed */Block.__(27, [Curry._1(Endorsed$5[/* decode */2], raw)]);
     case "PayoutFinalized" : 
-        return /* PayoutFinalized */Block.__(31, [decode$8(raw)]);
+        return /* PayoutFinalized */Block.__(32, [decode$8(raw)]);
     case "PayoutProposed" : 
         return /* PayoutProposed */Block.__(25, [Curry._1(Proposed$5[/* decode */2], raw)]);
     case "PayoutRejected" : 
         return /* PayoutRejected */Block.__(26, [Curry._1(Rejected$5[/* decode */2], raw)]);
     case "PayoutSigned" : 
-        return /* PayoutSigned */Block.__(30, [decode$7(raw)]);
+        return /* PayoutSigned */Block.__(31, [decode$7(raw)]);
     case "TransactionConfirmed" : 
-        return /* TransactionConfirmed */Block.__(40, [decode$17(raw)]);
+        return /* TransactionConfirmed */Block.__(41, [decode$17(raw)]);
     case "VentureCreated" : 
         return /* VentureCreated */Block.__(0, [decode(raw)]);
     default:
@@ -1302,7 +1325,7 @@ function decode$18(raw) {
 }
 
 function getIncomeAddressExposedExn($$event) {
-  if ($$event.tag === 38) {
+  if ($$event.tag === 39) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getIncomeAddressExposedExn");
@@ -1310,7 +1333,7 @@ function getIncomeAddressExposedExn($$event) {
 }
 
 function getAccountKeyChainIdentifiedExn($$event) {
-  if ($$event.tag === 36) {
+  if ($$event.tag === 37) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getAccountKeyChainIdentifiedExn");
@@ -1318,7 +1341,7 @@ function getAccountKeyChainIdentifiedExn($$event) {
 }
 
 function getAccountKeyChainActivatedExn($$event) {
-  if ($$event.tag === 37) {
+  if ($$event.tag === 38) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getAccountKeyChainActivatedExn");
@@ -1326,7 +1349,7 @@ function getAccountKeyChainActivatedExn($$event) {
 }
 
 function getCustodianKeyChainUpdatedExn($$event) {
-  if ($$event.tag === 35) {
+  if ($$event.tag === 36) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getCustodianKeyChainUpdatedExn");
@@ -1334,7 +1357,7 @@ function getCustodianKeyChainUpdatedExn($$event) {
 }
 
 function getPayoutBroadcastFailedExn($$event) {
-  if ($$event.tag === 34) {
+  if ($$event.tag === 35) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getPayoutBroadcastFailedExn");
@@ -1342,7 +1365,7 @@ function getPayoutBroadcastFailedExn($$event) {
 }
 
 function getPayoutBroadcastExn($$event) {
-  if ($$event.tag === 32) {
+  if ($$event.tag === 33) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getPayoutBroadcastExn");
@@ -1350,7 +1373,7 @@ function getPayoutBroadcastExn($$event) {
 }
 
 function getPayoutSignedExn($$event) {
-  if ($$event.tag === 30) {
+  if ($$event.tag === 31) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getPayoutSignedExn");

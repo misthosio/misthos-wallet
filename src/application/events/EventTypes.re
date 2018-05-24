@@ -30,6 +30,8 @@ type acceptance('a) = {
 
 type denial = {processId};
 
+type abort = {processId};
+
 module type EventData = {
   type t;
   let encode: t => Js.Json.t;
@@ -235,6 +237,31 @@ let makeDenial = (name: string) : (module DeniedEvent) =>
   (module
    {
      type t = denial;
+     let fromProposal = ({processId}: proposal('a)) : t => {
+       processId: processId,
+     };
+     let encode = (event: t) =>
+       Json.Encode.(
+         object_([
+           ("type", string(name)),
+           ("processId", ProcessId.encode(event.processId)),
+         ])
+       );
+     let decode = raw : t =>
+       Json.Decode.{processId: raw |> field("processId", ProcessId.decode)};
+   });
+
+module type AbortedEvent = {
+  type t = abort;
+  let fromProposal: proposal('a) => t;
+  let encode: t => Js.Json.t;
+  let decode: Js.Json.t => t;
+};
+
+let makeAbort = (name: string) : (module AbortedEvent) =>
+  (module
+   {
+     type t = abort;
      let fromProposal = ({processId}: proposal('a)) => {
        processId: processId,
      };
@@ -293,6 +320,12 @@ module type Process =
       let encode: t => Js.Json.t;
       let decode: Js.Json.t => t;
     };
+    module Aborted: {
+      type t = abort;
+      let fromProposal: proposal('a) => t;
+      let encode: t => Js.Json.t;
+      let decode: Js.Json.t => t;
+    };
   };
 
 let makeProcess = (name: string) : (module Process) =>
@@ -304,6 +337,7 @@ let makeProcess = (name: string) : (module Process) =>
      module Endorsed = (val makeEndorsement(name ++ "Endorsed"));
      module Accepted = (val makeAcceptance(name ++ "Accepted"))(Data);
      module Denied = (val makeDenial(name ++ "Denied"));
+     module Aborted = (val makeAbort(name ++ "Aborted"));
      let dataEq = (dataA, dataB) =>
        Data.encode(dataA) == Data.encode(dataB);
    });

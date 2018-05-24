@@ -32,7 +32,8 @@ let make =
       voters,
       canVote,
       data: {summary, payoutStatus: status, txId, date},
-    }: ViewData.t = viewData;
+    }: ViewData.payout =
+      viewData.payout;
     let destinationList =
       ReasonReact.array(
         Array.of_list(
@@ -58,6 +59,7 @@ let make =
         | PendingApproval => ("Pending Approval", Pending)
         | Accepted => ("Accepted", Success)
         | Denied => ("Denied", Failure)
+        | Aborted => ("Aborted", Failure)
         | Unconfirmed => ("Unconfirmed", Pending)
         | Confirmed => ("Confirmed", Success)
         | Failed(_) => ("Failed", Failure)
@@ -141,6 +143,13 @@ let make =
             onReject=(() => commands.rejectPayout(~processId))
             cmdStatus
           />
+          (
+            if (viewData.collidesWith |> Belt.Set.size > 0) {
+              "WARNING!!! This payout collides with other payouts" |> text;
+            } else {
+              ReasonReact.null;
+            }
+          )
         </div>
     />;
   },

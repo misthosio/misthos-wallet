@@ -17,7 +17,8 @@ type voter = {
 type status =
   | PendingApproval
   | Accepted
-  | Denied;
+  | Denied
+  | Aborted;
 
 type process('data) = {
   processId,
@@ -105,6 +106,15 @@ let addDenial = ({processId}: denial, map) =>
   |. Map.update(
        processId,
        Utils.mapOption(payout => {...payout, canVote: false, status: Denied}),
+     );
+
+let addAbort = ({processId}: abort, map) =>
+  map
+  |. Map.update(
+       processId,
+       Utils.mapOption(payout =>
+         {...payout, canVote: false, status: Aborted}
+       ),
      );
 
 let updateData = (processId, fn, map) =>

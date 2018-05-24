@@ -211,6 +211,7 @@ let update = (event, {currentPartners, processes} as state) => {
       }
     | VentureCreated(_)
     | PayoutSigned(_)
+    | PayoutAborted(_)
     | PayoutFinalized(_)
     | PayoutBroadcast(_)
     | PayoutBroadcastDuplicate(_)

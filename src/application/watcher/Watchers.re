@@ -25,6 +25,8 @@ module CustodianKeyChain = Watcher__CustodianKeyChain;
 
 module AccountKeyChain = Watcher__AccountKeyChain;
 
+module AbortPayout = Watcher__AbortPayout;
+
 module PayoutApproval = Watcher__PayoutApproval;
 
 module SignPayout = Watcher__SignPayout;
@@ -35,28 +37,37 @@ module BroadcastPayout = Watcher__BroadcastPayout;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch (event) {
-  | VentureCreated(event) => Some(Initialize.make(session, event, log))
-  | PartnerProposed(proposal) => Some(PartnerApproval.make(proposal, log))
-  | PartnerRemovalProposed(proposal) =>
-    Some(PartnerRemovalApproval.make(proposal, log))
-  | PartnerAccepted(acceptance) =>
-    Some(AutoEndorseCustodianSelf.make(session, acceptance, log))
-  | AccountCreationProposed(proposal) =>
-    Some(AccountCreationApproval.make(proposal, log))
-  | AccountCreationAccepted(acceptance) =>
-    Some(AccountKeyChain.make(session, acceptance, log))
-  | PayoutProposed(proposal) => Some(PayoutApproval.make(proposal, log))
-  | PayoutEndorsed(endorsement) =>
-    Some(SignPayout.make(session, endorsement, log))
-  | PayoutAccepted(acceptance) => Some(FinalizePayout.make(acceptance, log))
-  | PayoutFinalized(finalized) => Some(BroadcastPayout.make(finalized, log))
-  | CustodianProposed(proposal) =>
-    Some(CustodianApproval.make(proposal, log))
-  | CustodianRemovalProposed(proposal) =>
-    Some(CustodianRemovalApproval.make(proposal, log))
-  | CustodianAccepted(acceptance) =>
-    Some(CustodianKeyChain.make(session, acceptance, log))
-  | _ => None
+  | VentureCreated(event) => [Initialize.make(session, event, log)]
+  | PartnerProposed(proposal) => [PartnerApproval.make(proposal, log)]
+  | PartnerRemovalProposed(proposal) => [
+      PartnerRemovalApproval.make(proposal, log),
+    ]
+  | PartnerAccepted(acceptance) => [
+      AutoEndorseCustodianSelf.make(session, acceptance, log),
+    ]
+  | AccountCreationProposed(proposal) => [
+      AccountCreationApproval.make(proposal, log),
+    ]
+  | AccountCreationAccepted(acceptance) => [
+      AccountKeyChain.make(session, acceptance, log),
+    ]
+  | PayoutProposed(proposal) => [
+      PayoutApproval.make(proposal, log),
+      AbortPayout.make(proposal, log),
+    ]
+  | PayoutEndorsed(endorsement) => [
+      SignPayout.make(session, endorsement, log),
+    ]
+  | PayoutAccepted(acceptance) => [FinalizePayout.make(acceptance, log)]
+  | PayoutFinalized(finalized) => [BroadcastPayout.make(finalized, log)]
+  | CustodianProposed(proposal) => [CustodianApproval.make(proposal, log)]
+  | CustodianRemovalProposed(proposal) => [
+      CustodianRemovalApproval.make(proposal, log),
+    ]
+  | CustodianAccepted(acceptance) => [
+      CustodianKeyChain.make(session, acceptance, log),
+    ]
+  | _ => []
   };
 
 let apply = (~reconstruct=false, session, item, log, watchers) =>
@@ -66,12 +77,7 @@ let apply = (~reconstruct=false, session, item, log, watchers) =>
     if (reconstruct == false) {
       watchers |> List.iter(w => w#receive(item));
     };
-    (
-      switch (initWatcherFor(session, item, log)) {
-      | Some(w) => [w, ...watchers]
-      | None => watchers
-      }
-    )
+    List.append(initWatcherFor(session, item, log), watchers)
     |> List.filter(w => w#processCompleted() == false);
   | None => watchers
   };

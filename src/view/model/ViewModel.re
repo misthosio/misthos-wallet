@@ -6,8 +6,6 @@ module ItemsSet = Belt.Set.String;
 
 module PartnersCollector = ViewModel__PartnersCollector;
 
-module BalanceCollector = ViewModel__BalanceCollector;
-
 module TransactionCollector = ViewModel__TransactionCollector;
 
 module TxDetailsCollector = ViewModel__TxDetailsCollector;
@@ -20,7 +18,6 @@ type t = {
   name: string,
   processedItems: ItemsSet.t,
   metaPolicy: Policy.t,
-  balanceCollector: BalanceCollector.t,
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
   txDetailsCollector: TxDetailsCollector.t,
@@ -64,7 +61,10 @@ module ViewPartnerView = {
 let viewPartnerModal = ViewPartnerView.fromViewModelState;
 
 module CreatePayoutView = {
-  type balance = BalanceCollector.balance;
+  type balance = {
+    currentSpendable: BTC.t,
+    reserved: BTC.t,
+  };
   type t = {
     allowCreation: bool,
     balance,
@@ -76,10 +76,23 @@ module CreatePayoutView = {
     summary: (list((string, BTC.t)), BTC.t) => PayoutTransaction.summary,
   };
   let fromViewModelState =
-      ({ventureId, localUser, name, balanceCollector, walletInfoCollector}) => {
-    let balance =
-      balanceCollector
-      |> BalanceCollector.accountBalance(AccountIndex.default);
+      ({ventureId, localUser, name, walletInfoCollector}) => {
+    let reserved = walletInfoCollector |> WalletInfoCollector.totalReservedBTC;
+    let balance = {
+      reserved,
+      currentSpendable:
+        walletInfoCollector
+        |> WalletInfoCollector.totalUnusedBTC
+        |> BTC.minus(reserved),
+    };
+    let network = walletInfoCollector |> WalletInfoCollector.network;
+    let allInputs = walletInfoCollector |> WalletInfoCollector.unusedInputs;
+    let mandatoryInputs =
+      walletInfoCollector
+      |> WalletInfoCollector.nonReservedOldInputs(
+           AccountIndex.default,
+           localUser,
+         );
     {
       ventureId,
       balance,
@@ -97,7 +110,7 @@ module CreatePayoutView = {
           {
             Bitcoin.Address.toOutputScript(
               address,
-              walletInfoCollector.network |> Network.bitcoinNetwork,
+              network |> Network.bitcoinNetwork,
             )
             |> ignore;
             true;
@@ -107,18 +120,16 @@ module CreatePayoutView = {
         },
       max: (targetDestination, destinations, fee) =>
         PayoutTransaction.max(
-          ~allInputs=walletInfoCollector.unused,
+          ~allInputs,
           ~targetDestination,
           ~destinations,
           ~satsPerByte=fee,
-          ~network=walletInfoCollector.network,
+          ~network,
         ),
       summary: (destinations, fee) =>
         PayoutTransaction.build(
-          ~mandatoryInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.oldInputs(AccountIndex.default, localUser),
-          ~allInputs=walletInfoCollector.unused,
+          ~mandatoryInputs,
+          ~allInputs,
           ~destinations,
           ~satsPerByte=fee,
           ~changeAddress=
@@ -127,9 +138,9 @@ module CreatePayoutView = {
                  AccountIndex.default,
                  localUser,
                ),
-          ~network=walletInfoCollector.network,
+          ~network,
         )
-        |> PayoutTransaction.summary(walletInfoCollector.network),
+        |> PayoutTransaction.summary(network),
     };
   };
 };
@@ -140,9 +151,23 @@ module ViewPayoutView = {
   type payoutStatus = TxDetailsCollector.payoutStatus;
   type voteStatus = ProcessCollector.voteStatus;
   type voter = ProcessCollector.voter;
-  type t = TxDetailsCollector.payoutProcess;
-  let fromViewModelState = (processId, {txDetailsCollector}) =>
-    txDetailsCollector |> TxDetailsCollector.getPayout(processId);
+  type payout = TxDetailsCollector.payoutProcess;
+  type t = {
+    payout,
+    collidesWith: ProcessId.set,
+  };
+  let fromViewModelState =
+      (processId, {txDetailsCollector, walletInfoCollector}) =>
+    txDetailsCollector
+    |> TxDetailsCollector.getPayout(processId)
+    |> Utils.mapOption(payout =>
+         {
+           payout,
+           collidesWith:
+             walletInfoCollector
+             |> WalletInfoCollector.collidingProcesses(processId),
+         }
+       );
 };
 
 let viewPayoutModal = ViewPayoutView.fromViewModelState;
@@ -155,7 +180,10 @@ module SelectedVentureView = {
   type txData = TransactionCollector.txData;
   type payoutStatus = TxDetailsCollector.payoutStatus;
   type payoutProcess = TxDetailsCollector.payoutProcess;
-  type balance = BalanceCollector.balance;
+  type balance = {
+    currentSpendable: BTC.t,
+    reserved: BTC.t,
+  };
   type t = {
     ventureId,
     ventureName: string,
@@ -176,22 +204,31 @@ module SelectedVentureView = {
           partnersCollector,
           transactionCollector,
           txDetailsCollector,
-          balanceCollector,
+          walletInfoCollector,
         },
       ) => {
-    ventureId,
-    ventureName: name,
-    readOnly:
-      partnersCollector |> PartnersCollector.isPartner(localUser) == false,
-    partners: partnersCollector.partners,
-    prospects: partnersCollector |> PartnersCollector.prospectsPendingApproval,
-    payoutsPendingApproval:
-      txDetailsCollector |> TxDetailsCollector.payoutsPendingApproval,
-    confirmedTxs: transactionCollector.confirmedTxs,
-    unconfirmedTxs: transactionCollector.unconfirmedTxs,
-    balance:
-      balanceCollector
-      |> BalanceCollector.accountBalance(AccountIndex.default),
+    let reserved = walletInfoCollector |> WalletInfoCollector.totalReservedBTC;
+    let balance = {
+      reserved,
+      currentSpendable:
+        walletInfoCollector
+        |> WalletInfoCollector.totalUnusedBTC
+        |> BTC.minus(reserved),
+    };
+    {
+      ventureId,
+      ventureName: name,
+      readOnly:
+        partnersCollector |> PartnersCollector.isPartner(localUser) == false,
+      partners: partnersCollector.partners,
+      prospects:
+        partnersCollector |> PartnersCollector.prospectsPendingApproval,
+      payoutsPendingApproval:
+        txDetailsCollector |> TxDetailsCollector.payoutsPendingApproval,
+      confirmedTxs: transactionCollector.confirmedTxs,
+      unconfirmedTxs: transactionCollector.unconfirmedTxs,
+      balance,
+    };
   };
 };
 
@@ -204,7 +241,6 @@ let make = localUser => {
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   metaPolicy: Policy.unanimous,
-  balanceCollector: BalanceCollector.make(),
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
   txDetailsCollector: TxDetailsCollector.make(localUser),
@@ -217,8 +253,6 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
   } else {
     let state = {
       ...state,
-      balanceCollector:
-        state.balanceCollector |> BalanceCollector.apply(event),
       partnersCollector:
         state.partnersCollector |> PartnersCollector.apply(event),
       transactionCollector:

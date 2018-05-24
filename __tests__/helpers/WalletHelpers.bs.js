@@ -9,6 +9,7 @@ var Generators = require("./Generators.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
+var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollector.bs.js");
 
 function constructState(log) {
   return Generators.Log[/* reduce */1]((function (s, param) {
@@ -22,17 +23,17 @@ function testNextIncomeAddress(user, address, wallet) {
   Jest.test(description, (function () {
           return Jest.Expect[/* toEqual */12](address, Jest.Expect[/* expect */0](exposed[/* address */1][/* displayAddress */5]));
         }));
-  return Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(38, [exposed]), wallet);
+  return Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(39, [exposed]), wallet);
 }
 
 function collectNextTwoAddresses(user, param) {
   var wallet = param[0];
   var exposed1 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet);
-  var log = Generators.Log[/* appendSystemEvent */8](/* IncomeAddressExposed */Block.__(38, [exposed1]), param[1]);
-  var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(38, [exposed1]), wallet);
+  var log = Generators.Log[/* appendSystemEvent */8](/* IncomeAddressExposed */Block.__(39, [exposed1]), param[1]);
+  var wallet$1 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(39, [exposed1]), wallet);
   var exposed2 = Venture__Wallet.exposeNextIncomeAddress(user[/* userId */0], WalletTypes.AccountIndex[/* default */9], wallet$1);
-  var log$1 = Generators.Log[/* appendSystemEvent */8](/* IncomeAddressExposed */Block.__(38, [exposed2]), log);
-  var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(38, [exposed2]), wallet$1);
+  var log$1 = Generators.Log[/* appendSystemEvent */8](/* IncomeAddressExposed */Block.__(39, [exposed2]), log);
+  var wallet$2 = Venture__Wallet.apply(/* IncomeAddressExposed */Block.__(39, [exposed2]), wallet$1);
   return /* tuple */[
           /* tuple */[
             exposed1,
@@ -46,13 +47,12 @@ function collectNextTwoAddresses(user, param) {
 }
 
 function getExposedAddresses(param) {
-  var match = param[/* walletInfoCollector */3];
-  var accountKeyChains = match[/* keyChains */3];
+  var walletInfoCollector = param[/* walletInfoCollector */3];
   return List.map((function (a) {
                 return a[/* displayAddress */5];
               }), List.map((function (coordinates) {
-                    return Address.find(coordinates, accountKeyChains);
-                  }), match[/* exposedCoordinates */6]));
+                    return Address.find(coordinates, WalletInfoCollector.accountKeyChains(walletInfoCollector));
+                  }), WalletInfoCollector.exposedCoordinates(walletInfoCollector)));
 }
 
 var Wallet = 0;

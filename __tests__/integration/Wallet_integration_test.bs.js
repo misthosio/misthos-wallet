@@ -16,6 +16,7 @@ var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
 var PayoutTransaction = require("../../src/application/wallet/PayoutTransaction.bs.js");
+var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollector.bs.js");
 
 Helpers.enableHttpRequests(/* () */0);
 
@@ -182,11 +183,11 @@ describe("Wallet_integration", (function () {
                                                       var incomeEvent = Event.IncomeDetected[/* make */0](param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, param[/* txId */0], param[/* amount */3]);
                                                       var match = List.mem_assoc(address, walletOneAddresses);
                                                       if (match) {
-                                                        oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(39, [incomeEvent]), oneKeyChainWallet[0]);
-                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(39, [incomeEvent]), twoKeyChainWallet[0]);
+                                                        oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(40, [incomeEvent]), oneKeyChainWallet[0]);
+                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(40, [incomeEvent]), twoKeyChainWallet[0]);
                                                         return /* () */0;
                                                       } else {
-                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(39, [incomeEvent]), twoKeyChainWallet[0]);
+                                                        twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(40, [incomeEvent]), twoKeyChainWallet[0]);
                                                         return /* () */0;
                                                       }
                                                     }), utxos);
@@ -220,8 +221,8 @@ describe("Wallet_integration", (function () {
                                             })).then((function (param) {
                                             var txId = param[1];
                                             var processId = param[0];
-                                            oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(32, [Curry._2(Event.Payout[/* Broadcast */10][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
-                                            twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(32, [Curry._2(Event.Payout[/* Broadcast */10][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
+                                            oneKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(33, [Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId)]), oneKeyChainWallet[0]);
+                                            twoKeyChainWallet[0] = Venture__Wallet.apply(/* PayoutBroadcast */Block.__(33, [Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId)]), twoKeyChainWallet[0]);
                                             return Promise.resolve(/* () */0);
                                           }));
                             }));
@@ -251,7 +252,7 @@ describe("Wallet_integration", (function () {
                                     if (param) {
                                       var $$event = param[0];
                                       var data = $$event[/* data */6];
-                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], wallet$2[/* walletInfoCollector */3][/* keyChains */3], data[/* payoutTx */1], /* Regtest */0));
+                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1], /* Regtest */0));
                                       tmp = Promise.all(/* tuple */[
                                             Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(25, [$$event]), twoKeyChainWallet[0])),
                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[

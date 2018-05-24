@@ -67,6 +67,12 @@ function make(viewData, commands, cmdStatus, _) {
                       /* Failure */1
                     ];
                     break;
+                case 3 : 
+                    match$2 = /* tuple */[
+                      "Aborted",
+                      /* Failure */1
+                    ];
+                    break;
                 
               }
               var statusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$2[1], match$2[0], /* array */[]));

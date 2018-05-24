@@ -54,7 +54,7 @@ let () =
         test("1 input is old", () =>
           expect(
             info
-            |> WalletInfoCollector.oldInputs(
+            |> WalletInfoCollector.nonReservedOldInputs(
                  AccountIndex.default,
                  user1.userId,
                )

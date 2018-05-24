@@ -8,6 +8,7 @@ type payoutStatus =
   | PendingApproval
   | Accepted
   | Denied
+  | Aborted
   | Unconfirmed
   | Confirmed
   | Failed(string);
@@ -95,6 +96,15 @@ let apply = (event, state) =>
         |> ProcessCollector.addDenial(denial)
         |> ProcessCollector.updateData(processId, data =>
              {...data, payoutStatus: Denied}
+           ),
+    }
+  | PayoutAborted({processId} as abort) => {
+      ...state,
+      payouts:
+        state.payouts
+        |> ProcessCollector.addAbort(abort)
+        |> ProcessCollector.updateData(processId, data =>
+             {...data, payoutStatus: Aborted}
            ),
     }
   | PayoutBroadcast({processId, txId}) => {

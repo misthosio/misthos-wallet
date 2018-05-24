@@ -55,6 +55,7 @@ let make =
         switch (status) {
         | PendingApproval => ("Pending Approval", Pending)
         | Accepted => ("Accepted", Success)
+        | Aborted => ("Aborted", Failure)
         | Denied => ("Denied", Failure)
         };
       <StatusChip status label />;

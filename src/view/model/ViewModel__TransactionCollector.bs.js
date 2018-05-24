@@ -72,7 +72,7 @@ function apply($$event, state) {
                 /* network */state[/* network */4],
                 /* txIds */state[/* txIds */5]
               ];
-    case 32 : 
+    case 33 : 
         var match$2 = $$event[0];
         var txId = match$2[/* txId */1];
         var processId = match$2[/* processId */0];
@@ -118,7 +118,7 @@ function apply($$event, state) {
                   /* txIds */state[/* txIds */5]
                 ];
         }
-    case 39 : 
+    case 40 : 
         var match$5 = $$event[0];
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
@@ -141,7 +141,7 @@ function apply($$event, state) {
                 /* network */state[/* network */4],
                 /* txIds */state[/* txIds */5]
               ];
-    case 40 : 
+    case 41 : 
         return mapConfirmation($$event[0], state);
     default:
       return state;
