@@ -238,86 +238,115 @@ let make =
       );
     <Body2
       titles=["Create A Payout"]
-      body1=
-        <div>
-          <MTypography variant=`Title>
-            (viewData.ventureName |> text)
-          </MTypography>
-          <Balance currentSpendable=viewData.balance />
-          <MInput
-            placeholder="Recipient Address"
-            value=(`String(inputs.recipientAddress))
-            onChange=(e => send(ChangeRecipientAddress(extractString(e))))
-            autoFocus=false
-            fullWidth=true
-          />
-          (
-            if (addressValid == false) {
-              "Address is BAD" |> text;
-            } else {
-              ReasonReact.null;
-            }
-          )
-          <MInput
-            placeholder="BTC amount"
-            value=(`String(inputs.btcAmount))
-            onChange=(e => send(ChangeBTCAmount(extractString(e))))
-            autoFocus=false
-            fullWidth=true
-            ensuring=true
-            endAdornment=MaterialUi.(
-                           <InputAdornment position=`End>
-                             <MButton
-                               className=Styles.maxButton
-                               size=`Small
-                               variant=Flat
-                               onClick=(_e => send(EnterMax))>
-                               (text("Max"))
-                             </MButton>
-                           </InputAdornment>
-                         )
-          />
-          <MButton fullWidth=true onClick=(_e => send(AddToSummary))>
-            (text("Add to Summary"))
-          </MButton>
-        </div>
-      body2=
-        <div>
-          <MTypography variant=`Title> (text("Summary")) </MTypography>
-          MaterialUi.(
-            <Table>
-              <TableBody>
-                destinationList
-                <TableRow key="networkFee">
-                  <TableCell
-                    className=(Styles.maxWidth ++ " " ++ Styles.noBorder)
-                    padding=`None>
-                    <b> ("NETWORK FEE" |> text) </b>
-                  </TableCell>
-                  <TableCell
-                    numeric=true className=Styles.noBorder padding=`None>
-                    (BTC.format(summary.networkFee) ++ " BTC" |> text)
-                  </TableCell>
-                  <TableCell className=Styles.noBorder />
-                </TableRow>
-                <TableRow key="misthosFee">
-                  <TableCell className=Styles.noBorder padding=`None>
-                    <b> ("MISTHOS FEE" |> text) </b>
-                  </TableCell>
-                  <TableCell
-                    numeric=true className=Styles.noBorder padding=`None>
-                    (BTC.format(summary.misthosFee) ++ " BTC" |> text)
-                  </TableCell>
-                  <TableCell className=Styles.noBorder />
-                </TableRow>
-              </TableBody>
-            </Table>
-          )
-          <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
-            (text("Propose Payout"))
-          </MButton>
-          feedback
-        </div>
+      body1=(
+              if (viewData.balance |> BTC.comparedTo(BTC.zero) == 0) {
+                <div>
+                  <MTypography variant=`Title>
+                    (viewData.ventureName |> text)
+                  </MTypography>
+                  <Balance currentSpendable=viewData.balance />
+                </div>;
+              } else {
+                <div>
+                  <MTypography variant=`Title>
+                    (viewData.ventureName |> text)
+                  </MTypography>
+                  <Balance currentSpendable=viewData.balance />
+                  <MInput
+                    placeholder="Recipient Address"
+                    value=(`String(inputs.recipientAddress))
+                    onChange=(
+                      e => send(ChangeRecipientAddress(extractString(e)))
+                    )
+                    autoFocus=false
+                    fullWidth=true
+                  />
+                  (
+                    if (addressValid == false) {
+                      "Address is BAD" |> text;
+                    } else {
+                      ReasonReact.null;
+                    }
+                  )
+                  <MInput
+                    placeholder="BTC amount"
+                    value=(`String(inputs.btcAmount))
+                    onChange=(e => send(ChangeBTCAmount(extractString(e))))
+                    autoFocus=false
+                    fullWidth=true
+                    ensuring=true
+                    endAdornment=MaterialUi.(
+                                   <InputAdornment position=`End>
+                                     <MButton
+                                       className=Styles.maxButton
+                                       size=`Small
+                                       variant=Flat
+                                       onClick=(_e => send(EnterMax))>
+                                       (text("Max"))
+                                     </MButton>
+                                   </InputAdornment>
+                                 )
+                  />
+                  <MButton fullWidth=true onClick=(_e => send(AddToSummary))>
+                    (text("Add to Summary"))
+                  </MButton>
+                </div>;
+              }
+            )
+      body2=(
+              if (viewData.balance |> BTC.comparedTo(BTC.zero) == 0) {
+                <div>
+                  <MTypography variant=`Body2>
+                    ("Either you have no BTC or it is all reserved" |> text)
+                  </MTypography>
+                </div>;
+              } else {
+                <div>
+                  <MTypography variant=`Title>
+                    (text("Summary"))
+                  </MTypography>
+                  MaterialUi.(
+                    <Table>
+                      <TableBody>
+                        destinationList
+                        <TableRow key="networkFee">
+                          <TableCell
+                            className=(
+                              Styles.maxWidth ++ " " ++ Styles.noBorder
+                            )
+                            padding=`None>
+                            <b> ("NETWORK FEE" |> text) </b>
+                          </TableCell>
+                          <TableCell
+                            numeric=true
+                            className=Styles.noBorder
+                            padding=`None>
+                            (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                          </TableCell>
+                          <TableCell className=Styles.noBorder />
+                        </TableRow>
+                        <TableRow key="misthosFee">
+                          <TableCell className=Styles.noBorder padding=`None>
+                            <b> ("MISTHOS FEE" |> text) </b>
+                          </TableCell>
+                          <TableCell
+                            numeric=true
+                            className=Styles.noBorder
+                            padding=`None>
+                            (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                          </TableCell>
+                          <TableCell className=Styles.noBorder />
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  )
+                  <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
+                    (text("Propose Payout"))
+                  </MButton>
+                  feedback
+                </div>;
+              }
+            )
     />;
   },
 };
