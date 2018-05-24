@@ -16,6 +16,7 @@ let () = {
         |> withAccountCreationProposed(~proposer=user1)
       );
     let proposal = log |> L.lastEvent |> Event.getAccountCreationProposedExn;
+    let log = log |> L.withAccountCreationEndorsed(user1, proposal);
     let watcher = AccountCreationApproval.make(proposal, log |> L.eventLog);
     testWatcherHasEventPending(
       "AccountCreationAccepted",
@@ -35,6 +36,7 @@ let () = {
         |> withAccountCreationProposed(~proposer=user1)
       );
     let proposal = log |> L.lastEvent |> Event.getAccountCreationProposedExn;
+    let log = log |> L.withAccountCreationEndorsed(user1, proposal);
     let watcher = AccountCreationApproval.make(proposal, log |> L.eventLog);
     let log = log |> L.withAccountCreationAccepted(proposal);
     watcher#receive(log |> L.lastItem);
