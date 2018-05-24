@@ -6,6 +6,8 @@ type t;
 
 let make: unit => t;
 
+let collidingProcesses: (processId, t) => ProcessId.set;
+
 let exposedCoordinates: t => list(Address.Coordinates.t);
 
 let accountKeyChains: t => AccountKeyChain.Collection.t;

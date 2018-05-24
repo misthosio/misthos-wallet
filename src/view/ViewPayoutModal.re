@@ -32,7 +32,8 @@ let make =
       voters,
       canVote,
       data: {summary, payoutStatus: status, txId, date},
-    }: ViewData.t = viewData;
+    }: ViewData.payout =
+      viewData.payout;
     let destinationList =
       ReasonReact.array(
         Array.of_list(

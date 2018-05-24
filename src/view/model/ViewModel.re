@@ -151,9 +151,23 @@ module ViewPayoutView = {
   type payoutStatus = TxDetailsCollector.payoutStatus;
   type voteStatus = ProcessCollector.voteStatus;
   type voter = ProcessCollector.voter;
-  type t = TxDetailsCollector.payoutProcess;
-  let fromViewModelState = (processId, {txDetailsCollector}) =>
-    txDetailsCollector |> TxDetailsCollector.getPayout(processId);
+  type payout = TxDetailsCollector.payoutProcess;
+  type t = {
+    payout,
+    collidesWith: ProcessId.set,
+  };
+  let fromViewModelState =
+      (processId, {txDetailsCollector, walletInfoCollector}) =>
+    txDetailsCollector
+    |> TxDetailsCollector.getPayout(processId)
+    |> Utils.mapOption(payout =>
+         {
+           payout,
+           collidesWith:
+             walletInfoCollector
+             |> WalletInfoCollector.collidingProcesses(processId),
+         }
+       );
 };
 
 let viewPayoutModal = ViewPayoutView.fromViewModelState;

@@ -15,6 +15,14 @@ var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var PayoutTransaction = require("./PayoutTransaction.bs.js");
 
+function collidingProcesses(processId, param) {
+  var reserved = param[/* reserved */2];
+  var inputs = Belt_Map.getExn(param[/* payoutProcesses */4], processId)[/* usedInputs */1];
+  return Belt_Set.remove(Belt_Array.reduceU(inputs, PrimitiveTypes.ProcessId[/* emptySet */9], (function (res, input) {
+                    return Belt_Set.union(Belt_Map.getExn(reserved, input), res);
+                  })), processId);
+}
+
 function totalUnusedBTC(param) {
   return Belt_Set.reduceU(param[/* unused */1], BTC.zero, (function (res, param) {
                 return res.plus(param[/* value */3]);
@@ -274,6 +282,7 @@ function apply($$event, state) {
 }
 
 exports.make = make;
+exports.collidingProcesses = collidingProcesses;
 exports.exposedCoordinates = exposedCoordinates;
 exports.accountKeyChains = accountKeyChains;
 exports.network = network;

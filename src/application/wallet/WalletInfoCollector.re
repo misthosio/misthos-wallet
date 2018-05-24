@@ -19,6 +19,15 @@ type t = {
   exposedCoordinates: list(Address.Coordinates.t),
 };
 
+let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
+  let inputs = (payoutProcesses |. Map.getExn(processId)).usedInputs;
+  inputs
+  |. Array.reduceU(ProcessId.emptySet, (. res, input) =>
+       reserved |. Map.getExn(input) |. Set.union(res)
+     )
+  |. Set.remove(processId);
+};
+
 let totalUnusedBTC = ({unused}) =>
   unused
   |. Set.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>

@@ -5,6 +5,7 @@ var BTC = require("../../application/wallet/BTC.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../../utils/Utils.bs.js");
 var Policy = require("../../application/Policy.bs.js");
 var Router = require("../Router.bs.js");
 var Network = require("../../application/wallet/Network.bs.js");
@@ -108,7 +109,13 @@ function fromViewModelState$2(param) {
 var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$2];
 
 function fromViewModelState$3(processId, param) {
-  return ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]);
+  var walletInfoCollector = param[/* walletInfoCollector */9];
+  return Utils.mapOption((function (payout) {
+                return /* record */[
+                        /* payout */payout,
+                        /* collidesWith */WalletInfoCollector.collidingProcesses(processId, walletInfoCollector)
+                      ];
+              }), ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]));
 }
 
 var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
