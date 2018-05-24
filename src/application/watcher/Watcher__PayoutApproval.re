@@ -54,6 +54,10 @@ let make = (proposal: Payout.Proposed.t, log) => {
               when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;
             state^;
+          | PayoutAborted(event)
+              when ProcessId.eq(event.processId, proposal.processId) =>
+            completed := true;
+            state^;
           | PayoutDenied(event)
               when ProcessId.eq(event.processId, proposal.processId) =>
             completed := true;

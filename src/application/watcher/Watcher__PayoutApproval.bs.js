@@ -100,6 +100,7 @@ function make(proposal, log) {
                     }
                     break;
                 case 28 : 
+                case 29 : 
                 case 30 : 
                     exit = 1;
                     break;
