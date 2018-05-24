@@ -31,19 +31,19 @@ function accountKeyChains(param) {
   return param[/* keyChains */3];
 }
 
+function unusedInputs(param) {
+  return Belt_Set.diff(param[/* unused */1], Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */2])));
+}
+
 function nonReservedOldInputs(accountIdx, userId, collector) {
   var keyChains = collector[/* keyChains */3];
   var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
   var currentKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, keyChains);
   var custodians = AccountKeyChain.custodians(currentKeyChain);
   var currentKeyChainIdents = AccountKeyChain.Collection[/* withCustodians */3](custodians, keyChains);
-  return Belt_Set.keepU(collector[/* unused */1], (function (i) {
+  return Belt_Set.keepU(unusedInputs(collector), (function (i) {
                 return Belt_SetString.has(currentKeyChainIdents, Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6])) === false;
               }));
-}
-
-function unusedInputs(param) {
-  return Belt_Set.diff(param[/* unused */1], Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */2])));
 }
 
 function network(param) {

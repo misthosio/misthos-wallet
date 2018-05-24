@@ -35,27 +35,27 @@ let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 
 let accountKeyChains = ({keyChains}) => keyChains;
 
-let nonReservedOldInputs =
-    (accountIdx, userId, {keyChains, unused} as collector) => {
+let unusedInputs = ({unused, reserved}) =>
+  Set.diff(
+    unused,
+    reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
+  );
+
+let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) => {
   let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
   let currentKeyChain =
     keyChains |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
   let custodians = currentKeyChain |> AccountKeyChain.custodians;
   let currentKeyChainIdents =
     keyChains |> AccountKeyChain.Collection.withCustodians(custodians);
-  unused
+  collector
+  |. unusedInputs
   |. Belt.Set.keepU((. i: Network.txInput) =>
        i.coordinates
        |> Coordinates.keyChainIdent
        |> Set.String.has(currentKeyChainIdents) == false
      );
 };
-
-let unusedInputs = ({unused, reserved}) =>
-  Set.diff(
-    unused,
-    reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
-  );
 
 let network = ({network}) => network;
 
