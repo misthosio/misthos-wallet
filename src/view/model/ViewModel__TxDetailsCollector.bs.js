@@ -86,6 +86,22 @@ function apply($$event, state) {
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
                 /* txIds */state[/* txIds */4]
               ];
+    case 29 : 
+        var abort = $$event[0];
+        return /* record */[
+                /* network */state[/* network */0],
+                /* localUser */state[/* localUser */1],
+                /* payouts */ProcessCollector.updateData(abort[/* processId */0], (function (data) {
+                        return /* record */[
+                                /* payoutStatus : Aborted */3,
+                                /* summary */data[/* summary */1],
+                                /* txId */data[/* txId */2],
+                                /* date */data[/* date */3]
+                              ];
+                      }), ProcessCollector.addAbort(abort, state[/* payouts */2])),
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txIds */state[/* txIds */4]
+              ];
     case 30 : 
         var denial = $$event[0];
         return /* record */[
@@ -112,7 +128,7 @@ function apply($$event, state) {
                 /* payouts */ProcessCollector.updateData(processId, (function (data) {
                         var match = Belt_SetString.has(state[/* txIds */4], txId);
                         return /* record */[
-                                /* payoutStatus */match ? /* Confirmed */4 : /* Unconfirmed */3,
+                                /* payoutStatus */match ? /* Confirmed */5 : /* Unconfirmed */4,
                                 /* summary */data[/* summary */1],
                                 /* txId : Some */[txId],
                                 /* date */data[/* date */3]
@@ -148,7 +164,7 @@ function apply($$event, state) {
                 /* localUser */state[/* localUser */1],
                 /* payouts */processId$1 ? ProcessCollector.updateData(processId$1[0], (function (data) {
                           return /* record */[
-                                  /* payoutStatus : Confirmed */4,
+                                  /* payoutStatus : Confirmed */5,
                                   /* summary */data[/* summary */1],
                                   /* txId */data[/* txId */2],
                                   /* date : Some */[new Date(unixTime * 1000)]

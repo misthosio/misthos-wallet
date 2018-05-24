@@ -200,6 +200,16 @@ let apply = (event, state) =>
         state.reserved,
       );
     {...state, reserved};
+  | PayoutAborted({processId}) =>
+    let payoutTx: PayoutTransaction.t =
+      state.payoutProcesses |. Map.getExn(processId);
+    let reserved =
+      removeInputsFromReserved(
+        processId,
+        payoutTx.usedInputs,
+        state.reserved,
+      );
+    {...state, reserved};
   | PayoutBroadcast({processId, txId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);

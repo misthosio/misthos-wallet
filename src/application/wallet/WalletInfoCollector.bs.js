@@ -146,7 +146,7 @@ function apply($$event, state) {
                     state[/* exposedCoordinates */6]
                   ] : state[/* exposedCoordinates */6]
               ];
-    case 30 : 
+    case 29 : 
         var processId$1 = $$event[0][/* processId */0];
         var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$1);
         var reserved = removeInputsFromReserved(processId$1, payoutTx$1[/* usedInputs */1], state[/* reserved */2]);
@@ -159,29 +159,42 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 33 : 
-        var match$1 = $$event[0];
-        var processId$2 = match$1[/* processId */0];
+    case 30 : 
+        var processId$2 = $$event[0][/* processId */0];
         var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$2);
         var reserved$1 = removeInputsFromReserved(processId$2, payoutTx$2[/* usedInputs */1], state[/* reserved */2]);
-        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], state[/* network */0], payoutTx$2);
         return /* record */[
                 /* network */state[/* network */0],
-                /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */1], match$2[0]) : state[/* unused */1], payoutTx$2[/* usedInputs */1]),
+                /* unused */state[/* unused */1],
                 /* reserved */reserved$1,
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 35 : 
-        var processId$3 = $$event[0][/* processId */0];
+    case 33 : 
+        var match$1 = $$event[0];
+        var processId$3 = match$1[/* processId */0];
         var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$3);
         var reserved$2 = removeInputsFromReserved(processId$3, payoutTx$3[/* usedInputs */1], state[/* reserved */2]);
+        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], state[/* network */0], payoutTx$3);
+        return /* record */[
+                /* network */state[/* network */0],
+                /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */1], match$2[0]) : state[/* unused */1], payoutTx$3[/* usedInputs */1]),
+                /* reserved */reserved$2,
+                /* keyChains */state[/* keyChains */3],
+                /* payoutProcesses */state[/* payoutProcesses */4],
+                /* activatedKeyChain */state[/* activatedKeyChain */5],
+                /* exposedCoordinates */state[/* exposedCoordinates */6]
+              ];
+    case 35 : 
+        var processId$4 = $$event[0][/* processId */0];
+        var payoutTx$4 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$4);
+        var reserved$3 = removeInputsFromReserved(processId$4, payoutTx$4[/* usedInputs */1], state[/* reserved */2]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */reserved$2,
+                /* reserved */reserved$3,
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],

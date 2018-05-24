@@ -58,6 +58,7 @@ let make =
         | PendingApproval => ("Pending Approval", Pending)
         | Accepted => ("Accepted", Success)
         | Denied => ("Denied", Failure)
+        | Aborted => ("Aborted", Failure)
         | Unconfirmed => ("Unconfirmed", Pending)
         | Confirmed => ("Confirmed", Success)
         | Failed(_) => ("Failed", Failure)

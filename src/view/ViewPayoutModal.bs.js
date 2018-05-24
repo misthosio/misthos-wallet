@@ -91,11 +91,17 @@ function make(viewData, commands, cmdStatus, _) {
                       break;
                   case 3 : 
                       match$1 = /* tuple */[
+                        "Aborted",
+                        /* Failure */1
+                      ];
+                      break;
+                  case 4 : 
+                      match$1 = /* tuple */[
                         "Unconfirmed",
                         /* Pending */0
                       ];
                       break;
-                  case 4 : 
+                  case 5 : 
                       match$1 = /* tuple */[
                         "Confirmed",
                         /* Success */2

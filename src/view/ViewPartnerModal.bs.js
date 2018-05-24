@@ -12,6 +12,7 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 var component = ReasonReact.statelessComponent("ViewPartner");
 
@@ -67,6 +68,15 @@ function make(viewData, commands, cmdStatus, _) {
                       /* Failure */1
                     ];
                     break;
+                case 3 : 
+                    throw [
+                          Caml_builtin_exceptions.match_failure,
+                          [
+                            "ViewPartnerModal.re",
+                            55,
+                            8
+                          ]
+                        ];
                 
               }
               var statusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$2[1], match$2[0], /* array */[]));
