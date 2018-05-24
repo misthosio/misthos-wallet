@@ -11,7 +11,6 @@ var Js_option = require("bs-platform/lib/js/js_option.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
-var PayoutTransaction = require("../wallet/PayoutTransaction.bs.js");
 
 var class_tables = [
   0,
@@ -23,76 +22,51 @@ function make(param, log) {
   var payoutProcess = param[/* processId */0];
   var match = Curry._3(EventLog.reduce, (function (param, param$1) {
           var $$event = param$1[/* event */0];
-          var network = param[3];
-          var systemIssuer = param[2];
-          var txs = param[1];
+          var network = param[2];
+          var systemIssuer = param[1];
           var broadcast = param[0];
           var exit = 0;
-          var exit$1 = 0;
           switch ($$event.tag | 0) {
             case 0 : 
                 var match = $$event[0];
                 return /* tuple */[
                         broadcast,
-                        txs,
                         match[/* systemIssuer */5],
                         match[/* network */6]
                       ];
-            case 30 : 
-                var match$1 = $$event[0];
-                if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
-                  return /* tuple */[
-                          broadcast,
-                          /* :: */[
-                            match$1[/* payoutTx */2],
-                            txs
-                          ],
-                          systemIssuer,
-                          network
-                        ];
-                } else {
-                  exit = 1;
-                }
-                break;
             case 32 : 
             case 33 : 
             case 34 : 
-                exit$1 = 2;
+                exit = 1;
                 break;
             default:
-              exit = 1;
+              return /* tuple */[
+                      broadcast,
+                      systemIssuer,
+                      network
+                    ];
           }
-          if (exit$1 === 2) {
+          if (exit === 1) {
             if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], payoutProcess)) {
               return /* tuple */[
                       false,
-                      txs,
                       systemIssuer,
                       network
                     ];
             } else {
-              exit = 1;
+              return /* tuple */[
+                      broadcast,
+                      systemIssuer,
+                      network
+                    ];
             }
-          }
-          if (exit === 1) {
-            return /* tuple */[
-                    broadcast,
-                    txs,
-                    systemIssuer,
-                    network
-                  ];
           }
           
         }), /* tuple */[
         true,
-        /* :: */[
-          param[/* data */2][/* payoutTx */1],
-          /* [] */0
-        ],
         BitcoinjsLib.ECPair.makeRandom(),
         /* Regtest */0
       ], log);
-  var network = match[3];
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",
@@ -188,7 +162,7 @@ function make(param, log) {
         ]);
     var env_init = function (env$1) {
       var self = CamlinternalOO.create_object_opt(0, $$class);
-      self[finalTransaction] = [env$1[1] ? /* Some */[PayoutTransaction.finalize(env$1[2], env$1[3])] : /* None */0];
+      self[finalTransaction] = [env$1[2] ? /* Some */[BitcoinjsLib.Transaction.fromHex(env$1[1])] : /* None */0];
       self[delivered] = [false];
       self[env] = env$1[0];
       return self;
@@ -199,12 +173,11 @@ function make(param, log) {
   return Curry._1(class_tables[0], [
               [
                 payoutProcess,
-                match[2],
-                network
+                match[1],
+                match[2]
               ],
-              match[0],
-              match[1],
-              network
+              param[/* payoutTx */2][/* txHex */0],
+              match[0]
             ]);
 }
 

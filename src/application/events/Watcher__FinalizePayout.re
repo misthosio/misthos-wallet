@@ -65,15 +65,17 @@ let make =
       |> Utils.mapOption((tx: Bitcoin.Transaction.t) =>
            (
              systemIssuer,
-             Event.Payout.Finalized.make(
-               ~processId=payoutProcess,
-               ~payoutTx={
-                 txHex: tx |> Bitcoin.Transaction.toHex,
-                 usedInputs,
-                 misthosFeeAddress,
-                 changeAddress,
-               },
-               ~txId=tx |> Bitcoin.Transaction.getId,
+             PayoutFinalized(
+               Event.Payout.Finalized.make(
+                 ~processId=payoutProcess,
+                 ~payoutTx={
+                   txHex: tx |> Bitcoin.Transaction.toHex,
+                   usedInputs,
+                   misthosFeeAddress,
+                   changeAddress,
+                 },
+                 ~txId=tx |> Bitcoin.Transaction.getId,
+               ),
              ),
            )
            |> Js.Promise.resolve

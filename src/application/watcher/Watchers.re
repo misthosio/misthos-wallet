@@ -29,6 +29,8 @@ module PayoutApproval = Watcher__PayoutApproval;
 
 module SignPayout = Watcher__SignPayout;
 
+module FinalizePayout = Watcher__FinalizePayout;
+
 module BroadcastPayout = Watcher__BroadcastPayout;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
@@ -46,8 +48,8 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   | PayoutProposed(proposal) => Some(PayoutApproval.make(proposal, log))
   | PayoutEndorsed(endorsement) =>
     Some(SignPayout.make(session, endorsement, log))
-  | PayoutAccepted(acceptance) =>
-    Some(BroadcastPayout.make(acceptance, log))
+  | PayoutAccepted(acceptance) => Some(FinalizePayout.make(acceptance, log))
+  | PayoutFinalized(finalized) => Some(BroadcastPayout.make(finalized, log))
   | CustodianProposed(proposal) =>
     Some(CustodianApproval.make(proposal, log))
   | CustodianRemovalProposed(proposal) =>
