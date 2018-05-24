@@ -189,10 +189,11 @@ let apply = (event, state) =>
         |. Array.reduceU(state.reserved, (. lookup, input) =>
              lookup
              |. Map.updateU(input, (. processes) =>
-                  processes
-                  |> Js.Option.getWithDefault(ProcessId.emptySet)
-                  |. Set.add(processId)
-                  |. Some
+                  Some(
+                    processes
+                    |> Js.Option.getWithDefault(ProcessId.emptySet)
+                    |. Set.add(processId),
+                  )
                 )
            ),
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
