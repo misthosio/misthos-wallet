@@ -55,9 +55,9 @@ function make(proposal, log) {
                 case 0 : 
                     self$1[systemIssuer][0] = $$event[0][/* systemIssuer */5];
                     return /* () */0;
-                case 25 : 
+                case 28 : 
                     var match = $$event[0];
-                    self$1[payoutProcesses][0] = Belt_Map.set(self$1[payoutProcesses][0], match[/* processId */0], Belt_Set.mergeMany(Network.inputSet(/* () */0), match[/* data */6][/* payoutTx */1][/* usedInputs */1]));
+                    self$1[payoutProcesses][0] = Belt_Map.set(self$1[payoutProcesses][0], match[/* processId */0], Belt_Set.mergeMany(Network.inputSet(/* () */0), match[/* data */2][/* payoutTx */1][/* usedInputs */1]));
                     return /* () */0;
                 case 29 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0])) {
@@ -84,6 +84,9 @@ function make(proposal, log) {
                       self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
                       return /* () */0;
                     }
+                case 35 : 
+                    self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], $$event[0][/* processId */0]);
+                    return /* () */0;
                 default:
                   return /* () */0;
               }

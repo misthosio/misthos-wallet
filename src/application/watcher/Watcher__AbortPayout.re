@@ -19,13 +19,15 @@ let make =
       let _ignoreThisWarning = this;
       switch (event) {
       | VentureCreated(event) => systemIssuer := event.systemIssuer
-      | PayoutProposed({processId, data: {payoutTx: {usedInputs}}}) =>
+      | PayoutAccepted({processId, data: {payoutTx: {usedInputs}}}) =>
         payoutProcesses :=
           payoutProcesses^
           |. Map.set(
                processId,
                usedInputs |> Set.mergeMany(Network.inputSet()),
              )
+      | PayoutBroadcastFailed({processId: broadcastProcess}) =>
+        payoutProcesses := payoutProcesses^ |. Map.remove(broadcastProcess)
       | PayoutBroadcast({processId: broadcastProcess})
           when ProcessId.eq(broadcastProcess, processId) =>
         result := None;
