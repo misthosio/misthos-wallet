@@ -20,10 +20,16 @@ type t = {
 };
 
 let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
-  let inputs = (payoutProcesses |. Map.getExn(processId)).usedInputs;
+  let inputs =
+    payoutProcesses
+    |. Map.get(processId)
+    |> Utils.mapOption(({usedInputs}: PayoutTransaction.t) => usedInputs)
+    |> Js.Option.getWithDefault([||]);
   inputs
   |. Array.reduceU(ProcessId.emptySet, (. res, input) =>
-       reserved |. Map.getExn(input) |. Set.union(res)
+       reserved
+       |. Map.getWithDefault(input, ProcessId.emptySet)
+       |. Set.union(res)
      )
   |. Set.remove(processId);
 };
