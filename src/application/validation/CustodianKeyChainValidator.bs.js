@@ -27,7 +27,7 @@ function update($$event, param) {
           keyChains
         ];
         break;
-    case 34 : 
+    case 35 : 
         var match = $$event[0];
         var keyChain = match[/* keyChain */2];
         var custodianId = match[/* custodianId */1];

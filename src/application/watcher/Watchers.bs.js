@@ -8,6 +8,7 @@ var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var Watcher__SignPayout = require("./Watcher__SignPayout.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
+var Watcher__FinalizePayout = require("../events/Watcher__FinalizePayout.bs.js");
 var Watcher__PayoutApproval = require("./Watcher__PayoutApproval.bs.js");
 var Watcher__AccountKeyChain = require("./Watcher__AccountKeyChain.bs.js");
 var Watcher__BroadcastPayout = require("./Watcher__BroadcastPayout.bs.js");
@@ -46,6 +47,8 @@ function initWatcherFor(session, param, log) {
     case 27 : 
         return /* Some */[Watcher__SignPayout.make(session, $$event[0], log)];
     case 28 : 
+        return /* Some */[Watcher__FinalizePayout.make($$event[0], log)];
+    case 31 : 
         return /* Some */[Watcher__BroadcastPayout.make($$event[0], log)];
     default:
       return /* None */0;
@@ -148,6 +151,8 @@ var PayoutApproval = 0;
 
 var SignPayout = 0;
 
+var FinalizePayout = 0;
+
 var BroadcastPayout = 0;
 
 exports.Initialize = Initialize;
@@ -161,6 +166,7 @@ exports.CustodianKeyChain = CustodianKeyChain;
 exports.AccountKeyChain = AccountKeyChain;
 exports.PayoutApproval = PayoutApproval;
 exports.SignPayout = SignPayout;
+exports.FinalizePayout = FinalizePayout;
 exports.BroadcastPayout = BroadcastPayout;
 exports.initWatcherFor = initWatcherFor;
 exports.apply = apply;

@@ -499,20 +499,70 @@ function decode$7(raw) {
         ];
 }
 
-var Signature = /* module */[
+var Signed = /* module */[
   /* make */make$1,
   /* encode */encode$7,
   /* decode */decode$7
 ];
 
-function make$2(processId, txId) {
+function make$2(processId, txId, payoutTx) {
+  return /* record */[
+          /* processId */processId,
+          /* txId */txId,
+          /* payoutTx */payoutTx
+        ];
+}
+
+function encode$8($$event) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "PayoutFinalized"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "processId",
+                  PrimitiveTypes.ProcessId[/* encode */2]($$event[/* processId */0])
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "txId",
+                    $$event[/* txId */1]
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "payoutTx",
+                      PayoutTransaction.encode($$event[/* payoutTx */2])
+                    ],
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function decode$8(raw) {
+  return /* record */[
+          /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
+          /* txId */Json_decode.field("txId", Json_decode.string, raw),
+          /* payoutTx */Json_decode.field("payoutTx", PayoutTransaction.decode, raw)
+        ];
+}
+
+var Finalized = /* module */[
+  /* make */make$2,
+  /* encode */encode$8,
+  /* decode */decode$8
+];
+
+function make$3(processId, txId) {
   return /* record */[
           /* processId */processId,
           /* txId */txId
         ];
 }
 
-function encode$8($$event) {
+function encode$9($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -534,7 +584,7 @@ function encode$8($$event) {
             ]);
 }
 
-function decode$8(raw) {
+function decode$9(raw) {
   return /* record */[
           /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
           /* txId */Json_decode.field("txId", Json_decode.string, raw)
@@ -542,16 +592,16 @@ function decode$8(raw) {
 }
 
 var Broadcast = /* module */[
-  /* make */make$2,
-  /* encode */encode$8,
-  /* decode */decode$8
+  /* make */make$3,
+  /* encode */encode$9,
+  /* decode */decode$9
 ];
 
-function make$3(processId) {
+function make$4(processId) {
   return /* record */[/* processId */processId];
 }
 
-function encode$9($$event) {
+function encode$10($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -567,24 +617,24 @@ function encode$9($$event) {
             ]);
 }
 
-function decode$9(raw) {
+function decode$10(raw) {
   return /* record */[/* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw)];
 }
 
 var BroadcastDuplicate = /* module */[
-  /* make */make$3,
-  /* encode */encode$9,
-  /* decode */decode$9
+  /* make */make$4,
+  /* encode */encode$10,
+  /* decode */decode$10
 ];
 
-function make$4(processId, errorMessage) {
+function make$5(processId, errorMessage) {
   return /* record */[
           /* processId */processId,
           /* errorMessage */errorMessage
         ];
 }
 
-function encode$10($$event) {
+function encode$11($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -606,7 +656,7 @@ function encode$10($$event) {
             ]);
 }
 
-function decode$10(raw) {
+function decode$11(raw) {
   return /* record */[
           /* processId */Json_decode.field("processId", PrimitiveTypes.ProcessId[/* decode */3], raw),
           /* errorMessage */Json_decode.field("errorMessage", Json_decode.string, raw)
@@ -614,9 +664,9 @@ function decode$10(raw) {
 }
 
 var BroadcastFailed = /* module */[
-  /* make */make$4,
-  /* encode */encode$10,
-  /* decode */decode$10
+  /* make */make$5,
+  /* encode */encode$11,
+  /* decode */decode$11
 ];
 
 var Payout_001 = /* processName */include$5[0];
@@ -632,13 +682,14 @@ var Payout = /* module */[
   /* Endorsed */Endorsed$5,
   /* Accepted */Accepted$5,
   /* Denied */Denied$4,
-  /* Signature */Signature,
+  /* Signed */Signed,
+  /* Finalized */Finalized,
   /* Broadcast */Broadcast,
   /* BroadcastDuplicate */BroadcastDuplicate,
   /* BroadcastFailed */BroadcastFailed
 ];
 
-function make$5(custodianApprovalProcess, custodianId, keyChain) {
+function make$6(custodianApprovalProcess, custodianId, keyChain) {
   return /* record */[
           /* custodianApprovalProcess */custodianApprovalProcess,
           /* custodianId */custodianId,
@@ -646,7 +697,7 @@ function make$5(custodianApprovalProcess, custodianId, keyChain) {
         ];
 }
 
-function encode$11($$event) {
+function encode$12($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -674,7 +725,7 @@ function encode$11($$event) {
             ]);
 }
 
-function decode$11(raw) {
+function decode$12(raw) {
   return /* record */[
           /* custodianApprovalProcess */Json_decode.field("custodianApprovalProcess", PrimitiveTypes.ProcessId[/* decode */3], raw),
           /* custodianId */Json_decode.field("custodianId", PrimitiveTypes.UserId[/* decode */3], raw),
@@ -683,16 +734,16 @@ function decode$11(raw) {
 }
 
 var CustodianKeyChainUpdated = /* module */[
-  /* make */make$5,
-  /* encode */encode$11,
-  /* decode */decode$11
+  /* make */make$6,
+  /* encode */encode$12,
+  /* decode */decode$12
 ];
 
-function make$6(keyChain) {
+function make$7(keyChain) {
   return /* record */[/* keyChain */keyChain];
 }
 
-function encode$12($$event) {
+function encode$13($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -708,17 +759,17 @@ function encode$12($$event) {
             ]);
 }
 
-function decode$12(raw) {
+function decode$13(raw) {
   return /* record */[/* keyChain */Json_decode.field("keyChain", AccountKeyChain.decode, raw)];
 }
 
 var AccountKeyChainIdentified = /* module */[
-  /* make */make$6,
-  /* encode */encode$12,
-  /* decode */decode$12
+  /* make */make$7,
+  /* encode */encode$13,
+  /* decode */decode$13
 ];
 
-function make$7(accountIdx, custodianId, identifier, sequence) {
+function make$8(accountIdx, custodianId, identifier, sequence) {
   return /* record */[
           /* accountIdx */accountIdx,
           /* custodianId */custodianId,
@@ -727,7 +778,7 @@ function make$7(accountIdx, custodianId, identifier, sequence) {
         ];
 }
 
-function encode$13($$event) {
+function encode$14($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -761,7 +812,7 @@ function encode$13($$event) {
             ]);
 }
 
-function decode$13(raw) {
+function decode$14(raw) {
   return /* record */[
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* custodianId */Json_decode.field("custodianId", PrimitiveTypes.UserId[/* decode */3], raw),
@@ -771,19 +822,19 @@ function decode$13(raw) {
 }
 
 var AccountKeyChainActivated = /* module */[
-  /* make */make$7,
-  /* encode */encode$13,
-  /* decode */decode$13
+  /* make */make$8,
+  /* encode */encode$14,
+  /* decode */decode$14
 ];
 
-function make$8(partnerId, address) {
+function make$9(partnerId, address) {
   return /* record */[
           /* partnerId */partnerId,
           /* address */address
         ];
 }
 
-function encode$14($$event) {
+function encode$15($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -805,7 +856,7 @@ function encode$14($$event) {
             ]);
 }
 
-function decode$14(raw) {
+function decode$15(raw) {
   return /* record */[
           /* partnerId */Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw),
           /* address */Json_decode.field("address", Address.decode, raw)
@@ -813,12 +864,12 @@ function decode$14(raw) {
 }
 
 var IncomeAddressExposed = /* module */[
-  /* make */make$8,
-  /* encode */encode$14,
-  /* decode */decode$14
+  /* make */make$9,
+  /* encode */encode$15,
+  /* decode */decode$15
 ];
 
-function make$9(txOutputN, coordinates, address, txId, amount) {
+function make$10(txOutputN, coordinates, address, txId, amount) {
   return /* record */[
           /* address */address,
           /* coordinates */coordinates,
@@ -828,7 +879,7 @@ function make$9(txOutputN, coordinates, address, txId, amount) {
         ];
 }
 
-function encode$15($$event) {
+function encode$16($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -868,7 +919,7 @@ function encode$15($$event) {
             ]);
 }
 
-function decode$15(raw) {
+function decode$16(raw) {
   return /* record */[
           /* address */Json_decode.field("address", Json_decode.string, raw),
           /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
@@ -879,12 +930,12 @@ function decode$15(raw) {
 }
 
 var IncomeDetected = /* module */[
-  /* make */make$9,
-  /* encode */encode$15,
-  /* decode */decode$15
+  /* make */make$10,
+  /* encode */encode$16,
+  /* decode */decode$16
 ];
 
-function make$10(txId, blockHeight, unixTime) {
+function make$11(txId, blockHeight, unixTime) {
   return /* record */[
           /* txId */txId,
           /* blockHeight */blockHeight,
@@ -892,7 +943,7 @@ function make$10(txId, blockHeight, unixTime) {
         ];
 }
 
-function encode$16($$event) {
+function encode$17($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -920,7 +971,7 @@ function encode$16($$event) {
             ]);
 }
 
-function decode$16(raw) {
+function decode$17(raw) {
   return /* record */[
           /* txId */Json_decode.field("txId", Json_decode.string, raw),
           /* blockHeight */Json_decode.field("blockHeight", Utils.decodeFloat, raw),
@@ -929,9 +980,9 @@ function decode$16(raw) {
 }
 
 var Confirmed = /* module */[
-  /* make */make$10,
-  /* encode */encode$16,
-  /* decode */decode$16
+  /* make */make$11,
+  /* encode */encode$17,
+  /* decode */decode$17
 ];
 
 var Transaction = /* module */[/* Confirmed */Confirmed];
@@ -1041,7 +1092,7 @@ function makePayoutRejected(processId, rejectorId) {
   return /* PayoutRejected */Block.__(26, [Curry._2(Rejected$5[/* make */0], processId, rejectorId)]);
 }
 
-function encode$17(param) {
+function encode$18(param) {
   switch (param.tag | 0) {
     case 0 : 
         return encode(param[0]);
@@ -1123,6 +1174,8 @@ function encode$17(param) {
         return encode$15(param[0]);
     case 39 : 
         return encode$16(param[0]);
+    case 40 : 
+        return encode$17(param[0]);
     
   }
 }
@@ -1143,9 +1196,10 @@ function isSystemEvent(param) {
     case 31 : 
     case 32 : 
     case 33 : 
-    case 35 : 
-    case 38 : 
+    case 34 : 
+    case 36 : 
     case 39 : 
+    case 40 : 
         return true;
     default:
       return false;
@@ -1154,7 +1208,7 @@ function isSystemEvent(param) {
 
 var UnknownEvent = Caml_exceptions.create("Event.UnknownEvent");
 
-function decode$17(raw) {
+function decode$18(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "AccountCreationAccepted" : 
@@ -1166,9 +1220,9 @@ function decode$17(raw) {
     case "AccountCreationRejected" : 
         return /* AccountCreationRejected */Block.__(12, [Curry._1(Rejected$2[/* decode */2], raw)]);
     case "AccountKeyChainActivated" : 
-        return /* AccountKeyChainActivated */Block.__(36, [decode$13(raw)]);
+        return /* AccountKeyChainActivated */Block.__(37, [decode$14(raw)]);
     case "AccountKeyChainIdentified" : 
-        return /* AccountKeyChainIdentified */Block.__(35, [decode$12(raw)]);
+        return /* AccountKeyChainIdentified */Block.__(36, [decode$13(raw)]);
     case "CustodianAccepted" : 
         return /* CustodianAccepted */Block.__(18, [Curry._1(Accepted$3[/* decode */2], raw)]);
     case "CustodianDenied" : 
@@ -1176,7 +1230,7 @@ function decode$17(raw) {
     case "CustodianEndorsed" : 
         return /* CustodianEndorsed */Block.__(17, [Curry._1(Endorsed$3[/* decode */2], raw)]);
     case "CustodianKeyChainUpdated" : 
-        return /* CustodianKeyChainUpdated */Block.__(34, [decode$11(raw)]);
+        return /* CustodianKeyChainUpdated */Block.__(35, [decode$12(raw)]);
     case "CustodianProposed" : 
         return /* CustodianProposed */Block.__(15, [Curry._1(Proposed$3[/* decode */2], raw)]);
     case "CustodianRejected" : 
@@ -1192,9 +1246,9 @@ function decode$17(raw) {
     case "CustodianRemovalRejected" : 
         return /* CustodianRemovalRejected */Block.__(21, [Curry._1(Rejected$4[/* decode */2], raw)]);
     case "IncomeAddressExposed" : 
-        return /* IncomeAddressExposed */Block.__(37, [decode$14(raw)]);
+        return /* IncomeAddressExposed */Block.__(38, [decode$15(raw)]);
     case "IncomeDetected" : 
-        return /* IncomeDetected */Block.__(38, [decode$15(raw)]);
+        return /* IncomeDetected */Block.__(39, [decode$16(raw)]);
     case "PartnerAccepted" : 
         return /* PartnerAccepted */Block.__(4, [Curry._1(Accepted[/* decode */2], raw)]);
     case "PartnerDenied" : 
@@ -1218,15 +1272,17 @@ function decode$17(raw) {
     case "PayoutAccepted" : 
         return /* PayoutAccepted */Block.__(28, [Curry._1(Accepted$5[/* decode */2], raw)]);
     case "PayoutBroadcast" : 
-        return /* PayoutBroadcast */Block.__(31, [decode$8(raw)]);
+        return /* PayoutBroadcast */Block.__(32, [decode$9(raw)]);
     case "PayoutBroadcastDuplicate" : 
-        return /* PayoutBroadcastDuplicate */Block.__(32, [decode$9(raw)]);
+        return /* PayoutBroadcastDuplicate */Block.__(33, [decode$10(raw)]);
     case "PayoutBroadcastFailed" : 
-        return /* PayoutBroadcastFailed */Block.__(33, [decode$10(raw)]);
+        return /* PayoutBroadcastFailed */Block.__(34, [decode$11(raw)]);
     case "PayoutDenied" : 
         return /* PayoutDenied */Block.__(29, [Curry._1(Denied$4[/* decode */2], raw)]);
     case "PayoutEndorsed" : 
         return /* PayoutEndorsed */Block.__(27, [Curry._1(Endorsed$5[/* decode */2], raw)]);
+    case "PayoutFinalized" : 
+        return /* PayoutFinalized */Block.__(31, [decode$8(raw)]);
     case "PayoutProposed" : 
         return /* PayoutProposed */Block.__(25, [Curry._1(Proposed$5[/* decode */2], raw)]);
     case "PayoutRejected" : 
@@ -1234,7 +1290,7 @@ function decode$17(raw) {
     case "PayoutSigned" : 
         return /* PayoutSigned */Block.__(30, [decode$7(raw)]);
     case "TransactionConfirmed" : 
-        return /* TransactionConfirmed */Block.__(39, [decode$16(raw)]);
+        return /* TransactionConfirmed */Block.__(40, [decode$17(raw)]);
     case "VentureCreated" : 
         return /* VentureCreated */Block.__(0, [decode(raw)]);
     default:
@@ -1246,7 +1302,7 @@ function decode$17(raw) {
 }
 
 function getIncomeAddressExposedExn($$event) {
-  if ($$event.tag === 37) {
+  if ($$event.tag === 38) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getIncomeAddressExposedExn");
@@ -1254,7 +1310,7 @@ function getIncomeAddressExposedExn($$event) {
 }
 
 function getAccountKeyChainIdentifiedExn($$event) {
-  if ($$event.tag === 35) {
+  if ($$event.tag === 36) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getAccountKeyChainIdentifiedExn");
@@ -1262,7 +1318,7 @@ function getAccountKeyChainIdentifiedExn($$event) {
 }
 
 function getAccountKeyChainActivatedExn($$event) {
-  if ($$event.tag === 36) {
+  if ($$event.tag === 37) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getAccountKeyChainActivatedExn");
@@ -1270,7 +1326,7 @@ function getAccountKeyChainActivatedExn($$event) {
 }
 
 function getCustodianKeyChainUpdatedExn($$event) {
-  if ($$event.tag === 34) {
+  if ($$event.tag === 35) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getCustodianKeyChainUpdatedExn");
@@ -1278,7 +1334,7 @@ function getCustodianKeyChainUpdatedExn($$event) {
 }
 
 function getPayoutBroadcastFailedExn($$event) {
-  if ($$event.tag === 33) {
+  if ($$event.tag === 34) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getPayoutBroadcastFailedExn");
@@ -1286,7 +1342,7 @@ function getPayoutBroadcastFailedExn($$event) {
 }
 
 function getPayoutBroadcastExn($$event) {
-  if ($$event.tag === 31) {
+  if ($$event.tag === 32) {
     return $$event[0];
   } else {
     return Js_exn.raiseError("getPayoutBroadcastExn");
@@ -1488,10 +1544,10 @@ exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;
 exports.makePayoutEndorsed = makePayoutEndorsed;
 exports.makePayoutRejected = makePayoutRejected;
-exports.encode = encode$17;
+exports.encode = encode$18;
 exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;
-exports.decode = decode$17;
+exports.decode = decode$18;
 exports.getIncomeAddressExposedExn = getIncomeAddressExposedExn;
 exports.getAccountKeyChainIdentifiedExn = getAccountKeyChainIdentifiedExn;
 exports.getAccountKeyChainActivatedExn = getAccountKeyChainActivatedExn;

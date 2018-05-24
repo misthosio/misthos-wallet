@@ -240,6 +240,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | TransactionConfirmed(_)
   | IncomeAddressExposed(_)
   | PayoutSigned(_)
+  | PayoutFinalized(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_)
@@ -743,6 +744,7 @@ let validateEvent =
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | TransactionConfirmed(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
+  | PayoutFinalized(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcast(_) => ((_state, _pubKey) => Ok)
   | PayoutBroadcastDuplicate(_) => ((_state, _pubKey) => Ignore)
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);

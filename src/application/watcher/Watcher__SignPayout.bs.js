@@ -59,7 +59,7 @@ function make(param, param$1, log) {
                 } else {
                   return state;
                 }
-            case 35 : 
+            case 36 : 
                 return /* record */[
                         /* network */state[/* network */0],
                         /* ventureId */state[/* ventureId */1],
@@ -82,7 +82,7 @@ function make(param, param$1, log) {
     var match = PayoutTransaction.signPayout(state[/* ventureId */1], userId, param[/* masterKeyChain */4], state[/* accountKeyChains */2], Js_option.getExn(state[/* payoutTx */3]), state[/* network */0]);
     signEvent = match ? /* Some */[/* tuple */[
           param[/* issuerKeyPair */2],
-          /* PayoutSigned */Block.__(30, [Curry._3(Event.Payout[/* Signature */8][/* make */0], payoutProcess, userId, match[0])])
+          /* PayoutSigned */Block.__(30, [Curry._3(Event.Payout[/* Signed */8][/* make */0], payoutProcess, userId, match[0])])
         ]] : /* None */0;
   } else {
     signEvent = /* None */0;

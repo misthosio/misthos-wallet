@@ -72,7 +72,7 @@ let make =
         Some((
           issuerKeyPair,
           PayoutSigned(
-            Payout.Signature.make(
+            Payout.Signed.make(
               ~processId=payoutProcess,
               ~custodianId=userId,
               ~payoutTx,

@@ -47,7 +47,7 @@ function update($$event, param) {
           activations
         ];
         break;
-    case 35 : 
+    case 36 : 
         var match$1 = $$event[0][/* keyChain */0];
         var accountIdx = match$1[/* accountIdx */0];
         match = /* tuple */[
@@ -64,7 +64,7 @@ function update($$event, param) {
           activations
         ];
         break;
-    case 36 : 
+    case 37 : 
         var match$2 = $$event[0];
         var identifier = match$2[/* identifier */2];
         var custodianId = match$2[/* custodianId */1];

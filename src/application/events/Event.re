@@ -211,7 +211,7 @@ module Payout = {
       };
   };
   include (val EventTypes.makeProcess("Payout"))(Data);
-  module Signature = {
+  module Signed = {
     type t = {
       processId,
       custodianId: userId,
@@ -235,6 +235,29 @@ module Payout = {
       Json.Decode.{
         processId: raw |> field("processId", ProcessId.decode),
         custodianId: raw |> field("custodianId", UserId.decode),
+        payoutTx: raw |> field("payoutTx", PayoutTransaction.decode),
+      };
+  };
+  module Finalized = {
+    type t = {
+      processId,
+      txId: string,
+      payoutTx: PayoutTransaction.t,
+    };
+    let make = (~processId, ~txId, ~payoutTx) => {processId, txId, payoutTx};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("PayoutFinalized")),
+          ("processId", ProcessId.encode(event.processId)),
+          ("txId", string(event.txId)),
+          ("payoutTx", PayoutTransaction.encode(event.payoutTx)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        processId: raw |> field("processId", ProcessId.decode),
+        txId: raw |> field("txId", string),
         payoutTx: raw |> field("payoutTx", PayoutTransaction.decode),
       };
   };
@@ -490,7 +513,8 @@ type t =
   | PayoutEndorsed(Payout.Endorsed.t)
   | PayoutAccepted(Payout.Accepted.t)
   | PayoutDenied(Payout.Denied.t)
-  | PayoutSigned(Payout.Signature.t)
+  | PayoutSigned(Payout.Signed.t)
+  | PayoutFinalized(Payout.Finalized.t)
   | PayoutBroadcast(Payout.Broadcast.t)
   | PayoutBroadcastDuplicate(Payout.BroadcastDuplicate.t)
   | PayoutBroadcastFailed(Payout.BroadcastFailed.t)
@@ -709,7 +733,8 @@ let encode =
   | PayoutEndorsed(event) => Payout.Endorsed.encode(event)
   | PayoutAccepted(event) => Payout.Accepted.encode(event)
   | PayoutDenied(event) => Payout.Denied.encode(event)
-  | PayoutSigned(event) => Payout.Signature.encode(event)
+  | PayoutSigned(event) => Payout.Signed.encode(event)
+  | PayoutFinalized(event) => Payout.Finalized.encode(event)
   | PayoutBroadcast(event) => Payout.Broadcast.encode(event)
   | PayoutBroadcastDuplicate(event) =>
     Payout.BroadcastDuplicate.encode(event)
@@ -742,6 +767,7 @@ let isSystemEvent =
   | AccountKeyChainIdentified(_)
   | IncomeDetected(_)
   | TransactionConfirmed(_)
+  | PayoutFinalized(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_) => true
@@ -788,8 +814,9 @@ let decode = raw => {
   | "PayoutEndorsed" => PayoutEndorsed(Payout.Endorsed.decode(raw))
   | "PayoutAccepted" => PayoutAccepted(Payout.Accepted.decode(raw))
   | "PayoutDenied" => PayoutDenied(Payout.Denied.decode(raw))
-  | "PayoutSigned" => PayoutSigned(Payout.Signature.decode(raw))
+  | "PayoutSigned" => PayoutSigned(Payout.Signed.decode(raw))
   | "PayoutBroadcast" => PayoutBroadcast(Payout.Broadcast.decode(raw))
+  | "PayoutFinalized" => PayoutFinalized(Payout.Finalized.decode(raw))
   | "PayoutBroadcastDuplicate" =>
     PayoutBroadcastDuplicate(Payout.BroadcastDuplicate.decode(raw))
   | "PayoutBroadcastFailed" =>

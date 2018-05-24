@@ -2,60 +2,44 @@ open Event;
 
 open PrimitiveTypes;
 
-let make = ({processId: payoutProcess, data}: Payout.Accepted.t, log) => {
-  let (needsBroadcast, signedTxs, systemIssuer, network) =
+let make =
+    ({payoutTx: {txHex}, processId: payoutProcess}: Payout.Finalized.t, log) => {
+  let (needsBroadcast, systemIssuer, network) =
     log
     |> EventLog.reduce(
-         ((broadcast, txs, systemIssuer, network), {event}) =>
+         ((broadcast, systemIssuer, network), {event}) =>
            switch (event) {
            | VentureCreated({systemIssuer, network}) => (
                broadcast,
-               txs,
-               systemIssuer,
-               network,
-             )
-           | PayoutSigned({processId, payoutTx})
-               when ProcessId.eq(processId, payoutProcess) => (
-               broadcast,
-               [payoutTx, ...txs],
                systemIssuer,
                network,
              )
            | PayoutBroadcast({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                false,
-               txs,
                systemIssuer,
                network,
              )
            | PayoutBroadcastDuplicate({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                false,
-               txs,
                systemIssuer,
                network,
              )
            | PayoutBroadcastFailed({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                false,
-               txs,
                systemIssuer,
                network,
              )
-           | _ => (broadcast, txs, systemIssuer, network)
+           | _ => (broadcast, systemIssuer, network)
            },
-         (
-           true,
-           [data.payoutTx],
-           Bitcoin.ECPair.makeRandom(),
-           Network.Regtest,
-         ),
+         (true, Bitcoin.ECPair.makeRandom(), Network.Regtest),
        );
   let process = {
     val finalTransaction =
       ref(
-        needsBroadcast ?
-          Some(PayoutTransaction.finalize(signedTxs, network)) : None,
+        needsBroadcast ? Some(txHex |> Bitcoin.Transaction.fromHex) : None,
       );
     val delivered = ref(false);
     pub receive = ({event}: EventLog.item) => {
