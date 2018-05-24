@@ -7,6 +7,7 @@ var Utils = require("../../utils/Utils.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var Watcher__SignPayout = require("./Watcher__SignPayout.bs.js");
+var Watcher__AbortPayout = require("./Watcher__AbortPayout.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 var Watcher__FinalizePayout = require("../events/Watcher__FinalizePayout.bs.js");
 var Watcher__PayoutApproval = require("./Watcher__PayoutApproval.bs.js");
@@ -25,33 +26,76 @@ function initWatcherFor(session, param, log) {
   var $$event = param[/* event */0];
   switch ($$event.tag | 0) {
     case 0 : 
-        return /* Some */[Watcher__InitializeVenture.make(session, $$event[0], log)];
+        return /* :: */[
+                Watcher__InitializeVenture.make(session, $$event[0], log),
+                /* [] */0
+              ];
     case 1 : 
-        return /* Some */[Watcher__PartnerApproval.make($$event[0], log)];
+        return /* :: */[
+                Watcher__PartnerApproval.make($$event[0], log),
+                /* [] */0
+              ];
     case 4 : 
-        return /* Some */[Watcher__AutoEndorseCustodianSelf.make(session, $$event[0], log)];
+        return /* :: */[
+                Watcher__AutoEndorseCustodianSelf.make(session, $$event[0], log),
+                /* [] */0
+              ];
     case 6 : 
-        return /* Some */[Watcher__PartnerRemovalApproval.make($$event[0], log)];
+        return /* :: */[
+                Watcher__PartnerRemovalApproval.make($$event[0], log),
+                /* [] */0
+              ];
     case 11 : 
-        return /* Some */[Watcher__AccountCreationApproval.make($$event[0], log)];
+        return /* :: */[
+                Watcher__AccountCreationApproval.make($$event[0], log),
+                /* [] */0
+              ];
     case 14 : 
-        return /* Some */[Watcher__AccountKeyChain.make(session, $$event[0], log)];
+        return /* :: */[
+                Watcher__AccountKeyChain.make(session, $$event[0], log),
+                /* [] */0
+              ];
     case 15 : 
-        return /* Some */[Watcher__CustodianApproval.make($$event[0], log)];
+        return /* :: */[
+                Watcher__CustodianApproval.make($$event[0], log),
+                /* [] */0
+              ];
     case 18 : 
-        return /* Some */[Watcher__CustodianKeyChain.make(session, $$event[0], log)];
+        return /* :: */[
+                Watcher__CustodianKeyChain.make(session, $$event[0], log),
+                /* [] */0
+              ];
     case 20 : 
-        return /* Some */[Watcher__CustodianRemovalApproval.make($$event[0], log)];
+        return /* :: */[
+                Watcher__CustodianRemovalApproval.make($$event[0], log),
+                /* [] */0
+              ];
     case 25 : 
-        return /* Some */[Watcher__PayoutApproval.make($$event[0], log)];
+        var proposal = $$event[0];
+        return /* :: */[
+                Watcher__PayoutApproval.make(proposal, log),
+                /* :: */[
+                  Watcher__AbortPayout.make(proposal, log),
+                  /* [] */0
+                ]
+              ];
     case 27 : 
-        return /* Some */[Watcher__SignPayout.make(session, $$event[0], log)];
+        return /* :: */[
+                Watcher__SignPayout.make(session, $$event[0], log),
+                /* [] */0
+              ];
     case 28 : 
-        return /* Some */[Watcher__FinalizePayout.make($$event[0], log)];
+        return /* :: */[
+                Watcher__FinalizePayout.make($$event[0], log),
+                /* [] */0
+              ];
     case 32 : 
-        return /* Some */[Watcher__BroadcastPayout.make($$event[0], log)];
+        return /* :: */[
+                Watcher__BroadcastPayout.make($$event[0], log),
+                /* [] */0
+              ];
     default:
-      return /* None */0;
+      return /* [] */0;
   }
 }
 
@@ -64,13 +108,9 @@ function apply($staropt$star, session, item, log, watchers) {
               return Caml_oo_curry.js2(710435299, 3, w, item$1);
             }), watchers);
     }
-    var match = initWatcherFor(session, item$1, log);
     return List.filter((function (w) {
                     return Caml_oo_curry.js2(111581468, 4, w, /* () */0) === false;
-                  }))(match ? /* :: */[
-                  match[0],
-                  watchers
-                ] : watchers);
+                  }))(List.append(initWatcherFor(session, item$1, log), watchers));
   } else {
     return watchers;
   }
@@ -147,6 +187,8 @@ var CustodianKeyChain = 0;
 
 var AccountKeyChain = 0;
 
+var AbortPayout = 0;
+
 var PayoutApproval = 0;
 
 var SignPayout = 0;
@@ -164,6 +206,7 @@ exports.CustodianRemovalApproval = CustodianRemovalApproval;
 exports.AutoEndorseCustodianSelf = AutoEndorseCustodianSelf;
 exports.CustodianKeyChain = CustodianKeyChain;
 exports.AccountKeyChain = AccountKeyChain;
+exports.AbortPayout = AbortPayout;
 exports.PayoutApproval = PayoutApproval;
 exports.SignPayout = SignPayout;
 exports.FinalizePayout = FinalizePayout;
