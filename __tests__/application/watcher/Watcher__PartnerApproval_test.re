@@ -17,8 +17,10 @@ let () =
           |> withPartnerProposed(~proposer=user1, ~prospect=user1)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+        let log = log |> L.withPartnerEndorsed(user1, proposal);
         let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
         testWatcherHasEventPending(
           "PartnerAccepted",
@@ -42,8 +44,10 @@ let () =
           |> withPartnerProposed(~proposer=user1, ~prospect=user2)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+        let log = log |> L.withPartnerEndorsed(user1, proposal);
         let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
         testWatcherHasEventPending(
           "PartnerAccepted",
@@ -67,8 +71,10 @@ let () =
           |> withPartnerProposed(~proposer=user1, ~prospect=user2)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+        let log = log |> L.withPartnerEndorsed(user1, proposal);
         let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
         let log = log |> L.withPartnerAccepted(proposal);
         watcher#receive(log |> L.lastItem);
@@ -88,8 +94,10 @@ let () =
           |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2, _user3) = G.threeUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+        let log = log |> L.withPartnerEndorsed(user1, proposal);
         let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
         testWatcherHasNoEventPending(watcher);
       },
@@ -108,9 +116,14 @@ let () =
         );
       },
       (sessions, log) => {
-        let (_user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        let (user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-        let log = log |> L.withPartnerEndorsed(user2, proposal);
+        let log =
+          L.(
+            log
+            |> withPartnerEndorsed(user1, proposal)
+            |> withPartnerEndorsed(user2, proposal)
+          );
         let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
         testWatcherHasEventPending(
           "PartnerAccepted",
@@ -136,8 +149,10 @@ let () =
           |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
+        let log = log |> L.withPartnerEndorsed(user1, proposal);
         let watcher = PartnerApproval.make(proposal, log |> L.eventLog);
         testWatcherHasEventPending(
           "PartnerAccepted",

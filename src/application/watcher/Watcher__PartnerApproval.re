@@ -97,7 +97,7 @@ let make = (proposal: Partner.Proposed.t, log) => {
           | _ => None
           }
         );
-      if (proposal.data.id == state^.creatorId && log |> EventLog.length == 2) {
+      if (proposal.data.id == state^.creatorId && log |> EventLog.length == 3) {
         result :=
           Some((
             state^.systemIssuer,

@@ -143,7 +143,7 @@ function make(proposal, log) {
                         /* PartnerDenied */Block.__(5, [Curry._1(Event.Partner[/* Denied */7][/* fromProposal */0], env$1[0])])
                       ]]
                 );
-              if (Caml_obj.caml_equal(env$1[0][/* data */6][/* id */1], self$1[state][0][/* creatorId */5]) && Curry._1(EventLog.length, env$1[1]) === 2) {
+              if (Caml_obj.caml_equal(env$1[0][/* data */6][/* id */1], self$1[state][0][/* creatorId */5]) && Curry._1(EventLog.length, env$1[1]) === 3) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */4],
                     /* PartnerAccepted */Block.__(4, [Curry._1(Event.Partner[/* Accepted */6][/* fromProposal */0], env$1[0])])
