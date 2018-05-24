@@ -90,7 +90,7 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "PartnerAlreadyExists"
+                      "MaxPartnersReached"
                     ],
                     /* [] */0
                   ]);
@@ -98,7 +98,7 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "PartnerAlreadyProposed"
+                      "PartnerAlreadyExists"
                     ],
                     /* [] */0
                   ]);
@@ -106,11 +106,19 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "CouldNotFindUserInfo"
+                      "PartnerAlreadyProposed"
                     ],
                     /* [] */0
                   ]);
     case 3 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "CouldNotFindUserInfo"
+                    ],
+                    /* [] */0
+                  ]);
+    case 4 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -126,13 +134,15 @@ function decodeError(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "CouldNotFindUserInfo" : 
-        return /* CouldNotFindUserInfo */2;
+        return /* CouldNotFindUserInfo */3;
     case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */3;
+        return /* CouldNotPersistVenture */4;
+    case "MaxPartnersReached" : 
+        return /* MaxPartnersReached */0;
     case "PartnerAlreadyExists" : 
-        return /* PartnerAlreadyExists */0;
+        return /* PartnerAlreadyExists */1;
     case "PartnerAlreadyProposed" : 
-        return /* PartnerAlreadyProposed */1;
+        return /* PartnerAlreadyProposed */2;
     default:
       throw [
             UnknownMessage,

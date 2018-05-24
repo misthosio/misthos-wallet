@@ -35,6 +35,7 @@ type cmdSuccess =
   | ProcessRejected(processId);
 
 type cmdError =
+  | MaxPartnersReached
   | PartnerAlreadyExists
   | PartnerAlreadyProposed
   | CouldNotFindUserInfo
@@ -100,6 +101,8 @@ let decodeSuccess = raw => {
 
 let encodeError =
   fun
+  | MaxPartnersReached =>
+    Json.Encode.(object_([("type", string("MaxPartnersReached"))]))
   | PartnerAlreadyExists =>
     Json.Encode.(object_([("type", string("PartnerAlreadyExists"))]))
   | PartnerAlreadyProposed =>
@@ -112,6 +115,7 @@ let encodeError =
 let decodeError = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
+  | "MaxPartnersReached" => MaxPartnersReached
   | "PartnerAlreadyProposed" => PartnerAlreadyProposed
   | "PartnerAlreadyExists" => PartnerAlreadyExists
   | "CouldNotFindUserInfo" => CouldNotFindUserInfo

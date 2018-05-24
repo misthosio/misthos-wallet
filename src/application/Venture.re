@@ -402,8 +402,10 @@ module Cmd = {
     };
   };
   module ProposePartner = {
+    let maxNPartners = 12;
     type result =
       | Ok(processId, t, array(EventLog.item))
+      | MaxPartnersReached
       | ProposalAlreadyExists
       | PartnerAlreadyExists
       | NoUserInfo
@@ -412,6 +414,10 @@ module Cmd = {
       logMessage("Executing 'ProposePartner' command");
       if (state |> State.isPartner(prospectId)) {
         PartnerAlreadyExists |> Js.Promise.resolve;
+      } else if (state
+                 |> State.currentPartners
+                 |> Belt.Set.size >= maxNPartners) {
+        MaxPartnersReached |> Js.Promise.resolve;
       } else {
         Js.Promise.(
           UserInfo.Public.read(~blockstackId=prospectId)

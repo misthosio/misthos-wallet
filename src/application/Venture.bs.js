@@ -9,6 +9,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("./events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var Policy = require("./Policy.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("./events/EventLog.bs.js");
 var UserInfo = require("./UserInfo.bs.js");
 var Watchers = require("./watcher/Watchers.bs.js");
@@ -482,7 +483,9 @@ function exec$3(prospectId, venture) {
   var session = venture[/* session */0];
   logMessage("Executing 'ProposePartner' command");
   if (Venture__State.isPartner(prospectId, state)) {
-    return Promise.resolve(/* PartnerAlreadyExists */1);
+    return Promise.resolve(/* PartnerAlreadyExists */2);
+  } else if (Belt_Set.size(Venture__State.currentPartners(state)) >= 12) {
+    return Promise.resolve(/* MaxPartnersReached */0);
   } else {
     return UserInfo.Public[/* read */4](prospectId).then((function (param) {
                   if (param) {
@@ -510,16 +513,14 @@ function exec$3(prospectId, venture) {
                                     }
                                   }));
                     } else {
-                      return Promise.resolve(/* ProposalAlreadyExists */0);
+                      return Promise.resolve(/* ProposalAlreadyExists */1);
                     }
                   } else {
-                    return Promise.resolve(/* NoUserInfo */2);
+                    return Promise.resolve(/* NoUserInfo */3);
                   }
                 }));
   }
 }
-
-var ProposePartner = /* module */[/* exec */exec$3];
 
 function exec$4(processId, venture) {
   var session = venture[/* session */0];
@@ -746,22 +747,6 @@ function exec$12(processId, venture) {
 
 var EndorsePayout = /* module */[/* exec */exec$12];
 
-var Cmd = /* module */[
-  /* Create */Create,
-  /* SynchronizeLogs */SynchronizeLogs,
-  /* SynchronizeWallet */SynchronizeWallet,
-  /* ProposePartner */ProposePartner,
-  /* RejectPartner */RejectPartner,
-  /* EndorsePartner */EndorsePartner,
-  /* ProposePartnerRemoval */ProposePartnerRemoval,
-  /* RejectPartnerRemoval */RejectPartnerRemoval,
-  /* EndorsePartnerRemoval */EndorsePartnerRemoval,
-  /* ExposeIncomeAddress */ExposeIncomeAddress,
-  /* ProposePayout */ProposePayout,
-  /* RejectPayout */RejectPayout,
-  /* EndorsePayout */EndorsePayout
-];
-
 var Index = [
   Venture__Index.load,
   Venture__Index.encode,
@@ -769,6 +754,24 @@ var Index = [
 ];
 
 var Validation = [Venture__Validation.resultToString];
+
+var Cmd_003 = [exec$3];
+
+var Cmd = [
+  Create,
+  SynchronizeLogs,
+  SynchronizeWallet,
+  Cmd_003,
+  RejectPartner,
+  EndorsePartner,
+  ProposePartnerRemoval,
+  RejectPartnerRemoval,
+  EndorsePartnerRemoval,
+  ExposeIncomeAddress,
+  ProposePayout,
+  RejectPayout,
+  EndorsePayout
+];
 
 exports.Index = Index;
 exports.Validation = Validation;
