@@ -16,6 +16,7 @@ var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
 var PayoutTransaction = require("../../src/application/wallet/PayoutTransaction.bs.js");
+var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollector.bs.js");
 
 Helpers.enableHttpRequests(/* () */0);
 
@@ -251,7 +252,7 @@ describe("Wallet_integration", (function () {
                                     if (param) {
                                       var $$event = param[0];
                                       var data = $$event[/* data */6];
-                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], wallet$2[/* walletInfoCollector */3][/* keyChains */3], data[/* payoutTx */1], /* Regtest */0));
+                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1], /* Regtest */0));
                                       tmp = Promise.all(/* tuple */[
                                             Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(25, [$$event]), twoKeyChainWallet[0])),
                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[

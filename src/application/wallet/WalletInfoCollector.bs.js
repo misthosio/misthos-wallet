@@ -17,7 +17,20 @@ function currentKeyChainIdent(accountIdx, userId, param) {
   return Js_option.getExn(Belt_List.getAssoc(Js_option.getExn(Belt_List.getAssoc(param[/* activatedKeyChain */5], accountIdx, WalletTypes.AccountIndex[/* eq */7])), userId, PrimitiveTypes.UserId[/* eq */5]));
 }
 
-function oldInputs(accountIdx, userId, collector) {
+function currentKeyChain(accountIdx, userId, state) {
+  var currentIdent = currentKeyChainIdent(accountIdx, userId, state);
+  return AccountKeyChain.Collection[/* lookup */2](accountIdx, currentIdent, state[/* keyChains */3]);
+}
+
+function exposedCoordinates(param) {
+  return param[/* exposedCoordinates */6];
+}
+
+function accountKeyChains(param) {
+  return param[/* keyChains */3];
+}
+
+function nonReservedOldInputs(accountIdx, userId, collector) {
   var keyChains = collector[/* keyChains */3];
   var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
   var currentKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, keyChains);
@@ -26,6 +39,14 @@ function oldInputs(accountIdx, userId, collector) {
   return Belt_Set.keepU(collector[/* unused */1], (function (i) {
                 return Belt_SetString.has(currentKeyChainIdents, Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6])) === false;
               }));
+}
+
+function unusedInputs(param) {
+  return param[/* unused */1];
+}
+
+function network(param) {
+  return param[/* network */0];
 }
 
 function nextChangeAddress(accountIdx, userId, collector) {
@@ -201,9 +222,14 @@ function apply($$event, state) {
   }
 }
 
-exports.currentKeyChainIdent = currentKeyChainIdent;
-exports.oldInputs = oldInputs;
-exports.nextChangeAddress = nextChangeAddress;
 exports.make = make;
+exports.exposedCoordinates = exposedCoordinates;
+exports.accountKeyChains = accountKeyChains;
+exports.network = network;
 exports.apply = apply;
+exports.currentKeyChainIdent = currentKeyChainIdent;
+exports.currentKeyChain = currentKeyChain;
+exports.nonReservedOldInputs = nonReservedOldInputs;
+exports.unusedInputs = unusedInputs;
+exports.nextChangeAddress = nextChangeAddress;
 /* Address Not a pure module */

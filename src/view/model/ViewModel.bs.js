@@ -69,6 +69,9 @@ function fromViewModelState$2(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var localUser = param[/* localUser */0];
   var balance = ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6]);
+  var network = WalletInfoCollector.network(walletInfoCollector);
+  var allInputs = WalletInfoCollector.unusedInputs(walletInfoCollector);
+  var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
   return /* record */[
           /* allowCreation */balance[/* currentSpendable */0].gt(BTC.zero),
           /* balance */balance,
@@ -83,7 +86,7 @@ function fromViewModelState$2(param) {
           ],
           /* isAddressValid */(function (address) {
               try {
-                BitcoinjsLib.address.toOutputScript(address, Network.bitcoinNetwork(walletInfoCollector[/* network */0]));
+                BitcoinjsLib.address.toOutputScript(address, Network.bitcoinNetwork(network));
                 return true;
               }
               catch (exn){
@@ -91,10 +94,10 @@ function fromViewModelState$2(param) {
               }
             }),
           /* max */(function (targetDestination, destinations, fee) {
-              return PayoutTransaction.max(walletInfoCollector[/* unused */1], targetDestination, destinations, fee, walletInfoCollector[/* network */0]);
+              return PayoutTransaction.max(allInputs, targetDestination, destinations, fee, network);
             }),
           /* summary */(function (destinations, fee) {
-              return PayoutTransaction.summary(walletInfoCollector[/* network */0], PayoutTransaction.build(WalletInfoCollector.oldInputs(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector), walletInfoCollector[/* unused */1], destinations, fee, WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector), walletInfoCollector[/* network */0]));
+              return PayoutTransaction.summary(network, PayoutTransaction.build(mandatoryInputs, allInputs, destinations, fee, WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector), network));
             })
         ];
 }

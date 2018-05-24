@@ -219,7 +219,9 @@ let () =
                       ~ventureId,
                       ~userId=user2.userId,
                       ~masterKeyChain=user2.masterKeyChain,
-                      ~accountKeyChains=wallet.walletInfoCollector.keyChains,
+                      ~accountKeyChains=
+                        wallet.walletInfoCollector
+                        |> WalletInfoCollector.accountKeyChains,
                       ~payoutTx=data.payoutTx,
                       ~network=Network.Regtest,
                     )

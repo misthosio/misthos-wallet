@@ -47,10 +47,12 @@ let collectNextTwoAddresses = (user: Session.Data.t, (wallet, log)) => {
   ((exposed1, exposed2), (wallet, log));
 };
 
-let getExposedAddresses =
-    (
-      {walletInfoCollector: {exposedCoordinates, keyChains: accountKeyChains}}: Wallet.t,
-    ) =>
-  exposedCoordinates
-  |> List.map(coordinates => accountKeyChains |> Address.find(coordinates))
+let getExposedAddresses = ({walletInfoCollector}: Wallet.t) =>
+  walletInfoCollector
+  |> WalletInfoCollector.exposedCoordinates
+  |> List.map(coordinates =>
+       walletInfoCollector
+       |> WalletInfoCollector.accountKeyChains
+       |> Address.find(coordinates)
+     )
   |> List.map((a: Address.t) => a.displayAddress);

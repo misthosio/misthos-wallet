@@ -33,26 +33,17 @@ let apply = (event: Event.t, state) => {
   };
 };
 
-let exposeNextIncomeAddress =
-    (
-      userId,
-      accountIdx,
-      {
-        walletInfoCollector: {
-          exposedCoordinates,
-          activatedKeyChain,
-          keyChains: accountKeyChains,
-        },
-      },
-    ) => {
-  let ident =
-    activatedKeyChain |> List.assoc(accountIdx) |> List.assoc(userId);
+let exposeNextIncomeAddress = (userId, accountIdx, {walletInfoCollector}) => {
   let accountKeyChain =
-    accountKeyChains |> AccountKeyChain.Collection.lookup(accountIdx, ident);
+    WalletInfoCollector.currentKeyChain(
+      accountIdx,
+      userId,
+      walletInfoCollector,
+    );
   let coordinates =
     Address.Coordinates.nextExternal(
       userId,
-      exposedCoordinates,
+      walletInfoCollector |> WalletInfoCollector.exposedCoordinates,
       accountKeyChain,
     );
   IncomeAddressExposed.make(
@@ -72,12 +63,7 @@ let preparePayoutTx =
       accountIdx,
       destinations,
       satsPerByte,
-      {
-        ventureId,
-        payoutPolicy,
-        walletInfoCollector:
-          {keyChains: accountKeyChains, unused: inputs} as walletInfoCollector,
-      },
+      {ventureId, payoutPolicy, walletInfoCollector},
     ) =>
   try (
     {
@@ -85,8 +71,8 @@ let preparePayoutTx =
         PayoutTransaction.build(
           ~mandatoryInputs=
             walletInfoCollector
-            |> WalletInfoCollector.oldInputs(accountIdx, userId),
-          ~allInputs=inputs,
+            |> WalletInfoCollector.nonReservedOldInputs(accountIdx, userId),
+          ~allInputs=walletInfoCollector |> WalletInfoCollector.unusedInputs,
           ~destinations,
           ~satsPerByte,
           ~changeAddress=
@@ -100,7 +86,8 @@ let preparePayoutTx =
             ~ventureId,
             ~userId,
             ~masterKeyChain,
-            ~accountKeyChains,
+            ~accountKeyChains=
+              walletInfoCollector |> WalletInfoCollector.accountKeyChains,
             ~payoutTx,
             ~network,
           )

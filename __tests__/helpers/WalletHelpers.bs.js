@@ -9,6 +9,7 @@ var Generators = require("./Generators.bs.js");
 var WalletTypes = require("../../src/application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Venture__Wallet = require("../../src/application/Venture__Wallet.bs.js");
+var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollector.bs.js");
 
 function constructState(log) {
   return Generators.Log[/* reduce */1]((function (s, param) {
@@ -46,13 +47,12 @@ function collectNextTwoAddresses(user, param) {
 }
 
 function getExposedAddresses(param) {
-  var match = param[/* walletInfoCollector */3];
-  var accountKeyChains = match[/* keyChains */3];
+  var walletInfoCollector = param[/* walletInfoCollector */3];
   return List.map((function (a) {
                 return a[/* displayAddress */5];
               }), List.map((function (coordinates) {
-                    return Address.find(coordinates, accountKeyChains);
-                  }), match[/* exposedCoordinates */6]));
+                    return Address.find(coordinates, WalletInfoCollector.accountKeyChains(walletInfoCollector));
+                  }), WalletInfoCollector.exposedCoordinates(walletInfoCollector)));
 }
 
 var Wallet = 0;

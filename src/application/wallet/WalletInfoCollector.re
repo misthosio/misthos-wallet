@@ -26,7 +26,17 @@ let currentKeyChainIdent = (accountIdx, userId, {activatedKeyChain}) =>
   |. List.getAssoc(userId, UserId.eq)
   |> Js.Option.getExn;
 
-let oldInputs = (accountIdx, userId, {keyChains, unused} as collector) => {
+let currentKeyChain = (accountIdx, userId, {keyChains} as state) => {
+  let currentIdent = currentKeyChainIdent(accountIdx, userId, state);
+  keyChains |> AccountKeyChain.Collection.lookup(accountIdx, currentIdent);
+};
+
+let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
+
+let accountKeyChains = ({keyChains}) => keyChains;
+
+let nonReservedOldInputs =
+    (accountIdx, userId, {keyChains, unused} as collector) => {
   let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
   let currentKeyChain =
     keyChains |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
@@ -40,6 +50,10 @@ let oldInputs = (accountIdx, userId, {keyChains, unused} as collector) => {
        |> Set.String.has(currentKeyChainIdents) == false
      );
 };
+
+let unusedInputs = ({unused}) => unused;
+
+let network = ({network}) => network;
 
 let nextChangeAddress = (accountIdx, userId, collector) => {
   let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);

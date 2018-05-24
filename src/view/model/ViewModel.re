@@ -80,6 +80,14 @@ module CreatePayoutView = {
     let balance =
       balanceCollector
       |> BalanceCollector.accountBalance(AccountIndex.default);
+    let network = walletInfoCollector |> WalletInfoCollector.network;
+    let allInputs = walletInfoCollector |> WalletInfoCollector.unusedInputs;
+    let mandatoryInputs =
+      walletInfoCollector
+      |> WalletInfoCollector.nonReservedOldInputs(
+           AccountIndex.default,
+           localUser,
+         );
     {
       ventureId,
       balance,
@@ -97,7 +105,7 @@ module CreatePayoutView = {
           {
             Bitcoin.Address.toOutputScript(
               address,
-              walletInfoCollector.network |> Network.bitcoinNetwork,
+              network |> Network.bitcoinNetwork,
             )
             |> ignore;
             true;
@@ -107,18 +115,16 @@ module CreatePayoutView = {
         },
       max: (targetDestination, destinations, fee) =>
         PayoutTransaction.max(
-          ~allInputs=walletInfoCollector.unused,
+          ~allInputs,
           ~targetDestination,
           ~destinations,
           ~satsPerByte=fee,
-          ~network=walletInfoCollector.network,
+          ~network,
         ),
       summary: (destinations, fee) =>
         PayoutTransaction.build(
-          ~mandatoryInputs=
-            walletInfoCollector
-            |> WalletInfoCollector.oldInputs(AccountIndex.default, localUser),
-          ~allInputs=walletInfoCollector.unused,
+          ~mandatoryInputs,
+          ~allInputs,
           ~destinations,
           ~satsPerByte=fee,
           ~changeAddress=
@@ -127,9 +133,9 @@ module CreatePayoutView = {
                  AccountIndex.default,
                  localUser,
                ),
-          ~network=walletInfoCollector.network,
+          ~network,
         )
-        |> PayoutTransaction.summary(walletInfoCollector.network),
+        |> PayoutTransaction.summary(network),
     };
   };
 };
