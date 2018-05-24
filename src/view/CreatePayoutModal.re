@@ -239,19 +239,25 @@ let make =
     <Body2
       titles=["Create A Payout"]
       body1=(
-              if (viewData.balance |> BTC.comparedTo(BTC.zero) == 0) {
+              if (viewData.allowCreation == false) {
                 <div>
                   <MTypography variant=`Title>
                     (viewData.ventureName |> text)
                   </MTypography>
-                  <Balance currentSpendable=viewData.balance />
+                  <Balance
+                    currentSpendable=viewData.balance.currentSpendable
+                    reserved=viewData.balance.reserved
+                  />
                 </div>;
               } else {
                 <div>
                   <MTypography variant=`Title>
                     (viewData.ventureName |> text)
                   </MTypography>
-                  <Balance currentSpendable=viewData.balance />
+                  <Balance
+                    currentSpendable=viewData.balance.currentSpendable
+                    reserved=viewData.balance.reserved
+                  />
                   <MInput
                     placeholder="Recipient Address"
                     value=(`String(inputs.recipientAddress))
@@ -294,10 +300,10 @@ let make =
               }
             )
       body2=(
-              if (viewData.balance |> BTC.comparedTo(BTC.zero) == 0) {
+              if (viewData.allowCreation == false) {
                 <div>
                   <MTypography variant=`Body2>
-                    ("Either you have no BTC or it is all reserved" |> text)
+                    ("Cannot create Payout without unreserved balance" |> text)
                   </MTypography>
                 </div>;
               } else {

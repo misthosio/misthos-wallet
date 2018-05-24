@@ -70,7 +70,7 @@ function updateState(state) {
   var inputAmount = state[/* inputAmount */3];
   var destinations = state[/* destinations */1];
   var viewData = state[/* viewData */0];
-  var match$1 = Curry._1(viewData[/* isAddressValid */4], recipientAddress) ? /* tuple */[
+  var match$1 = Curry._1(viewData[/* isAddressValid */5], recipientAddress) ? /* tuple */[
       recipientAddress,
       recipientAddress,
       true
@@ -98,7 +98,7 @@ function updateState(state) {
   var inputAmount$1 = match$2[1];
   var btcAmount$1 = match$2[0];
   if (inputAmount$1.gt(BTC.zero) && inputDestination !== "") {
-    var max = Curry._3(viewData[/* max */5], inputDestination, destinations, defaultFee);
+    var max = Curry._3(viewData[/* max */6], inputDestination, destinations, defaultFee);
     var match$3 = inputAmount$1.gt(max);
     var match$4 = match$3 ? /* tuple */[
         max,
@@ -114,7 +114,7 @@ function updateState(state) {
             /* inputDestination */inputDestination,
             /* inputAmount */inputAmount$2,
             /* addressValid */addressValid,
-            /* summary */Curry._2(viewData[/* summary */6], /* :: */[
+            /* summary */Curry._2(viewData[/* summary */7], /* :: */[
                   /* tuple */[
                     inputDestination,
                     inputAmount$2
@@ -133,7 +133,7 @@ function updateState(state) {
             /* inputDestination */inputDestination,
             /* inputAmount */inputAmount$1,
             /* addressValid */addressValid,
-            /* summary */Curry._2(viewData[/* summary */6], destinations, defaultFee),
+            /* summary */Curry._2(viewData[/* summary */7], destinations, defaultFee),
             /* inputs : record */[
               /* recipientAddress */recipientAddress$1,
               /* btcAmount */btcAmount$1
@@ -191,7 +191,7 @@ function make(viewData, commands, cmdStatus, _) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Create A Payout",
                                 /* [] */0
-                              ]], viewData[/* balance */2].comparedTo(BTC.zero) === 0 ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */2], /* None */0, /* array */[]))) : React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */2], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
+                              ]], viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */1][/* currentSpendable */0], /* Some */[viewData[/* balance */1][/* reserved */1]], /* array */[]))) : React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */1][/* currentSpendable */0], /* Some */[viewData[/* balance */1][/* reserved */1]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
                                               -976970511,
                                               inputs[/* recipientAddress */0]
                                             ]], /* Some */[(function (e) {
@@ -205,7 +205,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                                     return Curry._1(send, /* EnterMax */0);
                                                                   })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* array */[ViewCommon.text("Max")]))]))], /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                 return Curry._1(send, /* AddToSummary */1);
-                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Add to Summary")]))), viewData[/* balance */2].comparedTo(BTC.zero) === 0 ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("Either you have no BTC or it is all reserved")]))) : React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Table.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableBody.make(/* None */0, /* None */0, /* array */[
+                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Add to Summary")]))), viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("Cannot create Payout without unreserved balance")]))) : React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Table.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableBody.make(/* None */0, /* None */0, /* array */[
                                                       destinationList,
                                                       ReasonReact.element(/* Some */["networkFee"], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                 ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[maxWidth + (" " + noBorder)], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("NETWORK FEE"))])),
@@ -228,7 +228,7 @@ function make(viewData, commands, cmdStatus, _) {
                       /* inputDestination */"",
                       /* inputAmount */BTC.zero,
                       /* addressValid */true,
-                      /* summary */viewData[/* initialSummary */3],
+                      /* summary */viewData[/* initialSummary */4],
                       /* inputs : record */[
                         /* recipientAddress */"",
                         /* btcAmount */""
@@ -240,7 +240,7 @@ function make(viewData, commands, cmdStatus, _) {
               if (typeof action === "number") {
                 switch (action) {
                   case 0 : 
-                      var max = Curry._3(state[/* viewData */0][/* max */5], state[/* inputDestination */2], state[/* destinations */1], defaultFee);
+                      var max = Curry._3(state[/* viewData */0][/* max */6], state[/* inputDestination */2], state[/* destinations */1], defaultFee);
                       return /* SideEffects */Block.__(1, [(function (param) {
                                     return Curry._1(param[/* send */3], /* ChangeBTCAmount */Block.__(1, [BTC.format(max)]));
                                   })]);

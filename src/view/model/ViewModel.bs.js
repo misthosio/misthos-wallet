@@ -68,10 +68,12 @@ var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$1]
 function fromViewModelState$2(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var localUser = param[/* localUser */0];
+  var balance = ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6]);
   return /* record */[
+          /* allowCreation */balance[/* currentSpendable */0].gt(BTC.zero),
+          /* balance */balance,
           /* ventureId */param[/* ventureId */1],
           /* ventureName */param[/* name */3],
-          /* balance */ViewModel__BalanceCollector.accountBalance(WalletTypes.AccountIndex[/* default */9], param[/* balanceCollector */6])[/* currentSpendable */0],
           /* initialSummary : record */[
             /* reserved */BTC.zero,
             /* destinations : [] */0,

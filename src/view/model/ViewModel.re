@@ -64,10 +64,12 @@ module ViewPartnerView = {
 let viewPartnerModal = ViewPartnerView.fromViewModelState;
 
 module CreatePayoutView = {
+  type balance = BalanceCollector.balance;
   type t = {
+    allowCreation: bool,
+    balance,
     ventureId,
     ventureName: string,
-    balance: BTC.t,
     initialSummary: PayoutTransaction.summary,
     isAddressValid: string => bool,
     max: (string, list((string, BTC.t)), BTC.t) => BTC.t,
@@ -75,59 +77,60 @@ module CreatePayoutView = {
   };
   let fromViewModelState =
       ({ventureId, localUser, name, balanceCollector, walletInfoCollector}) => {
-    ventureId,
-    balance:
-      (
-        balanceCollector
-        |> BalanceCollector.accountBalance(AccountIndex.default)
-      ).
-        currentSpendable,
-    ventureName: name,
-    initialSummary: {
-      reserved: BTC.zero,
-      destinations: [],
-      spentWithFees: BTC.zero,
-      misthosFee: BTC.zero,
-      networkFee: BTC.zero,
-    },
-    isAddressValid: address =>
-      try (
-        {
-          Bitcoin.Address.toOutputScript(
-            address,
-            walletInfoCollector.network |> Network.bitcoinNetwork,
-          )
-          |> ignore;
-          true;
-        }
-      ) {
-      | _ => false
+    let balance =
+      balanceCollector
+      |> BalanceCollector.accountBalance(AccountIndex.default);
+    {
+      ventureId,
+      balance,
+      allowCreation: balance.currentSpendable |> BTC.gt(BTC.zero),
+      ventureName: name,
+      initialSummary: {
+        reserved: BTC.zero,
+        destinations: [],
+        spentWithFees: BTC.zero,
+        misthosFee: BTC.zero,
+        networkFee: BTC.zero,
       },
-    max: (targetDestination, destinations, fee) =>
-      PayoutTransaction.max(
-        ~allInputs=walletInfoCollector.unused,
-        ~targetDestination,
-        ~destinations,
-        ~satsPerByte=fee,
-        ~network=walletInfoCollector.network,
-      ),
-    summary: (destinations, fee) =>
-      PayoutTransaction.build(
-        ~mandatoryInputs=
-          walletInfoCollector
-          |> WalletInfoCollector.oldInputs(AccountIndex.default, localUser),
-        ~allInputs=walletInfoCollector.unused,
-        ~destinations,
-        ~satsPerByte=fee,
-        ~changeAddress=
-          walletInfoCollector
-          |> WalletInfoCollector.nextChangeAddress(
-               AccountIndex.default,
-               localUser,
-             ),
-        ~network=walletInfoCollector.network,
-      )
-      |> PayoutTransaction.summary(walletInfoCollector.network),
+      isAddressValid: address =>
+        try (
+          {
+            Bitcoin.Address.toOutputScript(
+              address,
+              walletInfoCollector.network |> Network.bitcoinNetwork,
+            )
+            |> ignore;
+            true;
+          }
+        ) {
+        | _ => false
+        },
+      max: (targetDestination, destinations, fee) =>
+        PayoutTransaction.max(
+          ~allInputs=walletInfoCollector.unused,
+          ~targetDestination,
+          ~destinations,
+          ~satsPerByte=fee,
+          ~network=walletInfoCollector.network,
+        ),
+      summary: (destinations, fee) =>
+        PayoutTransaction.build(
+          ~mandatoryInputs=
+            walletInfoCollector
+            |> WalletInfoCollector.oldInputs(AccountIndex.default, localUser),
+          ~allInputs=walletInfoCollector.unused,
+          ~destinations,
+          ~satsPerByte=fee,
+          ~changeAddress=
+            walletInfoCollector
+            |> WalletInfoCollector.nextChangeAddress(
+                 AccountIndex.default,
+                 localUser,
+               ),
+          ~network=walletInfoCollector.network,
+        )
+        |> PayoutTransaction.summary(walletInfoCollector.network),
+    };
   };
 };
 
