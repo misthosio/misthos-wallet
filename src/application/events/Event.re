@@ -506,7 +506,7 @@ exception BadData(string);
 let makePartnerProposed =
     (
       ~eligibleWhenProposing,
-      ~supporterId,
+      ~proposerId,
       ~prospectId,
       ~prospectPubKey,
       ~lastRemovalAccepted,
@@ -534,7 +534,7 @@ let makePartnerProposed =
       ~dependsOnCompletions=
         dependsOnCompletions |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
-      ~supporterId,
+      ~proposerId,
       ~policy,
       Partner.Data.{
         id: prospectId,
@@ -549,7 +549,7 @@ let makePartnerRemovalProposed =
     (
       ~eligibleWhenProposing,
       ~lastPartnerAccepted: Partner.Accepted.t,
-      ~supporterId,
+      ~proposerId,
       ~policy,
     ) =>
   PartnerRemovalProposed(
@@ -558,7 +558,7 @@ let makePartnerRemovalProposed =
         [|lastPartnerAccepted.processId|]
         |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
-      ~supporterId,
+      ~proposerId,
       ~policy,
       Partner.Removal.Data.{
         lastPartnerProcess: lastPartnerAccepted.processId,
@@ -568,11 +568,11 @@ let makePartnerRemovalProposed =
   );
 
 let makeAccountCreationProposed =
-    (~eligibleWhenProposing, ~supporterId, ~name, ~accountIdx, ~policy) =>
+    (~eligibleWhenProposing, ~proposerId, ~name, ~accountIdx, ~policy) =>
   AccountCreationProposed(
     AccountCreation.Proposed.make(
       ~eligibleWhenProposing,
-      ~supporterId,
+      ~proposerId,
       ~policy,
       AccountCreation.Data.{accountIdx, name},
     ),
@@ -583,7 +583,7 @@ let makeCustodianProposed =
       ~eligibleWhenProposing,
       ~lastCustodianRemovalAccepted,
       ~partnerProposed: Partner.Proposed.t,
-      ~supporterId,
+      ~proposerId,
       ~accountIdx,
       ~policy,
     ) => {
@@ -606,7 +606,7 @@ let makeCustodianProposed =
       ~dependsOnProposals=
         [|partnerApprovalProcess|] |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
-      ~supporterId,
+      ~proposerId,
       ~policy,
       Custodian.Data.{
         lastCustodianRemovalProcess,
@@ -622,7 +622,7 @@ let makeCustodianRemovalProposed =
     (
       ~eligibleWhenProposing,
       ~custodianAccepted: Custodian.Accepted.t,
-      ~supporterId,
+      ~proposerId,
       ~accountIdx,
       ~policy,
     ) => {
@@ -632,7 +632,7 @@ let makeCustodianRemovalProposed =
       ~dependsOnCompletions=
         [|lastCustodianProcess|] |> Set.mergeMany(ProcessId.emptySet),
       ~eligibleWhenProposing,
-      ~supporterId,
+      ~proposerId,
       ~policy,
       Custodian.Removal.Data.{lastCustodianProcess, custodianId, accountIdx},
     ),
@@ -653,6 +653,11 @@ let makePartnerRemovalRejected = (~processId, ~rejectorId) =>
 let makePartnerRemovalEndorsed = (~processId, ~supporterId) =>
   PartnerRemovalEndorsed(
     Partner.Removal.Endorsed.make(~processId, ~supporterId),
+  );
+
+let makeAccountCreationEndorsed = (~processId, ~supporterId) =>
+  AccountCreationEndorsed(
+    AccountCreation.Endorsed.make(~processId, ~supporterId),
   );
 
 let makeCustodianRejected = (~processId, ~rejectorId) =>

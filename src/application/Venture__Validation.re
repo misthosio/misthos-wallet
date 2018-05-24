@@ -87,41 +87,41 @@ let apply = ({hash, event}: EventLog.item, state) => {
           lastPartnerRemovalProcess: None,
         },
     }
-  | PartnerProposed({supporterId, processId, data}) => {
+  | PartnerProposed({proposerId, processId, data}) => {
       ...state,
-      partnerData: [(processId, (supporterId, data)), ...state.partnerData],
+      partnerData: [(processId, (proposerId, data)), ...state.partnerData],
     }
-  | PartnerRemovalProposed({supporterId, processId, data}) => {
+  | PartnerRemovalProposed({proposerId, processId, data}) => {
       ...state,
       partnerRemovalData: [
-        (processId, (supporterId, data)),
+        (processId, (proposerId, data)),
         ...state.partnerRemovalData,
       ],
     }
-  | CustodianProposed({supporterId, processId, data}) => {
+  | CustodianProposed({proposerId, processId, data}) => {
       ...state,
       custodianData: [
-        (processId, (supporterId, data)),
+        (processId, (proposerId, data)),
         ...state.custodianData,
       ],
     }
-  | CustodianRemovalProposed({supporterId, processId, data}) => {
+  | CustodianRemovalProposed({proposerId, processId, data}) => {
       ...state,
       custodianRemovalData: [
-        (processId, (supporterId, data)),
+        (processId, (proposerId, data)),
         ...state.custodianRemovalData,
       ],
     }
-  | AccountCreationProposed({supporterId, processId, data}) => {
+  | AccountCreationProposed({proposerId, processId, data}) => {
       ...state,
       accountCreationData: [
-        (processId, (supporterId, data)),
+        (processId, (proposerId, data)),
         ...state.accountCreationData,
       ],
     }
-  | PayoutProposed({supporterId, processId, data}) => {
+  | PayoutProposed({proposerId, processId, data}) => {
       ...state,
-      payoutData: [(processId, (supporterId, data)), ...state.payoutData],
+      payoutData: [(processId, (proposerId, data)), ...state.payoutData],
     }
   | PartnerRejected(_)
   | PartnerRemovalRejected(_)
@@ -347,12 +347,12 @@ let validateProposal =
       ~validateData: ('a, t) => result=defaultDataValidator,
       _processName,
       _dataList: list((processId, (userId, 'a))),
-      {supporterId, data, dependsOnProposals, dependsOnCompletions}:
+      {proposerId, data, dependsOnProposals, dependsOnCompletions}:
         EventTypes.proposal('a),
       state,
       issuerId,
     ) =>
-  if (UserId.neq(issuerId, supporterId)) {
+  if (UserId.neq(issuerId, proposerId)) {
     InvalidIssuer;
   } else {
     state
@@ -766,6 +766,12 @@ let validate =
           && issuerPubKey == state.creatorData.pubKey
           && state.partnerData
           |> List.length == 0 =>
+      Ok
+    | (PartnerEndorsed(event), false, false)
+        when
+          event.supporterId == state.creatorData.id
+          && state.knownItems
+          |> List.length == 2 =>
       Ok
     | (_, false, false) => InvalidIssuer
     | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer

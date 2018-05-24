@@ -30,7 +30,7 @@ let () =
           log |> constructState,
           L.(
             log
-            |> withCustodianProposed(~supporter=user1, ~custodian=user2)
+            |> withCustodianProposed(~proposer=user1, ~custodian=user2)
             |> lastItem
           ),
           Validation.Ok,
@@ -59,7 +59,7 @@ let () =
           log |> constructState,
           L.(
             log
-            |> withCustodianProposed(~supporter=user1, ~custodian=user2)
+            |> withCustodianProposed(~proposer=user1, ~custodian=user2)
             |> lastItem
           ),
           Validation.Ok,

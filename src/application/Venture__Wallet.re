@@ -112,7 +112,7 @@ let preparePayoutTx =
         Event.Payout.(
           Proposed.make(
             ~eligibleWhenProposing,
-            ~supporterId=userId,
+            ~proposerId=userId,
             ~policy=payoutPolicy,
             Data.{accountIdx, payoutTx},
           )

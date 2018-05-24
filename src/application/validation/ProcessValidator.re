@@ -41,8 +41,7 @@ let make = () => {
 
 let addProposal =
     (
-      {processId, policy, supporterId, eligibleWhenProposing}:
-        EventTypes.proposal('a),
+      {processId, policy, eligibleWhenProposing}: EventTypes.proposal('a),
       map,
     ) =>
   map
@@ -50,7 +49,7 @@ let addProposal =
        processId,
        {
          status: InProgress,
-         supporterIds: [|supporterId|] |> Set.mergeMany(UserId.emptySet),
+         supporterIds: UserId.emptySet,
          rejectorIds: UserId.emptySet,
          eligibleWhenProposing,
          policy,

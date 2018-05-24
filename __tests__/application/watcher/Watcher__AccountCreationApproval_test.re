@@ -13,9 +13,10 @@ let () = {
       L.(
         createVenture(user1)
         |> withFirstPartner(user1)
-        |> withAccountCreationProposed(~supporter=user1)
+        |> withAccountCreationProposed(~proposer=user1)
       );
     let proposal = log |> L.lastEvent |> Event.getAccountCreationProposedExn;
+    let log = log |> L.withAccountCreationEndorsed(user1, proposal);
     let watcher = AccountCreationApproval.make(proposal, log |> L.eventLog);
     testWatcherHasEventPending(
       "AccountCreationAccepted",
@@ -32,9 +33,10 @@ let () = {
       L.(
         createVenture(user1)
         |> withFirstPartner(user1)
-        |> withAccountCreationProposed(~supporter=user1)
+        |> withAccountCreationProposed(~proposer=user1)
       );
     let proposal = log |> L.lastEvent |> Event.getAccountCreationProposedExn;
+    let log = log |> L.withAccountCreationEndorsed(user1, proposal);
     let watcher = AccountCreationApproval.make(proposal, log |> L.eventLog);
     let log = log |> L.withAccountCreationAccepted(proposal);
     watcher#receive(log |> L.lastItem);

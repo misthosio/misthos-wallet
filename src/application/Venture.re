@@ -421,7 +421,7 @@ module Cmd = {
                    let partnerProposed =
                      Event.makePartnerProposed(
                        ~eligibleWhenProposing=state |> State.currentPartners,
-                       ~supporterId=session.userId,
+                       ~proposerId=session.userId,
                        ~prospectId,
                        ~prospectPubKey=info.appPubKey,
                        ~policy=
@@ -438,7 +438,7 @@ module Cmd = {
                          ~lastCustodianRemovalAccepted=
                            state |> State.lastRemovalOfCustodian(prospectId),
                          ~partnerProposed,
-                         ~supporterId=session.userId,
+                         ~proposerId=session.userId,
                          ~accountIdx=AccountIndex.default,
                          ~policy=
                            state
@@ -451,7 +451,27 @@ module Cmd = {
                           v
                           |> apply(
                                ~collector=c,
+                               Event.makePartnerEndorsed(
+                                 ~processId=partnerProposed.processId,
+                                 ~supporterId=session.userId,
+                               ),
+                             )
+                        )
+                     |> then_(((v, c)) =>
+                          v
+                          |> apply(
+                               ~collector=c,
                                Event.CustodianProposed(custodianProposal),
+                             )
+                        )
+                     |> then_(((v, c)) =>
+                          v
+                          |> apply(
+                               ~collector=c,
+                               Event.makeCustodianEndorsed(
+                                 ~processId=custodianProposal.processId,
+                                 ~supporterId=session.userId,
+                               ),
                              )
                         )
                      |> then_(persist)
@@ -556,20 +576,31 @@ module Cmd = {
           (
             switch (state |> State.custodianAcceptedFor(partnerId)) {
             | Some(custodianAccepted) =>
+              let custodianRemoval =
+                Event.makeCustodianRemovalProposed(
+                  ~eligibleWhenProposing=state |> State.currentPartners,
+                  ~custodianAccepted,
+                  ~proposerId=session.userId,
+                  ~accountIdx=AccountIndex.default,
+                  ~policy=
+                    state
+                    |> State.currentPolicy(
+                         Event.Custodian.Removal.processName,
+                       ),
+                )
+                |> Event.getCustodianRemovalProposedExn;
               venture
-              |> apply(
-                   Event.makeCustodianRemovalProposed(
-                     ~eligibleWhenProposing=state |> State.currentPartners,
-                     ~custodianAccepted,
-                     ~supporterId=session.userId,
-                     ~accountIdx=AccountIndex.default,
-                     ~policy=
-                       state
-                       |> State.currentPolicy(
-                            Event.Custodian.Removal.processName,
-                          ),
-                   ),
-                 )
+              |> apply(CustodianRemovalProposed(custodianRemoval))
+              |> then_(((v, c)) =>
+                   v
+                   |> apply(
+                        ~collector=c,
+                        Event.makeCustodianRemovalEndorsed(
+                          ~processId=custodianRemoval.processId,
+                          ~supporterId=session.userId,
+                        ),
+                      )
+                 );
             | None => (venture, [||]) |> resolve
             }
           )
@@ -579,7 +610,7 @@ module Cmd = {
                    ~eligibleWhenProposing=state |> State.currentPartners,
                    ~lastPartnerAccepted=
                      state |> State.lastPartnerAccepted(partnerId),
-                   ~supporterId=session.userId,
+                   ~proposerId=session.userId,
                    ~policy=
                      state
                      |> State.currentPolicy(Event.Partner.Removal.processName),
@@ -587,6 +618,16 @@ module Cmd = {
                  |> Event.getPartnerRemovalProposedExn;
                v
                |> apply(~collector=c, PartnerRemovalProposed(proposal))
+               |> then_(((v, c)) =>
+                    v
+                    |> apply(
+                         ~collector=c,
+                         Event.makePartnerRemovalEndorsed(
+                           ~processId=proposal.processId,
+                           ~supporterId=session.userId,
+                         ),
+                       )
+                  )
                |> then_(persist)
                |> then_(
                     fun
@@ -714,6 +755,16 @@ module Cmd = {
           | Wallet.Ok(proposal) =>
             venture
             |> apply(PayoutProposed(proposal))
+            |> then_(((v, c)) =>
+                 v
+                 |> apply(
+                      ~collector=c,
+                      Event.makePayoutEndorsed(
+                        ~processId=proposal.processId,
+                        ~supporterId=session.userId,
+                      ),
+                    )
+               )
             |> then_(persist)
             |> then_(
                  fun

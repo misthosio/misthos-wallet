@@ -29,8 +29,8 @@ let make =
           switch (event, UserId.eq(acceptedPartnerId, userId)) {
           | (_, false) => {...state^, pendingEvent: None, completed: true}
           /* Creators suggests themselves */
-          | (CustodianProposed({supporterId}), true)
-              when UserId.eq(supporterId, userId) => {
+          | (CustodianProposed({proposerId}), true)
+              when UserId.eq(proposerId, userId) => {
               ...state^,
               completed: true,
             }

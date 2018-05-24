@@ -107,12 +107,12 @@ module Event = {
         ~eligibleWhenProposing,
         ~policy=Policy.unanimous,
         ~lastRemovalAccepted,
-        supporterSession: Session.Data.t,
+        proposerSession: Session.Data.t,
         prospectSession: Session.Data.t,
       ) =>
     AppEvent.makePartnerProposed(
       ~eligibleWhenProposing,
-      ~supporterId=supporterSession.userId,
+      ~proposerId=proposerSession.userId,
       ~prospectId=prospectSession.userId,
       ~prospectPubKey=
         prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
@@ -134,12 +134,12 @@ module Event = {
       (
         ~eligibleWhenProposing,
         ~lastPartnerAccepted,
-        supporterSession: Session.Data.t,
+        proposerSession: Session.Data.t,
       ) =>
     AppEvent.makePartnerRemovalProposed(
       ~eligibleWhenProposing,
       ~lastPartnerAccepted,
-      ~supporterId=supporterSession.userId,
+      ~proposerId=proposerSession.userId,
       ~policy=Policy.unanimousMinusOne,
     )
     |> AppEvent.getPartnerRemovalProposedExn;
@@ -158,12 +158,22 @@ module Event = {
       (~eligibleWhenProposing, {userId}: Session.Data.t) =>
     AppEvent.makeAccountCreationProposed(
       ~eligibleWhenProposing,
-      ~supporterId=userId,
+      ~proposerId=userId,
       ~name="test",
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimous,
     )
     |> AppEvent.getAccountCreationProposedExn;
+  let accountCreationEndorsed =
+      (
+        supporter: Session.Data.t,
+        {processId}: AppEvent.AccountCreation.Proposed.t,
+      ) =>
+    AppEvent.makeAccountCreationEndorsed(
+      ~processId,
+      ~supporterId=supporter.userId,
+    )
+    |> AppEvent.getAccountCreationEndorsedExn;
   let accountCreationAccepted = AppEvent.AccountCreation.Accepted.fromProposal;
   let custodianProposed =
       (
@@ -176,7 +186,7 @@ module Event = {
       ~eligibleWhenProposing,
       ~lastCustodianRemovalAccepted,
       ~partnerProposed=partnerProposal,
-      ~supporterId=userId,
+      ~proposerId=userId,
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimous,
     )
@@ -195,12 +205,12 @@ module Event = {
       (
         ~eligibleWhenProposing,
         ~custodianAccepted,
-        supporterSession: Session.Data.t,
+        proposerSession: Session.Data.t,
       ) =>
     AppEvent.makeCustodianRemovalProposed(
       ~eligibleWhenProposing,
       ~custodianAccepted,
-      ~supporterId=supporterSession.userId,
+      ~proposerId=proposerSession.userId,
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimousMinusOne,
     )
@@ -316,13 +326,13 @@ module Log = {
         ~withLastRemoval=true,
         ~issuer=?,
         ~policy=Policy.unanimous,
-        ~supporter: Session.Data.t,
+        ~proposer: Session.Data.t,
         ~prospect: Session.Data.t,
         {log} as l,
       ) => {
     let issuer =
       switch (issuer) {
-      | None => supporter.issuerKeyPair
+      | None => proposer.issuerKeyPair
       | Some(key) => key
       };
     let lastRemovalAccepted =
@@ -346,7 +356,7 @@ module Log = {
           ~eligibleWhenProposing=eligiblePartners(l),
           ~policy,
           ~lastRemovalAccepted,
-          supporter,
+          proposer,
           prospect,
         ),
       ),
@@ -381,10 +391,10 @@ module Log = {
     appendSystemEvent(PartnerDenied(Event.partnerDenied(proposal)));
   let withPartner = (user, ~supporters, log) =>
     switch (supporters) {
-    | [first, ...rest] =>
-      let log = log |> withPartnerProposed(~supporter=first, ~prospect=user);
+    | [first, ..._rest] =>
+      let log = log |> withPartnerProposed(~proposer=first, ~prospect=user);
       let proposal = log |> lastEvent |> AppEvent.getPartnerProposedExn;
-      rest
+      supporters
       |> List.fold_left(
            (log, supporter) =>
              log |> withPartnerEndorsed(supporter, proposal),
@@ -396,7 +406,7 @@ module Log = {
     };
   let withFirstPartner = user => withPartner(user, ~supporters=[user]);
   let withPartnerRemovalProposed =
-      (~supporter: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
+      (~proposer: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
     let lastPartnerAccepted =
       log
       |> EventLog.reduce(
@@ -412,12 +422,12 @@ module Log = {
       |> Js.Option.getExn;
     l
     |> appendEvent(
-         supporter.issuerKeyPair,
+         proposer.issuerKeyPair,
          PartnerRemovalProposed(
            Event.partnerRemovalProposed(
              ~eligibleWhenProposing=eligiblePartners(l),
              ~lastPartnerAccepted,
-             supporter,
+             proposer,
            ),
          ),
        );
@@ -435,11 +445,11 @@ module Log = {
     );
   let withPartnerRemoved = (user, ~supporters, log) =>
     switch (supporters) {
-    | [first, ...rest] =>
+    | [first, ..._rest] =>
       let log =
-        log |> withPartnerRemovalProposed(~supporter=first, ~toBeRemoved=user);
+        log |> withPartnerRemovalProposed(~proposer=first, ~toBeRemoved=user);
       let proposal = log |> lastEvent |> AppEvent.getPartnerRemovalProposedExn;
-      rest
+      supporters
       |> List.fold_left(
            (log, supporter) =>
              log |> withPartnerRemovalEndorsed(supporter, proposal),
@@ -449,15 +459,22 @@ module Log = {
     | _ => %assert
            "withPartner"
     };
-  let withAccountCreationProposed = (~supporter: Session.Data.t) =>
+  let withAccountCreationProposed = (~proposer: Session.Data.t) =>
     appendEvent(
-      supporter.issuerKeyPair,
+      proposer.issuerKeyPair,
       AccountCreationProposed(
         Event.accountCreationProposed(
           ~eligibleWhenProposing=
-            [|supporter.userId|] |> Belt.Set.mergeMany(UserId.emptySet),
-          supporter,
+            [|proposer.userId|] |> Belt.Set.mergeMany(UserId.emptySet),
+          proposer,
         ),
+      ),
+    );
+  let withAccountCreationEndorsed = (supporter: Session.Data.t, proposal) =>
+    appendEvent(
+      supporter.issuerKeyPair,
+      AccountCreationEndorsed(
+        Event.accountCreationEndorsed(supporter, proposal),
       ),
     );
   let withAccountCreationAccepted = proposal =>
@@ -465,12 +482,14 @@ module Log = {
       AccountCreationAccepted(Event.accountCreationAccepted(proposal)),
     );
   let withAccount = (~supporter, log) => {
-    let log = log |> withAccountCreationProposed(~supporter);
+    let log = log |> withAccountCreationProposed(~proposer=supporter);
     let proposal = log |> lastEvent |> AppEvent.getAccountCreationProposedExn;
-    log |> withAccountCreationAccepted(proposal);
+    log
+    |> withAccountCreationEndorsed(supporter, proposal)
+    |> withAccountCreationAccepted(proposal);
   };
   let withCustodianProposed =
-      (~supporter: Session.Data.t, ~custodian: Session.Data.t, {log} as l) => {
+      (~proposer: Session.Data.t, ~custodian: Session.Data.t, {log} as l) => {
     let (partnerProposed, lastCustodianRemovalAccepted) =
       log
       |> EventLog.reduce(
@@ -491,12 +510,12 @@ module Log = {
            (None, None),
          );
     appendEvent(
-      supporter.issuerKeyPair,
+      proposer.issuerKeyPair,
       CustodianProposed(
         Event.custodianProposed(
           ~eligibleWhenProposing=eligiblePartners(l),
           ~lastCustodianRemovalAccepted,
-          supporter,
+          proposer,
           partnerProposed |> Js.Option.getExn,
         ),
       ),
@@ -519,11 +538,11 @@ module Log = {
     appendSystemEvent(CustodianDenied(Event.custodianDenied(proposal)));
   let withCustodian = (user, ~supporters, log) =>
     switch (supporters) {
-    | [first, ...rest] =>
+    | [first, ..._rest] =>
       let log =
-        log |> withCustodianProposed(~supporter=first, ~custodian=user);
+        log |> withCustodianProposed(~proposer=first, ~custodian=user);
       let proposal = log |> lastEvent |> AppEvent.getCustodianProposedExn;
-      rest
+      supporters
       |> List.fold_left(
            (log, supporter) =>
              log |> withCustodianEndorsed(supporter, proposal),
@@ -534,7 +553,7 @@ module Log = {
            "withPartner"
     };
   let withCustodianRemovalProposed =
-      (~supporter: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
+      (~proposer: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
     let custodianAccepted =
       log
       |> EventLog.reduce(
@@ -550,12 +569,12 @@ module Log = {
       |> Js.Option.getExn;
     l
     |> appendEvent(
-         supporter.issuerKeyPair,
+         proposer.issuerKeyPair,
          CustodianRemovalProposed(
            Event.custodianRemovalProposed(
              ~eligibleWhenProposing=eligiblePartners(l),
              ~custodianAccepted,
-             supporter,
+             proposer,
            ),
          ),
        );
@@ -573,13 +592,13 @@ module Log = {
     );
   let withCustodianRemoved = (user, ~supporters, log) =>
     switch (supporters) {
-    | [first, ...rest] =>
+    | [first, ..._rest] =>
       let log =
         log
-        |> withCustodianRemovalProposed(~supporter=first, ~toBeRemoved=user);
+        |> withCustodianRemovalProposed(~proposer=first, ~toBeRemoved=user);
       let proposal =
         log |> lastEvent |> AppEvent.getCustodianRemovalProposedExn;
-      rest
+      supporters
       |> List.fold_left(
            (log, supporter) =>
              log |> withCustodianRemovalEndorsed(supporter, proposal),
