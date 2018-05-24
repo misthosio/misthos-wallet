@@ -2,6 +2,7 @@
 'use strict';
 
 var BTC = require("./BTC.bs.js");
+var Utils = require("../../utils/Utils.bs.js");
 var Address = require("./Address.bs.js");
 var Network = require("./Network.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
@@ -17,9 +18,11 @@ var PayoutTransaction = require("./PayoutTransaction.bs.js");
 
 function collidingProcesses(processId, param) {
   var reserved = param[/* reserved */2];
-  var inputs = Belt_Map.getExn(param[/* payoutProcesses */4], processId)[/* usedInputs */1];
+  var inputs = Js_option.getWithDefault(/* array */[], Utils.mapOption((function (param) {
+              return param[/* usedInputs */1];
+            }), Belt_Map.get(param[/* payoutProcesses */4], processId)));
   return Belt_Set.remove(Belt_Array.reduceU(inputs, PrimitiveTypes.ProcessId[/* emptySet */9], (function (res, input) {
-                    return Belt_Set.union(Belt_Map.getExn(reserved, input), res);
+                    return Belt_Set.union(Belt_Map.getWithDefault(reserved, input, PrimitiveTypes.ProcessId[/* emptySet */9]), res);
                   })), processId);
 }
 
