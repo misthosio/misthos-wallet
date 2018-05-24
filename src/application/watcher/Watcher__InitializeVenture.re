@@ -8,11 +8,13 @@ let defaultAccountName = "default";
 
 type state =
   | ProposePartner
-  | PartnerProposed(Partner.Proposed.t)
+  | EndorsePartner(Partner.Proposed.t)
+  | PartnerEndorsed(Partner.Proposed.t)
   | ProposeAccountCreation(Partner.Proposed.t)
-  | AccountCreationProposed(processId, Partner.Proposed.t)
+  | EndorseAccountCreation(processId, Partner.Proposed.t)
+  | AccountCreationEndorsed(processId, Partner.Proposed.t)
   | ProposeCustodian(Partner.Proposed.t)
-  | CustodianProposed(processId)
+  | EndorseCustodian(processId)
   | Complete;
 
 let make =
@@ -32,8 +34,12 @@ let make =
           switch (state^, event) {
           | (ProposePartner, PartnerProposed(event))
               when UserId.eq(event.data.id, creatorId) =>
-            PartnerProposed(event)
-          | (PartnerProposed(partnerProposedEvent), PartnerAccepted(event))
+            EndorsePartner(event)
+          | (EndorsePartner(partnerProposedEvent), PartnerEndorsed(event))
+              when
+                ProcessId.eq(partnerProposedEvent.processId, event.processId) =>
+            PartnerEndorsed(partnerProposedEvent)
+          | (PartnerEndorsed(partnerProposedEvent), PartnerAccepted(event))
               when
                 ProcessId.eq(partnerProposedEvent.processId, event.processId) =>
             ProposeAccountCreation(partnerProposedEvent)
@@ -43,17 +49,23 @@ let make =
             )
               when
                 AccountIndex.eq(event.data.accountIdx, AccountIndex.default) =>
-            AccountCreationProposed(event.processId, partnerProposedEvent)
+            EndorseAccountCreation(event.processId, partnerProposedEvent)
           | (
-              AccountCreationProposed(processId, partnerProcess),
+              EndorseAccountCreation(processId, partnerProcess),
+              AccountCreationEndorsed(event),
+            )
+              when ProcessId.eq(processId, event.processId) =>
+            AccountCreationEndorsed(processId, partnerProcess)
+          | (
+              AccountCreationEndorsed(processId, partnerProcess),
               AccountCreationAccepted(event),
             )
               when ProcessId.eq(processId, event.processId) =>
             ProposeCustodian(partnerProcess)
           | (ProposeCustodian(_), CustodianProposed(event))
               when UserId.eq(event.data.partnerId, creatorId) =>
-            CustodianProposed(event.processId)
-          | (CustodianProposed(processId), CustodianAccepted(event))
+            EndorseCustodian(event.processId)
+          | (EndorseCustodian(processId), CustodianEndorsed(event))
               when ProcessId.eq(processId, event.processId) =>
             Complete
           | _ => state^
@@ -75,6 +87,11 @@ let make =
                 ~lastRemovalAccepted=None,
               ),
             ))
+          | EndorsePartner({processId}) =>
+            Some((
+              issuerKeyPair,
+              Event.makePartnerEndorsed(~processId, ~supporterId=creatorId),
+            ))
           | ProposeAccountCreation(_) =>
             Some((
               issuerKeyPair,
@@ -85,6 +102,14 @@ let make =
                 ~name=defaultAccountName,
                 ~accountIdx=AccountIndex.default,
                 ~policy=metaPolicy,
+              ),
+            ))
+          | EndorseAccountCreation(processId, _) =>
+            Some((
+              issuerKeyPair,
+              Event.makeAccountCreationEndorsed(
+                ~processId,
+                ~supporterId=creatorId,
               ),
             ))
           | ProposeCustodian(partnerProposed) =>
@@ -100,7 +125,14 @@ let make =
                 ~policy=metaPolicy,
               ),
             ))
-          | _ => None
+          | EndorseCustodian(processId) =>
+            Some((
+              issuerKeyPair,
+              Event.makeCustodianEndorsed(~processId, ~supporterId=creatorId),
+            ))
+          | PartnerEndorsed(_)
+          | AccountCreationEndorsed(_)
+          | Complete => None
           }
         );
     };

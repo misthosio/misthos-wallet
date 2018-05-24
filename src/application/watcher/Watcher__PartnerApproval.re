@@ -11,6 +11,7 @@ type state = {
   policy: Policy.t,
   systemIssuer: Bitcoin.ECPair.t,
   creatorId: userId,
+  received: int,
 };
 
 let make = (proposal: Partner.Proposed.t, log) => {
@@ -24,6 +25,7 @@ let make = (proposal: Partner.Proposed.t, log) => {
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),
         creatorId: UserId.fromString(""),
+        received: 0,
       });
     val completed = ref(false);
     val result = ref(None);
@@ -34,6 +36,7 @@ let make = (proposal: Partner.Proposed.t, log) => {
           ...state^,
           eligibilityCollector:
             state^.eligibilityCollector |> EligibilityCollector.apply(event),
+          received: state^.received + 1,
         };
       state :=
         (
@@ -97,7 +100,7 @@ let make = (proposal: Partner.Proposed.t, log) => {
           | _ => None
           }
         );
-      if (proposal.data.id == state^.creatorId && log |> EventLog.length == 3) {
+      if (proposal.data.id == state^.creatorId && state^.received == 3) {
         result :=
           Some((
             state^.systemIssuer,
