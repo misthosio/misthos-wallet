@@ -6,6 +6,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Address = require("./Address.bs.js");
 var Belt_Id = require("bs-platform/lib/js/belt_Id.js");
+var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
@@ -51,6 +52,10 @@ var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
 
 function inputSet() {
   return Belt_Set.make(TxInputCmp);
+}
+
+function inputMap() {
+  return Belt_Map.make(TxInputCmp);
 }
 
 function encodeInput(input) {
@@ -301,6 +306,7 @@ exports.encode = encode;
 exports.decode = decode;
 exports.TxInputCmp = TxInputCmp;
 exports.inputSet = inputSet;
+exports.inputMap = inputMap;
 exports.encodeInput = encodeInput;
 exports.decodeInput = decodeInput;
 exports.Make = Make;

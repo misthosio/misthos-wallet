@@ -52,6 +52,10 @@ type inputSet = Belt.Set.t(TxInputCmp.t, TxInputCmp.identity);
 
 let inputSet = () => Belt.Set.make(~id=(module TxInputCmp));
 
+type inputMap('a) = Belt.Map.t(TxInputCmp.t, 'a, TxInputCmp.identity);
+
+let inputMap = () => Belt.Map.make(~id=(module TxInputCmp));
+
 let encodeInput = input =>
   Json.Encode.(
     object_([

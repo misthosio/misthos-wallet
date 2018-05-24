@@ -7,6 +7,7 @@ var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var WalletTypes = require("./WalletTypes.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
@@ -42,7 +43,7 @@ function nonReservedOldInputs(accountIdx, userId, collector) {
 }
 
 function unusedInputs(param) {
-  return Belt_Set.diff(param[/* unused */1], param[/* reserved */2]);
+  return Belt_Set.diff(param[/* unused */1], Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */2])));
 }
 
 function network(param) {
@@ -61,12 +62,26 @@ function make() {
   return /* record */[
           /* network : Regtest */0,
           /* unused */Network.inputSet(/* () */0),
-          /* reserved */Network.inputSet(/* () */0),
+          /* reserved */Network.inputMap(/* () */0),
           /* keyChains */AccountKeyChain.Collection[/* empty */0],
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* activatedKeyChain : [] */0,
           /* exposedCoordinates : [] */0
         ];
+}
+
+function removeInputsFromReserved(processId, inputs, reserved) {
+  return Belt_Array.reduceU(inputs, reserved, (function (lookup, input) {
+                return Belt_Map.updateU(lookup, input, (function (processes) {
+                              var processes$1 = Belt_Set.remove(Js_option.getWithDefault(PrimitiveTypes.ProcessId[/* emptySet */9], processes), processId);
+                              var match = Belt_Set.isEmpty(processes$1);
+                              if (match) {
+                                return /* None */0;
+                              } else {
+                                return /* Some */[processes$1];
+                              }
+                            }));
+              }));
 }
 
 function apply($$event, state) {
@@ -101,12 +116,17 @@ function apply($$event, state) {
         var match = $$event[0];
         var payoutTx = match[/* data */6][/* payoutTx */1];
         var changeAddress = payoutTx[/* changeAddress */3];
+        var processId = match[/* processId */0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */Belt_Set.mergeMany(state[/* reserved */2], payoutTx[/* usedInputs */1]),
+                /* reserved */Belt_Array.reduceU(payoutTx[/* usedInputs */1], state[/* reserved */2], (function (lookup, input) {
+                        return Belt_Map.updateU(lookup, input, (function (processes) {
+                                      return /* Some */[Belt_Set.add(Js_option.getWithDefault(PrimitiveTypes.ProcessId[/* emptySet */9], processes), processId)];
+                                    }));
+                      })),
                 /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */4], match[/* processId */0], payoutTx),
+                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */4], processId, payoutTx),
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */changeAddress ? /* :: */[
                     changeAddress[0][/* coordinates */2],
@@ -114,11 +134,13 @@ function apply($$event, state) {
                   ] : state[/* exposedCoordinates */6]
               ];
     case 29 : 
-        var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */4], $$event[0][/* processId */0]);
+        var processId$1 = $$event[0][/* processId */0];
+        var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$1);
+        var reserved = removeInputsFromReserved(processId$1, payoutTx$1[/* usedInputs */1], state[/* reserved */2]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */Belt_Set.removeMany(state[/* reserved */2], payoutTx$1[/* usedInputs */1]),
+                /* reserved */reserved,
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
@@ -126,23 +148,27 @@ function apply($$event, state) {
               ];
     case 32 : 
         var match$1 = $$event[0];
-        var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */4], match$1[/* processId */0]);
+        var processId$2 = match$1[/* processId */0];
+        var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$2);
+        var reserved$1 = removeInputsFromReserved(processId$2, payoutTx$2[/* usedInputs */1], state[/* reserved */2]);
         var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], state[/* network */0], payoutTx$2);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */1], match$2[0]) : state[/* unused */1], payoutTx$2[/* usedInputs */1]),
-                /* reserved */Belt_Set.removeMany(state[/* reserved */2], payoutTx$2[/* usedInputs */1]),
+                /* reserved */reserved$1,
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
     case 34 : 
-        var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */4], $$event[0][/* processId */0]);
+        var processId$3 = $$event[0][/* processId */0];
+        var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$3);
+        var reserved$2 = removeInputsFromReserved(processId$3, payoutTx$3[/* usedInputs */1], state[/* reserved */2]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */Belt_Set.removeMany(state[/* reserved */2], payoutTx$3[/* usedInputs */1]),
+                /* reserved */reserved$2,
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
