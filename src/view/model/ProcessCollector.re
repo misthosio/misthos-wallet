@@ -35,7 +35,7 @@ let make = ProcessId.makeMap;
 let addProposal =
     (
       localUser,
-      {eligibleWhenProposing, processId, supporterId, data}: proposal('a),
+      {eligibleWhenProposing, processId, proposerId, data}: proposal('a),
       makeData: 'a => 'data,
       map,
     ) =>
@@ -45,21 +45,12 @@ let addProposal =
        {
          processId,
          status: PendingApproval,
-         proposedBy: supporterId,
-         canVote:
-           UserId.neq(supporterId, localUser)
-           && eligibleWhenProposing
-           |. Set.has(localUser),
+         proposedBy: proposerId,
+         canVote: eligibleWhenProposing |. Set.has(localUser),
          voters:
            eligibleWhenProposing
            |> Set.toList
-           |. List.mapU((. userId) =>
-                {
-                  userId,
-                  voteStatus:
-                    UserId.eq(supporterId, userId) ? Endorsed : Pending,
-                }
-              ),
+           |. List.mapU((. userId) => {userId, voteStatus: Pending}),
          data: makeData(data),
        },
      );

@@ -20,7 +20,7 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
         dependencyMet: false,
         eligibilityCollector:
           EligibilityCollector.make(proposal.eligibleWhenProposing),
-        endorsements: UserId.emptySet |. Set.add(proposal.supporterId),
+        endorsements: UserId.emptySet,
         rejections: UserId.emptySet,
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),

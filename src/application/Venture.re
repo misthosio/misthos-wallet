@@ -421,7 +421,7 @@ module Cmd = {
                    let partnerProposed =
                      Event.makePartnerProposed(
                        ~eligibleWhenProposing=state |> State.currentPartners,
-                       ~supporterId=session.userId,
+                       ~proposerId=session.userId,
                        ~prospectId,
                        ~prospectPubKey=info.appPubKey,
                        ~policy=
@@ -438,7 +438,7 @@ module Cmd = {
                          ~lastCustodianRemovalAccepted=
                            state |> State.lastRemovalOfCustodian(prospectId),
                          ~partnerProposed,
-                         ~supporterId=session.userId,
+                         ~proposerId=session.userId,
                          ~accountIdx=AccountIndex.default,
                          ~policy=
                            state
@@ -561,7 +561,7 @@ module Cmd = {
                    Event.makeCustodianRemovalProposed(
                      ~eligibleWhenProposing=state |> State.currentPartners,
                      ~custodianAccepted,
-                     ~supporterId=session.userId,
+                     ~proposerId=session.userId,
                      ~accountIdx=AccountIndex.default,
                      ~policy=
                        state
@@ -579,7 +579,7 @@ module Cmd = {
                    ~eligibleWhenProposing=state |> State.currentPartners,
                    ~lastPartnerAccepted=
                      state |> State.lastPartnerAccepted(partnerId),
-                   ~supporterId=session.userId,
+                   ~proposerId=session.userId,
                    ~policy=
                      state
                      |> State.currentPolicy(Event.Partner.Removal.processName),

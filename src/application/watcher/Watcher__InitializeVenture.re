@@ -68,7 +68,7 @@ let make =
               Event.makePartnerProposed(
                 ~eligibleWhenProposing=
                   [|creatorId|] |> Belt.Set.mergeMany(UserId.emptySet),
-                ~supporterId=creatorId,
+                ~proposerId=creatorId,
                 ~prospectId=creatorId,
                 ~prospectPubKey=creatorPubKey,
                 ~policy=metaPolicy,
@@ -81,7 +81,7 @@ let make =
               Event.makeAccountCreationProposed(
                 ~eligibleWhenProposing=
                   [|creatorId|] |> Belt.Set.mergeMany(UserId.emptySet),
-                ~supporterId=creatorId,
+                ~proposerId=creatorId,
                 ~name=defaultAccountName,
                 ~accountIdx=AccountIndex.default,
                 ~policy=metaPolicy,
@@ -95,7 +95,7 @@ let make =
                   [|creatorId|] |> Belt.Set.mergeMany(UserId.emptySet),
                 ~lastCustodianRemovalAccepted=None,
                 ~partnerProposed,
-                ~supporterId=creatorId,
+                ~proposerId=creatorId,
                 ~accountIdx=AccountIndex.default,
                 ~policy=metaPolicy,
               ),

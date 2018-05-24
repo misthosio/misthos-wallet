@@ -7,7 +7,7 @@ type proposal('a) = {
   dependsOnProposals: ProcessId.set,
   dependsOnCompletions: ProcessId.set,
   eligibleWhenProposing: UserId.set,
-  supporterId: userId,
+  proposerId: userId,
   policy: Policy.t,
   data: 'a,
 };
@@ -45,7 +45,7 @@ module type ProposedEvent =
         ~dependsOnProposals: ProcessId.set=?,
         ~dependsOnCompletions: ProcessId.set=?,
         ~eligibleWhenProposing: UserId.set,
-        ~supporterId: userId,
+        ~proposerId: userId,
         ~policy: Policy.t,
         Data.t
       ) =>
@@ -63,7 +63,7 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
            ~dependsOnProposals=ProcessId.emptySet,
            ~dependsOnCompletions=ProcessId.emptySet,
            ~eligibleWhenProposing,
-           ~supporterId,
+           ~proposerId,
            ~policy,
            data,
          ) => {
@@ -71,7 +71,7 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
        eligibleWhenProposing,
        dependsOnProposals,
        dependsOnCompletions,
-       supporterId,
+       proposerId,
        policy,
        data,
      };
@@ -95,7 +95,7 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
              "eligibleWhenProposing",
              array(UserId.encode, event.eligibleWhenProposing |> Set.toArray),
            ),
-           ("supporterId", UserId.encode(event.supporterId)),
+           ("proposerId", UserId.encode(event.proposerId)),
            ("policy", Policy.encode(event.policy)),
            ("data", Data.encode(event.data)),
          ])
@@ -115,7 +115,7 @@ let makeProposal = (name: string) : (module ProposedEvent) =>
            raw
            |> field("eligibleWhenProposing", array(UserId.decode))
            |> Set.mergeMany(UserId.emptySet),
-         supporterId: raw |> field("supporterId", UserId.decode),
+         proposerId: raw |> field("proposerId", UserId.decode),
          policy: raw |> field("policy", Policy.decode),
          data: raw |> field("data", Data.decode),
        };
@@ -261,7 +261,7 @@ module type Process =
           ~dependsOnProposals: ProcessId.set=?,
           ~dependsOnCompletions: ProcessId.set=?,
           ~eligibleWhenProposing: UserId.set,
-          ~supporterId: userId,
+          ~proposerId: userId,
           ~policy: Policy.t,
           Data.t
         ) =>

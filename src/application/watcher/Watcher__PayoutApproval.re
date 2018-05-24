@@ -18,7 +18,7 @@ let make = (proposal: Payout.Proposed.t, log) => {
       ref({
         eligibilityCollector:
           EligibilityCollector.make(proposal.eligibleWhenProposing),
-        endorsements: UserId.emptySet |. Set.add(proposal.supporterId),
+        endorsements: UserId.emptySet,
         rejections: UserId.emptySet,
         policy: proposal.policy,
         systemIssuer: Bitcoin.ECPair.makeRandom(),

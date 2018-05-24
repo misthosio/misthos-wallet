@@ -107,12 +107,12 @@ module Event = {
         ~eligibleWhenProposing,
         ~policy=Policy.unanimous,
         ~lastRemovalAccepted,
-        supporterSession: Session.Data.t,
+        proposerSession: Session.Data.t,
         prospectSession: Session.Data.t,
       ) =>
     AppEvent.makePartnerProposed(
       ~eligibleWhenProposing,
-      ~supporterId=supporterSession.userId,
+      ~proposerId=proposerSession.userId,
       ~prospectId=prospectSession.userId,
       ~prospectPubKey=
         prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
@@ -134,12 +134,12 @@ module Event = {
       (
         ~eligibleWhenProposing,
         ~lastPartnerAccepted,
-        supporterSession: Session.Data.t,
+        proposerSession: Session.Data.t,
       ) =>
     AppEvent.makePartnerRemovalProposed(
       ~eligibleWhenProposing,
       ~lastPartnerAccepted,
-      ~supporterId=supporterSession.userId,
+      ~proposerId=proposerSession.userId,
       ~policy=Policy.unanimousMinusOne,
     )
     |> AppEvent.getPartnerRemovalProposedExn;
@@ -158,7 +158,7 @@ module Event = {
       (~eligibleWhenProposing, {userId}: Session.Data.t) =>
     AppEvent.makeAccountCreationProposed(
       ~eligibleWhenProposing,
-      ~supporterId=userId,
+      ~proposerId=userId,
       ~name="test",
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimous,
@@ -176,7 +176,7 @@ module Event = {
       ~eligibleWhenProposing,
       ~lastCustodianRemovalAccepted,
       ~partnerProposed=partnerProposal,
-      ~supporterId=userId,
+      ~proposerId=userId,
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimous,
     )
@@ -195,12 +195,12 @@ module Event = {
       (
         ~eligibleWhenProposing,
         ~custodianAccepted,
-        supporterSession: Session.Data.t,
+        proposerSession: Session.Data.t,
       ) =>
     AppEvent.makeCustodianRemovalProposed(
       ~eligibleWhenProposing,
       ~custodianAccepted,
-      ~supporterId=supporterSession.userId,
+      ~proposerId=proposerSession.userId,
       ~accountIdx=AccountIndex.default,
       ~policy=Policy.unanimousMinusOne,
     )
