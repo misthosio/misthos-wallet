@@ -130,8 +130,14 @@ function Make(funarg) {
                 ]
               ]);
   };
-  var log = function (param) {
-    return Json_encode.array(item, param);
+  var log = function (log$1) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "items",
+                  Json_encode.array(item, log$1)
+                ],
+                /* [] */0
+              ]);
   };
   var ecSig = function (ecSig$1) {
     return Utils.signatureFromString(Json_decode.string(ecSig$1));
@@ -145,7 +151,9 @@ function Make(funarg) {
           ];
   };
   var log$1 = function (param) {
-    return Json_decode.array(item$1, param);
+    return Json_decode.field("items", (function (param) {
+                  return Json_decode.array(item$1, param);
+                }), param);
   };
   return [
           make,
