@@ -134,7 +134,7 @@ let make = (~session, ~updateSession, _children) => {
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn, _, _) => <PublicHome onSignIn />
     | (_, TypographyStack, _) => <TypographyStack />
-    | (Unknown, _, _) => <Spinner text="Loading" />
+    | (Unknown, _, _) => <BlankScreen text="Loading" />
     | (AnonymousLogin, _, _) =>
       <Spinner
         text={js|
@@ -143,7 +143,7 @@ let make = (~session, ~updateSession, _children) => {
              |js}
       />
     | (LoginPending, _, _) =>
-      <Spinner text="Waiting for BlockStack session" />
+      <BlankScreen text="Waiting for BlockStack session" />
     | (
         LoggedIn(_),
         Venture(_, _) | Home | JoinVenture(_),
