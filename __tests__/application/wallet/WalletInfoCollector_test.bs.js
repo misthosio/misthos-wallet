@@ -21,10 +21,10 @@ describe("WalletInfoCollector", (function () {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withIncomeDetected */40](2, Generators.Log[/* withIncomeDetected */40](1, Generators.Log[/* withIncomeDetected */40](0, Generators.Log[/* withIncomeAddressExposed */39](user1, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
+                      return Generators.Log[/* withIncomeDetected */41](2, Generators.Log[/* withIncomeDetected */41](1, Generators.Log[/* withIncomeDetected */41](0, Generators.Log[/* withIncomeAddressExposed */40](user1, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
                                                               user1,
                                                               /* [] */0
-                                                            ], Generators.Log[/* withIncomeAddressExposed */39](user1, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */31](user2, /* :: */[
+                                                            ], Generators.Log[/* withIncomeAddressExposed */40](user1, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */32](user2, /* :: */[
                                                                                   user1,
                                                                                   /* :: */[
                                                                                     user2,
@@ -33,10 +33,10 @@ describe("WalletInfoCollector", (function () {
                                                                                 ], Generators.Log[/* withPartner */17](user2, /* :: */[
                                                                                       user1,
                                                                                       /* [] */0
-                                                                                    ], Generators.Log[/* withIncomeAddressExposed */39](user1, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */31](user1, /* :: */[
+                                                                                    ], Generators.Log[/* withIncomeAddressExposed */40](user1, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */32](user1, /* :: */[
                                                                                                           user1,
                                                                                                           /* [] */0
-                                                                                                        ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))))))))))))))))));
+                                                                                                        ], Generators.Log[/* withAccount */26](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))))))))))))))))));
                     }), (function (sessions, log) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user1 = match[0];

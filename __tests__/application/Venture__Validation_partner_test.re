@@ -22,7 +22,7 @@ let () = {
           log |> constructState,
           L.(
             log
-            |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+            |> withPartnerProposed(~proposer=user1, ~prospect=user2)
             |> lastItem
           ),
           Validation.Ok,
@@ -47,7 +47,7 @@ let () = {
           log |> constructState,
           L.(
             log
-            |> withPartnerProposed(~supporter=user2, ~prospect=user1)
+            |> withPartnerProposed(~proposer=user2, ~prospect=user1)
             |> lastItem
           ),
           Validation.BadData("Partner already exists"),
@@ -61,7 +61,7 @@ let () = {
         log |> constructState,
         L.(
           log
-          |> withPartnerProposed(~supporter=user1, ~prospect=user1)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user1)
           |> lastItem
         ),
         Validation.Ok,
@@ -86,7 +86,7 @@ let () = {
           log |> constructState,
           L.(
             log
-            |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+            |> withPartnerProposed(~proposer=user1, ~prospect=user2)
             |> lastItem
           ),
           Validation.Ok,
@@ -115,7 +115,7 @@ let () = {
             log
             |> withPartnerProposed(
                  ~withLastRemoval=false,
-                 ~supporter=user3,
+                 ~proposer=user3,
                  ~prospect=user2,
                )
             |> lastItem
@@ -145,7 +145,7 @@ let () = {
           L.(
             log
             |> withPartnerRemovalProposed(
-                 ~supporter=user1,
+                 ~proposer=user1,
                  ~toBeRemoved=user2,
                )
             |> lastItem

@@ -1017,6 +1017,10 @@ function makePartnerRemovalEndorsed(processId, supporterId) {
   return /* PartnerRemovalEndorsed */Block.__(8, [Curry._2(Endorsed$1[/* make */0], processId, supporterId)]);
 }
 
+function makeAccountCreationEndorsed(processId, supporterId) {
+  return /* AccountCreationEndorsed */Block.__(13, [Curry._2(Endorsed$2[/* make */0], processId, supporterId)]);
+}
+
 function makeCustodianRejected(processId, rejectorId) {
   return /* CustodianRejected */Block.__(16, [Curry._2(Rejected$3[/* make */0], processId, rejectorId)]);
 }
@@ -1478,6 +1482,7 @@ exports.makePartnerRejected = makePartnerRejected;
 exports.makePartnerEndorsed = makePartnerEndorsed;
 exports.makePartnerRemovalRejected = makePartnerRemovalRejected;
 exports.makePartnerRemovalEndorsed = makePartnerRemovalEndorsed;
+exports.makeAccountCreationEndorsed = makeAccountCreationEndorsed;
 exports.makeCustodianRejected = makeCustodianRejected;
 exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;

@@ -13,7 +13,7 @@ let () = {
       L.(
         createVenture(user1)
         |> withFirstPartner(user1)
-        |> withAccountCreationProposed(~supporter=user1)
+        |> withAccountCreationProposed(~proposer=user1)
       );
     let proposal = log |> L.lastEvent |> Event.getAccountCreationProposedExn;
     let watcher = AccountCreationApproval.make(proposal, log |> L.eventLog);
@@ -32,7 +32,7 @@ let () = {
       L.(
         createVenture(user1)
         |> withFirstPartner(user1)
-        |> withAccountCreationProposed(~supporter=user1)
+        |> withAccountCreationProposed(~proposer=user1)
       );
     let proposal = log |> L.lastEvent |> Event.getAccountCreationProposedExn;
     let watcher = AccountCreationApproval.make(proposal, log |> L.eventLog);

@@ -655,6 +655,11 @@ let makePartnerRemovalEndorsed = (~processId, ~supporterId) =>
     Partner.Removal.Endorsed.make(~processId, ~supporterId),
   );
 
+let makeAccountCreationEndorsed = (~processId, ~supporterId) =>
+  AccountCreationEndorsed(
+    AccountCreation.Endorsed.make(~processId, ~supporterId),
+  );
+
 let makeCustodianRejected = (~processId, ~rejectorId) =>
   CustodianRejected(Custodian.Rejected.make(~processId, ~rejectorId));
 

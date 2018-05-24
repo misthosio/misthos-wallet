@@ -44,7 +44,7 @@ let () = {
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user2)
         );
       },
       (_sessions, log) =>
@@ -68,7 +68,7 @@ let () = {
           log |> constructState,
           L.(
             log
-            |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+            |> withPartnerProposed(~proposer=user2, ~prospect=user3)
             |> lastItem
           ),
           Validation.InvalidIssuer,
@@ -91,7 +91,7 @@ let () = {
             log
             |> withPartnerProposed(
                  ~issuer=user1.issuerKeyPair,
-                 ~supporter=user2,
+                 ~proposer=user2,
                  ~prospect=user3,
                )
             |> lastItem
@@ -110,7 +110,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -119,7 +119,7 @@ let () = {
           log |> constructState,
           L.(
             log
-            |> withPartnerProposed(~supporter=user2, ~prospect=user3)
+            |> withPartnerProposed(~proposer=user2, ~prospect=user3)
             |> lastItem
           ),
           Validation.Ok,
@@ -138,7 +138,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -170,7 +170,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -193,7 +193,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -226,7 +226,7 @@ let () = {
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
           |> withPartner(user3, ~supporters=[user1, user2])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user4)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user4)
         );
       },
       (sessions, log) => {
@@ -253,7 +253,7 @@ let () = {
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
           |> withPartner(user3, ~supporters=[user1, user2])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user4)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user4)
         );
       },
       (sessions, log) => {
@@ -278,7 +278,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -303,7 +303,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -335,7 +335,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -358,7 +358,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -391,7 +391,7 @@ let () = {
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
           |> withPartner(user3, ~supporters=[user1, user2])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user4)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user4)
         );
       },
       (sessions, log) => {
@@ -418,7 +418,7 @@ let () = {
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
           |> withPartner(user3, ~supporters=[user1, user2])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user4)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user4)
         );
       },
       (sessions, log) => {
@@ -443,7 +443,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -468,7 +468,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -493,7 +493,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -523,7 +523,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -559,7 +559,7 @@ let () = {
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (_sessions, log) => {

@@ -28,7 +28,7 @@ describe("Completes when the account is accepted", (function () {
         var log = Generators.Log[/* withAccountCreationProposed */23](user1)(Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
         var proposal = Event.getAccountCreationProposedExn(Generators.Log[/* lastEvent */5](log));
         var watcher = Watcher__AccountCreationApproval.make(proposal, Generators.Log[/* eventLog */6](log));
-        var log$1 = Generators.Log[/* withAccountCreationAccepted */24](proposal)(log);
+        var log$1 = Generators.Log[/* withAccountCreationAccepted */25](proposal)(log);
         Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */4](log$1));
         return WatcherHelpers.testWatcherHasCompleted(watcher);
       }));

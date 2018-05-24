@@ -70,12 +70,12 @@ let () = {
       L.(
         createVenture(user1)
         |> withFirstPartner(user1)
-        |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+        |> withPartnerProposed(~proposer=user1, ~prospect=user2)
       );
     let {processId: partnerProcess}: Event.Partner.Proposed.t =
       log |> L.lastEvent |> Event.getPartnerProposedExn;
     let log =
-      L.(log |> withCustodianProposed(~supporter=user1, ~custodian=user2));
+      L.(log |> withCustodianProposed(~proposer=user1, ~custodian=user2));
     let {processId: custodianProcess}: Event.Custodian.Proposed.t =
       log |> L.lastEvent |> Event.getCustodianProposedExn;
     let state = log |> constructState;
@@ -117,14 +117,13 @@ let () = {
         |> withFirstPartner(user1)
         |> withPartner(user2, ~supporters=[user1])
         |> withCustodian(user2, ~supporters=[user1, user2])
-        |> withCustodianRemovalProposed(~supporter=user1, ~toBeRemoved=user2)
+        |> withCustodianRemovalProposed(~proposer=user1, ~toBeRemoved=user2)
       );
     let {processId: custodianRemovalProcess}: Event.Custodian.Removal.Proposed.t =
       log |> L.lastEvent |> Event.getCustodianRemovalProposedExn;
     let log =
       L.(
-        log
-        |> withPartnerRemovalProposed(~supporter=user1, ~toBeRemoved=user2)
+        log |> withPartnerRemovalProposed(~proposer=user1, ~toBeRemoved=user2)
       );
     let {processId: partnerRemovalProcess}: Event.Partner.Removal.Proposed.t =
       log |> L.lastEvent |> Event.getPartnerRemovalProposedExn;

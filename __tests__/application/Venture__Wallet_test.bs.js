@@ -12,7 +12,7 @@ describe("Venture__Wallet", (function () {
                       var match = Generators.threeUserSessionsFromArray(sessions);
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */31](user2, /* :: */[
+                      return Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */37](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */32](user2, /* :: */[
                                                       user1,
                                                       /* :: */[
                                                         user2,
@@ -21,17 +21,17 @@ describe("Venture__Wallet", (function () {
                                                     ], Generators.Log[/* withPartner */17](user2, /* :: */[
                                                           user1,
                                                           /* [] */0
-                                                        ], Generators.Log[/* withCustodian */31](user1, /* :: */[
+                                                        ], Generators.Log[/* withCustodian */32](user1, /* :: */[
                                                               user1,
                                                               /* [] */0
-                                                            ], Generators.Log[/* withAccount */25](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)))))))))));
+                                                            ], Generators.Log[/* withAccount */26](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)))))))))));
                     }), (function (sessions, log) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
                       var user3 = match[2];
                       var user2 = match[1];
                       var user1 = match[0];
                       WalletHelpers.testNextIncomeAddress(user1, "2NCAxqkK9bhRQWssyrMqJhXS65xmUCWraXT", WalletHelpers.testNextIncomeAddress(user2, "2NGFyACMJG6KJ9Db92n9MM2nNtR4r4tUNFW", WalletHelpers.testNextIncomeAddress(user1, "2MtvnaAWnfkSBU7NbpSfMRrCKSTgLeRVd93", WalletHelpers.constructState(log))));
-                      var log$1 = Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */38](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */37](Generators.Log[/* withCustodianKeyChain */36](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */31](user3, /* :: */[
+                      var log$1 = Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */32](user3, /* :: */[
                                                 user1,
                                                 /* :: */[
                                                   user2,

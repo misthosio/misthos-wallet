@@ -14,7 +14,7 @@ let () =
         let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         L.(
           createVenture(user1)
-          |> withPartnerProposed(~supporter=user1, ~prospect=user1)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user1)
         );
       },
       (_sessions, log) => {
@@ -39,7 +39,7 @@ let () =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user2)
         );
       },
       (_sessions, log) => {
@@ -64,7 +64,7 @@ let () =
         L.(
           createVenture(user1)
           |> withFirstPartner(user1)
-          |> withPartnerProposed(~supporter=user1, ~prospect=user2)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user2)
         );
       },
       (_sessions, log) => {
@@ -85,7 +85,7 @@ let () =
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (_sessions, log) => {
@@ -104,7 +104,7 @@ let () =
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -133,7 +133,7 @@ let () =
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
           |> withPartnerRemoved(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (_sessions, log) => {
@@ -159,7 +159,7 @@ let () =
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {
@@ -187,7 +187,7 @@ let () =
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withPartner(user2, ~supporters=[user1])
-          |> withPartnerProposed(~supporter=user1, ~prospect=user3)
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
         );
       },
       (sessions, log) => {

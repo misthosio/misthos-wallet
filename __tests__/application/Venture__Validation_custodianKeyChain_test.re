@@ -97,7 +97,7 @@ let () =
           createVenture(user1)
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
-          |> withCustodianProposed(~supporter=user1, ~custodian=user1)
+          |> withCustodianProposed(~proposer=user1, ~custodian=user1)
         );
       },
       (sessions, log) => {
