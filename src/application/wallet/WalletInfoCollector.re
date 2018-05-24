@@ -51,7 +51,7 @@ let nonReservedOldInputs =
      );
 };
 
-let unusedInputs = ({unused}) => unused;
+let unusedInputs = ({unused, reserved}) => Set.diff(unused, reserved);
 
 let network = ({network}) => network;
 
@@ -136,7 +136,6 @@ let apply = (event, state) =>
       processId,
     }) => {
       ...state,
-      unused: state.unused |. Set.removeMany(usedInputs),
       reserved: state.reserved |. Set.mergeMany(usedInputs),
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
       exposedCoordinates:
@@ -153,7 +152,6 @@ let apply = (event, state) =>
       state.payoutProcesses |. Map.getExn(processId);
     {
       ...state,
-      unused: state.unused |. Set.mergeMany(payoutTx.usedInputs),
       reserved: state.reserved |. Set.removeMany(payoutTx.usedInputs),
     };
   | PayoutBroadcast({processId, txId}) =>
@@ -163,20 +161,22 @@ let apply = (event, state) =>
       ...state,
       reserved: state.reserved |. Set.removeMany(payoutTx.usedInputs),
       unused:
-        switch (
-          payoutTx
-          |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
-        ) {
-        | Some(input) => state.unused |. Set.add(input)
-        | None => state.unused
-        },
+        (
+          switch (
+            payoutTx
+            |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
+          ) {
+          | Some(input) => state.unused |. Set.add(input)
+          | None => state.unused
+          }
+        )
+        |. Set.removeMany(payoutTx.usedInputs),
     };
   | PayoutBroadcastFailed({processId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
     {
       ...state,
-      unused: state.unused |. Set.mergeMany(payoutTx.usedInputs),
       reserved: state.reserved |. Set.removeMany(payoutTx.usedInputs),
     };
   | _ => state
