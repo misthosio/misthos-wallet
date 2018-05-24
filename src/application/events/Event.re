@@ -766,11 +766,11 @@ let isSystemEvent =
   | CustodianRemovalDenied(_)
   | PayoutAccepted(_)
   | PayoutDenied(_)
+  | PayoutAborted(_)
   | AccountKeyChainIdentified(_)
   | IncomeDetected(_)
   | TransactionConfirmed(_)
   | PayoutFinalized(_)
-  | PayoutAborted(_)
   | PayoutBroadcast(_)
   | PayoutBroadcastDuplicate(_)
   | PayoutBroadcastFailed(_) => true
