@@ -18,8 +18,10 @@ let () =
           |> withCustodianProposed(~proposer=user1, ~custodian=user1)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+        let log = log |> L.withCustodianEndorsed(user1, proposal);
         let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
         testWatcherHasEventPending(
           "CustodianAccepted",
@@ -43,8 +45,10 @@ let () =
           |> withCustodianProposed(~proposer=user1, ~custodian=user1)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+        let log = log |> L.withCustodianEndorsed(user1, proposal);
         let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
         let log = log |> L.withCustodianAccepted(proposal);
         watcher#receive(log |> L.lastItem);
@@ -67,7 +71,12 @@ let () =
       (sessions, log) => {
         let (user1, user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
-        let log = log |> L.withPartnerRemoved(user2, ~supporters=[user1]);
+        let log =
+          L.(
+            log
+            |> withCustodianEndorsed(user1, proposal)
+            |> withPartnerRemoved(user2, ~supporters=[user1])
+          );
         let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
         testWatcherHasCompleted(watcher);
       },
@@ -93,7 +102,7 @@ let () =
     );
     F.withCached(
       ~scope="Watcher__CustodianApproval",
-      "With 2 users and a proposal and endorsement",
+      "With 2 users and a proposal and 2 endorsements",
       () => G.withUserSessions(2),
       sessions => {
         let (user1, user2) = G.twoUserSessionsFromArray(sessions);
@@ -105,9 +114,14 @@ let () =
         );
       },
       (sessions, log) => {
-        let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
-        let log = log |> L.withCustodianEndorsed(user2, proposal);
+        let log =
+          L.(
+            log
+            |> withCustodianEndorsed(user1, proposal)
+            |> withCustodianEndorsed(user2, proposal)
+          );
         let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
         testWatcherHasEventPending(
           "CustodianAccepted",
@@ -133,8 +147,10 @@ let () =
           |> withCustodianProposed(~proposer=user1, ~custodian=user1)
         );
       },
-      (_sessions, log) => {
+      (sessions, log) => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+        let log = log |> L.withCustodianEndorsed(user1, proposal);
         let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
         testWatcherHasEventPending(
           "CustodianAccepted",
@@ -162,6 +178,7 @@ let () =
       (sessions, log) => {
         let (user1, user2) = G.twoUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+        let log = log |> L.withCustodianEndorsed(user1, proposal);
         let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
         let log = log |> L.withPartnerRemoved(user2, ~supporters=[user1]);
         watcher#receive(log |> L.lastItem);
