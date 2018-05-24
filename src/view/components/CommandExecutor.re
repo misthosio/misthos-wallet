@@ -155,6 +155,7 @@ module Status = {
         | (CouldNotJoinVenture, _) =>
           "RED: Error joining venture. Perhaps you have not been accepted yet."
           |> text
+        | (CouldNotLoadVenture, _) => "RED: Error loading venture" |> text
         }
       | Success(ProcessStarted(_)) =>
         "GREEN: Your proposal has been submited" |> text

@@ -98,7 +98,7 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "MaxPartnersReached"
+                      "CouldNotLoadVenture"
                     ],
                     /* [] */0
                   ]);
@@ -106,7 +106,7 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "PartnerAlreadyExists"
+                      "MaxPartnersReached"
                     ],
                     /* [] */0
                   ]);
@@ -114,7 +114,7 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "PartnerAlreadyProposed"
+                      "PartnerAlreadyExists"
                     ],
                     /* [] */0
                   ]);
@@ -122,11 +122,19 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "CouldNotFindUserInfo"
+                      "PartnerAlreadyProposed"
                     ],
                     /* [] */0
                   ]);
     case 5 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "CouldNotFindUserInfo"
+                    ],
+                    /* [] */0
+                  ]);
+    case 6 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -142,17 +150,19 @@ function decodeError(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "CouldNotFindUserInfo" : 
-        return /* CouldNotFindUserInfo */4;
+        return /* CouldNotFindUserInfo */5;
     case "CouldNotJoinVenture" : 
         return /* CouldNotJoinVenture */0;
+    case "CouldNotLoadVenture" : 
+        return /* CouldNotLoadVenture */1;
     case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */5;
+        return /* CouldNotPersistVenture */6;
     case "MaxPartnersReached" : 
-        return /* MaxPartnersReached */1;
+        return /* MaxPartnersReached */2;
     case "PartnerAlreadyExists" : 
-        return /* PartnerAlreadyExists */2;
+        return /* PartnerAlreadyExists */3;
     case "PartnerAlreadyProposed" : 
-        return /* PartnerAlreadyProposed */3;
+        return /* PartnerAlreadyProposed */4;
     default:
       throw [
             UnknownMessage,

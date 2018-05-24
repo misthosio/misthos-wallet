@@ -4,7 +4,7 @@ type selectedVenture =
   | None
   | CreatingVenture(CommandExecutor.cmdStatus)
   | JoiningVenture(ventureId, CommandExecutor.cmdStatus)
-  | LoadingVenture(ventureId)
+  | LoadingVenture(ventureId, CommandExecutor.cmdStatus)
   | VentureLoaded(ventureId, ViewModel.t, VentureWorkerClient.Cmd.t);
 
 type action =
@@ -36,11 +36,15 @@ let loadVentureAndIndex =
       when VentureId.eq(ventureId, loadedId) => selectedVenture
   | (LoggedIn(_), Venture(ventureId, _), VentureLoaded(loadedId, _, _))
       when VentureId.neq(ventureId, loadedId) =>
-    ventureWorker^ |> VentureWorkerClient.load(~ventureId) |> ignore;
-    LoadingVenture(ventureId);
+    LoadingVenture(
+      ventureId,
+      Pending(ventureWorker^ |> VentureWorkerClient.load(~ventureId)),
+    )
   | (LoggedIn(_), Venture(ventureId, _), _) =>
-    ventureWorker^ |> VentureWorkerClient.load(~ventureId) |> ignore;
-    LoadingVenture(ventureId);
+    LoadingVenture(
+      ventureId,
+      Pending(ventureWorker^ |> VentureWorkerClient.load(~ventureId)),
+    )
   | (LoggedIn(_sessionData), JoinVenture(ventureId, userId), _) =>
     JoiningVenture(
       ventureId,
@@ -184,6 +188,23 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 },
               ),
           });
+        | (
+            CmdCompleted(_, correlationId, response),
+            LoadingVenture(ventureId, Pending(joinCmdId)),
+          )
+            when correlationId == joinCmdId =>
+          Js.log("join cmd completed");
+          ReasonReact.Update({
+            ...state,
+            selectedVenture:
+              LoadingVenture(
+                ventureId,
+                switch (response) {
+                | Ok(success) => Success(success)
+                | Error(error) => Error(error)
+                },
+              ),
+          });
         | (VentureCreated(ventureId, log), _) =>
           ReasonReact.UpdateWithSideEffects(
             {
@@ -220,7 +241,10 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             },
             ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
           )
-        | (VentureLoaded(ventureId, events, _), LoadingVenture(loadingId))
+        | (
+            VentureLoaded(ventureId, events, _),
+            LoadingVenture(loadingId, _),
+          )
             when VentureId.eq(ventureId, loadingId) =>
           ReasonReact.Update({
             ...state,

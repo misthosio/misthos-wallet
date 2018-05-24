@@ -114,11 +114,16 @@ module Handle = {
                };
                resolve(venture);
              }
-           | Venture.CouldNotLoad(error) =>
-             /* if (notify) { */
-             /*   Notify.cmdError(ventureId, correlationId, CouldNotLoadVenture); */
-             /* }; */
-             raise(DeadThread(error)),
+           | Venture.CouldNotLoad(error) => {
+               if (notify) {
+                 Notify.cmdError(
+                   ventureId,
+                   correlationId,
+                   CouldNotLoadVenture,
+                 );
+               };
+               raise(DeadThread(error));
+             },
          )
     );
   let withVenture =
