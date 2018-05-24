@@ -102,7 +102,7 @@ module Make = (Event: Encodable) => {
           ("signature", ecSig(item.signature)),
         ])
       );
-    let log = Json.Encode.(array(item));
+    let log = log => Json.Encode.(object_([("items", array(item, log))]));
   };
   let encodeItem = Encode.item;
   let encode = Encode.log;
@@ -116,7 +116,7 @@ module Make = (Event: Encodable) => {
         issuerPubKey: item |> field("issuerPubKey", string),
         signature: item |> field("signature", ecSig),
       };
-    let log = Json.Decode.(array(item));
+    let log = Json.Decode.(field("items", array(item)));
   };
   let decodeItem = Decode.item;
   let decode = Decode.log;
