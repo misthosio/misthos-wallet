@@ -499,7 +499,7 @@ function decode$7(raw) {
         ];
 }
 
-var Signature = /* module */[
+var Signed = /* module */[
   /* make */make$1,
   /* encode */encode$7,
   /* decode */decode$7
@@ -682,7 +682,7 @@ var Payout = /* module */[
   /* Endorsed */Endorsed$5,
   /* Accepted */Accepted$5,
   /* Denied */Denied$4,
-  /* Signature */Signature,
+  /* Signed */Signed,
   /* Finalized */Finalized,
   /* Broadcast */Broadcast,
   /* BroadcastDuplicate */BroadcastDuplicate,
