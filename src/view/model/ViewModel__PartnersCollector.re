@@ -27,7 +27,7 @@ type t = {
 };
 
 let getProspect = (processId, {prospects}) =>
-  prospects |. Map.getExn(processId);
+  prospects |. Map.get(processId);
 
 let prospectsPendingApproval = ({prospects}) =>
   prospects

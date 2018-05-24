@@ -37,7 +37,7 @@ let make = localUser => {
   txIds: Set.String.empty,
 };
 
-let getPayout = (processId, {payouts}) => payouts |. Map.getExn(processId);
+let getPayout = (processId, {payouts}) => payouts |. Map.get(processId);
 
 let payoutsPendingApproval = ({payouts}) =>
   payouts

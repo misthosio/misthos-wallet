@@ -19,7 +19,7 @@ function make(localUser) {
 }
 
 function getPayout(processId, param) {
-  return Belt_Map.getExn(param[/* payouts */2], processId);
+  return Belt_Map.get(param[/* payouts */2], processId);
 }
 
 function payoutsPendingApproval(param) {

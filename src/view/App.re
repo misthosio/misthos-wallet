@@ -46,19 +46,17 @@ let make = (~session, ~updateSession, _children) => {
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <CommandExecutor
-            commands lastResponse=(venture |> ViewModel.lastResponse)>
-            ...(
-                 (~commands, ~cmdStatus) =>
-                   <ViewPartnerModal
-                     commands
-                     cmdStatus
-                     viewData=(
-                       venture |> ViewModel.viewPartnerModal(processId)
-                     )
-                   />
-               )
-          </CommandExecutor>,
+          switch (venture |> ViewModel.viewPartnerModal(processId)) {
+          | Some(viewData) =>
+            <CommandExecutor
+              commands lastResponse=(venture |> ViewModel.lastResponse)>
+              ...(
+                   (~commands, ~cmdStatus) =>
+                     <ViewPartnerModal commands cmdStatus viewData />
+                 )
+            </CommandExecutor>
+          | None => <NotFoundModal resource=NotFoundModal.Partner />
+          },
           onCloseModal(selected),
         ))
     | (
@@ -102,19 +100,17 @@ let make = (~session, ~updateSession, _children) => {
       venture |> ViewModel.readOnly ?
         None :
         Some((
-          <CommandExecutor
-            commands lastResponse=(venture |> ViewModel.lastResponse)>
-            ...(
-                 (~commands, ~cmdStatus) =>
-                   <ViewPayoutModal
-                     viewData=(
-                       venture |> ViewModel.viewPayoutModal(processId)
-                     )
-                     commands
-                     cmdStatus
-                   />
-               )
-          </CommandExecutor>,
+          switch (venture |> ViewModel.viewPayoutModal(processId)) {
+          | Some(viewData) =>
+            <CommandExecutor
+              commands lastResponse=(venture |> ViewModel.lastResponse)>
+              ...(
+                   (~commands, ~cmdStatus) =>
+                     <ViewPayoutModal viewData commands cmdStatus />
+                 )
+            </CommandExecutor>
+          | None => <NotFoundModal resource=NotFoundModal.Payout />
+          },
           onCloseModal(selected),
         ))
     | (LoggedIn(_), _, _) => None

@@ -7,7 +7,7 @@ var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var ProcessCollector = require("./ProcessCollector.bs.js");
 
 function getProspect(processId, param) {
-  return Belt_Map.getExn(param[/* prospects */2], processId);
+  return Belt_Map.get(param[/* prospects */2], processId);
 }
 
 function prospectsPendingApproval(param) {
