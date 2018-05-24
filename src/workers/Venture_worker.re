@@ -222,13 +222,14 @@ module Handle = {
                                  );
                                  venture |> resolve;
                                }
-                             | Venture.CouldNotJoin(error) =>
-                               /* Notify.cmdError( */
-                               /*   ventureId, */
-                               /*   correlationId, */
-                               /*   CouldNotJoinVenture, */
-                               /* ); */
-                               raise(DeadThread(error)),
+                             | Venture.CouldNotJoin(error) => {
+                                 Notify.cmdError(
+                                   ventureId,
+                                   correlationId,
+                                   CouldNotJoinVenture,
+                                 );
+                                 raise(DeadThread(error));
+                               },
                            ),
                       )
                     };

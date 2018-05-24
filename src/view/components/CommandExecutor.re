@@ -150,6 +150,7 @@ module Status = {
           "RED: This user has already been proposed to join" |> text
         | (PartnerAlreadyExists, _) =>
           "RED: User is already a partner of this venture" |> text
+        | (CouldNotJoinVenture, _) => ReasonReact.null
         }
       | Success(ProcessStarted(_)) =>
         "GREEN: Your proposal has been submited" |> text

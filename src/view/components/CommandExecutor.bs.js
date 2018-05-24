@@ -150,14 +150,16 @@ function make$1(cmdStatus, action, onRetry, _) {
                   case 1 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
-                            return ViewCommon.text("RED: The maximum number of partners we currently support in a venture has been reached");
+                            return null;
                         case 1 : 
-                            return ViewCommon.text("RED: User is already a partner of this venture");
+                            return ViewCommon.text("RED: The maximum number of partners we currently support in a venture has been reached");
                         case 2 : 
-                            return ViewCommon.text("RED: This user has already been proposed to join");
+                            return ViewCommon.text("RED: User is already a partner of this venture");
                         case 3 : 
-                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                            return ViewCommon.text("RED: This user has already been proposed to join");
                         case 4 : 
+                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                        case 5 : 
                             if (onRetry) {
                               var onRetry$1 = onRetry[0];
                               return /* array */[
