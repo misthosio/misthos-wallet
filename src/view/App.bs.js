@@ -14,6 +14,7 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var LoggedInHome = require("./LoggedInHome.bs.js");
 var VentureStore = require("./VentureStore.bs.js");
+var NotFoundModal = require("./NotFoundModal.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
@@ -115,15 +116,22 @@ function make(session, updateSession, _) {
           return /* None */0;
         } else {
           var venture$2 = selectedVenture[1];
-          var processId = match[0];
           var match$4 = ViewModel.readOnly(venture$2);
           if (match$4) {
             return /* None */0;
           } else {
+            var match$5 = ViewModel.viewPayoutModal(match[0], venture$2);
+            var tmp;
+            if (match$5) {
+              var viewData = match$5[0];
+              tmp = ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$2), /* None */0, (function (commands, cmdStatus) {
+                          return ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(viewData, commands, cmdStatus, /* array */[]));
+                        })));
+            } else {
+              tmp = ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Payout */0, /* array */[]));
+            }
             return /* Some */[/* tuple */[
-                      ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$2), /* None */0, (function (commands, cmdStatus) {
-                                  return ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(ViewModel.viewPayoutModal(processId, venture$2), commands, cmdStatus, /* array */[]));
-                                }))),
+                      tmp,
                       (function (param) {
                           return onCloseModal(selected, param);
                         })
@@ -134,15 +142,22 @@ function make(session, updateSession, _) {
         return /* None */0;
       } else {
         var venture$3 = selectedVenture[1];
-        var processId$1 = match[0];
-        var match$5 = ViewModel.readOnly(venture$3);
-        if (match$5) {
+        var match$6 = ViewModel.readOnly(venture$3);
+        if (match$6) {
           return /* None */0;
         } else {
+          var match$7 = ViewModel.viewPartnerModal(match[0], venture$3);
+          var tmp$1;
+          if (match$7) {
+            var viewData$1 = match$7[0];
+            tmp$1 = ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), /* None */0, (function (commands, cmdStatus) {
+                        return ReasonReact.element(/* None */0, /* None */0, ViewPartnerModal.make(viewData$1, commands, cmdStatus, /* array */[]));
+                      })));
+          } else {
+            tmp$1 = ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Partner */1, /* array */[]));
+          }
           return /* Some */[/* tuple */[
-                    ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), /* None */0, (function (commands, cmdStatus) {
-                                return ReasonReact.element(/* None */0, /* None */0, ViewPartnerModal.make(ViewModel.viewPartnerModal(processId$1, venture$3), commands, cmdStatus, /* array */[]));
-                              }))),
+                    tmp$1,
                     (function (param) {
                         return onCloseModal(selected, param);
                       })
