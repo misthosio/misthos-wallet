@@ -447,13 +447,16 @@ function findSignatures(_allSigs, needed, foundSigIdxs, foundSigs, network) {
 }
 
 function finalize(signedTransactions, network) {
-  if (signedTransactions) {
-    var match = signedTransactions[0];
+  var signedTransactions$1 = Belt_List.sortU(signedTransactions, (function (param, param$1) {
+          return Caml_primitive.caml_string_compare(param[/* txHex */0], param$1[/* txHex */0]);
+        }));
+  if (signedTransactions$1) {
+    var match = signedTransactions$1[0];
     var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(match[/* txHex */0]), Network.bitcoinNetwork(network));
     var inputs = txB.inputs;
     var otherInputs = List.map((function (param) {
             return BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]), Network.bitcoinNetwork(network)).inputs;
-          }), signedTransactions[1]);
+          }), signedTransactions$1[1]);
     $$Array.iteri((function (inputIdx, param) {
             var nCoSigners = param[/* nCoSigners */4];
             var testInput = Caml_array.caml_array_get(inputs, inputIdx);

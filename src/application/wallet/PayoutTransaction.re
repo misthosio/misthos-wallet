@@ -537,7 +537,12 @@ let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>
     }
   };
 
-let finalize = (signedTransactions, network) =>
+let finalize = (signedTransactions, network) => {
+  let signedTransactions =
+    signedTransactions
+    |. Belt.List.sortU((. {txHex: hexA}, {txHex: hexB}) =>
+         compare(hexA, hexB)
+       );
   switch (signedTransactions) {
   | [{txHex, usedInputs}, ...moreSignedTransactions] =>
     let txB =
@@ -617,3 +622,4 @@ let finalize = (signedTransactions, network) =>
   | _ => %assert
          "finalize"
   };
+};
