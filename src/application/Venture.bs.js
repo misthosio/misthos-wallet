@@ -450,7 +450,7 @@ function exec$2(incomeEvents, txConfs, venture) {
   logMessage("Synchronizing wallet");
   var __x = List.fold_left((function (p, $$event) {
           return p.then((function (param) {
-                        return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(38, [$$event]), param[0]);
+                        return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(39, [$$event]), param[0]);
                       }));
         }), Promise.resolve(/* tuple */[
             venture,
@@ -458,7 +458,7 @@ function exec$2(incomeEvents, txConfs, venture) {
           ]), incomeEvents);
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
-                                  return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(39, [$$event]), param[0]);
+                                  return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(40, [$$event]), param[0]);
                                 }));
                   }), __x, txConfs).then((function (eta) {
                   return persist(/* None */0, eta);
@@ -661,7 +661,7 @@ var EndorsePartnerRemoval = /* module */[/* exec */exec$8];
 function exec$9(accountIdx, venture) {
   logMessage("Executing 'GetIncomeAddress' command");
   var exposeEvent = Venture__Wallet.exposeNextIncomeAddress(venture[/* session */0][/* userId */0], accountIdx, venture[/* wallet */5]);
-  return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(37, [exposeEvent]), venture).then((function (eta) {
+  return apply(/* None */0, /* None */0, /* IncomeAddressExposed */Block.__(38, [exposeEvent]), venture).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
                 if (param.tag) {

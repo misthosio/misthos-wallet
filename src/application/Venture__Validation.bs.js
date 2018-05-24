@@ -280,7 +280,7 @@ function apply(param, state) {
           newrecord[/* payoutData */18]
         ];
         return newrecord$12;
-    case 34 : 
+    case 35 : 
         var match$12 = $$event[0];
         var keyChain = match$12[/* keyChain */2];
         var custodianId$1 = match$12[/* custodianId */1];
@@ -324,7 +324,7 @@ function apply(param, state) {
           List.remove_assoc(custodianId$1, newrecord[/* custodianKeyChains */20])
         ];
         return newrecord$13;
-    case 35 : 
+    case 36 : 
         var newrecord$14 = Caml_array.caml_array_dup(newrecord);
         newrecord$14[/* accountKeyChains */21] = AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], newrecord[/* accountKeyChains */21]);
         return newrecord$14;
@@ -341,7 +341,7 @@ function apply(param, state) {
     case 26 : 
     case 27 : 
     case 28 : 
-    case 36 : 
+    case 37 : 
         return newrecord;
     default:
       return newrecord;
@@ -1012,37 +1012,41 @@ function validateEvent(param) {
           });
     case 32 : 
         return (function (_, _$1) {
-            return /* Ignore */1;
+            return /* Ok */0;
           });
     case 33 : 
         return (function (_, _$1) {
-            return /* Ok */0;
+            return /* Ignore */1;
           });
     case 34 : 
+        return (function (_, _$1) {
+            return /* Ok */0;
+          });
+    case 35 : 
         var partial_arg$11 = param[0];
         return (function (param, param$1) {
             return validateCustodianKeyChainUpdated(partial_arg$11, param, param$1);
           });
-    case 35 : 
+    case 36 : 
         var partial_arg$12 = param[0];
         return (function (param, param$1) {
             return validateAccountKeyChainIdentified(partial_arg$12, param, param$1);
           });
-    case 36 : 
+    case 37 : 
         var partial_arg$13 = param[0];
         return (function (param, param$1) {
             return validateAccountKeyChainActivated(partial_arg$13, param, param$1);
           });
-    case 37 : 
+    case 38 : 
         var partial_arg$14 = param[0];
         return (function (param, param$1) {
             return validateIncomeAddressExposed(partial_arg$14, param, param$1);
           });
-    case 38 : 
+    case 39 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });
-    case 39 : 
+    case 40 : 
         return (function (_, _$1) {
             return /* Ok */0;
           });

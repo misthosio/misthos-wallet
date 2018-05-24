@@ -32,7 +32,7 @@ describe("Watcher__AccountKeyChain", (function () {
                         ], log));
                 var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainIdentified", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 35) {
+                              if (param.tag === 36) {
                                 var match = param[0][/* keyChain */0];
                                 if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9])) {
                                   return match[/* identifier */1] === "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73";
@@ -76,7 +76,7 @@ describe("Watcher__AccountKeyChain", (function () {
                                                                 ], log))))))))))));
                 var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainIdentified", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
-                              if (param.tag === 35) {
+                              if (param.tag === 36) {
                                 var match = param[0][/* keyChain */0];
                                 if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */1] === "038ccb176653ad573f4342fc625dc121b573762a69becbaaad5b8bbadb934340") {
                                   return List.length(match[/* custodianKeyChains */3]) === 1;
@@ -104,7 +104,7 @@ describe("Watcher__AccountKeyChain", (function () {
                             ], log)));
                 var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainActivated", watcher, user1[/* issuerKeyPair */2], (function (param) {
-                              if (param.tag === 36) {
+                              if (param.tag === 37) {
                                 var match = param[0];
                                 if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */2] === "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73") {
                                   return match[/* sequence */3] === 0;
@@ -161,7 +161,7 @@ describe("Watcher__AccountKeyChain", (function () {
                                                         ], log))))))))));
                 var watcher = Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1));
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainActivated", watcher, user1[/* issuerKeyPair */2], (function (param) {
-                              if (param.tag === 36) {
+                              if (param.tag === 37) {
                                 var match = param[0];
                                 if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */2] === "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73") {
                                   return match[/* sequence */3] === 1;
