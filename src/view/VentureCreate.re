@@ -42,13 +42,7 @@ let make =
         ReasonReact.Update({newVenture: ""});
       }
     },
-  render: ({send, state}) => {
-    let feedback =
-      switch (cmdStatus) {
-      | Pending(_) => <Spinner text="waiting for result" />
-      | Error(_) => "Could not execute teh command" |> text
-      | _ => ReasonReact.null
-      };
+  render: ({send, state}) =>
     <Body2
       titles=["Create a Venture"]
       body1=
@@ -74,7 +68,7 @@ let make =
           <MButton fullWidth=true onClick=(_e => send(CreateVenture))>
             ("create venture" |> text)
           </MButton>
-          feedback
+          <CommandExecutor.Status action=CreateVenture cmdStatus />
         </div>
       body2=
         <div className=Styles.infoBox>
@@ -106,6 +100,5 @@ let make =
             )
           </MTypography>
         </div>
-    />;
-  },
+    />,
 };

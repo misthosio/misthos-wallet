@@ -158,8 +158,8 @@ let make = (~session, ~updateSession, _children) => {
         | _ => Idle
         };
       <VentureCreate cmdStatus onCreateVenture=createVenture />;
-    | (LoggedIn(_), _, JoiningVenture(_)) =>
-      <Spinner text="Joining venture" />
+    | (LoggedIn(_), _, JoiningVenture(_, cmdStatus)) =>
+      <JoinVenture cmdStatus />
     | (LoggedIn(_), _, LoadingVenture(_)) =>
       <Spinner text="Loading venture" />
     | (LoggedIn(_), _, None) => <LoggedInHome index />

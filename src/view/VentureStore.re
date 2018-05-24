@@ -3,7 +3,7 @@ open PrimitiveTypes;
 type selectedVenture =
   | None
   | CreatingVenture(CommandExecutor.cmdStatus)
-  | JoiningVenture(ventureId)
+  | JoiningVenture(ventureId, CommandExecutor.cmdStatus)
   | LoadingVenture(ventureId)
   | VentureLoaded(ventureId, ViewModel.t, VentureWorkerClient.Cmd.t);
 
@@ -42,10 +42,12 @@ let loadVentureAndIndex =
     ventureWorker^ |> VentureWorkerClient.load(~ventureId) |> ignore;
     LoadingVenture(ventureId);
   | (LoggedIn(_sessionData), JoinVenture(ventureId, userId), _) =>
-    ventureWorker^
-    |> VentureWorkerClient.joinVia(~ventureId, ~userId)
-    |> ignore;
-    JoiningVenture(ventureId);
+    JoiningVenture(
+      ventureId,
+      Pending(
+        ventureWorker^ |> VentureWorkerClient.joinVia(~ventureId, ~userId),
+      ),
+    )
   | _ => None
   };
 };
@@ -165,6 +167,23 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 },
               ),
           })
+        | (
+            CmdCompleted(_, correlationId, response),
+            JoiningVenture(ventureId, Pending(joinCmdId)),
+          )
+            when correlationId == joinCmdId =>
+          Js.log("join cmd completed");
+          ReasonReact.Update({
+            ...state,
+            selectedVenture:
+              JoiningVenture(
+                ventureId,
+                switch (response) {
+                | Ok(success) => Success(success)
+                | Error(error) => Error(error)
+                },
+              ),
+          });
         | (VentureCreated(ventureId, log), _) =>
           ReasonReact.UpdateWithSideEffects(
             {
@@ -184,7 +203,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         | (UpdateIndex(index), _) =>
           updateOtherTabs(msg);
           ReasonReact.Update({...state, index: Some(index)});
-        | (VentureLoaded(ventureId, log, _), JoiningVenture(joiningId))
+        | (VentureLoaded(ventureId, log, _), JoiningVenture(joiningId, _))
             when VentureId.eq(ventureId, joiningId) =>
           ReasonReact.UpdateWithSideEffects(
             {

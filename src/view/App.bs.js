@@ -11,6 +11,7 @@ var Spinner = require("./components/Spinner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var JoinVenture = require("./JoinVenture.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var LoggedInHome = require("./LoggedInHome.bs.js");
 var VentureStore = require("./VentureStore.bs.js");
@@ -247,7 +248,7 @@ function make(session, updateSession, _) {
               exit = 1;
               break;
           case 1 : 
-              return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Joining venture", /* None */0, /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, JoinVenture.make(selectedVenture[1], /* array */[]));
           case 2 : 
               return ReasonReact.element(/* None */0, /* None */0, Spinner.make("Loading venture", /* None */0, /* array */[]));
           

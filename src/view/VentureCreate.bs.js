@@ -11,10 +11,10 @@ var Colors = require("./Colors.bs.js");
 var MInput = require("./components/MInput.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var MButton = require("./components/MButton.bs.js");
-var Spinner = require("./components/Spinner.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var CommandExecutor = require("./components/CommandExecutor.bs.js");
 
 var component = ReasonReact.reducerComponent("VentureCreate");
 
@@ -44,23 +44,6 @@ function make(onCreateVenture, cmdStatus, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
-              var feedback;
-              if (typeof cmdStatus === "number") {
-                feedback = null;
-              } else {
-                switch (cmdStatus.tag | 0) {
-                  case 0 : 
-                      feedback = ReasonReact.element(/* None */0, /* None */0, Spinner.make("waiting for result", /* None */0, /* array */[]));
-                      break;
-                  case 1 : 
-                      feedback = ViewCommon.text("Could not execute teh command");
-                      break;
-                  case 2 : 
-                      feedback = null;
-                      break;
-                  
-                }
-              }
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Create a Venture",
                                 /* [] */0
@@ -71,7 +54,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                               return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
                                             })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* CreateVenture */0);
-                                            })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("create venture")])), feedback), React.createElement("div", {
+                                            })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("create venture")])), ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* CreateVenture */0, /* None */0, /* array */[]))), React.createElement("div", {
                                   className: infoBox
                                 }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("What can you do with a venture?")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Your Venture can receive money from different sources, such as customers, clients, and investors\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Every Partner of the Venture has full transparency of income and payouts\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • The team decides the Policies by which payouts take place\n                ")]))), /* array */[]));
             }),
