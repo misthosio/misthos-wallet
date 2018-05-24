@@ -143,6 +143,13 @@ let make =
             onReject=(() => commands.rejectPayout(~processId))
             cmdStatus
           />
+          (
+            if (viewData.collidesWith |> Belt.Set.size > 0) {
+              "WARNING!!! This payout collides with other payouts" |> text;
+            } else {
+              ReasonReact.null;
+            }
+          )
         </div>
     />;
   },

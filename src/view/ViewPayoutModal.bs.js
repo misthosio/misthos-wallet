@@ -9,6 +9,7 @@ var Body2 = require("./components/Body2.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Voters = require("./components/Voters.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -140,7 +141,7 @@ function make(viewData, commands, cmdStatus, _) {
                                             return Curry._1(commands[/* endorsePayout */7], processId);
                                           }), (function () {
                                             return Curry._1(commands[/* rejectPayout */8], processId);
-                                          }), cmdStatus, /* array */[]))), /* array */[]));
+                                          }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */1]) > 0 ? ViewCommon.text("WARNING!!! This payout collides with other payouts") : null), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
