@@ -3,7 +3,10 @@ open Event;
 open PrimitiveTypes;
 
 let make =
-    ({payoutTx: {txHex}, processId: payoutProcess}: Payout.Finalized.t, log) => {
+    (
+      {payoutTx: {txHex}, txId, processId: payoutProcess}: Payout.Finalized.t,
+      log,
+    ) => {
   let (needsBroadcast, systemIssuer, network) =
     log
     |> EventLog.reduce(
@@ -14,8 +17,7 @@ let make =
                systemIssuer,
                network,
              )
-           | PayoutBroadcast({processId})
-               when ProcessId.eq(processId, payoutProcess) => (
+           | PayoutBroadcast({txId: broadcastTx}) when txId == broadcastTx => (
                false,
                systemIssuer,
                network,

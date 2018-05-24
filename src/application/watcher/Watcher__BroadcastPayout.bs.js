@@ -19,6 +19,7 @@ var class_tables = [
 ];
 
 function make(param, log) {
+  var txId = param[/* txId */1];
   var payoutProcess = param[/* processId */0];
   var match = Curry._3(EventLog.reduce, (function (param, param$1) {
           var $$event = param$1[/* event */0];
@@ -34,9 +35,22 @@ function make(param, log) {
                         match[/* systemIssuer */5],
                         match[/* network */6]
                       ];
-            case 32 : 
             case 33 : 
+                if (txId === $$event[0][/* txId */1]) {
+                  return /* tuple */[
+                          false,
+                          systemIssuer,
+                          network
+                        ];
+                } else {
+                  return /* tuple */[
+                          broadcast,
+                          systemIssuer,
+                          network
+                        ];
+                }
             case 34 : 
+            case 35 : 
                 exit = 1;
                 break;
             default:
@@ -93,8 +107,8 @@ function make(param, log) {
               var $$event = param[/* event */0];
               var exit = 0;
               switch ($$event.tag | 0) {
-                case 32 : 
-                case 34 : 
+                case 33 : 
+                case 35 : 
                     exit = 1;
                     break;
                 default:
@@ -128,14 +142,14 @@ function make(param, log) {
                                           if (typeof result === "number") {
                                             tmp = /* tuple */[
                                               env$1[1],
-                                              /* PayoutBroadcastDuplicate */Block.__(33, [Curry._1(Event.Payout[/* BroadcastDuplicate */11][/* make */0], env$1[0])])
+                                              /* PayoutBroadcastDuplicate */Block.__(34, [Curry._1(Event.Payout[/* BroadcastDuplicate */12][/* make */0], env$1[0])])
                                             ];
                                           } else {
                                             switch (result.tag | 0) {
                                               case 0 : 
                                                   tmp = /* tuple */[
                                                     env$1[1],
-                                                    /* PayoutBroadcast */Block.__(32, [Curry._2(Event.Payout[/* Broadcast */10][/* make */0], env$1[0], result[0])])
+                                                    /* PayoutBroadcast */Block.__(33, [Curry._2(Event.Payout[/* Broadcast */11][/* make */0], env$1[0], result[0])])
                                                   ];
                                                   break;
                                               case 1 : 
@@ -143,13 +157,13 @@ function make(param, log) {
                                                   Utils.printError("Broadcasting transaction failed", errorMessage);
                                                   tmp = /* tuple */[
                                                     env$1[1],
-                                                    /* PayoutBroadcastFailed */Block.__(34, [Curry._2(Event.Payout[/* BroadcastFailed */12][/* make */0], env$1[0], errorMessage)])
+                                                    /* PayoutBroadcastFailed */Block.__(35, [Curry._2(Event.Payout[/* BroadcastFailed */13][/* make */0], env$1[0], errorMessage)])
                                                   ];
                                                   break;
                                               case 2 : 
                                                   tmp = /* tuple */[
                                                     env$1[1],
-                                                    /* PayoutBroadcastFailed */Block.__(34, [Curry._2(Event.Payout[/* BroadcastFailed */12][/* make */0], env$1[0], "Fetch error")])
+                                                    /* PayoutBroadcastFailed */Block.__(35, [Curry._2(Event.Payout[/* BroadcastFailed */13][/* make */0], env$1[0], "Fetch error")])
                                                   ];
                                                   break;
                                               
