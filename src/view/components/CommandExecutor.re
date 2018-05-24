@@ -96,6 +96,8 @@ let make =
 
 module Status = {
   type action =
+    | CreateVenture
+    | JoinVenture
     | Proposal
     | Endorsement
     | Rejection;
@@ -109,15 +111,15 @@ module Status = {
         ReasonReact.array([|
           <MTypography variant=`Body2>
             (
-              "Your "
-              ++ (
+              (
                 switch (action) {
-                | Proposal => "proposal"
-                | Endorsement => "endorsement"
-                | Rejection => "rejection"
+                | CreateVenture => "Venture is being created"
+                | JoinVenture => "Joining venture"
+                | Proposal => "Your proposal is being submitted"
+                | Endorsement => "Your endorsement is being submitted"
+                | Rejection => "Your rejection is being submitted"
                 }
               )
-              ++ " is being submitted"
               |> text
             )
           </MTypography>,
@@ -150,6 +152,10 @@ module Status = {
           "RED: This user has already been proposed to join" |> text
         | (PartnerAlreadyExists, _) =>
           "RED: User is already a partner of this venture" |> text
+        | (CouldNotJoinVenture, _) =>
+          "RED: Error joining venture. Perhaps you have not been accepted yet."
+          |> text
+        | (CouldNotLoadVenture, _) => "RED: Error loading venture" |> text
         }
       | Success(ProcessStarted(_)) =>
         "GREEN: Your proposal has been submited" |> text

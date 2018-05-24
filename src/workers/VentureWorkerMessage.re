@@ -35,6 +35,8 @@ type cmdSuccess =
   | ProcessRejected(processId);
 
 type cmdError =
+  | CouldNotJoinVenture
+  | CouldNotLoadVenture
   | MaxPartnersReached
   | PartnerAlreadyExists
   | PartnerAlreadyProposed
@@ -101,6 +103,10 @@ let decodeSuccess = raw => {
 
 let encodeError =
   fun
+  | CouldNotJoinVenture =>
+    Json.Encode.(object_([("type", string("CouldNotJoinVenture"))]))
+  | CouldNotLoadVenture =>
+    Json.Encode.(object_([("type", string("CouldNotLoadVenture"))]))
   | MaxPartnersReached =>
     Json.Encode.(object_([("type", string("MaxPartnersReached"))]))
   | PartnerAlreadyExists =>
@@ -115,6 +121,8 @@ let encodeError =
 let decodeError = raw => {
   let type_ = raw |> Json.Decode.(field("type", string));
   switch (type_) {
+  | "CouldNotJoinVenture" => CouldNotJoinVenture
+  | "CouldNotLoadVenture" => CouldNotLoadVenture
   | "MaxPartnersReached" => MaxPartnersReached
   | "PartnerAlreadyProposed" => PartnerAlreadyProposed
   | "PartnerAlreadyExists" => PartnerAlreadyExists

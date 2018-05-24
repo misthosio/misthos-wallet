@@ -262,8 +262,11 @@ function load($staropt$star, session, ventureId) {
 function join(session, userId, ventureId) {
   return load(/* None */0, session, ventureId).then((function (loadResult) {
                 if (loadResult.tag) {
+                  console.log("joining properly");
                   return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).then((function (nullFile) {
+                                      console.log("hello");
                                       if (nullFile == null) {
+                                        console.log("not ofnund");
                                         throw Caml_builtin_exceptions.not_found;
                                       } else {
                                         return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
@@ -283,6 +286,7 @@ function join(session, userId, ventureId) {
                                                 }));
                                   }
                                 })).catch((function (err) {
+                                console.log("Caught");
                                 return Promise.resolve(/* CouldNotJoin */Block.__(2, [err]));
                               }));
                 } else {

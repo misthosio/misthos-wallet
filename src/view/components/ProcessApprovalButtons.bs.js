@@ -75,7 +75,7 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
                               ]))];
                     break;
                 case 2 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Endorsement */1, /* Some */[(function () {
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Endorsement */3, /* Some */[(function () {
                                     return Curry._1(send, /* Cancel */0);
                                   })], /* array */[]))];
                     break;
@@ -91,7 +91,7 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
                               ]))];
                     break;
                 case 4 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Rejection */2, /* Some */[(function () {
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Rejection */4, /* Some */[(function () {
                                     return Curry._1(send, /* Cancel */0);
                                   })], /* array */[]))];
                     break;

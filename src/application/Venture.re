@@ -198,6 +198,7 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
                 AlreadyLoaded(index, venture, newItems) |> resolve
               )
          | CouldNotLoad(_) =>
+           Js.log("joining properly");
            Blockstack.getFileFromUserAndDecrypt(
              (ventureId |> VentureId.toString)
              ++ "/"
@@ -205,16 +206,19 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
              ++ "/log.json",
              ~username=userId |> UserId.toString,
            )
-           |> then_(nullFile =>
+           |> then_(nullFile => {
+                Js.log("hello");
                 switch (Js.Nullable.toOption(nullFile)) {
-                | None => raise(Not_found)
+                | None =>
+                  Js.log("not ofnund");
+                  raise(Not_found);
                 | Some(raw) =>
                   raw
                   |> Json.parseOrRaise
                   |> EventLog.decode
                   |> reconstruct(session)
-                }
-              )
+                };
+              })
            |> then_(persist)
            |> then_(
                 fun
@@ -226,7 +230,10 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
                   |> then_(index => resolve(Joined(index, venture)))
                 | Js.Result.Error(err) => CouldNotJoin(err) |> resolve,
               )
-           |> catch(err => CouldNotJoin(err) |> resolve)
+           |> catch(err => {
+                Js.log("Caught");
+                CouldNotJoin(err) |> resolve;
+              });
          }
        )
   );

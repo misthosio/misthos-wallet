@@ -127,18 +127,24 @@ function make$1(cmdStatus, action, onRetry, _) {
                       var tmp;
                       switch (action) {
                         case 0 : 
-                            tmp = "proposal";
+                            tmp = "Venture is being created";
                             break;
                         case 1 : 
-                            tmp = "endorsement";
+                            tmp = "Joining venture";
                             break;
                         case 2 : 
-                            tmp = "rejection";
+                            tmp = "Your proposal is being submitted";
+                            break;
+                        case 3 : 
+                            tmp = "Your endorsement is being submitted";
+                            break;
+                        case 4 : 
+                            tmp = "Your rejection is being submitted";
                             break;
                         
                       }
                       return /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("Your " + (tmp + " is being submitted"))])),
+                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(tmp)])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_LinearProgress.make(/* Some */[Css.style(/* :: */[
                                               Css.marginTop(Css.px(Theme.space(1))),
                                               /* :: */[
@@ -150,14 +156,18 @@ function make$1(cmdStatus, action, onRetry, _) {
                   case 1 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
-                            return ViewCommon.text("RED: The maximum number of partners we currently support in a venture has been reached");
+                            return ViewCommon.text("RED: Error joining venture. Perhaps you have not been accepted yet.");
                         case 1 : 
-                            return ViewCommon.text("RED: User is already a partner of this venture");
+                            return ViewCommon.text("RED: Error loading venture");
                         case 2 : 
-                            return ViewCommon.text("RED: This user has already been proposed to join");
+                            return ViewCommon.text("RED: The maximum number of partners we currently support in a venture has been reached");
                         case 3 : 
-                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                            return ViewCommon.text("RED: User is already a partner of this venture");
                         case 4 : 
+                            return ViewCommon.text("RED: This user has already been proposed to join");
+                        case 5 : 
+                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                        case 6 : 
                             if (onRetry) {
                               var onRetry$1 = onRetry[0];
                               return /* array */[

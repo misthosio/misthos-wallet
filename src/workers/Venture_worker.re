@@ -114,11 +114,16 @@ module Handle = {
                };
                resolve(venture);
              }
-           | Venture.CouldNotLoad(error) =>
-             /* if (notify) { */
-             /*   Notify.cmdError(ventureId, correlationId, CouldNotLoadVenture); */
-             /* }; */
-             raise(DeadThread(error)),
+           | Venture.CouldNotLoad(error) => {
+               if (notify) {
+                 Notify.cmdError(
+                   ventureId,
+                   correlationId,
+                   CouldNotLoadVenture,
+                 );
+               };
+               raise(DeadThread(error));
+             },
          )
     );
   let withVenture =
@@ -222,13 +227,14 @@ module Handle = {
                                  );
                                  venture |> resolve;
                                }
-                             | Venture.CouldNotJoin(error) =>
-                               /* Notify.cmdError( */
-                               /*   ventureId, */
-                               /*   correlationId, */
-                               /*   CouldNotJoinVenture, */
-                               /* ); */
-                               raise(DeadThread(error)),
+                             | Venture.CouldNotJoin(error) => {
+                                 Notify.cmdError(
+                                   ventureId,
+                                   correlationId,
+                                   CouldNotJoinVenture,
+                                 );
+                                 raise(DeadThread(error));
+                               },
                            ),
                       )
                     };

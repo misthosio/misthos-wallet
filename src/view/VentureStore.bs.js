@@ -24,8 +24,10 @@ function loadVentureAndIndex(session, currentRoute, param) {
     return /* None */0;
   } else if (currentRoute.tag) {
     var ventureId = currentRoute[0];
-    VentureWorkerClient.joinVia(ventureId, currentRoute[1], ventureWorker[0]);
-    return /* JoiningVenture */Block.__(1, [ventureId]);
+    return /* JoiningVenture */Block.__(1, [
+              ventureId,
+              /* Pending */Block.__(0, [VentureWorkerClient.joinVia(ventureId, currentRoute[1], ventureWorker[0])])
+            ]);
   } else {
     var ventureId$1 = currentRoute[0];
     var exit = 0;
@@ -36,15 +38,19 @@ function loadVentureAndIndex(session, currentRoute, param) {
       if (PrimitiveTypes.VentureId[/* eq */5](ventureId$1, loadedId)) {
         return selectedVenture;
       } else if (PrimitiveTypes.VentureId[/* neq */6](ventureId$1, loadedId)) {
-        VentureWorkerClient.load(ventureId$1, ventureWorker[0]);
-        return /* LoadingVenture */Block.__(2, [ventureId$1]);
+        return /* LoadingVenture */Block.__(2, [
+                  ventureId$1,
+                  /* Pending */Block.__(0, [VentureWorkerClient.load(ventureId$1, ventureWorker[0])])
+                ]);
       } else {
         exit = 1;
       }
     }
     if (exit === 1) {
-      VentureWorkerClient.load(ventureId$1, ventureWorker[0]);
-      return /* LoadingVenture */Block.__(2, [ventureId$1]);
+      return /* LoadingVenture */Block.__(2, [
+                ventureId$1,
+                /* Pending */Block.__(0, [VentureWorkerClient.load(ventureId$1, ventureWorker[0])])
+              ]);
     }
     
   }
@@ -326,6 +332,46 @@ function make(currentRoute, session, children) {
                                                     /* ventureWorker */state[/* ventureWorker */5]
                                                   ]]);
                                       }
+                                  case 1 : 
+                                      var match$4 = match$2[1];
+                                      if (typeof match$4 === "number" || match$4.tag || correlationId !== match$4[0]) {
+                                        return /* NoUpdate */0;
+                                      } else {
+                                        console.log("join cmd completed");
+                                        var tmp$1;
+                                        tmp$1 = response.tag ? /* Error */Block.__(1, [response[0]]) : /* Success */Block.__(2, [response[0]]);
+                                        return /* Update */Block.__(0, [/* record */[
+                                                    /* index */state[/* index */0],
+                                                    /* selectedVenture : JoiningVenture */Block.__(1, [
+                                                        match$2[0],
+                                                        tmp$1
+                                                      ]),
+                                                    /* session */state[/* session */2],
+                                                    /* dataWorker */state[/* dataWorker */3],
+                                                    /* persistWorker */state[/* persistWorker */4],
+                                                    /* ventureWorker */state[/* ventureWorker */5]
+                                                  ]]);
+                                      }
+                                  case 2 : 
+                                      var match$5 = match$2[1];
+                                      if (typeof match$5 === "number" || match$5.tag || correlationId !== match$5[0]) {
+                                        return /* NoUpdate */0;
+                                      } else {
+                                        console.log("join cmd completed");
+                                        var tmp$2;
+                                        tmp$2 = response.tag ? /* Error */Block.__(1, [response[0]]) : /* Success */Block.__(2, [response[0]]);
+                                        return /* Update */Block.__(0, [/* record */[
+                                                    /* index */state[/* index */0],
+                                                    /* selectedVenture : LoadingVenture */Block.__(2, [
+                                                        match$2[0],
+                                                        tmp$2
+                                                      ]),
+                                                    /* session */state[/* session */2],
+                                                    /* dataWorker */state[/* dataWorker */3],
+                                                    /* persistWorker */state[/* persistWorker */4],
+                                                    /* ventureWorker */state[/* ventureWorker */5]
+                                                  ]]);
+                                      }
                                   case 3 : 
                                       var loadedId = match$2[0];
                                       if (PrimitiveTypes.VentureId[/* eq */5](msg$1[0], loadedId)) {
@@ -344,8 +390,7 @@ function make(currentRoute, session, children) {
                                       } else {
                                         return /* NoUpdate */0;
                                       }
-                                  default:
-                                    return /* NoUpdate */0;
+                                  
                                 }
                               }
                           default:
