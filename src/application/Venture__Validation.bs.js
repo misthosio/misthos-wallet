@@ -1083,6 +1083,17 @@ function validate(state, param) {
             exit$1 = 3;
           }
           break;
+      case 3 : 
+          if (match) {
+            exit$1 = 3;
+          } else if (match$1) {
+            exit = 2;
+          } else if (Caml_obj.caml_equal($$event[0][/* supporterId */1], state[/* creatorData */19][/* id */1]) && List.length(state[/* knownItems */6]) === 2) {
+            return /* Ok */0;
+          } else {
+            exit$1 = 3;
+          }
+          break;
       default:
         exit$1 = 3;
     }

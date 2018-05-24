@@ -767,6 +767,12 @@ let validate =
           && state.partnerData
           |> List.length == 0 =>
       Ok
+    | (PartnerEndorsed(event), false, false)
+        when
+          event.supporterId == state.creatorData.id
+          && state.knownItems
+          |> List.length == 2 =>
+      Ok
     | (_, false, false) => InvalidIssuer
     | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
     | (PartnerAccepted(event), true, false)

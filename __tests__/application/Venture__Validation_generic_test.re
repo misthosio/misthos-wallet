@@ -472,9 +472,14 @@ let () = {
         );
       },
       (sessions, log) => {
-        let (_user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        let (user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
         let proposal = log |> L.lastEvent |> Event.getPartnerProposedExn;
-        let log = log |> L.withPartnerEndorsed(user2, proposal);
+        let log =
+          L.(
+            log
+            |> withPartnerEndorsed(user1, proposal)
+            |> withPartnerEndorsed(user2, proposal)
+          );
         testValidationResult(
           log |> constructState,
           L.(log |> withPartnerAccepted(proposal) |> lastItem),
@@ -503,7 +508,8 @@ let () = {
         let log =
           L.(
             log
-            |> L.withPartner(user4, ~supporters=[user1, user2])
+            |> withPartnerEndorsed(user1, proposal)
+            |> withPartner(user4, ~supporters=[user1, user2])
             |> withPartnerEndorsed(user2, proposal)
           );
         testValidationResult(
