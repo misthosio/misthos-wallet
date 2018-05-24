@@ -6,7 +6,7 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 
-var component = ReasonReact.statelessComponent("JoinVenture");
+var component = ReasonReact.statelessComponent("LoadVenture");
 
 function make(cmdStatus, _) {
   return /* record */[
@@ -23,7 +23,7 @@ function make(cmdStatus, _) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Loading Venture",
                                 /* [] */0
-                              ]], ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* JoinVenture */1, /* None */0, /* array */[])), null, /* array */[]));
+                              ]], ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* LoadVenture */2, /* None */0, /* array */[])), null, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

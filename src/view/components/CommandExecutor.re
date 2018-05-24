@@ -98,6 +98,7 @@ module Status = {
   type action =
     | CreateVenture
     | JoinVenture
+    | LoadVenture
     | Proposal
     | Endorsement
     | Rejection;
@@ -115,6 +116,7 @@ module Status = {
                 switch (action) {
                 | CreateVenture => "Venture is being created"
                 | JoinVenture => "Joining venture"
+                | LoadVenture => "Loading venture"
                 | Proposal => "Your proposal is being submitted"
                 | Endorsement => "Your endorsement is being submitted"
                 | Rejection => "Your rejection is being submitted"
