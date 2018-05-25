@@ -23,8 +23,9 @@ build:
 	rm -rf build
 	yarn build
 
-ci:
+bsb-once:
 	node_modules/.bin/bsb -make-world
+ci:
 	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
 	CI=true yarn test --runInBand
