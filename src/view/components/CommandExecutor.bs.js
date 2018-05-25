@@ -164,10 +164,7 @@ function make$1(cmdStatus, action, _) {
                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(tmp)])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_LinearProgress.make(/* Some */[Css.style(/* :: */[
                                               Css.marginTop(Css.px(Theme.space(1))),
-                                              /* :: */[
-                                                Css.backgroundColor(Colors.misthosTeal),
-                                                /* [] */0
-                                              ]
+                                              /* [] */0
                                             ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))
                             ];
                   case 1 : 

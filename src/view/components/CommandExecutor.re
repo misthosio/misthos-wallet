@@ -147,12 +147,7 @@ module Status = {
             )
           </MTypography>,
           <MaterialUi.LinearProgress
-            className=Css.(
-                        style([
-                          marginTop(px(Theme.space(1))),
-                          backgroundColor(Colors.misthosTeal),
-                        ])
-                      )
+            className=Css.(style([marginTop(px(Theme.space(1)))]))
           />,
         |])
       | Error(error) =>
