@@ -112,10 +112,7 @@ function lastRemovalOfCustodian(partnerId, param) {
 }
 
 function lastPartnerAccepted(partnerId, param) {
-  console.log("here");
-  var ret = List.assoc(partnerId, param[/* partnerAccepted */11]);
-  console.log("there");
-  return ret;
+  return List.assoc(partnerId, param[/* partnerAccepted */11]);
 }
 
 function apply($$event, state) {
