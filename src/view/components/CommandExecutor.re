@@ -5,9 +5,11 @@ open PrimitiveTypes;
 open WalletTypes;
 
 type action =
-  | CommandExecuted(WebWorker.correlationId);
+  | CommandExecuted(WebWorker.correlationId)
+  | Reset;
 
 type commands = {
+  reset: unit => unit,
   proposePartner: (~prospectId: userId) => unit,
   endorsePartner: (~processId: processId) => unit,
   rejectPartner: (~processId: processId) => unit,
@@ -43,6 +45,7 @@ let make =
       children,
     ) => {
   let wrapCommands = send => {
+    reset: () => send(Reset),
     proposePartner: (~prospectId) =>
       send(CommandExecuted(commands.proposePartner(~prospectId))),
     endorsePartner: (~processId) =>
@@ -88,6 +91,7 @@ let make =
       switch (action) {
       | CommandExecuted(correlationId) =>
         ReasonReact.Update({cmdStatus: Pending(correlationId)})
+      | Reset => ReasonReact.Update({cmdStatus: Idle})
       },
     render: ({send, state: {cmdStatus}}) =>
       children(~commands=wrapCommands(send), ~cmdStatus),
@@ -102,8 +106,15 @@ module Status = {
     | Proposal
     | Endorsement
     | Rejection;
+  type reducerAction =
+    | Success
+    | Error;
+  type state = {
+    fired: bool,
+    cmdStatus,
+  };
   let component = ReasonReact.statelessComponent("CommandStatus");
-  let make = (~cmdStatus, ~action, ~onRetry=?, _children) => {
+  let make = (~cmdStatus: cmdStatus, ~action, _children) => {
     ...component,
     render: (_) =>
       switch (cmdStatus) {
@@ -135,36 +146,31 @@ module Status = {
           />,
         |])
       | Error(error) =>
-        switch (error, onRetry) {
-        | (CouldNotPersistVenture, Some(onRetry)) =>
-          ReasonReact.array([|
-            "RED: your submission could not be persisted" |> text,
-            <MButton fullWidth=true onClick=(_e => onRetry())>
-              (text("Try Again"))
-            </MButton>,
-          |])
-        | (CouldNotPersistVenture, None) =>
+        switch (error) {
+        | CouldNotPersistVenture =>
           "RED: your submission could not be persisted" |> text
-        | (CouldNotFindUserInfo, _) =>
+        | CouldNotFindUserInfo =>
           "RED: Id doesn't exist or user has never logged in" |> text
-        | (MaxPartnersReached, _) =>
+        | MaxPartnersReached =>
           "RED: The maximum number of partners we currently support in a venture has been reached"
           |> text
-        | (PartnerAlreadyProposed, _) =>
+        | PartnerAlreadyProposed =>
           "RED: This user has already been proposed to join" |> text
-        | (PartnerAlreadyExists, _) =>
+        | PartnerAlreadyExists =>
           "RED: User is already a partner of this venture" |> text
-        | (CouldNotJoinVenture, _) =>
+        | CouldNotJoinVenture =>
           "RED: Error joining venture. Perhaps you have not been accepted yet."
           |> text
-        | (CouldNotLoadVenture, _) => "RED: Error loading venture" |> text
+        | CouldNotLoadVenture => "RED: Error loading venture" |> text
         }
-      | Success(ProcessStarted(_)) =>
-        "GREEN: Your proposal has been submited" |> text
-      | Success(ProcessEndorsed(_)) =>
-        "GREEN: Your endorsement has been submited" |> text
-      | Success(ProcessRejected(_)) =>
-        "GREEN: Your rejection has been submited" |> text
+      | Success(success) =>
+        switch (success) {
+        | ProcessStarted(_) => "GREEN: Your proposal has been submited" |> text
+        | ProcessEndorsed(_) =>
+          "GREEN: Your endorsement has been submited" |> text
+        | ProcessRejected(_) =>
+          "GREEN: Your rejection has been submited" |> text
+        }
       },
   };
 };

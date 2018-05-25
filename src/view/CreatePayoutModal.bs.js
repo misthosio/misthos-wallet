@@ -293,7 +293,7 @@ function make(viewData, commands, cmdStatus, _) {
                           ],
                           state[/* destinations */1]
                         ] : state[/* destinations */1];
-                      Curry._3(commands[/* proposePayout */6], WalletTypes.AccountIndex[/* default */9], destinations, defaultFee);
+                      Curry._3(commands[/* proposePayout */7], WalletTypes.AccountIndex[/* default */9], destinations, defaultFee);
                       return /* NoUpdate */0;
                   
                 }

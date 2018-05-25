@@ -28,12 +28,28 @@ let make = (~session, ~updateSession, _children) => {
           <CommandExecutor
             commands lastResponse=(venture |> ViewModel.lastResponse)>
             ...(
-                 (~commands, ~cmdStatus) =>
-                   <ManagePartnersModal
-                     viewData=(venture |> ViewModel.managePartnersModal)
-                     commands
-                     cmdStatus
-                   />
+                 (
+                   ~commands as proposePartnerCmds,
+                   ~cmdStatus as proposeCmdStatus,
+                 ) =>
+                   <CommandExecutor
+                     commands lastResponse=(venture |> ViewModel.lastResponse)>
+                     ...(
+                          (
+                            ~commands as removePartnerCmds,
+                            ~cmdStatus as removeCmdStatus,
+                          ) =>
+                            <ManagePartnersModal
+                              viewData=(
+                                venture |> ViewModel.managePartnersModal
+                              )
+                              proposePartnerCmds
+                              proposeCmdStatus
+                              removePartnerCmds
+                              removeCmdStatus
+                            />
+                        )
+                   </CommandExecutor>
                )
           </CommandExecutor>,
           onCloseModal(selected),

@@ -138,9 +138,9 @@ function make(viewData, commands, cmdStatus, _) {
                                                   ]))])), React.createElement("div", {
                                       className: total
                                     }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* Some */[total], /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")]))), transactionId), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(match[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", match[/* canVote */3], (function () {
-                                            return Curry._1(commands[/* endorsePayout */7], processId);
+                                            return Curry._1(commands[/* endorsePayout */8], processId);
                                           }), (function () {
-                                            return Curry._1(commands[/* rejectPayout */8], processId);
+                                            return Curry._1(commands[/* rejectPayout */9], processId);
                                           }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */1]) > 0 ? ViewCommon.text("WARNING!!! This payout collides with other payouts") : null), /* array */[]));
             }),
           /* initialState */component[/* initialState */10],

@@ -75,9 +75,7 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
                               ]))];
                     break;
                 case 2 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Endorsement */4, /* Some */[(function () {
-                                    return Curry._1(send, /* Cancel */0);
-                                  })], /* array */[]))];
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Endorsement */4, /* array */[]))];
                     break;
                 case 3 : 
                     tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* array */[
@@ -91,9 +89,7 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
                               ]))];
                     break;
                 case 4 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Rejection */5, /* Some */[(function () {
-                                    return Curry._1(send, /* Cancel */0);
-                                  })], /* array */[]))];
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Rejection */5, /* array */[]))];
                     break;
                 
               }

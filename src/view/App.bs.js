@@ -56,14 +56,17 @@ function make(session, updateSession, _) {
               if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                 return /* None */0;
               } else {
+                var commands = selectedVenture[2];
                 var venture = selectedVenture[1];
                 var match$1 = ViewModel.readOnly(venture);
                 if (match$1) {
                   return /* None */0;
                 } else {
                   return /* Some */[/* tuple */[
-                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture), /* None */0, (function (commands, cmdStatus) {
-                                        return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), commands, cmdStatus, /* array */[]));
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* None */0, (function (proposePartnerCmds, proposeCmdStatus) {
+                                        return ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* None */0, (function (removePartnerCmds, removeCmdStatus) {
+                                                          return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, /* array */[]));
+                                                        })));
                                       }))),
                             (function (param) {
                                 return onCloseModal(selected, param);
