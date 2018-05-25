@@ -196,7 +196,7 @@ let make =
                     onChange=(
                       e => send(ChangeNewPartnerId(extractString(e)))
                     )
-                    autoFocus=false
+                    autoFocus=true
                     fullWidth=true
                   />
                   <ProposeButton
