@@ -111,6 +111,14 @@ function make(commands, lastResponse, onProcessStarted, children) {
         ];
 }
 
+function message(variant, message$1) {
+  var color = variant ? Colors.error : Colors.success;
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[Css.style(/* :: */[
+                        Css.color(color),
+                        /* [] */0
+                      ])], /* array */[ViewCommon.text(message$1)]));
+}
+
 var component$1 = ReasonReact.statelessComponent("CommandStatus");
 
 function make$1(cmdStatus, action, _) {
@@ -165,29 +173,29 @@ function make$1(cmdStatus, action, _) {
                   case 1 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
-                            return ViewCommon.text("RED: Error joining venture. Perhaps you have not been accepted yet.");
+                            return message(/* Error */1, "Error joining venture. Perhaps you have not been accepted yet.");
                         case 1 : 
-                            return ViewCommon.text("RED: Error loading venture");
+                            return message(/* Error */1, "Error loading venture");
                         case 2 : 
-                            return ViewCommon.text("RED: The maximum number of partners we currently support in a venture has been reached");
+                            return message(/* Error */1, "The maximum number of partners we currently support in a venture has been reached");
                         case 3 : 
-                            return ViewCommon.text("RED: User is already a partner of this venture");
+                            return message(/* Error */1, "User is already a partner of this venture");
                         case 4 : 
-                            return ViewCommon.text("RED: This user has already been proposed to join");
+                            return message(/* Error */1, "This user has already been proposed to join");
                         case 5 : 
-                            return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
+                            return message(/* Error */1, "Id doesn't exist or user has never logged in");
                         case 6 : 
-                            return ViewCommon.text("RED: your submission could not be persisted");
+                            return message(/* Error */1, "Your submission could not be persisted");
                         
                       }
                   case 2 : 
                       switch (cmdStatus[0].tag | 0) {
                         case 0 : 
-                            return ViewCommon.text("GREEN: Your proposal has been submited");
+                            return message(/* Success */0, "Your proposal has been submited");
                         case 1 : 
-                            return ViewCommon.text("GREEN: Your endorsement has been submited");
+                            return message(/* Success */0, "Your endorsement has been submited");
                         case 2 : 
-                            return ViewCommon.text("GREEN: Your rejection has been submited");
+                            return message(/* Success */0, "Your rejection has been submited");
                         
                       }
                   
@@ -203,6 +211,7 @@ function make$1(cmdStatus, action, _) {
 }
 
 var Status = /* module */[
+  /* message */message,
   /* component */component$1,
   /* make */make$1
 ];
