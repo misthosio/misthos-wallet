@@ -11,6 +11,4 @@ mv deps repo-with-deps
 
 tar -zcvf "bundled-deps-$(cat repo-with-deps/gitref).tgz" repo-with-deps
 
-cp -r repo/* repo-with-deps/
-rm -rf deps/*
-cp -r repo/node_modules deps
+mv ./*.tgz repo-with-deps
