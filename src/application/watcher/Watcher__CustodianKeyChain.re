@@ -6,7 +6,7 @@ open WalletTypes;
 
 type state = {
   ventureId,
-  pendingEvent: option((Bitcoin.ECPair.t, Event.t)),
+  pendingEvent: option(unit => (Bitcoin.ECPair.t, Event.t)),
   selfRemoved: bool,
   nextKeyChainIdx: custodianKeyChainIdx,
 };
@@ -38,23 +38,27 @@ let make =
               when acceptance.data.accountIdx == accountIdx => {
               ...state^,
               pendingEvent:
-                Some((
-                  issuerKeyPair,
-                  CustodianKeyChainUpdated(
-                    CustodianKeyChainUpdated.make(
-                      ~custodianApprovalProcess,
-                      ~custodianId,
-                      ~keyChain=
-                        CustodianKeyChain.make(
-                          ~ventureId=state^.ventureId,
-                          ~accountIdx,
-                          ~keyChainIdx=state^.nextKeyChainIdx,
-                          ~masterKeyChain,
-                        )
-                        |> CustodianKeyChain.toPublicKeyChain,
-                    ),
+                Some(
+                  (
+                    () => (
+                      issuerKeyPair,
+                      CustodianKeyChainUpdated(
+                        CustodianKeyChainUpdated.make(
+                          ~custodianApprovalProcess,
+                          ~custodianId,
+                          ~keyChain=
+                            CustodianKeyChain.make(
+                              ~ventureId=state^.ventureId,
+                              ~accountIdx,
+                              ~keyChainIdx=state^.nextKeyChainIdx,
+                              ~masterKeyChain,
+                            )
+                            |> CustodianKeyChain.toPublicKeyChain,
+                        ),
+                      ),
+                    )
                   ),
-                )),
+                ),
             }
           | CustodianRemovalAccepted({
               data: {
@@ -85,23 +89,27 @@ let make =
           | PartnerRemovalAccepted(_) => {
               ...state^,
               pendingEvent:
-                Some((
-                  issuerKeyPair,
-                  CustodianKeyChainUpdated(
-                    CustodianKeyChainUpdated.make(
-                      ~custodianApprovalProcess,
-                      ~custodianId,
-                      ~keyChain=
-                        CustodianKeyChain.make(
-                          ~ventureId=state^.ventureId,
-                          ~accountIdx,
-                          ~keyChainIdx=state^.nextKeyChainIdx,
-                          ~masterKeyChain,
-                        )
-                        |> CustodianKeyChain.toPublicKeyChain,
-                    ),
+                Some(
+                  (
+                    () => (
+                      issuerKeyPair,
+                      CustodianKeyChainUpdated(
+                        CustodianKeyChainUpdated.make(
+                          ~custodianApprovalProcess,
+                          ~custodianId,
+                          ~keyChain=
+                            CustodianKeyChain.make(
+                              ~ventureId=state^.ventureId,
+                              ~accountIdx,
+                              ~keyChainIdx=state^.nextKeyChainIdx,
+                              ~masterKeyChain,
+                            )
+                            |> CustodianKeyChain.toPublicKeyChain,
+                        ),
+                      ),
+                    )
                   ),
-                )),
+                ),
             }
           | CustodianKeyChainUpdated({
               custodianApprovalProcess: processId,
@@ -130,7 +138,7 @@ let make =
               ...state^,
               pendingEvent:
                 state^.pendingEvent
-                |> Utils.mapOption((_) =>
+                |> Utils.mapOption((_, ()) =>
                      (
                        issuerKeyPair,
                        CustodianKeyChainUpdated(
@@ -160,7 +168,7 @@ let make =
     };
     pub processCompleted = () =>
       UserId.neq(userId, custodianId) || state^.selfRemoved;
-    pub pendingEvent = () => state^.pendingEvent
+    pub pendingEvent = () => state^.pendingEvent |> Utils.mapOption(f => f())
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;
