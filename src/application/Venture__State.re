@@ -153,7 +153,7 @@ let apply = (event, state) =>
       {data: {custodianId, lastCustodianProcess}} as event,
     ) => {
       ...state,
-      custodianRemovals: [(custodianId, event)],
+      custodianRemovals: [(custodianId, event), ...state.custodianRemovals],
       custodianAccepted:
         state.custodianAccepted
         |> List.filter(((_, {processId}: Custodian.Accepted.t)) =>

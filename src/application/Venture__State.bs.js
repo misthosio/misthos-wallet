@@ -350,7 +350,7 @@ function apply($$event, state) {
                     match$4[/* custodianId */0],
                     $$event$4
                   ],
-                  /* [] */0
+                  state[/* custodianRemovals */10]
                 ],
                 /* partnerAccepted */state[/* partnerAccepted */11]
               ];
