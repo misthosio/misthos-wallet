@@ -44,7 +44,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               return /* record */[
                       /* viewData */viewData,
                       /* canSubmitProposal */state[/* canSubmitProposal */1],
-                      /* inputs */state[/* inputs */2]
+                      /* removeInputFrozen */state[/* removeInputFrozen */2],
+                      /* inputs */state[/* inputs */3]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -55,7 +56,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              var inputs = match[/* inputs */2];
+              var inputs = match[/* inputs */3];
               var viewData = match[/* viewData */0];
               var activeStep;
               activeStep = typeof proposeCmdStatus === "number" || proposeCmdStatus.tag !== 2 ? 0 : 1;
@@ -132,7 +133,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                           })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
                                                               ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner", (function () {
                                                                           return Curry._1(send, /* ProposePartner */0);
-                                                                        }), match[/* canSubmitProposal */1], /* Some */[false], proposeCmdStatus, /* array */[]))
+                                                                        }), /* None */0, /* None */0, match[/* canSubmitProposal */1], /* Some */[false], proposeCmdStatus, /* array */[]))
                                                             ]))
                                                   ])),
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
@@ -146,12 +147,17 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                   ]))
                                         ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner removal", (function () {
                                             return Curry._1(send, /* RemovePartner */1);
-                                          }), Js_option.isSome(inputs[/* removePartnerId */1]), /* None */0, removeCmdStatus, /* array */[]))), /* array */[]));
+                                          }), /* Some */[(function () {
+                                              return Curry._1(send, /* FreezeRemoval */3);
+                                            })], /* Some */[(function () {
+                                              return Curry._1(send, /* ResetRemoval */4);
+                                            })], Js_option.isSome(inputs[/* removePartnerId */1]), /* None */0, removeCmdStatus, /* array */[]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
                       /* viewData */viewData,
                       /* canSubmitProposal */false,
+                      /* removeInputFrozen */false,
                       /* inputs : record */[
                         /* prospectId */"",
                         /* removePartnerId : None */0
@@ -163,7 +169,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               if (typeof action === "number") {
                 switch (action) {
                   case 0 : 
-                      var prospectId = $$String.trim(state[/* inputs */2][/* prospectId */0]);
+                      var prospectId = $$String.trim(state[/* inputs */3][/* prospectId */0]);
                       if (prospectId === "") {
                         return /* NoUpdate */0;
                       } else {
@@ -173,22 +179,24 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                   case 1 : 
                       Utils.mapOption((function (partnerId) {
                               return Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], partnerId);
-                            }), state[/* inputs */2][/* removePartnerId */1]);
-                      var init = state[/* inputs */2];
+                            }), state[/* inputs */3][/* removePartnerId */1]);
+                      var init = state[/* inputs */3];
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
+                                  /* removeInputFrozen */state[/* removeInputFrozen */2],
                                   /* inputs : record */[
                                     /* prospectId */init[/* prospectId */0],
                                     /* removePartnerId : None */0
                                   ]
                                 ]]);
                   case 2 : 
-                      var init$1 = state[/* inputs */2];
+                      var init$1 = state[/* inputs */3];
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
+                                  /* removeInputFrozen */state[/* removeInputFrozen */2],
                                   /* inputs : record */[
                                     /* prospectId */"",
                                     /* removePartnerId */init$1[/* removePartnerId */1]
@@ -198,24 +206,72 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                     return Curry._1(proposePartnerCmds[/* reset */0], /* () */0);
                                   })
                               ]);
+                  case 3 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* canSubmitProposal */state[/* canSubmitProposal */1],
+                                  /* removeInputFrozen */true,
+                                  /* inputs */state[/* inputs */3]
+                                ]]);
+                  case 4 : 
+                      return /* UpdateWithSideEffects */Block.__(2, [
+                                /* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* canSubmitProposal */state[/* canSubmitProposal */1],
+                                  /* removeInputFrozen */false,
+                                  /* inputs */state[/* inputs */3]
+                                ],
+                                (function () {
+                                    return Curry._1(removePartnerCmds[/* reset */0], /* () */0);
+                                  })
+                              ]);
                   
                 }
               } else if (action.tag) {
-                var init$2 = state[/* inputs */2];
-                return /* Update */Block.__(0, [/* record */[
-                            /* viewData */state[/* viewData */0],
-                            /* canSubmitProposal */state[/* canSubmitProposal */1],
-                            /* inputs : record */[
-                              /* prospectId */init$2[/* prospectId */0],
-                              /* removePartnerId : Some */[action[0]]
-                            ]
-                          ]]);
+                var match = state[/* removeInputFrozen */2];
+                var exit = 0;
+                if (typeof removeCmdStatus === "number") {
+                  if (match) {
+                    return /* NoUpdate */0;
+                  } else {
+                    exit = 1;
+                  }
+                } else {
+                  switch (removeCmdStatus.tag | 0) {
+                    case 0 : 
+                        return /* NoUpdate */0;
+                    case 1 : 
+                    case 2 : 
+                        exit = 1;
+                        break;
+                    
+                  }
+                }
+                if (exit === 1) {
+                  var init$2 = state[/* inputs */3];
+                  return /* UpdateWithSideEffects */Block.__(2, [
+                            /* record */[
+                              /* viewData */state[/* viewData */0],
+                              /* canSubmitProposal */state[/* canSubmitProposal */1],
+                              /* removeInputFrozen */false,
+                              /* inputs : record */[
+                                /* prospectId */init$2[/* prospectId */0],
+                                /* removePartnerId : Some */[action[0]]
+                              ]
+                            ],
+                            (function () {
+                                return Curry._1(removePartnerCmds[/* reset */0], /* () */0);
+                              })
+                          ]);
+                }
+                
               } else {
                 var text = action[0];
-                var init$3 = state[/* inputs */2];
+                var init$3 = state[/* inputs */3];
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
                             /* canSubmitProposal */text !== "",
+                            /* removeInputFrozen */state[/* removeInputFrozen */2],
                             /* inputs : record */[
                               /* prospectId */text,
                               /* removePartnerId */init$3[/* removePartnerId */1]

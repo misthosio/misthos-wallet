@@ -14,6 +14,7 @@ type inputs = {
 type state = {
   viewData: ViewData.t,
   canSubmitProposal: bool,
+  removeInputFrozen: bool,
   inputs,
 };
 
@@ -22,7 +23,9 @@ type action =
   | ProposePartner
   | SelectRemovePartner(UserId.t)
   | RemovePartner
-  | AddAnother;
+  | AddAnother
+  | FreezeRemoval
+  | ResetRemoval;
 
 let component = ReasonReact.reducerComponent("ManagePartners");
 
@@ -46,6 +49,7 @@ let make =
       removePartnerId: None,
       prospectId: "",
     },
+    removeInputFrozen: false,
     canSubmitProposal: false,
     viewData,
   },
@@ -74,7 +78,8 @@ let make =
       state.inputs.removePartnerId
       |> Utils.mapOption(partnerId =>
            removePartnerCmds.proposePartnerRemoval(~partnerId)
-         );
+         )
+      |> ignore;
       ReasonReact.Update({
         ...state,
         inputs: {
@@ -83,13 +88,28 @@ let make =
         },
       });
     | SelectRemovePartner(partner) =>
-      ReasonReact.Update({
-        ...state,
-        inputs: {
-          ...state.inputs,
-          removePartnerId: Some(partner),
-        },
-      })
+      switch (removeCmdStatus, state.removeInputFrozen) {
+      | (Success(_) | Error(_), _)
+      | (Idle, false) =>
+        ReasonReact.UpdateWithSideEffects(
+          {
+            ...state,
+            removeInputFrozen: false,
+            inputs: {
+              ...state.inputs,
+              removePartnerId: Some(partner),
+            },
+          },
+          ((_) => removePartnerCmds.reset()),
+        )
+      | _ => ReasonReact.NoUpdate
+      }
+    | FreezeRemoval => ReasonReact.Update({...state, removeInputFrozen: true})
+    | ResetRemoval =>
+      ReasonReact.UpdateWithSideEffects(
+        {...state, removeInputFrozen: false},
+        ((_) => removePartnerCmds.reset()),
+      )
     | AddAnother =>
       ReasonReact.UpdateWithSideEffects(
         {
@@ -180,7 +200,7 @@ let make =
                     fullWidth=true
                   />
                   <ProposeButton
-                    onPropose=(() => send(ProposePartner))
+                    onSubmit=(() => send(ProposePartner))
                     canSubmitProposal
                     withConfirmation=false
                     proposeText="Propose partner"
@@ -226,7 +246,9 @@ let make =
           </MTypography>
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
           <ProposeButton
-            onPropose=(() => send(RemovePartner))
+            onPropose=(() => send(FreezeRemoval))
+            onSubmit=(() => send(RemovePartner))
+            onCancel=(() => send(ResetRemoval))
             canSubmitProposal=(inputs.removePartnerId |> Js.Option.isSome)
             proposeText="Propose partner removal"
             cmdStatus=removeCmdStatus

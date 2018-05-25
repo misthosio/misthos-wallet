@@ -28,7 +28,9 @@ module Styles = {
 let make =
     (
       ~proposeText,
-      ~onPropose,
+      ~onSubmit,
+      ~onPropose=?,
+      ~onCancel=?,
       ~canSubmitProposal,
       ~withConfirmation=true,
       ~cmdStatus: CommandExecutor.cmdStatus,
@@ -41,28 +43,27 @@ let make =
     switch (action, withConfirmation, canSubmitProposal) {
     | (_, _, false) => ReasonReact.NoUpdate
     | (Propose, true, _) =>
-      ReasonReact.Update({...state, buttonState: ConfirmProposal})
+      ReasonReact.UpdateWithSideEffects(
+        {...state, buttonState: ConfirmProposal},
+        ((_) => onPropose |> Utils.mapOption(f => f()) |> ignore),
+      )
     | (Propose, false, _) =>
       ReasonReact.SideEffects((({send}) => send(ConfirmProposal)))
     | (ConfirmProposal, _, _) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, buttonState: ProposalSubmited},
-        ((_) => onPropose()),
+        ((_) => onSubmit()),
       )
     | (Cancel, _, _) =>
-      ReasonReact.Update({cmdStatus: Idle, buttonState: NoDecision})
+      ReasonReact.UpdateWithSideEffects(
+        {cmdStatus: Idle, buttonState: NoDecision},
+        ((_) => onCancel |> Utils.mapOption(f => f()) |> ignore),
+      )
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
     ReasonReact.array(
       Array.concatMany([|
         switch (state, cmdStatus) {
-        | (_, Error(_))
-        | (NoDecision, _) => [|
-            <MButton fullWidth=true onClick=(_e => send(Propose))>
-              (text(proposeText))
-            </MButton>,
-            <CommandExecutor.Status cmdStatus action=Proposal />,
-          |]
         | (ConfirmProposal, _) => [|
             <MTypography className=Styles.inlineConfirm variant=`Body2>
               (proposeText |> text)
@@ -73,6 +74,13 @@ let make =
                 (text("No"))
               </MButton>
             </MTypography>,
+          |]
+        | (_, Error(_) | Idle)
+        | (NoDecision, _) => [|
+            <MButton fullWidth=true onClick=(_e => send(Propose))>
+              (text(proposeText))
+            </MButton>,
+            <CommandExecutor.Status cmdStatus action=Proposal />,
           |]
         | (ProposalSubmited, _) => [|
             <CommandExecutor.Status cmdStatus action=Proposal />,
