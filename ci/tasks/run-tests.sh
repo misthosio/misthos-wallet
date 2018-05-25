@@ -12,7 +12,7 @@ fi
 mv deps/node_modules repo/
 
 pushd repo
-# make bsb-once
+make bsb-once
 
 git log --pretty=format:'%h' -n 1 > gitref
 
@@ -21,7 +21,8 @@ if [[ "$(git status -s -uno)" != "" ]]; then
   exit 1;
 fi
 
-# make ci
+make ci
+
 popd
 
 tar -zcvf "misthos-code-v$(cat code-version/number)-$(cat repo/gitref).tgz" repo > /dev/null
