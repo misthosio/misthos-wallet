@@ -145,7 +145,16 @@ let make =
           />
           (
             if (viewData.collidesWith |> Belt.Set.size > 0) {
-              "WARNING!!! This payout collides with other payouts" |> text;
+              <MaterialUi.SnackbarContent
+                message=(
+                  {|
+                   This Proposal is a duplicate of another proposal.
+                   We recommend that you coordinate with your Partners
+                   to only endorse one Proposal and reject the other one.
+                   |}
+                  |> text
+                )
+              />;
             } else {
               ReasonReact.null;
             }
