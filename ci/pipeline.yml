@@ -190,7 +190,7 @@ resources:
   source:
     bucket: artifact-cache
     json_key: ((gcp-service-account))
-    regexp: misthos-code-v(.*).tgz
+    regexp: misthos-code-v(.*)-.*.tgz
 - name: misthos-build
   type: gcs-resource
   source:
