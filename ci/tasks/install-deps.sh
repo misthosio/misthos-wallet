@@ -1,12 +1,12 @@
 #!/bin/bash
 
-cp -r deps/* repo
-
 set -e
 
-cd repo
+pushd deps
 make install
-cd ../
-cp -r repo/* repo-with-deps/
-rm -rf deps/*
-cp -r repo/node_modules deps
+git log --pretty=format:'%h' -n 1 > gitref
+popd
+
+tar -zcvf "bundled-deps-v$(cat deps-version/number)-$(cat deps/gitref).tgz" deps > /dev/null
+
+mv ./*.tgz bundled-deps
