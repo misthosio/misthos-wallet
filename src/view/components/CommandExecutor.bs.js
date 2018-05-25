@@ -7,7 +7,6 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("../Theme.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Colors = require("../Colors.bs.js");
-var MButton = require("./MButton.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -18,6 +17,9 @@ var component = ReasonReact.reducerComponent("CommandExecuter");
 function make(commands, lastResponse, onProcessStarted, children) {
   var wrapCommands = function (send) {
     return /* record */[
+            /* reset */(function () {
+                return Curry._1(send, /* Reset */0);
+              }),
             /* proposePartner */(function (prospectId) {
                 return Curry._1(send, /* CommandExecuted */[Curry._1(commands[/* proposePartner */0], prospectId)]);
               }),
@@ -98,7 +100,11 @@ function make(commands, lastResponse, onProcessStarted, children) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, _) {
-              return /* Update */Block.__(0, [/* record */[/* cmdStatus : Pending */Block.__(0, [action[0]])]]);
+              if (action) {
+                return /* Update */Block.__(0, [/* record */[/* cmdStatus : Pending */Block.__(0, [action[0]])]]);
+              } else {
+                return /* Update */Block.__(0, [/* record */[/* cmdStatus : Idle */0]]);
+              }
             }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
@@ -107,7 +113,7 @@ function make(commands, lastResponse, onProcessStarted, children) {
 
 var component$1 = ReasonReact.statelessComponent("CommandStatus");
 
-function make$1(cmdStatus, action, onRetry, _) {
+function make$1(cmdStatus, action, _) {
   return /* record */[
           /* debugName */component$1[/* debugName */0],
           /* reactClassInternal */component$1[/* reactClassInternal */1],
@@ -171,17 +177,7 @@ function make$1(cmdStatus, action, onRetry, _) {
                         case 5 : 
                             return ViewCommon.text("RED: Id doesn't exist or user has never logged in");
                         case 6 : 
-                            if (onRetry) {
-                              var onRetry$1 = onRetry[0];
-                              return /* array */[
-                                      ViewCommon.text("RED: your submission could not be persisted"),
-                                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                    return Curry._1(onRetry$1, /* () */0);
-                                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))
-                                    ];
-                            } else {
-                              return ViewCommon.text("RED: your submission could not be persisted");
-                            }
+                            return ViewCommon.text("RED: your submission could not be persisted");
                         
                       }
                   case 2 : 

@@ -62,8 +62,15 @@ function make(session, updateSession, _) {
                   return /* None */0;
                 } else {
                   return /* Some */[/* tuple */[
+<<<<<<< HEAD
                             ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture), /* None */0, (function (commands, cmdStatus) {
                                         return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), commands, cmdStatus, /* array */[]));
+=======
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* None */0, (function (proposePartnerCmds, proposeCmdStatus) {
+                                        return ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(commands, ViewModel.lastResponse(venture), /* None */0, (function (removePartnerCmds, removeCmdStatus) {
+                                                          return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, /* array */[]));
+                                                        })));
+>>>>>>> Add reset to CommandExecutor
                                       }))),
                             (function (param) {
                                 return onCloseModal(selected, param);

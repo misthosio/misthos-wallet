@@ -33,17 +33,17 @@ function make(viewData, commands, cmdStatus, _) {
               var processId = viewData[/* processId */0];
               var match$1 = processType ? /* tuple */[
                   (function () {
-                      return Curry._1(commands[/* endorsePartner */1], processId);
+                      return Curry._1(commands[/* endorsePartner */2], processId);
                     }),
                   (function () {
-                      return Curry._1(commands[/* rejectPartner */2], processId);
+                      return Curry._1(commands[/* rejectPartner */3], processId);
                     })
                 ] : /* tuple */[
                   (function () {
-                      return Curry._1(commands[/* endorsePartnerRemoval */4], processId);
+                      return Curry._1(commands[/* endorsePartnerRemoval */5], processId);
                     }),
                   (function () {
-                      return Curry._1(commands[/* rejectPartnerRemoval */5], processId);
+                      return Curry._1(commands[/* rejectPartnerRemoval */6], processId);
                     })
                 ];
               var processTypeString = processType ? "Addition" : "Removal";

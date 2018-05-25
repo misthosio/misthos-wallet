@@ -5,9 +5,11 @@ open PrimitiveTypes;
 open WalletTypes;
 
 type action =
-  | CommandExecuted(WebWorker.correlationId);
+  | CommandExecuted(WebWorker.correlationId)
+  | Reset;
 
 type commands = {
+  reset: unit => unit,
   proposePartner: (~prospectId: userId) => unit,
   endorsePartner: (~processId: processId) => unit,
   rejectPartner: (~processId: processId) => unit,
@@ -43,6 +45,7 @@ let make =
       children,
     ) => {
   let wrapCommands = send => {
+    reset: () => send(Reset),
     proposePartner: (~prospectId) =>
       send(CommandExecuted(commands.proposePartner(~prospectId))),
     endorsePartner: (~processId) =>
@@ -88,6 +91,7 @@ let make =
       switch (action) {
       | CommandExecuted(correlationId) =>
         ReasonReact.Update({cmdStatus: Pending(correlationId)})
+      | Reset => ReasonReact.Update({cmdStatus: Idle})
       },
     render: ({send, state: {cmdStatus}}) =>
       children(~commands=wrapCommands(send), ~cmdStatus),

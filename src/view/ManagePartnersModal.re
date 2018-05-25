@@ -11,8 +11,6 @@ type inputs = {prospectId: string};
 type state = {
   viewData: ViewData.t,
   canSubmitProposal: bool,
-  proposeCmdStatus: CommandExecutor.cmdStatus,
-  removeCmdStatus: CommandExecutor.cmdStatus,
   inputs,
 };
 
@@ -32,9 +30,9 @@ module Styles = {
 let make =
     (
       ~viewData: ViewData.t,
-      ~proposePartner,
+      ~proposePartnerCmds: CommandExecutor.commands,
       ~proposeCmdStatus: CommandExecutor.cmdStatus,
-      ~proposePartnerRemoval,
+      ~removePartnerCmds: CommandExecutor.commands,
       ~removeCmdStatus: CommandExecutor.cmdStatus,
       _children,
     ) => {
@@ -44,16 +42,9 @@ let make =
       prospectId: "",
     },
     canSubmitProposal: false,
-    proposeCmdStatus,
-    removeCmdStatus,
     viewData,
   },
-  willReceiveProps: ({state}) => {
-    ...state,
-    viewData,
-    proposeCmdStatus,
-    removeCmdStatus,
-  },
+  willReceiveProps: ({state}) => {...state, viewData},
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
@@ -68,23 +59,26 @@ let make =
       switch (String.trim(state.inputs.prospectId)) {
       | "" => ReasonReact.NoUpdate
       | prospectId =>
-        proposePartner(~prospectId=prospectId |> UserId.fromString);
+        proposePartnerCmds.proposePartner(
+          ~prospectId=prospectId |> UserId.fromString,
+        );
         ReasonReact.NoUpdate;
       }
     | RemovePartner(partnerId) =>
-      proposePartnerRemoval(~partnerId);
+      removePartnerCmds.proposePartnerRemoval(~partnerId);
       ReasonReact.NoUpdate;
     | AddAnother =>
-      ReasonReact.Update({
-        ...state,
-        inputs: {
-          prospectId: "",
+      ReasonReact.UpdateWithSideEffects(
+        {
+          ...state,
+          inputs: {
+            prospectId: "",
+          },
         },
-        proposeCmdStatus: Idle,
-      })
+        ((_) => proposePartnerCmds.reset()),
+      )
     },
-  render:
-    ({send, state: {canSubmitProposal, viewData, inputs, proposeCmdStatus}}) => {
+  render: ({send, state: {canSubmitProposal, viewData, inputs}}) => {
     let activeStep =
       switch (proposeCmdStatus) {
       | Success(_) => 1

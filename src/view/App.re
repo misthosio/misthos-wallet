@@ -43,10 +43,9 @@ let make = (~session, ~updateSession, _children) => {
                               viewData=(
                                 venture |> ViewModel.managePartnersModal
                               )
-                              proposePartner=proposePartnerCmds.proposePartner
+                              proposePartnerCmds
                               proposeCmdStatus
-                              proposePartnerRemoval=removePartnerCmds.
-                                                      proposePartnerRemoval
+                              removePartnerCmds
                               removeCmdStatus
                             />
                         )

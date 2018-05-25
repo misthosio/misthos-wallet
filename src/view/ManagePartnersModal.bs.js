@@ -31,7 +31,11 @@ var lenght = Css.px(Theme.space(3));
 
 var Styles = /* module */[/* lenght */lenght];
 
+<<<<<<< HEAD
 function make(viewData, commands, cmdStatus, _) {
+=======
+function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds, _, _$1) {
+>>>>>>> Add reset to CommandExecutor
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -39,7 +43,12 @@ function make(viewData, commands, cmdStatus, _) {
           /* willReceiveProps */(function (param) {
               return /* record */[
                       /* viewData */viewData,
+<<<<<<< HEAD
                       /* inputs */param[/* state */1][/* inputs */1]
+=======
+                      /* canSubmitProposal */state[/* canSubmitProposal */1],
+                      /* inputs */state[/* inputs */2]
+>>>>>>> Add reset to CommandExecutor
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -118,7 +127,11 @@ function make(viewData, commands, cmdStatus, _) {
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                                                           -976970511,
+<<<<<<< HEAD
                                                                           match[/* inputs */1][/* prospectId */0]
+=======
+                                                                          match[/* inputs */2][/* prospectId */0]
+>>>>>>> Add reset to CommandExecutor
                                                                         ]], /* Some */[(function (e) {
                                                                             return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
                                                                           })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
@@ -139,12 +152,17 @@ function make(viewData, commands, cmdStatus, _) {
           /* initialState */(function () {
               return /* record */[
                       /* viewData */viewData,
+<<<<<<< HEAD
+=======
+                      /* canSubmitProposal */false,
+>>>>>>> Add reset to CommandExecutor
                       /* inputs : record */[/* prospectId */""]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               if (typeof action === "number") {
+<<<<<<< HEAD
                 var prospectId = $$String.trim(state[/* inputs */1][/* prospectId */0]);
                 if (prospectId === "") {
                   return /* NoUpdate */0;
@@ -154,11 +172,40 @@ function make(viewData, commands, cmdStatus, _) {
                 }
               } else if (action.tag) {
                 Curry._1(commands[/* proposePartnerRemoval */3], action[0]);
+=======
+                if (action === 0) {
+                  var prospectId = $$String.trim(state[/* inputs */2][/* prospectId */0]);
+                  if (prospectId === "") {
+                    return /* NoUpdate */0;
+                  } else {
+                    Curry._1(proposePartnerCmds[/* proposePartner */1], PrimitiveTypes.UserId[/* fromString */1](prospectId));
+                    return /* NoUpdate */0;
+                  }
+                } else {
+                  return /* UpdateWithSideEffects */Block.__(2, [
+                            /* record */[
+                              /* viewData */state[/* viewData */0],
+                              /* canSubmitProposal */state[/* canSubmitProposal */1],
+                              /* inputs : record */[/* prospectId */""]
+                            ],
+                            (function () {
+                                return Curry._1(proposePartnerCmds[/* reset */0], /* () */0);
+                              })
+                          ]);
+                }
+              } else if (action.tag) {
+                Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], action[0]);
+>>>>>>> Add reset to CommandExecutor
                 return /* NoUpdate */0;
               } else {
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
+<<<<<<< HEAD
                             /* inputs : record */[/* prospectId */action[0]]
+=======
+                            /* canSubmitProposal */text !== "",
+                            /* inputs : record */[/* prospectId */text]
+>>>>>>> Add reset to CommandExecutor
                           ]]);
               }
             }),
