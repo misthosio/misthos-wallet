@@ -4,8 +4,6 @@ open PrimitiveTypes;
 
 [@bs.module] external remove : string = "../assets/img/remove-partner.svg";
 
-[@bs.module] external stepBg : string = "../assets/img/step_bg.svg";
-
 module ViewData = ViewModel.ManagePartnersView;
 
 type inputs = {prospectId: string};
@@ -27,14 +25,6 @@ let component = ReasonReact.reducerComponent("ManagePartners");
 module Styles = {
   open Css;
   let lenght = px(Theme.space(3));
-  let stepLabel =
-    style([
-      backgroundImage(url(stepBg)),
-      backgroundSize(`size((lenght, lenght))),
-      height(lenght),
-      width(lenght),
-      marginRight(px(Theme.space(1))),
-    ]);
 };
 
 let make =
@@ -107,6 +97,23 @@ let make =
              ),
         ),
       );
+    let icon = index =>
+      <svg width="44" height="44" viewBox="0 0 44 44">
+        <defs>
+          <linearGradient
+            id="a" x1="162.467%" x2="-41.102%" y1="29.557%" y2="66.287%">
+            <stop offset="0%" stopColor="#05CFDB" />
+            <stop offset="100%" stopColor="#02A2B4" />
+          </linearGradient>
+        </defs>
+        <g fill="none" fillRule="evenodd" transform="translate(1 1)">
+          <circle cx="21" cy="21" r="21" stroke="#000" />
+          <circle cx="21" cy="21" r="18" fill="url(#a)" />
+        </g>
+        <text x="22" y="27" textAnchor="middle">
+          (index + 1 |> string_of_int |> text)
+        </text>
+      </svg>;
     let onSuccess = () => send(ProposePartnerSuccess);
     <Body2
       titles=["Add a partner", "Remove a partner"]
@@ -115,7 +122,7 @@ let make =
           MaterialUi.(
             <Stepper orientation=`Vertical activeStep=(`Int(activeStep))>
               <Step key="enter-id">
-                <StepLabel classes=[IconContainer(Styles.stepLabel)]>
+                <StepLabel icon=(icon(0))>
                   ("ADD A BLOCKSTACK ID" |> text)
                 </StepLabel>
                 <StepContent>
@@ -140,7 +147,9 @@ let make =
                 </StepContent>
               </Step>
               <Step>
-                <StepLabel> ("SHARE THE VENTURE URL" |> text) </StepLabel>
+                <StepLabel icon=(icon(1))>
+                  ("SHARE THE VENTURE URL" |> text)
+                </StepLabel>
                 <StepContent>
                   <MTypography variant=`Body2>
                     (

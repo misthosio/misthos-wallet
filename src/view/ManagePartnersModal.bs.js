@@ -24,40 +24,13 @@ var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Steppe
 var MaterialUi_StepLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_StepLabel.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 var MaterialUi_StepContent = require("@jsiebern/bs-material-ui/src/MaterialUi_StepContent.bs.js");
-var Step_bgSvg = require("../assets/img/step_bg.svg");
 var RemovePartnerSvg = require("../assets/img/remove-partner.svg");
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
 var lenght = Css.px(Theme.space(3));
 
-var stepLabel = Css.style(/* :: */[
-      Css.backgroundImage(Css.url(Step_bgSvg)),
-      /* :: */[
-        Css.backgroundSize(/* `size */[
-              -866934591,
-              /* tuple */[
-                lenght,
-                lenght
-              ]
-            ]),
-        /* :: */[
-          Css.height(lenght),
-          /* :: */[
-            Css.width(lenght),
-            /* :: */[
-              Css.marginRight(Css.px(Theme.space(1))),
-              /* [] */0
-            ]
-          ]
-        ]
-      ]
-    ]);
-
-var Styles = /* module */[
-  /* lenght */lenght,
-  /* stepLabel */stepLabel
-];
+var Styles = /* module */[/* lenght */lenght];
 
 function make(viewData, commands, cmdStatus, _) {
   return /* record */[
@@ -94,6 +67,43 @@ function make(viewData, commands, cmdStatus, _) {
                             return /* None */0;
                           }
                         })));
+              var icon = function (index) {
+                return React.createElement("svg", {
+                            height: "44",
+                            width: "44",
+                            viewBox: "0 0 44 44"
+                          }, React.createElement("defs", undefined, React.createElement("linearGradient", {
+                                    id: "a",
+                                    x1: "162.467%",
+                                    x2: "-41.102%",
+                                    y1: "29.557%",
+                                    y2: "66.287%"
+                                  }, React.createElement("stop", {
+                                        offset: "0%",
+                                        stopColor: "#05CFDB"
+                                      }), React.createElement("stop", {
+                                        offset: "100%",
+                                        stopColor: "#02A2B4"
+                                      }))), React.createElement("g", {
+                                fill: "none",
+                                fillRule: "evenodd",
+                                transform: "translate(1 1)"
+                              }, React.createElement("circle", {
+                                    cx: "21",
+                                    cy: "21",
+                                    r: "21",
+                                    stroke: "#000"
+                                  }), React.createElement("circle", {
+                                    cx: "21",
+                                    cy: "21",
+                                    fill: "url(#a)",
+                                    r: "18"
+                                  })), React.createElement("text", {
+                                textAnchor: "middle",
+                                x: "22",
+                                y: "27"
+                              }, ViewCommon.text(String(index + 1 | 0))));
+              };
               var onSuccess = function () {
                 return Curry._1(send, /* ProposePartnerSuccess */1);
               };
@@ -108,10 +118,7 @@ function make(viewData, commands, cmdStatus, _) {
                                             match[/* activeStep */1]
                                           ]], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Vertical */-1010337642], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                           ReasonReact.element(/* Some */["enter-id"], /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
-                                                                /* IconContainer */Block.__(9, [stepLabel]),
-                                                                /* [] */0
-                                                              ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
+                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon(0)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                                                           -976970511,
@@ -126,7 +133,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                             ]))
                                                   ])),
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("SHARE THE VENTURE URL")])),
+                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon(1)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("SHARE THE VENTURE URL")])),
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
                                                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))
