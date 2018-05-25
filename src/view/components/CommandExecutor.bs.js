@@ -107,32 +107,12 @@ function make(commands, lastResponse, onProcessStarted, children) {
 
 var component$1 = ReasonReact.statelessComponent("CommandStatus");
 
-function make$1(cmdStatus, action, onRetry, onSuccess, onError, _) {
+function make$1(cmdStatus, action, onRetry, _) {
   return /* record */[
           /* debugName */component$1[/* debugName */0],
           /* reactClassInternal */component$1[/* reactClassInternal */1],
           /* handedOffState */component$1[/* handedOffState */2],
-          /* willReceiveProps */(function () {
-              if (typeof cmdStatus === "number") {
-                return /* () */0;
-              } else {
-                switch (cmdStatus.tag | 0) {
-                  case 0 : 
-                      return /* () */0;
-                  case 1 : 
-                      Utils.mapOption((function (f) {
-                              return Curry._1(f, /* () */0);
-                            }), onSuccess);
-                      return /* () */0;
-                  case 2 : 
-                      Utils.mapOption((function (f) {
-                              return Curry._1(f, /* () */0);
-                            }), onError);
-                      return /* () */0;
-                  
-                }
-              }
-            }),
+          /* willReceiveProps */component$1[/* willReceiveProps */3],
           /* didMount */component$1[/* didMount */4],
           /* didUpdate */component$1[/* didUpdate */5],
           /* willUnmount */component$1[/* willUnmount */6],

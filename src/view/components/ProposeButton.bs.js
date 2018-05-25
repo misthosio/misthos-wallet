@@ -31,7 +31,7 @@ var Styles = /* module */[
   /* inlineConfirm */inlineConfirm
 ];
 
-function make(proposeText, onPropose, $staropt$star, cmdStatus, onSuccess, onError, _) {
+function make(proposeText, onPropose, $staropt$star, cmdStatus, _) {
   var withConfirmation = $staropt$star ? $staropt$star[0] : true;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -72,7 +72,7 @@ function make(proposeText, onPropose, $staropt$star, cmdStatus, onSuccess, onErr
                 case 2 : 
                     tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](match[/* cmdStatus */1], /* Proposal */3, /* Some */[(function () {
                                     return Curry._1(send, /* Cancel */0);
-                                  })], onSuccess, onError, /* array */[]))];
+                                  })], /* array */[]))];
                     break;
                 
               }

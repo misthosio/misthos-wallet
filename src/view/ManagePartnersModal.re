@@ -10,15 +10,13 @@ type inputs = {prospectId: string};
 
 type state = {
   viewData: ViewData.t,
-  activeStep: int,
   inputs,
 };
 
 type action =
   | ChangeNewPartnerId(string)
   | ProposePartner
-  | RemovePartner(UserId.t)
-  | ProposePartnerSuccess;
+  | RemovePartner(UserId.t);
 
 let component = ReasonReact.reducerComponent("ManagePartners");
 
@@ -39,7 +37,6 @@ let make =
     inputs: {
       prospectId: "",
     },
-    activeStep: 0,
     viewData,
   },
   willReceiveProps: ({state}) => {...state, viewData},
@@ -62,16 +59,13 @@ let make =
     | RemovePartner(partnerId) =>
       commands.proposePartnerRemoval(~partnerId);
       ReasonReact.NoUpdate;
-    | ProposePartnerSuccess =>
-      ReasonReact.Update({
-        ...state,
-        inputs: {
-          prospectId: "",
-        },
-        activeStep: 1,
-      })
     },
-  render: ({send, state: {viewData, inputs, activeStep}}) => {
+  render: ({send, state: {viewData, inputs}}) => {
+    let activeStep =
+      switch (cmdStatus) {
+      | Success(_) => 1
+      | _ => 0
+      };
     let partners =
       ReasonReact.array(
         Array.of_list(
@@ -114,7 +108,6 @@ let make =
           (index + 1 |> string_of_int |> text)
         </text>
       </svg>;
-    let onSuccess = () => send(ProposePartnerSuccess);
     <Body2
       titles=["Add a partner", "Remove a partner"]
       body1=
@@ -137,9 +130,9 @@ let make =
                   />
                   <ProposeButton
                     onPropose=(() => send(ProposePartner))
+                    withConfirmation=false
                     proposeText="Propose partner addition"
                     cmdStatus
-                    onSuccess
                   />
                 </StepContent>
               </Step>

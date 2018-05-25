@@ -31,8 +31,6 @@ let make =
       ~onPropose,
       ~withConfirmation=true,
       ~cmdStatus: CommandExecutor.cmdStatus,
-      ~onSuccess=?,
-      ~onError=?,
       _children,
     ) => {
   ...component,
@@ -77,8 +75,6 @@ let make =
               cmdStatus
               action=Proposal
               onRetry=(() => send(Cancel))
-              ?onSuccess
-              ?onError
             />,
           |]
         },

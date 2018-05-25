@@ -105,23 +105,13 @@ module Status = {
   type reducerAction =
     | Success
     | Error;
+  type state = {
+    fired: bool,
+    cmdStatus,
+  };
   let component = ReasonReact.statelessComponent("CommandStatus");
-  let make =
-      (
-        ~cmdStatus: cmdStatus,
-        ~action,
-        ~onRetry=?,
-        ~onSuccess=?,
-        ~onError=?,
-        _children,
-      ) => {
+  let make = (~cmdStatus: cmdStatus, ~action, ~onRetry=?, _children) => {
     ...component,
-    willReceiveProps: (_) =>
-      switch (cmdStatus) {
-      | Error(_) => onSuccess |> Utils.mapOption(f => f()) |> ignore
-      | Success(_) => onError |> Utils.mapOption(f => f()) |> ignore
-      | _ => ()
-      },
     render: (_) =>
       switch (cmdStatus) {
       | Idle => ReasonReact.null

@@ -37,11 +37,9 @@ function make(viewData, commands, cmdStatus, _) {
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
-              var state = param[/* state */1];
               return /* record */[
                       /* viewData */viewData,
-                      /* activeStep */state[/* activeStep */1],
-                      /* inputs */state[/* inputs */2]
+                      /* inputs */param[/* state */1][/* inputs */1]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -53,6 +51,8 @@ function make(viewData, commands, cmdStatus, _) {
               var send = param[/* send */3];
               var match = param[/* state */1];
               var viewData = match[/* viewData */0];
+              var activeStep;
+              activeStep = typeof cmdStatus === "number" || cmdStatus.tag !== 2 ? 0 : 1;
               var partners = $$Array.of_list(Belt_List.keepMapU(viewData[/* partners */0], (function (partner) {
                           var match = partner[/* canProposeRemoval */2];
                           if (match) {
@@ -103,9 +103,6 @@ function make(viewData, commands, cmdStatus, _) {
                                 y: "27"
                               }, ViewCommon.text(String(index + 1 | 0))));
               };
-              var onSuccess = function () {
-                return Curry._1(send, /* ProposePartnerSuccess */1);
-              };
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",
                                 /* :: */[
@@ -114,20 +111,20 @@ function make(viewData, commands, cmdStatus, _) {
                                 ]
                               ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
                                             3654863,
-                                            match[/* activeStep */1]
+                                            activeStep
                                           ]], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Vertical */-1010337642], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                           ReasonReact.element(/* Some */["enter-id"], /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon(0)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                                                           -976970511,
-                                                                          match[/* inputs */2][/* prospectId */0]
+                                                                          match[/* inputs */1][/* prospectId */0]
                                                                         ]], /* Some */[(function (e) {
                                                                             return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
                                                                           })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
                                                               ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", (function () {
                                                                           return Curry._1(send, /* ProposePartner */0);
-                                                                        }), /* None */0, cmdStatus, /* Some */[onSuccess], /* None */0, /* array */[]))
+                                                                        }), /* Some */[false], cmdStatus, /* array */[]))
                                                             ]))
                                                   ])),
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
@@ -142,27 +139,18 @@ function make(viewData, commands, cmdStatus, _) {
           /* initialState */(function () {
               return /* record */[
                       /* viewData */viewData,
-                      /* activeStep */0,
                       /* inputs : record */[/* prospectId */""]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               if (typeof action === "number") {
-                if (action === 0) {
-                  var prospectId = $$String.trim(state[/* inputs */2][/* prospectId */0]);
-                  if (prospectId === "") {
-                    return /* NoUpdate */0;
-                  } else {
-                    Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
-                    return /* NoUpdate */0;
-                  }
+                var prospectId = $$String.trim(state[/* inputs */1][/* prospectId */0]);
+                if (prospectId === "") {
+                  return /* NoUpdate */0;
                 } else {
-                  return /* Update */Block.__(0, [/* record */[
-                              /* viewData */state[/* viewData */0],
-                              /* activeStep */1,
-                              /* inputs : record */[/* prospectId */""]
-                            ]]);
+                  Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
+                  return /* NoUpdate */0;
                 }
               } else if (action.tag) {
                 Curry._1(commands[/* proposePartnerRemoval */3], action[0]);
@@ -170,7 +158,6 @@ function make(viewData, commands, cmdStatus, _) {
               } else {
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
-                            /* activeStep */state[/* activeStep */1],
                             /* inputs : record */[/* prospectId */action[0]]
                           ]]);
               }
