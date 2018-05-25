@@ -4,7 +4,6 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
-var Utils = require("../../utils/Utils.bs.js");
 var Policy = require("../Policy.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../events/EventLog.bs.js");
@@ -150,9 +149,7 @@ function make(proposal, log) {
             }),
           pendingEvent,
           (function (self$1, _) {
-              return Utils.mapOption((function (prim) {
-                            return Promise.resolve(prim);
-                          }), self$1[result][0]);
+              return self$1[result][0];
             })
         ]);
     var env_init = function (env$1) {

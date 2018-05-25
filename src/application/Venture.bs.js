@@ -120,7 +120,6 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
 
 function apply($staropt$star, $staropt$star$1, $$event, param) {
   var state = param[/* state */3];
-  var id = param[/* id */1];
   var session = param[/* session */0];
   var systemEvent = $staropt$star ? $staropt$star[0] : false;
   var collector = $staropt$star$1 ? $staropt$star$1[0] : /* array */[];
@@ -131,30 +130,29 @@ function apply($staropt$star, $staropt$star$1, $$event, param) {
         collector
       ]);
   var match$1 = match[2];
-  return Watchers.applyAndProcessPending(session, match[0], match[1], (function (eta) {
-                  return (function (param, param$1, param$2) {
-                      return applyInternal(/* None */0, eta, param, param$1, param$2);
-                    });
-                }), /* tuple */[
-                match$1[0],
-                match$1[1],
-                match$1[2],
-                match$1[3]
-              ], param[/* watchers */6]).then((function (param) {
-                var match = param[1];
-                return Promise.resolve(/* tuple */[
-                            /* record */[
-                              /* session */session,
-                              /* id */id,
-                              /* log */param[0],
-                              /* state */match[1],
-                              /* validation */match[0],
-                              /* wallet */match[2],
-                              /* watchers */param[2]
-                            ],
-                            match[3]
-                          ]);
-              }));
+  var match$2 = Watchers.applyAndProcessPending(session, match[0], match[1], (function (eta) {
+          return (function (param, param$1, param$2) {
+              return applyInternal(/* None */0, eta, param, param$1, param$2);
+            });
+        }), /* tuple */[
+        match$1[0],
+        match$1[1],
+        match$1[2],
+        match$1[3]
+      ], param[/* watchers */6]);
+  var match$3 = match$2[1];
+  return Promise.resolve(/* tuple */[
+              /* record */[
+                /* session */session,
+                /* id */param[/* id */1],
+                /* log */match$2[0],
+                /* state */match$3[1],
+                /* validation */match$3[0],
+                /* wallet */match$3[2],
+                /* watchers */match$2[2]
+              ],
+              match$3[3]
+            ]);
 }
 
 function reconstruct(session, log) {
@@ -182,31 +180,29 @@ function reconstruct(session, log) {
         /* [] */0,
         /* [] */0
       ], log);
-  var id = match$1[0];
-  return Watchers.processPending(session, log, (function (eta) {
-                  return (function (param, param$1, param$2) {
-                      return applyInternal(/* None */0, eta, param, param$1, param$2);
-                    });
-                }), /* tuple */[
-                match$1[1],
-                match$1[2],
-                match$1[3],
-                /* array */[]
-              ], match$1[5]).then((function (param) {
-                var match = param[1];
-                return Promise.resolve(/* tuple */[
-                            /* record */[
-                              /* session */session,
-                              /* id */id,
-                              /* log */param[0],
-                              /* state */match[1],
-                              /* validation */match[0],
-                              /* wallet */match[2],
-                              /* watchers */param[2]
-                            ],
-                            match[3]
-                          ]);
-              }));
+  var match$2 = Watchers.processPending(session, log, (function (eta) {
+          return (function (param, param$1, param$2) {
+              return applyInternal(/* None */0, eta, param, param$1, param$2);
+            });
+        }), /* tuple */[
+        match$1[1],
+        match$1[2],
+        match$1[3],
+        /* array */[]
+      ], match$1[5]);
+  var match$3 = match$2[1];
+  return Promise.resolve(/* tuple */[
+              /* record */[
+                /* session */session,
+                /* id */match$1[0],
+                /* log */match$2[0],
+                /* state */match$3[1],
+                /* validation */match$3[0],
+                /* wallet */match$3[2],
+                /* watchers */match$2[2]
+              ],
+              match$3[3]
+            ]);
 }
 
 function persist($staropt$star, param) {
@@ -409,28 +405,27 @@ function exec$1(newItems, venture) {
   var conflicts = match[2];
   var match$1 = match[0];
   var partial_arg = /* Some */[true];
-  return Watchers.processPending(session, match$1[/* log */2], (function (param, param$1, param$2, param$3) {
-                    return applyInternal(partial_arg, param, param$1, param$2, param$3);
-                  }), /* tuple */[
-                  match$1[/* validation */4],
-                  match$1[/* state */3],
-                  match$1[/* wallet */5],
-                  match[1]
-                ], match$1[/* watchers */6]).then((function (param) {
-                  var match = param[1];
-                  return persist(/* None */0, /* tuple */[
-                              /* record */[
-                                /* session */venture[/* session */0],
-                                /* id */venture[/* id */1],
-                                /* log */param[0],
-                                /* state */match[1],
-                                /* validation */match[0],
-                                /* wallet */match[2],
-                                /* watchers */param[2]
-                              ],
-                              match[3]
-                            ]);
-                })).then((function (param) {
+  var match$2 = Watchers.processPending(session, match$1[/* log */2], (function (param, param$1, param$2, param$3) {
+          return applyInternal(partial_arg, param, param$1, param$2, param$3);
+        }), /* tuple */[
+        match$1[/* validation */4],
+        match$1[/* state */3],
+        match$1[/* wallet */5],
+        match[1]
+      ], match$1[/* watchers */6]);
+  var match$3 = match$2[1];
+  return persist(/* None */0, /* tuple */[
+                /* record */[
+                  /* session */venture[/* session */0],
+                  /* id */venture[/* id */1],
+                  /* log */match$2[0],
+                  /* state */match$3[1],
+                  /* validation */match$3[0],
+                  /* wallet */match$3[2],
+                  /* watchers */match$2[2]
+                ],
+                match$3[3]
+              ]).then((function (param) {
                 if (param.tag) {
                   return Promise.resolve(/* CouldNotPersist */Block.__(2, [param[0]]));
                 } else {

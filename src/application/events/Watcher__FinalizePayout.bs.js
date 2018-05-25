@@ -129,15 +129,15 @@ function make(param, log) {
           (function (self$1, _) {
               var env$1 = self$1[env];
               return Utils.mapOption((function (tx) {
-                            return Promise.resolve(/* tuple */[
-                                        env$1[4],
-                                        /* PayoutFinalized */Block.__(32, [Curry._3(Event.Payout[/* Finalized */10][/* make */0], env$1[0], tx.getId(), /* record */[
-                                                  /* txHex */tx.toHex(),
-                                                  /* usedInputs */env$1[1],
-                                                  /* misthosFeeAddress */env$1[2],
-                                                  /* changeAddress */env$1[3]
-                                                ])])
-                                      ]);
+                            return /* tuple */[
+                                    env$1[4],
+                                    /* PayoutFinalized */Block.__(32, [Curry._3(Event.Payout[/* Finalized */10][/* make */0], env$1[0], tx.getId(), /* record */[
+                                              /* txHex */tx.toHex(),
+                                              /* usedInputs */env$1[1],
+                                              /* misthosFeeAddress */env$1[2],
+                                              /* changeAddress */env$1[3]
+                                            ])])
+                                  ];
                           }), self$1[finalTransaction][0]);
             })
         ]);

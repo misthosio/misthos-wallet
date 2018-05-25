@@ -27,16 +27,15 @@ function testWatcherHasNoEventPending(watcher) {
 
 function testWatcherHasEventPending(eventName, watcher, expectedIssuer, eventTest) {
   testWatcherHasNotCompleted(watcher);
-  return Jest.testPromise(/* None */0, "and has " + (eventName + " pending"), (function () {
-                return Js_option.getExn(Caml_oo_curry.js2(761988163, 4, watcher, /* () */0)).then((function (param) {
-                              return Promise.resolve(Jest.Expect[/* toEqual */12](/* tuple */[
-                                              expectedIssuer,
-                                              true
-                                            ], Jest.Expect[/* expect */0](/* tuple */[
-                                                  param[0],
-                                                  Curry._1(eventTest, param[1])
-                                                ])));
-                            }));
+  return Jest.test("and has " + (eventName + " pending"), (function () {
+                var param = Js_option.getExn(Caml_oo_curry.js2(761988163, 4, watcher, /* () */0));
+                return Jest.Expect[/* toEqual */12](/* tuple */[
+                            expectedIssuer,
+                            true
+                          ], Jest.Expect[/* expect */0](/* tuple */[
+                                param[0],
+                                Curry._1(eventTest, param[1])
+                              ]));
               }));
 }
 

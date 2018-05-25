@@ -107,7 +107,7 @@ let make = (proposal: Custodian.Removal.Proposed.t, log) => {
         );
     };
     pub processCompleted = () => completed^;
-    pub pendingEvent = () => result^ |> Utils.mapOption(Js.Promise.resolve)
+    pub pendingEvent = () => result^
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

@@ -160,8 +160,7 @@ let make =
     };
     pub processCompleted = () =>
       UserId.neq(userId, custodianId) || state^.selfRemoved;
-    pub pendingEvent = () =>
-      state^.pendingEvent |> Utils.mapOption(Js.Promise.resolve)
+    pub pendingEvent = () => state^.pendingEvent
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

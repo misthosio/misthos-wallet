@@ -81,7 +81,7 @@ let apply =
       log,
       (validation, state, wallet, collector),
     );
-  Js.Promise.(
+  let (log, (validation, state, wallet, collector), watchers) =
     watchers
     |> Watchers.applyAndProcessPending(
          session,
@@ -89,12 +89,9 @@ let apply =
          log,
          applyInternal,
          (validation, state, wallet, collector),
-       )
-    |> then_(((log, (validation, state, wallet, collector), watchers)) =>
-         ({validation, session, id, log, state, wallet, watchers}, collector)
-         |> resolve
-       )
-  );
+       );
+  ({validation, session, id, log, state, wallet, watchers}, collector)
+  |> Js.Promise.resolve;
 };
 
 let reconstruct = (session, log) => {
@@ -119,18 +116,16 @@ let reconstruct = (session, log) => {
          ),
          (VentureId.make(), validation, state, wallet, [], []),
        );
-  watchers
-  |> Watchers.processPending(
-       session,
-       log,
-       applyInternal,
-       (validation, state, wallet, [||]),
-     )
-  |> Js.Promise.then_(
-       ((log, (validation, state, wallet, collector), watchers)) =>
-       ({validation, session, id, log, state, wallet, watchers}, collector)
-       |> Js.Promise.resolve
-     );
+  let (log, (validation, state, wallet, collector), watchers) =
+    watchers
+    |> Watchers.processPending(
+         session,
+         log,
+         applyInternal,
+         (validation, state, wallet, [||]),
+       );
+  ({validation, session, id, log, state, wallet, watchers}, collector)
+  |> Js.Promise.resolve;
 };
 
 let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
@@ -334,21 +329,17 @@ module Cmd = {
                },
              (venture, [||], [||]),
            );
-      Js.Promise.(
+      let (log, (validation, state, wallet, collector), watchers) =
         watchers
         |> Watchers.processPending(
              session,
              log,
              applyInternal(~syncing=true),
              (validation, state, wallet, collector),
-           )
-        |> then_(((log, (validation, state, wallet, collector), watchers)) =>
-             (
-               {...venture, log, validation, state, wallet, watchers},
-               collector,
-             )
-             |> persist
-           )
+           );
+      Js.Promise.(
+        ({...venture, log, validation, state, wallet, watchers}, collector)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((venture, collector)) =>

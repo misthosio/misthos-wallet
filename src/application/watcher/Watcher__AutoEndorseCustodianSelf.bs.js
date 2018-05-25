@@ -3,7 +3,6 @@
 
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
-var Utils = require("../../utils/Utils.bs.js");
 var EventLog = require("../events/EventLog.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
@@ -112,9 +111,7 @@ function make(param, param$1, log) {
             }),
           pendingEvent,
           (function (self$1, _) {
-              return Utils.mapOption((function (prim) {
-                            return Promise.resolve(prim);
-                          }), self$1[state][0][/* pendingEvent */0]);
+              return self$1[state][0][/* pendingEvent */0];
             })
         ]);
     var env_init = function (env$1) {

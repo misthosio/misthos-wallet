@@ -110,53 +110,53 @@ function apply($staropt$star, session, item, log, watchers) {
   }
 }
 
-function processPendingPromise(session, eventFound, promise) {
-  return promise.then((function (param) {
-                var watchers = param[2];
-                var state = param[1];
-                var log = param[0];
-                var tmp;
-                try {
-                  tmp = /* Some */[List.find((function (w) {
-                            return Js_option.isSome(Caml_oo_curry.js2(761988163, 5, w, /* () */0));
-                          }), watchers)];
-                }
-                catch (exn){
-                  if (exn === Caml_builtin_exceptions.not_found) {
-                    tmp = /* None */0;
-                  } else {
-                    throw exn;
-                  }
-                }
-                var nextEvent = Utils.mapOption((function (w) {
-                        return Js_option.getExn(Caml_oo_curry.js2(761988163, 6, w, /* () */0));
-                      }), tmp);
-                if (nextEvent) {
-                  return processPendingPromise(session, eventFound, nextEvent[0].then((function (param) {
-                                    var match = Curry._4(eventFound, param[0], param[1], log, state);
-                                    var log$1 = match[1];
-                                    return Promise.resolve(/* tuple */[
-                                                log$1,
-                                                match[2],
-                                                apply(/* None */0, session, match[0], log$1, watchers)
-                                              ]);
-                                  })));
-                } else {
-                  return Promise.resolve(/* tuple */[
-                              log,
-                              state,
-                              watchers
-                            ]);
-                }
-              }));
-}
-
 function processPending(session, log, eventFound, state, watchers) {
-  return processPendingPromise(session, eventFound, Promise.resolve(/* tuple */[
-                  log,
-                  state,
-                  watchers
-                ]));
+  var session$1 = session;
+  var eventFound$1 = eventFound;
+  var _param = /* tuple */[
+    log,
+    state,
+    watchers
+  ];
+  while(true) {
+    var param = _param;
+    var watchers$1 = param[2];
+    var state$1 = param[1];
+    var log$1 = param[0];
+    var tmp;
+    try {
+      tmp = /* Some */[List.find((function (w) {
+                return Js_option.isSome(Caml_oo_curry.js2(761988163, 5, w, /* () */0));
+              }), watchers$1)];
+    }
+    catch (exn){
+      if (exn === Caml_builtin_exceptions.not_found) {
+        tmp = /* None */0;
+      } else {
+        throw exn;
+      }
+    }
+    var nextEvent = Utils.mapOption((function (w) {
+            return Js_option.getExn(Caml_oo_curry.js2(761988163, 6, w, /* () */0));
+          }), tmp);
+    if (nextEvent) {
+      var match = nextEvent[0];
+      var match$1 = Curry._4(eventFound$1, match[0], match[1], log$1, state$1);
+      var log$2 = match$1[1];
+      _param = /* tuple */[
+        log$2,
+        match$1[2],
+        apply(/* None */0, session$1, match$1[0], log$2, watchers$1)
+      ];
+      continue ;
+    } else {
+      return /* tuple */[
+              log$1,
+              state$1,
+              watchers$1
+            ];
+    }
+  };
 }
 
 function applyAndProcessPending(session, item, log, eventFound, state, watchers) {
@@ -204,7 +204,6 @@ exports.SignPayout = SignPayout;
 exports.FinalizePayout = FinalizePayout;
 exports.initWatcherFor = initWatcherFor;
 exports.apply = apply;
-exports.processPendingPromise = processPendingPromise;
 exports.processPending = processPending;
 exports.applyAndProcessPending = applyAndProcessPending;
 /* Utils Not a pure module */

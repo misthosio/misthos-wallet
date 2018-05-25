@@ -1,7 +1,7 @@
 type watcher = {
   .
   receive: EventLog.item => unit,
-  pendingEvent: unit => option(Js.Promise.t((Bitcoin.ECPair.t, Event.t))),
+  pendingEvent: unit => option((Bitcoin.ECPair.t, Event.t)),
   processCompleted: unit => bool,
 };
 
@@ -79,46 +79,32 @@ let apply = (~reconstruct=false, session, item, log, watchers) =>
   | None => watchers
   };
 
-let rec processPendingPromise = (session, eventFound, promise) =>
-  Js.Promise.(
-    promise
-    |> then_(((log, state, watchers)) => {
-         let nextEvent =
-           (
-             try (
-               Some(
-                 watchers
-                 |> List.find(w => w#pendingEvent() |> Js.Option.isSome),
-               )
-             ) {
-             | Not_found => None
-             }
-           )
-           |> Utils.mapOption(w => w#pendingEvent() |> Js.Option.getExn);
-         switch (nextEvent) {
-         | None => (log, state, watchers) |> resolve
-         | Some(eventPromise) =>
-           processPendingPromise(
-             session,
-             eventFound,
-             eventPromise
-             |> then_(((issuer, event)) => {
-                  let (item, log, state) =
-                    state |> eventFound(issuer, event, log);
-                  (log, state, watchers |> apply(session, item, log))
-                  |> resolve;
-                }),
-           )
-         };
-       })
-  );
+let rec processPending = (session, eventFound, (log, state, watchers)) => {
+  let nextEvent =
+    (
+      try (
+        Some(watchers |> List.find(w => w#pendingEvent() |> Js.Option.isSome))
+      ) {
+      | Not_found => None
+      }
+    )
+    |> Utils.mapOption(w => w#pendingEvent() |> Js.Option.getExn);
+  switch (nextEvent) {
+  | None => (log, state, watchers)
+  | Some((issuer, event)) =>
+    processPending(
+      session,
+      eventFound,
+      {
+        let (item, log, state) = state |> eventFound(issuer, event, log);
+        (log, state, watchers |> apply(session, item, log));
+      },
+    )
+  };
+};
 
 let processPending = (session, log, eventFound, state, watchers) =>
-  processPendingPromise(
-    session,
-    eventFound,
-    (log, state, watchers) |> Js.Promise.resolve,
-  );
+  processPending(session, eventFound, (log, state, watchers));
 
 let applyAndProcessPending = (session, item, log, eventFound, state, watchers) =>
   watchers

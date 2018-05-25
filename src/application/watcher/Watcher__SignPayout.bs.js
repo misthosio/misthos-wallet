@@ -4,7 +4,6 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
-var Utils = require("../../utils/Utils.bs.js");
 var EventLog = require("../events/EventLog.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
@@ -128,9 +127,7 @@ function make(param, param$1, log) {
           (function (self$1, _) {
               var match = self$1[signPending][0];
               if (match) {
-                return Utils.mapOption((function (prim) {
-                              return Promise.resolve(prim);
-                            }), self$1[env][0]);
+                return self$1[env][0];
               } else {
                 return /* None */0;
               }
