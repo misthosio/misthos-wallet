@@ -6,6 +6,7 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
@@ -55,27 +56,26 @@ function Make(funarg) {
     var existingHashes = Belt_SetString.fromArray($$Array.map((function (param) {
                 return param[/* hash */1];
               }), log));
-    return $$Array.map((function (param) {
-                    return param[1];
-                  }), $$Array.fold_left((function (found, item) {
-                        var hash = item[/* hash */1];
-                        if (Js_option.isSome(Js_primitive.undefined_to_opt(found.find((function (param) {
-                                          return param[0] === hash;
-                                        })))) || Belt_SetString.has(existingHashes, hash)) {
-                          return found;
-                        } else {
-                          return $$Array.append(found, /* array */[/* tuple */[
-                                        hash,
-                                        item
-                                      ]]);
-                        }
-                      }), /* array */[], other)).filter((function (param) {
-                  var issuerPubKey = param[/* issuerPubKey */2];
-                  var hashCheck = makeItemHash(issuerPubKey, param[/* event */0]);
-                  if (Utils.bufToHex(hashCheck) !== param[/* hash */1]) {
-                    return false;
+    return Belt_Array.keepMapU($$Array.fold_left((function (found, item) {
+                      var hash = item[/* hash */1];
+                      if (Js_option.isSome(Js_primitive.undefined_to_opt(found.find((function (param) {
+                                        return param[0] === hash;
+                                      })))) || Belt_SetString.has(existingHashes, hash)) {
+                        return found;
+                      } else {
+                        return $$Array.append(found, /* array */[/* tuple */[
+                                      hash,
+                                      item
+                                    ]]);
+                      }
+                    }), /* array */[], other), (function (param) {
+                  var item = param[1];
+                  var issuerPubKey = item[/* issuerPubKey */2];
+                  var hashCheck = makeItemHash(issuerPubKey, item[/* event */0]);
+                  if (Utils.bufToHex(hashCheck) !== item[/* hash */1] || !Utils.keyFromPublicKey(issuerPubKey).verify(hashCheck, item[/* signature */3])) {
+                    return /* None */0;
                   } else {
-                    return Utils.keyFromPublicKey(issuerPubKey).verify(hashCheck, param[/* signature */3]);
+                    return /* Some */[item];
                   }
                 }));
   };

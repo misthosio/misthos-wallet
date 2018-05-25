@@ -59,14 +59,16 @@ module Make = (Event: Encodable) => {
            },
          [||],
        )
-    |> Array.map(((_, item)) => item)
-    |> Js.Array.filter(({issuerPubKey, event, hash, signature}) => {
+    |. Belt.Array.keepMapU(
+         (. (_, {issuerPubKey, event, hash, signature} as item)) => {
          let hashCheck = makeItemHash(issuerPubKey, event);
          if (hashCheck |> Utils.bufToHex != hash) {
-           false;
+           None;
+         } else if (Utils.keyFromPublicKey(issuerPubKey)
+                    |> Bitcoin.ECPair.verify(hashCheck, signature)) {
+           Some(item);
          } else {
-           Utils.keyFromPublicKey(issuerPubKey)
-           |> Bitcoin.ECPair.verify(hashCheck, signature);
+           None;
          };
        });
   };
