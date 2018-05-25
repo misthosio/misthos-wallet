@@ -147,7 +147,18 @@ function make(viewData, commands, cmdStatus, _) {
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */component[/* willReceiveProps */3],
+          /* willReceiveProps */(function (param) {
+              var state = param[/* state */1];
+              return /* record */[
+                      /* viewData */viewData,
+                      /* destinations */state[/* destinations */1],
+                      /* inputDestination */state[/* inputDestination */2],
+                      /* inputAmount */state[/* inputAmount */3],
+                      /* addressValid */state[/* addressValid */4],
+                      /* summary */state[/* summary */5],
+                      /* inputs */state[/* inputs */6]
+                    ];
+            }),
           /* didMount */component[/* didMount */4],
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],

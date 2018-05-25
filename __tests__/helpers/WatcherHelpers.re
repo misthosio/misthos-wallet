@@ -30,15 +30,13 @@ let testWatcherHasNoEventPending = watcher => {
 let testWatcherHasEventPending =
     (eventName, watcher, expectedIssuer, eventTest) => {
   testWatcherHasNotCompleted(watcher);
-  testPromise("and has " ++ eventName ++ " pending", () =>
+  test("and has " ++ eventName ++ " pending", () =>
     watcher#pendingEvent()
     |> Js.Option.getExn
-    |> Js.Promise.(
-         then_(((issuer, event)) =>
-           expect((issuer, eventTest(event)))
-           |> toEqual((expectedIssuer, true))
-           |> resolve
-         )
-       )
+    |> (
+      ((issuer, event)) =>
+        expect((issuer, eventTest(event)))
+        |> toEqual((expectedIssuer, true))
+    )
   );
 };

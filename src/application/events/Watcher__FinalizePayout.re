@@ -78,7 +78,6 @@ let make =
                ),
              ),
            )
-           |> Js.Promise.resolve
          )
   };
   process;

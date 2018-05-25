@@ -5,7 +5,6 @@ var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
-var Utils = require("../../utils/Utils.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../events/EventLog.bs.js");
 var WalletTypes = require("../wallet/WalletTypes.bs.js");
@@ -245,9 +244,11 @@ function make(param, param$1, log) {
               var match = self$1[state][0][/* active */6];
               if (match) {
                 var match$1 = self$1[state][0][/* identifiedEvent */3];
-                return Utils.mapOption((function (prim) {
-                              return Promise.resolve(prim);
-                            }), match$1 ? self$1[state][0][/* identifiedEvent */3] : self$1[state][0][/* activatedEvent */4]);
+                if (match$1) {
+                  return self$1[state][0][/* identifiedEvent */3];
+                } else {
+                  return self$1[state][0][/* activatedEvent */4];
+                }
               } else {
                 return /* None */0;
               }

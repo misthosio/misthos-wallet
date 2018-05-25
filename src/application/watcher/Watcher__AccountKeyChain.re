@@ -144,13 +144,10 @@ let make =
     pub processCompleted = () => false;
     pub pendingEvent = () =>
       state^.active ?
-        (
-          switch (state^.identifiedEvent) {
-          | Some(_) => state^.identifiedEvent
-          | None => state^.activatedEvent
-          }
-        )
-        |> Utils.mapOption(Js.Promise.resolve) :
+        switch (state^.identifiedEvent) {
+        | Some(_) => state^.identifiedEvent
+        | None => state^.activatedEvent
+        } :
         None
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());

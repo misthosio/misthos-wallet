@@ -531,15 +531,27 @@ function encodeIncoming(param) {
                       ],
                       /* :: */[
                         /* tuple */[
-                          "incomeEvents",
-                          Json_encode.list(Event.IncomeDetected[/* encode */1], param[1])
+                          "broadcastEvents",
+                          Json_encode.list(Event.Payout[/* Broadcast */11][/* encode */1], param[1])
                         ],
                         /* :: */[
                           /* tuple */[
-                            "transactionConfirmations",
-                            Json_encode.list(Event.Transaction[/* Confirmed */0][/* encode */1], param[2])
+                            "broadcastFailures",
+                            Json_encode.list(Event.Payout[/* BroadcastFailed */13][/* encode */1], param[2])
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "incomeEvents",
+                              Json_encode.list(Event.IncomeDetected[/* encode */1], param[3])
+                            ],
+                            /* :: */[
+                              /* tuple */[
+                                "transactionConfirmations",
+                                Json_encode.list(Event.Transaction[/* Confirmed */0][/* encode */1], param[4])
+                              ],
+                              /* [] */0
+                            ]
+                          ]
                         ]
                       ]
                     ]
@@ -682,16 +694,26 @@ function decodeIncoming(raw) {
                 ]);
     case "SyncWallet" : 
         var ventureId$14 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);
-        var partial_arg = Event.IncomeDetected[/* decode */2];
-        var incomeEvents = Json_decode.field("incomeEvents", (function (param) {
+        var partial_arg = Event.Payout[/* Broadcast */11][/* decode */2];
+        var broadcasts = Json_decode.field("broadcastEvents", (function (param) {
                 return Json_decode.list(partial_arg, param);
               }), raw);
-        var partial_arg$1 = Event.Transaction[/* Confirmed */0][/* decode */2];
-        var confs = Json_decode.field("transactionConfirmations", (function (param) {
+        var partial_arg$1 = Event.Payout[/* BroadcastFailed */13][/* decode */2];
+        var broadcastFailures = Json_decode.field("broadcastFailures", (function (param) {
                 return Json_decode.list(partial_arg$1, param);
+              }), raw);
+        var partial_arg$2 = Event.IncomeDetected[/* decode */2];
+        var incomeEvents = Json_decode.field("incomeEvents", (function (param) {
+                return Json_decode.list(partial_arg$2, param);
+              }), raw);
+        var partial_arg$3 = Event.Transaction[/* Confirmed */0][/* decode */2];
+        var confs = Json_decode.field("transactionConfirmations", (function (param) {
+                return Json_decode.list(partial_arg$3, param);
               }), raw);
         return /* SyncWallet */Block.__(15, [
                   ventureId$14,
+                  broadcasts,
+                  broadcastFailures,
                   incomeEvents,
                   confs
                 ]);

@@ -14,6 +14,56 @@ let logMessage = WorkerUtils.logMessage(logLabel);
 
 let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
+let broadcastPayouts =
+    ({ventureId, network, notYetBroadcastPayouts}: TransactionCollector.t) =>
+  Js.Promise.(
+    notYetBroadcastPayouts
+    |. Map.forEachU((. processId, {txHex}: PayoutTransaction.t) =>
+         txHex
+         |> Bitcoin.Transaction.fromHex
+         |> Network.broadcastTransaction(network)
+         |> then_(result =>
+              (
+                switch (result) {
+                | WalletTypes.Ok(txId) =>
+                  postMessage(
+                    VentureWorkerMessage.SyncWallet(
+                      ventureId,
+                      [Event.Payout.Broadcast.make(~processId, ~txId)],
+                      [],
+                      [],
+                      [],
+                    ),
+                  )
+                | WalletTypes.AlreadyInBlockchain => ()
+                | WalletTypes.Error(errorMessage) =>
+                  Utils.printError(
+                    "Broadcasting transaction failed",
+                    errorMessage,
+                  );
+                  postMessage(
+                    VentureWorkerMessage.SyncWallet(
+                      ventureId,
+                      [],
+                      [
+                        Event.Payout.BroadcastFailed.make(
+                          ~processId,
+                          ~errorMessage,
+                        ),
+                      ],
+                      [],
+                      [],
+                    ),
+                  );
+                | WalletTypes.FetchError(_error) => ()
+                }
+              )
+              |> resolve
+            )
+         |> catchAndLogError
+       )
+  );
+
 let scanTransactions =
     ((addresses: AddressCollector.t, transactions: TransactionCollector.t)) =>
   Js.Promise.(
@@ -48,13 +98,16 @@ let filterUTXOs = (knownTxs, utxos) =>
 
 let detectIncomeFromVenture = (ventureId, eventLog) => {
   logMessage(
-    "Detecting income for venture '" ++ VentureId.toString(ventureId) ++ "'",
+    "Sychronizing wallet state for venture '"
+    ++ VentureId.toString(ventureId)
+    ++ "'",
   );
   Js.Promise.(
     eventLog
     |> findAddressesAndTxIds
     |> scanTransactions
     |> then_(((utxos, txInfos, transactions: TransactionCollector.t)) => {
+         transactions |> broadcastPayouts;
          let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
            utxos
@@ -89,7 +142,13 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
            | ([], []) => ()
            | (_, confs) =>
              postMessage(
-               VentureWorkerMessage.SyncWallet(ventureId, events, confs),
+               VentureWorkerMessage.SyncWallet(
+                 ventureId,
+                 [],
+                 [],
+                 events,
+                 confs,
+               ),
              )
            }
          )

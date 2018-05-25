@@ -104,8 +104,7 @@ let make =
       };
     };
     pub processCompleted = () => signPending^ == false;
-    pub pendingEvent = () =>
-      signPending^ ? signEvent |> Utils.mapOption(Js.Promise.resolve) : None
+    pub pendingEvent = () => signPending^ ? signEvent : None
   };
   process;
 };

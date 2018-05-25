@@ -82,6 +82,8 @@ module Cmd: {
       | CouldNotPersist(Js.Promise.error);
     let exec:
       (
+        list(Event.Payout.Broadcast.t),
+        list(Event.Payout.BroadcastFailed.t),
         list(Event.IncomeDetected.t),
         list(Event.Transaction.Confirmed.t),
         t

@@ -137,7 +137,7 @@ let make =
         );
     };
     pub processCompleted = () => state^ == Complete;
-    pub pendingEvent = () => result^ |> Utils.mapOption(Js.Promise.resolve)
+    pub pendingEvent = () => result^
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;

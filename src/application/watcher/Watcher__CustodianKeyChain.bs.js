@@ -152,9 +152,7 @@ function make(param, param$1, log) {
             }),
           pendingEvent,
           (function (self$1, _) {
-              return Utils.mapOption((function (prim) {
-                            return Promise.resolve(prim);
-                          }), self$1[state][0][/* pendingEvent */1]);
+              return self$1[state][0][/* pendingEvent */1];
             })
         ]);
     var env_init = function (env$1) {

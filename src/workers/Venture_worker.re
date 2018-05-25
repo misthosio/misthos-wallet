@@ -664,13 +664,13 @@ module Handle = {
       )
     );
   };
-  let syncWallet = (ventureId, events, confs) => {
+  let syncWallet = (ventureId, broadcasts, broadcastFailures, income, confs) => {
     logMessage("Handling 'SynchWallet'");
     withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeWallet.(
           venture
-          |> exec(events, confs)
+          |> exec(broadcasts, broadcastFailures, income, confs)
           |> then_(
                fun
                | Ok(venture, newItems) => {
@@ -767,8 +767,8 @@ let handleMessage =
     Handle.endorsePayout(ventureId, processId)
   | Message.ExposeIncomeAddress(ventureId, accountIdx) =>
     Handle.exposeIncomeAddress(ventureId, accountIdx)
-  | SyncWallet(ventureId, income, confs) =>
-    Handle.syncWallet(ventureId, income, confs)
+  | SyncWallet(ventureId, broadcasts, broadcastFailures, income, confs) =>
+    Handle.syncWallet(ventureId, broadcasts, broadcastFailures, income, confs)
   | NewItemsDetected(ventureId, items) =>
     Handle.newItemsDetected(ventureId, items)
   | SyncTabs(ventureId, items) => Handle.syncTabs(ventureId, items);
