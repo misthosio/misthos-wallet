@@ -11,6 +11,14 @@ var uWhite = "FFFFFF";
 
 var white = Css.hex(uWhite);
 
+var uSucces = "33d321";
+
+var success = Css.hex(uSucces);
+
+var uError = "d0021b";
+
+var error = Css.hex(uError);
+
 var uRobinsEgg = "59f7f0";
 
 var robinsEgg = Css.hex(uRobinsEgg);
@@ -105,6 +113,10 @@ exports.uBlack = uBlack;
 exports.black = black;
 exports.uWhite = uWhite;
 exports.white = white;
+exports.uSucces = uSucces;
+exports.success = success;
+exports.uError = uError;
+exports.error = error;
 exports.uRobinsEgg = uRobinsEgg;
 exports.robinsEgg = robinsEgg;
 exports.uDeepAqua = uDeepAqua;

@@ -8,6 +8,14 @@ let uWhite = "FFFFFF";
 
 let white = hex(uWhite);
 
+let uSucces = "33d321";
+
+let success = hex(uSucces);
+
+let uError = "d0021b";
+
+let error = hex(uError);
+
 let uRobinsEgg = "59f7f0";
 
 let robinsEgg = hex(uRobinsEgg);

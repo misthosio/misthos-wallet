@@ -23,7 +23,7 @@ function make(cmdStatus, _) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Loading Venture",
                                 /* [] */0
-                              ]], ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* LoadVenture */2, /* array */[])), null, /* array */[]));
+                              ]], ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* LoadVenture */2, /* array */[])), null, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

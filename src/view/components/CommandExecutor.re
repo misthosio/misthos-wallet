@@ -113,6 +113,16 @@ module Status = {
     fired: bool,
     cmdStatus,
   };
+  let message = (variant: reducerAction, message: string) => {
+    let color =
+      switch (variant) {
+      | Error => Colors.error
+      | Success => Colors.success
+      };
+    <MTypography variant=`Body2 className=(Css.style([Css.color(color)]))>
+      (message |> text)
+    </MTypography>;
+  };
   let component = ReasonReact.statelessComponent("CommandStatus");
   let make = (~cmdStatus: cmdStatus, ~action, _children) => {
     ...component,
@@ -148,28 +158,29 @@ module Status = {
       | Error(error) =>
         switch (error) {
         | CouldNotPersistVenture =>
-          "RED: your submission could not be persisted" |> text
+          "Your submission could not be persisted" |> message(Error)
         | CouldNotFindUserInfo =>
-          "RED: Id doesn't exist or user has never logged in" |> text
+          "Id doesn't exist or user has never logged in" |> message(Error)
         | MaxPartnersReached =>
-          "RED: The maximum number of partners we currently support in a venture has been reached"
-          |> text
+          "The maximum number of partners we currently support in a venture has been reached"
+          |> message(Error)
         | PartnerAlreadyProposed =>
-          "RED: This user has already been proposed to join" |> text
+          "This user has already been proposed to join" |> message(Error)
         | PartnerAlreadyExists =>
-          "RED: User is already a partner of this venture" |> text
+          "User is already a partner of this venture" |> message(Error)
         | CouldNotJoinVenture =>
-          "RED: Error joining venture. Perhaps you have not been accepted yet."
-          |> text
-        | CouldNotLoadVenture => "RED: Error loading venture" |> text
+          "Error joining venture. Perhaps you have not been accepted yet."
+          |> message(Error)
+        | CouldNotLoadVenture => "Error loading venture" |> message(Error)
         }
       | Success(success) =>
         switch (success) {
-        | ProcessStarted(_) => "GREEN: Your proposal has been submited" |> text
+        | ProcessStarted(_) =>
+          "Your proposal has been submited" |> message(Success)
         | ProcessEndorsed(_) =>
-          "GREEN: Your endorsement has been submited" |> text
+          "Your endorsement has been submited" |> message(Success)
         | ProcessRejected(_) =>
-          "GREEN: Your rejection has been submited" |> text
+          "Your rejection has been submited" |> message(Success)
         }
       },
   };
