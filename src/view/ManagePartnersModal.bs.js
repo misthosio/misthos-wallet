@@ -10,14 +10,13 @@ var Theme = require("./Theme.bs.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
-var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var ProposeButton = require("./components/ProposeButton.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.js");
 var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Stepper.bs.js");
@@ -126,10 +125,9 @@ function make(viewData, commands, cmdStatus, _) {
                                                                         ]], /* Some */[(function (e) {
                                                                             return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
                                                                           })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
-                                                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                                            return Curry._1(send, /* ProposePartner */0);
-                                                                          })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Propose partner addition")])),
-                                                              ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Proposal */3, /* None */0, /* Some */[onSuccess], /* None */0, /* array */[]))
+                                                              ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", (function () {
+                                                                          return Curry._1(send, /* ProposePartner */0);
+                                                                        }), /* None */0, cmdStatus, /* Some */[onSuccess], /* None */0, /* array */[]))
                                                             ]))
                                                   ])),
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[

@@ -102,10 +102,26 @@ module Status = {
     | Proposal
     | Endorsement
     | Rejection;
+  type reducerAction =
+    | Success
+    | Error;
   let component = ReasonReact.statelessComponent("CommandStatus");
   let make =
-      (~cmdStatus, ~action, ~onRetry=?, ~onSuccess=?, ~onError=?, _children) => {
+      (
+        ~cmdStatus: cmdStatus,
+        ~action,
+        ~onRetry=?,
+        ~onSuccess=?,
+        ~onError=?,
+        _children,
+      ) => {
     ...component,
+    willReceiveProps: (_) =>
+      switch (cmdStatus) {
+      | Error(_) => onSuccess |> Utils.mapOption(f => f()) |> ignore
+      | Success(_) => onError |> Utils.mapOption(f => f()) |> ignore
+      | _ => ()
+      },
     render: (_) =>
       switch (cmdStatus) {
       | Idle => ReasonReact.null
@@ -136,7 +152,6 @@ module Status = {
           />,
         |])
       | Error(error) =>
-        onError |> Utils.mapOption(onError => onError()) |> ignore;
         switch (error, onRetry) {
         | (CouldNotPersistVenture, Some(onRetry)) =>
           ReasonReact.array([|
@@ -160,16 +175,15 @@ module Status = {
           "RED: Error joining venture. Perhaps you have not been accepted yet."
           |> text
         | (CouldNotLoadVenture, _) => "RED: Error loading venture" |> text
-        };
+        }
       | Success(success) =>
-        onSuccess |> Utils.mapOption(onSuccess => onSuccess()) |> ignore;
         switch (success) {
         | ProcessStarted(_) => "GREEN: Your proposal has been submited" |> text
         | ProcessEndorsed(_) =>
           "GREEN: Your endorsement has been submited" |> text
         | ProcessRejected(_) =>
           "GREEN: Your rejection has been submited" |> text
-        };
+        }
       },
   };
 };

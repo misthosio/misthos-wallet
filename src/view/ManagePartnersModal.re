@@ -135,14 +135,11 @@ let make =
                     autoFocus=false
                     fullWidth=true
                   />
-                  <MButton
-                    fullWidth=true onClick=(_e => send(ProposePartner))>
-                    (text("Propose partner addition"))
-                  </MButton>
-                  <CommandExecutor.Status
-                    onSuccess
+                  <ProposeButton
+                    onPropose=(() => send(ProposePartner))
+                    proposeText="Propose partner addition"
                     cmdStatus
-                    action=Proposal
+                    onSuccess
                   />
                 </StepContent>
               </Step>

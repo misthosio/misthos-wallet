@@ -112,7 +112,27 @@ function make$1(cmdStatus, action, onRetry, onSuccess, onError, _) {
           /* debugName */component$1[/* debugName */0],
           /* reactClassInternal */component$1[/* reactClassInternal */1],
           /* handedOffState */component$1[/* handedOffState */2],
-          /* willReceiveProps */component$1[/* willReceiveProps */3],
+          /* willReceiveProps */(function () {
+              if (typeof cmdStatus === "number") {
+                return /* () */0;
+              } else {
+                switch (cmdStatus.tag | 0) {
+                  case 0 : 
+                      return /* () */0;
+                  case 1 : 
+                      Utils.mapOption((function (f) {
+                              return Curry._1(f, /* () */0);
+                            }), onSuccess);
+                      return /* () */0;
+                  case 2 : 
+                      Utils.mapOption((function (f) {
+                              return Curry._1(f, /* () */0);
+                            }), onError);
+                      return /* () */0;
+                  
+                }
+              }
+            }),
           /* didMount */component$1[/* didMount */4],
           /* didUpdate */component$1[/* didUpdate */5],
           /* willUnmount */component$1[/* willUnmount */6],
@@ -157,9 +177,6 @@ function make$1(cmdStatus, action, onRetry, onSuccess, onError, _) {
                                             ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))
                             ];
                   case 1 : 
-                      Utils.mapOption((function (onError) {
-                              return Curry._1(onError, /* () */0);
-                            }), onError);
                       switch (cmdStatus[0]) {
                         case 0 : 
                             return ViewCommon.text("RED: Error joining venture. Perhaps you have not been accepted yet.");
@@ -188,9 +205,6 @@ function make$1(cmdStatus, action, onRetry, onSuccess, onError, _) {
                         
                       }
                   case 2 : 
-                      Utils.mapOption((function (onSuccess) {
-                              return Curry._1(onSuccess, /* () */0);
-                            }), onSuccess);
                       switch (cmdStatus[0].tag | 0) {
                         case 0 : 
                             return ViewCommon.text("GREEN: Your proposal has been submited");
