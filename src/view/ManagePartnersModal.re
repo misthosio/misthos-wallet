@@ -6,7 +6,10 @@ open PrimitiveTypes;
 
 module ViewData = ViewModel.ManagePartnersView;
 
-type inputs = {prospectId: string};
+type inputs = {
+  prospectId: string,
+  removePartnerId: option(UserId.t),
+};
 
 type state = {
   viewData: ViewData.t,
@@ -17,7 +20,8 @@ type state = {
 type action =
   | ChangeNewPartnerId(string)
   | ProposePartner
-  | RemovePartner(UserId.t)
+  | SelectRemovePartner(UserId.t)
+  | RemovePartner
   | AddAnother;
 
 let component = ReasonReact.reducerComponent("ManagePartners");
@@ -39,6 +43,7 @@ let make =
   ...component,
   initialState: () => {
     inputs: {
+      removePartnerId: None,
       prospectId: "",
     },
     canSubmitProposal: false,
@@ -52,6 +57,7 @@ let make =
         ...state,
         canSubmitProposal: text != "",
         inputs: {
+          ...state.inputs,
           prospectId: text,
         },
       })
@@ -64,14 +70,32 @@ let make =
         );
         ReasonReact.NoUpdate;
       }
-    | RemovePartner(partnerId) =>
-      removePartnerCmds.proposePartnerRemoval(~partnerId);
-      ReasonReact.NoUpdate;
+    | RemovePartner =>
+      state.inputs.removePartnerId
+      |> Utils.mapOption(partnerId =>
+           removePartnerCmds.proposePartnerRemoval(~partnerId)
+         );
+      ReasonReact.Update({
+        ...state,
+        inputs: {
+          ...state.inputs,
+          removePartnerId: None,
+        },
+      });
+    | SelectRemovePartner(partner) =>
+      ReasonReact.Update({
+        ...state,
+        inputs: {
+          ...state.inputs,
+          removePartnerId: Some(partner),
+        },
+      })
     | AddAnother =>
       ReasonReact.UpdateWithSideEffects(
         {
           ...state,
           inputs: {
+            ...state.inputs,
             prospectId: "",
           },
         },
@@ -95,13 +119,22 @@ let make =
                      key=(partner.userId |> UserId.toString)
                      partnerId=partner.userId
                      name=?partner.name
+                     onClick=(
+                       _e => send(SelectRemovePartner(partner.userId))
+                     )
                      button=MaterialUi.(
-                              <IconButton
-                                onClick=(
-                                  _e => send(RemovePartner(partner.userId))
-                                )>
-                                <img src=remove alt="Remove" />
-                              </IconButton>
+                              <Radio
+                                onChange=(
+                                  (_e, _b) =>
+                                    send(SelectRemovePartner(partner.userId))
+                                )
+                                checked=(
+                                          `Bool(
+                                            inputs.removePartnerId
+                                            == Some(partner.userId),
+                                          )
+                                        )
+                              />
                             )
                    />,
                  ) :
@@ -192,7 +225,12 @@ let make =
             )
           </MTypography>
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
-          <CommandExecutor.Status cmdStatus=removeCmdStatus action=Proposal />
+          <ProposeButton
+            onPropose=(() => send(RemovePartner))
+            canSubmitProposal=(inputs.removePartnerId |> Js.Option.isSome)
+            proposeText="Propose partner removal"
+            cmdStatus=removeCmdStatus
+          />
         </div>
     />;
   },
