@@ -55,13 +55,15 @@ let make =
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
     ReasonReact.array(
       Array.concatMany([|
-        switch (state) {
-        | NoDecision => [|
+        switch (state, cmdStatus) {
+        | (_, Error(_))
+        | (NoDecision, _) => [|
             <MButton fullWidth=true onClick=(_e => send(Propose))>
               (text(proposeText))
             </MButton>,
+            <CommandExecutor.Status cmdStatus action=Proposal />,
           |]
-        | ConfirmProposal => [|
+        | (ConfirmProposal, _) => [|
             <MTypography className=Styles.inlineConfirm variant=`Body2>
               (proposeText |> text)
               <MButton variant=Flat onClick=(_e => send(ConfirmProposal))>
@@ -72,7 +74,7 @@ let make =
               </MButton>
             </MTypography>,
           |]
-        | ProposalSubmited => [|
+        | (ProposalSubmited, _) => [|
             <CommandExecutor.Status cmdStatus action=Proposal />,
           |]
         },

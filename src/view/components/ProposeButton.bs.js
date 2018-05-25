@@ -51,28 +51,44 @@ function make(proposeText, onPropose, canSubmitProposal, $staropt$star, cmdStatu
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
+              var cmdStatus = match[/* cmdStatus */1];
               var tmp;
-              switch (match[/* buttonState */0]) {
-                case 0 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                    return Curry._1(send, /* Propose */1);
-                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(proposeText)]))];
-                    break;
-                case 1 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* array */[
-                                ViewCommon.text(proposeText),
-                                ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                              return Curry._1(send, /* ConfirmProposal */2);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("yes")])),
-                                ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                              return Curry._1(send, /* Cancel */0);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("No")]))
-                              ]))];
-                    break;
-                case 2 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](match[/* cmdStatus */1], /* Proposal */3, /* array */[]))];
-                    break;
-                
+              var exit = 0;
+              var exit$1 = 0;
+              if (typeof cmdStatus === "number" || cmdStatus.tag !== 1) {
+                exit$1 = 2;
+              } else {
+                exit = 1;
+              }
+              if (exit$1 === 2) {
+                switch (match[/* buttonState */0]) {
+                  case 0 : 
+                      exit = 1;
+                      break;
+                  case 1 : 
+                      tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* array */[
+                                  ViewCommon.text(proposeText),
+                                  ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                return Curry._1(send, /* ConfirmProposal */2);
+                                              })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("yes")])),
+                                  ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                return Curry._1(send, /* Cancel */0);
+                                              })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("No")]))
+                                ]))];
+                      break;
+                  case 2 : 
+                      tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Proposal */3, /* array */[]))];
+                      break;
+                  
+                }
+              }
+              if (exit === 1) {
+                tmp = /* array */[
+                  ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                return Curry._1(send, /* Propose */1);
+                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(proposeText)])),
+                  ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* Proposal */3, /* array */[]))
+                ];
               }
               return Belt_Array.concatMany(/* array */[tmp]);
             }),
