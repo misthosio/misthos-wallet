@@ -82,6 +82,34 @@ let () =
       },
     );
     F.withCached(
+      /* ~load=false, */
+      ~scope="Watcher__CustodianApproval",
+      "Only completes if the partner process has completed",
+      () => G.withUserSessions(3),
+      sessions => {
+        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withPartnerProposed(~proposer=user1, ~prospect=user3)
+          |> withCustodianProposed(~proposer=user1, ~custodian=user3)
+        );
+      },
+      (sessions, log) => {
+        let (user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        let proposal = log |> L.lastEvent |> Event.getCustodianProposedExn;
+        let log =
+          L.(
+            log
+            |> withCustodianEndorsed(user1, proposal)
+            |> withPartnerRemoved(user2, ~supporters=[user1])
+          );
+        let watcher = CustodianApproval.make(proposal, log |> L.eventLog);
+        testWatcherHasNoEventPending(watcher);
+      },
+    );
+    F.withCached(
       ~scope="Watcher__CustodianApproval",
       "With 2 users and a proposal",
       () => G.withUserSessions(2),

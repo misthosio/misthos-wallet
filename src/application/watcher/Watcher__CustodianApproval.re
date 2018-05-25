@@ -6,6 +6,7 @@ open PrimitiveTypes;
 
 type state = {
   eligibilityCollector: EligibilityCollector.t,
+  partnerProcessComplete: bool,
   endorsements: UserId.set,
   rejections: UserId.set,
   policy: Policy.t,
@@ -16,6 +17,7 @@ let make = (proposal: Custodian.Proposed.t, log) => {
   let process = {
     val state =
       ref({
+        partnerProcessComplete: false,
         eligibilityCollector:
           EligibilityCollector.make(proposal.eligibleWhenProposing),
         endorsements: UserId.emptySet,
@@ -48,6 +50,12 @@ let make = (proposal: Custodian.Proposed.t, log) => {
                 ) =>
             completed := true;
             state^;
+          | PartnerAccepted({processId})
+              when
+                ProcessId.eq(processId, proposal.data.partnerApprovalProcess) => {
+              ...state^,
+              partnerProcessComplete: true,
+            }
           | CustodianEndorsed(event)
               when ProcessId.eq(event.processId, proposal.processId) => {
               ...state^,
@@ -104,7 +112,7 @@ let make = (proposal: Custodian.Proposed.t, log) => {
         );
     };
     pub processCompleted = () => completed^;
-    pub pendingEvent = () => result^
+    pub pendingEvent = () => state^.partnerProcessComplete ? result^ : None
   };
   log |> EventLog.reduce((_, item) => process#receive(item), ());
   process;
