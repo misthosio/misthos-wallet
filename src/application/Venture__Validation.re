@@ -4,6 +4,8 @@ open WalletTypes;
 
 open Event;
 
+module ItemsSet = Belt.Set.String;
+
 type t = {
   accountValidator: AccountValidator.t,
   custodianValidator: CustodianValidator.t,
@@ -11,7 +13,7 @@ type t = {
   accountKeyChainValidator: AccountKeyChainValidator.t,
   processValidator: ProcessValidator.t,
   systemPubKey: string,
-  knownItems: list(string),
+  knownItems: ItemsSet.t,
   currentPartners: UserId.set,
   currentPartnerPubKeys: list((string, userId)),
   partnerData: list((processId, (userId, Partner.Data.t))),
@@ -38,7 +40,7 @@ let make = () => {
   accountKeyChainValidator: AccountKeyChainValidator.make(),
   processValidator: ProcessValidator.make(),
   systemPubKey: "",
-  knownItems: [],
+  knownItems: ItemsSet.empty,
   currentPartners: UserId.emptySet,
   currentPartnerPubKeys: [],
   partnerData: [],
@@ -63,7 +65,7 @@ let make = () => {
 let apply = ({hash, event}: EventLog.item, state) => {
   let state = {
     ...state,
-    knownItems: [hash, ...state.knownItems],
+    knownItems: state.knownItems |. ItemsSet.add(hash),
     accountValidator:
       state.accountValidator |> AccountValidator.update(event),
     processValidator:
@@ -753,7 +755,7 @@ let validateEvent =
 
 let validate =
     ({knownItems} as state, {hash, event, issuerPubKey}: EventLog.item) =>
-  if (knownItems |> List.mem(hash)) {
+  if (knownItems |. ItemsSet.has(hash)) {
     Ignore;
   } else {
     switch (
@@ -775,7 +777,7 @@ let validate =
         when
           event.supporterId == state.creatorData.id
           && state.knownItems
-          |> List.length == 2 =>
+          |> ItemsSet.size == 2 =>
       Ok
     | (_, false, false) => InvalidIssuer
     | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer

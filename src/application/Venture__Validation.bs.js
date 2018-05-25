@@ -10,6 +10,7 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
+var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./wallet/AccountKeyChain.bs.js");
 var AccountValidator = require("./validation/AccountValidator.bs.js");
@@ -28,7 +29,7 @@ function make() {
           /* accountKeyChainValidator */AccountKeyChainValidator.make(/* () */0),
           /* processValidator */ProcessValidator.make(/* () */0),
           /* systemPubKey */"",
-          /* knownItems : [] */0,
+          /* knownItems */Belt_SetString.empty,
           /* currentPartners */PrimitiveTypes.UserId[/* emptySet */9],
           /* currentPartnerPubKeys : [] */0,
           /* partnerData : [] */0,
@@ -59,10 +60,7 @@ function apply(param, state) {
   newrecord[/* custodianKeyChainValidator */2] = CustodianKeyChainValidator.update($$event, state[/* custodianKeyChainValidator */2]);
   newrecord[/* accountKeyChainValidator */3] = AccountKeyChainValidator.update($$event, state[/* accountKeyChainValidator */3]);
   newrecord[/* processValidator */4] = ProcessValidator.update($$event, state[/* processValidator */4]);
-  newrecord[/* knownItems */6] = /* :: */[
-    param[/* hash */1],
-    state[/* knownItems */6]
-  ];
+  newrecord[/* knownItems */6] = Belt_SetString.add(state[/* knownItems */6], param[/* hash */1]);
   switch ($$event.tag | 0) {
     case 0 : 
         var match = $$event[0];
@@ -1065,7 +1063,7 @@ function validateEvent(param) {
 function validate(state, param) {
   var issuerPubKey = param[/* issuerPubKey */2];
   var $$event = param[/* event */0];
-  if (List.mem(param[/* hash */1], state[/* knownItems */6])) {
+  if (Belt_SetString.has(state[/* knownItems */6], param[/* hash */1])) {
     return /* Ignore */1;
   } else {
     var match = Event.isSystemEvent($$event);
@@ -1096,7 +1094,7 @@ function validate(state, param) {
             exit$1 = 3;
           } else if (match$1) {
             exit = 2;
-          } else if (Caml_obj.caml_equal($$event[0][/* supporterId */1], state[/* creatorData */19][/* id */1]) && List.length(state[/* knownItems */6]) === 2) {
+          } else if (Caml_obj.caml_equal($$event[0][/* supporterId */1], state[/* creatorData */19][/* id */1]) && Belt_SetString.size(state[/* knownItems */6]) === 2) {
             return /* Ok */0;
           } else {
             exit$1 = 3;
@@ -1130,6 +1128,9 @@ function validate(state, param) {
   }
 }
 
+var ItemsSet = 0;
+
+exports.ItemsSet = ItemsSet;
 exports.make = make;
 exports.apply = apply;
 exports.resultToString = resultToString;
