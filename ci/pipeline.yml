@@ -69,7 +69,7 @@ jobs:
   - aggregate:
     - put: misthos-code
       params:
-        file: bundled-code-with-build-version/misthos-code-*.tgz
+        file: bundled-code/misthos-code-*.tgz
 
 - name: build
   plan:
