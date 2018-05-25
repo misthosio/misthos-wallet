@@ -10,6 +10,7 @@ var Theme = require("./Theme.bs.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
+var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -17,6 +18,7 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var ProposeButton = require("./components/ProposeButton.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
+var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.js");
 var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Stepper.bs.js");
@@ -31,24 +33,17 @@ var lenght = Css.px(Theme.space(3));
 
 var Styles = /* module */[/* lenght */lenght];
 
-<<<<<<< HEAD
-function make(viewData, commands, cmdStatus, _) {
-=======
-function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds, _, _$1) {
->>>>>>> Add reset to CommandExecutor
+function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
+              var state = param[/* state */1];
               return /* record */[
                       /* viewData */viewData,
-<<<<<<< HEAD
-                      /* inputs */param[/* state */1][/* inputs */1]
-=======
                       /* canSubmitProposal */state[/* canSubmitProposal */1],
                       /* inputs */state[/* inputs */2]
->>>>>>> Add reset to CommandExecutor
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -61,7 +56,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var match = param[/* state */1];
               var viewData = match[/* viewData */0];
               var activeStep;
-              activeStep = typeof cmdStatus === "number" || cmdStatus.tag !== 2 ? 0 : 1;
+              activeStep = typeof proposeCmdStatus === "number" || proposeCmdStatus.tag !== 2 ? 0 : 1;
               var partners = $$Array.of_list(Belt_List.keepMapU(viewData[/* partners */0], (function (partner) {
                           var match = partner[/* canProposeRemoval */2];
                           if (match) {
@@ -127,52 +122,37 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                                                           -976970511,
-<<<<<<< HEAD
-                                                                          match[/* inputs */1][/* prospectId */0]
-=======
                                                                           match[/* inputs */2][/* prospectId */0]
->>>>>>> Add reset to CommandExecutor
                                                                         ]], /* Some */[(function (e) {
                                                                             return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
                                                                           })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
-                                                              ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", (function () {
+                                                              ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner", (function () {
                                                                           return Curry._1(send, /* ProposePartner */0);
-                                                                        }), /* Some */[false], cmdStatus, /* array */[]))
+                                                                        }), match[/* canSubmitProposal */1], /* Some */[false], proposeCmdStatus, /* array */[]))
                                                             ]))
                                                   ])),
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon(1)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("SHARE THE VENTURE URL")])),
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
-                                                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))
+                                                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])])),
+                                                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                                            return Curry._1(send, /* AddAnother */1);
+                                                                          })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("Add Another")]))
                                                             ]))
                                                   ]))
-                                        ]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))), /* array */[]));
+                                        ]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners])), ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](removeCmdStatus, /* Proposal */3, /* array */[]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
                       /* viewData */viewData,
-<<<<<<< HEAD
-=======
                       /* canSubmitProposal */false,
->>>>>>> Add reset to CommandExecutor
                       /* inputs : record */[/* prospectId */""]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               if (typeof action === "number") {
-<<<<<<< HEAD
-                var prospectId = $$String.trim(state[/* inputs */1][/* prospectId */0]);
-                if (prospectId === "") {
-                  return /* NoUpdate */0;
-                } else {
-                  Curry._1(commands[/* proposePartner */0], PrimitiveTypes.UserId[/* fromString */1](prospectId));
-                  return /* NoUpdate */0;
-                }
-              } else if (action.tag) {
-                Curry._1(commands[/* proposePartnerRemoval */3], action[0]);
-=======
                 if (action === 0) {
                   var prospectId = $$String.trim(state[/* inputs */2][/* prospectId */0]);
                   if (prospectId === "") {
@@ -195,17 +175,13 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                 }
               } else if (action.tag) {
                 Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], action[0]);
->>>>>>> Add reset to CommandExecutor
                 return /* NoUpdate */0;
               } else {
+                var text = action[0];
                 return /* Update */Block.__(0, [/* record */[
                             /* viewData */state[/* viewData */0],
-<<<<<<< HEAD
-                            /* inputs : record */[/* prospectId */action[0]]
-=======
                             /* canSubmitProposal */text !== "",
                             /* inputs : record */[/* prospectId */text]
->>>>>>> Add reset to CommandExecutor
                           ]]);
               }
             }),

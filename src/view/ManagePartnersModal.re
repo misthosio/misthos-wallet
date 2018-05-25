@@ -192,6 +192,7 @@ let make =
             )
           </MTypography>
           <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
+          <CommandExecutor.Status cmdStatus=removeCmdStatus action=Proposal />
         </div>
     />;
   },
