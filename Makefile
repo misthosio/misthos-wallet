@@ -1,5 +1,6 @@
 install:
 	yarn install
+	node_modules/.bin/bsb -make-world
 
 dev:
 	yarn start

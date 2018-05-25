@@ -1,7 +1,7 @@
 ---
 groups:
 - name: misthos-web
-  jobs: [test, bump-minor,bump-patch, build, deploy-staging, deploy-testnet]
+  jobs: [install-deps,test, bump-minor,bump-patch, build, deploy-staging, deploy-testnet]
 - name: pipeline-image
   jobs: [build-task-image]
 
@@ -19,6 +19,28 @@ jobs:
     - { get: misthos-build, trigger: true, passed: [build] }
     - { get: version, params: {bump: patch}, passed: [build] }
     - { put: version,                params: {file: version/number} }
+
+- name: install-deps
+  plan:
+  - aggregate:
+    - {get: deps, trigger: true}
+    - {get: pipeline-tasks}
+  - task: install-deps
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: deps
+      outputs:
+      - name: repo-with-deps
+      run:
+        path: pipeline-tasks/ci/tasks/install-deps.sh
+  - put: bundled-deps
+    params:
+      file: repo-with-deps/bundled-deps-*.tgz
 
 - name: test
   plan:
@@ -150,6 +172,13 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: master
     private_key: ((github-ssh-key.private_key))
+- name: deps
+  type: git
+  source:
+    paths: [yarn.lock]
+    uri: git@github.com:misthosio/misthos.git
+    branch: master
+    private_key: ((github-ssh-key.private_key))
 - name: staging-branch
   type: git
   source:
@@ -162,6 +191,12 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: testnet
     private_key: ((github-ssh-key.private_key))
+- name: bundled-deps
+  type: gcs-resource
+  source:
+    bucket: artifact-cache
+    json_key: ((gcp-service-account))
+    regexp: bundled-deps-(.*).tgz
 - name: misthos-code
   type: gcs-resource
   source:
@@ -192,7 +227,7 @@ resources:
   type: git
   source:
     uri: git@github.com:misthosio/misthos.git
-    branch: master
+    branch: iterate-pipeline
     paths: [ci/tasks/*, Makefile]
     private_key: ((github-ssh-key.private_key))
 - name: docker-image-ci
