@@ -90,9 +90,14 @@ let apply =
          applyInternal,
          (validation, state, wallet, collector),
        );
-  ({validation, session, id, log, state, wallet, watchers}, collector)
-  |> Js.Promise.resolve;
+  ({validation, session, id, log, state, wallet, watchers}, collector);
 };
+
+let applyMany = (~collector=[||], venture) =>
+  List.fold_left(
+    ((v, collector), event) => v |> apply(~collector, event),
+    (venture, collector),
+  );
 
 let reconstruct = (session, log) => {
   let {validation, state, wallet} = make(session, VentureId.make());
@@ -261,7 +266,7 @@ module Cmd = {
              makeResult =>
                makeResult
                |> apply(VentureCreated(ventureCreated))
-               |> then_(persist)
+               |> persist
                |> then_(
                     fun
                     | Js.Result.Ok((venture, _)) =>
@@ -364,61 +369,45 @@ module Cmd = {
       Js.Promise.(
         incomeEvents
         |> List.fold_left(
-             (p, event) =>
-               p
-               |> then_(((v, collector)) =>
-                    v
-                    |> apply(
-                         ~systemEvent=true,
-                         ~collector,
-                         IncomeDetected(event),
-                       )
-                  ),
-             (venture, [||]) |> resolve,
+             ((v, collector), event) =>
+               v
+               |> apply(~systemEvent=true, ~collector, IncomeDetected(event)),
+             (venture, [||]),
            )
         |> List.fold_left(
-             (p, event) =>
-               p
-               |> then_(((v, collector)) =>
-                    v
-                    |> apply(
-                         ~systemEvent=true,
-                         ~collector,
-                         PayoutBroadcast(event),
-                       )
+             ((v, collector), event) =>
+               v
+               |> apply(
+                    ~systemEvent=true,
+                    ~collector,
+                    PayoutBroadcast(event),
                   ),
              _,
              broadcasts,
            )
         |> List.fold_left(
-             (p, event) =>
-               p
-               |> then_(((v, collector)) =>
-                    v
-                    |> apply(
-                         ~systemEvent=true,
-                         ~collector,
-                         PayoutBroadcastFailed(event),
-                       )
+             ((v, collector), event) =>
+               v
+               |> apply(
+                    ~systemEvent=true,
+                    ~collector,
+                    PayoutBroadcastFailed(event),
                   ),
              _,
              broadcastFailures,
            )
         |> List.fold_left(
-             (p, event) =>
-               p
-               |> then_(((v, collector)) =>
-                    v
-                    |> apply(
-                         ~systemEvent=true,
-                         ~collector,
-                         TransactionConfirmed(event),
-                       )
+             ((v, collector), event) =>
+               v
+               |> apply(
+                    ~systemEvent=true,
+                    ~collector,
+                    TransactionConfirmed(event),
                   ),
              _,
              txConfs,
            )
-        |> then_(persist)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
@@ -477,36 +466,20 @@ module Cmd = {
                            |> State.currentPolicy(Event.Custodian.processName),
                        )
                        |> Event.getCustodianProposedExn;
-                     venture
-                     |> apply(Event.PartnerProposed(partnerProposed))
-                     |> then_(((v, c)) =>
-                          v
-                          |> apply(
-                               ~collector=c,
-                               Event.makePartnerEndorsed(
-                                 ~processId=partnerProposed.processId,
-                                 ~supporterId=session.userId,
-                               ),
-                             )
-                        )
-                     |> then_(((v, c)) =>
-                          v
-                          |> apply(
-                               ~collector=c,
-                               Event.CustodianProposed(custodianProposal),
-                             )
-                        )
-                     |> then_(((v, c)) =>
-                          v
-                          |> apply(
-                               ~collector=c,
-                               Event.makeCustodianEndorsed(
-                                 ~processId=custodianProposal.processId,
-                                 ~supporterId=session.userId,
-                               ),
-                             )
-                        )
-                     |> then_(persist)
+                     [
+                       Event.PartnerProposed(partnerProposed),
+                       Event.makePartnerEndorsed(
+                         ~processId=partnerProposed.processId,
+                         ~supporterId=session.userId,
+                       ),
+                       Event.CustodianProposed(custodianProposal),
+                       Event.makeCustodianEndorsed(
+                         ~processId=custodianProposal.processId,
+                         ~supporterId=session.userId,
+                       ),
+                     ]
+                     |> applyMany(venture)
+                     |> persist
                      |> then_(
                           fun
                           | Js.Result.Ok((v, c)) =>
@@ -533,24 +506,15 @@ module Cmd = {
       let custodianProcessId =
         state |> State.custodianProcessForPartnerProcess(processId);
       Js.Promise.(
-        venture
-        |> apply(
-             Event.makePartnerRejected(
-               ~processId,
-               ~rejectorId=session.userId,
-             ),
-           )
-        |> then_(((v, c)) =>
-             v
-             |> apply(
-                  ~collector=c,
-                  Event.makeCustodianRejected(
-                    ~processId=custodianProcessId,
-                    ~rejectorId=session.userId,
-                  ),
-                )
-           )
-        |> then_(persist)
+        [
+          Event.makePartnerRejected(~processId, ~rejectorId=session.userId),
+          Event.makeCustodianRejected(
+            ~processId=custodianProcessId,
+            ~rejectorId=session.userId,
+          ),
+        ]
+        |> applyMany(venture)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
@@ -568,24 +532,15 @@ module Cmd = {
       let custodianProcessId =
         state |> State.custodianProcessForPartnerProcess(processId);
       Js.Promise.(
-        venture
-        |> apply(
-             Event.makePartnerEndorsed(
-               ~processId,
-               ~supporterId=session.userId,
-             ),
-           )
-        |> then_(((v, c)) =>
-             v
-             |> apply(
-                  ~collector=c,
-                  Event.makeCustodianEndorsed(
-                    ~processId=custodianProcessId,
-                    ~supporterId=session.userId,
-                  ),
-                )
-           )
-        |> then_(persist)
+        [
+          Event.makePartnerEndorsed(~processId, ~supporterId=session.userId),
+          Event.makeCustodianEndorsed(
+            ~processId=custodianProcessId,
+            ~supporterId=session.userId,
+          ),
+        ]
+        |> applyMany(venture)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
@@ -621,53 +576,47 @@ module Cmd = {
                        ),
                 )
                 |> Event.getCustodianRemovalProposedExn;
-              venture
-              |> apply(CustodianRemovalProposed(custodianRemoval))
-              |> then_(((v, c)) =>
-                   v
-                   |> apply(
-                        ~collector=c,
-                        Event.makeCustodianRemovalEndorsed(
-                          ~processId=custodianRemoval.processId,
-                          ~supporterId=session.userId,
-                        ),
-                      )
-                 );
-            | None => (venture, [||]) |> resolve
+              [
+                Event.CustodianRemovalProposed(custodianRemoval),
+                Event.makeCustodianRemovalEndorsed(
+                  ~processId=custodianRemoval.processId,
+                  ~supporterId=session.userId,
+                ),
+              ]
+              |> applyMany(venture);
+            | None => (venture, [||])
             }
           )
-          |> then_(((v, c)) => {
-               let proposal =
-                 Event.makePartnerRemovalProposed(
-                   ~eligibleWhenProposing=state |> State.currentPartners,
-                   ~lastPartnerAccepted=
-                     state |> State.lastPartnerAccepted(partnerId),
-                   ~proposerId=session.userId,
-                   ~policy=
-                     state
-                     |> State.currentPolicy(Event.Partner.Removal.processName),
-                 )
-                 |> Event.getPartnerRemovalProposedExn;
-               v
-               |> apply(~collector=c, PartnerRemovalProposed(proposal))
-               |> then_(((v, c)) =>
-                    v
-                    |> apply(
-                         ~collector=c,
-                         Event.makePartnerRemovalEndorsed(
-                           ~processId=proposal.processId,
-                           ~supporterId=session.userId,
-                         ),
-                       )
-                  )
-               |> then_(persist)
-               |> then_(
-                    fun
-                    | Js.Result.Ok((v, c)) =>
-                      Ok(proposal.processId, v, c) |> resolve
-                    | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
-                  );
-             })
+          |> (
+            ((v, c)) => {
+              let proposal =
+                Event.makePartnerRemovalProposed(
+                  ~eligibleWhenProposing=state |> State.currentPartners,
+                  ~lastPartnerAccepted=
+                    state |> State.lastPartnerAccepted(partnerId),
+                  ~proposerId=session.userId,
+                  ~policy=
+                    state
+                    |> State.currentPolicy(Event.Partner.Removal.processName),
+                )
+                |> Event.getPartnerRemovalProposedExn;
+              [
+                Event.PartnerRemovalProposed(proposal),
+                Event.makePartnerRemovalEndorsed(
+                  ~processId=proposal.processId,
+                  ~supporterId=session.userId,
+                ),
+              ]
+              |> applyMany(~collector=c, v)
+              |> persist
+              |> then_(
+                   fun
+                   | Js.Result.Ok((v, c)) =>
+                     Ok(proposal.processId, v, c) |> resolve
+                   | Js.Result.Error(err) => CouldNotPersist(err) |> resolve,
+                 );
+            }
+          )
         );
       };
     };
@@ -686,7 +635,7 @@ module Cmd = {
                ~rejectorId=session.userId,
              ),
            )
-        |> then_(persist)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
@@ -717,20 +666,21 @@ module Cmd = {
                    ~supporterId=session.userId,
                  ),
                )
-          | None => (venture, [||]) |> resolve
+          | None => (venture, [||])
           }
         )
-        |> then_(((v, c)) =>
-             v
-             |> apply(
-                  ~collector=c,
-                  Event.makePartnerRemovalEndorsed(
-                    ~processId,
-                    ~supporterId=session.userId,
-                  ),
-                )
-           )
-        |> then_(persist)
+        |> (
+          ((v, c)) =>
+            v
+            |> apply(
+                 ~collector=c,
+                 Event.makePartnerRemovalEndorsed(
+                   ~processId,
+                   ~supporterId=session.userId,
+                 ),
+               )
+        )
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
@@ -750,7 +700,7 @@ module Cmd = {
       Js.Promise.(
         venture
         |> apply(IncomeAddressExposed(exposeEvent))
-        |> then_(persist)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) =>
@@ -785,19 +735,15 @@ module Cmd = {
         |> (
           fun
           | Wallet.Ok(proposal) =>
-            venture
-            |> apply(PayoutProposed(proposal))
-            |> then_(((v, c)) =>
-                 v
-                 |> apply(
-                      ~collector=c,
-                      Event.makePayoutEndorsed(
-                        ~processId=proposal.processId,
-                        ~supporterId=session.userId,
-                      ),
-                    )
-               )
-            |> then_(persist)
+            [
+              Event.PayoutProposed(proposal),
+              Event.makePayoutEndorsed(
+                ~processId=proposal.processId,
+                ~supporterId=session.userId,
+              ),
+            ]
+            |> applyMany(venture)
+            |> persist
             |> then_(
                  fun
                  | Js.Result.Ok((v, c)) =>
@@ -820,7 +766,7 @@ module Cmd = {
         |> apply(
              Event.makePayoutRejected(~processId, ~rejectorId=session.userId),
            )
-        |> then_(persist)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
@@ -843,7 +789,7 @@ module Cmd = {
                ~supporterId=session.userId,
              ),
            )
-        |> then_(persist)
+        |> persist
         |> then_(
              fun
              | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
