@@ -18,7 +18,7 @@ git log --pretty=format:'%h' -n 1 > gitref
 
 if [[ "$(git status -s -uno)" != "" ]]; then
   echo "Compiler output differs from commited files"
-  git diff
+  git --no-pager diff
   exit 1;
 fi
 
