@@ -12,6 +12,6 @@ make build
 
 popd
 
-tar -zcvf "misthos-build-v$(cat version/number).tgz" repo/build
+tar -zcvf "misthos-build-v$(cat build-version/number).tgz" repo/build
 mv ./*.tgz build
 
