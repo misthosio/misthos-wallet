@@ -95,18 +95,10 @@ let make =
             </MTypography>,
           |]
         | (EndorsementSubmited, _) => [|
-            <CommandExecutor.Status
-              cmdStatus
-              action=Endorsement
-              onRetry=(() => send(Cancel))
-            />,
+            <CommandExecutor.Status cmdStatus action=Endorsement />,
           |]
         | (RejectionSubmited, _) => [|
-            <CommandExecutor.Status
-              cmdStatus
-              action=Rejection
-              onRetry=(() => send(Cancel))
-            />,
+            <CommandExecutor.Status cmdStatus action=Rejection />,
           |]
         },
       |]),

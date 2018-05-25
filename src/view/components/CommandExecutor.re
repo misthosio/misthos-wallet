@@ -110,7 +110,7 @@ module Status = {
     cmdStatus,
   };
   let component = ReasonReact.statelessComponent("CommandStatus");
-  let make = (~cmdStatus: cmdStatus, ~action, ~onRetry=?, _children) => {
+  let make = (~cmdStatus: cmdStatus, ~action, _children) => {
     ...component,
     render: (_) =>
       switch (cmdStatus) {
@@ -142,29 +142,22 @@ module Status = {
           />,
         |])
       | Error(error) =>
-        switch (error, onRetry) {
-        | (CouldNotPersistVenture, Some(onRetry)) =>
-          ReasonReact.array([|
-            "RED: your submission could not be persisted" |> text,
-            <MButton fullWidth=true onClick=(_e => onRetry())>
-              (text("Try Again"))
-            </MButton>,
-          |])
-        | (CouldNotPersistVenture, None) =>
+        switch (error) {
+        | CouldNotPersistVenture =>
           "RED: your submission could not be persisted" |> text
-        | (CouldNotFindUserInfo, _) =>
+        | CouldNotFindUserInfo =>
           "RED: Id doesn't exist or user has never logged in" |> text
-        | (MaxPartnersReached, _) =>
+        | MaxPartnersReached =>
           "RED: The maximum number of partners we currently support in a venture has been reached"
           |> text
-        | (PartnerAlreadyProposed, _) =>
+        | PartnerAlreadyProposed =>
           "RED: This user has already been proposed to join" |> text
-        | (PartnerAlreadyExists, _) =>
+        | PartnerAlreadyExists =>
           "RED: User is already a partner of this venture" |> text
-        | (CouldNotJoinVenture, _) =>
+        | CouldNotJoinVenture =>
           "RED: Error joining venture. Perhaps you have not been accepted yet."
           |> text
-        | (CouldNotLoadVenture, _) => "RED: Error loading venture" |> text
+        | CouldNotLoadVenture => "RED: Error loading venture" |> text
         }
       | Success(success) =>
         switch (success) {

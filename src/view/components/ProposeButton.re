@@ -71,11 +71,7 @@ let make =
             </MTypography>,
           |]
         | ProposalSubmited => [|
-            <CommandExecutor.Status
-              cmdStatus
-              action=Proposal
-              onRetry=(() => send(Cancel))
-            />,
+            <CommandExecutor.Status cmdStatus action=Proposal />,
           |]
         },
       |]),

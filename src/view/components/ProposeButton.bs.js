@@ -70,9 +70,7 @@ function make(proposeText, onPropose, $staropt$star, cmdStatus, _) {
                               ]))];
                     break;
                 case 2 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](match[/* cmdStatus */1], /* Proposal */3, /* Some */[(function () {
-                                    return Curry._1(send, /* Cancel */0);
-                                  })], /* array */[]))];
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](match[/* cmdStatus */1], /* Proposal */3, /* array */[]))];
                     break;
                 
               }
