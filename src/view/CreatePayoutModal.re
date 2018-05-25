@@ -34,9 +34,15 @@ let component = ReasonReact.reducerComponent("CreatePayout");
 module Styles = {
   open Css;
   let maxButton = style([color(rgba(0, 0, 0, 0.54))]);
-  let maxWidth = style([maxWidth(`percent(99.0))]);
+  let maxWidth = style([width(`percent(99.0))]);
   let buttonPadding = style([paddingLeft(px(4))]);
-  let noBorder = style([borderColor(`transparent)]);
+  let noBorder = style([borderColor(`transparent), whiteSpace(`nowrap)]);
+  let spaceBetween = align =>
+    style([
+      display(`flex),
+      justifyContent(`spaceBetween),
+      alignItems(align),
+    ]);
 };
 
 let updateState =
@@ -218,19 +224,20 @@ let make =
           |> List.mapi((idx, (address, amount)) =>
                MaterialUi.(
                  <TableRow key=(idx |> string_of_int)>
-                   <TableCell className=Styles.noBorder padding=`None>
+                   <TableCell
+                     className=(
+                       Styles.spaceBetween(`center) ++ " " ++ Styles.noBorder
+                     )
+                     padding=`None>
                      <b> (address |> text) </b>
-                   </TableCell>
-                   <TableCell
-                     numeric=true className=Styles.noBorder padding=`None>
-                     (BTC.format(amount) ++ " BTC" |> text)
-                   </TableCell>
-                   <TableCell
-                     numeric=true className=Styles.noBorder padding=`None>
                      <IconButton
                        onClick=(_e => send(RemoveDestination(idx)))>
                        <img src=remove alt="Remove" />
                      </IconButton>
+                   </TableCell>
+                   <TableCell
+                     numeric=true className=Styles.noBorder padding=`None>
+                     (BTC.format(amount) ++ " BTC" |> text)
                    </TableCell>
                  </TableRow>
                )
@@ -314,20 +321,17 @@ let make =
                       <TableBody>
                         destinationList
                         <TableRow key="networkFee">
-                          <TableCell
-                            className=(
-                              Styles.maxWidth ++ " " ++ Styles.noBorder
-                            )
-                            padding=`None>
+                          <TableCell className=Styles.noBorder padding=`None>
                             <b> ("NETWORK FEE" |> text) </b>
                           </TableCell>
                           <TableCell
                             numeric=true
-                            className=Styles.noBorder
+                            className=(
+                              Styles.maxWidth ++ " " ++ Styles.noBorder
+                            )
                             padding=`None>
                             (BTC.format(summary.networkFee) ++ " BTC" |> text)
                           </TableCell>
-                          <TableCell className=Styles.noBorder />
                         </TableRow>
                         <TableRow key="misthosFee">
                           <TableCell className=Styles.noBorder padding=`None>
@@ -339,11 +343,18 @@ let make =
                             padding=`None>
                             (BTC.format(summary.misthosFee) ++ " BTC" |> text)
                           </TableCell>
-                          <TableCell className=Styles.noBorder />
                         </TableRow>
                       </TableBody>
                     </Table>
                   )
+                  <div className=(Styles.spaceBetween(`baseline))>
+                    <MaterialUi.Typography variant=`Body2>
+                      ("TOTAL PAYOUT" |> text)
+                    </MaterialUi.Typography>
+                    <MTypography variant=`Subheading>
+                      (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
+                    </MTypography>
+                  </div>
                   <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
                     (text("Propose Payout"))
                   </MButton>
