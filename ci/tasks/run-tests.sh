@@ -9,7 +9,7 @@ if [[ $(diff -q deps/yarn.lock repo/yarn.lock) ]]; then
   exit 1
 fi
 
-cp -r deps/node_modules repo/
+mv -r deps/node_modules repo/
 
 pushd repo
 # make ci
