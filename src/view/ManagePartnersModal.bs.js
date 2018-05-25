@@ -12,6 +12,7 @@ var MInput = require("./components/MInput.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
+var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -21,11 +22,10 @@ var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.js");
+var MaterialUi_Radio = require("@jsiebern/bs-material-ui/src/MaterialUi_Radio.bs.js");
 var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Stepper.bs.js");
 var MaterialUi_StepLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_StepLabel.bs.js");
-var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 var MaterialUi_StepContent = require("@jsiebern/bs-material-ui/src/MaterialUi_StepContent.bs.js");
-var RemovePartnerSvg = require("../assets/img/remove-partner.svg");
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
@@ -54,18 +54,21 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
+              var inputs = match[/* inputs */2];
               var viewData = match[/* viewData */0];
               var activeStep;
               activeStep = typeof proposeCmdStatus === "number" || proposeCmdStatus.tag !== 2 ? 0 : 1;
               var partners = $$Array.of_list(Belt_List.keepMapU(viewData[/* partners */0], (function (partner) {
                           var match = partner[/* canProposeRemoval */2];
                           if (match) {
-                            return /* Some */[ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
-                                                            return Curry._1(send, /* RemovePartner */Block.__(1, [partner[/* userId */0]]));
-                                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                                              alt: "Remove",
-                                                              src: RemovePartnerSvg
-                                                            })]))], /* array */[]))];
+                            return /* Some */[ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Radio.make(/* Some */[/* `Bool */[
+                                                          737456202,
+                                                          Caml_obj.caml_equal(inputs[/* removePartnerId */1], /* Some */[partner[/* userId */0]])
+                                                        ]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (_, _$1) {
+                                                            return Curry._1(send, /* SelectRemovePartner */Block.__(1, [partner[/* userId */0]]));
+                                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))], /* Some */[(function () {
+                                                  return Curry._1(send, /* SelectRemovePartner */Block.__(1, [partner[/* userId */0]]));
+                                                })], /* array */[]))];
                           } else {
                             return /* None */0;
                           }
@@ -122,7 +125,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                                                           -976970511,
-                                                                          match[/* inputs */2][/* prospectId */0]
+                                                                          inputs[/* prospectId */0]
                                                                         ]], /* Some */[(function (e) {
                                                                             return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
                                                                           })], /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
@@ -146,7 +149,10 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               return /* record */[
                       /* viewData */viewData,
                       /* canSubmitProposal */false,
-                      /* inputs : record */[/* prospectId */""]
+                      /* inputs : record */[
+                        /* prospectId */"",
+                        /* removePartnerId : None */0
+                      ]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -161,27 +167,49 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                     return /* NoUpdate */0;
                   }
                 } else {
+                  var init = state[/* inputs */2];
                   return /* UpdateWithSideEffects */Block.__(2, [
                             /* record */[
                               /* viewData */state[/* viewData */0],
                               /* canSubmitProposal */state[/* canSubmitProposal */1],
-                              /* inputs : record */[/* prospectId */""]
+                              /* inputs : record */[
+                                /* prospectId */"",
+                                /* removePartnerId */init[/* removePartnerId */1]
+                              ]
                             ],
                             (function () {
                                 return Curry._1(proposePartnerCmds[/* reset */0], /* () */0);
                               })
                           ]);
                 }
-              } else if (action.tag) {
-                Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], action[0]);
-                return /* NoUpdate */0;
               } else {
-                var text = action[0];
-                return /* Update */Block.__(0, [/* record */[
-                            /* viewData */state[/* viewData */0],
-                            /* canSubmitProposal */text !== "",
-                            /* inputs : record */[/* prospectId */text]
-                          ]]);
+                switch (action.tag | 0) {
+                  case 0 : 
+                      var text = action[0];
+                      var init$1 = state[/* inputs */2];
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* canSubmitProposal */text !== "",
+                                  /* inputs : record */[
+                                    /* prospectId */text,
+                                    /* removePartnerId */init$1[/* removePartnerId */1]
+                                  ]
+                                ]]);
+                  case 1 : 
+                      var init$2 = state[/* inputs */2];
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* canSubmitProposal */state[/* canSubmitProposal */1],
+                                  /* inputs : record */[
+                                    /* prospectId */init$2[/* prospectId */0],
+                                    /* removePartnerId : Some */[action[0]]
+                                  ]
+                                ]]);
+                  case 2 : 
+                      Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], action[0]);
+                      return /* NoUpdate */0;
+                  
+                }
               }
             }),
           /* subscriptions */component[/* subscriptions */13],

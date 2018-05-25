@@ -6,7 +6,10 @@ open PrimitiveTypes;
 
 module ViewData = ViewModel.ManagePartnersView;
 
-type inputs = {prospectId: string};
+type inputs = {
+  prospectId: string,
+  removePartnerId: option(UserId.t),
+};
 
 type state = {
   viewData: ViewData.t,
@@ -17,6 +20,7 @@ type state = {
 type action =
   | ChangeNewPartnerId(string)
   | ProposePartner
+  | SelectRemovePartner(UserId.t)
   | RemovePartner(UserId.t)
   | AddAnother;
 
@@ -39,6 +43,7 @@ let make =
   ...component,
   initialState: () => {
     inputs: {
+      removePartnerId: None,
       prospectId: "",
     },
     canSubmitProposal: false,
@@ -52,6 +57,7 @@ let make =
         ...state,
         canSubmitProposal: text != "",
         inputs: {
+          ...state.inputs,
           prospectId: text,
         },
       })
@@ -67,11 +73,20 @@ let make =
     | RemovePartner(partnerId) =>
       removePartnerCmds.proposePartnerRemoval(~partnerId);
       ReasonReact.NoUpdate;
+    | SelectRemovePartner(partner) =>
+      ReasonReact.Update({
+        ...state,
+        inputs: {
+          ...state.inputs,
+          removePartnerId: Some(partner),
+        },
+      })
     | AddAnother =>
       ReasonReact.UpdateWithSideEffects(
         {
           ...state,
           inputs: {
+            ...state.inputs,
             prospectId: "",
           },
         },
@@ -95,13 +110,22 @@ let make =
                      key=(partner.userId |> UserId.toString)
                      partnerId=partner.userId
                      name=?partner.name
+                     onClick=(
+                       _e => send(SelectRemovePartner(partner.userId))
+                     )
                      button=MaterialUi.(
-                              <IconButton
-                                onClick=(
-                                  _e => send(RemovePartner(partner.userId))
-                                )>
-                                <img src=remove alt="Remove" />
-                              </IconButton>
+                              <Radio
+                                onChange=(
+                                  (_e, _b) =>
+                                    send(SelectRemovePartner(partner.userId))
+                                )
+                                checked=(
+                                          `Bool(
+                                            inputs.removePartnerId
+                                            == Some(partner.userId),
+                                          )
+                                        )
+                              />
                             )
                    />,
                  ) :

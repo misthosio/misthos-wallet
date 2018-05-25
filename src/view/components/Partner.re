@@ -21,7 +21,7 @@ module Styles = {
     ]);
 };
 
-let make = (~partnerId: userId, ~name=?, ~button=?, _children) => {
+let make = (~partnerId: userId, ~name=?, ~button=?, ~onClick=?, _children) => {
   ...component,
   render: _self => {
     let userId = partnerId |> UserId.toString;
@@ -31,7 +31,7 @@ let make = (~partnerId: userId, ~name=?, ~button=?, _children) => {
       | None => (userId |> text, None)
       };
     MaterialUi.(
-      <ListItem disableGutters=true>
+      <ListItem disableGutters=true ?onClick>
         <Avatar className=Styles.avatar>
           (userId.[0] |> String.make(1) |> String.uppercase |> text)
         </Avatar>
