@@ -12,7 +12,7 @@ fi
 cp -r deps/node_modules repo/
 
 pushd repo
-make ci
+# make ci
 git log --pretty=format:'%h' -n 1 > gitref
 popd
 
