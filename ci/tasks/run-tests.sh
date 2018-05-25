@@ -16,6 +16,6 @@ pushd repo
 git log --pretty=format:'%h' -n 1 > gitref
 popd
 
-tar -zcvf "misthos-code-v$(cat code-version/number)-$(cat repo/gitref).tgz" repo
+tar -zcvf "misthos-code-v$(cat code-version/number)-$(cat repo/gitref).tgz" repo > /dev/null
 
 mv ./*.tgz bundled-code
