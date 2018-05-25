@@ -46,7 +46,7 @@ let make = (~onSignIn, _children) => {
                 </Typography>
                 <br />
                 <Typography variant=`Display1>
-                  ("Use if for projects. Use if for payments." |> text)
+                  ("Use it for projects. Use it for payments." |> text)
                 </Typography>
               </Grid>
               <Grid item=true xs=V3>
