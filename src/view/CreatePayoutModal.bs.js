@@ -12,12 +12,12 @@ var React = require("react");
 var MInput = require("./components/MInput.bs.js");
 var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
-var Spinner = require("./components/Spinner.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
+var ProposeButton = require("./components/ProposeButton.bs.js");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var MaterialUi_TableRow = require("@jsiebern/bs-material-ui/src/MaterialUi_TableRow.bs.js");
 var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_TableBody.bs.js");
@@ -82,7 +82,7 @@ var Styles = /* module */[
 ];
 
 function updateState(state) {
-  var match = state[/* inputs */6];
+  var match = state[/* inputs */8];
   var btcAmount = match[/* btcAmount */1];
   var recipientAddress = match[/* recipientAddress */0];
   var inputAmount = state[/* inputAmount */3];
@@ -126,32 +126,38 @@ function updateState(state) {
         btcAmount$1
       ];
     var inputAmount$2 = match$4[0];
+    var summary = Curry._2(viewData[/* summary */7], /* :: */[
+          /* tuple */[
+            inputDestination,
+            inputAmount$2
+          ],
+          destinations
+        ], defaultFee);
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
             /* inputDestination */inputDestination,
             /* inputAmount */inputAmount$2,
             /* addressValid */addressValid,
-            /* summary */Curry._2(viewData[/* summary */7], /* :: */[
-                  /* tuple */[
-                    inputDestination,
-                    inputAmount$2
-                  ],
-                  destinations
-                ], defaultFee),
+            /* canSubmitProposal */summary[/* misthosFee */3].gt(BTC.zero),
+            /* frozen */state[/* frozen */6],
+            /* summary */summary,
             /* inputs : record */[
               /* recipientAddress */recipientAddress$1,
               /* btcAmount */match$4[1]
             ]
           ];
   } else {
+    var summary$1 = Curry._2(viewData[/* summary */7], destinations, defaultFee);
     return /* record */[
             /* viewData */viewData,
             /* destinations */state[/* destinations */1],
             /* inputDestination */inputDestination,
             /* inputAmount */inputAmount$1,
             /* addressValid */addressValid,
-            /* summary */Curry._2(viewData[/* summary */7], destinations, defaultFee),
+            /* canSubmitProposal */summary$1[/* misthosFee */3].gt(BTC.zero),
+            /* frozen */state[/* frozen */6],
+            /* summary */summary$1,
             /* inputs : record */[
               /* recipientAddress */recipientAddress$1,
               /* btcAmount */btcAmount$1
@@ -173,8 +179,10 @@ function make(viewData, commands, cmdStatus, _) {
                       /* inputDestination */state[/* inputDestination */2],
                       /* inputAmount */state[/* inputAmount */3],
                       /* addressValid */state[/* addressValid */4],
-                      /* summary */state[/* summary */5],
-                      /* inputs */state[/* inputs */6]
+                      /* canSubmitProposal */state[/* canSubmitProposal */5],
+                      /* frozen */state[/* frozen */6],
+                      /* summary */state[/* summary */7],
+                      /* inputs */state[/* inputs */8]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -185,26 +193,9 @@ function make(viewData, commands, cmdStatus, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var match = param[/* state */1];
-              var inputs = match[/* inputs */6];
-              var summary = match[/* summary */5];
+              var inputs = match[/* inputs */8];
+              var summary = match[/* summary */7];
               var viewData = match[/* viewData */0];
-              var feedback;
-              if (typeof cmdStatus === "number") {
-                feedback = null;
-              } else {
-                switch (cmdStatus.tag | 0) {
-                  case 0 : 
-                      feedback = ReasonReact.element(/* None */0, /* None */0, Spinner.make("waiting for result", /* None */0, /* array */[]));
-                      break;
-                  case 1 : 
-                      feedback = ViewCommon.text("Could not execute teh command");
-                      break;
-                  case 2 : 
-                      feedback = null;
-                      break;
-                  
-                }
-              }
               var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
                           return ReasonReact.element(/* Some */[String(idx)], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[spaceBetween(/* center */98248149) + (" " + noBorder)], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
@@ -255,9 +246,13 @@ function make(viewData, commands, cmdStatus, _) {
                                                               ]))
                                                     ]))])), React.createElement("div", {
                                         className: spaceBetween(/* baseline */287825029)
-                                      }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")]))), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                return Curry._1(send, /* ProposePayout */2);
-                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Propose Payout")])), feedback), /* array */[]));
+                                      }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")]))), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose payout", (function () {
+                                              return Curry._1(send, /* ProposePayout */2);
+                                            }), /* Some */[(function () {
+                                                return Curry._1(send, /* Freeze */3);
+                                              })], /* Some */[(function () {
+                                                return Curry._1(send, /* Reset */4);
+                                              })], match[/* canSubmitProposal */5], /* None */0, cmdStatus, /* array */[]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -266,6 +261,8 @@ function make(viewData, commands, cmdStatus, _) {
                       /* inputDestination */"",
                       /* inputAmount */BTC.zero,
                       /* addressValid */true,
+                      /* canSubmitProposal */false,
+                      /* frozen */false,
                       /* summary */viewData[/* initialSummary */4],
                       /* inputs : record */[
                         /* recipientAddress */"",
@@ -275,100 +272,199 @@ function make(viewData, commands, cmdStatus, _) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              if (typeof action === "number") {
-                switch (action) {
-                  case 0 : 
-                      var max = Curry._3(state[/* viewData */0][/* max */6], state[/* inputDestination */2], state[/* destinations */1], defaultFee);
-                      return /* SideEffects */Block.__(1, [(function (param) {
-                                    return Curry._1(param[/* send */3], /* ChangeBTCAmount */Block.__(1, [BTC.format(max)]));
-                                  })]);
-                  case 1 : 
-                      if (state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero)) {
-                        return /* Update */Block.__(0, [/* record */[
-                                    /* viewData */state[/* viewData */0],
-                                    /* destinations : :: */[
-                                      /* tuple */[
-                                        state[/* inputDestination */2],
-                                        state[/* inputAmount */3]
-                                      ],
-                                      state[/* destinations */1]
-                                    ],
-                                    /* inputDestination */"",
-                                    /* inputAmount */BTC.zero,
-                                    /* addressValid */state[/* addressValid */4],
-                                    /* summary */state[/* summary */5],
-                                    /* inputs : record */[
-                                      /* recipientAddress */"",
-                                      /* btcAmount */""
-                                    ]
-                                  ]]);
-                      } else {
-                        return /* NoUpdate */0;
-                      }
-                  case 2 : 
-                      var destinations = state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero) ? /* :: */[
-                          /* tuple */[
-                            state[/* inputDestination */2],
-                            state[/* inputAmount */3]
-                          ],
-                          state[/* destinations */1]
-                        ] : state[/* destinations */1];
-                      Curry._3(commands[/* proposePayout */7], WalletTypes.AccountIndex[/* default */9], destinations, defaultFee);
-                      return /* NoUpdate */0;
-                  
-                }
+              var match = state[/* frozen */6];
+              var exit = 0;
+              if (typeof cmdStatus === "number") {
+                exit = match ? 1 : 2;
               } else {
-                switch (action.tag | 0) {
+                switch (cmdStatus.tag | 0) {
                   case 0 : 
-                      var init = state[/* inputs */6];
-                      return /* Update */Block.__(0, [updateState(/* record */[
-                                      /* viewData */state[/* viewData */0],
-                                      /* destinations */state[/* destinations */1],
-                                      /* inputDestination */state[/* inputDestination */2],
-                                      /* inputAmount */state[/* inputAmount */3],
-                                      /* addressValid */state[/* addressValid */4],
-                                      /* summary */state[/* summary */5],
-                                      /* inputs : record */[
-                                        /* recipientAddress */action[0],
-                                        /* btcAmount */init[/* btcAmount */1]
-                                      ]
-                                    ])]);
+                      exit = 1;
+                      break;
                   case 1 : 
-                      var init$1 = state[/* inputs */6];
-                      return /* Update */Block.__(0, [updateState(/* record */[
-                                      /* viewData */state[/* viewData */0],
-                                      /* destinations */state[/* destinations */1],
-                                      /* inputDestination */state[/* inputDestination */2],
-                                      /* inputAmount */state[/* inputAmount */3],
-                                      /* addressValid */state[/* addressValid */4],
-                                      /* summary */state[/* summary */5],
-                                      /* inputs : record */[
-                                        /* recipientAddress */init$1[/* recipientAddress */0],
-                                        /* btcAmount */action[0]
-                                      ]
-                                    ])]);
                   case 2 : 
-                      var removeIdx = action[0];
-                      return /* Update */Block.__(0, [updateState(/* record */[
-                                      /* viewData */state[/* viewData */0],
-                                      /* destinations */Belt_List.keepMapU(Belt_List.mapWithIndexU(state[/* destinations */1], (function (idx, destination) {
-                                                  var match = idx === removeIdx;
-                                                  if (match) {
-                                                    return /* None */0;
-                                                  } else {
-                                                    return /* Some */[destination];
-                                                  }
-                                                })), (function (d) {
-                                              return d;
-                                            })),
-                                      /* inputDestination */state[/* inputDestination */2],
-                                      /* inputAmount */state[/* inputAmount */3],
-                                      /* addressValid */state[/* addressValid */4],
-                                      /* summary */state[/* summary */5],
-                                      /* inputs */state[/* inputs */6]
-                                    ])]);
+                      exit = 2;
+                      break;
                   
                 }
+              }
+              switch (exit) {
+                case 1 : 
+                    if (typeof action === "number") {
+                      switch (action) {
+                        case 0 : 
+                        case 1 : 
+                            return /* NoUpdate */0;
+                        case 2 : 
+                            var destinations = state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero) ? /* :: */[
+                                /* tuple */[
+                                  state[/* inputDestination */2],
+                                  state[/* inputAmount */3]
+                                ],
+                                state[/* destinations */1]
+                              ] : state[/* destinations */1];
+                            Curry._3(commands[/* proposePayout */7], WalletTypes.AccountIndex[/* default */9], destinations, defaultFee);
+                            return /* NoUpdate */0;
+                        case 3 : 
+                            return /* Update */Block.__(0, [/* record */[
+                                        /* viewData */state[/* viewData */0],
+                                        /* destinations */state[/* destinations */1],
+                                        /* inputDestination */state[/* inputDestination */2],
+                                        /* inputAmount */state[/* inputAmount */3],
+                                        /* addressValid */state[/* addressValid */4],
+                                        /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                        /* frozen */true,
+                                        /* summary */state[/* summary */7],
+                                        /* inputs */state[/* inputs */8]
+                                      ]]);
+                        case 4 : 
+                            return /* UpdateWithSideEffects */Block.__(2, [
+                                      /* record */[
+                                        /* viewData */state[/* viewData */0],
+                                        /* destinations */state[/* destinations */1],
+                                        /* inputDestination */state[/* inputDestination */2],
+                                        /* inputAmount */state[/* inputAmount */3],
+                                        /* addressValid */state[/* addressValid */4],
+                                        /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                        /* frozen */false,
+                                        /* summary */state[/* summary */7],
+                                        /* inputs */state[/* inputs */8]
+                                      ],
+                                      (function () {
+                                          return Curry._1(commands[/* reset */0], /* () */0);
+                                        })
+                                    ]);
+                        
+                      }
+                    } else {
+                      return /* NoUpdate */0;
+                    }
+                case 2 : 
+                    if (typeof action === "number") {
+                      switch (action) {
+                        case 0 : 
+                            var max = Curry._3(state[/* viewData */0][/* max */6], state[/* inputDestination */2], state[/* destinations */1], defaultFee);
+                            return /* SideEffects */Block.__(1, [(function (param) {
+                                          return Curry._1(param[/* send */3], /* ChangeBTCAmount */Block.__(1, [BTC.format(max)]));
+                                        })]);
+                        case 1 : 
+                            if (state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero)) {
+                              return /* Update */Block.__(0, [/* record */[
+                                          /* viewData */state[/* viewData */0],
+                                          /* destinations : :: */[
+                                            /* tuple */[
+                                              state[/* inputDestination */2],
+                                              state[/* inputAmount */3]
+                                            ],
+                                            state[/* destinations */1]
+                                          ],
+                                          /* inputDestination */"",
+                                          /* inputAmount */BTC.zero,
+                                          /* addressValid */state[/* addressValid */4],
+                                          /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                          /* frozen */state[/* frozen */6],
+                                          /* summary */state[/* summary */7],
+                                          /* inputs : record */[
+                                            /* recipientAddress */"",
+                                            /* btcAmount */""
+                                          ]
+                                        ]]);
+                            } else {
+                              return /* NoUpdate */0;
+                            }
+                        case 2 : 
+                            return /* NoUpdate */0;
+                        case 3 : 
+                            return /* Update */Block.__(0, [/* record */[
+                                        /* viewData */state[/* viewData */0],
+                                        /* destinations */state[/* destinations */1],
+                                        /* inputDestination */state[/* inputDestination */2],
+                                        /* inputAmount */state[/* inputAmount */3],
+                                        /* addressValid */state[/* addressValid */4],
+                                        /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                        /* frozen */true,
+                                        /* summary */state[/* summary */7],
+                                        /* inputs */state[/* inputs */8]
+                                      ]]);
+                        case 4 : 
+                            return /* UpdateWithSideEffects */Block.__(2, [
+                                      /* record */[
+                                        /* viewData */state[/* viewData */0],
+                                        /* destinations */state[/* destinations */1],
+                                        /* inputDestination */state[/* inputDestination */2],
+                                        /* inputAmount */state[/* inputAmount */3],
+                                        /* addressValid */state[/* addressValid */4],
+                                        /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                        /* frozen */false,
+                                        /* summary */state[/* summary */7],
+                                        /* inputs */state[/* inputs */8]
+                                      ],
+                                      (function () {
+                                          return Curry._1(commands[/* reset */0], /* () */0);
+                                        })
+                                    ]);
+                        
+                      }
+                    } else {
+                      switch (action.tag | 0) {
+                        case 0 : 
+                            var init = state[/* inputs */8];
+                            return /* Update */Block.__(0, [updateState(/* record */[
+                                            /* viewData */state[/* viewData */0],
+                                            /* destinations */state[/* destinations */1],
+                                            /* inputDestination */state[/* inputDestination */2],
+                                            /* inputAmount */state[/* inputAmount */3],
+                                            /* addressValid */state[/* addressValid */4],
+                                            /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                            /* frozen */state[/* frozen */6],
+                                            /* summary */state[/* summary */7],
+                                            /* inputs : record */[
+                                              /* recipientAddress */action[0],
+                                              /* btcAmount */init[/* btcAmount */1]
+                                            ]
+                                          ])]);
+                        case 1 : 
+                            var init$1 = state[/* inputs */8];
+                            return /* Update */Block.__(0, [updateState(/* record */[
+                                            /* viewData */state[/* viewData */0],
+                                            /* destinations */state[/* destinations */1],
+                                            /* inputDestination */state[/* inputDestination */2],
+                                            /* inputAmount */state[/* inputAmount */3],
+                                            /* addressValid */state[/* addressValid */4],
+                                            /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                            /* frozen */state[/* frozen */6],
+                                            /* summary */state[/* summary */7],
+                                            /* inputs : record */[
+                                              /* recipientAddress */init$1[/* recipientAddress */0],
+                                              /* btcAmount */action[0]
+                                            ]
+                                          ])]);
+                        case 2 : 
+                            var removeIdx = action[0];
+                            return /* Update */Block.__(0, [updateState(/* record */[
+                                            /* viewData */state[/* viewData */0],
+                                            /* destinations */Belt_List.keepMapU(Belt_List.mapWithIndexU(state[/* destinations */1], (function (idx, destination) {
+                                                        var match = idx === removeIdx;
+                                                        if (match) {
+                                                          return /* None */0;
+                                                        } else {
+                                                          return /* Some */[destination];
+                                                        }
+                                                      })), (function (d) {
+                                                    return d;
+                                                  })),
+                                            /* inputDestination */state[/* inputDestination */2],
+                                            /* inputAmount */state[/* inputAmount */3],
+                                            /* addressValid */state[/* addressValid */4],
+                                            /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                            /* frozen */state[/* frozen */6],
+                                            /* summary */state[/* summary */7],
+                                            /* inputs */state[/* inputs */8]
+                                          ])]);
+                        
+                      }
+                    }
+                
               }
             }),
           /* subscriptions */component[/* subscriptions */13],

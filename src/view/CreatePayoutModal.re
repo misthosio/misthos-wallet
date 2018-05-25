@@ -17,6 +17,8 @@ type state = {
   inputDestination: string,
   inputAmount: BTC.t,
   addressValid: bool,
+  canSubmitProposal: bool,
+  frozen: bool,
   summary: PayoutTransaction.summary,
   inputs,
 };
@@ -27,7 +29,9 @@ type action =
   | RemoveDestination(int)
   | EnterMax
   | AddToSummary
-  | ProposePayout;
+  | ProposePayout
+  | Freeze
+  | Reset;
 
 let component = ReasonReact.reducerComponent("CreatePayout");
 
@@ -74,30 +78,34 @@ let updateState =
     let (inputAmount, btcAmount) =
       inputAmount |> BTC.gt(max) ?
         (max, max |> BTC.format) : (inputAmount, btcAmount);
+    let summary =
+      viewData.summary(
+        [(inputDestination, inputAmount), ...destinations],
+        defaultFee,
+      );
     {
       ...state,
       viewData,
       inputAmount,
       inputDestination,
       addressValid,
-      summary:
-        viewData.summary(
-          [(inputDestination, inputAmount), ...destinations],
-          defaultFee,
-        ),
+      canSubmitProposal: summary.misthosFee |> BTC.gt(BTC.zero),
+      summary,
       inputs: {
         btcAmount,
         recipientAddress,
       },
     };
   } else {
+    let summary = viewData.summary(destinations, defaultFee);
     {
       ...state,
       viewData,
       inputAmount,
       inputDestination,
       addressValid,
-      summary: viewData.summary(destinations, defaultFee),
+      canSubmitProposal: summary.misthosFee |> BTC.gt(BTC.zero),
+      summary,
       inputs: {
         btcAmount,
         recipientAddress,
@@ -115,7 +123,9 @@ let make =
     ) => {
   ...component,
   initialState: () => {
+    frozen: false,
     viewData,
+    canSubmitProposal: false,
     destinations: [],
     addressValid: true,
     summary: viewData.initialSummary,
@@ -128,95 +138,126 @@ let make =
   },
   willReceiveProps: ({state}) => {...state, viewData},
   reducer: (action, {viewData} as state) =>
-    switch (action) {
-    | RemoveDestination(removeIdx) =>
-      ReasonReact.Update(
-        {
-          ...state,
-          destinations:
-            state.destinations
-            |. Belt.List.mapWithIndexU((. idx, destination) =>
-                 idx == removeIdx ? None : Some(destination)
-               )
-            |. Belt.List.keepMapU((. d) => d),
-        }
-        |> updateState,
-      )
-    | ChangeRecipientAddress(address) =>
-      ReasonReact.Update(
-        {
-          ...state,
-          inputs: {
-            ...state.inputs,
-            recipientAddress: address,
-          },
-        }
-        |> updateState,
-      )
-    | ChangeBTCAmount(amount) =>
-      ReasonReact.Update(
-        {
-          ...state,
-          inputs: {
-            ...state.inputs,
-            btcAmount: amount,
-          },
-        }
-        |> updateState,
-      )
-    | ProposePayout =>
-      let destinations =
+    switch (cmdStatus, state.frozen) {
+    | (Success(_) | Error(_), _)
+    | (Idle, false) =>
+      switch (action) {
+      | RemoveDestination(removeIdx) =>
+        ReasonReact.Update(
+          {
+            ...state,
+            destinations:
+              state.destinations
+              |. Belt.List.mapWithIndexU((. idx, destination) =>
+                   idx == removeIdx ? None : Some(destination)
+                 )
+              |. Belt.List.keepMapU((. d) => d),
+          }
+          |> updateState,
+        )
+      | ChangeRecipientAddress(address) =>
+        ReasonReact.Update(
+          {
+            ...state,
+            inputs: {
+              ...state.inputs,
+              recipientAddress: address,
+            },
+          }
+          |> updateState,
+        )
+      | ChangeBTCAmount(amount) =>
+        ReasonReact.Update(
+          {
+            ...state,
+            inputs: {
+              ...state.inputs,
+              btcAmount: amount,
+            },
+          }
+          |> updateState,
+        )
+      | AddToSummary =>
         if (state.inputDestination != ""
             && state.inputAmount
             |> BTC.gt(BTC.zero)) {
-          [
-            (state.inputDestination, state.inputAmount),
-            ...state.destinations,
-          ];
+          ReasonReact.Update({
+            ...state,
+            destinations: [
+              (state.inputDestination, state.inputAmount),
+              ...state.destinations,
+            ],
+            inputDestination: "",
+            inputAmount: BTC.zero,
+            inputs: {
+              recipientAddress: "",
+              btcAmount: "",
+            },
+          });
         } else {
-          state.destinations;
-        };
-      commands.proposePayout(
-        ~accountIdx=WalletTypes.AccountIndex.default,
-        ~destinations,
-        ~fee=defaultFee,
-      );
-      ReasonReact.NoUpdate;
-    | AddToSummary =>
-      if (state.inputDestination != ""
-          && state.inputAmount
-          |> BTC.gt(BTC.zero)) {
-        ReasonReact.Update({
-          ...state,
-          destinations: [
-            (state.inputDestination, state.inputAmount),
-            ...state.destinations,
-          ],
-          inputDestination: "",
-          inputAmount: BTC.zero,
-          inputs: {
-            recipientAddress: "",
-            btcAmount: "",
-          },
-        });
-      } else {
-        ReasonReact.NoUpdate;
+          ReasonReact.NoUpdate;
+        }
+      | EnterMax =>
+        let max =
+          viewData.max(
+            state.inputDestination,
+            state.destinations,
+            defaultFee,
+          );
+        ReasonReact.SideEffects(
+          (({send}) => send(ChangeBTCAmount(max |> BTC.format))),
+        );
+      | Freeze => ReasonReact.Update({...state, frozen: true})
+      | Reset =>
+        ReasonReact.UpdateWithSideEffects(
+          {...state, frozen: false},
+          ((_) => commands.reset()),
+        )
+      | ProposePayout => ReasonReact.NoUpdate
       }
-    | EnterMax =>
-      let max =
-        viewData.max(state.inputDestination, state.destinations, defaultFee);
-      ReasonReact.SideEffects(
-        (({send}) => send(ChangeBTCAmount(max |> BTC.format))),
-      );
+    | _ =>
+      switch (action) {
+      | Freeze => ReasonReact.Update({...state, frozen: true})
+      | Reset =>
+        ReasonReact.UpdateWithSideEffects(
+          {...state, frozen: false},
+          ((_) => commands.reset()),
+        )
+      | ProposePayout =>
+        let destinations =
+          if (state.inputDestination != ""
+              && state.inputAmount
+              |> BTC.gt(BTC.zero)) {
+            [
+              (state.inputDestination, state.inputAmount),
+              ...state.destinations,
+            ];
+          } else {
+            state.destinations;
+          };
+        commands.proposePayout(
+          ~accountIdx=WalletTypes.AccountIndex.default,
+          ~destinations,
+          ~fee=defaultFee,
+        );
+        ReasonReact.NoUpdate;
+      | _ => ReasonReact.NoUpdate
+      }
     },
   render:
-    ({send, state: {viewData, addressValid, inputs, destinations, summary}}) => {
-    let feedback =
-      switch (cmdStatus) {
-      | Pending(_) => <Spinner text="waiting for result" />
-      | Error(_) => "Could not execute teh command" |> text
-      | _ => ReasonReact.null
-      };
+    (
+      {
+        send,
+        state: {
+          canSubmitProposal,
+          viewData,
+          addressValid,
+          inputs,
+          destinations,
+          summary,
+        },
+      },
+    ) => {
     let destinationList =
       ReasonReact.array(
         Array.of_list(
@@ -355,10 +396,14 @@ let make =
                       (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
                     </MTypography>
                   </div>
-                  <MButton fullWidth=true onClick=(_e => send(ProposePayout))>
-                    (text("Propose Payout"))
-                  </MButton>
-                  feedback
+                  <ProposeButton
+                    onPropose=(() => send(Freeze))
+                    onSubmit=(() => send(ProposePayout))
+                    onCancel=(() => send(Reset))
+                    canSubmitProposal
+                    proposeText="Propose payout"
+                    cmdStatus
+                  />
                 </div>;
               }
             )
