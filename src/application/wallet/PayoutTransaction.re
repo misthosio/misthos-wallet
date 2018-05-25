@@ -10,7 +10,7 @@ module Fee = TransactionFee;
 
 type input = Network.txInput;
 
-let misthosFeePercent = 0.9;
+let misthosFeePercent = 1.49;
 
 type t = {
   txHex: string,
