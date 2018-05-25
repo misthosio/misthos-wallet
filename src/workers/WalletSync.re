@@ -98,7 +98,9 @@ let filterUTXOs = (knownTxs, utxos) =>
 
 let detectIncomeFromVenture = (ventureId, eventLog) => {
   logMessage(
-    "Detecting income for venture '" ++ VentureId.toString(ventureId) ++ "'",
+    "Sychronizing wallet state for venture '"
+    ++ VentureId.toString(ventureId)
+    ++ "'",
   );
   Js.Promise.(
     eventLog

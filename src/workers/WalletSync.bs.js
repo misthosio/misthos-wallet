@@ -124,7 +124,7 @@ function filterUTXOs(knownTxs, utxos) {
 }
 
 function detectIncomeFromVenture(ventureId, eventLog) {
-  logMessage("Detecting income for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
+  logMessage("Sychronizing wallet state for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return scanTransactions(findAddressesAndTxIds(eventLog)).then((function (param) {
                 var transactions = param[2];
                 broadcastPayouts(transactions);
