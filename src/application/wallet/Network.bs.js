@@ -296,7 +296,7 @@ function bitcoinNetwork(param) {
   }
 }
 
-var testnetIncomeAddress = "2N6sH9jioUGHE8CyHrE2sbCV94RV2Y29K7D";
+var testnetIncomeAddress = "2Mx5q5BjJ6nfXvHGVaYPWjXmRxMezH9hwVJ";
 
 function incomeAddress() {
   return testnetIncomeAddress;
