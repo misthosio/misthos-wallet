@@ -10,21 +10,22 @@ jobs:
   public: true
   plan:
     - { get: misthos-build, trigger: true,  passed: [deploy-testnet] }
-    - { get: version, params: {bump: minor}, passed: [deploy-testnet] }
-    - { put: version,                 params: {file: version/number} }
+    - { get: build-version, params: {bump: minor}, passed: [deploy-testnet] }
+    - { put: build-version,                 params: {file: build-version/number} }
 
 - name: bump-patch
   public: true
   plan:
     - { get: misthos-build, trigger: true, passed: [build] }
-    - { get: version, params: {bump: patch}, passed: [build] }
-    - { put: version,                params: {file: version/number} }
+    - { get: build-version, params: {bump: patch}, passed: [build] }
+    - { put: build-version,                params: {file: version/number} }
 
 - name: install-deps
   plan:
   - aggregate:
     - {get: deps, trigger: true}
     - {get: pipeline-tasks}
+    - {put: deps-version, params: {bump: minor}}
   - task: install-deps
     config:
       platform: linux
@@ -34,13 +35,14 @@ jobs:
       inputs:
       - name: pipeline-tasks
       - name: deps
+      - name: deps-version
       outputs:
-      - name: repo-with-deps
+      - name: bundled-deps
       run:
         path: pipeline-tasks/ci/tasks/install-deps.sh
   - put: bundled-deps
     params:
-      file: repo-with-deps/bundled-deps-*.tgz
+      file: bundled-deps/bundled-deps-*.tgz
 
 - name: test
   plan:
@@ -48,6 +50,7 @@ jobs:
     - {get: repo, trigger: true}
     - {get: bundled-deps, trigger: true}
     - {get: pipeline-tasks}
+    - {put: code-version, params: {bump: minor}}
   - task: test
     config:
       platform: linux
@@ -57,6 +60,7 @@ jobs:
       inputs:
       - name: pipeline-tasks
       - name: bundled-deps
+      - name: code-version
       - name: repo
       outputs:
       - name: bundled-code
@@ -65,14 +69,14 @@ jobs:
   - aggregate:
     - put: misthos-code
       params:
-        file: bundled-code-with-version/misthos-code-*.tgz
+        file: bundled-code-with-build-version/misthos-code-*.tgz
 
 - name: build
   plan:
   - aggregate:
     - {get: repo, passed: [test]}
     - {get: misthos-code, trigger: true, passed: [test]}
-    - {get: version, params: { bump: final} }
+    - {get: build-version, params: { bump: final} }
     - {get: pipeline-tasks}
   - task: build
     config:
@@ -83,7 +87,7 @@ jobs:
       inputs:
       - name: pipeline-tasks
       - name: misthos-code
-      - name: version
+      - name: build-version
       outputs:
       - name: build
       run:
@@ -97,7 +101,7 @@ jobs:
   - aggregate:
     - {get: misthos-build, trigger: true, passed: [build]}
     - {get: repo, trigger: false, passed: [build]}
-    - {get: version, trigger: false, passed: [build], params: { bump: final}}
+    - {get: build-version, trigger: false, passed: [build], params: { bump: final}}
     - {get: pipeline-tasks}
   - task: deploy-staging
     config:
@@ -114,13 +118,13 @@ jobs:
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: staging-branch
-    params: {repository: repo, tag: version/version, tag_prefix: "v", force: true}
+    params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
 
 - name: deploy-testnet
   plan:
   - aggregate:
     - {get: misthos-build, trigger: false, passed: [deploy-staging]}
-    - {get: version, trigger: false, passed: [deploy-staging], params: { bump: final}}
+    - {get: build-version, trigger: false, passed: [deploy-staging], params: { bump: final}}
     - {get: repo, trigger: false, passed: [deploy-staging]}
     - {get: pipeline-tasks}
   - task: deploy-testnet
@@ -138,7 +142,7 @@ jobs:
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: testnet-branch
-    params: {repository: repo, tag: version/version, tag_prefix: "v", force: true}
+    params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
 
 - name: build-task-image
   serial: true
@@ -180,20 +184,34 @@ resources:
   source:
     bucket: artifact-cache
     json_key: ((gcp-service-account))
-    regexp: bundled-deps-(.*).tgz
+    regexp: bundled-deps-v(.*)-.*.tgz
 - name: misthos-code
   type: gcs-resource
   source:
     bucket: artifact-cache
     json_key: ((gcp-service-account))
-    regexp: misthos-code-(.*).tgz
+    regexp: misthos-code-v(.*).tgz
 - name: misthos-build
   type: gcs-resource
   source:
     bucket: artifact-cache
     json_key: ((gcp-service-account))
     regexp: misthos-build-v(.*).tgz
-- name: version
+- name: deps-version
+  type: semver
+  source:
+    driver: gcs
+    bucket: artifact-cache
+    key: misthos-deps-version
+    json_key: ((gcp-service-account))
+- name: code-version
+  type: semver
+  source:
+    driver: gcs
+    bucket: artifact-cache
+    key: misthos-code-version
+    json_key: ((gcp-service-account))
+- name: build-version
   type: semver
   source:
     driver: gcs

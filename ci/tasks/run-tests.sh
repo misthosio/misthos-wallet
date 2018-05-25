@@ -12,11 +12,10 @@ fi
 cp -r deps/node_modules repo/
 
 pushd repo
-
 make ci
 git log --pretty=format:'%h' -n 1 > gitref
 popd
 
-tar -zcvf "misthos-code-$(cat repo/gitref).tgz" repo/ > /dev/null
+tar -zcvf "misthos-code-v$(cat code-version/number)-$(cat repo/gitref).tgz" repo
 
 mv ./*.tgz bundled-code
