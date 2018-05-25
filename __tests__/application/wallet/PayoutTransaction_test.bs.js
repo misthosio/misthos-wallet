@@ -208,11 +208,11 @@ describe("build", (function () {
                             ],
                             /* spentWithFees */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
-                                  /* lo */10174
+                                  /* lo */10232
                                 ]),
                             /* misthosFee */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
-                                  /* lo */89
+                                  /* lo */147
                                 ]),
                             /* networkFee */BTC.fromSatoshis(/* int64 */[
                                   /* hi */0,
@@ -274,7 +274,7 @@ describe("build", (function () {
                                         ]),
                                     /* misthosFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */131
+                                          /* lo */216
                                         ]),
                                     /* networkFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,

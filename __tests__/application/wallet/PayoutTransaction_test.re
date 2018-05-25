@@ -169,8 +169,8 @@ let () =
                  BTC.fromSatoshis(9800L),
                ),
              ],
-             spentWithFees: BTC.fromSatoshis(10174L),
-             misthosFee: BTC.fromSatoshis(89L),
+             spentWithFees: BTC.fromSatoshis(10232L),
+             misthosFee: BTC.fromSatoshis(147L),
              networkFee: BTC.fromSatoshis(285L),
            },
          );
@@ -213,7 +213,7 @@ let () =
                  ),
                ],
                spentWithFees: BTC.fromSatoshis(15000L),
-               misthosFee: BTC.fromSatoshis(131L),
+               misthosFee: BTC.fromSatoshis(216L),
                networkFee: BTC.fromSatoshis(321L),
              },
            );
