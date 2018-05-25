@@ -259,22 +259,19 @@ let make =
                     currentSpendable=viewData.balance.currentSpendable
                     reserved=viewData.balance.reserved
                   />
-                  <MInput
-                    placeholder="Recipient Address"
-                    value=(`String(inputs.recipientAddress))
-                    onChange=(
-                      e => send(ChangeRecipientAddress(extractString(e)))
-                    )
-                    autoFocus=false
-                    fullWidth=true
-                  />
-                  (
-                    if (addressValid == false) {
-                      "Address is BAD" |> text;
-                    } else {
-                      ReasonReact.null;
-                    }
-                  )
+                  {
+                    let error = addressValid ? None : Some("Address is BAD");
+                    <MInput
+                      placeholder="Recipient Address"
+                      value=(`String(inputs.recipientAddress))
+                      onChange=(
+                        e => send(ChangeRecipientAddress(extractString(e)))
+                      )
+                      autoFocus=false
+                      fullWidth=true
+                      ?error
+                    />;
+                  }
                   <MInput
                     placeholder="BTC amount"
                     value=(`String(inputs.btcAmount))

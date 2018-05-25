@@ -1,3 +1,5 @@
+include ViewCommon;
+
 let component = ReasonReact.statelessComponent("MInput");
 
 module Styles = {
@@ -17,18 +19,29 @@ let make =
       ~autoFocus=?,
       ~fullWidth=?,
       ~endAdornment=?,
+      ~error=?,
       ~ensuring=false,
       _children,
     ) => {
   ...component,
-  render: _self =>
-    <MaterialUi.Input
-      className=(Styles.margin(~tf=ensuring ? 4 : 3, ~bf=0))
-      ?placeholder
-      ?value
-      ?onChange
-      ?autoFocus
-      ?fullWidth
-      ?endAdornment
-    />,
+  render: _self => {
+    let (error, message) =
+      switch (error) {
+      | Some(message) => (true, message)
+      | None => (false, "")
+      };
+    MaterialUi.(
+      <FormControl
+        ?fullWidth
+        className=(Styles.margin(~tf=ensuring ? 4 : 3, ~bf=0))
+        error>
+        <Input ?placeholder ?value ?onChange ?autoFocus ?endAdornment />
+        (
+          error ?
+            <FormHelperText> (message |> text) </FormHelperText> :
+            ReasonReact.null
+        )
+      </FormControl>
+    );
+  },
 };
