@@ -17,7 +17,7 @@ let theme =
   createMuiTheme({
     "palette": {
       "primary": {
-        "main": "#ffffff",
+        "main": "#" ++ Colors.uMisthosTeal,
       },
       "background": {
         "default": "#FFFFFF",

@@ -2,8 +2,6 @@ include ViewCommon;
 
 open PrimitiveTypes;
 
-[@bs.module] external remove : string = "../assets/img/remove-partner.svg";
-
 module ViewData = ViewModel.ManagePartnersView;
 
 type inputs = {
@@ -31,7 +29,18 @@ let component = ReasonReact.reducerComponent("ManagePartners");
 
 module Styles = {
   open Css;
-  let lenght = px(Theme.space(3));
+  let icon = style([marginLeft(px(Theme.space(-1))), height(px(44))]);
+  let stepper = style([padding2(~h=px(Theme.space(1)), ~v=px(0))]);
+  let stepIconText =
+    style([
+      fontFamily(Theme.sourceSansPro),
+      fontWeight(600),
+      fontSize(px(18)),
+      fontStyle(normal),
+      lineHeight(1.0),
+      letterSpacing(px(1)),
+      unsafe("fill", "#" ++ Colors.uBlack),
+    ]);
 };
 
 let make =
@@ -144,6 +153,7 @@ let make =
                      )
                      button=MaterialUi.(
                               <Radio
+                                color=`Primary
                                 onChange=(
                                   (_e, _b) =>
                                     send(SelectRemovePartner(partner.userId))
@@ -175,18 +185,33 @@ let make =
           <circle cx="21" cy="21" r="21" stroke="#000" />
           <circle cx="21" cy="21" r="18" fill="url(#a)" />
         </g>
-        <text x="22" y="27" textAnchor="middle">
-          (index + 1 |> string_of_int |> text)
-        </text>
+        (
+          if (index < activeStep) {
+            /* TODO replace with checkmark icon */
+            <text
+              className=Styles.stepIconText x="22" y="28" textAnchor="middle">
+              ("Done" |> text)
+            </text>;
+          } else {
+            <text
+              className=Styles.stepIconText x="22" y="28" textAnchor="middle">
+              (index + 1 |> string_of_int |> text)
+            </text>;
+          }
+        )
       </svg>;
     <Body2
       titles=["Add a partner", "Remove a partner"]
       body1=
         <div>
           MaterialUi.(
-            <Stepper orientation=`Vertical activeStep=(`Int(activeStep))>
+            <Stepper
+              className=Styles.stepper
+              orientation=`Vertical
+              activeStep=(`Int(activeStep))>
               <Step key="enter-id">
-                <StepLabel icon=(icon(0))>
+                <StepLabel
+                  classes=[IconContainer(Styles.icon)] icon=(icon(0))>
                   ("ADD A BLOCKSTACK ID" |> text)
                 </StepLabel>
                 <StepContent>
@@ -209,7 +234,8 @@ let make =
                 </StepContent>
               </Step>
               <Step>
-                <StepLabel icon=(icon(1))>
+                <StepLabel
+                  classes=[IconContainer(Styles.icon)] icon=(icon(1))>
                   ("SHARE THE VENTURE URL" |> text)
                 </StepLabel>
                 <StepContent>
