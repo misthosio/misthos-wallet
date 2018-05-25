@@ -120,6 +120,7 @@ let make =
       btcAmount: "",
     },
   },
+  willReceiveProps: ({state}) => {...state, viewData},
   reducer: (action, {viewData} as state) =>
     switch (action) {
     | RemoveDestination(removeIdx) =>
