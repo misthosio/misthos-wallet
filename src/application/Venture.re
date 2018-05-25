@@ -368,7 +368,7 @@ module Cmd = {
     type result =
       | Ok(t, array(EventLog.item))
       | CouldNotPersist(Js.Promise.error);
-    let exec = (incomeEvents, txConfs, venture) => {
+    let exec = (broadcasts, broadcastFailures, incomeEvents, txConfs, venture) => {
       logMessage("Synchronizing wallet");
       Js.Promise.(
         incomeEvents
@@ -384,6 +384,34 @@ module Cmd = {
                        )
                   ),
              (venture, [||]) |> resolve,
+           )
+        |> List.fold_left(
+             (p, event) =>
+               p
+               |> then_(((v, collector)) =>
+                    v
+                    |> apply(
+                         ~systemEvent=true,
+                         ~collector,
+                         PayoutBroadcast(event),
+                       )
+                  ),
+             _,
+             broadcasts,
+           )
+        |> List.fold_left(
+             (p, event) =>
+               p
+               |> then_(((v, collector)) =>
+                    v
+                    |> apply(
+                         ~systemEvent=true,
+                         ~collector,
+                         PayoutBroadcastFailed(event),
+                       )
+                  ),
+             _,
+             broadcastFailures,
            )
         |> List.fold_left(
              (p, event) =>

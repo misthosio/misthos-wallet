@@ -451,7 +451,7 @@ function exec$1(newItems, venture) {
 
 var SynchronizeLogs = /* module */[/* exec */exec$1];
 
-function exec$2(incomeEvents, txConfs, venture) {
+function exec$2(broadcasts, broadcastFailures, incomeEvents, txConfs, venture) {
   logMessage("Synchronizing wallet");
   var __x = List.fold_left((function (p, $$event) {
           return p.then((function (param) {
@@ -461,11 +461,21 @@ function exec$2(incomeEvents, txConfs, venture) {
             venture,
             /* array */[]
           ]), incomeEvents);
+  var __x$1 = List.fold_left((function (p, $$event) {
+          return p.then((function (param) {
+                        return apply(/* Some */[true], /* Some */[param[1]], /* PayoutBroadcast */Block.__(33, [$$event]), param[0]);
+                      }));
+        }), __x, broadcasts);
+  var __x$2 = List.fold_left((function (p, $$event) {
+          return p.then((function (param) {
+                        return apply(/* Some */[true], /* Some */[param[1]], /* PayoutBroadcastFailed */Block.__(35, [$$event]), param[0]);
+                      }));
+        }), __x$1, broadcastFailures);
   return List.fold_left((function (p, $$event) {
                     return p.then((function (param) {
                                   return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(41, [$$event]), param[0]);
                                 }));
-                  }), __x, txConfs).then((function (eta) {
+                  }), __x$2, txConfs).then((function (eta) {
                   return persist(/* None */0, eta);
                 })).then((function (param) {
                 if (param.tag) {

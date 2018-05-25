@@ -12,7 +12,6 @@ var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exception
 var Watcher__FinalizePayout = require("../events/Watcher__FinalizePayout.bs.js");
 var Watcher__PayoutApproval = require("./Watcher__PayoutApproval.bs.js");
 var Watcher__AccountKeyChain = require("./Watcher__AccountKeyChain.bs.js");
-var Watcher__BroadcastPayout = require("./Watcher__BroadcastPayout.bs.js");
 var Watcher__PartnerApproval = require("./Watcher__PartnerApproval.bs.js");
 var Watcher__CustodianApproval = require("./Watcher__CustodianApproval.bs.js");
 var Watcher__CustodianKeyChain = require("./Watcher__CustodianKeyChain.bs.js");
@@ -87,11 +86,6 @@ function initWatcherFor(session, param, log) {
     case 28 : 
         return /* :: */[
                 Watcher__FinalizePayout.make($$event[0], log),
-                /* [] */0
-              ];
-    case 32 : 
-        return /* :: */[
-                Watcher__BroadcastPayout.make($$event[0], log),
                 /* [] */0
               ];
     default:
@@ -195,8 +189,6 @@ var SignPayout = 0;
 
 var FinalizePayout = 0;
 
-var BroadcastPayout = 0;
-
 exports.Initialize = Initialize;
 exports.PartnerApproval = PartnerApproval;
 exports.PartnerRemovalApproval = PartnerRemovalApproval;
@@ -210,7 +202,6 @@ exports.AbortPayout = AbortPayout;
 exports.PayoutApproval = PayoutApproval;
 exports.SignPayout = SignPayout;
 exports.FinalizePayout = FinalizePayout;
-exports.BroadcastPayout = BroadcastPayout;
 exports.initWatcherFor = initWatcherFor;
 exports.apply = apply;
 exports.processPendingPromise = processPendingPromise;
