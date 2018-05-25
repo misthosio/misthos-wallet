@@ -10,13 +10,17 @@ type inputs = {prospectId: string};
 
 type state = {
   viewData: ViewData.t,
+  canSubmitProposal: bool,
+  proposeCmdStatus: CommandExecutor.cmdStatus,
+  removeCmdStatus: CommandExecutor.cmdStatus,
   inputs,
 };
 
 type action =
   | ChangeNewPartnerId(string)
   | ProposePartner
-  | RemovePartner(UserId.t);
+  | RemovePartner(UserId.t)
+  | AddAnother;
 
 let component = ReasonReact.reducerComponent("ManagePartners");
 
@@ -28,8 +32,10 @@ module Styles = {
 let make =
     (
       ~viewData: ViewData.t,
-      ~commands: CommandExecutor.commands,
-      ~cmdStatus: CommandExecutor.cmdStatus,
+      ~proposePartner,
+      ~proposeCmdStatus: CommandExecutor.cmdStatus,
+      ~proposePartnerRemoval,
+      ~removeCmdStatus: CommandExecutor.cmdStatus,
       _children,
     ) => {
   ...component,
@@ -37,14 +43,23 @@ let make =
     inputs: {
       prospectId: "",
     },
+    canSubmitProposal: false,
+    proposeCmdStatus,
+    removeCmdStatus,
     viewData,
   },
-  willReceiveProps: ({state}) => {...state, viewData},
+  willReceiveProps: ({state}) => {
+    ...state,
+    viewData,
+    proposeCmdStatus,
+    removeCmdStatus,
+  },
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({
         ...state,
+        canSubmitProposal: text != "",
         inputs: {
           prospectId: text,
         },
@@ -53,16 +68,25 @@ let make =
       switch (String.trim(state.inputs.prospectId)) {
       | "" => ReasonReact.NoUpdate
       | prospectId =>
-        commands.proposePartner(~prospectId=prospectId |> UserId.fromString);
+        proposePartner(~prospectId=prospectId |> UserId.fromString);
         ReasonReact.NoUpdate;
       }
     | RemovePartner(partnerId) =>
-      commands.proposePartnerRemoval(~partnerId);
+      proposePartnerRemoval(~partnerId);
       ReasonReact.NoUpdate;
+    | AddAnother =>
+      ReasonReact.Update({
+        ...state,
+        inputs: {
+          prospectId: "",
+        },
+        proposeCmdStatus: Idle,
+      })
     },
-  render: ({send, state: {viewData, inputs}}) => {
+  render:
+    ({send, state: {canSubmitProposal, viewData, inputs, proposeCmdStatus}}) => {
     let activeStep =
-      switch (cmdStatus) {
+      switch (proposeCmdStatus) {
       | Success(_) => 1
       | _ => 0
       };
@@ -130,9 +154,10 @@ let make =
                   />
                   <ProposeButton
                     onPropose=(() => send(ProposePartner))
+                    canSubmitProposal
                     withConfirmation=false
-                    proposeText="Propose partner addition"
-                    cmdStatus
+                    proposeText="Propose partner"
+                    cmdStatus=proposeCmdStatus
                   />
                 </StepContent>
               </Step>
@@ -152,6 +177,9 @@ let make =
                   <MTypography variant=`Body2>
                     (viewData.joinVentureUrl |> text)
                   </MTypography>
+                  <MButton variant=Flat onClick=(_e => send(AddAnother))>
+                    (text("Add Another"))
+                  </MButton>
                 </StepContent>
               </Step>
             </Stepper>

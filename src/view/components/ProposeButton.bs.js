@@ -31,7 +31,7 @@ var Styles = /* module */[
   /* inlineConfirm */inlineConfirm
 ];
 
-function make(proposeText, onPropose, $staropt$star, cmdStatus, _) {
+function make(proposeText, onPropose, canSubmitProposal, $staropt$star, cmdStatus, _) {
   var withConfirmation = $staropt$star ? $staropt$star[0] : true;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -84,34 +84,38 @@ function make(proposeText, onPropose, $staropt$star, cmdStatus, _) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              switch (action) {
-                case 0 : 
-                    return /* Update */Block.__(0, [/* record */[
-                                /* buttonState : NoDecision */0,
-                                /* cmdStatus : Idle */0
-                              ]]);
-                case 1 : 
-                    if (withConfirmation) {
+              if (canSubmitProposal) {
+                switch (action) {
+                  case 0 : 
                       return /* Update */Block.__(0, [/* record */[
-                                  /* buttonState : ConfirmProposal */1,
-                                  /* cmdStatus */state[/* cmdStatus */1]
+                                  /* buttonState : NoDecision */0,
+                                  /* cmdStatus : Idle */0
                                 ]]);
-                    } else {
-                      return /* SideEffects */Block.__(1, [(function (param) {
-                                    return Curry._1(param[/* send */3], /* ConfirmProposal */2);
-                                  })]);
-                    }
-                case 2 : 
-                    return /* UpdateWithSideEffects */Block.__(2, [
-                              /* record */[
-                                /* buttonState : ProposalSubmited */2,
-                                /* cmdStatus */state[/* cmdStatus */1]
-                              ],
-                              (function () {
-                                  return Curry._1(onPropose, /* () */0);
-                                })
-                            ]);
-                
+                  case 1 : 
+                      if (withConfirmation) {
+                        return /* Update */Block.__(0, [/* record */[
+                                    /* buttonState : ConfirmProposal */1,
+                                    /* cmdStatus */state[/* cmdStatus */1]
+                                  ]]);
+                      } else {
+                        return /* SideEffects */Block.__(1, [(function (param) {
+                                      return Curry._1(param[/* send */3], /* ConfirmProposal */2);
+                                    })]);
+                      }
+                  case 2 : 
+                      return /* UpdateWithSideEffects */Block.__(2, [
+                                /* record */[
+                                  /* buttonState : ProposalSubmited */2,
+                                  /* cmdStatus */state[/* cmdStatus */1]
+                                ],
+                                (function () {
+                                    return Curry._1(onPropose, /* () */0);
+                                  })
+                              ]);
+                  
+                }
+              } else {
+                return /* NoUpdate */0;
               }
             }),
           /* subscriptions */component[/* subscriptions */13],

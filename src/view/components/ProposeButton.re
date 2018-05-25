@@ -29,6 +29,7 @@ let make =
     (
       ~proposeText,
       ~onPropose,
+      ~canSubmitProposal,
       ~withConfirmation=true,
       ~cmdStatus: CommandExecutor.cmdStatus,
       _children,
@@ -37,17 +38,18 @@ let make =
   initialState: () => {buttonState: NoDecision, cmdStatus: Idle},
   willReceiveProps: ({state}) => {...state, cmdStatus},
   reducer: (action, state) =>
-    switch (action, withConfirmation) {
-    | (Propose, true) =>
+    switch (action, withConfirmation, canSubmitProposal) {
+    | (_, _, false) => ReasonReact.NoUpdate
+    | (Propose, true, _) =>
       ReasonReact.Update({...state, buttonState: ConfirmProposal})
-    | (Propose, false) =>
+    | (Propose, false, _) =>
       ReasonReact.SideEffects((({send}) => send(ConfirmProposal)))
-    | (ConfirmProposal, _) =>
+    | (ConfirmProposal, _, _) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, buttonState: ProposalSubmited},
         ((_) => onPropose()),
       )
-    | (Cancel, _) =>
+    | (Cancel, _, _) =>
       ReasonReact.Update({cmdStatus: Idle, buttonState: NoDecision})
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
