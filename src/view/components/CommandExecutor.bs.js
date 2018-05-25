@@ -107,7 +107,7 @@ function make(commands, lastResponse, onProcessStarted, children) {
 
 var component$1 = ReasonReact.statelessComponent("CommandStatus");
 
-function make$1(cmdStatus, action, onRetry, _) {
+function make$1(cmdStatus, action, onRetry, onSuccess, onError, _) {
   return /* record */[
           /* debugName */component$1[/* debugName */0],
           /* reactClassInternal */component$1[/* reactClassInternal */1],
@@ -157,6 +157,9 @@ function make$1(cmdStatus, action, onRetry, _) {
                                             ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))
                             ];
                   case 1 : 
+                      Utils.mapOption((function (onError) {
+                              return Curry._1(onError, /* () */0);
+                            }), onError);
                       switch (cmdStatus[0]) {
                         case 0 : 
                             return ViewCommon.text("RED: Error joining venture. Perhaps you have not been accepted yet.");
@@ -185,6 +188,9 @@ function make$1(cmdStatus, action, onRetry, _) {
                         
                       }
                   case 2 : 
+                      Utils.mapOption((function (onSuccess) {
+                              return Curry._1(onSuccess, /* () */0);
+                            }), onSuccess);
                       switch (cmdStatus[0].tag | 0) {
                         case 0 : 
                             return ViewCommon.text("GREEN: Your proposal has been submited");
