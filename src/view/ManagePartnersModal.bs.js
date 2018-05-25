@@ -7,6 +7,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Body2 = require("./components/Body2.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("./Theme.bs.js");
+var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
@@ -14,12 +15,12 @@ var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var ProposeButton = require("./components/ProposeButton.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.js");
 var MaterialUi_Radio = require("@jsiebern/bs-material-ui/src/MaterialUi_Radio.bs.js");
@@ -139,11 +140,13 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
                                                               ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                                            return Curry._1(send, /* AddAnother */1);
+                                                                            return Curry._1(send, /* AddAnother */2);
                                                                           })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("Add Another")]))
                                                             ]))
                                                   ]))
-                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners])), ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](removeCmdStatus, /* Proposal */3, /* array */[]))), /* array */[]));
+                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner removal", (function () {
+                                            return Curry._1(send, /* RemovePartner */1);
+                                          }), Js_option.isSome(inputs[/* removePartnerId */1]), /* None */0, removeCmdStatus, /* array */[]))), /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
@@ -158,58 +161,66 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               if (typeof action === "number") {
-                if (action === 0) {
-                  var prospectId = $$String.trim(state[/* inputs */2][/* prospectId */0]);
-                  if (prospectId === "") {
-                    return /* NoUpdate */0;
-                  } else {
-                    Curry._1(proposePartnerCmds[/* proposePartner */1], PrimitiveTypes.UserId[/* fromString */1](prospectId));
-                    return /* NoUpdate */0;
-                  }
-                } else {
-                  var init = state[/* inputs */2];
-                  return /* UpdateWithSideEffects */Block.__(2, [
-                            /* record */[
-                              /* viewData */state[/* viewData */0],
-                              /* canSubmitProposal */state[/* canSubmitProposal */1],
-                              /* inputs : record */[
-                                /* prospectId */"",
-                                /* removePartnerId */init[/* removePartnerId */1]
-                              ]
-                            ],
-                            (function () {
-                                return Curry._1(proposePartnerCmds[/* reset */0], /* () */0);
-                              })
-                          ]);
-                }
-              } else {
-                switch (action.tag | 0) {
+                switch (action) {
                   case 0 : 
-                      var text = action[0];
-                      var init$1 = state[/* inputs */2];
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* viewData */state[/* viewData */0],
-                                  /* canSubmitProposal */text !== "",
-                                  /* inputs : record */[
-                                    /* prospectId */text,
-                                    /* removePartnerId */init$1[/* removePartnerId */1]
-                                  ]
-                                ]]);
+                      var prospectId = $$String.trim(state[/* inputs */2][/* prospectId */0]);
+                      if (prospectId === "") {
+                        return /* NoUpdate */0;
+                      } else {
+                        Curry._1(proposePartnerCmds[/* proposePartner */1], PrimitiveTypes.UserId[/* fromString */1](prospectId));
+                        return /* NoUpdate */0;
+                      }
                   case 1 : 
-                      var init$2 = state[/* inputs */2];
+                      Utils.mapOption((function (partnerId) {
+                              return Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], partnerId);
+                            }), state[/* inputs */2][/* removePartnerId */1]);
+                      var init = state[/* inputs */2];
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
                                   /* inputs : record */[
-                                    /* prospectId */init$2[/* prospectId */0],
-                                    /* removePartnerId : Some */[action[0]]
+                                    /* prospectId */init[/* prospectId */0],
+                                    /* removePartnerId : None */0
                                   ]
                                 ]]);
                   case 2 : 
-                      Curry._1(removePartnerCmds[/* proposePartnerRemoval */4], action[0]);
-                      return /* NoUpdate */0;
+                      var init$1 = state[/* inputs */2];
+                      return /* UpdateWithSideEffects */Block.__(2, [
+                                /* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* canSubmitProposal */state[/* canSubmitProposal */1],
+                                  /* inputs : record */[
+                                    /* prospectId */"",
+                                    /* removePartnerId */init$1[/* removePartnerId */1]
+                                  ]
+                                ],
+                                (function () {
+                                    return Curry._1(proposePartnerCmds[/* reset */0], /* () */0);
+                                  })
+                              ]);
                   
                 }
+              } else if (action.tag) {
+                var init$2 = state[/* inputs */2];
+                return /* Update */Block.__(0, [/* record */[
+                            /* viewData */state[/* viewData */0],
+                            /* canSubmitProposal */state[/* canSubmitProposal */1],
+                            /* inputs : record */[
+                              /* prospectId */init$2[/* prospectId */0],
+                              /* removePartnerId : Some */[action[0]]
+                            ]
+                          ]]);
+              } else {
+                var text = action[0];
+                var init$3 = state[/* inputs */2];
+                return /* Update */Block.__(0, [/* record */[
+                            /* viewData */state[/* viewData */0],
+                            /* canSubmitProposal */text !== "",
+                            /* inputs : record */[
+                              /* prospectId */text,
+                              /* removePartnerId */init$3[/* removePartnerId */1]
+                            ]
+                          ]]);
               }
             }),
           /* subscriptions */component[/* subscriptions */13],
