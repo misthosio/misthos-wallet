@@ -168,9 +168,6 @@ let make =
                       |> text
                     )
                   </MTypography>
-                  <MTypography variant=`Body2>
-                    (viewData.joinVentureUrl |> text)
-                  </MTypography>
                   <MButton variant=Flat onClick=(_e => send(AddAnother))>
                     (text("Add Another"))
                   </MButton>
@@ -178,6 +175,9 @@ let make =
               </Step>
             </Stepper>
           )
+          <MTypography variant=`Body2>
+            (viewData.joinVentureUrl |> text)
+          </MTypography>
         </div>
       body2=
         <div>
