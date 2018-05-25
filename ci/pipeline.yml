@@ -18,7 +18,7 @@ jobs:
   plan:
     - { get: misthos-build, trigger: true, passed: [build] }
     - { get: build-version, params: {bump: patch}, passed: [build] }
-    - { put: build-version,                params: {file: version/number} }
+    - { put: build-version,                params: {file: build-version/number} }
 
 - name: install-deps
   plan:
