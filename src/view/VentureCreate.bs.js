@@ -52,7 +52,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                             param[/* state */1][/* newVenture */0]
                                           ]], /* Some */[(function (e) {
                                               return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
-                                            })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                            })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* CreateVenture */0);
                                             })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("create venture")])), ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */1](cmdStatus, /* CreateVenture */0, /* None */0, /* array */[]))), React.createElement("div", {
                                   className: infoBox
