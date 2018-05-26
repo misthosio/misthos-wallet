@@ -8,6 +8,29 @@ var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 
+function encode($$event) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "txId",
+                $$event[/* txId */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "txOutputN",
+                  $$event[/* txOutputN */1]
+                ],
+                /* [] */0
+              ]
+            ]);
+}
+
+function decode(raw) {
+  return /* record */[
+          /* txId */Json_decode.field("txId", Json_decode.string, raw),
+          /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw)
+        ];
+}
+
 function cmp(param, param$1) {
   var c = Caml_primitive.caml_string_compare(param[/* txId */0], param$1[/* txId */0]);
   if (c !== 0) {
@@ -27,91 +50,9 @@ function inputMap() {
   return Belt_Map.make(TxInputCmp);
 }
 
-function encodeInput(input) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "txId",
-                input[/* txId */0]
-              ],
-              /* :: */[
-                /* tuple */[
-                  "txOutputN",
-                  input[/* txOutputN */1]
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "address",
-                    input[/* address */2]
-                  ],
-                  /* :: */[
-                    /* tuple */[
-                      "nCoSigners",
-                      input[/* nCoSigners */3]
-                    ],
-                    /* :: */[
-                      /* tuple */[
-                        "nPubKeys",
-                        input[/* nPubKeys */4]
-                      ],
-                      /* [] */0
-                    ]
-                  ]
-                ]
-              ]
-            ]);
-}
-
-function decodeInput(raw) {
-  return /* record */[
-          /* txId */Json_decode.field("txId", Json_decode.string, raw),
-          /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw),
-          /* address */Json_decode.field("address", Json_decode.string, raw),
-          /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
-          /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw)
-        ];
-}
-
-function encode($$event) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "type",
-                "IncomeDetected"
-              ],
-              /* :: */[
-                /* tuple */[
-                  "address",
-                  $$event[/* address */0]
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "txId",
-                    $$event[/* txId */1]
-                  ],
-                  /* :: */[
-                    /* tuple */[
-                      "txOutputN",
-                      $$event[/* txOutputN */2]
-                    ],
-                    /* [] */0
-                  ]
-                ]
-              ]
-            ]);
-}
-
-function decode(raw) {
-  return /* record */[
-          /* address */Json_decode.field("address", Json_decode.string, raw),
-          /* txId */Json_decode.field("txId", Json_decode.string, raw),
-          /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw)
-        ];
-}
-
+exports.encode = encode;
+exports.decode = decode;
 exports.TxInputCmp = TxInputCmp;
 exports.inputSet = inputSet;
 exports.inputMap = inputMap;
-exports.encodeInput = encodeInput;
-exports.decodeInput = decodeInput;
-exports.encode = encode;
-exports.decode = decode;
 /* TxInputCmp Not a pure module */

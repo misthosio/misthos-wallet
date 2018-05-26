@@ -21,15 +21,10 @@ function text(prim) {
 
 var smallLog = Json_decode.array(IncomeEvent.decode, Json.parseOrRaise(Income.income));
 
-IncomeEvent.inputSet(/* () */0);
-
 var unused = Belt_Array.reduce(smallLog, IncomeEvent.inputSet(/* () */0), (function (unused, param) {
         return Belt_Set.add(unused, /* record */[
-                    /* txId */param[/* txId */1],
-                    /* txOutputN */param[/* txOutputN */2],
-                    /* address */param[/* address */0],
-                    /* nCoSigners */2,
-                    /* nPubKeys */3
+                    /* txId */param[/* txId */0],
+                    /* txOutputN */param[/* txOutputN */1]
                   ]);
       }));
 
@@ -52,7 +47,7 @@ function countInputs(set) {
               }));
 }
 
-ReactDOMRe.renderToElementWithId("one file" + (String(countInputs(unusedAfter)) + " yup"), "root");
+ReactDOMRe.renderToElementWithId("less types " + (String(countInputs(unusedAfter)) + " yup"), "root");
 
 exports.filterOne = filterOne;
 exports.text = text;
