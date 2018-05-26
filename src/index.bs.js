@@ -38,7 +38,7 @@ var afterInputsCount = Belt_Array.reduce(Belt_Set.toArray(afterInputs), 0, (func
         }
       }));
 
-ReactDOMRe.renderToElementWithId("there are less code" + (String(afterInputsCount) + " identical things"), "root");
+ReactDOMRe.renderToElementWithId("there are bla " + (String(afterInputsCount) + " identical things"), "root");
 
 exports.text = text;
 exports.reproWalletCollector = reproWalletCollector;

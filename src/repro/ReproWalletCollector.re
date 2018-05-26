@@ -19,85 +19,34 @@ type t = {
   exposedCoordinates: list(Address.Coordinates.t),
 };
 
-let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
-  let inputs =
-    payoutProcesses
-    |. Map.get(processId)
-    |> Utils.mapOption(({usedInputs}: PayoutTransaction.t) => usedInputs)
-    |> Js.Option.getWithDefault([||]);
-  inputs
-  |. Array.reduceU(ProcessId.emptySet, (. res, input) =>
-       reserved
-       |. Map.getWithDefault(input, ProcessId.emptySet)
-       |. Set.union(res)
-     )
-  |. Set.remove(processId);
-};
-
-let totalUnusedBTC = ({unused}) =>
-  unused
-  |. Set.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
-       res |> BTC.plus(value)
-     );
-
-let totalReservedBTC = ({reserved}) =>
-  reserved
-  |. Map.keysToArray
-  |. Array.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
-       res |> BTC.plus(value)
-     );
-
-let currentKeyChainIdent = (accountIdx, userId, {activatedKeyChain}) =>
-  activatedKeyChain
-  |. List.getAssoc(accountIdx, AccountIndex.eq)
-  |> Js.Option.getExn
-  |. List.getAssoc(userId, UserId.eq)
-  |> Js.Option.getExn;
-
-let currentKeyChain = (accountIdx, userId, {keyChains} as state) => {
-  let currentIdent = currentKeyChainIdent(accountIdx, userId, state);
-  keyChains |> AccountKeyChain.Collection.lookup(accountIdx, currentIdent);
-};
-
-let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
-
-let accountKeyChains = ({keyChains}) => keyChains;
-
-let unusedInputs = ({unused, reserved}) =>
+let unusedInputs = ({unused, reserved}) => {
+  Js.log2("unused", unused |> Set.toArray);
+  Js.log2(
+    "reserved",
+    reserved
+    |> Map.keysToArray
+    |> Set.mergeMany(Network.inputSet())
+    |> Set.toArray,
+  );
   Set.diff(
     unused,
     reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
   );
+};
 
-let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) => {
-  let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
-  let currentKeyChain =
-    keyChains |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
-  let custodians = currentKeyChain |> AccountKeyChain.custodians;
-  let currentKeyChainIdents =
-    keyChains |> AccountKeyChain.Collection.withCustodians(custodians);
+let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) =>
   collector
   |. unusedInputs
   |. Belt.Set.keepU((. i: Network.txInput) =>
-       i.coordinates
-       |> Coordinates.keyChainIdent
-       |> Set.String.has(currentKeyChainIdents) == false
+       if (i.txId
+           == "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b"
+           ||
+           i.txId == "d029a186f3d3124aca7fdc95d085ce25e0519918bf63ecb32cdfbb1da3268d8c") {
+         false;
+       } else {
+         true;
+       }
      );
-};
-
-let network = ({network}) => network;
-
-let nextChangeAddress = (accountIdx, userId, collector) => {
-  let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
-  let accountKeyChain =
-    collector.keyChains
-    |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
-  let coordinates =
-    collector.exposedCoordinates |> Coordinates.allForAccount(accountIdx);
-  let nextChangeCoordinates =
-    Coordinates.nextInternal(userId, coordinates, accountKeyChain);
-  Address.find(nextChangeCoordinates, collector.keyChains);
-};
 
 let make = () => {
   network: Regtest,
