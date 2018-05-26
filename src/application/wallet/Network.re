@@ -40,11 +40,14 @@ module TxInputCmp =
         (.
           {txId: id1, txOutputN: out1}: txInput,
           {txId: id2, txOutputN: out2}: txInput,
-        ) =>
-          compare(
-            id1 ++ ":" ++ string_of_int(out1),
-            id2 ++ ":" ++ string_of_int(out2),
-          );
+        ) => {
+          let c = compare(id1, id2);
+          if (c != 0) {
+            c;
+          } else {
+            compare(out1, out2);
+          };
+        };
     },
   );
 

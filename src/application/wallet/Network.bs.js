@@ -45,7 +45,12 @@ function decode(raw) {
 }
 
 function cmp(param, param$1) {
-  return Caml_primitive.caml_string_compare(param[/* txId */0] + (":" + String(param[/* txOutputN */1])), param$1[/* txId */0] + (":" + String(param$1[/* txOutputN */1])));
+  var c = Caml_primitive.caml_string_compare(param[/* txId */0], param$1[/* txId */0]);
+  if (c !== 0) {
+    return c;
+  } else {
+    return Caml_primitive.caml_int_compare(param[/* txOutputN */1], param$1[/* txOutputN */1]);
+  }
 }
 
 var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
