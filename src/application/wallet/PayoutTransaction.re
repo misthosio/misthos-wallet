@@ -6,11 +6,7 @@ exception NotEnoughSignatures;
 
 exception NoSignaturesForInput;
 
-module Fee = TransactionFee;
-
 type input = Network.txInput;
-
-let misthosFeePercent = 1.49;
 
 type t = {
   txHex: string,
@@ -19,32 +15,18 @@ type t = {
   changeAddress: option(Address.t),
 };
 
-let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
+let txInputForChangeAddress = (~txId, {changeAddress}) =>
   changeAddress
-  |> Utils.mapOption((address: Address.t) => {
-       let tx = B.Transaction.fromHex(txHex);
-       let (idx, value) =
-         tx##outs
-         |> Array.to_list
-         |> List.mapi((i, out) =>
-              B.Address.fromOutputScript(
-                out##script,
-                Bitcoin.Networks.testnet,
-              )
-              == address.displayAddress ?
-                Some((i, BTC.fromSatoshisFloat(out##value))) : None
-            )
-         |> List.find(Js.Option.isSome)
-         |> Js.Option.getExn;
+  |> Utils.mapOption((_) =>
        Network.{
          txId,
-         txOutputN: idx,
-         value,
-         nCoSigners: address.nCoSigners,
-         nPubKeys: address.nPubKeys,
-         address: address.displayAddress,
-       };
-     });
+         txOutputN: 1,
+         value: BTC.zero,
+         nCoSigners: 3,
+         nPubKeys: 2,
+         address: "public",
+       }
+     );
 
 let encode = payout =>
   Json.Encode.(

@@ -2,16 +2,11 @@ open Belt;
 
 open PrimitiveTypes;
 
-open WalletTypes;
-
 open Event;
 
 type t = {
-  network: Network.t,
   unused: Network.inputSet,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
-  activatedKeyChain:
-    list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
 };
 
 let inputs =
@@ -49,37 +44,12 @@ let nonReservedOldInputs = ({unused}) => {
 };
 
 let make = () => {
-  network: Regtest,
   unused: Network.inputSet(),
   payoutProcesses: ProcessId.makeMap(),
-  activatedKeyChain: [],
 };
 
 let apply = (event, state) =>
   switch (event) {
-  | VentureCreated({network}) => {...state, network}
-  | AccountCreationAccepted(
-      ({data: {accountIdx}}: AccountCreation.Accepted.t),
-    ) => {
-      ...state,
-      activatedKeyChain: [(accountIdx, []), ...state.activatedKeyChain],
-    }
-  | AccountKeyChainActivated({accountIdx, custodianId, identifier}) => {
-      ...state,
-      activatedKeyChain: [
-        (
-          accountIdx,
-          [
-            (custodianId, identifier),
-            ...state.activatedKeyChain
-               |. List.getAssoc(accountIdx, AccountIndex.eq)
-               |> Js.Option.getExn,
-          ],
-        ),
-        ...state.activatedKeyChain
-           |. List.removeAssoc(accountIdx, AccountIndex.eq),
-      ],
-    }
   | IncomeDetected({address, txId, txOutputN, amount}) => {
       ...state,
       unused:
@@ -104,10 +74,7 @@ let apply = (event, state) =>
       ...state,
       unused:
         (
-          switch (
-            payoutTx
-            |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
-          ) {
+          switch (payoutTx |> PayoutTransaction.txInputForChangeAddress(~txId)) {
           | Some(input) => state.unused |. Set.add(input)
           | None => state.unused
           }

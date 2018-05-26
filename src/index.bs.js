@@ -56,7 +56,7 @@ console.log(before, middle, after);
 
 console.log(countInputs(afterUnused), countInputs(afterInputs));
 
-ReactDOMRe.renderToElementWithId("NO keychain " + (String(countInputs(afterUnused)) + " identical things"), "root");
+ReactDOMRe.renderToElementWithId("simpler change output" + (String(countInputs(afterUnused)) + " identical things"), "root");
 
 exports.text = text;
 exports.reproWalletCollector = reproWalletCollector;

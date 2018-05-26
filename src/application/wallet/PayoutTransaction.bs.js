@@ -2,15 +2,11 @@
 'use strict';
 
 var BTC = require("./BTC.bs.js");
-var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Address = require("./Address.bs.js");
 var Network = require("./Network.bs.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
-var BitcoinjsLib = require("bitcoinjs-lib");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
 var NotEnoughFunds = Caml_exceptions.create("PayoutTransaction.NotEnoughFunds");
@@ -19,28 +15,15 @@ var NotEnoughSignatures = Caml_exceptions.create("PayoutTransaction.NotEnoughSig
 
 var NoSignaturesForInput = Caml_exceptions.create("PayoutTransaction.NoSignaturesForInput");
 
-function txInputForChangeAddress(txId, _, param) {
-  var txHex = param[/* txHex */0];
-  return Utils.mapOption((function (address) {
-                var tx = BitcoinjsLib.Transaction.fromHex(txHex);
-                var match = Js_option.getExn(List.find(Js_option.isSome, List.mapi((function (i, out) {
-                                var match = BitcoinjsLib.address.fromOutputScript(out.script, BitcoinjsLib.networks.testnet) === address[/* displayAddress */5];
-                                if (match) {
-                                  return /* Some */[/* tuple */[
-                                            i,
-                                            BTC.fromSatoshisFloat(out.value)
-                                          ]];
-                                } else {
-                                  return /* None */0;
-                                }
-                              }), $$Array.to_list(tx.outs))));
+function txInputForChangeAddress(txId, param) {
+  return Utils.mapOption((function () {
                 return /* record */[
                         /* txId */txId,
-                        /* txOutputN */match[0],
-                        /* address */address[/* displayAddress */5],
-                        /* value */match[1],
-                        /* nCoSigners */address[/* nCoSigners */0],
-                        /* nPubKeys */address[/* nPubKeys */1]
+                        /* txOutputN */1,
+                        /* address */"public",
+                        /* value */BTC.zero,
+                        /* nCoSigners */3,
+                        /* nPubKeys */2
                       ];
               }), param[/* changeAddress */3]);
 }
@@ -86,12 +69,12 @@ function decode(raw) {
         ];
 }
 
-var misthosFeePercent = 1.49;
+var B = 0;
 
+exports.B = B;
 exports.NotEnoughFunds = NotEnoughFunds;
 exports.NotEnoughSignatures = NotEnoughSignatures;
 exports.NoSignaturesForInput = NoSignaturesForInput;
-exports.misthosFeePercent = misthosFeePercent;
 exports.txInputForChangeAddress = txInputForChangeAddress;
 exports.encode = encode;
 exports.decode = decode;

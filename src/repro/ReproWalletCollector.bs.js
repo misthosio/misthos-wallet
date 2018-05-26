@@ -6,17 +6,14 @@ var Inputs = require("./Inputs.bs.js");
 var Network = require("../application/wallet/Network.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
-var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
-var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var PayoutTransaction = require("../application/wallet/PayoutTransaction.bs.js");
 
 var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), Json_decode.array(Network.decodeInput, Json.parseOrRaise(Inputs.inputs)));
 
 function nonReservedOldInputs(param) {
-  var unused = param[/* unused */1];
+  var unused = param[/* unused */0];
   console.log("eq before?", Belt_Set.eq(unused, inputs));
   return /* tuple */[
           Belt_Set.keepU(unused, (function (i) {
@@ -30,88 +27,39 @@ function nonReservedOldInputs(param) {
 
 function make() {
   return /* record */[
-          /* network : Regtest */0,
           /* unused */Network.inputSet(/* () */0),
-          /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
-          /* activatedKeyChain : [] */0
+          /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0)
         ];
 }
 
 function apply($$event, state) {
   switch ($$event.tag | 0) {
-    case 0 : 
-        return /* record */[
-                /* network */$$event[0][/* network */6],
-                /* unused */state[/* unused */1],
-                /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain */state[/* activatedKeyChain */3]
-              ];
-    case 14 : 
-        return /* record */[
-                /* network */state[/* network */0],
-                /* unused */state[/* unused */1],
-                /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain : :: */[
-                  /* tuple */[
-                    $$event[0][/* data */2][/* accountIdx */0],
-                    /* [] */0
-                  ],
-                  state[/* activatedKeyChain */3]
-                ]
-              ];
     case 25 : 
         var match = $$event[0];
         return /* record */[
-                /* network */state[/* network */0],
-                /* unused */state[/* unused */1],
-                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */2], match[/* processId */0], match[/* data */6][/* payoutTx */1]),
-                /* activatedKeyChain */state[/* activatedKeyChain */3]
+                /* unused */state[/* unused */0],
+                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */1], match[/* processId */0], match[/* data */6][/* payoutTx */1])
               ];
     case 33 : 
         var match$1 = $$event[0];
-        var payoutTx = Belt_Map.getExn(state[/* payoutProcesses */2], match$1[/* processId */0]);
-        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], state[/* network */0], payoutTx);
+        var payoutTx = Belt_Map.getExn(state[/* payoutProcesses */1], match$1[/* processId */0]);
+        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], payoutTx);
         return /* record */[
-                /* network */state[/* network */0],
-                /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */1], match$2[0]) : state[/* unused */1], payoutTx[/* usedInputs */1]),
-                /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain */state[/* activatedKeyChain */3]
-              ];
-    case 38 : 
-        var match$3 = $$event[0];
-        var accountIdx = match$3[/* accountIdx */0];
-        return /* record */[
-                /* network */state[/* network */0],
-                /* unused */state[/* unused */1],
-                /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain : :: */[
-                  /* tuple */[
-                    accountIdx,
-                    /* :: */[
-                      /* tuple */[
-                        match$3[/* custodianId */1],
-                        match$3[/* identifier */2]
-                      ],
-                      Js_option.getExn(Belt_List.getAssoc(state[/* activatedKeyChain */3], accountIdx, WalletTypes.AccountIndex[/* eq */7]))
-                    ]
-                  ],
-                  Belt_List.removeAssoc(state[/* activatedKeyChain */3], accountIdx, WalletTypes.AccountIndex[/* eq */7])
-                ]
+                /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */0], match$2[0]) : state[/* unused */0], payoutTx[/* usedInputs */1]),
+                /* payoutProcesses */state[/* payoutProcesses */1]
               ];
     case 40 : 
-        var match$4 = $$event[0];
+        var match$3 = $$event[0];
         return /* record */[
-                /* network */state[/* network */0],
-                /* unused */Belt_Set.add(state[/* unused */1], /* record */[
-                      /* txId */match$4[/* txId */2],
-                      /* txOutputN */match$4[/* txOutputN */3],
-                      /* address */match$4[/* address */0],
-                      /* value */match$4[/* amount */4],
+                /* unused */Belt_Set.add(state[/* unused */0], /* record */[
+                      /* txId */match$3[/* txId */2],
+                      /* txOutputN */match$3[/* txOutputN */3],
+                      /* address */match$3[/* address */0],
+                      /* value */match$3[/* amount */4],
                       /* nCoSigners */2,
                       /* nPubKeys */3
                     ]),
-                /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain */state[/* activatedKeyChain */3]
+                /* payoutProcesses */state[/* payoutProcesses */1]
               ];
     default:
       return state;
