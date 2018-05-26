@@ -9,6 +9,7 @@ var Utils = require("../../utils/Utils.bs.js");
 var Policy = require("../../application/Policy.bs.js");
 var Router = require("../Router.bs.js");
 var Network = require("../../application/wallet/Network.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../application/events/EventLog.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -76,6 +77,7 @@ function fromViewModelState$2(param) {
   var network = WalletInfoCollector.network(walletInfoCollector);
   var allInputs = WalletInfoCollector.unusedInputs(walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
+  console.log("getting mandatory inputs in view model", Belt_Set.toArray(mandatoryInputs));
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),
           /* balance */balance,
