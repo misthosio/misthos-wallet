@@ -11,7 +11,6 @@ open Address;
 type t = {
   network: Network.t,
   unused: Network.inputSet,
-  keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
   activatedKeyChain:
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
@@ -55,7 +54,6 @@ let nonReservedOldInputs = ({unused}) => {
 let make = () => {
   network: Regtest,
   unused: Network.inputSet(),
-  keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
   activatedKeyChain: [],
   exposedCoordinates: [],
@@ -69,10 +67,6 @@ let apply = (event, state) =>
     ) => {
       ...state,
       activatedKeyChain: [(accountIdx, []), ...state.activatedKeyChain],
-    }
-  | AccountKeyChainIdentified({keyChain}) => {
-      ...state,
-      keyChains: state.keyChains |> AccountKeyChain.Collection.add(keyChain),
     }
   | AccountKeyChainActivated({accountIdx, custodianId, identifier}) => {
       ...state,
@@ -94,14 +88,7 @@ let apply = (event, state) =>
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
     }
-  | IncomeDetected({address, txId, txOutputN, amount, coordinates}) =>
-    let keyChain =
-      state.keyChains
-      |> AccountKeyChain.Collection.lookup(
-           coordinates |> Address.Coordinates.accountIdx,
-           coordinates |> Address.Coordinates.keyChainIdent,
-         );
-    {
+  | IncomeDetected({address, txId, txOutputN, amount, coordinates}) => {
       ...state,
       unused:
         state.unused
@@ -111,10 +98,10 @@ let apply = (event, state) =>
              address,
              value: amount,
              coordinates,
-             nCoSigners: keyChain.nCoSigners,
-             nPubKeys: keyChain.custodianKeyChains |> List.length,
+             nCoSigners: 2,
+             nPubKeys: 3,
            }),
-    };
+    }
   | PayoutProposed({data: {payoutTx}, processId}) => {
       ...state,
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),

@@ -46,7 +46,7 @@ Js.log2(countInputs(afterUnused), countInputs(afterInputs));
 
 ReactDOMRe.renderToElementWithId(
   text(
-    "there are equal before "
+    "NO keychain "
     ++ string_of_int(countInputs(afterUnused))
     ++ " identical things",
   ),
