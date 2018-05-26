@@ -33,14 +33,16 @@ var afterUnused = Belt_Set.keep(unused, keepTx);
 
 var afterInputs = Belt_Set.keep(match[1], keepTx);
 
-var afterInputsCount = Belt_Array.reduce(Belt_Set.toArray(afterUnused), 0, (function (res, param) {
-        var match = param[/* txId */0] === "b0478fed46339ffd2d0d36b0355d782be269b0452f452d7532b8f6e1dfa8e06b";
-        if (match) {
-          return res + 1 | 0;
-        } else {
-          return res;
-        }
-      }));
+function countInputs(set) {
+  return Belt_Array.reduce(Belt_Set.toArray(set), 0, (function (res, param) {
+                var match = param[/* txId */0] === "b0478fed46339ffd2d0d36b0355d782be269b0452f452d7532b8f6e1dfa8e06b";
+                if (match) {
+                  return res + 1 | 0;
+                } else {
+                  return res;
+                }
+              }));
+}
 
 var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), Json_decode.array(Network.decodeInput, Json.parseOrRaise(Inputs.inputs)));
 
@@ -48,7 +50,11 @@ var before = Belt_Set.eq(unused, inputs);
 
 var after = Belt_Set.eq(afterUnused, afterInputs);
 
-ReactDOMRe.renderToElementWithId("there are afterInputsCount " + (String(afterInputsCount) + " identical things"), "root");
+console.log(before, after);
+
+console.log(countInputs(afterUnused), countInputs(afterInputs));
+
+ReactDOMRe.renderToElementWithId("there are equal before " + (String(countInputs(afterUnused)) + " identical things"), "root");
 
 exports.text = text;
 exports.reproWalletCollector = reproWalletCollector;
@@ -56,7 +62,7 @@ exports.unused = unused;
 exports.keepTx = keepTx;
 exports.afterUnused = afterUnused;
 exports.afterInputs = afterInputs;
-exports.afterInputsCount = afterInputsCount;
+exports.countInputs = countInputs;
 exports.inputs = inputs;
 exports.before = before;
 exports.after = after;

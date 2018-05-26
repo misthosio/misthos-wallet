@@ -19,8 +19,10 @@ var PayoutTransaction = require("../application/wallet/PayoutTransaction.bs.js")
 var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), Json_decode.array(Network.decodeInput, Json.parseOrRaise(Inputs.inputs)));
 
 function nonReservedOldInputs(param) {
+  var unused = param[/* unused */1];
+  console.log("eq before?", Belt_Set.eq(unused, inputs));
   return /* tuple */[
-          Belt_Set.keepU(param[/* unused */1], (function (i) {
+          Belt_Set.keepU(unused, (function (i) {
                   return !(i[/* txId */0] === "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b" || i[/* txId */0] === "d029a186f3d3124aca7fdc95d085ce25e0519918bf63ecb32cdfbb1da3268d8c");
                 })),
           Belt_Set.keepU(inputs, (function (i) {

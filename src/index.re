@@ -21,8 +21,8 @@ let (afterUnused, afterInputs) = (
   inputs |. Belt.Set.keep(keepTx),
 );
 
-let afterInputsCount =
-  afterUnused
+let countInputs = set =>
+  set
   |> Set.toArray
   |. Array.reduce(0, (res, {txId}: Network.txInput) =>
        txId
@@ -40,10 +40,14 @@ let before = Set.eq(unused, inputs);
 
 let after = Set.eq(afterUnused, afterInputs);
 
+Js.log2(before, after);
+
+Js.log2(countInputs(afterUnused), countInputs(afterInputs));
+
 ReactDOMRe.renderToElementWithId(
   text(
-    "there are afterInputsCount "
-    ++ string_of_int(afterInputsCount)
+    "there are equal before "
+    ++ string_of_int(countInputs(afterUnused))
     ++ " identical things",
   ),
   "root",
