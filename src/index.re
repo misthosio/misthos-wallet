@@ -15,8 +15,7 @@ let filterOne = set =>
 
 let text = ReasonReact.string;
 
-let smallLog =
-  Income.income |> Json.parseOrRaise |> Json.Decode.array(IncomeEvent.decode);
+let smallLog = IncomeEvent.itemsArray;
 
 let unused =
   smallLog
@@ -42,6 +41,6 @@ let countInputs = set =>
      );
 
 ReactDOMRe.renderToElementWithId(
-  text("less types " ++ string_of_int(countInputs(unusedAfter)) ++ " yup"),
+  text("from array " ++ string_of_int(countInputs(unusedAfter)) ++ " yup"),
   "root",
 );
