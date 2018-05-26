@@ -281,6 +281,8 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
         }), Belt_Set.toList(Belt_Set.diff(Belt_Set.keep(allInputs, (function (param) {
                       return TransactionFee.canPayForItself(satsPerByte, param);
                     })), mandatoryInputs$1)));
+  console.log("mandatory inputs:", Belt_Set.toArray(mandatoryInputs$1));
+  console.log("all inputs", Belt_List.toArray(allInputs$1));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   var usedInputs = List.map((function (i) {
           return /* tuple */[

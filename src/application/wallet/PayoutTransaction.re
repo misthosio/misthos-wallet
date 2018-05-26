@@ -342,6 +342,8 @@ let build =
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
        );
+  Js.log2("mandatory inputs:", mandatoryInputs |> Belt.Set.toArray);
+  Js.log2("all inputs", allInputs |> Belt.List.toArray);
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
     mandatoryInputs

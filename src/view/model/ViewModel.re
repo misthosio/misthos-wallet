@@ -126,7 +126,8 @@ module CreatePayoutView = {
           ~satsPerByte=fee,
           ~network,
         ),
-      summary: (destinations, fee) =>
+      summary: (destinations, fee) => {
+        Js.log("ViewModel summary");
         PayoutTransaction.build(
           ~mandatoryInputs,
           ~allInputs,
@@ -140,7 +141,8 @@ module CreatePayoutView = {
                ),
           ~network,
         )
-        |> PayoutTransaction.summary(network),
+        |> PayoutTransaction.summary(network);
+      },
     };
   };
 };
