@@ -2,15 +2,10 @@ open Belt;
 
 let text = ReasonReact.string;
 
+let eventLog = IncomeLog.log |> Json.parseOrRaise |> EventLog.decode;
+
 let smallLog =
-  IncomeVenture.eventLog
-  |> EventLog.items
-  |. Array.keepMap(({event}: EventLog.item) =>
-       switch (event) {
-       | IncomeDetected(income) => Some(income)
-       | _ => None
-       }
-     );
+  Income.income |> Json.parseOrRaise |> Json.Decode.array(IncomeEvent.decode);
 
 let reproWalletCollector =
   smallLog
@@ -54,9 +49,7 @@ Js.log2(countInputs(afterUnused), countInputs(afterInputs));
 
 ReactDOMRe.renderToElementWithId(
   text(
-    "only income "
-    ++ string_of_int(countInputs(afterUnused))
-    ++ " identical things",
+    "decode small log " ++ string_of_int(countInputs(afterUnused)) ++ " yup",
   ),
   "root",
 );

@@ -48,7 +48,7 @@ let make = () => {
   payoutProcesses: ProcessId.makeMap(),
 };
 
-let apply = ({address, txId, txOutputN, amount}: IncomeDetected.t, state) => {
+let apply = ({address, txId, txOutputN, amount}: IncomeEvent.t, state) => {
   ...state,
   unused:
     state.unused
