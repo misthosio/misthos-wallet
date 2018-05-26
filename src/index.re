@@ -2,12 +2,20 @@ open Belt;
 
 let text = ReasonReact.string;
 
-let reproWalletCollector =
+let smallLog =
   IncomeVenture.eventLog
-  |> EventLog.reduce(
-       (res, {event}: EventLog.item) =>
-         res |> ReproWalletCollector.apply(event),
-       ReproWalletCollector.make(),
+  |> EventLog.items
+  |. Array.keep(({event}: EventLog.item) =>
+       switch (event) {
+       | IncomeDetected(_) => true
+       | _ => false
+       }
+     );
+
+let reproWalletCollector =
+  smallLog
+  |. Array.reduce(ReproWalletCollector.make(), (res, {event}: EventLog.item) =>
+       res |> ReproWalletCollector.apply(event)
      );
 
 let (unused, inputs) =

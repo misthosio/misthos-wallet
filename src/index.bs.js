@@ -13,9 +13,17 @@ function text(prim) {
   return prim;
 }
 
-var reproWalletCollector = Curry._3(EventLog.reduce, (function (res, param) {
+var smallLog = Belt_Array.keep(Curry._1(EventLog.items, IncomeVenture.eventLog), (function (param) {
+        if (param[/* event */0].tag === 40) {
+          return true;
+        } else {
+          return false;
+        }
+      }));
+
+var reproWalletCollector = Belt_Array.reduce(smallLog, ReproWalletCollector.make(/* () */0), (function (res, param) {
         return ReproWalletCollector.apply(param[/* event */0], res);
-      }), ReproWalletCollector.make(/* () */0), IncomeVenture.eventLog);
+      }));
 
 var match = ReproWalletCollector.nonReservedOldInputs(reproWalletCollector);
 
@@ -59,6 +67,7 @@ console.log(countInputs(afterUnused), countInputs(afterInputs));
 ReactDOMRe.renderToElementWithId("simpler change output" + (String(countInputs(afterUnused)) + " identical things"), "root");
 
 exports.text = text;
+exports.smallLog = smallLog;
 exports.reproWalletCollector = reproWalletCollector;
 exports.unused = unused;
 exports.inputs = inputs;
@@ -69,4 +78,4 @@ exports.afterInputs = afterInputs;
 exports.countInputs = countInputs;
 exports.middle = middle;
 exports.after = after;
-/* reproWalletCollector Not a pure module */
+/* smallLog Not a pure module */
