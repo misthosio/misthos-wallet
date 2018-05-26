@@ -1,5 +1,18 @@
 open Belt;
 
+let filterOne = set =>
+  set
+  |. Belt.Set.keepU((. i: IncomeEvent.txInput) =>
+       if (i.txId
+           == "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b"
+           ||
+           i.txId == "d029a186f3d3124aca7fdc95d085ce25e0519918bf63ecb32cdfbb1da3268d8c") {
+         false;
+       } else {
+         true;
+       }
+     );
+
 let text = ReasonReact.string;
 
 let smallLog =
@@ -7,28 +20,21 @@ let smallLog =
 
 let unused = IncomeEvent.inputSet();
 
-let reproWalletCollector =
+let unused =
   smallLog
-  |. Array.reduce(ReproWalletCollector.make(), (res, income) =>
-       res |> ReproWalletCollector.apply(income)
+  |. Array.reduce(
+       IncomeEvent.inputSet(),
+       (unused, {address, txId, txOutputN}: IncomeEvent.t) =>
+       unused
+       |. Set.add({txId, txOutputN, address, nCoSigners: 2, nPubKeys: 3})
      );
 
-let (unused, inputs) =
-  reproWalletCollector |> ReproWalletCollector.nonReservedOldInputs;
+let filteredUnused = filterOne(unused);
 
-let keepTx = ({txId}: IncomeEvent.txInput) =>
+let filterTwo = ({txId}: IncomeEvent.txInput) =>
   txId != "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
 
-let before = Set.eq(unused, inputs);
-
-Js.log2(unused, inputs);
-
-let (afterUnused, afterInputs) = (
-  unused |. Belt.Set.keep(keepTx),
-  inputs |. Belt.Set.keep(keepTx),
-);
-
-Js.log2(unused, inputs);
+let unusedAfter = unused |. Belt.Set.keep(filterTwo);
 
 let countInputs = set =>
   set
@@ -39,17 +45,7 @@ let countInputs = set =>
          res + 1 : res
      );
 
-let middle = Set.eq(unused, inputs);
-
-let after = Set.eq(afterUnused, afterInputs);
-
-Js.log3(before, middle, after);
-
-Js.log2(countInputs(afterUnused), countInputs(afterInputs));
-
 ReactDOMRe.renderToElementWithId(
-  text(
-    "remove a lot " ++ string_of_int(countInputs(afterUnused)) ++ " yup",
-  ),
+  text("one file" ++ string_of_int(countInputs(unusedAfter)) ++ " yup"),
   "root",
 );

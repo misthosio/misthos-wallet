@@ -8,7 +8,12 @@ var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var IncomeEvent = require("./repro/IncomeEvent.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
-var ReproWalletCollector = require("./repro/ReproWalletCollector.bs.js");
+
+function filterOne(set) {
+  return Belt_Set.keepU(set, (function (i) {
+                return !(i[/* txId */0] === "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b" || i[/* txId */0] === "d029a186f3d3124aca7fdc95d085ce25e0519918bf63ecb32cdfbb1da3268d8c");
+              }));
+}
 
 function text(prim) {
   return prim;
@@ -18,29 +23,23 @@ var smallLog = Json_decode.array(IncomeEvent.decode, Json.parseOrRaise(Income.in
 
 IncomeEvent.inputSet(/* () */0);
 
-var reproWalletCollector = Belt_Array.reduce(smallLog, ReproWalletCollector.make(/* () */0), (function (res, income) {
-        return ReproWalletCollector.apply(income, res);
+var unused = Belt_Array.reduce(smallLog, IncomeEvent.inputSet(/* () */0), (function (unused, param) {
+        return Belt_Set.add(unused, /* record */[
+                    /* txId */param[/* txId */1],
+                    /* txOutputN */param[/* txOutputN */2],
+                    /* address */param[/* address */0],
+                    /* nCoSigners */2,
+                    /* nPubKeys */3
+                  ]);
       }));
 
-var match = ReproWalletCollector.nonReservedOldInputs(reproWalletCollector);
+var filteredUnused = filterOne(unused);
 
-var inputs = match[1];
-
-var unused = match[0];
-
-function keepTx(param) {
+function filterTwo(param) {
   return param[/* txId */0] !== "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
 }
 
-var before = Belt_Set.eq(unused, inputs);
-
-console.log(unused, inputs);
-
-var afterUnused = Belt_Set.keep(unused, keepTx);
-
-var afterInputs = Belt_Set.keep(inputs, keepTx);
-
-console.log(unused, inputs);
+var unusedAfter = Belt_Set.keep(unused, filterTwo);
 
 function countInputs(set) {
   return Belt_Array.reduce(Belt_Set.toArray(set), 0, (function (res, param) {
@@ -53,26 +52,14 @@ function countInputs(set) {
               }));
 }
 
-var middle = Belt_Set.eq(unused, inputs);
+ReactDOMRe.renderToElementWithId("one file" + (String(countInputs(unusedAfter)) + " yup"), "root");
 
-var after = Belt_Set.eq(afterUnused, afterInputs);
-
-console.log(before, middle, after);
-
-console.log(countInputs(afterUnused), countInputs(afterInputs));
-
-ReactDOMRe.renderToElementWithId("remove a lot " + (String(countInputs(afterUnused)) + " yup"), "root");
-
+exports.filterOne = filterOne;
 exports.text = text;
 exports.smallLog = smallLog;
-exports.reproWalletCollector = reproWalletCollector;
 exports.unused = unused;
-exports.inputs = inputs;
-exports.keepTx = keepTx;
-exports.before = before;
-exports.afterUnused = afterUnused;
-exports.afterInputs = afterInputs;
+exports.filteredUnused = filteredUnused;
+exports.filterTwo = filterTwo;
+exports.unusedAfter = unusedAfter;
 exports.countInputs = countInputs;
-exports.middle = middle;
-exports.after = after;
 /* smallLog Not a pure module */
