@@ -3,14 +3,68 @@
 
 var Body2 = require("./components/Body2.bs.js");
 var React = require("react");
-var LinkButton = require("./components/LinkButton.bs.js");
+var ViewModel = require("./model/ViewModel.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var VentureList = require("./VentureList.bs.js");
+var IncomeVenture = require("../repro/IncomeVenture.bs.js");
+var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
 
 var component = ReasonReact.statelessComponent("LoggedInHome");
 
-function make(index, _) {
+function commands_000() {
+  return /* () */0;
+}
+
+function commands_001() {
+  return /* () */0;
+}
+
+function commands_002() {
+  return /* () */0;
+}
+
+function commands_003() {
+  return /* () */0;
+}
+
+function commands_004() {
+  return /* () */0;
+}
+
+function commands_005() {
+  return /* () */0;
+}
+
+function commands_006() {
+  return /* () */0;
+}
+
+function commands_007(_, _$1, _$2) {
+  return /* () */0;
+}
+
+function commands_008() {
+  return /* () */0;
+}
+
+function commands_009() {
+  return /* () */0;
+}
+
+var commands = /* record */[
+  commands_000,
+  commands_001,
+  commands_002,
+  commands_003,
+  commands_004,
+  commands_005,
+  commands_006,
+  commands_007,
+  commands_008,
+  commands_009
+];
+
+function make(_, _$1) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -25,7 +79,7 @@ function make(index, _) {
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "My Ventures",
                                 /* [] */0
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, VentureList.make(/* None */0, index, /* array */[])), React.createElement("div", undefined), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[ViewCommon.text("Create a Venture")]))), null, /* array */[]));
+                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(IncomeVenture.viewModel), commands, /* Idle */0, /* array */[]))), null, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -42,5 +96,6 @@ var extractString = ViewCommon.extractString;
 exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
+exports.commands = commands;
 exports.make = make;
 /* component Not a pure module */
