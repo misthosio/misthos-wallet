@@ -56,7 +56,9 @@ function accountKeyChains(param) {
 }
 
 function unusedInputs(param) {
-  return Belt_Set.diff(param[/* unused */1], Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */2])));
+  var unused = param[/* unused */1];
+  console.log("unusedInputs", Belt_Set.toArray(unused));
+  return Belt_Set.diff(unused, Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */2])));
 }
 
 function nonReservedOldInputs(accountIdx, userId, collector) {
@@ -260,15 +262,28 @@ function apply($$event, state) {
               ];
     case 40 : 
         var match$4 = $$event[0];
+        var amount = match$4[/* amount */4];
+        var txOutputN = match$4[/* txOutputN */3];
+        var txId = match$4[/* txId */2];
         var coordinates = match$4[/* coordinates */1];
+        var address = match$4[/* address */0];
         var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3]);
+        console.log("WalletInfoCollector income:", Belt_Set.toArray(Belt_Set.add(state[/* unused */1], /* record */[
+                      /* txId */txId,
+                      /* txOutputN */txOutputN,
+                      /* address */address,
+                      /* value */amount,
+                      /* nCoSigners */keyChain[/* nCoSigners */2],
+                      /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */3]),
+                      /* coordinates */coordinates
+                    ])));
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */Belt_Set.add(state[/* unused */1], /* record */[
-                      /* txId */match$4[/* txId */2],
-                      /* txOutputN */match$4[/* txOutputN */3],
-                      /* address */match$4[/* address */0],
-                      /* value */match$4[/* amount */4],
+                      /* txId */txId,
+                      /* txOutputN */txOutputN,
+                      /* address */address,
+                      /* value */amount,
                       /* nCoSigners */keyChain[/* nCoSigners */2],
                       /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */3]),
                       /* coordinates */coordinates

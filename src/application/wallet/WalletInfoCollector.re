@@ -63,11 +63,13 @@ let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 
 let accountKeyChains = ({keyChains}) => keyChains;
 
-let unusedInputs = ({unused, reserved}) =>
+let unusedInputs = ({unused, reserved}) => {
+  Js.log2("unusedInputs", unused |> Set.toArray);
   Set.diff(
     unused,
     reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
   );
+};
 
 let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) => {
   let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
@@ -165,6 +167,20 @@ let apply = (event, state) =>
            coordinates |> Address.Coordinates.accountIdx,
            coordinates |> Address.Coordinates.keyChainIdent,
          );
+    Js.log2(
+      "WalletInfoCollector income:",
+      state.unused
+      |. Set.add({
+           txId,
+           txOutputN,
+           address,
+           value: amount,
+           coordinates,
+           nCoSigners: keyChain.nCoSigners,
+           nPubKeys: keyChain.custodianKeyChains |> List.length,
+         })
+      |> Set.toArray,
+    );
     {
       ...state,
       unused:

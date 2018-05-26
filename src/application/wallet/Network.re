@@ -38,12 +38,12 @@ module TxInputCmp =
       type t = txInput;
       let cmp =
         (.
-          {txId, txOutputN}: txInput,
+          {txId: id1, txOutputN: out1}: txInput,
           {txId: id2, txOutputN: out2}: txInput,
         ) =>
           compare(
-            txId ++ string_of_int(txOutputN),
-            id2 ++ string_of_int(out2),
+            id1 ++ ":" ++ string_of_int(out1),
+            id2 ++ ":" ++ string_of_int(out2),
           );
     },
   );
