@@ -15,6 +15,21 @@ let mandatoryInputs =
        UserId.fromString("misthosio.id"),
      );
 
+let reproWalletCollector =
+  IncomeVenture.eventLog
+  |> EventLog.reduce(
+       (res, {event}: EventLog.item) =>
+         res |> ReproWalletCollector.apply(event),
+       ReproWalletCollector.make(),
+     );
+
+let mandatoryInputs =
+  reproWalletCollector
+  |> ReproWalletCollector.nonReservedOldInputs(
+       AccountIndex.default,
+       UserId.fromString("misthosio.id"),
+     );
+
 let defaultFee = BTC.fromSatoshis(100L);
 
 let keepTx = ({txId}: Network.txInput) =>
@@ -39,7 +54,7 @@ let make = (~index, _children) => {
     <div>
       (
         text(
-          "there are "
+          "there are  repro "
           ++ string_of_int(afterInputsCount)
           ++ " identical things",
         )

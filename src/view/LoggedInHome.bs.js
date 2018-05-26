@@ -2,8 +2,10 @@
 'use strict';
 
 var BTC = require("../application/wallet/BTC.bs.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
+var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -11,10 +13,17 @@ var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var IncomeVenture = require("../repro/IncomeVenture.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WalletInfoCollector = require("../application/wallet/WalletInfoCollector.bs.js");
+var ReproWalletCollector = require("../repro/ReproWalletCollector.bs.js");
 
 var component = ReasonReact.statelessComponent("LoggedInHome");
 
-var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], PrimitiveTypes.UserId[/* fromString */1]("misthosio.id"), IncomeVenture.viewModel[/* walletInfoCollector */9]);
+WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], PrimitiveTypes.UserId[/* fromString */1]("misthosio.id"), IncomeVenture.viewModel[/* walletInfoCollector */9]);
+
+var reproWalletCollector = Curry._3(EventLog.reduce, (function (res, param) {
+        return ReproWalletCollector.apply(param[/* event */0], res);
+      }), ReproWalletCollector.make(/* () */0), IncomeVenture.eventLog);
+
+var mandatoryInputs = ReproWalletCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], PrimitiveTypes.UserId[/* fromString */1]("misthosio.id"), reproWalletCollector);
 
 var defaultFee = BTC.fromSatoshis(/* int64 */[
       /* hi */0,
@@ -50,7 +59,7 @@ function make(_, _$1) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return React.createElement("div", undefined, ViewCommon.text("there are " + (String(afterInputsCount) + " identical things")));
+              return React.createElement("div", undefined, ViewCommon.text("there are  repro " + (String(afterInputsCount) + " identical things")));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -67,6 +76,7 @@ var extractString = ViewCommon.extractString;
 exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
+exports.reproWalletCollector = reproWalletCollector;
 exports.mandatoryInputs = mandatoryInputs;
 exports.defaultFee = defaultFee;
 exports.keepTx = keepTx;
