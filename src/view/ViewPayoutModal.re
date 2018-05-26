@@ -148,7 +148,7 @@ let make =
               <MaterialUi.SnackbarContent
                 message=(
                   {|
-                   This Proposal is a duplicate of another proposal.
+                   This Proposal is reusing inputs reserved by another payout.
                    We recommend that you coordinate with your Partners
                    to only endorse one Proposal and reject the other one.
                    |}
