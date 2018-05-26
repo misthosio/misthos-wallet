@@ -332,8 +332,18 @@ let build =
       ~changeAddress: Address.t,
       ~network,
     ) => {
+  Js.log2("Mandatory inputs before", mandatoryInputs);
+  Js.log2(
+    "Mandatory inputs before array",
+    mandatoryInputs |> Belt.Set.toArray,
+  );
   let mandatoryInputs =
     mandatoryInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
+  Js.log2("Mandatory inputs after", mandatoryInputs);
+  Js.log2(
+    "Mandatory inputs after array",
+    mandatoryInputs |> Belt.Set.toArray,
+  );
   let allInputs =
     allInputs
     |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
