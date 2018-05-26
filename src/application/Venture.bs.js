@@ -204,18 +204,18 @@ function reconstruct(session, log) {
         /* array */[]
       ], match$1[5]);
   var match$3 = match$2[1];
-  return Promise.resolve(/* tuple */[
-              /* record */[
-                /* session */session,
-                /* id */match$1[0],
-                /* log */match$2[0],
-                /* state */match$3[1],
-                /* validation */match$3[0],
-                /* wallet */match$3[2],
-                /* watchers */match$2[2]
-              ],
-              match$3[3]
-            ]);
+  return /* tuple */[
+          /* record */[
+            /* session */session,
+            /* id */match$1[0],
+            /* log */match$2[0],
+            /* state */match$3[1],
+            /* validation */match$3[0],
+            /* wallet */match$3[2],
+            /* watchers */match$2[2]
+          ],
+          match$3[3]
+        ];
 }
 
 function persist($staropt$star, param) {
@@ -244,15 +244,14 @@ function persist($staropt$star, param) {
 function load($staropt$star, session, ventureId) {
   var shouldPersist = $staropt$star ? $staropt$star[0] : true;
   logMessage("Loading venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  var partial_arg = /* Some */[shouldPersist];
   return Blockstack$1.getFile(PrimitiveTypes.VentureId[/* toString */0](ventureId) + "/log.json").then((function (nullLog) {
-                      if (nullLog == null) {
-                        throw Caml_builtin_exceptions.not_found;
-                      } else {
-                        return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
-                      }
-                    })).then((function (param) {
-                    return persist(partial_arg, param);
+                    var tmp;
+                    if (nullLog == null) {
+                      throw Caml_builtin_exceptions.not_found;
+                    } else {
+                      tmp = reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullLog)));
+                    }
+                    return persist(/* Some */[shouldPersist], tmp);
                   })).then((function (param) {
                   if (param.tag) {
                     return Promise.resolve(/* CouldNotLoad */Block.__(1, [param[0]]));
@@ -273,15 +272,15 @@ function join(session, userId, ventureId) {
                 if (loadResult.tag) {
                   console.log("joining properly");
                   return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).then((function (nullFile) {
-                                      console.log("hello");
-                                      if (nullFile == null) {
-                                        console.log("not ofnund");
-                                        throw Caml_builtin_exceptions.not_found;
-                                      } else {
-                                        return reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
-                                      }
-                                    })).then((function (eta) {
-                                    return persist(/* None */0, eta);
+                                    console.log("hello");
+                                    var tmp;
+                                    if (nullFile == null) {
+                                      console.log("not ofnund");
+                                      throw Caml_builtin_exceptions.not_found;
+                                    } else {
+                                      tmp = reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
+                                    }
+                                    return persist(/* None */0, tmp);
                                   })).then((function (param) {
                                   if (param.tag) {
                                     return Promise.resolve(/* CouldNotJoin */Block.__(2, [param[0]]));
@@ -793,5 +792,6 @@ exports.join = join;
 exports.getId = getId;
 exports.getEventLog = getEventLog;
 exports.getSummary = getSummary;
+exports.reconstruct = reconstruct;
 exports.Cmd = Cmd;
 /* Event Not a pure module */

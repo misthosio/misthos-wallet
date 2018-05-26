@@ -57,6 +57,8 @@ let getEventLog: t => EventLog.t;
 
 let getSummary: t => EventLog.summary;
 
+let reconstruct: (Session.Data.t, EventLog.t) => (t, array(EventLog.item));
+
 module Cmd: {
   module Create: {
     type result =

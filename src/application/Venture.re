@@ -129,8 +129,7 @@ let reconstruct = (session, log) => {
          applyInternal,
          (validation, state, wallet, [||]),
        );
-  ({validation, session, id, log, state, wallet, watchers}, collector)
-  |> Js.Promise.resolve;
+  ({validation, session, id, log, state, wallet, watchers}, collector);
 };
 
 let persist = (~shouldPersist=true, ({id, log} as venture, collector)) =>
@@ -163,13 +162,18 @@ let load =
       (ventureId |> VentureId.toString) ++ "/log.json",
     )
     |> then_(nullLog =>
-         switch (Js.Nullable.toOption(nullLog)) {
-         | Some(raw) =>
-           raw |> Json.parseOrRaise |> EventLog.decode |> reconstruct(session)
-         | None => raise(Not_found)
-         }
+         (
+           switch (Js.Nullable.toOption(nullLog)) {
+           | Some(raw) =>
+             raw
+             |> Json.parseOrRaise
+             |> EventLog.decode
+             |> reconstruct(session)
+           | None => raise(Not_found)
+           }
+         )
+         |> persist(~shouldPersist)
        )
-    |> then_(persist(~shouldPersist))
     |> then_(
          fun
          | Js.Result.Ok((v, c)) => Ok(v, c) |> resolve
@@ -208,18 +212,20 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
            )
            |> then_(nullFile => {
                 Js.log("hello");
-                switch (Js.Nullable.toOption(nullFile)) {
-                | None =>
-                  Js.log("not ofnund");
-                  raise(Not_found);
-                | Some(raw) =>
-                  raw
-                  |> Json.parseOrRaise
-                  |> EventLog.decode
-                  |> reconstruct(session)
-                };
+                (
+                  switch (Js.Nullable.toOption(nullFile)) {
+                  | None =>
+                    Js.log("not ofnund");
+                    raise(Not_found);
+                  | Some(raw) =>
+                    raw
+                    |> Json.parseOrRaise
+                    |> EventLog.decode
+                    |> reconstruct(session)
+                  }
+                )
+                |> persist;
               })
-           |> then_(persist)
            |> then_(
                 fun
                 | Js.Result.Ok((venture, _)) =>
