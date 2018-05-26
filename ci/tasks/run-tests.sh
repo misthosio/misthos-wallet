@@ -22,7 +22,7 @@ if [[ "$(git status -s -uno)" != "" ]]; then
   exit 1;
 fi
 
-# make ci
+make ci
 
 popd
 
