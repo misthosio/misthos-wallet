@@ -3,20 +3,6 @@ type t = {
   txOutputN: int,
 };
 
-let encode = event =>
-  Json.Encode.(
-    object_([
-      ("txId", string(event.txId)),
-      ("txOutputN", int(event.txOutputN)),
-    ])
-  );
-
-let decode = raw =>
-  Json.Decode.{
-    txId: raw |> field("txId", string),
-    txOutputN: raw |> field("txOutputN", int),
-  };
-
 module TxInputCmp =
   Belt.Id.MakeComparableU(
     {
@@ -36,10 +22,6 @@ module TxInputCmp =
 type inputSet = Belt.Set.t(TxInputCmp.t, TxInputCmp.identity);
 
 let inputSet = () => Belt.Set.make(~id=(module TxInputCmp));
-
-type inputMap('a) = Belt.Map.t(TxInputCmp.t, 'a, TxInputCmp.identity);
-
-let inputMap = () => Belt.Map.make(~id=(module TxInputCmp));
 
 let itemsArray = [|
   {

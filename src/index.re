@@ -15,13 +15,10 @@ let filterOne = set =>
 
 let text = ReasonReact.string;
 
-let smallLog = IncomeEvent.itemsArray;
-
 let unused =
-  smallLog
-  |. Array.reduce(
-       IncomeEvent.inputSet(), (unused, {txId, txOutputN}: IncomeEvent.t) =>
-       unused |. Set.add({txId, txOutputN})
+  IncomeEvent.itemsArray
+  |. Array.reduce(IncomeEvent.inputSet(), (unused, item) =>
+       unused |. Set.add(item)
      );
 
 let filteredUnused = filterOne(unused);

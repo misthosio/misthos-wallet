@@ -16,12 +16,7 @@ function text(prim) {
   return prim;
 }
 
-var unused = Belt_Array.reduce(IncomeEvent.itemsArray, IncomeEvent.inputSet(/* () */0), (function (unused, param) {
-        return Belt_Set.add(unused, /* record */[
-                    /* txId */param[/* txId */0],
-                    /* txOutputN */param[/* txOutputN */1]
-                  ]);
-      }));
+var unused = Belt_Array.reduce(IncomeEvent.itemsArray, IncomeEvent.inputSet(/* () */0), Belt_Set.add);
 
 var filteredUnused = filterOne(unused);
 
@@ -44,11 +39,8 @@ function countInputs(set) {
 
 ReactDOMRe.renderToElementWithId("from array " + (String(countInputs(unusedAfter)) + " yup"), "root");
 
-var smallLog = IncomeEvent.itemsArray;
-
 exports.filterOne = filterOne;
 exports.text = text;
-exports.smallLog = smallLog;
 exports.unused = unused;
 exports.filteredUnused = filteredUnused;
 exports.filterTwo = filterTwo;

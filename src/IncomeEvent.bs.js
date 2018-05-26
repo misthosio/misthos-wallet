@@ -2,34 +2,8 @@
 'use strict';
 
 var Belt_Id = require("bs-platform/lib/js/belt_Id.js");
-var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
-var Json_decode = require("bs-json/src/Json_decode.js");
-var Json_encode = require("bs-json/src/Json_encode.js");
 var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
-
-function encode($$event) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "txId",
-                $$event[/* txId */0]
-              ],
-              /* :: */[
-                /* tuple */[
-                  "txOutputN",
-                  $$event[/* txOutputN */1]
-                ],
-                /* [] */0
-              ]
-            ]);
-}
-
-function decode(raw) {
-  return /* record */[
-          /* txId */Json_decode.field("txId", Json_decode.string, raw),
-          /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw)
-        ];
-}
 
 function cmp(param, param$1) {
   var c = Caml_primitive.caml_string_compare(param[/* txId */0], param$1[/* txId */0]);
@@ -44,10 +18,6 @@ var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
 
 function inputSet() {
   return Belt_Set.make(TxInputCmp);
-}
-
-function inputMap() {
-  return Belt_Map.make(TxInputCmp);
 }
 
 var itemsArray = /* array */[
@@ -133,10 +103,7 @@ var itemsArray = /* array */[
   ]
 ];
 
-exports.encode = encode;
-exports.decode = decode;
 exports.TxInputCmp = TxInputCmp;
 exports.inputSet = inputSet;
-exports.inputMap = inputMap;
 exports.itemsArray = itemsArray;
 /* TxInputCmp Not a pure module */
