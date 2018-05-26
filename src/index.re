@@ -15,9 +15,7 @@ let filterOne = set =>
 
 let text = ReasonReact.string;
 
-let unused =
-  Item.itemsArray
-  |. Array.reduce(Item.itemSet(), (unused, item) => unused |. Set.add(item));
+let unused = Item.itemsArray |> Set.mergeMany(Item.itemSet());
 
 let filteredUnused = filterOne(unused);
 
@@ -36,6 +34,8 @@ let countInputs = set =>
      );
 
 ReactDOMRe.renderToElementWithId(
-  text("less deps " ++ string_of_int(countInputs(unusedAfter)) ++ " yup"),
+  text(
+    "with merge many " ++ string_of_int(countInputs(unusedAfter)) ++ " yup",
+  ),
   "root",
 );

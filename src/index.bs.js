@@ -16,7 +16,7 @@ function text(prim) {
   return prim;
 }
 
-var unused = Belt_Array.reduce(Item.itemsArray, Item.itemSet(/* () */0), Belt_Set.add);
+var unused = Belt_Set.mergeMany(Item.itemSet(/* () */0), Item.itemsArray);
 
 var filteredUnused = filterOne(unused);
 
@@ -37,7 +37,7 @@ function countInputs(set) {
               }));
 }
 
-ReactDOMRe.renderToElementWithId("less deps " + (String(countInputs(unusedAfter)) + " yup"), "root");
+ReactDOMRe.renderToElementWithId("with merge many " + (String(countInputs(unusedAfter)) + " yup"), "root");
 
 exports.filterOne = filterOne;
 exports.text = text;
