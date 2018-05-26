@@ -58,6 +58,7 @@ let updateState =
         inputs: {btcAmount, recipientAddress},
       } as state,
     ) => {
+  Js.log("CreatePayoutModal update state");
   let (recipientAddress, inputDestination, addressValid) =
     if (recipientAddress |> viewData.isAddressValid) {
       (recipientAddress, recipientAddress, true);
