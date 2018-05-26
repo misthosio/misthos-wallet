@@ -184,21 +184,28 @@ let make =
         <g fill="none" fillRule="evenodd" transform="translate(1 1)">
           <circle cx="21" cy="21" r="21" stroke="#000" />
           <circle cx="21" cy="21" r="18" fill="url(#a)" />
+          (
+            if (index < activeStep) {
+              <polyline
+                fill="none"
+                stroke="#000"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                points="16 0 5 11 0 6"
+                transform="translate(12 16)"
+              />;
+            } else {
+              <text
+                className=Styles.stepIconText
+                x="21"
+                y="27"
+                textAnchor="middle">
+                (index + 1 |> string_of_int |> text)
+              </text>;
+            }
+          )
         </g>
-        (
-          if (index < activeStep) {
-            /* TODO replace with checkmark icon */
-            <text
-              className=Styles.stepIconText x="22" y="28" textAnchor="middle">
-              ("Done" |> text)
-            </text>;
-          } else {
-            <text
-              className=Styles.stepIconText x="22" y="28" textAnchor="middle">
-              (index + 1 |> string_of_int |> text)
-            </text>;
-          }
-        )
       </svg>;
     <Body2
       titles=["Add a partner", "Remove a partner"]
