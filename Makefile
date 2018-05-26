@@ -19,7 +19,6 @@ bsb:
 
 build:
 	rm -rf ./node_modules/uri-js/dist/esnext
-	rm -rf build
 	yarn build
 
 bsb-once:

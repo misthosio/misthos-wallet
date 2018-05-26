@@ -9,11 +9,6 @@
       "dir": "src",
       "subdirs": true
     },
-    {
-      "dir": "__tests__",
-      "subdirs": true,
-      "type": "dev"
-    }
   ],
   "bs-dependencies": [
     "reason-react",

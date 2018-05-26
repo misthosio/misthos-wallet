@@ -6,11 +6,9 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Network = require("../application/wallet/Network.bs.js");
-var Venture = require("../application/Venture.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
 var IncomeLog = require("./IncomeLog.bs.js");
-var ViewModel = require("../view/model/ViewModel.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -54,14 +52,11 @@ var threeUserSessionsArray = /* array */[
 
 var scenarioSession = Belt_Array.getExn(threeUserSessionsArray, 0);
 
-var eventLog = Venture.getEventLog(Venture.reconstruct(scenarioSession, Curry._1(EventLog.decode, Json.parseOrRaise(IncomeLog.log)))[0]);
-
-var viewModel = Curry._1(ViewModel.init(PrimitiveTypes.UserId[/* fromString */1]("misthosio.id")), eventLog);
+var eventLog = Curry._1(EventLog.decode, Json.parseOrRaise(IncomeLog.log));
 
 exports.userSession = userSession;
 exports.threeUserSessions = threeUserSessions;
 exports.threeUserSessionsArray = threeUserSessionsArray;
 exports.scenarioSession = scenarioSession;
 exports.eventLog = eventLog;
-exports.viewModel = viewModel;
 /* keyA Not a pure module */

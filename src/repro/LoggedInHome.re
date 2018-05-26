@@ -1,19 +1,12 @@
-include ViewCommon;
-
 open Belt;
 
 open PrimitiveTypes;
 
 open WalletTypes;
 
-let component = ReasonReact.statelessComponent("LoggedInHome");
+let text = ReasonReact.string;
 
-let mandatoryInputs =
-  IncomeVenture.viewModel.walletInfoCollector
-  |> WalletInfoCollector.nonReservedOldInputs(
-       AccountIndex.default,
-       UserId.fromString("misthosio.id"),
-     );
+let component = ReasonReact.statelessComponent("LoggedInHome");
 
 let reproWalletCollector =
   IncomeVenture.eventLog
@@ -29,8 +22,6 @@ let mandatoryInputs =
        AccountIndex.default,
        UserId.fromString("misthosio.id"),
      );
-
-let defaultFee = BTC.fromSatoshis(100L);
 
 let keepTx = ({txId}: Network.txInput) =>
   txId != "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
@@ -48,13 +39,13 @@ let afterInputsCount =
          res + 1 : res
      );
 
-let make = (~index, _children) => {
+let make = _children => {
   ...component,
   render: (_) =>
     <div>
       (
         text(
-          "there are  repro "
+          "there are event log"
           ++ string_of_int(afterInputsCount)
           ++ " identical things",
         )

@@ -46,13 +46,4 @@ let threeUserSessionsArray = {
 
 let scenarioSession = threeUserSessionsArray |. Array.getExn(0);
 
-let eventLog =
-  IncomeLog.log
-  |> Json.parseOrRaise
-  |> EventLog.decode
-  |> Venture.reconstruct(scenarioSession)
-  |> fst
-  |> Venture.getEventLog;
-
-let viewModel =
-  eventLog |> ViewModel.init(UserId.fromString("misthosio.id"));
+let eventLog = IncomeLog.log |> Json.parseOrRaise |> EventLog.decode;
