@@ -273,21 +273,31 @@ function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, 
 }
 
 function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddress, network) {
-  console.log("mandatory inputs before:", Belt_Set.toArray(mandatoryInputs));
-  var mandatoryInputs$1 = Belt_Set.keep(mandatoryInputs, (function (param) {
-          return TransactionFee.canPayForItself(satsPerByte, param);
+  var mandatoryInputs$1 = Belt_Set.reduce(Belt_Set.keep(mandatoryInputs, (function (param) {
+              return TransactionFee.canPayForItself(satsPerByte, param);
+            })), Network.inputSet(/* () */0), (function (res, input) {
+          var out1 = input[/* txOutputN */1];
+          var id1 = input[/* txId */0];
+          var match = Belt_Set.some(res, (function (param) {
+                  if (id1 === param[/* txId */0]) {
+                    return out1 === param[/* txOutputN */1];
+                  } else {
+                    return false;
+                  }
+                }));
+          if (match) {
+            return res;
+          } else {
+            return Belt_Set.add(res, input);
+          }
         }));
-  console.log("mandatory inputs inbetween:", Belt_Set.toArray(mandatoryInputs$1));
   var allInputs$1 = List.sort((function (i1, i2) {
           return i1[/* value */3].comparedTo(i2[/* value */3]);
         }), Belt_Set.toList(Belt_Set.diff(Belt_Set.keep(allInputs, (function (param) {
                       return TransactionFee.canPayForItself(satsPerByte, param);
                     })), mandatoryInputs$1)));
-  console.log("mandatory inputs:", Belt_Set.toArray(mandatoryInputs$1));
-  console.log("all inputs", Belt_List.toArray(allInputs$1));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   var usedInputs = List.map((function (i) {
-          console.log("adding input: ", Network.encodeInput(i));
           return /* tuple */[
                   txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                   i
@@ -312,7 +322,6 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             }), usedInputs), satsPerByte, Network.bitcoinNetwork(network));
   if (currentInputValue.gte(outTotal.plus(currentFee))) {
     var withChange = addChangeOutput(currentInputValue, outTotal, currentFee, changeAddress, satsPerByte, network, txB);
-    console.log("payout transaction complete branch 1");
     return /* record */[
             /* txHex */txB.buildIncomplete().toHex(),
             /* usedInputs */$$Array.map((function (param) {
@@ -327,7 +336,6 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
     if (match[1]) {
       var match$1 = List.fold_left((function (param, i) {
-              console.log("adding input 2: ", Network.encodeInput(i));
               return /* tuple */[
                       param[0].plus(i[/* value */3]),
                       param[1].plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
@@ -345,7 +353,6 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             usedInputs
           ], match[0]);
       var withChange$1 = addChangeOutput(match$1[0], outTotal, match$1[1], changeAddress, satsPerByte, network, txB);
-      console.log("payout transaction complete branch 2");
       return /* record */[
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */$$Array.map((function (param) {
@@ -357,7 +364,6 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
               /* changeAddress */withChange$1 ? /* Some */[changeAddress] : /* None */0
             ];
     } else {
-      console.log("payout transaction complete branch 3");
       throw NotEnoughFunds;
     }
   }

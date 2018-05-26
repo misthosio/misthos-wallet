@@ -332,10 +332,18 @@ let build =
       ~changeAddress: Address.t,
       ~network,
     ) => {
-  Js.log2("mandatory inputs before:", mandatoryInputs |> Belt.Set.toArray);
   let mandatoryInputs =
-    mandatoryInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
-  Js.log2("mandatory inputs inbetween:", mandatoryInputs |> Belt.Set.toArray);
+    mandatoryInputs
+    |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
+    |. Belt.Set.reduce(
+         Network.inputSet(),
+         (res, {txId: id1, txOutputN: out1} as input: Network.txInput) =>
+         res
+         |. Belt.Set.some(({txId: id2, txOutputN: out2}: Network.txInput) =>
+              id1 == id2 && out1 == out2
+            ) ?
+           res : res |. Belt.Set.add(input)
+       );
   let allInputs =
     allInputs
     |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
@@ -344,16 +352,13 @@ let build =
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
        );
-  Js.log2("mandatory inputs:", mandatoryInputs |> Belt.Set.toArray);
-  Js.log2("all inputs", allInputs |> Belt.List.toArray);
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
   let usedInputs =
     mandatoryInputs
     |> Belt.Set.toList
-    |> List.map((i: input) => {
-         Js.log2("adding input: ", Network.encodeInput(i));
-         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i);
-       });
+    |> List.map((i: input) =>
+         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
+       );
   let outTotalWithoutFee =
     destinations
     |> List.fold_left(
@@ -399,7 +404,6 @@ let build =
         ~network,
         ~txBuilder=txB,
       );
-    Js.log("payout transaction complete branch 1");
     {
       usedInputs:
         usedInputs
@@ -424,20 +428,17 @@ let build =
       let (currentInputValue, currentFee, usedInputs) =
         inputs
         |> List.fold_left(
-             ((inV, feeV, usedInputs), i: input) => {
-               Js.log2("adding input 2: ", Network.encodeInput(i));
-               (
-                 inV |> BTC.plus(i.value),
-                 feeV
-                 |> BTC.plus(
-                      Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
-                    ),
-                 [
-                   (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
-                   ...usedInputs,
-                 ],
-               );
-             },
+             ((inV, feeV, usedInputs), i: input) => (
+               inV |> BTC.plus(i.value),
+               feeV
+               |> BTC.plus(
+                    Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
+                  ),
+               [
+                 (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
+                 ...usedInputs,
+               ],
+             ),
              (currentInputValue, currentFee, usedInputs),
            );
       let withChange =
@@ -450,7 +451,6 @@ let build =
           ~network,
           ~txBuilder=txB,
         );
-      Js.log("payout transaction complete branch 2");
       {
         usedInputs:
           usedInputs
@@ -464,7 +464,6 @@ let build =
         changeAddress: withChange ? Some(changeAddress) : None,
       };
     } else {
-      Js.log("payout transaction complete branch 3");
       raise(NotEnoughFunds);
     };
   };

@@ -93,10 +93,6 @@ module CreatePayoutView = {
            AccountIndex.default,
            localUser,
          );
-    Js.log2(
-      "getting mandatory inputs in view model",
-      mandatoryInputs |> Belt.Set.toArray,
-    );
     {
       ventureId,
       balance,
