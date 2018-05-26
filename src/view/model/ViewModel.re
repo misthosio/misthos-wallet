@@ -128,20 +128,23 @@ module CreatePayoutView = {
         ),
       summary: (destinations, fee) => {
         Js.log("ViewModel summary");
-        PayoutTransaction.build(
-          ~mandatoryInputs,
-          ~allInputs,
-          ~destinations,
-          ~satsPerByte=fee,
-          ~changeAddress=
-            walletInfoCollector
-            |> WalletInfoCollector.nextChangeAddress(
-                 AccountIndex.default,
-                 localUser,
-               ),
-          ~network,
-        )
-        |> PayoutTransaction.summary(network);
+        let ret =
+          PayoutTransaction.build(
+            ~mandatoryInputs,
+            ~allInputs,
+            ~destinations,
+            ~satsPerByte=fee,
+            ~changeAddress=
+              walletInfoCollector
+              |> WalletInfoCollector.nextChangeAddress(
+                   AccountIndex.default,
+                   localUser,
+                 ),
+            ~network,
+          )
+          |> PayoutTransaction.summary(network);
+        Js.log("ViewModel summary ret");
+        ret;
       },
     };
   };

@@ -348,9 +348,10 @@ let build =
   let usedInputs =
     mandatoryInputs
     |> Belt.Set.toList
-    |> List.map((i: input) =>
-         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
-       );
+    |> List.map((i: input) => {
+         Js.log2("adding input: ", Network.encodeInput(i));
+         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i);
+       });
   let outTotalWithoutFee =
     destinations
     |> List.fold_left(
@@ -396,6 +397,7 @@ let build =
         ~network,
         ~txBuilder=txB,
       );
+    Js.log("payout transaction complete branch 1");
     {
       usedInputs:
         usedInputs
@@ -420,17 +422,20 @@ let build =
       let (currentInputValue, currentFee, usedInputs) =
         inputs
         |> List.fold_left(
-             ((inV, feeV, usedInputs), i: input) => (
-               inV |> BTC.plus(i.value),
-               feeV
-               |> BTC.plus(
-                    Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
-                  ),
-               [
-                 (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
-                 ...usedInputs,
-               ],
-             ),
+             ((inV, feeV, usedInputs), i: input) => {
+               Js.log2("adding input 2: ", Network.encodeInput(i));
+               (
+                 inV |> BTC.plus(i.value),
+                 feeV
+                 |> BTC.plus(
+                      Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
+                    ),
+                 [
+                   (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
+                   ...usedInputs,
+                 ],
+               );
+             },
              (currentInputValue, currentFee, usedInputs),
            );
       let withChange =
@@ -443,6 +448,7 @@ let build =
           ~network,
           ~txBuilder=txB,
         );
+      Js.log("payout transaction complete branch 2");
       {
         usedInputs:
           usedInputs
@@ -456,6 +462,7 @@ let build =
         changeAddress: withChange ? Some(changeAddress) : None,
       };
     } else {
+      Js.log("payout transaction complete branch 3");
       raise(NotEnoughFunds);
     };
   };

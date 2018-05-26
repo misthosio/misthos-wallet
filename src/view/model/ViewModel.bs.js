@@ -102,7 +102,9 @@ function fromViewModelState$2(param) {
             }),
           /* summary */(function (destinations, fee) {
               console.log("ViewModel summary");
-              return PayoutTransaction.summary(network, PayoutTransaction.build(mandatoryInputs, allInputs, destinations, fee, WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector), network));
+              var ret = PayoutTransaction.summary(network, PayoutTransaction.build(mandatoryInputs, allInputs, destinations, fee, WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector), network));
+              console.log("ViewModel summary ret");
+              return ret;
             })
         ];
 }

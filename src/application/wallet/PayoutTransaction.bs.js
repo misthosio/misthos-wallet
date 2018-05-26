@@ -285,6 +285,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
   console.log("all inputs", Belt_List.toArray(allInputs$1));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   var usedInputs = List.map((function (i) {
+          console.log("adding input: ", Network.encodeInput(i));
           return /* tuple */[
                   txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                   i
@@ -309,6 +310,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             }), usedInputs), satsPerByte, Network.bitcoinNetwork(network));
   if (currentInputValue.gte(outTotal.plus(currentFee))) {
     var withChange = addChangeOutput(currentInputValue, outTotal, currentFee, changeAddress, satsPerByte, network, txB);
+    console.log("payout transaction complete branch 1");
     return /* record */[
             /* txHex */txB.buildIncomplete().toHex(),
             /* usedInputs */$$Array.map((function (param) {
@@ -323,6 +325,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
     if (match[1]) {
       var match$1 = List.fold_left((function (param, i) {
+              console.log("adding input 2: ", Network.encodeInput(i));
               return /* tuple */[
                       param[0].plus(i[/* value */3]),
                       param[1].plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
@@ -340,6 +343,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             usedInputs
           ], match[0]);
       var withChange$1 = addChangeOutput(match$1[0], outTotal, match$1[1], changeAddress, satsPerByte, network, txB);
+      console.log("payout transaction complete branch 2");
       return /* record */[
               /* txHex */txB.buildIncomplete().toHex(),
               /* usedInputs */$$Array.map((function (param) {
@@ -351,6 +355,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
               /* changeAddress */withChange$1 ? /* Some */[changeAddress] : /* None */0
             ];
     } else {
+      console.log("payout transaction complete branch 3");
       throw NotEnoughFunds;
     }
   }
