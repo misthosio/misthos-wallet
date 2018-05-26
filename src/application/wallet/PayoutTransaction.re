@@ -333,17 +333,7 @@ let build =
       ~network,
     ) => {
   let mandatoryInputs =
-    mandatoryInputs
-    |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
-    |. Belt.Set.reduce(
-         Network.inputSet(),
-         (res, {txId: id1, txOutputN: out1} as input: Network.txInput) =>
-         res
-         |. Belt.Set.some(({txId: id2, txOutputN: out2}: Network.txInput) =>
-              id1 == id2 && out1 == out2
-            ) ?
-           res : res |. Belt.Set.add(input)
-       );
+    mandatoryInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
   let allInputs =
     allInputs
     |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
