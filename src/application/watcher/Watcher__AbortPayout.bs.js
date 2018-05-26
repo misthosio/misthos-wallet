@@ -50,6 +50,7 @@ function make(proposal, log) {
           (function (self$1, param) {
               var env$1 = self$1[env];
               var $$event = param[/* event */0];
+              var exit = 0;
               switch ($$event.tag | 0) {
                 case 0 : 
                     self$1[systemIssuer][0] = $$event[0][/* systemIssuer */5];
@@ -58,37 +59,37 @@ function make(proposal, log) {
                     var match = $$event[0];
                     self$1[payoutProcesses][0] = Belt_Map.set(self$1[payoutProcesses][0], match[/* processId */0], Belt_Set.mergeMany(Network.inputSet(/* () */0), match[/* data */2][/* payoutTx */1][/* usedInputs */1]));
                     return /* () */0;
-                case 29 : 
-                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0])) {
-                      self$1[result][0] = /* None */0;
-                      self$1[completed][0] = true;
-                      return /* () */0;
-                    } else {
-                      return /* () */0;
-                    }
-                case 33 : 
+                case 32 : 
                     var broadcastProcess = $$event[0][/* processId */0];
-                    if (PrimitiveTypes.ProcessId[/* eq */5](broadcastProcess, env$1[0])) {
-                      self$1[result][0] = /* None */0;
-                      self$1[completed][0] = true;
-                      return /* () */0;
-                    } else {
-                      var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], broadcastProcess);
-                      if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, env$1[2])) > 0) {
-                        self$1[result][0] = /* Some */[/* tuple */[
-                            self$1[systemIssuer][0],
-                            /* PayoutAborted */Block.__(29, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[1])])
-                          ]];
-                      }
-                      self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
-                      return /* () */0;
+                    var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], broadcastProcess);
+                    if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, env$1[2])) > 0) {
+                      self$1[result][0] = /* Some */[/* tuple */[
+                          self$1[systemIssuer][0],
+                          /* PayoutAborted */Block.__(29, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[1])])
+                        ]];
                     }
+                    self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
+                    return /* () */0;
+                case 29 : 
+                case 33 : 
+                    exit = 1;
+                    break;
                 case 35 : 
                     self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], $$event[0][/* processId */0]);
                     return /* () */0;
                 default:
                   return /* () */0;
               }
+              if (exit === 1) {
+                if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0])) {
+                  self$1[result][0] = /* None */0;
+                  self$1[completed][0] = true;
+                  return /* () */0;
+                } else {
+                  return /* () */0;
+                }
+              }
+              
             }),
           processCompleted,
           (function (self$1, _) {
