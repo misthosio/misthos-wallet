@@ -11,7 +11,6 @@ open Address;
 type t = {
   network: Network.t,
   unused: Network.inputSet,
-  reserved: Network.inputMap(ProcessId.set),
   keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
   activatedKeyChain:
@@ -56,28 +55,11 @@ let nonReservedOldInputs = ({unused}) => {
 let make = () => {
   network: Regtest,
   unused: Network.inputSet(),
-  reserved: Network.inputMap(),
   keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
   activatedKeyChain: [],
   exposedCoordinates: [],
 };
-
-let removeInputsFromReserved = (processId, inputs, reserved) =>
-  inputs
-  |. Array.reduceU(reserved, (. lookup, input) =>
-       lookup
-       |. Map.updateU(
-            input,
-            (. processes) => {
-              let processes =
-                processes
-                |> Js.Option.getWithDefault(ProcessId.emptySet)
-                |. Set.remove(processId);
-              processes |. Set.isEmpty ? None : Some(processes);
-            },
-          )
-     );
 
 let apply = (event, state) =>
   switch (event) {
@@ -133,65 +115,15 @@ let apply = (event, state) =>
              nPubKeys: keyChain.custodianKeyChains |> List.length,
            }),
     };
-  | PayoutProposed({
-      data: {payoutTx: {usedInputs, changeAddress} as payoutTx},
-      processId,
-    }) => {
+  | PayoutProposed({data: {payoutTx}, processId}) => {
       ...state,
-      reserved:
-        usedInputs
-        |. Array.reduceU(state.reserved, (. lookup, input) =>
-             lookup
-             |. Map.updateU(input, (. processes) =>
-                  Some(
-                    processes
-                    |> Js.Option.getWithDefault(ProcessId.emptySet)
-                    |. Set.add(processId),
-                  )
-                )
-           ),
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
-      exposedCoordinates:
-        switch (changeAddress) {
-        | None => state.exposedCoordinates
-        | Some(changeAddress) => [
-            changeAddress.coordinates,
-            ...state.exposedCoordinates,
-          ]
-        },
     }
-  | PayoutDenied({processId}) =>
-    let payoutTx: PayoutTransaction.t =
-      state.payoutProcesses |. Map.getExn(processId);
-    let reserved =
-      removeInputsFromReserved(
-        processId,
-        payoutTx.usedInputs,
-        state.reserved,
-      );
-    {...state, reserved};
-  | PayoutAborted({processId}) =>
-    let payoutTx: PayoutTransaction.t =
-      state.payoutProcesses |. Map.getExn(processId);
-    let reserved =
-      removeInputsFromReserved(
-        processId,
-        payoutTx.usedInputs,
-        state.reserved,
-      );
-    {...state, reserved};
   | PayoutBroadcast({processId, txId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
-    let reserved =
-      removeInputsFromReserved(
-        processId,
-        payoutTx.usedInputs,
-        state.reserved,
-      );
     {
       ...state,
-      reserved,
       unused:
         (
           switch (
@@ -204,15 +136,5 @@ let apply = (event, state) =>
         )
         |. Set.removeMany(payoutTx.usedInputs),
     };
-  | PayoutBroadcastFailed({processId}) =>
-    let payoutTx: PayoutTransaction.t =
-      state.payoutProcesses |. Map.getExn(processId);
-    let reserved =
-      removeInputsFromReserved(
-        processId,
-        payoutTx.usedInputs,
-        state.reserved,
-      );
-    {...state, reserved};
   | _ => state
   };
