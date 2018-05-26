@@ -2,11 +2,8 @@
 'use strict';
 
 var Json = require("bs-json/src/Json.js");
-var Curry = require("bs-platform/lib/js/curry.js");
 var Income = require("./repro/Income.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
-var EventLog = require("./application/events/EventLog.bs.js");
-var IncomeLog = require("./repro/IncomeLog.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
 var IncomeEvent = require("./repro/IncomeEvent.bs.js");
@@ -17,9 +14,9 @@ function text(prim) {
   return prim;
 }
 
-var eventLog = Curry._1(EventLog.decode, Json.parseOrRaise(IncomeLog.log));
-
 var smallLog = Json_decode.array(IncomeEvent.decode, Json.parseOrRaise(Income.income));
+
+IncomeEvent.inputSet(/* () */0);
 
 var reproWalletCollector = Belt_Array.reduce(smallLog, ReproWalletCollector.make(/* () */0), (function (res, income) {
         return ReproWalletCollector.apply(income, res);
@@ -64,10 +61,9 @@ console.log(before, middle, after);
 
 console.log(countInputs(afterUnused), countInputs(afterInputs));
 
-ReactDOMRe.renderToElementWithId("decode small log " + (String(countInputs(afterUnused)) + " yup"), "root");
+ReactDOMRe.renderToElementWithId("remove a lot " + (String(countInputs(afterUnused)) + " yup"), "root");
 
 exports.text = text;
-exports.eventLog = eventLog;
 exports.smallLog = smallLog;
 exports.reproWalletCollector = reproWalletCollector;
 exports.unused = unused;
@@ -79,4 +75,4 @@ exports.afterInputs = afterInputs;
 exports.countInputs = countInputs;
 exports.middle = middle;
 exports.after = after;
-/* eventLog Not a pure module */
+/* smallLog Not a pure module */

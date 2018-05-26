@@ -1,25 +1,18 @@
 open Belt;
 
-open PrimitiveTypes;
-
-open Event;
-
-type t = {
-  unused: Network.inputSet,
-  payoutProcesses: ProcessId.map(PayoutTransaction.t),
-};
+type t = {unused: IncomeEvent.inputSet};
 
 let inputs =
   Inputs.inputs
   |> Json.parseOrRaise
-  |> Json.Decode.array(Network.decodeInput)
-  |> Set.mergeMany(Network.inputSet());
+  |> Json.Decode.array(IncomeEvent.decodeInput)
+  |> Set.mergeMany(IncomeEvent.inputSet());
 
 let nonReservedOldInputs = ({unused}) => {
   Js.log2("eq before?", Set.eq(unused, inputs));
   (
     unused
-    |. Belt.Set.keepU((. i: Network.txInput) =>
+    |. Belt.Set.keepU((. i: IncomeEvent.txInput) =>
          if (i.txId
              == "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b"
              ||
@@ -30,7 +23,7 @@ let nonReservedOldInputs = ({unused}) => {
          }
        ),
     inputs
-    |. Belt.Set.keepU((. i: Network.txInput) =>
+    |. Belt.Set.keepU((. i: IncomeEvent.txInput) =>
          if (i.txId
              == "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b"
              ||
@@ -43,21 +36,11 @@ let nonReservedOldInputs = ({unused}) => {
   );
 };
 
-let make = () => {
-  unused: Network.inputSet(),
-  payoutProcesses: ProcessId.makeMap(),
-};
+let make = () => {unused: IncomeEvent.inputSet()};
 
-let apply = ({address, txId, txOutputN, amount}: IncomeEvent.t, state) => {
+let apply = ({address, txId, txOutputN}: IncomeEvent.t, state) => {
   ...state,
   unused:
     state.unused
-    |. Set.add({
-         txId,
-         txOutputN,
-         address,
-         value: amount,
-         nCoSigners: 2,
-         nPubKeys: 3,
-       }),
+    |. Set.add({txId, txOutputN, address, nCoSigners: 2, nPubKeys: 3}),
 };

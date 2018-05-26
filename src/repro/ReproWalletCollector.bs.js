@@ -3,12 +3,11 @@
 
 var Json = require("bs-json/src/Json.js");
 var Inputs = require("./Inputs.bs.js");
-var Network = require("../application/wallet/Network.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
+var IncomeEvent = require("./IncomeEvent.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
-var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
-var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), Json_decode.array(Network.decodeInput, Json.parseOrRaise(Inputs.inputs)));
+var inputs = Belt_Set.mergeMany(IncomeEvent.inputSet(/* () */0), Json_decode.array(IncomeEvent.decodeInput, Json.parseOrRaise(Inputs.inputs)));
 
 function nonReservedOldInputs(param) {
   var unused = param[/* unused */0];
@@ -24,24 +23,17 @@ function nonReservedOldInputs(param) {
 }
 
 function make() {
-  return /* record */[
-          /* unused */Network.inputSet(/* () */0),
-          /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0)
-        ];
+  return /* record */[/* unused */IncomeEvent.inputSet(/* () */0)];
 }
 
 function apply(param, state) {
-  return /* record */[
-          /* unused */Belt_Set.add(state[/* unused */0], /* record */[
-                /* txId */param[/* txId */2],
-                /* txOutputN */param[/* txOutputN */3],
+  return /* record */[/* unused */Belt_Set.add(state[/* unused */0], /* record */[
+                /* txId */param[/* txId */1],
+                /* txOutputN */param[/* txOutputN */2],
                 /* address */param[/* address */0],
-                /* value */param[/* amount */4],
                 /* nCoSigners */2,
                 /* nPubKeys */3
-              ]),
-          /* payoutProcesses */state[/* payoutProcesses */1]
-        ];
+              ])];
 }
 
 exports.inputs = inputs;
