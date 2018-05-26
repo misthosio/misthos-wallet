@@ -17,9 +17,10 @@ let mandatoryInputs =
 
 let defaultFee = BTC.fromSatoshis(100L);
 
-let afterInputs =
-  mandatoryInputs
-  |. Belt.Set.keep(TransactionFee.canPayForItself(defaultFee));
+let keepTx = ({txId}: Network.txInput) =>
+  txId != "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
+
+let afterInputs = mandatoryInputs |. Belt.Set.keep(keepTx);
 
 Js.log2(mandatoryInputs, afterInputs);
 

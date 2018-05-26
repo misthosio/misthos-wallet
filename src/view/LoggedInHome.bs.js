@@ -2,7 +2,6 @@
 'use strict';
 
 var BTC = require("../application/wallet/BTC.bs.js");
-var Body2 = require("./components/Body2.bs.js");
 var React = require("react");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
@@ -11,63 +10,9 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var IncomeVenture = require("../repro/IncomeVenture.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var TransactionFee = require("../application/wallet/TransactionFee.bs.js");
 var WalletInfoCollector = require("../application/wallet/WalletInfoCollector.bs.js");
 
 var component = ReasonReact.statelessComponent("LoggedInHome");
-
-function commands_000() {
-  return /* () */0;
-}
-
-function commands_001() {
-  return /* () */0;
-}
-
-function commands_002() {
-  return /* () */0;
-}
-
-function commands_003() {
-  return /* () */0;
-}
-
-function commands_004() {
-  return /* () */0;
-}
-
-function commands_005() {
-  return /* () */0;
-}
-
-function commands_006() {
-  return /* () */0;
-}
-
-function commands_007(_, _$1, _$2) {
-  return /* () */0;
-}
-
-function commands_008() {
-  return /* () */0;
-}
-
-function commands_009() {
-  return /* () */0;
-}
-
-var commands = /* record */[
-  commands_000,
-  commands_001,
-  commands_002,
-  commands_003,
-  commands_004,
-  commands_005,
-  commands_006,
-  commands_007,
-  commands_008,
-  commands_009
-];
 
 var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], PrimitiveTypes.UserId[/* fromString */1]("misthosio.id"), IncomeVenture.viewModel[/* walletInfoCollector */9]);
 
@@ -76,9 +21,11 @@ var defaultFee = BTC.fromSatoshis(/* int64 */[
       /* lo */100
     ]);
 
-var afterInputs = Belt_Set.keep(mandatoryInputs, (function (param) {
-        return TransactionFee.canPayForItself(defaultFee, param);
-      }));
+function keepTx(param) {
+  return param[/* txId */0] !== "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
+}
+
+var afterInputs = Belt_Set.keep(mandatoryInputs, keepTx);
 
 console.log(mandatoryInputs, afterInputs);
 
@@ -103,10 +50,7 @@ function make(_, _$1) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
-                                "My Ventures",
-                                /* [] */0
-                              ]], React.createElement("div", undefined, ViewCommon.text("there are " + (String(afterInputsCount) + " identical things"))), null, /* array */[]));
+              return React.createElement("div", undefined, ViewCommon.text("there are " + (String(afterInputsCount) + " identical things")));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -123,9 +67,9 @@ var extractString = ViewCommon.extractString;
 exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
-exports.commands = commands;
 exports.mandatoryInputs = mandatoryInputs;
 exports.defaultFee = defaultFee;
+exports.keepTx = keepTx;
 exports.afterInputs = afterInputs;
 exports.afterInputsCount = afterInputsCount;
 exports.make = make;
