@@ -3,60 +3,10 @@
 
 var Json = require("bs-json/src/Json.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Utils = require("../utils/Utils.bs.js");
-var $$String = require("bs-platform/lib/js/string.js");
-var Network = require("../application/wallet/Network.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
-var UserInfo = require("../application/UserInfo.bs.js");
 var IncomeLog = require("./IncomeLog.bs.js");
-var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
-var BitcoinjsLib = require("bitcoinjs-lib");
-var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-
-function userSession(userId, keyPair) {
-  var appPubKey = Utils.publicKeyFromKeyPair(keyPair);
-  var chainCode = Utils.bufFromHex($$String.sub(appPubKey, 0, 64));
-  return /* record */[
-          /* userId */userId,
-          /* appPrivateKey */keyPair.toWIF(),
-          /* issuerKeyPair */keyPair,
-          /* storagePrefix */UserInfo.storagePrefix(appPubKey),
-          /* masterKeyChain */new BitcoinjsLib.HDNode(keyPair, chainCode),
-          /* network : Regtest */0
-        ];
-}
-
-var keyA = BitcoinjsLib.ECPair.fromWIF("cUVTgxrs44T7zVon5dSDicBkBRjyfLwL7RF1RvR7n94ar3HEaLs1", Network.bitcoinNetwork(/* Regtest */0));
-
-var keyB = BitcoinjsLib.ECPair.fromWIF("cPMRPo3fXGehCmFC5QsSFcZmYivsFtLVexxWi22CFwocvndXLqP1", Network.bitcoinNetwork(/* Regtest */0));
-
-var keyC = BitcoinjsLib.ECPair.fromWIF("cPfdeLvhwvAVRRM5wiEWopWviGG65gbxQCHdtFL56PYUJXsTYixf", Network.bitcoinNetwork(/* Regtest */0));
-
-var threeUserSessions_000 = userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"), keyA);
-
-var threeUserSessions_001 = userSession(PrimitiveTypes.UserId[/* fromString */1]("user2"), keyB);
-
-var threeUserSessions_002 = userSession(PrimitiveTypes.UserId[/* fromString */1]("user3"), keyC);
-
-var threeUserSessions = /* tuple */[
-  threeUserSessions_000,
-  threeUserSessions_001,
-  threeUserSessions_002
-];
-
-var threeUserSessionsArray = /* array */[
-  threeUserSessions_000,
-  threeUserSessions_001,
-  threeUserSessions_002
-];
-
-var scenarioSession = Belt_Array.getExn(threeUserSessionsArray, 0);
 
 var eventLog = Curry._1(EventLog.decode, Json.parseOrRaise(IncomeLog.log));
 
-exports.userSession = userSession;
-exports.threeUserSessions = threeUserSessions;
-exports.threeUserSessionsArray = threeUserSessionsArray;
-exports.scenarioSession = scenarioSession;
 exports.eventLog = eventLog;
-/* keyA Not a pure module */
+/* eventLog Not a pure module */
