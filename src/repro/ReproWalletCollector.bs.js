@@ -33,8 +33,7 @@ function make() {
           /* network : Regtest */0,
           /* unused */Network.inputSet(/* () */0),
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
-          /* activatedKeyChain : [] */0,
-          /* exposedCoordinates : [] */0
+          /* activatedKeyChain : [] */0
         ];
 }
 
@@ -45,8 +44,7 @@ function apply($$event, state) {
                 /* network */$$event[0][/* network */6],
                 /* unused */state[/* unused */1],
                 /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain */state[/* activatedKeyChain */3],
-                /* exposedCoordinates */state[/* exposedCoordinates */4]
+                /* activatedKeyChain */state[/* activatedKeyChain */3]
               ];
     case 14 : 
         return /* record */[
@@ -59,8 +57,7 @@ function apply($$event, state) {
                     /* [] */0
                   ],
                   state[/* activatedKeyChain */3]
-                ],
-                /* exposedCoordinates */state[/* exposedCoordinates */4]
+                ]
               ];
     case 25 : 
         var match = $$event[0];
@@ -68,8 +65,7 @@ function apply($$event, state) {
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
                 /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */2], match[/* processId */0], match[/* data */6][/* payoutTx */1]),
-                /* activatedKeyChain */state[/* activatedKeyChain */3],
-                /* exposedCoordinates */state[/* exposedCoordinates */4]
+                /* activatedKeyChain */state[/* activatedKeyChain */3]
               ];
     case 33 : 
         var match$1 = $$event[0];
@@ -79,8 +75,7 @@ function apply($$event, state) {
                 /* network */state[/* network */0],
                 /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */1], match$2[0]) : state[/* unused */1], payoutTx[/* usedInputs */1]),
                 /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain */state[/* activatedKeyChain */3],
-                /* exposedCoordinates */state[/* exposedCoordinates */4]
+                /* activatedKeyChain */state[/* activatedKeyChain */3]
               ];
     case 38 : 
         var match$3 = $$event[0];
@@ -101,18 +96,6 @@ function apply($$event, state) {
                     ]
                   ],
                   Belt_List.removeAssoc(state[/* activatedKeyChain */3], accountIdx, WalletTypes.AccountIndex[/* eq */7])
-                ],
-                /* exposedCoordinates */state[/* exposedCoordinates */4]
-              ];
-    case 39 : 
-        return /* record */[
-                /* network */state[/* network */0],
-                /* unused */state[/* unused */1],
-                /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain */state[/* activatedKeyChain */3],
-                /* exposedCoordinates : :: */[
-                  $$event[0][/* address */1][/* coordinates */2],
-                  state[/* exposedCoordinates */4]
                 ]
               ];
     case 40 : 
@@ -128,8 +111,7 @@ function apply($$event, state) {
                       /* nPubKeys */3
                     ]),
                 /* payoutProcesses */state[/* payoutProcesses */2],
-                /* activatedKeyChain */state[/* activatedKeyChain */3],
-                /* exposedCoordinates */state[/* exposedCoordinates */4]
+                /* activatedKeyChain */state[/* activatedKeyChain */3]
               ];
     default:
       return state;

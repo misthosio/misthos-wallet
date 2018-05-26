@@ -6,15 +6,12 @@ open WalletTypes;
 
 open Event;
 
-open Address;
-
 type t = {
   network: Network.t,
   unused: Network.inputSet,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
   activatedKeyChain:
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
-  exposedCoordinates: list(Address.Coordinates.t),
 };
 
 let inputs =
@@ -56,7 +53,6 @@ let make = () => {
   unused: Network.inputSet(),
   payoutProcesses: ProcessId.makeMap(),
   activatedKeyChain: [],
-  exposedCoordinates: [],
 };
 
 let apply = (event, state) =>
@@ -83,10 +79,6 @@ let apply = (event, state) =>
         ...state.activatedKeyChain
            |. List.removeAssoc(accountIdx, AccountIndex.eq),
       ],
-    }
-  | IncomeAddressExposed(({address: {coordinates}}: IncomeAddressExposed.t)) => {
-      ...state,
-      exposedCoordinates: [coordinates, ...state.exposedCoordinates],
     }
   | IncomeDetected({address, txId, txOutputN, amount}) => {
       ...state,
