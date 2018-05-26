@@ -5,15 +5,39 @@ var BTC = require("../../src/application/wallet/BTC.bs.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
 var Scenarios = require("../helpers/Scenarios.bs.js");
 var ViewModel = require("../../src/view/model/ViewModel.bs.js");
+var CreatePayoutModal = require("../../src/view/CreatePayoutModal.bs.js");
 
 Scenarios.run("income-summary", (function (viewModel) {
         var createPayoutModal = ViewModel.createPayoutModal(viewModel);
-        var balance = createPayoutModal[/* balance */1];
-        return Jest.test("Balance is correct", (function () {
+        Jest.test("Balance is correct", (function () {
+                var balance = createPayoutModal[/* balance */1];
+                return Jest.Expect[/* toEqual */12](BTC.fromSatoshis(/* int64 */[
+                                /* hi */0,
+                                /* lo */50756770
+                              ]), Jest.Expect[/* expect */0](balance[/* currentSpendable */0]));
+              }));
+        return Jest.test("Network fee is set", (function () {
+                      var createPayoutModalState_007 = /* summary */createPayoutModal[/* initialSummary */4];
+                      var createPayoutModalState_008 = /* inputs : record */[
+                        /* recipientAddress */"",
+                        /* btcAmount */"2MvTochgBg25bYVyJwaX6nWM1AThbmaoUHA"
+                      ];
+                      var createPayoutModalState = /* record */[
+                        /* viewData */createPayoutModal,
+                        /* destinations : [] */0,
+                        /* inputDestination */"",
+                        /* inputAmount */BTC.zero,
+                        /* addressValid */true,
+                        /* canSubmitProposal */false,
+                        /* frozen */false,
+                        createPayoutModalState_007,
+                        createPayoutModalState_008
+                      ];
+                      var updatedState = CreatePayoutModal.updateState(createPayoutModalState);
                       return Jest.Expect[/* toEqual */12](BTC.fromSatoshis(/* int64 */[
                                       /* hi */0,
-                                      /* lo */50756770
-                                    ]), Jest.Expect[/* expect */0](balance[/* currentSpendable */0]));
+                                      /* lo */184650
+                                    ]), Jest.Expect[/* expect */0](updatedState[/* summary */7][/* networkFee */4]));
                     }));
       }));
 
