@@ -1,9 +1,5 @@
 open Belt;
 
-open PrimitiveTypes;
-
-open WalletTypes;
-
 let text = ReasonReact.string;
 
 let reproWalletCollector =
@@ -14,18 +10,19 @@ let reproWalletCollector =
        ReproWalletCollector.make(),
      );
 
-let mandatoryInputs =
-  reproWalletCollector |> ReproWalletCollector.nonReservedOldInputs
+let (unused, inputs) =
+  reproWalletCollector |> ReproWalletCollector.nonReservedOldInputs;
 
 let keepTx = ({txId}: Network.txInput) =>
   txId != "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
 
-let afterInputs = mandatoryInputs |. Belt.Set.keep(keepTx);
-
-Js.log2(mandatoryInputs, afterInputs);
+let (afterUnused, afterInputs) = (
+  unused |. Belt.Set.keep(keepTx),
+  inputs |. Belt.Set.keep(keepTx),
+);
 
 let afterInputsCount =
-  afterInputs
+  afterUnused
   |> Set.toArray
   |. Array.reduce(0, (res, {txId}: Network.txInput) =>
        txId
@@ -33,9 +30,19 @@ let afterInputsCount =
          res + 1 : res
      );
 
+let inputs =
+  Inputs.inputs
+  |> Json.parseOrRaise
+  |> Json.Decode.array(Network.decodeInput)
+  |> Set.mergeMany(Network.inputSet());
+
+let before = Set.eq(unused, inputs);
+
+let after = Set.eq(afterUnused, afterInputs);
+
 ReactDOMRe.renderToElementWithId(
   text(
-    "there are unused direct "
+    "there are afterInputsCount "
     ++ string_of_int(afterInputsCount)
     ++ " identical things",
   ),
