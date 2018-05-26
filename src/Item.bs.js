@@ -14,10 +14,10 @@ function cmp(param, param$1) {
   }
 }
 
-var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
+var ItemCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
 
-function inputSet() {
-  return Belt_Set.make(TxInputCmp);
+function itemSet() {
+  return Belt_Set.make(ItemCmp);
 }
 
 var itemsArray = /* array */[
@@ -103,7 +103,7 @@ var itemsArray = /* array */[
   ]
 ];
 
-exports.TxInputCmp = TxInputCmp;
-exports.inputSet = inputSet;
+exports.ItemCmp = ItemCmp;
+exports.itemSet = itemSet;
 exports.itemsArray = itemsArray;
-/* TxInputCmp Not a pure module */
+/* ItemCmp Not a pure module */

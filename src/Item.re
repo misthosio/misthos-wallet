@@ -3,7 +3,7 @@ type t = {
   txOutputN: int,
 };
 
-module TxInputCmp =
+module ItemCmp =
   Belt.Id.MakeComparableU(
     {
       type nonrec t = t;
@@ -19,9 +19,9 @@ module TxInputCmp =
     },
   );
 
-type inputSet = Belt.Set.t(TxInputCmp.t, TxInputCmp.identity);
+type itemSet = Belt.Set.t(ItemCmp.t, ItemCmp.identity);
 
-let inputSet = () => Belt.Set.make(~id=(module TxInputCmp));
+let itemSet = () => Belt.Set.make(~id=(module ItemCmp));
 
 let itemsArray = [|
   {

@@ -1,3 +1,0 @@
-#!/bin/bash
-
-fly -t misthos set-pipeline -p misthos-web -c ci/pipeline.yml
