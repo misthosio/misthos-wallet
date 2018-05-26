@@ -145,17 +145,20 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                     cy: "21",
                                     fill: "url(#a)",
                                     r: "18"
-                                  })), index < activeStep ? React.createElement("text", {
-                                  className: stepIconText,
-                                  textAnchor: "middle",
-                                  x: "22",
-                                  y: "28"
-                                }, ViewCommon.text("Done")) : React.createElement("text", {
-                                  className: stepIconText,
-                                  textAnchor: "middle",
-                                  x: "22",
-                                  y: "28"
-                                }, ViewCommon.text(String(index + 1 | 0))));
+                                  }), index < activeStep ? React.createElement("polyline", {
+                                      fill: "none",
+                                      points: "16 0 5 11 0 6",
+                                      stroke: "#000",
+                                      strokeLinecap: "round",
+                                      strokeLinejoin: "round",
+                                      strokeWidth: "2",
+                                      transform: "translate(12 16)"
+                                    }) : React.createElement("text", {
+                                      className: stepIconText,
+                                      textAnchor: "middle",
+                                      x: "21",
+                                      y: "27"
+                                    }, ViewCommon.text(String(index + 1 | 0)))));
               };
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Add a partner",
