@@ -125,8 +125,7 @@ function apply($$event, state) {
                       /* address */match$4[/* address */0],
                       /* value */match$4[/* amount */4],
                       /* nCoSigners */2,
-                      /* nPubKeys */3,
-                      /* coordinates */match$4[/* coordinates */1]
+                      /* nPubKeys */3
                     ]),
                 /* payoutProcesses */state[/* payoutProcesses */2],
                 /* activatedKeyChain */state[/* activatedKeyChain */3],

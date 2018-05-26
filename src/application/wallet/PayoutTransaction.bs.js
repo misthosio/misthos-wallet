@@ -40,8 +40,7 @@ function txInputForChangeAddress(txId, _, param) {
                         /* address */address[/* displayAddress */5],
                         /* value */match[1],
                         /* nCoSigners */address[/* nCoSigners */0],
-                        /* nPubKeys */address[/* nPubKeys */1],
-                        /* coordinates */address[/* coordinates */2]
+                        /* nPubKeys */address[/* nPubKeys */1]
                       ];
               }), param[/* changeAddress */3]);
 }

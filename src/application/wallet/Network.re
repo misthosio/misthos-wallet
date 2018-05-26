@@ -29,7 +29,6 @@ type txInput = {
   value: BTC.t,
   nCoSigners: int,
   nPubKeys: int,
-  coordinates: Address.Coordinates.t,
 };
 
 module TxInputCmp =
@@ -68,7 +67,6 @@ let encodeInput = input =>
       ("value", BTC.encode(input.value)),
       ("nCoSigners", int(input.nCoSigners)),
       ("nPubKeys", int(input.nPubKeys)),
-      ("coordinates", Address.Coordinates.encode(input.coordinates)),
     ])
   );
 
@@ -80,5 +78,4 @@ let decodeInput = raw =>
     value: raw |> field("value", BTC.decode),
     nCoSigners: raw |> field("nCoSigners", int),
     nPubKeys: raw |> field("nPubKeys", int),
-    coordinates: raw |> field("coordinates", Address.Coordinates.decode),
   };

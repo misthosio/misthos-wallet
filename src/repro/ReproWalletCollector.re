@@ -88,7 +88,7 @@ let apply = (event, state) =>
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
     }
-  | IncomeDetected({address, txId, txOutputN, amount, coordinates}) => {
+  | IncomeDetected({address, txId, txOutputN, amount}) => {
       ...state,
       unused:
         state.unused
@@ -97,7 +97,6 @@ let apply = (event, state) =>
              txOutputN,
              address,
              value: amount,
-             coordinates,
              nCoSigners: 2,
              nPubKeys: 3,
            }),

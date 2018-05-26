@@ -43,7 +43,6 @@ let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
          nCoSigners: address.nCoSigners,
          nPubKeys: address.nPubKeys,
          address: address.displayAddress,
-         coordinates: address.coordinates,
        };
      });
 

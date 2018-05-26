@@ -3,7 +3,6 @@
 
 var BTC = require("./BTC.bs.js");
 var Js_exn = require("bs-platform/lib/js/js_exn.js");
-var Address = require("./Address.bs.js");
 var Belt_Id = require("bs-platform/lib/js/belt_Id.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
@@ -87,13 +86,7 @@ function encodeInput(input) {
                           "nPubKeys",
                           input[/* nPubKeys */5]
                         ],
-                        /* :: */[
-                          /* tuple */[
-                            "coordinates",
-                            Address.Coordinates[/* encode */9](input[/* coordinates */6])
-                          ],
-                          /* [] */0
-                        ]
+                        /* [] */0
                       ]
                     ]
                   ]
@@ -109,8 +102,7 @@ function decodeInput(raw) {
           /* address */Json_decode.field("address", Json_decode.string, raw),
           /* value */Json_decode.field("value", BTC.decode, raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
-          /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw),
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw)
+          /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw)
         ];
 }
 
