@@ -16,10 +16,16 @@ let (unused, inputs) =
 let keepTx = ({txId}: Network.txInput) =>
   txId != "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
 
+let before = Set.eq(unused, inputs);
+
+Js.log2(unused, inputs);
+
 let (afterUnused, afterInputs) = (
   unused |. Belt.Set.keep(keepTx),
   inputs |. Belt.Set.keep(keepTx),
 );
+
+Js.log2(unused, inputs);
 
 let countInputs = set =>
   set
@@ -30,17 +36,11 @@ let countInputs = set =>
          res + 1 : res
      );
 
-let inputs =
-  Inputs.inputs
-  |> Json.parseOrRaise
-  |> Json.Decode.array(Network.decodeInput)
-  |> Set.mergeMany(Network.inputSet());
-
-let before = Set.eq(unused, inputs);
+let middle = Set.eq(unused, inputs);
 
 let after = Set.eq(afterUnused, afterInputs);
 
-Js.log2(before, after);
+Js.log3(before, middle, after);
 
 Js.log2(countInputs(afterUnused), countInputs(afterInputs));
 
