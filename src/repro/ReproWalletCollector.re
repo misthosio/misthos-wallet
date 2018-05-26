@@ -19,15 +19,14 @@ type t = {
   exposedCoordinates: list(Address.Coordinates.t),
 };
 
+let inputs =
+  Inputs.inputs
+  |> Json.parseOrRaise
+  |> Json.Decode.array(Network.decodeInput)
+  |> Set.mergeMany(Network.inputSet());
+
 let unusedInputs = ({unused, reserved}) => {
-  Js.log2("unused", unused |> Set.toArray);
-  Js.log2(
-    "reserved",
-    reserved
-    |> Map.keysToArray
-    |> Set.mergeMany(Network.inputSet())
-    |> Set.toArray,
-  );
+  Js.log2("equal?", Set.eq(unused, inputs));
   Set.diff(
     unused,
     reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),

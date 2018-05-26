@@ -37,10 +37,11 @@ let afterInputsCount =
          res + 1 : res
      );
 
-/* external register_service_worker : unit => unit = "default" [@@bs.module "./registerServiceWorker"]; */
 ReactDOMRe.renderToElementWithId(
   text(
-    "there are bla " ++ string_of_int(afterInputsCount) ++ " identical things",
+    "there are equal "
+    ++ string_of_int(afterInputsCount)
+    ++ " identical things",
   ),
   "root",
 );
