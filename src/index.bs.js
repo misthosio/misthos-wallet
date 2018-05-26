@@ -2,11 +2,11 @@
 'use strict';
 
 var Json = require("bs-json/src/Json.js");
-var Income = require("./repro/Income.bs.js");
+var Income = require("./Income.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
-var IncomeEvent = require("./repro/IncomeEvent.bs.js");
+var IncomeEvent = require("./IncomeEvent.bs.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 
 function filterOne(set) {
