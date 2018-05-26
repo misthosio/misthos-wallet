@@ -21,11 +21,11 @@ var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), Json_decode.array(N
 function unusedInputs(param) {
   var unused = param[/* unused */1];
   console.log("equal?", Belt_Set.eq(unused, inputs));
-  return Belt_Set.diff(unused, Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */2])));
+  return unused;
 }
 
-function nonReservedOldInputs(_, _$1, collector) {
-  return Belt_Set.keepU(unusedInputs(collector), (function (i) {
+function nonReservedOldInputs(param) {
+  return Belt_Set.keepU(param[/* unused */1], (function (i) {
                 return !(i[/* txId */0] === "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b" || i[/* txId */0] === "d029a186f3d3124aca7fdc95d085ce25e0519918bf63ecb32cdfbb1da3268d8c");
               }));
 }

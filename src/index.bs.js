@@ -6,9 +6,7 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("./application/events/EventLog.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ReactDOMRe = require("reason-react/src/ReactDOMRe.js");
-var WalletTypes = require("./application/wallet/WalletTypes.bs.js");
 var IncomeVenture = require("./repro/IncomeVenture.bs.js");
-var PrimitiveTypes = require("./application/PrimitiveTypes.bs.js");
 var ReproWalletCollector = require("./repro/ReproWalletCollector.bs.js");
 
 function text(prim) {
@@ -19,7 +17,7 @@ var reproWalletCollector = Curry._3(EventLog.reduce, (function (res, param) {
         return ReproWalletCollector.apply(param[/* event */0], res);
       }), ReproWalletCollector.make(/* () */0), IncomeVenture.eventLog);
 
-var mandatoryInputs = ReproWalletCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], PrimitiveTypes.UserId[/* fromString */1]("misthosio.id"), reproWalletCollector);
+var mandatoryInputs = ReproWalletCollector.nonReservedOldInputs(reproWalletCollector);
 
 function keepTx(param) {
   return param[/* txId */0] !== "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
@@ -38,7 +36,7 @@ var afterInputsCount = Belt_Array.reduce(Belt_Set.toArray(afterInputs), 0, (func
         }
       }));
 
-ReactDOMRe.renderToElementWithId("there are equal " + (String(afterInputsCount) + " identical things"), "root");
+ReactDOMRe.renderToElementWithId("there are unused direct " + (String(afterInputsCount) + " identical things"), "root");
 
 exports.text = text;
 exports.reproWalletCollector = reproWalletCollector;

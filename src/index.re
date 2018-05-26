@@ -15,11 +15,7 @@ let reproWalletCollector =
      );
 
 let mandatoryInputs =
-  reproWalletCollector
-  |> ReproWalletCollector.nonReservedOldInputs(
-       AccountIndex.default,
-       UserId.fromString("misthosio.id"),
-     );
+  reproWalletCollector |> ReproWalletCollector.nonReservedOldInputs
 
 let keepTx = ({txId}: Network.txInput) =>
   txId != "514ec6088ef79a9c56b1530b6d0e1a47fc5e61ab74993861e315d1430de2c407";
@@ -39,7 +35,7 @@ let afterInputsCount =
 
 ReactDOMRe.renderToElementWithId(
   text(
-    "there are equal "
+    "there are unused direct "
     ++ string_of_int(afterInputsCount)
     ++ " identical things",
   ),

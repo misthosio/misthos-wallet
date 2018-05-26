@@ -27,15 +27,11 @@ let inputs =
 
 let unusedInputs = ({unused, reserved}) => {
   Js.log2("equal?", Set.eq(unused, inputs));
-  Set.diff(
-    unused,
-    reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
-  );
+  unused;
 };
 
-let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) =>
-  collector
-  |. unusedInputs
+let nonReservedOldInputs = ({unused}) =>
+  unused
   |. Belt.Set.keepU((. i: Network.txInput) =>
        if (i.txId
            == "35815aaadec8a110391de8ae2e8c304e3e6084d3cd1344d8155a2293ee54324b"
