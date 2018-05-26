@@ -48,7 +48,17 @@ function cmp(param, param$1) {
   return Caml_primitive.caml_string_compare(param[/* txId */0] + (":" + String(param[/* txOutputN */1])), param$1[/* txId */0] + (":" + String(param$1[/* txOutputN */1])));
 }
 
-var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
+var TxDummyInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
+
+function dummySet() {
+  return Belt_Set.make(TxDummyInputCmp);
+}
+
+function cmp$1(param, param$1) {
+  return Caml_primitive.caml_string_compare(param[/* txId */0] + (":" + String(param[/* txOutputN */1])), param$1[/* txId */0] + (":" + String(param$1[/* txOutputN */1])));
+}
+
+var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp$1]);
 
 function inputSet() {
   return Belt_Set.make(TxInputCmp);
@@ -304,6 +314,8 @@ function incomeAddress() {
 
 exports.encode = encode;
 exports.decode = decode;
+exports.TxDummyInputCmp = TxDummyInputCmp;
+exports.dummySet = dummySet;
 exports.TxInputCmp = TxInputCmp;
 exports.inputSet = inputSet;
 exports.inputMap = inputMap;
@@ -319,4 +331,4 @@ exports.broadcastTransaction = broadcastTransaction$3;
 exports.bitcoinNetwork = bitcoinNetwork;
 exports.testnetIncomeAddress = testnetIncomeAddress;
 exports.incomeAddress = incomeAddress;
-/* TxInputCmp Not a pure module */
+/* TxDummyInputCmp Not a pure module */

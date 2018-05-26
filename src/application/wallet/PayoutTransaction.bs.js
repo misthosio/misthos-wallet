@@ -273,9 +273,11 @@ function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, 
 }
 
 function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddress, network) {
+  console.log("mandatory inputs before:", Belt_Set.toArray(mandatoryInputs));
   var mandatoryInputs$1 = Belt_Set.keep(mandatoryInputs, (function (param) {
           return TransactionFee.canPayForItself(satsPerByte, param);
         }));
+  console.log("mandatory inputs inbetween:", Belt_Set.toArray(mandatoryInputs$1));
   var allInputs$1 = List.sort((function (i1, i2) {
           return i1[/* value */3].comparedTo(i2[/* value */3]);
         }), Belt_Set.toList(Belt_Set.diff(Belt_Set.keep(allInputs, (function (param) {
