@@ -13,16 +13,17 @@ function text(prim) {
   return prim;
 }
 
-var smallLog = Belt_Array.keep(Curry._1(EventLog.items, IncomeVenture.eventLog), (function (param) {
-        if (param[/* event */0].tag === 40) {
-          return true;
+var smallLog = Belt_Array.keepMap(Curry._1(EventLog.items, IncomeVenture.eventLog), (function (param) {
+        var $$event = param[/* event */0];
+        if ($$event.tag === 40) {
+          return /* Some */[$$event[0]];
         } else {
-          return false;
+          return /* None */0;
         }
       }));
 
-var reproWalletCollector = Belt_Array.reduce(smallLog, ReproWalletCollector.make(/* () */0), (function (res, param) {
-        return ReproWalletCollector.apply(param[/* event */0], res);
+var reproWalletCollector = Belt_Array.reduce(smallLog, ReproWalletCollector.make(/* () */0), (function (res, income) {
+        return ReproWalletCollector.apply(income, res);
       }));
 
 var match = ReproWalletCollector.nonReservedOldInputs(reproWalletCollector);
@@ -64,7 +65,7 @@ console.log(before, middle, after);
 
 console.log(countInputs(afterUnused), countInputs(afterInputs));
 
-ReactDOMRe.renderToElementWithId("simpler change output" + (String(countInputs(afterUnused)) + " identical things"), "root");
+ReactDOMRe.renderToElementWithId("only income " + (String(countInputs(afterUnused)) + " identical things"), "root");
 
 exports.text = text;
 exports.smallLog = smallLog;

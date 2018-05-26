@@ -48,38 +48,16 @@ let make = () => {
   payoutProcesses: ProcessId.makeMap(),
 };
 
-let apply = (event, state) =>
-  switch (event) {
-  | IncomeDetected({address, txId, txOutputN, amount}) => {
-      ...state,
-      unused:
-        state.unused
-        |. Set.add({
-             txId,
-             txOutputN,
-             address,
-             value: amount,
-             nCoSigners: 2,
-             nPubKeys: 3,
-           }),
-    }
-  | PayoutProposed({data: {payoutTx}, processId}) => {
-      ...state,
-      payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
-    }
-  | PayoutBroadcast({processId, txId}) =>
-    let payoutTx: PayoutTransaction.t =
-      state.payoutProcesses |. Map.getExn(processId);
-    {
-      ...state,
-      unused:
-        (
-          switch (payoutTx |> PayoutTransaction.txInputForChangeAddress(~txId)) {
-          | Some(input) => state.unused |. Set.add(input)
-          | None => state.unused
-          }
-        )
-        |. Set.removeMany(payoutTx.usedInputs),
-    };
-  | _ => state
-  };
+let apply = ({address, txId, txOutputN, amount}: IncomeDetected.t, state) => {
+  ...state,
+  unused:
+    state.unused
+    |. Set.add({
+         txId,
+         txOutputN,
+         address,
+         value: amount,
+         nCoSigners: 2,
+         nPubKeys: 3,
+       }),
+};

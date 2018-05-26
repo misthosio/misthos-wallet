@@ -4,11 +4,9 @@
 var Json = require("bs-json/src/Json.js");
 var Inputs = require("./Inputs.bs.js");
 var Network = require("../application/wallet/Network.bs.js");
-var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
-var PayoutTransaction = require("../application/wallet/PayoutTransaction.bs.js");
 
 var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), Json_decode.array(Network.decodeInput, Json.parseOrRaise(Inputs.inputs)));
 
@@ -32,38 +30,18 @@ function make() {
         ];
 }
 
-function apply($$event, state) {
-  switch ($$event.tag | 0) {
-    case 25 : 
-        var match = $$event[0];
-        return /* record */[
-                /* unused */state[/* unused */0],
-                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */1], match[/* processId */0], match[/* data */6][/* payoutTx */1])
-              ];
-    case 33 : 
-        var match$1 = $$event[0];
-        var payoutTx = Belt_Map.getExn(state[/* payoutProcesses */1], match$1[/* processId */0]);
-        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], payoutTx);
-        return /* record */[
-                /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */0], match$2[0]) : state[/* unused */0], payoutTx[/* usedInputs */1]),
-                /* payoutProcesses */state[/* payoutProcesses */1]
-              ];
-    case 40 : 
-        var match$3 = $$event[0];
-        return /* record */[
-                /* unused */Belt_Set.add(state[/* unused */0], /* record */[
-                      /* txId */match$3[/* txId */2],
-                      /* txOutputN */match$3[/* txOutputN */3],
-                      /* address */match$3[/* address */0],
-                      /* value */match$3[/* amount */4],
-                      /* nCoSigners */2,
-                      /* nPubKeys */3
-                    ]),
-                /* payoutProcesses */state[/* payoutProcesses */1]
-              ];
-    default:
-      return state;
-  }
+function apply(param, state) {
+  return /* record */[
+          /* unused */Belt_Set.add(state[/* unused */0], /* record */[
+                /* txId */param[/* txId */2],
+                /* txOutputN */param[/* txOutputN */3],
+                /* address */param[/* address */0],
+                /* value */param[/* amount */4],
+                /* nCoSigners */2,
+                /* nPubKeys */3
+              ]),
+          /* payoutProcesses */state[/* payoutProcesses */1]
+        ];
 }
 
 exports.inputs = inputs;

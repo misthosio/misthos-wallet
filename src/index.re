@@ -5,17 +5,17 @@ let text = ReasonReact.string;
 let smallLog =
   IncomeVenture.eventLog
   |> EventLog.items
-  |. Array.keep(({event}: EventLog.item) =>
+  |. Array.keepMap(({event}: EventLog.item) =>
        switch (event) {
-       | IncomeDetected(_) => true
-       | _ => false
+       | IncomeDetected(income) => Some(income)
+       | _ => None
        }
      );
 
 let reproWalletCollector =
   smallLog
-  |. Array.reduce(ReproWalletCollector.make(), (res, {event}: EventLog.item) =>
-       res |> ReproWalletCollector.apply(event)
+  |. Array.reduce(ReproWalletCollector.make(), (res, income) =>
+       res |> ReproWalletCollector.apply(income)
      );
 
 let (unused, inputs) =
@@ -54,7 +54,7 @@ Js.log2(countInputs(afterUnused), countInputs(afterInputs));
 
 ReactDOMRe.renderToElementWithId(
   text(
-    "simpler change output"
+    "only income "
     ++ string_of_int(countInputs(afterUnused))
     ++ " identical things",
   ),
