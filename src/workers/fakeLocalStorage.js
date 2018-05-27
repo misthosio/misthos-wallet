@@ -8,7 +8,7 @@ function setItem (key, item) {
   cache[key] = item;
 };
 
-localStorage = {
+var localStorage = {
   getItem: getItem,
   setItem: setItem
 };
