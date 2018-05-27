@@ -10,4 +10,4 @@ EOF
 gcloud auth activate-service-account --key-file ./account.json
 
 tar -zxvf misthos-build/misthos-build-*.tgz
-gsutil -m cp -r repo/build/* "gs://${DEPLOY_ENVIRONMENT}.misthos.io"
+gsutil -m cp -r repo/dist/* "gs://${DEPLOY_ENVIRONMENT}.misthos.io"

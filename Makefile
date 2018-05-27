@@ -1,8 +1,8 @@
+dev:
+	node_modules/.bin/webpack-dev-server --mode development --open
+
 install:
 	yarn install
-
-dev:
-	yarn start
 
 test-unit:
 	node_modules/.bin/jest --clearCache
@@ -18,9 +18,9 @@ bsb:
 	node_modules/.bin/bsb -make-world -w
 
 build:
-	rm -rf ./node_modules/uri-js/dist/esnext
-	rm -rf build
-	yarn build
+	rm -rf dist/*
+	NODE_ENV=production node_modules/.bin/webpack --mode production
+	cp public/* dist/
 
 bsb-once:
 	node_modules/.bin/bsb -make-world
