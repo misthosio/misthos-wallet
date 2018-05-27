@@ -88,7 +88,6 @@ function updateState(state) {
   var inputAmount = state[/* inputAmount */3];
   var destinations = state[/* destinations */1];
   var viewData = state[/* viewData */0];
-  console.log("CreatePayoutModal update state");
   var match$1 = Curry._1(viewData[/* isAddressValid */5], recipientAddress) ? /* tuple */[
       recipientAddress,
       recipientAddress,
