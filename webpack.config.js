@@ -100,6 +100,11 @@ const config = {
     clientLogLevel: 'none',
     port: 3000,
     contentBase: "./public",
+    historyApiFallback: {
+      // Paths with dots should still use the history fallback.
+      // See https://github.com/facebookincubator/create-react-app/issues/387.
+      disableDotRule: true,
+    },
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
