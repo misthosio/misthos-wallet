@@ -22,6 +22,9 @@ if [[ "$(git status -s -uno)" != "" ]]; then
   exit 1;
 fi
 
+cp ../pipeline-tasks/Makefile repo
+cp -r ../pipeline-tasks/scripts repo
+
 make ci
 
 popd
