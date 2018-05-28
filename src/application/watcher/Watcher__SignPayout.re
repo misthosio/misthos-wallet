@@ -34,10 +34,11 @@ let make =
                  state.accountKeyChains
                  |> AccountKeyChain.Collection.add(keyChain),
              }
-           | PayoutProposed({processId, data})
+           | PayoutProposed({processId, proposerId, data})
                when ProcessId.eq(processId, payoutProcess) => {
                ...state,
                payoutTx: Some(data.payoutTx),
+               complete: UserId.eq(proposerId, userId),
              }
            | PayoutSigned({custodianId, processId: signingProcess})
                when

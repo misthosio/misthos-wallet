@@ -40,7 +40,7 @@ function make(param, param$1, log) {
                           /* ventureId */state[/* ventureId */1],
                           /* accountKeyChains */state[/* accountKeyChains */2],
                           /* payoutTx : Some */[match$1[/* data */6][/* payoutTx */1]],
-                          /* complete */state[/* complete */4]
+                          /* complete */PrimitiveTypes.UserId[/* eq */5](match$1[/* proposerId */4], userId)
                         ];
                 } else {
                   return state;
