@@ -32,7 +32,8 @@ let make =
           when ProcessId.eq(broadcastProcess, processId) =>
         result := None;
         completed := true;
-      | PayoutFinalized({processId: broadcastProcess}) =>
+      | PayoutFinalized({processId: broadcastProcess})
+          when ProcessId.neq(broadcastProcess, processId) =>
         let broadcastInputs =
           payoutProcesses^ |. Map.getExn(broadcastProcess);
         if (Set.intersect(broadcastInputs, inputs) |. Set.size > 0) {
