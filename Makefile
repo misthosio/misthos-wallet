@@ -20,7 +20,7 @@ bsb:
 build:
 	rm -rf dist/*
 	NODE_ENV=production node_modules/.bin/webpack --mode production
-	for file in $(ls public | grep -v 'index.html') ; do cp public/$file dist/; done
+	for file in $(ls public | grep -v 'index.html') ; do cp "public/$file dist/"; done
 
 bsb-once:
 	node_modules/.bin/bsb -make-world
