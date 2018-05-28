@@ -19,19 +19,17 @@ let make =
       let _ignoreThisWarning = this;
       switch (event) {
       | VentureCreated(event) => systemIssuer := event.systemIssuer
-      | PayoutAccepted({processId, data: {payoutTx: {usedInputs}}}) =>
+      | PayoutAccepted({
+          processId: acceptedProcess,
+          data: {payoutTx: {usedInputs}},
+        })
+          when ProcessId.neq(processId, acceptedProcess) =>
         payoutProcesses :=
           payoutProcesses^
           |. Map.set(
-               processId,
+               acceptedProcess,
                usedInputs |> Set.mergeMany(Network.inputSet()),
              )
-      | PayoutBroadcastFailed({processId: broadcastProcess}) =>
-        payoutProcesses := payoutProcesses^ |. Map.remove(broadcastProcess)
-      | PayoutBroadcast({processId: broadcastProcess})
-          when ProcessId.eq(broadcastProcess, processId) =>
-        result := None;
-        completed := true;
       | PayoutFinalized({processId: broadcastProcess})
           when ProcessId.neq(broadcastProcess, processId) =>
         let broadcastInputs =
@@ -44,6 +42,14 @@ let make =
             ));
         };
         payoutProcesses := payoutProcesses^ |. Map.remove(broadcastProcess);
+      | PayoutBroadcast({processId: broadcastProcess})
+          when ProcessId.eq(broadcastProcess, processId) =>
+        result := None;
+        completed := true;
+      | PayoutBroadcastFailed({processId: broadcastProcess})
+          when ProcessId.eq(broadcastProcess, processId) =>
+        result := None;
+        completed := true;
       | PayoutAborted({processId: abortedProcess})
           when ProcessId.eq(abortedProcess, processId) =>
         result := None;
