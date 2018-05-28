@@ -1478,9 +1478,9 @@ bitcoinjs-lib@^3.3, bitcoinjs-lib@^3.3.0:
     varuint-bitcoin "^1.0.4"
     wif "^2.0.1"
 
-blockstack@^0.17:
-  version "0.17.2"
-  resolved "https://registry.yarnpkg.com/blockstack/-/blockstack-0.17.2.tgz#14698e47fc0506ce0046099f003d8853900c7208"
+blockstack@^17:
+  version "17.2.0"
+  resolved "https://registry.yarnpkg.com/blockstack/-/blockstack-17.2.0.tgz#1a20bb75e6e3986bf5aead943f5b35fa29389e1c"
   dependencies:
     ajv "^4.11.5"
     bigi "^1.4.2"
@@ -8585,9 +8585,9 @@ worker-farm@^1.5.2:
   dependencies:
     errno "~0.1.7"
 
-worker-loader@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/worker-loader/-/worker-loader-1.1.1.tgz#920d74ddac6816fc635392653ed8b4af1929fd92"
+worker-loader@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/worker-loader/-/worker-loader-2.0.0.tgz#45fda3ef76aca815771a89107399ee4119b430ac"
   dependencies:
     loader-utils "^1.0.0"
     schema-utils "^0.4.0"
