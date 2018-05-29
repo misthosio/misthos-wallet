@@ -90,10 +90,7 @@
   },
   "babel": {
     "presets": [
-      "react-app"
+      "env"
     ]
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   }
 }
