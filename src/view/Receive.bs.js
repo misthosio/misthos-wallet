@@ -116,16 +116,7 @@ function make(commands, _) {
               return /* :: */[
                       /* Sub */[
                         (function () {
-                            var clipBoard = Clipboard.make(".copy-btn", "modal");
-                            clipBoard.on("success", (function (arg) {
-                                    console.log("success", arg);
-                                    return /* () */0;
-                                  }));
-                            clipBoard.on("error", (function (arg) {
-                                    console.log("error", arg);
-                                    return /* () */0;
-                                  }));
-                            return clipBoard;
+                            return Clipboard.make(".copy-btn", "modal");
                           }),
                         (function (clipboard) {
                             clipboard.destroy();

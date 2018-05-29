@@ -37,12 +37,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
   didMount: ({send}) => send(GetIncomeAddress),
   subscriptions: (_) => [
     Sub(
-      () => {
-        let clipBoard = Clipboard.make(".copy-btn", "modal");
-        clipBoard |> Clipboard.on("success", arg => Js.log2("success", arg));
-        clipBoard |> Clipboard.on("error", arg => Js.log2("error", arg));
-        clipBoard;
-      },
+      () => Clipboard.make(".copy-btn", "modal"),
       clipboard => clipboard |> Clipboard.destroy,
     ),
   ],
