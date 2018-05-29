@@ -1,17 +1,17 @@
 dev:
-	node_modules/.bin/webpack-dev-server --mode development --open
+	./node_modules/.bin/webpack-dev-server --mode development --open
 
 install:
 	yarn install
 
 test-unit:
-	node_modules/.bin/jest --clearCache
-	yarn test --testPathIgnorePatterns "/integration/"
+	./node_modules/.bin/jest --clearCache
+	NODE_ENV=test ./node_modules/.bin/jest --env=jsdom --testPathIgnorePatterns "/integration/" --watch
 
 test:
-	node_modules/.bin/jest --clearCache
+	./node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
-	yarn test
+	NODE_ENV=test ./node_modules/.bin/jest --env=jsdom --watch
 
 bsb:
 	node_modules/.bin/bsb -clean-world
@@ -25,7 +25,7 @@ bsb-once:
 ci:
 	node_modules/.bin/jest --clearCache
 	./scripts/start_bitcoind.sh
-	CI=true yarn test --runInBand
+	NODE_ENV=test CI=true ./node_modules/.bin/jest --env=jsdom --runInBand
 	./scripts/stop_bitcoind.sh
 
 .PHONY: ci build
