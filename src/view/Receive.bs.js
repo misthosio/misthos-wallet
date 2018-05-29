@@ -9,8 +9,8 @@ var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var TitleBar = require("./components/TitleBar.bs.js");
+var Clipboard = require("../ffi/Clipboard.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
-var Clipboard = require("clipboard");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -116,7 +116,7 @@ function make(commands, _) {
               return /* :: */[
                       /* Sub */[
                         (function () {
-                            var clipBoard = new Clipboard(".copy-btn");
+                            var clipBoard = Clipboard.make(".copy-btn", "modal");
                             clipBoard.on("success", (function (arg) {
                                     console.log("success", arg);
                                     return /* () */0;
