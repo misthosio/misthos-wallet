@@ -4,15 +4,19 @@
 var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var TitleBar = require("./components/TitleBar.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var Clipboard = require("clipboard");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
+var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
+var CopySvg = require("../assets/img/copy.svg");
 
 var component = ReasonReact.reducerComponent("Receive");
 
@@ -65,6 +69,13 @@ function make(commands, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var state = param[/* state */1];
+              var copyButton = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
+                          return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
+                                                    src: CopySvg
+                                                  })])), {
+                                      "data-clipboard-text": address
+                                    });
+                        }), state[/* address */0]));
               var match = state[/* address */0];
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
                                     "Receive BTC",
@@ -74,7 +85,10 @@ function make(commands, _) {
                             }, match ? React.createElement("img", {
                                     height: "250px",
                                     src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
-                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(Js_option.getWithDefault("", state[/* address */0]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                  }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[
+                                      ViewCommon.text(Js_option.getWithDefault("", state[/* address */0])),
+                                      copyButton
+                                    ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* GetIncomeAddress */0);
                                         })], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")]))));
             }),
@@ -98,7 +112,29 @@ function make(commands, _) {
                         ]);
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
+          /* subscriptions */(function () {
+              return /* :: */[
+                      /* Sub */[
+                        (function () {
+                            var clipBoard = new Clipboard(".copy-btn");
+                            clipBoard.on("success", (function (arg) {
+                                    console.log("success", arg);
+                                    return /* () */0;
+                                  }));
+                            clipBoard.on("error", (function (arg) {
+                                    console.log("error", arg);
+                                    return /* () */0;
+                                  }));
+                            return clipBoard;
+                          }),
+                        (function (clipboard) {
+                            clipboard.destroy();
+                            return /* () */0;
+                          })
+                      ],
+                      /* [] */0
+                    ];
+            }),
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
 }

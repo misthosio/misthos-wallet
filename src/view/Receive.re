@@ -2,6 +2,8 @@ include ViewCommon;
 
 open WalletTypes;
 
+[@bs.module] external copy : string = "../assets/img/copy.svg";
+
 type state = {address: option(string)};
 
 type action =
@@ -33,6 +35,17 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
   ...component,
   initialState: () => {address: None},
   didMount: ({send}) => send(GetIncomeAddress),
+  subscriptions: (_) => [
+    Sub(
+      () => {
+        let clipBoard = Clipboard.make(".copy-btn");
+        clipBoard |> Clipboard.on("success", arg => Js.log2("success", arg));
+        clipBoard |> Clipboard.on("error", arg => Js.log2("error", arg));
+        clipBoard;
+      },
+      clipboard => clipboard |> Clipboard.destroy,
+    ),
+  ],
   reducer: (action, _state) =>
     switch (action) {
     | GetIncomeAddress =>
@@ -49,7 +62,19 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
       )
     | UpdateAddress(address) => ReasonReact.Update({address: Some(address)})
     },
-  render: ({send, state}) =>
+  render: ({send, state}) => {
+    let copyButton =
+      state.address
+      |> Utils.mapOption(address =>
+           ReasonReact.cloneElement(
+             <MaterialUi.IconButton className="copy-btn">
+               <img src=copy />
+             </MaterialUi.IconButton>,
+             ~props={"data-clipboard-text": address},
+             [||],
+           )
+         )
+      |> Js.Option.getWithDefault(ReasonReact.null);
     <div>
       <TitleBar titles=["Receive BTC"] />
       <div className=Styles.container>
@@ -69,10 +94,12 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
         )
         <MTypography variant=`Body2>
           (state.address |> Js.Option.getWithDefault("") |> text)
+          copyButton
         </MTypography>
         <MButton onClick=(_e => send(GetIncomeAddress))>
           (text("Generate new income address"))
         </MButton>
       </div>
-    </div>,
+    </div>;
+  },
 };

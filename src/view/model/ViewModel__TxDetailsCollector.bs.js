@@ -144,8 +144,9 @@ function apply($$event, state) {
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
                 /* payouts */ProcessCollector.updateData(match$1[/* processId */0], (function (data) {
+                        var match = data[/* payoutStatus */0] !== /* Unconfirmed */4 && data[/* payoutStatus */0] !== /* Confirmed */5;
                         return /* record */[
-                                /* payoutStatus : Failed */[errorMessage],
+                                /* payoutStatus */match ? /* Failed */[errorMessage] : data[/* payoutStatus */0],
                                 /* summary */data[/* summary */1],
                                 /* txId */data[/* txId */2],
                                 /* date */data[/* date */3]
