@@ -56,6 +56,8 @@ let make = (~drawer, ~modal, children) => {
       MaterialUi.(
         modal
         |> Utils.mapOption(((modal, onClose)) => {
+             /* We need to add the id #modal to the focused element for the clipboard to work */
+             /* in the Receive modal */
              let inner =
                ReasonReact.cloneElement(
                  <Paper className=Styles.modal>
