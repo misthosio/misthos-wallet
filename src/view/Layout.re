@@ -52,6 +52,28 @@ let make = (~drawer, ~modal, children) => {
     },
   render: ({send, state}) => {
     let theme = Theme.theme |> Theme.toJsUnsafe;
+    let modalContainer =
+      MaterialUi.(
+        modal
+        |> Utils.mapOption(((modal, onClose)) => {
+             let inner =
+               ReasonReact.cloneElement(
+                 <Paper className=Styles.modal>
+                   <Toolbar>
+                     <div className=Styles.flex_ />
+                     <IconButton color=`Inherit onClick=onClose>
+                       <img src=close alt="close" />
+                     </IconButton>
+                   </Toolbar>
+                   modal
+                 </Paper>,
+                 ~props={"id": "modal"},
+                 [||],
+               );
+             <Modal _open=true onBackdropClick=onClose> inner </Modal>;
+           })
+        |> Js.Option.getWithDefault(ReasonReact.null)
+      );
     MaterialUi.(
       <MuiThemeProvider theme=(`ObjectGeneric(theme))>
         <CssBaseline>
@@ -62,8 +84,7 @@ let make = (~drawer, ~modal, children) => {
               | Some(drawer) =>
                 <AppBar position=`Static className=Styles.appBar>
                   <Toolbar>
-                    <IconButton
-                      color=`Inherit onClick=(_e => Router.goTo(Home))>
+                    <IconButton color=`Inherit onClick=(_e => ())>
                       <img src=logo alt="logo" />
                     </IconButton>
                     <div className=Styles.flex_ />
@@ -89,23 +110,7 @@ let make = (~drawer, ~modal, children) => {
                 </AppBar>
               }
             )
-            (
-              switch (modal) {
-              | None => ReasonReact.null
-              | Some((modal, onClose)) =>
-                <Modal _open=true onBackdropClick=onClose>
-                  <Paper className=Styles.modal>
-                    <Toolbar>
-                      <div className=Styles.flex_ />
-                      <IconButton color=`Inherit onClick=onClose>
-                        <img src=close alt="close" />
-                      </IconButton>
-                    </Toolbar>
-                    modal
-                  </Paper>
-                </Modal>
-              }
-            )
+            modalContainer
             <Grid
               className=Styles.grid container=true spacing=V24 direction=`Row>
               children
