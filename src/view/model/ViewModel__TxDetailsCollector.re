@@ -147,7 +147,13 @@ let apply = (event, state) =>
       payouts:
         state.payouts
         |> ProcessCollector.updateData(processId, data =>
-             {...data, payoutStatus: Failed(errorMessage)}
+             {
+               ...data,
+               payoutStatus:
+                 data.payoutStatus != Unconfirmed
+                 && data.payoutStatus != Confirmed ?
+                   Failed(errorMessage) : data.payoutStatus,
+             }
            ),
     }
   | _ => state
