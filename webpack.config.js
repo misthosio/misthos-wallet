@@ -40,7 +40,7 @@ const config = {
           ]
       },
       {
-        exclude: [/\.css$/, /\.js$/, /\.html$/, /\.json$/],
+        exclude: [ /\.js$/, /\.html$/, /\.json$/],
         loader: require.resolve('file-loader'),
         options: {
           name: 'static/media/[name].[hash:8].[ext]',

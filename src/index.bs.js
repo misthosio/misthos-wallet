@@ -9,8 +9,6 @@ var SessionStore = require("./view/SessionStore.bs.js");
 
 ((window.blockstack = require('blockstack')));
 
-((require('./assets/css/base.css')));
-
 ReactDOMRe.renderToElementWithId(ReasonReact.element(/* None */0, /* None */0, JssProvider.make(/* array */[ReasonReact.element(/* None */0, /* None */0, SessionStore.make((function (session, updateSession) {
                           return ReasonReact.element(/* None */0, /* None */0, App.make(session, updateSession, /* array */[]));
                         })))])), "root");
