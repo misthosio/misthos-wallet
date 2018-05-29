@@ -31,7 +31,7 @@ var Styles = /* module */[
   /* inlineConfirm */inlineConfirm
 ];
 
-function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, _) {
+function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -51,17 +51,17 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
               var send = param[/* send */3];
               var match = param[/* state */1];
               var cmdStatus = match[/* cmdStatus */1];
+              var state = match[/* buttonState */0];
               var tmp;
-              switch (match[/* buttonState */0]) {
+              var exit = 0;
+              var exit$1 = 0;
+              switch (state) {
                 case 0 : 
-                    tmp = canVote ? /* array */[
-                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* Endorse */1);
-                                    })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(endorseText)])),
-                        ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                      return Curry._1(send, /* Reject */3);
-                                    })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[gray], /* array */[ViewCommon.text(rejectText)]))
-                      ] : /* array */[null];
+                    if (canVote) {
+                      exit = 2;
+                    } else {
+                      tmp = /* array */[null];
+                    }
                     break;
                 case 1 : 
                     tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* array */[
@@ -74,9 +74,6 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
                                             })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("No")]))
                               ]))];
                     break;
-                case 2 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[]))];
-                    break;
                 case 3 : 
                     tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* array */[
                                 ViewCommon.text(rejectText),
@@ -88,8 +85,57 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
                                             })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("No")]))
                               ]))];
                     break;
+                case 2 : 
                 case 4 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[]))];
+                    exit$1 = 3;
+                    break;
+                
+              }
+              if (exit$1 === 3) {
+                if (typeof cmdStatus === "number") {
+                  exit = canVote ? 2 : 1;
+                } else {
+                  switch (cmdStatus.tag | 0) {
+                    case 1 : 
+                        if (state >= 4) {
+                          tmp = /* array */[
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                    return Curry._1(send, /* Cancel */0);
+                                                  })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("Try Again")]))]))
+                          ];
+                        } else if (cmdStatus[0] >= 6) {
+                          tmp = /* array */[
+                            ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[])),
+                            ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                          return Curry._1(send, /* Cancel */0);
+                                        })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("Try Again")]))
+                          ];
+                        } else {
+                          exit = 1;
+                        }
+                        break;
+                    case 0 : 
+                    case 2 : 
+                        exit = 1;
+                        break;
+                    
+                  }
+                }
+              }
+              switch (exit) {
+                case 1 : 
+                    tmp = state >= 4 ? /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[]))] : /* array */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[]))];
+                    break;
+                case 2 : 
+                    tmp = /* array */[
+                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                    return Curry._1(send, /* Endorse */1);
+                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(endorseText)])),
+                      ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                    return Curry._1(send, /* Reject */3);
+                                  })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[gray], /* array */[ViewCommon.text(rejectText)]))
+                    ];
                     break;
                 
               }
@@ -105,10 +151,15 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, cmdStatus, 
           /* reducer */(function (action, state) {
               switch (action) {
                 case 0 : 
-                    return /* Update */Block.__(0, [/* record */[
+                    return /* UpdateWithSideEffects */Block.__(2, [
+                              /* record */[
                                 /* buttonState : NoDecision */0,
                                 /* cmdStatus : Idle */0
-                              ]]);
+                              ],
+                              (function () {
+                                  return Curry._1(onCancel, /* () */0);
+                                })
+                            ]);
                 case 1 : 
                     return /* Update */Block.__(0, [/* record */[
                                 /* buttonState : ConfirmEndorse */1,

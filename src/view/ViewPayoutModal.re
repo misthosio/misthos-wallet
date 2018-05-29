@@ -141,6 +141,7 @@ let make =
             canVote
             onEndorse=(() => commands.endorsePayout(~processId))
             onReject=(() => commands.rejectPayout(~processId))
+            onCancel=(() => commands.reset())
             cmdStatus
           />
           (

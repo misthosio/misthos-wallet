@@ -85,6 +85,7 @@ let make =
             canVote
             onEndorse
             onReject
+            onCancel=(() => commands.reset())
             cmdStatus
           />
         </div>

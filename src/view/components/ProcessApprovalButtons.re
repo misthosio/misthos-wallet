@@ -36,6 +36,7 @@ let make =
       ~canVote,
       ~onEndorse,
       ~onReject,
+      ~onCancel,
       ~cmdStatus: CommandExecutor.cmdStatus,
       _children,
     ) => {
@@ -56,23 +57,18 @@ let make =
         {...state, buttonState: RejectionSubmited},
         ((_) => onReject()),
       )
-    | Cancel => ReasonReact.Update({cmdStatus: Idle, buttonState: NoDecision})
+    | Cancel =>
+      ReasonReact.UpdateWithSideEffects(
+        {cmdStatus: Idle, buttonState: NoDecision},
+        ((_) => onCancel()),
+      )
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
     ReasonReact.array(
       Array.concatMany([|
-        switch (state, canVote) {
-        | (NoDecision, true) => [|
-            <MButton fullWidth=true onClick=(_e => send(Endorse))>
-              (text(endorseText))
-            </MButton>,
-            <MButton
-              className=Styles.gray variant=Flat onClick=(_e => send(Reject))>
-              (text(rejectText))
-            </MButton>,
-          |]
-        | (NoDecision, false) => [|ReasonReact.null|]
-        | (ConfirmReject, _) => [|
+        switch (cmdStatus, state, canVote) {
+        | (_, NoDecision, false) => [|ReasonReact.null|]
+        | (_, ConfirmReject, _) => [|
             <MTypography className=Styles.inlineConfirm variant=`Body2>
               (rejectText |> text)
               <MButton variant=Flat onClick=(_e => send(ConfirmReject))>
@@ -83,7 +79,7 @@ let make =
               </MButton>
             </MTypography>,
           |]
-        | (ConfirmEndorse, _) => [|
+        | (_, ConfirmEndorse, _) => [|
             <MTypography className=Styles.inlineConfirm variant=`Body2>
               (endorseText |> text)
               <MButton variant=Flat onClick=(_e => send(ConfirmEndorse))>
@@ -94,10 +90,34 @@ let make =
               </MButton>
             </MTypography>,
           |]
-        | (EndorsementSubmited, _) => [|
+        | (Idle, _, true)
+        | (_, NoDecision, true) => [|
+            <MButton fullWidth=true onClick=(_e => send(Endorse))>
+              (text(endorseText))
+            </MButton>,
+            <MButton
+              className=Styles.gray variant=Flat onClick=(_e => send(Reject))>
+              (text(rejectText))
+            </MButton>,
+          |]
+        | (Error(_), RejectionSubmited, _) => [|
+            <CommandExecutor.Status cmdStatus action=Endorsement />,
+            <MTypography className=Styles.inlineConfirm variant=`Body2>
+              <MButton variant=Flat onClick=(_e => send(Cancel))>
+                (text("Try Again"))
+              </MButton>
+            </MTypography>,
+          |]
+        | (Error(CouldNotPersistVenture), EndorsementSubmited, _) => [|
+            <CommandExecutor.Status cmdStatus action=Rejection />,
+            <MButton variant=Flat onClick=(_e => send(Cancel))>
+              (text("Try Again"))
+            </MButton>,
+          |]
+        | (_, EndorsementSubmited, _) => [|
             <CommandExecutor.Status cmdStatus action=Endorsement />,
           |]
-        | (RejectionSubmited, _) => [|
+        | (_, RejectionSubmited, _) => [|
             <CommandExecutor.Status cmdStatus action=Rejection />,
           |]
         },
