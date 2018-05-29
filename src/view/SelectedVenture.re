@@ -151,7 +151,9 @@ let make = (~viewData: ViewData.t, _children) => {
             | _ => ReasonReact.null
             }
           )
-          <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
+          <ScrollList>
+            <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
+          </ScrollList>
           <LinkButton
             fullWidth=true
             route=(Venture(viewData.ventureId, ManagePartners))>
@@ -160,8 +162,10 @@ let make = (~viewData: ViewData.t, _children) => {
         </div>
       body4=MaterialUi.(
               <div>
-                <List disablePadding=true> payouts </List>
-                <List disablePadding=true> transactions </List>
+                <ScrollList>
+                  <List disablePadding=true> payouts </List>
+                  <List disablePadding=true> transactions </List>
+                </ScrollList>
               </div>
             )
     />;
