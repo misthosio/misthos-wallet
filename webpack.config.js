@@ -1,7 +1,8 @@
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+const publicPath = '/';
 
 const config = {
   entry: {
@@ -9,6 +10,7 @@ const config = {
   },
   output: {
     filename: 'static/js/[name].[chunkhash:8].js',
+    publicPath: publicPath,
   },
   module: {
     rules: [
@@ -36,10 +38,6 @@ const config = {
               options: { minimize: true }
             }
           ]
-      },
-      {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"]
       },
       {
         exclude: [/\.css$/, /\.js$/, /\.html$/, /\.json$/],
@@ -90,16 +88,13 @@ const config = {
         minifyURLs: true,
       },
     }),
-    new MiniCssExtractPlugin({
-      filename: "static/css/[name].[contenthash:8].css",
-      chunkFilename: "[id].css"
-    }),
   ],
   devServer: {
     compress: true,
     clientLogLevel: 'none',
     port: 3000,
-    contentBase: "./public",
+    contentBase: '/public',
+    publicPath: publicPath,
     historyApiFallback: {
       // Paths with dots should still use the history fallback.
       // See https://github.com/facebookincubator/create-react-app/issues/387.
