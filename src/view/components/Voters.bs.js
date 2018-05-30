@@ -52,7 +52,20 @@ function make(voters, _) {
                         }), voters));
               return /* array */[
                       ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])),
-                      ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[voters$1]))]))
+                      ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* Some */[/* `calc */[
+                                  -1044768619,
+                                  /* tuple */[
+                                    /* sub */5745024,
+                                    /* `percent */[
+                                      -119887163,
+                                      100.0
+                                    ],
+                                    /* `px */[
+                                      25096,
+                                      64
+                                    ]
+                                  ]
+                                ]], /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[voters$1]))]))
                     ];
             }),
           /* initialState */component[/* initialState */10],

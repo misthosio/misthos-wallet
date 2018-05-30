@@ -2,26 +2,52 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var React = require("react");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var ReactCustomScrollbars = require("react-custom-scrollbars");
 
-var foo = Css.style(/* [] */0);
+var component = ReasonReact.statelessComponent("ScrollList");
 
-var Styles = /* module */[/* foo */foo];
-
-function renderView() {
-  return React.createElement("div", {
-              className: foo
-            });
+function scroll(maxHeightValue) {
+  return Css.style(/* :: */[
+              Css.overflowY(Css.auto),
+              /* :: */[
+                Css.height(Css.auto),
+                /* :: */[
+                  Css.maxHeight(maxHeightValue),
+                  /* [] */0
+                ]
+              ]
+            ]);
 }
 
-function make(children) {
-  return ReasonReact.wrapJsForReason(ReactCustomScrollbars.default, {
-              autoHeight: true,
-              autoHide: true
-            }, children);
+var Styles = /* module */[/* scroll */scroll];
+
+function make($staropt$star, children) {
+  var maxHeight = $staropt$star ? $staropt$star[0] : /* `percent */[
+      -119887163,
+      100.0
+    ];
+  return /* record */[
+          /* debugName */component[/* debugName */0],
+          /* reactClassInternal */component[/* reactClassInternal */1],
+          /* handedOffState */component[/* handedOffState */2],
+          /* willReceiveProps */component[/* willReceiveProps */3],
+          /* didMount */component[/* didMount */4],
+          /* didUpdate */component[/* didUpdate */5],
+          /* willUnmount */component[/* willUnmount */6],
+          /* willUpdate */component[/* willUpdate */7],
+          /* shouldUpdate */component[/* shouldUpdate */8],
+          /* render */(function () {
+              return ReasonReact.createDomElement("div", {
+                          className: scroll(maxHeight)
+                        }, children);
+            }),
+          /* initialState */component[/* initialState */10],
+          /* retainedProps */component[/* retainedProps */11],
+          /* reducer */component[/* reducer */12],
+          /* subscriptions */component[/* subscriptions */13],
+          /* jsElementWrapped */component[/* jsElementWrapped */14]
+        ];
 }
 
 var text = ViewCommon.text;
@@ -30,7 +56,7 @@ var extractString = ViewCommon.extractString;
 
 exports.text = text;
 exports.extractString = extractString;
+exports.component = component;
 exports.Styles = Styles;
-exports.renderView = renderView;
 exports.make = make;
-/* foo Not a pure module */
+/* component Not a pure module */

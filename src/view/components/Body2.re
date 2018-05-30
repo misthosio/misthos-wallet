@@ -13,7 +13,7 @@ module Styles = {
         ++ "px",
       "gridTemplateAreas": {|"title title title title title" ". body1 . body2 ."|},
       "gridTemplateColumns": "minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr)",
-      "gridTemplateRows": "min-content auto",
+      "gridTemplateRows": "min-content 65vh",
       "width": "100%",
     });
   let area = area => cssUnsafe({"gridArea": area});

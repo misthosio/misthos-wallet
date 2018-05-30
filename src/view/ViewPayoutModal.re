@@ -135,7 +135,7 @@ let make =
           transactionId
         </div>
       body2=
-        <div>
+        <div className=Css.(style([height(`percent(100.0))]))>
           <Voters voters />
           <ProcessApprovalButtons
             endorseText="Endorse Payout"

@@ -14,7 +14,7 @@ var grid = Glamor.css({
       gridGap: String(Theme.space(8)) + ("px " + (String(Theme.space(3)) + "px")),
       gridTemplateAreas: "\"title title title title title\" \". body1 . body2 .\"",
       gridTemplateColumns: "minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr)",
-      gridTemplateRows: "min-content auto",
+      gridTemplateRows: "min-content 65vh",
       width: "100%"
     });
 

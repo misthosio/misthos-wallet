@@ -71,8 +71,8 @@ var grid = Css.style(/* :: */[
               -1044768619,
               /* tuple */[
                 /* sub */5745024,
-                /* `percent */[
-                  -119887163,
+                /* `vh */[
+                  26418,
                   100.0
                 ],
                 /* `px */[
@@ -84,7 +84,7 @@ var grid = Css.style(/* :: */[
         /* :: */[
           Css.margin(Css.px(0)),
           /* :: */[
-            Css.overflowY(Css.auto),
+            Css.paddingBottom(Css.px(Theme.space(8))),
             /* [] */0
           ]
         ]
