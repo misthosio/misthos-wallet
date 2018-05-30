@@ -357,37 +357,47 @@ let make =
                   <MTypography variant=`Title>
                     (text("Summary"))
                   </MTypography>
-                  MaterialUi.(
-                    <Table>
-                      <TableBody>
-                        destinationList
-                        <TableRow key="networkFee">
-                          <TableCell className=Styles.noBorder padding=`None>
-                            <b> ("NETWORK FEE" |> text) </b>
-                          </TableCell>
-                          <TableCell
-                            numeric=true
-                            className=(
-                              Styles.maxWidth ++ " " ++ Styles.noBorder
-                            )
-                            padding=`None>
-                            (BTC.format(summary.networkFee) ++ " BTC" |> text)
-                          </TableCell>
-                        </TableRow>
-                        <TableRow key="misthosFee">
-                          <TableCell className=Styles.noBorder padding=`None>
-                            <b> ("MISTHOS FEE" |> text) </b>
-                          </TableCell>
-                          <TableCell
-                            numeric=true
-                            className=Styles.noBorder
-                            padding=`None>
-                            (BTC.format(summary.misthosFee) ++ " BTC" |> text)
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  )
+                  <ScrollList>
+                    MaterialUi.(
+                      <Table>
+                        <TableBody>
+                          destinationList
+                          <TableRow key="networkFee">
+                            <TableCell className=Styles.noBorder padding=`None>
+                              <b> ("NETWORK FEE" |> text) </b>
+                            </TableCell>
+                            <TableCell
+                              numeric=true
+                              className=(
+                                Styles.maxWidth ++ " " ++ Styles.noBorder
+                              )
+                              padding=`None>
+                              (
+                                BTC.format(summary.networkFee)
+                                ++ " BTC"
+                                |> text
+                              )
+                            </TableCell>
+                          </TableRow>
+                          <TableRow key="misthosFee">
+                            <TableCell className=Styles.noBorder padding=`None>
+                              <b> ("MISTHOS FEE" |> text) </b>
+                            </TableCell>
+                            <TableCell
+                              numeric=true
+                              className=Styles.noBorder
+                              padding=`None>
+                              (
+                                BTC.format(summary.misthosFee)
+                                ++ " BTC"
+                                |> text
+                              )
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    )
+                  </ScrollList>
                   <div className=(Styles.spaceBetween(`baseline))>
                     <MaterialUi.Typography variant=`Body2>
                       ("TOTAL PAYOUT" |> text)

@@ -27,7 +27,9 @@ let make = (~voters: list(ProcessCollector.voter), _children) => {
       <MTypography variant=`Title>
         ("Endorsement Status" |> text)
       </MTypography>,
-      <MaterialUi.List disablePadding=true> voters </MaterialUi.List>,
+      <ScrollList>
+        <MaterialUi.List disablePadding=true> voters </MaterialUi.List>
+      </ScrollList>,
     |]);
   },
 };

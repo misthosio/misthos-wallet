@@ -277,7 +277,9 @@ let make =
               |> text
             )
           </MTypography>
-          <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
+          <ScrollList>
+            <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
+          </ScrollList>
           <ProposeButton
             onPropose=(() => send(FreezeRemoval))
             onSubmit=(() => send(RemovePartner))
