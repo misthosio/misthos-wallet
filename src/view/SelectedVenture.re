@@ -137,7 +137,7 @@ let make = (~viewData: ViewData.t, _children) => {
           </MFabButton>
         </div>
       body3=
-        <div>
+        <div className=Css.(style([height(`percent(100.0))]))>
           (
             switch (viewData.readOnly) {
             | true =>
@@ -151,7 +151,8 @@ let make = (~viewData: ViewData.t, _children) => {
             | _ => ReasonReact.null
             }
           )
-          <ScrollList>
+          <ScrollList
+            maxHeight=Css.(`calc((`sub, `percent(100.0), `px(75))))>
             <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
           </ScrollList>
           <LinkButton
@@ -161,12 +162,10 @@ let make = (~viewData: ViewData.t, _children) => {
           </LinkButton>
         </div>
       body4=MaterialUi.(
-              <div>
-                <ScrollList>
-                  <List disablePadding=true> payouts </List>
-                  <List disablePadding=true> transactions </List>
-                </ScrollList>
-              </div>
+              <ScrollList>
+                <List disablePadding=true> payouts </List>
+                <List disablePadding=true> transactions </List>
+              </ScrollList>
             )
     />;
   },

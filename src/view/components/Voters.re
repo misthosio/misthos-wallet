@@ -27,7 +27,7 @@ let make = (~voters: list(ProcessCollector.voter), _children) => {
       <MTypography variant=`Title>
         ("Endorsement Status" |> text)
       </MTypography>,
-      <ScrollList>
+      <ScrollList maxHeight=Css.(`calc((`sub, `percent(100.0), `px(64))))>
         <MaterialUi.List disablePadding=true> voters </MaterialUi.List>
       </ScrollList>,
     |]);
