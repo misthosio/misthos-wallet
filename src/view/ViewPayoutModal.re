@@ -85,7 +85,7 @@ let make =
             (
               switch (date) {
               | Some(date) =>
-                "Payout completed on " ++ Js.Date.toString(date) |> text
+                "Payout completed on " ++ Js.Date.toDateString(date) |> text
               | None => "Proposed by " ++ UserId.toString(proposedBy) |> text
               }
             )

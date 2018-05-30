@@ -25,7 +25,7 @@ let make = (~tx: ViewData.txData, _children) => {
   ...component,
   render: _self => {
     let afmt = amount => BTC.format(amount) ++ " BTC" |> text;
-    let dfmt = Utils.mapOption(date => Js.Date.toString(date) |> text);
+    let dfmt = Utils.mapOption(date => Js.Date.toDateString(date) |> text);
     let (primary, secondary, amount) = (
       switch (tx.status, tx.txType) {
       | (Unconfirmed, Payout) => text("UNCONFIRMED PAYOUT")

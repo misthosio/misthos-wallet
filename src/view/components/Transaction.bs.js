@@ -54,7 +54,7 @@ function make(tx, _) {
               };
               var dfmt = function (param) {
                 return Utils.mapOption((function (date) {
-                              return ViewCommon.text(date.toString());
+                              return ViewCommon.text(date.toDateString());
                             }), param);
               };
               var match = tx[/* status */1];
