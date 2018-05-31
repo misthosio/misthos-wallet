@@ -340,7 +340,7 @@ let make =
                                  )
                   />
                   <MButton fullWidth=true onClick=(_e => send(AddToSummary))>
-                    (text("Add to Summary"))
+                    (text("Add another Recipient"))
                   </MButton>
                 </div>;
               }

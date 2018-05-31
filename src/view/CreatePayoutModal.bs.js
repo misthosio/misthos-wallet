@@ -230,7 +230,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                       return Curry._1(send, /* EnterMax */0);
                                                     })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* array */[ViewCommon.text("Max")]))]))], /* None */0, /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                   return Curry._1(send, /* AddToSummary */1);
-                                })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Add to Summary")])));
+                                })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Add another Recipient")])));
               }
               return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
                                 "Create A Payout",
