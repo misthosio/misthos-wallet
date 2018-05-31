@@ -10,7 +10,7 @@ type t = {
   transactionsOfInterest: Set.String.t,
   knownIncomeTxs: Set.String.t,
   confirmedTransactions: Set.String.t,
-  notYetBroadcastPayouts: ProcessId.map(PayoutTransaction.t),
+  notYetBroadcastPayouts: ProcessId.map(Payout.Finalized.t),
 };
 
 let make = () => {
@@ -31,10 +31,10 @@ let apply = (event, state) =>
         state.transactionsOfInterest |. Set.String.add(txId),
       knownIncomeTxs: state.knownIncomeTxs |. Set.String.add(txId),
     }
-  | PayoutFinalized({processId, payoutTx}) => {
+  | PayoutFinalized({processId} as finalizedTx) => {
       ...state,
       notYetBroadcastPayouts:
-        state.notYetBroadcastPayouts |. Map.set(processId, payoutTx),
+        state.notYetBroadcastPayouts |. Map.set(processId, finalizedTx),
     }
   | PayoutBroadcast({processId, txId}) => {
       ...state,

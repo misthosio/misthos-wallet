@@ -39,10 +39,20 @@ function broadcastPayouts(param) {
   var ventureId = param[/* ventureId */1];
   var network = param[/* network */0];
   return Belt_Map.forEachU(param[/* notYetBroadcastPayouts */5], (function (processId, param) {
-                return catchAndLogError(Curry._1(Network.broadcastTransaction(network), BitcoinjsLib.Transaction.fromHex(param[/* txHex */0])).then((function (result) {
+                var txId = param[/* txId */1];
+                return catchAndLogError(Curry._1(Network.broadcastTransaction(network), BitcoinjsLib.Transaction.fromHex(param[/* payoutTx */2][/* txHex */0])).then((function (result) {
                                   var tmp;
                                   if (typeof result === "number") {
-                                    tmp = /* () */0;
+                                    tmp = postMessage$1(/* SyncWallet */Block.__(15, [
+                                            ventureId,
+                                            /* :: */[
+                                              Curry._2(Event.Payout[/* Broadcast */11][/* make */0], processId, txId),
+                                              /* [] */0
+                                            ],
+                                            /* [] */0,
+                                            /* [] */0,
+                                            /* [] */0
+                                          ]));
                                   } else {
                                     switch (result.tag | 0) {
                                       case 0 : 

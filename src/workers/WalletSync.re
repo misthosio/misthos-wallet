@@ -18,7 +18,8 @@ let broadcastPayouts =
     ({ventureId, network, notYetBroadcastPayouts}: TransactionCollector.t) =>
   Js.Promise.(
     notYetBroadcastPayouts
-    |. Map.forEachU((. processId, {txHex}: PayoutTransaction.t) =>
+    |. Map.forEachU(
+         (. processId, {txId, payoutTx: {txHex}}: Event.Payout.Finalized.t) =>
          txHex
          |> Bitcoin.Transaction.fromHex
          |> Network.broadcastTransaction(network)
@@ -35,7 +36,16 @@ let broadcastPayouts =
                       [],
                     ),
                   )
-                | WalletTypes.AlreadyInBlockchain => ()
+                | WalletTypes.AlreadyInBlockchain =>
+                  postMessage(
+                    VentureWorkerMessage.SyncWallet(
+                      ventureId,
+                      [Event.Payout.Broadcast.make(~processId, ~txId)],
+                      [],
+                      [],
+                      [],
+                    ),
+                  )
                 | WalletTypes.Error(errorMessage) =>
                   Utils.printError(
                     "Broadcasting transaction failed",

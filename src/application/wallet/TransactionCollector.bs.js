@@ -29,24 +29,24 @@ function apply($$event, state) {
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
     case 32 : 
-        var match$1 = $$event[0];
+        var finalizedTx = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* ventureId */state[/* ventureId */1],
                 /* transactionsOfInterest */state[/* transactionsOfInterest */2],
                 /* knownIncomeTxs */state[/* knownIncomeTxs */3],
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
-                /* notYetBroadcastPayouts */Belt_Map.set(state[/* notYetBroadcastPayouts */5], match$1[/* processId */0], match$1[/* payoutTx */2])
+                /* notYetBroadcastPayouts */Belt_Map.set(state[/* notYetBroadcastPayouts */5], finalizedTx[/* processId */0], finalizedTx)
               ];
     case 33 : 
-        var match$2 = $$event[0];
+        var match$1 = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* ventureId */state[/* ventureId */1],
-                /* transactionsOfInterest */Belt_SetString.add(state[/* transactionsOfInterest */2], match$2[/* txId */1]),
+                /* transactionsOfInterest */Belt_SetString.add(state[/* transactionsOfInterest */2], match$1[/* txId */1]),
                 /* knownIncomeTxs */state[/* knownIncomeTxs */3],
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
-                /* notYetBroadcastPayouts */Belt_Map.remove(state[/* notYetBroadcastPayouts */5], match$2[/* processId */0])
+                /* notYetBroadcastPayouts */Belt_Map.remove(state[/* notYetBroadcastPayouts */5], match$1[/* processId */0])
               ];
     case 35 : 
         return /* record */[
