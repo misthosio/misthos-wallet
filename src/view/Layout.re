@@ -86,7 +86,8 @@ let make = (~drawer, ~modal, children) => {
               | Some(drawer) =>
                 <AppBar position=`Static className=Styles.appBar>
                   <Toolbar>
-                    <IconButton color=`Inherit onClick=(_e => ())>
+                    <IconButton
+                      color=`Inherit onClick=(Router.clickToRoute(Home))>
                       <img src=logo alt="logo" />
                     </IconButton>
                     <div className=Styles.flex_ />
