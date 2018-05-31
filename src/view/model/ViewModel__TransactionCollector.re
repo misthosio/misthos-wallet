@@ -25,7 +25,7 @@ type t = {
   unconfirmedTxs: list(txData),
   confirmedTxs: list(txData),
   network: Network.t,
-  txIds: Set.String.t,
+  txDates: Map.String.t(Js.Date.t),
 };
 
 let make = () => {
@@ -34,7 +34,7 @@ let make = () => {
   confirmedTxs: [],
   unconfirmedTxs: [],
   payoutProcesses: ProcessId.makeMap(),
-  txIds: Set.String.empty,
+  txDates: Map.String.empty,
 };
 
 let mapConfirmation =
@@ -42,15 +42,12 @@ let mapConfirmation =
       {txId, unixTime}: Event.Transaction.Confirmed.t,
       {unconfirmedTxs, confirmedTxs} as state,
     ) => {
+  let txDate = Js.Date.fromFloat(unixTime *. 1000.);
   let newTxs =
     unconfirmedTxs
     |. List.keepMap(({txId: dataId} as data) =>
          if (dataId == txId) {
-           Some({
-             ...data,
-             date: Some(Js.Date.fromFloat(unixTime *. 1000.)),
-             status: Confirmed,
-           });
+           Some({...data, date: Some(txDate), status: Confirmed});
          } else {
            None;
          }
@@ -59,7 +56,7 @@ let mapConfirmation =
     unconfirmedTxs |. List.keep(({txId: dataId}) => dataId != txId);
   {
     ...state,
-    txIds: state.txIds |. Set.String.add(txId),
+    txDates: state.txDates |. Map.String.set(txId, txDate),
     unconfirmedTxs: newUnconf,
     confirmedTxs: newTxs |. List.concat(confirmedTxs),
   };
@@ -89,13 +86,14 @@ let apply = (event: Event.t, state) =>
   | PayoutBroadcast({txId, processId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
+    let txDate = state.txDates |. Map.String.get(txId);
     let payout = {
       txId,
       txType: Payout,
-      status: state.txIds |. Set.String.has(txId) ? Confirmed : Unconfirmed,
+      status: txDate |> Js.Option.isSome ? Confirmed : Unconfirmed,
       amount:
         PayoutTransaction.summary(state.network, payoutTx).spentWithFees,
-      date: None,
+      date: txDate,
       detailsLink: Venture(state.ventureId, Payout(processId)),
     };
     switch (payout.status) {
