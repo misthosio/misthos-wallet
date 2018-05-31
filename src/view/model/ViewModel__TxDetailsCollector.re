@@ -27,7 +27,7 @@ type t = {
   localUser: userId,
   payouts: ProcessCollector.collection(data),
   txIdToProcessIdMap: Map.String.t(processId),
-  txIds: Set.String.t,
+  txDates: Map.String.t(Js.Date.t),
 };
 
 let make = localUser => {
@@ -35,7 +35,7 @@ let make = localUser => {
   localUser,
   payouts: ProcessCollector.make(),
   txIdToProcessIdMap: Map.String.empty,
-  txIds: Set.String.empty,
+  txDates: Map.String.empty,
 };
 
 let getPayout = (processId, {payouts}) => payouts |. Map.get(processId);
@@ -107,7 +107,9 @@ let apply = (event, state) =>
              {...data, payoutStatus: Aborted}
            ),
     }
-  | PayoutBroadcast({processId, txId}) => {
+  | PayoutBroadcast({processId, txId}) =>
+    let txDate = state.txDates |. Map.String.get(txId);
+    {
       ...state,
       txIdToProcessIdMap:
         state.txIdToProcessIdMap |. Map.String.set(txId, processId),
@@ -118,27 +120,24 @@ let apply = (event, state) =>
                ...data,
                txId: Some(txId),
                payoutStatus:
-                 state.txIds |. Set.String.has(txId) ?
-                   Confirmed : Unconfirmed,
+                 txDate |> Js.Option.isSome ? Confirmed : Unconfirmed,
+               date: txDate,
              }
            ),
-    }
+    };
   | TransactionConfirmed({txId, unixTime}) =>
     let processId = state.txIdToProcessIdMap |. Map.String.get(txId);
+    let txDate = Js.Date.fromFloat(unixTime *. 1000.);
     {
       ...state,
-      txIds: state.txIds |. Set.String.add(txId),
+      txDates: state.txDates |. Map.String.set(txId, txDate),
       payouts:
         switch (processId) {
         | None => state.payouts
         | Some(processId) =>
           state.payouts
           |> ProcessCollector.updateData(processId, data =>
-               {
-                 ...data,
-                 date: Some(Js.Date.fromFloat(unixTime *. 1000.)),
-                 payoutStatus: Confirmed,
-               }
+               {...data, date: Some(txDate), payoutStatus: Confirmed}
              )
         },
     };
