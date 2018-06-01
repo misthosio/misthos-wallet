@@ -80,7 +80,7 @@ const config = {
     compress: true,
     clientLogLevel: 'none',
     port: 3000,
-    contentBase: '/public',
+    contentBase: './public',
     publicPath: publicPath,
     historyApiFallback: {
       disableDotRule: true,
