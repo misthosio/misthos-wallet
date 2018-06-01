@@ -4,6 +4,7 @@
 var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Icons = require("./Icons.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
@@ -16,7 +17,6 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
-var CopySvg = require("../assets/img/copy.svg");
 
 var component = ReasonReact.reducerComponent("Receive");
 
@@ -70,9 +70,7 @@ function make(commands, _) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var copyButton = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
-                          return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                                    src: CopySvg
-                                                  })])), {
+                          return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
                                       "data-clipboard-text": address
                                     });
                         }), state[/* address */0]));

@@ -1,7 +1,5 @@
 include ViewCommon;
 
-[@bs.module] external remove : string = "../assets/img/remove.svg";
-
 module View = ViewModel.CreatePayoutView;
 
 let defaultFee = BTC.fromSatoshis(100L);
@@ -273,7 +271,7 @@ let make =
                      <b> (address |> text) </b>
                      <IconButton
                        onClick=(_e => send(RemoveDestination(idx)))>
-                       <img src=remove alt="Remove" />
+                       Icons.remove
                      </IconButton>
                    </TableCell>
                    <TableCell

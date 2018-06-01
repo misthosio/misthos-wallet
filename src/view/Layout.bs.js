@@ -4,6 +4,7 @@
 var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
@@ -18,11 +19,8 @@ var MaterialUi_AppBar = require("@jsiebern/bs-material-ui/src/MaterialUi_AppBar.
 var MaterialUi_Drawer = require("@jsiebern/bs-material-ui/src/MaterialUi_Drawer.bs.js");
 var MaterialUi_Toolbar = require("@jsiebern/bs-material-ui/src/MaterialUi_Toolbar.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
-var MenuSvg = require("../assets/img/menu.svg");
 var MaterialUi_CssBaseline = require("@jsiebern/bs-material-ui/src/MaterialUi_CssBaseline.bs.js");
 var MaterialUi_MuiThemeProvider = require("@jsiebern/bs-material-ui/src/MaterialUi_MuiThemeProvider.bs.js");
-var LogoSolidSvg = require("../assets/img/logo-solid.svg");
-var CloseButtonSvg = require("../assets/img/close-button.svg");
 
 var component = ReasonReact.reducerComponent("Layout");
 
@@ -162,10 +160,7 @@ function make(drawer$1, modal$1, children) {
                                                   React.createElement("div", {
                                                         className: flex_
                                                       }),
-                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                                                  alt: "close",
-                                                                  src: CloseButtonSvg
-                                                                })]))
+                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.close]))
                                                 ])),
                                         param[0]
                                       ])), {
@@ -182,19 +177,13 @@ function make(drawer$1, modal$1, children) {
                                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Toolbar.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                                                                 return Router.clickToRoute(/* Home */0, param);
-                                                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                                                                  alt: "logo",
-                                                                                  src: LogoSolidSvg
-                                                                                })])),
+                                                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.logoSolid])),
                                                                   React.createElement("div", {
                                                                         className: flex_
                                                                       }),
                                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
                                                                                 return Curry._1(send, /* OpenDrawer */0);
-                                                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                                                                  alt: "menu",
-                                                                                  src: MenuSvg
-                                                                                })]))
+                                                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.menu]))
                                                                 ])),
                                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Drawer.make(/* Some */[/* Right */-57574468], /* None */0, /* None */0, /* None */0, /* Some */[(function () {
                                                                       return Curry._1(send, /* CloseDrawer */1);

@@ -8,6 +8,7 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Body2 = require("./components/Body2.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Icons = require("./Icons.bs.js");
 var React = require("react");
 var MInput = require("./components/MInput.bs.js");
 var Balance = require("./components/Balance.bs.js");
@@ -25,7 +26,6 @@ var MaterialUi_TableBody = require("@jsiebern/bs-material-ui/src/MaterialUi_Tabl
 var MaterialUi_TableCell = require("@jsiebern/bs-material-ui/src/MaterialUi_TableCell.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
-var RemoveSvg = require("../assets/img/remove.svg");
 var MaterialUi_InputAdornment = require("@jsiebern/bs-material-ui/src/MaterialUi_InputAdornment.bs.js");
 
 var defaultFee = BTC.fromSatoshis(/* int64 */[
@@ -203,10 +203,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                     React.createElement("b", undefined, ViewCommon.text(param[0])),
                                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
                                                                   return Curry._1(send, /* RemoveDestination */Block.__(2, [idx]));
-                                                                })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                                                    alt: "Remove",
-                                                                    src: RemoveSvg
-                                                                  })]))
+                                                                })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.remove]))
                                                   ])),
                                           ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(param[1]) + " BTC")]))
                                         ]));

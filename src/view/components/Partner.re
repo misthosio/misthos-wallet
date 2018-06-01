@@ -4,22 +4,77 @@ open PrimitiveTypes;
 
 let component = ReasonReact.statelessComponent("Partner");
 
-[@bs.module] external avatar : string = "../../assets/img/avatar-bg.svg";
-
 module Styles = {
   open Css;
   let lenght = Theme.space(8);
   let avatar =
     style([
-      backgroundImage(url(avatar)),
-      backgroundSize(`size((px(lenght), px(lenght)))),
+      backgroundColor(`transparent),
       width(px(lenght)),
       height(px(lenght)),
+    ]);
+  let iconText =
+    style([
+      fontFamily(Theme.sourceSansPro),
       fontSize(px(36)),
       lineHeight(1.0),
       fontWeight(600),
     ]);
 };
+
+let avatar = (letter: char) =>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="70"
+    height="70"
+    viewBox="0 0 70 70">
+    <defs>
+      <linearGradient id="b" x1="-1.146%" y1="71.336%" y2="0%">
+        <stop offset="0%" stopColor="#59F7F0" />
+        <stop offset="28.22%" stopColor="#02A2B4" />
+        <stop offset="56.765%" stopColor="#067781" />
+        <stop offset="79.931%" stopColor="#FF006D" />
+        <stop offset="100%" stopColor="#F65E25" />
+      </linearGradient>
+    </defs>
+    <g fill="none" fillRule="evenodd" transform="translate(6 6)">
+      <ellipse
+        fill="#000"
+        fillOpacity=".98"
+        cx="29"
+        cy="28.642"
+        rx="29"
+        ry="28.642"
+      />
+      <ellipse
+        cx="29"
+        cy="28.642"
+        stroke="url(#b)"
+        strokeWidth="6"
+        rx="32"
+        ry="31.642"
+      />
+      <ellipse
+        cx="29"
+        cy="28.642"
+        stroke="#FFF"
+        strokeWidth="4"
+        rx="31"
+        ry="30.642"
+      />
+    </g>
+    <text
+      fill="#FFF"
+      fontSize="36px"
+      fontWeight="600"
+      x="50%"
+      y="50%"
+      textAnchor="middle"
+      alignmentBaseline="middle"
+      fontFamily=Theme.sourceSansPro>
+      (letter |> String.make(1) |> String.uppercase |> text)
+    </text>
+  </svg>;
 
 let make = (~partnerId: userId, ~name=?, ~button=?, ~onClick=?, _children) => {
   ...component,
@@ -32,9 +87,7 @@ let make = (~partnerId: userId, ~name=?, ~button=?, ~onClick=?, _children) => {
       };
     MaterialUi.(
       <ListItem disableGutters=true ?onClick>
-        <Avatar className=Styles.avatar>
-          (userId.[0] |> String.make(1) |> String.uppercase |> text)
-        </Avatar>
+        <Avatar className=Styles.avatar> (userId.[0] |> avatar) </Avatar>
         <ListItemText primary ?secondary />
         (
           switch (button) {

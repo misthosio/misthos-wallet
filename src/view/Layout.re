@@ -1,9 +1,3 @@
-[@bs.module] external logo : string = "../assets/img/logo-solid.svg";
-
-[@bs.module] external menu : string = "../assets/img/menu.svg";
-
-[@bs.module] external close : string = "../assets/img/close-button.svg";
-
 type action =
   | OpenDrawer
   | CloseDrawer;
@@ -64,7 +58,7 @@ let make = (~drawer, ~modal, children) => {
                    <Toolbar>
                      <div className=Styles.flex_ />
                      <IconButton color=`Inherit onClick=onClose>
-                       <img src=close alt="close" />
+                       Icons.close
                      </IconButton>
                    </Toolbar>
                    modal
@@ -88,12 +82,12 @@ let make = (~drawer, ~modal, children) => {
                   <Toolbar>
                     <IconButton
                       color=`Inherit onClick=(Router.clickToRoute(Home))>
-                      <img src=logo alt="logo" />
+                      Icons.logoSolid
                     </IconButton>
                     <div className=Styles.flex_ />
                     <IconButton
                       color=`Inherit onClick=(_e => send(OpenDrawer))>
-                      <img src=menu alt="menu" />
+                      Icons.menu
                     </IconButton>
                   </Toolbar>
                   <Drawer
