@@ -10,7 +10,7 @@
     "bitcoinjs-lib": "^3.3",
     "blockstack": "^17",
     "bs-css": "^6.7.0",
-    "bs-fetch": "^0.2.1",
+    "bs-fetch": "^0.3.0",
     "bs-json": "^1.0",
     "bs-webapi": "^0.9.1",
     "clipboard": "^2.0.1",
