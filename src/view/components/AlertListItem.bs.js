@@ -2,8 +2,8 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Icons = require("../Icons.bs.js");
 var Theme = require("../Theme.bs.js");
-var React = require("react");
 var Colors = require("../Colors.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -11,11 +11,7 @@ var MaterialUi_Avatar = require("@jsiebern/bs-material-ui/src/MaterialUi_Avatar.
 var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js");
-var ArrowRightSvg = require("../../assets/img/arrow-right.svg");
-var PlusCircleSvg = require("../../assets/img/plus-circle.svg");
-var MinusCircleSvg = require("../../assets/img/minus-circle.svg");
 var MaterialUi_ListItemSecondaryAction = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemSecondaryAction.bs.js");
-var ArrowUpCircleSvg = require("../../assets/img/arrow-up-circle.svg");
 
 var component = ReasonReact.statelessComponent("AlertListItem");
 
@@ -61,38 +57,23 @@ function make(icon$1, onClick, primary, secondary, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match;
+              var icon$2;
               switch (icon$1) {
                 case 0 : 
-                    match = /* tuple */[
-                      PlusCircleSvg,
-                      "plus-icon"
-                    ];
+                    icon$2 = Icons.plusCircle;
                     break;
                 case 1 : 
-                    match = /* tuple */[
-                      MinusCircleSvg,
-                      "minus-icon"
-                    ];
+                    icon$2 = Icons.minusCircle;
                     break;
                 case 2 : 
-                    match = /* tuple */[
-                      ArrowUpCircleSvg,
-                      "arrow-up-icon"
-                    ];
+                    icon$2 = Icons.arrowUpCircle;
                     break;
                 
               }
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* Some */[alert], /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[icon], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                              alt: match[1],
-                                              src: match[0]
-                                            })])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[icon], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[icon$2])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[primary], secondary, /* None */0, /* None */0, /* array */[])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("img", {
-                                                        alt: "arrow-right-icon",
-                                                        src: ArrowRightSvg
-                                                      })]))]))
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClick], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.arrowRight]))]))
                             ]));
             }),
           /* initialState */component[/* initialState */10],

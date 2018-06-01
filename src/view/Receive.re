@@ -63,7 +63,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
       |> Utils.mapOption(address =>
            ReasonReact.cloneElement(
              <MaterialUi.IconButton className="copy-btn">
-               <img src=copy />
+               Icons.copy
              </MaterialUi.IconButton>,
              ~props={"data-clipboard-text": address},
              [||],

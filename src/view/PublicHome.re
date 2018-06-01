@@ -10,6 +10,7 @@ module Styles = {
   let display4 = style([paddingBottom(`vw(1.5))]);
   let background =
     style([
+      /* TODO switch to inline svg when refactoring layout */
       backgroundImage(url(logo)),
       backgroundRepeat(noRepeat),
       backgroundSize(`size((`px(584), `px(419)))),

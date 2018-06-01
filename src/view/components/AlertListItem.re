@@ -7,15 +7,6 @@ type icon =
 
 let component = ReasonReact.statelessComponent("AlertListItem");
 
-[@bs.module] external plus : string = "../../assets/img/plus-circle.svg";
-
-[@bs.module] external minus : string = "../../assets/img/minus-circle.svg";
-
-[@bs.module]
-external arrowUp : string = "../../assets/img/arrow-up-circle.svg";
-
-[@bs.module] external arrowRight : string = "../../assets/img/arrow-right.svg";
-
 module Styles = {
   open Css;
   let alert =
@@ -33,20 +24,18 @@ module Styles = {
 let make = (~icon: icon, ~onClick, ~primary, ~secondary=?, _children) => {
   ...component,
   render: _self => {
-    let (src, alt) =
+    let icon =
       switch (icon) {
-      | Plus => (plus, "plus-icon")
-      | Minus => (minus, "minus-icon")
-      | ArrowUp => (arrowUp, "arrow-up-icon")
+      | Plus => Icons.plusCircle
+      | Minus => Icons.minusCircle
+      | ArrowUp => Icons.arrowUpCircle
       };
     MaterialUi.(
       <ListItem className=Styles.alert dense=true button=true onClick>
-        <Avatar className=Styles.icon> <img src alt /> </Avatar>
+        <Avatar className=Styles.icon> icon </Avatar>
         <ListItemText primary ?secondary />
         <ListItemSecondaryAction>
-          <IconButton onClick>
-            <img src=arrowRight alt="arrow-right-icon" />
-          </IconButton>
+          <IconButton onClick> Icons.arrowRight </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
     );
