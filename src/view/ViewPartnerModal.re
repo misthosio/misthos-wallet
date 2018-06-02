@@ -25,7 +25,7 @@ let make =
       _children,
     ) => {
   ...component,
-  render: (_) => {
+  render: _ => {
     let {
       proposedBy,
       processId,
@@ -62,10 +62,10 @@ let make =
     };
     <Body2
       titles=["Proposed Partner " ++ processTypeString]
-      body1=
+      body1={
         <div>
           <MTypography variant=`Title>
-            ("Proposed partner addition" |> text)
+            ("Proposed Partner " ++ processTypeString |> text)
           </MTypography>
           <Partner key=(userId |> UserId.toString) partnerId=userId />
           <MTypography variant=`Body2>
@@ -76,7 +76,8 @@ let make =
             statusChip
           </MTypography>
         </div>
-      body2=
+      }
+      body2={
         <div>
           <Voters voters />
           <ProcessApprovalButtons
@@ -89,6 +90,7 @@ let make =
             cmdStatus
           />
         </div>
+      }
     />;
   },
 };
