@@ -113,8 +113,9 @@ let make = (~viewData: ViewData.t, _children) => {
         ),
       );
     <Body4
-      titles=["Partners", "Transactions"]
-      body1=
+      title1=("Partners" |> text)
+      title2=("Transactions" |> text)
+      area1=
         <div>
           <MTypography variant=`Title>
             (viewData.ventureName |> text)
@@ -124,7 +125,7 @@ let make = (~viewData: ViewData.t, _children) => {
             reserved=viewData.balance.reserved
           />
         </div>
-      body2=
+      area2=
         <div className=Css.(style([display(`flex)]))>
           <MFabButton
             variant=Aqua route=(Venture(viewData.ventureId, Receive))>
@@ -136,7 +137,7 @@ let make = (~viewData: ViewData.t, _children) => {
             ("PAY OUT" |> text)
           </MFabButton>
         </div>
-      body3=
+      area3=
         <div>
           (
             switch (viewData.readOnly) {
@@ -160,7 +161,7 @@ let make = (~viewData: ViewData.t, _children) => {
             ("Add or Remove Partners" |> text)
           </LinkButton>
         </div>
-      body4=MaterialUi.(
+      area4=MaterialUi.(
               <div>
                 <ScrollList>
                   <List disablePadding=true> payouts </List>
