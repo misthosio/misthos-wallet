@@ -83,35 +83,29 @@ function make(viewData, _) {
                                   }), confirmed)
                           ])));
               var match = viewData[/* readOnly */2];
-              return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[/* :: */[
-                                "Partners",
-                                /* :: */[
-                                  "Transactions",
-                                  /* [] */0
-                                ]
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[]))), React.createElement("div", {
-                                  className: Css.style(/* :: */[
-                                        Css.display(/* flex */-1010954439),
-                                        /* [] */0
-                                      ])
-                                }, ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
-                                            viewData[/* ventureId */0],
-                                            /* Receive */3
-                                          ]), /* array */[ViewCommon.text("RECEIVE")])), React.createElement("div", {
-                                      className: Css.style(/* :: */[
-                                            Css.width(Css.px(Theme.space(8))),
-                                            /* [] */0
-                                          ])
-                                    }), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
-                                            viewData[/* ventureId */0],
-                                            /* CreatePayout */2
-                                          ]), /* array */[ViewCommon.text("PAY OUT")]))), React.createElement("div", undefined, match ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
-                                            viewData[/* ventureId */0],
-                                            /* ManagePartners */1
-                                          ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[payouts])),
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[transactions]))
-                                        ]))), /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[ViewCommon.text("Partners")], /* Some */[ViewCommon.text("Transactions")], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[])))], /* Some */[React.createElement("div", {
+                                    className: Css.style(/* :: */[
+                                          Css.display(/* flex */-1010954439),
+                                          /* [] */0
+                                        ])
+                                  }, ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
+                                              viewData[/* ventureId */0],
+                                              /* Receive */3
+                                            ]), /* array */[ViewCommon.text("RECEIVE")])), React.createElement("div", {
+                                        className: Css.style(/* :: */[
+                                              Css.width(Css.px(Theme.space(8))),
+                                              /* [] */0
+                                            ])
+                                      }), ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Orange */1, /* Venture */Block.__(0, [
+                                              viewData[/* ventureId */0],
+                                              /* CreatePayout */2
+                                            ]), /* array */[ViewCommon.text("PAY OUT")])))], /* Some */[React.createElement("div", undefined, match ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* Venture */Block.__(0, [
+                                              viewData[/* ventureId */0],
+                                              /* ManagePartners */1
+                                            ]), /* Some */[true], /* array */[ViewCommon.text("Add or Remove Partners")])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
+                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[payouts])),
+                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[transactions]))
+                                          ])))], /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
