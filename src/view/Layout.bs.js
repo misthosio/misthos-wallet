@@ -138,13 +138,22 @@ var modal = Css.style(/* :: */[
       ]
     ]);
 
+var logo = Css.style(/* :: */[
+      Css.hover(/* :: */[
+            Css.backgroundColor(Css.transparent),
+            /* [] */0
+          ]),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* flex_ */flex_,
   /* appBar */appBar,
   /* container */container,
   /* grid */grid,
   /* drawer */drawer,
-  /* modal */modal
+  /* modal */modal,
+  /* logo */logo
 ];
 
 function make(drawer$1, modal$1, children) {
@@ -183,7 +192,7 @@ function make(drawer$1, modal$1, children) {
                                               className: container
                                             }, drawer$1 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_AppBar.make(/* Some */[appBar], /* None */0, /* Some */[/* Static */982536398], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Toolbar.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+                                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[logo], /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                                                                 return Router.clickToRoute(/* Home */0, param);
                                                                               })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.logoSolid])),
                                                                   React.createElement("div", {
