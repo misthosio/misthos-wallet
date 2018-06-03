@@ -74,13 +74,13 @@ var titleBg = Css.style(/* :: */[
         /* :: */[
           Css.backgroundColor(Colors.black),
           /* :: */[
-            Css.borderBottomWidth(Css.px(4)),
+            Css.borderBottomStyle(Css.solid),
             /* :: */[
-              Css.borderBottomStyle(Css.solid),
+              Css.unsafe("borderImageSlice", "1"),
               /* :: */[
-                Css.unsafe("borderImageSlice", "1"),
+                Css.unsafe("borderImageSource", Colors.uGradient),
                 /* :: */[
-                  Css.unsafe("borderImageSource", Colors.uGradient),
+                  Css.unsafe("borderWidth", "0px 0px 4px 0px"),
                   /* [] */0
                 ]
               ]

@@ -55,10 +55,10 @@ module Styles = {
       unsafe("gridColumn", "begin / end"),
       unsafe("gridRow", "begin / end"),
       backgroundColor(Colors.black),
-      borderBottomWidth(px(4)),
       borderBottomStyle(solid),
       unsafe("borderImageSlice", "1"),
       unsafe("borderImageSource", Colors.uGradient),
+      unsafe("borderWidth", "0px 0px 4px 0px"),
     ]);
 };
 
