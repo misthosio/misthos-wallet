@@ -112,7 +112,7 @@ let make = (~viewData: ViewData.t, _children) => {
           },
         ),
       );
-    <Body4
+    <Grid
       title1=("Partners" |> text)
       title2=("Transactions" |> text)
       area1=

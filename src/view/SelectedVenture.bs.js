@@ -3,10 +3,10 @@
 
 var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
+var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
-var Body4 = require("./components/Body4.bs.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
@@ -83,7 +83,7 @@ function make(viewData, _) {
                                   }), confirmed)
                           ])));
               var match = viewData[/* readOnly */2];
-              return ReasonReact.element(/* None */0, /* None */0, Body4.make(/* Some */[ViewCommon.text("Partners")], /* Some */[ViewCommon.text("Transactions")], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[])))], /* Some */[React.createElement("div", {
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Partners")], /* Some */[ViewCommon.text("Transactions")], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */1])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */8][/* currentSpendable */0], /* Some */[viewData[/* balance */8][/* reserved */1]], /* array */[])))], /* Some */[React.createElement("div", {
                                     className: Css.style(/* :: */[
                                           Css.display(/* flex */-1010954439),
                                           /* [] */0
