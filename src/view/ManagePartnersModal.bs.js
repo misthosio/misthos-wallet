@@ -2,9 +2,9 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Grid = require("./components/Grid.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
-var Body2 = require("./components/Body2.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
@@ -161,52 +161,46 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                       y: "27"
                                     }, ViewCommon.text(String(index + 1 | 0)))));
               };
-              return ReasonReact.element(/* None */0, /* None */0, Body2.make(/* Some */[/* :: */[
-                                "Add a partner",
-                                /* :: */[
-                                  "Remove a partner",
-                                  /* [] */0
-                                ]
-                              ]], React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
-                                            3654863,
-                                            activeStep
-                                          ]], /* None */0, /* Some */[stepper], /* None */0, /* None */0, /* Some */[/* Vertical */-1010337642], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                          ReasonReact.element(/* Some */["enter-id"], /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(0)], /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
-                                                                /* IconContainer */Block.__(9, [icon]),
-                                                                /* [] */0
-                                                              ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
-                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                              ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
-                                                                          -976970511,
-                                                                          inputs[/* prospectId */0]
-                                                                        ]], /* Some */[(function (e) {
-                                                                            return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
-                                                                          })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
-                                                              ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner", (function () {
-                                                                          return Curry._1(send, /* ProposePartner */0);
-                                                                        }), /* None */0, /* None */0, match[/* canSubmitProposal */1], /* Some */[false], proposeCmdStatus, /* array */[]))
-                                                            ]))
-                                                  ])),
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(1)], /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
-                                                                /* IconContainer */Block.__(9, [icon]),
-                                                                /* [] */0
-                                                              ]], /* None */0, /* array */[ViewCommon.text("SHARE THE VENTURE URL")])),
-                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
-                                                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                                            return Curry._1(send, /* AddAnother */2);
-                                                                          })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("Add Another")]))
-                                                            ]))
-                                                  ]))
-                                        ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner removal", (function () {
-                                            return Curry._1(send, /* RemovePartner */1);
-                                          }), /* Some */[(function () {
-                                              return Curry._1(send, /* FreezeRemoval */3);
-                                            })], /* Some */[(function () {
-                                              return Curry._1(send, /* ResetRemoval */4);
-                                            })], Js_option.isSome(inputs[/* removePartnerId */1]), /* None */0, removeCmdStatus, /* array */[]))), /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Add a partner")], /* Some */[ViewCommon.text("Remove a partner")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
+                                              3654863,
+                                              activeStep
+                                            ]], /* None */0, /* Some */[stepper], /* None */0, /* None */0, /* Some */[/* Vertical */-1010337642], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                            ReasonReact.element(/* Some */["enter-id"], /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(0)], /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
+                                                                  /* IconContainer */Block.__(9, [icon]),
+                                                                  /* [] */0
+                                                                ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                                ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
+                                                                            -976970511,
+                                                                            inputs[/* prospectId */0]
+                                                                          ]], /* Some */[(function (e) {
+                                                                              return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
+                                                                            })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
+                                                                ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner", (function () {
+                                                                            return Curry._1(send, /* ProposePartner */0);
+                                                                          }), /* None */0, /* None */0, match[/* canSubmitProposal */1], /* Some */[false], proposeCmdStatus, /* array */[]))
+                                                              ]))
+                                                    ])),
+                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(1)], /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
+                                                                  /* IconContainer */Block.__(9, [icon]),
+                                                                  /* [] */0
+                                                                ]], /* None */0, /* array */[ViewCommon.text("SHARE THE VENTURE URL")])),
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
+                                                                ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                                              return Curry._1(send, /* AddAnother */2);
+                                                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("Add Another")]))
+                                                              ]))
+                                                    ]))
+                                          ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner removal", (function () {
+                                              return Curry._1(send, /* RemovePartner */1);
+                                            }), /* Some */[(function () {
+                                                return Curry._1(send, /* FreezeRemoval */3);
+                                              })], /* Some */[(function () {
+                                                return Curry._1(send, /* ResetRemoval */4);
+                                              })], Js_option.isSome(inputs[/* removePartnerId */1]), /* None */0, removeCmdStatus, /* array */[])))], /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

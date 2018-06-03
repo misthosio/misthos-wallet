@@ -207,9 +207,10 @@ let make =
           )
         </g>
       </svg>;
-    <Body2
-      titles=["Add a partner", "Remove a partner"]
-      body1=
+    <Grid
+      title1=("Add a partner" |> text)
+      title2=("Remove a partner" |> text)
+      area3=
         <div>
           MaterialUi.(
             <Stepper
@@ -265,7 +266,7 @@ let make =
             (viewData.joinVentureUrl |> text)
           </MTypography>
         </div>
-      body2=
+      area4=
         <div>
           <MTypography variant=`Body2>
             (

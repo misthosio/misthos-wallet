@@ -77,9 +77,9 @@ let make =
         </div>
       | None => ReasonReact.null
       };
-    <Body2
-      titles=["Payout Details"]
-      body1=
+    <Grid
+      title1=("Payout Details" |> text)
+      area3=
         <div>
           <MTypography variant=`Body2>
             (
@@ -134,7 +134,7 @@ let make =
           )
           transactionId
         </div>
-      body2=
+      area4=
         <div>
           <Voters voters />
           <ProcessApprovalButtons

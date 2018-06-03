@@ -8,6 +8,7 @@ let component = ReasonReact.reducerComponent("Layout");
 
 module Styles = {
   open Css;
+  global("html, body, #root", [height(`percent(100.0))]);
   let flex_ = style([flex(1)]);
   let appBar =
     style([backgroundColor(Colors.white), boxShadow(Colors.white)]);

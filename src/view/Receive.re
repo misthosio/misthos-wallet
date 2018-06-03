@@ -70,31 +70,35 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
            )
          )
       |> Js.Option.getWithDefault(ReasonReact.null);
-    <div>
-      <TitleBar titles=["Receive BTC"] />
-      <div className=Styles.container>
-        (
-          switch (state.address) {
-          | Some(address) =>
-            <img
-              height="250px"
-              src=(
-                "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl="
-                ++ address
-              )
-            />
-          | None =>
-            <Spinner className=Styles.spinner text="Generating new address" />
-          }
-        )
-        <MTypography variant=`Body2>
-          (state.address |> Js.Option.getWithDefault("") |> text)
-          copyButton
-        </MTypography>
-        <MButton onClick=(_e => send(GetIncomeAddress))>
-          (text("Generate new income address"))
-        </MButton>
-      </div>
-    </div>;
+    <Grid
+      title1=("Receive BTC" |> text)
+      area3=
+        <div className=Styles.container>
+          (
+            switch (state.address) {
+            | Some(address) =>
+              <img
+                height="250px"
+                src=(
+                  "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl="
+                  ++ address
+                )
+              />
+            | None =>
+              <Spinner
+                className=Styles.spinner
+                text="Generating new address"
+              />
+            }
+          )
+          <MTypography variant=`Body2>
+            (state.address |> Js.Option.getWithDefault("") |> text)
+            copyButton
+          </MTypography>
+          <MButton onClick=(_e => send(GetIncomeAddress))>
+            (text("Generate new income address"))
+          </MButton>
+        </div>
+    />;
   },
 };

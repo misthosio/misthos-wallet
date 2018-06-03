@@ -2,30 +2,40 @@ let component = ReasonReact.statelessComponent("Grid");
 
 [@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
 
+type variant =
+  | V1
+  | V2
+  | V4;
+
 module Styles = {
   open Css;
   let gap = (Theme.space(8) |> string_of_int) ++ "px";
-  let grid = firstRow =>
+  let grid = variant =>
     cssUnsafe({
       "display": "grid",
       "gridGap": gap ++ " " ++ gap,
       "gridTemplateAreas":
-        switch (firstRow) {
-        | Some(_) => {|
-                       ". area1 . area2 ."
-                       ". title1 . title2 ."
-                       ". area3 . area4 ."
-                       |}
-        | None => {|
-                       ". title1 . title2 ."
-                       ". area3 . area4 ."
-                   |}
+        switch (variant) {
+        | V4 => {|
+                 ". area1 . area2 ."
+                 ". title1 . title2 ."
+                 ". area3 . area4 ."
+                 |}
+        | V2 => {|
+                 ". title1 . title2 ."
+                 ". area3 . area4 ."
+                 |}
+        | V1 => {|
+                 ". title1 title1 title1 ."
+                 ". area3 area3 area3 ."
+                 |}
         },
       "gridTemplateColumns": "[begin] minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr) [end]",
       "gridTemplateRows":
-        switch (firstRow) {
-        | Some(_) => "min-content [begin] min-content [end] auto"
-        | None => "[begin] min-content [end] auto"
+        switch (variant) {
+        | V4 => "min-content [begin] min-content [end] auto"
+        | V2
+        | V1 => "[begin] min-content [end] auto"
         },
       "width": "100%",
     });
@@ -33,6 +43,7 @@ module Styles = {
   let title =
     style([
       fontFamily(Theme.oswald),
+      height(px(45)),
       fontSize(px(30)),
       fontWeight(600),
       color(Colors.white),
@@ -54,8 +65,15 @@ module Styles = {
 let make =
     (~title1=?, ~title2=?, ~area1=?, ~area2=?, ~area3=?, ~area4=?, _children) => {
   ...component,
-  render: _self =>
-    <div className=(Styles.grid(area1))>
+  render: _self => {
+    let variant =
+      switch (area1, area3, area4) {
+      | (Some(_), Some(_), Some(_)) => V4
+      | (None, Some(_), Some(_)) => V2
+      | (None, Some(_), None) => V1
+      | (_, _, _) => V4
+      };
+    <div className=(Styles.grid(variant))>
       <div className=Styles.titleBg key="titleBg" />
       (
         [|
@@ -78,5 +96,6 @@ let make =
            )
         |> ReasonReact.array
       )
-    </div>,
+    </div>;
+  },
 };

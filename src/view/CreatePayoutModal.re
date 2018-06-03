@@ -283,9 +283,9 @@ let make =
              ),
         ),
       );
-    <Body2
-      titles=["Create A Payout"]
-      body1=(
+    <Grid
+      title1=("Create A Payout" |> text)
+      area3=(
               if (viewData.allowCreation == false) {
                 <div>
                   <MTypography variant=`Title>
@@ -343,7 +343,7 @@ let make =
                 </div>;
               }
             )
-      body2=(
+      area4=(
               if (viewData.allowCreation == false) {
                 <div>
                   <MTypography variant=`Body2>

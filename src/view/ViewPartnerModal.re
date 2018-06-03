@@ -60,9 +60,9 @@ let make =
         };
       <StatusChip status label />;
     };
-    <Body2
-      titles=["Proposed Partner " ++ processTypeString]
-      body1={
+    <Grid
+      title1=("Proposed Partner " ++ processTypeString |> text)
+      area3={
         <div>
           <MTypography variant=`Title>
             ("Proposed Partner " ++ processTypeString |> text)
@@ -77,7 +77,7 @@ let make =
           </MTypography>
         </div>
       }
-      body2={
+      area4={
         <div>
           <Voters voters />
           <ProcessApprovalButtons

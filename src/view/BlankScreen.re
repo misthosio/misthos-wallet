@@ -1,9 +1,8 @@
 include ViewCommon;
 
-let component = ReasonReact.statelessComponent("JoinVenture");
+let component = ReasonReact.statelessComponent("BlankScreen");
 
 let make = (~text as notice, _children) => {
   ...component,
-  render: (_) =>
-    <Body2 titles=[""] body1=(text(notice)) body2=ReasonReact.null />,
+  render: (_) => <Spinner text=notice />,
 };
