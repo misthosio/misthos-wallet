@@ -5,9 +5,9 @@ let component = ReasonReact.statelessComponent("LoggedInHome");
 let make = (~index, _children) => {
   ...component,
   render: (_) =>
-    <Body2
-      titles=["My Ventures"]
-      body1=
+    <Grid
+      title1=("My Ventures" |> text)
+      area3=
         <div>
           <VentureList index />
           <div />
@@ -15,6 +15,5 @@ let make = (~index, _children) => {
             ("Create a Venture" |> text)
           </LinkButton>
         </div>
-      body2=ReasonReact.null
     />,
 };

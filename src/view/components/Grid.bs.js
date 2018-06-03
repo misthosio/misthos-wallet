@@ -13,13 +13,26 @@ var component = ReasonReact.statelessComponent("Grid");
 
 var gap = String(Theme.space(8)) + "px";
 
-function grid(firstRow) {
+function grid(variant) {
+  var tmp;
+  switch (variant) {
+    case 0 : 
+        tmp = "\n                 \". title1 title1 title1 .\"\n                 \". area3 area3 area3 .\"\n                 ";
+        break;
+    case 1 : 
+        tmp = "\n                 \". title1 . title2 .\"\n                 \". area3 . area4 .\"\n                 ";
+        break;
+    case 2 : 
+        tmp = "\n                 \". area1 . area2 .\"\n                 \". title1 . title2 .\"\n                 \". area3 . area4 .\"\n                 ";
+        break;
+    
+  }
   return Glamor.css({
               display: "grid",
               gridGap: gap + (" " + gap),
-              gridTemplateAreas: firstRow ? "\n                       \". area1 . area2 .\"\n                       \". title1 . title2 .\"\n                       \". area3 . area4 .\"\n                       " : "\n                       \". title1 . title2 .\"\n                       \". area3 . area4 .\"\n                   ",
+              gridTemplateAreas: tmp,
               gridTemplateColumns: "[begin] minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr) [end]",
-              gridTemplateRows: firstRow ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto",
+              gridTemplateRows: variant >= 2 ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto",
               width: "100%"
             });
 }
@@ -34,16 +47,19 @@ function area(area$1) {
 var title = Css.style(/* :: */[
       Css.fontFamily(Theme.oswald),
       /* :: */[
-        Css.fontSize(Css.px(30)),
+        Css.height(Css.px(45)),
         /* :: */[
-          Css.fontWeight(600),
+          Css.fontSize(Css.px(30)),
           /* :: */[
-            Css.color(Colors.white),
+            Css.fontWeight(600),
             /* :: */[
-              Css.textTransform(Css.uppercase),
+              Css.color(Colors.white),
               /* :: */[
-                Css.marginBottom(Css.px(4)),
-                /* [] */0
+                Css.textTransform(Css.uppercase),
+                /* :: */[
+                  Css.marginBottom(Css.px(4)),
+                  /* [] */0
+                ]
               ]
             ]
           ]
@@ -94,8 +110,11 @@ function make(title1, title2, area1, area2, area3, area4, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
+              var variant = area1 || !area3 ? /* V4 */2 : (
+                  area4 ? /* V2 */1 : /* V1 */0
+                );
               return React.createElement("div", {
-                          className: grid(area1)
+                          className: grid(variant)
                         }, React.createElement("div", {
                               key: "titleBg",
                               className: titleBg

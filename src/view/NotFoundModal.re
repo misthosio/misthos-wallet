@@ -14,9 +14,9 @@ let make = (~resource, _children) => {
       | Payout => "payout"
       | Partner => "partner"
       };
-    <Body2
-      titles=[resourceText ++ " not found"]
-      body1=
+    <Grid
+      title1=(resourceText ++ " not found" |> text)
+      area3=
         <div>
           (
             text(
@@ -26,7 +26,6 @@ let make = (~resource, _children) => {
             )
           )
         </div>
-      body2=ReasonReact.null
     />;
   },
 };
