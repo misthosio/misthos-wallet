@@ -9,18 +9,20 @@ var Colors = require("../Colors.bs.js");
 var Glamor = require("glamor");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
-var component = ReasonReact.statelessComponent("Body4");
+var component = ReasonReact.statelessComponent("Grid");
 
 var gap = String(Theme.space(8)) + "px";
 
-var grid = Glamor.css({
-      display: "grid",
-      gridGap: gap + (" " + gap),
-      gridTemplateAreas: "\". area1 . area2 .\" \". title1 . title2 .\" \". area3 . area4 .\"",
-      gridTemplateColumns: "[begin] minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr) [end]",
-      gridTemplateRows: "min-content [begin] min-content [end] auto",
-      width: "100%"
-    });
+function grid(firstRow) {
+  return Glamor.css({
+              display: "grid",
+              gridGap: gap + (" " + gap),
+              gridTemplateAreas: firstRow ? "\n                       \". area1 . area2 .\"\n                       \". title1 . title2 .\"\n                       \". area3 . area4 .\"\n                       " : "\n                       \". title1 . title2 .\"\n                       \". area3 . area4 .\"\n                   ",
+              gridTemplateColumns: "[begin] minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr) [end]",
+              gridTemplateRows: firstRow ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto",
+              width: "100%"
+            });
+}
 
 function area(area$1) {
   return Css.style(/* :: */[
@@ -93,7 +95,7 @@ function make(title1, title2, area1, area2, area3, area4, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return React.createElement("div", {
-                          className: grid
+                          className: grid(area1)
                         }, React.createElement("div", {
                               key: "titleBg",
                               className: titleBg

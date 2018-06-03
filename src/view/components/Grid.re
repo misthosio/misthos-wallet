@@ -1,17 +1,32 @@
-let component = ReasonReact.statelessComponent("Body4");
+let component = ReasonReact.statelessComponent("Grid");
 
 [@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
 
 module Styles = {
   open Css;
   let gap = (Theme.space(8) |> string_of_int) ++ "px";
-  let grid =
+  let grid = firstRow =>
     cssUnsafe({
       "display": "grid",
       "gridGap": gap ++ " " ++ gap,
-      "gridTemplateAreas": {|". area1 . area2 ." ". title1 . title2 ." ". area3 . area4 ."|},
+      "gridTemplateAreas":
+        switch (firstRow) {
+        | Some(_) => {|
+                       ". area1 . area2 ."
+                       ". title1 . title2 ."
+                       ". area3 . area4 ."
+                       |}
+        | None => {|
+                       ". title1 . title2 ."
+                       ". area3 . area4 ."
+                   |}
+        },
       "gridTemplateColumns": "[begin] minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr) [end]",
-      "gridTemplateRows": "min-content [begin] min-content [end] auto",
+      "gridTemplateRows":
+        switch (firstRow) {
+        | Some(_) => "min-content [begin] min-content [end] auto"
+        | None => "[begin] min-content [end] auto"
+        },
       "width": "100%",
     });
   let area = area => style([unsafe("gridArea", area)]);
@@ -40,7 +55,7 @@ let make =
     (~title1=?, ~title2=?, ~area1=?, ~area2=?, ~area3=?, ~area4=?, _children) => {
   ...component,
   render: _self =>
-    <div className=Styles.grid>
+    <div className=(Styles.grid(area1))>
       <div className=Styles.titleBg key="titleBg" />
       (
         [|
