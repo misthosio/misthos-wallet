@@ -35,7 +35,8 @@ module Styles = {
       margin2(~v=`vh(5.0), ~h=`vw(5.0)),
       focus([outlineStyle(`none)]),
     ]);
-  let logo = style([hover([backgroundColor(transparent)])]);
+  let logo =
+    style([hover([backgroundColor(transparent)]), borderRadius(px(0))]);
 };
 
 let make = (~drawer, ~modal, children) => {

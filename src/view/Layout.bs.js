@@ -143,7 +143,10 @@ var logo = Css.style(/* :: */[
             Css.backgroundColor(Css.transparent),
             /* [] */0
           ]),
-      /* [] */0
+      /* :: */[
+        Css.borderRadius(Css.px(0)),
+        /* [] */0
+      ]
     ]);
 
 var Styles = /* module */[

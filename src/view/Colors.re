@@ -48,7 +48,7 @@ let gradient =
     ],
   );
 
-let uGradient = {j|linear-gradient(90deg, #$uRobinsEgg 0%, #$uMisthosTeal 28%, #$uDeepAqua 57%, #$uStrongPink 80%, #$uReddishOrange 100%);|j};
+let uGradient = {j|linear-gradient(90deg, #$uRobinsEgg 0%, #$uMisthosTeal 28%, #$uDeepAqua 57%, #$uStrongPink 80%, #$uReddishOrange 100%)|j};
 
 let gradientAqua =
   linearGradient(
