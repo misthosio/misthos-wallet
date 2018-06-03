@@ -35,6 +35,7 @@ module Styles = {
       margin2(~v=`vh(5.0), ~h=`vw(5.0)),
       focus([outlineStyle(`none)]),
     ]);
+  let logo = style([hover([backgroundColor(transparent)])]);
 };
 
 let make = (~drawer, ~modal, children) => {
@@ -82,7 +83,9 @@ let make = (~drawer, ~modal, children) => {
                 <AppBar position=`Static className=Styles.appBar>
                   <Toolbar>
                     <IconButton
-                      color=`Inherit onClick=(Router.clickToRoute(Home))>
+                      className=Styles.logo
+                      color=`Inherit
+                      onClick=(Router.clickToRoute(Home))>
                       Icons.logoSolid
                     </IconButton>
                     <div className=Styles.flex_ />
