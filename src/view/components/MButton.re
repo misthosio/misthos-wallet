@@ -37,6 +37,7 @@ let make =
       ~fullWidth=false,
       ~variant=Outlined,
       ~className="",
+      ~href=?,
       children,
     ) => {
   ...component,
@@ -45,6 +46,7 @@ let make =
       ?size
       className=(Styles.button(fullWidth, variant) ++ " " ++ className)
       ?color
+      ?href
       ?onClick>
       children
     </MaterialUi.Button>,

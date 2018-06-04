@@ -15,7 +15,7 @@ type t = {
   ventureId,
   lastResponse:
     option((WebWorker.correlationId, VentureWorkerMessage.cmdResponse)),
-  name: string,
+  ventureName: string,
   processedItems: ItemsSet.t,
   metaPolicy: Policy.t,
   partnersCollector: PartnersCollector.t,
@@ -37,10 +37,15 @@ let lastResponse = ({lastResponse}) => lastResponse;
 module ManagePartnersView = {
   type partner = PartnersCollector.partner;
   type t = {
+    ventureName: string,
+    localUser: UserId.t,
     partners: list(partner),
     joinVentureUrl: string,
   };
-  let fromViewModelState = ({ventureId, localUser, partnersCollector}) => {
+  let fromViewModelState =
+      ({ventureName, ventureId, localUser, partnersCollector}) => {
+    localUser,
+    ventureName,
     partners: partnersCollector.partners,
     joinVentureUrl:
       Location.origin
@@ -76,7 +81,7 @@ module CreatePayoutView = {
     summary: (list((string, BTC.t)), BTC.t) => PayoutTransaction.summary,
   };
   let fromViewModelState =
-      ({ventureId, localUser, name, walletInfoCollector}) => {
+      ({ventureId, localUser, ventureName, walletInfoCollector}) => {
     let reserved = walletInfoCollector |> WalletInfoCollector.totalReservedBTC;
     let balance = {
       reserved,
@@ -97,7 +102,7 @@ module CreatePayoutView = {
       ventureId,
       balance,
       allowCreation: balance.currentSpendable |> BTC.gt(BTC.zero),
-      ventureName: name,
+      ventureName,
       initialSummary: {
         reserved: BTC.zero,
         destinations: [],
@@ -206,7 +211,7 @@ module SelectedVentureView = {
       (
         {
           ventureId,
-          name,
+          ventureName,
           localUser,
           partnersCollector,
           transactionCollector,
@@ -224,7 +229,7 @@ module SelectedVentureView = {
     };
     {
       ventureId,
-      ventureName: name,
+      ventureName,
       readOnly:
         partnersCollector |> PartnersCollector.isPartner(localUser) == false,
       partners: partnersCollector.partners,
@@ -244,7 +249,7 @@ let selectedVenture = SelectedVentureView.fromViewModelState;
 let make = localUser => {
   localUser,
   lastResponse: None,
-  name: "",
+  ventureName: "",
   processedItems: ItemsSet.empty,
   ventureId: VentureId.fromString(""),
   metaPolicy: Policy.unanimous,
@@ -274,7 +279,7 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
     | VentureCreated({ventureName, metaPolicy, ventureId}) => {
         ...state,
         ventureId,
-        name: ventureName,
+        ventureName,
         metaPolicy,
       }
     | _ => state

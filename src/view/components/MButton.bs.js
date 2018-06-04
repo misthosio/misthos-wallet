@@ -63,7 +63,7 @@ function button(fullWidth, variant) {
 
 var Styles = /* module */[/* button */button];
 
-function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, children) {
+function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, href, children) {
   var fullWidth = $staropt$star ? $staropt$star[0] : false;
   var variant = $staropt$star$1 ? $staropt$star$1[0] : /* Outlined */1;
   var className = $staropt$star$2 ? $staropt$star$2[0] : "";
@@ -78,7 +78,7 @@ function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$sta
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant) + (" " + className)], color, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant) + (" " + className)], color, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, href, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
