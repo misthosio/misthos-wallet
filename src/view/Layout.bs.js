@@ -110,22 +110,37 @@ var drawer = Css.style(/* :: */[
     ]);
 
 var modal = Css.style(/* :: */[
-      Css.width(/* `vw */[
-            26433,
-            90.0
+      Css.media("(min-width: 960px)", /* :: */[
+            Css.width(/* `vw */[
+                  26433,
+                  90.0
+                ]),
+            /* :: */[
+              Css.height(/* `vh */[
+                    26418,
+                    90.0
+                  ]),
+              /* :: */[
+                Css.margin2(/* `vh */[
+                      26418,
+                      5.0
+                    ], /* `vw */[
+                      26433,
+                      5.0
+                    ]),
+                /* [] */0
+              ]
+            ]
           ]),
       /* :: */[
-        Css.height(/* `vh */[
-              26418,
-              90.0
+        Css.width(/* `percent */[
+              -119887163,
+              100.0
             ]),
         /* :: */[
-          Css.margin2(/* `vh */[
-                26418,
-                5.0
-              ], /* `vw */[
-                26433,
-                5.0
+          Css.height(/* `percent */[
+                -119887163,
+                100.0
               ]),
           /* :: */[
             Css.focus(/* :: */[
