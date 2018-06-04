@@ -29,9 +29,9 @@ function grid(variant) {
   }
   return Glamor.css({
               display: "grid",
-              gridGap: gap + (" " + gap),
+              gridGap: gap + " 0px",
               gridTemplateAreas: tmp,
-              gridTemplateColumns: "[begin] minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr) [end]",
+              gridTemplateColumns: "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]",
               gridTemplateRows: variant >= 2 ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto",
               width: "100%"
             });

@@ -13,7 +13,7 @@ module Styles = {
   let grid = variant =>
     cssUnsafe({
       "display": "grid",
-      "gridGap": gap ++ " " ++ gap,
+      "gridGap": gap ++ " 0px",
       "gridTemplateAreas":
         switch (variant) {
         | V4 => {|
@@ -30,7 +30,7 @@ module Styles = {
                  ". area3 area3 area3 ."
                  |}
         },
-      "gridTemplateColumns": "[begin] minmax(0, 1fr) minmax(400px, 4fr) 1fr minmax(400px, 4fr) minmax(0, 1fr) [end]",
+      "gridTemplateColumns": "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]",
       "gridTemplateRows":
         switch (variant) {
         | V4 => "min-content [begin] min-content [end] auto"
