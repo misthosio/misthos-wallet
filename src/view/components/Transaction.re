@@ -47,17 +47,16 @@ let make = (~tx: ViewData.txData, _children) => {
           }
         )
         onClick=(Router.clickToRoute(tx.detailsLink))>
-        /* <ListItemIcon> <Avatar> ("F" |> Utils.text) </Avatar> </ListItemIcon> */
-
-          <ListItemText
-            primary=
-              <div className=Styles.primary>
-                primary
-                <span className=(Styles.amount(tx.txType))> amount </span>
-              </div>
-            ?secondary
-          />
-        </ListItem>
+        <ListItemText
+          primary={
+            <div className=Styles.primary>
+              primary
+              <span className=(Styles.amount(tx.txType))> amount </span>
+            </div>
+          }
+          ?secondary
+        />
+      </ListItem>
     );
   },
 };
