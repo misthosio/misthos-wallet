@@ -99,7 +99,7 @@ let make = (~drawer, ~modal, children) => {
                     theme
                     variant=`Temporary
                     anchor=`Right
-                    onClose=((_) => send(CloseDrawer))
+                    onClose=(_ => send(CloseDrawer))
                     _open=state.drawerOpen>
                     <div
                       className=Styles.drawer

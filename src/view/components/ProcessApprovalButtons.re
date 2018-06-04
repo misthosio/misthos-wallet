@@ -50,17 +50,17 @@ let make =
     | ConfirmEndorse =>
       ReasonReact.UpdateWithSideEffects(
         {...state, buttonState: EndorsementSubmited},
-        ((_) => onEndorse()),
+        (_ => onEndorse()),
       )
     | ConfirmReject =>
       ReasonReact.UpdateWithSideEffects(
         {...state, buttonState: RejectionSubmited},
-        ((_) => onReject()),
+        (_ => onReject()),
       )
     | Cancel =>
       ReasonReact.UpdateWithSideEffects(
         {cmdStatus: Idle, buttonState: NoDecision},
-        ((_) => onCancel()),
+        (_ => onCancel()),
       )
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>

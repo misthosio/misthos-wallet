@@ -174,7 +174,7 @@ module Handle = {
                              };
                              resolve(venture);
                            })
-                        |> catch((_) =>
+                        |> catch(_ =>
                              loadAndNotify(
                                ~notify,
                                data,
@@ -305,11 +305,11 @@ module Handle = {
   };
   let load = ventureId => {
     logMessage("Handling 'Load'");
-    withVenture(~notify=true, Load(ventureId), (_) => Js.Promise.resolve);
+    withVenture(~notify=true, Load(ventureId), _ => Js.Promise.resolve);
   };
   let joinVia = (ventureId, userId) => {
     logMessage("Handling 'JoinVia'");
-    withVenture(JoinVia(ventureId, userId), (_) => Js.Promise.resolve);
+    withVenture(JoinVia(ventureId, userId), _ => Js.Promise.resolve);
   };
   let create = name => {
     logMessage("Handling 'Create'");

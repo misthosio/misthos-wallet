@@ -22,6 +22,7 @@ var VentureCreate = require("./VentureCreate.bs.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
+var ViewIncomeModal = require("./ViewIncomeModal.bs.js");
 var ViewPayoutModal = require("./ViewPayoutModal.bs.js");
 var ViewPartnerModal = require("./ViewPartnerModal.bs.js");
 var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
@@ -117,57 +118,81 @@ function make(session, updateSession, _) {
               }
           
         }
-      } else if (match.tag) {
-        if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
-          return /* None */0;
-        } else {
-          var venture$2 = selectedVenture[1];
-          var match$4 = ViewModel.readOnly(venture$2);
-          if (match$4) {
-            return /* None */0;
-          } else {
-            var match$5 = ViewModel.viewPayoutModal(match[0], venture$2);
-            var tmp;
-            if (match$5) {
-              var viewData = match$5[0];
-              tmp = ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$2), /* None */0, (function (commands, cmdStatus) {
-                          return ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(viewData, commands, cmdStatus, /* array */[]));
-                        })));
-            } else {
-              tmp = ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Payout */0, /* array */[]));
-            }
-            return /* Some */[/* tuple */[
-                      tmp,
-                      (function (param) {
-                          return onCloseModal(selected, param);
-                        })
-                    ]];
-          }
-        }
-      } else if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
-        return /* None */0;
       } else {
-        var venture$3 = selectedVenture[1];
-        var match$6 = ViewModel.readOnly(venture$3);
-        if (match$6) {
-          return /* None */0;
-        } else {
-          var match$7 = ViewModel.viewPartnerModal(match[0], venture$3);
-          var tmp$1;
-          if (match$7) {
-            var viewData$1 = match$7[0];
-            tmp$1 = ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), /* None */0, (function (commands, cmdStatus) {
-                        return ReasonReact.element(/* None */0, /* None */0, ViewPartnerModal.make(viewData$1, commands, cmdStatus, /* array */[]));
-                      })));
-          } else {
-            tmp$1 = ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Partner */1, /* array */[]));
-          }
-          return /* Some */[/* tuple */[
-                    tmp$1,
-                    (function (param) {
-                        return onCloseModal(selected, param);
-                      })
-                  ]];
+        switch (match.tag | 0) {
+          case 0 : 
+              if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
+                return /* None */0;
+              } else {
+                var venture$2 = selectedVenture[1];
+                var match$4 = ViewModel.readOnly(venture$2);
+                if (match$4) {
+                  return /* None */0;
+                } else {
+                  var match$5 = ViewModel.viewPartnerModal(match[0], venture$2);
+                  var tmp;
+                  if (match$5) {
+                    var viewData = match$5[0];
+                    tmp = ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$2), /* None */0, (function (commands, cmdStatus) {
+                                return ReasonReact.element(/* None */0, /* None */0, ViewPartnerModal.make(viewData, commands, cmdStatus, /* array */[]));
+                              })));
+                  } else {
+                    tmp = ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Partner */2, /* array */[]));
+                  }
+                  return /* Some */[/* tuple */[
+                            tmp,
+                            (function (param) {
+                                return onCloseModal(selected, param);
+                              })
+                          ]];
+                }
+              }
+          case 1 : 
+              if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
+                return /* None */0;
+              } else {
+                var venture$3 = selectedVenture[1];
+                var match$6 = ViewModel.readOnly(venture$3);
+                if (match$6) {
+                  return /* None */0;
+                } else {
+                  var match$7 = ViewModel.viewPayoutModal(match[0], venture$3);
+                  var tmp$1;
+                  if (match$7) {
+                    var viewData$1 = match$7[0];
+                    tmp$1 = ReasonReact.element(/* None */0, /* None */0, CommandExecutor.make(selectedVenture[2], ViewModel.lastResponse(venture$3), /* None */0, (function (commands, cmdStatus) {
+                                return ReasonReact.element(/* None */0, /* None */0, ViewPayoutModal.make(viewData$1, commands, cmdStatus, /* array */[]));
+                              })));
+                  } else {
+                    tmp$1 = ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Payout */0, /* array */[]));
+                  }
+                  return /* Some */[/* tuple */[
+                            tmp$1,
+                            (function (param) {
+                                return onCloseModal(selected, param);
+                              })
+                          ]];
+                }
+              }
+          case 2 : 
+              if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
+                return /* None */0;
+              } else {
+                var venture$4 = selectedVenture[1];
+                var match$8 = ViewModel.readOnly(venture$4);
+                if (match$8) {
+                  return /* None */0;
+                } else {
+                  var match$9 = ViewModel.viewIncomeModal(match[0], venture$4);
+                  return /* Some */[/* tuple */[
+                            match$9 ? ReasonReact.element(/* None */0, /* None */0, ViewIncomeModal.make(match$9[0], /* array */[])) : ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Income */1, /* array */[])),
+                            (function (param) {
+                                return onCloseModal(selected, param);
+                              })
+                          ]];
+                }
+              }
+          
         }
       }
     }

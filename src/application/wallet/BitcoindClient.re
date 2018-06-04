@@ -62,14 +62,14 @@ let importAllAs = (config, addresses, label) =>
                 }),
            start,
          )
-      |> then_((_) => resolve())
+      |> then_(_ => resolve())
     );
   };
 
 let getUTXOs = (config, addresses) : Js.Promise.t(list(WalletTypes.utxo)) =>
   Js.Promise.(
     importAllAs(config, addresses, "")
-    |> then_((_) => {
+    |> then_(_ => {
          let jsonRPCUnspent =
            Json.Encode.(
              object_([
@@ -147,6 +147,6 @@ let make = (config, network) : (module WalletTypes.NetworkClient) =>
    {
      let network = network;
      let getUTXOs = getUTXOs(config);
-     let getTransactionInfo = (_) => Js.Promise.resolve([]);
+     let getTransactionInfo = _ => Js.Promise.resolve([]);
      let broadcastTransaction = broadcastTransaction(config);
    });

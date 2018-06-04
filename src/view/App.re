@@ -129,6 +129,20 @@ let make = (~session, ~updateSession, _children) => {
           },
           onCloseModal(selected),
         ))
+    | (
+        LoggedIn(_),
+        Venture(selected, Income(txId)),
+        VentureLoaded(_, venture, _),
+      ) =>
+      venture |> ViewModel.readOnly ?
+        None :
+        Some((
+          switch (venture |> ViewModel.viewIncomeModal(txId)) {
+          | Some(viewData) => <ViewIncomeModal viewData />
+          | None => <NotFoundModal resource=NotFoundModal.Income />
+          },
+          onCloseModal(selected),
+        ))
     | (LoggedIn(_), _, _) => None
     };
   let drawer = (index, currentRoute: Router.Config.route) =>

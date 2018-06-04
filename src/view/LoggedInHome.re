@@ -4,10 +4,10 @@ let component = ReasonReact.statelessComponent("LoggedInHome");
 
 let make = (~index, _children) => {
   ...component,
-  render: (_) =>
+  render: _ =>
     <Grid
       title1=("My Ventures" |> text)
-      area3=
+      area3={
         <div>
           <VentureList index />
           <div />
@@ -15,5 +15,6 @@ let make = (~index, _children) => {
             ("Create a Venture" |> text)
           </LinkButton>
         </div>
+      }
     />,
 };

@@ -33,23 +33,21 @@ type txInput = {
 };
 
 module TxInputCmp =
-  Belt.Id.MakeComparableU(
-    {
-      type t = txInput;
-      let cmp =
-        (.
-          {txId: id1, txOutputN: out1}: txInput,
-          {txId: id2, txOutputN: out2}: txInput,
-        ) => {
-          let c = compare(id1, id2);
-          if (c != 0) {
-            c;
-          } else {
-            compare(out1, out2);
-          };
+  Belt.Id.MakeComparableU({
+    type t = txInput;
+    let cmp =
+      (.
+        {txId: id1, txOutputN: out1}: txInput,
+        {txId: id2, txOutputN: out2}: txInput,
+      ) => {
+        let c = compare(id1, id2);
+        if (c != 0) {
+          c;
+        } else {
+          compare(out1, out2);
         };
-    },
-  );
+      };
+  });
 
 type inputSet = Belt.Set.t(TxInputCmp.t, TxInputCmp.identity);
 

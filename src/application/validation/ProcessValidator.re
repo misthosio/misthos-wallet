@@ -31,12 +31,12 @@ type t = {
 let make = () => {
   processes: ProcessId.makeMap(),
   currentPartners: UserId.emptySet,
-  exists: (_) => false,
-  completed: (_) => false,
+  exists: _ => false,
+  completed: _ => false,
   isEligible: (_, _) => false,
   didVote: (_, _) => false,
-  policyFulfilled: (_) => false,
-  canPolicyBeFulfilled: (_) => false,
+  policyFulfilled: _ => false,
+  canPolicyBeFulfilled: _ => false,
 };
 
 let addProposal =

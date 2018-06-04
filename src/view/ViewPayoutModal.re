@@ -79,7 +79,7 @@ let make =
       };
     <Grid
       title1=("Payout Details" |> text)
-      area3=
+      area3={
         <div>
           <MTypography variant=`Body2>
             (
@@ -134,7 +134,8 @@ let make =
           )
           transactionId
         </div>
-      area4=
+      }
+      area4={
         <div>
           <Voters voters />
           <ProcessApprovalButtons
@@ -163,6 +164,7 @@ let make =
             }
           )
         </div>
+      }
     />;
   },
 };

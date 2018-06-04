@@ -22,12 +22,25 @@ type data = {
 
 type payoutProcess = ProcessCollector.process(data);
 
+type incomeStatus =
+  | Unconfirmed
+  | Confirmed;
+
+type income = {
+  status: incomeStatus,
+  date: option(Js.Date.t),
+  txId: string,
+  amount: BTC.t,
+  addresses: Set.String.t,
+};
+
 type t = {
   network: Network.t,
   localUser: userId,
   payouts: ProcessCollector.collection(data),
   txIdToProcessIdMap: Map.String.t(processId),
   txDates: Map.String.t(Js.Date.t),
+  income: Map.String.t(income),
 };
 
 let make = localUser => {
@@ -36,9 +49,11 @@ let make = localUser => {
   payouts: ProcessCollector.make(),
   txIdToProcessIdMap: Map.String.empty,
   txDates: Map.String.empty,
+  income: Map.String.empty,
 };
 
 let getPayout = (processId, {payouts}) => payouts |. Map.get(processId);
+let getIncome = (txId, {income}) => income |. Map.String.get(txId);
 
 let payoutsPendingApproval = ({payouts}) =>
   payouts
@@ -131,6 +146,14 @@ let apply = (event, state) =>
     {
       ...state,
       txDates: state.txDates |. Map.String.set(txId, txDate),
+      income:
+        state.income
+        |. Map.String.update(
+             txId,
+             Utils.mapOption(income =>
+               {...income, date: Some(txDate), status: Confirmed}
+             ),
+           ),
       payouts:
         switch (processId) {
         | None => state.payouts
@@ -155,5 +178,30 @@ let apply = (event, state) =>
              }
            ),
     }
+  | IncomeDetected({address, txId, amount}) =>
+    let txDate = state.txDates |. Map.String.get(txId);
+    {
+      ...state,
+      income:
+        state.income
+        |. Map.String.update(
+             txId,
+             fun
+             | Some(income) =>
+               Some({
+                 ...income,
+                 amount: income.amount |> BTC.plus(amount),
+                 addresses: income.addresses |. Set.String.add(address),
+               })
+             | None =>
+               Some({
+                 date: txDate,
+                 status: txDate |> Js.Option.isSome ? Confirmed : Unconfirmed,
+                 txId,
+                 amount,
+                 addresses: Set.String.empty |. Set.String.add(address),
+               }),
+           ),
+    };
   | _ => state
   };

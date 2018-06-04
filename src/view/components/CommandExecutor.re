@@ -126,7 +126,7 @@ module Status = {
   let component = ReasonReact.statelessComponent("CommandStatus");
   let make = (~cmdStatus: cmdStatus, ~action, _children) => {
     ...component,
-    render: (_) =>
+    render: _ =>
       switch (cmdStatus) {
       | Idle => ReasonReact.null
       | Pending(_) =>

@@ -120,7 +120,13 @@ function fromViewModelState$3(processId, param) {
 
 var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
 
-function fromViewModelState$4(param) {
+function fromViewModelState$4(txId, param) {
+  return ViewModel__TxDetailsCollector.getIncome(txId, param[/* txDetailsCollector */8]);
+}
+
+var ViewIncomeView = /* module */[/* fromViewModelState */fromViewModelState$4];
+
+function fromViewModelState$5(param) {
   var walletInfoCollector = param[/* walletInfoCollector */9];
   var transactionCollector = param[/* transactionCollector */7];
   var partnersCollector = param[/* partnersCollector */6];
@@ -143,7 +149,7 @@ function fromViewModelState$4(param) {
         ];
 }
 
-var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$4];
+var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$5];
 
 function make(localUser) {
   return /* record */[
@@ -237,7 +243,9 @@ var createPayoutModal = fromViewModelState$2;
 
 var viewPayoutModal = fromViewModelState$3;
 
-var selectedVenture = fromViewModelState$4;
+var viewIncomeModal = fromViewModelState$4;
+
+var selectedVenture = fromViewModelState$5;
 
 exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
@@ -254,6 +262,8 @@ exports.CreatePayoutView = CreatePayoutView;
 exports.createPayoutModal = createPayoutModal;
 exports.ViewPayoutView = ViewPayoutView;
 exports.viewPayoutModal = viewPayoutModal;
+exports.ViewIncomeView = ViewIncomeView;
+exports.viewIncomeModal = viewIncomeModal;
 exports.SelectedVentureView = SelectedVentureView;
 exports.selectedVenture = selectedVenture;
 exports.make = make;

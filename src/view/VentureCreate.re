@@ -45,7 +45,7 @@ let make =
   render: ({send, state}) =>
     <Grid
       title1=("Create a Venture" |> text)
-      area3=
+      area3={
         <div>
           <MTypography variant=`Body2>
             (
@@ -70,7 +70,8 @@ let make =
           </MButton>
           <CommandExecutor.Status action=CreateVenture cmdStatus />
         </div>
-      area4=
+      }
+      area4={
         <div className=Styles.infoBox>
           <MTypography variant=`Title>
             ("What can you do with a venture?" |> text)
@@ -100,5 +101,6 @@ let make =
             )
           </MTypography>
         </div>
+      }
     />,
 };

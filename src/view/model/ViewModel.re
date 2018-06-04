@@ -171,6 +171,13 @@ module ViewPayoutView = {
 };
 
 let viewPayoutModal = ViewPayoutView.fromViewModelState;
+module ViewIncomeView = {
+  type t = TxDetailsCollector.income;
+  let fromViewModelState = (txId, {txDetailsCollector}) =>
+    txDetailsCollector |> TxDetailsCollector.getIncome(txId);
+};
+
+let viewIncomeModal = ViewIncomeView.fromViewModelState;
 
 module SelectedVentureView = {
   type partner = PartnersCollector.partner;
