@@ -54,13 +54,13 @@ module Partner = {
     type t = {
       lastPartnerRemovalProcess: option(processId),
       id: userId,
-      pubKey: string,
+      pubKey: option(string),
     };
     let encode = event =>
       Json.Encode.(
         object_([
           ("id", UserId.encode(event.id)),
-          ("pubKey", string(event.pubKey)),
+          ("pubKey", nullable(string, event.pubKey)),
           (
             "lastPartnerRemovalProcess",
             nullable(ProcessId.encode, event.lastPartnerRemovalProcess),
@@ -70,7 +70,7 @@ module Partner = {
     let decode = raw =>
       Json.Decode.{
         id: raw |> field("id", UserId.decode),
-        pubKey: raw |> field("pubKey", string),
+        pubKey: raw |> field("pubKey", optional(string)),
         lastPartnerRemovalProcess:
           raw
           |> field("lastPartnerRemovalProcess", optional(ProcessId.decode)),
@@ -533,7 +533,7 @@ let makePartnerProposed =
       ~eligibleWhenProposing,
       ~proposerId,
       ~prospectId,
-      ~prospectPubKey,
+      ~prospectPubKey=?,
       ~lastRemovalAccepted,
       ~policy,
     ) => {

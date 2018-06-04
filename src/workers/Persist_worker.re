@@ -30,7 +30,9 @@ let determinPartnerKeysAndRemovals = eventLog => {
            switch (event) {
            | PartnerAccepted({data}) => (
                [data.id, ...partners],
-               [(data.id, data.pubKey), ...keys],
+               data.pubKey
+               |> Utils.mapOption(pubKey => [(data.id, pubKey), ...keys])
+               |> Js.Option.getWithDefault(keys),
                processLookup,
                removalProcesses,
              )

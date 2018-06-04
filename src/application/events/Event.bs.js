@@ -113,7 +113,9 @@ function encode$1($$event) {
               /* :: */[
                 /* tuple */[
                   "pubKey",
-                  $$event[/* pubKey */2]
+                  Json_encode.nullable((function (prim) {
+                          return prim;
+                        }), $$event[/* pubKey */2])
                 ],
                 /* :: */[
                   /* tuple */[
@@ -133,7 +135,9 @@ function decode$1(raw) {
                   return Json_decode.optional(partial_arg, param);
                 }), raw),
           /* id */Json_decode.field("id", PrimitiveTypes.UserId[/* decode */3], raw),
-          /* pubKey */Json_decode.field("pubKey", Json_decode.string, raw)
+          /* pubKey */Json_decode.field("pubKey", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), raw)
         ];
 }
 

@@ -4,9 +4,11 @@
 var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Utils = require("../utils/Utils.bs.js");
 var Session = require("../application/Session.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Blockstack = require("blockstack");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
@@ -39,13 +41,15 @@ function determinPartnerKeysAndRemovals(eventLog) {
                           data[/* id */1],
                           partners
                         ],
-                        /* :: */[
-                          /* tuple */[
-                            data[/* id */1],
-                            data[/* pubKey */2]
-                          ],
-                          keys
-                        ],
+                        Js_option.getWithDefault(keys, Utils.mapOption((function (pubKey) {
+                                    return /* :: */[
+                                            /* tuple */[
+                                              data[/* id */1],
+                                              pubKey
+                                            ],
+                                            keys
+                                          ];
+                                  }), data[/* pubKey */2])),
                         processLookup,
                         removalProcesses
                       ];

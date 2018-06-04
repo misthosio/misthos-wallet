@@ -55,7 +55,7 @@ let make = () => {
   payoutData: [],
   creatorData: {
     id: UserId.fromString(""),
-    pubKey: "",
+    pubKey: None,
     lastPartnerRemovalProcess: None,
   },
   custodianKeyChains: [],
@@ -85,7 +85,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       creatorData:
         Partner.Data.{
           id: creatorId,
-          pubKey: creatorPubKey,
+          pubKey: Some(creatorPubKey),
           lastPartnerRemovalProcess: None,
         },
     }
@@ -140,10 +140,12 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PartnerAccepted({processId, data}) => {
       ...state,
       currentPartners: state.currentPartners |. Belt.Set.add(data.id),
-      currentPartnerPubKeys: [
-        (data.pubKey, data.id),
-        ...state.currentPartnerPubKeys,
-      ],
+      currentPartnerPubKeys:
+        data.pubKey
+        |> Utils.mapOption(pubKey =>
+             [(pubKey, data.id), ...state.currentPartnerPubKeys]
+           )
+        |> Js.Option.getWithDefault(state.currentPartnerPubKeys),
       partnerAccepted: [(data.id, processId), ...state.partnerAccepted],
     }
   | PartnerRemovalAccepted({processId, data: {id}}) =>
@@ -769,7 +771,7 @@ let validate =
     | (PartnerProposed(event), false, false)
         when
           event.data == state.creatorData
-          && issuerPubKey == state.creatorData.pubKey
+          && Some(issuerPubKey) == state.creatorData.pubKey
           && state.partnerData
           |> List.length == 0 =>
       Ok

@@ -124,7 +124,7 @@ function createVenture(session) {
 
 function partnerProposed(eligibleWhenProposing, $staropt$star, lastRemovalAccepted, proposerSession, prospectSession) {
   var policy = $staropt$star ? $staropt$star[0] : Policy.unanimous;
-  return Event.getPartnerProposedExn(Event.makePartnerProposed(eligibleWhenProposing, proposerSession[/* userId */0], prospectSession[/* userId */0], Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2]), lastRemovalAccepted, policy));
+  return Event.getPartnerProposedExn(Event.makePartnerProposed(eligibleWhenProposing, proposerSession[/* userId */0], prospectSession[/* userId */0], /* Some */[Utils.publicKeyFromKeyPair(prospectSession[/* issuerKeyPair */2])], lastRemovalAccepted, policy));
 }
 
 function partnerEndorsed(supporter, param) {

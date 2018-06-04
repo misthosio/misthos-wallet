@@ -118,7 +118,7 @@ function make(param, param$1, log) {
               if (typeof match$1 === "number") {
                 tmp$1 = match$1 === 0 ? /* Some */[/* tuple */[
                       env$1[0],
-                      Event.makePartnerProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], env$1[2], /* None */0, env$1[3])
+                      Event.makePartnerProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], /* Some */[env$1[2]], /* None */0, env$1[3])
                     ]] : /* None */0;
               } else {
                 switch (match$1.tag | 0) {

@@ -8,6 +8,7 @@ var Utils = require("../utils/Utils.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -45,7 +46,7 @@ function make() {
           /* creatorData : record */[
             /* lastPartnerRemovalProcess : None */0,
             /* id */PrimitiveTypes.UserId[/* fromString */1](""),
-            /* pubKey */""
+            /* pubKey : None */0
           ],
           /* custodianKeyChains : [] */0,
           /* accountKeyChains */AccountKeyChain.Collection[/* empty */0]
@@ -69,7 +70,7 @@ function apply(param, state) {
         newrecord$1[/* creatorData */19] = /* record */[
           /* lastPartnerRemovalProcess : None */0,
           /* id */match[/* creatorId */2],
-          /* pubKey */match[/* creatorPubKey */3]
+          /* pubKey : Some */[match[/* creatorPubKey */3]]
         ];
         return newrecord$1;
     case 1 : 
@@ -91,13 +92,15 @@ function apply(param, state) {
         var data = match$2[/* data */2];
         var newrecord$3 = Caml_array.caml_array_dup(newrecord);
         newrecord$3[/* currentPartners */7] = Belt_Set.add(newrecord[/* currentPartners */7], data[/* id */1]);
-        newrecord$3[/* currentPartnerPubKeys */8] = /* :: */[
-          /* tuple */[
-            data[/* pubKey */2],
-            data[/* id */1]
-          ],
-          newrecord[/* currentPartnerPubKeys */8]
-        ];
+        newrecord$3[/* currentPartnerPubKeys */8] = Js_option.getWithDefault(newrecord[/* currentPartnerPubKeys */8], Utils.mapOption((function (pubKey) {
+                    return /* :: */[
+                            /* tuple */[
+                              pubKey,
+                              data[/* id */1]
+                            ],
+                            newrecord[/* currentPartnerPubKeys */8]
+                          ];
+                  }), data[/* pubKey */2]));
         newrecord$3[/* partnerAccepted */10] = /* :: */[
           /* tuple */[
             data[/* id */1],
@@ -1083,7 +1086,7 @@ function validate(state, param) {
             exit$1 = 3;
           } else if (match$1) {
             exit = 2;
-          } else if (Caml_obj.caml_equal($$event[0][/* data */6], state[/* creatorData */19]) && issuerPubKey === state[/* creatorData */19][/* pubKey */2] && List.length(state[/* partnerData */9]) === 0) {
+          } else if (Caml_obj.caml_equal($$event[0][/* data */6], state[/* creatorData */19]) && Caml_obj.caml_equal(/* Some */[issuerPubKey], state[/* creatorData */19][/* pubKey */2]) && List.length(state[/* partnerData */9]) === 0) {
             return /* Ok */0;
           } else {
             exit$1 = 3;
