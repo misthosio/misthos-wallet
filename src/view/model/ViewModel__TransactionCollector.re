@@ -74,7 +74,7 @@ let apply = (event: Event.t, state) =>
           status: Unconfirmed,
           amount,
           date: None,
-          detailsLink: Venture(state.ventureId, None),
+          detailsLink: Venture(state.ventureId, Income(txId)),
         },
         ...state.unconfirmedTxs,
       ],

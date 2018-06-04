@@ -35,7 +35,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
   ...component,
   initialState: () => {address: None},
   didMount: ({send}) => send(GetIncomeAddress),
-  subscriptions: (_) => [
+  subscriptions: _ => [
     Sub(
       () => Clipboard.make(".copy-btn", "modal"),
       clipboard => clipboard |> Clipboard.destroy,
@@ -72,7 +72,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
       |> Js.Option.getWithDefault(ReasonReact.null);
     <Grid
       title1=("Receive BTC" |> text)
-      area3=
+      area3={
         <div className=Styles.container>
           (
             switch (state.address) {
@@ -99,6 +99,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
             (text("Generate new income address"))
           </MButton>
         </div>
+      }
     />;
   },
 };

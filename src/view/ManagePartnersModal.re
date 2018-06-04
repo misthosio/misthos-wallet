@@ -109,7 +109,7 @@ let make =
               removePartnerId: Some(partner),
             },
           },
-          ((_) => removePartnerCmds.reset()),
+          (_ => removePartnerCmds.reset()),
         )
       | _ => ReasonReact.NoUpdate
       }
@@ -117,7 +117,7 @@ let make =
     | ResetRemoval =>
       ReasonReact.UpdateWithSideEffects(
         {...state, removeInputFrozen: false},
-        ((_) => removePartnerCmds.reset()),
+        (_ => removePartnerCmds.reset()),
       )
     | AddAnother =>
       ReasonReact.UpdateWithSideEffects(
@@ -128,7 +128,7 @@ let make =
             prospectId: "",
           },
         },
-        ((_) => proposePartnerCmds.reset()),
+        (_ => proposePartnerCmds.reset()),
       )
     },
   render: ({send, state: {canSubmitProposal, viewData, inputs}}) => {
@@ -210,7 +210,7 @@ let make =
     <Grid
       title1=("Add a partner" |> text)
       title2=("Remove a partner" |> text)
-      area3=
+      area3={
         <div>
           MaterialUi.(
             <Stepper
@@ -266,7 +266,8 @@ let make =
             (viewData.joinVentureUrl |> text)
           </MTypography>
         </div>
-      area4=
+      }
+      area4={
         <div>
           <MTypography variant=`Body2>
             (
@@ -290,6 +291,7 @@ let make =
             cmdStatus=removeCmdStatus
           />
         </div>
+      }
     />;
   },
 };

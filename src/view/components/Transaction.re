@@ -40,12 +40,7 @@ let make = (~tx: ViewData.txData, _children) => {
       <ListItem
         dense=true
         disableGutters=true
-        button=(
-          switch (tx.txType) {
-          | Payout => true
-          | _ => false
-          }
-        )
+        button=true
         onClick=(Router.clickToRoute(tx.detailsLink))>
         <ListItemText
           primary={

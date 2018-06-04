@@ -219,7 +219,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                   ),
                 ),
             },
-            ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
+            (_ => Router.goTo(Router.Config.Venture(ventureId, None))),
           )
         | (UpdateIndex(index), _) =>
           updateOtherTabs(msg);
@@ -239,7 +239,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                   ),
                 ),
             },
-            ((_) => Router.goTo(Router.Config.Venture(ventureId, None))),
+            (_ => Router.goTo(Router.Config.Venture(ventureId, None))),
           )
         | (
             VentureLoaded(ventureId, events, _),

@@ -4,7 +4,7 @@ let component = ReasonReact.statelessComponent("Voters");
 
 let make = (~voters: list(ProcessCollector.voter), _children) => {
   ...component,
-  render: (_) => {
+  render: _ => {
     let voters =
       ReasonReact.array(
         Array.of_list(

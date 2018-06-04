@@ -7,6 +7,7 @@ module Config = {
     | CreatePayout
     | Partner(processId)
     | Payout(processId)
+    | Income(string)
     | Receive;
   type route =
     | Home
@@ -32,6 +33,8 @@ module Config = {
         id |> VentureId.fromString,
         Payout(processId |> ProcessId.fromString),
       )
+    | ["ventures", id, "income", transactionId] =>
+      Venture(id |> VentureId.fromString, Income(transactionId))
     | ["ventures", id, "receive"] =>
       Venture(id |> VentureId.fromString, Receive)
     | ["ventures", id, "joinvia", userId] =>
@@ -58,6 +61,8 @@ module Config = {
       ++ (id |> VentureId.toString)
       ++ "/payouts/"
       ++ (processId |> ProcessId.toString)
+    | Venture(id, Income(txId)) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/income/" ++ txId
     | Venture(id, Receive) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/receive"
     | JoinVenture(id, userId) =>

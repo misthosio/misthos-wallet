@@ -209,7 +209,7 @@ let make =
       | Reset =>
         ReasonReact.UpdateWithSideEffects(
           {...state, frozen: false},
-          ((_) => commands.reset()),
+          (_ => commands.reset()),
         )
       | ProposePayout => ReasonReact.NoUpdate
       }
@@ -219,7 +219,7 @@ let make =
       | Reset =>
         ReasonReact.UpdateWithSideEffects(
           {...state, frozen: false},
-          ((_) => commands.reset()),
+          (_ => commands.reset()),
         )
       | ProposePayout =>
         let destinations =

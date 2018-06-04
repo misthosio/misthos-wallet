@@ -7,7 +7,7 @@ type t = {
   exists: accountIdx => bool,
 };
 
-let make = () => {accounts: [], exists: (_) => false};
+let make = () => {accounts: [], exists: _ => false};
 
 let update = (event, {accounts}) => {
   let accounts =

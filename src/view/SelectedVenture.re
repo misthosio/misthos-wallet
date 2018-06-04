@@ -8,7 +8,7 @@ let component = ReasonReact.statelessComponent("SelectedVenture");
 
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
-  render: (_) => {
+  render: _ => {
     let prospects =
       viewData.prospects
       |> List.map((prospect: ViewData.prospect) =>
@@ -115,7 +115,7 @@ let make = (~viewData: ViewData.t, _children) => {
     <Grid
       title1=("Partners" |> text)
       title2=("Transactions" |> text)
-      area1=
+      area1={
         <div>
           <MTypography variant=`Title>
             (viewData.ventureName |> text)
@@ -125,7 +125,8 @@ let make = (~viewData: ViewData.t, _children) => {
             reserved=viewData.balance.reserved
           />
         </div>
-      area2=
+      }
+      area2={
         <div className=Css.(style([display(`flex)]))>
           <MFabButton
             variant=Aqua route=(Venture(viewData.ventureId, Receive))>
@@ -137,7 +138,8 @@ let make = (~viewData: ViewData.t, _children) => {
             ("PAY OUT" |> text)
           </MFabButton>
         </div>
-      area3=
+      }
+      area3={
         <div>
           (
             switch (viewData.readOnly) {
@@ -161,6 +163,7 @@ let make = (~viewData: ViewData.t, _children) => {
             ("Add or Remove Partners" |> text)
           </LinkButton>
         </div>
+      }
       area4=MaterialUi.(
               <div>
                 <ScrollList>

@@ -4,20 +4,18 @@ type dummyInput = {
 };
 
 module TxDummyInputCmp =
-  Belt.Id.MakeComparableU(
-    {
-      type t = dummyInput;
-      let cmp =
-        (.
-          {txId: id1, txOutputN: out1}: dummyInput,
-          {txId: id2, txOutputN: out2}: dummyInput,
-        ) =>
-          compare(
-            id1 ++ ":" ++ string_of_int(out1),
-            id2 ++ ":" ++ string_of_int(out2),
-          );
-    },
-  );
+  Belt.Id.MakeComparableU({
+    type t = dummyInput;
+    let cmp =
+      (.
+        {txId: id1, txOutputN: out1}: dummyInput,
+        {txId: id2, txOutputN: out2}: dummyInput,
+      ) =>
+        compare(
+          id1 ++ ":" ++ string_of_int(out1),
+          id2 ++ ":" ++ string_of_int(out2),
+        );
+  });
 
 type dummySet = Belt.Set.t(TxDummyInputCmp.t, TxDummyInputCmp.identity);
 

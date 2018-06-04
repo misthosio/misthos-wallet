@@ -45,19 +45,19 @@ let make =
     | (Propose, true, _) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, buttonState: ConfirmProposal},
-        ((_) => onPropose |> Utils.mapOption(f => f()) |> ignore),
+        (_ => onPropose |> Utils.mapOption(f => f()) |> ignore),
       )
     | (Propose, false, _) =>
       ReasonReact.SideEffects((({send}) => send(ConfirmProposal)))
     | (ConfirmProposal, _, _) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, buttonState: ProposalSubmited},
-        ((_) => onSubmit()),
+        (_ => onSubmit()),
       )
     | (Cancel, _, _) =>
       ReasonReact.UpdateWithSideEffects(
         {cmdStatus: Idle, buttonState: NoDecision},
-        ((_) => onCancel |> Utils.mapOption(f => f()) |> ignore),
+        (_ => onCancel |> Utils.mapOption(f => f()) |> ignore),
       )
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>

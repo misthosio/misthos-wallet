@@ -530,7 +530,7 @@ let validateCustodianKeyChainUpdated =
     let accountIdx = keyChain |> CustodianKeyChain.accountIdx;
     state
     |> test(accountExists(accountIdx))
-    |> andThen((_) =>
+    |> andThen(_ =>
          if (custodianData
              |> List.mem_assoc(custodianApprovalProcess) == false
              || processValidator.completed(custodianApprovalProcess) == false) {

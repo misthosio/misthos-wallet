@@ -20,7 +20,19 @@ function make(resource, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var resourceText = resource ? "partner" : "payout";
+              var resourceText;
+              switch (resource) {
+                case 0 : 
+                    resourceText = "payout";
+                    break;
+                case 1 : 
+                    resourceText = "income transaction";
+                    break;
+                case 2 : 
+                    resourceText = "partner";
+                    break;
+                
+              }
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text(resourceText + " not found")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ViewCommon.text("The " + (resourceText + " was not found. Perhaps it hasn't been synced yet")))], /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],

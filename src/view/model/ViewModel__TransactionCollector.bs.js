@@ -122,6 +122,7 @@ function apply($$event, state) {
         }
     case 40 : 
         var match$5 = $$event[0];
+        var txId$1 = match$5[/* txId */2];
         return /* record */[
                 /* ventureId */state[/* ventureId */0],
                 /* payoutProcesses */state[/* payoutProcesses */1],
@@ -129,12 +130,12 @@ function apply($$event, state) {
                   /* record */[
                     /* txType : Income */0,
                     /* status : Unconfirmed */1,
-                    /* txId */match$5[/* txId */2],
+                    /* txId */txId$1,
                     /* amount */match$5[/* amount */4],
                     /* date : None */0,
                     /* detailsLink : Venture */Block.__(0, [
                         state[/* ventureId */0],
-                        /* None */0
+                        /* Income */Block.__(2, [txId$1])
                       ])
                   ],
                   state[/* unconfirmedTxs */2]
