@@ -12,11 +12,6 @@ type action =
 
 let component = ReasonReact.reducerComponent("Receive");
 
-/* height: 250px; */
-/* display: flex; */
-/* flex-direction: column; */
-/* align-items: center; */
-/* justify-content: space-evenly; */
 module Styles = {
   open Css;
   let container =
