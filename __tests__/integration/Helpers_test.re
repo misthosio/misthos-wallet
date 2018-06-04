@@ -24,7 +24,7 @@ let () = {
           (keyA |> ECPair.getAddress, tenSats),
           (keyB |> ECPair.getAddress, tenSats),
         ])
-        |> then_((_) =>
+        |> then_(_ =>
              BitcoindClient.getUTXOs(
                config,
                [keyA |> ECPair.getAddress, keyB |> ECPair.getAddress],

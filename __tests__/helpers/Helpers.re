@@ -92,7 +92,7 @@ let fundAddress = (outputs, utxos) => {
   inputs |> List.iteri((i, _utxo) => txB |> TxBuilder.sign(i, faucetKey));
   Js.Promise.(
     broadcastTransaction(txB |> TxBuilder.build)
-    |> then_((_) =>
+    |> then_(_ =>
          BitcoindClient.getUTXOs(bitcoindConfig, outputs |> List.map(fst))
        )
   );
