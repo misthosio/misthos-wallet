@@ -5,8 +5,10 @@ var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Session = require("../application/Session.bs.js");
+var Venture = require("../application/Venture.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Blockstack = require("blockstack");
 var WorkerUtils = require("./WorkerUtils.bs.js");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
@@ -363,45 +365,53 @@ function persist(ventureId, eventLog, param) {
 
 function persistVenture(ventureId) {
   logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  Session.getCurrentSession(/* () */0).then((function (param) {
-          if (typeof param === "number") {
-            return Promise.resolve(/* () */0);
-          } else {
-            return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
-                            return persist(ventureId, eventLog, determinPartnerKeysAndRemovals(eventLog));
-                          })).then((function (param) {
-                          return persistRemovals(ventureId, param);
-                        }));
-          }
-        }));
-  return /* () */0;
+  return Session.getCurrentSession(/* () */0).then((function (param) {
+                if (typeof param === "number") {
+                  return Promise.resolve(/* () */0);
+                } else {
+                  return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {
+                                  return persist(ventureId, eventLog, determinPartnerKeysAndRemovals(eventLog));
+                                })).then((function (param) {
+                                return persistRemovals(ventureId, param);
+                              }));
+                }
+              }));
 }
 
 function handleMessage(param) {
   if (typeof param === "number") {
-    return /* () */0;
+    return Promise.resolve(/* () */0);
   } else {
     switch (param.tag | 0) {
       case 0 : 
           logMessage("Handling 'SessionStarted'");
-          return WorkerLocalStorage.setBlockstackItems(param[0]);
+          WorkerLocalStorage.setBlockstackItems(param[0]);
+          return Venture.Index[/* load */0](/* () */0).then((function (index) {
+                        return Belt_List.reduce(index, Promise.resolve(/* () */0), (function (p, param) {
+                                      var id = param[/* id */0];
+                                      return p.then((function () {
+                                                    return persistVenture(id);
+                                                  }));
+                                    }));
+                      }));
       case 3 : 
           if (param[2].length !== 0) {
             return persistVenture(param[0]);
           } else {
-            return /* () */0;
+            return Promise.resolve(/* () */0);
           }
       case 4 : 
       case 5 : 
           return persistVenture(param[0]);
       default:
-        return /* () */0;
+        return Promise.resolve(/* () */0);
     }
   }
 }
 
 self.onmessage = (function (msg) {
-    return handleMessage(PersistWorkerMessage.decodeIncoming(msg.data.payload));
+    handleMessage(PersistWorkerMessage.decodeIncoming(msg.data.payload));
+    return /* () */0;
   });
 
 exports.logMessage = logMessage;

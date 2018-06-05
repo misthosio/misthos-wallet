@@ -308,8 +308,7 @@ let persistVenture = ventureId => {
            |> then_(persistRemovals(ventureId))
          | _ => resolve(),
        )
-  )
-  |> ignore;
+  );
 };
 
 let handleMessage =
@@ -317,13 +316,23 @@ let handleMessage =
   | SessionStarted(items, _storagePrefix) => {
       logMessage("Handling 'SessionStarted'");
       items |> WorkerLocalStorage.setBlockstackItems;
+      Js.Promise.(
+        Venture.Index.load()
+        |> then_(index =>
+             index
+             |. Belt.List.reduce(resolve(), (p, {id}: Venture.Index.item) =>
+                  p |> then_(() => persistVenture(id))
+                )
+           )
+      );
     }
   | VentureLoaded(ventureId, _, newItems) when newItems |> Array.length > 0 =>
     persistVenture(ventureId)
   | VentureCreated(ventureId, _) => persistVenture(ventureId)
   | NewItems(ventureId, _) => persistVenture(ventureId)
-  | _ => ();
+  | _ => Js.Promise.resolve();
 
 onMessage(self, msg =>
   handleMessage(msg##data##payload |> PersistWorkerMessage.decodeIncoming)
+  |> ignore
 );
