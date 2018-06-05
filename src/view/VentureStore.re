@@ -176,7 +176,6 @@ let make = (~currentRoute, ~session: Session.t, children) => {
             JoiningVenture(ventureId, Pending(joinCmdId)),
           )
             when correlationId == joinCmdId =>
-          Js.log("join cmd completed");
           ReasonReact.Update({
             ...state,
             selectedVenture:
@@ -187,13 +186,12 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 | Error(error) => Error(error)
                 },
               ),
-          });
+          })
         | (
             CmdCompleted(_, correlationId, response),
             LoadingVenture(ventureId, Pending(joinCmdId)),
           )
             when correlationId == joinCmdId =>
-          Js.log("join cmd completed");
           ReasonReact.Update({
             ...state,
             selectedVenture:
@@ -204,7 +202,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
                 | Error(error) => Error(error)
                 },
               ),
-          });
+          })
         | (VentureCreated(ventureId, log), _) =>
           ReasonReact.UpdateWithSideEffects(
             {
