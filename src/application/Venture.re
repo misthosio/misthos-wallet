@@ -456,6 +456,7 @@ module Cmd = {
                          |> State.currentPolicy(Event.Partner.processName),
                        ~lastRemovalAccepted=
                          state |> State.lastRemovalOfPartner(prospectId),
+                       (),
                      )
                      |> Event.getPartnerProposedExn;
                    if (state |> State.isPartnerProposalUnique(partnerProposed)) {

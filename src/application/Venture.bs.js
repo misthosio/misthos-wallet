@@ -498,7 +498,7 @@ function exec$3(prospectId, venture) {
   } else {
     return UserInfo.Public[/* read */4](prospectId).then((function (param) {
                   if (param) {
-                    var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(Venture__State.currentPartners(state), session[/* userId */0], prospectId, /* Some */[param[0][/* appPubKey */0]], Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state)));
+                    var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(/* Some */[param[0][/* appPubKey */0]], Venture__State.currentPartners(state), session[/* userId */0], prospectId, Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state), /* () */0));
                     if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
                       var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
                       return persist(/* None */0, applyMany(/* None */0, venture)(/* :: */[

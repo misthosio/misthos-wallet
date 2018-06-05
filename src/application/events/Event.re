@@ -530,12 +530,13 @@ exception BadData(string);
 
 let makePartnerProposed =
     (
+      ~prospectPubKey=?,
       ~eligibleWhenProposing,
       ~proposerId,
       ~prospectId,
-      ~prospectPubKey=?,
       ~lastRemovalAccepted,
       ~policy,
+      _,
     ) => {
   let lastPartnerRemovalProcess =
     lastRemovalAccepted

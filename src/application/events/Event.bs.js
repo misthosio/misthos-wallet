@@ -1011,7 +1011,7 @@ var Transaction = /* module */[/* Confirmed */Confirmed];
 
 var BadData = Caml_exceptions.create("Event.BadData");
 
-function makePartnerProposed(eligibleWhenProposing, proposerId, prospectId, prospectPubKey, lastRemovalAccepted, policy) {
+function makePartnerProposed(prospectPubKey, eligibleWhenProposing, proposerId, prospectId, lastRemovalAccepted, policy, _) {
   var lastPartnerRemovalProcess = Utils.mapOption((function (param) {
           if (PrimitiveTypes.UserId[/* neq */6](param[/* data */2][/* id */0], prospectId)) {
             throw [
