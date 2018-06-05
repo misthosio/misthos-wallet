@@ -42,7 +42,7 @@ var determinPartnerIds = Curry._2(EventLog.reduce, (function (ids, param) {
                       $$event[0][/* data */2][/* id */1],
                       ids
                     ];
-          case 9 : 
+          case 10 : 
               var data = $$event[0][/* data */2];
               return Belt_List.keep(ids, (function (id) {
                             return PrimitiveTypes.UserId[/* neq */6](id, data[/* id */0]);

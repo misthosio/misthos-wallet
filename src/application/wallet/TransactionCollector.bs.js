@@ -28,7 +28,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
-    case 32 : 
+    case 33 : 
         var finalizedTx = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -38,7 +38,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */Belt_Map.set(state[/* notYetBroadcastPayouts */5], finalizedTx[/* processId */0], finalizedTx)
               ];
-    case 33 : 
+    case 34 : 
         var match$1 = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -48,7 +48,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */Belt_Map.remove(state[/* notYetBroadcastPayouts */5], match$1[/* processId */0])
               ];
-    case 35 : 
+    case 36 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* ventureId */state[/* ventureId */1],
@@ -57,7 +57,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */Belt_Map.remove(state[/* notYetBroadcastPayouts */5], $$event[0][/* processId */0])
               ];
-    case 40 : 
+    case 41 : 
         var txId = $$event[0][/* txId */2];
         return /* record */[
                 /* network */state[/* network */0],
@@ -67,7 +67,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
-    case 41 : 
+    case 42 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* ventureId */state[/* ventureId */1],

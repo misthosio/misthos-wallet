@@ -65,7 +65,7 @@ function make(proposal, log) {
                       /* systemIssuer */$$event[0][/* systemIssuer */5]
                     ];
                     break;
-                case 13 : 
+                case 14 : 
                     var $$event$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$1[/* processId */0], env$1[0][/* processId */0])) {
                       var init$2 = self$1[state][0];
@@ -79,7 +79,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 14 : 
+                case 15 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0][/* processId */0])) {
                       self$1[completed][0] = true;
                       tmp = self$1[state][0];
@@ -103,7 +103,7 @@ function make(proposal, log) {
               if (tmp$1) {
                 self$1[result][0] = /* Some */[/* tuple */[
                     self$1[state][0][/* systemIssuer */3],
-                    /* AccountCreationAccepted */Block.__(14, [Curry._1(Event.AccountCreation[/* Accepted */6][/* fromProposal */0], env$1[0])])
+                    /* AccountCreationAccepted */Block.__(15, [Curry._1(Event.AccountCreation[/* Accepted */6][/* fromProposal */0], env$1[0])])
                   ]];
                 return /* () */0;
               } else {

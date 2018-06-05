@@ -6,6 +6,7 @@ var Policy = require("../Policy.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
+var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function make() {
   return /* record */[
@@ -119,7 +120,16 @@ function update($$event, state) {
           /* canPolicyBeFulfilled */state[/* canPolicyBeFulfilled */7]
         ];
         break;
-    case 9 : 
+    case 6 : 
+        throw [
+              Caml_builtin_exceptions.match_failure,
+              [
+                "ProcessValidator.re",
+                93,
+                4
+              ]
+            ];
+    case 10 : 
         var acceptance$1 = $$event[0];
         match = /* record */[
           /* processes */addAcceptance(acceptance$1, processes),
@@ -133,40 +143,40 @@ function update($$event, state) {
         ];
         break;
     case 1 : 
-    case 6 : 
-    case 11 : 
-    case 15 : 
-    case 20 : 
-    case 25 : 
-        exit = 1;
-        break;
-    case 2 : 
     case 7 : 
     case 12 : 
     case 16 : 
     case 21 : 
     case 26 : 
-        exit = 2;
+        exit = 1;
         break;
-    case 3 : 
+    case 2 : 
     case 8 : 
     case 13 : 
     case 17 : 
     case 22 : 
     case 27 : 
-        exit = 3;
+        exit = 2;
         break;
+    case 3 : 
+    case 9 : 
     case 14 : 
     case 18 : 
     case 23 : 
     case 28 : 
+        exit = 3;
+        break;
+    case 15 : 
+    case 19 : 
+    case 24 : 
+    case 29 : 
         exit = 5;
         break;
     case 5 : 
-    case 10 : 
-    case 19 : 
-    case 24 : 
-    case 30 : 
+    case 11 : 
+    case 20 : 
+    case 25 : 
+    case 31 : 
         exit = 4;
         break;
     default:

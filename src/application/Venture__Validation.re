@@ -757,7 +757,7 @@ let validateEvent =
 
 let validate =
     (
-      ~partnerId as _=?,
+      ~partnerId as originId=None,
       {knownItems} as state,
       {hash, event, issuerPubKey}: EventLog.item,
     ) =>
@@ -785,6 +785,12 @@ let validate =
           && state.knownItems
           |> ItemsSet.size == 2 =>
       Ok
+    | (PartnerPubKeyAdded({partnerId}), false, false) =>
+      switch (originId) {
+      | Some(originId) => UserId.eq(originId, partnerId) ? Ok : InvalidIssuer
+      | None => InvalidIssuer
+      }
+
     | (_, false, false) => InvalidIssuer
     | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
     | (PartnerAccepted(event), true, false)

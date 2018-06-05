@@ -207,4 +207,28 @@ let () = {
       );
     });
   });
+  describe("PartnerPubKeyAdded", () =>
+    F.withCached(
+      ~scope="PartnerPubKeyAdded",
+      "when everything is okay",
+      () => G.withUserSessions(2),
+      sessions => {
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
+        testValidationResult(
+          ~originId=user2.userId,
+          log |> constructState,
+          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+          Validation.Ok,
+        );
+      },
+    )
+  );
 };

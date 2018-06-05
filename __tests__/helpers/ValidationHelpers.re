@@ -28,10 +28,14 @@ let constructState = log =>
        Validation.make(),
      );
 
-let testValidationResult = (state, item, expected) => {
+let testValidationResult = (~originId=?, state, item, expected) => {
   let description = expected |> Validation.resultToString;
   test("valdation should return '" ++ description ++ "'", () =>
-    expect(item |> Validation.validate(state) |> Validation.resultToString)
+    expect(
+      item
+      |> Validation.validate(~partnerId=originId, state)
+      |> Validation.resultToString,
+    )
     |> toEqual(description)
   );
 };

@@ -102,6 +102,25 @@ module Partner = {
     };
     include (val EventTypes.makeProcess("PartnerRemoval"))(Data);
   };
+  module PubKeyAdded = {
+    type t = {
+      partnerId: userId,
+      pubKey: string,
+    };
+    let make = (~partnerId, ~pubKey) => {partnerId, pubKey};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("partnerId", UserId.encode(event.partnerId)),
+          ("pubKey", string(event.pubKey)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        partnerId: raw |> field("partnerId", UserId.decode),
+        pubKey: raw |> field("pubKey", string),
+      };
+  };
 };
 
 module AccountCreation = {
@@ -489,6 +508,7 @@ type t =
   | PartnerEndorsed(Partner.Endorsed.t)
   | PartnerAccepted(Partner.Accepted.t)
   | PartnerDenied(Partner.Denied.t)
+  | PartnerPubKeyAdded(Partner.PubKeyAdded.t)
   | PartnerRemovalProposed(Partner.Removal.Proposed.t)
   | PartnerRemovalRejected(Partner.Removal.Rejected.t)
   | PartnerRemovalEndorsed(Partner.Removal.Endorsed.t)
@@ -711,6 +731,7 @@ let encode =
   | PartnerEndorsed(event) => Partner.Endorsed.encode(event)
   | PartnerAccepted(event) => Partner.Accepted.encode(event)
   | PartnerDenied(event) => Partner.Denied.encode(event)
+  | PartnerPubKeyAdded(event) => Partner.PubKeyAdded.encode(event)
   | PartnerRemovalProposed(event) => Partner.Removal.Proposed.encode(event)
   | PartnerRemovalRejected(event) => Partner.Removal.Rejected.encode(event)
   | PartnerRemovalEndorsed(event) => Partner.Removal.Endorsed.encode(event)
@@ -788,6 +809,8 @@ let decode = raw => {
   | "PartnerEndorsed" => PartnerEndorsed(Partner.Endorsed.decode(raw))
   | "PartnerAccepted" => PartnerAccepted(Partner.Accepted.decode(raw))
   | "PartnerDenied" => PartnerDenied(Partner.Denied.decode(raw))
+  | "PartnerPubKeyAdded" =>
+    PartnerPubKeyAdded(Partner.PubKeyAdded.decode(raw))
   | "PartnerRemovalProposed" =>
     PartnerRemovalProposed(Partner.Removal.Proposed.decode(raw))
   | "PartnerRemovalRejected" =>

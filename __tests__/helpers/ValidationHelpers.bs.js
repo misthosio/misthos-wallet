@@ -30,10 +30,10 @@ function constructState(log) {
               }), Venture__Validation.make(/* () */0), log);
 }
 
-function testValidationResult(state, item, expected) {
+function testValidationResult(originId, state, item, expected) {
   var description = Venture__Validation.resultToString(expected);
   return Jest.test("valdation should return '" + (description + "'"), (function () {
-                return Jest.Expect[/* toEqual */12](description, Jest.Expect[/* expect */0](Venture__Validation.resultToString(Venture__Validation.validate(/* None */0, state, item))));
+                return Jest.Expect[/* toEqual */12](description, Jest.Expect[/* expect */0](Venture__Validation.resultToString(Venture__Validation.validate(/* Some */[originId], state, item))));
               }));
 }
 

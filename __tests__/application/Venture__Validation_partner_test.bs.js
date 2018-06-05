@@ -20,16 +20,16 @@ describe("PartnerProposal", (function () {
                 var user2 = match[1];
                 var user1 = match[0];
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
-                                        return Curry._5(func, param, param$1, param$2, user1, user2);
-                                      })(/* None */0, /* None */0, /* None */0), log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2, param$3) {
+                                        return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
+                                      })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
         Fixtures.withCached(/* None */0, "PartnerProposal", "when the prospect is already a partner", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withPartner */17](match[1], /* :: */[
+                return Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
                             user1,
                             /* [] */0
                           ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
@@ -38,17 +38,17 @@ describe("PartnerProposal", (function () {
                 var user2 = match[1];
                 var user1 = match[0];
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
-                                        return Curry._5(func, param, param$1, param$2, user2, user1);
-                                      })(/* None */0, /* None */0, /* None */0), log)), /* BadData */["Partner already exists"]);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2, param$3) {
+                                        return Curry._6(func, param, param$1, param$2, param$3, user2, user1);
+                                      })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* BadData */["Partner already exists"]);
               }));
         describe("when the creator proposes themselves", (function () {
                 var user1 = Generators.userSession(PrimitiveTypes.UserId[/* fromString */1]("user1"));
                 var log = Generators.Log[/* createVenture */11](user1);
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
-                                        return Curry._5(func, param, param$1, param$2, user1, user1);
-                                      })(/* None */0, /* None */0, /* None */0), log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2, param$3) {
+                                        return Curry._6(func, param, param$1, param$2, param$3, user1, user1);
+                                      })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
         Fixtures.withCached(/* None */0, "PartnerProposal", "when proposing a partner that was removed", (function () {
                 return Generators.withUserSessions(2);
@@ -56,10 +56,10 @@ describe("PartnerProposal", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user2 = match[1];
                 var user1 = match[0];
-                return Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
+                return Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
                             user1,
                             /* [] */0
-                          ], Generators.Log[/* withPartner */17](user2, /* :: */[
+                          ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
                                 user1,
                                 /* [] */0
                               ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
@@ -68,9 +68,9 @@ describe("PartnerProposal", (function () {
                 var user2 = match[1];
                 var user1 = match[0];
                 var func = Generators.Log[/* withPartnerProposed */12];
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
-                                        return Curry._5(func, param, param$1, param$2, user1, user2);
-                                      })(/* None */0, /* None */0, /* None */0), log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2, param$3) {
+                                        return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
+                                      })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
         return Fixtures.withCached(/* None */0, "PartnerProposal", "when the partner was removed but the proposal doesn't show it", (function () {
                       return Generators.withUserSessions(3);
@@ -79,19 +79,19 @@ describe("PartnerProposal", (function () {
                       var user3 = match[2];
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
+                      return Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
                                   user1,
                                   /* :: */[
                                     user3,
                                     /* [] */0
                                   ]
-                                ], Generators.Log[/* withPartner */17](user3, /* :: */[
+                                ], Generators.Log[/* withPartner */17](/* None */0, user3, /* :: */[
                                       user1,
                                       /* :: */[
                                         user2,
                                         /* [] */0
                                       ]
-                                    ], Generators.Log[/* withPartner */17](user2, /* :: */[
+                                    ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
                                           user1,
                                           /* [] */0
                                         ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
@@ -100,12 +100,9 @@ describe("PartnerProposal", (function () {
                       var user3 = match[2];
                       var user2 = match[1];
                       var func = Generators.Log[/* withPartnerProposed */12];
-                      var arg = function (param, param$1) {
-                        return Curry._5(func, /* Some */[false], param, param$1, user3, user2);
-                      };
-                      return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4]((function (eta) {
-                                          return Curry._1(arg(/* None */0, /* None */0), eta);
-                                        })(log)), /* BadData */["Last removal doesn't match"]);
+                      return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Curry._1((function (param, param$1, param$2) {
+                                              return Curry._6(func, param, /* Some */[false], param$1, param$2, user3, user2);
+                                            })(/* None */0, /* None */0, /* None */0), log)), /* BadData */["Last removal doesn't match"]);
                     }));
       }));
 
@@ -115,13 +112,13 @@ describe("PartnerRemovalProposal", (function () {
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 var user1 = match[0];
-                return Generators.Log[/* withPartner */17](match[1], /* :: */[
+                return Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
                             user1,
                             /* [] */0
                           ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRemovalProposed */19](match[0], match[1], log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRemovalProposed */19](match[0], match[1], log)), /* Ok */0);
               }));
         describe("validatePartnerRemovalData", (function () {
                 Fixtures.withCached(/* None */0, "PartnerRemovalProposal", "when the prospect is not a partner", (function () {
@@ -143,7 +140,7 @@ describe("PartnerRemovalProposal", (function () {
                             }), (function (sessions) {
                               var match = Generators.twoUserSessionsFromArray(sessions);
                               var user1 = match[0];
-                              return Generators.Log[/* withPartner */17](match[1], /* :: */[
+                              return Generators.Log[/* withPartner */17](/* None */0, match[1], /* :: */[
                                           user1,
                                           /* [] */0
                                         ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
@@ -156,6 +153,23 @@ describe("PartnerRemovalProposal", (function () {
                             }));
               }));
         return /* () */0;
+      }));
+
+describe("PartnerPubKeyAdded", (function () {
+        return Fixtures.withCached(/* None */0, "PartnerPubKeyAdded", "when everything is okay", (function () {
+                      return Generators.withUserSessions(2);
+                    }), (function (sessions) {
+                      var match = Generators.twoUserSessionsFromArray(sessions);
+                      var user1 = match[0];
+                      return Generators.Log[/* withPartner */17](/* Some */[false], match[1], /* :: */[
+                                  user1,
+                                  /* [] */0
+                                ], Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)));
+                    }), (function (sessions, log) {
+                      var match = Generators.twoUserSessionsFromArray(sessions);
+                      var user2 = match[1];
+                      return ValidationHelpers.testValidationResult(/* Some */[user2[/* userId */0]], ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerPubKeyAdded */20](user2)(log)), /* Ok */0);
+                    }));
       }));
 
 /*  Not a pure module */

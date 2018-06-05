@@ -33,7 +33,7 @@ var findCurrentUsers = Curry._2(EventLog.reduce, (function (users, item) {
         switch (match.tag | 0) {
           case 4 : 
               return Belt_Set.add(users, match[0][/* data */2][/* id */1]);
-          case 9 : 
+          case 10 : 
               return Belt_Set.remove(users, match[0][/* data */2][/* id */0]);
           default:
             return users;

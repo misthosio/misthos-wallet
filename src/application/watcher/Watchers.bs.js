@@ -39,37 +39,37 @@ function initWatcherFor(session, param, log) {
                 Watcher__AutoEndorseCustodianSelf.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 6 : 
+    case 7 : 
         return /* :: */[
                 Watcher__PartnerRemovalApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 11 : 
+    case 12 : 
         return /* :: */[
                 Watcher__AccountCreationApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 14 : 
+    case 15 : 
         return /* :: */[
                 Watcher__AccountKeyChain.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 15 : 
+    case 16 : 
         return /* :: */[
                 Watcher__CustodianApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 18 : 
+    case 19 : 
         return /* :: */[
                 Watcher__CustodianKeyChain.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 20 : 
+    case 21 : 
         return /* :: */[
                 Watcher__CustodianRemovalApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 25 : 
+    case 26 : 
         var proposal = $$event[0];
         return /* :: */[
                 Watcher__PayoutApproval.make(proposal, log),
@@ -78,12 +78,12 @@ function initWatcherFor(session, param, log) {
                   /* [] */0
                 ]
               ];
-    case 27 : 
+    case 28 : 
         return /* :: */[
                 Watcher__SignPayout.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 28 : 
+    case 29 : 
         return /* :: */[
                 Watcher__FinalizePayout.make($$event[0], log),
                 /* [] */0

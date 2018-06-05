@@ -55,7 +55,7 @@ function make(proposal, log) {
                 case 0 : 
                     self$1[systemIssuer][0] = $$event[0][/* systemIssuer */5];
                     return /* () */0;
-                case 28 : 
+                case 29 : 
                     var match = $$event[0];
                     var acceptedProcess = match[/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](env$1[0], acceptedProcess)) {
@@ -64,14 +64,14 @@ function make(proposal, log) {
                     } else {
                       return /* () */0;
                     }
-                case 32 : 
+                case 33 : 
                     var broadcastProcess = $$event[0][/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](broadcastProcess, env$1[0])) {
                       var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], broadcastProcess);
                       if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, env$1[2])) > 0) {
                         self$1[result][0] = /* Some */[/* tuple */[
                             self$1[systemIssuer][0],
-                            /* PayoutAborted */Block.__(29, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[1])])
+                            /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[1])])
                           ]];
                       }
                       self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
@@ -79,9 +79,9 @@ function make(proposal, log) {
                     } else {
                       return /* () */0;
                     }
-                case 29 : 
-                case 33 : 
-                case 35 : 
+                case 30 : 
+                case 34 : 
+                case 36 : 
                     exit = 1;
                     break;
                 default:

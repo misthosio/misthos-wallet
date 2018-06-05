@@ -66,7 +66,7 @@ function apply($$event, state) {
                 /* prospects */ProcessCollector.addAcceptance(acceptance, state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
-    case 6 : 
+    case 7 : 
         var proposal = $$event[0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
@@ -91,14 +91,14 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 2 : 
-    case 7 : 
+    case 8 : 
         exit = 1;
         break;
     case 3 : 
-    case 8 : 
+    case 9 : 
         exit = 2;
         break;
-    case 9 : 
+    case 10 : 
         var acceptance$1 = $$event[0];
         var id = acceptance$1[/* data */2][/* id */0];
         return /* record */[
@@ -110,7 +110,7 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 5 : 
-    case 10 : 
+    case 11 : 
         exit = 3;
         break;
     default:

@@ -85,7 +85,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 9 : 
+                case 10 : 
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[0][/* data */6][/* partnerApprovalProcess */1])) {
                       self$1[completed][0] = true;
                       tmp = self$1[state][0];
@@ -93,7 +93,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 16 : 
+                case 17 : 
                     var $$event$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$1[/* processId */0], env$1[0][/* processId */0])) {
                       var init$3 = self$1[state][0];
@@ -109,7 +109,7 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 17 : 
+                case 18 : 
                     var $$event$2 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5]($$event$2[/* processId */0], env$1[0][/* processId */0])) {
                       var init$4 = self$1[state][0];
@@ -125,8 +125,8 @@ function make(proposal, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 18 : 
                 case 19 : 
+                case 20 : 
                     exit = 1;
                     break;
                 default:
@@ -156,11 +156,11 @@ function make(proposal, log) {
                   match$1 ? (
                       match$2 ? /* Some */[/* tuple */[
                             self$1[state][0][/* systemIssuer */5],
-                            /* CustodianAccepted */Block.__(18, [Curry._1(Event.Custodian[/* Accepted */6][/* fromProposal */0], env$1[0])])
+                            /* CustodianAccepted */Block.__(19, [Curry._1(Event.Custodian[/* Accepted */6][/* fromProposal */0], env$1[0])])
                           ]] : /* None */0
                     ) : /* Some */[/* tuple */[
                         self$1[state][0][/* systemIssuer */5],
-                        /* CustodianDenied */Block.__(19, [Curry._1(Event.Custodian[/* Denied */7][/* fromProposal */0], env$1[0])])
+                        /* CustodianDenied */Block.__(20, [Curry._1(Event.Custodian[/* Denied */7][/* fromProposal */0], env$1[0])])
                       ]]
                 );
               return /* () */0;

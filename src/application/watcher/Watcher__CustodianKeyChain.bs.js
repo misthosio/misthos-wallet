@@ -53,7 +53,7 @@ function make(param, param$1, log) {
                       /* nextKeyChainIdx */init[/* nextKeyChainIdx */3]
                     ];
                     break;
-                case 9 : 
+                case 10 : 
                     var match = $$event[0][/* data */2];
                     if (PrimitiveTypes.UserId[/* eq */5](env$1[1], match[/* id */0]) && PrimitiveTypes.ProcessId[/* eq */5](match[/* lastPartnerProcess */1], env$1[5])) {
                       var init$1 = self$1[state][0];
@@ -70,7 +70,7 @@ function make(param, param$1, log) {
                         /* pendingEvent : Some */[(function () {
                               return /* tuple */[
                                       env$1[2],
-                                      /* CustodianKeyChainUpdated */Block.__(36, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
+                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
                                     ];
                             })],
                         /* selfRemoved */init$2[/* selfRemoved */2],
@@ -78,7 +78,7 @@ function make(param, param$1, log) {
                       ];
                     }
                     break;
-                case 14 : 
+                case 15 : 
                     if (Caml_obj.caml_equal($$event[0][/* data */2][/* accountIdx */0], env$1[6])) {
                       var init$3 = self$1[state][0];
                       tmp = /* record */[
@@ -86,7 +86,7 @@ function make(param, param$1, log) {
                         /* pendingEvent : Some */[(function () {
                               return /* tuple */[
                                       env$1[2],
-                                      /* CustodianKeyChainUpdated */Block.__(36, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
+                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
                                     ];
                             })],
                         /* selfRemoved */init$3[/* selfRemoved */2],
@@ -96,7 +96,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 23 : 
+                case 24 : 
                     var match$1 = $$event[0][/* data */2];
                     if (PrimitiveTypes.UserId[/* eq */5](match$1[/* custodianId */0], env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](match$1[/* lastCustodianProcess */2], env$1[4]) && WalletTypes.AccountIndex[/* eq */7](match$1[/* accountIdx */1], env$1[6])) {
                       var init$4 = self$1[state][0];
@@ -110,7 +110,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 36 : 
+                case 37 : 
                     var match$2 = $$event[0];
                     var keyChain = match$2[/* keyChain */2];
                     var custodian = match$2[/* custodianId */1];
@@ -129,7 +129,7 @@ function make(param, param$1, log) {
                         /* pendingEvent */Utils.mapOption((function (_, _$1) {
                                 return /* tuple */[
                                         env$1[2],
-                                        /* CustodianKeyChainUpdated */Block.__(36, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3]), env$1[3])))])
+                                        /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3]), env$1[3])))])
                                       ];
                               }), self$1[state][0][/* pendingEvent */1]),
                         /* selfRemoved */init$6[/* selfRemoved */2],

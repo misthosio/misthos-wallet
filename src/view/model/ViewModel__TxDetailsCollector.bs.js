@@ -47,7 +47,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 25 : 
+    case 26 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
@@ -63,7 +63,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 26 : 
+    case 27 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
@@ -72,7 +72,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 27 : 
+    case 28 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],
@@ -81,7 +81,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 28 : 
+    case 29 : 
         var accepted = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -98,7 +98,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 29 : 
+    case 30 : 
         var abort = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -115,7 +115,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 30 : 
+    case 31 : 
         var denial = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
@@ -132,7 +132,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 33 : 
+    case 34 : 
         var match = $$event[0];
         var txId = match[/* txId */1];
         var processId = match[/* processId */0];
@@ -153,7 +153,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 35 : 
+    case 36 : 
         var match$1 = $$event[0];
         var errorMessage = match$1[/* errorMessage */1];
         return /* record */[
@@ -172,7 +172,7 @@ function apply($$event, state) {
                 /* txDates */state[/* txDates */4],
                 /* income */state[/* income */5]
               ];
-    case 40 : 
+    case 41 : 
         var match$2 = $$event[0];
         var amount = match$2[/* amount */4];
         var txId$1 = match$2[/* txId */2];
@@ -206,7 +206,7 @@ function apply($$event, state) {
                         }
                       }))
               ];
-    case 41 : 
+    case 42 : 
         var match$3 = $$event[0];
         var txId$2 = match$3[/* txId */0];
         var processId$1 = Belt_MapString.get(state[/* txIdToProcessIdMap */3], txId$2);
