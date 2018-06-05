@@ -99,9 +99,8 @@ function syncEventsFromPartner(storagePrefix, ventureId, knownItems, eventLog, u
 function syncEventsFromVenture(storagePrefix, ventureId, eventLog) {
   logMessage("Finding new events for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   var summary = Curry._1(EventLog.getSummary, eventLog);
-  var partnerKeys = Curry._1(determinPartnerIds, eventLog);
   var partial_arg = summary[/* knownItems */0];
-  return Belt_List.forEach(partnerKeys, (function (param) {
+  return Belt_List.forEach(Curry._1(determinPartnerIds, eventLog), (function (param) {
                 return syncEventsFromPartner(storagePrefix, ventureId, partial_arg, eventLog, param);
               }));
 }

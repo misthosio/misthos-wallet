@@ -108,8 +108,8 @@ let syncEventsFromVenture = (storagePrefix, ventureId, eventLog) => {
     "Finding new events for venture '" ++ VentureId.toString(ventureId) ++ "'",
   );
   let summary = eventLog |> EventLog.getSummary;
-  let partnerKeys = eventLog |> determinPartnerIds;
-  partnerKeys
+  eventLog
+  |> determinPartnerIds
   |. List.forEach(
        syncEventsFromPartner(
          storagePrefix,
