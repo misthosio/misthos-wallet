@@ -22,7 +22,7 @@ function apply($$event, state) {
                 /* eligible */state[/* eligible */0],
                 /* currentPartners */Belt_Set.add(state[/* currentPartners */1], $$event[0][/* data */2][/* id */1])
               ];
-    case 9 : 
+    case 10 : 
         return /* record */[
                 /* eligible */state[/* eligible */0],
                 /* currentPartners */Belt_Set.remove(state[/* currentPartners */1], $$event[0][/* data */2][/* id */0])

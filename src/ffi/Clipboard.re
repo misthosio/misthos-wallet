@@ -1,6 +1,6 @@
 type t;
 
-type document; /* abstract type for a document object */
+type document;
 
 [@bs.send]
 external getElementById : (document, string) => Dom.element = "getElementById";

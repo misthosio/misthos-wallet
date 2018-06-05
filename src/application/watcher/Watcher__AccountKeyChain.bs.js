@@ -48,7 +48,7 @@ function make(param, param$1, log) {
               ],
               /* Some */[/* tuple */[
                   state[/* systemIssuer */0],
-                  /* AccountKeyChainIdentified */Block.__(37, [$$event])
+                  /* AccountKeyChainIdentified */Block.__(38, [$$event])
                 ]]
             ];
     }
@@ -56,7 +56,7 @@ function make(param, param$1, log) {
   var activatedEvent = function (identifier, identifiedKeyChains) {
     return /* Some */[/* tuple */[
               issuerKeyPair,
-              /* AccountKeyChainActivated */Block.__(38, [Event.AccountKeyChainActivated[/* make */0](accountIdx, localUserId, identifier, List.assoc(identifier, identifiedKeyChains))])
+              /* AccountKeyChainActivated */Block.__(39, [Event.AccountKeyChainActivated[/* make */0](accountIdx, localUserId, identifier, List.assoc(identifier, identifiedKeyChains))])
             ]];
   };
   if (!class_tables[0]) {
@@ -110,7 +110,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 9 : 
+                case 10 : 
                     if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* data */2][/* id */0], env$1[0])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
@@ -126,7 +126,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 23 : 
+                case 24 : 
                     var match = $$event[0][/* data */2];
                     var removedAccount = match[/* accountIdx */1];
                     if (WalletTypes.AccountIndex[/* eq */7](removedAccount, removedAccount)) {
@@ -157,7 +157,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 36 : 
+                case 37 : 
                     var match$2 = $$event[0];
                     var keyChain = match$2[/* keyChain */2];
                     var custodianId = match$2[/* custodianId */1];
@@ -188,7 +188,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 37 : 
+                case 38 : 
                     var keyChain$1 = $$event[0][/* keyChain */0];
                     if (Caml_obj.caml_equal(keyChain$1[/* accountIdx */0], env$1[1]) && keyChain$1[/* identifier */1] === self$1[state][0][/* waitingForIdentification */5]) {
                       var init$5 = self$1[state][0];
@@ -205,7 +205,7 @@ function make(param, param$1, log) {
                       tmp = self$1[state][0];
                     }
                     break;
-                case 38 : 
+                case 39 : 
                     var match$4 = $$event[0];
                     var identifier$2 = match$4[/* identifier */2];
                     if (WalletTypes.AccountIndex[/* eq */7](match$4[/* accountIdx */0], env$1[1]) && PrimitiveTypes.UserId[/* eq */5](match$4[/* custodianId */1], env$1[0])) {

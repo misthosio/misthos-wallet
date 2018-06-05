@@ -42,7 +42,7 @@ var determinPartnerIds = Curry._2(EventLog.reduce, (function (ids, param) {
                       $$event[0][/* data */2][/* id */1],
                       ids
                     ];
-          case 9 : 
+          case 10 : 
               var data = $$event[0][/* data */2];
               return Belt_List.keep(ids, (function (id) {
                             return PrimitiveTypes.UserId[/* neq */6](id, data[/* id */0]);
@@ -81,7 +81,8 @@ function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
           return Promise.resolve(items.length !== 0 ? postMessage$1(/* NewItemsDetected */Block.__(14, [
                               ventureId,
-                              items
+                              items,
+                              userId
                             ])) : /* () */0);
         }));
   return /* () */0;
@@ -99,9 +100,8 @@ function syncEventsFromPartner(storagePrefix, ventureId, knownItems, eventLog, u
 function syncEventsFromVenture(storagePrefix, ventureId, eventLog) {
   logMessage("Finding new events for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   var summary = Curry._1(EventLog.getSummary, eventLog);
-  var partnerKeys = Curry._1(determinPartnerIds, eventLog);
   var partial_arg = summary[/* knownItems */0];
-  return Belt_List.forEach(partnerKeys, (function (param) {
+  return Belt_List.forEach(Curry._1(determinPartnerIds, eventLog), (function (param) {
                 return syncEventsFromPartner(storagePrefix, ventureId, partial_arg, eventLog, param);
               }));
 }

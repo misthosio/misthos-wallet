@@ -120,7 +120,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 14 : 
+    case 15 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -136,7 +136,7 @@ function apply($$event, state) {
                 ],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 25 : 
+    case 26 : 
         var match = $$event[0];
         var payoutTx = match[/* data */6][/* payoutTx */1];
         var changeAddress = payoutTx[/* changeAddress */3];
@@ -157,7 +157,7 @@ function apply($$event, state) {
                     state[/* exposedCoordinates */6]
                   ] : state[/* exposedCoordinates */6]
               ];
-    case 29 : 
+    case 30 : 
         var processId$1 = $$event[0][/* processId */0];
         var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$1);
         var reserved = removeInputsFromReserved(processId$1, payoutTx$1[/* usedInputs */1], state[/* reserved */2]);
@@ -170,7 +170,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 30 : 
+    case 31 : 
         var processId$2 = $$event[0][/* processId */0];
         var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$2);
         var reserved$1 = removeInputsFromReserved(processId$2, payoutTx$2[/* usedInputs */1], state[/* reserved */2]);
@@ -183,7 +183,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 33 : 
+    case 34 : 
         var match$1 = $$event[0];
         var processId$3 = match$1[/* processId */0];
         var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$3);
@@ -198,7 +198,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 35 : 
+    case 36 : 
         var processId$4 = $$event[0][/* processId */0];
         var payoutTx$4 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$4);
         var reserved$3 = removeInputsFromReserved(processId$4, payoutTx$4[/* usedInputs */1], state[/* reserved */2]);
@@ -211,7 +211,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 37 : 
+    case 38 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -221,7 +221,7 @@ function apply($$event, state) {
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 38 : 
+    case 39 : 
         var match$3 = $$event[0];
         var accountIdx = match$3[/* accountIdx */0];
         return /* record */[
@@ -245,7 +245,7 @@ function apply($$event, state) {
                 ],
                 /* exposedCoordinates */state[/* exposedCoordinates */6]
               ];
-    case 39 : 
+    case 40 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -258,7 +258,7 @@ function apply($$event, state) {
                   state[/* exposedCoordinates */6]
                 ]
               ];
-    case 40 : 
+    case 41 : 
         var match$4 = $$event[0];
         var coordinates = match$4[/* coordinates */1];
         var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3]);

@@ -6,6 +6,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
+var Watcher__AddPubKey = require("./Watcher__AddPubKey.bs.js");
 var Watcher__SignPayout = require("./Watcher__SignPayout.bs.js");
 var Watcher__AbortPayout = require("./Watcher__AbortPayout.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -36,54 +37,58 @@ function initWatcherFor(session, param, log) {
               ];
     case 4 : 
         return /* :: */[
-                Watcher__AutoEndorseCustodianSelf.make(session, $$event[0], log),
+                Watcher__AddPubKey.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 6 : 
+    case 7 : 
         return /* :: */[
                 Watcher__PartnerRemovalApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 11 : 
+    case 12 : 
         return /* :: */[
                 Watcher__AccountCreationApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 14 : 
+    case 15 : 
         return /* :: */[
                 Watcher__AccountKeyChain.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 15 : 
+    case 16 : 
+        var proposal = $$event[0];
         return /* :: */[
-                Watcher__CustodianApproval.make($$event[0], log),
-                /* [] */0
+                Watcher__AutoEndorseCustodianSelf.make(session, proposal, log),
+                /* :: */[
+                  Watcher__CustodianApproval.make(proposal, log),
+                  /* [] */0
+                ]
               ];
-    case 18 : 
+    case 19 : 
         return /* :: */[
                 Watcher__CustodianKeyChain.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 20 : 
+    case 21 : 
         return /* :: */[
                 Watcher__CustodianRemovalApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 25 : 
-        var proposal = $$event[0];
+    case 26 : 
+        var proposal$1 = $$event[0];
         return /* :: */[
-                Watcher__PayoutApproval.make(proposal, log),
+                Watcher__PayoutApproval.make(proposal$1, log),
                 /* :: */[
-                  Watcher__AbortPayout.make(proposal, log),
+                  Watcher__AbortPayout.make(proposal$1, log),
                   /* [] */0
                 ]
               ];
-    case 27 : 
+    case 28 : 
         return /* :: */[
                 Watcher__SignPayout.make(session, $$event[0], log),
                 /* [] */0
               ];
-    case 28 : 
+    case 29 : 
         return /* :: */[
                 Watcher__FinalizePayout.make($$event[0], log),
                 /* [] */0
@@ -167,6 +172,8 @@ var Initialize = 0;
 
 var PartnerApproval = 0;
 
+var AddPubKey = 0;
+
 var PartnerRemovalApproval = 0;
 
 var AccountCreationApproval = 0;
@@ -191,6 +198,7 @@ var FinalizePayout = 0;
 
 exports.Initialize = Initialize;
 exports.PartnerApproval = PartnerApproval;
+exports.AddPubKey = AddPubKey;
 exports.PartnerRemovalApproval = PartnerRemovalApproval;
 exports.AccountCreationApproval = AccountCreationApproval;
 exports.CustodianApproval = CustodianApproval;

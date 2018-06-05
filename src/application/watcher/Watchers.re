@@ -8,40 +8,29 @@ type watcher = {
 type t = list(watcher);
 
 module Initialize = Watcher__InitializeVenture;
-
 module PartnerApproval = Watcher__PartnerApproval;
-
+module AddPubKey = Watcher__AddPubKey;
 module PartnerRemovalApproval = Watcher__PartnerRemovalApproval;
-
 module AccountCreationApproval = Watcher__AccountCreationApproval;
-
 module CustodianApproval = Watcher__CustodianApproval;
-
 module CustodianRemovalApproval = Watcher__CustodianRemovalApproval;
-
 module AutoEndorseCustodianSelf = Watcher__AutoEndorseCustodianSelf;
-
 module CustodianKeyChain = Watcher__CustodianKeyChain;
-
 module AccountKeyChain = Watcher__AccountKeyChain;
-
 module AbortPayout = Watcher__AbortPayout;
-
 module PayoutApproval = Watcher__PayoutApproval;
-
 module SignPayout = Watcher__SignPayout;
-
 module FinalizePayout = Watcher__FinalizePayout;
 
 let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch (event) {
   | VentureCreated(event) => [Initialize.make(session, event, log)]
   | PartnerProposed(proposal) => [PartnerApproval.make(proposal, log)]
+  | PartnerAccepted(acceptance) => [
+      AddPubKey.make(session, acceptance, log),
+    ]
   | PartnerRemovalProposed(proposal) => [
       PartnerRemovalApproval.make(proposal, log),
-    ]
-  | PartnerAccepted(acceptance) => [
-      AutoEndorseCustodianSelf.make(session, acceptance, log),
     ]
   | AccountCreationProposed(proposal) => [
       AccountCreationApproval.make(proposal, log),
@@ -57,7 +46,10 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
       SignPayout.make(session, endorsement, log),
     ]
   | PayoutAccepted(acceptance) => [FinalizePayout.make(acceptance, log)]
-  | CustodianProposed(proposal) => [CustodianApproval.make(proposal, log)]
+  | CustodianProposed(proposal) => [
+      AutoEndorseCustodianSelf.make(session, proposal, log),
+      CustodianApproval.make(proposal, log),
+    ]
   | CustodianRemovalProposed(proposal) => [
       CustodianRemovalApproval.make(proposal, log),
     ]

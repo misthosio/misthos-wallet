@@ -172,49 +172,120 @@ let persistRemovals = (ventureId, (removalProcesses, removedKeys)) =>
     |> List.fold_left(
          (promise, (id, items)) => {
            let pubKey = removedKeys |> List.assoc(id);
-           let eventLog =
-             items
-             |> List.rev
-             |> List.fold_left(
-                  (log, item) => log |> EventLog.appendItem(item),
-                  EventLog.make(),
+           switch (pubKey) {
+           | Some(pubKey) =>
+             let eventLog =
+               items
+               |> List.rev
+               |> List.fold_left(
+                    (log, item) => log |> EventLog.appendItem(item),
+                    EventLog.make(),
+                  );
+             promise
+             |> then_(() =>
+                  persistLogString(
+                    ventureId,
+                    eventLog |> EventLog.encode |> Json.stringify,
+                    pubKey,
+                  )
+                )
+             |> then_(() =>
+                  persistSummaryString(
+                    ventureId,
+                    eventLog
+                    |> EventLog.getSummary
+                    |> EventLog.encodeSummary
+                    |> Json.stringify,
+                    pubKey,
+                  )
                 );
-           promise
-           |> then_(() =>
-                persistLogString(
-                  ventureId,
-                  eventLog |> EventLog.encode |> Json.stringify,
-                  pubKey,
-                )
-              )
-           |> then_(() =>
-                persistSummaryString(
-                  ventureId,
-                  eventLog
-                  |> EventLog.getSummary
-                  |> EventLog.encodeSummary
-                  |> Json.stringify,
-                  pubKey,
-                )
-              );
+           | None => promise
+           };
          },
          resolve(),
        )
   );
 
+let missingKeys = ref(Belt.Map.String.empty);
+let addToMissingKeys = (ventureId, userId, f) => {
+  open Belt;
+  let key = VentureId.toString(ventureId) ++ UserId.toString(userId);
+  missingKeys := missingKeys^ |. Map.String.set(key, f);
+};
+let removeFromMissingKeys = (ventureId, userId) => {
+  open Belt;
+  let key = VentureId.toString(ventureId) ++ UserId.toString(userId);
+  missingKeys := missingKeys^ |. Map.String.remove(key);
+};
+
+Js.Global.setInterval(
+  () =>
+    Belt.(
+      Js.Promise.(
+        missingKeys^
+        |. Map.String.reduceU(resolve(), (. promise, key, (id, f)) =>
+             UserInfo.Public.(
+               read(~blockstackId=id)
+               |> then_(
+                    fun
+                    | UserInfo.Public.Ok({appPubKey}) =>
+                      if (missingKeys^ |. Map.String.has(key)) {
+                        logMessage("Missing key has been found");
+                        promise |> f(appPubKey);
+                      } else {
+                        promise;
+                      }
+                    | NotFound => {
+                        logMessage("Could not find UserInfo");
+                        promise;
+                      },
+                  )
+             )
+           )
+        |> ignore
+      )
+    ),
+  10000,
+);
+
 let persist = (ventureId, eventLog, (keys, removals)) => {
   let logString = eventLog |> EventLog.encode |> Json.stringify;
   let summaryString =
     eventLog |> EventLog.getSummary |> EventLog.encodeSummary |> Json.stringify;
+  let persistLogAndSummary = (pubKey, promise) =>
+    Js.Promise.(
+      promise
+      |> then_(() => persistLogString(ventureId, logString, pubKey))
+      |> then_(() => persistSummaryString(ventureId, summaryString, pubKey))
+    );
   Js.Promise.(
     keys
     |> List.fold_left(
-         (promise, (_id, pubKey)) =>
-           promise
-           |> then_(() => persistLogString(ventureId, logString, pubKey))
-           |> then_(() =>
-                persistSummaryString(ventureId, summaryString, pubKey)
-              ),
+         (promise, (id, pubKey)) =>
+           switch (pubKey) {
+           | Some(pubKey) =>
+             removeFromMissingKeys(ventureId, id);
+             promise |> persistLogAndSummary(pubKey);
+           | None =>
+             UserInfo.Public.(
+               read(~blockstackId=id)
+               |> then_(
+                    fun
+                    | UserInfo.Public.Ok({appPubKey}) => {
+                        removeFromMissingKeys(ventureId, id);
+                        promise |> persistLogAndSummary(appPubKey);
+                      }
+                    | NotFound => {
+                        addToMissingKeys(
+                          ventureId,
+                          id,
+                          (id, persistLogAndSummary),
+                        );
+                        promise;
+                      },
+                  )
+             )
+           },
          resolve(),
        )
     |> then_(() => resolve(removals))

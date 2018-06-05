@@ -170,7 +170,7 @@ function make$1(cmdStatus, action, _) {
                   case 1 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
-                            return message(/* Error */1, "Error joining venture. Perhaps you have not been accepted yet.");
+                            return message(/* Error */1, "Error joining venture. Perhaps you have not been accepted yet,\n          or if this was your first time logging in to Misthos,\n          the Venture will become available after the inviting partner has logged in again.");
                         case 1 : 
                             return message(/* Error */1, "Error loading venture");
                         case 2 : 
@@ -180,8 +180,6 @@ function make$1(cmdStatus, action, _) {
                         case 4 : 
                             return message(/* Error */1, "This user has already been proposed to join");
                         case 5 : 
-                            return message(/* Error */1, "Id doesn't exist or user has never logged in");
-                        case 6 : 
                             return message(/* Error */1, "Your submission could not be persisted, probably due to network connectivity.");
                         
                       }

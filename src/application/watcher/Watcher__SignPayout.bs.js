@@ -32,7 +32,7 @@ function make(param, param$1, log) {
                         /* payoutTx */state[/* payoutTx */3],
                         /* complete */state[/* complete */4]
                       ];
-            case 25 : 
+            case 26 : 
                 var match$1 = $$event[0];
                 if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
                   return /* record */[
@@ -45,7 +45,7 @@ function make(param, param$1, log) {
                 } else {
                   return state;
                 }
-            case 31 : 
+            case 32 : 
                 var match$2 = $$event[0];
                 if (PrimitiveTypes.UserId[/* eq */5](match$2[/* custodianId */1], userId) && PrimitiveTypes.ProcessId[/* eq */5](match$2[/* processId */0], payoutProcess)) {
                   return /* record */[
@@ -58,7 +58,7 @@ function make(param, param$1, log) {
                 } else {
                   return state;
                 }
-            case 37 : 
+            case 38 : 
                 return /* record */[
                         /* network */state[/* network */0],
                         /* ventureId */state[/* ventureId */1],
@@ -81,7 +81,7 @@ function make(param, param$1, log) {
     var match = PayoutTransaction.signPayout(state[/* ventureId */1], userId, param[/* masterKeyChain */4], state[/* accountKeyChains */2], Js_option.getExn(state[/* payoutTx */3]), state[/* network */0]);
     signEvent = match ? /* Some */[/* tuple */[
           param[/* issuerKeyPair */2],
-          /* PayoutSigned */Block.__(31, [Curry._3(Event.Payout[/* Signed */9][/* make */0], payoutProcess, userId, match[0])])
+          /* PayoutSigned */Block.__(32, [Curry._3(Event.Payout[/* Signed */9][/* make */0], payoutProcess, userId, match[0])])
         ]] : /* None */0;
   } else {
     signEvent = /* None */0;
@@ -107,7 +107,7 @@ function make(param, param$1, log) {
           (function (self$1, param) {
               var env$1 = self$1[env];
               var $$event = param[/* event */0];
-              if ($$event.tag === 31) {
+              if ($$event.tag === 32) {
                 var match = $$event[0];
                 if (PrimitiveTypes.UserId[/* eq */5](match[/* custodianId */1], env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], env$1[2])) {
                   self$1[signPending][0] = false;

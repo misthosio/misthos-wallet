@@ -19,7 +19,7 @@ type incoming =
   | RejectPayout(ventureId, processId)
   | EndorsePayout(ventureId, processId)
   | ExposeIncomeAddress(ventureId, accountIdx)
-  | NewItemsDetected(ventureId, array(EventLog.item))
+  | NewItemsDetected(ventureId, array(EventLog.item), userId)
   | SyncWallet(
       ventureId,
       list(Event.Payout.Broadcast.t),
@@ -42,7 +42,6 @@ type cmdError =
   | MaxPartnersReached
   | PartnerAlreadyExists
   | PartnerAlreadyProposed
-  | CouldNotFindUserInfo
   | CouldNotPersistVenture;
 
 type cmdResponse =
@@ -115,8 +114,6 @@ let encodeError =
     Json.Encode.(object_([("type", string("PartnerAlreadyExists"))]))
   | PartnerAlreadyProposed =>
     Json.Encode.(object_([("type", string("PartnerAlreadyProposed"))]))
-  | CouldNotFindUserInfo =>
-    Json.Encode.(object_([("type", string("CouldNotFindUserInfo"))]))
   | CouldNotPersistVenture =>
     Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]));
 
@@ -128,7 +125,6 @@ let decodeError = raw => {
   | "MaxPartnersReached" => MaxPartnersReached
   | "PartnerAlreadyProposed" => PartnerAlreadyProposed
   | "PartnerAlreadyExists" => PartnerAlreadyExists
-  | "CouldNotFindUserInfo" => CouldNotFindUserInfo
   | "CouldNotPersistVenture" => CouldNotPersistVenture
   | _ => raise(UnknownMessage(raw))
   };
@@ -270,12 +266,13 @@ let encodeIncoming =
         ("accountIdx", AccountIndex.encode(accountIdx)),
       ])
     )
-  | NewItemsDetected(ventureId, items) =>
+  | NewItemsDetected(ventureId, items, partnerId) =>
     Json.Encode.(
       object_([
         ("type", string("NewItemsDetected")),
         ("ventureId", VentureId.encode(ventureId)),
         ("items", array(EventLog.encodeItem, items)),
+        ("partnerId", UserId.encode(partnerId)),
       ])
     )
   | SyncWallet(ventureId, broadcasts, broadcastFailures, incomeEvents, confs) =>
@@ -403,7 +400,8 @@ let decodeIncoming = raw => {
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =
       raw |> Json.Decode.(field("items", array(EventLog.decodeItem)));
-    NewItemsDetected(ventureId, items);
+    let partnerId = raw |> Json.Decode.(field("partnerId", UserId.decode));
+    NewItemsDetected(ventureId, items, partnerId);
   | "SyncTabs" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =

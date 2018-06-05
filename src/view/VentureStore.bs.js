@@ -337,7 +337,6 @@ function make(currentRoute, session, children) {
                                       if (typeof match$4 === "number" || match$4.tag || correlationId !== match$4[0]) {
                                         return /* NoUpdate */0;
                                       } else {
-                                        console.log("join cmd completed");
                                         var tmp$1;
                                         tmp$1 = response.tag ? /* Error */Block.__(1, [response[0]]) : /* Success */Block.__(2, [response[0]]);
                                         return /* Update */Block.__(0, [/* record */[
@@ -357,7 +356,6 @@ function make(currentRoute, session, children) {
                                       if (typeof match$5 === "number" || match$5.tag || correlationId !== match$5[0]) {
                                         return /* NoUpdate */0;
                                       } else {
-                                        console.log("join cmd completed");
                                         var tmp$2;
                                         tmp$2 = response.tag ? /* Error */Block.__(1, [response[0]]) : /* Success */Block.__(2, [response[0]]);
                                         return /* Update */Block.__(0, [/* record */[

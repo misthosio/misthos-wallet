@@ -55,7 +55,7 @@ let make = () => {
   payoutData: [],
   creatorData: {
     id: UserId.fromString(""),
-    pubKey: "",
+    pubKey: None,
     lastPartnerRemovalProcess: None,
   },
   custodianKeyChains: [],
@@ -85,7 +85,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
       creatorData:
         Partner.Data.{
           id: creatorId,
-          pubKey: creatorPubKey,
+          pubKey: Some(creatorPubKey),
           lastPartnerRemovalProcess: None,
         },
     }
@@ -140,11 +140,20 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PartnerAccepted({processId, data}) => {
       ...state,
       currentPartners: state.currentPartners |. Belt.Set.add(data.id),
+      currentPartnerPubKeys:
+        data.pubKey
+        |> Utils.mapOption(pubKey =>
+             [(pubKey, data.id), ...state.currentPartnerPubKeys]
+           )
+        |> Js.Option.getWithDefault(state.currentPartnerPubKeys),
+      partnerAccepted: [(data.id, processId), ...state.partnerAccepted],
+    }
+  | PartnerPubKeyAdded({partnerId, pubKey}) => {
+      ...state,
       currentPartnerPubKeys: [
-        (data.pubKey, data.id),
+        (pubKey, partnerId),
         ...state.currentPartnerPubKeys,
       ],
-      partnerAccepted: [(data.id, processId), ...state.partnerAccepted],
     }
   | PartnerRemovalAccepted({processId, data: {id}}) =>
     let pubKey =
@@ -746,6 +755,7 @@ let validateEvent =
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | TransactionConfirmed(_) => ((_state, _pubKey) => Ok)
+  | PartnerPubKeyAdded(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutAborted(_) => ((_state, _pubKey) => Ok)
   | PayoutFinalized(_) => ((_state, _pubKey) => Ok)
@@ -754,7 +764,11 @@ let validateEvent =
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 
 let validate =
-    ({knownItems} as state, {hash, event, issuerPubKey}: EventLog.item) =>
+    (
+      ~partnerId as originId=?,
+      {knownItems} as state,
+      {hash, event, issuerPubKey}: EventLog.item,
+    ) =>
   if (knownItems |. ItemsSet.has(hash)) {
     Ignore;
   } else {
@@ -769,7 +783,7 @@ let validate =
     | (PartnerProposed(event), false, false)
         when
           event.data == state.creatorData
-          && issuerPubKey == state.creatorData.pubKey
+          && Some(issuerPubKey) == state.creatorData.pubKey
           && state.partnerData
           |> List.length == 0 =>
       Ok
@@ -779,6 +793,18 @@ let validate =
           && state.knownItems
           |> ItemsSet.size == 2 =>
       Ok
+    | (PartnerPubKeyAdded({partnerId}), _, false) =>
+      switch (originId) {
+      | Some(originId) =>
+        state.currentPartners
+        |. Belt.Set.has(originId)
+        && UserId.eq(originId, partnerId) ?
+          Ok : InvalidIssuer
+      | _ => InvalidIssuer
+      }
+    | (PartnerPubKeyAdded(_), _, true) =>
+      BadData("Partner pub key is already known")
+
     | (_, false, false) => InvalidIssuer
     | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer
     | (PartnerAccepted(event), true, false)

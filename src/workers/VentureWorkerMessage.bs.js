@@ -130,14 +130,6 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
-                      "CouldNotFindUserInfo"
-                    ],
-                    /* [] */0
-                  ]);
-    case 6 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
                       "CouldNotPersistVenture"
                     ],
                     /* [] */0
@@ -149,14 +141,12 @@ function encodeError(param) {
 function decodeError(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
-    case "CouldNotFindUserInfo" : 
-        return /* CouldNotFindUserInfo */5;
     case "CouldNotJoinVenture" : 
         return /* CouldNotJoinVenture */0;
     case "CouldNotLoadVenture" : 
         return /* CouldNotLoadVenture */1;
     case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */6;
+        return /* CouldNotPersistVenture */5;
     case "MaxPartnersReached" : 
         return /* MaxPartnersReached */2;
     case "PartnerAlreadyExists" : 
@@ -514,7 +504,13 @@ function encodeIncoming(param) {
                           "items",
                           Json_encode.array(EventLog.encodeItem, param[1])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "partnerId",
+                            PrimitiveTypes.UserId[/* encode */2](param[2])
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]);
@@ -629,9 +625,11 @@ function decodeIncoming(raw) {
         var items = Json_decode.field("items", (function (param) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
+        var partnerId = Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw);
         return /* NewItemsDetected */Block.__(14, [
                   ventureId$6,
-                  items
+                  items,
+                  partnerId
                 ]);
     case "ProposePartner" : 
         var ventureId$7 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);

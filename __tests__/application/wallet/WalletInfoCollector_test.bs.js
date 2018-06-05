@@ -21,22 +21,22 @@ describe("WalletInfoCollector", (function () {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withIncomeDetected */41](2, Generators.Log[/* withIncomeDetected */41](1, Generators.Log[/* withIncomeDetected */41](0, Generators.Log[/* withIncomeAddressExposed */40](user1, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */22](user2, /* :: */[
+                      return Generators.Log[/* withIncomeDetected */42](2, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
                                                               user1,
                                                               /* [] */0
-                                                            ], Generators.Log[/* withIncomeAddressExposed */40](user1, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */32](user2, /* :: */[
+                                                            ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
                                                                                   user1,
                                                                                   /* :: */[
                                                                                     user2,
                                                                                     /* [] */0
                                                                                   ]
-                                                                                ], Generators.Log[/* withPartner */17](user2, /* :: */[
+                                                                                ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
                                                                                       user1,
                                                                                       /* [] */0
-                                                                                    ], Generators.Log[/* withIncomeAddressExposed */40](user1, Generators.Log[/* withAccountKeyChainActivated */39](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */38](Generators.Log[/* withCustodianKeyChain */37](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */32](user1, /* :: */[
+                                                                                    ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
                                                                                                           user1,
                                                                                                           /* [] */0
-                                                                                                        ], Generators.Log[/* withAccount */26](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))))))))))))))))));
+                                                                                                        ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))))))))))))))))));
                     }), (function (sessions, log) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user1 = match[0];

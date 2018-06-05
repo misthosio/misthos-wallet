@@ -74,7 +74,7 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 2 : 
-                      if ($$event.tag === 11) {
+                      if ($$event.tag === 12) {
                         var $$event$2 = $$event[0];
                         tmp = WalletTypes.AccountIndex[/* eq */7]($$event$2[/* data */6][/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) ? /* EndorseAccountCreation */Block.__(3, [
                               $$event$2[/* processId */0],
@@ -85,7 +85,7 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 3 : 
-                      if ($$event.tag === 13) {
+                      if ($$event.tag === 14) {
                         var processId = match[0];
                         tmp = PrimitiveTypes.ProcessId[/* eq */5](processId, $$event[0][/* processId */0]) ? /* AccountCreationEndorsed */Block.__(4, [
                               processId,
@@ -96,10 +96,10 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 4 : 
-                      tmp = $$event.tag === 14 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* ProposeCustodian */Block.__(5, [match[1]]) : self$1[state][0];
+                      tmp = $$event.tag === 15 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* ProposeCustodian */Block.__(5, [match[1]]) : self$1[state][0];
                       break;
                   case 5 : 
-                      if ($$event.tag === 15) {
+                      if ($$event.tag === 16) {
                         var $$event$3 = $$event[0];
                         tmp = PrimitiveTypes.UserId[/* eq */5]($$event$3[/* data */6][/* partnerId */0], env$1[1]) ? /* EndorseCustodian */Block.__(6, [$$event$3[/* processId */0]]) : self$1[state][0];
                       } else {
@@ -107,7 +107,7 @@ function make(param, param$1, log) {
                       }
                       break;
                   case 6 : 
-                      tmp = $$event.tag === 17 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* Complete */1 : self$1[state][0];
+                      tmp = $$event.tag === 18 && PrimitiveTypes.ProcessId[/* eq */5](match[0], $$event[0][/* processId */0]) ? /* Complete */1 : self$1[state][0];
                       break;
                   
                 }
@@ -118,7 +118,7 @@ function make(param, param$1, log) {
               if (typeof match$1 === "number") {
                 tmp$1 = match$1 === 0 ? /* Some */[/* tuple */[
                       env$1[0],
-                      Event.makePartnerProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], env$1[2], /* None */0, env$1[3])
+                      Event.makePartnerProposed(/* Some */[env$1[2]], Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], env$1[1], /* None */0, env$1[3], /* () */0)
                     ]] : /* None */0;
               } else {
                 switch (match$1.tag | 0) {

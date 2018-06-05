@@ -8,6 +8,7 @@ type state = {
   ventureId,
   pendingEvent: option(unit => (Bitcoin.ECPair.t, Event.t)),
   selfRemoved: bool,
+  pubKeyPresent: bool,
   nextKeyChainIdx: custodianKeyChainIdx,
 };
 
@@ -26,6 +27,7 @@ let make =
         ventureId: VentureId.fromString(""),
         pendingEvent: None,
         selfRemoved: false,
+        pubKeyPresent: false,
         nextKeyChainIdx: CustodianKeyChainIndex.first,
       });
     pub receive = ({event}: EventLog.item) => {
@@ -34,6 +36,15 @@ let make =
         (
           switch (event) {
           | VentureCreated({ventureId}) => {...state^, ventureId}
+          | PartnerProposed({processId, data: {pubKey}})
+              when ProcessId.eq(processId, partnerApprovalProcess) => {
+              ...state^,
+              pubKeyPresent: pubKey |> Js.Option.isSome,
+            }
+          | PartnerPubKeyAdded({partnerId}) when UserId.eq(partnerId, userId) => {
+              ...state^,
+              pubKeyPresent: true,
+            }
           | AccountCreationAccepted(acceptance)
               when acceptance.data.accountIdx == accountIdx => {
               ...state^,
@@ -168,8 +179,12 @@ let make =
     };
     pub processCompleted = () =>
       UserId.neq(userId, custodianId) || state^.selfRemoved;
-    pub pendingEvent = () => state^.pendingEvent |> Utils.mapOption(f => f())
+    pub pendingEvent = () =>
+      state^.pubKeyPresent ?
+        state^.pendingEvent |> Utils.mapOption(f => f()) : None
   };
-  log |> EventLog.reduce((_, item) => process#receive(item), ());
+  if (process#processCompleted() == false) {
+    log |> EventLog.reduce((_, item) => process#receive(item), ());
+  };
   process;
 };

@@ -85,6 +85,7 @@ let make =
                 ~prospectPubKey=creatorPubKey,
                 ~policy=metaPolicy,
                 ~lastRemovalAccepted=None,
+                (),
               ),
             ))
           | EndorsePartner({processId}) =>

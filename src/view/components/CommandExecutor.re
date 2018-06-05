@@ -155,8 +155,6 @@ module Status = {
         | CouldNotPersistVenture =>
           "Your submission could not be persisted, probably due to network connectivity."
           |> message(Error)
-        | CouldNotFindUserInfo =>
-          "Id doesn't exist or user has never logged in" |> message(Error)
         | MaxPartnersReached =>
           "The maximum number of partners we currently support in a venture has been reached"
           |> message(Error)
@@ -165,7 +163,9 @@ module Status = {
         | PartnerAlreadyExists =>
           "User is already a partner of this venture" |> message(Error)
         | CouldNotJoinVenture =>
-          "Error joining venture. Perhaps you have not been accepted yet."
+          {|Error joining venture. Perhaps you have not been accepted yet,
+          or if this was your first time logging in to Misthos,
+          the Venture will become available after the inviting partner has logged in again.|}
           |> message(Error)
         | CouldNotLoadVenture => "Error loading venture" |> message(Error)
         }

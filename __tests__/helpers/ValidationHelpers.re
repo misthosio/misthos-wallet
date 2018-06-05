@@ -16,11 +16,11 @@ open PrimitiveTypes;
 
 exception TestingInvalidSequence(string);
 
-let constructState = log =>
+let constructState = (~originId as partnerId=?, log) =>
   log
   |> L.reduce(
        (s, item) =>
-         switch (s |. Validation.validate(item)) {
+         switch (s |. Validation.validate(~partnerId?, item)) {
          | Ok => s |> Validation.apply(item)
          | bad =>
            raise(TestingInvalidSequence(bad |> Validation.resultToString))
@@ -28,10 +28,14 @@ let constructState = log =>
        Validation.make(),
      );
 
-let testValidationResult = (state, item, expected) => {
+let testValidationResult = (~originId as partnerId=?, state, item, expected) => {
   let description = expected |> Validation.resultToString;
   test("valdation should return '" ++ description ++ "'", () =>
-    expect(item |> Validation.validate(state) |> Validation.resultToString)
+    expect(
+      item
+      |> Validation.validate(~partnerId?, state)
+      |> Validation.resultToString,
+    )
     |> toEqual(description)
   );
 };

@@ -73,7 +73,7 @@ let findNewItemsFromPartner = (ventureId, userId, storagePrefix, eventLog) =>
          (
            switch (eventLog |> EventLog.findNewItems(~other)) {
            | [||] => ()
-           | items => postMessage(NewItemsDetected(ventureId, items))
+           | items => postMessage(NewItemsDetected(ventureId, items, userId))
            }
          )
          |> resolve
@@ -108,8 +108,8 @@ let syncEventsFromVenture = (storagePrefix, ventureId, eventLog) => {
     "Finding new events for venture '" ++ VentureId.toString(ventureId) ++ "'",
   );
   let summary = eventLog |> EventLog.getSummary;
-  let partnerKeys = eventLog |> determinPartnerIds;
-  partnerKeys
+  eventLog
+  |> determinPartnerIds
   |. List.forEach(
        syncEventsFromPartner(
          storagePrefix,

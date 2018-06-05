@@ -363,14 +363,6 @@ module Handle = {
                    );
                    venture |> resolve;
                  }
-               | NoUserInfo => {
-                   Notify.cmdError(
-                     ventureId,
-                     correlationId,
-                     CouldNotFindUserInfo,
-                   );
-                   venture |> resolve;
-                 }
                | CouldNotPersist(_err) => {
                    Notify.cmdError(
                      ventureId,
@@ -683,13 +675,13 @@ module Handle = {
       )
     );
   };
-  let newItemsDetected = (ventureId, items) => {
+  let newItemsDetected = (ventureId, items, partnerId) => {
     logMessage("Handling 'NewItemsDetected'");
     withVenture(Load(ventureId), (correlationId, venture) =>
       Js.Promise.(
         Venture.Cmd.SynchronizeLogs.(
           venture
-          |> exec(items)
+          |> exec(~partnerId, items)
           |> then_(
                fun
                | Ok(venture, newItems) => {
@@ -769,8 +761,8 @@ let handleMessage =
     Handle.exposeIncomeAddress(ventureId, accountIdx)
   | SyncWallet(ventureId, broadcasts, broadcastFailures, income, confs) =>
     Handle.syncWallet(ventureId, broadcasts, broadcastFailures, income, confs)
-  | NewItemsDetected(ventureId, items) =>
-    Handle.newItemsDetected(ventureId, items)
+  | NewItemsDetected(ventureId, items, partnerId) =>
+    Handle.newItemsDetected(ventureId, items, partnerId)
   | SyncTabs(ventureId, items) => Handle.syncTabs(ventureId, items);
 
 let cleanState = {venturesThread: Js.Promise.resolve(None)};

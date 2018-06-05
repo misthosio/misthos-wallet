@@ -253,5 +253,28 @@ let () =
           testWatcherHasCompleted(watcher);
         },
       );
+      F.withCached(
+        ~scope="Watcher__CustodianKeyChain",
+        "when the partner has no pubkey",
+        () => G.withUserSessions(2),
+        sessions => {
+          let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+          L.(
+            createVenture(user1)
+            |> withFirstPartner(user1)
+            |> withAccount(~supporter=user1)
+            |> withCustodian(user1, ~supporters=[user1])
+            |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
+            |> withCustodian(user2, ~supporters=[user1, user2])
+          );
+        },
+        (sessions, log) => {
+          let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
+          let acceptance = log |> L.lastEvent |> Event.getCustodianAcceptedExn;
+          let watcher =
+            CustodianKeyChain.make(user2, acceptance, log |> L.eventLog);
+          testWatcherHasNoEventPending(watcher);
+        },
+      );
     });
   });

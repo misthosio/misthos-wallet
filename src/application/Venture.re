@@ -39,13 +39,14 @@ let make = (session, id) => {
 let applyInternal =
     (
       ~syncing=false,
+      ~partnerId,
       issuer,
       event,
       oldLog,
       (validation, state, wallet, collector),
     ) => {
   let (item, log) = oldLog |> EventLog.append(issuer, event);
-  switch (item |> Validation.validate(validation)) {
+  switch (item |> Validation.validate(~partnerId, validation)) {
   | Ok =>
     logMessage("Appended event to log:");
     logMessage(Event.encode(event) |> Json.stringify);
@@ -76,6 +77,7 @@ let apply =
     ) => {
   let (item, log, (validation, state, wallet, collector)) =
     applyInternal(
+      ~partnerId=session.userId,
       systemEvent ? state |> State.systemIssuer : session.issuerKeyPair,
       event,
       log,
@@ -87,7 +89,7 @@ let apply =
          session,
          item,
          log,
-         applyInternal,
+         applyInternal(~partnerId=session.userId),
          (validation, state, wallet, collector),
        );
   ({validation, session, id, log, state, wallet, watchers}, collector);
@@ -126,7 +128,7 @@ let reconstruct = (session, log) => {
     |> Watchers.processPending(
          session,
          log,
-         applyInternal,
+         applyInternal(~partnerId=session.userId),
          (validation, state, wallet, [||]),
        );
   ({validation, session, id, log, state, wallet, watchers}, collector);
@@ -202,7 +204,6 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
                 AlreadyLoaded(index, venture, newItems) |> resolve
               )
          | CouldNotLoad(_) =>
-           Js.log("joining properly");
            Blockstack.getFileFromUserAndDecrypt(
              (ventureId |> VentureId.toString)
              ++ "/"
@@ -210,13 +211,10 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
              ++ "/log.json",
              ~username=userId |> UserId.toString,
            )
-           |> then_(nullFile => {
-                Js.log("hello");
+           |> then_(nullFile =>
                 (
                   switch (Js.Nullable.toOption(nullFile)) {
-                  | None =>
-                    Js.log("not ofnund");
-                    raise(Not_found);
+                  | None => raise(Not_found)
                   | Some(raw) =>
                     raw
                     |> Json.parseOrRaise
@@ -224,8 +222,8 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
                     |> reconstruct(session)
                   }
                 )
-                |> persist;
-              })
+                |> persist
+              )
            |> then_(
                 fun
                 | Js.Result.Ok((venture, _)) =>
@@ -236,10 +234,7 @@ let join = (session: Session.Data.t, ~userId, ~ventureId) =>
                   |> then_(index => resolve(Joined(index, venture)))
                 | Js.Result.Error(err) => CouldNotJoin(err) |> resolve,
               )
-           |> catch(err => {
-                Js.log("Caught");
-                CouldNotJoin(err) |> resolve;
-              });
+           |> catch(err => CouldNotJoin(err) |> resolve)
          }
        )
   );
@@ -296,7 +291,7 @@ module Cmd = {
           array((EventLog.item, Validation.result)),
         )
       | CouldNotPersist(Js.Promise.error);
-    let exec = (newItems, {session} as venture) => {
+    let exec = (~partnerId=?, newItems, {session} as venture) => {
       let ({log, validation, state, wallet, watchers}, collector, conflicts) =
         newItems
         |> Array.fold_left(
@@ -308,7 +303,7 @@ module Cmd = {
                ),
                {event} as item: EventLog.item,
              ) =>
-               switch (item |> Validation.validate(validation)) {
+               switch (item |> Validation.validate(~partnerId?, validation)) {
                | Ok =>
                  logMessage("Appending synced event to log:");
                  logMessage(Event.encode(event) |> Json.stringify);
@@ -345,7 +340,7 @@ module Cmd = {
         |> Watchers.processPending(
              session,
              log,
-             applyInternal(~syncing=true),
+             applyInternal(~syncing=true, ~partnerId=session.userId),
              (validation, state, wallet, collector),
            );
       Js.Promise.(
@@ -429,7 +424,6 @@ module Cmd = {
       | MaxPartnersReached
       | ProposalAlreadyExists
       | PartnerAlreadyExists
-      | NoUserInfo
       | CouldNotPersist(Js.Promise.error);
     let exec = (~prospectId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
@@ -444,61 +438,62 @@ module Cmd = {
           UserInfo.Public.read(~blockstackId=prospectId)
           |> then_(
                fun
-               | UserInfo.Public.Ok(info) => {
-                   let partnerProposed =
-                     Event.makePartnerProposed(
-                       ~eligibleWhenProposing=state |> State.currentPartners,
-                       ~proposerId=session.userId,
-                       ~prospectId,
-                       ~prospectPubKey=info.appPubKey,
-                       ~policy=
-                         state
-                         |> State.currentPolicy(Event.Partner.processName),
-                       ~lastRemovalAccepted=
-                         state |> State.lastRemovalOfPartner(prospectId),
-                     )
-                     |> Event.getPartnerProposedExn;
-                   if (state |> State.isPartnerProposalUnique(partnerProposed)) {
-                     let custodianProposal =
-                       Event.makeCustodianProposed(
-                         ~eligibleWhenProposing=state |> State.currentPartners,
-                         ~lastCustodianRemovalAccepted=
-                           state |> State.lastRemovalOfCustodian(prospectId),
-                         ~partnerProposed,
-                         ~proposerId=session.userId,
-                         ~accountIdx=AccountIndex.default,
-                         ~policy=
-                           state
-                           |> State.currentPolicy(Event.Custodian.processName),
-                       )
-                       |> Event.getCustodianProposedExn;
-                     [
-                       Event.PartnerProposed(partnerProposed),
-                       Event.makePartnerEndorsed(
-                         ~processId=partnerProposed.processId,
-                         ~supporterId=session.userId,
-                       ),
-                       Event.CustodianProposed(custodianProposal),
-                       Event.makeCustodianEndorsed(
-                         ~processId=custodianProposal.processId,
-                         ~supporterId=session.userId,
-                       ),
-                     ]
-                     |> applyMany(venture)
-                     |> persist
-                     |> then_(
-                          fun
-                          | Js.Result.Ok((v, c)) =>
-                            Ok(partnerProposed.processId, v, c) |> resolve
-                          | Js.Result.Error(err) =>
-                            CouldNotPersist(err) |> resolve,
-                        );
-                   } else {
-                     ProposalAlreadyExists |> resolve;
-                   };
-                 }
-               | UserInfo.Public.NotFound => resolve(NoUserInfo),
+               | UserInfo.Public.NotFound => None |> resolve
+               | UserInfo.Public.Ok(info) => Some(info.appPubKey) |> resolve,
              )
+          |> then_(prospectPubKey => {
+               let partnerProposed =
+                 Event.makePartnerProposed(
+                   ~eligibleWhenProposing=state |> State.currentPartners,
+                   ~proposerId=session.userId,
+                   ~prospectId,
+                   ~prospectPubKey?,
+                   ~policy=
+                     state |> State.currentPolicy(Event.Partner.processName),
+                   ~lastRemovalAccepted=
+                     state |> State.lastRemovalOfPartner(prospectId),
+                   (),
+                 )
+                 |> Event.getPartnerProposedExn;
+               if (state |> State.isPartnerProposalUnique(partnerProposed)) {
+                 let custodianProposal =
+                   Event.makeCustodianProposed(
+                     ~eligibleWhenProposing=state |> State.currentPartners,
+                     ~lastCustodianRemovalAccepted=
+                       state |> State.lastRemovalOfCustodian(prospectId),
+                     ~partnerProposed,
+                     ~proposerId=session.userId,
+                     ~accountIdx=AccountIndex.default,
+                     ~policy=
+                       state
+                       |> State.currentPolicy(Event.Custodian.processName),
+                   )
+                   |> Event.getCustodianProposedExn;
+                 [
+                   Event.PartnerProposed(partnerProposed),
+                   Event.makePartnerEndorsed(
+                     ~processId=partnerProposed.processId,
+                     ~supporterId=session.userId,
+                   ),
+                   Event.CustodianProposed(custodianProposal),
+                   Event.makeCustodianEndorsed(
+                     ~processId=custodianProposal.processId,
+                     ~supporterId=session.userId,
+                   ),
+                 ]
+                 |> applyMany(venture)
+                 |> persist
+                 |> then_(
+                      fun
+                      | Js.Result.Ok((v, c)) =>
+                        Ok(partnerProposed.processId, v, c) |> resolve
+                      | Js.Result.Error(err) =>
+                        CouldNotPersist(err) |> resolve,
+                    );
+               } else {
+                 ProposalAlreadyExists |> resolve;
+               };
+             })
         );
       };
     };

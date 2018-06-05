@@ -104,20 +104,35 @@ module Event = {
     );
   let partnerProposed =
       (
+        ~withPubKey=true,
         ~eligibleWhenProposing,
         ~policy=Policy.unanimous,
         ~lastRemovalAccepted,
         proposerSession: Session.Data.t,
         prospectSession: Session.Data.t,
       ) =>
-    AppEvent.makePartnerProposed(
-      ~eligibleWhenProposing,
-      ~proposerId=proposerSession.userId,
-      ~prospectId=prospectSession.userId,
-      ~prospectPubKey=
-        prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
-      ~policy,
-      ~lastRemovalAccepted,
+    (
+      if (withPubKey) {
+        AppEvent.makePartnerProposed(
+          ~prospectPubKey=
+            prospectSession.issuerKeyPair |> Utils.publicKeyFromKeyPair,
+          ~eligibleWhenProposing,
+          ~proposerId=proposerSession.userId,
+          ~prospectId=prospectSession.userId,
+          ~policy,
+          ~lastRemovalAccepted,
+          (),
+        );
+      } else {
+        AppEvent.makePartnerProposed(
+          ~proposerId=proposerSession.userId,
+          ~prospectId=prospectSession.userId,
+          ~eligibleWhenProposing,
+          ~policy,
+          ~lastRemovalAccepted,
+          (),
+        );
+      }
     )
     |> AppEvent.getPartnerProposedExn;
   let partnerEndorsed =
@@ -130,6 +145,11 @@ module Event = {
     |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
   let partnerDenied = AppEvent.Partner.Denied.fromProposal;
+  let partnerPubKeyAdded = (partner: Session.Data.t) =>
+    AppEvent.Partner.PubKeyAdded.make(
+      ~partnerId=partner.userId,
+      ~pubKey=partner.issuerKeyPair |> Utils.publicKeyFromKeyPair,
+    );
   let partnerRemovalProposed =
       (
         ~eligibleWhenProposing,
@@ -323,6 +343,7 @@ module Log = {
     make(session, Event.createVenture(session));
   let withPartnerProposed =
       (
+        ~withPubKey=true,
         ~withLastRemoval=true,
         ~issuer=?,
         ~policy=Policy.unanimous,
@@ -353,6 +374,7 @@ module Log = {
       issuer,
       PartnerProposed(
         Event.partnerProposed(
+          ~withPubKey,
           ~eligibleWhenProposing=eligiblePartners(l),
           ~policy,
           ~lastRemovalAccepted,
@@ -389,10 +411,12 @@ module Log = {
     appendSystemEvent(PartnerAccepted(Event.partnerAccepted(proposal)));
   let withPartnerDenied = proposal =>
     appendSystemEvent(PartnerDenied(Event.partnerDenied(proposal)));
-  let withPartner = (user, ~supporters, log) =>
+  let withPartner = (~withPubKey=true, user, ~supporters, log) =>
     switch (supporters) {
     | [first, ..._rest] =>
-      let log = log |> withPartnerProposed(~proposer=first, ~prospect=user);
+      let log =
+        log
+        |> withPartnerProposed(~withPubKey, ~proposer=first, ~prospect=user);
       let proposal = log |> lastEvent |> AppEvent.getPartnerProposedExn;
       supporters
       |> List.fold_left(
@@ -432,6 +456,11 @@ module Log = {
          ),
        );
   };
+  let withPartnerPubKeyAdded = (partner: Session.Data.t) =>
+    appendEvent(
+      partner.issuerKeyPair,
+      PartnerPubKeyAdded(Event.partnerPubKeyAdded(partner)),
+    );
   let withPartnerRemovalEndorsed = (supporter: Session.Data.t, proposal) =>
     appendEvent(
       supporter.issuerKeyPair,

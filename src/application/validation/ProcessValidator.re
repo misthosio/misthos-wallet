@@ -210,6 +210,7 @@ let update = (event, {currentPartners, processes} as state) => {
         processes: processes |> addDenial(denial),
       }
     | VentureCreated(_)
+    | PartnerPubKeyAdded(_)
     | PayoutSigned(_)
     | PayoutAborted(_)
     | PayoutFinalized(_)
