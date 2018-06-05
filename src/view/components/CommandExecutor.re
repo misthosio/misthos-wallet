@@ -155,8 +155,6 @@ module Status = {
         | CouldNotPersistVenture =>
           "Your submission could not be persisted, probably due to network connectivity."
           |> message(Error)
-        | CouldNotFindUserInfo =>
-          "Id doesn't exist or user has never logged in" |> message(Error)
         | MaxPartnersReached =>
           "The maximum number of partners we currently support in a venture has been reached"
           |> message(Error)

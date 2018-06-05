@@ -99,7 +99,6 @@ module Cmd: {
       | MaxPartnersReached
       | ProposalAlreadyExists
       | PartnerAlreadyExists
-      | NoUserInfo
       | CouldNotPersist(Js.Promise.error);
     let exec: (~prospectId: userId, t) => Js.Promise.t(result);
   };

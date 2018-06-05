@@ -363,14 +363,6 @@ module Handle = {
                    );
                    venture |> resolve;
                  }
-               | NoUserInfo => {
-                   Notify.cmdError(
-                     ventureId,
-                     correlationId,
-                     CouldNotFindUserInfo,
-                   );
-                   venture |> resolve;
-                 }
                | CouldNotPersist(_err) => {
                    Notify.cmdError(
                      ventureId,

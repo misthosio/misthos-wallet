@@ -42,7 +42,6 @@ type cmdError =
   | MaxPartnersReached
   | PartnerAlreadyExists
   | PartnerAlreadyProposed
-  | CouldNotFindUserInfo
   | CouldNotPersistVenture;
 
 type cmdResponse =
@@ -115,8 +114,6 @@ let encodeError =
     Json.Encode.(object_([("type", string("PartnerAlreadyExists"))]))
   | PartnerAlreadyProposed =>
     Json.Encode.(object_([("type", string("PartnerAlreadyProposed"))]))
-  | CouldNotFindUserInfo =>
-    Json.Encode.(object_([("type", string("CouldNotFindUserInfo"))]))
   | CouldNotPersistVenture =>
     Json.Encode.(object_([("type", string("CouldNotPersistVenture"))]));
 
@@ -128,7 +125,6 @@ let decodeError = raw => {
   | "MaxPartnersReached" => MaxPartnersReached
   | "PartnerAlreadyProposed" => PartnerAlreadyProposed
   | "PartnerAlreadyExists" => PartnerAlreadyExists
-  | "CouldNotFindUserInfo" => CouldNotFindUserInfo
   | "CouldNotPersistVenture" => CouldNotPersistVenture
   | _ => raise(UnknownMessage(raw))
   };

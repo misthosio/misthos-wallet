@@ -270,12 +270,9 @@ function load($staropt$star, session, ventureId) {
 function join(session, userId, ventureId) {
   return load(/* None */0, session, ventureId).then((function (loadResult) {
                 if (loadResult.tag) {
-                  console.log("joining properly");
                   return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).then((function (nullFile) {
-                                    console.log("hello");
                                     var tmp;
                                     if (nullFile == null) {
-                                      console.log("not ofnund");
                                       throw Caml_builtin_exceptions.not_found;
                                     } else {
                                       tmp = reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
@@ -294,7 +291,6 @@ function join(session, userId, ventureId) {
                                                 }));
                                   }
                                 })).catch((function (err) {
-                                console.log("Caught");
                                 return Promise.resolve(/* CouldNotJoin */Block.__(2, [err]));
                               }));
                 } else {
@@ -497,39 +493,41 @@ function exec$3(prospectId, venture) {
     return Promise.resolve(/* MaxPartnersReached */0);
   } else {
     return UserInfo.Public[/* read */4](prospectId).then((function (param) {
-                  if (param) {
-                    var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(/* Some */[param[0][/* appPubKey */0]], Venture__State.currentPartners(state), session[/* userId */0], prospectId, Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state), /* () */0));
-                    if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
-                      var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
-                      return persist(/* None */0, applyMany(/* None */0, venture)(/* :: */[
-                                        /* PartnerProposed */Block.__(1, [partnerProposed]),
+                    if (param) {
+                      return Promise.resolve(/* Some */[param[0][/* appPubKey */0]]);
+                    } else {
+                      return Promise.resolve(/* None */0);
+                    }
+                  })).then((function (prospectPubKey) {
+                  var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(prospectPubKey, Venture__State.currentPartners(state), session[/* userId */0], prospectId, Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state), /* () */0));
+                  if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
+                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
+                    return persist(/* None */0, applyMany(/* None */0, venture)(/* :: */[
+                                      /* PartnerProposed */Block.__(1, [partnerProposed]),
+                                      /* :: */[
+                                        Event.makePartnerEndorsed(partnerProposed[/* processId */0], session[/* userId */0]),
                                         /* :: */[
-                                          Event.makePartnerEndorsed(partnerProposed[/* processId */0], session[/* userId */0]),
+                                          /* CustodianProposed */Block.__(16, [custodianProposal]),
                                           /* :: */[
-                                            /* CustodianProposed */Block.__(16, [custodianProposal]),
-                                            /* :: */[
-                                              Event.makeCustodianEndorsed(custodianProposal[/* processId */0], session[/* userId */0]),
-                                              /* [] */0
-                                            ]
+                                            Event.makeCustodianEndorsed(custodianProposal[/* processId */0], session[/* userId */0]),
+                                            /* [] */0
                                           ]
                                         ]
-                                      ])).then((function (param) {
-                                    if (param.tag) {
-                                      return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
-                                    } else {
-                                      var match = param[0];
-                                      return Promise.resolve(/* Ok */Block.__(0, [
-                                                    partnerProposed[/* processId */0],
-                                                    match[0],
-                                                    match[1]
-                                                  ]));
-                                    }
-                                  }));
-                    } else {
-                      return Promise.resolve(/* ProposalAlreadyExists */1);
-                    }
+                                      ]
+                                    ])).then((function (param) {
+                                  if (param.tag) {
+                                    return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                                  } else {
+                                    var match = param[0];
+                                    return Promise.resolve(/* Ok */Block.__(0, [
+                                                  partnerProposed[/* processId */0],
+                                                  match[0],
+                                                  match[1]
+                                                ]));
+                                  }
+                                }));
                   } else {
-                    return Promise.resolve(/* NoUserInfo */3);
+                    return Promise.resolve(/* ProposalAlreadyExists */1);
                   }
                 }));
   }

@@ -180,8 +180,6 @@ function make$1(cmdStatus, action, _) {
                         case 4 : 
                             return message(/* Error */1, "This user has already been proposed to join");
                         case 5 : 
-                            return message(/* Error */1, "Id doesn't exist or user has never logged in");
-                        case 6 : 
                             return message(/* Error */1, "Your submission could not be persisted, probably due to network connectivity.");
                         
                       }

@@ -104,7 +104,7 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                                                     return Curry._1(send, /* Cancel */0);
                                                   })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))]))
                           ];
-                        } else if (cmdStatus[0] >= 6) {
+                        } else if (cmdStatus[0] >= 5) {
                           tmp = /* array */[
                             ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[])),
                             ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
