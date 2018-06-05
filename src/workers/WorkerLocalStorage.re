@@ -11,6 +11,10 @@ let getItem = key => _getItem(_localStorage, key);
 
 let setItem = (key, value) => _setItem(_localStorage, key, value);
 
+[@bs.send] external _removeItem : (t, string) => unit = "removeItem";
+
+let removeItem = key => _removeItem(_localStorage, key);
+
 type blockstackItems = {
   blockstack: option(string),
   blockstackGaiaHubConfig: option(string),
@@ -43,21 +47,28 @@ let decodeItems = raw =>
 
 module L = Dom.Storage;
 
+let blockstackKey = "blockstack";
+let gaiaHubKey = "blockstack-gaia-hub-config";
+let transitPrivKey = "blockstack-transit-private-key";
+
 let readBlockstackItemsFromStorage = () => {
-  blockstack: L.getItem("blockstack", L.localStorage),
-  blockstackGaiaHubConfig:
-    L.getItem("blockstack-gaia-hub-config", L.localStorage),
-  blockstackTransitPrivateKey:
-    L.getItem("blockstack-transit-private-key", L.localStorage),
+  blockstack: L.getItem(blockstackKey, L.localStorage),
+  blockstackGaiaHubConfig: L.getItem(gaiaHubKey, L.localStorage),
+  blockstackTransitPrivateKey: L.getItem(transitPrivKey, L.localStorage),
 };
 
 let setBlockstackItems =
     ({blockstack, blockstackGaiaHubConfig, blockstackTransitPrivateKey}) => {
-  blockstack |> Utils.mapOption(setItem("blockstack")) |> ignore;
-  blockstackGaiaHubConfig
-  |> Utils.mapOption(setItem("blockstack-gaia-hub-config"))
-  |> ignore;
-  blockstackTransitPrivateKey
-  |> Utils.mapOption(setItem("blockstack-transit-private-key"))
-  |> ignore;
+  switch (blockstack) {
+  | Some(blockstack) => blockstack |> setItem(blockstackKey)
+  | None => removeItem(blockstackKey)
+  };
+  switch (blockstackGaiaHubConfig) {
+  | Some(config) => config |> setItem(gaiaHubKey)
+  | None => removeItem(gaiaHubKey)
+  };
+  switch (blockstackTransitPrivateKey) {
+  | Some(key) => key |> setItem(transitPrivKey)
+  | None => removeItem(transitPrivKey)
+  };
 };

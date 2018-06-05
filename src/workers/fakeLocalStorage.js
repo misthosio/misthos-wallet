@@ -8,9 +8,14 @@ function setItem (key, item) {
   cache[key] = item;
 };
 
+function removeItem (key) {
+  cache[key] = null;
+};
+
 var localStorage = {
   getItem: getItem,
-  setItem: setItem
+  setItem: setItem,
+  removeItem: removeItem
 };
 
 exports.localStorage = localStorage;

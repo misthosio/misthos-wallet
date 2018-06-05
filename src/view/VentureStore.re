@@ -313,7 +313,14 @@ let make = (~currentRoute, ~session: Session.t, children) => {
         | _ => ReasonReact.NoUpdate
         }
       }
-    | _ => ReasonReact.NoUpdate
+    | _ =>
+      switch (action) {
+      | VentureWorkerMessage(msg) =>
+        state.persistWorker^ |. PersistWorkerClient.postMessage(msg) |> ignore;
+        state.dataWorker^ |. DataWorkerClient.postMessage(msg) |> ignore;
+      | _ => ()
+      };
+      ReasonReact.NoUpdate;
     },
   render: ({state: {index, selectedVenture}, send}) =>
     children(~index, ~selectedVenture, ~createVenture=name =>
