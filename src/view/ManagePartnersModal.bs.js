@@ -6,6 +6,7 @@ var Grid = require("./components/Grid.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
@@ -16,6 +17,7 @@ var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Clipboard = require("../ffi/Clipboard.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -28,6 +30,7 @@ var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.j
 var MaterialUi_Radio = require("@jsiebern/bs-material-ui/src/MaterialUi_Radio.bs.js");
 var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Stepper.bs.js");
 var MaterialUi_StepLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_StepLabel.bs.js");
+var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 var MaterialUi_StepContent = require("@jsiebern/bs-material-ui/src/MaterialUi_StepContent.bs.js");
 
 var component = ReasonReact.reducerComponent("ManagePartners");
@@ -74,6 +77,19 @@ var Styles = /* module */[
   /* stepIconText */stepIconText
 ];
 
+function subject(name) {
+  return encodeURI("Join Misthos venture \"" + (name + "\""));
+}
+
+function body(prospect, ventureName, joinUrl, user) {
+  return encodeURI("Hello " + (String(prospect) + ("\n\n    I have suggested that you should join the venture \"" + (String(ventureName) + ("\".\n    Go to the URL bellow to sync with the venture as soon as you have been accepted.\n\n    " + (String(joinUrl) + ("\n\n    Sincerely,\n    " + (String(user) + "\n\n    www.misthos.io\n  "))))))));
+}
+
+var LinkEmail = /* module */[
+  /* subject */subject,
+  /* body */body
+];
+
 function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -100,7 +116,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var viewData = match[/* viewData */0];
               var activeStep;
               activeStep = typeof proposeCmdStatus === "number" || proposeCmdStatus.tag !== 2 ? 0 : 1;
-              var partners = $$Array.of_list(Belt_List.keepMapU(viewData[/* partners */0], (function (partner) {
+              var partners = $$Array.of_list(Belt_List.keepMapU(viewData[/* partners */2], (function (partner) {
                           var match = partner[/* canProposeRemoval */2];
                           if (match) {
                             return /* Some */[ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Radio.make(/* Some */[/* `Bool */[
@@ -161,6 +177,9 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                       y: "27"
                                     }, ViewCommon.text(String(index + 1 | 0)))));
               };
+              var copyButton = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
+                    "data-clipboard-text": viewData[/* joinVentureUrl */3]
+                  });
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Add a partner")], /* Some */[ViewCommon.text("Remove a partner")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
                                               3654863,
                                               activeStep
@@ -191,10 +210,14 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                 ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
                                                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                                               return Curry._1(send, /* AddAnother */2);
-                                                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* array */[ViewCommon.text("Add Another")]))
+                                                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* array */[ViewCommon.text("Add Another")])),
+                                                                ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["mailto:?subject=" + (subject(viewData[/* ventureName */0]) + ("&body=" + body(inputs[/* prospectId */0], viewData[/* ventureName */0], viewData[/* joinVentureUrl */3], PrimitiveTypes.UserId[/* toString */0](viewData[/* localUser */1]))))], /* array */[ViewCommon.text("Email the link ")]))
                                                               ]))
                                                     ]))
-                                          ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text(viewData[/* joinVentureUrl */1])])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner removal", (function () {
+                                          ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[
+                                            ViewCommon.text(viewData[/* joinVentureUrl */3]),
+                                            copyButton
+                                          ])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner removal", (function () {
                                               return Curry._1(send, /* RemovePartner */1);
                                             }), /* Some */[(function () {
                                                 return Curry._1(send, /* FreezeRemoval */3);
@@ -328,7 +351,20 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                           ]]);
               }
             }),
-          /* subscriptions */component[/* subscriptions */13],
+          /* subscriptions */(function () {
+              return /* :: */[
+                      /* Sub */[
+                        (function () {
+                            return Clipboard.make(".copy-btn", "modal");
+                          }),
+                        (function (clipboard) {
+                            clipboard.destroy();
+                            return /* () */0;
+                          })
+                      ],
+                      /* [] */0
+                    ];
+            }),
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
 }
@@ -344,5 +380,6 @@ exports.extractString = extractString;
 exports.ViewData = ViewData;
 exports.component = component;
 exports.Styles = Styles;
+exports.LinkEmail = LinkEmail;
 exports.make = make;
 /* component Not a pure module */

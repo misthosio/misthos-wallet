@@ -32,7 +32,7 @@ function captureResponse(correlationId, response, state) {
               correlationId,
               response
             ]],
-          /* name */state[/* name */3],
+          /* ventureName */state[/* ventureName */3],
           /* processedItems */state[/* processedItems */4],
           /* metaPolicy */state[/* metaPolicy */5],
           /* partnersCollector */state[/* partnersCollector */6],
@@ -47,11 +47,14 @@ function lastResponse(param) {
 }
 
 function fromViewModelState(param) {
+  var localUser = param[/* localUser */0];
   return /* record */[
+          /* ventureName */param[/* ventureName */3],
+          /* localUser */localUser,
           /* partners */param[/* partnersCollector */6][/* partners */1],
           /* joinVentureUrl */window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                   param[/* ventureId */1],
-                  param[/* localUser */0]
+                  localUser
                 ]))
         ];
 }
@@ -80,7 +83,7 @@ function fromViewModelState$2(param) {
           /* allowCreation */balance_000.gt(BTC.zero),
           /* balance */balance,
           /* ventureId */param[/* ventureId */1],
-          /* ventureName */param[/* name */3],
+          /* ventureName */param[/* ventureName */3],
           /* initialSummary : record */[
             /* reserved */BTC.zero,
             /* destinations : [] */0,
@@ -138,7 +141,7 @@ function fromViewModelState$5(param) {
   ];
   return /* record */[
           /* ventureId */param[/* ventureId */1],
-          /* ventureName */param[/* name */3],
+          /* ventureName */param[/* ventureName */3],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
           /* partners */partnersCollector[/* partners */1],
           /* prospects */ViewModel__PartnersCollector.prospectsPendingApproval(partnersCollector),
@@ -156,7 +159,7 @@ function make(localUser) {
           /* localUser */localUser,
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* lastResponse : None */0,
-          /* name */"",
+          /* ventureName */"",
           /* processedItems */Belt_SetString.empty,
           /* metaPolicy */Policy.unanimous,
           /* partnersCollector */ViewModel__PartnersCollector.make(localUser),
@@ -176,7 +179,7 @@ function apply(param, state) {
     var state_000 = /* localUser */state[/* localUser */0];
     var state_001 = /* ventureId */state[/* ventureId */1];
     var state_002 = /* lastResponse */state[/* lastResponse */2];
-    var state_003 = /* name */state[/* name */3];
+    var state_003 = /* ventureName */state[/* ventureName */3];
     var state_004 = /* processedItems */Belt_SetString.add(processedItems, hash);
     var state_005 = /* metaPolicy */state[/* metaPolicy */5];
     var state_006 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */6]);
@@ -203,7 +206,7 @@ function apply(param, state) {
               state_000,
               /* ventureId */match[/* ventureId */0],
               state_002,
-              /* name */match[/* ventureName */1],
+              /* ventureName */match[/* ventureName */1],
               state_004,
               /* metaPolicy */match[/* metaPolicy */4],
               state_006,

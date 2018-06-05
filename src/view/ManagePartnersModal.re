@@ -1,5 +1,8 @@
 include ViewCommon;
 
+[@bs.module] external copy : string = "../assets/img/copy.svg";
+[@bs.val] external encodeURI : string => string = "";
+
 open PrimitiveTypes;
 
 module ViewData = ViewModel.ManagePartnersView;
@@ -43,6 +46,25 @@ module Styles = {
     ]);
 };
 
+module LinkEmail = {
+  let subject = name => encodeURI("Join Misthos venture \"" ++ name ++ "\"");
+  let body = (prospect, ventureName, joinUrl, user) =>
+    encodeURI(
+      {j|Hello $prospect
+
+    I have suggested that you should join the venture "$ventureName".
+    Go to the URL bellow to sync with the venture as soon as you have been accepted.
+
+    $joinUrl
+
+    Sincerely,
+    $user
+
+    www.misthos.io
+  |j},
+    );
+};
+
 let make =
     (
       ~viewData: ViewData.t,
@@ -63,6 +85,12 @@ let make =
     viewData,
   },
   willReceiveProps: ({state}) => {...state, viewData},
+  subscriptions: _ => [
+    Sub(
+      () => Clipboard.make(".copy-btn", "modal"),
+      clipboard => clipboard |> Clipboard.destroy,
+    ),
+  ],
   reducer: (action, state) =>
     switch (action) {
     | ChangeNewPartnerId(text) =>
@@ -207,6 +235,15 @@ let make =
           )
         </g>
       </svg>;
+    let copyButton =
+      ReasonReact.cloneElement(
+        <MaterialUi.IconButton className="copy-btn">
+          Icons.copy
+        </MaterialUi.IconButton>,
+        ~props={"data-clipboard-text": viewData.joinVentureUrl},
+        [||],
+      );
+
     <Grid
       title1=("Add a partner" |> text)
       title2=("Remove a partner" |> text)
@@ -258,12 +295,27 @@ let make =
                   <MButton variant=Flat onClick=(_e => send(AddAnother))>
                     (text("Add Another"))
                   </MButton>
+                  <MButton
+                    href=(
+                      "mailto:?subject="
+                      ++ LinkEmail.subject(viewData.ventureName)
+                      ++ "&body="
+                      ++ LinkEmail.body(
+                           inputs.prospectId,
+                           viewData.ventureName,
+                           viewData.joinVentureUrl,
+                           viewData.localUser |> UserId.toString,
+                         )
+                    )>
+                    ("Email the link " |> text)
+                  </MButton>
                 </StepContent>
               </Step>
             </Stepper>
           )
           <MTypography variant=`Body2>
             (viewData.joinVentureUrl |> text)
+            copyButton
           </MTypography>
         </div>
       }
