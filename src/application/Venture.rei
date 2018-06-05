@@ -76,7 +76,8 @@ module Cmd: {
           array((EventLog.item, Validation.result)),
         )
       | CouldNotPersist(Js.Promise.error);
-    let exec: (array(EventLog.item), t) => Js.Promise.t(result);
+    let exec:
+      (~partnerId: userId=?, array(EventLog.item), t) => Js.Promise.t(result);
   };
   module SynchronizeWallet: {
     type result =

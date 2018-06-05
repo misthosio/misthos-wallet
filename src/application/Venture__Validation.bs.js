@@ -1063,7 +1063,7 @@ function validateEvent(param) {
   }
 }
 
-function validate(state, param) {
+function validate(_, state, param) {
   var issuerPubKey = param[/* issuerPubKey */2];
   var $$event = param[/* event */0];
   if (Belt_SetString.has(state[/* knownItems */6], param[/* hash */1])) {

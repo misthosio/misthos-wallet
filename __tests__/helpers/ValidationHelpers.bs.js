@@ -11,7 +11,7 @@ var TestingInvalidSequence = Caml_exceptions.create("ValidationHelpers.TestingIn
 
 function constructState(log) {
   return Generators.Log[/* reduce */1]((function (s, item) {
-                var bad = Venture__Validation.validate(s, item);
+                var bad = Venture__Validation.validate(/* None */0, s, item);
                 if (typeof bad === "number") {
                   if (bad !== 0) {
                     throw [
@@ -33,7 +33,7 @@ function constructState(log) {
 function testValidationResult(state, item, expected) {
   var description = Venture__Validation.resultToString(expected);
   return Jest.test("valdation should return '" + (description + "'"), (function () {
-                return Jest.Expect[/* toEqual */12](description, Jest.Expect[/* expect */0](Venture__Validation.resultToString(Venture__Validation.validate(state, item))));
+                return Jest.Expect[/* toEqual */12](description, Jest.Expect[/* expect */0](Venture__Validation.resultToString(Venture__Validation.validate(/* None */0, state, item))));
               }));
 }
 

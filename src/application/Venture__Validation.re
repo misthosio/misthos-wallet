@@ -756,7 +756,11 @@ let validateEvent =
   | PayoutBroadcastFailed(_) => ((_state, _pubKey) => Ok);
 
 let validate =
-    ({knownItems} as state, {hash, event, issuerPubKey}: EventLog.item) =>
+    (
+      ~partnerId as _=?,
+      {knownItems} as state,
+      {hash, event, issuerPubKey}: EventLog.item,
+    ) =>
   if (knownItems |. ItemsSet.has(hash)) {
     Ignore;
   } else {

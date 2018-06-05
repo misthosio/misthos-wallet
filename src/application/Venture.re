@@ -296,7 +296,7 @@ module Cmd = {
           array((EventLog.item, Validation.result)),
         )
       | CouldNotPersist(Js.Promise.error);
-    let exec = (newItems, {session} as venture) => {
+    let exec = (~partnerId=?, newItems, {session} as venture) => {
       let ({log, validation, state, wallet, watchers}, collector, conflicts) =
         newItems
         |> Array.fold_left(
@@ -308,7 +308,7 @@ module Cmd = {
                ),
                {event} as item: EventLog.item,
              ) =>
-               switch (item |> Validation.validate(validation)) {
+               switch (item |> Validation.validate(~partnerId, validation)) {
                | Ok =>
                  logMessage("Appending synced event to log:");
                  logMessage(Event.encode(event) |> Json.stringify);

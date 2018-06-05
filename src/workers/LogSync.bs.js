@@ -81,7 +81,8 @@ function findNewItemsFromPartner(ventureId, userId, storagePrefix, eventLog) {
           var items = Curry._2(EventLog.findNewItems, other, eventLog);
           return Promise.resolve(items.length !== 0 ? postMessage$1(/* NewItemsDetected */Block.__(14, [
                               ventureId,
-                              items
+                              items,
+                              userId
                             ])) : /* () */0);
         }));
   return /* () */0;

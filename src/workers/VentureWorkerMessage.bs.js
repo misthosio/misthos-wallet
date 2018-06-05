@@ -514,7 +514,13 @@ function encodeIncoming(param) {
                           "items",
                           Json_encode.array(EventLog.encodeItem, param[1])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "partnerId",
+                            PrimitiveTypes.UserId[/* encode */2](param[2])
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]);
@@ -629,9 +635,11 @@ function decodeIncoming(raw) {
         var items = Json_decode.field("items", (function (param) {
                 return Json_decode.array(EventLog.decodeItem, param);
               }), raw);
+        var partnerId = Json_decode.field("partnerId", PrimitiveTypes.UserId[/* decode */3], raw);
         return /* NewItemsDetected */Block.__(14, [
                   ventureId$6,
-                  items
+                  items,
+                  partnerId
                 ]);
     case "ProposePartner" : 
         var ventureId$7 = Json_decode.field("ventureId", PrimitiveTypes.VentureId[/* decode */3], raw);

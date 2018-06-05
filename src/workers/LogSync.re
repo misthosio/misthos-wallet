@@ -73,7 +73,7 @@ let findNewItemsFromPartner = (ventureId, userId, storagePrefix, eventLog) =>
          (
            switch (eventLog |> EventLog.findNewItems(~other)) {
            | [||] => ()
-           | items => postMessage(NewItemsDetected(ventureId, items))
+           | items => postMessage(NewItemsDetected(ventureId, items, userId))
            }
          )
          |> resolve

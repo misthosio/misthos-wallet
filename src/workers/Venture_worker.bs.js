@@ -577,12 +577,12 @@ function syncWallet(ventureId, broadcasts, broadcastFailures, income, confs) {
     });
 }
 
-function newItemsDetected(ventureId, items) {
+function newItemsDetected(ventureId, items, partnerId) {
   logMessage("Handling 'NewItemsDetected'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
-                    return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
+                    return Curry._3(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], /* Some */[partnerId], items, venture).then((function (param) {
                                   switch (param.tag | 0) {
                                     case 0 : 
                                         newItems(correlationId, ventureId, param[1]);
@@ -606,7 +606,7 @@ function syncTabs(ventureId, items) {
   var partial_arg$1 = /* Some */[true];
   return (function (param, param$1) {
       return withVenture(partial_arg$1, partial_arg, (function (correlationId, venture) {
-                    return Curry._2(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], items, venture).then((function (param) {
+                    return Curry._3(Venture.Cmd[/* SynchronizeLogs */1][/* exec */0], /* None */0, items, venture).then((function (param) {
                                   switch (param.tag | 0) {
                                     case 0 : 
                                         newItems(correlationId, ventureId, param[1]);
@@ -680,7 +680,7 @@ function handleMessage(param) {
     case 13 : 
         return exposeIncomeAddress(param[0], param[1]);
     case 14 : 
-        return newItemsDetected(param[0], param[1]);
+        return newItemsDetected(param[0], param[1], param[2]);
     case 15 : 
         return syncWallet(param[0], param[1], param[2], param[3], param[4]);
     case 16 : 
