@@ -39,7 +39,7 @@
     "webpack": "4.10.2",
     "webpack-cli": "2.1.4",
     "webpack-dev-server": "3.1.4",
-    "whatwg-fetch": "2.0.3",
+    "whatwg-fetch": "2.0.4",
     "worker-loader": "2.0.0",
     "xmlhttprequest": "1.8.0"
   },
