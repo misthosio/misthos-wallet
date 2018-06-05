@@ -34,11 +34,6 @@ function initWatcherFor(session, param, log) {
                 Watcher__PartnerApproval.make($$event[0], log),
                 /* [] */0
               ];
-    case 4 : 
-        return /* :: */[
-                Watcher__AutoEndorseCustodianSelf.make(session, $$event[0], log),
-                /* [] */0
-              ];
     case 7 : 
         return /* :: */[
                 Watcher__PartnerRemovalApproval.make($$event[0], log),
@@ -55,9 +50,13 @@ function initWatcherFor(session, param, log) {
                 /* [] */0
               ];
     case 16 : 
+        var proposal = $$event[0];
         return /* :: */[
-                Watcher__CustodianApproval.make($$event[0], log),
-                /* [] */0
+                Watcher__AutoEndorseCustodianSelf.make(session, proposal, log),
+                /* :: */[
+                  Watcher__CustodianApproval.make(proposal, log),
+                  /* [] */0
+                ]
               ];
     case 19 : 
         return /* :: */[
@@ -70,11 +69,11 @@ function initWatcherFor(session, param, log) {
                 /* [] */0
               ];
     case 26 : 
-        var proposal = $$event[0];
+        var proposal$1 = $$event[0];
         return /* :: */[
-                Watcher__PayoutApproval.make(proposal, log),
+                Watcher__PayoutApproval.make(proposal$1, log),
                 /* :: */[
-                  Watcher__AbortPayout.make(proposal, log),
+                  Watcher__AbortPayout.make(proposal$1, log),
                   /* [] */0
                 ]
               ];
