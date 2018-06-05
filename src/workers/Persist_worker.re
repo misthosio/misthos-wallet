@@ -199,7 +199,7 @@ let persistRemovals = (ventureId, (removalProcesses, removedKeys)) =>
                     pubKey,
                   )
                 );
-           | None => resolve()
+           | None => promise
            };
          },
          resolve(),
@@ -210,18 +210,28 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
   let logString = eventLog |> EventLog.encode |> Json.stringify;
   let summaryString =
     eventLog |> EventLog.getSummary |> EventLog.encodeSummary |> Json.stringify;
+  let persistLogAndSummary = (pubKey, promise) =>
+    Js.Promise.(
+      promise
+      |> then_(() => persistLogString(ventureId, logString, pubKey))
+      |> then_(() => persistSummaryString(ventureId, summaryString, pubKey))
+    );
   Js.Promise.(
     keys
     |> List.fold_left(
-         (promise, (_id, pubKey)) =>
+         (promise, (id, pubKey)) =>
            switch (pubKey) {
-           | Some(pubKey) =>
-             promise
-             |> then_(() => persistLogString(ventureId, logString, pubKey))
-             |> then_(() =>
-                  persistSummaryString(ventureId, summaryString, pubKey)
-                )
-           | None => resolve()
+           | Some(pubKey) => promise |> persistLogAndSummary(pubKey)
+           | None =>
+             UserInfo.Public.(
+               read(~blockstackId=id)
+               |> then_(
+                    fun
+                    | UserInfo.Public.Ok({appPubKey}) =>
+                      promise |> persistLogAndSummary(appPubKey)
+                    | NotFound => promise,
+                  )
+             )
            },
          resolve(),
        )

@@ -285,7 +285,7 @@ function persistRemovals(ventureId, param) {
                                 return persistSummaryString(ventureId, Json.stringify(Curry._1(EventLog.encodeSummary, Curry._1(EventLog.getSummary, eventLog))), pubKey$1);
                               }));
                 } else {
-                  return Promise.resolve(/* () */0);
+                  return promise;
                 }
               }), Promise.resolve(/* () */0), param[0]);
 }
@@ -294,17 +294,25 @@ function persist(ventureId, eventLog, param) {
   var removals = param[1];
   var logString = Json.stringify(Curry._1(EventLog.encode, eventLog));
   var summaryString = Json.stringify(Curry._1(EventLog.encodeSummary, Curry._1(EventLog.getSummary, eventLog)));
+  var persistLogAndSummary = function (pubKey, promise) {
+    return promise.then((function () {
+                    return persistLogString(ventureId, logString, pubKey);
+                  })).then((function () {
+                  return persistSummaryString(ventureId, summaryString, pubKey);
+                }));
+  };
   return List.fold_left((function (promise, param) {
                   var pubKey = param[1];
                   if (pubKey) {
-                    var pubKey$1 = pubKey[0];
-                    return promise.then((function () {
-                                    return persistLogString(ventureId, logString, pubKey$1);
-                                  })).then((function () {
-                                  return persistSummaryString(ventureId, summaryString, pubKey$1);
-                                }));
+                    return persistLogAndSummary(pubKey[0], promise);
                   } else {
-                    return Promise.resolve(/* () */0);
+                    return UserInfo.Public[/* read */4](param[0]).then((function (param) {
+                                  if (param) {
+                                    return persistLogAndSummary(param[0][/* appPubKey */0], promise);
+                                  } else {
+                                    return promise;
+                                  }
+                                }));
                   }
                 }), Promise.resolve(/* () */0), param[0]).then((function () {
                 return Promise.resolve(removals);
