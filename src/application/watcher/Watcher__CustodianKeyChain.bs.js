@@ -7,6 +7,7 @@ var Event = require("../events/Event.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var EventLog = require("../events/EventLog.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../wallet/WalletTypes.bs.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
@@ -50,90 +51,126 @@ function make(param, param$1, log) {
                       /* ventureId */$$event[0][/* ventureId */0],
                       /* pendingEvent */init[/* pendingEvent */1],
                       /* selfRemoved */init[/* selfRemoved */2],
-                      /* nextKeyChainIdx */init[/* nextKeyChainIdx */3]
+                      /* pubKeyPresent */init[/* pubKeyPresent */3],
+                      /* nextKeyChainIdx */init[/* nextKeyChainIdx */4]
                     ];
                     break;
-                case 10 : 
-                    var match = $$event[0][/* data */2];
-                    if (PrimitiveTypes.UserId[/* eq */5](env$1[1], match[/* id */0]) && PrimitiveTypes.ProcessId[/* eq */5](match[/* lastPartnerProcess */1], env$1[5])) {
+                case 1 : 
+                    var match = $$event[0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], env$1[5])) {
                       var init$1 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$1[/* ventureId */0],
-                        /* pendingEvent : None */0,
-                        /* selfRemoved */true,
-                        /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */3]
+                        /* pendingEvent */init$1[/* pendingEvent */1],
+                        /* selfRemoved */init$1[/* selfRemoved */2],
+                        /* pubKeyPresent */Js_option.isSome(match[/* data */6][/* pubKey */2]),
+                        /* nextKeyChainIdx */init$1[/* nextKeyChainIdx */4]
                       ];
                     } else {
+                      tmp = self$1[state][0];
+                    }
+                    break;
+                case 6 : 
+                    if (PrimitiveTypes.UserId[/* eq */5]($$event[0][/* partnerId */0], env$1[0])) {
                       var init$2 = self$1[state][0];
                       tmp = /* record */[
                         /* ventureId */init$2[/* ventureId */0],
+                        /* pendingEvent */init$2[/* pendingEvent */1],
+                        /* selfRemoved */init$2[/* selfRemoved */2],
+                        /* pubKeyPresent */true,
+                        /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */4]
+                      ];
+                    } else {
+                      tmp = self$1[state][0];
+                    }
+                    break;
+                case 10 : 
+                    var match$1 = $$event[0][/* data */2];
+                    if (PrimitiveTypes.UserId[/* eq */5](env$1[1], match$1[/* id */0]) && PrimitiveTypes.ProcessId[/* eq */5](match$1[/* lastPartnerProcess */1], env$1[5])) {
+                      var init$3 = self$1[state][0];
+                      tmp = /* record */[
+                        /* ventureId */init$3[/* ventureId */0],
+                        /* pendingEvent : None */0,
+                        /* selfRemoved */true,
+                        /* pubKeyPresent */init$3[/* pubKeyPresent */3],
+                        /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */4]
+                      ];
+                    } else {
+                      var init$4 = self$1[state][0];
+                      tmp = /* record */[
+                        /* ventureId */init$4[/* ventureId */0],
                         /* pendingEvent : Some */[(function () {
                               return /* tuple */[
                                       env$1[2],
-                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
+                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */4], env$1[3])))])
                                     ];
                             })],
-                        /* selfRemoved */init$2[/* selfRemoved */2],
-                        /* nextKeyChainIdx */init$2[/* nextKeyChainIdx */3]
+                        /* selfRemoved */init$4[/* selfRemoved */2],
+                        /* pubKeyPresent */init$4[/* pubKeyPresent */3],
+                        /* nextKeyChainIdx */init$4[/* nextKeyChainIdx */4]
                       ];
                     }
                     break;
                 case 15 : 
                     if (Caml_obj.caml_equal($$event[0][/* data */2][/* accountIdx */0], env$1[6])) {
-                      var init$3 = self$1[state][0];
+                      var init$5 = self$1[state][0];
                       tmp = /* record */[
-                        /* ventureId */init$3[/* ventureId */0],
+                        /* ventureId */init$5[/* ventureId */0],
                         /* pendingEvent : Some */[(function () {
                               return /* tuple */[
                                       env$1[2],
-                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */3], env$1[3])))])
+                                      /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], self$1[state][0][/* nextKeyChainIdx */4], env$1[3])))])
                                     ];
                             })],
-                        /* selfRemoved */init$3[/* selfRemoved */2],
-                        /* nextKeyChainIdx */init$3[/* nextKeyChainIdx */3]
+                        /* selfRemoved */init$5[/* selfRemoved */2],
+                        /* pubKeyPresent */init$5[/* pubKeyPresent */3],
+                        /* nextKeyChainIdx */init$5[/* nextKeyChainIdx */4]
                       ];
                     } else {
                       tmp = self$1[state][0];
                     }
                     break;
                 case 24 : 
-                    var match$1 = $$event[0][/* data */2];
-                    if (PrimitiveTypes.UserId[/* eq */5](match$1[/* custodianId */0], env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](match$1[/* lastCustodianProcess */2], env$1[4]) && WalletTypes.AccountIndex[/* eq */7](match$1[/* accountIdx */1], env$1[6])) {
-                      var init$4 = self$1[state][0];
+                    var match$2 = $$event[0][/* data */2];
+                    if (PrimitiveTypes.UserId[/* eq */5](match$2[/* custodianId */0], env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](match$2[/* lastCustodianProcess */2], env$1[4]) && WalletTypes.AccountIndex[/* eq */7](match$2[/* accountIdx */1], env$1[6])) {
+                      var init$6 = self$1[state][0];
                       tmp = /* record */[
-                        /* ventureId */init$4[/* ventureId */0],
+                        /* ventureId */init$6[/* ventureId */0],
                         /* pendingEvent : None */0,
                         /* selfRemoved */true,
-                        /* nextKeyChainIdx */init$4[/* nextKeyChainIdx */3]
+                        /* pubKeyPresent */init$6[/* pubKeyPresent */3],
+                        /* nextKeyChainIdx */init$6[/* nextKeyChainIdx */4]
                       ];
                     } else {
                       tmp = self$1[state][0];
                     }
                     break;
                 case 37 : 
-                    var match$2 = $$event[0];
-                    var keyChain = match$2[/* keyChain */2];
-                    var custodian = match$2[/* custodianId */1];
-                    if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](env$1[4], match$2[/* custodianApprovalProcess */0]) && WalletTypes.AccountIndex[/* eq */7](CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
-                      var init$5 = self$1[state][0];
+                    var match$3 = $$event[0];
+                    var keyChain = match$3[/* keyChain */2];
+                    var custodian = match$3[/* custodianId */1];
+                    if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && PrimitiveTypes.ProcessId[/* eq */5](env$1[4], match$3[/* custodianApprovalProcess */0]) && WalletTypes.AccountIndex[/* eq */7](CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
+                      var init$7 = self$1[state][0];
                       tmp = /* record */[
-                        /* ventureId */init$5[/* ventureId */0],
+                        /* ventureId */init$7[/* ventureId */0],
                         /* pendingEvent : None */0,
-                        /* selfRemoved */init$5[/* selfRemoved */2],
-                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3])
+                        /* selfRemoved */init$7[/* selfRemoved */2],
+                        /* pubKeyPresent */init$7[/* pubKeyPresent */3],
+                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */4])
                       ];
                     } else if (PrimitiveTypes.UserId[/* eq */5](custodian, env$1[1]) && WalletTypes.AccountIndex[/* eq */7](CustodianKeyChain.accountIdx(keyChain), env$1[6])) {
-                      var init$6 = self$1[state][0];
+                      var init$8 = self$1[state][0];
                       tmp = /* record */[
-                        /* ventureId */init$6[/* ventureId */0],
+                        /* ventureId */init$8[/* ventureId */0],
                         /* pendingEvent */Utils.mapOption((function (_, _$1) {
                                 return /* tuple */[
                                         env$1[2],
-                                        /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3]), env$1[3])))])
+                                        /* CustodianKeyChainUpdated */Block.__(37, [Event.CustodianKeyChainUpdated[/* make */0](env$1[4], env$1[1], CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(self$1[state][0][/* ventureId */0], env$1[6], WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */4]), env$1[3])))])
                                       ];
                               }), self$1[state][0][/* pendingEvent */1]),
-                        /* selfRemoved */init$6[/* selfRemoved */2],
-                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */3])
+                        /* selfRemoved */init$8[/* selfRemoved */2],
+                        /* pubKeyPresent */init$8[/* pubKeyPresent */3],
+                        /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* next */2](self$1[state][0][/* nextKeyChainIdx */4])
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -156,9 +193,14 @@ function make(param, param$1, log) {
             }),
           pendingEvent,
           (function (self$1, _) {
-              return Utils.mapOption((function (f) {
-                            return Curry._1(f, /* () */0);
-                          }), self$1[state][0][/* pendingEvent */1]);
+              var match = self$1[state][0][/* pubKeyPresent */3];
+              if (match) {
+                return Utils.mapOption((function (f) {
+                              return Curry._1(f, /* () */0);
+                            }), self$1[state][0][/* pendingEvent */1]);
+              } else {
+                return /* None */0;
+              }
             })
         ]);
     var env_init = function (env$1) {
@@ -167,6 +209,7 @@ function make(param, param$1, log) {
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* pendingEvent : None */0,
           /* selfRemoved */false,
+          /* pubKeyPresent */false,
           /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* first */8]
         ]];
       self[env] = env$1;
@@ -192,9 +235,11 @@ function make(param, param$1, log) {
     envs_006
   ];
   var $$process = Curry._1(class_tables[0], envs);
-  Curry._3(EventLog.reduce, (function (_, item) {
-          return Caml_oo_curry.js2(710435299, 1, $$process, item);
-        }), /* () */0, log);
+  if (Caml_oo_curry.js2(111581468, 1, $$process, /* () */0) === false) {
+    Curry._3(EventLog.reduce, (function (_, item) {
+            return Caml_oo_curry.js2(710435299, 2, $$process, item);
+          }), /* () */0, log);
+  }
   return $$process;
 }
 

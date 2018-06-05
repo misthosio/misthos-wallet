@@ -39,13 +39,14 @@ let make = (session, id) => {
 let applyInternal =
     (
       ~syncing=false,
+      ~partnerId,
       issuer,
       event,
       oldLog,
       (validation, state, wallet, collector),
     ) => {
   let (item, log) = oldLog |> EventLog.append(issuer, event);
-  switch (item |> Validation.validate(validation)) {
+  switch (item |> Validation.validate(~partnerId, validation)) {
   | Ok =>
     logMessage("Appended event to log:");
     logMessage(Event.encode(event) |> Json.stringify);
@@ -76,6 +77,7 @@ let apply =
     ) => {
   let (item, log, (validation, state, wallet, collector)) =
     applyInternal(
+      ~partnerId=session.userId,
       systemEvent ? state |> State.systemIssuer : session.issuerKeyPair,
       event,
       log,
@@ -87,7 +89,7 @@ let apply =
          session,
          item,
          log,
-         applyInternal,
+         applyInternal(~partnerId=session.userId),
          (validation, state, wallet, collector),
        );
   ({validation, session, id, log, state, wallet, watchers}, collector);
@@ -126,7 +128,7 @@ let reconstruct = (session, log) => {
     |> Watchers.processPending(
          session,
          log,
-         applyInternal,
+         applyInternal(~partnerId=session.userId),
          (validation, state, wallet, [||]),
        );
   ({validation, session, id, log, state, wallet, watchers}, collector);
@@ -301,7 +303,7 @@ module Cmd = {
                ),
                {event} as item: EventLog.item,
              ) =>
-               switch (item |> Validation.validate(~partnerId, validation)) {
+               switch (item |> Validation.validate(~partnerId?, validation)) {
                | Ok =>
                  logMessage("Appending synced event to log:");
                  logMessage(Event.encode(event) |> Json.stringify);
@@ -338,7 +340,7 @@ module Cmd = {
         |> Watchers.processPending(
              session,
              log,
-             applyInternal(~syncing=true),
+             applyInternal(~syncing=true, ~partnerId=session.userId),
              (validation, state, wallet, collector),
            );
       Js.Promise.(

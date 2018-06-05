@@ -28,7 +28,7 @@ let make =
               ),
             )) :
             None,
-        completed: pubKey |> Js.Option.isSome,
+        completed: UserId.neq(id, userId) || pubKey |> Js.Option.isSome,
       });
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
@@ -46,6 +46,8 @@ let make =
     pub processCompleted = () => state^.completed;
     pub pendingEvent = () => state^.pendingEvent
   };
-  log |> EventLog.reduce((_, item) => process#receive(item), ());
+  if (process#processCompleted()) {
+    log |> EventLog.reduce((_, item) => process#receive(item), ());
+  };
   process;
 };

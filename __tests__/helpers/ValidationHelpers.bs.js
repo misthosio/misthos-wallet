@@ -9,9 +9,9 @@ var Venture__Validation = require("../../src/application/Venture__Validation.bs.
 
 var TestingInvalidSequence = Caml_exceptions.create("ValidationHelpers.TestingInvalidSequence");
 
-function constructState(originId, log) {
+function constructState(partnerId, log) {
   return Generators.Log[/* reduce */1]((function (s, item) {
-                var bad = Venture__Validation.validate(/* Some */[originId], s, item);
+                var bad = Venture__Validation.validate(partnerId, s, item);
                 if (typeof bad === "number") {
                   if (bad !== 0) {
                     throw [
@@ -30,10 +30,10 @@ function constructState(originId, log) {
               }), Venture__Validation.make(/* () */0), log);
 }
 
-function testValidationResult(originId, state, item, expected) {
+function testValidationResult(partnerId, state, item, expected) {
   var description = Venture__Validation.resultToString(expected);
   return Jest.test("valdation should return '" + (description + "'"), (function () {
-                return Jest.Expect[/* toEqual */12](description, Jest.Expect[/* expect */0](Venture__Validation.resultToString(Venture__Validation.validate(/* Some */[originId], state, item))));
+                return Jest.Expect[/* toEqual */12](description, Jest.Expect[/* expect */0](Venture__Validation.resultToString(Venture__Validation.validate(partnerId, state, item))));
               }));
 }
 

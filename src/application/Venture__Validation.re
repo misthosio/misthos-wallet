@@ -765,7 +765,7 @@ let validateEvent =
 
 let validate =
     (
-      ~partnerId as originId=None,
+      ~partnerId as originId=?,
       {knownItems} as state,
       {hash, event, issuerPubKey}: EventLog.item,
     ) =>

@@ -45,7 +45,7 @@ function make(session, id) {
         ];
 }
 
-function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
+function applyInternal($staropt$star, partnerId, issuer, $$event, oldLog, param) {
   var collector = param[3];
   var wallet = param[2];
   var state = param[1];
@@ -53,7 +53,7 @@ function applyInternal($staropt$star, issuer, $$event, oldLog, param) {
   var syncing = $staropt$star ? $staropt$star[0] : false;
   var match = Curry._3(EventLog.append, issuer, $$event, oldLog);
   var item = match[0];
-  var result = Venture__Validation.validate(/* None */0, validation, item);
+  var result = Venture__Validation.validate(/* Some */[partnerId], validation, item);
   var exit = 0;
   if (typeof result === "number") {
     if (result !== 1) {
@@ -123,7 +123,7 @@ function apply($staropt$star, $staropt$star$1, $$event, param) {
   var session = param[/* session */0];
   var systemEvent = $staropt$star ? $staropt$star[0] : false;
   var collector = $staropt$star$1 ? $staropt$star$1[0] : /* array */[];
-  var match = applyInternal(/* None */0, systemEvent ? Venture__State.systemIssuer(state) : session[/* issuerKeyPair */2], $$event, param[/* log */2], /* tuple */[
+  var match = applyInternal(/* None */0, session[/* userId */0], systemEvent ? Venture__State.systemIssuer(state) : session[/* issuerKeyPair */2], $$event, param[/* log */2], /* tuple */[
         param[/* validation */4],
         state,
         param[/* wallet */5],
@@ -131,8 +131,14 @@ function apply($staropt$star, $staropt$star$1, $$event, param) {
       ]);
   var match$1 = match[2];
   var match$2 = Watchers.applyAndProcessPending(session, match[0], match[1], (function (eta) {
+          var arg = session[/* userId */0];
+          var partial_arg = (function (param) {
+                return (function (param$1, param$2, param$3, param$4) {
+                    return applyInternal(param, arg, param$1, param$2, param$3, param$4);
+                  });
+              })(/* None */0);
           return (function (param, param$1, param$2) {
-              return applyInternal(/* None */0, eta, param, param$1, param$2);
+              return partial_arg(eta, param, param$1, param$2);
             });
         }), /* tuple */[
         match$1[0],
@@ -194,8 +200,14 @@ function reconstruct(session, log) {
         /* [] */0
       ], log);
   var match$2 = Watchers.processPending(session, log, (function (eta) {
+          var arg = session[/* userId */0];
+          var partial_arg = (function (param) {
+                return (function (param$1, param$2, param$3, param$4) {
+                    return applyInternal(param, arg, param$1, param$2, param$3, param$4);
+                  });
+              })(/* None */0);
           return (function (param, param$1, param$2) {
-              return applyInternal(/* None */0, eta, param, param$1, param$2);
+              return partial_arg(eta, param, param$1, param$2);
             });
         }), /* tuple */[
         match$1[1],
@@ -351,7 +363,7 @@ function exec$1(partnerId, newItems, venture) {
           var collector = param[1];
           var venture = param[0];
           var validation = venture[/* validation */4];
-          var conflict = Venture__Validation.validate(/* Some */[partnerId], validation, item);
+          var conflict = Venture__Validation.validate(partnerId, validation, item);
           var exit = 0;
           if (typeof conflict === "number") {
             if (conflict !== 1) {
@@ -410,9 +422,10 @@ function exec$1(partnerId, newItems, venture) {
       ], newItems);
   var conflicts = match[2];
   var match$1 = match[0];
-  var partial_arg = /* Some */[true];
+  var partial_arg = session[/* userId */0];
+  var partial_arg$1 = /* Some */[true];
   var match$2 = Watchers.processPending(session, match$1[/* log */2], (function (param, param$1, param$2, param$3) {
-          return applyInternal(partial_arg, param, param$1, param$2, param$3);
+          return applyInternal(partial_arg$1, partial_arg, param, param$1, param$2, param$3);
         }), /* tuple */[
         match$1[/* validation */4],
         match$1[/* state */3],

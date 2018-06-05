@@ -70,7 +70,7 @@ function make(param, param$1, log) {
                 env$1[2],
                 /* PartnerPubKeyAdded */Block.__(6, [Curry._2(Event.Partner[/* PubKeyAdded */10][/* make */0], env$1[1], Utils.publicKeyFromKeyPair(env$1[2]))])
               ]] : /* None */0,
-          /* completed */Js_option.isSome(env$1[4])
+          /* completed */PrimitiveTypes.UserId[/* neq */6](env$1[3], env$1[1]) || Js_option.isSome(env$1[4])
         ]];
       self[env] = env$1[0];
       return self;
@@ -90,9 +90,11 @@ function make(param, param$1, log) {
     envs_004
   ];
   var $$process = Curry._1(class_tables[0], envs);
-  Curry._3(EventLog.reduce, (function (_, item) {
-          return Caml_oo_curry.js2(710435299, 1, $$process, item);
-        }), /* () */0, log);
+  if (Caml_oo_curry.js2(111581468, 1, $$process, /* () */0)) {
+    Curry._3(EventLog.reduce, (function (_, item) {
+            return Caml_oo_curry.js2(710435299, 2, $$process, item);
+          }), /* () */0, log);
+  }
   return $$process;
 }
 
