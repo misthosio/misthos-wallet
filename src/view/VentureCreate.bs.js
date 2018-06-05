@@ -36,7 +36,12 @@ function make(onCreateVenture, cmdStatus, _) {
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */component[/* willReceiveProps */3],
+          /* willReceiveProps */(function (param) {
+              return /* record */[
+                      /* newVenture */param[/* state */1][/* newVenture */0],
+                      /* cmdStatus */cmdStatus
+                    ];
+            }),
           /* didMount */component[/* didMount */4],
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
@@ -56,21 +61,37 @@ function make(onCreateVenture, cmdStatus, _) {
                                   }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("What can you do with a venture?")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Your Venture can receive money from different sources, such as customers, clients, and investors\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • Every Partner of the Venture has full transparency of income and payouts\n                ")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n                 • The team decides the Policies by which payouts take place\n                ")])))], /* array */[]));
             }),
           /* initialState */(function () {
-              return /* record */[/* newVenture */""];
+              return /* record */[
+                      /* newVenture */"",
+                      /* cmdStatus */cmdStatus
+                    ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              if (action) {
-                return /* Update */Block.__(0, [/* record */[/* newVenture */action[0]]]);
+              var match = state[/* cmdStatus */1];
+              var exit = 0;
+              if (typeof match === "number" || match.tag) {
+                exit = 1;
               } else {
-                var name = $$String.trim(state[/* newVenture */0]);
-                if (name === "") {
-                  return /* NoUpdate */0;
+                return /* NoUpdate */0;
+              }
+              if (exit === 1) {
+                if (action) {
+                  return /* Update */Block.__(0, [/* record */[
+                              /* newVenture */action[0],
+                              /* cmdStatus */state[/* cmdStatus */1]
+                            ]]);
                 } else {
-                  Curry._1(onCreateVenture, name);
-                  return /* Update */Block.__(0, [/* record */[/* newVenture */""]]);
+                  var name = $$String.trim(state[/* newVenture */0]);
+                  if (name === "") {
+                    return /* NoUpdate */0;
+                  } else {
+                    Curry._1(onCreateVenture, name);
+                    return /* NoUpdate */0;
+                  }
                 }
               }
+              
             }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]

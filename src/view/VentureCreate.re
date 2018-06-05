@@ -4,7 +4,10 @@ type status =
   | None
   | CreatingVenture(string);
 
-type state = {newVenture: string};
+type state = {
+  newVenture: string,
+  cmdStatus: CommandExecutor.cmdStatus,
+};
 
 type action =
   | ChangeNewVenture(string)
@@ -30,16 +33,19 @@ module Styles = {
 let make =
     (~onCreateVenture, ~cmdStatus: CommandExecutor.cmdStatus, _children) => {
   ...component,
-  initialState: () => {newVenture: ""},
+  initialState: () => {newVenture: "", cmdStatus},
+  willReceiveProps: ({state}) => {...state, cmdStatus},
   reducer: (action, state) =>
-    switch (action) {
-    | ChangeNewVenture(text) => ReasonReact.Update({newVenture: text})
-    | CreateVenture =>
+    switch (action, state.cmdStatus) {
+    | (_, Pending(_)) => ReasonReact.NoUpdate
+    | (ChangeNewVenture(text), _) =>
+      ReasonReact.Update({...state, newVenture: text})
+    | (CreateVenture, _) =>
       switch (String.trim(state.newVenture)) {
       | "" => ReasonReact.NoUpdate
       | name =>
         onCreateVenture(name);
-        ReasonReact.Update({newVenture: ""});
+        ReasonReact.NoUpdate;
       }
     },
   render: ({send, state}) =>
