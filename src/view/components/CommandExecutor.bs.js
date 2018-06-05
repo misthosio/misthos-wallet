@@ -170,7 +170,7 @@ function make$1(cmdStatus, action, _) {
                   case 1 : 
                       switch (cmdStatus[0]) {
                         case 0 : 
-                            return message(/* Error */1, "Error joining venture. Perhaps you have not been accepted yet or\n        if this was your first time logging in to Misthos the Venture will become available after the inviting partner has logged in again.");
+                            return message(/* Error */1, "Error joining venture. Perhaps you have not been accepted yet,\n          or if this was your first time logging in to Misthos,\n          the Venture will become available after the inviting partner has logged in again.");
                         case 1 : 
                             return message(/* Error */1, "Error loading venture");
                         case 2 : 
