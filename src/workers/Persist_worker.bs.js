@@ -309,9 +309,15 @@ setInterval((function () {
         Belt_MapString.reduceU(missingKeys[0], Promise.resolve(/* () */0), (function (promise, key, param) {
                 var f = param[1];
                 return UserInfo.Public[/* read */4](param[0]).then((function (param) {
-                              if (param && Belt_MapString.has(missingKeys[0], key)) {
-                                return Curry._2(f, param[0][/* appPubKey */0], promise);
+                              if (param) {
+                                if (Belt_MapString.has(missingKeys[0], key)) {
+                                  logMessage("Missing key has been found");
+                                  return Curry._2(f, param[0][/* appPubKey */0], promise);
+                                } else {
+                                  return promise;
+                                }
                               } else {
+                                logMessage("Could not find UserInfo");
                                 return promise;
                               }
                             }));
@@ -339,6 +345,7 @@ function persist(ventureId, eventLog, param) {
                   } else {
                     return UserInfo.Public[/* read */4](id).then((function (param) {
                                   if (param) {
+                                    removeFromMissingKeys(ventureId, id);
                                     return persistLogAndSummary(param[0][/* appPubKey */0], promise);
                                   } else {
                                     addToMissingKeys(ventureId, id, /* tuple */[

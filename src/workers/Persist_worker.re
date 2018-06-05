@@ -230,11 +230,15 @@ Js.Global.setInterval(
                     fun
                     | UserInfo.Public.Ok({appPubKey}) =>
                       if (missingKeys^ |. Map.String.has(key)) {
+                        logMessage("Missing key has been found");
                         promise |> f(appPubKey);
                       } else {
                         promise;
                       }
-                    | NotFound => promise,
+                    | NotFound => {
+                        logMessage("Could not find UserInfo");
+                        promise;
+                      },
                   )
              )
            )
@@ -267,8 +271,10 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
                read(~blockstackId=id)
                |> then_(
                     fun
-                    | UserInfo.Public.Ok({appPubKey}) =>
-                      promise |> persistLogAndSummary(appPubKey)
+                    | UserInfo.Public.Ok({appPubKey}) => {
+                        removeFromMissingKeys(ventureId, id);
+                        promise |> persistLogAndSummary(appPubKey);
+                      }
                     | NotFound => {
                         addToMissingKeys(
                           ventureId,
