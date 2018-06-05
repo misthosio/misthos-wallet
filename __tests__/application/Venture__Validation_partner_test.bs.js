@@ -124,7 +124,7 @@ describe("PartnerRemovalProposal", (function () {
                 return ValidationHelpers.testValidationResult(ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRemovalProposed */19](match[0], match[1], log)), /* Ok */0);
               }));
         describe("validatePartnerRemovalData", (function () {
-                Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the prospect is not a partner", (function () {
+                Fixtures.withCached(/* None */0, "PartnerRemovalProposal", "when the prospect is not a partner", (function () {
                         return Generators.withUserSessions(2);
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
@@ -138,7 +138,7 @@ describe("PartnerRemovalProposal", (function () {
                                     /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0)
                                   ], /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](user2[/* userId */0]) + "' doesn't exist")]);
                       }));
-                return Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when lastPartnerProcess doesn't match", (function () {
+                return Fixtures.withCached(/* None */0, "PartnerRemovalProposal", "when lastPartnerProcess doesn't match", (function () {
                               return Generators.withUserSessions(2);
                             }), (function (sessions) {
                               var match = Generators.twoUserSessionsFromArray(sessions);

@@ -156,7 +156,7 @@ let () = {
     );
     describe("validatePartnerRemovalData", () => {
       F.withCached(
-        ~scope="Watcher__CustodianKeyChain",
+        ~scope="PartnerRemovalProposal",
         "when the prospect is not a partner",
         () => G.withUserSessions(2),
         sessions => {
@@ -181,7 +181,7 @@ let () = {
         },
       );
       F.withCached(
-        ~scope="Watcher__CustodianKeyChain",
+        ~scope="PartnerRemovalProposal",
         "when lastPartnerProcess doesn't match",
         () => G.withUserSessions(2),
         sessions => {
