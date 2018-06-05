@@ -226,15 +226,21 @@ function make$1(partnerId, pubKey) {
 function encode$3($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "partnerId",
-                PrimitiveTypes.UserId[/* encode */2]($$event[/* partnerId */0])
+                "type",
+                "PartnerPubKeyAdded"
               ],
               /* :: */[
                 /* tuple */[
-                  "pubKey",
-                  $$event[/* pubKey */1]
+                  "partnerId",
+                  PrimitiveTypes.UserId[/* encode */2]($$event[/* partnerId */0])
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "pubKey",
+                    $$event[/* pubKey */1]
+                  ],
+                  /* [] */0
+                ]
               ]
             ]);
 }

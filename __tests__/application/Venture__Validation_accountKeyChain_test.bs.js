@@ -21,7 +21,7 @@ describe(" AccountKeyChainIdentified", (function () {
                                 /* [] */0
                               ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
               }), (function (_, log) {
-                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainIdentified */39](log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainIdentified */39](log)), /* Ok */0);
               }));
         Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "when the account doesn't exist", (function () {
                 return Generators.withUserSessions(2);
@@ -37,7 +37,7 @@ describe(" AccountKeyChainIdentified", (function () {
                 var init = identified[/* keyChain */0];
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
-                            }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
+                            }), ValidationHelpers.constructState(/* None */0, log), /* record */[/* keyChain : record */[
                               /* accountIdx */WalletTypes.AccountIndex[/* fromInt */1](1),
                               /* identifier */init[/* identifier */1],
                               /* nCoSigners */init[/* nCoSigners */2],
@@ -58,7 +58,7 @@ describe(" AccountKeyChainIdentified", (function () {
                 var init = identified[/* keyChain */0];
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
-                            }), ValidationHelpers.constructState(log), /* record */[/* keyChain : record */[
+                            }), ValidationHelpers.constructState(/* None */0, log), /* record */[/* keyChain : record */[
                               /* accountIdx */init[/* accountIdx */0],
                               /* identifier */"",
                               /* nCoSigners */init[/* nCoSigners */2],
@@ -96,7 +96,7 @@ describe(" AccountKeyChainIdentified", (function () {
                 var user1 = match[0];
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
-                            }), ValidationHelpers.constructState(log), /* record */[/* keyChain */AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], /* :: */[
+                            }), ValidationHelpers.constructState(/* None */0, log), /* record */[/* keyChain */AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], /* :: */[
                                   /* tuple */[
                                     user1[/* userId */0],
                                     Generators.custodianKeyChain(/* None */0, Generators.Log[/* ventureId */2](log), 1, user1)
@@ -124,7 +124,7 @@ describe(" AccountKeyChainIdentified", (function () {
                       var user1 = match[0];
                       return ValidationHelpers.testDataValidation((function (param, param$1) {
                                     return ValidationHelpers.withSystemIssuer(Venture__Validation.validateAccountKeyChainIdentified, param, param$1);
-                                  }), ValidationHelpers.constructState(log), /* record */[/* keyChain */AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], /* :: */[
+                                  }), ValidationHelpers.constructState(/* None */0, log), /* record */[/* keyChain */AccountKeyChain.make(WalletTypes.AccountIndex[/* default */9], /* :: */[
                                         /* tuple */[
                                           user1[/* userId */0],
                                           Generators.custodianKeyChain(/* None */0, PrimitiveTypes.VentureId[/* make */10](/* () */0), 1, user1)
@@ -146,7 +146,7 @@ describe("AccountKeyChainActivated", (function () {
                                   ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, match[0], log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, match[0], log)), /* Ok */0);
               }));
         Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "after a partner removal", (function () {
                 return Generators.withUserSessions(2);
@@ -172,7 +172,7 @@ describe("AccountKeyChainActivated", (function () {
                                                                   ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))))))))));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainActivated */40](/* Some */[1], match[0], log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainActivated */40](/* Some */[1], match[0], log)), /* Ok */0);
               }));
         Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the account doesn't exist", (function () {
                 return Generators.withUserSessions(2);
@@ -189,7 +189,7 @@ describe("AccountKeyChainActivated", (function () {
                 var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */5](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
-                            }), ValidationHelpers.constructState(log), /* record */[
+                            }), ValidationHelpers.constructState(/* None */0, log), /* record */[
                             /* accountIdx */WalletTypes.AccountIndex[/* fromInt */1](1),
                             /* custodianId */activated[/* custodianId */1],
                             /* identifier */activated[/* identifier */2],
@@ -214,7 +214,7 @@ describe("AccountKeyChainActivated", (function () {
                 var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */5](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, match[0], log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
-                            }), ValidationHelpers.constructState(log), activated, /* InvalidIssuer */2);
+                            }), ValidationHelpers.constructState(/* None */0, log), activated, /* InvalidIssuer */2);
               }));
         Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the issuer is not a custodian", (function () {
                 return Generators.withUserSessions(2);
@@ -234,7 +234,7 @@ describe("AccountKeyChainActivated", (function () {
                 var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */5](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
-                            }), ValidationHelpers.constructState(log), activated, /* BadData */["Not a custodian"]);
+                            }), ValidationHelpers.constructState(/* None */0, log), activated, /* BadData */["Not a custodian"]);
               }));
         Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the identifier is unknown", (function () {
                 return Generators.withUserSessions(2);
@@ -251,7 +251,7 @@ describe("AccountKeyChainActivated", (function () {
                 var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */5](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, log)));
                 return ValidationHelpers.testDataValidation((function (param, param$1) {
                               return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
-                            }), ValidationHelpers.constructState(log), /* record */[
+                            }), ValidationHelpers.constructState(/* None */0, log), /* record */[
                             /* accountIdx */activated[/* accountIdx */0],
                             /* custodianId */activated[/* custodianId */1],
                             /* identifier */"bad",
@@ -273,7 +273,7 @@ describe("AccountKeyChainActivated", (function () {
                       var activated = Event.getAccountKeyChainActivatedExn(Generators.Log[/* lastEvent */5](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, log)));
                       return ValidationHelpers.testDataValidation((function (param, param$1) {
                                     return ValidationHelpers.withIssuer(user1, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
-                                  }), ValidationHelpers.constructState(log), /* record */[
+                                  }), ValidationHelpers.constructState(/* None */0, log), /* record */[
                                   /* accountIdx */activated[/* accountIdx */0],
                                   /* custodianId */activated[/* custodianId */1],
                                   /* identifier */activated[/* identifier */2],

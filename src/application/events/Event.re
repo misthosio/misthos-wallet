@@ -111,6 +111,7 @@ module Partner = {
     let encode = event =>
       Json.Encode.(
         object_([
+          ("type", string("PartnerPubKeyAdded")),
           ("partnerId", UserId.encode(event.partnerId)),
           ("pubKey", string(event.pubKey)),
         ])

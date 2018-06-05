@@ -16,11 +16,11 @@ open PrimitiveTypes;
 
 exception TestingInvalidSequence(string);
 
-let constructState = log =>
+let constructState = (~originId=?, log) =>
   log
   |> L.reduce(
        (s, item) =>
-         switch (s |. Validation.validate(item)) {
+         switch (s |. Validation.validate(~partnerId=originId, item)) {
          | Ok => s |> Validation.apply(item)
          | bad =>
            raise(TestingInvalidSequence(bad |> Validation.resultToString))

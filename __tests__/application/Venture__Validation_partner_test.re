@@ -207,7 +207,7 @@ let () = {
       );
     });
   });
-  describe("PartnerPubKeyAdded", () =>
+  describe("PartnerPubKeyAdded", () => {
     F.withCached(
       ~scope="PartnerPubKeyAdded",
       "when everything is okay",
@@ -229,6 +229,102 @@ let () = {
           Validation.Ok,
         );
       },
-    )
-  );
+    );
+    F.withCached(
+      ~scope="PartnerPubKeyAdded",
+      "when the partner submits an event",
+      () => G.withUserSessions(3),
+      sessions => {
+        let (user1, user2, _user3) = G.threeUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
+          |> withPartnerPubKeyAdded(user2)
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        testValidationResult(
+          log |> constructState(~originId=user2.userId),
+          L.(
+            log
+            |> withPartnerProposed(~proposer=user2, ~prospect=user3)
+            |> lastItem
+          ),
+          Validation.Ok,
+        );
+      },
+    );
+    F.withCached(
+      ~scope="PartnerPubKeyAdded",
+      "when syncing from another user",
+      () => G.withUserSessions(2),
+      sessions => {
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(~withPubKey=false, user2, ~supporters=[user1])
+        );
+      },
+      (sessions, log) => {
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        testValidationResult(
+          ~originId=user1.userId,
+          log |> constructState,
+          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+          Validation.InvalidIssuer,
+        );
+      },
+    );
+    F.withCached(
+      ~scope="PartnerPubKeyAdded",
+      "when the partner hasn't been accepted",
+      () => G.withUserSessions(2),
+      sessions => {
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartnerProposed(
+               ~withPubKey=false,
+               ~proposer=user1,
+               ~prospect=user2,
+             )
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
+        testValidationResult(
+          ~originId=user2.userId,
+          log |> constructState,
+          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+          Validation.InvalidIssuer,
+        );
+      },
+    );
+    F.withCached(
+      ~scope="PartnerPubKeyAdded",
+      "when the pub key is already known",
+      () => G.withUserSessions(2),
+      sessions => {
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withPartner(user2, ~supporters=[user1])
+        );
+      },
+      (sessions, log) => {
+        let (_user1, user2) = G.twoUserSessionsFromArray(sessions);
+        testValidationResult(
+          ~originId=user2.userId,
+          log |> constructState,
+          L.(log |> withPartnerPubKeyAdded(user2) |> lastItem),
+          Validation.BadData("Partner pub key is already known"),
+        );
+      },
+    );
+  });
 };

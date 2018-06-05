@@ -24,7 +24,7 @@ describe("CustodianProposed", (function () {
                               ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */28](match[0], match[1], log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */28](match[0], match[1], log)), /* Ok */0);
               }));
         Fixtures.withCached(/* None */0, "CustodianProposed", "when proposing a custodian after removal", (function () {
                 return Generators.withUserSessions(2);
@@ -53,7 +53,7 @@ describe("CustodianProposed", (function () {
                                       ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))))));
               }), (function (sessions, log) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
-                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */28](match[0], match[1], log)), /* Ok */0);
+                return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */28](match[0], match[1], log)), /* Ok */0);
               }));
         describe("validateCustodianData", (function () {
                 Fixtures.withCached(/* None */0, "CustodianProposed", "when the custodian is not a partner", (function () {
@@ -68,7 +68,7 @@ describe("CustodianProposed", (function () {
                       }), (function (sessions, log) {
                         var match = Generators.threeUserSessionsFromArray(sessions);
                         var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                        return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log), /* record */[
+                        return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(/* None */0, log), /* record */[
                                     /* partnerId */match[2][/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
                                     /* lastCustodianRemovalProcess : None */0,
@@ -86,7 +86,7 @@ describe("CustodianProposed", (function () {
                                   ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))));
                       }), (function (sessions, log) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
-                        return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log), /* record */[
+                        return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(/* None */0, log), /* record */[
                                     /* partnerId */match[1][/* userId */0],
                                     /* partnerApprovalProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0),
                                     /* lastCustodianRemovalProcess : None */0,
@@ -102,7 +102,7 @@ describe("CustodianProposed", (function () {
                       }), (function (sessions, log) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
                         var partnerApproval = Event.getPartnerAcceptedExn(Generators.Log[/* lastEvent */5](log));
-                        return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log), /* record */[
+                        return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(/* None */0, log), /* record */[
                                     /* partnerId */match[0][/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
                                     /* lastCustodianRemovalProcess : None */0,
@@ -136,7 +136,7 @@ describe("CustodianProposed", (function () {
                                           /* [] */0
                                         ]
                                       ], log));
-                              return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(log$1), /* record */[
+                              return ValidationHelpers.testDataValidation(Venture__Validation.validateCustodianData, ValidationHelpers.constructState(/* None */0, log$1), /* record */[
                                           /* partnerId */user2[/* userId */0],
                                           /* partnerApprovalProcess */partnerApproval[/* processId */0],
                                           /* lastCustodianRemovalProcess : None */0,

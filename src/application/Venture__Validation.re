@@ -148,6 +148,13 @@ let apply = ({hash, event}: EventLog.item, state) => {
         |> Js.Option.getWithDefault(state.currentPartnerPubKeys),
       partnerAccepted: [(data.id, processId), ...state.partnerAccepted],
     }
+  | PartnerPubKeyAdded({partnerId, pubKey}) => {
+      ...state,
+      currentPartnerPubKeys: [
+        (pubKey, partnerId),
+        ...state.currentPartnerPubKeys,
+      ],
+    }
   | PartnerRemovalAccepted({processId, data: {id}}) =>
     let pubKey =
       state.currentPartnerPubKeys
@@ -748,6 +755,7 @@ let validateEvent =
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
   | TransactionConfirmed(_) => ((_state, _pubKey) => Ok)
+  | PartnerPubKeyAdded(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)
   | PayoutAborted(_) => ((_state, _pubKey) => Ok)
   | PayoutFinalized(_) => ((_state, _pubKey) => Ok)
@@ -785,11 +793,17 @@ let validate =
           && state.knownItems
           |> ItemsSet.size == 2 =>
       Ok
-    | (PartnerPubKeyAdded({partnerId}), false, false) =>
+    | (PartnerPubKeyAdded({partnerId}), _, false) =>
       switch (originId) {
-      | Some(originId) => UserId.eq(originId, partnerId) ? Ok : InvalidIssuer
-      | None => InvalidIssuer
+      | Some(originId) =>
+        state.currentPartners
+        |. Belt.Set.has(originId)
+        && UserId.eq(originId, partnerId) ?
+          Ok : InvalidIssuer
+      | _ => InvalidIssuer
       }
+    | (PartnerPubKeyAdded(_), _, true) =>
+      BadData("Partner pub key is already known")
 
     | (_, false, false) => InvalidIssuer
     | (_, true, _) when issuerPubKey != state.systemPubKey => InvalidIssuer

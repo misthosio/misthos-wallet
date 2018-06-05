@@ -9,9 +9,9 @@ var Venture__Validation = require("../../src/application/Venture__Validation.bs.
 
 var TestingInvalidSequence = Caml_exceptions.create("ValidationHelpers.TestingInvalidSequence");
 
-function constructState(log) {
+function constructState(originId, log) {
   return Generators.Log[/* reduce */1]((function (s, item) {
-                var bad = Venture__Validation.validate(/* None */0, s, item);
+                var bad = Venture__Validation.validate(/* Some */[originId], s, item);
                 if (typeof bad === "number") {
                   if (bad !== 0) {
                     throw [
