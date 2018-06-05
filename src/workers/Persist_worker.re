@@ -231,7 +231,13 @@ Js.Global.setInterval(
                     | UserInfo.Public.Ok({appPubKey}) =>
                       if (missingKeys^ |. Map.String.has(key)) {
                         logMessage("Missing key has been found");
-                        promise |> f(appPubKey);
+                        promise
+                        |> f(appPubKey)
+                        |> then_(() => {
+                             missingKeys :=
+                               missingKeys^ |. Map.String.remove(key);
+                             resolve();
+                           });
                       } else {
                         promise;
                       }

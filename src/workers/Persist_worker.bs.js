@@ -314,7 +314,10 @@ setInterval((function () {
                               if (param) {
                                 if (Belt_MapString.has(missingKeys[0], key)) {
                                   logMessage("Missing key has been found");
-                                  return Curry._2(f, param[0][/* appPubKey */0], promise);
+                                  return Curry._2(f, param[0][/* appPubKey */0], promise).then((function () {
+                                                missingKeys[0] = Belt_MapString.remove(missingKeys[0], key);
+                                                return Promise.resolve(/* () */0);
+                                              }));
                                 } else {
                                   return promise;
                                 }
