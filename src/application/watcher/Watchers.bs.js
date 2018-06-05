@@ -6,6 +6,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
+var Watcher__AddPubKey = require("./Watcher__AddPubKey.bs.js");
 var Watcher__SignPayout = require("./Watcher__SignPayout.bs.js");
 var Watcher__AbortPayout = require("./Watcher__AbortPayout.bs.js");
 var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
@@ -32,6 +33,11 @@ function initWatcherFor(session, param, log) {
     case 1 : 
         return /* :: */[
                 Watcher__PartnerApproval.make($$event[0], log),
+                /* [] */0
+              ];
+    case 4 : 
+        return /* :: */[
+                Watcher__AddPubKey.make(session, $$event[0], log),
                 /* [] */0
               ];
     case 7 : 
@@ -166,6 +172,8 @@ var Initialize = 0;
 
 var PartnerApproval = 0;
 
+var AddPubKey = 0;
+
 var PartnerRemovalApproval = 0;
 
 var AccountCreationApproval = 0;
@@ -190,6 +198,7 @@ var FinalizePayout = 0;
 
 exports.Initialize = Initialize;
 exports.PartnerApproval = PartnerApproval;
+exports.AddPubKey = AddPubKey;
 exports.PartnerRemovalApproval = PartnerRemovalApproval;
 exports.AccountCreationApproval = AccountCreationApproval;
 exports.CustodianApproval = CustodianApproval;

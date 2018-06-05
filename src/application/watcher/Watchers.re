@@ -9,6 +9,7 @@ type t = list(watcher);
 
 module Initialize = Watcher__InitializeVenture;
 module PartnerApproval = Watcher__PartnerApproval;
+module AddPubKey = Watcher__AddPubKey;
 module PartnerRemovalApproval = Watcher__PartnerRemovalApproval;
 module AccountCreationApproval = Watcher__AccountCreationApproval;
 module CustodianApproval = Watcher__CustodianApproval;
@@ -25,6 +26,9 @@ let initWatcherFor = (session, {event}: EventLog.item, log) =>
   switch (event) {
   | VentureCreated(event) => [Initialize.make(session, event, log)]
   | PartnerProposed(proposal) => [PartnerApproval.make(proposal, log)]
+  | PartnerAccepted(acceptance) => [
+      AddPubKey.make(session, acceptance, log),
+    ]
   | PartnerRemovalProposed(proposal) => [
       PartnerRemovalApproval.make(proposal, log),
     ]
