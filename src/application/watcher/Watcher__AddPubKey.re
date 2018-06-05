@@ -36,8 +36,8 @@ let make =
         (
           switch (event) {
           | PartnerPubKeyAdded({partnerId}) when UserId.eq(partnerId, id) => {
-              ...state^,
               completed: true,
+              pendingEvent: None,
             }
           | _ => state^
           }
@@ -46,7 +46,7 @@ let make =
     pub processCompleted = () => state^.completed;
     pub pendingEvent = () => state^.pendingEvent
   };
-  if (process#processCompleted()) {
+  if (process#processCompleted() == false) {
     log |> EventLog.reduce((_, item) => process#receive(item), ());
   };
   process;

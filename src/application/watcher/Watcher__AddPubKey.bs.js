@@ -41,15 +41,10 @@ function make(param, param$1, log) {
           (function (self$1, param) {
               var $$event = param[/* event */0];
               var tmp;
-              if ($$event.tag === 6 && PrimitiveTypes.UserId[/* eq */5]($$event[0][/* partnerId */0], self$1[env][0])) {
-                var init = self$1[state][0];
-                tmp = /* record */[
-                  /* pendingEvent */init[/* pendingEvent */0],
+              tmp = $$event.tag === 6 && PrimitiveTypes.UserId[/* eq */5]($$event[0][/* partnerId */0], self$1[env][0]) ? /* record */[
+                  /* pendingEvent : None */0,
                   /* completed */true
-                ];
-              } else {
-                tmp = self$1[state][0];
-              }
+                ] : self$1[state][0];
               self$1[state][0] = tmp;
               return /* () */0;
             }),
@@ -90,7 +85,7 @@ function make(param, param$1, log) {
     envs_004
   ];
   var $$process = Curry._1(class_tables[0], envs);
-  if (Caml_oo_curry.js2(111581468, 1, $$process, /* () */0)) {
+  if (Caml_oo_curry.js2(111581468, 1, $$process, /* () */0) === false) {
     Curry._3(EventLog.reduce, (function (_, item) {
             return Caml_oo_curry.js2(710435299, 2, $$process, item);
           }), /* () */0, log);
