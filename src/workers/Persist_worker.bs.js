@@ -9,6 +9,7 @@ var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
 var Blockstack = require("blockstack");
 var WorkerUtils = require("./WorkerUtils.bs.js");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var WorkerLocalStorage = require("./WorkerLocalStorage.bs.js");
 var PersistWorkerMessage = require("./PersistWorkerMessage.bs.js");
@@ -290,6 +291,34 @@ function persistRemovals(ventureId, param) {
               }), Promise.resolve(/* () */0), param[0]);
 }
 
+var missingKeys = [Belt_MapString.empty];
+
+function addToMissingKeys(ventureId, userId, f) {
+  var key = PrimitiveTypes.VentureId[/* toString */0](ventureId) + PrimitiveTypes.UserId[/* toString */0](userId);
+  missingKeys[0] = Belt_MapString.set(missingKeys[0], key, f);
+  return /* () */0;
+}
+
+function removeFromMissingKeys(ventureId, userId) {
+  var key = PrimitiveTypes.VentureId[/* toString */0](ventureId) + PrimitiveTypes.UserId[/* toString */0](userId);
+  missingKeys[0] = Belt_MapString.remove(missingKeys[0], key);
+  return /* () */0;
+}
+
+setInterval((function () {
+        Belt_MapString.reduceU(missingKeys[0], Promise.resolve(/* () */0), (function (promise, key, param) {
+                var f = param[1];
+                return UserInfo.Public[/* read */4](param[0]).then((function (param) {
+                              if (param && Belt_MapString.has(missingKeys[0], key)) {
+                                return Curry._2(f, param[0][/* appPubKey */0], promise);
+                              } else {
+                                return promise;
+                              }
+                            }));
+              }));
+        return /* () */0;
+      }), 10000);
+
 function persist(ventureId, eventLog, param) {
   var removals = param[1];
   var logString = Json.stringify(Curry._1(EventLog.encode, eventLog));
@@ -303,13 +332,19 @@ function persist(ventureId, eventLog, param) {
   };
   return List.fold_left((function (promise, param) {
                   var pubKey = param[1];
+                  var id = param[0];
                   if (pubKey) {
+                    removeFromMissingKeys(ventureId, id);
                     return persistLogAndSummary(pubKey[0], promise);
                   } else {
-                    return UserInfo.Public[/* read */4](param[0]).then((function (param) {
+                    return UserInfo.Public[/* read */4](id).then((function (param) {
                                   if (param) {
                                     return persistLogAndSummary(param[0][/* appPubKey */0], promise);
                                   } else {
+                                    addToMissingKeys(ventureId, id, /* tuple */[
+                                          id,
+                                          persistLogAndSummary
+                                        ]);
                                     return promise;
                                   }
                                 }));
@@ -367,6 +402,9 @@ exports.determinPartnerKeysAndRemovals = determinPartnerKeysAndRemovals;
 exports.persistLogString = persistLogString;
 exports.persistSummaryString = persistSummaryString;
 exports.persistRemovals = persistRemovals;
+exports.missingKeys = missingKeys;
+exports.addToMissingKeys = addToMissingKeys;
+exports.removeFromMissingKeys = removeFromMissingKeys;
 exports.persist = persist;
 exports.persistVenture = persistVenture;
 exports.handleMessage = handleMessage;

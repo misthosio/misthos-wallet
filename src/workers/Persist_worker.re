@@ -206,6 +206,44 @@ let persistRemovals = (ventureId, (removalProcesses, removedKeys)) =>
        )
   );
 
+let missingKeys = ref(Belt.Map.String.empty);
+let addToMissingKeys = (ventureId, userId, f) => {
+  open Belt;
+  let key = VentureId.toString(ventureId) ++ UserId.toString(userId);
+  missingKeys := missingKeys^ |. Map.String.set(key, f);
+};
+let removeFromMissingKeys = (ventureId, userId) => {
+  open Belt;
+  let key = VentureId.toString(ventureId) ++ UserId.toString(userId);
+  missingKeys := missingKeys^ |. Map.String.remove(key);
+};
+
+Js.Global.setInterval(
+  () =>
+    Belt.(
+      Js.Promise.(
+        missingKeys^
+        |. Map.String.reduceU(resolve(), (. promise, key, (id, f)) =>
+             UserInfo.Public.(
+               read(~blockstackId=id)
+               |> then_(
+                    fun
+                    | UserInfo.Public.Ok({appPubKey}) =>
+                      if (missingKeys^ |. Map.String.has(key)) {
+                        promise |> f(appPubKey);
+                      } else {
+                        promise;
+                      }
+                    | NotFound => promise,
+                  )
+             )
+           )
+        |> ignore
+      )
+    ),
+  10000,
+);
+
 let persist = (ventureId, eventLog, (keys, removals)) => {
   let logString = eventLog |> EventLog.encode |> Json.stringify;
   let summaryString =
@@ -221,7 +259,9 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
     |> List.fold_left(
          (promise, (id, pubKey)) =>
            switch (pubKey) {
-           | Some(pubKey) => promise |> persistLogAndSummary(pubKey)
+           | Some(pubKey) =>
+             removeFromMissingKeys(ventureId, id);
+             promise |> persistLogAndSummary(pubKey);
            | None =>
              UserInfo.Public.(
                read(~blockstackId=id)
@@ -229,7 +269,14 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
                     fun
                     | UserInfo.Public.Ok({appPubKey}) =>
                       promise |> persistLogAndSummary(appPubKey)
-                    | NotFound => promise,
+                    | NotFound => {
+                        addToMissingKeys(
+                          ventureId,
+                          id,
+                          (id, persistLogAndSummary),
+                        );
+                        promise;
+                      },
                   )
              )
            },
