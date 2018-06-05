@@ -30,9 +30,7 @@ let determinPartnerKeysAndRemovals = eventLog => {
            switch (event) {
            | PartnerAccepted({data}) => (
                [data.id, ...partners],
-               data.pubKey
-               |> Utils.mapOption(pubKey => [(data.id, pubKey), ...keys])
-               |> Js.Option.getWithDefault(keys),
+               [(data.id, data.pubKey), ...keys],
                processLookup,
                removalProcesses,
              )
@@ -174,31 +172,35 @@ let persistRemovals = (ventureId, (removalProcesses, removedKeys)) =>
     |> List.fold_left(
          (promise, (id, items)) => {
            let pubKey = removedKeys |> List.assoc(id);
-           let eventLog =
-             items
-             |> List.rev
-             |> List.fold_left(
-                  (log, item) => log |> EventLog.appendItem(item),
-                  EventLog.make(),
+           switch (pubKey) {
+           | Some(pubKey) =>
+             let eventLog =
+               items
+               |> List.rev
+               |> List.fold_left(
+                    (log, item) => log |> EventLog.appendItem(item),
+                    EventLog.make(),
+                  );
+             promise
+             |> then_(() =>
+                  persistLogString(
+                    ventureId,
+                    eventLog |> EventLog.encode |> Json.stringify,
+                    pubKey,
+                  )
+                )
+             |> then_(() =>
+                  persistSummaryString(
+                    ventureId,
+                    eventLog
+                    |> EventLog.getSummary
+                    |> EventLog.encodeSummary
+                    |> Json.stringify,
+                    pubKey,
+                  )
                 );
-           promise
-           |> then_(() =>
-                persistLogString(
-                  ventureId,
-                  eventLog |> EventLog.encode |> Json.stringify,
-                  pubKey,
-                )
-              )
-           |> then_(() =>
-                persistSummaryString(
-                  ventureId,
-                  eventLog
-                  |> EventLog.getSummary
-                  |> EventLog.encodeSummary
-                  |> Json.stringify,
-                  pubKey,
-                )
-              );
+           | None => resolve()
+           };
          },
          resolve(),
        )
@@ -212,11 +214,15 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
     keys
     |> List.fold_left(
          (promise, (_id, pubKey)) =>
-           promise
-           |> then_(() => persistLogString(ventureId, logString, pubKey))
-           |> then_(() =>
-                persistSummaryString(ventureId, summaryString, pubKey)
-              ),
+           switch (pubKey) {
+           | Some(pubKey) =>
+             promise
+             |> then_(() => persistLogString(ventureId, logString, pubKey))
+             |> then_(() =>
+                  persistSummaryString(ventureId, summaryString, pubKey)
+                )
+           | None => resolve()
+           },
          resolve(),
        )
     |> then_(() => resolve(removals))
