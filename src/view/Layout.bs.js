@@ -78,8 +78,8 @@ var grid = Css.style(/* :: */[
               -1044768619,
               /* tuple */[
                 /* sub */5745024,
-                /* `vh */[
-                  26418,
+                /* `percent */[
+                  -119887163,
                   100.0
                 ],
                 /* `px */[
@@ -91,7 +91,7 @@ var grid = Css.style(/* :: */[
         /* :: */[
           Css.margin(Css.px(0)),
           /* :: */[
-            Css.paddingBottom(Css.px(Theme.space(8))),
+            Css.overflowY(Css.auto),
             /* [] */0
           ]
         ]
@@ -105,27 +105,6 @@ var drawer = Css.style(/* :: */[
           ]),
       /* :: */[
         Css.flex(1),
-        /* [] */0
-      ]
-    ]);
-
-var modalContent = Css.style(/* :: */[
-      Css.height(/* `calc */[
-            -1044768619,
-            /* tuple */[
-              /* sub */5745024,
-              /* `percent */[
-                -119887163,
-                100.0
-              ],
-              /* `px */[
-                25096,
-                64
-              ]
-            ]
-          ]),
-      /* :: */[
-        Css.paddingBottom(Css.px(Theme.space(8))),
         /* [] */0
       ]
     ]);
@@ -191,7 +170,6 @@ var Styles = /* module */[
   /* container */container,
   /* grid */grid,
   /* drawer */drawer,
-  /* modalContent */modalContent,
   /* modal */modal,
   /* logo */logo
 ];
@@ -219,9 +197,7 @@ function make(drawer$1, modal$1, children) {
                                                       }),
                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.close]))
                                                 ])),
-                                        React.createElement("div", {
-                                              className: modalContent
-                                            }, param[0])
+                                        param[0]
                                       ])), {
                                 id: "modal"
                               });

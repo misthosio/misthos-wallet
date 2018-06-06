@@ -1,42 +1,24 @@
 include ViewCommon;
 
+[@bs.module "react-custom-scrollbars"]
+external reactClass : ReasonReact.reactClass = "default";
+
 module Styles = {
   open Css;
-  let view =
-    style([
-      position(relative),
-      overflow(hidden),
-      width(`percent(100.0)),
-      height(auto),
-      minHeight(`percent(100.0)),
-      maxHeight(`percent(100.0)),
-    ]);
-  let flexContainer = style([flex(1), minHeight(px(0))]);
+  let foo = style([]);
 };
 
-let containerStyles =
-  Css.(
-    style([
-      height(`percent(100.0)),
-      display(`flex),
-      flexDirection(column),
-    ])
+[@bs.deriving abstract]
+type jsProps = {
+  renderView: unit => ReasonReact.reactElement,
+  renderThumb: unit => ReasonReact.reactElement,
+};
+
+let renderView = () => <div className=Styles.foo />;
+
+let make = children =>
+  ReasonReact.wrapJsForReason(
+    ~reactClass,
+    ~props={"autoHeight": true, "autoHide": true},
+    children,
   );
-
-module CustomScrollbar = {
-  [@bs.module "react-custom-scrollbars"]
-  external reactClass : ReasonReact.reactClass = "default";
-
-  let make = children =>
-    ReasonReact.wrapJsForReason(~reactClass, ~props={}, children);
-};
-
-let component = ReasonReact.statelessComponent("ScrollList");
-
-let make = children => {
-  ...component,
-  render: _self =>
-    <div className=Styles.flexContainer>
-      <CustomScrollbar> children </CustomScrollbar>
-    </div>,
-};

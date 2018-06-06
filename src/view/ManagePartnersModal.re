@@ -320,7 +320,7 @@ let make =
         </div>
       }
       area4={
-        <div className=ScrollList.containerStyles>
+        <div>
           <MTypography variant=`Body2>
             (
               {js|

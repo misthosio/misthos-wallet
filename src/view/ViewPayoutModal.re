@@ -13,9 +13,6 @@ module Styles = {
       display(`flex),
       justifyContent(spaceBetween),
       alignItems(`baseline),
-      backgroundColor(Colors.white),
-      position(sticky),
-      bottom(px(0)),
     ]);
   let noBorder = style([borderColor(`transparent)]);
 };
@@ -83,7 +80,7 @@ let make =
     <Grid
       title1=("Payout Details" |> text)
       area3={
-        <div className=ScrollList.containerStyles>
+        <div>
           <MTypography variant=`Body2>
             (
               switch (date) {
@@ -124,22 +121,22 @@ let make =
                 </TableBody>
               </Table>
             )
-            MaterialUi.(
-              <div className=Styles.total>
-                <Typography variant=`Body2>
-                  ("TOTAL PAYOUT" |> text)
-                </Typography>
-                <MTypography className=Styles.total variant=`Subheading>
-                  (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
-                </MTypography>
-              </div>
-            )
           </ScrollList>
+          MaterialUi.(
+            <div className=Styles.total>
+              <Typography variant=`Body2>
+                ("TOTAL PAYOUT" |> text)
+              </Typography>
+              <MTypography className=Styles.total variant=`Subheading>
+                (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
+              </MTypography>
+            </div>
+          )
           transactionId
         </div>
       }
       area4={
-        <div className=ScrollList.containerStyles>
+        <div>
           <Voters voters />
           <ProcessApprovalButtons
             endorseText="Endorse Payout"

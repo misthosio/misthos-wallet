@@ -23,16 +23,11 @@ module Styles = {
   let grid =
     style([
       width(`percent(100.0)),
-      height(`calc((`sub, `vh(100.0), `px(64)))),
+      height(`calc((`sub, `percent(100.0), `px(64)))),
       margin(px(0)),
-      paddingBottom(px(Theme.space(8))),
+      overflowY(auto),
     ]);
   let drawer = style([width(`px(440)), flex(1)]);
-  let modalContent =
-    style([
-      height(`calc((`sub, `percent(100.0), `px(64)))),
-      paddingBottom(px(Theme.space(8))),
-    ]);
   let modal =
     style([
       media(
@@ -76,7 +71,7 @@ let make = (~drawer, ~modal, children) => {
                        Icons.close
                      </IconButton>
                    </Toolbar>
-                   <div className=Styles.modalContent> modal </div>
+                   modal
                  </Paper>,
                  ~props={"id": "modal"},
                  [||],

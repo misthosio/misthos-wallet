@@ -140,7 +140,7 @@ let make = (~viewData: ViewData.t, _children) => {
         </div>
       }
       area3={
-        <div className=ScrollList.containerStyles>
+        <div>
           (
             switch (viewData.readOnly) {
             | true =>
@@ -165,7 +165,7 @@ let make = (~viewData: ViewData.t, _children) => {
         </div>
       }
       area4=MaterialUi.(
-              <div className=ScrollList.containerStyles>
+              <div>
                 <ScrollList>
                   <List disablePadding=true> payouts </List>
                   <List disablePadding=true> transactions </List>
