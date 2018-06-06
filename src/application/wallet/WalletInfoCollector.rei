@@ -30,3 +30,4 @@ let nonReservedOldInputs: (accountIdx, userId, t) => Network.inputSet;
 let unusedInputs: t => Network.inputSet;
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
+let fakeChangeAddress: (accountIdx, userId, t) => Address.t;

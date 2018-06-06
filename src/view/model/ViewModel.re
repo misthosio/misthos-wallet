@@ -100,7 +100,7 @@ module CreatePayoutView = {
          );
     let changeAddress =
       walletInfoCollector
-      |> WalletInfoCollector.nextChangeAddress(
+      |> WalletInfoCollector.fakeChangeAddress(
            AccountIndex.default,
            localUser,
          );

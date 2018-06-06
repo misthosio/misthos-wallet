@@ -99,6 +99,25 @@ let nextChangeAddress = (accountIdx, userId, collector) => {
   Address.find(nextChangeCoordinates, collector.keyChains);
 };
 
+let fakeChangeAddress = (accountIdx, userId, collector) => {
+  let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
+  let accountKeyChain =
+    collector.keyChains
+    |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
+  let coordinates =
+    collector.exposedCoordinates |> Coordinates.allForAccount(accountIdx);
+  let nextChangeCoordinates =
+    Coordinates.nextInternal(userId, coordinates, accountKeyChain);
+  {
+    nCoSigners: accountKeyChain.nCoSigners,
+    nPubKeys: accountKeyChain.custodianKeyChains |> List.length,
+    coordinates: nextChangeCoordinates,
+    witnessScript: "",
+    redeemScript: "",
+    displayAddress: Network.exampleOfLongestAddress(collector.network),
+  };
+};
+
 let make = () => {
   network: Regtest,
   unused: Network.inputSet(),

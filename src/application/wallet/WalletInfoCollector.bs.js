@@ -82,6 +82,21 @@ function nextChangeAddress(accountIdx, userId, collector) {
   return Address.find(nextChangeCoordinates, collector[/* keyChains */3]);
 }
 
+function fakeChangeAddress(accountIdx, userId, collector) {
+  var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
+  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, collector[/* keyChains */3]);
+  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(collector[/* exposedCoordinates */6]);
+  var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
+  return /* record */[
+          /* nCoSigners */accountKeyChain[/* nCoSigners */2],
+          /* nPubKeys */Belt_List.length(accountKeyChain[/* custodianKeyChains */3]),
+          /* coordinates */nextChangeCoordinates,
+          /* witnessScript */"",
+          /* redeemScript */"",
+          /* displayAddress */Network.exampleOfLongestAddress(collector[/* network */0])
+        ];
+}
+
 function make() {
   return /* record */[
           /* network : Regtest */0,
@@ -297,4 +312,5 @@ exports.currentKeyChain = currentKeyChain;
 exports.nonReservedOldInputs = nonReservedOldInputs;
 exports.unusedInputs = unusedInputs;
 exports.nextChangeAddress = nextChangeAddress;
+exports.fakeChangeAddress = fakeChangeAddress;
 /* BTC Not a pure module */

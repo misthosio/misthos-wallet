@@ -307,6 +307,17 @@ function incomeAddress() {
   return testnetIncomeAddress;
 }
 
+function exampleOfLongestAddress(param) {
+  switch (param) {
+    case 0 : 
+    case 1 : 
+        return "2NC7VRQr4WgEQ5ZkJoHhqmVTH8axr2FcowJ";
+    case 2 : 
+        return testnetIncomeAddress;
+    
+  }
+}
+
 exports.encode = encode;
 exports.decode = decode;
 exports.TxInputCmp = TxInputCmp;
@@ -324,4 +335,5 @@ exports.broadcastTransaction = broadcastTransaction$3;
 exports.bitcoinNetwork = bitcoinNetwork;
 exports.testnetIncomeAddress = testnetIncomeAddress;
 exports.incomeAddress = incomeAddress;
+exports.exampleOfLongestAddress = exampleOfLongestAddress;
 /* TxInputCmp Not a pure module */
