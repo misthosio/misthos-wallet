@@ -9,7 +9,7 @@
     "bip39": "2.5.0",
     "bitcoinjs-lib": "3.3.2",
     "blockstack": "17.2.0",
-    "bs-css": "6.7.0",
+    "bs-css": "7.0.1",
     "bs-fetch": "0.3.0",
     "bs-json": "1.0.1",
     "bs-webapi": "0.9.1",
