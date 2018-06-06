@@ -313,7 +313,7 @@ function exampleOfLongestAddress(param) {
     case 1 : 
         return "2NC7VRQr4WgEQ5ZkJoHhqmVTH8axr2FcowJ";
     case 2 : 
-        return testnetIncomeAddress;
+        return "BAD";
     
   }
 }
