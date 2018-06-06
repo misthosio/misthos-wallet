@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var $$String = require("bs-platform/lib/js/string.js");
@@ -29,6 +30,66 @@ var avatar = Css.style(/* :: */[
       ]
     ]);
 
+var primary = Css.style(/* :: */[
+      Css.fontFamily(Theme.oswald),
+      /* :: */[
+        Css.fontSize(Css.px(18)),
+        /* :: */[
+          Css.fontWeight(600),
+          /* :: */[
+            Css.unsafe("letterSpacing", "0.7px"),
+            /* :: */[
+              Css.textDecoration(Css.underline),
+              /* :: */[
+                Css.textTransform(Css.uppercase),
+                /* :: */[
+                  Css.whiteSpace(Css.nowrap),
+                  /* :: */[
+                    Css.overflow(Css.hidden),
+                    /* :: */[
+                      Css.textOverflow(Css.ellipsis),
+                      /* [] */0
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var secondary = Css.style(/* :: */[
+      Css.fontFamily(Theme.sourceSansPro),
+      /* :: */[
+        Css.fontSize(Css.px(16)),
+        /* :: */[
+          Css.fontWeight(300),
+          /* :: */[
+            Css.unsafe("letterSpacing", "0.5px"),
+            /* :: */[
+              Css.color(Css.rgba(0, 0, 0, 0.87)),
+              /* [] */0
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+function secondaryAction(status) {
+  if (status) {
+    return Css.style(/* :: */[
+                Css.paddingRight(Css.px(Theme.space(12))),
+                /* [] */0
+              ]);
+  } else {
+    return Css.style(/* :: */[
+                Css.paddingRight(Css.px(Theme.space(4))),
+                /* [] */0
+              ]);
+  }
+}
+
 var iconText = Css.style(/* :: */[
       Css.fontFamily(Theme.sourceSansPro),
       /* :: */[
@@ -46,6 +107,9 @@ var iconText = Css.style(/* :: */[
 var Styles = /* module */[
   /* lenght */lenght,
   /* avatar */avatar,
+  /* primary */primary,
+  /* secondary */secondary,
+  /* secondaryAction */secondaryAction,
   /* iconText */iconText
 ];
 
@@ -112,7 +176,7 @@ function avatar$1(letter) {
                 }, ViewCommon.text($$String.uppercase($$String.make(1, letter)))));
 }
 
-function make(partnerId, name, button, onClick, _) {
+function make(partnerId, name, button, status, onClick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -132,10 +196,21 @@ function make(partnerId, name, button, onClick, _) {
                   ViewCommon.text(userId),
                   /* None */0
                 ];
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* array */[
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
+                                /* SecondaryAction */Block.__(9, [secondaryAction(status)]),
+                                /* [] */0
+                              ]], /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[avatar$1(Caml_string.get(userId, 0))])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[match[0]], match[1], /* None */0, /* None */0, /* array */[])),
-                              button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : null
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[match[0]], match[1], /* Some */[/* :: */[
+                                          /* Primary */Block.__(3, [primary]),
+                                          /* :: */[
+                                            /* Secondary */Block.__(4, [secondary]),
+                                            /* [] */0
+                                          ]
+                                        ]], /* None */0, /* array */[])),
+                              button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : (
+                                  status ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[status[0]])) : null
+                                )
                             ]));
             }),
           /* initialState */component[/* initialState */10],

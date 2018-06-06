@@ -124,7 +124,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                           Caml_obj.caml_equal(inputs[/* removePartnerId */1], /* Some */[partner[/* userId */0]])
                                                         ]], /* None */0, /* Some */[/* Primary */-791844958], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (_, _$1) {
                                                             return Curry._1(send, /* SelectRemovePartner */Block.__(1, [partner[/* userId */0]]));
-                                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))], /* Some */[(function () {
+                                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))], /* None */0, /* Some */[(function () {
                                                   return Curry._1(send, /* SelectRemovePartner */Block.__(1, [partner[/* userId */0]]));
                                                 })], /* array */[]))];
                           } else {

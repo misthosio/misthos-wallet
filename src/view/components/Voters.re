@@ -18,7 +18,7 @@ let make = (~voters: list(ProcessCollector.voter), _children) => {
                  };
                <Partner
                  partnerId=userId
-                 button={<StatusChip label status />}
+                 status={<StatusChip label status />}
                />;
              }),
         ),
