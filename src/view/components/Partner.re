@@ -13,6 +13,31 @@ module Styles = {
       width(px(lenght)),
       height(px(lenght)),
     ]);
+  let primary =
+    style([
+      fontFamily(Theme.oswald),
+      fontSize(px(18)),
+      fontWeight(600),
+      unsafe("letterSpacing", "0.7px"),
+      textDecoration(underline),
+      textTransform(uppercase),
+      whiteSpace(nowrap),
+      overflow(hidden),
+      textOverflow(ellipsis),
+    ]);
+  let secondary =
+    style([
+      fontFamily(Theme.sourceSansPro),
+      fontSize(px(16)),
+      fontWeight(300),
+      unsafe("letterSpacing", "0.5px"),
+      color(rgba(0, 0, 0, 0.87)),
+    ]);
+  let secondaryAction = status =>
+    switch (status) {
+    | Some(_) => style([paddingRight(px(Theme.space(12)))])
+    | None => style([paddingRight(px(Theme.space(4)))])
+    };
   let iconText =
     style([
       fontFamily(Theme.sourceSansPro),
@@ -76,7 +101,8 @@ let avatar = (letter: char) =>
     </text>
   </svg>;
 
-let make = (~partnerId: userId, ~name=?, ~button=?, ~onClick=?, _children) => {
+let make =
+    (~partnerId: userId, ~name=?, ~button=?, ~status=?, ~onClick=?, _children) => {
   ...component,
   render: _self => {
     let userId = partnerId |> UserId.toString;
@@ -86,13 +112,22 @@ let make = (~partnerId: userId, ~name=?, ~button=?, ~onClick=?, _children) => {
       | None => (userId |> text, None)
       };
     MaterialUi.(
-      <ListItem disableGutters=true ?onClick>
+      <ListItem
+        classes=[SecondaryAction(Styles.secondaryAction(status))]
+        disableGutters=true
+        ?onClick>
         <Avatar className=Styles.avatar> (userId.[0] |> avatar) </Avatar>
-        <ListItemText primary ?secondary />
+        <ListItemText
+          classes=[Primary(Styles.primary), Secondary(Styles.secondary)]
+          primary
+          ?secondary
+        />
         (
-          switch (button) {
-          | None => ReasonReact.null
-          | Some(action) =>
+          switch (button, status) {
+          | (None, None) => ReasonReact.null
+          | (Some(action), _) =>
+            <ListItemSecondaryAction> action </ListItemSecondaryAction>
+          | (_, Some(action)) =>
             <ListItemSecondaryAction> action </ListItemSecondaryAction>
           }
         )
