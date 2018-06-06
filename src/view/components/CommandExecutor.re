@@ -172,11 +172,11 @@ module Status = {
       | Success(success) =>
         switch (success) {
         | ProcessStarted(_) =>
-          "Your proposal has been submited" |> message(Success)
+          "Your proposal has been submitted" |> message(Success)
         | ProcessEndorsed(_) =>
-          "Your endorsement has been submited" |> message(Success)
+          "Your endorsement has been submitted" |> message(Success)
         | ProcessRejected(_) =>
-          "Your rejection has been submited" |> message(Success)
+          "Your rejection has been submitted" |> message(Success)
         }
       },
   };

@@ -186,11 +186,11 @@ function make$1(cmdStatus, action, _) {
                   case 2 : 
                       switch (cmdStatus[0].tag | 0) {
                         case 0 : 
-                            return message(/* Success */0, "Your proposal has been submited");
+                            return message(/* Success */0, "Your proposal has been submitted");
                         case 1 : 
-                            return message(/* Success */0, "Your endorsement has been submited");
+                            return message(/* Success */0, "Your endorsement has been submitted");
                         case 2 : 
-                            return message(/* Success */0, "Your rejection has been submited");
+                            return message(/* Success */0, "Your rejection has been submitted");
                         
                       }
                   
