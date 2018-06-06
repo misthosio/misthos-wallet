@@ -158,13 +158,16 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PartnerRemovalAccepted({processId, data: {id}}) =>
     let pubKey =
       state.currentPartnerPubKeys
-      |> List.find(((_key, pId)) => UserId.eq(pId, id))
-      |> fst;
+      |. Belt.List.getByU((. (_key, pId)) => UserId.eq(pId, id));
     {
       ...state,
       currentPartners: state.currentPartners |. Belt.Set.remove(id),
       currentPartnerPubKeys:
-        state.currentPartnerPubKeys |> List.remove_assoc(pubKey),
+        switch (pubKey) {
+        | Some((pubKey, _)) =>
+          state.currentPartnerPubKeys |> List.remove_assoc(pubKey)
+        | None => state.currentPartnerPubKeys
+        },
       partnerRemovals: [(id, processId), ...state.partnerRemovals],
     };
   | AccountCreationAccepted({data}) => {

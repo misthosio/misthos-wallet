@@ -8,6 +8,7 @@ var Utils = require("../utils/Utils.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var WalletTypes = require("./wallet/WalletTypes.bs.js");
@@ -137,12 +138,12 @@ function apply(param, state) {
     case 10 : 
         var match$5 = $$event[0];
         var id = match$5[/* data */2][/* id */0];
-        var pubKey = List.find((function (param) {
-                  return PrimitiveTypes.UserId[/* eq */5](param[1], id);
-                }), newrecord[/* currentPartnerPubKeys */8])[0];
+        var pubKey = Belt_List.getByU(newrecord[/* currentPartnerPubKeys */8], (function (param) {
+                return PrimitiveTypes.UserId[/* eq */5](param[1], id);
+              }));
         var newrecord$6 = Caml_array.caml_array_dup(newrecord);
         newrecord$6[/* currentPartners */7] = Belt_Set.remove(newrecord[/* currentPartners */7], id);
-        newrecord$6[/* currentPartnerPubKeys */8] = List.remove_assoc(pubKey, newrecord[/* currentPartnerPubKeys */8]);
+        newrecord$6[/* currentPartnerPubKeys */8] = pubKey ? List.remove_assoc(pubKey[0][0], newrecord[/* currentPartnerPubKeys */8]) : newrecord[/* currentPartnerPubKeys */8];
         newrecord$6[/* partnerRemovals */12] = /* :: */[
           /* tuple */[
             id,
