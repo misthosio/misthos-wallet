@@ -79,6 +79,7 @@ function fromViewModelState$2(param) {
   var network = WalletInfoCollector.network(walletInfoCollector);
   var allInputs = WalletInfoCollector.unusedInputs(walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
+  var changeAddress = WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),
           /* balance */balance,
@@ -104,7 +105,7 @@ function fromViewModelState$2(param) {
               return PayoutTransaction.max(allInputs, targetDestination, destinations, fee, network);
             }),
           /* summary */(function (destinations, fee) {
-              return PayoutTransaction.summary(network, PayoutTransaction.build(mandatoryInputs, allInputs, destinations, fee, WalletInfoCollector.nextChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector), network));
+              return PayoutTransaction.summary(network, PayoutTransaction.build(mandatoryInputs, allInputs, destinations, fee, changeAddress, network));
             })
         ];
 }

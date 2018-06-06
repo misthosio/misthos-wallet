@@ -98,6 +98,12 @@ module CreatePayoutView = {
            AccountIndex.default,
            localUser,
          );
+    let changeAddress =
+      walletInfoCollector
+      |> WalletInfoCollector.nextChangeAddress(
+           AccountIndex.default,
+           localUser,
+         );
     {
       ventureId,
       balance,
@@ -137,12 +143,7 @@ module CreatePayoutView = {
           ~allInputs,
           ~destinations,
           ~satsPerByte=fee,
-          ~changeAddress=
-            walletInfoCollector
-            |> WalletInfoCollector.nextChangeAddress(
-                 AccountIndex.default,
-                 localUser,
-               ),
+          ~changeAddress,
           ~network,
         )
         |> PayoutTransaction.summary(network),
