@@ -212,10 +212,14 @@ let addToMissingKeys = (ventureId, userId, f) => {
   let key = VentureId.toString(ventureId) ++ UserId.toString(userId);
   missingKeys := missingKeys^ |. Map.String.set(key, f);
 };
-let removeFromMissingKeys = (ventureId, userId) => {
+let removeVentureFromMissingKeys = ventureId => {
   open Belt;
-  let key = VentureId.toString(ventureId) ++ UserId.toString(userId);
-  missingKeys := missingKeys^ |. Map.String.remove(key);
+  let ventureStr = VentureId.toString(ventureId);
+  missingKeys :=
+    missingKeys^
+    |. Map.String.keepU((. key, _) =>
+         Js.String.startsWith(ventureStr, key) == false
+       );
 };
 
 Js.Global.setInterval(
@@ -267,20 +271,17 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
   Js.Promise.(
     keys
     |> List.fold_left(
-         (promise, (id, pubKey)) =>
+         (promise, (id, pubKey)) => {
+           removeVentureFromMissingKeys(ventureId);
            switch (pubKey) {
-           | Some(pubKey) =>
-             removeFromMissingKeys(ventureId, id);
-             promise |> persistLogAndSummary(pubKey);
+           | Some(pubKey) => promise |> persistLogAndSummary(pubKey)
            | None =>
              UserInfo.Public.(
                read(~blockstackId=id)
                |> then_(
                     fun
-                    | UserInfo.Public.Ok({appPubKey}) => {
-                        removeFromMissingKeys(ventureId, id);
-                        promise |> persistLogAndSummary(appPubKey);
-                      }
+                    | UserInfo.Public.Ok({appPubKey}) =>
+                      promise |> persistLogAndSummary(appPubKey)
                     | NotFound => {
                         addToMissingKeys(
                           ventureId,
@@ -291,7 +292,8 @@ let persist = (ventureId, eventLog, (keys, removals)) => {
                       },
                   )
              )
-           },
+           };
+         },
          resolve(),
        )
     |> then_(() => resolve(removals))

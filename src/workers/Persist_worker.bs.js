@@ -301,9 +301,11 @@ function addToMissingKeys(ventureId, userId, f) {
   return /* () */0;
 }
 
-function removeFromMissingKeys(ventureId, userId) {
-  var key = PrimitiveTypes.VentureId[/* toString */0](ventureId) + PrimitiveTypes.UserId[/* toString */0](userId);
-  missingKeys[0] = Belt_MapString.remove(missingKeys[0], key);
+function removeVentureFromMissingKeys(ventureId) {
+  var ventureStr = PrimitiveTypes.VentureId[/* toString */0](ventureId);
+  missingKeys[0] = Belt_MapString.keepU(missingKeys[0], (function (key, _) {
+          return key.startsWith(ventureStr) === false;
+        }));
   return /* () */0;
 }
 
@@ -344,13 +346,12 @@ function persist(ventureId, eventLog, param) {
   return List.fold_left((function (promise, param) {
                   var pubKey = param[1];
                   var id = param[0];
+                  removeVentureFromMissingKeys(ventureId);
                   if (pubKey) {
-                    removeFromMissingKeys(ventureId, id);
                     return persistLogAndSummary(pubKey[0], promise);
                   } else {
                     return UserInfo.Public[/* read */4](id).then((function (param) {
                                   if (param) {
-                                    removeFromMissingKeys(ventureId, id);
                                     return persistLogAndSummary(param[0][/* appPubKey */0], promise);
                                   } else {
                                     addToMissingKeys(ventureId, id, /* tuple */[
@@ -424,7 +425,7 @@ exports.persistSummaryString = persistSummaryString;
 exports.persistRemovals = persistRemovals;
 exports.missingKeys = missingKeys;
 exports.addToMissingKeys = addToMissingKeys;
-exports.removeFromMissingKeys = removeFromMissingKeys;
+exports.removeVentureFromMissingKeys = removeVentureFromMissingKeys;
 exports.persist = persist;
 exports.persistVenture = persistVenture;
 exports.handleMessage = handleMessage;
