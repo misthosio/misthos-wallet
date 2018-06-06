@@ -10,6 +10,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var React = require("react");
+var Colors = require("./Colors.bs.js");
 var MInput = require("./components/MInput.bs.js");
 var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
@@ -74,12 +75,24 @@ function spaceBetween(align) {
             ]);
 }
 
+var total = Css.style(/* :: */[
+      Css.backgroundColor(Colors.white),
+      /* :: */[
+        Css.position(Css.sticky),
+        /* :: */[
+          Css.bottom(Css.px(0)),
+          /* [] */0
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* maxButton */maxButton,
   /* maxWidth */maxWidth,
   /* buttonPadding */buttonPadding,
   /* noBorder */noBorder,
-  /* spaceBetween */spaceBetween
+  /* spaceBetween */spaceBetween,
+  /* total */total
 ];
 
 function updateState(state) {
@@ -229,7 +242,10 @@ function make(viewData, commands, cmdStatus, _) {
                                   return Curry._1(send, /* AddToSummary */1);
                                 })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Add another Recipient")])));
               }
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Create A Payout")], /* None */0, /* None */0, /* None */0, /* Some */[tmp], /* Some */[viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("Cannot create Payout without unreserved balance")]))) : React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Table.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableBody.make(/* None */0, /* None */0, /* array */[
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Create A Payout")], /* None */0, /* None */0, /* None */0, /* Some */[tmp], /* Some */[viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("Cannot create Payout without unreserved balance")]))) : React.createElement("div", {
+                                      className: ScrollList.containerStyles
+                                    }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
+                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Table.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableBody.make(/* None */0, /* None */0, /* array */[
                                                                   destinationList,
                                                                   ReasonReact.element(/* Some */["networkFee"], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("NETWORK FEE"))])),
@@ -239,9 +255,11 @@ function make(viewData, commands, cmdStatus, _) {
                                                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("b", undefined, ViewCommon.text("MISTHOS FEE"))])),
                                                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* misthosFee */3]) + " BTC")]))
                                                                           ]))
-                                                                ]))]))])), React.createElement("div", {
-                                          className: spaceBetween(/* baseline */287825029)
-                                        }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")]))), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose payout", (function () {
+                                                                ]))])),
+                                              React.createElement("div", {
+                                                    className: spaceBetween(/* baseline */287825029) + (" " + total)
+                                                  }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
+                                            ])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose payout", (function () {
                                                 return Curry._1(send, /* ProposePayout */2);
                                               }), /* Some */[(function () {
                                                   return Curry._1(send, /* Freeze */3);
