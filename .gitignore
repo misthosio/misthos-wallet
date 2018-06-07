@@ -1,7 +1,5 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
-.next
-
 # dependencies
 /node_modules
 
@@ -11,6 +9,10 @@
 # production
 /build
 /dist
+
+# next
+.next
+/web-dist
 
 # bucklescript
 /lib

@@ -3,7 +3,7 @@ web-dev:
 web-build:
 	./node_modules/.bin/next build
 web-export: web-build
-	./node_modules/.bin/next export --out web-dist
+	./node_modules/.bin/next export -o web-dist
 
 dev:
 	./node_modules/.bin/webpack-dev-server --mode development --open
