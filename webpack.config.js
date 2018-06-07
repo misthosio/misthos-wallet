@@ -62,7 +62,7 @@ const config = {
   plugins: [
     new HtmlWebPackPlugin({
       inject: true,
-      template: "./public/index.html",
+      template: "./static/index.html",
       minify: {
         removeComments: true,
         collapseWhitespace: true,
@@ -80,7 +80,7 @@ const config = {
     compress: true,
     clientLogLevel: 'none',
     port: 3000,
-    contentBase: './public',
+    contentBase: './static',
     publicPath: publicPath,
     historyApiFallback: {
       disableDotRule: true,
