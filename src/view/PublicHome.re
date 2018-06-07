@@ -1,4 +1,4 @@
-[@bs.module] external logo : string = "../assets/img/logo-big.svg";
+/* [@bs.module] external logo : string = "../assets/img/logo-big.svg"; */
 
 include ViewCommon;
 
@@ -11,7 +11,7 @@ module Styles = {
   let background =
     style([
       /* TODO switch to inline svg when refactoring layout */
-      backgroundImage(url(logo)),
+      /* backgroundImage(url(logo)), */
       backgroundRepeat(noRepeat),
       backgroundSize(`size((`px(584), `px(419)))),
     ]);

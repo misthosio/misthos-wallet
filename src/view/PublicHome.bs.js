@@ -8,7 +8,6 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Grid = require("@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js");
 var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
-var LogoBigSvg = require("../assets/img/logo-big.svg");
 
 var component = ReasonReact.statelessComponent("PublicHome");
 
@@ -29,25 +28,22 @@ var display4 = Css.style(/* :: */[
     ]);
 
 var background = Css.style(/* :: */[
-      Css.backgroundImage(Css.url(LogoBigSvg)),
+      Css.backgroundRepeat(Css.noRepeat),
       /* :: */[
-        Css.backgroundRepeat(Css.noRepeat),
-        /* :: */[
-          Css.backgroundSize(/* `size */[
-                -866934591,
-                /* tuple */[
-                  /* `px */[
-                    25096,
-                    584
-                  ],
-                  /* `px */[
-                    25096,
-                    419
-                  ]
+        Css.backgroundSize(/* `size */[
+              -866934591,
+              /* tuple */[
+                /* `px */[
+                  25096,
+                  584
+                ],
+                /* `px */[
+                  25096,
+                  419
                 ]
-              ]),
-          /* [] */0
-        ]
+              ]
+            ]),
+        /* [] */0
       ]
     ]);
 
