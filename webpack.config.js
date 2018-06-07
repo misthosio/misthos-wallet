@@ -6,7 +6,7 @@ const publicPath = '/';
 
 const config = {
   entry: {
-    main: './src/index.bs.js'
+    main: './src/entry.bs.js'
   },
   output: {
     filename: 'static/js/[name].[chunkhash:8].js',
