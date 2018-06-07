@@ -24,7 +24,7 @@ var MaterialUi_MuiThemeProvider = require("@jsiebern/bs-material-ui/src/Material
 
 var component = ReasonReact.reducerComponent("Layout");
 
-Css.$$global("html, body, #root", /* :: */[
+Css.$$global("html, body, #root, #__next", /* :: */[
       Css.height(/* `percent */[
             -119887163,
             100.0
