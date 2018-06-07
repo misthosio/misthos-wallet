@@ -10,6 +10,9 @@
       "subdirs": true
     },
     {
+      "dir": "pages"
+    },
+    {
       "dir": "__tests__",
       "subdirs": true,
       "type": "dev"
