@@ -25,10 +25,10 @@
     "@jsiebern/bs-material-ui",
     "reason-reroute",
     "bs-css",
-    "bs-webapi",
+    "bs-webapi"
   ],
   "bs-dev-dependencies": [
-     "@glennsl/bs-jest",
+     "@glennsl/bs-jest"
   ],
   "reason": {
     "react-jsx": 2
