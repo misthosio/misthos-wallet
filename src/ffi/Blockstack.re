@@ -11,15 +11,14 @@ type userData = {
 [@bs.module "blockstack"] [@bs.return nullable]
 external loadUserData : unit => option(userData) = "";
 
-type transitKey;
 [@bs.module "blockstack"]
-external generateAndStoreTransitKey : unit => transitKey = "";
+external generateAndStoreTransitKey : unit => string = "";
 
 type authRequest;
 [@bs.module "blockstack"]
 external makeAuthRequest :
   (
-    ~transitKey: transitKey,
+    ~transitKey: string,
     ~redirectURI: string,
     ~manifestURI: string,
     ~scopes: array(string),
@@ -77,6 +76,9 @@ external getUserAppFileUrl :
   (~path: string, ~username: string, ~appOrigin: string) =>
   Js.Promise.t(string) =
   "";
+
+[@bs.module "blockstack/lib/keys.js"]
+external makeECPrivateKey : unit => string = "";
 
 [@bs.module "blockstack/lib/encryption.js"]
 external encryptECIES : (~publicKey: string, string) => Js.Json.t = "";

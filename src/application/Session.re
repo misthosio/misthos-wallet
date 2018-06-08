@@ -60,7 +60,13 @@ let initMasterKey = (sessionData: Data.t) => {
   );
 };
 
-let completeLogIn = () =>
+let completeLogIn = () => {
+  Cookie.get("transitKey")
+  |> Utils.mapOption(key =>
+       LocalStorage.setItem("blockstack-transit-private-key", key)
+     )
+  |> ignore;
+  Cookie.delete("transitKey");
   Js.Promise.(
     Blockstack.handlePendingSignIn()
     |> then_(userData =>
@@ -72,6 +78,7 @@ let completeLogIn = () =>
          }
        )
   );
+};
 
 let getCurrentSession = () =>
   Js.Promise.(
@@ -98,12 +105,17 @@ let signOut = () => {
   NotLoggedIn;
 };
 
-let signIn = (~environment=Environment.default, ()) => {
+let signIn =
+    (
+      ~environment=Environment.default,
+      ~transitKey=Blockstack.generateAndStoreTransitKey(),
+      (),
+    ) => {
   signOut() |> ignore;
   Blockstack.(
     redirectToSignInWithAuthRequest(
       makeAuthRequest(
-        ~transitKey=generateAndStoreTransitKey(),
+        ~transitKey,
         ~redirectURI=environment.redirectURI(),
         ~manifestURI=environment.manifestURI(),
         ~scopes=[|"store_write", "publish_data"|],
