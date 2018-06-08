@@ -44,11 +44,6 @@
     "worker-loader": "2.0.0",
     "xmlhttprequest": "1.8.0"
   },
-  "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
-  },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{re,ml}"
