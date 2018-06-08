@@ -52,7 +52,14 @@ function getEnvironment() {
                   })
               ];
     default:
-      return Environment.$$default;
+      return /* record */[
+              /* redirectURI */Environment.$$default[/* redirectURI */0],
+              /* manifestURI */Environment.$$default[/* manifestURI */1],
+              /* appDomain */Environment.$$default[/* appDomain */2],
+              /* cookieDomain */(function () {
+                  return "misthos.io";
+                })
+            ];
   }
 }
 

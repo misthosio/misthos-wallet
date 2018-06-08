@@ -20,5 +20,5 @@ let getEnvironment = () =>
       appDomain: () => "https://testnet.misthos.io",
       cookieDomain: () => "misthos.io",
     }
-  | _ => Environment.default
+  | _ => {...Environment.default, cookieDomain: () => "misthos.io"}
   };
