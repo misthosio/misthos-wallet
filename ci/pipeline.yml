@@ -341,7 +341,7 @@ resources:
   type: git
   source:
     uri: git@github.com:misthosio/misthos.git
-    branch: add-website-to-pipeline
+    branch: master
     paths: [ci/tasks/*, Makefile]
     private_key: ((github-ssh-key.private_key))
 - name: docker-image-ci
