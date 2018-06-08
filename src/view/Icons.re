@@ -1,5 +1,13 @@
 include ViewCommon;
 
+let toBase64Encoding = icon =>
+  ReactDOMServerRe.renderToStaticMarkup(icon)
+  |> Node.Buffer.fromString
+  |> BufferExt.toStringWithEncoding("base64");
+
+let asDataUrl = icon =>
+  "data:image/svg+xml;base64," ++ toBase64Encoding(icon);
+
 let arrowRight =
   <svg
     xmlns="http://www.w3.org/2000/svg"

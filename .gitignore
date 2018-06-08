@@ -10,6 +10,10 @@
 /build
 /dist
 
+# next
+.next
+/web-dist
+
 # bucklescript
 /lib
 /types

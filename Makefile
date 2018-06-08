@@ -1,3 +1,10 @@
+web-dev:
+	./node_modules/.bin/next -p 3001
+web-build:
+	./node_modules/.bin/next build
+web-export: web-build
+	./node_modules/.bin/next export -o web-dist
+
 dev:
 	./node_modules/.bin/webpack-dev-server --mode development --open
 
