@@ -11,6 +11,26 @@ type userData = {
 [@bs.module "blockstack"] [@bs.return nullable]
 external loadUserData : unit => option(userData) = "";
 
+type transitKey;
+[@bs.module "blockstack"]
+external generateAndStoreTransitKey : unit => transitKey = "";
+
+type authRequest;
+[@bs.module "blockstack"]
+external makeAuthRequest :
+  (
+    ~transitKey: transitKey,
+    ~redirectURI: string,
+    ~manifestURI: string,
+    ~scopes: array(string),
+    ~appDomain: string
+  ) =>
+  authRequest =
+  "";
+
+[@bs.module "blockstack"]
+external redirectToSignInWithAuthRequest : authRequest => unit = "";
+
 [@bs.module "blockstack"]
 external redirectToSignIn :
   (~redirectURI: string, ~manifestURI: string, ~scopes: array(string)) => unit =

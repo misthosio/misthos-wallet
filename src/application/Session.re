@@ -98,12 +98,18 @@ let signOut = () => {
   NotLoggedIn;
 };
 
-let signIn = () => {
+let signIn = (~environment=Environment.default, ()) => {
   signOut() |> ignore;
-  Blockstack.redirectToSignIn(
-    ~redirectURI=Location.origin ++ "/",
-    ~manifestURI=Location.origin ++ "/manifest.json",
-    ~scopes=[|"store_write", "publish_data"|],
+  Blockstack.(
+    redirectToSignInWithAuthRequest(
+      makeAuthRequest(
+        ~transitKey=generateAndStoreTransitKey(),
+        ~redirectURI=environment.redirectURI(),
+        ~manifestURI=environment.manifestURI(),
+        ~scopes=[|"store_write", "publish_data"|],
+        ~appDomain=environment.appDomain(),
+      ),
+    )
   );
   LoginPending;
 };
