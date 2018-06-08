@@ -49,6 +49,11 @@ let mapOption = fn =>
   | Some(a) => Some(fn(a))
   | None => None;
 
+let andThen = fn =>
+  fun
+  | Some(a) => fn(a)
+  | None => None;
+
 let encodeFloat = Json.Encode.float;
 
 let decodeFloat = Json.Decode.float;

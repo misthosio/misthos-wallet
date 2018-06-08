@@ -12,6 +12,25 @@ type userData = {
 external loadUserData : unit => option(userData) = "";
 
 [@bs.module "blockstack"]
+external generateAndStoreTransitKey : unit => string = "";
+
+type authRequest;
+[@bs.module "blockstack"]
+external makeAuthRequest :
+  (
+    ~transitKey: string,
+    ~redirectURI: string,
+    ~manifestURI: string,
+    ~scopes: array(string),
+    ~appDomain: string
+  ) =>
+  authRequest =
+  "";
+
+[@bs.module "blockstack"]
+external redirectToSignInWithAuthRequest : authRequest => unit = "";
+
+[@bs.module "blockstack"]
 external redirectToSignIn :
   (~redirectURI: string, ~manifestURI: string, ~scopes: array(string)) => unit =
   "";
@@ -57,6 +76,9 @@ external getUserAppFileUrl :
   (~path: string, ~username: string, ~appOrigin: string) =>
   Js.Promise.t(string) =
   "";
+
+[@bs.module "blockstack/lib/keys.js"]
+external makeECPrivateKey : unit => string = "";
 
 [@bs.module "blockstack/lib/encryption.js"]
 external encryptECIES : (~publicKey: string, string) => Js.Json.t = "";

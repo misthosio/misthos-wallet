@@ -71,6 +71,14 @@ function mapOption(fn, param) {
   }
 }
 
+function andThen(fn, param) {
+  if (param) {
+    return Curry._1(fn, param[0]);
+  } else {
+    return /* None */0;
+  }
+}
+
 function encodeFloat(prim) {
   return prim;
 }
@@ -103,6 +111,7 @@ exports.hashCode = hashCode;
 exports.$great$great = $great$great;
 exports.printError = printError;
 exports.mapOption = mapOption;
+exports.andThen = andThen;
 exports.encodeFloat = encodeFloat;
 exports.decodeFloat = decodeFloat;
 exports.intersperse = intersperse;

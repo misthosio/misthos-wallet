@@ -43,7 +43,25 @@ let default = () =>
     </Head>
     <JssProvider>
       <Layout drawer=None modal=None>
-        <PublicHome onSignIn=(_ => ()) />
+        <PublicHome
+          onSignIn=(
+            _e => {
+              let transitKey = Blockstack.makeECPrivateKey();
+              Cookie.set(
+                ~secure="",
+                "transitKey",
+                transitKey,
+                Env.getCookieDomain(),
+              );
+              Session.signIn(
+                ~environment=Env.getEnvironment(),
+                ~transitKey,
+                (),
+              )
+              |> ignore;
+            }
+          )
+        />
       </Layout>
     </JssProvider>
   </div>;

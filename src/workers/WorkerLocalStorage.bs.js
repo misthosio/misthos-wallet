@@ -4,20 +4,7 @@
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
-
-function getItem(key) {
-  return Js_primitive.null_undefined_to_opt(localStorage.getItem(key));
-}
-
-function setItem(key, value) {
-  localStorage.setItem(key, value);
-  return /* () */0;
-}
-
-function removeItem(key) {
-  localStorage.removeItem(key);
-  return /* () */0;
-}
+var LocalStorage = require("../ffi/LocalStorage.bs.js");
 
 function encodeItems(items) {
   return Json_encode.object_(/* :: */[
@@ -80,28 +67,24 @@ function setBlockstackItems(param) {
   var blockstackGaiaHubConfig = param[/* blockstackGaiaHubConfig */1];
   var blockstack = param[/* blockstack */0];
   if (blockstack) {
-    setItem(blockstackKey, blockstack[0]);
+    LocalStorage.setItem(blockstackKey, blockstack[0]);
   } else {
-    localStorage.removeItem(blockstackKey);
+    LocalStorage.removeItem(blockstackKey);
   }
   if (blockstackGaiaHubConfig) {
-    setItem(gaiaHubKey, blockstackGaiaHubConfig[0]);
+    LocalStorage.setItem(gaiaHubKey, blockstackGaiaHubConfig[0]);
   } else {
-    localStorage.removeItem(gaiaHubKey);
+    LocalStorage.removeItem(gaiaHubKey);
   }
   if (blockstackTransitPrivateKey) {
-    return setItem(transitPrivKey, blockstackTransitPrivateKey[0]);
+    return LocalStorage.setItem(transitPrivKey, blockstackTransitPrivateKey[0]);
   } else {
-    localStorage.removeItem(transitPrivKey);
-    return /* () */0;
+    return LocalStorage.removeItem(transitPrivKey);
   }
 }
 
 var L = 0;
 
-exports.getItem = getItem;
-exports.setItem = setItem;
-exports.removeItem = removeItem;
 exports.encodeItems = encodeItems;
 exports.decodeItems = decodeItems;
 exports.L = L;
