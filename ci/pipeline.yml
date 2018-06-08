@@ -1,7 +1,7 @@
 ---
 groups:
 - name: misthos-web
-  jobs: [install-deps,test, bump-minor,bump-patch, build, deploy-staging, deploy-testnet]
+  jobs: [install-deps,test, bump-minor,bump-patch, build, web-build, deploy-staging, deploy-testnet]
 - name: pipeline-image
   jobs: [build-task-image]
 
@@ -76,7 +76,7 @@ jobs:
   - aggregate:
     - {get: repo, passed: [test]}
     - {get: misthos-code, trigger: true, passed: [test]}
-    - {get: build-version, params: { bump: final} }
+    - {get: build-version }
     - {get: pipeline-tasks}
   - task: build
     config:
@@ -95,6 +95,31 @@ jobs:
   - put: misthos-build
     params:
       file: build/misthos-build-*.tgz
+
+- name: web-build
+  plan:
+  - aggregate:
+    - {get: repo, passed: [test]}
+    - {get: misthos-code, trigger: true, passed: [test]}
+    - {get: build-version }
+    - {get: pipeline-tasks }
+  - task: web-build
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-code
+      - name: build-version
+      outputs:
+      - name: web-build
+      run:
+        path: pipeline-tasks/ci/tasks/web-build.sh
+  - put: misthos-web-build
+    params:
+      file: build/misthos-web-build-*.tgz
 
 - name: deploy-staging
   plan:
@@ -197,6 +222,12 @@ resources:
     bucket: artifact-cache
     json_key: ((gcp-service-account))
     regexp: misthos-build-v(.*).tgz
+- name: misthos-web-build
+  type: gcs-resource
+  source:
+    bucket: artifact-cache
+    json_key: ((gcp-service-account))
+    regexp: misthos-web-build-v(.*).tgz
 - name: deps-version
   type: semver
   source:
@@ -229,7 +260,7 @@ resources:
   type: git
   source:
     uri: git@github.com:misthosio/misthos.git
-    branch: master
+    branch: add-website-to-pipeline
     paths: [ci/tasks/*, Makefile]
     private_key: ((github-ssh-key.private_key))
 - name: docker-image-ci
