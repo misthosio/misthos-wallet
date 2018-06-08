@@ -144,6 +144,30 @@ jobs:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: staging-branch
     params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
+- name: deploy-web-staging
+  plan:
+  - aggregate:
+    - {get: misthos-web-build, trigger: true, passed: [build]}
+    - {get: repo, trigger: false, passed: [build]}
+    - {get: build-version, trigger: false, passed: [build], params: { bump: final}}
+    - {get: pipeline-tasks}
+  - task: deploy-web-staging
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-build
+      params:
+          GCP_SERVICE_ACCOUNT: ((gcp-service-account))
+          DEPLOY_ENVIRONMENT: staging
+          WEB: "true"
+      run:
+        path: pipeline-tasks/ci/tasks/deploy.sh
+  - put: staging-branch
+    params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
 
 - name: deploy-testnet
   plan:
