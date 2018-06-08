@@ -52,8 +52,8 @@ function getCookieDomain() {
   switch (match) {
     case "localhost" : 
         return "localhost";
-    case "web-staging" : 
-    case "web-testnet" : 
+    case "web-staging.misthos.io" : 
+    case "web-testnet.misthos.io" : 
         return "misthos.io";
     default:
       return window.location.hostname;

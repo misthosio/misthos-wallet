@@ -23,7 +23,7 @@ let getEnvironment = () =>
 let getCookieDomain = () =>
   switch (Location.hostname) {
   | "localhost" => "localhost"
-  | "web-staging" => "misthos.io"
-  | "web-testnet" => "misthos.io"
+  | "web-staging.misthos.io" => "misthos.io"
+  | "web-testnet.misthos.io" => "misthos.io"
   | _ => Location.hostname
   };
