@@ -45,11 +45,11 @@ function initMasterKey(sessionData) {
               }));
 }
 
-function completeLogIn() {
+function completeLogIn(environment) {
   Utils.mapOption((function (key) {
           return LocalStorage.setItem("blockstack-transit-private-key", key);
         }), Cookie.get("transitKey"));
-  Cookie.$$delete("transitKey");
+  Cookie.$$delete("transitKey", Curry._1(environment[/* cookieDomain */3], /* () */0));
   return Blockstack.handlePendingSignIn().then((function (userData) {
                 var match = fromUserData(userData);
                 if (match) {
@@ -62,7 +62,8 @@ function completeLogIn() {
               }));
 }
 
-function getCurrentSession() {
+function getCurrentSession($staropt$star, _) {
+  var environment = $staropt$star ? $staropt$star[0] : Environment.$$default;
   if (Blockstack.isUserSignedIn()) {
     var match = Blockstack.loadUserData();
     if (match == null) {
@@ -78,7 +79,7 @@ function getCurrentSession() {
       }
     }
   } else if (Blockstack.isSignInPending()) {
-    return completeLogIn(/* () */0);
+    return completeLogIn(environment);
   } else {
     return Promise.resolve(/* NotLoggedIn */2);
   }
@@ -93,6 +94,7 @@ function signIn($staropt$star, $staropt$star$1, _) {
   var environment = $staropt$star ? $staropt$star[0] : Environment.$$default;
   var transitKey = $staropt$star$1 ? $staropt$star$1[0] : Blockstack.generateAndStoreTransitKey();
   Blockstack.signUserOut();
+  Cookie.set("transitKey", transitKey, Curry._1(environment[/* cookieDomain */3], /* () */0));
   Blockstack.redirectToSignInWithAuthRequest(Blockstack.makeAuthRequest(transitKey, Curry._1(environment[/* redirectURI */0], /* () */0), Curry._1(environment[/* manifestURI */1], /* () */0), /* array */[
             "store_write",
             "publish_data"

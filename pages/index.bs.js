@@ -3,7 +3,6 @@
 
 var Env = require("../src/web/Env.bs.js");
 var React = require("react");
-var Cookie = require("../src/ffi/Cookie.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
 var Session = require("../src/application/Session.bs.js");
 var Head = require("next/head");
@@ -73,7 +72,6 @@ function $$default() {
               id: "root"
             }, ReasonReact.element(/* None */0, /* None */0, ReasonReact.wrapJsForReason(Head.default, /* None */0, children)), ReasonReact.element(/* None */0, /* None */0, JssProvider.make(/* array */[ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, PublicHome.make((function () {
                                             var transitKey = KeysJs.makeECPrivateKey();
-                                            Cookie.set("transitKey", transitKey, Env.getCookieDomain(/* () */0));
                                             Session.signIn(/* Some */[Env.getEnvironment(/* () */0)], /* Some */[transitKey], /* () */0);
                                             return /* () */0;
                                           }), /* array */[]))]))])));

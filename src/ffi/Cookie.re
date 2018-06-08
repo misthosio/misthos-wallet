@@ -15,5 +15,8 @@ let get = key =>
        Js.Re.captures(result)[2] |> Js.Nullable.toOption
      );
 
-let delete = key =>
-  setCookie(doc, key ++ "=;expires=Thu, 01 Jan 1970 00:00:01 GMT");
+let delete = (key, domain) =>
+  setCookie(
+    doc,
+    key ++ "=;domain=" ++ domain ++ ";expires=Thu, 01 Jan 1970 00:00:01 GMT",
+  );

@@ -16,6 +16,9 @@ function getEnvironment() {
                   }),
                 /* appDomain */(function () {
                     return "http://localhost:3000";
+                  }),
+                /* cookieDomain */(function () {
+                    return "localhost";
                   })
               ];
     case "web-staging.misthos.io" : 
@@ -28,6 +31,9 @@ function getEnvironment() {
                   }),
                 /* appDomain */(function () {
                     return "https://staging.misthos.io";
+                  }),
+                /* cookieDomain */(function () {
+                    return "misthos.io";
                   })
               ];
     case "web-testnet.misthos.io" : 
@@ -40,6 +46,9 @@ function getEnvironment() {
                   }),
                 /* appDomain */(function () {
                     return "https://testnet.misthos.io";
+                  }),
+                /* cookieDomain */(function () {
+                    return "misthos.io";
                   })
               ];
     default:
@@ -47,19 +56,5 @@ function getEnvironment() {
   }
 }
 
-function getCookieDomain() {
-  var match = window.location.hostname;
-  switch (match) {
-    case "localhost" : 
-        return "localhost";
-    case "web-staging.misthos.io" : 
-    case "web-testnet.misthos.io" : 
-        return "misthos.io";
-    default:
-      return window.location.hostname;
-  }
-}
-
 exports.getEnvironment = getEnvironment;
-exports.getCookieDomain = getCookieDomain;
 /* No side effect */

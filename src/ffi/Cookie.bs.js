@@ -16,8 +16,8 @@ function get(key) {
               }), Js_primitive.null_to_opt(new RegExp("(^| )" + (key + "=([^;]+)")).exec(document.cookie)));
 }
 
-function $$delete(key) {
-  document.cookie = key + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT";
+function $$delete(key, domain) {
+  document.cookie = key + ("=;domain=" + (domain + ";expires=Thu, 01 Jan 1970 00:00:01 GMT"));
   return /* () */0;
 }
 

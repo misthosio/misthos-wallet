@@ -369,7 +369,7 @@ function persist(ventureId, eventLog, param) {
 
 function persistVenture(ventureId) {
   logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  return Session.getCurrentSession(/* () */0).then((function (param) {
+  return Session.getCurrentSession(/* None */0, /* () */0).then((function (param) {
                 if (typeof param === "number") {
                   return Promise.resolve(/* () */0);
                 } else {

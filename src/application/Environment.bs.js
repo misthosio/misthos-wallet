@@ -14,10 +14,15 @@ function default_002() {
   return window.location.origin;
 }
 
+function default_003() {
+  return window.location.hostname;
+}
+
 var $$default = /* record */[
   default_000,
   default_001,
-  default_002
+  default_002,
+  default_003
 ];
 
 exports.$$default = $$default;

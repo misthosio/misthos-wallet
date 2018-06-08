@@ -263,7 +263,7 @@ function withVenture($staropt$star, ventureAction, f, correlationId, param) {
 function updateSession(items, correlationId, state) {
   logMessage("Handling 'UpdateSession'");
   WorkerLocalStorage.setBlockstackItems(items);
-  var sessionThread = Session.getCurrentSession(/* () */0).then((function (param) {
+  var sessionThread = Session.getCurrentSession(/* None */0, /* () */0).then((function (param) {
           if (typeof param === "number") {
             return Promise.resolve(/* None */0);
           } else {

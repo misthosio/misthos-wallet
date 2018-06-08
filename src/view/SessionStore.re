@@ -12,7 +12,7 @@ let make = children => {
   initialState: () => {session: Session.Unknown},
   didMount: ({send}) =>
     Js.Promise.(
-      Session.getCurrentSession()
+      Session.getCurrentSession(~environment=Env.getEnvironment(), ())
       |> then_(session => send(UpdateSession(session)) |> resolve)
       |> ignore
     ),
