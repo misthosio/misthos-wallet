@@ -90,9 +90,8 @@ function signOut() {
   return /* NotLoggedIn */2;
 }
 
-function signIn($staropt$star, $staropt$star$1, _) {
-  var environment = $staropt$star ? $staropt$star[0] : Environment.$$default;
-  var transitKey = $staropt$star$1 ? $staropt$star$1[0] : Blockstack.generateAndStoreTransitKey();
+function signIn($staropt$star, environment, _) {
+  var transitKey = $staropt$star ? $staropt$star[0] : Blockstack.generateAndStoreTransitKey();
   Blockstack.signUserOut();
   Cookie.set("transitKey", transitKey, Curry._1(environment[/* cookieDomain */3], /* () */0));
   Blockstack.redirectToSignInWithAuthRequest(Blockstack.makeAuthRequest(transitKey, Curry._1(environment[/* redirectURI */0], /* () */0), Curry._1(environment[/* manifestURI */1], /* () */0), /* array */[

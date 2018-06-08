@@ -107,8 +107,8 @@ let signOut = () => {
 
 let signIn =
     (
-      ~environment=Environment.default,
       ~transitKey=Blockstack.generateAndStoreTransitKey(),
+      ~environment: Environment.t,
       (),
     ) => {
   signOut() |> ignore;

@@ -18,5 +18,5 @@ let get = key =>
 let delete = (key, domain) =>
   setCookie(
     doc,
-    key ++ "=;domain=" ++ domain ++ ";expires=Thu, 01 Jan 1970 00:00:01 GMT",
+    key ++ "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=" ++ domain,
   );

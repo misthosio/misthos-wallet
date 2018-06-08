@@ -19,7 +19,10 @@ let make = children => {
   reducer: (action, _state) =>
     switch (action) {
     | UpdateSession(session) => ReasonReact.Update({session: session})
-    | SignIn => ReasonReact.Update({session: Session.signIn()})
+    | SignIn =>
+      ReasonReact.Update({
+        session: Session.signIn(~environment=Env.getEnvironment(), ()),
+      })
     | SignOut => ReasonReact.Update({session: Session.signOut()})
     },
   render: ({state, send}) =>

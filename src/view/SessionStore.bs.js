@@ -38,7 +38,7 @@ function make(children) {
                 if (action !== 0) {
                   return /* Update */Block.__(0, [/* record */[/* session */Session.signOut(/* () */0)]]);
                 } else {
-                  return /* Update */Block.__(0, [/* record */[/* session */Session.signIn(/* None */0, /* None */0, /* () */0)]]);
+                  return /* Update */Block.__(0, [/* record */[/* session */Session.signIn(/* None */0, Env.getEnvironment(/* () */0), /* () */0)]]);
                 }
               } else {
                 return /* Update */Block.__(0, [/* record */[/* session */action[0]]]);
