@@ -1,8 +1,28 @@
 include ViewCommon;
 
+[@bs.module "glamor"] external cssUnsafe : Js.t({..}) => string = "css";
+
 module Styles = {
   open Css;
-  let view =
+
+  let customScrollBar =
+    cssUnsafe({
+      "::-webkit-scrollbar-track": {
+        "width": "10px",
+        "borderLeft": "1px solid white",
+        "borderRight": "1px solid white",
+        "backgroundColor": "#000",
+      },
+      "::-webkit-scrollbar": {
+        "width": "3px",
+        "backgroundColor": "#fff",
+      },
+      "::-webkit-scrollbar-thumb": {
+        "backgroundColor": "#000",
+      },
+    });
+
+  let scrollContainer =
     style([
       position(relative),
       overflow(hidden),
@@ -11,7 +31,6 @@ module Styles = {
       minHeight(`percent(100.0)),
       maxHeight(`percent(100.0)),
     ]);
-  let flexContainer = style([flex(1), minHeight(px(0))]);
 };
 
 let containerStyles =
@@ -23,20 +42,16 @@ let containerStyles =
     ])
   );
 
-module CustomScrollbar = {
-  [@bs.module "react-custom-scrollbars"]
-  external reactClass : ReasonReact.reactClass = "default";
-
-  let make = children =>
-    ReasonReact.wrapJsForReason(~reactClass, ~props={}, children);
-};
-
 let component = ReasonReact.statelessComponent("ScrollList");
 
 let make = children => {
   ...component,
   render: _self =>
-    <div className=Styles.flexContainer>
-      <CustomScrollbar> children </CustomScrollbar>
-    </div>,
+    ReasonReact.createDomElement(
+      "div",
+      ~props={
+        "className": Styles.scrollContainer ++ " " ++ Styles.customScrollBar,
+      },
+      children,
+    ),
 };
