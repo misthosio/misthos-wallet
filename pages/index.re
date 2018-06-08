@@ -47,12 +47,7 @@ let default = () =>
           onSignIn=(
             _e => {
               let transitKey = Blockstack.makeECPrivateKey();
-              Cookie.set(
-                ~secure="",
-                "transitKey",
-                transitKey,
-                Env.getCookieDomain(),
-              );
+              Cookie.set("transitKey", transitKey, Env.getCookieDomain());
               Session.signIn(
                 ~environment=Env.getEnvironment(),
                 ~transitKey,
