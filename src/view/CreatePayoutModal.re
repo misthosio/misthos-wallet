@@ -45,6 +45,12 @@ module Styles = {
       justifyContent(`spaceBetween),
       alignItems(align),
     ]);
+  let total =
+    style([
+      backgroundColor(Colors.white),
+      position(sticky),
+      bottom(px(0)),
+    ]);
 };
 
 let updateState =
@@ -351,7 +357,7 @@ let make =
                   </MTypography>
                 </div>;
               } else {
-                <div>
+                <div className=ScrollList.containerStyles>
                   <MTypography variant=`Title>
                     (text("Summary"))
                   </MTypography>
@@ -395,15 +401,18 @@ let make =
                         </TableBody>
                       </Table>
                     )
+                    <div
+                      className=(
+                        Styles.spaceBetween(`baseline) ++ " " ++ Styles.total
+                      )>
+                      <MaterialUi.Typography variant=`Body2>
+                        ("TOTAL PAYOUT" |> text)
+                      </MaterialUi.Typography>
+                      <MTypography variant=`Subheading>
+                        (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
+                      </MTypography>
+                    </div>
                   </ScrollList>
-                  <div className=(Styles.spaceBetween(`baseline))>
-                    <MaterialUi.Typography variant=`Body2>
-                      ("TOTAL PAYOUT" |> text)
-                    </MaterialUi.Typography>
-                    <MTypography variant=`Subheading>
-                      (BTC.format(summary.spentWithFees) ++ " BTC" |> text)
-                    </MTypography>
-                  </div>
                   <ProposeButton
                     onPropose=(() => send(Freeze))
                     onSubmit=(() => send(ProposePayout))

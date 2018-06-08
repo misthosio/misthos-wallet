@@ -22,7 +22,7 @@ module Styles = {
           border(px(2), `solid, black),
           paddingLeft(px(25)),
           paddingRight(px(25)),
-          margin2(~v=px(Theme.space(5)), ~h=px(0)),
+          marginTop(px(Theme.space(5))),
         ]
       };
     style([baseRules, variantRules] |> List.flatten);

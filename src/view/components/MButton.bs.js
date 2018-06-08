@@ -27,7 +27,7 @@ function button(fullWidth, variant) {
           /* :: */[
             Css.paddingRight(Css.px(25)),
             /* :: */[
-              Css.margin2(Css.px(Theme.space(5)), Css.px(0)),
+              Css.marginTop(Css.px(Theme.space(5))),
               /* [] */0
             ]
           ]

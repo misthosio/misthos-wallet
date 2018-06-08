@@ -38,8 +38,9 @@ module Styles = {
         | V1 => "[begin] min-content [end] auto"
         },
       "width": "100%",
+      "height": "100%",
     });
-  let area = area => style([unsafe("gridArea", area)]);
+  let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
   let title =
     style([
       fontFamily(Theme.oswald),

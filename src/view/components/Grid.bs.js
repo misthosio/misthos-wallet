@@ -33,14 +33,18 @@ function grid(variant) {
               gridTemplateAreas: tmp,
               gridTemplateColumns: "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]",
               gridTemplateRows: variant >= 2 ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto",
-              width: "100%"
+              width: "100%",
+              height: "100%"
             });
 }
 
 function area(area$1) {
   return Css.style(/* :: */[
               Css.unsafe("gridArea", area$1),
-              /* [] */0
+              /* :: */[
+                Css.minHeight(Css.px(0)),
+                /* [] */0
+              ]
             ]);
 }
 
