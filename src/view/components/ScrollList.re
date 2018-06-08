@@ -8,16 +8,16 @@ module Styles = {
   let customScrollBar =
     cssUnsafe({
       "::-webkit-scrollbar-track": {
-        "width": "10px",
-        "borderLeft": "1px solid white",
+        "borderLeft": "9px solid white",
         "borderRight": "1px solid white",
         "backgroundColor": "#000",
       },
       "::-webkit-scrollbar": {
-        "width": "3px",
+        "width": "11px",
         "backgroundColor": "#fff",
       },
       "::-webkit-scrollbar-thumb": {
+        "borderLeft": "8px solid white",
         "backgroundColor": "#000",
       },
     });
