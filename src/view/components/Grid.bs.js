@@ -41,7 +41,10 @@ function grid(variant) {
 function area(area$1) {
   return Css.style(/* :: */[
               Css.unsafe("gridArea", area$1),
-              /* [] */0
+              /* :: */[
+                Css.minHeight(Css.px(0)),
+                /* [] */0
+              ]
             ]);
 }
 
