@@ -3,6 +3,15 @@
 
 var React = require("react");
 var ViewCommon = require("./ViewCommon.bs.js");
+var Server = require("react-dom/server");
+
+function toBase64Encoding(icon) {
+  return Buffer.from(Server.renderToStaticMarkup(icon)).toString("base64");
+}
+
+function asDataUrl(icon) {
+  return "data:image/svg+xml;base64," + toBase64Encoding(icon);
+}
 
 var arrowRight = React.createElement("svg", {
       height: "16",
@@ -249,6 +258,8 @@ var extractString = ViewCommon.extractString;
 
 exports.text = text;
 exports.extractString = extractString;
+exports.toBase64Encoding = toBase64Encoding;
+exports.asDataUrl = asDataUrl;
 exports.arrowRight = arrowRight;
 exports.arrowUpCircle = arrowUpCircle;
 exports.close = close;

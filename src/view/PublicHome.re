@@ -1,5 +1,3 @@
-/* [@bs.module] external logo : string = "../assets/img/logo-big.svg"; */
-
 include ViewCommon;
 
 let component = ReasonReact.statelessComponent("PublicHome");
@@ -10,8 +8,7 @@ module Styles = {
   let display4 = style([paddingBottom(`vw(1.5))]);
   let background =
     style([
-      /* TODO switch to inline svg when refactoring layout */
-      /* backgroundImage(url(logo)), */
+      backgroundImage(url(Icons.asDataUrl(Icons.logoBig))),
       backgroundRepeat(noRepeat),
       backgroundSize(`size((`px(584), `px(419)))),
     ]);

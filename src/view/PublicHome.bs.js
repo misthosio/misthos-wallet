@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Icons = require("./Icons.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -28,22 +29,25 @@ var display4 = Css.style(/* :: */[
     ]);
 
 var background = Css.style(/* :: */[
-      Css.backgroundRepeat(Css.noRepeat),
+      Css.backgroundImage(Css.url(Icons.asDataUrl(Icons.logoBig))),
       /* :: */[
-        Css.backgroundSize(/* `size */[
-              -866934591,
-              /* tuple */[
-                /* `px */[
-                  25096,
-                  584
-                ],
-                /* `px */[
-                  25096,
-                  419
+        Css.backgroundRepeat(Css.noRepeat),
+        /* :: */[
+          Css.backgroundSize(/* `size */[
+                -866934591,
+                /* tuple */[
+                  /* `px */[
+                    25096,
+                    584
+                  ],
+                  /* `px */[
+                    25096,
+                    419
+                  ]
                 ]
-              ]
-            ]),
-        /* [] */0
+              ]),
+          /* [] */0
+        ]
       ]
     ]);
 
