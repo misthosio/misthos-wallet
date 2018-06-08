@@ -119,7 +119,7 @@ jobs:
         path: pipeline-tasks/ci/tasks/web-build.sh
   - put: misthos-web-build
     params:
-      file: build/misthos-web-build-*.tgz
+      file: web-build/misthos-web-build-*.tgz
 
 - name: deploy-staging
   plan:
