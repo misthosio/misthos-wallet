@@ -1,7 +1,18 @@
 ---
 groups:
 - name: misthos-web
-  jobs: [install-deps,test, bump-minor,bump-patch, build, deploy-staging, deploy-testnet]
+  jobs:
+  - install-deps
+  - test
+  - bump-minor
+  - bump-patch
+  - build
+  - web-build
+  - deploy-staging
+  - deploy-web-staging
+  - trigger-testnet
+  - deploy-testnet
+  - deploy-web-testnet
 - name: pipeline-image
   jobs: [build-task-image]
 
@@ -76,7 +87,7 @@ jobs:
   - aggregate:
     - {get: repo, passed: [test]}
     - {get: misthos-code, trigger: true, passed: [test]}
-    - {get: build-version, params: { bump: final} }
+    - {get: build-version }
     - {get: pipeline-tasks}
   - task: build
     config:
@@ -95,6 +106,31 @@ jobs:
   - put: misthos-build
     params:
       file: build/misthos-build-*.tgz
+
+- name: web-build
+  plan:
+  - aggregate:
+    - {get: repo, passed: [test]}
+    - {get: misthos-code, trigger: true, passed: [test]}
+    - {get: build-version }
+    - {get: pipeline-tasks }
+  - task: web-build
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-code
+      - name: build-version
+      outputs:
+      - name: web-build
+      run:
+        path: pipeline-tasks/ci/tasks/web-build.sh
+  - put: misthos-web-build
+    params:
+      file: web-build/misthos-web-build-*.tgz
 
 - name: deploy-staging
   plan:
@@ -119,14 +155,47 @@ jobs:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: staging-branch
     params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
+- name: deploy-web-staging
+  plan:
+  - aggregate:
+    - {get: misthos-web-build, trigger: true, passed: [web-build]}
+    - {get: repo, trigger: false, passed: [web-build]}
+    - {get: build-version, trigger: false, passed: [web-build]}
+    - {get: pipeline-tasks}
+  - task: deploy-web-staging
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-web-build
+      params:
+          GCP_SERVICE_ACCOUNT: ((gcp-service-account))
+          DEPLOY_ENVIRONMENT: staging
+          WEB: "true"
+      run:
+        path: pipeline-tasks/ci/tasks/deploy.sh
+  - put: web-staging-branch
+    params: {repository: repo, force: true}
+
+- name: trigger-testnet
+  plan:
+  - aggregate:
+    - {get: misthos-build, trigger: false, passed: [deploy-staging]}
+    - {get: misthos-web-build, trigger: false, passed: [deploy-web-staging]}
+    - {get: build-version, trigger: false, passed: [deploy-staging, deploy-web-staging] }
+    - {get: repo, trigger: false, passed: [deploy-staging, deploy-web-staging]}
+    - {get: pipeline-tasks}
 
 - name: deploy-testnet
   plan:
   - aggregate:
-    - {get: misthos-build, trigger: false, passed: [deploy-staging]}
-    - {get: build-version, trigger: false, passed: [deploy-staging], params: { bump: final}}
-    - {get: repo, trigger: false, passed: [deploy-staging]}
-    - {get: pipeline-tasks}
+    - {get: misthos-build, trigger: true, passed: [trigger-testnet] }
+    - {get: build-version, trigger: false, passed: [trigger-testnet] }
+    - {get: repo, trigger: false, passed: [trigger-testnet] }
+    - {get: pipeline-tasks }
   - task: deploy-testnet
     config:
       platform: linux
@@ -143,6 +212,31 @@ jobs:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: testnet-branch
     params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
+
+- name: deploy-web-testnet
+  plan:
+  - aggregate:
+    - {get: misthos-web-build, trigger: true, passed: [trigger-testnet]}
+    - {get: repo, trigger: false, passed: [trigger-testnet]}
+    - {get: build-version, trigger: false, passed: [trigger-testnet]}
+    - {get: pipeline-tasks}
+  - task: deploy-web-testnet
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-web-build
+      params:
+          GCP_SERVICE_ACCOUNT: ((gcp-service-account))
+          DEPLOY_ENVIRONMENT: testnet
+          WEB: "true"
+      run:
+        path: pipeline-tasks/ci/tasks/deploy.sh
+  - put: web-testnet-branch
+    params: {repository: repo, force: true}
 
 - name: build-task-image
   serial: true
@@ -173,11 +267,23 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: staging
     private_key: ((github-ssh-key.private_key))
+- name: web-staging-branch
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: web-staging
+    private_key: ((github-ssh-key.private_key))
 - name: testnet-branch
   type: git
   source:
     uri: git@github.com:misthosio/misthos.git
     branch: testnet
+    private_key: ((github-ssh-key.private_key))
+- name: web-testnet-branch
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: web-testnet
     private_key: ((github-ssh-key.private_key))
 - name: bundled-deps
   type: gcs-resource
@@ -197,6 +303,12 @@ resources:
     bucket: artifact-cache
     json_key: ((gcp-service-account))
     regexp: misthos-build-v(.*).tgz
+- name: misthos-web-build
+  type: gcs-resource
+  source:
+    bucket: artifact-cache
+    json_key: ((gcp-service-account))
+    regexp: misthos-web-build-v(.*).tgz
 - name: deps-version
   type: semver
   source:
