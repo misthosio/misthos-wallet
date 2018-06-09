@@ -39,7 +39,7 @@ type loadResult =
   | CouldNotLoad(Js.Promise.error);
 
 let load:
-  (~persist: bool=?, Session.Data.t, ~ventureId: ventureId) =>
+  (~persist: bool=?, SessionData.t, ~ventureId: ventureId) =>
   Js.Promise.t(loadResult);
 
 type joinResult =
@@ -48,7 +48,7 @@ type joinResult =
   | CouldNotJoin(Js.Promise.error);
 
 let join:
-  (Session.Data.t, ~userId: userId, ~ventureId: ventureId) =>
+  (SessionData.t, ~userId: userId, ~ventureId: ventureId) =>
   Js.Promise.t(joinResult);
 
 let getId: t => ventureId;
@@ -57,7 +57,7 @@ let getEventLog: t => EventLog.t;
 
 let getSummary: t => EventLog.summary;
 
-let reconstruct: (Session.Data.t, EventLog.t) => (t, array(EventLog.item));
+let reconstruct: (SessionData.t, EventLog.t) => (t, array(EventLog.item));
 
 module Cmd: {
   module Create: {
@@ -65,7 +65,7 @@ module Cmd: {
       | Ok(Index.t, t)
       | CouldNotPersist(Js.Promise.error);
     let exec:
-      (Session.Data.t, ~name: string) => (ventureId, Js.Promise.t(result));
+      (SessionData.t, ~name: string) => (ventureId, Js.Promise.t(result));
   };
   module SynchronizeLogs: {
     type result =

@@ -2,7 +2,7 @@ open PrimitiveTypes;
 
 open Bitcoin;
 
-let userSession = (userId, keyPair) : Session.Data.t => {
+let userSession = (userId, keyPair) : SessionData.t => {
   let appPubKey = keyPair |> Utils.publicKeyFromKeyPair;
   let chainCode = appPubKey |. String.sub(0, 64) |> Utils.bufFromHex;
   {
@@ -51,7 +51,7 @@ let createVenture = user =>
     },
   );
 
-let encodeSessionData = (data: Session.Data.t) =>
+let encodeSessionData = (data: SessionData.t) =>
   Json.Encode.(
     object_([
       ("userId", UserId.encode(data.userId)),

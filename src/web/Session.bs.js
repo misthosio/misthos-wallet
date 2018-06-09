@@ -4,32 +4,13 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../utils/Utils.bs.js");
 var Cookie = require("../ffi/Cookie.bs.js");
-var Network = require("./wallet/Network.bs.js");
-var UserInfo = require("./UserInfo.bs.js");
+var UserInfo = require("../application/UserInfo.bs.js");
 var Blockstack = require("blockstack");
 var Environment = require("./Environment.bs.js");
+var SessionData = require("../application/SessionData.bs.js");
 var LocalStorage = require("../ffi/LocalStorage.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
-var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
-
-function fromUserData(userData) {
-  var match = userData.username;
-  if (match == null) {
-    return /* None */0;
-  } else {
-    var issuerKeyPair = Utils.keyPairFromPrivateKey(Network.bitcoinNetwork(/* Testnet */1), userData.appPrivateKey);
-    return /* Some */[/* record */[
-              /* userId */PrimitiveTypes.UserId[/* fromString */1](match),
-              /* appPrivateKey */userData.appPrivateKey,
-              /* issuerKeyPair */issuerKeyPair,
-              /* storagePrefix */UserInfo.storagePrefix(Utils.publicKeyFromKeyPair(issuerKeyPair)),
-              /* masterKeyChain */new BitcoinjsLib.HDNode(issuerKeyPair, Utils.bufFromHex("c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb")),
-              /* network : Testnet */1
-            ]];
-  }
-}
-
-var Data = /* module */[/* fromUserData */fromUserData];
+var KeysJs = require("blockstack/lib/keys.js");
 
 function initMasterKey(sessionData) {
   var appPubKey = Utils.publicKeyFromKeyPair(sessionData[/* issuerKeyPair */2]);
@@ -45,13 +26,14 @@ function initMasterKey(sessionData) {
               }));
 }
 
-function completeLogIn(environment) {
+function completeLogIn() {
+  var environment = Environment.get(/* () */0);
   Utils.mapOption((function (key) {
-          return LocalStorage.setItem("blockstack-transit-private-key", key);
+          LocalStorage.setItem("blockstack-transit-private-key", key);
+          return Cookie.$$delete("transitKey", Curry._1(environment[/* cookieDomain */3], /* () */0));
         }), Cookie.get("transitKey"));
-  Cookie.$$delete("transitKey", Curry._1(environment[/* cookieDomain */3], /* () */0));
   return Blockstack.handlePendingSignIn().then((function (userData) {
-                var match = fromUserData(userData);
+                var match = SessionData.fromUserData(userData);
                 if (match) {
                   return initMasterKey(match[0]).then((function (session) {
                                 return Promise.resolve(/* LoggedIn */[session]);
@@ -62,14 +44,13 @@ function completeLogIn(environment) {
               }));
 }
 
-function getCurrentSession($staropt$star, _) {
-  var environment = $staropt$star ? $staropt$star[0] : Environment.$$default;
+function getCurrentSession() {
   if (Blockstack.isUserSignedIn()) {
     var match = Blockstack.loadUserData();
     if (match == null) {
       return Promise.resolve(/* NotLoggedIn */2);
     } else {
-      var match$1 = fromUserData(match);
+      var match$1 = SessionData.fromUserData(match);
       if (match$1) {
         return initMasterKey(match$1[0]).then((function (session) {
                       return Promise.resolve(/* LoggedIn */[session]);
@@ -79,7 +60,7 @@ function getCurrentSession($staropt$star, _) {
       }
     }
   } else if (Blockstack.isSignInPending()) {
-    return completeLogIn(environment);
+    return completeLogIn(/* () */0);
   } else {
     return Promise.resolve(/* NotLoggedIn */2);
   }
@@ -90,9 +71,10 @@ function signOut() {
   return /* NotLoggedIn */2;
 }
 
-function signIn($staropt$star, environment, _) {
-  var transitKey = $staropt$star ? $staropt$star[0] : Blockstack.generateAndStoreTransitKey();
+function signIn() {
   Blockstack.signUserOut();
+  var transitKey = KeysJs.makeECPrivateKey();
+  var environment = Environment.get(/* () */0);
   Cookie.set("transitKey", transitKey, Curry._1(environment[/* cookieDomain */3], /* () */0));
   Blockstack.redirectToSignInWithAuthRequest(Blockstack.makeAuthRequest(transitKey, Curry._1(environment[/* redirectURI */0], /* () */0), Curry._1(environment[/* manifestURI */1], /* () */0), /* array */[
             "store_write",
@@ -101,7 +83,6 @@ function signIn($staropt$star, environment, _) {
   return /* LoginPending */1;
 }
 
-exports.Data = Data;
 exports.initMasterKey = initMasterKey;
 exports.completeLogIn = completeLogIn;
 exports.getCurrentSession = getCurrentSession;

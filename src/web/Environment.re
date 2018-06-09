@@ -1,6 +1,11 @@
-open Environment;
+type t = {
+  redirectURI: unit => string,
+  manifestURI: unit => string,
+  appDomain: unit => string,
+  cookieDomain: unit => string,
+};
 
-let getEnvironment = () =>
+let get = () =>
   switch (Location.hostname) {
   | "localhost" => {
       redirectURI: () => "http://localhost:3000/",
@@ -20,5 +25,10 @@ let getEnvironment = () =>
       appDomain: () => "https://testnet.misthos.io",
       cookieDomain: () => "misthos.io",
     }
-  | _ => {...Environment.default, cookieDomain: () => "misthos.io"}
+  | _ => {
+      redirectURI: () => Location.origin ++ "/",
+      manifestURI: () => Location.origin ++ "/manifest.json",
+      appDomain: () => Location.origin,
+      cookieDomain: () => "misthos.io",
+    }
   };

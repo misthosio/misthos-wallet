@@ -14,7 +14,7 @@ type state = {
 
 let make =
     (
-      {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
+      {userId, issuerKeyPair, masterKeyChain}: SessionData.t,
       {
         data: {partnerId: custodianId, accountIdx, partnerApprovalProcess},
         processId: custodianApprovalProcess,

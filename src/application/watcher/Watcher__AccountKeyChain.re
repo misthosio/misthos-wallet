@@ -16,7 +16,7 @@ type state = {
 
 let make =
     (
-      {userId: localUserId, issuerKeyPair}: Session.Data.t,
+      {userId: localUserId, issuerKeyPair}: SessionData.t,
       {data: {accountIdx}}: AccountCreation.Accepted.t,
       log,
     ) => {

@@ -41,7 +41,7 @@ let () = {
       let state = log |> constructState;
       expect(
         [user1, user2, user3]
-        |> List.map(({userId}: Session.Data.t) =>
+        |> List.map(({userId}: SessionData.t) =>
              state |> State.isPartner(userId)
            ),
       )
@@ -57,7 +57,7 @@ let () = {
       let state = log |> constructState;
       expect(
         [user1, user2, user3]
-        |> List.map(({userId}: Session.Data.t) =>
+        |> List.map(({userId}: SessionData.t) =>
              state |> State.isPartner(userId)
            ),
       )

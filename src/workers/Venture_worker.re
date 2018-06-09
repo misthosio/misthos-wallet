@@ -84,9 +84,7 @@ module Notify = {
 type state = {
   venturesThread:
     Js.Promise.t(
-      option(
-        (Session.Data.t, list((ventureId, Js.Promise.t(Venture.t)))),
-      ),
+      option((SessionData.t, list((ventureId, Js.Promise.t(Venture.t))))),
     ),
 };
 
@@ -279,9 +277,9 @@ module Handle = {
     Js.Promise.{
       venturesThread:
         all2((sessionThread, state.venturesThread))
-        |> then_(((session: option(Session.Data.t), venturesThread)) =>
+        |> then_(((session: option(SessionData.t), venturesThread)) =>
              switch (session, venturesThread) {
-             | (Some(data), Some((oldData: Session.Data.t, threads)))
+             | (Some(data), Some((oldData: SessionData.t, threads)))
                  when UserId.eq(data.userId, oldData.userId) =>
                resolve(Some((data, threads)))
              | (Some(data), _) =>

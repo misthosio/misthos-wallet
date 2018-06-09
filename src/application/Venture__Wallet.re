@@ -59,7 +59,7 @@ type preparePayoutResult =
 let preparePayoutTx =
     (
       ~eligibleWhenProposing,
-      {userId, masterKeyChain, network}: Session.Data.t,
+      {userId, masterKeyChain, network}: SessionData.t,
       accountIdx,
       destinations,
       satsPerByte,

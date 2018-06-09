@@ -17,7 +17,7 @@ module F = Fixtures;
 let constructState = log =>
   log |> L.reduce((s, {event}) => s |> Wallet.apply(event), Wallet.make());
 
-let testNextIncomeAddress = (user: Session.Data.t, address, wallet) => {
+let testNextIncomeAddress = (user: SessionData.t, address, wallet) => {
   let exposed =
     wallet
     |> Wallet.exposeNextIncomeAddress(user.userId, AccountIndex.default);
@@ -33,7 +33,7 @@ let testNextIncomeAddress = (user: Session.Data.t, address, wallet) => {
   wallet |> Wallet.apply(IncomeAddressExposed(exposed));
 };
 
-let collectNextTwoAddresses = (user: Session.Data.t, (wallet, log)) => {
+let collectNextTwoAddresses = (user: SessionData.t, (wallet, log)) => {
   let exposed1 =
     wallet
     |> Wallet.exposeNextIncomeAddress(user.userId, AccountIndex.default);
