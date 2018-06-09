@@ -4,7 +4,7 @@
 var Json = require("bs-json/src/Json.js");
 var List = require("bs-platform/lib/js/list.js");
 var Curry = require("bs-platform/lib/js/curry.js");
-var Session = require("../application/Session.bs.js");
+var Session = require("../web/Session.bs.js");
 var Venture = require("../application/Venture.bs.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
@@ -369,7 +369,7 @@ function persist(ventureId, eventLog, param) {
 
 function persistVenture(ventureId) {
   logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  return Session.getCurrentSession(/* None */0, /* () */0).then((function (param) {
+  return Session.getCurrentSession(/* () */0).then((function (param) {
                 if (typeof param === "number") {
                   return Promise.resolve(/* () */0);
                 } else {

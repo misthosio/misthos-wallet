@@ -43,19 +43,7 @@ let default = () =>
     </Head>
     <JssProvider>
       <Layout drawer=None modal=None>
-        <PublicHome
-          onSignIn=(
-            _e => {
-              let transitKey = Blockstack.makeECPrivateKey();
-              Session.signIn(
-                ~environment=Env.getEnvironment(),
-                ~transitKey,
-                (),
-              )
-              |> ignore;
-            }
-          )
-        />
+        <PublicHome onSignIn=(_e => Session.signIn() |> ignore) />
       </Layout>
     </JssProvider>
   </div>;

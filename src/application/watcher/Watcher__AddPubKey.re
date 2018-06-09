@@ -9,7 +9,7 @@ type state = {
 
 let make =
     (
-      {userId, issuerKeyPair}: Session.Data.t,
+      {userId, issuerKeyPair}: SessionData.t,
       {data: {id, pubKey}}: Partner.Accepted.t,
       log,
     ) => {

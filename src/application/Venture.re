@@ -15,7 +15,7 @@ exception InvalidEvent(Validation.result);
 exception NotPersistingNewEvents;
 
 type t = {
-  session: Session.Data.t,
+  session: SessionData.t,
   id: ventureId,
   log: EventLog.t,
   state: State.t,
@@ -157,7 +157,7 @@ type loadResult =
   | CouldNotLoad(Js.Promise.error);
 
 let load =
-    (~persist as shouldPersist=true, session: Session.Data.t, ~ventureId) => {
+    (~persist as shouldPersist=true, session: SessionData.t, ~ventureId) => {
   logMessage("Loading venture '" ++ VentureId.toString(ventureId) ++ "'");
   Js.Promise.(
     Blockstack.getFileDecrypted(
@@ -190,7 +190,7 @@ type joinResult =
   | Joined(Index.t, t)
   | CouldNotJoin(Js.Promise.error);
 
-let join = (session: Session.Data.t, ~userId, ~ventureId) =>
+let join = (session: SessionData.t, ~userId, ~ventureId) =>
   Js.Promise.(
     load(session, ~ventureId)
     |> then_(loadResult =>
@@ -250,7 +250,7 @@ module Cmd = {
     type result =
       | Ok(Index.t, t)
       | CouldNotPersist(Js.Promise.error);
-    let exec = (session: Session.Data.t, ~name as ventureName) => {
+    let exec = (session: SessionData.t, ~name as ventureName) => {
       logMessage("Executing 'Create' command");
       let ventureCreated =
         Event.VentureCreated.make(

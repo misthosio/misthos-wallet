@@ -12,7 +12,7 @@ type state = {
 
 let make =
     (
-      {userId, issuerKeyPair, masterKeyChain}: Session.Data.t,
+      {userId, issuerKeyPair, masterKeyChain}: SessionData.t,
       {processId: payoutProcess, supporterId}: Payout.Endorsed.t,
       log,
     ) => {

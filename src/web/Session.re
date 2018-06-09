@@ -1,51 +1,11 @@
-open PrimitiveTypes;
-
-module Data = {
-  type t = {
-    userId,
-    appPrivateKey: string,
-    issuerKeyPair: Bitcoin.ECPair.t,
-    storagePrefix: string,
-    masterKeyChain: Bitcoin.HDNode.t,
-    network: Network.t,
-  };
-  let fromUserData = userData =>
-    switch (Js.Nullable.toOption(userData##username)) {
-    | None => None
-    | Some(blockstackId) =>
-      let issuerKeyPair =
-        Utils.keyPairFromPrivateKey(
-          Network.bitcoinNetwork(Testnet),
-          userData##appPrivateKey,
-        );
-      Some({
-        appPrivateKey: userData##appPrivateKey,
-        userId: blockstackId |> UserId.fromString,
-        issuerKeyPair,
-        network: Testnet,
-        storagePrefix:
-          UserInfo.storagePrefix(
-            ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair,
-          ),
-        masterKeyChain:
-          Bitcoin.HDNode.make(
-            issuerKeyPair,
-            Utils.bufFromHex(
-              "c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb",
-            ),
-          ),
-      });
-    };
-};
-
 type t =
   | Unknown
   | LoginPending
   | NotLoggedIn
   | AnonymousLogin
-  | LoggedIn(Data.t);
+  | LoggedIn(SessionData.t);
 
-let initMasterKey = (sessionData: Data.t) => {
+let initMasterKey = (sessionData: SessionData.t) => {
   let appPubKey = sessionData.issuerKeyPair |> Utils.publicKeyFromKeyPair;
   Js.Promise.(
     UserInfo.getOrInit(~appPubKey)
@@ -60,17 +20,18 @@ let initMasterKey = (sessionData: Data.t) => {
   );
 };
 
-let completeLogIn = (~environment: Environment.t) => {
+let completeLogIn = () => {
+  let environment = Environment.get();
   Cookie.get("transitKey")
-  |> Utils.mapOption(key =>
-       LocalStorage.setItem("blockstack-transit-private-key", key)
-     )
+  |> Utils.mapOption(key => {
+       LocalStorage.setItem("blockstack-transit-private-key", key);
+       Cookie.delete("transitKey", environment.cookieDomain());
+     })
   |> ignore;
-  Cookie.delete("transitKey", environment.cookieDomain());
   Js.Promise.(
     Blockstack.handlePendingSignIn()
     |> then_(userData =>
-         switch (Data.fromUserData(userData)) {
+         switch (SessionData.fromUserData(userData)) {
          | None => resolve(AnonymousLogin)
          | Some(sessionData) =>
            initMasterKey(sessionData)
@@ -80,13 +41,13 @@ let completeLogIn = (~environment: Environment.t) => {
   );
 };
 
-let getCurrentSession = (~environment=Environment.default, ()) =>
+let getCurrentSession = () =>
   Js.Promise.(
     if (Blockstack.isUserSignedIn()) {
       switch (Blockstack.loadUserData()) {
       | None => NotLoggedIn |> resolve
       | Some(userData) =>
-        switch (Data.fromUserData(userData)) {
+        switch (SessionData.fromUserData(userData)) {
         | None => AnonymousLogin |> resolve
         | Some(sessionData) =>
           initMasterKey(sessionData)
@@ -94,7 +55,7 @@ let getCurrentSession = (~environment=Environment.default, ()) =>
         }
       };
     } else if (Blockstack.isSignInPending()) {
-      completeLogIn(~environment);
+      completeLogIn();
     } else {
       NotLoggedIn |> resolve;
     }
@@ -105,13 +66,10 @@ let signOut = () => {
   NotLoggedIn;
 };
 
-let signIn =
-    (
-      ~transitKey=Blockstack.generateAndStoreTransitKey(),
-      ~environment: Environment.t,
-      (),
-    ) => {
+let signIn = () => {
   signOut() |> ignore;
+  let transitKey = Blockstack.makeECPrivateKey();
+  let environment = Environment.get();
   Cookie.set("transitKey", transitKey, environment.cookieDomain());
   Blockstack.(
     redirectToSignInWithAuthRequest(

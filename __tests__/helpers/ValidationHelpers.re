@@ -60,7 +60,7 @@ let withSystemIssuer =
 
 let withIssuer =
     (
-      issuer: Session.Data.t,
+      issuer: SessionData.t,
       dataValidation: ('a, Validation.t, userId) => Validation.result,
       data,
       state,

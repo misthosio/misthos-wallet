@@ -4,7 +4,7 @@ open WalletTypes;
 
 module AppEvent = Event;
 
-let userSession = id : Session.Data.t => {
+let userSession = id : SessionData.t => {
   let appPrivateKey = Crypto.randomBytes(32) |> Utils.bufToHex;
   let issuerKeyPair =
     Utils.keyPairFromPrivateKey(
@@ -73,7 +73,7 @@ let custodianKeyChain =
       ~accountIdx=AccountIndex.default,
       ~ventureId,
       ~keyChainIdx,
-      {masterKeyChain}: Session.Data.t,
+      {masterKeyChain}: SessionData.t,
     ) =>
   CustodianKeyChain.make(
     ~ventureId,
@@ -88,13 +88,13 @@ let accountKeyChainFrom = AccountKeyChain.make(AccountIndex.default);
 let accountKeyChain =
     (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
   users
-  |> List.map((user: Session.Data.t) =>
+  |> List.map((user: SessionData.t) =>
        (user.userId, custodianKeyChain(~ventureId, ~keyChainIdx, user))
      )
   |> accountKeyChainFrom;
 
 module Event = {
-  let createVenture = (session: Session.Data.t) =>
+  let createVenture = (session: SessionData.t) =>
     AppEvent.VentureCreated.make(
       ~ventureName=UserId.toString(session.userId) ++ "-testventure",
       ~creatorId=session.userId,
@@ -108,8 +108,8 @@ module Event = {
         ~eligibleWhenProposing,
         ~policy=Policy.unanimous,
         ~lastRemovalAccepted,
-        proposerSession: Session.Data.t,
-        prospectSession: Session.Data.t,
+        proposerSession: SessionData.t,
+        prospectSession: SessionData.t,
       ) =>
     (
       if (withPubKey) {
@@ -136,16 +136,16 @@ module Event = {
     )
     |> AppEvent.getPartnerProposedExn;
   let partnerEndorsed =
-      (supporter: Session.Data.t, {processId}: AppEvent.Partner.Proposed.t) =>
+      (supporter: SessionData.t, {processId}: AppEvent.Partner.Proposed.t) =>
     AppEvent.makePartnerEndorsed(~processId, ~supporterId=supporter.userId)
     |> AppEvent.getPartnerEndorsedExn;
   let partnerRejected =
-      (rejector: Session.Data.t, {processId}: AppEvent.Partner.Proposed.t) =>
+      (rejector: SessionData.t, {processId}: AppEvent.Partner.Proposed.t) =>
     AppEvent.makePartnerRejected(~processId, ~rejectorId=rejector.userId)
     |> AppEvent.getPartnerRejectedExn;
   let partnerAccepted = AppEvent.Partner.Accepted.fromProposal;
   let partnerDenied = AppEvent.Partner.Denied.fromProposal;
-  let partnerPubKeyAdded = (partner: Session.Data.t) =>
+  let partnerPubKeyAdded = (partner: SessionData.t) =>
     AppEvent.Partner.PubKeyAdded.make(
       ~partnerId=partner.userId,
       ~pubKey=partner.issuerKeyPair |> Utils.publicKeyFromKeyPair,
@@ -154,7 +154,7 @@ module Event = {
       (
         ~eligibleWhenProposing,
         ~lastPartnerAccepted,
-        proposerSession: Session.Data.t,
+        proposerSession: SessionData.t,
       ) =>
     AppEvent.makePartnerRemovalProposed(
       ~eligibleWhenProposing,
@@ -165,7 +165,7 @@ module Event = {
     |> AppEvent.getPartnerRemovalProposedExn;
   let partnerRemovalEndorsed =
       (
-        supporter: Session.Data.t,
+        supporter: SessionData.t,
         {processId}: AppEvent.Partner.Removal.Proposed.t,
       ) =>
     AppEvent.makePartnerRemovalEndorsed(
@@ -175,7 +175,7 @@ module Event = {
     |> AppEvent.getPartnerRemovalEndorsedExn;
   let partnerRemovalAccepted = AppEvent.Partner.Removal.Accepted.fromProposal;
   let accountCreationProposed =
-      (~eligibleWhenProposing, {userId}: Session.Data.t) =>
+      (~eligibleWhenProposing, {userId}: SessionData.t) =>
     AppEvent.makeAccountCreationProposed(
       ~eligibleWhenProposing,
       ~proposerId=userId,
@@ -186,7 +186,7 @@ module Event = {
     |> AppEvent.getAccountCreationProposedExn;
   let accountCreationEndorsed =
       (
-        supporter: Session.Data.t,
+        supporter: SessionData.t,
         {processId}: AppEvent.AccountCreation.Proposed.t,
       ) =>
     AppEvent.makeAccountCreationEndorsed(
@@ -199,7 +199,7 @@ module Event = {
       (
         ~eligibleWhenProposing,
         ~lastCustodianRemovalAccepted,
-        {userId}: Session.Data.t,
+        {userId}: SessionData.t,
         partnerProposal: AppEvent.Partner.Proposed.t,
       ) =>
     Event.makeCustodianProposed(
@@ -212,11 +212,11 @@ module Event = {
     )
     |> Event.getCustodianProposedExn;
   let custodianEndorsed =
-      (supporter: Session.Data.t, {processId}: AppEvent.Custodian.Proposed.t) =>
+      (supporter: SessionData.t, {processId}: AppEvent.Custodian.Proposed.t) =>
     AppEvent.makeCustodianEndorsed(~processId, ~supporterId=supporter.userId)
     |> AppEvent.getCustodianEndorsedExn;
   let custodianRejected =
-      (rejector: Session.Data.t, {processId}: AppEvent.Custodian.Proposed.t) =>
+      (rejector: SessionData.t, {processId}: AppEvent.Custodian.Proposed.t) =>
     AppEvent.makeCustodianRejected(~processId, ~rejectorId=rejector.userId)
     |> AppEvent.getCustodianRejectedExn;
   let custodianAccepted = AppEvent.Custodian.Accepted.fromProposal;
@@ -225,7 +225,7 @@ module Event = {
       (
         ~eligibleWhenProposing,
         ~custodianAccepted,
-        proposerSession: Session.Data.t,
+        proposerSession: SessionData.t,
       ) =>
     AppEvent.makeCustodianRemovalProposed(
       ~eligibleWhenProposing,
@@ -237,7 +237,7 @@ module Event = {
     |> AppEvent.getCustodianRemovalProposedExn;
   let custodianRemovalEndorsed =
       (
-        supporter: Session.Data.t,
+        supporter: SessionData.t,
         {processId}: AppEvent.Custodian.Removal.Proposed.t,
       ) =>
     AppEvent.makeCustodianRemovalEndorsed(
@@ -249,7 +249,7 @@ module Event = {
   let custodianKeyChainUpdated = AppEvent.CustodianKeyChainUpdated.make;
   let accountKeyChainIdentified = AppEvent.AccountKeyChainIdentified.make;
   let accountKeyChainActivated =
-      (~sequence=0, ~custodian: Session.Data.t, ~identifier) =>
+      (~sequence=0, ~custodian: SessionData.t, ~identifier) =>
     AppEvent.AccountKeyChainActivated.make(
       ~accountIdx=AccountIndex.default,
       ~custodianId=custodian.userId,
@@ -325,7 +325,7 @@ module Log = {
       log,
     };
   };
-  let make = (session: Session.Data.t, ventureCreated) => {
+  let make = (session: SessionData.t, ventureCreated) => {
     let (lastItem, log) =
       EventLog.make()
       |> EventLog.append(
@@ -339,7 +339,7 @@ module Log = {
       log,
     };
   };
-  let createVenture = (session: Session.Data.t) =>
+  let createVenture = (session: SessionData.t) =>
     make(session, Event.createVenture(session));
   let withPartnerProposed =
       (
@@ -347,8 +347,8 @@ module Log = {
         ~withLastRemoval=true,
         ~issuer=?,
         ~policy=Policy.unanimous,
-        ~proposer: Session.Data.t,
-        ~prospect: Session.Data.t,
+        ~proposer: SessionData.t,
+        ~prospect: SessionData.t,
         {log} as l,
       ) => {
     let issuer =
@@ -385,7 +385,7 @@ module Log = {
       l,
     );
   };
-  let withPartnerEndorsed = (~issuer=?, supporter: Session.Data.t, proposal) => {
+  let withPartnerEndorsed = (~issuer=?, supporter: SessionData.t, proposal) => {
     let issuer =
       switch (issuer) {
       | None => supporter.issuerKeyPair
@@ -396,7 +396,7 @@ module Log = {
       PartnerEndorsed(Event.partnerEndorsed(supporter, proposal)),
     );
   };
-  let withPartnerRejected = (~issuer=?, supporter: Session.Data.t, proposal) => {
+  let withPartnerRejected = (~issuer=?, supporter: SessionData.t, proposal) => {
     let issuer =
       switch (issuer) {
       | None => supporter.issuerKeyPair
@@ -430,7 +430,7 @@ module Log = {
     };
   let withFirstPartner = user => withPartner(user, ~supporters=[user]);
   let withPartnerRemovalProposed =
-      (~proposer: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
+      (~proposer: SessionData.t, ~toBeRemoved: SessionData.t, {log} as l) => {
     let lastPartnerAccepted =
       log
       |> EventLog.reduce(
@@ -456,12 +456,12 @@ module Log = {
          ),
        );
   };
-  let withPartnerPubKeyAdded = (partner: Session.Data.t) =>
+  let withPartnerPubKeyAdded = (partner: SessionData.t) =>
     appendEvent(
       partner.issuerKeyPair,
       PartnerPubKeyAdded(Event.partnerPubKeyAdded(partner)),
     );
-  let withPartnerRemovalEndorsed = (supporter: Session.Data.t, proposal) =>
+  let withPartnerRemovalEndorsed = (supporter: SessionData.t, proposal) =>
     appendEvent(
       supporter.issuerKeyPair,
       PartnerRemovalEndorsed(
@@ -488,7 +488,7 @@ module Log = {
     | _ => %assert
            "withPartner"
     };
-  let withAccountCreationProposed = (~proposer: Session.Data.t) =>
+  let withAccountCreationProposed = (~proposer: SessionData.t) =>
     appendEvent(
       proposer.issuerKeyPair,
       AccountCreationProposed(
@@ -499,7 +499,7 @@ module Log = {
         ),
       ),
     );
-  let withAccountCreationEndorsed = (supporter: Session.Data.t, proposal) =>
+  let withAccountCreationEndorsed = (supporter: SessionData.t, proposal) =>
     appendEvent(
       supporter.issuerKeyPair,
       AccountCreationEndorsed(
@@ -518,7 +518,7 @@ module Log = {
     |> withAccountCreationAccepted(proposal);
   };
   let withCustodianProposed =
-      (~proposer: Session.Data.t, ~custodian: Session.Data.t, {log} as l) => {
+      (~proposer: SessionData.t, ~custodian: SessionData.t, {log} as l) => {
     let (partnerProposed, lastCustodianRemovalAccepted) =
       log
       |> EventLog.reduce(
@@ -551,12 +551,12 @@ module Log = {
       l,
     );
   };
-  let withCustodianEndorsed = (supporter: Session.Data.t, proposal) =>
+  let withCustodianEndorsed = (supporter: SessionData.t, proposal) =>
     appendEvent(
       supporter.issuerKeyPair,
       CustodianEndorsed(Event.custodianEndorsed(supporter, proposal)),
     );
-  let withCustodianRejected = (rejector: Session.Data.t, proposal) =>
+  let withCustodianRejected = (rejector: SessionData.t, proposal) =>
     appendEvent(
       rejector.issuerKeyPair,
       CustodianRejected(Event.custodianRejected(rejector, proposal)),
@@ -582,7 +582,7 @@ module Log = {
            "withPartner"
     };
   let withCustodianRemovalProposed =
-      (~proposer: Session.Data.t, ~toBeRemoved: Session.Data.t, {log} as l) => {
+      (~proposer: SessionData.t, ~toBeRemoved: SessionData.t, {log} as l) => {
     let custodianAccepted =
       log
       |> EventLog.reduce(
@@ -608,7 +608,7 @@ module Log = {
          ),
        );
   };
-  let withCustodianRemovalEndorsed = (supporter: Session.Data.t, proposal) =>
+  let withCustodianRemovalEndorsed = (supporter: SessionData.t, proposal) =>
     appendEvent(
       supporter.issuerKeyPair,
       CustodianRemovalEndorsed(
@@ -655,7 +655,7 @@ module Log = {
     let keyChain = custodianKeyChain(~ventureId, ~keyChainIdx, custodian);
     let issuerKeyPair =
       issuer
-      |> Utils.mapOption((issuer: Session.Data.t) => issuer.issuerKeyPair)
+      |> Utils.mapOption((issuer: SessionData.t) => issuer.issuerKeyPair)
       |> Js.Option.getWithDefault(custodian.issuerKeyPair);
     l
     |> appendEvent(
@@ -701,7 +701,7 @@ module Log = {
        );
   };
   let withAccountKeyChainActivated =
-      (~sequence=0, user: Session.Data.t, {log} as l) => {
+      (~sequence=0, user: SessionData.t, {log} as l) => {
     let identifier =
       log
       |> EventLog.reduce(
@@ -724,7 +724,7 @@ module Log = {
          ),
        );
   };
-  let withIncomeAddressExposed = (user: Session.Data.t, {log} as l) => {
+  let withIncomeAddressExposed = (user: SessionData.t, {log} as l) => {
     let (keyChains, activations, exposed) =
       log
       |> EventLog.reduce(
