@@ -23,6 +23,7 @@ module Styles = {
   let grid =
     style([
       width(`percent(100.0)),
+      minHeight(`calc((`sub, px(Theme.space(88)), `px(64)))),
       height(`calc((`sub, `vh(100.0), `px(64)))),
       margin(px(0)),
       paddingBottom(px(Theme.space(8))),

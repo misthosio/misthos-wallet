@@ -74,14 +74,11 @@ var grid = Css.style(/* :: */[
             100.0
           ]),
       /* :: */[
-        Css.height(/* `calc */[
+        Css.minHeight(/* `calc */[
               -1044768619,
               /* tuple */[
                 /* sub */5745024,
-                /* `vh */[
-                  26418,
-                  100.0
-                ],
+                Css.px(Theme.space(88)),
                 /* `px */[
                   25096,
                   64
@@ -89,10 +86,26 @@ var grid = Css.style(/* :: */[
               ]
             ]),
         /* :: */[
-          Css.margin(Css.px(0)),
+          Css.height(/* `calc */[
+                -1044768619,
+                /* tuple */[
+                  /* sub */5745024,
+                  /* `vh */[
+                    26418,
+                    100.0
+                  ],
+                  /* `px */[
+                    25096,
+                    64
+                  ]
+                ]
+              ]),
           /* :: */[
-            Css.paddingBottom(Css.px(Theme.space(8))),
-            /* [] */0
+            Css.margin(Css.px(0)),
+            /* :: */[
+              Css.paddingBottom(Css.px(Theme.space(8))),
+              /* [] */0
+            ]
           ]
         ]
       ]
