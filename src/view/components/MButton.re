@@ -22,6 +22,7 @@ module Styles = {
           border(px(2), `solid, black),
           paddingLeft(px(25)),
           paddingRight(px(25)),
+          minHeight(px(45)),
           marginTop(px(Theme.space(5))),
         ]
       };
