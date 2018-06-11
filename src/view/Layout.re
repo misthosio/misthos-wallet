@@ -36,14 +36,11 @@ module Styles = {
     ]);
   let modal =
     style([
-      media(
-        "(min-width: 960px)",
-        [
-          width(`vw(90.0)),
-          height(`vh(90.0)),
-          margin2(~v=`vh(5.0), ~h=`vw(5.0)),
-        ],
-      ),
+      BreakPoints.md([
+        width(`vw(90.0)),
+        height(`vh(90.0)),
+        margin2(~v=`vh(5.0), ~h=`vw(5.0)),
+      ]),
       width(`percent(100.0)),
       height(`percent(100.0)),
       focus([outlineStyle(`none)]),

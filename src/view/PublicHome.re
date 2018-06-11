@@ -4,49 +4,69 @@ let component = ReasonReact.statelessComponent("PublicHome");
 
 module Styles = {
   open Css;
+  open BreakPoints;
+
   let grid =
     style([
       display(grid),
       gridGap(px(Theme.space(5))),
-      unsafe(
-        "gridTemplateAreas",
-        {|
-         ". . . ."
-         ". title title ."
-         ". sub button ."
-         ". . . ."
-         |},
-      ),
-      unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
-      unsafe(
-        "gridTemplateRows",
-        "[begin] auto min-content [end] min-content auto",
-      ),
+      md([
+        unsafe(
+          "gridTemplateAreas",
+          {|
+           ". . . ."
+           ". title title ."
+           ". sub button ."
+           ". . . ."
+           |},
+        ),
+        unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
+        unsafe(
+          "gridTemplateRows",
+          "[begin] auto min-content [end] min-content auto",
+        ),
+      ]),
+      sm([unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]")]),
+      xs([
+        unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
+        unsafe(
+          "gridTemplateAreas",
+          {|
+           ". . ."
+           ". title ."
+           ". sub ."
+           ". button ."
+           ". . ."
+           |},
+        ),
+        unsafe(
+          "gridTemplateRows",
+          "[begin] auto min-content [end] min-content min-content auto",
+        ),
+      ]),
       width(`percent(100.0)),
       height(`vh(100.0)),
       alignItems(`flexEnd),
     ]);
-
   let logo =
     style([
       backgroundImage(url(Icons.asDataUrl(Icons.logoBig))),
       backgroundRepeat(noRepeat),
       alignSelf(`stretch),
-      unsafe("backgroundSize", "auto 90%"),
-      unsafe("gridColumn", "begin / end"),
-      unsafe("gridRow", "begin / end"),
-    ]);
-
-  let button =
-    style([
-      backgroundImage(url(Icons.asDataUrl(Icons.logoBig))),
-      backgroundRepeat(noRepeat),
-      unsafe("backgroundSize", "auto 90%"),
+      unsafe("backgroundSize", "auto 100%"),
       unsafe("gridColumn", "begin / end"),
       unsafe("gridRow", "begin / end"),
     ]);
 
   let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
+
+  let title =
+    style([
+      lineHeight(0.92),
+      md([fontSize(px(124))]),
+      sm([fontSize(px(72))]),
+      xs([fontSize(px(68))]),
+    ]);
 };
 
 let make = (~onSignIn, _children) => {
@@ -55,7 +75,9 @@ let make = (~onSignIn, _children) => {
     MaterialUi.(
       <div className=Styles.grid>
         <div className=Styles.logo />
-        <Typography className=(Styles.area("title")) variant=`Display4>
+        <Typography
+          className=(Styles.area("title") ++ " " ++ Styles.title)
+          variant=`Display4>
           ("Distribute Funds" |> text)
           <br />
           ("with misthos." |> text)

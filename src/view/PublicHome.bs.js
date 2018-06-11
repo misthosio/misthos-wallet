@@ -7,6 +7,7 @@ var Theme = require("./Theme.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_SvgIcon = require("@jsiebern/bs-material-ui/src/MaterialUi_SvgIcon.bs.js");
 var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
@@ -18,11 +19,32 @@ var grid = Css.style(/* :: */[
       /* :: */[
         Css.gridGap(Css.px(Theme.space(5))),
         /* :: */[
-          Css.unsafe("gridTemplateAreas", "\n         \". . . .\"\n         \". title title .\"\n         \". sub button .\"\n         \". . . .\"\n         "),
+          BreakPoints.md(/* :: */[
+                Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". title title .\"\n           \". sub button .\"\n           \". . . .\"\n           "),
+                /* :: */[
+                  Css.unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
+                  /* :: */[
+                    Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content auto"),
+                    /* [] */0
+                  ]
+                ]
+              ]),
           /* :: */[
-            Css.unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
+            BreakPoints.sm(/* :: */[
+                  Css.unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]"),
+                  /* [] */0
+                ]),
             /* :: */[
-              Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content auto"),
+              BreakPoints.xs(/* :: */[
+                    Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
+                    /* :: */[
+                      Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". title .\"\n           \". sub .\"\n           \". button .\"\n           \". . .\"\n           "),
+                      /* :: */[
+                        Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content min-content auto"),
+                        /* [] */0
+                      ]
+                    ]
+                  ]),
               /* :: */[
                 Css.width(/* `percent */[
                       -119887163,
@@ -52,30 +74,13 @@ var logo = Css.style(/* :: */[
         /* :: */[
           Css.alignSelf(/* stretch */-162316795),
           /* :: */[
-            Css.unsafe("backgroundSize", "auto 90%"),
+            Css.unsafe("backgroundSize", "auto 100%"),
             /* :: */[
               Css.unsafe("gridColumn", "begin / end"),
               /* :: */[
                 Css.unsafe("gridRow", "begin / end"),
                 /* [] */0
               ]
-            ]
-          ]
-        ]
-      ]
-    ]);
-
-var button = Css.style(/* :: */[
-      Css.backgroundImage(Css.url(Icons.asDataUrl(Icons.logoBig))),
-      /* :: */[
-        Css.backgroundRepeat(Css.noRepeat),
-        /* :: */[
-          Css.unsafe("backgroundSize", "auto 90%"),
-          /* :: */[
-            Css.unsafe("gridColumn", "begin / end"),
-            /* :: */[
-              Css.unsafe("gridRow", "begin / end"),
-              /* [] */0
             ]
           ]
         ]
@@ -92,11 +97,34 @@ function area(area$1) {
             ]);
 }
 
+var title = Css.style(/* :: */[
+      Css.lineHeight(0.92),
+      /* :: */[
+        BreakPoints.md(/* :: */[
+              Css.fontSize(Css.px(124)),
+              /* [] */0
+            ]),
+        /* :: */[
+          BreakPoints.sm(/* :: */[
+                Css.fontSize(Css.px(72)),
+                /* [] */0
+              ]),
+          /* :: */[
+            BreakPoints.xs(/* :: */[
+                  Css.fontSize(Css.px(68)),
+                  /* [] */0
+                ]),
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* grid */grid,
   /* logo */logo,
-  /* button */button,
-  /* area */area
+  /* area */area,
+  /* title */title
 ];
 
 function make(onSignIn, _) {
@@ -115,7 +143,7 @@ function make(onSignIn, _) {
                           className: grid
                         }, React.createElement("div", {
                               className: logo
-                            }), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("title")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[
+                            }), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("title") + (" " + title)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[
                                   ViewCommon.text("Distribute Funds"),
                                   React.createElement("br", undefined),
                                   ViewCommon.text("with misthos.")

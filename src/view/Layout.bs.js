@@ -11,6 +11,7 @@ var React = require("react");
 var Colors = require("./Colors.bs.js");
 var Router = require("./Router.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Grid = require("@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js");
 var MaterialUi_Modal = require("@jsiebern/bs-material-ui/src/MaterialUi_Modal.bs.js");
@@ -142,7 +143,7 @@ var modalContent = Css.style(/* :: */[
     ]);
 
 var modal = Css.style(/* :: */[
-      Css.media("(min-width: 960px)", /* :: */[
+      BreakPoints.md(/* :: */[
             Css.width(/* `vw */[
                   26433,
                   90.0
