@@ -29,8 +29,11 @@ function button(fullWidth, variant) {
             /* :: */[
               Css.minHeight(Css.px(45)),
               /* :: */[
-                Css.marginTop(Css.px(Theme.space(5))),
-                /* [] */0
+                Css.maxHeight(Css.px(45)),
+                /* :: */[
+                  Css.marginTop(Css.px(Theme.space(5))),
+                  /* [] */0
+                ]
               ]
             ]
           ]

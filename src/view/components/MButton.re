@@ -23,6 +23,7 @@ module Styles = {
           paddingLeft(px(25)),
           paddingRight(px(25)),
           minHeight(px(45)),
+          maxHeight(px(45)),
           marginTop(px(Theme.space(5))),
         ]
       };
