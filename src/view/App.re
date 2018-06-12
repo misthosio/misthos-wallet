@@ -203,20 +203,14 @@ let make = (~session, ~updateSession, _children) => {
                <VentureStore currentRoute session>
                  ...(
                       (~index, ~selectedVenture, ~createVenture) =>
-                        <GlobalScroll>
-                          <Layout
-                            drawer=(currentRoute |> drawer(index))
-                            modal=(currentRoute |> modal(selectedVenture))>
-                            ...(
-                                 currentRoute
-                                 |> body(
-                                      index,
-                                      selectedVenture,
-                                      createVenture,
-                                    )
-                               )
-                          </Layout>
-                        </GlobalScroll>
+                        <Layout
+                          drawer=(currentRoute |> drawer(index))
+                          modal=(currentRoute |> modal(selectedVenture))>
+                          (
+                            currentRoute
+                            |> body(index, selectedVenture, createVenture)
+                          )
+                        </Layout>
                     )
                </VentureStore>
            )

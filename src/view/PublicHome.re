@@ -9,8 +9,7 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      gridGap(px(Theme.space(5))),
-      md([
+      lg([
         unsafe(
           "gridTemplateAreas",
           {|
@@ -26,7 +25,10 @@ module Styles = {
           "[begin] auto min-content [end] min-content auto",
         ),
       ]),
-      sm([unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]")]),
+      sm([
+        unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]"),
+        gridGap(px(Theme.space(5))),
+      ]),
       xs([
         unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
         unsafe(
@@ -43,6 +45,7 @@ module Styles = {
           "gridTemplateRows",
           "[begin] auto min-content [end] min-content min-content auto",
         ),
+        gridGap(px(Theme.space(2))),
       ]),
       width(`percent(100.0)),
       height(`vh(100.0)),

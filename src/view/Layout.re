@@ -8,25 +8,25 @@ let component = ReasonReact.reducerComponent("Layout");
 
 module Styles = {
   open Css;
-  global("html, body, #root, #__next", [height(`percent(100.0))]);
   let flex_ = style([flex(1)]);
   let appBar =
-    style([backgroundColor(Colors.white), boxShadow(Colors.white)]);
-  let container =
     style([
-      flexGrow(1),
-      width(`percent(100.0)),
-      height(`percent(100.0)),
-      margin(px(0)),
-      overflow(hidden),
+      backgroundColor(Colors.white),
+      boxShadow(Colors.white),
+      unsafe("gridArea", "bar"),
     ]);
+  let body = style([minHeight(px(0)), unsafe("gridArea", "body")]);
+  let gap = (Theme.space(8) |> string_of_int) ++ "px";
   let grid =
     style([
-      width(`percent(100.0)),
-      minHeight(`calc((`sub, px(Theme.space(88)), `px(64)))),
-      height(`calc((`sub, `vh(100.0), `px(64)))),
-      margin(px(0)),
-      paddingBottom(px(Theme.space(8))),
+      display(grid),
+      minWidth(px(Theme.space(101))),
+      minHeight(px(Theme.space(88))),
+      height(vh(100.0)),
+      width(vw(100.0)),
+      unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+      unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
+      unsafe("gridTemplateAreas", {|"bar" "body" "."|}),
     ]);
   let drawer = style([width(`px(440)), flex(1)]);
   let modalContent =
@@ -84,7 +84,7 @@ let make = (~drawer, ~modal, children) => {
         |> Js.Option.getWithDefault(ReasonReact.null)
       );
     MaterialUi.(
-      <div className=Styles.container>
+      <div className=Styles.grid>
         (
           switch (drawer) {
           | None => ReasonReact.null
@@ -120,9 +120,13 @@ let make = (~drawer, ~modal, children) => {
           }
         )
         modalContainer
-        <Grid className=Styles.grid container=true spacing=V24 direction=`Row>
-          children
-        </Grid>
+        (
+          ReasonReact.createDomElement(
+            "div",
+            ~props={"className": Styles.body},
+            children,
+          )
+        )
       </div>
     );
   },

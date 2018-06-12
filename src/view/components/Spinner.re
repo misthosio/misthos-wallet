@@ -5,16 +5,16 @@ let component = ReasonReact.statelessComponent("Spinner");
 module Styles = {
   open Css;
   let progress = style([color(Colors.misthosTeal)]);
-  let container = style([textAlign(center)]);
+  let container = style([textAlign(center), height(`percent(100.0))]);
 };
 
-let make = (~text as spinnerText, ~className=?, _children) => {
+let make = (~text as spinnerText, ~className="", _children) => {
   ...component,
   render: _self =>
     MaterialUi.(
       <Grid
         container=true
-        ?className
+        className=(Styles.container ++ " " ++ className)
         direction=`Row
         alignItems=`Center
         justify=`Center>

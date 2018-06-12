@@ -13,7 +13,6 @@ var Router = require("./Router.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var MaterialUi_Grid = require("@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js");
 var MaterialUi_Modal = require("@jsiebern/bs-material-ui/src/MaterialUi_Modal.bs.js");
 var MaterialUi_Paper = require("@jsiebern/bs-material-ui/src/MaterialUi_Paper.bs.js");
 var MaterialUi_AppBar = require("@jsiebern/bs-material-ui/src/MaterialUi_AppBar.bs.js");
@@ -22,14 +21,6 @@ var MaterialUi_Toolbar = require("@jsiebern/bs-material-ui/src/MaterialUi_Toolba
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 
 var component = ReasonReact.reducerComponent("Layout");
-
-Css.$$global("html, body, #root, #__next", /* :: */[
-      Css.height(/* `percent */[
-            -119887163,
-            100.0
-          ]),
-      /* [] */0
-    ]);
 
 var flex_ = Css.style(/* :: */[
       Css.flex(1),
@@ -40,70 +31,43 @@ var appBar = Css.style(/* :: */[
       Css.backgroundColor(Colors.white),
       /* :: */[
         Css.boxShadow(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, Colors.white),
-        /* [] */0
-      ]
-    ]);
-
-var container = Css.style(/* :: */[
-      Css.flexGrow(1),
-      /* :: */[
-        Css.width(/* `percent */[
-              -119887163,
-              100.0
-            ]),
         /* :: */[
-          Css.height(/* `percent */[
-                -119887163,
-                100.0
-              ]),
-          /* :: */[
-            Css.margin(Css.px(0)),
-            /* :: */[
-              Css.overflow(Css.hidden),
-              /* [] */0
-            ]
-          ]
+          Css.unsafe("gridArea", "bar"),
+          /* [] */0
         ]
       ]
     ]);
 
-var grid = Css.style(/* :: */[
-      Css.width(/* `percent */[
-            -119887163,
-            100.0
-          ]),
+var body = Css.style(/* :: */[
+      Css.minHeight(Css.px(0)),
       /* :: */[
-        Css.minHeight(/* `calc */[
-              -1044768619,
-              /* tuple */[
-                /* sub */5745024,
-                Css.px(Theme.space(88)),
-                /* `px */[
-                  25096,
-                  64
-                ]
-              ]
-            ]),
+        Css.unsafe("gridArea", "body"),
+        /* [] */0
+      ]
+    ]);
+
+var gap = String(Theme.space(8)) + "px";
+
+var grid = Css.style(/* :: */[
+      Css.display(Css.grid),
+      /* :: */[
+        Css.minWidth(Css.px(Theme.space(101))),
         /* :: */[
-          Css.height(/* `calc */[
-                -1044768619,
-                /* tuple */[
-                  /* sub */5745024,
-                  /* `vh */[
-                    26418,
-                    100.0
-                  ],
-                  /* `px */[
-                    25096,
-                    64
+          Css.minHeight(Css.px(Theme.space(88))),
+          /* :: */[
+            Css.height(Css.vh(100.0)),
+            /* :: */[
+              Css.width(Css.vw(100.0)),
+              /* :: */[
+                Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+                /* :: */[
+                  Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
+                  /* :: */[
+                    Css.unsafe("gridTemplateAreas", "\"bar\" \"body\" \".\""),
+                    /* [] */0
                   ]
                 ]
-              ]),
-          /* :: */[
-            Css.margin(Css.px(0)),
-            /* :: */[
-              Css.paddingBottom(Css.px(Theme.space(8))),
-              /* [] */0
+              ]
             ]
           ]
         ]
@@ -200,7 +164,8 @@ var logo = Css.style(/* :: */[
 var Styles = /* module */[
   /* flex_ */flex_,
   /* appBar */appBar,
-  /* container */container,
+  /* body */body,
+  /* gap */gap,
   /* grid */grid,
   /* drawer */drawer,
   /* modalContent */modalContent,
@@ -240,7 +205,7 @@ function make(drawer$1, modal$1, children) {
                           return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Modal.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, true, /* None */0, /* None */0, /* array */[inner]));
                         }), modal$1));
               return React.createElement("div", {
-                          className: container
+                          className: grid
                         }, drawer$1 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_AppBar.make(/* Some */[appBar], /* None */0, /* Some */[/* Static */982536398], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_Toolbar.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[logo], /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
@@ -263,7 +228,9 @@ function make(drawer$1, modal$1, children) {
                                                         return Curry._1(send, /* CloseDrawer */1);
                                                       })
                                                   }, drawer$1[0])]))
-                                  ])) : null, modalContainer, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* Some */[grid], /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V24 */3], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children])));
+                                  ])) : null, modalContainer, ReasonReact.createDomElement("div", {
+                              className: body
+                            }, children));
             }),
           /* initialState */(function () {
               return /* record */[/* drawerOpen */false];
