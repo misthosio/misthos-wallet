@@ -49,6 +49,11 @@ var maxWidth = Css.style(/* :: */[
       /* [] */0
     ]);
 
+var cellHeight = Css.style(/* :: */[
+      Css.height(Css.px(49)),
+      /* [] */0
+    ]);
+
 var buttonPadding = Css.style(/* :: */[
       Css.paddingLeft(Css.px(4)),
       /* [] */0
@@ -89,6 +94,7 @@ var total = Css.style(/* :: */[
 var Styles = /* module */[
   /* maxButton */maxButton,
   /* maxWidth */maxWidth,
+  /* cellHeight */cellHeight,
   /* buttonPadding */buttonPadding,
   /* noBorder */noBorder,
   /* spaceBetween */spaceBetween,
@@ -210,17 +216,29 @@ function make(viewData, commands, cmdStatus, _) {
               var inputs = match[/* inputs */8];
               var summary = match[/* summary */7];
               var viewData = match[/* viewData */0];
-              var destinationList = $$Array.of_list(List.mapi((function (idx, param) {
-                          return ReasonReact.element(/* Some */[String(idx)], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[spaceBetween(/* center */98248149) + (" " + noBorder)], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                    React.createElement("b", undefined, ViewCommon.text(param[0])),
-                                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
-                                                                  return Curry._1(send, /* RemoveDestination */Block.__(2, [idx]));
-                                                                })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.remove]))
-                                                  ])),
-                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(param[1]) + " BTC")]))
-                                        ]));
-                        }), match[/* destinations */1]));
+              var destinationRow = function ($staropt$star, idx, address, amount) {
+                var withRemoveBtn = $staropt$star ? $staropt$star[0] : true;
+                var match = address !== "" && amount.gt(BTC.zero);
+                if (match) {
+                  return ReasonReact.element(/* Some */[String(idx)], /* None */0, MaterialUi_TableRow.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[spaceBetween(/* center */98248149) + (" " + (noBorder + (" " + cellHeight)))], /* None */0, /* None */0, /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                            React.createElement("b", undefined, ViewCommon.text(address)),
+                                            withRemoveBtn ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
+                                                            return Curry._1(send, /* RemoveDestination */Block.__(2, [idx - 1 | 0]));
+                                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.remove])) : null
+                                          ])),
+                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_TableCell.make(/* Some */[noBorder], /* None */0, /* Some */[true], /* Some */[/* None */870530776], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(amount) + " BTC")]))
+                                ]));
+                } else {
+                  return null;
+                }
+              };
+              var destinationList = $$Array.of_list(/* :: */[
+                    destinationRow(/* Some */[false], 0, match[/* inputDestination */2], match[/* inputAmount */3]),
+                    List.mapi((function (idx, param) {
+                            return destinationRow(/* None */0, idx + 1 | 0, param[0], param[1]);
+                          }), match[/* destinations */1])
+                  ]);
               var tmp;
               if (viewData[/* allowCreation */0] === false) {
                 tmp = React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */1][/* currentSpendable */0], /* Some */[viewData[/* balance */1][/* reserved */1]], /* array */[])));
