@@ -6,17 +6,12 @@ var Styles = require("material-ui/styles");
 var JssProvider = require("react-jss/lib/JssProvider");
 var JssInsertionPoint = require("../assets/js/jss-insertion-point");
 
-var jssObj = JssInsertionPoint.default();
-
 function make(children) {
   return ReasonReact.wrapJsForReason(JssProvider.default, {
-              jss: jssObj,
+              jss: JssInsertionPoint.default(),
               generateClassName: Styles.createGenerateClassName()
             }, children);
 }
 
-console.log(jssObj.createStyleSheet());
-
-exports.jssObj = jssObj;
 exports.make = make;
-/* jssObj Not a pure module */
+/* ReasonReact Not a pure module */

@@ -6,16 +6,10 @@ external jss : unit => Js.t({..}) = "default";
 
 [@bs.module "material-ui/styles"]
 external createGenerateClassName : unit => Js.t({..}) = "";
-[@bs.send] external createStyleSheet : Js.t({..}) => string = "";
 
-let jssObj = jss();
 let make = children =>
   ReasonReact.wrapJsForReason(
     ~reactClass,
-    ~props={
-      "jss": jssObj,
-      "generateClassName": () |> createGenerateClassName,
-    },
+    ~props={"jss": jss(), "generateClassName": () |> createGenerateClassName},
     children,
   );
-Js.log(createStyleSheet(jssObj));
