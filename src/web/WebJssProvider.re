@@ -1,3 +1,8 @@
+type registry;
+[@bs.module "react-jss"] [@bs.new]
+external makeRegistry : unit => registry = "SheetsRegistry";
+[@bs.send] external toString : registry => string = "";
+
 [@bs.module "react-jss/lib/JssProvider"]
 external reactClass : ReasonReact.reactClass = "default";
 
@@ -6,16 +11,13 @@ external jss : unit => Js.t({..}) = "default";
 
 [@bs.module "material-ui/styles"]
 external createGenerateClassName : unit => Js.t({..}) = "";
-[@bs.send] external createStyleSheet : Js.t({..}) => string = "";
 
-let jssObj = jss();
-let make = children =>
+let make = (~registry, children) =>
   ReasonReact.wrapJsForReason(
     ~reactClass,
     ~props={
-      "jss": jssObj,
+      "registry": registry,
       "generateClassName": () |> createGenerateClassName,
     },
     children,
   );
-Js.log(createStyleSheet(jssObj));
