@@ -87,49 +87,46 @@ let make = (~drawer, ~modal, children) => {
         |> Js.Option.getWithDefault(ReasonReact.null)
       );
     MaterialUi.(
-      <CssBaseline>
-        <div className=Styles.container>
-          (
-            switch (drawer) {
-            | None => ReasonReact.null
-            | Some(drawer) =>
-              <AppBar position=`Static className=Styles.appBar>
-                <Toolbar>
-                  <IconButton
-                    className=Styles.logo
-                    color=`Inherit
-                    onClick=(Router.clickToRoute(Home))>
-                    Icons.logoSolid
-                  </IconButton>
-                  <div className=Styles.flex_ />
-                  <IconButton color=`Inherit onClick=(_e => send(OpenDrawer))>
-                    Icons.menu
-                  </IconButton>
-                </Toolbar>
-                <Drawer
-                  theme
-                  variant=`Temporary
-                  anchor=`Right
-                  onClose=(_ => send(CloseDrawer))
-                  _open=state.drawerOpen>
-                  <div
-                    className=Styles.drawer
-                    tabIndex=0
-                    role="button"
-                    onClick=(_event => send(CloseDrawer))>
-                    drawer
-                  </div>
-                </Drawer>
-              </AppBar>
-            }
-          )
-          modalContainer
-          <Grid
-            className=Styles.grid container=true spacing=V24 direction=`Row>
-            children
-          </Grid>
-        </div>
-      </CssBaseline>
+      <div className=Styles.container>
+        (
+          switch (drawer) {
+          | None => ReasonReact.null
+          | Some(drawer) =>
+            <AppBar position=`Static className=Styles.appBar>
+              <Toolbar>
+                <IconButton
+                  className=Styles.logo
+                  color=`Inherit
+                  onClick=(Router.clickToRoute(Home))>
+                  Icons.logoSolid
+                </IconButton>
+                <div className=Styles.flex_ />
+                <IconButton color=`Inherit onClick=(_e => send(OpenDrawer))>
+                  Icons.menu
+                </IconButton>
+              </Toolbar>
+              <Drawer
+                theme
+                variant=`Temporary
+                anchor=`Right
+                onClose=(_ => send(CloseDrawer))
+                _open=state.drawerOpen>
+                <div
+                  className=Styles.drawer
+                  tabIndex=0
+                  role="button"
+                  onClick=(_event => send(CloseDrawer))>
+                  drawer
+                </div>
+              </Drawer>
+            </AppBar>
+          }
+        )
+        modalContainer
+        <Grid className=Styles.grid container=true spacing=V24 direction=`Row>
+          children
+        </Grid>
+      </div>
     );
   },
 };

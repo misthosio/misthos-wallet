@@ -3,8 +3,11 @@ import Document, { Head, Main, NextScript } from 'next/document';
 import JssProvider from 'react-jss/lib/JssProvider';
 import flush from 'styled-jsx/server';
 import getPageContext from '../src/web/getPageContext';
+import {renderStaticOptimized} from 'glamor/server'
+import jss from '../src/assets/js/jss-insertion-point.js';
 
 class MyDocument extends Document {
+
   render() {
     const { pageContext } = this.props;
 
@@ -41,7 +44,6 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css?family=Oswald:600,700|Source+Sans+Pro:300,600"
             rel="stylesheet"
           />
-          <noscript id="jss-insertion-point" />
           <title>Misthos</title>
         </Head>
         <body>
@@ -75,12 +77,13 @@ MyDocument.getInitialProps = ctx => {
   const pageContext = getPageContext();
   const page = ctx.renderPage(Component => props => (
     <JssProvider
-    registry={pageContext.sheetsRegistry}
-    generateClassName={pageContext.generateClassName}
+      registry={pageContext.sheetsRegistry}
+      generateClassName={pageContext.generateClassName}
     >
-    <Component pageContext={pageContext} {...props} />
+      <Component pageContext={pageContext} {...props} />
     </JssProvider>
   ));
+  const glamourStyles = renderStaticOptimized(() => page.html)
 
   return {
     ...page,
@@ -88,9 +91,13 @@ MyDocument.getInitialProps = ctx => {
     styles: (
       <React.Fragment>
       <style
-      id="jss-server-side"
-      // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: pageContext.sheetsRegistry.toString() }}
+        id="jss-server-side"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: pageContext.sheetsRegistry.toString() }}
+      />
+      <style id="glamour-css"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: glamourStyles.css }}
       />
       {flush() || null}
       </React.Fragment>

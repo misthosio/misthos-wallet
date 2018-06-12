@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import getPageContext from './getPageContext';
+import JssProvider from 'react-jss/lib/JssProvider';
+import jss from '../assets/js/jss-insertion-point.js';
 
 function withRoot(Component) {
   class WithRoot extends React.Component {
@@ -14,10 +16,14 @@ function withRoot(Component) {
 
     componentDidMount() {
       // Remove the server-side injected CSS.
-      // const jssStyles = document.querySelector('#jss-server-side');
-      // if (jssStyles && jssStyles.parentNode) {
-      //   jssStyles.parentNode.removeChild(jssStyles);
-      // }
+      const jssStyles = document.querySelector('#jss-server-side');
+      if (jssStyles && jssStyles.parentNode) {
+        // jssStyles.parentNode.removeChild(jssStyles);
+      }
+      const glamourStyles = document.querySelector('#glamour-css');
+      if (glamourStyles && glamourStyles.parentNode) {
+        glamourStyles.parentNode.removeChild(glamourStyles);
+      }
     }
 
     pageContext = null;
@@ -25,12 +31,16 @@ function withRoot(Component) {
     render() {
       // MuiThemeProvider makes the theme available down the React tree thanks to React context.
       return (
+      <JssProvider>
         <MuiThemeProvider
-        theme={this.pageContext.theme}
-        sheetsManager={this.pageContext.sheetsManager}
+          theme={this.pageContext.theme}
+          sheetsManager={this.pageContext.sheetsManager}
         >
-        <Component {...this.props} />
+          <CssBaseline>
+            <Component {...this.props} />
+          </CssBaseline>
         </MuiThemeProvider>
+      </JssProvider>
       );
     }
   }
