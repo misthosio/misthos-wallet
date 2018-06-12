@@ -1,9 +1,18 @@
 [%bs.raw {|window.blockstack = require('blockstack')|}];
 
+let theme = Theme.theme |> Theme.toJsUnsafe;
+
 ReactDOMRe.renderToElementWithId(
   <JssProvider>
     <SessionStore>
-      ...((~session, ~updateSession) => <App session updateSession />)
+      ...(
+           (~session, ~updateSession) =>
+             MaterialUi.(
+               <MuiThemeProvider theme=(`ObjectGeneric(theme))>
+                 <CssBaseline> <App session updateSession /> </CssBaseline>
+               </MuiThemeProvider>
+             )
+         )
     </SessionStore>
   </JssProvider>,
   "root",

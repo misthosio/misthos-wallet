@@ -10,9 +10,6 @@ external createGenerateClassName : unit => Js.t({..}) = "";
 let make = children =>
   ReasonReact.wrapJsForReason(
     ~reactClass,
-    ~props={
-      "jss": () |> jss,
-      "generateClassName": () |> createGenerateClassName,
-    },
+    ~props={"jss": jss(), "generateClassName": () |> createGenerateClassName},
     children,
   );

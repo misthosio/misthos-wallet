@@ -24,13 +24,6 @@ const config = {
         }
       },
       {
-        test: /\.(js|mjs)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader"
-        }
-      },
-      {
         test: /\.html$/,
           use: [
             {

@@ -1,4 +1,4 @@
 // next.config.js
 module.exports = {
-  pageExtensions: ['bs.js']
+  pageExtensions: ['bs.js', 'js']
 }

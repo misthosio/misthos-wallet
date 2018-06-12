@@ -80,7 +80,7 @@
   },
   "babel": {
     "presets": [
-      "env"
+      "next/babel"
     ]
   }
 }
