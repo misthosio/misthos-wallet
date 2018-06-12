@@ -17,11 +17,11 @@ module Styles = {
     ]);
   let body = style([minHeight(px(0)), unsafe("gridArea", "body")]);
   let gap = (Theme.space(8) |> string_of_int) ++ "px";
-  let grid =
+  let grid = mobileEnabled =>
     style([
       display(grid),
-      minWidth(px(Theme.space(101))),
-      minHeight(px(Theme.space(88))),
+      minWidth(mobileEnabled ? px(0) : px(Theme.space(101))),
+      minHeight(mobileEnabled ? px(0) : px(Theme.space(88))),
       height(vh(100.0)),
       width(vw(100.0)),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
@@ -49,7 +49,7 @@ module Styles = {
     style([hover([backgroundColor(transparent)]), borderRadius(px(0))]);
 };
 
-let make = (~drawer, ~modal, children) => {
+let make = (~drawer, ~modal, ~mobileEnabled=false, children) => {
   ...component,
   initialState: () => {drawerOpen: false},
   reducer: (action, _state) =>
@@ -84,7 +84,7 @@ let make = (~drawer, ~modal, children) => {
         |> Js.Option.getWithDefault(ReasonReact.null)
       );
     MaterialUi.(
-      <div className=Styles.grid>
+      <div className=(Styles.grid(mobileEnabled))>
         (
           switch (drawer) {
           | None => ReasonReact.null

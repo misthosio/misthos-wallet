@@ -21,7 +21,7 @@ function make() {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, PublicHome.make((function () {
+              return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[ReasonReact.element(/* None */0, /* None */0, PublicHome.make((function () {
                                           Session.signIn(/* () */0);
                                           return /* () */0;
                                         }), /* array */[]))]));

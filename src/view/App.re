@@ -10,6 +10,11 @@ let make = (~session, ~updateSession, _children) => {
   let onCloseModal = (ventureId, _e) =>
     Router.Config.routeToUrl(Venture(ventureId, None))
     |> ReasonReact.Router.push;
+  let mobileEnabled =
+    switch (session) {
+    | NotLoggedIn => true
+    | _ => false
+    };
   let modal =
       (
         selectedVenture: VentureStore.selectedVenture,
@@ -204,6 +209,7 @@ let make = (~session, ~updateSession, _children) => {
                  ...(
                       (~index, ~selectedVenture, ~createVenture) =>
                         <Layout
+                          mobileEnabled
                           drawer=(currentRoute |> drawer(index))
                           modal=(currentRoute |> modal(selectedVenture))>
                           (

@@ -5,7 +5,7 @@ let component = ReasonReact.statelessComponent("index");
 let make = _children => {
   ...component,
   render: _ =>
-    <Layout drawer=None modal=None>
+    <Layout drawer=None modal=None mobileEnabled=true>
       <PublicHome onSignIn=(_e => Session.signIn() |> ignore) />
     </Layout>,
 };

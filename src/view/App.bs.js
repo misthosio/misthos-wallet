@@ -43,6 +43,7 @@ function make(session, updateSession, _) {
                       /* None */0
                     ])));
   };
+  var mobileEnabled = typeof session === "number" ? session === 2 : false;
   var modal = function (selectedVenture, currentRoute) {
     if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag) {
       return /* None */0;
@@ -305,7 +306,7 @@ function make(session, updateSession, _) {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Curry._1(Router.Container[/* make */1], (function (currentRoute) {
                                 return ReasonReact.element(/* None */0, /* None */0, VentureStore.make(currentRoute, session, (function (index, selectedVenture, createVenture) {
-                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(selectedVenture, currentRoute), /* array */[body(index, selectedVenture, createVenture, currentRoute)]));
+                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(selectedVenture, currentRoute), /* Some */[mobileEnabled], /* array */[body(index, selectedVenture, createVenture, currentRoute)]));
                                                 })));
                               })));
             }),

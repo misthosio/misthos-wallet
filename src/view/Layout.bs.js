@@ -48,31 +48,33 @@ var body = Css.style(/* :: */[
 
 var gap = String(Theme.space(8)) + "px";
 
-var grid = Css.style(/* :: */[
-      Css.display(Css.grid),
-      /* :: */[
-        Css.minWidth(Css.px(Theme.space(101))),
-        /* :: */[
-          Css.minHeight(Css.px(Theme.space(88))),
-          /* :: */[
-            Css.height(Css.vh(100.0)),
-            /* :: */[
-              Css.width(Css.vw(100.0)),
+function grid(mobileEnabled) {
+  return Css.style(/* :: */[
+              Css.display(Css.grid),
               /* :: */[
-                Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+                Css.minWidth(mobileEnabled ? Css.px(0) : Css.px(Theme.space(101))),
                 /* :: */[
-                  Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
+                  Css.minHeight(mobileEnabled ? Css.px(0) : Css.px(Theme.space(88))),
                   /* :: */[
-                    Css.unsafe("gridTemplateAreas", "\"bar\" \"body\" \".\""),
-                    /* [] */0
+                    Css.height(Css.vh(100.0)),
+                    /* :: */[
+                      Css.width(Css.vw(100.0)),
+                      /* :: */[
+                        Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+                        /* :: */[
+                          Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
+                          /* :: */[
+                            Css.unsafe("gridTemplateAreas", "\"bar\" \"body\" \".\""),
+                            /* [] */0
+                          ]
+                        ]
+                      ]
+                    ]
                   ]
                 ]
               ]
-            ]
-          ]
-        ]
-      ]
-    ]);
+            ]);
+}
 
 var drawer = Css.style(/* :: */[
       Css.width(/* `px */[
@@ -173,7 +175,8 @@ var Styles = /* module */[
   /* logo */logo
 ];
 
-function make(drawer$1, modal$1, children) {
+function make(drawer$1, modal$1, $staropt$star, children) {
+  var mobileEnabled = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -205,7 +208,7 @@ function make(drawer$1, modal$1, children) {
                           return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Modal.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, true, /* None */0, /* None */0, /* array */[inner]));
                         }), modal$1));
               return React.createElement("div", {
-                          className: grid
+                          className: grid(mobileEnabled)
                         }, drawer$1 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_AppBar.make(/* Some */[appBar], /* None */0, /* Some */[/* Static */982536398], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_Toolbar.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[logo], /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
