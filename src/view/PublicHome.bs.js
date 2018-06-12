@@ -3,58 +3,131 @@
 
 var Css = require("bs-css/src/Css.js");
 var Icons = require("./Icons.bs.js");
+var Theme = require("./Theme.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var MaterialUi_Grid = require("@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js");
+var MaterialUi_SvgIcon = require("@jsiebern/bs-material-ui/src/MaterialUi_SvgIcon.bs.js");
 var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
 
 var component = ReasonReact.statelessComponent("PublicHome");
 
-var fullHeight = Css.style(/* :: */[
-      Css.height(/* `percent */[
-            -119887163,
-            100.0
-          ]),
-      /* [] */0
+var grid = Css.style(/* :: */[
+      Css.display(Css.grid),
+      /* :: */[
+        BreakPoints.lg(/* :: */[
+              Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". title title .\"\n           \". sub button .\"\n           \". . . .\"\n           "),
+              /* :: */[
+                Css.unsafe("gridTemplateColumns", "[begin] 1fr 7fr 5fr 1fr [end]"),
+                /* :: */[
+                  Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content auto"),
+                  /* [] */0
+                ]
+              ]
+            ]),
+        /* :: */[
+          BreakPoints.sm(/* :: */[
+                Css.unsafe("gridTemplateColumns", "[begin] 1fr 6fr 1fr [end]"),
+                /* :: */[
+                  Css.gridGap(Css.px(Theme.space(5))),
+                  /* [] */0
+                ]
+              ]),
+          /* :: */[
+            BreakPoints.xs(/* :: */[
+                  Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
+                  /* :: */[
+                    Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". title .\"\n           \". sub .\"\n           \". button .\"\n           \". . .\"\n           "),
+                    /* :: */[
+                      Css.unsafe("gridTemplateRows", "[begin] auto min-content [end] min-content min-content auto"),
+                      /* :: */[
+                        Css.gridGap(Css.px(Theme.space(2))),
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]),
+            /* :: */[
+              Css.width(/* `percent */[
+                    -119887163,
+                    100.0
+                  ]),
+              /* :: */[
+                Css.height(/* `vh */[
+                      26418,
+                      100.0
+                    ]),
+                /* :: */[
+                  Css.alignItems(/* flexEnd */924268066),
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
     ]);
 
-var display4 = Css.style(/* :: */[
-      Css.paddingBottom(/* `vw */[
-            26433,
-            1.5
-          ]),
-      /* [] */0
-    ]);
-
-var background = Css.style(/* :: */[
+var logo = Css.style(/* :: */[
       Css.backgroundImage(Css.url(Icons.asDataUrl(Icons.logoBig))),
       /* :: */[
         Css.backgroundRepeat(Css.noRepeat),
         /* :: */[
-          Css.backgroundSize(/* `size */[
-                -866934591,
-                /* tuple */[
-                  /* `px */[
-                    25096,
-                    584
-                  ],
-                  /* `px */[
-                    25096,
-                    419
-                  ]
-                ]
+          Css.alignSelf(/* stretch */-162316795),
+          /* :: */[
+            Css.unsafe("backgroundSize", "auto 100%"),
+            /* :: */[
+              Css.unsafe("gridColumn", "begin / end"),
+              /* :: */[
+                Css.unsafe("gridRow", "begin / end"),
+                /* [] */0
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+function area(area$1) {
+  return Css.style(/* :: */[
+              Css.unsafe("gridArea", area$1),
+              /* :: */[
+                Css.minHeight(Css.px(0)),
+                /* [] */0
+              ]
+            ]);
+}
+
+var title = Css.style(/* :: */[
+      Css.lineHeight(0.92),
+      /* :: */[
+        BreakPoints.md(/* :: */[
+              Css.fontSize(Css.px(124)),
+              /* [] */0
+            ]),
+        /* :: */[
+          BreakPoints.sm(/* :: */[
+                Css.fontSize(Css.px(72)),
+                /* [] */0
               ]),
-          /* [] */0
+          /* :: */[
+            BreakPoints.xs(/* :: */[
+                  Css.fontSize(Css.px(68)),
+                  /* [] */0
+                ]),
+            /* [] */0
+          ]
         ]
       ]
     ]);
 
 var Styles = /* module */[
-  /* fullHeight */fullHeight,
-  /* display4 */display4,
-  /* background */background
+  /* grid */grid,
+  /* logo */logo,
+  /* area */area,
+  /* title */title
 ];
 
 function make(onSignIn, _) {
@@ -69,20 +142,26 @@ function make(onSignIn, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* Some */[/* Center */980392437], /* Some */[background], /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V10 */9], /* None */0, /* None */0, /* None */0, /* array */[
-                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[ViewCommon.text("Distribute Funds")])),
-                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[display4], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[ViewCommon.text("with misthos.")]))
-                                                ])),
-                                        ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V10 */9], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[/* Space_Between */959915471], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V8 */7], /* None */0, /* None */0, /* None */0, /* array */[
-                                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[ViewCommon.text("Misthos is the only multi-sig Bitcoin wallet that lets you change co-singers in a fast and friction-less way.")])),
-                                                                      React.createElement("br", undefined),
-                                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[ViewCommon.text("Use it for projects. Use it for payments.")]))
-                                                                    ])),
-                                                            ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V3 */2], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* Some */[/* Flex_End */-403022699], /* Some */[fullHeight], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Sign In with Blockstack"]))]))]))
-                                                          ]))]))
-                                      ]))]));
+              return React.createElement("div", {
+                          className: grid
+                        }, React.createElement("div", {
+                              className: logo
+                            }), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("title") + (" " + title)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[
+                                  ViewCommon.text("Distribute Funds"),
+                                  React.createElement("br", undefined),
+                                  ViewCommon.text("with misthos.")
+                                ])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("sub")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[
+                                  ViewCommon.text("Misthos is the only multi-sig Bitcoin wallet that lets you change co-singers in a fast and friction-less way."),
+                                  React.createElement("br", undefined),
+                                  React.createElement("br", undefined),
+                                  ViewCommon.text("Use it for projects. Use it for payments.")
+                                ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* None */0, /* None */0, /* Some */[area("button")], /* None */0, /* array */[
+                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_SvgIcon.make(/* Some */[Css.style(/* :: */[
+                                                  Css.marginRight(Css.px(16)),
+                                                  /* [] */0
+                                                ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.blockStack])),
+                                  ViewCommon.text("Sign In with Blockstack")
+                                ])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

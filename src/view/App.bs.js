@@ -15,7 +15,6 @@ var BlankScreen = require("./BlankScreen.bs.js");
 var JoinVenture = require("./JoinVenture.bs.js");
 var LoadVenture = require("./LoadVenture.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
-var GlobalScroll = require("./components/GlobalScroll.bs.js");
 var LoggedInHome = require("./LoggedInHome.bs.js");
 var VentureStore = require("./VentureStore.bs.js");
 var NotFoundModal = require("./NotFoundModal.bs.js");
@@ -44,6 +43,7 @@ function make(session, updateSession, _) {
                       /* None */0
                     ])));
   };
+  var mobileEnabled = typeof session === "number" ? session === 2 : false;
   var modal = function (selectedVenture, currentRoute) {
     if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag) {
       return /* None */0;
@@ -306,7 +306,7 @@ function make(session, updateSession, _) {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Curry._1(Router.Container[/* make */1], (function (currentRoute) {
                                 return ReasonReact.element(/* None */0, /* None */0, VentureStore.make(currentRoute, session, (function (index, selectedVenture, createVenture) {
-                                                  return ReasonReact.element(/* None */0, /* None */0, GlobalScroll.make(/* array */[ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(selectedVenture, currentRoute), body(index, selectedVenture, createVenture, currentRoute)))]));
+                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(selectedVenture, currentRoute), /* Some */[mobileEnabled], /* array */[body(index, selectedVenture, createVenture, currentRoute)]));
                                                 })));
                               })));
             }),

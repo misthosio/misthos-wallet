@@ -18,7 +18,13 @@ var progress = Css.style(/* :: */[
 
 var container = Css.style(/* :: */[
       Css.textAlign(Css.center),
-      /* [] */0
+      /* :: */[
+        Css.height(/* `percent */[
+              -119887163,
+              100.0
+            ]),
+        /* [] */0
+      ]
     ]);
 
 var Styles = /* module */[
@@ -26,7 +32,8 @@ var Styles = /* module */[
   /* container */container
 ];
 
-function make(spinnerText, className, _) {
+function make(spinnerText, $staropt$star, _) {
+  var className = $staropt$star ? $staropt$star[0] : "";
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -38,7 +45,7 @@ function make(spinnerText, className, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* Some */[/* Center */980392437], className, /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* Some */[container], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[/* V2 */1], /* Some */[/* V4 */3], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V8 */7], /* None */0, /* None */0, /* None */0, /* array */[
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* Some */[/* Center */980392437], /* Some */[container + (" " + className)], /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* Some */[/* Row */4102650], /* None */0, /* None */0, /* Some */[/* Center */980392437], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* Some */[container], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[/* V2 */1], /* Some */[/* V4 */3], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V8 */7], /* None */0, /* None */0, /* None */0, /* array */[
                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi_CircularProgress.make(/* Some */[progress], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])),
                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body1 */-904051921], /* None */0, /* None */0, /* array */[ViewCommon.text(spinnerText)]))
                                                 ]))]))]));

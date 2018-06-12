@@ -252,6 +252,23 @@ var stepBg = React.createElement("svg", {
               r: "18"
             })));
 
+var blockStack = React.createElement("svg", {
+      height: "24",
+      width: "24",
+      viewBox: "0 0 24 24",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("g", {
+          fill: "none",
+          fillRule: "nonzero"
+        }, React.createElement("path", {
+              d: "M24 16.431s.006 2.502-.267 3.586c-.272 1.084-.772 1.84-1.326 2.394-.557.556-1.294 1.063-2.418 1.326-1.124.264-3.563.26-3.563.26L7.566 24s-2.502.006-3.586-.266c-1.084-.273-1.84-.773-2.395-1.327C1.03 21.851.523 21.113.26 19.99-.005 18.866 0 16.427 0 16.427V7.57s-.006-2.502.267-3.586c.272-1.084.772-1.84 1.326-2.394C2.15 1.033 2.887.526 4.011.263c1.124-.264 3.563-.26 3.563-.26L16.434 0s2.502-.006 3.586.266c1.084.273 1.84.773 2.395 1.327.556.556 1.062 1.294 1.326 2.417.264 1.124.259 3.563.259 3.563v8.858z",
+              fill: "#270F34"
+            }), React.createElement("g", {
+              fill: "#FEFEFE"
+            }, React.createElement("path", {
+                  d: "M8.12 17.832a1.956 1.956 0 1 0 0-3.911 1.956 1.956 0 0 0 0 3.911M8.12 10.035a1.956 1.956 0 1 0 0-3.912 1.956 1.956 0 0 0 0 3.912M15.943 10.035a1.956 1.956 0 1 0 0-3.912 1.956 1.956 0 0 0 0 3.912M15.943 17.832a1.956 1.956 0 1 0 0-3.912 1.956 1.956 0 0 0 0 3.912"
+                }))));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -271,4 +288,5 @@ exports.minusCircle = minusCircle;
 exports.plusCircle = plusCircle;
 exports.remove = remove;
 exports.stepBg = stepBg;
+exports.blockStack = blockStack;
 /* arrowRight Not a pure module */
