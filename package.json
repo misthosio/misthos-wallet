@@ -79,8 +79,22 @@
     ]
   },
   "babel": {
-    "presets": [
-      "next/babel"
-    ]
+    "env": {
+      "test": {
+        "presets": [
+          "env"
+        ]
+      },
+      "development": {
+        "presets": [
+          "next/babel"
+        ]
+      },
+      "production": {
+        "presets": [
+          "next/babel"
+        ]
+      }
+    }
   }
 }
