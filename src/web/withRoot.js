@@ -4,7 +4,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import getPageContext from './getPageContext';
 import JssProvider from 'react-jss/lib/JssProvider';
-import jss from '../assets/js/jss-insertion-point.js';
+import jss from './jss-insertion-point.js';
 
 function withRoot(Component) {
   class WithRoot extends React.Component {

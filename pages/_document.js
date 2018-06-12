@@ -4,7 +4,7 @@ import JssProvider from 'react-jss/lib/JssProvider';
 import flush from 'styled-jsx/server';
 import getPageContext from '../src/web/getPageContext';
 import {renderStaticOptimized} from 'glamor/server'
-import jss from '../src/assets/js/jss-insertion-point.js';
+import jss from '../src/web/jss-insertion-point';
 
 class MyDocument extends Document {
 
