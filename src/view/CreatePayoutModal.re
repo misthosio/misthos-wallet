@@ -37,6 +37,7 @@ module Styles = {
   open Css;
   let maxButton = style([color(rgba(0, 0, 0, 0.54))]);
   let maxWidth = style([width(`percent(99.0))]);
+  let cellHeight = style([height(px(49))]);
   let buttonPadding = style([paddingLeft(px(4))]);
   let noBorder = style([borderColor(`transparent), whiteSpace(`nowrap)]);
   let spaceBetween = align =>
@@ -256,38 +257,57 @@ let make =
           canSubmitProposal,
           viewData,
           addressValid,
+          inputDestination,
+          inputAmount,
           inputs,
           destinations,
           summary,
         },
       },
     ) => {
+    let destinationRow = (~withRemoveBtn=true, idx, address, amount) =>
+      MaterialUi.(
+        address != "" && amount |> BTC.gt(BTC.zero) ?
+          <TableRow key=(idx |> string_of_int)>
+            <TableCell
+              className=(
+                Styles.spaceBetween(`center)
+                ++ " "
+                ++ Styles.noBorder
+                ++ " "
+                ++ Styles.cellHeight
+              )
+              padding=`None>
+              <b> (address |> text) </b>
+              (
+                withRemoveBtn ?
+                  <IconButton
+                    onClick=(_e => send(RemoveDestination(idx - 1)))>
+                    Icons.remove
+                  </IconButton> :
+                  ReasonReact.null
+              )
+            </TableCell>
+            <TableCell numeric=true className=Styles.noBorder padding=`None>
+              (BTC.format(amount) ++ " BTC" |> text)
+            </TableCell>
+          </TableRow> :
+          ReasonReact.null
+      );
     let destinationList =
       ReasonReact.array(
-        Array.of_list(
-          destinations
-          |> List.mapi((idx, (address, amount)) =>
-               MaterialUi.(
-                 <TableRow key=(idx |> string_of_int)>
-                   <TableCell
-                     className=(
-                       Styles.spaceBetween(`center) ++ " " ++ Styles.noBorder
-                     )
-                     padding=`None>
-                     <b> (address |> text) </b>
-                     <IconButton
-                       onClick=(_e => send(RemoveDestination(idx)))>
-                       Icons.remove
-                     </IconButton>
-                   </TableCell>
-                   <TableCell
-                     numeric=true className=Styles.noBorder padding=`None>
-                     (BTC.format(amount) ++ " BTC" |> text)
-                   </TableCell>
-                 </TableRow>
-               )
-             ),
-        ),
+        Array.of_list([
+          destinationRow(
+            ~withRemoveBtn=false,
+            0,
+            inputDestination,
+            inputAmount,
+          ),
+          ...destinations
+             |> List.mapi((idx, (address, amount)) =>
+                  destinationRow(idx + 1, address, amount)
+                ),
+        ]),
       );
     <Grid
       title1=("Create A Payout" |> text)
