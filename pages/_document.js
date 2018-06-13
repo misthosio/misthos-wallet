@@ -16,9 +16,7 @@ class MyDocument extends Document {
     return (
       <html lang="en" dir="ltr">
         <Head>
-          <script>
-          {ga}
-          </script>
+          <script dangerouslySetInnerHTML={{ __html: ga }}/>
           <meta charSet="utf-8" />
           <meta
             name="viewport"
