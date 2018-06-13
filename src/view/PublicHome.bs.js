@@ -103,7 +103,7 @@ function area(area$1) {
 var title = Css.style(/* :: */[
       Css.lineHeight(0.92),
       /* :: */[
-        BreakPoints.md(/* :: */[
+        BreakPoints.lg(/* :: */[
               Css.fontSize(Css.px(124)),
               /* [] */0
             ]),
