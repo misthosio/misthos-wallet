@@ -17,8 +17,12 @@ Scenarios.run("income-summary", (function (viewModel) {
                               ]), Jest.Expect[/* expect */0](balance[/* currentSpendable */0]));
               }));
         return Jest.test("Network fee is set", (function () {
-                      var createPayoutModalState_007 = /* summary */createPayoutModal[/* initialSummary */4];
-                      var createPayoutModalState_008 = /* inputs : record */[
+                      var createPayoutModalState_007 = /* fee */BTC.fromSatoshis(/* int64 */[
+                            /* hi */0,
+                            /* lo */100
+                          ]);
+                      var createPayoutModalState_008 = /* summary */createPayoutModal[/* initialSummary */4];
+                      var createPayoutModalState_009 = /* inputs : record */[
                         /* recipientAddress */"",
                         /* btcAmount */"2MvTochgBg25bYVyJwaX6nWM1AThbmaoUHA"
                       ];
@@ -31,13 +35,14 @@ Scenarios.run("income-summary", (function (viewModel) {
                         /* canSubmitProposal */false,
                         /* frozen */false,
                         createPayoutModalState_007,
-                        createPayoutModalState_008
+                        createPayoutModalState_008,
+                        createPayoutModalState_009
                       ];
                       var updatedState = CreatePayoutModal.updateState(createPayoutModalState);
                       return Jest.Expect[/* toEqual */12](BTC.fromSatoshis(/* int64 */[
                                       /* hi */0,
                                       /* lo */184650
-                                    ]), Jest.Expect[/* expect */0](updatedState[/* summary */7][/* networkFee */4]));
+                                    ]), Jest.Expect[/* expect */0](updatedState[/* summary */8][/* networkFee */4]));
                     }));
       }));
 
