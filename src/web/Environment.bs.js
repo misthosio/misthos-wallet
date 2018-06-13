@@ -7,63 +7,35 @@ function get() {
   switch (match) {
     case "localhost" : 
         return /* record */[
-                /* redirectURI */(function () {
-                    return "http://localhost:3000/";
-                  }),
-                /* manifestURI */(function () {
-                    return "http://localhost:3000/manifest.json";
-                  }),
-                /* appDomain */(function () {
-                    return "http://localhost:3000";
-                  }),
-                /* cookieDomain */(function () {
-                    return "localhost";
-                  })
+                /* redirectURI */"http://localhost:3000/",
+                /* manifestURI */"http://localhost:3000/manifest.json",
+                /* appDomain */"http://localhost:3000",
+                /* cookieDomain */"localhost",
+                /* network : Testnet */1
               ];
     case "web-staging.misthos.io" : 
         return /* record */[
-                /* redirectURI */(function () {
-                    return "https://staging.misthos.io/";
-                  }),
-                /* manifestURI */(function () {
-                    return "https://staging.misthos.io/manifest.json";
-                  }),
-                /* appDomain */(function () {
-                    return "https://staging.misthos.io";
-                  }),
-                /* cookieDomain */(function () {
-                    return "misthos.io";
-                  })
+                /* redirectURI */"https://staging.misthos.io/",
+                /* manifestURI */"https://staging.misthos.io/manifest.json",
+                /* appDomain */"https://staging.misthos.io",
+                /* cookieDomain */"misthos.io",
+                /* network : Testnet */1
               ];
     case "web-testnet.misthos.io" : 
         return /* record */[
-                /* redirectURI */(function () {
-                    return "https://testnet.misthos.io/";
-                  }),
-                /* manifestURI */(function () {
-                    return "https://testnet.misthos.io/manifest.json";
-                  }),
-                /* appDomain */(function () {
-                    return "https://testnet.misthos.io";
-                  }),
-                /* cookieDomain */(function () {
-                    return "misthos.io";
-                  })
+                /* redirectURI */"https://testnet.misthos.io/",
+                /* manifestURI */"https://testnet.misthos.io/manifest.json",
+                /* appDomain */"https://testnet.misthos.io",
+                /* cookieDomain */"misthos.io",
+                /* network : Testnet */1
               ];
     default:
       return /* record */[
-              /* redirectURI */(function () {
-                  return window.location.origin + "/";
-                }),
-              /* manifestURI */(function () {
-                  return window.location.origin + "/manifest.json";
-                }),
-              /* appDomain */(function () {
-                  return window.location.origin;
-                }),
-              /* cookieDomain */(function () {
-                  return "misthos.io";
-                })
+              /* redirectURI */window.location.origin + "/",
+              /* manifestURI */window.location.origin + "/manifest.json",
+              /* appDomain */window.location.origin,
+              /* cookieDomain */"misthos.io",
+              /* network : Testnet */1
             ];
   }
 }
