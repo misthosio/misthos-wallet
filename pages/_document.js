@@ -5,15 +5,20 @@ import flush from 'styled-jsx/server';
 import getPageContext from '../src/web/getPageContext';
 import {renderStaticOptimized} from 'glamor/server'
 import jss from '../src/web/jss-insertion-point';
+import ReactDOMServer from 'react-dom/server';
 
 class MyDocument extends Document {
 
   render() {
     const { pageContext } = this.props;
 
+    const ga = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-PDCW5VS');"
     return (
       <html lang="en" dir="ltr">
         <Head>
+          <script>
+          {ga}
+          </script>
           <meta charSet="utf-8" />
           <meta
             name="viewport"
@@ -47,8 +52,8 @@ class MyDocument extends Document {
           <title>Misthos</title>
         </Head>
         <body>
-        <Main />
-        <NextScript />
+          <Main />
+          <NextScript />
         </body>
       </html>
     );
