@@ -46,13 +46,13 @@ let make =
                  <TableRow key=(idx |> string_of_int)>
                    <TableCell className=Styles.noBorder padding=`None>
                      <MTypography variant=`Body2>
-                      (address |> text)
+                       (address |> text)
                      </MTypography>
                    </TableCell>
                    <TableCell
                      numeric=true className=Styles.noBorder padding=`None>
                      <MTypography variant=`Body2>
-                      (BTC.format(amount) ++ " BTC" |> text)
+                       (BTC.format(amount) ++ " BTC" |> text)
                      </MTypography>
                    </TableCell>
                  </TableRow>
@@ -136,7 +136,6 @@ let make =
                 </TableBody>
               </Table>
             )
-            </ScrollList>
             MaterialUi.(
               <div className=Styles.total>
                 <Typography variant=`Body2>
@@ -147,7 +146,7 @@ let make =
                 </MTypography>
               </div>
             )
-
+          </ScrollList>
           transactionId
         </div>
       }

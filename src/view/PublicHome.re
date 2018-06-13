@@ -56,7 +56,10 @@ module Styles = {
       backgroundImage(url(Icons.asDataUrl(Icons.logoBig))),
       backgroundRepeat(noRepeat),
       alignSelf(`stretch),
-      xs([unsafe("backgroundSize", "auto 100%")]),
+      lg([unsafe("backgroundSize", "auto 100%")]),
+      md([unsafe("backgroundSize", "auto 100%")]),
+      sm([unsafe("backgroundSize", "auto 100%")]),
+      xs([unsafe("backgroundSize", "auto 50%")]),
       unsafe("gridColumn", "begin / end"),
       unsafe("gridRow", "begin / end"),
     ]);
@@ -83,11 +86,11 @@ let make = (~onSignIn, _children) => {
           variant=`Display4>
           ("Distribute Funds" |> text)
           <br />
-          ("with misthos." |> text)
+          ("with Misthos." |> text)
         </Typography>
         <Typography className=(Styles.area("sub")) variant=`Display1>
           (
-            "Misthos is the only multi-sig Bitcoin wallet that lets you change co-singers in a fast and friction-less way."
+            "Misthos is the only multi-sig Bitcoin wallet that lets you change co-signers in a fast and friction-less way."
             |> text
           )
           <br />

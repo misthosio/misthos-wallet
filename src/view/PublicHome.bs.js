@@ -77,15 +77,33 @@ var logo = Css.style(/* :: */[
         /* :: */[
           Css.alignSelf(/* stretch */-162316795),
           /* :: */[
-            BreakPoints.xs(/* :: */[
+            BreakPoints.lg(/* :: */[
                   Css.unsafe("backgroundSize", "auto 100%"),
                   /* [] */0
                 ]),
             /* :: */[
-              Css.unsafe("gridColumn", "begin / end"),
+              BreakPoints.md(/* :: */[
+                    Css.unsafe("backgroundSize", "auto 100%"),
+                    /* [] */0
+                  ]),
               /* :: */[
-                Css.unsafe("gridRow", "begin / end"),
-                /* [] */0
+                BreakPoints.sm(/* :: */[
+                      Css.unsafe("backgroundSize", "auto 100%"),
+                      /* [] */0
+                    ]),
+                /* :: */[
+                  BreakPoints.xs(/* :: */[
+                        Css.unsafe("backgroundSize", "auto 50%"),
+                        /* [] */0
+                      ]),
+                  /* :: */[
+                    Css.unsafe("gridColumn", "begin / end"),
+                    /* :: */[
+                      Css.unsafe("gridRow", "begin / end"),
+                      /* [] */0
+                    ]
+                  ]
+                ]
               ]
             ]
           ]
@@ -152,9 +170,9 @@ function make(onSignIn, _) {
                             }), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("title") + (" " + title)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[
                                   ViewCommon.text("Distribute Funds"),
                                   React.createElement("br", undefined),
-                                  ViewCommon.text("with misthos.")
+                                  ViewCommon.text("with Misthos.")
                                 ])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("sub")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[
-                                  ViewCommon.text("Misthos is the only multi-sig Bitcoin wallet that lets you change co-singers in a fast and friction-less way."),
+                                  ViewCommon.text("Misthos is the only multi-sig Bitcoin wallet that lets you change co-signers in a fast and friction-less way."),
                                   React.createElement("br", undefined),
                                   React.createElement("br", undefined),
                                   ViewCommon.text("Use it for projects. Use it for payments.")
