@@ -77,32 +77,20 @@ var logo = Css.style(/* :: */[
         /* :: */[
           Css.alignSelf(/* stretch */-162316795),
           /* :: */[
-            BreakPoints.lg(/* :: */[
+            BreakPoints.sm(/* :: */[
                   Css.unsafe("backgroundSize", "auto 100%"),
                   /* [] */0
                 ]),
             /* :: */[
-              BreakPoints.md(/* :: */[
-                    Css.unsafe("backgroundSize", "auto 100%"),
+              BreakPoints.xs(/* :: */[
+                    Css.unsafe("backgroundSize", "auto 50%"),
                     /* [] */0
                   ]),
               /* :: */[
-                BreakPoints.sm(/* :: */[
-                      Css.unsafe("backgroundSize", "auto 100%"),
-                      /* [] */0
-                    ]),
+                Css.unsafe("gridColumn", "begin / end"),
                 /* :: */[
-                  BreakPoints.xs(/* :: */[
-                        Css.unsafe("backgroundSize", "auto 50%"),
-                        /* [] */0
-                      ]),
-                  /* :: */[
-                    Css.unsafe("gridColumn", "begin / end"),
-                    /* :: */[
-                      Css.unsafe("gridRow", "begin / end"),
-                      /* [] */0
-                    ]
-                  ]
+                  Css.unsafe("gridRow", "begin / end"),
+                  /* [] */0
                 ]
               ]
             ]
