@@ -3,22 +3,22 @@
 
 
 function get() {
-  var default_000 = /* redirectURI */window.location.origin + "/";
-  var default_001 = /* manifestURI */window.location.origin + "/manifest.json";
+  var default_000 = /* redirectURI */location.origin + "/";
+  var default_001 = /* manifestURI */location.origin + "/manifest.json";
   var $$default = /* record */[
     default_000,
     default_001,
-    /* appDomain */window.location.origin,
+    /* appDomain */location.origin,
     /* cookieDomain */"misthos.io",
     /* network : Testnet */1
   ];
-  var match = window.location.hostname;
+  var match = location.hostname;
   switch (match) {
     case "app.misthos.io" : 
         return /* record */[
                 default_000,
                 default_001,
-                /* appDomain */window.location.origin,
+                /* appDomain */location.origin,
                 /* cookieDomain */"misthos.io",
                 /* network : Mainnet */2
               ];
