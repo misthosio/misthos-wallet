@@ -79,7 +79,9 @@ let summary =
        )
     |> Js.Option.getWithDefault(BTC.zero);
   let misthosFee =
-    outs |> List.find(((a, _)) => a == misthosFeeAddress) |> snd;
+    try (outs |> List.find(((a, _)) => a == misthosFeeAddress) |> snd) {
+    | Not_found => BTC.zero
+    };
   {
     reserved: totalIn,
     destinations,
@@ -360,16 +362,21 @@ let build =
          },
          BTC.zero,
        );
-  let misthosFee =
-    outTotalWithoutFee |> BTC.timesRounded(misthosFeePercent /. 100.);
   let misthosFeeAddress = Network.incomeAddress(network);
-  txB
-  |> B.TxBuilder.addOutput(
-       misthosFeeAddress,
-       misthosFee |> BTC.toSatoshisFloat,
-     )
-  |> ignore;
-  let outTotal = outTotalWithoutFee |> BTC.plus(misthosFee);
+  let outTotal =
+    switch (network) {
+    | Network.Mainnet => outTotalWithoutFee
+    | _ =>
+      let misthosFee =
+        outTotalWithoutFee |> BTC.timesRounded(misthosFeePercent /. 100.);
+      txB
+      |> B.TxBuilder.addOutput(
+           misthosFeeAddress,
+           misthosFee |> BTC.toSatoshisFloat,
+         )
+      |> ignore;
+      outTotalWithoutFee |> BTC.plus(misthosFee);
+    };
   let currentInputValue =
     usedInputs
     |> List.fold_left(
@@ -470,15 +477,17 @@ let max =
            Some(input) : None
        );
   let outputs =
-    if (targetDestination != "") {
-      [
-        (targetDestination, BTC.zero),
-        (Network.incomeAddress(network), BTC.zero),
-        ...destinations,
-      ];
-    } else {
-      [(Network.incomeAddress(network), BTC.zero), ...destinations];
-    };
+    List.concat(
+      if (targetDestination != "") {
+        [(targetDestination, BTC.zero), ...destinations];
+      } else {
+        destinations;
+      },
+      switch (network) {
+      | Network.Mainnet => []
+      | _ => [(Network.incomeAddress(network), BTC.zero)]
+      },
+    );
   let fee =
     Fee.estimate(
       outputs |. List.map(fst),
@@ -492,12 +501,16 @@ let max =
   let totalOutValue =
     destinations
     |. List.reduce(BTC.zero, (res, (_, outVal)) => res |> BTC.plus(outVal));
-  let totalOutMisthosFee =
-    totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
   let rest = totalInputValue |> BTC.minus(totalOutValue |> BTC.plus(fee));
-  rest
-  |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.)
-  |> BTC.minus(totalOutMisthosFee);
+  switch (network) {
+  | Network.Mainnet => rest
+  | _ =>
+    let totalOutMisthosFee =
+      totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
+    rest
+    |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.)
+    |> BTC.minus(totalOutMisthosFee);
+  };
 };
 
 let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>

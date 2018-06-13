@@ -2,8 +2,6 @@ include ViewCommon;
 
 module View = ViewModel.CreatePayoutView;
 
-let defaultFee = BTC.fromSatoshis(100L);
-
 type inputs = {
   recipientAddress: string,
   btcAmount: string,
@@ -17,6 +15,7 @@ type state = {
   addressValid: bool,
   canSubmitProposal: bool,
   frozen: bool,
+  fee: BTC.t,
   summary: PayoutTransaction.summary,
   inputs,
 };
@@ -25,6 +24,7 @@ type action =
   | ChangeRecipientAddress(string)
   | ChangeBTCAmount(string)
   | RemoveDestination(int)
+  | SetFee(BTC.t)
   | EnterMax
   | AddToSummary
   | ProposePayout
@@ -61,6 +61,7 @@ let updateState =
         inputAmount,
         destinations,
         inputs: {btcAmount, recipientAddress},
+        fee,
       } as state,
     ) => {
   let (recipientAddress, inputDestination, addressValid) =
@@ -79,14 +80,14 @@ let updateState =
       (btcAmount, newInputAmount);
     };
   if (inputAmount |> BTC.gt(BTC.zero) && inputDestination != "") {
-    let max = viewData.max(inputDestination, destinations, defaultFee);
+    let max = viewData.max(inputDestination, destinations, fee);
     let (inputAmount, btcAmount) =
       inputAmount |> BTC.gt(max) ?
         (max, max |> BTC.format) : (inputAmount, btcAmount);
     let summary =
       viewData.summary(
         [(inputDestination, inputAmount), ...destinations],
-        defaultFee,
+        fee,
       );
     {
       ...state,
@@ -102,7 +103,7 @@ let updateState =
       },
     };
   } else {
-    let summary = viewData.summary(destinations, defaultFee);
+    let summary = viewData.summary(destinations, fee);
     {
       ...state,
       viewData,
@@ -129,6 +130,7 @@ let make =
   ...component,
   initialState: () => {
     frozen: false,
+    fee: BTC.zero,
     viewData,
     canSubmitProposal: false,
     destinations: [],
@@ -142,11 +144,20 @@ let make =
     },
   },
   willReceiveProps: ({state}) => {...state, viewData},
+  didMount: ({send}) =>
+    Js.Promise.(
+      BitcoinFeesClient.fetchFees()
+      |> then_((fees: BitcoinFeesClient.recomendedFees) =>
+           send(SetFee(fees.hourFee)) |> resolve
+         )
+    )
+    |> ignore,
   reducer: (action, {viewData} as state) =>
     switch (cmdStatus, state.frozen) {
     | (Success(_) | Error(_), _)
     | (Idle, false) =>
       switch (action) {
+      | SetFee(fee) => ReasonReact.Update({...state, fee})
       | RemoveDestination(removeIdx) =>
         ReasonReact.Update(
           {
@@ -204,11 +215,7 @@ let make =
         }
       | EnterMax =>
         let max =
-          viewData.max(
-            state.inputDestination,
-            state.destinations,
-            defaultFee,
-          );
+          viewData.max(state.inputDestination, state.destinations, state.fee);
         ReasonReact.SideEffects(
           (({send}) => send(ChangeBTCAmount(max |> BTC.format))),
         );
@@ -243,7 +250,7 @@ let make =
         commands.proposePayout(
           ~accountIdx=WalletTypes.AccountIndex.default,
           ~destinations,
-          ~fee=defaultFee,
+          ~fee=state.fee,
         );
         ReasonReact.NoUpdate;
       | _ => ReasonReact.NoUpdate
