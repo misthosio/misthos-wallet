@@ -52,7 +52,7 @@ function fromViewModelState(param) {
           /* ventureName */param[/* ventureName */3],
           /* localUser */localUser,
           /* partners */param[/* partnersCollector */6][/* partners */1],
-          /* joinVentureUrl */window.location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
+          /* joinVentureUrl */location.origin + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
                   param[/* ventureId */1],
                   localUser
                 ]))

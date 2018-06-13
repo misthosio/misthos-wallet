@@ -15,7 +15,7 @@ let fromUserData = (userData, network) =>
   | Some(blockstackId) =>
     let issuerKeyPair =
       Utils.keyPairFromPrivateKey(
-        Network.bitcoinNetwork(Testnet),
+        Network.bitcoinNetwork(network),
         userData##appPrivateKey,
       );
     Some({

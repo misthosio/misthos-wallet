@@ -12,7 +12,7 @@ function fromUserData(userData, network) {
   if (match == null) {
     return /* None */0;
   } else {
-    var issuerKeyPair = Utils.keyPairFromPrivateKey(Network.bitcoinNetwork(/* Testnet */1), userData.appPrivateKey);
+    var issuerKeyPair = Utils.keyPairFromPrivateKey(Network.bitcoinNetwork(network), userData.appPrivateKey);
     return /* Some */[/* record */[
               /* userId */PrimitiveTypes.UserId[/* fromString */1](match),
               /* appPrivateKey */userData.appPrivateKey,

@@ -12,7 +12,7 @@ var WalletInfoCollector = require("./wallet/WalletInfoCollector.bs.js");
 function make() {
   return /* record */[
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
-          /* network : Testnet */1,
+          /* network : Regtest */0,
           /* payoutPolicy */Policy.unanimous,
           /* walletInfoCollector */WalletInfoCollector.make(/* () */0)
         ];

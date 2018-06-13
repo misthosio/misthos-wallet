@@ -10,7 +10,7 @@ type t = {
 };
 
 let make = () => {
-  network: Network.Testnet,
+  network: Network.Regtest,
   ventureId: VentureId.fromString(""),
   walletInfoCollector: WalletInfoCollector.make(),
   payoutPolicy: Policy.unanimous,
