@@ -1,5 +1,9 @@
 open Css;
 
+let uDarkGray = "1f2532";
+
+let darkGray = hex(uDarkGray);
+
 let uBlack = "000000";
 
 let black = hex(uBlack);

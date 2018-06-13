@@ -13,6 +13,7 @@ module Styles = {
 
 let make =
     (
+      ~classes=?,
       ~placeholder=?,
       ~value=?,
       ~onChange=?,
@@ -20,6 +21,8 @@ let make =
       ~fullWidth=?,
       ~endAdornment=?,
       ~error=?,
+      ~name=?,
+      ~_type=?,
       ~ensuring=false,
       _children,
     ) => {
@@ -35,7 +38,16 @@ let make =
         ?fullWidth
         className=(Styles.margin(~tf=ensuring ? 4 : 3, ~bf=0))
         error>
-        <Input ?placeholder ?value ?onChange ?autoFocus ?endAdornment />
+        <Input
+          ?classes
+          ?placeholder
+          ?value
+          ?onChange
+          ?autoFocus
+          ?endAdornment
+          ?name
+          ?_type
+        />
         (
           error ?
             <FormHelperText> (message |> text) </FormHelperText> :

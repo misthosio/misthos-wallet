@@ -3,6 +3,10 @@
 
 var Css = require("bs-css/src/Css.js");
 
+var uDarkGray = "1f2532";
+
+var darkGray = Css.hex(uDarkGray);
+
 var uBlack = "000000";
 
 var black = Css.hex(uBlack);
@@ -111,6 +115,8 @@ var gradientOrange = Css.linearGradient(Css.deg(75), /* :: */[
 
 var uGradientOrange = "linear-gradient(75deg, #" + (String(uStrongPink) + (", #" + (String(uReddishOrange) + ")")));
 
+exports.uDarkGray = uDarkGray;
+exports.darkGray = darkGray;
 exports.uBlack = uBlack;
 exports.black = black;
 exports.uWhite = uWhite;
@@ -135,4 +141,4 @@ exports.gradientAqua = gradientAqua;
 exports.uGradientAqua = uGradientAqua;
 exports.gradientOrange = gradientOrange;
 exports.uGradientOrange = uGradientOrange;
-/* black Not a pure module */
+/* darkGray Not a pure module */

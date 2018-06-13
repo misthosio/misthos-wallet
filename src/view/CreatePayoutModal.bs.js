@@ -250,19 +250,19 @@ function make(viewData, commands, cmdStatus, _) {
                 tmp = React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */1][/* currentSpendable */0], /* Some */[viewData[/* balance */1][/* reserved */1]], /* array */[])));
               } else {
                 var error = match[/* addressValid */4] ? /* None */0 : /* Some */["Address is BAD"];
-                tmp = React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */1][/* currentSpendable */0], /* Some */[viewData[/* balance */1][/* reserved */1]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Enter Recipient Details")])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Recipient Address"], /* Some */[/* `String */[
+                tmp = React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(/* None */0, /* None */0, Balance.make(viewData[/* balance */1][/* currentSpendable */0], /* Some */[viewData[/* balance */1][/* reserved */1]], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* array */[ViewCommon.text("Enter Recipient Details")])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* None */0, /* Some */["Recipient Address"], /* Some */[/* `String */[
                                 -976970511,
                                 inputs[/* recipientAddress */0]
                               ]], /* Some */[(function (e) {
                                   return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
-                                })], /* Some */[false], /* Some */[true], /* None */0, error, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
+                                })], /* Some */[false], /* Some */[true], /* None */0, error, /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MInput.make(/* None */0, /* Some */["BTC amount"], /* Some */[/* `String */[
                                 -976970511,
                                 inputs[/* btcAmount */1]
                               ]], /* Some */[(function (e) {
                                   return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
                                 })], /* Some */[false], /* Some */[true], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_InputAdornment.make(/* None */0, /* None */0, /* None */0, /* Some */[/* End */3455931], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                       return Curry._1(send, /* EnterMax */0);
-                                                    })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* None */0, /* array */[ViewCommon.text("Max")]))]))], /* None */0, /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                    })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* None */0, /* array */[ViewCommon.text("Max")]))]))], /* None */0, /* None */0, /* None */0, /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                   return Curry._1(send, /* AddToSummary */1);
                                 })], /* Some */[/* Small */311976103], /* Some */[true], /* Some */[/* Flat */0], /* None */0, /* None */0, /* array */[ViewCommon.text("Add Another Recipient")])));
               }

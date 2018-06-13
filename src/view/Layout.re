@@ -23,7 +23,6 @@ module Styles = {
       minWidth(mobileEnabled ? px(0) : px(Theme.space(101))),
       minHeight(mobileEnabled ? px(0) : px(Theme.space(88))),
       height(vh(100.0)),
-      width(vw(100.0)),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
       unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
       unsafe("gridTemplateAreas", {|"bar" "body" "."|}),
