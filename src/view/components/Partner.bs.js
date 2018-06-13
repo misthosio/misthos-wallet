@@ -17,7 +17,7 @@ var MaterialUi_ListItemSecondaryAction = require("@jsiebern/bs-material-ui/src/M
 
 var component = ReasonReact.statelessComponent("Partner");
 
-var lenght = Theme.space(8);
+var lenght = Theme.space(6);
 
 var avatar = Css.style(/* :: */[
       Css.backgroundColor(/* transparent */582626130),
@@ -33,23 +33,20 @@ var avatar = Css.style(/* :: */[
 var primary = Css.style(/* :: */[
       Css.fontFamily(Theme.oswald),
       /* :: */[
-        Css.fontSize(Css.px(18)),
+        Css.fontSize(Css.px(16)),
         /* :: */[
           Css.fontWeight(600),
           /* :: */[
             Css.unsafe("letterSpacing", "0.7px"),
             /* :: */[
-              Css.textDecoration(Css.underline),
+              Css.textTransform(Css.uppercase),
               /* :: */[
-                Css.textTransform(Css.uppercase),
+                Css.whiteSpace(Css.nowrap),
                 /* :: */[
-                  Css.whiteSpace(Css.nowrap),
+                  Css.overflow(Css.hidden),
                   /* :: */[
-                    Css.overflow(Css.hidden),
-                    /* :: */[
-                      Css.textOverflow(Css.ellipsis),
-                      /* [] */0
-                    ]
+                    Css.textOverflow(Css.ellipsis),
+                    /* [] */0
                   ]
                 ]
               ]
@@ -172,7 +169,7 @@ function avatar$1(letter) {
                   fontWeight: "600",
                   textAnchor: "middle",
                   x: "50%",
-                  y: "50%"
+                  y: "53%"
                 }, ViewCommon.text($$String.uppercase($$String.make(1, letter)))));
 }
 

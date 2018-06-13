@@ -44,14 +44,17 @@ function chip(status) {
                 /* :: */[
                   Css.fontFamily(Theme.sourceSansPro),
                   /* :: */[
-                    Css.fontWeight(600),
+                    Css.fontWeight(400),
                     /* :: */[
-                      Css.textTransform(Css.uppercase),
+                      Css.fontSize(Css.px(12)),
                       /* :: */[
-                        Css.borderRadius(Css.px(0)),
+                        Css.textTransform(Css.uppercase),
                         /* :: */[
-                          Css.minWidth(Css.px(Theme.space(11))),
-                          /* [] */0
+                          Css.borderRadius(Css.px(0)),
+                          /* :: */[
+                            Css.minWidth(Css.px(Theme.space(11))),
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]

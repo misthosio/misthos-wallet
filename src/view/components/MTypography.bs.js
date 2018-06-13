@@ -33,11 +33,9 @@ function make(variant, $staropt$star, children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var style = variant !== -904051920 ? (
-                  variant !== 579538228 ? (
-                      variant !== 594052472 ? margin(0, 0) : margin(4, 0)
-                    ) : margin(4, 4)
-                ) : margin(3, 0);
+              var style = variant !== 579538228 ? (
+                  variant !== 594052472 ? margin(0, 0) : margin(4, 0)
+                ) : margin(4, 4);
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[style + (" " + className)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[variant], /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],

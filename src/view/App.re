@@ -174,11 +174,11 @@ let make = (~session, ~updateSession, _children) => {
       <Spinner
         text={js|
              You have signed in with a blockstack user that doesn't have a registered blockstack.id,
-             make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.
+             make sure to upgrade the Blockstack client, close all Misthos tabs and try again with a registered id.
              |js}
       />
     | (LoginPending, _, _) =>
-      <BlankScreen text="Waiting for BlockStack session" />
+      <BlankScreen text="Waiting for Blockstack session" />
     | (
         LoggedIn(_),
         Venture(_, _) | Home | JoinVenture(_),

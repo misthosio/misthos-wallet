@@ -77,7 +77,10 @@ var logo = Css.style(/* :: */[
         /* :: */[
           Css.alignSelf(/* stretch */-162316795),
           /* :: */[
-            Css.unsafe("backgroundSize", "auto 100%"),
+            BreakPoints.xs(/* :: */[
+                  Css.unsafe("backgroundSize", "auto 100%"),
+                  /* [] */0
+                ]),
             /* :: */[
               Css.unsafe("gridColumn", "begin / end"),
               /* :: */[

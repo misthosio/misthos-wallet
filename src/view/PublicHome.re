@@ -56,7 +56,7 @@ module Styles = {
       backgroundImage(url(Icons.asDataUrl(Icons.logoBig))),
       backgroundRepeat(noRepeat),
       alignSelf(`stretch),
-      unsafe("backgroundSize", "auto 100%"),
+      xs([unsafe("backgroundSize", "auto 100%")]),
       unsafe("gridColumn", "begin / end"),
       unsafe("gridRow", "begin / end"),
     ]);
