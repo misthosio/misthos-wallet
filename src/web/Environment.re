@@ -6,7 +6,14 @@ type t = {
   network: Network.t,
 };
 
-let get = () =>
+let get = () => {
+  let default = {
+    redirectURI: Location.origin ++ "/",
+    manifestURI: Location.origin ++ "/manifest.json",
+    appDomain: Location.origin,
+    cookieDomain: "misthos.io",
+    network: Testnet,
+  };
   switch (Location.hostname) {
   | "localhost" => {
       redirectURI: "http://localhost:3000/",
@@ -29,11 +36,7 @@ let get = () =>
       cookieDomain: "misthos.io",
       network: Testnet,
     }
-  | _ => {
-      redirectURI: Location.origin ++ "/",
-      manifestURI: Location.origin ++ "/manifest.json",
-      appDomain: Location.origin,
-      cookieDomain: "misthos.io",
-      network: Testnet,
-    }
+  | "app.misthos.io" => {...default, network: Mainnet}
+  | _ => default
   };
+};

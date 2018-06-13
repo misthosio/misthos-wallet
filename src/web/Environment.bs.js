@@ -3,8 +3,25 @@
 
 
 function get() {
+  var default_000 = /* redirectURI */window.location.origin + "/";
+  var default_001 = /* manifestURI */window.location.origin + "/manifest.json";
+  var $$default = /* record */[
+    default_000,
+    default_001,
+    /* appDomain */window.location.origin,
+    /* cookieDomain */"misthos.io",
+    /* network : Testnet */1
+  ];
   var match = window.location.hostname;
   switch (match) {
+    case "app.misthos.io" : 
+        return /* record */[
+                default_000,
+                default_001,
+                /* appDomain */window.location.origin,
+                /* cookieDomain */"misthos.io",
+                /* network : Mainnet */2
+              ];
     case "localhost" : 
         return /* record */[
                 /* redirectURI */"http://localhost:3000/",
@@ -30,13 +47,7 @@ function get() {
                 /* network : Testnet */1
               ];
     default:
-      return /* record */[
-              /* redirectURI */window.location.origin + "/",
-              /* manifestURI */window.location.origin + "/manifest.json",
-              /* appDomain */window.location.origin,
-              /* cookieDomain */"misthos.io",
-              /* network : Testnet */1
-            ];
+      return $$default;
   }
 }
 
