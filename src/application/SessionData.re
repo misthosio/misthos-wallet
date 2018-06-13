@@ -9,7 +9,7 @@ type t = {
   network: Network.t,
 };
 
-let fromUserData = userData =>
+let fromUserData = (userData, network) =>
   switch (Js.Nullable.toOption(userData##username)) {
   | None => None
   | Some(blockstackId) =>
@@ -22,7 +22,7 @@ let fromUserData = userData =>
       appPrivateKey: userData##appPrivateKey,
       userId: blockstackId |> UserId.fromString,
       issuerKeyPair,
-      network: Testnet,
+      network,
       storagePrefix:
         UserInfo.storagePrefix(
           ~appPubKey=issuerKeyPair |> Utils.publicKeyFromKeyPair,

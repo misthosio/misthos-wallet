@@ -303,8 +303,12 @@ function bitcoinNetwork(param) {
 
 var testnetIncomeAddress = "2NC7VRQr4WgEQ5ZkJoHhqmVTH8axr2FcowJ";
 
-function incomeAddress() {
-  return testnetIncomeAddress;
+function incomeAddress(param) {
+  if (param >= 2) {
+    return "3KVvnXV95XQQA7aQMuE9fn1gxnTK3nkZQX";
+  } else {
+    return testnetIncomeAddress;
+  }
 }
 
 function exampleOfLongestAddress(param) {
@@ -313,7 +317,7 @@ function exampleOfLongestAddress(param) {
     case 1 : 
         return "2NC7VRQr4WgEQ5ZkJoHhqmVTH8axr2FcowJ";
     case 2 : 
-        return "BAD";
+        return "3KVvnXV95XQQA7aQMuE9fn1gxnTK3nkZQX";
     
   }
 }

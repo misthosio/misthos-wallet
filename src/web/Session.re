@@ -25,13 +25,13 @@ let completeLogIn = () => {
   Cookie.get("transitKey")
   |> Utils.mapOption(key => {
        LocalStorage.setItem("blockstack-transit-private-key", key);
-       Cookie.delete("transitKey", environment.cookieDomain());
+       Cookie.delete("transitKey", environment.cookieDomain);
      })
   |> ignore;
   Js.Promise.(
     Blockstack.handlePendingSignIn()
     |> then_(userData =>
-         switch (SessionData.fromUserData(userData)) {
+         switch (SessionData.fromUserData(userData, environment.network)) {
          | None => resolve(AnonymousLogin)
          | Some(sessionData) =>
            initMasterKey(sessionData)
@@ -47,7 +47,7 @@ let getCurrentSession = () =>
       switch (Blockstack.loadUserData()) {
       | None => NotLoggedIn |> resolve
       | Some(userData) =>
-        switch (SessionData.fromUserData(userData)) {
+        switch (SessionData.fromUserData(userData, Environment.get().network)) {
         | None => AnonymousLogin |> resolve
         | Some(sessionData) =>
           initMasterKey(sessionData)
@@ -70,15 +70,15 @@ let signIn = () => {
   signOut() |> ignore;
   let transitKey = Blockstack.makeECPrivateKey();
   let environment = Environment.get();
-  Cookie.set("transitKey", transitKey, environment.cookieDomain());
+  Cookie.set("transitKey", transitKey, environment.cookieDomain);
   Blockstack.(
     redirectToSignInWithAuthRequest(
       makeAuthRequest(
         ~transitKey,
-        ~redirectURI=environment.redirectURI(),
-        ~manifestURI=environment.manifestURI(),
+        ~redirectURI=environment.redirectURI,
+        ~manifestURI=environment.manifestURI,
         ~scopes=[|"store_write", "publish_data"|],
-        ~appDomain=environment.appDomain(),
+        ~appDomain=environment.appDomain,
       ),
     )
   );

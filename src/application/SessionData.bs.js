@@ -7,7 +7,7 @@ var UserInfo = require("./UserInfo.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 
-function fromUserData(userData) {
+function fromUserData(userData, network) {
   var match = userData.username;
   if (match == null) {
     return /* None */0;
@@ -19,7 +19,7 @@ function fromUserData(userData) {
               /* issuerKeyPair */issuerKeyPair,
               /* storagePrefix */UserInfo.storagePrefix(Utils.publicKeyFromKeyPair(issuerKeyPair)),
               /* masterKeyChain */new BitcoinjsLib.HDNode(issuerKeyPair, Utils.bufFromHex("c8bce5e6dac6f931af17863878cce2ca3b704c61b3d775fe56881cc8ff3ab1cb")),
-              /* network : Testnet */1
+              /* network */network
             ]];
   }
 }
