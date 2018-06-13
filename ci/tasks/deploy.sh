@@ -15,4 +15,4 @@ fi
 gcloud auth activate-service-account --key-file ./account.json
 
 tar -zxvf misthos-${WEB_PATH}build/misthos-${WEB_PATH}build-*.tgz
-gsutil -m cp -r repo/${WEB_PATH}dist/* "gs://${WEB_PATH}${DEPLOY_ENVIRONMENT}.misthos.io"
+gsutil -m cp -r repo/${WEB_PATH}dist/* "gs://${SUBDOMAIN}.misthos.io"

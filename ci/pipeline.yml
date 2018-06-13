@@ -13,6 +13,8 @@ groups:
   - trigger-testnet
   - deploy-testnet
   - deploy-web-testnet
+  - trigger-prod
+  - deploy-prod
 - name: pipeline-image
   jobs: [build-task-image]
 
@@ -150,7 +152,7 @@ jobs:
       - name: misthos-build
       params:
           GCP_SERVICE_ACCOUNT: ((gcp-service-account))
-          DEPLOY_ENVIRONMENT: staging
+          SUBDOMAIN: staging
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: staging-branch
@@ -173,7 +175,7 @@ jobs:
       - name: misthos-web-build
       params:
           GCP_SERVICE_ACCOUNT: ((gcp-service-account))
-          DEPLOY_ENVIRONMENT: staging
+          SUBDOMAIN: web-staging
           WEB: "true"
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
@@ -207,7 +209,7 @@ jobs:
       - name: misthos-build
       params:
           GCP_SERVICE_ACCOUNT: ((gcp-service-account))
-          DEPLOY_ENVIRONMENT: testnet
+          SUBDOMAIN: testnet
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: testnet-branch
@@ -231,12 +233,45 @@ jobs:
       - name: misthos-web-build
       params:
           GCP_SERVICE_ACCOUNT: ((gcp-service-account))
-          DEPLOY_ENVIRONMENT: testnet
+          SUBDOMAIN: web-testnet
           WEB: "true"
       run:
         path: pipeline-tasks/ci/tasks/deploy.sh
   - put: web-testnet-branch
     params: {repository: repo, force: true}
+
+- name: trigger-prod
+  plan:
+  - aggregate:
+    - {get: misthos-build, trigger: false, passed: [deploy-testnet]}
+    - {get: misthos-web-build, trigger: false, passed: [deploy-web-testnet]}
+    - {get: build-version, trigger: false, passed: [deploy-testnet, deploy-web-testnet] }
+    - {get: repo, trigger: false, passed: [deploy-testnet, deploy-web-testnet]}
+    - {get: pipeline-tasks}
+
+- name: deploy-prod
+  plan:
+  - aggregate:
+    - {get: misthos-build, trigger: true, passed: [trigger-prod] }
+    - {get: build-version, trigger: false, passed: [trigger-prod] }
+    - {get: repo, trigger: false, passed: [trigger-prod] }
+    - {get: pipeline-tasks }
+  - task: deploy-prod
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-build
+      params:
+          GCP_SERVICE_ACCOUNT: ((gcp-service-account))
+          SUBDOMAIN: app
+      run:
+        path: pipeline-tasks/ci/tasks/deploy.sh
+  - put: prod-branch
+    params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
 
 - name: build-task-image
   serial: true
@@ -285,6 +320,18 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: web-testnet
     private_key: ((github-ssh-key.private_key))
+- name: prod-branch
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: prod
+    private_key: ((github-ssh-key.private_key))
+# - name: web-prod-branch
+#   type: git
+#   source:
+#     uri: git@github.com:misthosio/misthos.git
+#     branch: web-prod
+#     private_key: ((github-ssh-key.private_key))
 - name: bundled-deps
   type: gcs-resource
   source:
