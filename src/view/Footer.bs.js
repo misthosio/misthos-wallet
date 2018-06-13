@@ -2,28 +2,62 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var BreakPoints = require("./BreakPoints.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var MaterialUi_Input = require("@jsiebern/bs-material-ui/src/MaterialUi_Input.bs.js");
+var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 
 var component = ReasonReact.statelessComponent("Footer");
 
 var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        Css.unsafe("gridTemplateAreas", "\n           \". . . . .\"\n           \". footer1 footer2 footer3 .\"\n           \". notice . . .\"\n           \". . . . .\"\n           "),
+        BreakPoints.lg(/* :: */[
+              Css.unsafe("gridTemplateAreas", "\n           \". . . . .\"\n           \". footer1 footer2 footer3 .\"\n           \". notice . . .\"\n           \". . . . .\"\n           "),
+              /* :: */[
+                Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 1fr 0px [end]"),
+                /* :: */[
+                  Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content 0px [end]"),
+                  /* [] */0
+                ]
+              ]
+            ]),
         /* :: */[
-          Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 1fr 0px [end]"),
+          BreakPoints.sm(/* :: */[
+                Css.unsafe("gridTemplateAreas", "\n           \". . . .\"\n           \". footer1 . .\"\n           \". footer2 footer3 .\"\n           \". notice notice .\"\n           \". . . .\"\n           "),
+                /* :: */[
+                  Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content min-content 0px [end]"),
+                  /* :: */[
+                    Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 0px [end]"),
+                    /* :: */[
+                      Css.gridGap(Css.px(Theme.space(3))),
+                      /* [] */0
+                    ]
+                  ]
+                ]
+              ]),
           /* :: */[
-            Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content 0px [end]"),
-            /* :: */[
-              Css.gridGap(Css.px(Theme.space(2))),
-              /* [] */0
-            ]
+            BreakPoints.xs(/* :: */[
+                  Css.unsafe("gridTemplateAreas", "\n           \". . .\"\n           \". footer1 . \"\n           \". footer2 .\"\n           \". footer3 .\"\n           \". notice .\"\n           \". . .\"\n           "),
+                  /* :: */[
+                    Css.unsafe("gridTemplateRows", "[begin] 0px min-content min-content min-content min-content 0px [end]"),
+                    /* :: */[
+                      Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 0px [end]"),
+                      /* :: */[
+                        Css.gridGap(Css.px(Theme.space(2))),
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]),
+            /* [] */0
           ]
         ]
       ]
@@ -95,13 +129,55 @@ var link = Css.style(/* :: */[
       ]
     ]);
 
+var inputRoot = Css.style(/* :: */[
+      Css.color(Colors.white),
+      /* [] */0
+    ]);
+
+var inputUnderline = Css.style(/* :: */[
+      Css.before(/* :: */[
+            Css.backgroundColor(Colors.white),
+            /* [] */0
+          ]),
+      /* :: */[
+        Css.hover(/* :: */[
+              Css.before(/* :: */[
+                    Css.important(Css.backgroundColor(Colors.white)),
+                    /* [] */0
+                  ]),
+              /* [] */0
+            ]),
+        /* [] */0
+      ]
+    ]);
+
+var button = Css.style(/* :: */[
+      Css.color(Colors.white),
+      /* [] */0
+    ]);
+
+var social = Css.style(/* :: */[
+      Css.marginTop(Css.px(Theme.space(4))),
+      /* [] */0
+    ]);
+
+var socialIcon = Css.style(/* :: */[
+      Css.marginRight(Css.px(Theme.space(2))),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* grid */grid,
   /* area */area,
   /* bg */bg,
   /* logo */logo,
   /* notice */notice,
-  /* link */link
+  /* link */link,
+  /* inputRoot */inputRoot,
+  /* inputUnderline */inputUnderline,
+  /* button */button,
+  /* social */social,
+  /* socialIcon */socialIcon
 ];
 
 function make() {
@@ -144,13 +220,24 @@ function make() {
                                   action: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53",
                                   method: "post",
                                   target: "_blank"
-                                }, React.createElement("input", {
-                                      name: "EMAIL",
-                                      placeholder: "Email Address",
-                                      type: "email"
-                                    }), React.createElement("input", {
-                                      type: "submit"
-                                    }))), React.createElement("div", {
+                                }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["EMAIL"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["Email Address"], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["email"], /* None */0, /* Some */[/* :: */[
+                                            /* Root */Block.__(0, [inputRoot]),
+                                            /* :: */[
+                                              /* Underline */Block.__(4, [inputUnderline]),
+                                              /* [] */0
+                                            ]
+                                          ]], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Small */311976103], /* Some */["submit"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Sign Up")])), React.createElement("div", {
+                                      className: social
+                                    }, React.createElement("a", {
+                                          className: socialIcon,
+                                          href: "https://twitter.com/misthosio"
+                                        }, Icons.twitter), React.createElement("a", {
+                                          className: socialIcon,
+                                          href: "https://www.linkedin.com/company/misthos-io"
+                                        }, Icons.linkedin), React.createElement("a", {
+                                          className: socialIcon,
+                                          href: "https://medium.com/@misthosio"
+                                        }, Icons.medium)))), React.createElement("div", {
                               className: notice
                             }, ViewCommon.text("© Misthos 2018. All rights reserved.")));
             }),

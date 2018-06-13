@@ -296,6 +296,39 @@ var misthosWordMark = React.createElement("svg", {
           transform: "translate(-24 -87)"
         }));
 
+var twitter = React.createElement("svg", {
+      height: "16",
+      width: "20",
+      viewBox: "0 0 20 16",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("path", {
+          d: "M17.8 3.987c.013.175.013.35.013.525C17.813 9.85 13.722 16 6.244 16A11.55 11.55 0 0 1 0 14.188c.327.037.642.05.982.05 1.9 0 3.65-.638 5.048-1.725a4.07 4.07 0 0 1-3.802-2.8c.252.037.504.062.768.062.365 0 .73-.05 1.07-.137a4.045 4.045 0 0 1-3.26-3.963v-.05c.541.3 1.17.488 1.838.512a4.027 4.027 0 0 1-1.26-5.4A11.585 11.585 0 0 0 9.77 4.962c-.063-.3-.1-.612-.1-.924C9.668 1.812 11.48 0 13.733 0a4.07 4.07 0 0 1 2.971 1.275A8.04 8.04 0 0 0 19.286.3a4.032 4.032 0 0 1-1.788 2.225A8.197 8.197 0 0 0 19.84 1.9a8.707 8.707 0 0 1-2.04 2.087z",
+          fill: "#FFF",
+          fillRule: "nonzero"
+        }));
+
+var linkedin = React.createElement("svg", {
+      height: "16",
+      width: "16",
+      viewBox: "0 0 16 16",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("path", {
+          d: "M3.2 16H0V5.12h3.2V16zM1.92 3.84C.86 3.84 0 2.966 0 1.911 0 .856.86 0 1.92 0s1.92.856 1.92 1.911c0 1.055-.86 1.929-1.92 1.929zM15.996 16H12.72v-5.167c0-1.231-.025-2.81-1.708-2.81-1.708 0-1.97 1.338-1.97 2.722V16H5.76V5.386h3.15v1.448h.046C9.395 6 10.466 5.12 12.065 5.12 15.388 5.12 16 7.317 16 10.17V16h-.004z",
+          fill: "#FFF",
+          fillRule: "nonzero"
+        }));
+
+var medium = React.createElement("svg", {
+      height: "16",
+      width: "20",
+      viewBox: "0 0 20 16",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("path", {
+          d: "M19.337.816l-1.52 1.469a.452.452 0 0 0-.171.428v10.816a.442.442 0 0 0 .171.428l1.488 1.47v.325h-7.473v-.313l1.539-1.508c.152-.153.152-.198.152-.428V4.757L9.24 15.72h-.576L3.681 4.757v7.347c-.045.307.063.62.278.844l2.002 2.446v.326H.273v-.326l2.001-2.446a.984.984 0 0 0 .26-.844V3.607a.733.733 0 0 0-.24-.626L.513.816V.49h5.529l4.269 9.455L14.068.496h5.27v.32z",
+          fill: "#FFF",
+          fillRule: "nonzero"
+        }));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -317,4 +350,7 @@ exports.remove = remove;
 exports.stepBg = stepBg;
 exports.blockStack = blockStack;
 exports.misthosWordMark = misthosWordMark;
+exports.twitter = twitter;
+exports.linkedin = linkedin;
+exports.medium = medium;
 /* arrowRight Not a pure module */

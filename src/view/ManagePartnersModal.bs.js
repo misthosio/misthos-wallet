@@ -190,12 +190,12 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                   /* [] */0
                                                                 ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
                                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
+                                                                ReasonReact.element(/* None */0, /* None */0, MInput.make(/* None */0, /* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                                                             -976970511,
                                                                             inputs[/* prospectId */0]
                                                                           ]], /* Some */[(function (e) {
                                                                               return Curry._1(send, /* ChangeNewPartnerId */Block.__(0, [ViewCommon.extractString(e)]));
-                                                                            })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[])),
+                                                                            })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])),
                                                                 ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner", (function () {
                                                                             return Curry._1(send, /* ProposePartner */0);
                                                                           }), /* None */0, /* None */0, match[/* canSubmitProposal */1], /* Some */[false], proposeCmdStatus, /* array */[]))
