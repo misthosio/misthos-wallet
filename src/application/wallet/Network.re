@@ -177,10 +177,10 @@ let incomeAddress =
   fun
   | Regtest => testnetIncomeAddress
   | Testnet => testnetIncomeAddress
-  | Mainnet => testnetIncomeAddress;
+  | Mainnet => "3KVvnXV95XQQA7aQMuE9fn1gxnTK3nkZQX";
 
 let exampleOfLongestAddress =
   fun
   | Regtest => "2NC7VRQr4WgEQ5ZkJoHhqmVTH8axr2FcowJ"
   | Testnet => "2NC7VRQr4WgEQ5ZkJoHhqmVTH8axr2FcowJ"
-  | Mainnet => "BAD";
+  | Mainnet => "3KVvnXV95XQQA7aQMuE9fn1gxnTK3nkZQX";
