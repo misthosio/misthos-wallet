@@ -14,6 +14,7 @@ let () =
       let viewData = createPayoutModal;
       let createPayoutModalState: CreatePayoutModal.state = {
         frozen: false,
+        fee: BTC.fromSatoshis(100L),
         viewData,
         canSubmitProposal: false,
         destinations: [],
