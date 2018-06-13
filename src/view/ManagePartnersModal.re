@@ -47,13 +47,14 @@ module Styles = {
 };
 
 module LinkEmail = {
-  let subject = name => encodeURI("Join Misthos venture \"" ++ name ++ "\"");
+  let subject = name =>
+    encodeURI("Join this Misthos Venture: \"" ++ name ++ "\"");
   let body = (prospect, ventureName, joinUrl, user) =>
     encodeURI(
       {j|Hello $prospect
 
-    I have suggested that you should join the venture "$ventureName".
-    Go to the URL bellow to sync with the venture as soon as you have been accepted.
+    I have suggested that you should join the Misthos Venture "$ventureName".
+    Go to the URL bellow to sync with the Venture as soon as you have been accepted.
 
     $joinUrl
 
@@ -245,8 +246,8 @@ let make =
       );
 
     <Grid
-      title1=("Add a partner" |> text)
-      title2=("Remove a partner" |> text)
+      title1=("Propose Partner Addition" |> text)
+      title2=("Propose Partner Removal" |> text)
       area3={
         <div>
           MaterialUi.(
@@ -324,9 +325,9 @@ let make =
           <MTypography variant=`Body2>
             (
               {js|
-               To propose the removal of a partner from this venture,
+               To propose the removal of a Partner from this Venture,
                select his or her name below and submit your proposal.
-               When enough partners endorse this proposal, the partner will be removed.
+               When enough Partners endorse this proposal, the Partner will be removed.
                |js}
               |> text
             )
@@ -339,7 +340,7 @@ let make =
             onSubmit=(() => send(RemovePartner))
             onCancel=(() => send(ResetRemoval))
             canSubmitProposal=(inputs.removePartnerId |> Js.Option.isSome)
-            proposeText="Propose partner removal"
+            proposeText="Propose Partner Removal"
             cmdStatus=removeCmdStatus
           />
         </div>

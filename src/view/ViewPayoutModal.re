@@ -45,11 +45,15 @@ let make =
                MaterialUi.(
                  <TableRow key=(idx |> string_of_int)>
                    <TableCell className=Styles.noBorder padding=`None>
-                     <b> (address |> text) </b>
+                     <MTypography variant=`Body2>
+                       (address |> text)
+                     </MTypography>
                    </TableCell>
                    <TableCell
                      numeric=true className=Styles.noBorder padding=`None>
-                     (BTC.format(amount) ++ " BTC" |> text)
+                     <MTypography variant=`Body2>
+                       (BTC.format(amount) ++ " BTC" |> text)
+                     </MTypography>
                    </TableCell>
                  </TableRow>
                )
@@ -105,20 +109,28 @@ let make =
                   destinationList
                   <TableRow key="networkFee">
                     <TableCell className=Styles.noBorder padding=`None>
-                      <b> ("NETWORK FEE" |> text) </b>
+                      <MTypography variant=`Body2>
+                        ("NETWORK FEE" |> text)
+                      </MTypography>
                     </TableCell>
                     <TableCell
                       numeric=true className=Styles.noBorder padding=`None>
-                      (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                      <MTypography variant=`Body2>
+                        (BTC.format(summary.networkFee) ++ " BTC" |> text)
+                      </MTypography>
                     </TableCell>
                   </TableRow>
                   <TableRow key="misthosFee">
                     <TableCell className=Styles.noBorder padding=`None>
-                      <b> ("MISTHOS FEE" |> text) </b>
+                      <MTypography variant=`Body2>
+                        ("MISTHOS FEE" |> text)
+                      </MTypography>
                     </TableCell>
                     <TableCell
                       numeric=true className=Styles.noBorder padding=`None>
-                      (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                      <MTypography variant=`Body2>
+                        (BTC.format(summary.misthosFee) ++ " BTC" |> text)
+                      </MTypography>
                     </TableCell>
                   </TableRow>
                 </TableBody>

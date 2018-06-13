@@ -20,20 +20,23 @@ function button(variant) {
                   /* :: */[
                     Css.borderRadius(Css.px(Theme.space(19))),
                     /* :: */[
-                      Css.unsafe("boxShadow", "none"),
+                      Css.fontSize(Css.px(16)),
                       /* :: */[
-                        Css.unsafe("border", "double 4px transparent"),
+                        Css.unsafe("boxShadow", "none"),
                         /* :: */[
-                          Css.unsafe("borderImageSlice", "1"),
+                          Css.unsafe("border", "double 4px transparent"),
                           /* :: */[
-                            Css.unsafe("backgroundImage", "linear-gradient(white, white), " + (
-                                  variant ? Colors.uGradientOrange : Colors.uGradientAqua
-                                )),
+                            Css.unsafe("borderImageSlice", "1"),
                             /* :: */[
-                              Css.unsafe("backgroundOrigin", "border-box"),
+                              Css.unsafe("backgroundImage", "linear-gradient(white, white), " + (
+                                    variant ? Colors.uGradientOrange : Colors.uGradientAqua
+                                  )),
                               /* :: */[
-                                Css.unsafe("backgroundClip", "content-box, border-box"),
-                                /* [] */0
+                                Css.unsafe("backgroundOrigin", "border-box"),
+                                /* :: */[
+                                  Css.unsafe("backgroundClip", "content-box, border-box"),
+                                  /* [] */0
+                                ]
                               ]
                             ]
                           ]

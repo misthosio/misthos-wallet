@@ -78,11 +78,11 @@ var Styles = /* module */[
 ];
 
 function subject(name) {
-  return encodeURI("Join Misthos venture \"" + (name + "\""));
+  return encodeURI("Join this Misthos Venture: \"" + (name + "\""));
 }
 
 function body(prospect, ventureName, joinUrl, user) {
-  return encodeURI("Hello " + (String(prospect) + ("\n\n    I have suggested that you should join the venture \"" + (String(ventureName) + ("\".\n    Go to the URL bellow to sync with the venture as soon as you have been accepted.\n\n    " + (String(joinUrl) + ("\n\n    Sincerely,\n    " + (String(user) + "\n\n    www.misthos.io\n  "))))))));
+  return encodeURI("Hello " + (String(prospect) + ("\n\n    I have suggested that you should join the Misthos Venture \"" + (String(ventureName) + ("\".\n    Go to the URL bellow to sync with the Venture as soon as you have been accepted.\n\n    " + (String(joinUrl) + ("\n\n    Sincerely,\n    " + (String(user) + "\n\n    www.misthos.io\n  "))))))));
 }
 
 var LinkEmail = /* module */[
@@ -180,7 +180,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var copyButton = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
                     "data-clipboard-text": viewData[/* joinVentureUrl */3]
                   });
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Add a partner")], /* Some */[ViewCommon.text("Remove a partner")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Propose Partner Addition")], /* Some */[ViewCommon.text("Propose Partner Removal")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
                                               3654863,
                                               activeStep
                                             ]], /* None */0, /* Some */[stepper], /* None */0, /* None */0, /* Some */[/* Vertical */-1010337642], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
@@ -219,7 +219,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                             copyButton
                                           ])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
-                                  }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a partner from this venture,\n               select his or her name below and submit your proposal.\n               When enough partners endorse this proposal, the partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner removal", (function () {
+                                  }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a Partner from this Venture,\n               select his or her name below and submit your proposal.\n               When enough Partners endorse this proposal, the Partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose Partner Removal", (function () {
                                               return Curry._1(send, /* RemovePartner */1);
                                             }), /* Some */[(function () {
                                                 return Curry._1(send, /* FreezeRemoval */3);

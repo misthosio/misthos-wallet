@@ -285,7 +285,7 @@ let make =
                 ++ Styles.cellHeight
               )
               padding=`None>
-              <b> (address |> text) </b>
+              <MTypography variant=`Body2> (address |> text) </MTypography>
               (
                 withRemoveBtn ?
                   <IconButton
@@ -296,7 +296,9 @@ let make =
               )
             </TableCell>
             <TableCell numeric=true className=Styles.noBorder padding=`None>
-              (BTC.format(amount) ++ " BTC" |> text)
+              <MTypography variant=`Body2>
+                (BTC.format(amount) ++ " BTC" |> text)
+              </MTypography>
             </TableCell>
           </TableRow> :
           ReasonReact.null
@@ -317,7 +319,7 @@ let make =
         ]),
       );
     <Grid
-      title1=("Create A Payout" |> text)
+      title1=("Propose A Payout" |> text)
       area3=(
               if (viewData.allowCreation == false) {
                 <div>
@@ -338,6 +340,9 @@ let make =
                     currentSpendable=viewData.balance.currentSpendable
                     reserved=viewData.balance.reserved
                   />
+                  <MTypography variant=`Title>
+                    (text("Enter Recipient Details"))
+                  </MTypography>
                   {
                     let error = addressValid ? None : Some("Address is BAD");
                     <MInput
@@ -370,8 +375,12 @@ let make =
                                    </InputAdornment>
                                  )
                   />
-                  <MButton fullWidth=true onClick=(_e => send(AddToSummary))>
-                    (text("Add another Recipient"))
+                  <MButton
+                    size=`Small
+                    variant=Flat
+                    fullWidth=true
+                    onClick=(_e => send(AddToSummary))>
+                    (text("Add Another Recipient"))
                   </MButton>
                 </div>;
               }
@@ -380,7 +389,10 @@ let make =
               if (viewData.allowCreation == false) {
                 <div>
                   <MTypography variant=`Body2>
-                    ("Cannot create Payout without unreserved balance" |> text)
+                    (
+                      "You cannot create a Payout without an unreserved balance."
+                      |> text
+                    )
                   </MTypography>
                 </div>;
               } else {
@@ -395,7 +407,9 @@ let make =
                           destinationList
                           <TableRow key="networkFee">
                             <TableCell className=Styles.noBorder padding=`None>
-                              <b> ("NETWORK FEE" |> text) </b>
+                              <MTypography variant=`Body2>
+                                ("NETWORK FEE" |> text)
+                              </MTypography>
                             </TableCell>
                             <TableCell
                               numeric=true
@@ -403,26 +417,32 @@ let make =
                                 Styles.maxWidth ++ " " ++ Styles.noBorder
                               )
                               padding=`None>
-                              (
-                                BTC.format(summary.networkFee)
-                                ++ " BTC"
-                                |> text
-                              )
+                              <MTypography variant=`Body2>
+                                (
+                                  BTC.format(summary.networkFee)
+                                  ++ " BTC"
+                                  |> text
+                                )
+                              </MTypography>
                             </TableCell>
                           </TableRow>
                           <TableRow key="misthosFee">
                             <TableCell className=Styles.noBorder padding=`None>
-                              <b> ("MISTHOS FEE" |> text) </b>
+                              <MTypography variant=`Body2>
+                                ("MISTHOS FEE" |> text)
+                              </MTypography>
                             </TableCell>
                             <TableCell
                               numeric=true
                               className=Styles.noBorder
                               padding=`None>
-                              (
-                                BTC.format(summary.misthosFee)
-                                ++ " BTC"
-                                |> text
-                              )
+                              <MTypography variant=`Body2>
+                                (
+                                  BTC.format(summary.misthosFee)
+                                  ++ " BTC"
+                                  |> text
+                                )
+                              </MTypography>
                             </TableCell>
                           </TableRow>
                         </TableBody>
@@ -445,7 +465,7 @@ let make =
                     onSubmit=(() => send(ProposePayout))
                     onCancel=(() => send(Reset))
                     canSubmitProposal
-                    proposeText="Propose payout"
+                    proposeText="Propose Payout"
                     cmdStatus
                   />
                 </div>;

@@ -8,7 +8,13 @@ let component = ReasonReact.statelessComponent("Transaction");
 
 module Styles = {
   open Css;
-  let primary = style([marginRight(px(-8)), lineHeight(1.19)]);
+  let root =
+    style([
+      flex(1),
+      padding2(~v=px(0), ~h=px(16)),
+      minWidth(px(0)),
+      firstChild([paddingLeft(px(16))]),
+    ]);
   let amount = (inOut: ViewData.txType) =>
     style([
       color(
@@ -25,7 +31,12 @@ let make = (~tx: ViewData.txData, _children) => {
   ...component,
   render: _self => {
     let afmt = amount => BTC.format(amount) ++ " BTC" |> text;
-    let dfmt = Utils.mapOption(date => Js.Date.toDateString(date) |> text);
+    let dfmt =
+      Utils.mapOption(date =>
+        <MTypography variant=`Body1>
+          (Js.Date.toDateString(date) |> text)
+        </MTypography>
+      );
     let (primary, secondary, amount) = (
       switch (tx.status, tx.txType) {
       | (Unconfirmed, Payout) => text("UNCONFIRMED PAYOUT")
@@ -38,16 +49,17 @@ let make = (~tx: ViewData.txData, _children) => {
     );
     MaterialUi.(
       <ListItem
-        dense=true
+        dense=false
         disableGutters=true
         button=true
         onClick=(Router.clickToRoute(tx.detailsLink))>
         <ListItemText
+          classes=[Root(Styles.root)]
           primary={
-            <div className=Styles.primary>
+            <MTypography variant=`Body2>
               primary
               <span className=(Styles.amount(tx.txType))> amount </span>
-            </div>
+            </MTypography>
           }
           ?secondary
         />

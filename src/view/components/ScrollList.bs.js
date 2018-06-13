@@ -25,10 +25,13 @@ var customScrollBar = Glamor.css({
 var scrollContainer = Css.style(/* :: */[
       Css.unsafe("flex", "1 1 auto"),
       /* :: */[
-        Css.overflowY(Css.auto),
+        Css.overflowX(Css.hidden),
         /* :: */[
-          Css.minHeight(Css.px(0)),
-          /* [] */0
+          Css.overflowY(Css.auto),
+          /* :: */[
+            Css.minHeight(Css.px(0)),
+            /* [] */0
+          ]
         ]
       ]
     ]);

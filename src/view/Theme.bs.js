@@ -47,11 +47,11 @@ var theme = Styles.createMuiTheme({
           lineHeight: "92px"
         },
         display1: {
-          fontSize: "24px",
+          fontSize: "22px",
           color: "#000000",
           letterSpacing: "0.5px",
-          fontWeight: 600,
-          lineHeight: "32px"
+          fontWeight: 300,
+          lineHeight: "24px"
         },
         headline: {
           fontFamily: oswald,
@@ -79,34 +79,34 @@ var theme = Styles.createMuiTheme({
           lineHeight: "normal"
         },
         body2: {
-          fontSize: "16px",
+          fontSize: "14px",
           color: "#000000",
           letterSpacing: "0.5px",
-          fontWeight: 600,
+          fontWeight: 400,
           lineHeight: "19px"
         },
         body1: {
-          fontSize: "16px",
+          fontSize: "14px",
           color: "#000000",
           letterSpacing: "0.5px",
           fontWeight: 300,
           lineHeight: "19px"
         },
         caption: {
-          fontSize: "14px",
+          fontSize: "12px",
           color: "#000000",
           letterSpacing: "0.5px",
-          fontWeight: 600,
-          lineHeight: "18px"
+          fontWeight: 400,
+          lineHeight: "16px"
         },
         button: {
           fontFamily: oswald,
           textTransform: "uppercase",
-          fontSize: "18px",
+          fontSize: "16px",
           color: "#000000",
           letterSpacing: "0.7px",
           fontWeight: 700,
-          lineHeight: "26px"
+          lineHeight: "24px"
         }
       },
       spacing: {

@@ -12,6 +12,7 @@ module Styles = {
       width(px(Theme.space(19))),
       height(px(Theme.space(19))),
       borderRadius(px(Theme.space(19))),
+      fontSize(px(16)),
       unsafe("boxShadow", "none"),
       unsafe("border", "double 4px transparent"),
       unsafe("borderImageSlice", "1"),

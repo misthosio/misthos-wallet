@@ -6,7 +6,7 @@ let component = ReasonReact.statelessComponent("Partner");
 
 module Styles = {
   open Css;
-  let lenght = Theme.space(8);
+  let lenght = Theme.space(6);
   let avatar =
     style([
       backgroundColor(`transparent),
@@ -16,10 +16,9 @@ module Styles = {
   let primary =
     style([
       fontFamily(Theme.oswald),
-      fontSize(px(18)),
+      fontSize(px(16)),
       fontWeight(600),
       unsafe("letterSpacing", "0.7px"),
-      textDecoration(underline),
       textTransform(uppercase),
       whiteSpace(nowrap),
       overflow(hidden),
@@ -93,7 +92,7 @@ let avatar = (letter: char) =>
       fontSize="36px"
       fontWeight="600"
       x="50%"
-      y="50%"
+      y="53%"
       textAnchor="middle"
       alignmentBaseline="middle"
       fontFamily=Theme.sourceSansPro>

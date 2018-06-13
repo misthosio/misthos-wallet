@@ -264,12 +264,12 @@ function make(session, updateSession, _) {
       if (typeof session === "number") {
         if (session !== 1) {
           if (session >= 3) {
-            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("\n             You have signed in with a blockstack user that doesn\'t have a registered blockstack.id,\n             make sure to upgrade the BlockStack client, close all Misthos tabs and try again with a registered id.\n             ", /* None */0, /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("\n             You have signed in with a blockstack user that doesn\'t have a registered blockstack.id,\n             make sure to upgrade the Blockstack client, close all Misthos tabs and try again with a registered id.\n             ", /* None */0, /* array */[]));
           } else {
             return ReasonReact.element(/* None */0, /* None */0, BlankScreen.make("Loading", /* array */[]));
           }
         } else {
-          return ReasonReact.element(/* None */0, /* None */0, BlankScreen.make("Waiting for BlockStack session", /* array */[]));
+          return ReasonReact.element(/* None */0, /* None */0, BlankScreen.make("Waiting for Blockstack session", /* array */[]));
         }
       } else if (typeof selectedVenture === "number") {
         return ReasonReact.element(/* None */0, /* None */0, LoggedInHome.make(index, /* array */[]));
