@@ -58,15 +58,12 @@ function grid(mobileEnabled) {
                   /* :: */[
                     Css.height(Css.vh(100.0)),
                     /* :: */[
-                      Css.width(Css.vw(100.0)),
+                      Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
                       /* :: */[
-                        Css.unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
+                        Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
                         /* :: */[
-                          Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
-                          /* :: */[
-                            Css.unsafe("gridTemplateAreas", "\"bar\" \"body\" \".\""),
-                            /* [] */0
-                          ]
+                          Css.unsafe("gridTemplateAreas", "\"bar\" \"body\" \".\""),
+                          /* [] */0
                         ]
                       ]
                     ]

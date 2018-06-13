@@ -5,6 +5,7 @@ var Css = require("bs-css/src/Css.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
+var Footer = require("./Footer.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var BreakPoints = require("./BreakPoints.bs.js");
@@ -57,7 +58,7 @@ var grid = Css.style(/* :: */[
               /* :: */[
                 Css.height(/* `vh */[
                       26418,
-                      100.0
+                      95.0
                     ]),
                 /* :: */[
                   Css.alignItems(/* flexEnd */924268066),
@@ -151,26 +152,26 @@ function make(onSignIn, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return React.createElement("div", {
-                          className: grid
-                        }, React.createElement("div", {
-                              className: logo
-                            }), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("title") + (" " + title)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[
-                                  ViewCommon.text("Distribute Funds"),
-                                  React.createElement("br", undefined),
-                                  ViewCommon.text("with Misthos.")
-                                ])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("sub")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[
-                                  ViewCommon.text("Misthos is the only multi-sig Bitcoin wallet that lets you change co-signers in a fast and friction-less way."),
-                                  React.createElement("br", undefined),
-                                  React.createElement("br", undefined),
-                                  ViewCommon.text("Use it for projects. Use it for payments.")
-                                ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* None */0, /* None */0, /* Some */[area("button")], /* None */0, /* array */[
-                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_SvgIcon.make(/* Some */[Css.style(/* :: */[
-                                                  Css.marginRight(Css.px(16)),
-                                                  /* [] */0
-                                                ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.blockStack])),
-                                  ViewCommon.text("Sign In with Blockstack")
-                                ])));
+              return React.createElement("div", undefined, React.createElement("div", {
+                              className: grid
+                            }, React.createElement("div", {
+                                  className: logo
+                                }), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("title") + (" " + title)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[
+                                      ViewCommon.text("Distribute Funds"),
+                                      React.createElement("br", undefined),
+                                      ViewCommon.text("with Misthos.")
+                                    ])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[area("sub")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[
+                                      ViewCommon.text("Misthos is the only multi-sig Bitcoin wallet that lets you change co-signers in a fast and friction-less way."),
+                                      React.createElement("br", undefined),
+                                      React.createElement("br", undefined),
+                                      ViewCommon.text("Use it for projects. Use it for payments.")
+                                    ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* None */0, /* None */0, /* Some */[area("button")], /* None */0, /* array */[
+                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_SvgIcon.make(/* Some */[Css.style(/* :: */[
+                                                      Css.marginRight(Css.px(16)),
+                                                      /* [] */0
+                                                    ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.blockStack])),
+                                      ViewCommon.text("Sign In with Blockstack")
+                                    ]))), ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

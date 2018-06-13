@@ -48,7 +48,7 @@ module Styles = {
         gridGap(px(Theme.space(2))),
       ]),
       width(`percent(100.0)),
-      height(`vh(100.0)),
+      height(`vh(95.0)),
       alignItems(`flexEnd),
     ]);
   let logo =
@@ -77,31 +77,34 @@ let make = (~onSignIn, _children) => {
   ...component,
   render: _self =>
     MaterialUi.(
-      <div className=Styles.grid>
-        <div className=Styles.logo />
-        <Typography
-          className=(Styles.area("title") ++ " " ++ Styles.title)
-          variant=`Display4>
-          ("Distribute Funds" |> text)
-          <br />
-          ("with Misthos." |> text)
-        </Typography>
-        <Typography className=(Styles.area("sub")) variant=`Display1>
-          (
-            "Misthos is the only multi-sig Bitcoin wallet that lets you change co-signers in a fast and friction-less way."
-            |> text
-          )
-          <br />
-          <br />
-          ("Use it for projects. Use it for payments." |> text)
-        </Typography>
-        <MButton
-          className=(Styles.area("button")) color=`Inherit onClick=onSignIn>
-          <SvgIcon className=Css.(style([marginRight(px(16))]))>
-            Icons.blockStack
-          </SvgIcon>
-          ("Sign In with Blockstack" |> text)
-        </MButton>
+      <div>
+        <div className=Styles.grid>
+          <div className=Styles.logo />
+          <Typography
+            className=(Styles.area("title") ++ " " ++ Styles.title)
+            variant=`Display4>
+            ("Distribute Funds" |> text)
+            <br />
+            ("with Misthos." |> text)
+          </Typography>
+          <Typography className=(Styles.area("sub")) variant=`Display1>
+            (
+              "Misthos is the only multi-sig Bitcoin wallet that lets you change co-signers in a fast and friction-less way."
+              |> text
+            )
+            <br />
+            <br />
+            ("Use it for projects. Use it for payments." |> text)
+          </Typography>
+          <MButton
+            className=(Styles.area("button")) color=`Inherit onClick=onSignIn>
+            <SvgIcon className=Css.(style([marginRight(px(16))]))>
+              Icons.blockStack
+            </SvgIcon>
+            ("Sign In with Blockstack" |> text)
+          </MButton>
+        </div>
+        <Footer />
       </div>
     ),
 };
