@@ -95,7 +95,7 @@ let updateState =
       inputAmount,
       inputDestination,
       addressValid,
-      canSubmitProposal: summary.misthosFee |> BTC.gt(BTC.zero),
+      canSubmitProposal: summary.spentWithFees |> BTC.gt(summary.networkFee),
       summary,
       inputs: {
         btcAmount,
@@ -110,7 +110,7 @@ let updateState =
       inputAmount,
       inputDestination,
       addressValid,
-      canSubmitProposal: summary.misthosFee |> BTC.gt(BTC.zero),
+      canSubmitProposal: summary.spentWithFees |> BTC.gt(summary.networkFee),
       summary,
       inputs: {
         btcAmount,
