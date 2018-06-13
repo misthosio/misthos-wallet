@@ -140,7 +140,17 @@ function make() {
                                   className: link
                                 }, ViewCommon.text("Impressum"))), React.createElement("div", {
                               className: area("footer3")
-                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Headline */579538228, /* None */0, /* array */[ViewCommon.text("Stay Connected")]))), React.createElement("div", {
+                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Headline */579538228, /* None */0, /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
+                                  action: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53",
+                                  method: "post",
+                                  target: "_blank"
+                                }, React.createElement("input", {
+                                      name: "EMAIL",
+                                      placeholder: "Email Address",
+                                      type: "email"
+                                    }), React.createElement("input", {
+                                      type: "submit"
+                                    }))), React.createElement("div", {
                               className: notice
                             }, ViewCommon.text("© Misthos 2018. All rights reserved.")));
             }),

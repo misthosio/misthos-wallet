@@ -80,12 +80,17 @@ let make = _children => {
         <a className=Styles.link> ("Impressum" |> text) </a>
       </div>
       <div className=(Styles.area("footer3"))>
-
-          <MTypography variant=`Headline>
-            ("Stay Connected" |> text)
-          </MTypography>
-        </div>
-        /* form should go here */
+        <MTypography variant=`Headline>
+          ("Stay Connected" |> text)
+        </MTypography>
+        <form
+          action="https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53"
+          method="post"
+          target="_blank">
+          <input type_="email" placeholder="Email Address" name="EMAIL" />
+          <input type_="submit" />
+        </form>
+      </div>
       <div className=Styles.notice>
         ({js|© Misthos 2018. All rights reserved.|js} |> text)
       </div>
