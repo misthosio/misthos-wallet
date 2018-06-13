@@ -315,9 +315,9 @@ function exampleOfLongestAddress(param) {
   switch (param) {
     case 0 : 
     case 1 : 
-        return "2NC7VRQr4WgEQ5ZkJoHhqmVTH8axr2FcowJ";
+        return "2N3z4kw675LC8gD8uio2zrrsJRtArokaUnY";
     case 2 : 
-        return "3KVvnXV95XQQA7aQMuE9fn1gxnTK3nkZQX";
+        return "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
     
   }
 }

@@ -67,9 +67,19 @@ function summary(network, param) {
                               return param[0] === changeAddress[/* displayAddress */5];
                             }), outs)[1];
             }), changeAddress));
-  var misthosFee = List.find((function (param) {
-            return param[0] === misthosFeeAddress;
-          }), outs)[1];
+  var misthosFee;
+  try {
+    misthosFee = List.find((function (param) {
+              return param[0] === misthosFeeAddress;
+            }), outs)[1];
+  }
+  catch (exn){
+    if (exn === Caml_builtin_exceptions.not_found) {
+      misthosFee = BTC.zero;
+    } else {
+      throw exn;
+    }
+  }
   return /* record */[
           /* reserved */totalIn,
           /* destinations */destinations,
@@ -293,10 +303,15 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
           txB.addOutput(param[0], BTC.toSatoshisFloat(value));
           return total.plus(value);
         }), BTC.zero, destinations);
-  var misthosFee = BTC.timesRounded(1.49 / 100, outTotalWithoutFee);
   var misthosFeeAddress = Network.incomeAddress(network);
-  txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
-  var outTotal = outTotalWithoutFee.plus(misthosFee);
+  var outTotal;
+  if (network >= 2) {
+    outTotal = outTotalWithoutFee;
+  } else {
+    var misthosFee = BTC.timesRounded(1.49 / 100, outTotalWithoutFee);
+    txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
+    outTotal = outTotalWithoutFee.plus(misthosFee);
+  }
   var currentInputValue = List.fold_left((function (total, param) {
           return total.plus(param[1][/* value */3]);
         }), BTC.zero, usedInputs);
@@ -363,25 +378,19 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
             return /* None */0;
           }
         }));
-  var outputs = targetDestination !== "" ? /* :: */[
-      /* tuple */[
-        targetDestination,
-        BTC.zero
-      ],
-      /* :: */[
-        /* tuple */[
-          Network.incomeAddress(network),
-          BTC.zero
-        ],
-        destinations
-      ]
-    ] : /* :: */[
-      /* tuple */[
-        Network.incomeAddress(network),
-        BTC.zero
-      ],
-      destinations
-    ];
+  var outputs = Belt_List.concat(targetDestination !== "" ? /* :: */[
+          /* tuple */[
+            targetDestination,
+            BTC.zero
+          ],
+          destinations
+        ] : destinations, network >= 2 ? /* [] */0 : /* :: */[
+          /* tuple */[
+            Network.incomeAddress(network),
+            BTC.zero
+          ],
+          /* [] */0
+        ]);
   var fee = TransactionFee.estimate(Belt_List.map(outputs, (function (prim) {
               return prim[0];
             })), inputs, satsPerByte, Network.bitcoinNetwork(network));
@@ -391,9 +400,13 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
   var totalOutValue = Belt_List.reduce(destinations, BTC.zero, (function (res, param) {
           return res.plus(param[1]);
         }));
-  var totalOutMisthosFee = BTC.timesRounded(1.49 / 100, totalOutValue);
   var rest = totalInputValue.minus(totalOutValue.plus(fee));
-  return BTC.dividedByRounded(1 + 1.49 / 100, rest).minus(totalOutMisthosFee);
+  if (network >= 2) {
+    return rest;
+  } else {
+    var totalOutMisthosFee = BTC.timesRounded(1.49 / 100, totalOutValue);
+    return BTC.dividedByRounded(1 + 1.49 / 100, rest).minus(totalOutMisthosFee);
+  }
 }
 
 function findSignatures(_allSigs, needed, foundSigIdxs, foundSigs, network) {
