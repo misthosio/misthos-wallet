@@ -59,7 +59,7 @@ type preparePayoutResult =
 let preparePayoutTx =
     (
       ~eligibleWhenProposing,
-      {userId, masterKeyChain, network}: SessionData.t,
+      {userId, masterKeyChain}: SessionData.t,
       accountIdx,
       destinations,
       satsPerByte,
@@ -78,7 +78,7 @@ let preparePayoutTx =
           ~changeAddress=
             walletInfoCollector
             |> WalletInfoCollector.nextChangeAddress(accountIdx, userId),
-          ~network,
+          ~network=walletInfoCollector |> WalletInfoCollector.network,
         );
       let payoutTx =
         switch (
@@ -89,7 +89,7 @@ let preparePayoutTx =
             ~accountKeyChains=
               walletInfoCollector |> WalletInfoCollector.accountKeyChains,
             ~payoutTx,
-            ~network,
+            ~network=walletInfoCollector |> WalletInfoCollector.network,
           )
         ) {
         | Signed(payout) => payout

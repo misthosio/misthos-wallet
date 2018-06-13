@@ -51,11 +51,10 @@ function exposeNextIncomeAddress(userId, accountIdx, param) {
 
 function preparePayoutTx(eligibleWhenProposing, param, accountIdx, destinations, satsPerByte, param$1) {
   var walletInfoCollector = param$1[/* walletInfoCollector */3];
-  var network = param[/* network */5];
   var userId = param[/* userId */0];
   try {
-    var payoutTx = PayoutTransaction.build(WalletInfoCollector.nonReservedOldInputs(accountIdx, userId, walletInfoCollector), WalletInfoCollector.unusedInputs(walletInfoCollector), destinations, satsPerByte, WalletInfoCollector.nextChangeAddress(accountIdx, userId, walletInfoCollector), network);
-    var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(walletInfoCollector), payoutTx, network);
+    var payoutTx = PayoutTransaction.build(WalletInfoCollector.nonReservedOldInputs(accountIdx, userId, walletInfoCollector), WalletInfoCollector.unusedInputs(walletInfoCollector), destinations, satsPerByte, WalletInfoCollector.nextChangeAddress(accountIdx, userId, walletInfoCollector), WalletInfoCollector.network(walletInfoCollector));
+    var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(walletInfoCollector), payoutTx, WalletInfoCollector.network(walletInfoCollector));
     var payoutTx$1 = match ? match[0] : payoutTx;
     return /* Ok */[Curry._6(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, eligibleWhenProposing, userId, param$1[/* payoutPolicy */2], /* record */[
                   /* accountIdx */accountIdx,
