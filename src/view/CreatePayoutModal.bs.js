@@ -310,10 +310,18 @@ function make(viewData, commands, cmdStatus, _) {
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
+              var viewData = state[/* viewData */0];
               var match = state[/* frozen */6];
+              var match$1 = viewData[/* balance */1][/* currentSpendable */0].gt(state[/* summary */8][/* spentWithFees */2]) || state[/* inputAmount */3].gt(BTC.zero);
               var exit = 0;
+              var canInput;
               if (typeof cmdStatus === "number") {
-                exit = match ? 1 : 2;
+                if (match) {
+                  exit = 1;
+                } else {
+                  canInput = match$1;
+                  exit = 2;
+                }
               } else {
                 switch (cmdStatus.tag | 0) {
                   case 0 : 
@@ -321,6 +329,7 @@ function make(viewData, commands, cmdStatus, _) {
                       break;
                   case 1 : 
                   case 2 : 
+                      canInput = match$1;
                       exit = 2;
                       break;
                   
@@ -383,12 +392,16 @@ function make(viewData, commands, cmdStatus, _) {
                     if (typeof action === "number") {
                       switch (action) {
                         case 0 : 
-                            var max = Curry._3(state[/* viewData */0][/* max */6], state[/* inputDestination */2], state[/* destinations */1], state[/* fee */7]);
-                            return /* SideEffects */Block.__(1, [(function (param) {
-                                          return Curry._1(param[/* send */3], /* ChangeBTCAmount */Block.__(1, [BTC.format(max)]));
-                                        })]);
+                            if (canInput === true) {
+                              var max = Curry._3(viewData[/* max */6], state[/* inputDestination */2], state[/* destinations */1], state[/* fee */7]);
+                              return /* SideEffects */Block.__(1, [(function (param) {
+                                            return Curry._1(param[/* send */3], /* ChangeBTCAmount */Block.__(1, [BTC.format(max)]));
+                                          })]);
+                            } else {
+                              return /* NoUpdate */0;
+                            }
                         case 1 : 
-                            if (state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero)) {
+                            if (canInput === true && state[/* inputDestination */2] !== "" && state[/* inputAmount */3].gt(BTC.zero)) {
                               return /* Update */Block.__(0, [/* record */[
                                           /* viewData */state[/* viewData */0],
                                           /* destinations : :: */[
@@ -451,39 +464,47 @@ function make(viewData, commands, cmdStatus, _) {
                     } else {
                       switch (action.tag | 0) {
                         case 0 : 
-                            var init = state[/* inputs */9];
-                            return /* Update */Block.__(0, [updateState(/* record */[
-                                            /* viewData */state[/* viewData */0],
-                                            /* destinations */state[/* destinations */1],
-                                            /* inputDestination */state[/* inputDestination */2],
-                                            /* inputAmount */state[/* inputAmount */3],
-                                            /* addressValid */state[/* addressValid */4],
-                                            /* canSubmitProposal */state[/* canSubmitProposal */5],
-                                            /* frozen */state[/* frozen */6],
-                                            /* fee */state[/* fee */7],
-                                            /* summary */state[/* summary */8],
-                                            /* inputs : record */[
-                                              /* recipientAddress */action[0],
-                                              /* btcAmount */init[/* btcAmount */1]
-                                            ]
-                                          ])]);
+                            if (canInput === true) {
+                              var init = state[/* inputs */9];
+                              return /* Update */Block.__(0, [updateState(/* record */[
+                                              /* viewData */state[/* viewData */0],
+                                              /* destinations */state[/* destinations */1],
+                                              /* inputDestination */state[/* inputDestination */2],
+                                              /* inputAmount */state[/* inputAmount */3],
+                                              /* addressValid */state[/* addressValid */4],
+                                              /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                              /* frozen */state[/* frozen */6],
+                                              /* fee */state[/* fee */7],
+                                              /* summary */state[/* summary */8],
+                                              /* inputs : record */[
+                                                /* recipientAddress */action[0],
+                                                /* btcAmount */init[/* btcAmount */1]
+                                              ]
+                                            ])]);
+                            } else {
+                              return /* NoUpdate */0;
+                            }
                         case 1 : 
-                            var init$1 = state[/* inputs */9];
-                            return /* Update */Block.__(0, [updateState(/* record */[
-                                            /* viewData */state[/* viewData */0],
-                                            /* destinations */state[/* destinations */1],
-                                            /* inputDestination */state[/* inputDestination */2],
-                                            /* inputAmount */state[/* inputAmount */3],
-                                            /* addressValid */state[/* addressValid */4],
-                                            /* canSubmitProposal */state[/* canSubmitProposal */5],
-                                            /* frozen */state[/* frozen */6],
-                                            /* fee */state[/* fee */7],
-                                            /* summary */state[/* summary */8],
-                                            /* inputs : record */[
-                                              /* recipientAddress */init$1[/* recipientAddress */0],
-                                              /* btcAmount */action[0]
-                                            ]
-                                          ])]);
+                            if (canInput === true) {
+                              var init$1 = state[/* inputs */9];
+                              return /* Update */Block.__(0, [updateState(/* record */[
+                                              /* viewData */state[/* viewData */0],
+                                              /* destinations */state[/* destinations */1],
+                                              /* inputDestination */state[/* inputDestination */2],
+                                              /* inputAmount */state[/* inputAmount */3],
+                                              /* addressValid */state[/* addressValid */4],
+                                              /* canSubmitProposal */state[/* canSubmitProposal */5],
+                                              /* frozen */state[/* frozen */6],
+                                              /* fee */state[/* fee */7],
+                                              /* summary */state[/* summary */8],
+                                              /* inputs : record */[
+                                                /* recipientAddress */init$1[/* recipientAddress */0],
+                                                /* btcAmount */action[0]
+                                              ]
+                                            ])]);
+                            } else {
+                              return /* NoUpdate */0;
+                            }
                         case 2 : 
                             var removeIdx = action[0];
                             return /* Update */Block.__(0, [updateState(/* record */[

@@ -153,9 +153,16 @@ let make =
     )
     |> ignore,
   reducer: (action, {viewData} as state) =>
-    switch (cmdStatus, state.frozen) {
-    | (Success(_) | Error(_), _)
-    | (Idle, false) =>
+    switch (
+      cmdStatus,
+      state.frozen,
+      viewData.balance.currentSpendable
+      |> BTC.gt(state.summary.spentWithFees)
+      || state.inputAmount
+      |> BTC.gt(BTC.zero),
+    ) {
+    | (Success(_) | Error(_), _, canInput)
+    | (Idle, false, canInput) =>
       switch (action) {
       | SetFee(fee) => ReasonReact.Update({...state, fee})
       | RemoveDestination(removeIdx) =>
@@ -171,7 +178,7 @@ let make =
           }
           |> updateState,
         )
-      | ChangeRecipientAddress(address) =>
+      | ChangeRecipientAddress(address) when canInput == true =>
         ReasonReact.Update(
           {
             ...state,
@@ -182,7 +189,7 @@ let make =
           }
           |> updateState,
         )
-      | ChangeBTCAmount(amount) =>
+      | ChangeBTCAmount(amount) when canInput == true =>
         ReasonReact.Update(
           {
             ...state,
@@ -193,7 +200,7 @@ let make =
           }
           |> updateState,
         )
-      | AddToSummary =>
+      | AddToSummary when canInput == true =>
         if (state.inputDestination != ""
             && state.inputAmount
             |> BTC.gt(BTC.zero)) {
@@ -213,7 +220,7 @@ let make =
         } else {
           ReasonReact.NoUpdate;
         }
-      | EnterMax =>
+      | EnterMax when canInput == true =>
         let max =
           viewData.max(state.inputDestination, state.destinations, state.fee);
         ReasonReact.SideEffects(
@@ -225,7 +232,7 @@ let make =
           {...state, frozen: false},
           (_ => commands.reset()),
         )
-      | ProposePayout => ReasonReact.NoUpdate
+      | _ => ReasonReact.NoUpdate
       }
     | _ =>
       switch (action) {
