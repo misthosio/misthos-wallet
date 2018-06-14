@@ -49,7 +49,7 @@ let make = (~tx: ViewData.txData, _children) => {
     );
     MaterialUi.(
       <ListItem
-        dense=false
+        dense=true
         disableGutters=true
         button=true
         onClick=(Router.clickToRoute(tx.detailsLink))>

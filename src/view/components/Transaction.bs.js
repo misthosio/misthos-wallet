@@ -78,7 +78,7 @@ function make(tx, _) {
               var secondary = dfmt(tx[/* date */4]);
               var amount$1 = afmt(tx[/* amount */3]);
               var partial_arg = tx[/* detailsLink */5];
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[false], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                   return Router.clickToRoute(partial_arg, param);
                                 })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* array */[
                                                   primary,

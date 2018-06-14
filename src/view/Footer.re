@@ -96,7 +96,7 @@ module Styles = {
       textTransform(uppercase),
     ]);
 
-  let inputRoot = style([color(Colors.white)]);
+  let inputRoot = style([color(Colors.white), fontSize(px(14))]);
   let inputUnderline =
     style([
       before([backgroundColor(Colors.white)]),
