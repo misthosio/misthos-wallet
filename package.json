@@ -12,7 +12,7 @@
     "bs-css": "7.0.1",
     "bs-fetch": "0.3.0",
     "bs-json": "1.0.1",
-    "bs-webapi": "0.9.1",
+    "bs-webapi": "0.10.0",
     "clipboard": "2.0.1",
     "material-ui": "1.0.0-beta.47",
     "react": "16.4.0",
