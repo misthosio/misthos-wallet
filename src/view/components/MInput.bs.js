@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Block = require("bs-platform/lib/js/block.js");
 var Theme = require("../Theme.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -21,9 +22,17 @@ function margin(tf, bf) {
             ]);
 }
 
-var Styles = /* module */[/* margin */margin];
+var inputRoot = Css.style(/* :: */[
+      Css.fontSize(Css.px(14)),
+      /* [] */0
+    ]);
 
-function make(classes, placeholder, value, onChange, autoFocus, fullWidth, endAdornment, error, name, _type, $staropt$star, _) {
+var Styles = /* module */[
+  /* margin */margin,
+  /* inputRoot */inputRoot
+];
+
+function make(_, placeholder, value, onChange, autoFocus, fullWidth, endAdornment, error, name, _type, $staropt$star, _$1) {
   var ensuring = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -45,7 +54,10 @@ function make(classes, placeholder, value, onChange, autoFocus, fullWidth, endAd
                 ];
               var error$1 = match[0];
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_FormControl.make(/* Some */[margin(ensuring ? 4 : 3, 0)], /* None */0, /* None */0, /* Some */[error$1], fullWidth, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, autoFocus, /* None */0, /* None */0, /* None */0, /* None */0, endAdornment, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, name, /* None */0, onChange, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, placeholder, /* None */0, /* None */0, /* None */0, /* None */0, _type, value, classes, /* None */0, /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, autoFocus, /* None */0, /* None */0, /* None */0, /* None */0, endAdornment, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, name, /* None */0, onChange, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, placeholder, /* None */0, /* None */0, /* None */0, /* None */0, _type, value, /* Some */[/* :: */[
+                                          /* Root */Block.__(0, [inputRoot]),
+                                          /* [] */0
+                                        ]], /* None */0, /* array */[])),
                               error$1 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_FormHelperText.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(match[1])])) : null
                             ]));
             }),

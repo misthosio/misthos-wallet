@@ -9,6 +9,8 @@ module Styles = {
       marginTop(px(Theme.space(tf))),
       marginBottom(px(Theme.space(bf))),
     ]);
+
+  let inputRoot = style([fontSize(px(14))]);
 };
 
 let make =
@@ -39,7 +41,6 @@ let make =
         className=(Styles.margin(~tf=ensuring ? 4 : 3, ~bf=0))
         error>
         <Input
-          ?classes
           ?placeholder
           ?value
           ?onChange
@@ -47,6 +48,7 @@ let make =
           ?endAdornment
           ?name
           ?_type
+          classes=[Root(Styles.inputRoot)]
         />
         (
           error ?
