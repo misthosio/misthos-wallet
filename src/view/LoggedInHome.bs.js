@@ -4,9 +4,12 @@
 var Grid = require("./components/Grid.bs.js");
 var React = require("react");
 var LinkButton = require("./components/LinkButton.bs.js");
+var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureList = require("./VentureList.bs.js");
+var VentureInfoBox = require("./components/VentureInfoBox.bs.js");
 
 var component = ReasonReact.statelessComponent("LoggedInHome");
 
@@ -22,7 +25,9 @@ function make(index, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("My Ventures")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, VentureList.make(/* None */0, index, /* array */[])), React.createElement("div", undefined), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[ViewCommon.text("Create a Venture")])))], /* None */0, /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("My Ventures")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
+                                    className: ScrollList.containerStyles
+                                  }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, VentureList.make(/* None */0, index, /* array */[]))])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, VentureInfoBox.make(/* array */[])), React.createElement("br", undefined), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("\n                 Set up a new Venture with yourself as the initial Partner.\n                 You can add and remove Partners once the Venture is created.\n                ")])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* Some */[true], /* array */[ViewCommon.text("Create a Venture")])))], /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
