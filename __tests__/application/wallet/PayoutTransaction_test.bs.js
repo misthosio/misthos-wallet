@@ -278,7 +278,7 @@ describe("build", (function () {
                                         ]),
                                     /* networkFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */321
+                                          /* lo */320
                                         ])
                                   ], Jest.Expect[/* expect */0](summary));
                       }));
