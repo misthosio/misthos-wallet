@@ -63,7 +63,9 @@ let make =
               |> text
             )
           </MTypography>
-          <MTypography variant=`Title> ("Venture Name" |> text) </MTypography>
+          <MTypography gutterTop=true variant=`Title>
+            ("Venture Name" |> text)
+          </MTypography>
           <MInput
             placeholder="Enter a Venture Name"
             value=(`String(state.newVenture))
@@ -79,10 +81,10 @@ let make =
       }
       area4={
         <div className=Styles.infoBox>
-          <MTypography variant=`Title>
+          <MTypography gutterTop=true gutterBottom=true variant=`Title>
             ("What can you do with a venture?" |> text)
           </MTypography>
-          <MTypography variant=`Body2>
+          <MTypography gutterBottom=true variant=`Body2>
             (
               {js|
                  • Your Venture can receive money from different sources, such as customers, clients, and investors
@@ -90,7 +92,7 @@ let make =
               |> text
             )
           </MTypography>
-          <MTypography variant=`Body2>
+          <MTypography gutterBottom=true variant=`Body2>
             (
               {js|
                  • Every Partner of the Venture has full transparency of income and payouts
@@ -98,7 +100,7 @@ let make =
               |> text
             )
           </MTypography>
-          <MTypography variant=`Body2>
+          <MTypography gutterBottom=true variant=`Body2>
             (
               {js|
                  • The team decides the Policies by which payouts take place
