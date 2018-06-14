@@ -117,7 +117,7 @@ let make = (~viewData: ViewData.t, _children) => {
       title2=("Transactions" |> text)
       area1={
         <div>
-          <MTypography variant=`Title>
+          <MTypography gutterTop=true variant=`Title>
             (viewData.ventureName |> text)
           </MTypography>
           <Balance

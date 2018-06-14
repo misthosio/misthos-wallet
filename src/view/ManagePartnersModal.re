@@ -246,8 +246,8 @@ let make =
       );
 
     <Grid
-      title1=("Propose Partner Addition" |> text)
-      title2=("Propose Partner Removal" |> text)
+      title1=("Addition Proposal" |> text)
+      title2=("Removal Proposal" |> text)
       area3={
         <div>
           MaterialUi.(
@@ -274,7 +274,7 @@ let make =
                     onSubmit=(() => send(ProposePartner))
                     canSubmitProposal
                     withConfirmation=false
-                    proposeText="Propose partner"
+                    proposeText="Propose partner addition"
                     cmdStatus=proposeCmdStatus
                   />
                 </StepContent>
@@ -295,14 +295,6 @@ let make =
                   </MTypography>
                   <MButton
                     fullWidth=true
-                    variant=Flat
-                    onClick=(_e => send(AddAnother))>
-                    (text("Add Another"))
-                  </MButton>
-                  <MButton
-                    fullWidth=true
-                    gutterTop=false
-                    gutterBottom=true
                     href=(
                       "mailto:?subject="
                       ++ LinkEmail.subject(viewData.ventureName)
@@ -315,6 +307,14 @@ let make =
                          )
                     )>
                     ("Email the link " |> text)
+                  </MButton>
+                  <MButton
+                    gutterTop=false
+                    gutterBottom=true
+                    fullWidth=true
+                    variant=Flat
+                    onClick=(_e => send(AddAnother))>
+                    (text("Propose another Partner"))
                   </MButton>
                 </StepContent>
               </Step>
