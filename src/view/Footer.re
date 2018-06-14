@@ -113,7 +113,8 @@ module Styles = {
 
 let make = _children => {
   ...component,
-  render: _self =>
+  render: _self => {
+    let environment = Environment.get();
     <div className=Styles.grid>
       <div className=Styles.bg />
       <div className=(Styles.area("footer1"))>
@@ -135,7 +136,9 @@ let make = _children => {
           ("Jobs" |> text)
         </a>
         <a className=Styles.link> ({js|Datenshutzerklärung|js} |> text) </a>
-        <a className=Styles.link> ("Impressum" |> text) </a>
+        <a className=Styles.link href=(environment.webDomain ++ "/impressum")>
+          ("Impressum" |> text)
+        </a>
       </div>
       <div className=(Styles.area("footer3"))>
         <MTypography
@@ -185,5 +188,6 @@ let make = _children => {
       <div className=Styles.notice>
         ({js|© Misthos 2018. All rights reserved.|js} |> text)
       </div>
-    </div>,
+    </div>;
+  },
 };
