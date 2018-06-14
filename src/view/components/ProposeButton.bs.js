@@ -60,14 +60,14 @@ function make(proposeText, onSubmit, onPropose, onCancel, canSubmitProposal, $st
                     exit = 2;
                     break;
                 case 1 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* array */[
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* array */[
                                 ViewCommon.text(proposeText),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ConfirmProposal */2);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
+                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* Cancel */0);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
+                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
                               ]))];
                     break;
                 case 2 : 
@@ -96,7 +96,7 @@ function make(proposeText, onSubmit, onPropose, onCancel, canSubmitProposal, $st
                     tmp = /* array */[
                       ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                     return Curry._1(send, /* Propose */1);
-                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(proposeText)])),
+                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(proposeText)])),
                       ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Proposal */3, /* array */[]))
                     ];
                     break;

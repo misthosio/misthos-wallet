@@ -68,7 +68,7 @@ let make =
             ("Proposed Partner " ++ processTypeString |> text)
           </MTypography>
           <Partner key=(userId |> UserId.toString) partnerId=userId />
-          <MTypography variant=`Body2>
+          <MTypography variant=`Body2 gutterBottom=true>
             ("Proposed by " ++ UserId.toString(proposedBy) |> text)
           </MTypography>
           <MTypography variant=`Body2>

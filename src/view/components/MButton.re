@@ -6,8 +6,12 @@ type variant =
 
 module Styles = {
   open Css;
-  let button = (fullWidth, variant) => {
-    let baseRules = [width(fullWidth ? `percent(100.0) : auto)];
+  let button = (fullWidth, variant, gutterTop, gutterBottom) => {
+    let baseRules = [
+      width(fullWidth ? `percent(100.0) : auto),
+      marginTop(px(Theme.space(gutterTop ? 5 : 0))),
+      marginBottom(px(Theme.space(gutterBottom ? 5 : 0))),
+    ];
     let variantRules =
       switch (variant) {
       | Flat => [
@@ -24,7 +28,6 @@ module Styles = {
           paddingRight(px(25)),
           minHeight(px(45)),
           maxHeight(px(45)),
-          marginTop(px(Theme.space(5))),
         ]
       };
     style([baseRules, variantRules] |> List.flatten);
@@ -39,6 +42,8 @@ let make =
       ~fullWidth=false,
       ~variant=Outlined,
       ~className="",
+      ~gutterTop=true,
+      ~gutterBottom=false,
       ~href=?,
       children,
     ) => {
@@ -46,7 +51,11 @@ let make =
   render: _self =>
     <MaterialUi.Button
       ?size
-      className=(Styles.button(fullWidth, variant) ++ " " ++ className)
+      className=(
+        Styles.button(fullWidth, variant, gutterTop, gutterBottom)
+        ++ " "
+        ++ className
+      )
       ?color
       ?href
       ?onClick>

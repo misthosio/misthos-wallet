@@ -9,7 +9,7 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      lg([
+      md([
         unsafe(
           "gridTemplateAreas",
           {|
@@ -107,6 +107,8 @@ module Styles = {
 
   let social = style([marginTop(px(Theme.space(4)))]);
   let socialIcon = style([marginRight(px(Theme.space(2)))]);
+
+  let title = style([color(Colors.white)]);
 };
 
 let make = _children => {
@@ -118,7 +120,13 @@ let make = _children => {
         <div className=Styles.logo> Icons.misthosWordMark </div>
       </div>
       <div className=(Styles.area("footer2"))>
-        <MTypography variant=`Headline> ("Company" |> text) </MTypography>
+        <MTypography
+          gutterTop=true
+          gutterBottom=true
+          className=Styles.title
+          variant=`Title>
+          ("Company" |> text)
+        </MTypography>
         <a className=Styles.link> ("Frequently Asked Questions" |> text) </a>
         <a className=Styles.link href="mailto:contact@misthos.io">
           ("Contact us" |> text)
@@ -130,7 +138,11 @@ let make = _children => {
         <a className=Styles.link> ("Impressum" |> text) </a>
       </div>
       <div className=(Styles.area("footer3"))>
-        <MTypography variant=`Headline>
+        <MTypography
+          gutterTop=true
+          gutterBottom=true
+          className=Styles.title
+          variant=`Title>
           ("Stay Connected" |> text)
         </MTypography>
         MaterialUi.(

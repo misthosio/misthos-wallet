@@ -19,7 +19,7 @@ var component = ReasonReact.statelessComponent("Footer");
 var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        BreakPoints.lg(/* :: */[
+        BreakPoints.md(/* :: */[
               Css.unsafe("gridTemplateAreas", "\n           \". . . . .\"\n           \". footer1 footer2 footer3 .\"\n           \". notice . . .\"\n           \". . . . .\"\n           "),
               /* :: */[
                 Css.unsafe("gridTemplateColumns", "[begin] 0px 1fr 1fr 1fr 0px [end]"),
@@ -166,6 +166,11 @@ var socialIcon = Css.style(/* :: */[
       /* [] */0
     ]);
 
+var title = Css.style(/* :: */[
+      Css.color(Colors.white),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* grid */grid,
   /* area */area,
@@ -177,7 +182,8 @@ var Styles = /* module */[
   /* inputUnderline */inputUnderline,
   /* button */button,
   /* social */social,
-  /* socialIcon */socialIcon
+  /* socialIcon */socialIcon,
+  /* title */title
 ];
 
 function make() {
@@ -202,7 +208,7 @@ function make() {
                                   className: logo
                                 }, Icons.misthosWordMark)), React.createElement("div", {
                               className: area("footer2")
-                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Headline */579538228, /* None */0, /* array */[ViewCommon.text("Company")])), React.createElement("a", {
+                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* array */[ViewCommon.text("Company")])), React.createElement("a", {
                                   className: link
                                 }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
                                   className: link,
@@ -216,7 +222,7 @@ function make() {
                                   className: link
                                 }, ViewCommon.text("Impressum"))), React.createElement("div", {
                               className: area("footer3")
-                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Headline */579538228, /* None */0, /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
+                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
                                   action: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53",
                                   method: "post",
                                   target: "_blank"

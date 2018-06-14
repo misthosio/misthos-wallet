@@ -80,12 +80,12 @@ function make(commands, _) {
                                   }, match ? React.createElement("img", {
                                           height: "250px",
                                           src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
-                                        }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* array */[
+                                        }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text(Js_option.getWithDefault("", state[/* address */0])),
                                             copyButton
                                           ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                 return Curry._1(send, /* GetIncomeAddress */0);
-                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))], /* None */0, /* array */[]));
+                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))], /* None */0, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* address : None */0];

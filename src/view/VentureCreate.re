@@ -15,21 +15,6 @@ type action =
 
 let component = ReasonReact.reducerComponent("VentureCreate");
 
-module Styles = {
-  open Css;
-  let infoBox =
-    style([
-      border(px(2), solid, Colors.black),
-      padding4(
-        ~top=px(0),
-        ~right=px(Theme.space(4)),
-        ~left=px(Theme.space(4)),
-        ~bottom=px(Theme.space(4)),
-      ),
-      marginTop(px(32)),
-    ]);
-};
-
 let make =
     (~onCreateVenture, ~cmdStatus: CommandExecutor.cmdStatus, _children) => {
   ...component,
@@ -63,7 +48,9 @@ let make =
               |> text
             )
           </MTypography>
-          <MTypography variant=`Title> ("Venture Name" |> text) </MTypography>
+          <MTypography gutterTop=true variant=`Title>
+            ("Venture Name" |> text)
+          </MTypography>
           <MInput
             placeholder="Enter a Venture Name"
             value=(`String(state.newVenture))
@@ -77,36 +64,6 @@ let make =
           <CommandExecutor.Status action=CreateVenture cmdStatus />
         </div>
       }
-      area4={
-        <div className=Styles.infoBox>
-          <MTypography variant=`Title>
-            ("What can you do with a venture?" |> text)
-          </MTypography>
-          <MTypography variant=`Body2>
-            (
-              {js|
-                 • Your Venture can receive money from different sources, such as customers, clients, and investors
-                |js}
-              |> text
-            )
-          </MTypography>
-          <MTypography variant=`Body2>
-            (
-              {js|
-                 • Every Partner of the Venture has full transparency of income and payouts
-                |js}
-              |> text
-            )
-          </MTypography>
-          <MTypography variant=`Body2>
-            (
-              {js|
-                 • The team decides the Policies by which payouts take place
-                |js}
-              |> text
-            )
-          </MTypography>
-        </div>
-      }
+      area4={<VentureInfoBox />}
     />,
 };

@@ -373,6 +373,7 @@ let make =
                     endAdornment=MaterialUi.(
                                    <InputAdornment position=`End>
                                      <MButton
+                                       gutterTop=false
                                        className=Styles.maxButton
                                        size=`Small
                                        variant=Flat

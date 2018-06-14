@@ -88,7 +88,7 @@ let make =
       title1=("Payout Details" |> text)
       area3={
         <div className=ScrollList.containerStyles>
-          <MTypography variant=`Body2>
+          <MTypography variant=`Body2 gutterBottom=true>
             (
               switch (date) {
               | Some(date) =>
@@ -101,7 +101,9 @@ let make =
             ("Status: " |> text)
             payoutStatus
           </MTypography>
-          <MTypography variant=`Title> ("Payout" |> text) </MTypography>
+          <MTypography variant=`Title gutterTop=true>
+            ("Payout" |> text)
+          </MTypography>
           <ScrollList>
             MaterialUi.(
               <Table>

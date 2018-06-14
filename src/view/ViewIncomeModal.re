@@ -28,7 +28,7 @@ let make = (~viewData: ViewData.t, _children) => {
         title1=("Income Transaction Details" |> text)
         area3={
           <div>
-            <MTypography variant=`Body2>
+            <MTypography variant=`Body2 gutterBottom=true>
               (
                 switch (date) {
                 | Some(date) =>
@@ -44,17 +44,17 @@ let make = (~viewData: ViewData.t, _children) => {
               ("Status: " |> text)
               txStatus
             </MTypography>
-            <MTypography variant=`Title>
+            <MTypography variant=`Title gutterTop=true>
               ("Income Amount" |> text)
             </MTypography>
             <MTypography variant=`Subheading>
               (BTC.format(amount) ++ " BTC" |> text)
             </MTypography>
-            <MTypography variant=`Title>
+            <MTypography variant=`Title gutterTop=true>
               ("Income Address" |> text)
             </MTypography>
             <MTypography variant=`Body2> (addresses |> text) </MTypography>
-            <MTypography variant=`Title>
+            <MTypography variant=`Title gutterTop=true>
               ("Transaction ID" |> text)
             </MTypography>
             <MTypography variant=`Body2> (txId |> text) </MTypography>
