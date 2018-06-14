@@ -1,4 +1,4 @@
-type t;
+type t = Node.buffer;
 
 [@bs.module "bitcoin-ops"] external op_FALSE : t = "OP_FALSE";
 [@bs.module "bitcoin-ops"] external op_0 : t = "OP_0";

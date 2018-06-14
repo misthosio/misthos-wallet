@@ -97,6 +97,8 @@ module Transaction = {
   [@bs.send] external toHex : t => string = "";
   [@bs.send] external virtualSize : t => float = "";
   [@bs.send] external getId : t => string = "";
+  [@bs.send] external setInputScript : (t, int, Node.buffer) => unit = "";
+  [@bs.send] external setWitness : (t, int, array(Node.buffer)) => unit = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
   external fromHex : string => t = "";
 };
@@ -140,6 +142,8 @@ module Ops = {
 module Script = {
   [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
   external compile : array(Ops.t) => Node.buffer = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
+  external decompile : Node.buffer => array(Node.buffer) = "";
   module Multisig = {
     module Output = {
       [@bs.module "bitcoinjs-lib"]
