@@ -2,23 +2,21 @@ let component = ReasonReact.statelessComponent("MTypography");
 
 module Styles = {
   open Css;
-  let margin = (~tf, ~bf) =>
-    style([
-      marginTop(px(Theme.space(tf))),
-      marginBottom(px(Theme.space(bf))),
-    ]);
+  let margin = top => style([marginTop(px(Theme.space(top)))]);
 };
 
-let make = (~variant, ~className="", children) => {
+let make =
+    (~variant, ~className="", ~gutterBottom=false, ~gutterTop=false, children) => {
   ...component,
   render: _self => {
     let style =
-      switch (variant) {
-      | `Headline => Styles.margin(~tf=4, ~bf=4)
-      | `Title => Styles.margin(~tf=4, ~bf=0)
-      | _ => Styles.margin(~tf=0, ~bf=0)
+      switch (variant, gutterTop) {
+      | (`Title, true)
+      | (`Headline, true) => Styles.margin(4)
+      | (_, _) => Styles.margin(0)
       };
-    <MaterialUi.Typography className=(style ++ " " ++ className) variant>
+    <MaterialUi.Typography
+      className=(style ++ " " ++ className) variant gutterBottom>
       children
     </MaterialUi.Typography>;
   },

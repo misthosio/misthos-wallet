@@ -6,12 +6,11 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
-var Glamor = require("glamor");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.statelessComponent("Grid");
 
-var gap = String(Theme.space(8)) + "px";
+var gap = String(Theme.space(4)) + "px 0px";
 
 function grid(variant) {
   var tmp;
@@ -27,15 +26,34 @@ function grid(variant) {
         break;
     
   }
-  return Glamor.css({
-              display: "grid",
-              gridGap: gap + " 0px",
-              gridTemplateAreas: tmp,
-              gridTemplateColumns: "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]",
-              gridTemplateRows: variant >= 2 ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto",
-              width: "100%",
-              height: "100%"
-            });
+  return Css.style(/* :: */[
+              Css.display(Css.grid),
+              /* :: */[
+                Css.unsafe("gridGap", gap),
+                /* :: */[
+                  Css.unsafe("gridTemplateAreas", tmp),
+                  /* :: */[
+                    Css.unsafe("gridTemplateColumns", "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"),
+                    /* :: */[
+                      Css.unsafe("gridTemplateRows", variant >= 2 ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto"),
+                      /* :: */[
+                        Css.width(/* `percent */[
+                              -119887163,
+                              100.0
+                            ]),
+                        /* :: */[
+                          Css.height(/* `percent */[
+                                -119887163,
+                                100.0
+                              ]),
+                          /* [] */0
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
 }
 
 function area(area$1) {

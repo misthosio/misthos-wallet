@@ -9,7 +9,7 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      lg([
+      md([
         unsafe(
           "gridTemplateAreas",
           {|

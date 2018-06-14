@@ -9,12 +9,13 @@ type variant =
 
 module Styles = {
   open Css;
-  let gap = (Theme.space(8) |> string_of_int) ++ "px";
+  let gap = (Theme.space(4) |> string_of_int) ++ "px 0px";
   let grid = variant =>
-    cssUnsafe({
-      "display": "grid",
-      "gridGap": gap ++ " 0px",
-      "gridTemplateAreas":
+    style([
+      display(grid),
+      unsafe("gridGap", gap),
+      unsafe(
+        "gridTemplateAreas",
         switch (variant) {
         | V4 => {|
                  ". area1 . area2 ."
@@ -30,16 +31,22 @@ module Styles = {
                  ". area3 area3 area3 ."
                  |}
         },
-      "gridTemplateColumns": "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]",
-      "gridTemplateRows":
+      ),
+      unsafe(
+        "gridTemplateColumns",
+        "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]",
+      ),
+      unsafe(
+        "gridTemplateRows",
         switch (variant) {
         | V4 => "min-content [begin] min-content [end] auto"
         | V2
         | V1 => "[begin] min-content [end] auto"
         },
-      "width": "100%",
-      "height": "100%",
-    });
+      ),
+      width(`percent(100.0)),
+      height(`percent(100.0)),
+    ]);
   let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
   let title =
     style([

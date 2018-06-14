@@ -9,14 +9,21 @@ var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.
 
 var component = ReasonReact.statelessComponent("MButton");
 
-function button(fullWidth, variant) {
+function button(fullWidth, variant, gutterTop, gutterBottom) {
   var baseRules_000 = Css.width(fullWidth ? /* `percent */[
           -119887163,
           100.0
         ] : Css.auto);
+  var baseRules_001 = /* :: */[
+    Css.marginTop(Css.px(Theme.space(gutterTop ? 5 : 0))),
+    /* :: */[
+      Css.marginBottom(Css.px(Theme.space(gutterBottom ? 5 : 0))),
+      /* [] */0
+    ]
+  ];
   var baseRules = /* :: */[
     baseRules_000,
-    /* [] */0
+    baseRules_001
   ];
   var variantRules = variant ? /* :: */[
       Css.borderRadius(Css.px(25)),
@@ -30,10 +37,7 @@ function button(fullWidth, variant) {
               Css.minHeight(Css.px(45)),
               /* :: */[
                 Css.maxHeight(Css.px(45)),
-                /* :: */[
-                  Css.marginTop(Css.px(Theme.space(5))),
-                  /* [] */0
-                ]
+                /* [] */0
               ]
             ]
           ]
@@ -69,10 +73,12 @@ function button(fullWidth, variant) {
 
 var Styles = /* module */[/* button */button];
 
-function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, href, children) {
+function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, href, children) {
   var fullWidth = $staropt$star ? $staropt$star[0] : false;
   var variant = $staropt$star$1 ? $staropt$star$1[0] : /* Outlined */1;
   var className = $staropt$star$2 ? $staropt$star$2[0] : "";
+  var gutterTop = $staropt$star$3 ? $staropt$star$3[0] : true;
+  var gutterBottom = $staropt$star$4 ? $staropt$star$4[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -84,7 +90,7 @@ function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$sta
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant) + (" " + className)], color, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, href, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant, gutterTop, gutterBottom) + (" " + className)], color, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, href, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

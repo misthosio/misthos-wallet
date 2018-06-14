@@ -293,10 +293,16 @@ let make =
                       |> text
                     )
                   </MTypography>
-                  <MButton variant=Flat onClick=(_e => send(AddAnother))>
+                  <MButton
+                    fullWidth=true
+                    variant=Flat
+                    onClick=(_e => send(AddAnother))>
                     (text("Add Another"))
                   </MButton>
                   <MButton
+                    fullWidth=true
+                    gutterTop=false
+                    gutterBottom=true
                     href=(
                       "mailto:?subject="
                       ++ LinkEmail.subject(viewData.ventureName)
