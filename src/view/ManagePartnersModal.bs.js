@@ -190,7 +190,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                   /* [] */0
                                                                 ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
                                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                ReasonReact.element(/* None */0, /* None */0, MInput.make(/* None */0, /* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
+                                                                ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["Enter a Blockstack ID"], /* Some */[/* `String */[
                                                                             -976970511,
                                                                             inputs[/* prospectId */0]
                                                                           ]], /* Some */[(function (e) {

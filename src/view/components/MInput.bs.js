@@ -32,7 +32,7 @@ var Styles = /* module */[
   /* inputRoot */inputRoot
 ];
 
-function make(_, placeholder, value, onChange, autoFocus, fullWidth, endAdornment, error, name, _type, $staropt$star, _$1) {
+function make(placeholder, value, onChange, autoFocus, fullWidth, endAdornment, error, name, _type, $staropt$star, _) {
   var ensuring = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],

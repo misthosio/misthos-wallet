@@ -15,7 +15,6 @@ module Styles = {
 
 let make =
     (
-      ~classes=?,
       ~placeholder=?,
       ~value=?,
       ~onChange=?,
