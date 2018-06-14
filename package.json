@@ -15,8 +15,8 @@
     "bs-webapi": "0.9.1",
     "clipboard": "2.0.1",
     "material-ui": "1.0.0-beta.47",
-    "react": "16.4.0",
-    "react-dom": "16.4.0",
+    "react": "16.4.1",
+    "react-dom": "16.4.1",
     "reason-reroute": "0.0.4",
     "uuid": "3.2.1"
   },
