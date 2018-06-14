@@ -131,10 +131,7 @@ var link = Css.style(/* :: */[
 
 var inputRoot = Css.style(/* :: */[
       Css.color(Colors.white),
-      /* :: */[
-        Css.fontSize(Css.px(14)),
-        /* [] */0
-      ]
+      /* [] */0
     ]);
 
 var inputUnderline = Css.style(/* :: */[
