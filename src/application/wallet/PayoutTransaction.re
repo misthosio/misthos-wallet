@@ -508,8 +508,8 @@ let max =
     let totalOutMisthosFee =
       totalOutValue |> BTC.timesRounded(misthosFeePercent /. 100.);
     rest
-    |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.)
-    |> BTC.minus(totalOutMisthosFee);
+    |> BTC.minus(totalOutMisthosFee)
+    |> BTC.dividedByRounded(1. +. misthosFeePercent /. 100.);
   };
 };
 

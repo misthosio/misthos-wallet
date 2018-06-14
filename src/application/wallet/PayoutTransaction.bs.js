@@ -405,7 +405,7 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
     return rest;
   } else {
     var totalOutMisthosFee = BTC.timesRounded(1.49 / 100, totalOutValue);
-    return BTC.dividedByRounded(1 + 1.49 / 100, rest).minus(totalOutMisthosFee);
+    return BTC.dividedByRounded(1 + 1.49 / 100, rest.minus(totalOutMisthosFee));
   }
 }
 

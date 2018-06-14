@@ -214,7 +214,7 @@ let () =
                ],
                spentWithFees: BTC.fromSatoshis(15000L),
                misthosFee: BTC.fromSatoshis(216L),
-               networkFee: BTC.fromSatoshis(321L),
+               networkFee: BTC.fromSatoshis(320L),
              },
            );
       });
