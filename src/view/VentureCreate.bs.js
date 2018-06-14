@@ -22,10 +22,7 @@ var infoBox = Css.style(/* :: */[
       Css.border(Css.px(2), Css.solid, Colors.black),
       /* :: */[
         Css.padding4(Css.px(0), Css.px(Theme.space(4)), Css.px(Theme.space(4)), Css.px(Theme.space(4))),
-        /* :: */[
-          Css.marginTop(Css.px(32)),
-          /* [] */0
-        ]
+        /* [] */0
       ]
     ]);
 

@@ -26,7 +26,6 @@ module Styles = {
         ~left=px(Theme.space(4)),
         ~bottom=px(Theme.space(4)),
       ),
-      marginTop(px(32)),
     ]);
 };
 
