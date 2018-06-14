@@ -46,6 +46,8 @@ var Transaction = /* module */[];
 
 var TxBuilder = /* module */[];
 
+var Ops = /* module */[];
+
 var Output = /* module */[];
 
 var Multisig = /* module */[/* Output */Output];
@@ -78,5 +80,6 @@ exports.ECPair = ECPair;
 exports.HDNode = HDNode;
 exports.Transaction = Transaction;
 exports.TxBuilder = TxBuilder;
+exports.Ops = Ops;
 exports.Script = Script;
 /* all Not a pure module */

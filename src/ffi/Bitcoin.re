@@ -133,7 +133,13 @@ module TxBuilder = {
   [@bs.send] external buildIncomplete : t => Transaction.t = "";
 };
 
+module Ops = {
+  include BitcoinOps;
+};
+
 module Script = {
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
+  external compile : array(Ops.t) => Node.buffer = "";
   module Multisig = {
     module Output = {
       [@bs.module "bitcoinjs-lib"]
