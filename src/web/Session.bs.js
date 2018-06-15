@@ -29,10 +29,10 @@ function completeLogIn() {
   var environment = Environment.get(/* () */0);
   Utils.mapOption((function (key) {
           LocalStorage.setItem("blockstack-transit-private-key", key);
-          return Cookie.$$delete("transitKey", environment[/* cookieDomain */3]);
+          return Cookie.$$delete("transitKey", environment[/* cookieDomain */4]);
         }), Cookie.get("transitKey"));
   return Blockstack.handlePendingSignIn().then((function (userData) {
-                var match = SessionData.fromUserData(userData, environment[/* network */4]);
+                var match = SessionData.fromUserData(userData, environment[/* network */5]);
                 if (match) {
                   return initMasterKey(match[0]).then((function (session) {
                                 return Promise.resolve(/* LoggedIn */[session]);
@@ -49,7 +49,7 @@ function getCurrentSession() {
     if (match == null) {
       return Promise.resolve(/* NotLoggedIn */2);
     } else {
-      var match$1 = SessionData.fromUserData(match, Environment.get(/* () */0)[/* network */4]);
+      var match$1 = SessionData.fromUserData(match, Environment.get(/* () */0)[/* network */5]);
       if (match$1) {
         return initMasterKey(match$1[0]).then((function (session) {
                       return Promise.resolve(/* LoggedIn */[session]);
@@ -74,7 +74,7 @@ function signIn() {
   Blockstack.signUserOut();
   var transitKey = KeysJs.makeECPrivateKey();
   var environment = Environment.get(/* () */0);
-  Cookie.set("transitKey", transitKey, environment[/* cookieDomain */3]);
+  Cookie.set("transitKey", transitKey, environment[/* cookieDomain */4]);
   Blockstack.redirectToSignInWithAuthRequest(Blockstack.makeAuthRequest(transitKey, environment[/* redirectURI */0], environment[/* manifestURI */1], /* array */[
             "store_write",
             "publish_data"

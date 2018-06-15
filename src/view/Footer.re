@@ -73,7 +73,7 @@ module Styles = {
       unsafe("gridRow", "begin / end"),
     ]);
 
-  let logo = style([marginTop(px(Theme.space(4)))]);
+  let logo = style([marginTop(px(Theme.space(4))), display(block)]);
 
   let notice =
     style([
@@ -113,11 +113,14 @@ module Styles = {
 
 let make = _children => {
   ...component,
-  render: _self =>
+  render: _self => {
+    let environment = Environment.get();
     <div className=Styles.grid>
       <div className=Styles.bg />
       <div className=(Styles.area("footer1"))>
-        <div className=Styles.logo> Icons.misthosWordMark </div>
+        <a className=Styles.logo href=(environment.webDomain ++ "/")>
+          Icons.misthosWordMark
+        </a>
       </div>
       <div className=(Styles.area("footer2"))>
         <MTypography
@@ -127,15 +130,25 @@ let make = _children => {
           variant=`Title>
           ("Company" |> text)
         </MTypography>
-        <a className=Styles.link> ("Frequently Asked Questions" |> text) </a>
+        <a
+          className=Styles.link
+          href=(environment.webDomain ++ "/frequently_asked_questions")>
+          ("Frequently Asked Questions" |> text)
+        </a>
         <a className=Styles.link href="mailto:contact@misthos.io">
           ("Contact us" |> text)
         </a>
         <a className=Styles.link href="mailto:jobs@misthos.io">
           ("Jobs" |> text)
         </a>
-        <a className=Styles.link> ({js|Datenshutzerklärung|js} |> text) </a>
-        <a className=Styles.link> ("Impressum" |> text) </a>
+        <a
+          className=Styles.link
+          href=(environment.webDomain ++ "/datenshutzerklarung")>
+          ({js|Datenshutzerklärung|js} |> text)
+        </a>
+        <a className=Styles.link href=(environment.webDomain ++ "/impressum")>
+          ("Impressum" |> text)
+        </a>
       </div>
       <div className=(Styles.area("footer3"))>
         <MTypography
@@ -185,5 +198,6 @@ let make = _children => {
       <div className=Styles.notice>
         ({js|© Misthos 2018. All rights reserved.|js} |> text)
       </div>
-    </div>,
+    </div>;
+  },
 };

@@ -9,6 +9,7 @@ var React = require("react");
 var Colors = require("./Colors.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var BreakPoints = require("./BreakPoints.bs.js");
+var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Input = require("@jsiebern/bs-material-ui/src/MaterialUi_Input.bs.js");
@@ -83,7 +84,10 @@ var bg = Css.style(/* :: */[
 
 var logo = Css.style(/* :: */[
       Css.marginTop(Css.px(Theme.space(4))),
-      /* [] */0
+      /* :: */[
+        Css.display(Css.block),
+        /* [] */0
+      ]
     ]);
 
 var notice = Css.style(/* :: */[
@@ -201,18 +205,21 @@ function make() {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
+              var environment = Environment.get(/* () */0);
               return React.createElement("div", {
                           className: grid
                         }, React.createElement("div", {
                               className: bg
                             }), React.createElement("div", {
                               className: area("footer1")
-                            }, React.createElement("div", {
-                                  className: logo
+                            }, React.createElement("a", {
+                                  className: logo,
+                                  href: environment[/* webDomain */3] + "/"
                                 }, Icons.misthosWordMark)), React.createElement("div", {
                               className: area("footer2")
                             }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* array */[ViewCommon.text("Company")])), React.createElement("a", {
-                                  className: link
+                                  className: link,
+                                  href: environment[/* webDomain */3] + "/frequently_asked_questions"
                                 }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
                                   className: link,
                                   href: "mailto:contact@misthos.io"
@@ -220,9 +227,11 @@ function make() {
                                   className: link,
                                   href: "mailto:jobs@misthos.io"
                                 }, ViewCommon.text("Jobs")), React.createElement("a", {
-                                  className: link
+                                  className: link,
+                                  href: environment[/* webDomain */3] + "/datenshutzerklarung"
                                 }, ViewCommon.text("Datenshutzerklärung")), React.createElement("a", {
-                                  className: link
+                                  className: link,
+                                  href: environment[/* webDomain */3] + "/impressum"
                                 }, ViewCommon.text("Impressum"))), React.createElement("div", {
                               className: area("footer3")
                             }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
