@@ -291,3 +291,20 @@ let medium =
       d="M19.337.816l-1.52 1.469a.452.452 0 0 0-.171.428v10.816a.442.442 0 0 0 .171.428l1.488 1.47v.325h-7.473v-.313l1.539-1.508c.152-.153.152-.198.152-.428V4.757L9.24 15.72h-.576L3.681 4.757v7.347c-.045.307.063.62.278.844l2.002 2.446v.326H.273v-.326l2.001-2.446a.984.984 0 0 0 .26-.844V3.607a.733.733 0 0 0-.24-.626L.513.816V.49h5.529l4.269 9.455L14.068.496h5.27v.32z"
     />
   </svg>;
+
+let chevronDown =
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="14"
+    height="8"
+    viewBox="0 0 14 8">
+    <path
+      fill="none"
+      fillRule="evenodd"
+      stroke="#000"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M1 1l6 6 6-6"
+    />
+  </svg>;

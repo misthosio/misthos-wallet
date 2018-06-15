@@ -329,6 +329,21 @@ var medium = React.createElement("svg", {
           fillRule: "nonzero"
         }));
 
+var chevronDown = React.createElement("svg", {
+      height: "8",
+      width: "14",
+      viewBox: "0 0 14 8",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("path", {
+          d: "M1 1l6 6 6-6",
+          fill: "none",
+          fillRule: "evenodd",
+          stroke: "#000",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          strokeWidth: "2"
+        }));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -353,4 +368,5 @@ exports.misthosWordMark = misthosWordMark;
 exports.twitter = twitter;
 exports.linkedin = linkedin;
 exports.medium = medium;
+exports.chevronDown = chevronDown;
 /* arrowRight Not a pure module */

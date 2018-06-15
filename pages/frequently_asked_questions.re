@@ -14,7 +14,7 @@ let make = _children => {
         title1=("frequently asked questions" |> text)
         area3=MaterialUi.(
                 <ExpansionPanel>
-                  <ExpansionPanelSummary expandIcon=Icons.plusCircle>
+                  <ExpansionPanelSummary expandIcon=Icons.chevronDown>
                     <MTypography variant=`Subheading>
                       ("Expansion Panel 1" |> text)
                     </MTypography>
