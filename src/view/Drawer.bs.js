@@ -2,33 +2,16 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Grid = require("./components/Grid.bs.js");
 var React = require("react");
-var TitleBar = require("./components/TitleBar.bs.js");
+var MButton = require("./components/MButton.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
+var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureList = require("./VentureList.bs.js");
-var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 
 var component = ReasonReact.statelessComponent("Drawer");
-
-var container = Css.style(/* :: */[
-      Css.display(/* flex */-1010954439),
-      /* :: */[
-        Css.flexDirection(Css.column),
-        /* [] */0
-      ]
-    ]);
-
-var flex_ = Css.style(/* :: */[
-      Css.flex(1),
-      /* [] */0
-    ]);
-
-var Styles = /* module */[
-  /* container */container,
-  /* flex_ */flex_
-];
 
 function make(onSignOut, index, selected, _) {
   return /* record */[
@@ -42,16 +25,14 @@ function make(onSignOut, index, selected, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return React.createElement("div", {
-                          className: container
-                        }, ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* Some */[/* :: */[
-                                    "My Ventures",
-                                    /* [] */0
-                                  ]], /* Some */[false], /* array */[])), ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[])), React.createElement("div", {
-                              className: flex_
-                            }), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* None */0, /* array */[ViewCommon.text("Create a Venture")])), React.createElement("div", {
-                              className: flex_
-                            }), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onSignOut], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */["Sign Out"])));
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("My Ventures")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
+                                    className: ScrollList.containerStyles
+                                  }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[]))])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* Some */[true], /* array */[ViewCommon.text("Create a Venture")])), React.createElement("div", {
+                                        className: Css.style(/* :: */[
+                                              Css.flex(100),
+                                              /* [] */0
+                                            ])
+                                      }), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignOut], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* Some */[true], /* None */0, /* array */["Sign Out"])))], /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -68,6 +49,5 @@ var extractString = ViewCommon.extractString;
 exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
-exports.Styles = Styles;
 exports.make = make;
 /* component Not a pure module */

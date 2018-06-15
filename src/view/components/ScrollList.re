@@ -28,6 +28,7 @@ module Styles = {
       overflowX(hidden),
       overflowY(auto),
       minHeight(px(0)),
+      alignSelf(`stretch),
     ]);
 };
 
@@ -37,6 +38,7 @@ let containerStyles =
       height(`percent(100.0)),
       display(`flex),
       flexDirection(column),
+      alignItems(`flexStart),
     ])
   );
 
