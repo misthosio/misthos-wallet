@@ -2,9 +2,13 @@ include ViewCommon;
 [@bs.module "../src/web/withRoot"] [@bs.val]
 external withRoot : 'a => 'a = "default";
 
-let component = ReasonReact.statelessComponent("impressum");
+let component = ReasonReact.statelessComponent("datenshutzerklarung");
 
 let line = data => <MTypography variant=`Body1> (data |> text) </MTypography>;
+let subheading = data =>
+  <MTypography variant=`Subheading> (data |> text) </MTypography>;
+
+module T = Text.DatenschutzErklaerung;
 
 let environment = Environment.get();
 
@@ -13,9 +17,12 @@ let make = _children => {
   render: _ =>
     <Layout drawer=None modal=None mobileEnabled=true>
       <Grid
-        title1=("impressum" |> text)
+        title1=(T.title |> text)
         area3={
           <div>
+            <MTypography variant=`Title> (T.title |> text) </MTypography>
+            (T.section1 |> line)
+            (T.section2Heading |> subheading)
             ("Justin Carter" |> line)
             ("Misthos" |> line)
             ("Dolziger Str. 15" |> line)
@@ -33,14 +40,10 @@ let make = _children => {
                 ("https://www.misthos.io/impressum" |> text)
               </a>
             </MTypography>
-            <MTypography variant=`Body1>
-              ({js|Link zur Datenschutzerklärung: |js} |> text)
-              <a
-                href=(environment.webDomain ++ "/datenschutzerklarung")
-                target="_blank">
-                ("https://www.misthos.io/datenschutzerklarung" |> text)
-              </a>
-            </MTypography>
+            (T.section3Heading |> subheading)
+            <MTypography variant=`Body1> T.section3 </MTypography>
+            (T.section4Heading |> subheading)
+            (T.section4 |> line)
           </div>
         }
       />

@@ -2,6 +2,7 @@
 'use strict';
 
 var Grid = require("../src/view/components/Grid.bs.js");
+var Text = require("../src/Text.bs.js");
 var React = require("react");
 var Footer = require("../src/view/Footer.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
@@ -11,10 +12,14 @@ var MTypography = require("../src/view/components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WithRoot = require("../src/web/withRoot");
 
-var component = ReasonReact.statelessComponent("impressum");
+var component = ReasonReact.statelessComponent("datenshutzerklarung");
 
 function line(data) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
+}
+
+function subheading(data) {
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
 var environment = Environment.get(/* () */0);
@@ -32,7 +37,7 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("impressum")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text(Text.DatenschutzErklaerung[/* title */0])], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(Text.DatenschutzErklaerung[/* title */0])])), line(Text.DatenschutzErklaerung[/* section1 */1]), subheading(Text.DatenschutzErklaerung[/* section2Heading */2]), line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
                                                       ViewCommon.text("Email: "),
                                                       React.createElement("a", {
                                                             href: "mailto:Contact@misthos.io"
@@ -43,13 +48,7 @@ function make() {
                                                             href: environment[/* webDomain */3] + "/impressum",
                                                             target: "_blank"
                                                           }, ViewCommon.text("https://www.misthos.io/impressum"))
-                                                    ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
-                                                      ViewCommon.text("Link zur Datenschutzerklärung: "),
-                                                      React.createElement("a", {
-                                                            href: environment[/* webDomain */3] + "/datenschutzerklarung",
-                                                            target: "_blank"
-                                                          }, ViewCommon.text("https://www.misthos.io/datenschutzerklarung"))
-                                                    ])))], /* None */0, /* array */[])),
+                                                    ])), subheading(Text.DatenschutzErklaerung[/* section3Heading */3]), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[Text.DatenschutzErklaerung[/* section3 */4]])), subheading(Text.DatenschutzErklaerung[/* section4Heading */5]), line(Text.DatenschutzErklaerung[/* section4 */6]))], /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),
@@ -69,10 +68,14 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var T = 0;
+
 exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
 exports.line = line;
+exports.subheading = subheading;
+exports.T = T;
 exports.environment = environment;
 exports.make = make;
 exports.$$default = $$default;
