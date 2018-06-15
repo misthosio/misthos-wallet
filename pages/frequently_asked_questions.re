@@ -12,7 +12,24 @@ let make = _children => {
     <Layout drawer=None modal=None mobileEnabled=true>
       <Grid
         title1=("frequently asked questions" |> text)
-        area3=([|line("TODO")|] |> ReasonReact.array)
+        area3=MaterialUi.(
+                <ExpansionPanel>
+                  <ExpansionPanelSummary expandIcon=Icons.plusCircle>
+                    <MTypography variant=`Subheading>
+                      ("Expansion Panel 1" |> text)
+                    </MTypography>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <MTypography variant=`Body1>
+                      (
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
+            sit amet blandit leo lobortis eget."
+                        |> text
+                      )
+                    </MTypography>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              )
       />
       <Footer />
     </Layout>,
