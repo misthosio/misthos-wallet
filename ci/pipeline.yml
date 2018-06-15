@@ -243,7 +243,7 @@ jobs:
 - name: trigger-prod
   plan:
   - aggregate:
-    - {get: misthos-build, trigger: false, passed: [deploy-testnet]}
+    - {get: misthos-build, trigger: true, passed: [deploy-testnet]}
     - {get: misthos-web-build, trigger: false, passed: [deploy-web-testnet]}
     - {get: build-version, trigger: false, passed: [deploy-testnet, deploy-web-testnet] }
     - {get: repo, trigger: false, passed: [deploy-testnet, deploy-web-testnet]}
