@@ -10,7 +10,6 @@ open Bitcoin;
 open WalletTypes;
 
 let script = Ops.([|op_DEPTH, op_1, op_EQUAL, op_NIP|]);
-/* let script = Ops.([|op_1, op_EQUAL|]); */
 let encodeOutput = () => Script.compile(script);
 
 let () =
