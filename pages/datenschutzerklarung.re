@@ -20,7 +20,6 @@ let make = _children => {
         title1=(T.title |> text)
         area3={
           <div>
-            <MTypography variant=`Title> (T.title |> text) </MTypography>
             (T.section1 |> line)
             (T.section2Heading |> subheading)
             ("Justin Carter" |> line)
