@@ -19,30 +19,38 @@ let make = _children => {
       <Grid
         title1=(T.title |> text)
         area3={
-          <div>
-            (T.section1 |> line)
-            (T.section2Heading |> subheading)
-            ("Justin Carter" |> line)
-            ("Misthos" |> line)
-            ("Dolziger Str. 15" |> line)
-            ("D10247 Berlin" |> line)
-            ("Deutschland" |> line)
-            <MTypography variant=`Body1>
-              ("Email: " |> text)
-              <a href="mailto:Contact@misthos.io">
-                ("contact@misthos.io" |> text)
-              </a>
-            </MTypography>
-            <MTypography variant=`Body1>
-              ("Link zum Impressum: " |> text)
-              <a href=(environment.webDomain ++ "/impressum") target="_blank">
-                ("https://www.misthos.io/impressum" |> text)
-              </a>
-            </MTypography>
-            (T.section3Heading |> subheading)
-            <MTypography variant=`Body1> T.section3 </MTypography>
-            (T.section4Heading |> subheading)
-            (T.section4 |> line)
+          <div
+            className=(
+              ScrollList.containerStyles
+              ++ " "
+              ++ Css.(style([paddingBottom(px(Theme.space(4)))]))
+            )>
+            <ScrollList>
+              (T.section1 |> line)
+              (T.section2Heading |> subheading)
+              ("Justin Carter" |> line)
+              ("Misthos" |> line)
+              ("Dolziger Str. 15" |> line)
+              ("D10247 Berlin" |> line)
+              ("Deutschland" |> line)
+              <MTypography variant=`Body1>
+                ("Email: " |> text)
+                <a href="mailto:Contact@misthos.io">
+                  ("contact@misthos.io" |> text)
+                </a>
+              </MTypography>
+              <MTypography variant=`Body1>
+                ("Link zum Impressum: " |> text)
+                <a
+                  href=(environment.webDomain ++ "/impressum") target="_blank">
+                  ("https://www.misthos.io/impressum" |> text)
+                </a>
+              </MTypography>
+              (T.section3Heading |> subheading)
+              <MTypography variant=`Body1> T.section3 </MTypography>
+              (T.section4Heading |> subheading)
+              (T.section4 |> line)
+            </ScrollList>
           </div>
         }
       />
