@@ -79,9 +79,20 @@ var drawer = Css.style(/* :: */[
             440
           ]),
       /* :: */[
-        Css.flex(1),
+        Css.height(/* `percent */[
+              -119887163,
+              100.0
+            ]),
         /* [] */0
       ]
+    ]);
+
+var drawerPaper = Css.style(/* :: */[
+      Css.height(/* `percent */[
+            -119887163,
+            100.0
+          ]),
+      /* [] */0
     ]);
 
 var modalContent = Css.style(/* :: */[
@@ -167,6 +178,7 @@ var Styles = /* module */[
   /* gap */gap,
   /* grid */grid,
   /* drawer */drawer,
+  /* drawerPaper */drawerPaper,
   /* modalContent */modalContent,
   /* modal */modal,
   /* logo */logo
@@ -220,7 +232,10 @@ function make(drawer$1, modal$1, $staropt$star, children) {
                                             ])),
                                     ReasonReact.element(/* None */0, /* None */0, MaterialUi_Drawer.make(/* Some */[/* Right */-57574468], /* None */0, /* None */0, /* None */0, /* Some */[(function () {
                                                   return Curry._1(send, /* CloseDrawer */1);
-                                                })], /* Some */[param[/* state */1][/* drawerOpen */0]], /* None */0, /* None */0, /* Some */[theme], /* None */0, /* Some */[/* Temporary */-103274127], /* None */0, /* None */0, /* array */[React.createElement("div", {
+                                                })], /* Some */[param[/* state */1][/* drawerOpen */0]], /* None */0, /* None */0, /* Some */[theme], /* None */0, /* Some */[/* Temporary */-103274127], /* Some */[/* :: */[
+                                                /* Paper */Block.__(1, [drawerPaper]),
+                                                /* [] */0
+                                              ]], /* None */0, /* array */[React.createElement("div", {
                                                     className: drawer,
                                                     role: "button",
                                                     tabIndex: 0,

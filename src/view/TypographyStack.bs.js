@@ -4,7 +4,6 @@
 var Link = require("./components/Link.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
-var TitleBar = require("./components/TitleBar.bs.js");
 var LinkButton = require("./components/LinkButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -31,7 +30,6 @@ function make() {
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display3 */-11760687], /* None */0, /* None */0, /* array */[ViewCommon.text("Display 3")])),
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display2 */-11760688], /* None */0, /* None */0, /* array */[ViewCommon.text("Display 2")])),
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[ViewCommon.text("Display 1")])),
-                                        ReasonReact.element(/* None */0, /* None */0, TitleBar.make(/* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Headline")])),
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Title */594052472], /* None */0, /* None */0, /* array */[ViewCommon.text("Title")])),
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Subheading */148169314], /* None */0, /* None */0, /* array */[ViewCommon.text("Subheading")])),
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("Body2")])),

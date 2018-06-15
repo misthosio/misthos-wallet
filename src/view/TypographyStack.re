@@ -12,7 +12,6 @@ let make = _children => {
           <Typography variant=`Display3> ("Display 3" |> text) </Typography>
           <Typography variant=`Display2> ("Display 2" |> text) </Typography>
           <Typography variant=`Display1> ("Display 1" |> text) </Typography>
-          <TitleBar> ("Headline" |> text) </TitleBar>
           <Typography variant=`Title> ("Title" |> text) </Typography>
           <Typography variant=`Subheading> ("Subheading" |> text) </Typography>
           <Typography variant=`Body2> ("Body2" |> text) </Typography>

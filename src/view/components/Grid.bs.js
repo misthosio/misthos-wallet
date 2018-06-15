@@ -16,7 +16,7 @@ function grid(variant) {
   var tmp;
   switch (variant) {
     case 0 : 
-        tmp = "\n                 \". title1 title1 title1 .\"\n                 \". area3 area3 area3 .\"\n                 ";
+        tmp = "\n                 \". title1 .\"\n                 \". area3 .\"\n                 ";
         break;
     case 1 : 
         tmp = "\n                 \". title1 . title2 .\"\n                 \". area3 . area4 .\"\n                 ";
@@ -33,7 +33,7 @@ function grid(variant) {
                 /* :: */[
                   Css.unsafe("gridTemplateAreas", tmp),
                   /* :: */[
-                    Css.unsafe("gridTemplateColumns", "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"),
+                    Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"),
                     /* :: */[
                       Css.unsafe("gridTemplateRows", variant >= 2 ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto"),
                       /* :: */[

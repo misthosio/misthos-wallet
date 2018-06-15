@@ -27,7 +27,8 @@ module Styles = {
       unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
       unsafe("gridTemplateAreas", {|"bar" "body" "."|}),
     ]);
-  let drawer = style([width(`px(440)), flex(1)]);
+  let drawer = style([width(`px(440)), height(`percent(100.0))]);
+  let drawerPaper = style([height(`percent(100.0))]);
   let modalContent =
     style([
       height(`calc((`sub, `percent(100.0), `px(64)))),
@@ -103,6 +104,7 @@ let make = (~drawer, ~modal, ~mobileEnabled=false, children) => {
               </Toolbar>
               <Drawer
                 theme
+                classes=[Paper(Styles.drawerPaper)]
                 variant=`Temporary
                 anchor=`Right
                 onClose=(_ => send(CloseDrawer))

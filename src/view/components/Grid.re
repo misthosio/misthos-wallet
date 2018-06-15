@@ -27,14 +27,18 @@ module Styles = {
                  ". area3 . area4 ."
                  |}
         | V1 => {|
-                 ". title1 title1 title1 ."
-                 ". area3 area3 area3 ."
+                 ". title1 ."
+                 ". area3 ."
                  |}
         },
       ),
       unsafe(
         "gridTemplateColumns",
-        "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]",
+        switch (variant) {
+        | V4
+        | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
+        | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
+        },
       ),
       unsafe(
         "gridTemplateRows",
