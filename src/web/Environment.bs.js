@@ -3,18 +3,14 @@
 
 
 function get() {
-  var default_000 = /* redirectURI */location.origin + "/";
-  var default_001 = /* manifestURI */location.origin + "/manifest.json";
-  var $$default = /* record */[
-    default_000,
-    default_001,
-    /* appDomain */location.origin,
-    /* webDomain */location.origin,
-    /* cookieDomain */"misthos.io",
-    /* network : Testnet */1
-  ];
-  var match = location.hostname;
-  switch (match) {
+  var hostname;
+  try {
+    hostname = location.hostname;
+  }
+  catch (exn){
+    hostname = "server";
+  }
+  switch (hostname) {
     case "localhost" : 
         return /* record */[
                 /* redirectURI */"http://localhost:3000/",
@@ -22,6 +18,15 @@ function get() {
                 /* appDomain */"http://localhost:3000",
                 /* webDomain */"http://localhost:3001",
                 /* cookieDomain */"localhost",
+                /* network : Testnet */1
+              ];
+    case "server" : 
+        return /* record */[
+                /* redirectURI */"",
+                /* manifestURI */"",
+                /* appDomain */"",
+                /* webDomain */"",
+                /* cookieDomain */"",
                 /* network : Testnet */1
               ];
     case "staging.misthos.io" : 
@@ -50,12 +55,19 @@ function get() {
                 /* redirectURI */"https://app.misthos.io/",
                 /* manifestURI */"https://app.misthos.io/manifest.json",
                 /* appDomain */"https://app.misthos.io",
-                /* webDomain */"https://www..misthos.io",
+                /* webDomain */"https://www.misthos.io",
                 /* cookieDomain */"misthos.io",
                 /* network : Mainnet */2
               ];
     default:
-      return $$default;
+      return /* record */[
+              /* redirectURI */location.origin + "/",
+              /* manifestURI */location.origin + "/manifest.json",
+              /* appDomain */location.origin,
+              /* webDomain */location.origin,
+              /* cookieDomain */"misthos.io",
+              /* network : Testnet */1
+            ];
   }
 }
 
