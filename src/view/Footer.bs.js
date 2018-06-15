@@ -84,7 +84,10 @@ var bg = Css.style(/* :: */[
 
 var logo = Css.style(/* :: */[
       Css.marginTop(Css.px(Theme.space(4))),
-      /* [] */0
+      /* :: */[
+        Css.display(Css.block),
+        /* [] */0
+      ]
     ]);
 
 var notice = Css.style(/* :: */[
@@ -209,12 +212,14 @@ function make() {
                               className: bg
                             }), React.createElement("div", {
                               className: area("footer1")
-                            }, React.createElement("div", {
-                                  className: logo
+                            }, React.createElement("a", {
+                                  className: logo,
+                                  href: environment[/* webDomain */3] + "/"
                                 }, Icons.misthosWordMark)), React.createElement("div", {
                               className: area("footer2")
                             }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* array */[ViewCommon.text("Company")])), React.createElement("a", {
-                                  className: link
+                                  className: link,
+                                  href: environment[/* webDomain */3] + "/frequently_asked_questions"
                                 }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
                                   className: link,
                                   href: "mailto:contact@misthos.io"
@@ -222,7 +227,8 @@ function make() {
                                   className: link,
                                   href: "mailto:jobs@misthos.io"
                                 }, ViewCommon.text("Jobs")), React.createElement("a", {
-                                  className: link
+                                  className: link,
+                                  href: environment[/* webDomain */3] + "/datenshutzerklarung"
                                 }, ViewCommon.text("Datenshutzerklärung")), React.createElement("a", {
                                   className: link,
                                   href: environment[/* webDomain */3] + "/impressum"

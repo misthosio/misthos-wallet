@@ -9,7 +9,7 @@ var MTypography = require("../src/view/components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WithRoot = require("../src/web/withRoot");
 
-var component = ReasonReact.statelessComponent("impressum");
+var component = ReasonReact.statelessComponent("frequentlyAskedQuestions");
 
 function line(data) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
@@ -28,16 +28,7 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("impressum")], /* None */0, /* None */0, /* None */0, /* Some */[/* array */[
-                                          line("Justin Carter"),
-                                          line("Misthos"),
-                                          line("Dolziger Str. 15"),
-                                          line("D10247 Berlin"),
-                                          line("Deutschland"),
-                                          line("Email: contact@misthos.io"),
-                                          line("Link zum Impressum: https://www.misthos.io/impressum"),
-                                          line("Link zur Datenschutzerklärung: https://www.misthos.io/datenschutzerklarung")
-                                        ]], /* None */0, /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("frequently asked questions")], /* None */0, /* None */0, /* None */0, /* Some */[/* array */[line("TODO")]], /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),
