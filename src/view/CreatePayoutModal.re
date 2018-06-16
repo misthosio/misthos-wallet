@@ -279,6 +279,12 @@ let make =
         },
       },
     ) => {
+    let warning =
+      switch (Environment.get().network) {
+      | Testnet => Some(Text.Warnings.testnet)
+      | _ => None
+      };
+
     let destinationRow = (~withRemoveBtn=true, idx, address, amount) =>
       MaterialUi.(
         address != "" && amount |> BTC.gt(BTC.zero) ?
@@ -326,6 +332,7 @@ let make =
         ]),
       );
     <Grid
+      ?warning
       title1=("Propose A Payout" |> text)
       area3=(
               if (viewData.allowCreation == false) {
