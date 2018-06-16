@@ -10,26 +10,33 @@ type variant =
 module Styles = {
   open Css;
   let gap = (Theme.space(4) |> string_of_int) ++ "px 0px";
-  let grid = variant =>
+  let grid = (variant, warning) => {
+    let warning = warning == None ? false : true;
     style([
       display(grid),
       unsafe("gridGap", gap),
       unsafe(
         "gridTemplateAreas",
         switch (variant) {
-        | V4 => {|
-                 ". area1 . area2 ."
-                 ". title1 . title2 ."
-                 ". area3 . area4 ."
-                 |}
-        | V2 => {|
-                 ". title1 . title2 ."
-                 ". area3 . area4 ."
-                 |}
-        | V1 => {|
-                 ". title1 ."
-                 ". area3 ."
-                 |}
+        | V4 =>
+          (warning ? {|" . warning warning warning ."|} : "")
+          ++ {|
+              ". area1 . area2 ."
+              ". title1 . title2 ."
+              ". area3 . area4 ."
+              |}
+        | V2 =>
+          (warning ? {|" . warning warning warning ."|} : "")
+          ++ {|
+              ". title1 . title2 ."
+              ". area3 . area4 ."
+              |}
+        | V1 =>
+          (warning ? {|". warning ."|} : "")
+          ++ {|
+              ". title1 ."
+              ". area3 ."
+              |}
         },
       ),
       unsafe(
@@ -42,16 +49,46 @@ module Styles = {
       ),
       unsafe(
         "gridTemplateRows",
-        switch (variant) {
-        | V4 => "min-content [begin] min-content [end] auto"
-        | V2
-        | V1 => "[begin] min-content [end] auto"
-        },
+        (warning ? "[wBegin] min-content [wEnd] " : "")
+        ++ (
+          switch (variant) {
+          | V4 => "min-content [tBegin] min-content [tEnd] auto"
+          | V2
+          | V1 => "[tBegin] min-content [tEnd] auto"
+          }
+        ),
       ),
       width(`percent(100.0)),
       height(`percent(100.0)),
     ]);
+  };
   let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
+  let warning =
+    style([
+      fontFamily(Theme.sourceSansPro),
+      height(px(36)),
+      fontSize(px(14)),
+      fontWeight(700),
+      color(Colors.white),
+      textTransform(uppercase),
+      padding2(~h=px(0), ~v=px(Theme.space(1))),
+      children([
+        selector(
+          ":any-link,:-webkit-any-link",
+          [
+            color(Colors.white),
+            unsafe("textDecorationColor", Colors.uWhite),
+            hover([color(Colors.misthosTeal)]),
+          ],
+        ),
+      ]),
+    ]);
+  let warningBg =
+    style([
+      unsafe("gridColumn", "begin / end"),
+      unsafe("gridRow", "wBegin / wEnd"),
+      unsafe("background", Colors.uGradientOrange),
+    ]);
   let title =
     style([
       fontFamily(Theme.oswald),
@@ -65,7 +102,7 @@ module Styles = {
   let titleBg =
     style([
       unsafe("gridColumn", "begin / end"),
-      unsafe("gridRow", "begin / end"),
+      unsafe("gridRow", "tBegin / tEnd"),
       backgroundColor(Colors.black),
       borderBottomStyle(solid),
       unsafe("borderImageSlice", "1"),
@@ -75,7 +112,16 @@ module Styles = {
 };
 
 let make =
-    (~title1=?, ~title2=?, ~area1=?, ~area2=?, ~area3=?, ~area4=?, _children) => {
+    (
+      ~title1=?,
+      ~title2=?,
+      ~area1=?,
+      ~area2=?,
+      ~area3=?,
+      ~area4=?,
+      ~warning=?,
+      _children,
+    ) => {
   ...component,
   render: _self => {
     let variant =
@@ -85,10 +131,17 @@ let make =
       | (None, Some(_), None) => V1
       | (_, _, _) => V4
       };
-    <div className=(Styles.grid(variant))>
+    <div className=(Styles.grid(variant, warning))>
+      (
+        switch (warning) {
+        | Some(_) => <div className=Styles.warningBg key="warningBg" />
+        | None => ReasonReact.null
+        }
+      )
       <div className=Styles.titleBg key="titleBg" />
       (
         [|
+          (warning, "warning", Styles.warning),
           (area1, "area1", ""),
           (area2, "area2", ""),
           (title1, "title1", Styles.title),

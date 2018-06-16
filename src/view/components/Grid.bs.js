@@ -12,17 +12,25 @@ var component = ReasonReact.statelessComponent("Grid");
 
 var gap = String(Theme.space(4)) + "px 0px";
 
-function grid(variant) {
+function grid(variant, warning) {
+  var match = warning === /* None */0;
+  var warning$1 = match ? false : true;
   var tmp;
   switch (variant) {
     case 0 : 
-        tmp = "\n                 \". title1 .\"\n                 \". area3 .\"\n                 ";
+        tmp = (
+          warning$1 ? "\". warning .\"" : ""
+        ) + "\n              \". title1 .\"\n              \". area3 .\"\n              ";
         break;
     case 1 : 
-        tmp = "\n                 \". title1 . title2 .\"\n                 \". area3 . area4 .\"\n                 ";
+        tmp = (
+          warning$1 ? "\" . warning warning warning .\"" : ""
+        ) + "\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n              ";
         break;
     case 2 : 
-        tmp = "\n                 \". area1 . area2 .\"\n                 \". title1 . title2 .\"\n                 \". area3 . area4 .\"\n                 ";
+        tmp = (
+          warning$1 ? "\" . warning warning warning .\"" : ""
+        ) + "\n              \". area1 . area2 .\"\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n              ";
         break;
     
   }
@@ -35,7 +43,11 @@ function grid(variant) {
                   /* :: */[
                     Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"),
                     /* :: */[
-                      Css.unsafe("gridTemplateRows", variant >= 2 ? "min-content [begin] min-content [end] auto" : "[begin] min-content [end] auto"),
+                      Css.unsafe("gridTemplateRows", (
+                            warning$1 ? "[wBegin] min-content [wEnd] " : ""
+                          ) + (
+                            variant >= 2 ? "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto"
+                          )),
                       /* :: */[
                         Css.width(/* `percent */[
                               -119887163,
@@ -66,6 +78,58 @@ function area(area$1) {
             ]);
 }
 
+var warning = Css.style(/* :: */[
+      Css.fontFamily(Theme.sourceSansPro),
+      /* :: */[
+        Css.height(Css.px(36)),
+        /* :: */[
+          Css.fontSize(Css.px(14)),
+          /* :: */[
+            Css.fontWeight(700),
+            /* :: */[
+              Css.color(Colors.white),
+              /* :: */[
+                Css.textTransform(Css.uppercase),
+                /* :: */[
+                  Css.padding2(Css.px(Theme.space(1)), Css.px(0)),
+                  /* :: */[
+                    Css.children(/* :: */[
+                          Css.selector(":any-link,:-webkit-any-link", /* :: */[
+                                Css.color(Colors.white),
+                                /* :: */[
+                                  Css.unsafe("textDecorationColor", Colors.uWhite),
+                                  /* :: */[
+                                    Css.hover(/* :: */[
+                                          Css.color(Colors.misthosTeal),
+                                          /* [] */0
+                                        ]),
+                                    /* [] */0
+                                  ]
+                                ]
+                              ]),
+                          /* [] */0
+                        ]),
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var warningBg = Css.style(/* :: */[
+      Css.unsafe("gridColumn", "begin / end"),
+      /* :: */[
+        Css.unsafe("gridRow", "wBegin / wEnd"),
+        /* :: */[
+          Css.unsafe("background", Colors.uGradientOrange),
+          /* [] */0
+        ]
+      ]
+    ]);
+
 var title = Css.style(/* :: */[
       Css.fontFamily(Theme.oswald),
       /* :: */[
@@ -92,7 +156,7 @@ var title = Css.style(/* :: */[
 var titleBg = Css.style(/* :: */[
       Css.unsafe("gridColumn", "begin / end"),
       /* :: */[
-        Css.unsafe("gridRow", "begin / end"),
+        Css.unsafe("gridRow", "tBegin / tEnd"),
         /* :: */[
           Css.backgroundColor(Colors.black),
           /* :: */[
@@ -116,11 +180,13 @@ var Styles = /* module */[
   /* gap */gap,
   /* grid */grid,
   /* area */area,
+  /* warning */warning,
+  /* warningBg */warningBg,
   /* title */title,
   /* titleBg */titleBg
 ];
 
-function make(title1, title2, area1, area2, area3, area4, _) {
+function make(title1, title2, area1, area2, area3, area4, warning$1, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -136,8 +202,11 @@ function make(title1, title2, area1, area2, area3, area4, _) {
                   area4 ? /* V2 */1 : /* V1 */0
                 );
               return React.createElement("div", {
-                          className: grid(variant)
-                        }, React.createElement("div", {
+                          className: grid(variant, warning$1)
+                        }, warning$1 ? React.createElement("div", {
+                                key: "warningBg",
+                                className: warningBg
+                              }) : null, React.createElement("div", {
                               key: "titleBg",
                               className: titleBg
                             }), $$Array.map((function (param) {
@@ -152,6 +221,11 @@ function make(title1, title2, area1, area2, area3, area4, _) {
                                   return null;
                                 }
                               }), /* array */[
+                              /* tuple */[
+                                warning$1,
+                                "warning",
+                                warning
+                              ],
                               /* tuple */[
                                 area1,
                                 "area1",

@@ -289,7 +289,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                   return Curry._1(send, /* Freeze */3);
                                                 })], /* Some */[(function () {
                                                   return Curry._1(send, /* Reset */4);
-                                                })], match[/* canSubmitProposal */5], /* None */0, cmdStatus, /* array */[])))], /* array */[]));
+                                                })], match[/* canSubmitProposal */5], /* None */0, cmdStatus, /* array */[])))], /* None */0, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

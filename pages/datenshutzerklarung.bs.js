@@ -28,7 +28,7 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("datenshutzerklärung")], /* None */0, /* None */0, /* None */0, /* Some */[/* array */[line("TODO")]], /* None */0, /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("datenshutzerklärung")], /* None */0, /* None */0, /* None */0, /* Some */[/* array */[line("TODO")]], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),

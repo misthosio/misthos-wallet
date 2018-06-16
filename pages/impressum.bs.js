@@ -37,7 +37,7 @@ function make() {
                                           line("Email: contact@misthos.io"),
                                           line("Link zum Impressum: https://www.misthos.io/impressum"),
                                           line("Link zur Datenschutzerklärung: https://www.misthos.io/datenschutzerklarung")
-                                        ]], /* None */0, /* array */[])),
+                                        ]], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),
