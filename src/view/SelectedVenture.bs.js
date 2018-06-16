@@ -5,6 +5,7 @@ var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
+var Text = require("../Text.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Theme = require("./Theme.bs.js");
@@ -42,17 +43,7 @@ function make(viewData, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var match = Environment.get(/* () */0)[/* network */5];
-              var warning = match !== 1 ? /* None */0 : /* Some */[/* array */[
-                    ViewCommon.text("Warning! This is the testnet version of Misthos.  Get Testnet coins "),
-                    React.createElement("a", {
-                          href: "https://testnet.manu.backend.hamburg/faucet"
-                        }, ViewCommon.text("here")),
-                    ViewCommon.text(" and get notified of our Mainnet release "),
-                    React.createElement("a", {
-                          href: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53"
-                        }, ViewCommon.text("here")),
-                    ViewCommon.text(".")
-                  ]];
+              var warning = match !== 1 ? /* None */0 : /* Some */[Text.Warnings[/* testnet */0]];
               var prospects = List.map((function (prospect) {
                       var match = prospect[/* data */5][/* processType */1];
                       var partial_arg_000 = viewData[/* ventureId */0];

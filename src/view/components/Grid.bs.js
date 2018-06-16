@@ -18,14 +18,14 @@ function grid(variant, warning) {
   var tmp;
   switch (variant) {
     case 0 : 
-        tmp = (
+        tmp = "\n              \". title1 .\"\n              \". area3 .\"\n              " + (
           warning$1 ? "\". warning .\"" : ""
-        ) + "\n              \". title1 .\"\n              \". area3 .\"\n              ";
+        );
         break;
     case 1 : 
-        tmp = (
+        tmp = "\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n           " + (
           warning$1 ? "\" . warning warning warning .\"" : ""
-        ) + "\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n              ";
+        );
         break;
     case 2 : 
         tmp = (
@@ -43,11 +43,11 @@ function grid(variant, warning) {
                   /* :: */[
                     Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
                     /* :: */[
-                      Css.unsafe("gridTemplateRows", (
-                            warning$1 ? "[wBegin] min-content [wEnd] " : ""
-                          ) + (
-                            variant >= 2 ? "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto"
-                          )),
+                      Css.unsafe("gridTemplateRows", variant >= 2 ? (
+                              warning$1 ? "[wBegin] min-content [wEnd] " : ""
+                            ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
+                              warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                            )),
                       /* :: */[
                         Css.width(/* `percent */[
                               -119887163,

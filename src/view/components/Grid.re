@@ -26,17 +26,17 @@ module Styles = {
               ". area3 . area4 ."
               |}
         | V2 =>
-          (warning ? {|" . warning warning warning ."|} : "")
-          ++ {|
+          {|
               ". title1 . title2 ."
               ". area3 . area4 ."
-              |}
+           |}
+          ++ (warning ? {|" . warning warning warning ."|} : "")
         | V1 =>
-          (warning ? {|". warning ."|} : "")
-          ++ {|
+          {|
               ". title1 ."
               ". area3 ."
               |}
+          ++ (warning ? {|". warning ."|} : "")
         },
       ),
       unsafe(
@@ -49,14 +49,15 @@ module Styles = {
       ),
       unsafe(
         "gridTemplateRows",
-        (warning ? "[wBegin] min-content [wEnd] " : "")
-        ++ (
-          switch (variant) {
-          | V4 => "min-content [tBegin] min-content [tEnd] auto"
-          | V2
-          | V1 => "[tBegin] min-content [tEnd] auto"
-          }
-        ),
+        switch (variant) {
+        | V4 =>
+          (warning ? "[wBegin] min-content [wEnd] " : "")
+          ++ "min-content [tBegin] min-content [tEnd] auto"
+        | V2
+        | V1 =>
+          "[tBegin] min-content [tEnd] auto"
+          ++ (warning ? " [wBegin] min-content [wEnd]" : "")
+        },
       ),
       width(`percent(100.0)),
       height(`percent(100.0)),

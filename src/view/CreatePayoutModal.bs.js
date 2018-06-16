@@ -5,6 +5,7 @@ var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
+var Text = require("../Text.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
@@ -17,6 +18,7 @@ var MButton = require("./components/MButton.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
@@ -222,6 +224,8 @@ function make(viewData, commands, cmdStatus, _) {
               var inputs = match[/* inputs */9];
               var summary = match[/* summary */8];
               var viewData = match[/* viewData */0];
+              var match$1 = Environment.get(/* () */0)[/* network */5];
+              var warning = match$1 !== 1 ? /* None */0 : /* Some */[Text.Warnings[/* testnet */0]];
               var destinationRow = function ($staropt$star, idx, address, amount) {
                 var withRemoveBtn = $staropt$star ? $staropt$star[0] : true;
                 var match = address !== "" && amount.gt(BTC.zero);
@@ -289,7 +293,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                   return Curry._1(send, /* Freeze */3);
                                                 })], /* Some */[(function () {
                                                   return Curry._1(send, /* Reset */4);
-                                                })], match[/* canSubmitProposal */5], /* None */0, cmdStatus, /* array */[])))], /* None */0, /* array */[]));
+                                                })], match[/* canSubmitProposal */5], /* None */0, cmdStatus, /* array */[])))], warning, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[
