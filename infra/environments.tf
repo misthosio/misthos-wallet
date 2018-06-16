@@ -136,3 +136,26 @@ resource "google_storage_bucket_iam_member" "prod-public" {
   role   = "roles/storage.objectViewer"
   member = "allUsers"
 }
+
+resource "google_storage_bucket" "misthos-web-prod" {
+  name          = "www.misthos.io"
+  location      = "EU"
+  storage_class = "MULTI_REGIONAL"
+
+  website {
+    main_page_suffix = "index.html"
+    not_found_page = "index.html"
+  }
+}
+
+resource "google_storage_bucket_iam_member" "web-prod-concourse" {
+  bucket = "${google_storage_bucket.misthos-web-prod.name}"
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:concourse@misthos-173012.iam.gserviceaccount.com"
+}
+
+resource "google_storage_bucket_iam_member" "web-prod-public" {
+  bucket = "${google_storage_bucket.misthos-web-prod.name}"
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
+}
