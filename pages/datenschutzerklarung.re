@@ -89,6 +89,41 @@ let make = _children => {
               (T.section14P2 |> paragraph)
               (T.section14P3 |> paragraph)
               <MTypography variant=`Body1> T.section14P4 </MTypography>
+              (T.section15Heading |> subheading)
+              (T.section15P1 |> paragraph)
+              (T.section15P2 |> paragraph)
+              (T.section15P3 |> paragraph)
+              (T.section16Heading |> subheading)
+              (T.section16P1 |> paragraph)
+              (T.section16P2 |> paragraph)
+              (T.section17Heading |> subheading)
+              (T.section17P1 |> paragraph)
+              (T.section17P2 |> paragraph)
+              (T.section17P3 |> paragraph)
+              (T.section18Heading |> subheading)
+              (T.section18P1 |> paragraph)
+              (T.section18P2 |> paragraph)
+              (T.section18P3 |> paragraph)
+              (T.section18P4 |> paragraph)
+              (T.section18P5 |> paragraph)
+              (T.section18P6 |> paragraph)
+              (T.section18P7 |> paragraph)
+              (T.section19Heading |> subheading)
+              <MTypography variant=`Body1> T.section19P1 </MTypography>
+              (T.section19P2 |> paragraph)
+              (T.section20Heading |> subheading)
+              (T.section20P1 |> paragraph)
+              (T.section20P2 |> paragraph)
+              (T.section21Heading |> subheading)
+              (T.section21P1 |> paragraph)
+              (T.section21P2 |> paragraph)
+              (T.section22Heading |> subheading)
+              <MTypography variant=`Body1> T.section22 </MTypography>
+              (T.section23Heading |> subheading)
+              <MTypography variant=`Body1> T.section23 </MTypography>
+              (T.section24Heading |> subheading)
+              <MTypography variant=`Body1> T.section24 </MTypography>
+              <MTypography variant=`Body1> T.section25 </MTypography>
             </ScrollList>
           </div>
         }

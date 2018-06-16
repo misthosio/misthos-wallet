@@ -16,6 +16,52 @@ var section14P4 = React.createElement("p", undefined, ViewCommon.text("Ein gener
           target: "_blank"
         }, ViewCommon.text("http://www.youronlinechoices.com/")), ViewCommon.text(" erklärt werden. Des Weiteren kann die Speicherung von Cookies mittels deren Abschaltung in den Einstellungen des Browsers erreicht werden. Bitte beachten Sie, dass dann gegebenenfalls nicht alle Funktionen dieses Onlineangebotes genutzt werden können."));
 
+var section19P1 = React.createElement("p", undefined, ViewCommon.text("Der Versand der Newsletter erfolgt mittels des Versanddienstleisters „MailChimp“, einer Newsletterversandplattform des US-Anbieters Rocket Science Group, LLC, 675 Ponce De Leon Ave NE #5000, Atlanta, GA 30308, USA. Die Datenschutzbestimmungen des Versanddienstleisters können Sie hier einsehen: "), React.createElement("a", {
+          href: "https://mailchimp.com/legal/privacy/",
+          target: "_blank"
+        }, ViewCommon.text("https://mailchimp.com/legal/privacy/")), ViewCommon.text(". The Rocket Science Group LLC d/b/a MailChimp ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäisches Datenschutzniveau einzuhalten ("), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt0000000TO6hAAG&status=Active",
+          target: "_blank"
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000TO6hAAG&status=Active")), ViewCommon.text("). Der Versanddienstleister wird auf Grundlage unserer berechtigten Interessen gem. Art. 6 Abs. 1 lit. f DSGVO und eines Auftragsverarbeitungsvertrages gem. Art. 28 Abs. 3 S. 1 DSGVO eingesetzt."));
+
+var section22 = React.createElement("p", undefined, ViewCommon.text("Wir binden die Videos der Plattform “YouTube” des Anbieters Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA, ein. Datenschutzerklärung: "), React.createElement("a", {
+          href: "https://www.google.com/policies/privacy/",
+          target: "_blank"
+        }, ViewCommon.text("https://www.google.com/policies/privacy/")), ViewCommon.text(", Opt-Out: "), React.createElement("a", {
+          href: "https://adssettings.google.com/authenticated",
+          target: "_blank"
+        }, ViewCommon.text("https://adssettings.google.com/authenticated")), ViewCommon.text("."));
+
+var section23 = React.createElement("p", undefined, ViewCommon.text("Innerhalb unseres Onlineangebotes können Funktionen und Inhalte des Dienstes Twitter, angeboten durch die Twitter Inc., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA, eingebunden werden. Hierzu können z.B. Inhalte wie Bilder, Videos oder Texte und Schaltflächen gehören, mit denen Nutzer Ihr Gefallen betreffend die Inhalte kundtun, den Verfassern der Inhalte oder unsere Beiträge abonnieren können. Sofern die Nutzer Mitglieder der Plattform Twitter sind, kann Twitter den Aufruf der o.g. Inhalte und Funktionen den dortigen Profilen der Nutzer zuordnen. Twitter ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten ("), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active",
+          target: "_blank"
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000TORzAAO&status=Active")), ViewCommon.text("). Datenschutzerklärung: "), React.createElement("a", {
+          href: "https://twitter.com/de/privacy",
+          target: "_blank"
+        }, ViewCommon.text("https://twitter.com/de/privacy")), ViewCommon.text(", Opt-Out: "), React.createElement("a", {
+          href: "https://twitter.com/personalization",
+          target: "_blank"
+        }, ViewCommon.text("https://twitter.com/personalization")), ViewCommon.text("."));
+
+var section24 = React.createElement("p", undefined, ViewCommon.text("Innerhalb unseres Onlineangebotes können Funktionen und Inhalte des Dienstes LinkedIn, angeboten durch die inkedIn Ireland Unlimited Company Wilton Place, Dublin 2, Irland, eingebunden werden. Hierzu können z.B. Inhalte wie Bilder, Videos oder Texte und Schaltflächen gehören, mit denen Nutzer Ihr Gefallen betreffend die Inhalte kundtun, den Verfassern der Inhalte oder unsere Beiträge abonnieren können. Sofern die Nutzer Mitglieder der Plattform LinkedIn sind, kann LinkedIn den Aufruf der o.g. Inhalte und Funktionen den dortigen Profilen der Nutzer zuordnen. Datenschutzerklärung von LinkedIn: "), React.createElement("a", {
+          href: "https://www.linkedin.com/legal/privacy-policy",
+          target: "_blank"
+        }, ViewCommon.text("https://www.linkedin.com/legal/privacy-policy")), ViewCommon.text(". LinkedIn ist unter dem Privacy-Shield-Abkommen zertifiziert und bietet hierdurch eine Garantie, das europäische Datenschutzrecht einzuhalten ("), React.createElement("a", {
+          href: "https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active",
+          target: "_blank"
+        }, ViewCommon.text("https://www.privacyshield.gov/participant?id=a2zt0000000L0UZAA0&status=Active")), ViewCommon.text("). Datenschutzerklärung: "), React.createElement("a", {
+          href: "https://www.linkedin.com/legal/privacy-policy",
+          target: "_blank"
+        }, ViewCommon.text("https://www.linkedin.com/legal/privacy-policy")), ViewCommon.text(", Opt-Out: "), React.createElement("a", {
+          href: "https://www.linkedin.com/psettings/guest-controls/retargeting-opt-out",
+          target: "_blank"
+        }, ViewCommon.text("https://www.linkedin.com/psettings/guest-controls/retargeting-opt-out")), ViewCommon.text("."));
+
+var section25 = React.createElement("p", undefined, React.createElement("a", {
+          href: "https://datenschutz-generator.de/",
+          target: "_blank"
+        }, ViewCommon.text("Erstellt mit Datenschutz-Generator.de von RA Dr. Thomas Schwenke")));
+
 var DatenschutzErklaerung_000 = /* title */"datenschutzerklärung";
 
 var DatenschutzErklaerung_001 = /* section1 */"Diese Datenschutzerklärung klärt Sie über die Art, den Umfang und Zweck der Verarbeitung von personenbezogenen Daten (nachfolgend kurz „Daten“) innerhalb unseres Onlineangebotes und der mit ihm verbundenen Webseiten, Funktionen und Inhalte sowie externen Onlinepräsenzen, wie z.B. unser Social Media Profile auf (nachfolgend gemeinsam bezeichnet als „Onlineangebot“). Im Hinblick auf die verwendeten Begrifflichkeiten, wie z.B. „Verarbeitung“ oder „Verantwortlicher“ verweisen wir auf die Definitionen im Art. 4 der Datenschutzgrundverordnung (DSGVO).";
@@ -70,6 +116,68 @@ var DatenschutzErklaerung_038 = /* section14P2 */"Wir können temporäre und per
 
 var DatenschutzErklaerung_039 = /* section14P3 */"Falls die Nutzer nicht möchten, dass Cookies auf ihrem Rechner gespeichert werden, werden sie gebeten die entsprechende Option in den Systemeinstellungen ihres Browsers zu deaktivieren. Gespeicherte Cookies können in den Systemeinstellungen des Browsers gelöscht werden. Der Ausschluss von Cookies kann zu Funktionseinschränkungen dieses Onlineangebotes führen.";
 
+var DatenschutzErklaerung_041 = /* section15Heading */"Löschung von Daten";
+
+var DatenschutzErklaerung_042 = /* section15P1 */"Die von uns verarbeiteten Daten werden nach Maßgabe der Art. 17 und 18 DSGVO gelöscht oder in ihrer Verarbeitung eingeschränkt. Sofern nicht im Rahmen dieser Datenschutzerklärung ausdrücklich angegeben, werden die bei uns gespeicherten Daten gelöscht, sobald sie für ihre Zweckbestimmung nicht mehr erforderlich sind und der Löschung keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Sofern die Daten nicht gelöscht werden, weil sie für andere und gesetzlich zulässige Zwecke erforderlich sind, wird deren Verarbeitung eingeschränkt. D.h. die Daten werden gesperrt und nicht für andere Zwecke verarbeitet. Das gilt z.B. für Daten, die aus handels- oder steuerrechtlichen Gründen aufbewahrt werden müssen.";
+
+var DatenschutzErklaerung_043 = /* section15P2 */"Nach gesetzlichen Vorgaben in Deutschland, erfolgt die Aufbewahrung insbesondere für 10 Jahre gemäß §§ 147 Abs. 1 AO, 257 Abs. 1 Nr. 1 und 4, Abs. 4 HGB (Bücher, Aufzeichnungen, Lageberichte, Buchungsbelege, Handelsbücher, für Besteuerung relevanter Unterlagen, etc.) und 6 Jahre gemäß § 257 Abs. 1 Nr. 2 und 3, Abs. 4 HGB (Handelsbriefe).";
+
+var DatenschutzErklaerung_044 = /* section15P3 */"Nach gesetzlichen Vorgaben in Deutschland, erfolgt die Aufbewahrung insbesondere für 10 Jahre gemäß §§ 147 Abs. 1 AO, 257 Abs. 1 Nr. 1 und 4, Abs. 4 HGB (Bücher, Aufzeichnungen, Lageberichte, Buchungsbelege, Handelsbücher, für Besteuerung relevanter Unterlagen, etc.) und 6 Jahre gemäß § 257 Abs. 1 Nr. 2 und 3, Abs. 4 HGB (Handelsbriefe).";
+
+var DatenschutzErklaerung_045 = /* section15P4 */"Nach gesetzlichen Vorgaben in Österreich erfolgt die Aufbewahrung insbesondere für 7 J gemäß § 132 Abs. 1 BAO (Buchhaltungsunterlagen, Belege/Rechnungen, Konten, Belege, Geschäftspapiere, Aufstellung der Einnahmen und Ausgaben, etc.), für 22 Jahre im Zusammenhang mit Grundstücken und für 10 Jahre bei Unterlagen im Zusammenhang mit elektronisch erbrachten Leistungen, Telekommunikations-, Rundfunk- und Fernsehleistungen, die an Nichtunternehmer in EU-Mitgliedstaaten erbracht werden und für die der Mini-One-Stop-Shop (MOSS) in Anspruch genommen wird.";
+
+var DatenschutzErklaerung_046 = /* section16Heading */"Kontaktaufnahme";
+
+var DatenschutzErklaerung_047 = /* section16P1 */"Bei der Kontaktaufnahme mit uns (z.B. per Kontaktformular, E-Mail, Telefon oder via sozialer Medien) werden die Angaben des Nutzers zur Bearbeitung der Kontaktanfrage und deren Abwicklung gem. Art. 6 Abs. 1 lit. b) DSGVO verarbeitet. Die Angaben der Nutzer können in einem Customer-Relationship-Management System (\"CRM System\") oder vergleichbarer Anfragenorganisation gespeichert werden.";
+
+var DatenschutzErklaerung_048 = /* section16P2 */"Wir löschen die Anfragen, sofern diese nicht mehr erforderlich sind. Wir überprüfen die Erforderlichkeit alle zwei Jahre; Ferner gelten die gesetzlichen Archivierungspflichten.";
+
+var DatenschutzErklaerung_049 = /* section17Heading */"Registrierfunktion";
+
+var DatenschutzErklaerung_050 = /* section17P1 */"Nutzer können ein Nutzerkonto anlegen. Im Rahmen der Registrierung werden die erforderlichen Pflichtangaben den Nutzern mitgeteilt und auf Grundlage des Art. 6 Abs. 1 lit. b DSGVO zu Zwecken der Bereitstellung des Nutzerkontos verarbeitet. Zu den verarbeiteten Daten gehören insbesondere die Login-Informationen (Name, Passwort sowie eine E-Mailadresse). Die im Rahmen der Registrierung eingegebenen Daten werden für die Zwecke der Nutzung des Nutzerkontos und dessen Zwecks verwendet.";
+
+var DatenschutzErklaerung_051 = /* section17P2 */"Die Nutzer können über Informationen, die für deren Nutzerkonto relevant sind, wie z.B. technische Änderungen, per E-Mail informiert werden. Wenn Nutzer ihr Nutzerkonto gekündigt haben, werden deren Daten im Hinblick auf das Nutzerkonto, vorbehaltlich einer gesetzlichen Aufbewahrungspflicht, gelöscht. Es obliegt den Nutzern, ihre Daten bei erfolgter Kündigung vor dem Vertragsende zu sichern. Wir sind berechtigt, sämtliche während der Vertragsdauer gespeicherten Daten des Nutzers unwiederbringlich zu löschen.";
+
+var DatenschutzErklaerung_052 = /* section17P3 */"Im Rahmen der Inanspruchnahme unserer Registrierungs- und Anmeldefunktionen sowie der Nutzung des Nutzerkontos, speichern wird die IP-Adresse und den Zeitpunkt der jeweiligen Nutzerhandlung. Die Speicherung erfolgt auf Grundlage unserer berechtigten Interessen, als auch der Nutzer an Schutz vor Missbrauch und sonstiger unbefugter Nutzung. Eine Weitergabe dieser Daten an Dritte erfolgt grundsätzlich nicht, außer sie ist zur Verfolgung unserer Ansprüche erforderlich oder es besteht hierzu besteht eine gesetzliche Verpflichtung gem. Art. 6 Abs. 1 lit. c DSGVO. Die IP-Adressen werden spätestens nach 7 Tagen anonymisiert oder gelöscht.";
+
+var DatenschutzErklaerung_053 = /* section18Heading */"Newsletter";
+
+var DatenschutzErklaerung_054 = /* section18P1 */"Mit den nachfolgenden Hinweisen informieren wir Sie über die Inhalte unseres Newsletters sowie das Anmelde-, Versand- und das statistische Auswertungsverfahren sowie Ihre Widerspruchsrechte auf. Indem Sie unseren Newsletter abonnieren, erklären Sie sich mit dem Empfang und den beschriebenen Verfahren einverstanden.";
+
+var DatenschutzErklaerung_055 = /* section18P2 */"Inhalt des Newsletters: Wir versenden Newsletter, E-Mails und weitere elektronische Benachrichtigungen mit werblichen Informationen (nachfolgend „Newsletter“) nur mit der Einwilligung der Empfänger oder einer gesetzlichen Erlaubnis. Sofern im Rahmen einer Anmeldung zum Newsletter dessen Inhalte konkret umschrieben werden, sind sie für die Einwilligung der Nutzer maßgeblich. Im Übrigen enthalten unsere Newsletter Informationen zu unseren Leistungen und uns.";
+
+var DatenschutzErklaerung_056 = /* section18P3 */"Double-Opt-In und Protokollierung: Die Anmeldung zu unserem Newsletter erfolgt in einem sog. Double-Opt-In-Verfahren. D.h. Sie erhalten nach der Anmeldung eine E-Mail, in der Sie um die Bestätigung Ihrer Anmeldung gebeten werden. Diese Bestätigung ist notwendig, damit sich niemand mit fremden E-Mailadressen anmelden kann. Die Anmeldungen zum Newsletter werden protokolliert, um den Anmeldeprozess entsprechend den rechtlichen Anforderungen nachweisen zu können. Hierzu gehört die Speicherung des Anmelde- und des Bestätigungszeitpunkts, als auch der IP-Adresse. Ebenso werden die Änderungen Ihrer bei dem Versanddienstleister gespeicherten Daten protokolliert.";
+
+var DatenschutzErklaerung_057 = /* section18P4 */"Anmeldedaten: Um sich für den Newsletter anzumelden, reicht es aus, wenn Sie Ihre E-Mailadresse angeben. Optional bitten wir Sie einen Namen, zwecks persönlicher Ansprache im Newsletters anzugeben.";
+
+var DatenschutzErklaerung_058 = /* section18P5 */"Der Versand des Newsletters und die mit ihm verbundene Erfolgsmessung erfolgen auf Grundlage einer Einwilligung der Empfänger gem. Art. 6 Abs. 1 lit. a, Art. 7 DSGVO i.V.m § 7 Abs. 2 Nr. 3 UWG oder falls eine Einwilligung nicht erforderlich ist, auf Grundlage unserer berechtigten Interessen am Direktmarketing gem. Art. 6 Abs. 1 lt. f. DSGVO i.V.m. § 7 Abs. 3 UWG.";
+
+var DatenschutzErklaerung_059 = /* section18P6 */"Die Protokollierung des Anmeldeverfahrens erfolgt auf Grundlage unserer berechtigten Interessen gem. Art. 6 Abs. 1 lit. f DSGVO. Unser Interesse richtet sich auf den Einsatz eines nutzerfreundlichen sowie sicheren Newslettersystems, das sowohl unseren geschäftlichen Interessen dient, als auch den Erwartungen der Nutzer entspricht und uns ferner den Nachweis von Einwilligungen erlaubt.";
+
+var DatenschutzErklaerung_060 = /* section18P7 */"Kündigung/Widerruf - Sie können den Empfang unseres Newsletters jederzeit kündigen, d.h. Ihre Einwilligungen widerrufen. Einen Link zur Kündigung des Newsletters finden Sie am Ende eines jeden Newsletters. Wir können die ausgetragenen E-Mailadressen bis zu drei Jahren auf Grundlage unserer berechtigten Interessen speichern bevor wir sie löschen, um eine ehemals gegebene Einwilligung nachweisen zu können. Die Verarbeitung dieser Daten wird auf den Zweck einer möglichen Abwehr von Ansprüchen beschränkt. Ein individueller Löschungsantrag ist jederzeit möglich, sofern zugleich das ehemalige Bestehen einer Einwilligung bestätigt wird.";
+
+var DatenschutzErklaerung_061 = /* section19Heading */"Newsletter - Mailchimp";
+
+var DatenschutzErklaerung_063 = /* section19P2 */"Der Versanddienstleister kann die Daten der Empfänger in pseudonymer Form, d.h. ohne Zuordnung zu einem Nutzer, zur Optimierung oder Verbesserung der eigenen Services nutzen, z.B. zur technischen Optimierung des Versandes und der Darstellung der Newsletter oder für statistische Zwecke verwenden. Der Versanddienstleister nutzt die Daten unserer Newsletterempfänger jedoch nicht, um diese selbst anzuschreiben oder um die Daten an Dritte weiterzugeben.";
+
+var DatenschutzErklaerung_064 = /* section20Heading */"Onlinepräsenzen in sozialen Medien";
+
+var DatenschutzErklaerung_065 = /* section20P1 */"Wir unterhalten Onlinepräsenzen innerhalb sozialer Netzwerke und Plattformen, um mit den dort aktiven Kunden, Interessenten und Nutzern kommunizieren und sie dort über unsere Leistungen informieren zu können. Beim Aufruf der jeweiligen Netzwerke und Plattformen gelten die Geschäftsbedingungen und die Datenverarbeitungsrichtlinien deren jeweiligen Betreiber.";
+
+var DatenschutzErklaerung_066 = /* section20P2 */"Soweit nicht anders im Rahmen unserer Datenschutzerklärung angegeben, verarbeiten wir die Daten der Nutzer sofern diese mit uns innerhalb der sozialen Netzwerke und Plattformen kommunizieren, z.B. Beiträge auf unseren Onlinepräsenzen verfassen oder uns Nachrichten zusenden.";
+
+var DatenschutzErklaerung_067 = /* section21Heading */"Einbindung von Diensten und Inhalten Dritter";
+
+var DatenschutzErklaerung_068 = /* section21P1 */"Wir setzen innerhalb unseres Onlineangebotes auf Grundlage unserer berechtigten Interessen (d.h. Interesse an der Analyse, Optimierung und wirtschaftlichem Betrieb unseres Onlineangebotes im Sinne des Art. 6 Abs. 1 lit. f. DSGVO) Inhalts- oder Serviceangebote von Drittanbietern ein, um deren Inhalte und Services, wie z.B. Videos oder Schriftarten einzubinden (nachfolgend einheitlich bezeichnet als “Inhalte”).";
+
+var DatenschutzErklaerung_069 = /* section21P2 */"Dies setzt immer voraus, dass die Drittanbieter dieser Inhalte, die IP-Adresse der Nutzer wahrnehmen, da sie ohne die IP-Adresse die Inhalte nicht an deren Browser senden könnten. Die IP-Adresse ist damit für die Darstellung dieser Inhalte erforderlich. Wir bemühen uns nur solche Inhalte zu verwenden, deren jeweilige Anbieter die IP-Adresse lediglich zur Auslieferung der Inhalte verwenden. Drittanbieter können ferner so genannte Pixel-Tags (unsichtbare Grafiken, auch als \"Web Beacons\" bezeichnet) für statistische oder Marketingzwecke verwenden. Durch die \"Pixel-Tags\" können Informationen, wie der Besucherverkehr auf den Seiten dieser Website ausgewertet werden. Die pseudonymen Informationen können ferner in Cookies auf dem Gerät der Nutzer gespeichert werden und unter anderem technische Informationen zum Browser und Betriebssystem, verweisende Webseiten, Besuchszeit sowie weitere Angaben zur Nutzung unseres Onlineangebotes enthalten, als auch mit solchen Informationen aus anderen Quellen verbunden werden.";
+
+var DatenschutzErklaerung_070 = /* section22Heading */"YouTube";
+
+var DatenschutzErklaerung_072 = /* section23Heading */"Twitter";
+
+var DatenschutzErklaerung_074 = /* section24Heading */"LinkedIn";
+
 var DatenschutzErklaerung = /* module */[
   DatenschutzErklaerung_000,
   DatenschutzErklaerung_001,
@@ -111,7 +219,43 @@ var DatenschutzErklaerung = /* module */[
   DatenschutzErklaerung_037,
   DatenschutzErklaerung_038,
   DatenschutzErklaerung_039,
-  /* section14P4 */section14P4
+  /* section14P4 */section14P4,
+  DatenschutzErklaerung_041,
+  DatenschutzErklaerung_042,
+  DatenschutzErklaerung_043,
+  DatenschutzErklaerung_044,
+  DatenschutzErklaerung_045,
+  DatenschutzErklaerung_046,
+  DatenschutzErklaerung_047,
+  DatenschutzErklaerung_048,
+  DatenschutzErklaerung_049,
+  DatenschutzErklaerung_050,
+  DatenschutzErklaerung_051,
+  DatenschutzErklaerung_052,
+  DatenschutzErklaerung_053,
+  DatenschutzErklaerung_054,
+  DatenschutzErklaerung_055,
+  DatenschutzErklaerung_056,
+  DatenschutzErklaerung_057,
+  DatenschutzErklaerung_058,
+  DatenschutzErklaerung_059,
+  DatenschutzErklaerung_060,
+  DatenschutzErklaerung_061,
+  /* section19P1 */section19P1,
+  DatenschutzErklaerung_063,
+  DatenschutzErklaerung_064,
+  DatenschutzErklaerung_065,
+  DatenschutzErklaerung_066,
+  DatenschutzErklaerung_067,
+  DatenschutzErklaerung_068,
+  DatenschutzErklaerung_069,
+  DatenschutzErklaerung_070,
+  /* section22 */section22,
+  DatenschutzErklaerung_072,
+  /* section23 */section23,
+  DatenschutzErklaerung_074,
+  /* section24 */section24,
+  /* section25 */section25
 ];
 
 var text = ViewCommon.text;
