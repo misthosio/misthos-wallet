@@ -10,7 +10,7 @@ let paragraph = data =>
 let subheading = data =>
   <MTypography variant=`Subheading> (data |> text) </MTypography>;
 
-module T = Text.DatenschutzErklaerung;
+module T = DatenschutzText;
 
 let environment = Environment.get();
 
