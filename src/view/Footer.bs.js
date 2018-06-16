@@ -228,7 +228,7 @@ function make() {
                                   href: "mailto:jobs@misthos.io"
                                 }, ViewCommon.text("Jobs")), React.createElement("a", {
                                   className: link,
-                                  href: environment[/* webDomain */3] + "/datenshutzerklarung"
+                                  href: environment[/* webDomain */3] + "/datenschutzerklarung"
                                 }, ViewCommon.text("Datenshutzerklärung")), React.createElement("a", {
                                   className: link,
                                   href: environment[/* webDomain */3] + "/impressum"
