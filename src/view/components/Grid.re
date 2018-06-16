@@ -44,7 +44,7 @@ module Styles = {
         switch (variant) {
         | V4
         | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
-        | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
+        | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"
         },
       ),
       unsafe(

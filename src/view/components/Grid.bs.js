@@ -41,7 +41,7 @@ function grid(variant, warning) {
                 /* :: */[
                   Css.unsafe("gridTemplateAreas", tmp),
                   /* :: */[
-                    Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"),
+                    Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
                     /* :: */[
                       Css.unsafe("gridTemplateRows", (
                             warning$1 ? "[wBegin] min-content [wEnd] " : ""
