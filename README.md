@@ -15,6 +15,12 @@ make test
 ```
 Will start bitcoind and continuously run tests on changed files.
 
+```
+make test-unit
+```
+Will only run the unit tests (without integration with bitcoind)
+
+
 ### Build
 
 ```
