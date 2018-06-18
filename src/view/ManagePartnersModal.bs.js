@@ -129,6 +129,18 @@ function renderSuggestion(suggestion, vals) {
                             })))]));
 }
 
+function filterSuggestions(prospectId, suggestions) {
+  var inputLength = prospectId.length;
+  var match = inputLength === 0;
+  if (match) {
+    return /* array */[];
+  } else {
+    return Belt_Array.keepU(suggestions, (function (s) {
+                  return s.slice(0, inputLength) === prospectId;
+                }));
+  }
+}
+
 function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -230,11 +242,15 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                   /* [] */0
                                                                 ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
                                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                ReasonReact.element(/* None */0, /* None */0, Autosuggest.make(state[/* suggestions */4], (function (arg) {
-                                                                            Blockstack.fetchIds(arg.value).then((function (s) {
-                                                                                    return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [s])));
-                                                                                  }));
-                                                                            return /* () */0;
+                                                                ReasonReact.element(/* None */0, /* None */0, Autosuggest.make(filterSuggestions(inputs[/* prospectId */0], state[/* suggestions */4]), (function (arg) {
+                                                                            if (arg.value.length > 2) {
+                                                                              Blockstack.fetchIds(arg.value).then((function (s) {
+                                                                                      return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [s])));
+                                                                                    }));
+                                                                              return /* () */0;
+                                                                            } else {
+                                                                              return 0;
+                                                                            }
                                                                           }), (function () {
                                                                             return Curry._1(send, /* ClearSuggestions */0);
                                                                           }), (function (s) {
@@ -366,17 +382,12 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               } else {
                 switch (action.tag | 0) {
                   case 0 : 
-                      var inputLength = state[/* inputs */3][/* prospectId */0].length;
-                      var match = inputLength === 0;
-                      var suggestions = match ? /* array */[] : Belt_Array.keepU(action[0], (function (s) {
-                                return s.slice(0, inputLength) === state[/* inputs */3][/* prospectId */0];
-                              }));
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
                                   /* removeInputFrozen */state[/* removeInputFrozen */2],
                                   /* inputs */state[/* inputs */3],
-                                  /* suggestions */suggestions
+                                  /* suggestions */filterSuggestions(state[/* inputs */3][/* prospectId */0], action[0])
                                 ]]);
                   case 1 : 
                       var text = action[0];
@@ -392,10 +403,10 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                   /* suggestions */state[/* suggestions */4]
                                 ]]);
                   case 2 : 
-                      var match$1 = state[/* removeInputFrozen */2];
+                      var match = state[/* removeInputFrozen */2];
                       var exit = 0;
                       if (typeof removeCmdStatus === "number") {
-                        if (match$1) {
+                        if (match) {
                           return /* NoUpdate */0;
                         } else {
                           exit = 1;
@@ -467,5 +478,6 @@ exports.LinkEmail = LinkEmail;
 exports.renderInputComponent = renderInputComponent;
 exports.renderSuggestionsContainer = renderSuggestionsContainer;
 exports.renderSuggestion = renderSuggestion;
+exports.filterSuggestions = filterSuggestions;
 exports.make = make;
 /* component Not a pure module */

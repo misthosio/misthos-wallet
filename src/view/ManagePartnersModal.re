@@ -119,6 +119,15 @@ let renderSuggestion = (suggestion, vals) => {
   </MaterialUi.MenuItem>;
 };
 
+let filterSuggestions = (prospectId, suggestions) => {
+  let inputLength = prospectId |> Js.String.length;
+  inputLength == 0 ?
+    [||] :
+    suggestions
+    |. Belt.Array.keepU((. s) =>
+         s |> Js.String.slice(~from=0, ~to_=inputLength) == prospectId
+       );
+};
 let make =
     (
       ~viewData: ViewData.t,
@@ -149,18 +158,10 @@ let make =
   reducer: (action, state) =>
     switch (action) {
     | UpdateSuggestions(suggestions) =>
-      let inputLength = state.inputs.prospectId |> Js.String.length;
-      let suggestions =
-        inputLength == 0 ?
-          [||] :
-          suggestions
-          |. Belt.Array.keepU((. s) =>
-               s
-               |>
-               Js.String.slice(~from=0, ~to_=inputLength) == state.inputs.
-                                                                prospectId
-             );
-      ReasonReact.Update({...state, suggestions});
+      ReasonReact.Update({
+        ...state,
+        suggestions: filterSuggestions(state.inputs.prospectId, suggestions),
+      })
     | ClearSuggestions => ReasonReact.Update({...state, suggestions: [||]})
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({
@@ -330,15 +331,21 @@ let make =
                 </StepLabel>
                 <StepContent>
                   <Autosuggest
-                    suggestions=state.suggestions
+                    suggestions=(
+                      state.suggestions
+                      |> filterSuggestions(inputs.prospectId)
+                    )
                     getSuggestionValue=(s => s)
                     onSuggestionsFetchRequested=(
                       arg =>
-                        Blockstack.fetchIds(arg##value)
-                        |> Js.Promise.then_(s =>
-                             send(UpdateSuggestions(s)) |> Js.Promise.resolve
-                           )
-                        |> ignore
+                        if (arg##value |> Js.String.length > 2) {
+                          Blockstack.fetchIds(arg##value)
+                          |> Js.Promise.then_(s =>
+                               send(UpdateSuggestions(s))
+                               |> Js.Promise.resolve
+                             )
+                          |> ignore;
+                        }
                     )
                     onSuggestionsClearRequested=(() => send(ClearSuggestions))
                     renderSuggestion
