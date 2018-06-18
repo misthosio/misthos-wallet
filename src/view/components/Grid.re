@@ -67,7 +67,6 @@ module Styles = {
   let warning =
     style([
       fontFamily(Theme.sourceSansPro),
-      height(px(36)),
       fontSize(px(14)),
       fontWeight(700),
       color(Colors.white),
