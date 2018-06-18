@@ -81,33 +81,36 @@ function area(area$1) {
 var warning = Css.style(/* :: */[
       Css.fontFamily(Theme.sourceSansPro),
       /* :: */[
-        Css.fontSize(Css.px(14)),
+        Css.height(Css.px(36)),
         /* :: */[
-          Css.fontWeight(700),
+          Css.fontSize(Css.px(14)),
           /* :: */[
-            Css.color(Colors.white),
+            Css.fontWeight(700),
             /* :: */[
-              Css.textTransform(Css.uppercase),
+              Css.color(Colors.white),
               /* :: */[
-                Css.padding2(Css.px(Theme.space(1)), Css.px(0)),
+                Css.textTransform(Css.uppercase),
                 /* :: */[
-                  Css.children(/* :: */[
-                        Css.selector(":any-link,:-webkit-any-link", /* :: */[
-                              Css.color(Colors.white),
-                              /* :: */[
-                                Css.unsafe("textDecorationColor", Colors.uWhite),
+                  Css.padding2(Css.px(Theme.space(1)), Css.px(0)),
+                  /* :: */[
+                    Css.children(/* :: */[
+                          Css.selector(":any-link,:-webkit-any-link", /* :: */[
+                                Css.color(Colors.white),
                                 /* :: */[
-                                  Css.hover(/* :: */[
-                                        Css.color(Colors.misthosTeal),
-                                        /* [] */0
-                                      ]),
-                                  /* [] */0
+                                  Css.unsafe("textDecorationColor", Colors.uWhite),
+                                  /* :: */[
+                                    Css.hover(/* :: */[
+                                          Css.color(Colors.misthosTeal),
+                                          /* [] */0
+                                        ]),
+                                    /* [] */0
+                                  ]
                                 ]
-                              ]
-                            ]),
-                        /* [] */0
-                      ]),
-                  /* [] */0
+                              ]),
+                          /* [] */0
+                        ]),
+                    /* [] */0
+                  ]
                 ]
               ]
             ]
