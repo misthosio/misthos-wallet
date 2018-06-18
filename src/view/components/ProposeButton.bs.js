@@ -60,7 +60,7 @@ function make(proposeText, onSubmit, onPropose, onCancel, canSubmitProposal, $st
                     exit = 2;
                     break;
                 case 1 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* array */[
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* array */[
                                 ViewCommon.text(proposeText),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ConfirmProposal */2);

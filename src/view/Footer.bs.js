@@ -217,7 +217,7 @@ function make() {
                                   href: environment[/* webDomain */3] + "/"
                                 }, Icons.misthosWordMark)), React.createElement("div", {
                               className: area("footer2")
-                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* array */[ViewCommon.text("Company")])), React.createElement("a", {
+                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* None */0, /* array */[ViewCommon.text("Company")])), React.createElement("a", {
                                   className: link,
                                   href: environment[/* webDomain */3] + "/frequently_asked_questions"
                                 }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
@@ -234,7 +234,7 @@ function make() {
                                   href: environment[/* webDomain */3] + "/impressum"
                                 }, ViewCommon.text("Impressum"))), React.createElement("div", {
                               className: area("footer3")
-                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
+                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* None */0, /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
                                   action: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53",
                                   method: "post",
                                   target: "_blank"

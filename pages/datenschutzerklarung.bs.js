@@ -18,15 +18,25 @@ var WithRoot = require("../src/web/withRoot");
 var component = ReasonReact.statelessComponent("datenshutzerklarung");
 
 function line(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
+                    -976970511,
+                    "span"
+                  ]], /* array */[ViewCommon.text(data)]));
 }
 
 function paragraph(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("p", undefined, ViewCommon.text(data))]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
+}
+
+function wrapWithDiv(data) {
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
+                    -976970511,
+                    "div"
+                  ]], /* array */[data]));
 }
 
 function subheading(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* Some */[true], /* Some */[true], /* array */[ViewCommon.text(data)]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
 var environment = Environment.get(/* () */0);
@@ -52,12 +62,12 @@ function make() {
                                             }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
                                                       paragraph(DatenschutzText.section1),
                                                       subheading(DatenschutzText.section2Heading),
-                                                      React.createElement("p", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
+                                                      React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                     ViewCommon.text("Email: "),
                                                                     React.createElement("a", {
                                                                           href: "mailto:Contact@misthos.io"
                                                                         }, ViewCommon.text("contact@misthos.io"))
-                                                                  ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
+                                                                  ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                     ViewCommon.text("Link zum Impressum: "),
                                                                     React.createElement("a", {
                                                                           href: environment[/* webDomain */3] + "/impressum",
@@ -65,11 +75,11 @@ function make() {
                                                                         }, ViewCommon.text("https://www.misthos.io/impressum"))
                                                                   ]))),
                                                       subheading(DatenschutzText.section3Heading),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section3])),
+                                                      wrapWithDiv(DatenschutzText.section3),
                                                       subheading(DatenschutzText.section4Heading),
                                                       paragraph(DatenschutzText.section4),
                                                       subheading(DatenschutzText.section5Heading),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section5])),
+                                                      wrapWithDiv(DatenschutzText.section5),
                                                       subheading(DatenschutzText.section6Heading),
                                                       paragraph(DatenschutzText.section6P1),
                                                       paragraph(DatenschutzText.section6P2),
@@ -101,7 +111,7 @@ function make() {
                                                       paragraph(DatenschutzText.section14P1),
                                                       paragraph(DatenschutzText.section14P2),
                                                       paragraph(DatenschutzText.section14P3),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section14P4])),
+                                                      wrapWithDiv(DatenschutzText.section14P4),
                                                       subheading(DatenschutzText.section15Heading),
                                                       paragraph(DatenschutzText.section15P1),
                                                       paragraph(DatenschutzText.section15P2),
@@ -122,7 +132,7 @@ function make() {
                                                       paragraph(DatenschutzText.section18P6),
                                                       paragraph(DatenschutzText.section18P7),
                                                       subheading(DatenschutzText.section19Heading),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section19P1])),
+                                                      wrapWithDiv(DatenschutzText.section19P1),
                                                       paragraph(DatenschutzText.section19P2),
                                                       subheading(DatenschutzText.section20Heading),
                                                       paragraph(DatenschutzText.section20P1),
@@ -131,12 +141,12 @@ function make() {
                                                       paragraph(DatenschutzText.section21P1),
                                                       paragraph(DatenschutzText.section21P2),
                                                       subheading(DatenschutzText.section22Heading),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section22])),
+                                                      wrapWithDiv(DatenschutzText.section22),
                                                       subheading(DatenschutzText.section23Heading),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section23])),
+                                                      wrapWithDiv(DatenschutzText.section23),
                                                       subheading(DatenschutzText.section24Heading),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section24])),
-                                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[DatenschutzText.section25]))
+                                                      wrapWithDiv(DatenschutzText.section24),
+                                                      wrapWithDiv(DatenschutzText.section25)
                                                     ])))], /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
@@ -164,6 +174,7 @@ exports.extractString = extractString;
 exports.component = component;
 exports.line = line;
 exports.paragraph = paragraph;
+exports.wrapWithDiv = wrapWithDiv;
 exports.subheading = subheading;
 exports.T = T;
 exports.environment = environment;

@@ -16,7 +16,7 @@ var MaterialUi_ExpansionPanelSummary = require("@jsiebern/bs-material-ui/src/Mat
 var component = ReasonReact.statelessComponent("frequentlyAskedQuestions");
 
 function line(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
 function make() {
@@ -33,8 +33,8 @@ function make() {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[
                               ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("frequently asked questions")], /* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelSummary.make(/* None */0, /* None */0, /* None */0, /* Some */[Icons.chevronDown], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Expansion Panel 1")]))])),
-                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,\n            sit amet blandit leo lobortis eget.")]))]))
+                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelSummary.make(/* None */0, /* None */0, /* None */0, /* Some */[Icons.chevronDown], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Expansion Panel 1")]))])),
+                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,\n            sit amet blandit leo lobortis eget.")]))]))
                                                 ]))], /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));

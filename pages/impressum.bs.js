@@ -14,7 +14,7 @@ var WithRoot = require("../src/web/withRoot");
 var component = ReasonReact.statelessComponent("impressum");
 
 function line(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
 var environment = Environment.get(/* () */0);
@@ -32,18 +32,18 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("impressum")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("impressum")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                       ViewCommon.text("Email: "),
                                                       React.createElement("a", {
                                                             href: "mailto:Contact@misthos.io"
                                                           }, ViewCommon.text("contact@misthos.io"))
-                                                    ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
+                                                    ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                       ViewCommon.text("Link zum Impressum: "),
                                                       React.createElement("a", {
                                                             href: environment[/* webDomain */3] + "/impressum",
                                                             target: "_blank"
                                                           }, ViewCommon.text("https://www.misthos.io/impressum"))
-                                                    ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[
+                                                    ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                       ViewCommon.text("Link zur Datenschutzerklärung: "),
                                                       React.createElement("a", {
                                                             href: environment[/* webDomain */3] + "/datenschutzerklarung",

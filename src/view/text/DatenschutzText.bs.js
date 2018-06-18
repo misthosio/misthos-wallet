@@ -4,9 +4,9 @@
 var React = require("react");
 var ViewCommon = require("../ViewCommon.bs.js");
 
-var section3 = React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Bestandsdaten (z.B., Namen, Adressen).")), React.createElement("li", undefined, ViewCommon.text("Kontaktdaten (z.B., E-Mail, Telefonnummern).")), React.createElement("li", undefined, ViewCommon.text("Inhaltsdaten (z.B., Texteingaben, Fotografien, Videos).")), React.createElement("li", undefined, ViewCommon.text("Nutzungsdaten (z.B., besuchte Webseiten, Interesse an Inhalten, Zugriffszeiten).")), React.createElement("li", undefined, ViewCommon.text("Meta-/Kommunikationsdaten (z.B., Ger\xc3\xa4te-Informationen, IP-Adressen).")));
+var section3 = React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Bestandsdaten (z.B., Namen, Adressen).")), React.createElement("li", undefined, ViewCommon.text("Kontaktdaten (z.B., E-Mail, Telefonnummern).")), React.createElement("li", undefined, ViewCommon.text("Inhaltsdaten (z.B., Texteingaben, Fotografien, Videos).")), React.createElement("li", undefined, ViewCommon.text("Nutzungsdaten (z.B., besuchte Webseiten, Interesse an Inhalten, Zugriffszeiten).")), React.createElement("li", undefined, ViewCommon.text("Meta-/Kommunikationsdaten (z.B., Geräte-Informationen, IP-Adressen).")));
 
-var section5 = React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Zurverfügungstellung des Onlineangebotes, seiner Funktionen und Inhalte.")), React.createElement("li", undefined, ViewCommon.text("Beantwortung von Kontaktanfragen und Kommunikation mit Nutzern.")), React.createElement("li", undefined, ViewCommon.text("Sicherheitsma\xc3\x9fnahmen.")), React.createElement("li", undefined, ViewCommon.text("Reichweitenmessung/Marketing")));
+var section5 = React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Zurverfügungstellung des Onlineangebotes, seiner Funktionen und Inhalte.")), React.createElement("li", undefined, ViewCommon.text("Beantwortung von Kontaktanfragen und Kommunikation mit Nutzern.")), React.createElement("li", undefined, ViewCommon.text("Sicherheitsmaßnahmen.")), React.createElement("li", undefined, ViewCommon.text("Reichweitenmessung/Marketing")));
 
 var section14P4 = React.createElement("p", undefined, ViewCommon.text("Ein genereller Widerspruch gegen den Einsatz der zu Zwecken des Onlinemarketing eingesetzten Cookies kann bei einer Vielzahl der Dienste, vor allem im Fall des Trackings, über die US-amerikanische Seite "), React.createElement("a", {
           href: "http://www.aboutads.info/choices/",
@@ -94,7 +94,7 @@ var section6P5 = " Als „Verantwortlicher“ wird die natürliche oder juristis
 
 var section6P6 = " „Auftragsverarbeiter“ ist eine natürliche oder juristische Person, Behörde, Einrichtung oder andere Stelle, die personenbezogene Daten im Auftrag des Verantwortlichen verarbeitet.";
 
-var section7Heading = "Ma\xc3\x9fgebliche Rechtsgrundlagen";
+var section7Heading = "Maßgebliche Rechtsgrundlagen";
 
 var section7 = "Nach Maßgabe des Art. 13 DSGVO teilen wir Ihnen die Rechtsgrundlagen unserer Datenverarbeitungen mit. Sofern die Rechtsgrundlage in der Datenschutzerklärung nicht genannt wird, gilt Folgendes: Die Rechtsgrundlage für die Einholung von Einwilligungen ist Art. 6 Abs. 1 lit. a und Art. 7 DSGVO, die Rechtsgrundlage für die Verarbeitung zur Erfüllung unserer Leistungen und Durchführung vertraglicher Maßnahmen sowie Beantwortung von Anfragen ist Art. 6 Abs. 1 lit. b DSGVO, die Rechtsgrundlage für die Verarbeitung zur Erfüllung unserer rechtlichen Verpflichtungen ist Art. 6 Abs. 1 lit. c DSGVO, und die Rechtsgrundlage für die Verarbeitung zur Wahrung unserer berechtigten Interessen ist Art. 6 Abs. 1 lit. f DSGVO. Für den Fall, dass lebenswichtige Interessen der betroffenen Person oder einer anderen natürlichen Person eine Verarbeitung personenbezogener Daten erforderlich machen, dient Art. 6 Abs. 1 lit. d DSGVO als Rechtsgrundlage.";
 

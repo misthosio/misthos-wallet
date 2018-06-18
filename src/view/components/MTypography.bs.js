@@ -6,7 +6,7 @@ var Theme = require("../Theme.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
 
-var component = ReasonReact.statelessComponent("MTypography");
+var statelessComponent = ReasonReact.statelessComponent("MTypography");
 
 function margin(top) {
   return Css.style(/* :: */[
@@ -17,37 +17,37 @@ function margin(top) {
 
 var Styles = /* module */[/* margin */margin];
 
-function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, children) {
+function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, component, children) {
   var className = $staropt$star ? $staropt$star[0] : "";
   var gutterBottom = $staropt$star$1 ? $staropt$star$1[0] : false;
   var gutterTop = $staropt$star$2 ? $staropt$star$2[0] : false;
   return /* record */[
-          /* debugName */component[/* debugName */0],
-          /* reactClassInternal */component[/* reactClassInternal */1],
-          /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */component[/* willReceiveProps */3],
-          /* didMount */component[/* didMount */4],
-          /* didUpdate */component[/* didUpdate */5],
-          /* willUnmount */component[/* willUnmount */6],
-          /* willUpdate */component[/* willUpdate */7],
-          /* shouldUpdate */component[/* shouldUpdate */8],
+          /* debugName */statelessComponent[/* debugName */0],
+          /* reactClassInternal */statelessComponent[/* reactClassInternal */1],
+          /* handedOffState */statelessComponent[/* handedOffState */2],
+          /* willReceiveProps */statelessComponent[/* willReceiveProps */3],
+          /* didMount */statelessComponent[/* didMount */4],
+          /* didUpdate */statelessComponent[/* didUpdate */5],
+          /* willUnmount */statelessComponent[/* willUnmount */6],
+          /* willUpdate */statelessComponent[/* willUpdate */7],
+          /* shouldUpdate */statelessComponent[/* shouldUpdate */8],
           /* render */(function () {
               var style = variant !== 579538228 ? (
                   variant !== 594052472 || !gutterTop ? margin(0) : margin(4)
                 ) : (
                   gutterTop ? margin(4) : margin(0)
                 );
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[style + (" " + className)], /* None */0, /* None */0, /* Some */[gutterBottom], /* None */0, /* None */0, /* None */0, /* Some */[variant], /* None */0, /* None */0, /* array */[children]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[style + (" " + className)], /* None */0, component, /* Some */[gutterBottom], /* None */0, /* None */0, /* None */0, /* Some */[variant], /* None */0, /* None */0, /* array */[children]));
             }),
-          /* initialState */component[/* initialState */10],
-          /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
-          /* subscriptions */component[/* subscriptions */13],
-          /* jsElementWrapped */component[/* jsElementWrapped */14]
+          /* initialState */statelessComponent[/* initialState */10],
+          /* retainedProps */statelessComponent[/* retainedProps */11],
+          /* reducer */statelessComponent[/* reducer */12],
+          /* subscriptions */statelessComponent[/* subscriptions */13],
+          /* jsElementWrapped */statelessComponent[/* jsElementWrapped */14]
         ];
 }
 
-exports.component = component;
+exports.statelessComponent = statelessComponent;
 exports.Styles = Styles;
 exports.make = make;
-/* component Not a pure module */
+/* statelessComponent Not a pure module */

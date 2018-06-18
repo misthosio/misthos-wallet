@@ -4,9 +4,14 @@ external withRoot : 'a => 'a = "default";
 
 let component = ReasonReact.statelessComponent("datenshutzerklarung");
 
-let line = data => <MTypography variant=`Body1> (data |> text) </MTypography>;
+let line = data =>
+  <MTypography component=(`String("span")) variant=`Body1>
+    (data |> text)
+  </MTypography>;
 let paragraph = data =>
-  <MTypography variant=`Body1> <p> (data |> text) </p> </MTypography>;
+  <MTypography variant=`Body1> (data |> text) </MTypography>;
+let wrapWithDiv = data =>
+  <MTypography component=(`String("div")) variant=`Body1> data </MTypography>;
 let subheading = data =>
   <MTypography gutterTop=true gutterBottom=true variant=`Subheading>
     (data |> text)
@@ -32,12 +37,12 @@ let make = _children => {
             <ScrollList>
               (T.section1 |> paragraph)
               (T.section2Heading |> subheading)
-              <p>
-                ("Justin Carter" |> line)
-                ("Misthos" |> line)
-                ("Dolziger Str. 15" |> line)
-                ("D10247 Berlin" |> line)
-                ("Deutschland" |> line)
+              <div>
+                ({js|Justin Carter|js} |> line)
+                ({js|Misthos|js} |> line)
+                ({js|Dolziger Str. 15|js} |> line)
+                ({js|D10247 Berlin|js} |> line)
+                ({js|Deutschland|js} |> line)
                 <MTypography variant=`Body1>
                   ("Email: " |> text)
                   <a href="mailto:Contact@misthos.io">
@@ -45,20 +50,20 @@ let make = _children => {
                   </a>
                 </MTypography>
                 <MTypography variant=`Body1>
-                  ("Link zum Impressum: " |> text)
+                  ({js|Link zum Impressum: |js} |> text)
                   <a
                     href=(environment.webDomain ++ "/impressum")
                     target="_blank">
-                    ("https://www.misthos.io/impressum" |> text)
+                    ({js|https://www.misthos.io/impressum|js} |> text)
                   </a>
                 </MTypography>
-              </p>
+              </div>
               (T.section3Heading |> subheading)
-              <MTypography variant=`Body1> T.section3 </MTypography>
+              (T.section3 |> wrapWithDiv)
               (T.section4Heading |> subheading)
               (T.section4 |> paragraph)
               (T.section5Heading |> subheading)
-              <MTypography variant=`Body1> T.section5 </MTypography>
+              (T.section5 |> wrapWithDiv)
               (T.section6Heading |> subheading)
               (T.section6P1 |> paragraph)
               (T.section6P2 |> paragraph)
@@ -90,7 +95,7 @@ let make = _children => {
               (T.section14P1 |> paragraph)
               (T.section14P2 |> paragraph)
               (T.section14P3 |> paragraph)
-              <MTypography variant=`Body1> T.section14P4 </MTypography>
+              (T.section14P4 |> wrapWithDiv)
               (T.section15Heading |> subheading)
               (T.section15P1 |> paragraph)
               (T.section15P2 |> paragraph)
@@ -111,7 +116,7 @@ let make = _children => {
               (T.section18P6 |> paragraph)
               (T.section18P7 |> paragraph)
               (T.section19Heading |> subheading)
-              <MTypography variant=`Body1> T.section19P1 </MTypography>
+              (T.section19P1 |> wrapWithDiv)
               (T.section19P2 |> paragraph)
               (T.section20Heading |> subheading)
               (T.section20P1 |> paragraph)
@@ -120,12 +125,12 @@ let make = _children => {
               (T.section21P1 |> paragraph)
               (T.section21P2 |> paragraph)
               (T.section22Heading |> subheading)
-              <MTypography variant=`Body1> T.section22 </MTypography>
+              (T.section22 |> wrapWithDiv)
               (T.section23Heading |> subheading)
-              <MTypography variant=`Body1> T.section23 </MTypography>
+              (T.section23 |> wrapWithDiv)
               (T.section24Heading |> subheading)
-              <MTypography variant=`Body1> T.section24 </MTypography>
-              <MTypography variant=`Body1> T.section25 </MTypography>
+              (T.section24 |> wrapWithDiv)
+              (T.section25 |> wrapWithDiv)
             </ScrollList>
           </div>
         }
