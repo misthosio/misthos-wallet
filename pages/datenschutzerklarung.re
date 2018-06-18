@@ -8,7 +8,9 @@ let line = data => <MTypography variant=`Body1> (data |> text) </MTypography>;
 let paragraph = data =>
   <MTypography variant=`Body1> <p> (data |> text) </p> </MTypography>;
 let subheading = data =>
-  <MTypography variant=`Subheading> (data |> text) </MTypography>;
+  <MTypography gutterTop=true gutterBottom=true variant=`Subheading>
+    (data |> text)
+  </MTypography>;
 
 module T = DatenschutzText;
 

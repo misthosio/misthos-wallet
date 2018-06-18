@@ -26,7 +26,7 @@ function paragraph(data) {
 }
 
 function subheading(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* Some */[true], /* Some */[true], /* array */[ViewCommon.text(data)]));
 }
 
 var environment = Environment.get(/* () */0);
