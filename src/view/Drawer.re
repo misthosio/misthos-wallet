@@ -22,8 +22,8 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
                 </MButton>
                 <div className=Css.(style([flex(100)])) />
                 <MButton
+                  gutterTop=true
                   className=Styles.alignStart
-                  gutterTop=false
                   variant=Flat
                   color=`Inherit
                   href=(environment.webDomain ++ "/frequently_asked_questions")>
