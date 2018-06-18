@@ -65,7 +65,7 @@ function make(tx, _) {
               };
               var dfmt = function (param) {
                 return Utils.mapOption((function (date) {
-                              return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(date.toDateString())]));
+                              return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(date.toDateString())]));
                             }), param);
               };
               var match = tx[/* status */1];
@@ -80,7 +80,7 @@ function make(tx, _) {
               var partial_arg = tx[/* detailsLink */5];
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                   return Router.clickToRoute(partial_arg, param);
-                                })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* array */[
+                                })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                   primary,
                                                   React.createElement("span", {
                                                         className: amount(tx[/* txType */0])

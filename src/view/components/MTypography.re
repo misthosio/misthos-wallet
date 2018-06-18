@@ -1,4 +1,4 @@
-let component = ReasonReact.statelessComponent("MTypography");
+let statelessComponent = ReasonReact.statelessComponent("MTypography");
 
 module Styles = {
   open Css;
@@ -6,8 +6,15 @@ module Styles = {
 };
 
 let make =
-    (~variant, ~className="", ~gutterBottom=false, ~gutterTop=false, children) => {
-  ...component,
+    (
+      ~variant,
+      ~className="",
+      ~gutterBottom=false,
+      ~gutterTop=false,
+      ~component=?,
+      children,
+    ) => {
+  ...statelessComponent,
   render: _self => {
     let style =
       switch (variant, gutterTop) {
@@ -16,7 +23,7 @@ let make =
       | (_, _) => Styles.margin(0)
       };
     <MaterialUi.Typography
-      className=(style ++ " " ++ className) variant gutterBottom>
+      ?component className=(style ++ " " ++ className) variant gutterBottom>
       children
     </MaterialUi.Typography>;
   },

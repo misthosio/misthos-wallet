@@ -51,7 +51,7 @@ function make(voters, _) {
                           return ReasonReact.element(/* None */0, /* None */0, Partner.make(param[/* userId */0], /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match[1], match[0], /* array */[]))], /* None */0, /* array */[]));
                         }), voters));
               return /* array */[
-                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])),
+                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Endorsement Status")])),
                       ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[voters$1]))]))
                     ];
             }),
