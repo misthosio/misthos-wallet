@@ -43,7 +43,7 @@ let () =
         test("has the address", () =>
           expect(
             constructState(log).exposedAddresses
-            |. Map.String.getExn("2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o"),
+            |. Map.String.getExn("2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ"),
           )
           |> toEqual(
                {
@@ -51,14 +51,14 @@ let () =
                  nPubKeys: 1,
                  coordinates: (
                    0 |> AccountIndex.fromInt,
-                   "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73",
+                   "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30",
                    0 |> CoSignerIndex.fromInt,
                    ChainIndex.externalChain,
                    0 |> AddressIndex.fromInt,
                  ),
-                 witnessScript: "5121032a66ac40d30d81a2d0dca008ae11f0fed2a00896fe8e61350b2f9d0ca6256b6351ae",
-                 redeemScript: "0020a598432cbaab0e4039f2e240a97097e4f9a1e1763edd7ae2ca0021b4268ba8fc",
-                 displayAddress: "2N7unXRz7bkBsMMCQq3dcxLXXi1sPNq8m2o",
+                 witnessScript: "51210309995c255526c59ac6a6563832a838fbb9917305d84d3c11393e575238b4e9aa51ae",
+                 redeemScript: "0020f9a067ba831974aef9e6e8363e437d2660ca5120ab23c0c1acf32aa1605894c8",
+                 displayAddress: "2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ",
                }: Address.t,
              )
         ),

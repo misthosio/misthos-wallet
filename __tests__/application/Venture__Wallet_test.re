@@ -30,15 +30,15 @@ let () =
         |> constructState
         |> testNextIncomeAddress(
              user1,
-             "2MtvnaAWnfkSBU7NbpSfMRrCKSTgLeRVd93",
+             "2MsrfLGP6dhR1RgaW5y6ov6gww3t6fMBadm",
            )
         |> testNextIncomeAddress(
              user2,
-             "2NGFyACMJG6KJ9Db92n9MM2nNtR4r4tUNFW",
+             "2MsHBjkYY14C5bBtqE6YsQtrcZZ8cuzAKc6",
            )
         |> testNextIncomeAddress(
              user1,
-             "2NCAxqkK9bhRQWssyrMqJhXS65xmUCWraXT",
+             "2N6YtJ28KAB5MakPtXmdhAzenvhD5tuY5zz",
            )
         |> ignore;
         let log =
@@ -56,15 +56,15 @@ let () =
         |> constructState
         |> testNextIncomeAddress(
              user3,
-             "2NCGfPo6ehd2cgwFNE2ocqUFpv8rtcN3TGj",
+             "2NDjVoZySTzZFrd5BSPmioBktfcQ4cpMhcJ",
            )
         |> testNextIncomeAddress(
              user2,
-             "2N1sd2funBMd3ntLSbJrALAz3CJxEVsAPV7",
+             "2N4e6xA7wsrpPy2xZDXYDxzEuXoU8L9e8MN",
            )
         |> testNextIncomeAddress(
              user3,
-             "2N85sud6RgkaAEPitqdrNXsMbADYzXCWc7T",
+             "2N4wMyq6jmWTmPA5XTfXhWdZYA7EtzGm6ao",
            )
         |> ignore;
       },
