@@ -13,6 +13,7 @@ var MButton = require("./components/MButton.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var Clipboard = require("../ffi/Clipboard.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -22,10 +23,10 @@ var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_Ico
 
 var component = ReasonReact.reducerComponent("Receive");
 
-var container = Css.style(/* :: */[
+var alignCenter = Css.style(/* :: */[
       Css.display(/* flex */-1010954439),
       /* :: */[
-        Css.flexDirection(/* column */-963948842),
+        Css.flexDirection(Css.column),
         /* :: */[
           Css.alignItems(/* center */98248149),
           /* [] */0
@@ -34,7 +35,7 @@ var container = Css.style(/* :: */[
     ]);
 
 var spinner = Css.style(/* :: */[
-      Css.height(Css.px(269)),
+      Css.height(Css.px(298)),
       /* :: */[
         Css.display(/* flex */-1010954439),
         /* :: */[
@@ -51,7 +52,7 @@ var spinner = Css.style(/* :: */[
     ]);
 
 var Styles = /* module */[
-  /* container */container,
+  /* alignCenter */alignCenter,
   /* spinner */spinner
 ];
 
@@ -80,16 +81,18 @@ function make(commands, _) {
                         }), state[/* address */0]));
               var match$1 = state[/* address */0];
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Receive BTC")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
-                                    className: container
-                                  }, match$1 ? React.createElement("img", {
-                                          height: "250px",
-                                          src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match$1[0]
-                                        }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                            ViewCommon.text(Js_option.getWithDefault("", state[/* address */0])),
-                                            copyButton
-                                          ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                return Curry._1(send, /* GetIncomeAddress */0);
-                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))], /* None */0, warning, /* array */[]));
+                                    className: ScrollList.containerStyles + (" " + alignCenter)
+                                  }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[React.createElement("div", {
+                                                  className: alignCenter
+                                                }, match$1 ? React.createElement("img", {
+                                                        height: "250px",
+                                                        src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match$1[0]
+                                                      }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                          ViewCommon.text(Js_option.getWithDefault("", state[/* address */0])),
+                                                          copyButton
+                                                        ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                              return Curry._1(send, /* GetIncomeAddress */0);
+                                                            })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))])))], /* None */0, warning, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* address : None */0];

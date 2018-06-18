@@ -346,50 +346,55 @@ let make =
                   />
                 </div>;
               } else {
-                <div>
+                <div className=ScrollList.containerStyles>
                   <MTypography variant=`Title>
                     (viewData.ventureName |> text)
                   </MTypography>
-                  <Balance
-                    currentSpendable=viewData.balance.currentSpendable
-                    reserved=viewData.balance.reserved
-                  />
-                  <MTypography variant=`Title>
-                    (text("Enter Recipient Details"))
-                  </MTypography>
-                  {
-                    let error = addressValid ? None : Some("Address is BAD");
+                  <ScrollList>
+                    <Balance
+                      currentSpendable=viewData.balance.currentSpendable
+                      reserved=viewData.balance.reserved
+                    />
+                    <MTypography variant=`Title>
+                      (text("Enter Recipient Details"))
+                    </MTypography>
+                    {
+                      let error = addressValid ? None : Some("Address is BAD");
+                      <MInput
+                        placeholder="Recipient Address"
+                        value=(`String(inputs.recipientAddress))
+                        onChange=(
+                          e =>
+                            send(ChangeRecipientAddress(extractString(e)))
+                        )
+                        autoFocus=false
+                        fullWidth=true
+                        ?error
+                      />;
+                    }
                     <MInput
-                      placeholder="Recipient Address"
-                      value=(`String(inputs.recipientAddress))
+                      placeholder="BTC amount"
+                      value=(`String(inputs.btcAmount))
                       onChange=(
-                        e => send(ChangeRecipientAddress(extractString(e)))
+                        e => send(ChangeBTCAmount(extractString(e)))
                       )
                       autoFocus=false
                       fullWidth=true
-                      ?error
-                    />;
-                  }
-                  <MInput
-                    placeholder="BTC amount"
-                    value=(`String(inputs.btcAmount))
-                    onChange=(e => send(ChangeBTCAmount(extractString(e))))
-                    autoFocus=false
-                    fullWidth=true
-                    ensuring=true
-                    endAdornment=MaterialUi.(
-                                   <InputAdornment position=`End>
-                                     <MButton
-                                       gutterTop=false
-                                       className=Styles.maxButton
-                                       size=`Small
-                                       variant=Flat
-                                       onClick=(_e => send(EnterMax))>
-                                       (text("Max"))
-                                     </MButton>
-                                   </InputAdornment>
-                                 )
-                  />
+                      ensuring=true
+                      endAdornment=MaterialUi.(
+                                     <InputAdornment position=`End>
+                                       <MButton
+                                         gutterTop=false
+                                         className=Styles.maxButton
+                                         size=`Small
+                                         variant=Flat
+                                         onClick=(_e => send(EnterMax))>
+                                         (text("Max"))
+                                       </MButton>
+                                     </InputAdornment>
+                                   )
+                    />
+                  </ScrollList>
                   <MButton
                     size=`Small
                     variant=Flat
