@@ -1,5 +1,10 @@
 include ViewCommon;
 
+module Styles = {
+  open Css;
+  let alignStart = style([alignSelf(flexStart)]);
+};
+
 let component = ReasonReact.statelessComponent("Drawer");
 
 let make = (~onSignOut, ~index, ~selected=?, _children) => {
@@ -16,6 +21,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
                 </LinkButton>
                 <div className=Css.(style([flex(100)])) />
                 <MButton
+                  className=Styles.alignStart
                   gutterTop=false
                   variant=Flat
                   color=`Inherit
@@ -23,6 +29,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
                   "frequently asked questions"
                 </MButton>
                 <MButton
+                  className=Styles.alignStart
                   gutterTop=false
                   variant=Flat
                   color=`Inherit
@@ -30,6 +37,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
                   "Contact us"
                 </MButton>
                 <MButton
+                  className=Styles.alignStart
                   gutterTop=false
                   gutterBottom=true
                   variant=Flat
