@@ -16,9 +16,10 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
               let environment = Environment.get();
               <div className=ScrollList.containerStyles>
                 <ScrollList> <VentureList ?selected index /> </ScrollList>
-                <LinkButton fullWidth=true route=CreateVenture>
+                <MButton
+                  fullWidth=true onClick=(Router.clickToRoute(CreateVenture))>
                   ("Create a Venture" |> text)
-                </LinkButton>
+                </MButton>
                 <div className=Css.(style([flex(100)])) />
                 <MButton
                   className=Styles.alignStart

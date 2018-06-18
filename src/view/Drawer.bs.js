@@ -4,8 +4,8 @@
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var React = require("react");
+var Router = require("./Router.bs.js");
 var MButton = require("./components/MButton.bs.js");
-var LinkButton = require("./components/LinkButton.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var Environment = require("../web/Environment.bs.js");
@@ -36,12 +36,14 @@ function make(onSignOut, index, selected, _) {
               var environment = Environment.get(/* () */0);
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("My Ventures")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
-                                  }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[]))])), ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* CreateVenture */1, /* Some */[true], /* array */[ViewCommon.text("Create a Venture")])), React.createElement("div", {
+                                  }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, VentureList.make(selected, index, /* array */[]))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
+                                                return Router.clickToRoute(/* CreateVenture */1, param);
+                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Create a Venture")])), React.createElement("div", {
                                         className: Css.style(/* :: */[
                                               Css.flex(100),
                                               /* [] */0
                                             ])
-                                      }), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* None */0, /* Some */[environment[/* webDomain */3] + "/frequently_asked_questions"], /* array */["frequently asked questions"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* None */0, /* Some */["mailto:contact@misthos.io"], /* array */["Contact us"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignOut], /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* Some */[true], /* None */0, /* array */["Sign Out"])))], /* None */0, /* None */0, /* array */[]));
+                                      }), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[true], /* None */0, /* Some */[environment[/* webDomain */3] + "/frequently_asked_questions"], /* array */["frequently asked questions"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* None */0, /* Some */["mailto:contact@misthos.io"], /* array */["Contact us"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignOut], /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* Some */[true], /* None */0, /* array */["Sign Out"])))], /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

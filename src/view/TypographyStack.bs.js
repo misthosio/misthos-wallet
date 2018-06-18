@@ -4,7 +4,6 @@
 var Link = require("./components/Link.bs.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
-var LinkButton = require("./components/LinkButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Grid = require("@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js");
@@ -39,7 +38,6 @@ function make() {
                                       ])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_Grid.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* V6 */5], /* None */0, /* None */0, /* None */0, /* array */[
                                         ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Button")])),
-                                        ReasonReact.element(/* None */0, /* None */0, LinkButton.make(/* TypographyStack */2, /* None */0, /* array */[ViewCommon.text("LinkButton")])),
                                         React.createElement("br", undefined),
                                         ReasonReact.element(/* None */0, /* None */0, Link.make(/* TypographyStack */2, /* None */0, /* array */[ViewCommon.text("Link")]))
                                       ]))

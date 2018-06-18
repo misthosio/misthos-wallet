@@ -51,9 +51,10 @@ let make = (~index, _children) => {
               |> text
             )
           </MTypography>
-          <LinkButton fullWidth=true route=CreateVenture>
+          <MButton
+            fullWidth=true onClick=(Router.clickToRoute(CreateVenture))>
             ("Create a Venture" |> text)
-          </LinkButton>
+          </MButton>
         </div>
       }
     />,

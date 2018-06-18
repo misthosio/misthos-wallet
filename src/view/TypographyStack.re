@@ -21,9 +21,6 @@ let make = _children => {
         </Grid>
         <Grid item=true xs=V6>
           <MButton> ("Button" |> text) </MButton>
-          <LinkButton route=TypographyStack>
-            ("LinkButton" |> text)
-          </LinkButton>
           <br />
           <Link route=TypographyStack> ("Link" |> text) </Link>
         </Grid>

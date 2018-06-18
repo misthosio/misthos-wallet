@@ -164,11 +164,15 @@ let make = (~viewData: ViewData.t, _children) => {
           <ScrollList>
             <MaterialUi.List disablePadding=true> partners </MaterialUi.List>
           </ScrollList>
-          <LinkButton
+          <MButton
             fullWidth=true
-            route=(Venture(viewData.ventureId, ManagePartners))>
+            onClick=(
+              Router.clickToRoute(
+                Venture(viewData.ventureId, ManagePartners),
+              )
+            )>
             ("Add or Remove Partners" |> text)
-          </LinkButton>
+          </MButton>
         </div>
       }
       area4=MaterialUi.(
