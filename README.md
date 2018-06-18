@@ -4,14 +4,9 @@
 git clone https://github.com/misthosio/misthos
 cd misthos
 brew install node
-❯ node --version
-v9.7.1
 brew install yarn
-npm -g install bs-platform
-❯ yarn --version
-1.5.1
 brew install bitcoin
-> Bitcoin Core RPC client version v0.16.0.0-g4b4d7eb
+make install
 ```
 
 ### Test
@@ -32,3 +27,8 @@ Will continuously rebuild all project files (if you only want to check the compi
 make dev
 ```
 Will serve the app to `localhost:3000`
+
+```
+make web-dev
+```
+Will serve the website to `localhost:3001`
