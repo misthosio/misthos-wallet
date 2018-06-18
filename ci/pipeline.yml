@@ -15,6 +15,7 @@ groups:
   - deploy-web-testnet
   - trigger-prod
   - deploy-prod
+  - deploy-web-prod
 - name: pipeline-image
   jobs: [build-task-image]
 
@@ -273,6 +274,32 @@ jobs:
   - put: prod-branch
     params: {repository: repo, tag: build-version/version, tag_prefix: "v", force: true}
 
+- name: deploy-web-prod
+  plan:
+  - aggregate:
+    - {get: misthos-web-build, trigger: true, passed: [trigger-prod]}
+    - {get: repo, trigger: false, passed: [trigger-prod]}
+    - {get: build-version, trigger: false, passed: [trigger-prod]}
+    - {get: pipeline-tasks}
+  - task: deploy-web-prod
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: {repository: misthosio/misthos-web-pipeline}
+      inputs:
+      - name: pipeline-tasks
+      - name: misthos-web-build
+      params:
+          GCP_SERVICE_ACCOUNT: ((gcp-service-account))
+          SUBDOMAIN: www
+          WEB: "true"
+      run:
+        path: pipeline-tasks/ci/tasks/deploy.sh
+  - put: web-prod-branch
+    params: {repository: repo, force: true}
+
+
 - name: build-task-image
   serial: true
   plan:
@@ -326,12 +353,12 @@ resources:
     uri: git@github.com:misthosio/misthos.git
     branch: prod
     private_key: ((github-ssh-key.private_key))
-# - name: web-prod-branch
-#   type: git
-#   source:
-#     uri: git@github.com:misthosio/misthos.git
-#     branch: web-prod
-#     private_key: ((github-ssh-key.private_key))
+- name: web-prod-branch
+  type: git
+  source:
+    uri: git@github.com:misthosio/misthos.git
+    branch: web-prod
+    private_key: ((github-ssh-key.private_key))
 - name: bundled-deps
   type: gcs-resource
   source:
