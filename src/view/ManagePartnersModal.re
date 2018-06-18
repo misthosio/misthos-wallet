@@ -338,14 +338,14 @@ let make =
                     getSuggestionValue=(s => s)
                     onSuggestionsFetchRequested=(
                       arg =>
-                        if (arg##value |> Js.String.length > 2) {
-                          Blockstack.fetchIds(arg##value)
-                          |> Js.Promise.then_(s =>
-                               send(UpdateSuggestions(s))
-                               |> Js.Promise.resolve
-                             )
-                          |> ignore;
-                        }
+                        Blockstack.fetchIds(arg##value)
+                        |> Js.Promise.then_(s =>
+                             send(UpdateSuggestions(s)) |> Js.Promise.resolve
+                           )
+                        |> ignore
+                    )
+                    shouldRenderSuggestions=(
+                      value => Js.String.trim(value) |> Js.String.length > 2
                     )
                     onSuggestionsClearRequested=(() => send(ClearSuggestions))
                     renderSuggestion

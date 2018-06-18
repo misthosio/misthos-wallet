@@ -243,18 +243,16 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                 ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
                                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                 ReasonReact.element(/* None */0, /* None */0, Autosuggest.make(filterSuggestions(inputs[/* prospectId */0], state[/* suggestions */4]), (function (arg) {
-                                                                            if (arg.value.length > 2) {
-                                                                              Blockstack.fetchIds(arg.value).then((function (s) {
-                                                                                      return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [s])));
-                                                                                    }));
-                                                                              return /* () */0;
-                                                                            } else {
-                                                                              return 0;
-                                                                            }
+                                                                            Blockstack.fetchIds(arg.value).then((function (s) {
+                                                                                    return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [s])));
+                                                                                  }));
+                                                                            return /* () */0;
                                                                           }), (function () {
                                                                             return Curry._1(send, /* ClearSuggestions */0);
                                                                           }), (function (s) {
                                                                             return s;
+                                                                          }), (function (value) {
+                                                                            return value.trim().length > 2;
                                                                           }), renderSuggestion, renderSuggestionsContainer, renderInputComponent, {
                                                                           value: inputs[/* prospectId */0],
                                                                           onChange: (function (_, change) {
