@@ -8,14 +8,13 @@ var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
-var Colors = require("./Colors.bs.js");
+var Header = require("./Header.bs.js");
 var Router = require("./Router.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Modal = require("@jsiebern/bs-material-ui/src/MaterialUi_Modal.bs.js");
 var MaterialUi_Paper = require("@jsiebern/bs-material-ui/src/MaterialUi_Paper.bs.js");
-var MaterialUi_AppBar = require("@jsiebern/bs-material-ui/src/MaterialUi_AppBar.bs.js");
 var MaterialUi_Drawer = require("@jsiebern/bs-material-ui/src/MaterialUi_Drawer.bs.js");
 var MaterialUi_Toolbar = require("@jsiebern/bs-material-ui/src/MaterialUi_Toolbar.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
@@ -27,23 +26,17 @@ var flex_ = Css.style(/* :: */[
       /* [] */0
     ]);
 
-var appBar = Css.style(/* :: */[
-      Css.backgroundColor(Colors.white),
-      /* :: */[
-        Css.boxShadow(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, Colors.white),
-        /* :: */[
-          Css.unsafe("gridArea", "bar"),
-          /* [] */0
-        ]
-      ]
-    ]);
-
 var body = Css.style(/* :: */[
       Css.minHeight(Css.px(0)),
       /* :: */[
         Css.unsafe("gridArea", "body"),
         /* [] */0
       ]
+    ]);
+
+var header = Css.style(/* :: */[
+      Css.unsafe("gridArea", "header"),
+      /* [] */0
     ]);
 
 var gap = String(Theme.space(8)) + "px";
@@ -62,7 +55,7 @@ function grid(mobileEnabled) {
                       /* :: */[
                         Css.unsafe("gridTemplateRows", "[begin] min-content 1fr " + (String(gap) + " [end]")),
                         /* :: */[
-                          Css.unsafe("gridTemplateAreas", "\"bar\" \"body\" \".\""),
+                          Css.unsafe("gridTemplateAreas", "\"header\" \"body\" \".\""),
                           /* [] */0
                         ]
                       ]
@@ -160,31 +153,19 @@ var modal = Css.style(/* :: */[
       ]
     ]);
 
-var logo = Css.style(/* :: */[
-      Css.hover(/* :: */[
-            Css.backgroundColor(Css.transparent),
-            /* [] */0
-          ]),
-      /* :: */[
-        Css.borderRadius(Css.px(0)),
-        /* [] */0
-      ]
-    ]);
-
 var Styles = /* module */[
   /* flex_ */flex_,
-  /* appBar */appBar,
   /* body */body,
+  /* header */header,
   /* gap */gap,
   /* grid */grid,
   /* drawer */drawer,
   /* drawerPaper */drawerPaper,
   /* modalContent */modalContent,
-  /* modal */modal,
-  /* logo */logo
+  /* modal */modal
 ];
 
-function make(drawer$1, modal$1, $staropt$star, children) {
+function make(header$1, drawer$1, modal$1, $staropt$star, children) {
   var mobileEnabled = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -216,34 +197,41 @@ function make(drawer$1, modal$1, $staropt$star, children) {
                               });
                           return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Modal.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, true, /* None */0, /* None */0, /* array */[inner]));
                         }), modal$1));
+              var match = header$1 ? /* tuple */[
+                  React.createElement("div", {
+                        className: header
+                      }, header$1[0]),
+                  null
+                ] : (
+                  drawer$1 ? /* tuple */[
+                      React.createElement("div", {
+                            className: header
+                          }, ReasonReact.element(/* None */0, /* None */0, Header.make(/* Some */[(function (param) {
+                                        return Router.clickToRoute(/* Home */0, param);
+                                      })], /* None */0, /* Some */[(function () {
+                                        return Curry._1(send, /* OpenDrawer */0);
+                                      })], /* array */[]))),
+                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_Drawer.make(/* Some */[/* Right */-57574468], /* None */0, /* None */0, /* None */0, /* Some */[(function () {
+                                    return Curry._1(send, /* CloseDrawer */1);
+                                  })], /* Some */[param[/* state */1][/* drawerOpen */0]], /* None */0, /* None */0, /* Some */[theme], /* None */0, /* Some */[/* Temporary */-103274127], /* Some */[/* :: */[
+                                  /* Paper */Block.__(1, [drawerPaper]),
+                                  /* [] */0
+                                ]], /* None */0, /* array */[React.createElement("div", {
+                                      className: drawer,
+                                      role: "button",
+                                      tabIndex: 0,
+                                      onClick: (function () {
+                                          return Curry._1(send, /* CloseDrawer */1);
+                                        })
+                                    }, drawer$1[0])]))
+                    ] : /* tuple */[
+                      null,
+                      null
+                    ]
+                );
               return React.createElement("div", {
                           className: grid(mobileEnabled)
-                        }, drawer$1 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_AppBar.make(/* Some */[appBar], /* None */0, /* Some */[/* Static */982536398], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_Toolbar.make(/* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[logo], /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
-                                                            return Router.clickToRoute(/* Home */0, param);
-                                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.logoSolid])),
-                                              React.createElement("div", {
-                                                    className: flex_
-                                                  }),
-                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
-                                                            return Curry._1(send, /* OpenDrawer */0);
-                                                          })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.menu]))
-                                            ])),
-                                    ReasonReact.element(/* None */0, /* None */0, MaterialUi_Drawer.make(/* Some */[/* Right */-57574468], /* None */0, /* None */0, /* None */0, /* Some */[(function () {
-                                                  return Curry._1(send, /* CloseDrawer */1);
-                                                })], /* Some */[param[/* state */1][/* drawerOpen */0]], /* None */0, /* None */0, /* Some */[theme], /* None */0, /* Some */[/* Temporary */-103274127], /* Some */[/* :: */[
-                                                /* Paper */Block.__(1, [drawerPaper]),
-                                                /* [] */0
-                                              ]], /* None */0, /* array */[React.createElement("div", {
-                                                    className: drawer,
-                                                    role: "button",
-                                                    tabIndex: 0,
-                                                    onClick: (function () {
-                                                        return Curry._1(send, /* CloseDrawer */1);
-                                                      })
-                                                  }, drawer$1[0])]))
-                                  ])) : null, modalContainer, ReasonReact.createDomElement("div", {
+                        }, match[0], match[1], modalContainer, ReasonReact.createDomElement("div", {
                               className: body
                             }, children));
             }),

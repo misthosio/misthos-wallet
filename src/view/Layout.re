@@ -9,13 +9,8 @@ let component = ReasonReact.reducerComponent("Layout");
 module Styles = {
   open Css;
   let flex_ = style([flex(1)]);
-  let appBar =
-    style([
-      backgroundColor(Colors.white),
-      boxShadow(Colors.white),
-      unsafe("gridArea", "bar"),
-    ]);
   let body = style([minHeight(px(0)), unsafe("gridArea", "body")]);
+  let header = style([unsafe("gridArea", "header")]);
   let gap = (Theme.space(8) |> string_of_int) ++ "px";
   let grid = mobileEnabled =>
     style([
@@ -25,7 +20,7 @@ module Styles = {
       height(vh(100.0)),
       unsafe("gridTemplateColumns", "[begin] 1fr [end]"),
       unsafe("gridTemplateRows", {j|[begin] min-content 1fr $gap [end]|j}),
-      unsafe("gridTemplateAreas", {|"bar" "body" "."|}),
+      unsafe("gridTemplateAreas", {|"header" "body" "."|}),
     ]);
   let drawer = style([width(`px(440)), height(`percent(100.0))]);
   let drawerPaper = style([height(`percent(100.0))]);
@@ -45,11 +40,16 @@ module Styles = {
       height(`percent(100.0)),
       focus([outlineStyle(`none)]),
     ]);
-  let logo =
-    style([hover([backgroundColor(transparent)]), borderRadius(px(0))]);
 };
 
-let make = (~drawer, ~modal, ~mobileEnabled=false, children) => {
+let make =
+    (
+      ~header=?,
+      ~drawer: option(ReasonReact.reactElement)=?,
+      ~modal=?,
+      ~mobileEnabled=false,
+      children,
+    ) => {
   ...component,
   initialState: () => {drawerOpen: false},
   reducer: (action, _state) =>
@@ -83,52 +83,49 @@ let make = (~drawer, ~modal, ~mobileEnabled=false, children) => {
            })
         |> Js.Option.getWithDefault(ReasonReact.null)
       );
-    MaterialUi.(
-      <div className=(Styles.grid(mobileEnabled))>
-        (
-          switch (drawer) {
-          | None => ReasonReact.null
-          | Some(drawer) =>
-            <AppBar position=`Static className=Styles.appBar>
-              <Toolbar>
-                <IconButton
-                  className=Styles.logo
-                  color=`Inherit
-                  onClick=(Router.clickToRoute(Home))>
-                  Icons.logoSolid
-                </IconButton>
-                <div className=Styles.flex_ />
-                <IconButton color=`Inherit onClick=(_e => send(OpenDrawer))>
-                  Icons.menu
-                </IconButton>
-              </Toolbar>
-              <Drawer
-                theme
-                classes=[Paper(Styles.drawerPaper)]
-                variant=`Temporary
-                anchor=`Right
-                onClose=(_ => send(CloseDrawer))
-                _open=state.drawerOpen>
-                <div
-                  className=Styles.drawer
-                  tabIndex=0
-                  role="button"
-                  onClick=(_event => send(CloseDrawer))>
-                  drawer
-                </div>
-              </Drawer>
-            </AppBar>
-          }
+    let (header, drawer) =
+      switch (header, drawer) {
+      | (None, None) => (ReasonReact.null, ReasonReact.null)
+      | (Some(header), _) => (
+          <div className=Styles.header> header </div>,
+          ReasonReact.null,
         )
-        modalContainer
-        (
-          ReasonReact.createDomElement(
-            "div",
-            ~props={"className": Styles.body},
-            children,
-          )
+      | (None, Some(drawer)) =>
+        MaterialUi.(
+          <div className=Styles.header>
+            <Header
+              onClickLogo=(Router.clickToRoute(Home))
+              onClickMenu=(_e => send(OpenDrawer))
+            />
+          </div>,
+          <Drawer
+            theme
+            classes=[Paper(Styles.drawerPaper)]
+            variant=`Temporary
+            anchor=`Right
+            onClose=(_ => send(CloseDrawer))
+            _open=state.drawerOpen>
+            <div
+              className=Styles.drawer
+              tabIndex=0
+              role="button"
+              onClick=(_event => send(CloseDrawer))>
+              drawer
+            </div>
+          </Drawer>,
         )
-      </div>
-    );
+      };
+    <div className=(Styles.grid(mobileEnabled))>
+      header
+      drawer
+      modalContainer
+      (
+        ReasonReact.createDomElement(
+          "div",
+          ~props={"className": Styles.body},
+          children,
+        )
+      )
+    </div>;
   },
 };

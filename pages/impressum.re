@@ -11,7 +11,9 @@ let environment = Environment.get();
 let make = _children => {
   ...component,
   render: _ =>
-    <Layout drawer=None modal=None mobileEnabled=true>
+    <Layout
+      header={<Header hrefLogo=(environment.webDomain ++ "/") />}
+      mobileEnabled=true>
       <Grid
         title1=("impressum" |> text)
         area3={

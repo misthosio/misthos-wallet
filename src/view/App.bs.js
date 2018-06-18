@@ -306,7 +306,9 @@ function make(session, updateSession, _) {
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Curry._1(Router.Container[/* make */1], (function (currentRoute) {
                                 return ReasonReact.element(/* None */0, /* None */0, VentureStore.make(currentRoute, session, (function (index, selectedVenture, createVenture) {
-                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(drawer(index, currentRoute), modal(selectedVenture, currentRoute), /* Some */[mobileEnabled], /* array */[body(index, selectedVenture, createVenture, currentRoute)]));
+                                                  var drawer$1 = drawer(index, currentRoute);
+                                                  var modal$1 = modal(selectedVenture, currentRoute);
+                                                  return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, drawer$1, modal$1, /* Some */[mobileEnabled], /* array */[body(index, selectedVenture, createVenture, currentRoute)]));
                                                 })));
                               })));
             }),
