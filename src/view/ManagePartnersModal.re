@@ -1,6 +1,5 @@
 include ViewCommon;
 
-[@bs.module] external copy : string = "../assets/img/copy.svg";
 [@bs.val] external encodeURI : string => string = "";
 
 open PrimitiveTypes;
