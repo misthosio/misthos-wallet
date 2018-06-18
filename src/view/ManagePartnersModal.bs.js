@@ -231,7 +231,6 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                 ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
                                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                 ReasonReact.element(/* None */0, /* None */0, Autosuggest.make(state[/* suggestions */4], (function (arg) {
-                                                                            console.log("update suggestions", arg);
                                                                             Blockstack.fetchIds(arg.value).then((function (s) {
                                                                                     return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [s])));
                                                                                   }));
@@ -242,8 +241,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                             return s;
                                                                           }), renderSuggestion, renderSuggestionsContainer, renderInputComponent, {
                                                                           value: inputs[/* prospectId */0],
-                                                                          onChange: (function (e) {
-                                                                              return Curry._1(send, /* ChangeNewPartnerId */Block.__(1, [ViewCommon.extractString(e)]));
+                                                                          onChange: (function (_, change) {
+                                                                              return Curry._1(send, /* ChangeNewPartnerId */Block.__(1, [change.newValue]));
                                                                             })
                                                                         }, /* array */[])),
                                                                 ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", (function () {
@@ -372,7 +371,6 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                       var suggestions = match ? /* array */[] : Belt_Array.keepU(action[0], (function (s) {
                                 return s.slice(0, inputLength) === state[/* inputs */3][/* prospectId */0];
                               }));
-                      console.log("updating suggestiosn", suggestions);
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],

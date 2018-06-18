@@ -160,7 +160,6 @@ let make =
                Js.String.slice(~from=0, ~to_=inputLength) == state.inputs.
                                                                 prospectId
              );
-      Js.log2("updating suggestiosn", suggestions);
       ReasonReact.Update({...state, suggestions});
     | ClearSuggestions => ReasonReact.Update({...state, suggestions: [||]})
     | ChangeNewPartnerId(text) =>
@@ -334,14 +333,12 @@ let make =
                     suggestions=state.suggestions
                     getSuggestionValue=(s => s)
                     onSuggestionsFetchRequested=(
-                      arg => {
-                        Js.log2("update suggestions", arg);
+                      arg =>
                         Blockstack.fetchIds(arg##value)
                         |> Js.Promise.then_(s =>
                              send(UpdateSuggestions(s)) |> Js.Promise.resolve
                            )
-                        |> ignore;
-                      }
+                        |> ignore
                     )
                     onSuggestionsClearRequested=(() => send(ClearSuggestions))
                     renderSuggestion
@@ -349,8 +346,8 @@ let make =
                     renderSuggestionsContainer
                     inputProps={
                       "value": inputs.prospectId,
-                      "onChange": e =>
-                        send(ChangeNewPartnerId(extractString(e))),
+                      "onChange": (_e, change) =>
+                        send(ChangeNewPartnerId(change##newValue)),
                     }
                   />
                   <ProposeButton
