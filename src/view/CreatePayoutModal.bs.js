@@ -264,7 +264,7 @@ function make(viewData, commands, cmdStatus, _) {
                                           inputs[/* recipientAddress */0]
                                         ]], /* Some */[(function (e) {
                                             return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
-                                          })], /* Some */[false], /* Some */[true], /* None */0, error, /* None */0, /* None */0, /* None */0, /* array */[])),
+                                          })], /* Some */[false], /* Some */[true], /* None */0, error, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, MInput.make(/* Some */["BTC amount"], /* Some */[/* `String */[
                                           -976970511,
                                           inputs[/* btcAmount */1]
@@ -272,7 +272,7 @@ function make(viewData, commands, cmdStatus, _) {
                                             return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
                                           })], /* Some */[false], /* Some */[true], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_InputAdornment.make(/* None */0, /* None */0, /* None */0, /* Some */[/* End */3455931], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                                 return Curry._1(send, /* EnterMax */0);
-                                                              })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* Some */[false], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Max")]))]))], /* None */0, /* None */0, /* None */0, /* Some */[true], /* array */[]))
+                                                              })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* Some */[false], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Max")]))]))], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* array */[]))
                             ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                   return Curry._1(send, /* AddToSummary */1);
                                 })], /* Some */[/* Small */311976103], /* Some */[true], /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Add Another Recipient")])));

@@ -3,6 +3,8 @@ include ViewCommon;
 [@bs.module] external copy : string = "../assets/img/copy.svg";
 [@bs.val] external encodeURI : string => string = "";
 
+/* [@bs.val] external match : (string,string) => gcc */
+
 open PrimitiveTypes;
 
 module ViewData = ViewModel.ManagePartnersView;
@@ -17,9 +19,12 @@ type state = {
   canSubmitProposal: bool,
   removeInputFrozen: bool,
   inputs,
+  suggestions: array(string),
 };
 
 type action =
+  | UpdateSuggestions(array(string))
+  | ClearSuggestions
   | ChangeNewPartnerId(string)
   | ProposePartner
   | SelectRemovePartner(UserId.t)
@@ -66,6 +71,56 @@ module LinkEmail = {
     );
 };
 
+let renderInputComponent = props =>
+  <MInput
+    placeholder="Enter a Blockstack ID"
+    value=(`String(props##value))
+    onChange=props##onChange
+    autoFocus=true
+    fullWidth=true
+    inputProps=props
+  />;
+
+let renderSuggestionsContainer =
+    (
+      options: {
+        .
+        "containerProps": Js.t({..}),
+        "children": ReasonReact.reactElement,
+      },
+    ) =>
+  ReasonReact.cloneElement(
+    MaterialUi.(<Paper square=true />),
+    ~props=options##containerProps,
+    [|options##children|],
+  );
+
+let renderSuggestion = suggested => <div> (suggested |> text) </div>;
+/* let renderSuggestion = (suggestion, vals) { */
+/*   let query = vals##query; */
+/*   let isHighlighted=vals##isHighlighted; */
+/*   const matches = match(suggestion.label, query); */
+/*   const parts = parse(suggestion.label, matches); */
+
+/*   return ( */
+/*     <MenuItem selected={isHighlighted} component="div"> */
+/*     <div> */
+/*     {parts.map((part, index) => { */
+/*                                   return part.highlight ? ( */
+/*                                     <span key={String(index)} style={{ fontWeight: 300 }}> */
+/*                                     {part.text} */
+/*                                     </span> */
+/*                                   ) : ( */
+/*                                     <strong key={String(index)} style={{ fontWeight: 500 }}> */
+/*                                     {part.text} */
+/*                                     </strong> */
+/*                                   ); */
+/*                                 })} */
+/*     </div> */
+/*     </MenuItem> */
+/*   ); */
+/* } */
+
 let make =
     (
       ~viewData: ViewData.t,
@@ -84,6 +139,7 @@ let make =
     removeInputFrozen: false,
     canSubmitProposal: false,
     viewData,
+    suggestions: [||],
   },
   willReceiveProps: ({state}) => {...state, viewData},
   subscriptions: _ => [
@@ -94,6 +150,21 @@ let make =
   ],
   reducer: (action, state) =>
     switch (action) {
+    | UpdateSuggestions(suggestions) =>
+      let inputLength = state.inputs.prospectId |> Js.String.length;
+      let suggestions =
+        inputLength == 0 ?
+          [||] :
+          suggestions
+          |. Belt.Array.keepU((. s) =>
+               s
+               |>
+               Js.String.slice(~from=0, ~to_=inputLength) == state.inputs.
+                                                                prospectId
+             );
+      Js.log2("updating suggestiosn", suggestions);
+      ReasonReact.Update({...state, suggestions});
+    | ClearSuggestions => ReasonReact.Update({...state, suggestions: [||]})
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({
         ...state,
@@ -160,7 +231,7 @@ let make =
         (_ => proposePartnerCmds.reset()),
       )
     },
-  render: ({send, state: {canSubmitProposal, viewData, inputs}}) => {
+  render: ({send, state: {canSubmitProposal, viewData, inputs} as state}) => {
     let activeStep =
       switch (proposeCmdStatus) {
       | Success(_) => 1
@@ -261,14 +332,28 @@ let make =
                   ("ADD A BLOCKSTACK ID" |> text)
                 </StepLabel>
                 <StepContent>
-                  <MInput
-                    placeholder="Enter a Blockstack ID"
-                    value=(`String(inputs.prospectId))
-                    onChange=(
-                      e => send(ChangeNewPartnerId(extractString(e)))
+                  <Autosuggest
+                    suggestions=state.suggestions
+                    getSuggestionValue=(s => s)
+                    onSuggestionsFetchRequested=(
+                      arg => {
+                        Js.log2("update suggestions", arg);
+                        Blockstack.fetchIds(arg##value)
+                        |> Js.Promise.then_(s =>
+                             send(UpdateSuggestions(s)) |> Js.Promise.resolve
+                           )
+                        |> ignore;
+                      }
                     )
-                    autoFocus=true
-                    fullWidth=true
+                    onSuggestionsClearRequested=(() => send(ClearSuggestions))
+                    renderSuggestion
+                    renderInputComponent
+                    renderSuggestionsContainer
+                    inputProps={
+                      "value": inputs.prospectId,
+                      "onChange": e =>
+                        send(ChangeNewPartnerId(extractString(e))),
+                    }
                   />
                   <ProposeButton
                     onSubmit=(() => send(ProposePartner))

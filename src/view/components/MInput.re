@@ -23,6 +23,7 @@ let make =
       ~endAdornment=?,
       ~error=?,
       ~name=?,
+      ~inputProps=?,
       ~_type=?,
       ~ensuring=false,
       _children,
@@ -40,6 +41,7 @@ let make =
         className=(Styles.margin(~tf=ensuring ? 4 : 3, ~bf=0))
         error>
         <Input
+          ?inputProps
           ?placeholder
           ?value
           ?onChange
