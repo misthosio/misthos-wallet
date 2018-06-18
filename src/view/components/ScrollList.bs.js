@@ -30,10 +30,7 @@ var scrollContainer = Css.style(/* :: */[
           Css.overflowY(Css.auto),
           /* :: */[
             Css.minHeight(Css.px(0)),
-            /* :: */[
-              Css.alignSelf(/* stretch */-162316795),
-              /* [] */0
-            ]
+            /* [] */0
           ]
         ]
       ]
@@ -53,10 +50,7 @@ var containerStyles = Css.style(/* :: */[
         Css.display(/* flex */-1010954439),
         /* :: */[
           Css.flexDirection(Css.column),
-          /* :: */[
-            Css.alignItems(/* flexStart */662439529),
-            /* [] */0
-          ]
+          /* [] */0
         ]
       ]
     ]);
