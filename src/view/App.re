@@ -207,16 +207,16 @@ let make = (~session, ~updateSession, _children) => {
              (~currentRoute) =>
                <VentureStore currentRoute session>
                  ...(
-                      (~index, ~selectedVenture, ~createVenture) =>
-                        <Layout
-                          mobileEnabled
-                          drawer=(currentRoute |> drawer(index))
-                          modal=(currentRoute |> modal(selectedVenture))>
+                      (~index, ~selectedVenture, ~createVenture) => {
+                        let drawer = currentRoute |> drawer(index);
+                        let modal = currentRoute |> modal(selectedVenture);
+                        <Layout mobileEnabled ?drawer ?modal>
                           (
                             currentRoute
                             |> body(index, selectedVenture, createVenture)
                           )
-                        </Layout>
+                        </Layout>;
+                      }
                     )
                </VentureStore>
            )

@@ -4,6 +4,7 @@
 var Grid = require("../src/view/components/Grid.bs.js");
 var React = require("react");
 var Footer = require("../src/view/Footer.bs.js");
+var Header = require("../src/view/Header.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
 var ViewCommon = require("../src/view/ViewCommon.bs.js");
 var Environment = require("../src/web/Environment.bs.js");
@@ -31,7 +32,7 @@ function make() {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[
+              return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* Some */[ReasonReact.element(/* None */0, /* None */0, Header.make(/* None */0, /* Some */[environment[/* webDomain */3] + "/"], /* None */0, /* array */[]))], /* None */0, /* None */0, /* Some */[true], /* array */[
                               ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("impressum")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                       ViewCommon.text("Email: "),
                                                       React.createElement("a", {

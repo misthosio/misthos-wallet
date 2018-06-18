@@ -4,8 +4,10 @@
 var Grid = require("../src/view/components/Grid.bs.js");
 var Icons = require("../src/view/Icons.bs.js");
 var Footer = require("../src/view/Footer.bs.js");
+var Header = require("../src/view/Header.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
 var ViewCommon = require("../src/view/ViewCommon.bs.js");
+var Environment = require("../src/web/Environment.bs.js");
 var MTypography = require("../src/view/components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WithRoot = require("../src/web/withRoot");
@@ -19,6 +21,8 @@ function line(data) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
+var environment = Environment.get(/* () */0);
+
 function make() {
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -31,7 +35,7 @@ function make() {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* None */0, /* None */0, /* Some */[true], /* array */[
+              return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* Some */[ReasonReact.element(/* None */0, /* None */0, Header.make(/* None */0, /* Some */[environment[/* webDomain */3] + "/"], /* None */0, /* array */[]))], /* None */0, /* None */0, /* Some */[true], /* array */[
                               ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("frequently asked questions")], /* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelSummary.make(/* None */0, /* None */0, /* None */0, /* Some */[Icons.chevronDown], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Expansion Panel 1")]))])),
                                                   ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,\n            sit amet blandit leo lobortis eget.")]))]))
@@ -59,6 +63,7 @@ exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
 exports.line = line;
+exports.environment = environment;
 exports.make = make;
 exports.$$default = $$default;
 exports.default = $$default;
