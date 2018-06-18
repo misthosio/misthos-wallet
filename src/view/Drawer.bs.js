@@ -12,6 +12,13 @@ var Environment = require("../web/Environment.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var VentureList = require("./VentureList.bs.js");
 
+var alignStart = Css.style(/* :: */[
+      Css.alignSelf(Css.flexStart),
+      /* [] */0
+    ]);
+
+var Styles = /* module */[/* alignStart */alignStart];
+
 var component = ReasonReact.statelessComponent("Drawer");
 
 function make(onSignOut, index, selected, _) {
@@ -34,7 +41,7 @@ function make(onSignOut, index, selected, _) {
                                               Css.flex(100),
                                               /* [] */0
                                             ])
-                                      }), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* Some */[false], /* None */0, /* Some */[environment[/* webDomain */3] + "/frequently_asked_questions"], /* array */["frequently asked questions"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* Some */[false], /* None */0, /* Some */["mailto:contact@misthos.io"], /* array */["Contact us"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignOut], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* Some */[false], /* Some */[true], /* None */0, /* array */["Sign Out"])))], /* None */0, /* array */[]));
+                                      }), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* None */0, /* Some */[environment[/* webDomain */3] + "/frequently_asked_questions"], /* array */["frequently asked questions"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* None */0, /* Some */["mailto:contact@misthos.io"], /* array */["Contact us"])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignOut], /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[alignStart], /* Some */[false], /* Some */[true], /* None */0, /* array */["Sign Out"])))], /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -50,6 +57,7 @@ var extractString = ViewCommon.extractString;
 
 exports.text = text;
 exports.extractString = extractString;
+exports.Styles = Styles;
 exports.component = component;
 exports.make = make;
-/* component Not a pure module */
+/* alignStart Not a pure module */

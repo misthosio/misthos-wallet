@@ -2,15 +2,16 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var Link = require("./components/Link.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
+var Router = require("./Router.bs.js");
 var Spinner = require("./components/Spinner.bs.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
@@ -20,30 +21,15 @@ var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_L
 var component = ReasonReact.statelessComponent("VentureList");
 
 var linkSelected = Css.style(/* :: */[
-      Css.display(Css.block),
-      /* :: */[
-        Css.width(/* `percent */[
-              -119887163,
-              100.0
-            ]),
-        /* :: */[
-          Css.color(Colors.misthosTeal),
-          /* [] */0
-        ]
-      ]
+      Css.color(Colors.misthosTeal),
+      /* [] */0
     ]);
 
 var link = Css.style(/* :: */[
-      Css.display(Css.block),
+      Css.fontSize(Css.px(16)),
       /* :: */[
-        Css.width(/* `percent */[
-              -119887163,
-              100.0
-            ]),
-        /* :: */[
-          Css.color(/* currentColor */292050538),
-          /* [] */0
-        ]
+        Css.textDecoration(Css.underline),
+        /* [] */0
       ]
     ]);
 
@@ -64,22 +50,33 @@ function make(selected, index, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var ventureList = index ? $$Array.of_list(List.map((function (param) {
-                            var id = param[/* id */0];
-                            var ids = PrimitiveTypes.VentureId[/* toString */0](id);
-                            var match = Caml_obj.caml_equal(/* Some */[id], selected);
-                            return ReasonReact.element(/* Some */[ids], /* None */0, MaterialUi_ListItem.make(/* Some */[false], /* None */0, /* Some */[/* `String */[
-                                              -976970511,
-                                              "li"
-                                            ]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
-                                              -976970511,
-                                              ids
-                                            ]], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, Link.make(/* Venture */Block.__(0, [
-                                                                  id,
-                                                                  /* None */0
-                                                                ]), /* Some */[match ? linkSelected : link], /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* array */[]))]));
-                          }), index[0])) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
-              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
+              var ventureList;
+              if (index) {
+                var index$1 = index[0];
+                ventureList = index$1 ? $$Array.of_list(List.map((function (param) {
+                              var id = param[/* id */0];
+                              var ids = PrimitiveTypes.VentureId[/* toString */0](id);
+                              var partial_arg = /* Venture */Block.__(0, [
+                                  id,
+                                  /* None */0
+                                ]);
+                              var match = Caml_obj.caml_equal(/* Some */[id], selected);
+                              return ReasonReact.element(/* Some */[ids], /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* Some */[/* `String */[
+                                                -976970511,
+                                                "li"
+                                              ]], /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
+                                                -976970511,
+                                                ids
+                                              ]], /* None */0, /* Some */[(function (param) {
+                                                  return Router.clickToRoute(partial_arg, param);
+                                                })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[link + (" " + (
+                                                                      match ? linkSelected : ""
+                                                                    ))], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* array */[]))]));
+                            }), index$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You don’t have any Ventures yet. The choice is easy, then of course, the choice is yours…")]));
+              } else {
+                ventureList = ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
+              }
+              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

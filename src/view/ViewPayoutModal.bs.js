@@ -159,7 +159,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               return Curry._1(commands[/* rejectPayout */9], processId);
                                             }), (function () {
                                               return Curry._1(commands[/* reset */0], /* () */0);
-                                            }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */1]) > 0 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_SnackbarContent.make(/* None */0, /* None */0, /* Some */[ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])) : null)], /* array */[]));
+                                            }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */1]) > 0 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_SnackbarContent.make(/* None */0, /* None */0, /* Some */[ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])) : null)], /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

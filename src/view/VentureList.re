@@ -6,14 +6,8 @@ let component = ReasonReact.statelessComponent("VentureList");
 
 module Styles = {
   open Css;
-  let linkSelected =
-    style([
-      display(block),
-      width(`percent(100.0)),
-      color(Colors.misthosTeal),
-    ]);
-  let link =
-    style([display(block), width(`percent(100.0)), color(`currentColor)]);
+  let linkSelected = style([color(Colors.misthosTeal)]);
+  let link = style([fontSize(px(16)), textDecoration(underline)]);
 };
 
 let make = (~selected=?, ~index, _children) => {
@@ -22,6 +16,13 @@ let make = (~selected=?, ~index, _children) => {
     let ventureList =
       switch (index) {
       | None => <Spinner text="loading index" />
+      | Some([]) =>
+        <MTypography variant=`Body2>
+          (
+            {js|You don’t have any Ventures yet. The choice is easy, then of course, the choice is yours…|js}
+            |> text
+          )
+        </MTypography>
       | Some(index) =>
         ReasonReact.array(
           Array.of_list(
@@ -33,19 +34,25 @@ let make = (~selected=?, ~index, _children) => {
                      let ids = id |> VentureId.toString;
                      <ListItem
                        key=ids
-                       button=false
+                       dense=true
+                       button=true
                        value=(`String(ids))
+                       onClick=(Router.clickToRoute(Venture(id, None)))
                        component=(`String("li"))>
                        <ListItemText
                          primary={
-                           <Link
+                           <MTypography
+                             variant=`Title
                              className=(
-                               Some(id) == selected ?
-                                 Styles.linkSelected : Styles.link
-                             )
-                             route=(Venture(id, None))>
+                               Styles.link
+                               ++ " "
+                               ++ (
+                                 Some(id) == selected ?
+                                   Styles.linkSelected : ""
+                               )
+                             )>
                              (name |> text)
-                           </Link>
+                           </MTypography>
                          }
                        />
                      </ListItem>;
@@ -55,6 +62,10 @@ let make = (~selected=?, ~index, _children) => {
           ),
         )
       };
-    <div> <MaterialUi.List dense=true> ventureList </MaterialUi.List> </div>;
+    <div>
+      <MaterialUi.List dense=true disablePadding=true>
+        ventureList
+      </MaterialUi.List>
+    </div>;
   },
 };

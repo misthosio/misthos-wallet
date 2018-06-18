@@ -45,7 +45,7 @@ let () =
           | AccountKeyChainIdentified({keyChain: {identifier, accountIdx}})
               when AccountIndex.eq(accountIdx, AccountIndex.default) =>
             identifier
-            == "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73"
+            == "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30"
           | _ => false,
         );
       },
@@ -94,7 +94,7 @@ let () =
             })
               when AccountIndex.eq(accountIdx, AccountIndex.default) =>
             identifier
-            == "038ccb176653ad573f4342fc625dc121b573762a69becbaaad5b8bbadb934340"
+            == "84ba3d5f75b50fc70cdebf3b637c31c81d820519a68fd997025296ba765f2dc5"
             && custodianKeyChains
             |> List.length == 1
           | _ => false,
@@ -134,7 +134,7 @@ let () =
           | AccountKeyChainActivated({accountIdx, identifier, sequence})
               when AccountIndex.eq(accountIdx, AccountIndex.default) =>
             identifier
-            == "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73"
+            == "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30"
             && sequence == 0
           | _ => false,
         );
@@ -209,7 +209,7 @@ let () =
           | AccountKeyChainActivated({accountIdx, identifier, sequence})
               when AccountIndex.eq(accountIdx, AccountIndex.default) =>
             identifier
-            == "41f508a17ccd3b6e325be410341fd320d8d72befbb54cddf5723432a340bcc73"
+            == "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30"
             && sequence == 1
           | _ => false,
         );

@@ -225,7 +225,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                 return Curry._1(send, /* FreezeRemoval */3);
                                               })], /* Some */[(function () {
                                                 return Curry._1(send, /* ResetRemoval */4);
-                                              })], Js_option.isSome(inputs[/* removePartnerId */1]), /* None */0, removeCmdStatus, /* array */[])))], /* array */[]));
+                                              })], Js_option.isSome(inputs[/* removePartnerId */1]), /* None */0, removeCmdStatus, /* array */[])))], /* None */0, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

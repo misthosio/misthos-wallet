@@ -49,7 +49,7 @@ function make() {
                                                             href: environment[/* webDomain */3] + "/datenschutzerklarung",
                                                             target: "_blank"
                                                           }, ViewCommon.text("https://www.misthos.io/datenschutzerklarung"))
-                                                    ])))], /* None */0, /* array */[])),
+                                                    ])))], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),

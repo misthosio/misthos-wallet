@@ -47,7 +47,7 @@ let createVenture = user =>
     user,
     {
       ...Generators.Event.createVenture(user),
-      ventureId: VentureId.fromString("fixedVentureId"),
+      ventureId: VentureId.fromString("venture-id"),
     },
   );
 

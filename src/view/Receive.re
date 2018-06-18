@@ -53,6 +53,12 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
     | UpdateAddress(address) => ReasonReact.Update({address: Some(address)})
     },
   render: ({send, state}) => {
+    let warning =
+      switch (Environment.get().network) {
+      | Testnet => Some(Text.Warnings.testnet)
+      | _ => None
+      };
+
     let copyButton =
       state.address
       |> Utils.mapOption(address =>
@@ -66,6 +72,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
          )
       |> Js.Option.getWithDefault(ReasonReact.null);
     <Grid
+      ?warning
       title1=("Receive BTC" |> text)
       area3={
         <div className=Styles.container>

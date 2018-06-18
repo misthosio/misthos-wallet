@@ -3,6 +3,7 @@
 
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
+var Text = require("../Text.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
@@ -13,6 +14,7 @@ var Spinner = require("./components/Spinner.bs.js");
 var Clipboard = require("../ffi/Clipboard.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var ViewCommon = require("./ViewCommon.bs.js");
+var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
@@ -69,23 +71,25 @@ function make(commands, _) {
           /* render */(function (param) {
               var send = param[/* send */3];
               var state = param[/* state */1];
+              var match = Environment.get(/* () */0)[/* network */5];
+              var warning = match !== 1 ? /* None */0 : /* Some */[Text.Warnings[/* testnet */0]];
               var copyButton = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
                           return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
                                       "data-clipboard-text": address
                                     });
                         }), state[/* address */0]));
-              var match = state[/* address */0];
+              var match$1 = state[/* address */0];
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Receive BTC")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
                                     className: container
-                                  }, match ? React.createElement("img", {
+                                  }, match$1 ? React.createElement("img", {
                                           height: "250px",
-                                          src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match[0]
+                                          src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match$1[0]
                                         }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text(Js_option.getWithDefault("", state[/* address */0])),
                                             copyButton
                                           ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                 return Curry._1(send, /* GetIncomeAddress */0);
-                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))], /* None */0, /* array */[]));
+                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))], /* None */0, warning, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* address : None */0];

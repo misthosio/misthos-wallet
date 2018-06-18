@@ -9,6 +9,12 @@ let component = ReasonReact.statelessComponent("SelectedVenture");
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
   render: _ => {
+    let warning =
+      switch (Environment.get().network) {
+      | Testnet => Some(Text.Warnings.testnet)
+      | _ => None
+      };
+
     let prospects =
       viewData.prospects
       |> List.map((prospect: ViewData.prospect) =>
@@ -113,6 +119,7 @@ let make = (~viewData: ViewData.t, _children) => {
         ),
       );
     <Grid
+      ?warning
       title1=("Partners" |> text)
       title2=("Transactions" |> text)
       area1={
