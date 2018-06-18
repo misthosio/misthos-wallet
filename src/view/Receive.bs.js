@@ -92,7 +92,7 @@ function make(commands, _) {
                                                           copyButton
                                                         ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                               return Curry._1(send, /* GetIncomeAddress */0);
-                                                            })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))])))], /* None */0, warning, /* array */[]));
+                                                            })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))])))], /* None */0, warning, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* address : None */0];

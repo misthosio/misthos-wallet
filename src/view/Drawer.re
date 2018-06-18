@@ -22,6 +22,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
                 </MButton>
                 <div className=Css.(style([flex(100)])) />
                 <MButton
+                  targetBlank=true
                   gutterTop=true
                   className=Styles.alignStart
                   variant=Flat

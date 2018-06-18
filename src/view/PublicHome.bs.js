@@ -165,7 +165,7 @@ function make(onSignIn, _) {
                                       React.createElement("br", undefined),
                                       React.createElement("br", undefined),
                                       ViewCommon.text("Use it for projects. Use it for payments.")
-                                    ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* None */0, /* None */0, /* Some */[area("button")], /* None */0, /* None */0, /* None */0, /* array */[
+                                    ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* None */0, /* None */0, /* Some */[area("button")], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_SvgIcon.make(/* Some */[Css.style(/* :: */[
                                                       Css.marginRight(Css.px(16)),
                                                       /* [] */0

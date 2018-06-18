@@ -68,10 +68,10 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                                 ViewCommon.text(endorseText),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ConfirmEndorse */2);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
+                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* Cancel */0);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
+                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
                               ]))];
                     break;
                 case 3 : 
@@ -79,10 +79,10 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                                 ViewCommon.text(rejectText),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ConfirmReject */4);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
+                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("yes")])),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* Cancel */0);
-                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
+                                            })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("No")]))
                               ]))];
                     break;
                 case 2 : 
@@ -102,14 +102,14 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                             ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[])),
                             ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                     return Curry._1(send, /* Cancel */0);
-                                                  })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))]))
+                                                  })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))]))
                           ];
                         } else if (cmdStatus[0] >= 5) {
                           tmp = /* array */[
                             ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Rejection */5, /* array */[])),
                             ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                           return Curry._1(send, /* Cancel */0);
-                                        })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))
+                                        })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))
                           ];
                         } else {
                           exit = 1;
@@ -131,10 +131,10 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                     tmp = /* array */[
                       ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                     return Curry._1(send, /* Endorse */1);
-                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(endorseText)])),
+                                  })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(endorseText)])),
                       ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                     return Curry._1(send, /* Reject */3);
-                                  })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[gray], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(rejectText)]))
+                                  })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[gray], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(rejectText)]))
                     ];
                     break;
                 

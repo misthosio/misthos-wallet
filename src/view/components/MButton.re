@@ -45,10 +45,14 @@ let make =
       ~gutterTop=true,
       ~gutterBottom=false,
       ~href=?,
+      ~targetBlank=false,
       children,
     ) => {
   ...component,
-  render: _self =>
+  render: _self => {
+    let callback = (~props) =>
+      ReasonReact.cloneElement(<a target="_blank" />, ~props, [||]);
+    let component = targetBlank ? Some(`Callback(callback)) : None;
     <MaterialUi.Button
       ?size
       className=(
@@ -58,7 +62,9 @@ let make =
       )
       ?color
       ?href
+      ?component
       ?onClick>
       children
-    </MaterialUi.Button>,
+    </MaterialUi.Button>;
+  },
 };

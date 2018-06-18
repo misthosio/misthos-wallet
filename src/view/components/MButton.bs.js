@@ -4,6 +4,7 @@
 var Css = require("bs-css/src/Css.js");
 var List = require("bs-platform/lib/js/list.js");
 var Theme = require("../Theme.bs.js");
+var React = require("react");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
 
@@ -73,12 +74,13 @@ function button(fullWidth, variant, gutterTop, gutterBottom) {
 
 var Styles = /* module */[/* button */button];
 
-function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, href, children) {
+function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, href, $staropt$star$5, children) {
   var fullWidth = $staropt$star ? $staropt$star[0] : false;
   var variant = $staropt$star$1 ? $staropt$star$1[0] : /* Outlined */1;
   var className = $staropt$star$2 ? $staropt$star$2[0] : "";
   var gutterTop = $staropt$star$3 ? $staropt$star$3[0] : true;
   var gutterBottom = $staropt$star$4 ? $staropt$star$4[0] : false;
+  var targetBlank = $staropt$star$5 ? $staropt$star$5[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -90,7 +92,16 @@ function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$sta
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant, gutterTop, gutterBottom) + (" " + className)], color, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, href, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+              var callback = function (props) {
+                return React.cloneElement(React.createElement("a", {
+                                target: "_blank"
+                              }), props);
+              };
+              var component = targetBlank ? /* Some */[/* `Callback */[
+                    -659008027,
+                    callback
+                  ]] : /* None */0;
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant, gutterTop, gutterBottom) + (" " + className)], color, component, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, href, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
