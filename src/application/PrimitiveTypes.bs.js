@@ -8,11 +8,17 @@ var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 
+function fromString(id) {
+  return id.toLowerCase();
+}
+
 function encode(id) {
   return id;
 }
 
-var decode = Json_decode.string;
+function decode(id) {
+  return Json_decode.string(id).toLowerCase();
+}
 
 var compare = $$String.compare;
 
@@ -50,13 +56,9 @@ function VentureId_000(prim) {
   return prim;
 }
 
-function VentureId_001(prim) {
-  return prim;
-}
-
 var VentureId = [
   VentureId_000,
-  VentureId_001,
+  fromString,
   encode,
   decode,
   compare,
@@ -72,13 +74,9 @@ function UserId_000(prim) {
   return prim;
 }
 
-function UserId_001(prim) {
-  return prim;
-}
-
 var UserId = [
   UserId_000,
-  UserId_001,
+  fromString,
   encode,
   decode,
   compare,
@@ -93,13 +91,9 @@ function ProcessId_000(prim) {
   return prim;
 }
 
-function ProcessId_001(prim) {
-  return prim;
-}
-
 var ProcessId = [
   ProcessId_000,
-  ProcessId_001,
+  fromString,
   encode,
   decode,
   compare,
@@ -115,13 +109,9 @@ function LabelId_000(prim) {
   return prim;
 }
 
-function LabelId_001(prim) {
-  return prim;
-}
-
 var LabelId = [
   LabelId_000,
-  LabelId_001,
+  fromString,
   encode,
   decode,
   compare,

@@ -55,7 +55,7 @@ var threeUserSessionsArray = /* array */[
 function createVenture(user) {
   var init = Generators.Event[/* createVenture */0](user);
   return Generators.Log[/* make */10](user, /* record */[
-              /* ventureId */PrimitiveTypes.VentureId[/* fromString */1]("fixedVentureId"),
+              /* ventureId */PrimitiveTypes.VentureId[/* fromString */1]("venture-id"),
               /* ventureName */init[/* ventureName */1],
               /* creatorId */init[/* creatorId */2],
               /* creatorPubKey */init[/* creatorPubKey */3],
