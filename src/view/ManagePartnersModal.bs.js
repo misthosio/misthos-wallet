@@ -33,9 +33,12 @@ var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.j
 var MaterialUi_Paper = require("@jsiebern/bs-material-ui/src/MaterialUi_Paper.bs.js");
 var MaterialUi_Radio = require("@jsiebern/bs-material-ui/src/MaterialUi_Radio.bs.js");
 var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Stepper.bs.js");
+var MaterialUi_MenuItem = require("@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js");
 var MaterialUi_StepLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_StepLabel.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 var MaterialUi_StepContent = require("@jsiebern/bs-material-ui/src/MaterialUi_StepContent.bs.js");
+var Match = require("autosuggest-highlight/match");
+var Parse = require("autosuggest-highlight/parse");
 
 var component = ReasonReact.reducerComponent("ManagePartners");
 
@@ -105,8 +108,25 @@ function renderSuggestionsContainer(options) {
   return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_Paper.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[])), options.containerProps, options.children);
 }
 
-function renderSuggestion(suggested) {
-  return React.createElement("div", undefined, ViewCommon.text(suggested));
+function renderSuggestion(suggestion, vals) {
+  var query = vals.query;
+  var isHighlighted = vals.isHighlighted;
+  var parts = Parse(suggestion, Match(suggestion, query));
+  return ReasonReact.element(/* None */0, /* None */0, MaterialUi_MenuItem.make(/* None */0, /* Some */[/* `String */[
+                    -976970511,
+                    "div"
+                  ]], /* None */0, /* Some */[isHighlighted], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", undefined, Belt_Array.mapWithIndexU(parts, (function (index, part) {
+                              var match = part.highlight;
+                              if (match) {
+                                return React.createElement("span", {
+                                            key: String(index)
+                                          }, ViewCommon.text(part.text));
+                              } else {
+                                return React.createElement("strong", {
+                                            key: String(index)
+                                          }, ViewCommon.text(part.text));
+                              }
+                            })))]));
 }
 
 function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, _) {

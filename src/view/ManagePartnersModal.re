@@ -3,8 +3,6 @@ include ViewCommon;
 [@bs.module] external copy : string = "../assets/img/copy.svg";
 [@bs.val] external encodeURI : string => string = "";
 
-/* [@bs.val] external match : (string,string) => gcc */
-
 open PrimitiveTypes;
 
 module ViewData = ViewModel.ManagePartnersView;
@@ -95,31 +93,32 @@ let renderSuggestionsContainer =
     [|options##children|],
   );
 
-let renderSuggestion = suggested => <div> (suggested |> text) </div>;
-/* let renderSuggestion = (suggestion, vals) { */
-/*   let query = vals##query; */
-/*   let isHighlighted=vals##isHighlighted; */
-/*   const matches = match(suggestion.label, query); */
-/*   const parts = parse(suggestion.label, matches); */
+let renderSuggestion = (suggestion, vals) => {
+  let query = vals##query;
+  let isHighlighted = vals##isHighlighted;
+  let parts =
+    AutosuggestHighlight.(match(suggestion, query) |> parse(suggestion));
 
-/*   return ( */
-/*     <MenuItem selected={isHighlighted} component="div"> */
-/*     <div> */
-/*     {parts.map((part, index) => { */
-/*                                   return part.highlight ? ( */
-/*                                     <span key={String(index)} style={{ fontWeight: 300 }}> */
-/*                                     {part.text} */
-/*                                     </span> */
-/*                                   ) : ( */
-/*                                     <strong key={String(index)} style={{ fontWeight: 500 }}> */
-/*                                     {part.text} */
-/*                                     </strong> */
-/*                                   ); */
-/*                                 })} */
-/*     </div> */
-/*     </MenuItem> */
-/*   ); */
-/* } */
+  <MaterialUi.MenuItem selected=isHighlighted component=(`String("div"))>
+    <div>
+      (
+        parts
+        |. Belt.Array.mapWithIndexU((. index, part) =>
+             part##highlight ?
+               /* <span key=(string_of_int(index)) style={fontWeight: 300}> */
+               <span key=(string_of_int(index))>
+                 (part##text |> text)
+               </span> :
+               /* <strong key=(string_of_int(index)) style={fontWeight: 500}> */
+               <strong key=(string_of_int(index))>
+                 (part##text |> text)
+               </strong>
+           )
+        |> ReasonReact.array
+      )
+    </div>
+  </MaterialUi.MenuItem>;
+};
 
 let make =
     (
