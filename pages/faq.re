@@ -137,6 +137,51 @@ let make = _children => {
                   </Details>,
                 )
               )
+              (
+                panel(
+                  T.whatIsAProposalEndorsementQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.whatIsAProposalEndorsementAP1 |> paragraph)
+                    T.whatIsAProposalEndorsementAP2
+                    (T.whatIsAProposalEndorsementAP3 |> paragraph)
+                  </Details>,
+                )
+              )
+              (
+                panel(
+                  T.whoIsAPartnerQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.whoIsAPartnerA |> paragraph)
+                  </Details>,
+                )
+              )
+              (
+                panel(
+                  T.howAddRemovePartnerQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    T.howAddRemovePartnerAP1
+                    (T.howAddRemovePartnerAP2 |> paragraph)
+                  </Details>,
+                )
+              )
+              (
+                panel(
+                  T.howReceiveQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    T.howReceiveA
+                  </Details>,
+                )
+              )
+              (
+                panel(
+                  T.howPayoutQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.howPayoutAP1 |> paragraph)
+                    T.howPayoutAP2
+                    (T.howPayoutAP3 |> paragraph)
+                  </Details>,
+                )
+              )
             </ScrollList>
           </div>
         }

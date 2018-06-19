@@ -183,3 +183,83 @@ let howJoinVentureAP3 =
       |> text
     )
   </MTypography>;
+
+let whatIsAProposalEndorsementQ = "What is a proposal and an endorsement within Misthos?";
+let whatIsAProposalEndorsementAP1 = "Misthos works on a set of proposals and endorsements.";
+let whatIsAProposalEndorsementAP2 =
+  <MTypography gutterBottom=true variant=`Body1>
+    ("Here are the three types of proposals currently available:" |> text)
+    <ol>
+      <li> ("Propose a Payout" |> text) </li>
+      <li> ("Propose adding a Partner" |> text) </li>
+      <li> ("Propose removing a Partner" |> text) </li>
+    </ol>
+  </MTypography>;
+let whatIsAProposalEndorsementAP3 = "Each of these proposals require endorsements from the remaining partners to become accepted.";
+let whoIsAPartnerQ = "Who is a Partner?";
+let whoIsAPartnerA = "A Partner is an individual collaborator within a Venture and is a unique co-signer of the multisig wallet.
+";
+
+let howAddRemovePartnerQ = "How do I add or remove Partners within Misthos?";
+let howAddRemovePartnerAP1 =
+  <MTypography gutterBottom=true variant=`Body1>
+    ("In order to add a Partner to a Venture:" |> text)
+    <ol>
+      <li>
+        (
+          "Go to the main Venture view and click on \"Add or Remove Partners\"."
+          |> text
+        )
+      </li>
+      <li>
+        (
+          "A pop-up will appear. Here enter the Blockstack ID of the new Partner and click on \"Propose Partner\".
+            "
+          |> text
+        )
+      </li>
+      <li> ("Share the Venture URL with the added Partner." |> text) </li>
+    </ol>
+  </MTypography>;
+let howAddRemovePartnerAP2 = "In order to remove a Partner a remove Partner proposal needs to be submitted. This step requires enough existing Partners to endorse the proposal. See also the question on removing a Partner below.";
+
+let howReceiveQ = "How can I receive funds within Misthos?";
+let howReceiveA =
+  <MTypography gutterBottom=true variant=`Body1>
+    ("In order to receive funds:" |> text)
+    <ol>
+      <li>
+        ("Click on the \"Receive\" button on the main home screen." |> text)
+      </li>
+      <li>
+        (
+          "A pop-up will appear and create your with your \"Income Address\"."
+          |> text
+        )
+      </li>
+      <li>
+        (
+          "Use this address (either by copying the address or scanning the QR code) to receive funds."
+          |> text
+        )
+      </li>
+    </ol>
+  </MTypography>;
+
+let howPayoutQ = "How do payouts work within Misthos?";
+let howPayoutAP1 = "Any Partner can propose a payout within a Venture. As soon as there is more than one Partner, the funds are collectively controlled and all Partners need to unanimously agree to the payout.";
+let howPayoutAP2 =
+  <MTypography gutterBottom=true variant=`Body1>
+    (
+      "The payout process goes through the following steps within Misthos:"
+      |> text
+    )
+    <ol>
+      <li> ("Payout Proposal" |> text) </li>
+      <li> ("Payout Endorsement or Rejection" |> text) </li>
+      <li>
+        ("Payout transaction is submitted to the Bitcoin network" |> text)
+      </li>
+    </ol>
+  </MTypography>;
+let howPayoutAP3 = "The first two steps involving the proposal and endorsement are intrinsic to Misthos. The third step is extrinsic to Misthos and behaves the same as any transaction submitted to the Bitcoin network.";

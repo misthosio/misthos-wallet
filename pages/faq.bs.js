@@ -122,6 +122,37 @@ function make() {
                                                                     paragraph(FaqText.howJoinVentureAP1),
                                                                     paragraph(FaqText.howJoinVentureAP2),
                                                                     FaqText.howJoinVentureAP3
+                                                                  ]))),
+                                                      panel(FaqText.whatIsAProposalEndorsementQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    paragraph(FaqText.whatIsAProposalEndorsementAP1),
+                                                                    FaqText.whatIsAProposalEndorsementAP2,
+                                                                    paragraph(FaqText.whatIsAProposalEndorsementAP3)
+                                                                  ]))),
+                                                      panel(FaqText.whoIsAPartnerQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.whoIsAPartnerA)]))),
+                                                      panel(FaqText.howAddRemovePartnerQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    FaqText.howAddRemovePartnerAP1,
+                                                                    paragraph(FaqText.howAddRemovePartnerAP2)
+                                                                  ]))),
+                                                      panel(FaqText.howReceiveQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.howReceiveA]))),
+                                                      panel(FaqText.howPayoutQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    paragraph(FaqText.howPayoutAP1),
+                                                                    FaqText.howPayoutAP2,
+                                                                    paragraph(FaqText.howPayoutAP3)
                                                                   ])))
                                                     ])))], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))

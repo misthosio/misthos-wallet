@@ -68,6 +68,26 @@ var howJoinVentureAP3 = ReasonReact.element(/* None */0, /* None */0, MTypograph
                 /* [] */0
               ])], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Error joining Venture. Perhaps you have not been accepted yet, or if this was your first time logging in to Misthos, the Venture will become available after the inviting partner has logged in again.")]));
 
+var whatIsAProposalEndorsementAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+          ViewCommon.text("Here are the three types of proposals currently available:"),
+          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Propose a Payout")), React.createElement("li", undefined, ViewCommon.text("Propose adding a Partner")), React.createElement("li", undefined, ViewCommon.text("Propose removing a Partner")))
+        ]));
+
+var howAddRemovePartnerAP1 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+          ViewCommon.text("In order to add a Partner to a Venture:"),
+          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to the main Venture view and click on \"Add or Remove Partners\".")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear. Here enter the Blockstack ID of the new Partner and click on \"Propose Partner\".\n            ")), React.createElement("li", undefined, ViewCommon.text("Share the Venture URL with the added Partner.")))
+        ]));
+
+var howReceiveA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+          ViewCommon.text("In order to receive funds:"),
+          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Click on the \"Receive\" button on the main home screen.")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear and create your with your \"Income Address\".")), React.createElement("li", undefined, ViewCommon.text("Use this address (either by copying the address or scanning the QR code) to receive funds.")))
+        ]));
+
+var howPayoutAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+          ViewCommon.text("The payout process goes through the following steps within Misthos:"),
+          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Payout Proposal")), React.createElement("li", undefined, ViewCommon.text("Payout Endorsement or Rejection")), React.createElement("li", undefined, ViewCommon.text("Payout transaction is submitted to the Bitcoin network")))
+        ]));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -118,6 +138,28 @@ var howJoinVentureAP1 = "In order to join an existing Venture, a partner within 
 
 var howJoinVentureAP2 = "If the endorsement process is not yet complete i.e if all existing partners have not yet endorsed a proposed partner, then you will see the following error:";
 
+var whatIsAProposalEndorsementQ = "What is a proposal and an endorsement within Misthos?";
+
+var whatIsAProposalEndorsementAP1 = "Misthos works on a set of proposals and endorsements.";
+
+var whatIsAProposalEndorsementAP3 = "Each of these proposals require endorsements from the remaining partners to become accepted.";
+
+var whoIsAPartnerQ = "Who is a Partner?";
+
+var whoIsAPartnerA = "A Partner is an individual collaborator within a Venture and is a unique co-signer of the multisig wallet.\n";
+
+var howAddRemovePartnerQ = "How do I add or remove Partners within Misthos?";
+
+var howAddRemovePartnerAP2 = "In order to remove a Partner a remove Partner proposal needs to be submitted. This step requires enough existing Partners to endorse the proposal. See also the question on removing a Partner below.";
+
+var howReceiveQ = "How can I receive funds within Misthos?";
+
+var howPayoutQ = "How do payouts work within Misthos?";
+
+var howPayoutAP1 = "Any Partner can propose a payout within a Venture. As soon as there is more than one Partner, the funds are collectively controlled and all Partners need to unanimously agree to the payout.";
+
+var howPayoutAP3 = "The first two steps involving the proposal and endorsement are intrinsic to Misthos. The third step is extrinsic to Misthos and behaves the same as any transaction submitted to the Bitcoin network.";
+
 exports.text = text;
 exports.extractString = extractString;
 exports.whatIsMisthosQ = whatIsMisthosQ;
@@ -151,4 +193,19 @@ exports.howJoinVentureQ = howJoinVentureQ;
 exports.howJoinVentureAP1 = howJoinVentureAP1;
 exports.howJoinVentureAP2 = howJoinVentureAP2;
 exports.howJoinVentureAP3 = howJoinVentureAP3;
+exports.whatIsAProposalEndorsementQ = whatIsAProposalEndorsementQ;
+exports.whatIsAProposalEndorsementAP1 = whatIsAProposalEndorsementAP1;
+exports.whatIsAProposalEndorsementAP2 = whatIsAProposalEndorsementAP2;
+exports.whatIsAProposalEndorsementAP3 = whatIsAProposalEndorsementAP3;
+exports.whoIsAPartnerQ = whoIsAPartnerQ;
+exports.whoIsAPartnerA = whoIsAPartnerA;
+exports.howAddRemovePartnerQ = howAddRemovePartnerQ;
+exports.howAddRemovePartnerAP1 = howAddRemovePartnerAP1;
+exports.howAddRemovePartnerAP2 = howAddRemovePartnerAP2;
+exports.howReceiveQ = howReceiveQ;
+exports.howReceiveA = howReceiveA;
+exports.howPayoutQ = howPayoutQ;
+exports.howPayoutAP1 = howPayoutAP1;
+exports.howPayoutAP2 = howPayoutAP2;
+exports.howPayoutAP3 = howPayoutAP3;
 /* howCanATeamUseMisthosTodayA Not a pure module */
