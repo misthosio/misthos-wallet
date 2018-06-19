@@ -15,7 +15,7 @@ var MaterialUi_ExpansionPanel = require("@jsiebern/bs-material-ui/src/MaterialUi
 var MaterialUi_ExpansionPanelDetails = require("@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelDetails.bs.js");
 var MaterialUi_ExpansionPanelSummary = require("@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelSummary.bs.js");
 
-var component = ReasonReact.statelessComponent("frequentlyAskedQuestions");
+var component = ReasonReact.statelessComponent("faq");
 
 function line(data) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));

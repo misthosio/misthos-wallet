@@ -27,7 +27,7 @@ let make = (~onSignOut, ~index, ~selected=?, _children) => {
                   className=Styles.alignStart
                   variant=Flat
                   color=`Inherit
-                  href=(environment.webDomain ++ "/frequently_asked_questions")>
+                  href=(environment.webDomain ++ "/faq")>
                   "frequently asked questions"
                 </MButton>
                 <MButton
