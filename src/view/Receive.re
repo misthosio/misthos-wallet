@@ -55,7 +55,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
   render: ({send, state}) => {
     let warning =
       switch (Environment.get().network) {
-      | Testnet => Some(Text.Warnings.testnet)
+      | Testnet => Some(WarningsText.testnet)
       | _ => None
       };
 

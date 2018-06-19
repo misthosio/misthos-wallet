@@ -3,7 +3,6 @@
 
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
-var Text = require("../Text.bs.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
@@ -19,6 +18,7 @@ var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
+var WarningsText = require("./text/WarningsText.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 
 var component = ReasonReact.reducerComponent("Receive");
@@ -73,7 +73,7 @@ function make(commands, _) {
               var send = param[/* send */3];
               var state = param[/* state */1];
               var match = Environment.get(/* () */0)[/* network */5];
-              var warning = match !== 1 ? /* None */0 : /* Some */[Text.Warnings[/* testnet */0]];
+              var warning = match !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
               var copyButton = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
                           return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
                                       "data-clipboard-text": address
