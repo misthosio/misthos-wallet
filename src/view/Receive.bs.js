@@ -81,7 +81,6 @@ function make(commands, _) {
                         }), state[/* address */0]));
               var match$1 = state[/* address */0];
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Receive BTC")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
-<<<<<<< 32579dbf52850f4f8dbf1d1cf536dbb1f40fd947
                                     className: ScrollList.containerStyles + (" " + alignCenter)
                                   }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[React.createElement("div", {
                                                   className: alignCenter
@@ -94,18 +93,6 @@ function make(commands, _) {
                                                         ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                               return Curry._1(send, /* GetIncomeAddress */0);
                                                             })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))])))], /* None */0, warning, /* array */[]));
-=======
-                                    className: container
-                                  }, match$1 ? React.createElement("img", {
-                                          height: "250px",
-                                          src: "https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + match$1[0]
-                                        }) : ReasonReact.element(/* None */0, /* None */0, Spinner.make("Generating new address", /* Some */[spinner], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                            ViewCommon.text(Js_option.getWithDefault("", state[/* address */0])),
-                                            copyButton
-                                          ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
-                                                return Curry._1(send, /* GetIncomeAddress */0);
-                                              })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Generate new income address")])))], /* None */0, warning, /* array */[]));
->>>>>>> Blank target for FAQ in sidebar
             }),
           /* initialState */(function () {
               return /* record */[/* address : None */0];
