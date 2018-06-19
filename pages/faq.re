@@ -7,7 +7,7 @@ let component = ReasonReact.statelessComponent("faq");
 let line = data => <MTypography variant=`Body1> (data |> text) </MTypography>;
 
 let paragraph = data =>
-  <MTypography variant=`Body1> (data |> text) </MTypography>;
+  <MTypography gutterBottom=true variant=`Body1> (data |> text) </MTypography>;
 
 let environment = Environment.get();
 
@@ -28,7 +28,8 @@ let make = _children => {
                       (T.whatIsMisthosQ |> text)
                     </MTypography>
                   </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
+                  <ExpansionPanelDetails
+                    className=Css.(style([flexDirection(column)]))>
                     (T.whatIsMisthosAP1 |> paragraph)
                     (T.whatIsMisthosAP2 |> paragraph)
                   </ExpansionPanelDetails>
