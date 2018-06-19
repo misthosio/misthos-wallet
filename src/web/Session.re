@@ -63,6 +63,7 @@ let getCurrentSession = () =>
 
 let signOut = () => {
   Blockstack.signUserOut();
+  Location.replace(Environment.get().webDomain);
   NotLoggedIn;
 };
 

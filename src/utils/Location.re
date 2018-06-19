@@ -5,3 +5,5 @@
 [@bs.val] external pathname : string = "location.pathname";
 
 [@bs.val] external search : string = "location.search";
+
+[@bs.val] external replace : string => unit = "location.replace";

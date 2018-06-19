@@ -67,11 +67,12 @@ function getCurrentSession() {
 
 function signOut() {
   Blockstack.signUserOut();
+  location.replace(Environment.get(/* () */0)[/* webDomain */3]);
   return /* NotLoggedIn */2;
 }
 
 function signIn() {
-  Blockstack.signUserOut();
+  signOut(/* () */0);
   var transitKey = KeysJs.makeECPrivateKey();
   var environment = Environment.get(/* () */0);
   Cookie.set("transitKey", transitKey, environment[/* cookieDomain */4]);
