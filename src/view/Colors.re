@@ -62,6 +62,8 @@ let gradientAqua =
 
 let uGradientAqua = {j|linear-gradient(75deg, #$uRobinsEgg, #$uMisthosTeal 49%, #$uDeepAqua)|j};
 
+let uGradientAquaLight = {j|linear-gradient(90deg, #$uRobinsEgg, #$uMisthosTeal 49%, #$uDeepAqua)|j};
+
 let gradientOrange =
   linearGradient(deg(75), [(0, strongPink), (100, reddishOrange)]);
 

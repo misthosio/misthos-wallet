@@ -5,7 +5,6 @@ var Css = require("bs-css/src/Css.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
-var Footer = require("./Footer.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var BreakPoints = require("./BreakPoints.bs.js");
@@ -171,7 +170,7 @@ function make(onSignIn, _) {
                                                       /* [] */0
                                                     ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.blockStack])),
                                       ViewCommon.text("Sign In with Blockstack")
-                                    ]))), ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[])));
+                                    ]))));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

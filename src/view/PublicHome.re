@@ -104,7 +104,6 @@ let make = (~onSignIn, _children) => {
             ("Sign In with Blockstack" |> text)
           </MButton>
         </div>
-        <Footer />
       </div>
     ),
 };
