@@ -113,6 +113,11 @@ var suggestion = Css.style(/* :: */[
       /* [] */0
     ]);
 
+var suggestionItem = Css.style(/* :: */[
+      Css.fontSize(Css.px(14)),
+      /* [] */0
+    ]);
+
 var suggestionsList = Css.style(/* :: */[
       Css.margin(Css.px(0)),
       /* :: */[
@@ -132,6 +137,7 @@ var Styles = /* module */[
   /* autoCompleteContainer */autoCompleteContainer,
   /* suggestionsContainerOpen */suggestionsContainerOpen,
   /* suggestion */suggestion,
+  /* suggestionItem */suggestionItem,
   /* suggestionsList */suggestionsList
 ];
 
@@ -163,18 +169,26 @@ function renderSuggestion(suggestion, vals) {
   var query = vals.query;
   var isHighlighted = vals.isHighlighted;
   var parts = Parse(suggestion, Match(suggestion, query));
-  return ReasonReact.element(/* None */0, /* None */0, MaterialUi_MenuItem.make(/* None */0, /* Some */[/* `String */[
+  return ReasonReact.element(/* None */0, /* None */0, MaterialUi_MenuItem.make(/* Some */[suggestionItem], /* Some */[/* `String */[
                     -976970511,
                     "div"
                   ]], /* None */0, /* Some */[isHighlighted], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", undefined, Belt_Array.mapWithIndexU(parts, (function (index, part) {
                               var match = part.highlight;
                               if (match) {
                                 return React.createElement("span", {
-                                            key: String(index)
+                                            key: String(index),
+                                            className: Css.style(/* :: */[
+                                                  Css.fontWeight(600),
+                                                  /* [] */0
+                                                ])
                                           }, ViewCommon.text(part.text));
                               } else {
                                 return React.createElement("strong", {
-                                            key: String(index)
+                                            key: String(index),
+                                            className: Css.style(/* :: */[
+                                                  Css.fontWeight(300),
+                                                  /* [] */0
+                                                ])
                                           }, ViewCommon.text(part.text));
                               }
                             })))]));

@@ -59,6 +59,7 @@ module Styles = {
     ]);
 
   let suggestion = style([display(block)]);
+  let suggestionItem = style([fontSize(px(14))]);
   let suggestionsList =
     style([margin(px(0)), padding(px(0)), listStyleType(none)]);
 };
@@ -113,18 +114,23 @@ let renderSuggestion = (suggestion, vals) => {
   let parts =
     AutosuggestHighlight.(match(suggestion, query) |> parse(suggestion));
 
-  <MaterialUi.MenuItem selected=isHighlighted component=(`String("div"))>
+  <MaterialUi.MenuItem
+    className=Styles.suggestionItem
+    selected=isHighlighted
+    component=(`String("div"))>
     <div>
       (
         parts
         |. Belt.Array.mapWithIndexU((. index, part) =>
              part##highlight ?
-               /* <span key=(string_of_int(index)) style={fontWeight: 300}> */
-               <span key=(string_of_int(index))>
+               <span
+                 className=Css.(style([fontWeight(600)]))
+                 key=(string_of_int(index))>
                  (part##text |> text)
                </span> :
-               /* <strong key=(string_of_int(index)) style={fontWeight: 500}> */
-               <strong key=(string_of_int(index))>
+               <strong
+                 className=Css.(style([fontWeight(300)]))
+                 key=(string_of_int(index))>
                  (part##text |> text)
                </strong>
            )
