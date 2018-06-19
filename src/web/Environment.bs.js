@@ -11,6 +11,15 @@ function get() {
     hostname = "server";
   }
   switch (hostname) {
+    case "app.misthos.io" : 
+        return /* record */[
+                /* redirectURI */"https://app.misthos.io/",
+                /* manifestURI */"https://app.misthos.io/manifest.json",
+                /* appDomain */"https://app.misthos.io",
+                /* webDomain */"https://www.misthos.io",
+                /* cookieDomain */"misthos.io",
+                /* network : Mainnet */2
+              ];
     case "localhost" : 
         return /* record */[
                 /* redirectURI */"http://localhost:3000/",
@@ -41,23 +50,14 @@ function get() {
               ];
     case "testnet.misthos.io" : 
     case "web-testnet.misthos.io" : 
+    case "www.misthos.io" : 
         return /* record */[
                 /* redirectURI */"https://testnet.misthos.io/",
                 /* manifestURI */"https://testnet.misthos.io/manifest.json",
                 /* appDomain */"https://testnet.misthos.io",
-                /* webDomain */"https://web-testnet.misthos.io",
-                /* cookieDomain */"misthos.io",
-                /* network : Testnet */1
-              ];
-    case "app.misthos.io" : 
-    case "www.misthos.io" : 
-        return /* record */[
-                /* redirectURI */"https://app.misthos.io/",
-                /* manifestURI */"https://app.misthos.io/manifest.json",
-                /* appDomain */"https://app.misthos.io",
                 /* webDomain */"https://www.misthos.io",
                 /* cookieDomain */"misthos.io",
-                /* network : Mainnet */2
+                /* network : Testnet */1
               ];
     default:
       return /* record */[
