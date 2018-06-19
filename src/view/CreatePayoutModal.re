@@ -281,7 +281,7 @@ let make =
     ) => {
     let warning =
       switch (Environment.get().network) {
-      | Testnet => Some(Text.Warnings.testnet)
+      | Testnet => Some(WarningsText.testnet)
       | _ => None
       };
 

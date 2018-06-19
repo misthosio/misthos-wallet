@@ -11,7 +11,7 @@ let make = (~viewData: ViewData.t, _children) => {
   render: _ => {
     let warning =
       switch (Environment.get().network) {
-      | Testnet => Some(Text.Warnings.testnet)
+      | Testnet => Some(WarningsText.testnet)
       | _ => None
       };
 

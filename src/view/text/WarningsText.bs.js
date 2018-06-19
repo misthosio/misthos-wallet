@@ -2,7 +2,7 @@
 'use strict';
 
 var React = require("react");
-var ViewCommon = require("./view/ViewCommon.bs.js");
+var ViewCommon = require("../ViewCommon.bs.js");
 
 var testnet = /* array */[
   ViewCommon.text("Warning! This is the testnet version of Misthos.  Get Testnet coins "),
@@ -18,13 +18,11 @@ var testnet = /* array */[
   ViewCommon.text(".")
 ];
 
-var Warnings = /* module */[/* testnet */testnet];
-
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
 exports.text = text;
 exports.extractString = extractString;
-exports.Warnings = Warnings;
+exports.testnet = testnet;
 /* testnet Not a pure module */
