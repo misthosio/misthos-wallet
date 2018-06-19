@@ -27,6 +27,7 @@ var Autosuggest = require("../ffi/Autosuggest.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var ProposeButton = require("./components/ProposeButton.bs.js");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.js");
@@ -196,7 +197,7 @@ function renderSuggestion(suggestion, vals) {
 
 function filterSuggestions(prospectId, suggestions) {
   var inputLength = prospectId.length;
-  var match = inputLength === 0;
+  var match = inputLength < 3;
   if (match) {
     return /* array */[];
   } else {
@@ -204,6 +205,37 @@ function filterSuggestions(prospectId, suggestions) {
                   return s.slice(0, inputLength) === prospectId;
                 }));
   }
+}
+
+var addSuggestions = Belt_MapString.set;
+
+function getSuggestions(suggestions, _query) {
+  while(true) {
+    var query = _query;
+    var match = Belt_MapString.get(suggestions, query);
+    if (query.length < 3) {
+      return /* array */[];
+    } else if (match) {
+      return match[0];
+    } else {
+      _query = query.substring(0, query.length - 1 | 0);
+      continue ;
+    }
+  };
+}
+
+function onSuggestionsFetchRequested(send, suggestions, arg) {
+  var query = arg.value;
+  if (arg.reason === "input-changed") {
+    Curry._1(send, /* UpdateDisplayedSuggestions */Block.__(1, [query]));
+  }
+  Blockstack.fetchIds(/* Some */[getSuggestions(suggestions, query)], arg.value).then((function (param) {
+          return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [
+                            param[0],
+                            param[1]
+                          ])));
+        }));
+  return /* () */0;
 }
 
 function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, _) {
@@ -218,7 +250,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                       /* canSubmitProposal */state[/* canSubmitProposal */1],
                       /* removeInputFrozen */state[/* removeInputFrozen */2],
                       /* inputs */state[/* inputs */3],
-                      /* suggestions */state[/* suggestions */4]
+                      /* suggestions */state[/* suggestions */4],
+                      /* displayedSuggestions */state[/* displayedSuggestions */5]
                     ];
             }),
           /* didMount */component[/* didMount */4],
@@ -240,9 +273,9 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                           737456202,
                                                           Caml_obj.caml_equal(inputs[/* removePartnerId */1], /* Some */[partner[/* userId */0]])
                                                         ]], /* None */0, /* Some */[/* Primary */-791844958], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (_, _$1) {
-                                                            return Curry._1(send, /* SelectRemovePartner */Block.__(2, [partner[/* userId */0]]));
+                                                            return Curry._1(send, /* SelectRemovePartner */Block.__(3, [partner[/* userId */0]]));
                                                           })], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))], /* None */0, /* Some */[(function () {
-                                                  return Curry._1(send, /* SelectRemovePartner */Block.__(2, [partner[/* userId */0]]));
+                                                  return Curry._1(send, /* SelectRemovePartner */Block.__(3, [partner[/* userId */0]]));
                                                 })], /* array */[]))];
                           } else {
                             return /* None */0;
@@ -297,6 +330,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var copyButton = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
                     "data-clipboard-text": viewData[/* joinVentureUrl */3]
                   });
+              var partial_arg = state[/* suggestions */4];
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Addition Proposal")], /* Some */[ViewCommon.text("Removal Proposal")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
                                               3654863,
                                               activeStep
@@ -312,11 +346,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                           suggestionsContainerOpen: suggestionsContainerOpen,
                                                                           suggestion: suggestion,
                                                                           suggestionsList: suggestionsList
-                                                                        }, filterSuggestions(inputs[/* prospectId */0], state[/* suggestions */4]), (function (arg) {
-                                                                            Blockstack.fetchIds(arg.value).then((function (s) {
-                                                                                    return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [s])));
-                                                                                  }));
-                                                                            return /* () */0;
+                                                                        }, state[/* displayedSuggestions */5], (function (param) {
+                                                                            return onSuggestionsFetchRequested(send, partial_arg, param);
                                                                           }), (function () {
                                                                             return Curry._1(send, /* ClearSuggestions */0);
                                                                           }), (function (s) {
@@ -326,7 +357,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                           }), renderSuggestion, renderSuggestionsContainer, renderInputComponent, {
                                                                           value: inputs[/* prospectId */0],
                                                                           onChange: (function (_, change) {
-                                                                              return Curry._1(send, /* ChangeNewPartnerId */Block.__(1, [change.newValue]));
+                                                                              return Curry._1(send, /* ChangeNewPartnerId */Block.__(2, [change.newValue]));
                                                                             })
                                                                         }, /* array */[])),
                                                                 ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", (function () {
@@ -369,7 +400,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                         /* prospectId */"",
                         /* removePartnerId : None */0
                       ],
-                      /* suggestions : array */[]
+                      /* suggestions */Belt_MapString.empty,
+                      /* displayedSuggestions : array */[]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -382,7 +414,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
                                   /* removeInputFrozen */state[/* removeInputFrozen */2],
                                   /* inputs */state[/* inputs */3],
-                                  /* suggestions : array */[]
+                                  /* suggestions */state[/* suggestions */4],
+                                  /* displayedSuggestions : array */[]
                                 ]]);
                   case 1 : 
                       var prospectId = $$String.trim(state[/* inputs */3][/* prospectId */0]);
@@ -405,7 +438,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                     /* prospectId */init[/* prospectId */0],
                                     /* removePartnerId : None */0
                                   ],
-                                  /* suggestions */state[/* suggestions */4]
+                                  /* suggestions */state[/* suggestions */4],
+                                  /* displayedSuggestions */state[/* displayedSuggestions */5]
                                 ]]);
                   case 3 : 
                       var init$1 = state[/* inputs */3];
@@ -418,7 +452,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                     /* prospectId */"",
                                     /* removePartnerId */init$1[/* removePartnerId */1]
                                   ],
-                                  /* suggestions */state[/* suggestions */4]
+                                  /* suggestions */state[/* suggestions */4],
+                                  /* displayedSuggestions */state[/* displayedSuggestions */5]
                                 ],
                                 (function () {
                                     return Curry._1(proposePartnerCmds[/* reset */0], /* () */0);
@@ -430,7 +465,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
                                   /* removeInputFrozen */true,
                                   /* inputs */state[/* inputs */3],
-                                  /* suggestions */state[/* suggestions */4]
+                                  /* suggestions */state[/* suggestions */4],
+                                  /* displayedSuggestions */state[/* displayedSuggestions */5]
                                 ]]);
                   case 5 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -439,7 +475,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
                                   /* removeInputFrozen */false,
                                   /* inputs */state[/* inputs */3],
-                                  /* suggestions */state[/* suggestions */4]
+                                  /* suggestions */state[/* suggestions */4],
+                                  /* displayedSuggestions */state[/* displayedSuggestions */5]
                                 ],
                                 (function () {
                                     return Curry._1(removePartnerCmds[/* reset */0], /* () */0);
@@ -450,14 +487,26 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               } else {
                 switch (action.tag | 0) {
                   case 0 : 
+                      var suggestions = Belt_MapString.set(state[/* suggestions */4], action[0], action[1]);
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],
                                   /* removeInputFrozen */state[/* removeInputFrozen */2],
                                   /* inputs */state[/* inputs */3],
-                                  /* suggestions */filterSuggestions(state[/* inputs */3][/* prospectId */0], action[0])
+                                  /* suggestions */suggestions,
+                                  /* displayedSuggestions */filterSuggestions(state[/* inputs */3][/* prospectId */0], getSuggestions(suggestions, state[/* inputs */3][/* prospectId */0]))
                                 ]]);
                   case 1 : 
+                      var value = action[0];
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* viewData */state[/* viewData */0],
+                                  /* canSubmitProposal */state[/* canSubmitProposal */1],
+                                  /* removeInputFrozen */state[/* removeInputFrozen */2],
+                                  /* inputs */state[/* inputs */3],
+                                  /* suggestions */state[/* suggestions */4],
+                                  /* displayedSuggestions */filterSuggestions(value, getSuggestions(state[/* suggestions */4], value))
+                                ]]);
+                  case 2 : 
                       var text = action[0];
                       var init$2 = state[/* inputs */3];
                       return /* Update */Block.__(0, [/* record */[
@@ -468,9 +517,10 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                     /* prospectId */text,
                                     /* removePartnerId */init$2[/* removePartnerId */1]
                                   ],
-                                  /* suggestions */state[/* suggestions */4]
+                                  /* suggestions */state[/* suggestions */4],
+                                  /* displayedSuggestions */state[/* displayedSuggestions */5]
                                 ]]);
-                  case 2 : 
+                  case 3 : 
                       var match = state[/* removeInputFrozen */2];
                       var exit = 0;
                       if (typeof removeCmdStatus === "number") {
@@ -501,7 +551,8 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                       /* prospectId */init$3[/* prospectId */0],
                                       /* removePartnerId : Some */[action[0]]
                                     ],
-                                    /* suggestions */state[/* suggestions */4]
+                                    /* suggestions */state[/* suggestions */4],
+                                    /* displayedSuggestions */state[/* displayedSuggestions */5]
                                   ],
                                   (function () {
                                       return Curry._1(removePartnerCmds[/* reset */0], /* () */0);
@@ -547,5 +598,8 @@ exports.renderInputComponent = renderInputComponent;
 exports.renderSuggestionsContainer = renderSuggestionsContainer;
 exports.renderSuggestion = renderSuggestion;
 exports.filterSuggestions = filterSuggestions;
+exports.addSuggestions = addSuggestions;
+exports.getSuggestions = getSuggestions;
+exports.onSuggestionsFetchRequested = onSuggestionsFetchRequested;
 exports.make = make;
 /* component Not a pure module */

@@ -18,18 +18,30 @@ function getFileFromUserAndDecrypt(file, username) {
             });
 }
 
-function fetchIds(beginning) {
+function fetchIds($staropt$star, beginning) {
+  var current = $staropt$star ? $staropt$star[0] : /* array */[];
   if (beginning === "") {
-    return Promise.resolve(/* array */[]);
+    return Promise.resolve(/* tuple */[
+                "",
+                /* array */[]
+              ]);
+  } else if (beginning.includes(".")) {
+    return Promise.resolve(/* tuple */[
+                beginning,
+                current
+              ]);
   } else {
     return fetch("https://core.blockstack.org/v1/search?query=" + beginning).then((function (prim) {
                     return prim.json();
                   })).then((function (res) {
-                  return Promise.resolve(Json_decode.field("results", (function (param) {
-                                    return Json_decode.array((function (user) {
-                                                  return Json_decode.field("fullyQualifiedName", Json_decode.string, user);
-                                                }), param);
-                                  }), res));
+                  return Promise.resolve(/* tuple */[
+                              beginning,
+                              Json_decode.field("results", (function (param) {
+                                      return Json_decode.array((function (user) {
+                                                    return Json_decode.field("fullyQualifiedName", Json_decode.string, user);
+                                                  }), param);
+                                    }), res)
+                            ]);
                 }));
   }
 }

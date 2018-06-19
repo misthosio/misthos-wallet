@@ -16,11 +16,13 @@ type state = {
   canSubmitProposal: bool,
   removeInputFrozen: bool,
   inputs,
-  suggestions: array(string),
+  suggestions: Belt.Map.String.t(array(string)),
+  displayedSuggestions: array(string),
 };
 
 type action =
-  | UpdateSuggestions(array(string))
+  | UpdateSuggestions(string, array(string))
+  | UpdateDisplayedSuggestions(string)
   | ClearSuggestions
   | ChangeNewPartnerId(string)
   | ProposePartner
@@ -142,13 +144,45 @@ let renderSuggestion = (suggestion, vals) => {
 
 let filterSuggestions = (prospectId, suggestions) => {
   let inputLength = prospectId |> Js.String.length;
-  inputLength == 0 ?
+  inputLength < 3 ?
     [||] :
     suggestions
     |. Belt.Array.keepU((. s) =>
          s |> Js.String.slice(~from=0, ~to_=inputLength) == prospectId
        );
 };
+
+let addSuggestions = (suggestionsMap, query, suggestions) =>
+  Belt.(suggestionsMap |. Map.String.set(query, suggestions));
+let rec getSuggestions = (suggestions, query) =>
+  Belt.(
+    switch (query, suggestions |. Map.String.get(query)) {
+    | (query, _) when query |> Js.String.length < 3 => [||]
+    | (_, Some(suggestions)) => suggestions
+    | (query, None) =>
+      getSuggestions(
+        suggestions,
+        query
+        |> Js.String.substring(~from=0, ~to_=Js.String.length(query) - 1),
+      )
+    }
+  );
+
+let onSuggestionsFetchRequested = (send, suggestions, arg) => {
+  let query = arg##value;
+  if (arg##reason == "input-changed") {
+    send(UpdateDisplayedSuggestions(query));
+  };
+  Blockstack.fetchIds(
+    ~current=getSuggestions(suggestions, query),
+    arg##value,
+  )
+  |> Js.Promise.then_(((query, s)) =>
+       send(UpdateSuggestions(query, s)) |> Js.Promise.resolve
+     )
+  |> ignore;
+};
+
 let make =
     (
       ~viewData: ViewData.t,
@@ -167,7 +201,8 @@ let make =
     removeInputFrozen: false,
     canSubmitProposal: false,
     viewData,
-    suggestions: [||],
+    suggestions: Belt.Map.String.empty,
+    displayedSuggestions: [||],
   },
   willReceiveProps: ({state}) => {...state, viewData},
   subscriptions: _ => [
@@ -178,12 +213,26 @@ let make =
   ],
   reducer: (action, state) =>
     switch (action) {
-    | UpdateSuggestions(suggestions) =>
+    | UpdateSuggestions(query, suggestions) =>
+      let suggestions = addSuggestions(state.suggestions, query, suggestions);
       ReasonReact.Update({
         ...state,
-        suggestions: filterSuggestions(state.inputs.prospectId, suggestions),
+        suggestions,
+        displayedSuggestions:
+          filterSuggestions(
+            state.inputs.prospectId,
+            getSuggestions(suggestions, state.inputs.prospectId),
+          ),
+      });
+    | UpdateDisplayedSuggestions(value) =>
+      ReasonReact.Update({
+        ...state,
+        displayedSuggestions:
+          filterSuggestions(value, getSuggestions(state.suggestions, value)),
       })
-    | ClearSuggestions => ReasonReact.Update({...state, suggestions: [||]})
+
+    | ClearSuggestions =>
+      ReasonReact.Update({...state, displayedSuggestions: [||]})
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({
         ...state,
@@ -358,18 +407,10 @@ let make =
                       "suggestion": Styles.suggestion,
                       "suggestionsList": Styles.suggestionsList,
                     }
-                    suggestions=(
-                      state.suggestions
-                      |> filterSuggestions(inputs.prospectId)
-                    )
+                    suggestions=state.displayedSuggestions
                     getSuggestionValue=(s => s)
                     onSuggestionsFetchRequested=(
-                      arg =>
-                        Blockstack.fetchIds(arg##value)
-                        |> Js.Promise.then_(s =>
-                             send(UpdateSuggestions(s)) |> Js.Promise.resolve
-                           )
-                        |> ignore
+                      onSuggestionsFetchRequested(send, state.suggestions)
                     )
                     shouldRenderSuggestions=(
                       value => Js.String.trim(value) |> Js.String.length > 2
