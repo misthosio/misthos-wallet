@@ -207,7 +207,13 @@ function filterSuggestions(prospectId, suggestions) {
   }
 }
 
-var addSuggestions = Belt_MapString.set;
+function addSuggestions(suggestionsMap, query, suggestions) {
+  if (suggestions.length !== 0) {
+    return Belt_MapString.set(suggestionsMap, query, suggestions);
+  } else {
+    return suggestionsMap;
+  }
+}
 
 function getSuggestions(suggestions, _query) {
   while(true) {
@@ -487,7 +493,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               } else {
                 switch (action.tag | 0) {
                   case 0 : 
-                      var suggestions = Belt_MapString.set(state[/* suggestions */4], action[0], action[1]);
+                      var suggestions = addSuggestions(state[/* suggestions */4], action[0], action[1]);
                       return /* Update */Block.__(0, [/* record */[
                                   /* viewData */state[/* viewData */0],
                                   /* canSubmitProposal */state[/* canSubmitProposal */1],

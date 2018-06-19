@@ -153,7 +153,10 @@ let filterSuggestions = (prospectId, suggestions) => {
 };
 
 let addSuggestions = (suggestionsMap, query, suggestions) =>
-  Belt.(suggestionsMap |. Map.String.set(query, suggestions));
+  switch (suggestions) {
+  | [||] => suggestionsMap
+  | suggestions => Belt.(suggestionsMap |. Map.String.set(query, suggestions))
+  };
 let rec getSuggestions = (suggestions, query) =>
   Belt.(
     switch (query, suggestions |. Map.String.get(query)) {
