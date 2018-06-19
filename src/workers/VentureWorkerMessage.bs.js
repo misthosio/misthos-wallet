@@ -130,6 +130,14 @@ function encodeError(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
+                      "UserIdDoesNotExist"
+                    ],
+                    /* [] */0
+                  ]);
+    case 6 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
                       "CouldNotPersistVenture"
                     ],
                     /* [] */0
@@ -146,13 +154,15 @@ function decodeError(raw) {
     case "CouldNotLoadVenture" : 
         return /* CouldNotLoadVenture */1;
     case "CouldNotPersistVenture" : 
-        return /* CouldNotPersistVenture */5;
+        return /* CouldNotPersistVenture */6;
     case "MaxPartnersReached" : 
         return /* MaxPartnersReached */2;
     case "PartnerAlreadyExists" : 
         return /* PartnerAlreadyExists */3;
     case "PartnerAlreadyProposed" : 
         return /* PartnerAlreadyProposed */4;
+    case "UserIdDoesNotExist" : 
+        return /* UserIdDoesNotExist */5;
     default:
       throw [
             UnknownMessage,

@@ -86,6 +86,10 @@ external encryptECIES : (~publicKey: string, string) => Js.Json.t = "";
 [@bs.module "blockstack/lib/encryption.js"]
 external decryptECIES : (~privateKey: string, Js.Json.t) => string = "";
 
+type profile;
+[@bs.module "blockstack"]
+external lookupProfile : string => Js.Promise.t(profile) = "";
+
 let fetchIds = (~current=[||], beginning) =>
   Js.Promise.(
     switch (beginning) {

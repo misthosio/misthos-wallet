@@ -361,6 +361,14 @@ module Handle = {
                    );
                    venture |> resolve;
                  }
+               | UserIdDoesNotExist => {
+                   Notify.cmdError(
+                     ventureId,
+                     correlationId,
+                     UserIdDoesNotExist,
+                   );
+                   venture |> resolve;
+                 }
                | CouldNotPersist(_err) => {
                    Notify.cmdError(
                      ventureId,

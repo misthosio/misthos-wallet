@@ -424,6 +424,7 @@ module Cmd = {
       | MaxPartnersReached
       | ProposalAlreadyExists
       | PartnerAlreadyExists
+      | UserIdDoesNotExist
       | CouldNotPersist(Js.Promise.error);
     let exec = (~prospectId, {session, state} as venture) => {
       logMessage("Executing 'ProposePartner' command");
@@ -435,7 +436,8 @@ module Cmd = {
         MaxPartnersReached |> Js.Promise.resolve;
       } else {
         Js.Promise.(
-          UserInfo.Public.read(~blockstackId=prospectId)
+          Blockstack.lookupProfile(prospectId |> UserId.toString)
+          |> then_(_ => UserInfo.Public.read(~blockstackId=prospectId))
           |> then_(
                fun
                | UserInfo.Public.NotFound => None |> resolve
@@ -494,6 +496,7 @@ module Cmd = {
                  ProposalAlreadyExists |> resolve;
                };
              })
+          |> catch(_ => UserIdDoesNotExist |> resolve)
         );
       };
     };

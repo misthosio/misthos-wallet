@@ -505,43 +505,47 @@ function exec$3(prospectId, venture) {
   } else if (Belt_Set.size(Venture__State.currentPartners(state)) >= 12) {
     return Promise.resolve(/* MaxPartnersReached */0);
   } else {
-    return UserInfo.Public[/* read */4](prospectId).then((function (param) {
-                    if (param) {
-                      return Promise.resolve(/* Some */[param[0][/* appPubKey */0]]);
-                    } else {
-                      return Promise.resolve(/* None */0);
-                    }
-                  })).then((function (prospectPubKey) {
-                  var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(prospectPubKey, Venture__State.currentPartners(state), session[/* userId */0], prospectId, Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state), /* () */0));
-                  if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
-                    var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
-                    return persist(/* None */0, applyMany(/* None */0, venture)(/* :: */[
-                                      /* PartnerProposed */Block.__(1, [partnerProposed]),
-                                      /* :: */[
-                                        Event.makePartnerEndorsed(partnerProposed[/* processId */0], session[/* userId */0]),
+    return Blockstack$1.lookupProfile(PrimitiveTypes.UserId[/* toString */0](prospectId)).then((function () {
+                        return UserInfo.Public[/* read */4](prospectId);
+                      })).then((function (param) {
+                      if (param) {
+                        return Promise.resolve(/* Some */[param[0][/* appPubKey */0]]);
+                      } else {
+                        return Promise.resolve(/* None */0);
+                      }
+                    })).then((function (prospectPubKey) {
+                    var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(prospectPubKey, Venture__State.currentPartners(state), session[/* userId */0], prospectId, Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state), /* () */0));
+                    if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
+                      var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
+                      return persist(/* None */0, applyMany(/* None */0, venture)(/* :: */[
+                                        /* PartnerProposed */Block.__(1, [partnerProposed]),
                                         /* :: */[
-                                          /* CustodianProposed */Block.__(16, [custodianProposal]),
+                                          Event.makePartnerEndorsed(partnerProposed[/* processId */0], session[/* userId */0]),
                                           /* :: */[
-                                            Event.makeCustodianEndorsed(custodianProposal[/* processId */0], session[/* userId */0]),
-                                            /* [] */0
+                                            /* CustodianProposed */Block.__(16, [custodianProposal]),
+                                            /* :: */[
+                                              Event.makeCustodianEndorsed(custodianProposal[/* processId */0], session[/* userId */0]),
+                                              /* [] */0
+                                            ]
                                           ]
                                         ]
-                                      ]
-                                    ])).then((function (param) {
-                                  if (param.tag) {
-                                    return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
-                                  } else {
-                                    var match = param[0];
-                                    return Promise.resolve(/* Ok */Block.__(0, [
-                                                  partnerProposed[/* processId */0],
-                                                  match[0],
-                                                  match[1]
-                                                ]));
-                                  }
-                                }));
-                  } else {
-                    return Promise.resolve(/* ProposalAlreadyExists */1);
-                  }
+                                      ])).then((function (param) {
+                                    if (param.tag) {
+                                      return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
+                                    } else {
+                                      var match = param[0];
+                                      return Promise.resolve(/* Ok */Block.__(0, [
+                                                    partnerProposed[/* processId */0],
+                                                    match[0],
+                                                    match[1]
+                                                  ]));
+                                    }
+                                  }));
+                    } else {
+                      return Promise.resolve(/* ProposalAlreadyExists */1);
+                    }
+                  })).catch((function () {
+                  return Promise.resolve(/* UserIdDoesNotExist */3);
                 }));
   }
 }
