@@ -1,6 +1,5 @@
 include ViewCommon;
 
-[@bs.module] external copy : string = "../assets/img/copy.svg";
 [@bs.val] external encodeURI : string => string = "";
 
 open PrimitiveTypes;
@@ -17,9 +16,14 @@ type state = {
   canSubmitProposal: bool,
   removeInputFrozen: bool,
   inputs,
+  suggestions: Belt.Map.String.t(array(string)),
+  displayedSuggestions: array(string),
 };
 
 type action =
+  | UpdateSuggestions(string, array(string))
+  | UpdateDisplayedSuggestions(string)
+  | ClearSuggestions
   | ChangeNewPartnerId(string)
   | ProposePartner
   | SelectRemovePartner(UserId.t)
@@ -34,6 +38,8 @@ module Styles = {
   open Css;
   let icon = style([marginLeft(px(Theme.space(-1))), height(px(44))]);
   let stepper = style([padding2(~h=px(Theme.space(1)), ~v=px(0))]);
+  let autoCompleteContianerOverflow =
+    style([children([important(overflow(visible))])]);
   let stepIconText =
     style([
       fontFamily(Theme.sourceSansPro),
@@ -44,6 +50,20 @@ module Styles = {
       letterSpacing(px(1)),
       unsafe("fill", "#" ++ Colors.uBlack),
     ]);
+  let autoCompleteContainer = style([position(relative)]);
+  let suggestionsContainerOpen =
+    style([
+      position(absolute),
+      zIndex(2000),
+      marginTop(px(Theme.space(1))),
+      left(px(0)),
+      right(px(0)),
+    ]);
+
+  let suggestion = style([display(block)]);
+  let suggestionItem = style([fontSize(px(14))]);
+  let suggestionsList =
+    style([margin(px(0)), padding(px(0)), listStyleType(none)]);
 };
 
 module LinkEmail = {
@@ -66,6 +86,103 @@ module LinkEmail = {
     );
 };
 
+let renderInputComponent = props =>
+  <MInput
+    placeholder="Enter a Blockstack ID"
+    value=(`String(props##value))
+    onChange=props##onChange
+    autoFocus=true
+    fullWidth=true
+    inputProps=props
+  />;
+
+let renderSuggestionsContainer =
+    (
+      options: {
+        .
+        "containerProps": Js.t({..}),
+        "children": ReasonReact.reactElement,
+      },
+    ) =>
+  ReasonReact.cloneElement(
+    MaterialUi.(<Paper square=true />),
+    ~props=options##containerProps,
+    [|options##children|],
+  );
+
+let renderSuggestion = (suggestion, vals) => {
+  let query = vals##query;
+  let isHighlighted = vals##isHighlighted;
+  let parts =
+    AutosuggestHighlight.(match(suggestion, query) |> parse(suggestion));
+
+  <MaterialUi.MenuItem
+    className=Styles.suggestionItem
+    selected=isHighlighted
+    component=(`String("div"))>
+    <div>
+      (
+        parts
+        |. Belt.Array.mapWithIndexU((. index, part) =>
+             part##highlight ?
+               <span
+                 className=Css.(style([fontWeight(600)]))
+                 key=(string_of_int(index))>
+                 (part##text |> text)
+               </span> :
+               <strong
+                 className=Css.(style([fontWeight(300)]))
+                 key=(string_of_int(index))>
+                 (part##text |> text)
+               </strong>
+           )
+        |> ReasonReact.array
+      )
+    </div>
+  </MaterialUi.MenuItem>;
+};
+
+let filterSuggestions = (prospectId, suggestions) => {
+  let inputLength = prospectId |> Js.String.length;
+  inputLength < 3 ?
+    [||] :
+    suggestions
+    |. Belt.Array.keepU((. s) =>
+         s |> Js.String.slice(~from=0, ~to_=inputLength) == prospectId
+       );
+};
+
+let addSuggestions = (suggestionsMap, query, suggestions) =>
+  Belt.(suggestionsMap |. Map.String.set(query, suggestions));
+let rec getSuggestions = (suggestions, query) =>
+  Belt.(
+    switch (query, suggestions |. Map.String.get(query)) {
+    | (query, _) when query |> Js.String.length < 3 => [||]
+    | (_, Some(suggestions)) => suggestions
+    | (query, None) =>
+      getSuggestions(
+        suggestions,
+        query
+        |> Js.String.substring(~from=0, ~to_=Js.String.length(query) - 1),
+      )
+    }
+  );
+
+let onSuggestionsFetchRequested = (send, suggestions, arg) => {
+  let query = arg##value;
+  if (arg##reason == "input-changed") {
+    send(UpdateDisplayedSuggestions(query));
+  };
+  Blockstack.fetchIds(
+    ~current=getSuggestions(suggestions, query),
+    arg##value,
+  )
+  |> Js.Promise.then_(((query, s)) =>
+       send(UpdateSuggestions(query, s)) |> Js.Promise.resolve
+     )
+  |> ignore;
+};
+
 let make =
     (
       ~viewData: ViewData.t,
@@ -84,6 +201,8 @@ let make =
     removeInputFrozen: false,
     canSubmitProposal: false,
     viewData,
+    suggestions: Belt.Map.String.empty,
+    displayedSuggestions: [||],
   },
   willReceiveProps: ({state}) => {...state, viewData},
   subscriptions: _ => [
@@ -94,6 +213,26 @@ let make =
   ],
   reducer: (action, state) =>
     switch (action) {
+    | UpdateSuggestions(query, suggestions) =>
+      let suggestions = addSuggestions(state.suggestions, query, suggestions);
+      ReasonReact.Update({
+        ...state,
+        suggestions,
+        displayedSuggestions:
+          filterSuggestions(
+            state.inputs.prospectId,
+            getSuggestions(suggestions, state.inputs.prospectId),
+          ),
+      });
+    | UpdateDisplayedSuggestions(value) =>
+      ReasonReact.Update({
+        ...state,
+        displayedSuggestions:
+          filterSuggestions(value, getSuggestions(state.suggestions, value)),
+      })
+
+    | ClearSuggestions =>
+      ReasonReact.Update({...state, displayedSuggestions: [||]})
     | ChangeNewPartnerId(text) =>
       ReasonReact.Update({
         ...state,
@@ -160,7 +299,7 @@ let make =
         (_ => proposePartnerCmds.reset()),
       )
     },
-  render: ({send, state: {canSubmitProposal, viewData, inputs}}) => {
+  render: ({send, state: {canSubmitProposal, viewData, inputs} as state}) => {
     let activeStep =
       switch (proposeCmdStatus) {
       | Success(_) => 1
@@ -260,15 +399,31 @@ let make =
                   classes=[IconContainer(Styles.icon)] icon=(icon(0))>
                   ("ADD A BLOCKSTACK ID" |> text)
                 </StepLabel>
-                <StepContent>
-                  <MInput
-                    placeholder="Enter a Blockstack ID"
-                    value=(`String(inputs.prospectId))
-                    onChange=(
-                      e => send(ChangeNewPartnerId(extractString(e)))
+                <StepContent className=Styles.autoCompleteContianerOverflow>
+                  <Autosuggest
+                    theme={
+                      "container": Styles.autoCompleteContainer,
+                      "suggestionsContainerOpen": Styles.suggestionsContainerOpen,
+                      "suggestion": Styles.suggestion,
+                      "suggestionsList": Styles.suggestionsList,
+                    }
+                    suggestions=state.displayedSuggestions
+                    getSuggestionValue=(s => s)
+                    onSuggestionsFetchRequested=(
+                      onSuggestionsFetchRequested(send, state.suggestions)
                     )
-                    autoFocus=true
-                    fullWidth=true
+                    shouldRenderSuggestions=(
+                      value => Js.String.trim(value) |> Js.String.length > 2
+                    )
+                    onSuggestionsClearRequested=(() => send(ClearSuggestions))
+                    renderSuggestion
+                    renderInputComponent
+                    renderSuggestionsContainer
+                    inputProps={
+                      "value": inputs.prospectId,
+                      "onChange": (_e, change) =>
+                        send(ChangeNewPartnerId(change##newValue)),
+                    }
                   />
                   <ProposeButton
                     onSubmit=(() => send(ProposePartner))
@@ -278,7 +433,7 @@ let make =
                     cmdStatus=proposeCmdStatus
                   />
                 </StepContent>
-              </Step>
+              </Step> /* classes=[Root(Styles.stepperContentRoot)] */
               <Step>
                 <StepLabel
                   classes=[IconContainer(Styles.icon)] icon=(icon(1))>

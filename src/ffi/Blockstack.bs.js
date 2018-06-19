@@ -2,6 +2,7 @@
 'use strict';
 
 var Blockstack = require("blockstack");
+var Json_decode = require("bs-json/src/Json_decode.js");
 
 function getFileFromUser(file, username) {
   return Blockstack.getFile(file, {
@@ -17,6 +18,35 @@ function getFileFromUserAndDecrypt(file, username) {
             });
 }
 
+function fetchIds($staropt$star, beginning) {
+  var current = $staropt$star ? $staropt$star[0] : /* array */[];
+  if (beginning === "") {
+    return Promise.resolve(/* tuple */[
+                "",
+                /* array */[]
+              ]);
+  } else if (beginning.includes(".")) {
+    return Promise.resolve(/* tuple */[
+                beginning,
+                current
+              ]);
+  } else {
+    return fetch("https://core.blockstack.org/v1/search?query=" + beginning).then((function (prim) {
+                    return prim.json();
+                  })).then((function (res) {
+                  return Promise.resolve(/* tuple */[
+                              beginning,
+                              Json_decode.field("results", (function (param) {
+                                      return Json_decode.array((function (user) {
+                                                    return Json_decode.field("fullyQualifiedName", Json_decode.string, user);
+                                                  }), param);
+                                    }), res)
+                            ]);
+                }));
+  }
+}
+
 exports.getFileFromUser = getFileFromUser;
 exports.getFileFromUserAndDecrypt = getFileFromUserAndDecrypt;
+exports.fetchIds = fetchIds;
 /* blockstack Not a pure module */

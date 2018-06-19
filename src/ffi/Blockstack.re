@@ -85,3 +85,30 @@ external encryptECIES : (~publicKey: string, string) => Js.Json.t = "";
 
 [@bs.module "blockstack/lib/encryption.js"]
 external decryptECIES : (~privateKey: string, Js.Json.t) => string = "";
+
+let fetchIds = (~current=[||], beginning) =>
+  Js.Promise.(
+    switch (beginning) {
+    | "" => resolve(("", [||]))
+    | withDot when withDot |> Js.String.includes(".") =>
+      resolve((beginning, current))
+    | beginning =>
+      Fetch.fetch("https://core.blockstack.org/v1/search?query=" ++ beginning)
+      |> then_(Fetch.Response.json)
+      |> then_(res =>
+           (
+             beginning,
+             Json.Decode.(
+               res
+               |> field(
+                    "results",
+                    array(user =>
+                      user |> field("fullyQualifiedName", string)
+                    ),
+                  )
+             ),
+           )
+           |> resolve
+         )
+    }
+  );
