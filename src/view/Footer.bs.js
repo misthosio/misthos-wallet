@@ -219,7 +219,7 @@ function make() {
                               className: area("footer2")
                             }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* None */0, /* array */[ViewCommon.text("Company")])), React.createElement("a", {
                                   className: link,
-                                  href: environment[/* webDomain */3] + "/frequently_asked_questions"
+                                  href: environment[/* webDomain */3] + "/faq"
                                 }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
                                   className: link,
                                   href: "mailto:contact@misthos.io"

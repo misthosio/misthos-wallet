@@ -130,9 +130,7 @@ let make = _children => {
           variant=`Title>
           ("Company" |> text)
         </MTypography>
-        <a
-          className=Styles.link
-          href=(environment.webDomain ++ "/frequently_asked_questions")>
+        <a className=Styles.link href=(environment.webDomain ++ "/faq")>
           ("Frequently Asked Questions" |> text)
         </a>
         <a className=Styles.link href="mailto:contact@misthos.io">

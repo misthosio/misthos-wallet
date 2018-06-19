@@ -2,7 +2,7 @@ include ViewCommon;
 [@bs.module "../src/web/withRoot"] [@bs.val]
 external withRoot : 'a => 'a = "default";
 
-let component = ReasonReact.statelessComponent("frequentlyAskedQuestions");
+let component = ReasonReact.statelessComponent("faq");
 
 let line = data => <MTypography variant=`Body1> (data |> text) </MTypography>;
 
