@@ -4,8 +4,9 @@
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var ReactAutosuggest = require("react-autosuggest");
 
-function make(suggestions, onSuggestionsFetchRequested, onSuggestionsClearRequested, getSuggestionValue, shouldRenderSuggestions, renderSuggestion, renderSuggestionsContainer, renderInputComponent, inputProps, _children) {
+function make(theme, suggestions, onSuggestionsFetchRequested, onSuggestionsClearRequested, getSuggestionValue, shouldRenderSuggestions, renderSuggestion, renderSuggestionsContainer, renderInputComponent, inputProps, _children) {
   return ReasonReact.wrapJsForReason(ReactAutosuggest, {
+              theme: theme,
               suggestions: suggestions,
               onSuggestionsFetchRequested: onSuggestionsFetchRequested,
               onSuggestionsClearRequested: onSuggestionsClearRequested,

@@ -55,6 +55,14 @@ var stepper = Css.style(/* :: */[
       /* [] */0
     ]);
 
+var autoCompleteContianerOverflow = Css.style(/* :: */[
+      Css.children(/* :: */[
+            Css.important(Css.overflow(Css.visible)),
+            /* [] */0
+          ]),
+      /* [] */0
+    ]);
+
 var stepIconText = Css.style(/* :: */[
       Css.fontFamily(Theme.sourceSansPro),
       /* :: */[
@@ -78,10 +86,53 @@ var stepIconText = Css.style(/* :: */[
       ]
     ]);
 
+var autoCompleteContainer = Css.style(/* :: */[
+      Css.position(Css.relative),
+      /* [] */0
+    ]);
+
+var suggestionsContainerOpen = Css.style(/* :: */[
+      Css.position(Css.absolute),
+      /* :: */[
+        Css.zIndex(2000),
+        /* :: */[
+          Css.marginTop(Css.px(Theme.space(1))),
+          /* :: */[
+            Css.left(Css.px(0)),
+            /* :: */[
+              Css.right(Css.px(0)),
+              /* [] */0
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var suggestion = Css.style(/* :: */[
+      Css.display(Css.block),
+      /* [] */0
+    ]);
+
+var suggestionsList = Css.style(/* :: */[
+      Css.margin(Css.px(0)),
+      /* :: */[
+        Css.padding(Css.px(0)),
+        /* :: */[
+          Css.listStyleType(Css.none),
+          /* [] */0
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* icon */icon,
   /* stepper */stepper,
-  /* stepIconText */stepIconText
+  /* autoCompleteContianerOverflow */autoCompleteContianerOverflow,
+  /* stepIconText */stepIconText,
+  /* autoCompleteContainer */autoCompleteContainer,
+  /* suggestionsContainerOpen */suggestionsContainerOpen,
+  /* suggestion */suggestion,
+  /* suggestionsList */suggestionsList
 ];
 
 function subject(name) {
@@ -241,8 +292,13 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                                   /* IconContainer */Block.__(9, [icon]),
                                                                   /* [] */0
                                                                 ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                                ReasonReact.element(/* None */0, /* None */0, Autosuggest.make(filterSuggestions(inputs[/* prospectId */0], state[/* suggestions */4]), (function (arg) {
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* Some */[autoCompleteContianerOverflow], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                                ReasonReact.element(/* None */0, /* None */0, Autosuggest.make({
+                                                                          container: autoCompleteContainer,
+                                                                          suggestionsContainerOpen: suggestionsContainerOpen,
+                                                                          suggestion: suggestion,
+                                                                          suggestionsList: suggestionsList
+                                                                        }, filterSuggestions(inputs[/* prospectId */0], state[/* suggestions */4]), (function (arg) {
                                                                             Blockstack.fetchIds(arg.value).then((function (s) {
                                                                                     return Promise.resolve(Curry._1(send, /* UpdateSuggestions */Block.__(0, [s])));
                                                                                   }));

@@ -21,6 +21,7 @@ external autosuggest : ReasonReact.reactClass = "react-autosuggest";
 
 let make =
     (
+      ~theme,
       ~suggestions,
       ~onSuggestionsFetchRequested,
       ~onSuggestionsClearRequested,
@@ -35,6 +36,7 @@ let make =
   ReasonReact.wrapJsForReason(
     ~reactClass=autosuggest,
     ~props={
+      "theme": theme,
       "suggestions": suggestions,
       "onSuggestionsFetchRequested": onSuggestionsFetchRequested,
       "onSuggestionsClearRequested": onSuggestionsClearRequested,

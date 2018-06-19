@@ -36,6 +36,8 @@ module Styles = {
   open Css;
   let icon = style([marginLeft(px(Theme.space(-1))), height(px(44))]);
   let stepper = style([padding2(~h=px(Theme.space(1)), ~v=px(0))]);
+  let autoCompleteContianerOverflow =
+    style([children([important(overflow(visible))])]);
   let stepIconText =
     style([
       fontFamily(Theme.sourceSansPro),
@@ -46,6 +48,19 @@ module Styles = {
       letterSpacing(px(1)),
       unsafe("fill", "#" ++ Colors.uBlack),
     ]);
+  let autoCompleteContainer = style([position(relative)]);
+  let suggestionsContainerOpen =
+    style([
+      position(absolute),
+      zIndex(2000),
+      marginTop(px(Theme.space(1))),
+      left(px(0)),
+      right(px(0)),
+    ]);
+
+  let suggestion = style([display(block)]);
+  let suggestionsList =
+    style([margin(px(0)), padding(px(0)), listStyleType(none)]);
 };
 
 module LinkEmail = {
@@ -329,8 +344,14 @@ let make =
                   classes=[IconContainer(Styles.icon)] icon=(icon(0))>
                   ("ADD A BLOCKSTACK ID" |> text)
                 </StepLabel>
-                <StepContent>
+                <StepContent className=Styles.autoCompleteContianerOverflow>
                   <Autosuggest
+                    theme={
+                      "container": Styles.autoCompleteContainer,
+                      "suggestionsContainerOpen": Styles.suggestionsContainerOpen,
+                      "suggestion": Styles.suggestion,
+                      "suggestionsList": Styles.suggestionsList,
+                    }
                     suggestions=(
                       state.suggestions
                       |> filterSuggestions(inputs.prospectId)
@@ -365,7 +386,7 @@ let make =
                     cmdStatus=proposeCmdStatus
                   />
                 </StepContent>
-              </Step>
+              </Step> /* classes=[Root(Styles.stepperContentRoot)] */
               <Step>
                 <StepLabel
                   classes=[IconContainer(Styles.icon)] icon=(icon(1))>
