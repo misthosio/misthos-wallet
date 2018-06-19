@@ -69,6 +69,21 @@ function make() {
                                                               ])], /* None */0, /* None */0, /* array */[
                                                           paragraph(FaqText.whatIsUniqueAboutMisthosAP1),
                                                           FaqText.whatIsUniqueAboutMisthosAP2
+                                                        ]))), panel(FaqText.whatAreThePrinciplesBehindMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                Css.flexDirection(Css.column),
+                                                                /* [] */0
+                                                              ])], /* None */0, /* None */0, /* array */[FaqText.whatAreThePrinciplesBehindMisthosA]))), panel(FaqText.whatIsBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                Css.flexDirection(Css.column),
+                                                                /* [] */0
+                                                              ])], /* None */0, /* None */0, /* array */[FaqText.whatIsBlockstackA]))), panel(FaqText.doINeedToRegisterWithBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                Css.flexDirection(Css.column),
+                                                                /* [] */0
+                                                              ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.doINeedToRegisterWithBlockstackA)]))), panel(FaqText.howCanIGetStartedQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                Css.flexDirection(Css.column),
+                                                                /* [] */0
+                                                              ])], /* None */0, /* None */0, /* array */[
+                                                          paragraph(FaqText.howCanIGetStartedAP1),
+                                                          FaqText.howCanIGetStartedAP2
                                                         ]))))], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));

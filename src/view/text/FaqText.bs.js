@@ -16,6 +16,38 @@ var whatIsUniqueAboutMisthosAP2 = ReasonReact.element(/* None */0, /* None */0, 
           React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Quick wallet set-up")), React.createElement("li", undefined, ViewCommon.text("Scalability: dynamically adding / removing wallet custodians (Partners)")), React.createElement("li", undefined, ViewCommon.text("Streamlined user-experience for collaborative approval processes")))
         ]));
 
+var whatAreThePrinciplesBehindMisthosA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+          ViewCommon.text("Misthos is built on the principles of data sovereignty, identity and collaborative governance models. This "),
+          React.createElement("a", {
+                href: "https://medium.com/@misthosio/ushering-in-the-decentralization-of-work-c32c14e7625c",
+                target: "_blank"
+              }, ViewCommon.text("blog post")),
+          ViewCommon.text(" dives into the guiding principles behind Misthos.")
+        ]));
+
+var whatIsBlockstackA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+          ViewCommon.text("Blockstack is a platform for developing decentralised applications. It provides solution to the decentralization of authentication, authorization and data storage secured by the bitcoin blockchain. With Blockstack, users control their data and apps run on their devices. There are no middlemen, no passwords, no massive data silos to breach, and no services tracking users around the internet. You can learn more about Blockstack "),
+          React.createElement("a", {
+                href: "https://blockstack.org/",
+                target: "_blank"
+              }, ViewCommon.text("here")),
+          ViewCommon.text(".")
+        ]));
+
+var howCanIGetStartedAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to "), React.createElement("a", {
+                        href: "https://www.misthos.io/",
+                        target: "_blank"
+                      }, ViewCommon.text("https://www.misthos.io/")), ViewCommon.text(".")), React.createElement("li", undefined, ViewCommon.text("Click on the \"Sign in with Blockstack\" button. ")), React.createElement("li", undefined, ViewCommon.text("At this point you will be redirected and prompted to install the "), React.createElement("a", {
+                        href: "https://blockstack.org/install",
+                        target: "_blank"
+                      }, ViewCommon.text("Blockstack browser")), ViewCommon.text(" and asked to set up a Blockstack ID. You are now ready to sign-in to Misthos.")), React.createElement("li", undefined, ViewCommon.text("Start the Blockstack browser on your PC or Laptop. This step is important as the Misthos app calls the Blockstack browser.")), React.createElement("li", undefined, ViewCommon.text("Re-open the "), React.createElement("a", {
+                        href: "https://www.misthos.io/",
+                        target: "_blank"
+                      }, ViewCommon.text("https://www.misthos.io/")), ViewCommon.text(" page and click on the \"Sign-in with Blockstack\" button. You will see a \"Sign-In Request\" pop up. ")), React.createElement("li", undefined, ViewCommon.text("Choose the Blockstack ID you want to sign in with and click on \"Approve\" to give Misthos the required permissions."))),
+          ViewCommon.text("Once you are successfully signed in, you can either create a new Venture or join an existing one (by invitation).")
+        ]));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -38,6 +70,18 @@ var whatIsUniqueAboutMisthosQ = "What is unique about Misthos?";
 
 var whatIsUniqueAboutMisthosAP1 = "The Misthos multisig wallet is optimised for collaborating individuals who need a simple way to collectively share and distribute Bitcoin.";
 
+var whatAreThePrinciplesBehindMisthosQ = "What are the principles behind Misthos?";
+
+var whatIsBlockstackQ = "Misthos is built on Blockstack. What is Blockstack?";
+
+var doINeedToRegisterWithBlockstackQ = "Do I need to register with Blockstack?";
+
+var doINeedToRegisterWithBlockstackA = "Yes, you need to have a Blockstack ID to sign in to Misthos and create or join a Venture. If you don't have one you will be redirected to the blockstack setup page when signing in.";
+
+var howCanIGetStartedQ = "How can I get started with Misthos?";
+
+var howCanIGetStartedAP1 = "The first step is to set up a Blockstack ID. The Blockstack ID is unique to an individual or a Partner. If you already have a Blockstack ID, then you can directly go to step # 4";
+
 exports.text = text;
 exports.extractString = extractString;
 exports.whatIsMisthosQ = whatIsMisthosQ;
@@ -51,4 +95,13 @@ exports.howCanATeamUseMisthosTodayA = howCanATeamUseMisthosTodayA;
 exports.whatIsUniqueAboutMisthosQ = whatIsUniqueAboutMisthosQ;
 exports.whatIsUniqueAboutMisthosAP1 = whatIsUniqueAboutMisthosAP1;
 exports.whatIsUniqueAboutMisthosAP2 = whatIsUniqueAboutMisthosAP2;
+exports.whatAreThePrinciplesBehindMisthosQ = whatAreThePrinciplesBehindMisthosQ;
+exports.whatAreThePrinciplesBehindMisthosA = whatAreThePrinciplesBehindMisthosA;
+exports.whatIsBlockstackQ = whatIsBlockstackQ;
+exports.whatIsBlockstackA = whatIsBlockstackA;
+exports.doINeedToRegisterWithBlockstackQ = doINeedToRegisterWithBlockstackQ;
+exports.doINeedToRegisterWithBlockstackA = doINeedToRegisterWithBlockstackA;
+exports.howCanIGetStartedQ = howCanIGetStartedQ;
+exports.howCanIGetStartedAP1 = howCanIGetStartedAP1;
+exports.howCanIGetStartedAP2 = howCanIGetStartedAP2;
 /* howCanATeamUseMisthosTodayA Not a pure module */

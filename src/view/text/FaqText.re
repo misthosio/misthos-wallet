@@ -50,3 +50,87 @@ let whatIsUniqueAboutMisthosAP2 =
       </li>
     </ol>
   </MTypography>;
+
+let whatAreThePrinciplesBehindMisthosQ = "What are the principles behind Misthos?";
+let whatAreThePrinciplesBehindMisthosA =
+  <MTypography gutterBottom=true variant=`Body1>
+    (
+      "Misthos is built on the principles of data sovereignty, identity and collaborative governance models. This "
+      |> text
+    )
+    <a
+      href="https://medium.com/@misthosio/ushering-in-the-decentralization-of-work-c32c14e7625c"
+      target="_blank">
+      ("blog post" |> text)
+    </a>
+    (" dives into the guiding principles behind Misthos." |> text)
+  </MTypography>;
+
+let whatIsBlockstackQ = "Misthos is built on Blockstack. What is Blockstack?";
+let whatIsBlockstackA =
+  <MTypography gutterBottom=true variant=`Body1>
+    (
+      "Blockstack is a platform for developing decentralised applications. It provides solution to the decentralization of authentication, authorization and data storage secured by the bitcoin blockchain. With Blockstack, users control their data and apps run on their devices. There are no middlemen, no passwords, no massive data silos to breach, and no services tracking users around the internet. You can learn more about Blockstack "
+      |> text
+    )
+    <a href="https://blockstack.org/" target="_blank"> ("here" |> text) </a>
+    ("." |> text)
+  </MTypography>;
+
+let doINeedToRegisterWithBlockstackQ = "Do I need to register with Blockstack?";
+let doINeedToRegisterWithBlockstackA = "Yes, you need to have a Blockstack ID to sign in to Misthos and create or join a Venture. If you don't have one you will be redirected to the blockstack setup page when signing in.";
+
+let howCanIGetStartedQ = "How can I get started with Misthos?";
+let howCanIGetStartedAP1 = "The first step is to set up a Blockstack ID. The Blockstack ID is unique to an individual or a Partner. If you already have a Blockstack ID, then you can directly go to step # 4";
+let howCanIGetStartedAP2 =
+  <MTypography gutterBottom=true variant=`Body1>
+    <ol>
+      <li>
+        ("Go to " |> text)
+        <a href="https://www.misthos.io/" target="_blank">
+          ("https://www.misthos.io/" |> text)
+        </a>
+        ("." |> text)
+      </li>
+      <li> ("Click on the \"Sign in with Blockstack\" button. " |> text) </li>
+      <li>
+        (
+          "At this point you will be redirected and prompted to install the "
+          |> text
+        )
+        <a href="https://blockstack.org/install" target="_blank">
+          ("Blockstack browser" |> text)
+        </a>
+        (
+          " and asked to set up a Blockstack ID. You are now ready to sign-in to Misthos."
+          |> text
+        )
+      </li>
+      <li>
+        (
+          "Start the Blockstack browser on your PC or Laptop. This step is important as the Misthos app calls the Blockstack browser."
+          |> text
+        )
+      </li>
+      <li>
+        ("Re-open the " |> text)
+        <a href="https://www.misthos.io/" target="_blank">
+          ("https://www.misthos.io/" |> text)
+        </a>
+        (
+          " page and click on the \"Sign-in with Blockstack\" button. You will see a \"Sign-In Request\" pop up. "
+          |> text
+        )
+      </li>
+      <li>
+        (
+          "Choose the Blockstack ID you want to sign in with and click on \"Approve\" to give Misthos the required permissions."
+          |> text
+        )
+      </li>
+    </ol>
+    (
+      "Once you are successfully signed in, you can either create a new Venture or join an existing one (by invitation)."
+      |> text
+    )
+  </MTypography>;

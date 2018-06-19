@@ -69,6 +69,39 @@ let make = _children => {
                 </Details>,
               )
             )
+            (
+              panel(
+                T.whatAreThePrinciplesBehindMisthosQ,
+                <Details className=Css.(style([flexDirection(column)]))>
+                  T.whatAreThePrinciplesBehindMisthosA
+                </Details>,
+              )
+            )
+            (
+              panel(
+                T.whatIsBlockstackQ,
+                <Details className=Css.(style([flexDirection(column)]))>
+                  T.whatIsBlockstackA
+                </Details>,
+              )
+            )
+            (
+              panel(
+                T.doINeedToRegisterWithBlockstackQ,
+                <Details className=Css.(style([flexDirection(column)]))>
+                  (T.doINeedToRegisterWithBlockstackA |> paragraph)
+                </Details>,
+              )
+            )
+            (
+              panel(
+                T.howCanIGetStartedQ,
+                <Details className=Css.(style([flexDirection(column)]))>
+                  (T.howCanIGetStartedAP1 |> paragraph)
+                  T.howCanIGetStartedAP2
+                </Details>,
+              )
+            )
           </div>
         }
       />
