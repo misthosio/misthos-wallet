@@ -5,6 +5,7 @@ var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
+var Text = require("../Text.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Theme = require("./Theme.bs.js");
@@ -23,7 +24,6 @@ var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Transaction = require("./components/Transaction.bs.js");
-var WarningsText = require("./text/WarningsText.bs.js");
 var AlertListItem = require("./components/AlertListItem.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
@@ -43,7 +43,7 @@ function make(viewData, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var match = Environment.get(/* () */0)[/* network */5];
-              var warning = match !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
+              var warning = match !== 1 ? /* None */0 : /* Some */[Text.Warnings[/* testnet */0]];
               var prospects = List.map((function (prospect) {
                       var match = prospect[/* data */5][/* processType */1];
                       var partial_arg_000 = viewData[/* ventureId */0];

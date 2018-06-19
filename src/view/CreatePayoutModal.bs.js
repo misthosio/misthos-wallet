@@ -5,6 +5,7 @@ var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
+var Text = require("../Text.bs.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
@@ -21,7 +22,6 @@ var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
-var WarningsText = require("./text/WarningsText.bs.js");
 var ProposeButton = require("./components/ProposeButton.bs.js");
 var MaterialUi_Table = require("@jsiebern/bs-material-ui/src/MaterialUi_Table.bs.js");
 var BitcoinFeesClient = require("../application/wallet/BitcoinFeesClient.bs.js");
@@ -225,7 +225,7 @@ function make(viewData, commands, cmdStatus, _) {
               var summary = match[/* summary */8];
               var viewData = match[/* viewData */0];
               var match$1 = Environment.get(/* () */0)[/* network */5];
-              var warning = match$1 !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
+              var warning = match$1 !== 1 ? /* None */0 : /* Some */[Text.Warnings[/* testnet */0]];
               var destinationRow = function ($staropt$star, idx, address, amount) {
                 var withRemoveBtn = $staropt$star ? $staropt$star[0] : true;
                 var match = address !== "" && amount.gt(BTC.zero);
