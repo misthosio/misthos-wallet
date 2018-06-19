@@ -4,11 +4,13 @@
 var Css = require("bs-css/src/Css.js");
 var Grid = require("../src/view/components/Grid.bs.js");
 var Icons = require("../src/view/Icons.bs.js");
+var Theme = require("../src/view/Theme.bs.js");
 var React = require("react");
 var Footer = require("../src/view/Footer.bs.js");
 var Header = require("../src/view/Header.bs.js");
 var Layout = require("../src/view/Layout.bs.js");
 var FaqText = require("../src/view/text/FaqText.bs.js");
+var ScrollList = require("../src/view/components/ScrollList.bs.js");
 var ViewCommon = require("../src/view/ViewCommon.bs.js");
 var Environment = require("../src/web/Environment.bs.js");
 var MTypography = require("../src/view/components/MTypography.bs.js");
@@ -50,41 +52,55 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, Layout.make(/* Some */[ReasonReact.element(/* None */0, /* None */0, Header.make(/* None */0, /* Some */[environment[/* webDomain */3] + "/"], /* None */0, /* array */[]))], /* None */0, /* None */0, /* Some */[true], /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("frequently asked questions")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, panel(FaqText.whatIsMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[
-                                                          paragraph(FaqText.whatIsMisthosAP1),
-                                                          paragraph(FaqText.whatIsMisthosAP2),
-                                                          paragraph(FaqText.whatIsMisthosAP3)
-                                                        ]))), panel(FaqText.whoIsMisthosForQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.whoIsMisthosForA)]))), panel(FaqText.howCanATeamUseMisthosTodayQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[FaqText.howCanATeamUseMisthosTodayA]))), panel(FaqText.whatIsUniqueAboutMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[
-                                                          paragraph(FaqText.whatIsUniqueAboutMisthosAP1),
-                                                          FaqText.whatIsUniqueAboutMisthosAP2
-                                                        ]))), panel(FaqText.whatAreThePrinciplesBehindMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[FaqText.whatAreThePrinciplesBehindMisthosA]))), panel(FaqText.whatIsBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[FaqText.whatIsBlockstackA]))), panel(FaqText.doINeedToRegisterWithBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.doINeedToRegisterWithBlockstackA)]))), panel(FaqText.howCanIGetStartedQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                Css.flexDirection(Css.column),
-                                                                /* [] */0
-                                                              ])], /* None */0, /* None */0, /* array */[
-                                                          paragraph(FaqText.howCanIGetStartedAP1),
-                                                          FaqText.howCanIGetStartedAP2
-                                                        ]))))], /* None */0, /* None */0, /* array */[])),
+                              ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("frequently asked questions")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
+                                              className: ScrollList.containerStyles + (" " + Css.style(/* :: */[
+                                                      Css.paddingBottom(Css.px(Theme.space(4))),
+                                                      /* [] */0
+                                                    ]))
+                                            }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
+                                                      panel(FaqText.whatIsMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    paragraph(FaqText.whatIsMisthosAP1),
+                                                                    paragraph(FaqText.whatIsMisthosAP2),
+                                                                    paragraph(FaqText.whatIsMisthosAP3)
+                                                                  ]))),
+                                                      panel(FaqText.whoIsMisthosForQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.whoIsMisthosForA)]))),
+                                                      panel(FaqText.howCanATeamUseMisthosTodayQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.howCanATeamUseMisthosTodayA]))),
+                                                      panel(FaqText.whatIsUniqueAboutMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    paragraph(FaqText.whatIsUniqueAboutMisthosAP1),
+                                                                    FaqText.whatIsUniqueAboutMisthosAP2
+                                                                  ]))),
+                                                      panel(FaqText.whatAreThePrinciplesBehindMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.whatAreThePrinciplesBehindMisthosA]))),
+                                                      panel(FaqText.whatIsBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.whatIsBlockstackA]))),
+                                                      panel(FaqText.doINeedToRegisterWithBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.doINeedToRegisterWithBlockstackA)]))),
+                                                      panel(FaqText.howCanIGetStartedQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    paragraph(FaqText.howCanIGetStartedAP1),
+                                                                    FaqText.howCanIGetStartedAP2
+                                                                  ])))
+                                                    ])))], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),

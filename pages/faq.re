@@ -33,75 +33,82 @@ let make = _children => {
       <Grid
         title1=("frequently asked questions" |> text)
         area3={
-          <div>
-            (
-              panel(
-                T.whatIsMisthosQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  (T.whatIsMisthosAP1 |> paragraph)
-                  (T.whatIsMisthosAP2 |> paragraph)
-                  (T.whatIsMisthosAP3 |> paragraph)
-                </Details>,
+          <div
+            className=(
+              ScrollList.containerStyles
+              ++ " "
+              ++ Css.(style([paddingBottom(px(Theme.space(4)))]))
+            )>
+            <ScrollList>
+              (
+                panel(
+                  T.whatIsMisthosQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.whatIsMisthosAP1 |> paragraph)
+                    (T.whatIsMisthosAP2 |> paragraph)
+                    (T.whatIsMisthosAP3 |> paragraph)
+                  </Details>,
+                )
               )
-            )
-            (
-              panel(
-                T.whoIsMisthosForQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  (T.whoIsMisthosForA |> paragraph)
-                </Details>,
+              (
+                panel(
+                  T.whoIsMisthosForQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.whoIsMisthosForA |> paragraph)
+                  </Details>,
+                )
               )
-            )
-            (
-              panel(
-                T.howCanATeamUseMisthosTodayQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  T.howCanATeamUseMisthosTodayA
-                </Details>,
+              (
+                panel(
+                  T.howCanATeamUseMisthosTodayQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    T.howCanATeamUseMisthosTodayA
+                  </Details>,
+                )
               )
-            )
-            (
-              panel(
-                T.whatIsUniqueAboutMisthosQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  (T.whatIsUniqueAboutMisthosAP1 |> paragraph)
-                  T.whatIsUniqueAboutMisthosAP2
-                </Details>,
+              (
+                panel(
+                  T.whatIsUniqueAboutMisthosQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.whatIsUniqueAboutMisthosAP1 |> paragraph)
+                    T.whatIsUniqueAboutMisthosAP2
+                  </Details>,
+                )
               )
-            )
-            (
-              panel(
-                T.whatAreThePrinciplesBehindMisthosQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  T.whatAreThePrinciplesBehindMisthosA
-                </Details>,
+              (
+                panel(
+                  T.whatAreThePrinciplesBehindMisthosQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    T.whatAreThePrinciplesBehindMisthosA
+                  </Details>,
+                )
               )
-            )
-            (
-              panel(
-                T.whatIsBlockstackQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  T.whatIsBlockstackA
-                </Details>,
+              (
+                panel(
+                  T.whatIsBlockstackQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    T.whatIsBlockstackA
+                  </Details>,
+                )
               )
-            )
-            (
-              panel(
-                T.doINeedToRegisterWithBlockstackQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  (T.doINeedToRegisterWithBlockstackA |> paragraph)
-                </Details>,
+              (
+                panel(
+                  T.doINeedToRegisterWithBlockstackQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.doINeedToRegisterWithBlockstackA |> paragraph)
+                  </Details>,
+                )
               )
-            )
-            (
-              panel(
-                T.howCanIGetStartedQ,
-                <Details className=Css.(style([flexDirection(column)]))>
-                  (T.howCanIGetStartedAP1 |> paragraph)
-                  T.howCanIGetStartedAP2
-                </Details>,
+              (
+                panel(
+                  T.howCanIGetStartedQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.howCanIGetStartedAP1 |> paragraph)
+                    T.howCanIGetStartedAP2
+                  </Details>,
+                )
               )
-            )
+            </ScrollList>
           </div>
         }
       />
