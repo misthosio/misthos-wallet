@@ -108,6 +108,35 @@ let make = _children => {
                   </Details>,
                 )
               )
+              (
+                panel(
+                  T.whatIsAMisthosVentureQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.whatIsAMisthosVentureAP1 |> paragraph)
+                    T.whatIsAMisthosVentureAP2
+                  </Details>,
+                )
+              )
+              (
+                panel(
+                  T.howCreateAVentureQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    T.howCreateAVentureAP1
+                    (T.howCreateAVentureAP2 |> paragraph)
+                    (T.howCreateAVentureAP3 |> paragraph)
+                  </Details>,
+                )
+              )
+              (
+                panel(
+                  T.howJoinVentureQ,
+                  <Details className=Css.(style([flexDirection(column)]))>
+                    (T.howJoinVentureAP1 |> paragraph)
+                    (T.howJoinVentureAP2 |> paragraph)
+                    T.howJoinVentureAP3
+                  </Details>,
+                )
+              )
             </ScrollList>
           </div>
         }

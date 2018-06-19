@@ -134,3 +134,52 @@ let howCanIGetStartedAP2 =
       |> text
     )
   </MTypography>;
+
+let whatIsAMisthosVentureQ = "What is a Venture within Misthos?";
+let whatIsAMisthosVentureAP1 = "Any project is designated as a Venture within Misthos.";
+let whatIsAMisthosVentureAP2 =
+  <MTypography gutterBottom=true variant=`Body1>
+    ("Every Venture within Misthos has:" |> text)
+    <ul>
+      <li> ("One or more Partners" |> text) </li>
+      <li> ("A multisig BTC wallet at its core" |> text) </li>
+    </ul>
+  </MTypography>;
+
+let howCreateAVentureQ = "How can I create a Venture within Misthos?";
+let howCreateAVentureAP1 =
+  <MTypography gutterBottom=true variant=`Body1>
+    (
+      "To create a Venture, you need to be signed in to Misthos. If you are not yet signed in:"
+      |> text
+    )
+    <ol>
+      <li>
+        ("Go to " |> text)
+        <a href="https://www.misthos.io/" target="_blank">
+          ("https://www.misthos.io/" |> text)
+        </a>
+      </li>
+      <li> ("Click on the \"Sign in with Blockstack\" button. " |> text) </li>
+      <li>
+        (
+          "You will see a \"Sign-In Request\" pop up. Choose the blockstack Id you want to sign in with and click on \"Approve\" to give Misthos the required permissions. "
+          |> text
+        )
+      </li>
+    </ol>
+  </MTypography>;
+let howCreateAVentureAP2 = "Once you are signed in to Misthos, you will see the main screen with all the Ventures that you are a part of. To create a new Venture, click on \"Create a Venture\" button.";
+let howCreateAVentureAP3 = "You only need to enter a name to create a new Venture. Once created, you will be taken to the main Venture view?. In this view you can see the BTC amount that is held by the wallet of the Venture, the list of Partners, the transaction history and the buttons to receive BTC and create payouts.";
+
+let howJoinVentureQ = "How can I join an existing Venture?";
+let howJoinVentureAP1 = "In order to join an existing Venture, a partner within the Venture needs to propose that you be added and share an invitation link. Once all the existing partners within the Venture have endorsed the proposal you will gain access via the link that was shared with you.";
+let howJoinVentureAP2 = "If the endorsement process is not yet complete i.e if all existing partners have not yet endorsed a proposed partner, then you will see the following error:";
+let howJoinVentureAP3 =
+  <MTypography
+    variant=`Body2 className=(Css.style([Css.color(Colors.error)]))>
+    (
+      "Error joining Venture. Perhaps you have not been accepted yet, or if this was your first time logging in to Misthos, the Venture will become available after the inviting partner has logged in again."
+      |> text
+    )
+  </MTypography>;

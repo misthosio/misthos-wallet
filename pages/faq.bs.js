@@ -99,6 +99,29 @@ function make() {
                                                                         ])], /* None */0, /* None */0, /* array */[
                                                                     paragraph(FaqText.howCanIGetStartedAP1),
                                                                     FaqText.howCanIGetStartedAP2
+                                                                  ]))),
+                                                      panel(FaqText.whatIsAMisthosVentureQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    paragraph(FaqText.whatIsAMisthosVentureAP1),
+                                                                    FaqText.whatIsAMisthosVentureAP2
+                                                                  ]))),
+                                                      panel(FaqText.howCreateAVentureQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    FaqText.howCreateAVentureAP1,
+                                                                    paragraph(FaqText.howCreateAVentureAP2),
+                                                                    paragraph(FaqText.howCreateAVentureAP3)
+                                                                  ]))),
+                                                      panel(FaqText.howJoinVentureQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                          Css.flexDirection(Css.column),
+                                                                          /* [] */0
+                                                                        ])], /* None */0, /* None */0, /* array */[
+                                                                    paragraph(FaqText.howJoinVentureAP1),
+                                                                    paragraph(FaqText.howJoinVentureAP2),
+                                                                    FaqText.howJoinVentureAP3
                                                                   ])))
                                                     ])))], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
