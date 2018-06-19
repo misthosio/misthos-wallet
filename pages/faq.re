@@ -6,7 +6,12 @@ let component = ReasonReact.statelessComponent("faq");
 
 let line = data => <MTypography variant=`Body1> (data |> text) </MTypography>;
 
+let paragraph = data =>
+  <MTypography variant=`Body1> (data |> text) </MTypography>;
+
 let environment = Environment.get();
+
+module T = FaqText;
 
 let make = _children => {
   ...component,
@@ -20,17 +25,12 @@ let make = _children => {
                 <ExpansionPanel>
                   <ExpansionPanelSummary expandIcon=Icons.chevronDown>
                     <MTypography variant=`Subheading>
-                      ("Expansion Panel 1" |> text)
+                      (T.whatIsMisthosQ |> text)
                     </MTypography>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
-                    <MTypography variant=`Body1>
-                      (
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
-            sit amet blandit leo lobortis eget."
-                        |> text
-                      )
-                    </MTypography>
+                    (T.whatIsMisthosAP1 |> paragraph)
+                    (T.whatIsMisthosAP2 |> paragraph)
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
               )
