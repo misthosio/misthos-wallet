@@ -5,7 +5,7 @@
   "dependencies": {
     "@jsiebern/bs-material-ui": "0.2.0",
     "@material-ui/core": "1.2.1",
-    "autosuggest-highlight": "^3.1.1",
+    "autosuggest-highlight": "3.1.1",
     "bignumber.js": "7.0.1",
     "bip39": "2.5.0",
     "bitcoinjs-lib": "3.3.2",
@@ -17,7 +17,7 @@
     "clipboard": "2.0.1",
     "material-ui": "1.0.0-beta.47",
     "react": "16.4.1",
-    "react-autosuggest": "^9.3.4",
+    "react-autosuggest": "9.3.4",
     "react-dom": "16.4.1",
     "reason-reroute": "0.0.4",
     "uuid": "3.2.1"
