@@ -89,7 +89,7 @@ let make = (~onSignIn, _children) => {
           </Typography>
           <Typography className=(Styles.area("sub")) variant=`Display1>
             (
-              "Misthos is the only multisig bitcoin wallet that lets you change co-signers in a fast and friction-less way."
+              "Misthos is the only multisig bitcoin wallet that lets you change co-signers in a fast and frictionless way."
               |> text
             )
             <br />
