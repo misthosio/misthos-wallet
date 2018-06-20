@@ -167,7 +167,7 @@ let make = (~session, ~updateSession, _children) => {
         currentRoute: Router.Config.route,
       ) =>
     switch (session, currentRoute, selectedVenture) {
-    | (NotLoggedIn, _, _) => <PublicHome onSignIn />
+    | (NotLoggedIn, _, _) => <div> <PublicHome onSignIn /> <Footer /> </div>
     | (_, TypographyStack, _) => <TypographyStack />
     | (Unknown, _, _) => <BlankScreen text="Loading" />
     | (AnonymousLogin, _, _) =>

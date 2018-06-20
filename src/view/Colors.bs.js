@@ -99,6 +99,8 @@ var gradientAqua = Css.linearGradient(Css.deg(75), /* :: */[
 
 var uGradientAqua = "linear-gradient(75deg, #" + (String(uRobinsEgg) + (", #" + (String(uMisthosTeal) + (" 49%, #" + (String(uDeepAqua) + ")")))));
 
+var uGradientAquaLight = "linear-gradient(90deg, #" + (String(uRobinsEgg) + (", #" + (String(uMisthosTeal) + (" 49%, #" + (String(uDeepAqua) + ")")))));
+
 var gradientOrange = Css.linearGradient(Css.deg(75), /* :: */[
       /* tuple */[
         0,
@@ -139,6 +141,7 @@ exports.gradient = gradient;
 exports.uGradient = uGradient;
 exports.gradientAqua = gradientAqua;
 exports.uGradientAqua = uGradientAqua;
+exports.uGradientAquaLight = uGradientAquaLight;
 exports.gradientOrange = gradientOrange;
 exports.uGradientOrange = uGradientOrange;
 /* darkGray Not a pure module */

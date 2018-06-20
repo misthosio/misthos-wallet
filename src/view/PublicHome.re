@@ -48,7 +48,7 @@ module Styles = {
         gridGap(px(Theme.space(2))),
       ]),
       width(`percent(100.0)),
-      height(`vh(95.0)),
+      height(`vh(90.0)),
       alignItems(`flexEnd),
     ]);
   let logo =
@@ -104,7 +104,6 @@ let make = (~onSignIn, _children) => {
             ("Sign In with Blockstack" |> text)
           </MButton>
         </div>
-        <Footer />
       </div>
     ),
 };

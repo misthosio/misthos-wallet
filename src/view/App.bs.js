@@ -3,7 +3,9 @@
 
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var React = require("react");
 var Drawer = require("./Drawer.bs.js");
+var Footer = require("./Footer.bs.js");
 var Layout = require("./Layout.bs.js");
 var Router = require("./Router.bs.js");
 var Receive = require("./Receive.bs.js");
@@ -224,7 +226,7 @@ function make(session, updateSession, _) {
       if (session !== 2) {
         exit$2 = 3;
       } else {
-        return ReasonReact.element(/* None */0, /* None */0, PublicHome.make(onSignIn, /* array */[]));
+        return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, PublicHome.make(onSignIn, /* array */[])), ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[])));
       }
     } else {
       var exit$3 = 0;
