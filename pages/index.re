@@ -30,6 +30,7 @@ let make = _children => {
         }
       />
       <MisthosIs
+        last=true
         primary="Dynamic"
         secondary="See all Venture activity instantaneously. Manage Partners and create payouts with ease."
         img={

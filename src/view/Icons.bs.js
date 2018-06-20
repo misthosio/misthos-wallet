@@ -344,6 +344,27 @@ var chevronDown = React.createElement("svg", {
           strokeWidth: "2"
         }));
 
+var arrowDownBig = React.createElement("svg", {
+      height: "45",
+      width: "45",
+      viewBox: "0 0 45 45",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("g", {
+          fill: "none",
+          fillRule: "evenodd",
+          stroke: "#000",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
+          transform: "translate(1 1)"
+        }, React.createElement("circle", {
+              cx: "21.5",
+              cy: "21.5",
+              fill: "#FFF",
+              r: "21.5"
+            }), React.createElement("path", {
+              d: "M12.9 18.992l8.6 8.6 8.6-8.6"
+            })));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -369,4 +390,5 @@ exports.twitter = twitter;
 exports.linkedin = linkedin;
 exports.medium = medium;
 exports.chevronDown = chevronDown;
+exports.arrowDownBig = arrowDownBig;
 /* arrowRight Not a pure module */

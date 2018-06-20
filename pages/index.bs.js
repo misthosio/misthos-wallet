@@ -33,17 +33,17 @@ function make() {
                                             height: "480px",
                                             src: "/static/img/misthos-gif-01-v01.gif",
                                             width: "350px"
-                                          }), /* array */[])),
+                                          }), /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, MisthosIs.make("Intuitive", "Focus on simplicity. Complete tasks quickly with an easy-to-use interface.", React.createElement("img", {
                                             height: "480px",
                                             src: "/static/img/misthos-gif-02-v01.gif",
                                             width: "350px"
-                                          }), /* array */[])),
+                                          }), /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, MisthosIs.make("Dynamic", "See all Venture activity instantaneously. Manage Partners and create payouts with ease.", React.createElement("img", {
                                             height: "480px",
                                             src: "/static/img/misthos-gif-03-v01.gif",
                                             width: "350px"
-                                          }), /* array */[])),
+                                          }), /* Some */[true], /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),

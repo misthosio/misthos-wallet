@@ -2,6 +2,7 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Icons = require("../Icons.bs.js");
 var Theme = require("../Theme.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
@@ -12,26 +13,66 @@ var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typ
 
 var component = ReasonReact.statelessComponent("MisthosIs");
 
+var arrowIcon = Icons.asDataUrl(Icons.arrowDownBig);
+
 var grid = Css.style(/* :: */[
-      Css.display(Css.grid),
+      Css.height(Css.vh(95.0)),
       /* :: */[
-        BreakPoints.xs(/* :: */[
-              Css.height(Css.vh(95.0)),
+        BreakPoints.md(/* :: */[
+              Css.unsafe("gridTemplateAreas", "\n           \". .    line .   .\"\n           \". text line img .\"\n           \". .    line .   .\"\n           "),
               /* :: */[
-                Css.unsafe("gridTemplateAreas", "\n           \". .    line .   .\"\n           \". text line img .\"\n           \". .    line .   .\"\n           "),
+                Css.unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
                 /* :: */[
-                  Css.unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
+                  Css.unsafe("gridTemplateRows", "auto min-content auto"),
                   /* :: */[
-                    Css.unsafe("gridTemplateRows", "auto min-content auto"),
+                    Css.gridGap(Css.px(Theme.space(3))),
                     /* :: */[
-                      Css.gridGap(Css.px(Theme.space(3))),
+                      Css.display(Css.grid),
                       /* [] */0
                     ]
                   ]
                 ]
               ]
             ]),
-        /* [] */0
+        /* :: */[
+          BreakPoints.xs(/* :: */[
+                Css.unsafe("gridTemplateAreas", "\n           \". .    .\"\n           \". text .\"\n           \". img  .\"\n           \". .    .\"\n           "),
+                /* :: */[
+                  Css.unsafe("gridTemplateColumns", "0px 1fr 0px"),
+                  /* :: */[
+                    Css.unsafe("gridTemplateRows", "auto min-content min-content auto"),
+                    /* :: */[
+                      Css.gridGap(Css.px(Theme.space(1))),
+                      /* :: */[
+                        Css.display(Css.none),
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]
+              ]),
+          /* :: */[
+            Css.backgroundImage(Css.url(arrowIcon)),
+            /* :: */[
+              Css.backgroundRepeat(Css.noRepeat),
+              /* :: */[
+                Css.unsafe("backgroundPosition", "top, center"),
+                /* [] */0
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var last = Css.style(/* :: */[
+      Css.unsafe("backgroundImage", "url(" + (String(arrowIcon) + ("), url(" + (String(arrowIcon) + ")")))),
+      /* :: */[
+        Css.unsafe("backgroundPosition", "top center, bottom 24px center"),
+        /* :: */[
+          Css.unsafe("backgroundRepeat", "no-repeat, no-repeat"),
+          /* [] */0
+        ]
       ]
     ]);
 
@@ -83,32 +124,60 @@ var display2 = Css.style(/* :: */[
     ]);
 
 var display4 = Css.style(/* :: */[
-      Css.fontSize(Css.px(80)),
+      BreakPoints.lg(/* :: */[
+            Css.fontSize(Css.px(80)),
+            /* [] */0
+          ]),
       /* :: */[
-        Css.unsafe("backgroundImage", Colors.uGradientAquaLight),
-        /* :: */[
-          Css.unsafe("padding", "0px 16px"),
-          /* :: */[
-            Css.unsafe("margin", "-34px 0px 26px -16px"),
-            /* :: */[
-              Css.unsafe("zIndex", "-1"),
+        BreakPoints.xs(/* :: */[
+              Css.fontSize(Css.px(65)),
               /* [] */0
+            ]),
+        /* :: */[
+          Css.unsafe("backgroundImage", Colors.uGradientAquaLight),
+          /* :: */[
+            Css.unsafe("padding", "0px 16px"),
+            /* :: */[
+              Css.unsafe("margin", "-34px 0px 26px -16px"),
+              /* :: */[
+                Css.unsafe("zIndex", "-1"),
+                /* [] */0
+              ]
             ]
           ]
         ]
       ]
     ]);
 
-var line = Css.style(/* :: */[
-      Css.unsafe("gridArea", "line"),
-      /* :: */[
-        Css.backgroundColor(Css.hex("1f2532")),
-        /* [] */0
-      ]
-    ]);
+function line(last) {
+  return Css.style(/* :: */[
+              Css.unsafe("gridArea", "line"),
+              /* :: */[
+                Css.marginTop(Css.px(45)),
+                /* :: */[
+                  Css.marginBottom(Css.px(last ? 69 : 0)),
+                  /* :: */[
+                    Css.backgroundColor(Css.hex("1f2532")),
+                    /* :: */[
+                      Css.display(Css.none),
+                      /* :: */[
+                        BreakPoints.md(/* :: */[
+                              Css.display(Css.block),
+                              /* [] */0
+                            ]),
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
 
 var Styles = /* module */[
+  /* arrowIcon */arrowIcon,
   /* grid */grid,
+  /* last */last,
   /* img */img,
   /* text */text,
   /* display1 */display1,
@@ -117,7 +186,8 @@ var Styles = /* module */[
   /* line */line
 ];
 
-function make(primary, secondary, img$1, _) {
+function make(primary, secondary, img$1, $staropt$star, _) {
+  var last$1 = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -130,11 +200,13 @@ function make(primary, secondary, img$1, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return React.createElement("div", {
-                          className: grid
+                          className: grid + (" " + (
+                              last$1 ? last : ""
+                            ))
                         }, React.createElement("div", {
                               className: text
                             }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[display2], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display2 */-11760688], /* None */0, /* None */0, /* array */[ViewCommon.text("Misthos is")])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[display4], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display4 */-11760686], /* None */0, /* None */0, /* array */[ViewCommon.text(primary)])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[display1], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Display1 */-11760689], /* None */0, /* None */0, /* array */[ViewCommon.text(secondary)]))), React.createElement("div", {
-                              className: line
+                              className: line(last$1)
                             }), React.createElement("div", {
                               className: img
                             }, img$1));

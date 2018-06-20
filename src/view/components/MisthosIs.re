@@ -6,11 +6,12 @@ module Styles = {
   open Css;
   open BreakPoints;
 
+  let arrowIcon = Icons.asDataUrl(Icons.arrowDownBig);
+
   let grid =
     style([
-      display(grid),
-      xs([
-        height(vh(95.0)),
+      height(vh(95.0)),
+      md([
         unsafe(
           "gridTemplateAreas",
           {|
@@ -22,7 +23,33 @@ module Styles = {
         unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
         unsafe("gridTemplateRows", "auto min-content auto"),
         gridGap(px(Theme.space(3))),
+        display(grid),
       ]),
+      xs([
+        unsafe(
+          "gridTemplateAreas",
+          {|
+           ". .    ."
+           ". text ."
+           ". img  ."
+           ". .    ."
+           |},
+        ),
+        unsafe("gridTemplateColumns", "0px 1fr 0px"),
+        unsafe("gridTemplateRows", "auto min-content min-content auto"),
+        gridGap(px(Theme.space(1))),
+        display(none),
+      ]),
+      backgroundImage(url(arrowIcon)),
+      backgroundRepeat(noRepeat),
+      unsafe("backgroundPosition", "top, center"),
+    ]);
+
+  let last =
+    style([
+      unsafe("backgroundImage", {j|url($arrowIcon), url($arrowIcon)|j}),
+      unsafe("backgroundPosition", "top center, bottom 24px center"),
+      unsafe("backgroundRepeat", "no-repeat, no-repeat"),
     ]);
 
   let img =
@@ -46,21 +73,29 @@ module Styles = {
   let display2 = style([fontSize(px(62)), textTransform(uppercase)]);
   let display4 =
     style([
-      fontSize(px(80)),
+      lg([fontSize(px(80))]),
+      xs([fontSize(px(65))]),
       unsafe("backgroundImage", Colors.uGradientAquaLight),
       unsafe("padding", "0px 16px"),
       unsafe("margin", "-34px 0px 26px -16px"),
       unsafe("zIndex", "-1"),
     ]);
-  let line =
-    style([unsafe("gridArea", "line"), backgroundColor(hex("1f2532"))]);
+  let line = last =>
+    style([
+      unsafe("gridArea", "line"),
+      marginTop(px(45)),
+      marginBottom(px(last ? 69 : 0)),
+      backgroundColor(hex("1f2532")),
+      display(none),
+      md([display(block)]),
+    ]);
 };
 
-let make = (~primary, ~secondary, ~img, _children) => {
+let make = (~primary, ~secondary, ~img, ~last=false, _children) => {
   ...component,
   render: _self =>
     MaterialUi.(
-      <div className=Styles.grid>
+      <div className=(Styles.grid ++ " " ++ (last ? Styles.last : ""))>
         <div className=Styles.text>
           <Typography className=Styles.display2 variant=`Display2>
             ("Misthos is" |> text)
@@ -72,7 +107,7 @@ let make = (~primary, ~secondary, ~img, _children) => {
             (secondary |> text)
           </Typography>
         </div>
-        <div className=Styles.line />
+        <div className=(Styles.line(last)) />
         <div className=Styles.img> img </div>
       </div>
     ),

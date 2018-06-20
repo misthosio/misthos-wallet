@@ -308,3 +308,21 @@ let chevronDown =
       d="M1 1l6 6 6-6"
     />
   </svg>;
+
+let arrowDownBig =
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="45"
+    height="45"
+    viewBox="0 0 45 45">
+    <g
+      fill="none"
+      fillRule="evenodd"
+      stroke="#000"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      transform="translate(1 1)">
+      <circle cx="21.5" cy="21.5" r="21.5" fill="#FFF" />
+      <path d="M12.9 18.992l8.6 8.6 8.6-8.6" />
+    </g>
+  </svg>;
