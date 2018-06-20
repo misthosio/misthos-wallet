@@ -22,7 +22,7 @@ module Styles = {
         ),
         unsafe("gridTemplateColumns", "0px 1fr 1px 1fr 0px"),
         unsafe("gridTemplateRows", "auto min-content auto"),
-        gridGap(px(Theme.space(3))),
+        gridGap(px(Theme.space(5))),
         display(grid),
       ]),
       xs([

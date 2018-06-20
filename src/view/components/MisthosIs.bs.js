@@ -25,7 +25,7 @@ var grid = Css.style(/* :: */[
                 /* :: */[
                   Css.unsafe("gridTemplateRows", "auto min-content auto"),
                   /* :: */[
-                    Css.gridGap(Css.px(Theme.space(3))),
+                    Css.gridGap(Css.px(Theme.space(5))),
                     /* :: */[
                       Css.display(Css.grid),
                       /* [] */0
