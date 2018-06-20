@@ -31,6 +31,11 @@ external makeAuthRequest :
 external redirectToSignInWithAuthRequest : authRequest => unit = "";
 
 [@bs.module "blockstack"]
+external redirectToSignInWithAuthRequestMobile :
+  (authRequest, [@bs.as "https://blockstack.org/auth"] _) => unit =
+  "redirectToSignInWithAuthRequest";
+
+[@bs.module "blockstack"]
 external redirectToSignIn :
   (~redirectURI: string, ~manifestURI: string, ~scopes: array(string)) => unit =
   "";
