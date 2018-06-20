@@ -15,39 +15,11 @@ let make = (~index, _children) => {
       area4={
         <div>
           <MTypography gutterBottom=true variant=`Title>
-            ("What can you do with a venture?" |> text)
+            ("CREATE A NEW VENTURE" |> text)
           </MTypography>
-          <MTypography gutterBottom=true variant=`Body2>
-            (
-              {js|
-                 • Your Venture can receive money from different sources, such as customers, clients, and investors
-                |js}
-              |> text
-            )
-          </MTypography>
-          <MTypography gutterBottom=true variant=`Body2>
-            (
-              {js|
-                 • Every Partner of the Venture has full transparency of income and payouts
-                |js}
-              |> text
-            )
-          </MTypography>
-          <MTypography gutterBottom=true variant=`Body2>
-            (
-              {js|
-                 • The team decides the Policies by which payouts take place
-                |js}
-              |> text
-            )
-          </MTypography>
-          <br />
           <MTypography variant=`Body2>
             (
-              {js|
-                 Set up a new Venture with yourself as the initial Partner.
-                 You can add and remove Partners once the Venture is created.
-                |js}
+              "Set up a new Venture with yourself as the initial Partner. You can add and remove Partners once the Venture is created."
               |> text
             )
           </MTypography>

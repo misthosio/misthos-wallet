@@ -26,7 +26,7 @@ let make = _children => {
       <MTypography gutterBottom=true variant=`Body2>
         (
           {js|
-                 • Your Venture can receive money from different sources, such as customers, clients, and investors
+                 • Your Venture contains a multisig bitcoin wallet that you can share access to by adding and removing Partners
                 |js}
           |> text
         )
@@ -34,7 +34,7 @@ let make = _children => {
       <MTypography gutterBottom=true variant=`Body2>
         (
           {js|
-                 • Every Partner of the Venture has full transparency of income and payouts
+                 • As a team, you and your Partners can receive income and distribute payouts
                 |js}
           |> text
         )
@@ -42,7 +42,7 @@ let make = _children => {
       <MTypography gutterBottom=true variant=`Body2>
         (
           {js|
-                 • The team decides the Policies by which payouts take place
+                 •  All decisions withn a Venture are executed when a sufficient team consensus has been achieved
                 |js}
           |> text
         )
