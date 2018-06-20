@@ -72,7 +72,7 @@ function make(selected, index, _) {
                                                 })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[link + (" " + (
                                                                       match ? linkSelected : ""
                                                                     ))], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* array */[]))]));
-                            }), index$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You don’t have any Ventures yet. The choice is easy, then of course, the choice is yours…")]));
+                            }), index$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.")]));
               } else {
                 ventureList = ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
               }

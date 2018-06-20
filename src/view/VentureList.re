@@ -19,7 +19,7 @@ let make = (~selected=?, ~index, _children) => {
       | Some([]) =>
         <MTypography variant=`Body2>
           (
-            {js|You don’t have any Ventures yet. The choice is easy, then of course, the choice is yours…|js}
+            {js|You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.|js}
             |> text
           )
         </MTypography>
