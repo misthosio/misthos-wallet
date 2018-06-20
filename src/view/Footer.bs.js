@@ -229,7 +229,7 @@ function make() {
                                 }, ViewCommon.text("Jobs")), React.createElement("a", {
                                   className: link,
                                   href: environment[/* webDomain */3] + "/datenschutzerklarung"
-                                }, ViewCommon.text("Datenshutzerklärung")), React.createElement("a", {
+                                }, ViewCommon.text("Datenschutzerklärung")), React.createElement("a", {
                                   className: link,
                                   href: environment[/* webDomain */3] + "/impressum"
                                 }, ViewCommon.text("Impressum"))), React.createElement("div", {

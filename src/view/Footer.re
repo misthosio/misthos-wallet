@@ -142,7 +142,7 @@ let make = _children => {
         <a
           className=Styles.link
           href=(environment.webDomain ++ "/datenschutzerklarung")>
-          ({js|Datenshutzerklärung|js} |> text)
+          ({js|Datenschutzerklärung|js} |> text)
         </a>
         <a className=Styles.link href=(environment.webDomain ++ "/impressum")>
           ("Impressum" |> text)
