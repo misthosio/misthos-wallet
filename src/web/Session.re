@@ -72,19 +72,17 @@ let signIn = () => {
   let transitKey = Blockstack.makeECPrivateKey();
   let environment = Environment.get();
   Cookie.set("transitKey", transitKey, environment.cookieDomain);
-  let request =
-    Blockstack.makeAuthRequest(
-      ~transitKey,
-      ~redirectURI=environment.redirectURI,
-      ~manifestURI=environment.manifestURI,
-      ~scopes=[|"store_write", "publish_data"|],
-      ~appDomain=environment.appDomain,
-    );
 
   Blockstack.(
-    PlatformOS.isMobile() ?
-      redirectToSignInWithAuthRequestMobile(request) :
-      redirectToSignInWithAuthRequest(request)
+    redirectToSignInWithAuthRequest(
+      makeAuthRequest(
+        ~transitKey,
+        ~redirectURI=environment.redirectURI,
+        ~manifestURI=environment.manifestURI,
+        ~scopes=[|"store_write", "publish_data"|],
+        ~appDomain=environment.appDomain,
+      ),
+    )
   );
   LoginPending;
 };

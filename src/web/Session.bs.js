@@ -4,7 +4,6 @@
 var Utils = require("../utils/Utils.bs.js");
 var Cookie = require("../ffi/Cookie.bs.js");
 var UserInfo = require("../application/UserInfo.bs.js");
-var PlatformOS = require("./PlatformOS.bs.js");
 var Blockstack = require("blockstack");
 var Environment = require("./Environment.bs.js");
 var SessionData = require("../application/SessionData.bs.js");
@@ -77,16 +76,10 @@ function signIn() {
   var transitKey = KeysJs.makeECPrivateKey();
   var environment = Environment.get(/* () */0);
   Cookie.set("transitKey", transitKey, environment[/* cookieDomain */4]);
-  var request = Blockstack.makeAuthRequest(transitKey, environment[/* redirectURI */0], environment[/* manifestURI */1], /* array */[
-        "store_write",
-        "publish_data"
-      ], environment[/* appDomain */2]);
-  var match = PlatformOS.isMobile(/* () */0);
-  if (match) {
-    Blockstack.redirectToSignInWithAuthRequest(request, "https://blockstack.org/auth");
-  } else {
-    Blockstack.redirectToSignInWithAuthRequest(request);
-  }
+  Blockstack.redirectToSignInWithAuthRequest(Blockstack.makeAuthRequest(transitKey, environment[/* redirectURI */0], environment[/* manifestURI */1], /* array */[
+            "store_write",
+            "publish_data"
+          ], environment[/* appDomain */2]));
   return /* LoginPending */1;
 }
 
