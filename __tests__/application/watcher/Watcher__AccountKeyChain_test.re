@@ -248,4 +248,37 @@ let () =
         testWatcherHasNoEventPending(watcher);
       },
     );
+    F.withCached(
+      ~scope="Watcher__AccountKeyChain",
+      "Is idle when the custodian is removed",
+      () => F.threeUserSessionsArray,
+      sessions => {
+        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
+        L.(
+          Fixtures.createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+        );
+      },
+      (sessions, log) => {
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        let acceptance =
+          log |> L.lastEvent |> Event.getAccountCreationAcceptedExn;
+        let log =
+          L.(
+            log
+            |> withCustodian(user1, ~supporters=[user1])
+            |> withCustodianKeyChain(user1)
+            |> withAccountKeyChainIdentified
+            |> withAccountKeyChainActivated(user1)
+            |> withPartner(user2, ~supporters=[user1])
+            |> withCustodian(user2, ~supporters=[user1, user2])
+            |> withCustodianRemoved(user1, ~supporters=[user2])
+            |> withCustodianKeyChain(user2)
+          );
+        let watcher =
+          AccountKeyChain.make(user1, acceptance, log |> L.eventLog);
+        testWatcherHasNoEventPending(watcher);
+      },
+    );
   });
