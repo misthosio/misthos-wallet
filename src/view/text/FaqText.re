@@ -219,6 +219,12 @@ let howAddRemovePartnerAP1 =
         )
       </li>
       <li> ("Share the Venture URL with the added Partner." |> text) </li>
+      <li>
+        (
+          "Access will be granted once all other Partners have endorsed the proposal."
+          |> text
+        )
+      </li>
     </ol>
   </MTypography>;
 let howAddRemovePartnerAP2 = "In order to remove a Partner a remove Partner proposal needs to be submitted. This step requires enough existing Partners to endorse the proposal. See also the question on removing a Partner below.";

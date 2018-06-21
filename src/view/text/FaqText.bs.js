@@ -75,7 +75,7 @@ var whatIsAProposalEndorsementAP2 = ReasonReact.element(/* None */0, /* None */0
 
 var howAddRemovePartnerAP1 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
           ViewCommon.text("In order to add a Partner to a Venture:"),
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to the main Venture view and click on \"Add or Remove Partners\".")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear. Here enter the Blockstack ID of the new Partner and click on \"Propose Partner\".\n            ")), React.createElement("li", undefined, ViewCommon.text("Share the Venture URL with the added Partner.")))
+          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to the main Venture view and click on \"Add or Remove Partners\".")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear. Here enter the Blockstack ID of the new Partner and click on \"Propose Partner\".\n            ")), React.createElement("li", undefined, ViewCommon.text("Share the Venture URL with the added Partner.")), React.createElement("li", undefined, ViewCommon.text("Access will be granted once all other Partners have endorsed the proposal.")))
         ]));
 
 var howReceiveA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
