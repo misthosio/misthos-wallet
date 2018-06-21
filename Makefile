@@ -8,7 +8,7 @@ web-export: web-build
 dev:
 	./node_modules/.bin/webpack-dev-server --mode development --open
 
-install:
+install-deps:
 	yarn install
 
 test-unit:

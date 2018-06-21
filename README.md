@@ -6,7 +6,7 @@ cd misthos
 brew install node
 brew install yarn
 brew install bitcoin
-make install
+make install-deps
 ```
 
 ### Test
