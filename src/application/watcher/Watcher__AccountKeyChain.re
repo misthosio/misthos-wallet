@@ -75,6 +75,15 @@ let make =
           | CustodianRemovalAccepted({
               data: {custodianId, accountIdx as removedAccount},
             })
+              when
+                UserId.eq(custodianId, localUserId)
+                && AccountIndex.eq(removedAccount, accountIdx) => {
+              ...state^,
+              active: false,
+            }
+          | CustodianRemovalAccepted({
+              data: {custodianId, accountIdx as removedAccount},
+            })
               when AccountIndex.eq(removedAccount, accountIdx) =>
             try (
               {

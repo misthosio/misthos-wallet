@@ -129,21 +129,33 @@ function make(param, param$1, log) {
                 case 24 : 
                     var match = $$event[0][/* data */2];
                     var removedAccount = match[/* accountIdx */1];
-                    if (WalletTypes.AccountIndex[/* eq */7](removedAccount, removedAccount)) {
+                    var custodianId = match[/* custodianId */0];
+                    if (PrimitiveTypes.UserId[/* eq */5](custodianId, env$1[0]) && WalletTypes.AccountIndex[/* eq */7](removedAccount, removedAccount)) {
+                      var init$3 = self$1[state][0];
+                      tmp = /* record */[
+                        /* systemIssuer */init$3[/* systemIssuer */0],
+                        /* custodianKeyChains */init$3[/* custodianKeyChains */1],
+                        /* identifiedKeyChains */init$3[/* identifiedKeyChains */2],
+                        /* identifiedEvent */init$3[/* identifiedEvent */3],
+                        /* activatedEvent */init$3[/* activatedEvent */4],
+                        /* waitingForIdentification */init$3[/* waitingForIdentification */5],
+                        /* active */false
+                      ];
+                    } else if (WalletTypes.AccountIndex[/* eq */7](removedAccount, removedAccount)) {
                       try {
-                        var custodianKeyChains = List.remove_assoc(match[/* custodianId */0], self$1[state][0][/* custodianKeyChains */1]);
+                        var custodianKeyChains = List.remove_assoc(custodianId, self$1[state][0][/* custodianKeyChains */1]);
                         var match$1 = Curry._2(env$1[2], custodianKeyChains, self$1[state][0]);
                         var identifiedKeyChains = match$1[1];
                         var identifier = match$1[0];
-                        var init$3 = self$1[state][0];
+                        var init$4 = self$1[state][0];
                         tmp = /* record */[
-                          /* systemIssuer */init$3[/* systemIssuer */0],
+                          /* systemIssuer */init$4[/* systemIssuer */0],
                           /* custodianKeyChains */custodianKeyChains,
                           /* identifiedKeyChains */identifiedKeyChains,
                           /* identifiedEvent */match$1[2],
                           /* activatedEvent */Curry._2(env$1[3], identifier, identifiedKeyChains),
                           /* waitingForIdentification */identifier,
-                          /* active */init$3[/* active */6]
+                          /* active */init$4[/* active */6]
                         ];
                       }
                       catch (exn){
@@ -160,13 +172,13 @@ function make(param, param$1, log) {
                 case 37 : 
                     var match$2 = $$event[0];
                     var keyChain = match$2[/* keyChain */2];
-                    var custodianId = match$2[/* custodianId */1];
+                    var custodianId$1 = match$2[/* custodianId */1];
                     if (Caml_obj.caml_equal(CustodianKeyChain.accountIdx(keyChain), env$1[1])) {
                       var custodianKeyChains_000 = /* tuple */[
-                        custodianId,
+                        custodianId$1,
                         keyChain
                       ];
-                      var custodianKeyChains_001 = List.remove_assoc(custodianId, self$1[state][0][/* custodianKeyChains */1]);
+                      var custodianKeyChains_001 = List.remove_assoc(custodianId$1, self$1[state][0][/* custodianKeyChains */1]);
                       var custodianKeyChains$1 = /* :: */[
                         custodianKeyChains_000,
                         custodianKeyChains_001
@@ -174,15 +186,15 @@ function make(param, param$1, log) {
                       var match$3 = Curry._2(env$1[2], custodianKeyChains$1, self$1[state][0]);
                       var identifiedKeyChains$1 = match$3[1];
                       var identifier$1 = match$3[0];
-                      var init$4 = self$1[state][0];
+                      var init$5 = self$1[state][0];
                       tmp = /* record */[
-                        /* systemIssuer */init$4[/* systemIssuer */0],
+                        /* systemIssuer */init$5[/* systemIssuer */0],
                         /* custodianKeyChains */custodianKeyChains$1,
                         /* identifiedKeyChains */identifiedKeyChains$1,
                         /* identifiedEvent */match$3[2],
                         /* activatedEvent */Curry._2(env$1[3], identifier$1, identifiedKeyChains$1),
                         /* waitingForIdentification */identifier$1,
-                        /* active */init$4[/* active */6]
+                        /* active */init$5[/* active */6]
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -191,15 +203,15 @@ function make(param, param$1, log) {
                 case 38 : 
                     var keyChain$1 = $$event[0][/* keyChain */0];
                     if (Caml_obj.caml_equal(keyChain$1[/* accountIdx */0], env$1[1]) && keyChain$1[/* identifier */1] === self$1[state][0][/* waitingForIdentification */5]) {
-                      var init$5 = self$1[state][0];
+                      var init$6 = self$1[state][0];
                       tmp = /* record */[
-                        /* systemIssuer */init$5[/* systemIssuer */0],
-                        /* custodianKeyChains */init$5[/* custodianKeyChains */1],
-                        /* identifiedKeyChains */init$5[/* identifiedKeyChains */2],
+                        /* systemIssuer */init$6[/* systemIssuer */0],
+                        /* custodianKeyChains */init$6[/* custodianKeyChains */1],
+                        /* identifiedKeyChains */init$6[/* identifiedKeyChains */2],
                         /* identifiedEvent : None */0,
-                        /* activatedEvent */init$5[/* activatedEvent */4],
+                        /* activatedEvent */init$6[/* activatedEvent */4],
                         /* waitingForIdentification */"",
-                        /* active */init$5[/* active */6]
+                        /* active */init$6[/* active */6]
                       ];
                     } else {
                       tmp = self$1[state][0];
@@ -209,10 +221,10 @@ function make(param, param$1, log) {
                     var match$4 = $$event[0];
                     var identifier$2 = match$4[/* identifier */2];
                     if (WalletTypes.AccountIndex[/* eq */7](match$4[/* accountIdx */0], env$1[1]) && PrimitiveTypes.UserId[/* eq */5](match$4[/* custodianId */1], env$1[0])) {
-                      var init$6 = self$1[state][0];
+                      var init$7 = self$1[state][0];
                       tmp = /* record */[
-                        /* systemIssuer */init$6[/* systemIssuer */0],
-                        /* custodianKeyChains */init$6[/* custodianKeyChains */1],
+                        /* systemIssuer */init$7[/* systemIssuer */0],
+                        /* custodianKeyChains */init$7[/* custodianKeyChains */1],
                         /* identifiedKeyChains : :: */[
                           /* tuple */[
                             identifier$2,
@@ -220,10 +232,10 @@ function make(param, param$1, log) {
                           ],
                           List.remove_assoc(identifier$2, self$1[state][0][/* identifiedKeyChains */2])
                         ],
-                        /* identifiedEvent */init$6[/* identifiedEvent */3],
+                        /* identifiedEvent */init$7[/* identifiedEvent */3],
                         /* activatedEvent : None */0,
-                        /* waitingForIdentification */init$6[/* waitingForIdentification */5],
-                        /* active */init$6[/* active */6]
+                        /* waitingForIdentification */init$7[/* waitingForIdentification */5],
+                        /* active */init$7[/* active */6]
                       ];
                     } else {
                       tmp = self$1[state][0];
