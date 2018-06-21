@@ -195,7 +195,7 @@ let make =
             ...state,
             inputs: {
               ...state.inputs,
-              btcAmount: amount,
+              btcAmount: amount == "." ? "0." : amount,
             },
           }
           |> updateState,

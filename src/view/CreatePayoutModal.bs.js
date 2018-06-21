@@ -497,7 +497,9 @@ function make(viewData, commands, cmdStatus, _) {
                             }
                         case 1 : 
                             if (canInput === true) {
+                              var amount = action[0];
                               var init$1 = state[/* inputs */9];
+                              var match$2 = amount === ".";
                               return /* Update */Block.__(0, [updateState(/* record */[
                                               /* viewData */state[/* viewData */0],
                                               /* destinations */state[/* destinations */1],
@@ -510,7 +512,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               /* summary */state[/* summary */8],
                                               /* inputs : record */[
                                                 /* recipientAddress */init$1[/* recipientAddress */0],
-                                                /* btcAmount */action[0]
+                                                /* btcAmount */match$2 ? "0." : amount
                                               ]
                                             ])]);
                             } else {
