@@ -3,7 +3,7 @@
 set -e
 
 pushd deps
-make install
+make install-deps
 git log --pretty=format:'%h' -n 1 > gitref
 popd
 
