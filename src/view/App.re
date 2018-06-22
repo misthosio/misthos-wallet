@@ -170,13 +170,7 @@ let make = (~session, ~updateSession, _children) => {
     | (NotLoggedIn, _, _) => <div> <PublicHome onSignIn /> <Footer /> </div>
     | (_, TypographyStack, _) => <TypographyStack />
     | (Unknown, _, _) => <BlankScreen text="Loading" />
-    | (AnonymousLogin, _, _) =>
-      <Spinner
-        text={js|
-             You have signed in with a blockstack user that doesn't have a registered blockstack.id,
-             make sure to upgrade the Blockstack client, close all Misthos tabs and try again with a registered id.
-             |js}
-      />
+    | (AnonymousLogin, _, _) => <AnonymousLogin />
     | (LoginPending, _, _) =>
       <BlankScreen text="Waiting for Blockstack session" />
     | (

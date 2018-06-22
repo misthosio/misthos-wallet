@@ -9,7 +9,6 @@ var Footer = require("./Footer.bs.js");
 var Layout = require("./Layout.bs.js");
 var Router = require("./Router.bs.js");
 var Receive = require("./Receive.bs.js");
-var Spinner = require("./components/Spinner.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -21,6 +20,7 @@ var LoggedInHome = require("./LoggedInHome.bs.js");
 var VentureStore = require("./VentureStore.bs.js");
 var NotFoundModal = require("./NotFoundModal.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
+var AnonymousLogin = require("./AnonymousLogin.bs.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
@@ -266,7 +266,7 @@ function make(session, updateSession, _) {
       if (typeof session === "number") {
         if (session !== 1) {
           if (session >= 3) {
-            return ReasonReact.element(/* None */0, /* None */0, Spinner.make("\n             You have signed in with a blockstack user that doesn\'t have a registered blockstack.id,\n             make sure to upgrade the Blockstack client, close all Misthos tabs and try again with a registered id.\n             ", /* None */0, /* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, AnonymousLogin.make(/* array */[]));
           } else {
             return ReasonReact.element(/* None */0, /* None */0, BlankScreen.make("Loading", /* array */[]));
           }
