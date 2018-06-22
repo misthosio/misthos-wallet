@@ -38,7 +38,7 @@ function completeLogIn() {
                                 return Promise.resolve(/* LoggedIn */[session]);
                               }));
                 } else {
-                  return Promise.resolve(/* AnonymousLogin */3);
+                  return Promise.resolve(/* NamelessLogin */3);
                 }
               }));
 }
@@ -55,7 +55,7 @@ function getCurrentSession() {
                       return Promise.resolve(/* LoggedIn */[session]);
                     }));
       } else {
-        return Promise.resolve(/* AnonymousLogin */3);
+        return Promise.resolve(/* NamelessLogin */3);
       }
     }
   } else if (Blockstack.isSignInPending()) {

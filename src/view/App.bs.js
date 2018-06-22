@@ -18,9 +18,9 @@ var LoadVenture = require("./LoadVenture.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var LoggedInHome = require("./LoggedInHome.bs.js");
 var VentureStore = require("./VentureStore.bs.js");
+var NamelessLogin = require("./NamelessLogin.bs.js");
 var NotFoundModal = require("./NotFoundModal.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
-var AnonymousLogin = require("./AnonymousLogin.bs.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
@@ -266,7 +266,7 @@ function make(session, updateSession, _) {
       if (typeof session === "number") {
         if (session !== 1) {
           if (session >= 3) {
-            return ReasonReact.element(/* None */0, /* None */0, AnonymousLogin.make(/* array */[]));
+            return ReasonReact.element(/* None */0, /* None */0, NamelessLogin.make(/* array */[]));
           } else {
             return ReasonReact.element(/* None */0, /* None */0, BlankScreen.make("Loading", /* array */[]));
           }

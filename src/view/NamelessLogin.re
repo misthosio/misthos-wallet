@@ -6,7 +6,7 @@ let make = _children => {
   ...component,
   render: _self =>
     <Grid
-      title1=("Anonymous Login detected" |> text)
+      title1=("Nameless Login detected" |> text)
       area3={
         <div>
           <MTypography variant=`Body2>

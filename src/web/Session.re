@@ -2,7 +2,7 @@ type t =
   | Unknown
   | LoginPending
   | NotLoggedIn
-  | AnonymousLogin
+  | NamelessLogin
   | LoggedIn(SessionData.t);
 
 let initMasterKey = (sessionData: SessionData.t) => {
@@ -32,7 +32,7 @@ let completeLogIn = () => {
     Blockstack.handlePendingSignIn()
     |> then_(userData =>
          switch (SessionData.fromUserData(userData, environment.network)) {
-         | None => resolve(AnonymousLogin)
+         | None => resolve(NamelessLogin)
          | Some(sessionData) =>
            initMasterKey(sessionData)
            |> then_(session => LoggedIn(session) |> resolve)
@@ -48,7 +48,7 @@ let getCurrentSession = () =>
       | None => NotLoggedIn |> resolve
       | Some(userData) =>
         switch (SessionData.fromUserData(userData, Environment.get().network)) {
-        | None => AnonymousLogin |> resolve
+        | None => NamelessLogin |> resolve
         | Some(sessionData) =>
           initMasterKey(sessionData)
           |> then_(session => LoggedIn(session) |> resolve)

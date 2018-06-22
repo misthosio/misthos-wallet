@@ -21,7 +21,7 @@ let make = (~session, ~updateSession, _children) => {
         currentRoute: Router.Config.route,
       ) =>
     switch (session, currentRoute, selectedVenture) {
-    | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _, _) => None
+    | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _, _) => None
     | (
         LoggedIn(_),
         Venture(selected, ManagePartners),
@@ -152,7 +152,7 @@ let make = (~session, ~updateSession, _children) => {
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
-    | (NotLoggedIn | LoginPending | AnonymousLogin | Unknown, _) => None
+    | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _) => None
     | (_, TypographyStack) => None
     | (LoggedIn(_data), Home | CreateVenture) =>
       Some(<Drawer onSignOut index />)
@@ -170,7 +170,7 @@ let make = (~session, ~updateSession, _children) => {
     | (NotLoggedIn, _, _) => <div> <PublicHome onSignIn /> <Footer /> </div>
     | (_, TypographyStack, _) => <TypographyStack />
     | (Unknown, _, _) => <BlankScreen text="Loading" />
-    | (AnonymousLogin, _, _) => <AnonymousLogin />
+    | (NamelessLogin, _, _) => <NamelessLogin />
     | (LoginPending, _, _) =>
       <BlankScreen text="Waiting for Blockstack session" />
     | (
