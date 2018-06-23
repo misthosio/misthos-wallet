@@ -488,7 +488,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               /* fee */state[/* fee */7],
                                               /* summary */state[/* summary */8],
                                               /* inputs : record */[
-                                                /* recipientAddress */action[0],
+                                                /* recipientAddress */action[0].trim(),
                                                 /* btcAmount */init[/* btcAmount */1]
                                               ]
                                             ])]);

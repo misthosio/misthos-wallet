@@ -184,7 +184,7 @@ let make =
             ...state,
             inputs: {
               ...state.inputs,
-              recipientAddress: address,
+              recipientAddress: address |> Js.String.trim,
             },
           }
           |> updateState,
