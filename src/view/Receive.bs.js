@@ -75,7 +75,7 @@ function make(commands, _) {
               var match = Environment.get(/* () */0)[/* network */5];
               var warning = match !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
               var copyButton = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
-                          return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
+                          return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
                                       "data-clipboard-text": address
                                     });
                         }), state[/* address */0]));

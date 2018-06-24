@@ -20,7 +20,7 @@ function make(route, className, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var href = Router.Config[/* routeToUrl */1](route);
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(className, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[href], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(className, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[href], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                   return Router.clickToRoute(route, param);
                                 })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
             }),

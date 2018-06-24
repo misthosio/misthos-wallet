@@ -79,7 +79,7 @@ let make =
                  ~props={"id": "modal"},
                  [||],
                );
-             <Modal _open=true onBackdropClick=onClose> inner </Modal>;
+             <Modal open_=true onBackdropClick=onClose> inner </Modal>;
            })
         |> Js.Option.getWithDefault(ReasonReact.null)
       );
@@ -104,7 +104,7 @@ let make =
             variant=`Temporary
             anchor=`Right
             onClose=(_ => send(CloseDrawer))
-            _open=state.drawerOpen>
+            open_=state.drawerOpen>
             <div
               className=Styles.drawer
               tabIndex=0

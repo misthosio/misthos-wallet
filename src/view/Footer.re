@@ -166,11 +166,11 @@ let make = _children => {
                 Root(Styles.inputRoot),
                 Underline(Styles.inputUnderline),
               ]
-              _type="email"
+              type_="email"
               placeholder="Email Address"
               name="EMAIL"
             />
-            <Button size=`Small className=Styles.button _type="submit">
+            <Button size=`Small className=Styles.button type_="submit">
               ("Sign Up" |> text)
             </Button>
             <div className=Styles.social>

@@ -611,9 +611,9 @@
   dependencies:
     jest "^22.0.4"
 
-"@jsiebern/bs-material-ui@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.2.0.tgz#dd55a67d11870223854ffa153edbff8337b17a27"
+"@jsiebern/bs-material-ui@0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.3.1.tgz#e4b9a08b6d1746c69d3ffadc70c46340646d72a0"
   dependencies:
     object-hash "^1.2.0"
 

@@ -173,7 +173,7 @@ function renderSuggestion(suggestion, vals) {
   return ReasonReact.element(/* None */0, /* None */0, MaterialUi_MenuItem.make(/* Some */[suggestionItem], /* Some */[/* `String */[
                     -976970511,
                     "div"
-                  ]], /* None */0, /* Some */[isHighlighted], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", undefined, Belt_Array.mapWithIndexU(parts, (function (index, part) {
+                  ]], /* None */0, /* Some */[isHighlighted], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", undefined, Belt_Array.mapWithIndexU(parts, (function (index, part) {
                               var match = part.highlight;
                               if (match) {
                                 return React.createElement("span", {
@@ -333,7 +333,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                       y: "27"
                                     }, ViewCommon.text(String(index + 1 | 0)))));
               };
-              var copyButton = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
+              var copyButton = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
                     "data-clipboard-text": viewData[/* joinVentureUrl */3]
                   });
               var partial_arg = state[/* suggestions */4];
@@ -342,11 +342,11 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                               activeStep
                                             ]], /* None */0, /* Some */[stepper], /* None */0, /* None */0, /* Some */[/* Vertical */-1010337642], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ReasonReact.element(/* Some */["enter-id"], /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(0)], /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(0)], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
                                                                   /* IconContainer */Block.__(9, [icon]),
                                                                   /* [] */0
                                                                 ]], /* None */0, /* array */[ViewCommon.text("ADD A BLOCKSTACK ID")])),
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* Some */[autoCompleteContianerOverflow], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* Some */[autoCompleteContianerOverflow], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                 ReasonReact.element(/* None */0, /* None */0, Autosuggest.make({
                                                                           container: autoCompleteContainer,
                                                                           suggestionsContainerOpen: suggestionsContainerOpen,
@@ -372,11 +372,11 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                               ]))
                                                     ])),
                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_Step.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(1)], /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(1)], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
                                                                   /* IconContainer */Block.__(9, [icon]),
                                                                   /* [] */0
                                                                 ]], /* None */0, /* array */[ViewCommon.text("SHARE THE VENTURE URL")])),
-                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                 ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
                                                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["mailto:?subject=" + (subject(viewData[/* ventureName */0]) + ("&body=" + body(inputs[/* prospectId */0], viewData[/* ventureName */0], viewData[/* joinVentureUrl */3], PrimitiveTypes.UserId[/* toString */0](viewData[/* localUser */1]))))], /* None */0, /* array */[ViewCommon.text("Email the link ")])),
                                                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
