@@ -7,7 +7,7 @@ let make = _children => {
   render: _self =>
     MaterialUi.(
       <Grid container=true>
-        <Grid item=true xs=V6>
+        <Grid item=true xs=`V6>
           <Typography variant=`Display4> ("Display 4" |> text) </Typography>
           <Typography variant=`Display3> ("Display 3" |> text) </Typography>
           <Typography variant=`Display2> ("Display 2" |> text) </Typography>
@@ -19,7 +19,7 @@ let make = _children => {
           <Typography variant=`Caption> ("Caption" |> text) </Typography>
           <Typography variant=`Button> ("Button" |> text) </Typography>
         </Grid>
-        <Grid item=true xs=V6>
+        <Grid item=true xs=`V6>
           <MButton> ("Button" |> text) </MButton>
           <br />
           <Link route=TypographyStack> ("Link" |> text) </Link>

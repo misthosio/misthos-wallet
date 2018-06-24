@@ -32,7 +32,7 @@ function paragraph(data) {
 
 function panel(heading, details) {
   return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelSummary.make(/* None */0, /* None */0, /* None */0, /* Some */[Icons.chevronDown], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(heading)]))])),
+                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelSummary.make(/* None */0, /* None */0, /* None */0, /* Some */[Icons.chevronDown], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(heading)]))])),
                   details
                 ]));
 }

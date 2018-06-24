@@ -67,7 +67,7 @@ function make(variant, route, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var href = Router.Config[/* routeToUrl */1](route);
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(variant)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Fab */3502759], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function ($$event) {
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(variant)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Fab */3502759], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function ($$event) {
                                   $$event.preventDefault();
                                   return ReasonReact.Router[/* push */0](href);
                                 })], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));

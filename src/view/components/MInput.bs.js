@@ -32,7 +32,7 @@ var Styles = /* module */[
   /* inputRoot */inputRoot
 ];
 
-function make(placeholder, value, onChange, autoFocus, fullWidth, endAdornment, error, name, inputProps, _type, $staropt$star, _) {
+function make(placeholder, value, onChange, autoFocus, fullWidth, endAdornment, error, name, inputProps, type_, $staropt$star, _) {
   var ensuring = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -53,8 +53,8 @@ function make(placeholder, value, onChange, autoFocus, fullWidth, endAdornment, 
                   ""
                 ];
               var error$1 = match[0];
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_FormControl.make(/* Some */[margin(ensuring ? 4 : 3, 0)], /* None */0, /* None */0, /* Some */[error$1], fullWidth, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, autoFocus, /* None */0, /* None */0, /* None */0, /* None */0, endAdornment, /* None */0, /* None */0, /* None */0, /* None */0, inputProps, /* None */0, /* None */0, /* None */0, name, /* None */0, onChange, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, placeholder, /* None */0, /* None */0, /* None */0, /* None */0, _type, value, /* Some */[/* :: */[
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_FormControl.make(/* Some */[margin(ensuring ? 4 : 3, 0)], /* None */0, /* None */0, /* Some */[error$1], fullWidth, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, autoFocus, /* None */0, /* None */0, /* None */0, /* None */0, endAdornment, /* None */0, /* None */0, /* None */0, /* None */0, inputProps, /* None */0, /* None */0, /* None */0, name, /* None */0, onChange, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, placeholder, /* None */0, /* None */0, /* None */0, /* None */0, type_, value, /* Some */[/* :: */[
                                           /* Root */Block.__(0, [inputRoot]),
                                           /* [] */0
                                         ]], /* None */0, /* array */[])),

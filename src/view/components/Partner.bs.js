@@ -193,12 +193,12 @@ function make(partnerId, name, button, status, onClick, _) {
                   ViewCommon.text(userId),
                   /* None */0
                 ];
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
                                 /* SecondaryAction */Block.__(9, [secondaryAction(status)]),
                                 /* [] */0
                               ]], /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[avatar$1(Caml_string.get(userId, 0))])),
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[match[0]], match[1], /* Some */[/* :: */[
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[match[0]], /* None */0, match[1], /* None */0, /* Some */[/* :: */[
                                           /* Primary */Block.__(3, [primary]),
                                           /* :: */[
                                             /* Secondary */Block.__(4, [secondary]),

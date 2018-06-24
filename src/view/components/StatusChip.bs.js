@@ -79,7 +79,7 @@ function make(status, label, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var label$1 = ViewCommon.text(label);
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Chip.make(/* None */0, /* Some */[chip(status)], /* None */0, /* None */0, /* Some */[label$1], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Chip.make(/* None */0, /* Some */[chip(status)], /* None */0, /* None */0, /* None */0, /* Some */[label$1], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

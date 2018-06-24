@@ -64,14 +64,14 @@ function make(selected, index, _) {
                               return ReasonReact.element(/* Some */[ids], /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* Some */[/* `String */[
                                                 -976970511,
                                                 "li"
-                                              ]], /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
+                                              ]], /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
                                                 -976970511,
                                                 ids
                                               ]], /* None */0, /* Some */[(function (param) {
                                                   return Router.clickToRoute(partial_arg, param);
                                                 })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[link + (" " + (
                                                                       match ? linkSelected : ""
-                                                                    ))], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* array */[]))]));
+                                                                    ))], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))]));
                             }), index$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.")]));
               } else {
                 ventureList = ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));

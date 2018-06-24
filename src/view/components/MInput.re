@@ -24,7 +24,7 @@ let make =
       ~error=?,
       ~name=?,
       ~inputProps=?,
-      ~_type=?,
+      ~type_=?,
       ~ensuring=false,
       _children,
     ) => {
@@ -48,7 +48,7 @@ let make =
           ?autoFocus
           ?endAdornment
           ?name
-          ?_type
+          ?type_
           classes=[Root(Styles.inputRoot)]
         />
         (
