@@ -3,8 +3,8 @@
 
 var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Icons = require("../Icons.bs.js");
 var Theme = require("../Theme.bs.js");
-var React = require("react");
 var $$String = require("bs-platform/lib/js/string.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
@@ -20,12 +20,30 @@ var component = ReasonReact.statelessComponent("Partner");
 var lenght = Theme.space(6);
 
 var avatar = Css.style(/* :: */[
-      Css.backgroundColor(/* transparent */582626130),
+      Css.backgroundImage(Css.url(Icons.asDataUrl(Icons.avatar))),
       /* :: */[
-        Css.width(Css.px(lenght)),
+        Css.backgroundSize(/* `size */[
+              -866934591,
+              /* tuple */[
+                Css.px(lenght),
+                Css.px(lenght)
+              ]
+            ]),
         /* :: */[
-          Css.height(Css.px(lenght)),
-          /* [] */0
+          Css.width(Css.px(lenght)),
+          /* :: */[
+            Css.height(Css.px(lenght)),
+            /* :: */[
+              Css.fontSize(Css.px(24)),
+              /* :: */[
+                Css.lineHeight(1.0),
+                /* :: */[
+                  Css.fontWeight(600),
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
         ]
       ]
     ]);
@@ -87,91 +105,13 @@ function secondaryAction(status) {
   }
 }
 
-var iconText = Css.style(/* :: */[
-      Css.fontFamily(Theme.sourceSansPro),
-      /* :: */[
-        Css.fontSize(Css.px(36)),
-        /* :: */[
-          Css.lineHeight(1.0),
-          /* :: */[
-            Css.fontWeight(600),
-            /* [] */0
-          ]
-        ]
-      ]
-    ]);
-
 var Styles = /* module */[
   /* lenght */lenght,
   /* avatar */avatar,
   /* primary */primary,
   /* secondary */secondary,
-  /* secondaryAction */secondaryAction,
-  /* iconText */iconText
+  /* secondaryAction */secondaryAction
 ];
-
-function avatar$1(letter) {
-  return React.createElement("svg", {
-              height: "70",
-              width: "70",
-              viewBox: "0 0 70 70",
-              xmlns: "http://www.w3.org/2000/svg"
-            }, React.createElement("defs", undefined, React.createElement("linearGradient", {
-                      id: "b",
-                      x1: "-1.146%",
-                      y1: "71.336%",
-                      y2: "0%"
-                    }, React.createElement("stop", {
-                          offset: "0%",
-                          stopColor: "#59F7F0"
-                        }), React.createElement("stop", {
-                          offset: "28.22%",
-                          stopColor: "#02A2B4"
-                        }), React.createElement("stop", {
-                          offset: "56.765%",
-                          stopColor: "#067781"
-                        }), React.createElement("stop", {
-                          offset: "79.931%",
-                          stopColor: "#FF006D"
-                        }), React.createElement("stop", {
-                          offset: "100%",
-                          stopColor: "#F65E25"
-                        }))), React.createElement("g", {
-                  fill: "none",
-                  fillRule: "evenodd",
-                  transform: "translate(6 6)"
-                }, React.createElement("ellipse", {
-                      cx: "29",
-                      cy: "28.642",
-                      fill: "#000",
-                      fillOpacity: ".98",
-                      rx: "29",
-                      ry: "28.642"
-                    }), React.createElement("ellipse", {
-                      cx: "29",
-                      cy: "28.642",
-                      rx: "32",
-                      ry: "31.642",
-                      stroke: "url(#b)",
-                      strokeWidth: "6"
-                    }), React.createElement("ellipse", {
-                      cx: "29",
-                      cy: "28.642",
-                      rx: "31",
-                      ry: "30.642",
-                      stroke: "#FFF",
-                      strokeWidth: "4"
-                    })), React.createElement("text", {
-                  alignmentBaseline: "middle",
-                  fill: "#FFF",
-                  fontFamily: Theme.sourceSansPro,
-                  fontSize: "36px",
-                  fontWeight: "600",
-                  textAnchor: "middle",
-                  x: "50%",
-                  y: "53%"
-                }, ViewCommon.text($$String.uppercase($$String.make(1, letter)))));
-}
 
 function make(partnerId, name, button, status, onClick, _) {
   return /* record */[
@@ -197,7 +137,7 @@ function make(partnerId, name, button, status, onClick, _) {
                                 /* SecondaryAction */Block.__(9, [secondaryAction(status)]),
                                 /* [] */0
                               ]], /* None */0, /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[avatar$1(Caml_string.get(userId, 0))])),
+                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[match[0]], /* None */0, match[1], /* None */0, /* Some */[/* :: */[
                                           /* Primary */Block.__(3, [primary]),
                                           /* :: */[
@@ -226,6 +166,5 @@ exports.text = text;
 exports.extractString = extractString;
 exports.component = component;
 exports.Styles = Styles;
-exports.avatar = avatar$1;
 exports.make = make;
 /* component Not a pure module */

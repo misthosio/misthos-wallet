@@ -326,3 +326,46 @@ let arrowDownBig =
       <path d="M12.9 18.992l8.6 8.6 8.6-8.6" />
     </g>
   </svg>;
+
+let avatar =
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="70"
+    height="70"
+    viewBox="0 0 70 70">
+    <defs>
+      <linearGradient id="b" x1="-1.146%" y1="71.336%" y2="0%">
+        <stop offset="0%" stopColor="#59F7F0" />
+        <stop offset="28.22%" stopColor="#02A2B4" />
+        <stop offset="56.765%" stopColor="#067781" />
+        <stop offset="79.931%" stopColor="#FF006D" />
+        <stop offset="100%" stopColor="#F65E25" />
+      </linearGradient>
+    </defs>
+    <g fill="none" fillRule="evenodd" transform="translate(6 6)">
+      <ellipse
+        fill="#000"
+        fillOpacity=".98"
+        cx="29"
+        cy="28.642"
+        rx="29"
+        ry="28.642"
+      />
+      <ellipse
+        cx="29"
+        cy="28.642"
+        stroke="url(#b)"
+        strokeWidth="6"
+        rx="32"
+        ry="31.642"
+      />
+      <ellipse
+        cx="29"
+        cy="28.642"
+        stroke="#FFF"
+        strokeWidth="4"
+        rx="31"
+        ry="30.642"
+      />
+    </g>
+  </svg>;

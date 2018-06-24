@@ -365,6 +365,58 @@ var arrowDownBig = React.createElement("svg", {
               d: "M12.9 18.992l8.6 8.6 8.6-8.6"
             })));
 
+var avatar = React.createElement("svg", {
+      height: "70",
+      width: "70",
+      viewBox: "0 0 70 70",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("defs", undefined, React.createElement("linearGradient", {
+              id: "b",
+              x1: "-1.146%",
+              y1: "71.336%",
+              y2: "0%"
+            }, React.createElement("stop", {
+                  offset: "0%",
+                  stopColor: "#59F7F0"
+                }), React.createElement("stop", {
+                  offset: "28.22%",
+                  stopColor: "#02A2B4"
+                }), React.createElement("stop", {
+                  offset: "56.765%",
+                  stopColor: "#067781"
+                }), React.createElement("stop", {
+                  offset: "79.931%",
+                  stopColor: "#FF006D"
+                }), React.createElement("stop", {
+                  offset: "100%",
+                  stopColor: "#F65E25"
+                }))), React.createElement("g", {
+          fill: "none",
+          fillRule: "evenodd",
+          transform: "translate(6 6)"
+        }, React.createElement("ellipse", {
+              cx: "29",
+              cy: "28.642",
+              fill: "#000",
+              fillOpacity: ".98",
+              rx: "29",
+              ry: "28.642"
+            }), React.createElement("ellipse", {
+              cx: "29",
+              cy: "28.642",
+              rx: "32",
+              ry: "31.642",
+              stroke: "url(#b)",
+              strokeWidth: "6"
+            }), React.createElement("ellipse", {
+              cx: "29",
+              cy: "28.642",
+              rx: "31",
+              ry: "30.642",
+              stroke: "#FFF",
+              strokeWidth: "4"
+            })));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -391,4 +443,5 @@ exports.linkedin = linkedin;
 exports.medium = medium;
 exports.chevronDown = chevronDown;
 exports.arrowDownBig = arrowDownBig;
+exports.avatar = avatar;
 /* arrowRight Not a pure module */
