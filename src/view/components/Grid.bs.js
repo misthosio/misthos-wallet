@@ -91,21 +91,18 @@ var warning = Css.style(/* :: */[
               /* :: */[
                 Css.padding2(Css.px(Theme.space(1)), Css.px(0)),
                 /* :: */[
-                  Css.children(/* :: */[
-                        Css.selector(":any-link,:-webkit-any-link", /* :: */[
-                              Css.color(Colors.white),
-                              /* :: */[
-                                Css.unsafe("textDecorationColor", Colors.uWhite),
-                                /* :: */[
-                                  Css.hover(/* :: */[
-                                        Css.color(Colors.misthosTeal),
-                                        /* [] */0
-                                      ]),
+                  Css.selector("> a", /* :: */[
+                        Css.color(Colors.white),
+                        /* :: */[
+                          Css.unsafe("textDecorationColor", Colors.uWhite),
+                          /* :: */[
+                            Css.hover(/* :: */[
+                                  Css.color(Colors.misthosTeal),
                                   /* [] */0
-                                ]
-                              ]
-                            ]),
-                        /* [] */0
+                                ]),
+                            /* [] */0
+                          ]
+                        ]
                       ]),
                   /* [] */0
                 ]

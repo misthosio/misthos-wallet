@@ -72,16 +72,14 @@ module Styles = {
       color(Colors.white),
       textTransform(uppercase),
       padding2(~h=px(0), ~v=px(Theme.space(1))),
-      children([
-        selector(
-          ":any-link,:-webkit-any-link",
-          [
-            color(Colors.white),
-            unsafe("textDecorationColor", Colors.uWhite),
-            hover([color(Colors.misthosTeal)]),
-          ],
-        ),
-      ]),
+      selector(
+        "> a",
+        [
+          color(Colors.white),
+          unsafe("textDecorationColor", Colors.uWhite),
+          hover([color(Colors.misthosTeal)]),
+        ],
+      ),
     ]);
   let warningBg =
     style([
