@@ -64,6 +64,12 @@ module Styles = {
   let suggestionItem = style([fontSize(px(14))]);
   let suggestionsList =
     style([margin(px(0)), padding(px(0)), listStyleType(none)]);
+  let ventureLink =
+    style([
+      textDecoration(underline),
+      color(`currentColor),
+      hover([color(Colors.misthosTeal)]),
+    ]);
 };
 
 module LinkEmail = {
@@ -378,12 +384,13 @@ let make =
           )
         </g>
       </svg>;
-    let copyButton =
+    let copyButton = (~element, ~className="", ()) =>
       ReasonReact.cloneElement(
-        <MaterialUi.IconButton className="copy-btn">
-          Icons.copy
-        </MaterialUi.IconButton>,
-        ~props={"data-clipboard-text": viewData.joinVentureUrl},
+        element,
+        ~props={
+          "data-clipboard-text": viewData.joinVentureUrl,
+          "className": "copy-btn" ++ " " ++ className,
+        },
         [||],
       );
 
@@ -440,7 +447,21 @@ let make =
               <Step>
                 <StepLabel
                   classes=[IconContainer(Styles.icon)] icon=(icon(1))>
-                  ("SHARE THE VENTURE URL" |> text)
+                  ("SHARE THE " |> text)
+                  <Tooltip
+                    id="venter-url-label"
+                    title=("Copy to Clipboard" |> text)
+                    placement=`Bottom>
+                    {
+                      let element =
+                        <a
+                          href=viewData.joinVentureUrl
+                          onClick=ReactEventRe.Synthetic.preventDefault>
+                          ("VENTURE URL" |> text)
+                        </a>;
+                      copyButton(~element, ~className=Styles.ventureLink, ());
+                    }
+                  </Tooltip>
                 </StepLabel>
                 <StepContent>
                   <MTypography variant=`Body2>
@@ -450,6 +471,25 @@ let make =
                |js}
                       |> text
                     )
+                  </MTypography>
+                  <MTypography variant=`Body2>
+                    ("Share this Venture via a " |> text)
+                    {
+                      let element =
+                        <a
+                          href=viewData.joinVentureUrl
+                          onClick=ReactEventRe.Synthetic.preventDefault>
+                          ("private share link" |> text)
+                        </a>;
+                      copyButton(~element, ~className=Styles.ventureLink, ());
+                    }
+                    {
+                      let element =
+                        <MaterialUi.IconButton>
+                          Icons.copy
+                        </MaterialUi.IconButton>;
+                      copyButton(~element, ());
+                    }
                   </MTypography>
                   <MButton
                     fullWidth=true
@@ -478,10 +518,6 @@ let make =
               </Step>
             </Stepper>
           )
-          <MTypography variant=`Body2>
-            (viewData.joinVentureUrl |> text)
-            copyButton
-          </MTypography>
         </div>
       }
       area4={
