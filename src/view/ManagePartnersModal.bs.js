@@ -34,6 +34,7 @@ var MaterialUi_Step = require("@jsiebern/bs-material-ui/src/MaterialUi_Step.bs.j
 var MaterialUi_Paper = require("@jsiebern/bs-material-ui/src/MaterialUi_Paper.bs.js");
 var MaterialUi_Radio = require("@jsiebern/bs-material-ui/src/MaterialUi_Radio.bs.js");
 var MaterialUi_Stepper = require("@jsiebern/bs-material-ui/src/MaterialUi_Stepper.bs.js");
+var MaterialUi_Tooltip = require("@jsiebern/bs-material-ui/src/MaterialUi_Tooltip.bs.js");
 var MaterialUi_MenuItem = require("@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js");
 var MaterialUi_StepLabel = require("@jsiebern/bs-material-ui/src/MaterialUi_StepLabel.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
@@ -130,6 +131,20 @@ var suggestionsList = Css.style(/* :: */[
       ]
     ]);
 
+var ventureLink = Css.style(/* :: */[
+      Css.textDecoration(Css.underline),
+      /* :: */[
+        Css.color(/* currentColor */292050538),
+        /* :: */[
+          Css.hover(/* :: */[
+                Css.color(Colors.misthosTeal),
+                /* [] */0
+              ]),
+          /* [] */0
+        ]
+      ]
+    ]);
+
 var Styles = /* module */[
   /* icon */icon,
   /* stepper */stepper,
@@ -139,7 +154,8 @@ var Styles = /* module */[
   /* suggestionsContainerOpen */suggestionsContainerOpen,
   /* suggestion */suggestion,
   /* suggestionItem */suggestionItem,
-  /* suggestionsList */suggestionsList
+  /* suggestionsList */suggestionsList,
+  /* ventureLink */ventureLink
 ];
 
 function subject(name) {
@@ -333,10 +349,29 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                       y: "27"
                                     }, ViewCommon.text(String(index + 1 | 0)))));
               };
-              var copyButton = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
-                    "data-clipboard-text": viewData[/* joinVentureUrl */3]
-                  });
+              var copyButton = function (element, $staropt$star, _) {
+                var className = $staropt$star ? $staropt$star[0] : "";
+                return React.cloneElement(element, {
+                            "data-clipboard-text": viewData[/* joinVentureUrl */3],
+                            className: "copy-btn " + className
+                          });
+              };
               var partial_arg = state[/* suggestions */4];
+              var element = React.createElement("a", {
+                    href: viewData[/* joinVentureUrl */3],
+                    onClick: (function (prim) {
+                        prim.preventDefault();
+                        return /* () */0;
+                      })
+                  }, ViewCommon.text("VENTURE URL"));
+              var element$1 = React.createElement("a", {
+                    href: viewData[/* joinVentureUrl */3],
+                    onClick: (function (prim) {
+                        prim.preventDefault();
+                        return /* () */0;
+                      })
+                  }, ViewCommon.text("private share link"));
+              var element$2 = ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy]));
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Addition Proposal")], /* Some */[ViewCommon.text("Removal Proposal")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Stepper.make(/* Some */[/* `Int */[
                                               3654863,
                                               activeStep
@@ -375,18 +410,23 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepLabel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[icon$1(1)], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* :: */[
                                                                   /* IconContainer */Block.__(9, [icon]),
                                                                   /* [] */0
-                                                                ]], /* None */0, /* array */[ViewCommon.text("SHARE THE VENTURE URL")])),
+                                                                ]], /* None */0, /* array */[
+                                                                ViewCommon.text("SHARE THE "),
+                                                                ReasonReact.element(/* None */0, /* None */0, MaterialUi_Tooltip.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["venter-url-label"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Bottom */437082891], /* None */0, /* None */0, ViewCommon.text("Copy to Clipboard"), /* None */0, /* None */0, /* array */[copyButton(element, /* Some */[ventureLink], /* () */0)]))
+                                                              ])),
                                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_StepContent.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                 ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("\n               Please send the following URL to the proposed Partner so they can access the Venture:\n               ")])),
+                                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                                          ViewCommon.text("Share this Venture via a "),
+                                                                          copyButton(element$1, /* Some */[ventureLink], /* () */0),
+                                                                          copyButton(element$2, /* None */0, /* () */0)
+                                                                        ])),
                                                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["mailto:?subject=" + (subject(viewData[/* ventureName */0]) + ("&body=" + body(inputs[/* prospectId */0], viewData[/* ventureName */0], viewData[/* joinVentureUrl */3], PrimitiveTypes.UserId[/* toString */0](viewData[/* localUser */1]))))], /* None */0, /* array */[ViewCommon.text("Email the link ")])),
                                                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                                               return Curry._1(send, /* AddAnother */3);
                                                                             })], /* None */0, /* Some */[true], /* Some */[/* Flat */0], /* None */0, /* Some */[false], /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Propose another Partner")]))
                                                               ]))
                                                     ]))
-                                          ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                            ViewCommon.text(viewData[/* joinVentureUrl */3]),
-                                            copyButton
                                           ])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a Partner from this Venture,\n               select his or her name below and submit your proposal.\n               When enough Partners endorse this proposal, the Partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose Partner Removal", (function () {
