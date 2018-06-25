@@ -25,7 +25,7 @@
   "devDependencies": {
     "@glennsl/bs-jest": "0.4.2",
     "babel-core": "6.26.3",
-    "babel-jest": "23.0.1",
+    "babel-jest": "23.2.0",
     "babel-loader": "7.1.4",
     "babel-preset-env": "1.7.0",
     "bs-platform": "3.1.5",
