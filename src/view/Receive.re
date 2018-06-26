@@ -61,15 +61,22 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
 
     let copyButton =
       state.address
-      |> Utils.mapOption(address =>
-           ReasonReact.cloneElement(
-             <MaterialUi.IconButton className="copy-btn">
-               Icons.copy
-             </MaterialUi.IconButton>,
-             ~props={"data-clipboard-text": address},
-             [||],
-           )
-         )
+      |> Utils.mapOption(address => {
+           let button =
+             ReasonReact.cloneElement(
+               <MaterialUi.IconButton className="copy-btn">
+                 Icons.copy
+               </MaterialUi.IconButton>,
+               ~props={"data-clipboard-text": address},
+               [||],
+             );
+           <MaterialUi.Tooltip
+             id="address-copy-btn"
+             title=("Copy to Clipboard" |> text)
+             placement=`Bottom>
+             button
+           </MaterialUi.Tooltip>;
+         })
       |> Js.Option.getWithDefault(ReasonReact.null);
     <Grid
       ?warning

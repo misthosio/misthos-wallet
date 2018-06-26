@@ -30,7 +30,13 @@ var scrollContainer = Css.style(/* :: */[
           Css.overflowY(Css.auto),
           /* :: */[
             Css.minHeight(Css.px(0)),
-            /* [] */0
+            /* :: */[
+              Css.width(/* `percent */[
+                    -119887163,
+                    100.0
+                  ]),
+              /* [] */0
+            ]
           ]
         ]
       ]
