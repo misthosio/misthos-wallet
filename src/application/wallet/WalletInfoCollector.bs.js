@@ -93,7 +93,8 @@ function fakeChangeAddress(accountIdx, userId, collector) {
           /* coordinates */nextChangeCoordinates,
           /* witnessScript */"",
           /* redeemScript */"",
-          /* displayAddress */Network.exampleOfLongestAddress(collector[/* network */0])
+          /* displayAddress */Network.exampleOfLongestAddress(collector[/* network */0]),
+          /* sequence : Some */[1]
         ];
 }
 

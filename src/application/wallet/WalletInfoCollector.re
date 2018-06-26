@@ -115,6 +115,7 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
     witnessScript: "",
     redeemScript: "",
     displayAddress: Network.exampleOfLongestAddress(collector.network),
+    sequence: Some(1),
   };
 };
 

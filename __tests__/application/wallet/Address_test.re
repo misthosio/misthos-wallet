@@ -75,8 +75,25 @@ let () = {
              witnessScript: "5221020e9782b2f322710b493e068305a89f5ea251a599b1be30aed66eb3f9ef77f5dc210211f5757d29e19d91df628e51e219d2c08f09100d12be099e5fa5fe9bda66ea842103ecd7d25cf95c0bc67c0acd8bbb02e4d89a68bd7159703b68c8ac15bb281099ea53ae",
              redeemScript: "0020037ff9e769b4e13e6d47567412cb338195342685c3a50bd0eb0be0408f3da5c9",
              displayAddress: "2NEdi7RV4F4Ce7hNmEHQRpcSCf2ZUacfDMw",
+             sequence: None,
            }: Address.t,
          );
+    })
+  );
+  describe("encode / decode", () =>
+    test("Can handle old and new encode format", () => {
+      let coordinates =
+        Address.Coordinates.nextExternal(user1.userId, [], accountKeyChain);
+      let address: Address.t = {
+        nCoSigners: 2,
+        nPubKeys: 3,
+        coordinates,
+        witnessScript: "5221020e9782b2f322710b493e068305a89f5ea251a599b1be30aed66eb3f9ef77f5dc210211f5757d29e19d91df628e51e219d2c08f09100d12be099e5fa5fe9bda66ea842103ecd7d25cf95c0bc67c0acd8bbb02e4d89a68bd7159703b68c8ac15bb281099ea53ae",
+        redeemScript: "0020037ff9e769b4e13e6d47567412cb338195342685c3a50bd0eb0be0408f3da5c9",
+        displayAddress: "2NEdi7RV4F4Ce7hNmEHQRpcSCf2ZUacfDMw",
+        sequence: None,
+      };
+      expect(address |> Address.encode |> Address.decode) |> toEqual(address);
     })
   );
 };
