@@ -28,6 +28,7 @@ module Styles = {
       overflowX(hidden),
       overflowY(auto),
       minHeight(px(0)),
+      width(`percent(100.0)),
     ]);
 };
 

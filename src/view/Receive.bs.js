@@ -19,6 +19,7 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var WalletTypes = require("../application/wallet/WalletTypes.bs.js");
 var WarningsText = require("./text/WarningsText.bs.js");
+var MaterialUi_Tooltip = require("@jsiebern/bs-material-ui/src/MaterialUi_Tooltip.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 
 var component = ReasonReact.reducerComponent("Receive");
@@ -75,9 +76,10 @@ function make(commands, _) {
               var match = Environment.get(/* () */0)[/* network */5];
               var warning = match !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
               var copyButton = Js_option.getWithDefault(null, Utils.mapOption((function (address) {
-                          return React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
-                                      "data-clipboard-text": address
-                                    });
+                          var button = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */["copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.copy])), {
+                                "data-clipboard-text": address
+                              });
+                          return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Tooltip.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["address-copy-btn"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Bottom */437082891], /* None */0, /* None */0, ViewCommon.text("Copy to Clipboard"), /* None */0, /* None */0, /* array */[button]));
                         }), state[/* address */0]));
               var match$1 = state[/* address */0];
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Receive BTC")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {

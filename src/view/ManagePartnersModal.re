@@ -483,13 +483,18 @@ let make =
                         </a>;
                       copyButton(~element, ~className=Styles.ventureLink, ());
                     }
-                    {
-                      let element =
-                        <MaterialUi.IconButton>
-                          Icons.copy
-                        </MaterialUi.IconButton>;
-                      copyButton(~element, ());
-                    }
+                    <Tooltip
+                      id="venter-url-copy-btn"
+                      title=("Copy to Clipboard" |> text)
+                      placement=`Bottom>
+                      {
+                        let element =
+                          <MaterialUi.IconButton>
+                            Icons.copy
+                          </MaterialUi.IconButton>;
+                        copyButton(~element, ());
+                      }
+                    </Tooltip>
                   </MTypography>
                   <MButton
                     fullWidth=true
