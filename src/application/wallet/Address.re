@@ -139,7 +139,11 @@ let decode = raw =>
     sequence: raw |> optional(field("sequence", int)),
   };
 
-let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) => {
+let make =
+    (
+      coordinates,
+      {custodianKeyChains, nCoSigners, sequence}: AccountKeyChain.t,
+    ) => {
   let keys =
     custodianKeyChains
     |> List.map(chain => chain |> snd |> CustodianKeyChain.hdNode)
@@ -164,10 +168,16 @@ let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) =>
        );
   open Script;
   let witnessScript =
-    Multisig.Output.encode(
-      nCoSigners,
-      keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
-    );
+    sequence |> Js.Option.isSome ?
+      MultisigWithSequence.encode(
+        nCoSigners,
+        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
+        sequence |> Js.Option.getExn,
+      ) :
+      Multisig.Output.encode(
+        nCoSigners,
+        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
+      );
   let redeemScript =
     WitnessScriptHash.Output.encode(Crypto.sha256FromBuffer(witnessScript));
   let outputScript = ScriptHash.Output.encode(Crypto.hash160(redeemScript));

@@ -23,6 +23,7 @@ let () =
               ChainIndex.externalChain,
               AddressIndex.first,
             ),
+            sequence: None,
           }: Network.txInput
         ),
         (
@@ -40,6 +41,7 @@ let () =
               ChainIndex.externalChain,
               AddressIndex.first |> AddressIndex.next,
             ),
+            sequence: None,
           }: Network.txInput
         ),
       |]

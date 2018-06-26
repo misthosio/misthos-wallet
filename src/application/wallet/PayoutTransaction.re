@@ -116,6 +116,7 @@ let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
          nPubKeys: address.nPubKeys,
          address: address.displayAddress,
          coordinates: address.coordinates,
+         sequence: address.sequence,
        };
      });
 
@@ -345,6 +346,7 @@ let build =
          i1.value |> BTC.comparedTo(i2.value)
        );
   let txB = B.TxBuilder.createWithNetwork(network |> Network.bitcoinNetwork);
+  txB |. B.TxBuilder.setVersion(2);
   let usedInputs =
     mandatoryInputs
     |> Belt.Set.toList

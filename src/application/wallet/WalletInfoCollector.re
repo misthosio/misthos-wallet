@@ -115,7 +115,7 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
     witnessScript: "",
     redeemScript: "",
     displayAddress: Network.exampleOfLongestAddress(collector.network),
-    sequence: Some(1),
+    sequence: accountKeyChain.nCoSigners > 1 ? Some(1) : None,
   };
 };
 
@@ -197,6 +197,7 @@ let apply = (event, state) =>
              coordinates,
              nCoSigners: keyChain.nCoSigners,
              nPubKeys: keyChain.custodianKeyChains |> List.length,
+             sequence: keyChain.sequence,
            }),
     };
   | PayoutProposed({

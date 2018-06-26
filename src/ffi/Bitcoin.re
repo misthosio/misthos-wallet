@@ -117,6 +117,10 @@ module TxBuilder = {
   external fromTransactionWithNetwork : (Transaction.t, Networks.t) => t =
     "fromTransaction";
   [@bs.send.pipe: t] external addInput : (string, int) => int = "";
+  [@bs.send.pipe: t]
+  external addInputWithSequence : (string, int, int) => int = "addInput";
+  [@bs.send] external setLockTime : (t, int) => unit = "";
+  [@bs.send] external setVersion : (t, int) => unit = "";
   [@bs.send.pipe: t] external addOutput : (string, float) => int = "";
   [@bs.send.pipe: t] external sign : (int, ECPair.t) => unit = "";
   [@bs.send.pipe: t]
@@ -144,6 +148,10 @@ module Script = {
   external compile : array(Ops.t) => Node.buffer = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
   external decompile : Node.buffer => array(Node.buffer) = "";
+  module Number = {
+    [@bs.module "bitcoinjs-lib"] [@bs.scope ("script", "number")]
+    external encode : int => Node.buffer = "";
+  };
   module Multisig = {
     module Output = {
       [@bs.module "bitcoinjs-lib"]

@@ -138,3 +138,24 @@ external op_CHECKSEQUENCEVERIFY : t = "OP_CHECKSEQUENCEVERIFY";
 [@bs.module "bitcoin-ops"] external op_PUBKEYHASH : t = "OP_PUBKEYHASH";
 [@bs.module "bitcoin-ops"] external op_PUBKEY : t = "OP_PUBKEY";
 [@bs.module "bitcoin-ops"] external op_INVALIDOPCODE : t = "OP_INVALIDOPCODE";
+
+let numbers =
+  Belt.Array.getExn([|
+    op_0,
+    op_1,
+    op_2,
+    op_3,
+    op_4,
+    op_5,
+    op_6,
+    op_7,
+    op_8,
+    op_9,
+    op_10,
+    op_11,
+    op_12,
+    op_13,
+    op_14,
+    op_15,
+    op_16,
+  |]);

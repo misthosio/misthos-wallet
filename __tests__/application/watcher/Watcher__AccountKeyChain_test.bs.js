@@ -79,7 +79,7 @@ describe("Watcher__AccountKeyChain", (function () {
                               if (param.tag === 38) {
                                 var match = param[0][/* keyChain */0];
                                 if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */1] === "84ba3d5f75b50fc70cdebf3b637c31c81d820519a68fd997025296ba765f2dc5") {
-                                  return List.length(match[/* custodianKeyChains */3]) === 1;
+                                  return List.length(match[/* custodianKeyChains */4]) === 1;
                                 } else {
                                   return false;
                                 }

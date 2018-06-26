@@ -111,7 +111,8 @@ function txInputForChangeAddress(txId, network, param) {
                         /* value */match[1],
                         /* nCoSigners */address[/* nCoSigners */0],
                         /* nPubKeys */address[/* nPubKeys */1],
-                        /* coordinates */address[/* coordinates */2]
+                        /* coordinates */address[/* coordinates */2],
+                        /* sequence */address[/* sequence */6]
                       ];
               }), param[/* changeAddress */3]);
 }
@@ -176,7 +177,7 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
                         }))($$Array.to_list(match))) < input[/* nCoSigners */4];
           if (needsSigning) {
             try {
-              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
+              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */4]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
               var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
               var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
@@ -292,6 +293,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
                       return TransactionFee.canPayForItself(satsPerByte, param);
                     })), mandatoryInputs$1)));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
+  txB.setVersion(2);
   var usedInputs = List.map((function (i) {
           return /* tuple */[
                   txB.addInput(i[/* txId */0], i[/* txOutputN */1]),

@@ -41,7 +41,8 @@ describe(" AccountKeyChainIdentified", (function () {
                               /* accountIdx */WalletTypes.AccountIndex[/* fromInt */1](1),
                               /* identifier */init[/* identifier */1],
                               /* nCoSigners */init[/* nCoSigners */2],
-                              /* custodianKeyChains */init[/* custodianKeyChains */3]
+                              /* sequence */init[/* sequence */3],
+                              /* custodianKeyChains */init[/* custodianKeyChains */4]
                             ]], /* BadData */["Account doesn't exist"]);
               }));
         Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "when the AccountKeyChain is inconsistent", (function () {
@@ -62,7 +63,8 @@ describe(" AccountKeyChainIdentified", (function () {
                               /* accountIdx */init[/* accountIdx */0],
                               /* identifier */"",
                               /* nCoSigners */init[/* nCoSigners */2],
-                              /* custodianKeyChains */init[/* custodianKeyChains */3]
+                              /* sequence */init[/* sequence */3],
+                              /* custodianKeyChains */init[/* custodianKeyChains */4]
                             ]], /* BadData */["Inconsistent AccountKeyChain"]);
               }));
         Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "with an old custodian", (function () {

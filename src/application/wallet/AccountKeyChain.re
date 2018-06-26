@@ -30,10 +30,12 @@ type t = {
   accountIdx,
   identifier: Identifier.t,
   nCoSigners: int,
+  sequence: option(int),
   custodianKeyChains: list((userId, CustodianKeyChain.public)),
 };
 
 let defaultCoSignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8|];
+let defaultSequence = 6 * 24 * 88;
 
 let make = (accountIdx, custodianKeyChains) => {
   let nCoSigners = defaultCoSignerList[custodianKeyChains |> List.length];
@@ -42,6 +44,7 @@ let make = (accountIdx, custodianKeyChains) => {
     identifier: Identifier.make(nCoSigners, custodianKeyChains),
     custodianKeyChains,
     nCoSigners,
+    sequence: nCoSigners > 1 ? Some(defaultSequence) : None,
   };
 };
 
@@ -76,18 +79,26 @@ module Collection = {
 
 let encode = keyChain =>
   Json.Encode.(
-    object_([
-      (
-        "custodianKeyChains",
-        list(
-          pair(UserId.encode, CustodianKeyChain.encode),
-          keyChain.custodianKeyChains,
-        ),
+    object_(
+      Belt.List.concat(
+        [
+          (
+            "custodianKeyChains",
+            list(
+              pair(UserId.encode, CustodianKeyChain.encode),
+              keyChain.custodianKeyChains,
+            ),
+          ),
+          ("nCoSigners", int(keyChain.nCoSigners)),
+          ("accountIdx", AccountIndex.encode(keyChain.accountIdx)),
+          ("identifier", Identifier.encode(keyChain.identifier)),
+        ],
+        switch (keyChain.sequence) {
+        | None => []
+        | Some(sequence) => [("sequence", int(sequence))]
+        },
       ),
-      ("nCoSigners", int(keyChain.nCoSigners)),
-      ("accountIdx", AccountIndex.encode(keyChain.accountIdx)),
-      ("identifier", Identifier.encode(keyChain.identifier)),
-    ])
+    )
   );
 
 let decode = raw =>
@@ -101,4 +112,5 @@ let decode = raw =>
     nCoSigners: raw |> field("nCoSigners", int),
     accountIdx: raw |> field("accountIdx", AccountIndex.decode),
     identifier: raw |> field("identifier", Identifier.decode),
+    sequence: raw |> optional(field("sequence", int)),
   };
