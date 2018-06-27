@@ -2,210 +2,226 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
+var Block = require("bs-platform/lib/js/block.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
-var MTypography = require("../components/MTypography.bs.js");
-var ReasonReact = require("reason-react/src/ReasonReact.js");
 
-var howCanATeamUseMisthosTodayA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("Using Misthos, a team can:"),
-          React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Aggregate income in a multisig Bitcoin wallet")), React.createElement("li", undefined, ViewCommon.text("Dynamically add / remove Partners as they participate in the venture")), React.createElement("li", undefined, ViewCommon.text("Collectively approve payouts")), React.createElement("li", undefined, ViewCommon.text("Have full visibility of the transaction and approval history")))
-        ]));
-
-var whatIsUniqueAboutMisthosAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("Misthos is unique for its:"),
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Quick wallet set-up")), React.createElement("li", undefined, ViewCommon.text("Scalability: dynamically adding / removing wallet custodians (Partners)")), React.createElement("li", undefined, ViewCommon.text("Streamlined user-experience for collaborative approval processes")))
-        ]));
-
-var whatAreThePrinciplesBehindMisthosA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("Misthos is built on the principles of data sovereignty, identity and collaborative governance models. This "),
-          React.createElement("a", {
-                href: "https://medium.com/@misthosio/ushering-in-the-decentralization-of-work-c32c14e7625c",
-                target: "_blank"
-              }, ViewCommon.text("blog post")),
-          ViewCommon.text(" dives into the guiding principles behind Misthos.")
-        ]));
-
-var whatIsBlockstackA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("Blockstack is a platform for developing decentralised applications. It provides solution to the decentralization of authentication, authorization and data storage secured by the bitcoin blockchain. With Blockstack, users control their data and apps run on their devices. There are no middlemen, no passwords, no massive data silos to breach, and no services tracking users around the internet. You can learn more about Blockstack "),
-          React.createElement("a", {
-                href: "https://blockstack.org/",
-                target: "_blank"
-              }, ViewCommon.text("here")),
-          ViewCommon.text(".")
-        ]));
-
-var howCanIGetStartedAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to "), React.createElement("a", {
-                        href: "https://www.misthos.io/",
-                        target: "_blank"
-                      }, ViewCommon.text("https://www.misthos.io/")), ViewCommon.text(".")), React.createElement("li", undefined, ViewCommon.text("Click on the \"Sign in with Blockstack\" button. ")), React.createElement("li", undefined, ViewCommon.text("At this point you will be redirected and prompted to install the "), React.createElement("a", {
-                        href: "https://blockstack.org/install",
-                        target: "_blank"
-                      }, ViewCommon.text("Blockstack browser")), ViewCommon.text(" and asked to set up a Blockstack ID. You are now ready to sign-in to Misthos.")), React.createElement("li", undefined, ViewCommon.text("Start the Blockstack browser on your PC or Laptop. This step is important as the Misthos app calls the Blockstack browser.")), React.createElement("li", undefined, ViewCommon.text("Re-open the "), React.createElement("a", {
-                        href: "https://www.misthos.io/",
-                        target: "_blank"
-                      }, ViewCommon.text("https://www.misthos.io/")), ViewCommon.text(" page and click on the \"Sign-in with Blockstack\" button. You will see a \"Sign-In Request\" pop up. ")), React.createElement("li", undefined, ViewCommon.text("Choose the Blockstack ID you want to sign in with and click on \"Approve\" to give Misthos the required permissions."))),
-          ViewCommon.text("Once you are successfully signed in, you can either create a new Venture or join an existing one (by invitation).")
-        ]));
-
-var whatIsAMisthosVentureAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("Every Venture within Misthos has:"),
-          React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("One or more Partners")), React.createElement("li", undefined, ViewCommon.text("A multisig BTC wallet at its core")))
-        ]));
-
-var howCreateAVentureAP1 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("To create a Venture, you need to be signed in to Misthos. If you are not yet signed in:"),
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to "), React.createElement("a", {
-                        href: "https://www.misthos.io/",
-                        target: "_blank"
-                      }, ViewCommon.text("https://www.misthos.io/"))), React.createElement("li", undefined, ViewCommon.text("Click on the \"Sign in with Blockstack\" button. ")), React.createElement("li", undefined, ViewCommon.text("You will see a \"Sign-In Request\" pop up. Choose the blockstack Id you want to sign in with and click on \"Approve\" to give Misthos the required permissions. ")))
-        ]));
-
-var howJoinVentureAP3 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[Css.style(/* :: */[
-                Css.color(Colors.error),
-                /* [] */0
-              ])], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Error joining Venture. Perhaps you have not been accepted yet, or if this was your first time logging in to Misthos, the Venture will become available after the inviting partner has logged in again.")]));
-
-var whatIsAProposalEndorsementAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("Here are the three types of proposals currently available:"),
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Propose a Payout")), React.createElement("li", undefined, ViewCommon.text("Propose adding a Partner")), React.createElement("li", undefined, ViewCommon.text("Propose removing a Partner")))
-        ]));
-
-var howAddRemovePartnerAP1 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("In order to add a Partner to a Venture:"),
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to the main Venture view and click on \"Add or Remove Partners\".")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear. Here enter the Blockstack ID of the new Partner and click on \"Propose Partner\".\n            ")), React.createElement("li", undefined, ViewCommon.text("Share the Venture URL with the added Partner.")), React.createElement("li", undefined, ViewCommon.text("Access will be granted once all other Partners have endorsed the proposal.")))
-        ]));
-
-var howReceiveA = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("In order to receive funds:"),
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Click on the \"Receive\" button on the main home screen.")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear and create your with your \"Income Address\".")), React.createElement("li", undefined, ViewCommon.text("Use this address (either by copying the address or scanning the QR code) to receive funds.")))
-        ]));
-
-var howPayoutAP2 = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
-          ViewCommon.text("The payout process goes through the following steps within Misthos:"),
-          React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Payout Proposal")), React.createElement("li", undefined, ViewCommon.text("Payout Endorsement or Rejection")), React.createElement("li", undefined, ViewCommon.text("Payout transaction is submitted to the Bitcoin network")))
-        ]));
+var faq = /* array */[
+  /* record */[
+    /* q */"What is Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["Misthos is a decentralised app for collaborative management of finances.\n         Individuals collaborating on a project can use Misthos to manage and\n         distribute their bitcoin income as a team."]),
+      /* S */Block.__(0, ["Users can create Ventures and dynamically add and remove Partners that\n         share and control a multisig Bitcoin wallet. Ventures can receive Bitcoin,\n         and payouts can be proposed that require endorsement from the other\n         Partners before they are submitted to the Bitcoin network."]),
+      /* S */Block.__(0, ["In the future Misthos will evolve beyond being a shared wallet to a\n         complete solution for collaboratively managing your cash flow with bitcoin!"])
+    ]
+  ],
+  /* record */[
+    /* q */"Who is Misthos for?",
+    /* a : array */[/* S */Block.__(0, ["Misthos is for any team that need a simple way to transact from a shared\n       multisig Bitcoin wallet."])]
+  ],
+  /* record */[
+    /* q */"How can a team use Misthos today?",
+    /* a : array */[/* E */Block.__(1, [/* array */[
+            ViewCommon.text("Using Misthos, a team can:"),
+            React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Aggregate income in a multisig Bitcoin wallet")), React.createElement("li", undefined, ViewCommon.text("Dynamically add / remove Partners as they participate in the venture")), React.createElement("li", undefined, ViewCommon.text("Collectively approve payouts")), React.createElement("li", undefined, ViewCommon.text("Have full visibility of the transaction and approval history")))
+          ]])]
+  ],
+  /* record */[
+    /* q */"What is unique about Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["The Misthos multisig wallet is optimised for collaborating individuals who need a simple way to collectively share and distribute Bitcoin."]),
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("Misthos is unique for its:"),
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Quick wallet set-up")), React.createElement("li", undefined, ViewCommon.text("Scalability: dynamically adding / removing wallet custodians (Partners)")), React.createElement("li", undefined, ViewCommon.text("Streamlined user-experience for collaborative approval processes")))
+          ]])
+    ]
+  ],
+  /* record */[
+    /* q */"What are the principles behind Misthos?",
+    /* a : array */[/* E */Block.__(1, [/* array */[
+            ViewCommon.text("Misthos is built on the principles of data sovereignty, identity and collaborative governance models. This "),
+            React.createElement("a", {
+                  href: "https://medium.com/@misthosio/ushering-in-the-decentralization-of-work-c32c14e7625c",
+                  target: "_blank"
+                }, ViewCommon.text("blog post")),
+            ViewCommon.text(" dives into the guiding principles behind Misthos.")
+          ]])]
+  ],
+  /* record */[
+    /* q */"Misthos is built on Blockstack. What is Blockstack?",
+    /* a : array */[/* E */Block.__(1, [/* array */[
+            ViewCommon.text("Blockstack is a platform for developing decentralised applications.\n          It provides solution to the decentralization of authentication,\n          authorization and data storage secured by the bitcoin blockchain. With\n          Blockstack, users control their data and apps run on their devices.\n          There are no middlemen, no passwords, no massive data silos to breach,\n          and no services tracking users around the internet. You can learn more\n          about Blockstack"),
+            React.createElement("a", {
+                  href: "https://blockstack.org/",
+                  target: "_blank"
+                }, ViewCommon.text("here")),
+            ViewCommon.text(".")
+          ]])]
+  ],
+  /* record */[
+    /* q */"Do I need to register with Blockstack?",
+    /* a : array */[/* S */Block.__(0, ["Yes, you need to have a Blockstack ID to sign in to Misthos and create\n         or join a Venture. If you don't have one you will be redirected to the\n         blockstack setup page when signing in."])]
+  ],
+  /* record */[
+    /* q */"How can I get started with Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["The first step is to set up a Blockstack ID. The Blockstack ID is\n         unique to an individual or a Partner. If you already have a Blockstack\n         ID, then you can directly go to step # 4\n         "]),
+      /* E */Block.__(1, [/* array */[
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to "), React.createElement("a", {
+                          href: "https://www.misthos.io/",
+                          target: "_blank"
+                        }, ViewCommon.text("https://www.misthos.io/")), ViewCommon.text(".")), React.createElement("li", undefined, ViewCommon.text("Click on the \"Sign in with Blockstack\" button. ")), React.createElement("li", undefined, ViewCommon.text("At this point you will be redirected and prompted to install the "), React.createElement("a", {
+                          href: "https://blockstack.org/install",
+                          target: "_blank"
+                        }, ViewCommon.text("Blockstack browser")), ViewCommon.text(" and asked to set up a Blockstack ID. You are now ready to sign-in to Misthos.")), React.createElement("li", undefined, ViewCommon.text("Start the Blockstack browser on your PC or Laptop. This step is important as the Misthos app calls the Blockstack browser.")), React.createElement("li", undefined, ViewCommon.text("Re-open the "), React.createElement("a", {
+                          href: "https://www.misthos.io/",
+                          target: "_blank"
+                        }, ViewCommon.text("https://www.misthos.io/")), ViewCommon.text(" page and click on the \"Sign-in with Blockstack\" button. You will see a \"Sign-In Request\" pop up. ")), React.createElement("li", undefined, ViewCommon.text("Choose the Blockstack ID you want to sign in with and click on \"Approve\" to give Misthos the required permissions."))),
+            ViewCommon.text("Once you are successfully signed in, you can either create a new Venture or join an existing one (by invitation).")
+          ]])
+    ]
+  ],
+  /* record */[
+    /* q */"What is a Venture within Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["Any project is designated as a Venture within Misthos."]),
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("Every Venture within Misthos has:"),
+            React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("One or more Partners")), React.createElement("li", undefined, ViewCommon.text("A multisig BTC wallet at its core")))
+          ]])
+    ]
+  ],
+  /* record */[
+    /* q */"How can I create a Venture within Misthos?",
+    /* a : array */[
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("To create a Venture, you need to be signed in to Misthos. If you are not yet signed in:"),
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to "), React.createElement("a", {
+                          href: "https://www.misthos.io/",
+                          target: "_blank"
+                        }, ViewCommon.text("https://www.misthos.io/"))), React.createElement("li", undefined, ViewCommon.text("Click on the \"Sign in with Blockstack\" button. ")), React.createElement("li", undefined, ViewCommon.text("You will see a \"Sign-In Request\" pop up. Choose the blockstack Id you want to sign in with and click on \"Approve\" to give Misthos the required permissions. ")))
+          ]]),
+      /* S */Block.__(0, ["Once you are signed in to Misthos, you will see the main screen with\n         all the Ventures that you are a part of. To create a new Venture, click\n         on \\\"Create a Venture\\\" button."]),
+      /* S */Block.__(0, ["You only need to enter a name to create a new Venture. Once created,\n         you will be taken to the main Venture view?. In this view you can see\n         the BTC amount that is held by the wallet of the Venture, the list of\n         Partners, the transaction history and the buttons to receive BTC and\n         create payouts."])
+    ]
+  ],
+  /* record */[
+    /* q */"How can I join an existing Venture?",
+    /* a : array */[
+      /* S */Block.__(0, ["In order to join an existing Venture, a partner within the Venture needs to propose that you be added and share an invitation link. Once all the existing partners within the Venture have endorsed the proposal you will gain access via the link that was shared with you."]),
+      /* S */Block.__(0, ["If the endorsement process is not yet complete i.e if all existing partners have not yet endorsed a proposed partner, then you will see the following error:"]),
+      /* E */Block.__(1, [React.createElement("span", {
+                className: Css.style(/* :: */[
+                      Css.color(Colors.error),
+                      /* [] */0
+                    ])
+              }, ViewCommon.text("Error joining Venture. Perhaps you have not been accepted yet, or if this was your first time logging in to Misthos, the Venture will become available after the inviting partner has logged in again."))])
+    ]
+  ],
+  /* record */[
+    /* q */"What is a proposal and an endorsement within Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["Misthos works on a set of proposals and endorsements."]),
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("Here are the three types of proposals currently available:"),
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Propose a Payout")), React.createElement("li", undefined, ViewCommon.text("Propose adding a Partner")), React.createElement("li", undefined, ViewCommon.text("Propose removing a Partner")))
+          ]]),
+      /* S */Block.__(0, ["Each of these proposals require endorsements from the remaining\n         partners to become accepted."])
+    ]
+  ],
+  /* record */[
+    /* q */"Who is a Partner?",
+    /* a : array */[/* S */Block.__(0, ["A Partner is an individual collaborator within a Venture and is a\n         unique co-signer of the multisig wallet."])]
+  ],
+  /* record */[
+    /* q */"How do I add or remove Partners within Misthos?",
+    /* a : array */[
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("In order to add a Partner to a Venture:"),
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Go to the main Venture view and click on \"Add or Remove Partners\".")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear. Here enter the Blockstack ID of the new Partner and click on \"Propose Partner\".\n            ")), React.createElement("li", undefined, ViewCommon.text("Share the Venture URL with the added Partner.")), React.createElement("li", undefined, ViewCommon.text("Access will be granted once all other Partners have endorsed the proposal.")))
+          ]]),
+      /* S */Block.__(0, ["In order to remove a Partner a remove Partner proposal needs to be\n         submitted. This step requires enough existing Partners to endorse the\n         proposal. See also the question on removing a Partner below."])
+    ]
+  ],
+  /* record */[
+    /* q */"How can I receive funds within Misthos?",
+    /* a : array */[/* E */Block.__(1, [/* array */[
+            ViewCommon.text("In order to receive funds:"),
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Click on the \"Receive\" button on the main home screen.")), React.createElement("li", undefined, ViewCommon.text("A pop-up will appear and create your with your \"Income Address\".")), React.createElement("li", undefined, ViewCommon.text("Use this address (either by copying the address or scanning\n                 the QR code) to receive funds.")))
+          ]])]
+  ],
+  /* record */[
+    /* q */"How do payouts work within Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["Any Partner can propose a payout within a Venture. As soon as there is\n         more than one Partner, the funds are collectively controlled and all\n         Partners need to unanimously agree to the payout."]),
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("The payout process goes through the following steps within Misthos:"),
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Payout Proposal")), React.createElement("li", undefined, ViewCommon.text("Payout Endorsement or Rejection")), React.createElement("li", undefined, ViewCommon.text("Payout transaction is submitted to the Bitcoin network")))
+          ]]),
+      /* S */Block.__(0, ["The first two steps involving the proposal and endorsement are\n         intrinsic to Misthos. The third step is extrinsic to Misthos and\n         behaves the same as any transaction submitted to the Bitcoin network."])
+    ]
+  ],
+  /* record */[
+    /* q */"How can I Propose a Payout?",
+    /* a : array */[/* E */Block.__(1, [/* array */[
+            ViewCommon.text("In order to propose a payout:"),
+            React.createElement("ol", undefined, React.createElement("li", undefined, ViewCommon.text("Click on the \"Payout\" button within the main Venture view.\n                   This will open up a \"Create a Payout\" page.")), React.createElement("li", undefined, ViewCommon.text("Enter the receiving address and the BTC amount.")), React.createElement("li", undefined, ViewCommon.text("On the right side of this page, you can see the summary of\n                   the payout which includes a breakdown of the BTC amount, the\n                   Network fee and Misthos fee.")), React.createElement("li", undefined, ViewCommon.text("You can now either proceed with this payout by clicking on\n                   \"Propose Payout\" or choose to add another recipient.")))
+          ]])]
+  ],
+  /* record */[
+    /* q */"How can I Endorse or Reject a Payout?",
+    /* a : array */[
+      /* S */Block.__(0, ["Any proposed payout is added to list of payouts in the main Venture\n         view and is visible to all Partners. When a Partner clicks on a\n         proposed payout, they can see the overall endorsement status and an\n         option to endorse or reject an outstanding payout.\n         "]),
+      /* S */Block.__(0, ["Current policy requires unanimous or N-of-N endorsements. E.g if a\n         Venture has three Partners then all three partners need to endorse a\n         payout for it to go to the submission stage.\n         "]),
+      /* S */Block.__(0, ["If any partner chooses to reject a payout, then the payout is\n         cancelled and will not be submitted.\n         "]),
+      /* S */Block.__(0, ["Once all existing partners endorse the payout, it will be\n         automatically submitted to the Bitcoin network. "])
+    ]
+  ],
+  /* record */[
+    /* q */"What happens on Payout Submission?",
+    /* a : array */[
+      /* S */Block.__(0, ["Once all endorsements are received then the payout will be submitted\n         to the Bitcoin network and will be shown as an \xe2\x80\x9cunconfirmed payout\xe2\x80\x9d in\n         the transactions history on the main Venture page.\n         "]),
+      /* S */Block.__(0, ["Once submitted, a payout behaves the same way as any other transaction\n         that is submitted to the Bitcoin network. For a payout to move from\n         unconfirmed status to a confirmed status, the transaction needs to be\n         added to the Bitcoin blockchain by a miner. Once a payout is confirmed\n         on the Bitcoin network, the status will be updated and the funds will\n         be transferred.\n         "])
+    ]
+  ],
+  /* record */[
+    /* q */"What is a Multisig wallet?",
+    /* a : array */[
+      /* S */Block.__(0, ["Multisig, short for Multisignature is a form of technology used to add\n         additional security for cryptocurrency transactions. Multisig refers to\n         requiring more than one key to authorize a Bitcoin transaction. You can\n         read more about Multisig here.\n         "]),
+      /* S */Block.__(0, ["Within Misthos, each Venture has a multisig wallet at its core and\n         each Partner has custody of their unique private key. An endorsement\n         by a Partner is equivalent to signing with their private key. A\n         proposal is successful when enough Partners endorse it i.e sign with\n         their private key.\n         "])
+    ]
+  ],
+  /* record */[
+    /* q */"Who is a custodian of the multisig wallet?",
+    /* a : array */[/* S */Block.__(0, ["A custodian of the multisig wallet is a Partner within a Venture.\n         Every Partner has custody of their unique private key.\n         "])]
+  ],
+  /* record */[
+    /* q */"Who can see the transactions within a Venture?",
+    /* a : array */[/* S */Block.__(0, ["All existing Partners within a Venture can see the transactions and\n         make proposals. Any Partner who has left the Venture has read-only\n         access and can see the state at time of leaving."])]
+  ],
+  /* record */[
+    /* q */"What is the Network fees and Misthos fees?",
+    /* a : array */[
+      /* S */Block.__(0, ["The Network fee is the transaction fee that is collected by the miners\n         on the Bitcoin network for processing and confirming transactions.\n         "]),
+      /* S */Block.__(0, ["The Misthos fee is the fee collected by Misthos for using the software.\n         The fee is 1.49% of the total amount of a payout\n         (disregarding thenetwork fee). Other than usual in crypto exchanges\n         there is no fee for income.\n         "])
+    ]
+  ],
+  /* record */[
+    /* q */"What is a policy in Misthos?",
+    /* a : array */[/* S */Block.__(0, ["A policy specifies the governance rules for how decisions are made\n         within Misthos.\n         "])]
+  ],
+  /* record */[
+    /* q */"What policies are there within Misthos?\n        Can I change or modify these policies?",
+    /* a : array */[/* S */Block.__(0, ["There are three default policies specified within Misthos. These are\n         hard-coded in the software and users do not have the option to change\n         them."])]
+  ]
+];
 
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
-var whatIsMisthosQ = "What is Misthos?";
-
-var whatIsMisthosAP1 = "Misthos is a decentralised app for collaborative management of finances. Individuals collaborating on a project can use Misthos to manage and distribute their bitcoin income as a team.";
-
-var whatIsMisthosAP2 = "Users can create Ventures and dynamically add and remove Partners that share and control a multisig Bitcoin wallet. Ventures can receive Bitcoin, and payouts can be proposed that require endorsement from the other Partners before they are submitted to the Bitcoin network.";
-
-var whatIsMisthosAP3 = "In the future Misthos will evolve beyond being a shared wallet to a complete solution for collaboratively managing your cash flow with bitcoin!";
-
-var whoIsMisthosForQ = "Who is Misthos for?";
-
-var whoIsMisthosForA = "Misthos is for any team that need a simple way to transact from a shared multisig Bitcoin wallet.";
-
-var howCanATeamUseMisthosTodayQ = "How can a team use Misthos today?";
-
-var whatIsUniqueAboutMisthosQ = "What is unique about Misthos?";
-
-var whatIsUniqueAboutMisthosAP1 = "The Misthos multisig wallet is optimised for collaborating individuals who need a simple way to collectively share and distribute Bitcoin.";
-
-var whatAreThePrinciplesBehindMisthosQ = "What are the principles behind Misthos?";
-
-var whatIsBlockstackQ = "Misthos is built on Blockstack. What is Blockstack?";
-
-var doINeedToRegisterWithBlockstackQ = "Do I need to register with Blockstack?";
-
-var doINeedToRegisterWithBlockstackA = "Yes, you need to have a Blockstack ID to sign in to Misthos and create or join a Venture. If you don't have one you will be redirected to the blockstack setup page when signing in.";
-
-var howCanIGetStartedQ = "How can I get started with Misthos?";
-
-var howCanIGetStartedAP1 = "The first step is to set up a Blockstack ID. The Blockstack ID is unique to an individual or a Partner. If you already have a Blockstack ID, then you can directly go to step # 4";
-
-var whatIsAMisthosVentureQ = "What is a Venture within Misthos?";
-
-var whatIsAMisthosVentureAP1 = "Any project is designated as a Venture within Misthos.";
-
-var howCreateAVentureQ = "How can I create a Venture within Misthos?";
-
-var howCreateAVentureAP2 = "Once you are signed in to Misthos, you will see the main screen with all the Ventures that you are a part of. To create a new Venture, click on \"Create a Venture\" button.";
-
-var howCreateAVentureAP3 = "You only need to enter a name to create a new Venture. Once created, you will be taken to the main Venture view?. In this view you can see the BTC amount that is held by the wallet of the Venture, the list of Partners, the transaction history and the buttons to receive BTC and create payouts.";
-
-var howJoinVentureQ = "How can I join an existing Venture?";
-
-var howJoinVentureAP1 = "In order to join an existing Venture, a partner within the Venture needs to propose that you be added and share an invitation link. Once all the existing partners within the Venture have endorsed the proposal you will gain access via the link that was shared with you.";
-
-var howJoinVentureAP2 = "If the endorsement process is not yet complete i.e if all existing partners have not yet endorsed a proposed partner, then you will see the following error:";
-
-var whatIsAProposalEndorsementQ = "What is a proposal and an endorsement within Misthos?";
-
-var whatIsAProposalEndorsementAP1 = "Misthos works on a set of proposals and endorsements.";
-
-var whatIsAProposalEndorsementAP3 = "Each of these proposals require endorsements from the remaining partners to become accepted.";
-
-var whoIsAPartnerQ = "Who is a Partner?";
-
-var whoIsAPartnerA = "A Partner is an individual collaborator within a Venture and is a unique co-signer of the multisig wallet.\n";
-
-var howAddRemovePartnerQ = "How do I add or remove Partners within Misthos?";
-
-var howAddRemovePartnerAP2 = "In order to remove a Partner a remove Partner proposal needs to be submitted. This step requires enough existing Partners to endorse the proposal. See also the question on removing a Partner below.";
-
-var howReceiveQ = "How can I receive funds within Misthos?";
-
-var howPayoutQ = "How do payouts work within Misthos?";
-
-var howPayoutAP1 = "Any Partner can propose a payout within a Venture. As soon as there is more than one Partner, the funds are collectively controlled and all Partners need to unanimously agree to the payout.";
-
-var howPayoutAP3 = "The first two steps involving the proposal and endorsement are intrinsic to Misthos. The third step is extrinsic to Misthos and behaves the same as any transaction submitted to the Bitcoin network.";
-
 exports.text = text;
 exports.extractString = extractString;
-exports.whatIsMisthosQ = whatIsMisthosQ;
-exports.whatIsMisthosAP1 = whatIsMisthosAP1;
-exports.whatIsMisthosAP2 = whatIsMisthosAP2;
-exports.whatIsMisthosAP3 = whatIsMisthosAP3;
-exports.whoIsMisthosForQ = whoIsMisthosForQ;
-exports.whoIsMisthosForA = whoIsMisthosForA;
-exports.howCanATeamUseMisthosTodayQ = howCanATeamUseMisthosTodayQ;
-exports.howCanATeamUseMisthosTodayA = howCanATeamUseMisthosTodayA;
-exports.whatIsUniqueAboutMisthosQ = whatIsUniqueAboutMisthosQ;
-exports.whatIsUniqueAboutMisthosAP1 = whatIsUniqueAboutMisthosAP1;
-exports.whatIsUniqueAboutMisthosAP2 = whatIsUniqueAboutMisthosAP2;
-exports.whatAreThePrinciplesBehindMisthosQ = whatAreThePrinciplesBehindMisthosQ;
-exports.whatAreThePrinciplesBehindMisthosA = whatAreThePrinciplesBehindMisthosA;
-exports.whatIsBlockstackQ = whatIsBlockstackQ;
-exports.whatIsBlockstackA = whatIsBlockstackA;
-exports.doINeedToRegisterWithBlockstackQ = doINeedToRegisterWithBlockstackQ;
-exports.doINeedToRegisterWithBlockstackA = doINeedToRegisterWithBlockstackA;
-exports.howCanIGetStartedQ = howCanIGetStartedQ;
-exports.howCanIGetStartedAP1 = howCanIGetStartedAP1;
-exports.howCanIGetStartedAP2 = howCanIGetStartedAP2;
-exports.whatIsAMisthosVentureQ = whatIsAMisthosVentureQ;
-exports.whatIsAMisthosVentureAP1 = whatIsAMisthosVentureAP1;
-exports.whatIsAMisthosVentureAP2 = whatIsAMisthosVentureAP2;
-exports.howCreateAVentureQ = howCreateAVentureQ;
-exports.howCreateAVentureAP1 = howCreateAVentureAP1;
-exports.howCreateAVentureAP2 = howCreateAVentureAP2;
-exports.howCreateAVentureAP3 = howCreateAVentureAP3;
-exports.howJoinVentureQ = howJoinVentureQ;
-exports.howJoinVentureAP1 = howJoinVentureAP1;
-exports.howJoinVentureAP2 = howJoinVentureAP2;
-exports.howJoinVentureAP3 = howJoinVentureAP3;
-exports.whatIsAProposalEndorsementQ = whatIsAProposalEndorsementQ;
-exports.whatIsAProposalEndorsementAP1 = whatIsAProposalEndorsementAP1;
-exports.whatIsAProposalEndorsementAP2 = whatIsAProposalEndorsementAP2;
-exports.whatIsAProposalEndorsementAP3 = whatIsAProposalEndorsementAP3;
-exports.whoIsAPartnerQ = whoIsAPartnerQ;
-exports.whoIsAPartnerA = whoIsAPartnerA;
-exports.howAddRemovePartnerQ = howAddRemovePartnerQ;
-exports.howAddRemovePartnerAP1 = howAddRemovePartnerAP1;
-exports.howAddRemovePartnerAP2 = howAddRemovePartnerAP2;
-exports.howReceiveQ = howReceiveQ;
-exports.howReceiveA = howReceiveA;
-exports.howPayoutQ = howPayoutQ;
-exports.howPayoutAP1 = howPayoutAP1;
-exports.howPayoutAP2 = howPayoutAP2;
-exports.howPayoutAP3 = howPayoutAP3;
-/* howCanATeamUseMisthosTodayA Not a pure module */
+exports.faq = faq;
+/* faq Not a pure module */

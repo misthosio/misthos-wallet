@@ -3,6 +3,7 @@
 
 var Css = require("bs-css/src/Css.js");
 var Grid = require("../src/view/components/Grid.bs.js");
+var $$Array = require("bs-platform/lib/js/array.js");
 var Icons = require("../src/view/Icons.bs.js");
 var Theme = require("../src/view/Theme.bs.js");
 var React = require("react");
@@ -30,11 +31,11 @@ function paragraph(data) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
-function panel(heading, details) {
-  return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelSummary.make(/* None */0, /* None */0, /* None */0, /* Some */[Icons.chevronDown], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(heading)]))])),
-                  details
-                ]));
+function wrapWithDiv(data) {
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
+                    -976970511,
+                    "div"
+                  ]], /* array */[data]));
 }
 
 var environment = Environment.get(/* () */0);
@@ -57,104 +58,21 @@ function make() {
                                                       Css.paddingBottom(Css.px(Theme.space(4))),
                                                       /* [] */0
                                                     ]))
-                                            }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
-                                                      panel(FaqText.whatIsMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    paragraph(FaqText.whatIsMisthosAP1),
-                                                                    paragraph(FaqText.whatIsMisthosAP2),
-                                                                    paragraph(FaqText.whatIsMisthosAP3)
-                                                                  ]))),
-                                                      panel(FaqText.whoIsMisthosForQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.whoIsMisthosForA)]))),
-                                                      panel(FaqText.howCanATeamUseMisthosTodayQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.howCanATeamUseMisthosTodayA]))),
-                                                      panel(FaqText.whatIsUniqueAboutMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    paragraph(FaqText.whatIsUniqueAboutMisthosAP1),
-                                                                    FaqText.whatIsUniqueAboutMisthosAP2
-                                                                  ]))),
-                                                      panel(FaqText.whatAreThePrinciplesBehindMisthosQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.whatAreThePrinciplesBehindMisthosA]))),
-                                                      panel(FaqText.whatIsBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.whatIsBlockstackA]))),
-                                                      panel(FaqText.doINeedToRegisterWithBlockstackQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.doINeedToRegisterWithBlockstackA)]))),
-                                                      panel(FaqText.howCanIGetStartedQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    paragraph(FaqText.howCanIGetStartedAP1),
-                                                                    FaqText.howCanIGetStartedAP2
-                                                                  ]))),
-                                                      panel(FaqText.whatIsAMisthosVentureQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    paragraph(FaqText.whatIsAMisthosVentureAP1),
-                                                                    FaqText.whatIsAMisthosVentureAP2
-                                                                  ]))),
-                                                      panel(FaqText.howCreateAVentureQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    FaqText.howCreateAVentureAP1,
-                                                                    paragraph(FaqText.howCreateAVentureAP2),
-                                                                    paragraph(FaqText.howCreateAVentureAP3)
-                                                                  ]))),
-                                                      panel(FaqText.howJoinVentureQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    paragraph(FaqText.howJoinVentureAP1),
-                                                                    paragraph(FaqText.howJoinVentureAP2),
-                                                                    FaqText.howJoinVentureAP3
-                                                                  ]))),
-                                                      panel(FaqText.whatIsAProposalEndorsementQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    paragraph(FaqText.whatIsAProposalEndorsementAP1),
-                                                                    FaqText.whatIsAProposalEndorsementAP2,
-                                                                    paragraph(FaqText.whatIsAProposalEndorsementAP3)
-                                                                  ]))),
-                                                      panel(FaqText.whoIsAPartnerQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[paragraph(FaqText.whoIsAPartnerA)]))),
-                                                      panel(FaqText.howAddRemovePartnerQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    FaqText.howAddRemovePartnerAP1,
-                                                                    paragraph(FaqText.howAddRemovePartnerAP2)
-                                                                  ]))),
-                                                      panel(FaqText.howReceiveQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[FaqText.howReceiveA]))),
-                                                      panel(FaqText.howPayoutQ, ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
-                                                                          Css.flexDirection(Css.column),
-                                                                          /* [] */0
-                                                                        ])], /* None */0, /* None */0, /* array */[
-                                                                    paragraph(FaqText.howPayoutAP1),
-                                                                    FaqText.howPayoutAP2,
-                                                                    paragraph(FaqText.howPayoutAP3)
-                                                                  ])))
-                                                    ])))], /* None */0, /* None */0, /* array */[])),
+                                            }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[$$Array.map((function (item) {
+                                                              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanel.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelSummary.make(/* None */0, /* None */0, /* None */0, /* Some */[Icons.chevronDown], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(item[/* q */0])]))])),
+                                                                              ReasonReact.element(/* None */0, /* None */0, MaterialUi_ExpansionPanelDetails.make(/* Some */[Css.style(/* :: */[
+                                                                                              Css.flexDirection(Css.column),
+                                                                                              /* [] */0
+                                                                                            ])], /* None */0, /* None */0, /* array */[$$Array.map((function (line) {
+                                                                                                if (line.tag) {
+                                                                                                  return wrapWithDiv(line[0]);
+                                                                                                } else {
+                                                                                                  return paragraph(line[0]);
+                                                                                                }
+                                                                                              }), item[/* a */1])]))
+                                                                            ]));
+                                                            }), FaqText.faq)])))], /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),
@@ -183,7 +101,7 @@ exports.extractString = extractString;
 exports.component = component;
 exports.line = line;
 exports.paragraph = paragraph;
-exports.panel = panel;
+exports.wrapWithDiv = wrapWithDiv;
 exports.Details = Details;
 exports.environment = environment;
 exports.T = T;

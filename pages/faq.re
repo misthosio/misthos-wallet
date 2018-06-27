@@ -9,15 +9,8 @@ let line = data => <MTypography variant=`Body1> (data |> text) </MTypography>;
 let paragraph = data =>
   <MTypography gutterBottom=true variant=`Body1> (data |> text) </MTypography>;
 
-let panel = (heading, details) =>
-  MaterialUi.(
-    <ExpansionPanel>
-      <ExpansionPanelSummary expandIcon=Icons.chevronDown>
-        <MTypography variant=`Subheading> (heading |> text) </MTypography>
-      </ExpansionPanelSummary>
-      details
-    </ExpansionPanel>
-  );
+let wrapWithDiv = data =>
+  <MTypography component=(`String("div")) variant=`Body1> data </MTypography>;
 
 module Details = MaterialUi.ExpansionPanelDetails;
 let environment = Environment.get();
@@ -41,146 +34,32 @@ let make = _children => {
             )>
             <ScrollList>
               (
-                panel(
-                  T.whatIsMisthosQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.whatIsMisthosAP1 |> paragraph)
-                    (T.whatIsMisthosAP2 |> paragraph)
-                    (T.whatIsMisthosAP3 |> paragraph)
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.whoIsMisthosForQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.whoIsMisthosForA |> paragraph)
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.howCanATeamUseMisthosTodayQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    T.howCanATeamUseMisthosTodayA
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.whatIsUniqueAboutMisthosQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.whatIsUniqueAboutMisthosAP1 |> paragraph)
-                    T.whatIsUniqueAboutMisthosAP2
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.whatAreThePrinciplesBehindMisthosQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    T.whatAreThePrinciplesBehindMisthosA
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.whatIsBlockstackQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    T.whatIsBlockstackA
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.doINeedToRegisterWithBlockstackQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.doINeedToRegisterWithBlockstackA |> paragraph)
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.howCanIGetStartedQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.howCanIGetStartedAP1 |> paragraph)
-                    T.howCanIGetStartedAP2
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.whatIsAMisthosVentureQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.whatIsAMisthosVentureAP1 |> paragraph)
-                    T.whatIsAMisthosVentureAP2
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.howCreateAVentureQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    T.howCreateAVentureAP1
-                    (T.howCreateAVentureAP2 |> paragraph)
-                    (T.howCreateAVentureAP3 |> paragraph)
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.howJoinVentureQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.howJoinVentureAP1 |> paragraph)
-                    (T.howJoinVentureAP2 |> paragraph)
-                    T.howJoinVentureAP3
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.whatIsAProposalEndorsementQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.whatIsAProposalEndorsementAP1 |> paragraph)
-                    T.whatIsAProposalEndorsementAP2
-                    (T.whatIsAProposalEndorsementAP3 |> paragraph)
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.whoIsAPartnerQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.whoIsAPartnerA |> paragraph)
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.howAddRemovePartnerQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    T.howAddRemovePartnerAP1
-                    (T.howAddRemovePartnerAP2 |> paragraph)
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.howReceiveQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    T.howReceiveA
-                  </Details>,
-                )
-              )
-              (
-                panel(
-                  T.howPayoutQ,
-                  <Details className=Css.(style([flexDirection(column)]))>
-                    (T.howPayoutAP1 |> paragraph)
-                    T.howPayoutAP2
-                    (T.howPayoutAP3 |> paragraph)
-                  </Details>,
-                )
+                T.faq
+                |> Array.map((item: T.t) =>
+                     MaterialUi.(
+                       <ExpansionPanel>
+                         <ExpansionPanelSummary expandIcon=Icons.chevronDown>
+                           <MTypography variant=`Subheading>
+                             (item.q |> text)
+                           </MTypography>
+                         </ExpansionPanelSummary>
+                         <Details
+                           className=Css.(style([flexDirection(column)]))>
+                           (
+                             item.a
+                             |> Array.map((line: T.line) =>
+                                  switch (line) {
+                                  | S(data) => data |> paragraph
+                                  | E(data) => data |> wrapWithDiv
+                                  }
+                                )
+                             |> ReasonReact.array
+                           )
+                         </Details>
+                       </ExpansionPanel>
+                     )
+                   )
+                |> ReasonReact.array
               )
             </ScrollList>
           </div>
