@@ -291,9 +291,8 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   txB.setVersion(2);
   var usedInputs = List.map((function (i) {
-          var match = i[/* sequence */7];
           return /* tuple */[
-                  match ? txB.addInput(i[/* txId */0], i[/* txOutputN */1], match[0]) : txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
+                  txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                   i
                 ];
         }), Belt_Set.toList(mandatoryInputs$1));
@@ -335,13 +334,12 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
     if (match[1]) {
       var match$1 = List.fold_left((function (param, i) {
-              var match = i[/* sequence */7];
               return /* tuple */[
                       param[0].plus(i[/* value */3]),
                       param[1].plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
                       /* :: */[
                         /* tuple */[
-                          match ? txB.addInput(i[/* txId */0], i[/* txOutputN */1], match[0]) : txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
+                          txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                           i
                         ],
                         param[2]

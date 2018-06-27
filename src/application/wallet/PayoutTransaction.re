@@ -331,19 +331,7 @@ let build =
     mandatoryInputs
     |> Belt.Set.toList
     |> List.map((i: input) =>
-         (
-           switch (i.sequence) {
-           | Some(sequence) =>
-             txB
-             |> B.TxBuilder.addInputWithSequence(
-                  i.txId,
-                  i.txOutputN,
-                  sequence,
-                )
-           | None => txB |> B.TxBuilder.addInput(i.txId, i.txOutputN)
-           },
-           i,
-         )
+         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
        );
   let outTotalWithoutFee =
     destinations
@@ -426,19 +414,7 @@ let build =
                     Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
                   ),
                [
-                 (
-                   switch (i.sequence) {
-                   | Some(sequence) =>
-                     txB
-                     |> B.TxBuilder.addInputWithSequence(
-                          i.txId,
-                          i.txOutputN,
-                          sequence,
-                        )
-                   | None => txB |> B.TxBuilder.addInput(i.txId, i.txOutputN)
-                   },
-                   i,
-                 ),
+                 (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
                  ...usedInputs,
                ],
              ),
