@@ -285,9 +285,16 @@ function join(session, userId, ventureId) {
                   return Blockstack.getFileFromUserAndDecrypt(PrimitiveTypes.VentureId[/* toString */0](ventureId) + ("/" + (session[/* storagePrefix */3] + "/log.json")), PrimitiveTypes.UserId[/* toString */0](userId)).then((function (nullFile) {
                                     var tmp;
                                     if (nullFile == null) {
+                                      logMessage("log file could not be loaded");
                                       throw Caml_builtin_exceptions.not_found;
                                     } else {
-                                      tmp = reconstruct(session, Curry._1(EventLog.decode, Json.parseOrRaise(nullFile)));
+                                      var match = Json.parse(nullFile);
+                                      if (match) {
+                                        tmp = reconstruct(session, Curry._1(EventLog.decode, match[0]));
+                                      } else {
+                                        logMessage("error decoding log");
+                                        throw Caml_builtin_exceptions.not_found;
+                                      }
                                     }
                                     return persist(/* None */0, tmp);
                                   })).then((function (param) {
@@ -303,6 +310,8 @@ function join(session, userId, ventureId) {
                                                 }));
                                   }
                                 })).catch((function (err) {
+                                logMessage("Error while joining");
+                                console.log(err);
                                 return Promise.resolve(/* CouldNotJoin */Block.__(2, [err]));
                               }));
                 } else {

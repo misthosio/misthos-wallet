@@ -214,12 +214,17 @@ let join = (session: SessionData.t, ~userId, ~ventureId) =>
            |> then_(nullFile =>
                 (
                   switch (Js.Nullable.toOption(nullFile)) {
-                  | None => raise(Not_found)
+                  | None =>
+                    logMessage("log file could not be loaded");
+                    raise(Not_found);
                   | Some(raw) =>
-                    raw
-                    |> Json.parseOrRaise
-                    |> EventLog.decode
-                    |> reconstruct(session)
+                    switch (raw |> Json.parse) {
+                    | Some(json) =>
+                      json |> EventLog.decode |> reconstruct(session)
+                    | None =>
+                      logMessage("error decoding log");
+                      raise(Not_found);
+                    }
                   }
                 )
                 |> persist
@@ -234,7 +239,11 @@ let join = (session: SessionData.t, ~userId, ~ventureId) =>
                   |> then_(index => resolve(Joined(index, venture)))
                 | Js.Result.Error(err) => CouldNotJoin(err) |> resolve,
               )
-           |> catch(err => CouldNotJoin(err) |> resolve)
+           |> catch(err => {
+                logMessage("Error while joining");
+                Js.log(err);
+                CouldNotJoin(err) |> resolve;
+              })
          }
        )
   );
