@@ -223,10 +223,6 @@ let () =
                       ~payoutTx=data.payoutTx,
                     )
                     |> PayoutTransaction.getSignedExn;
-                  let tx =
-                    PayoutTransaction.finalize([data.payoutTx, payoutTx]);
-                  Js.log2("finalized:", tx |> Bitcoin.Transaction.toHex);
-                  Js.log(Helpers.displayTx(tx |> Bitcoin.Transaction.toHex));
                   Js.Promise.all2((
                     resolve(
                       twoKeyChainWallet^
@@ -241,7 +237,7 @@ let () =
             )
             |> then_(((wallet, _broadcastResult)) => {
                  let expectedFee =
-                   BTC.fromSatoshis(5810L)
+                   BTC.fromSatoshis(5870L)
                    |> BTC.plus(
                         twoKeyChainSpendAmount
                         |> BTC.timesRounded(misthosFeePercent /. 100.),

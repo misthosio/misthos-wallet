@@ -253,15 +253,6 @@ describe("Wallet_integration", (function () {
                                       var $$event = param[0];
                                       var data = $$event[/* data */6];
                                       var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1]));
-                                      var tx = PayoutTransaction.finalize(/* :: */[
-                                            data[/* payoutTx */1],
-                                            /* :: */[
-                                              payoutTx,
-                                              /* [] */0
-                                            ]
-                                          ]);
-                                      console.log("finalized:", tx.toHex());
-                                      console.log(Helpers.displayTx(tx.toHex()));
                                       tmp = Promise.all(/* tuple */[
                                             Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(26, [$$event]), twoKeyChainWallet[0])),
                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
@@ -278,7 +269,7 @@ describe("Wallet_integration", (function () {
                                     return tmp.then((function (param) {
                                                   var expectedFee = BTC.fromSatoshis(/* int64 */[
                                                           /* hi */0,
-                                                          /* lo */5810
+                                                          /* lo */5870
                                                         ]).plus(BTC.timesRounded(PayoutTransaction.misthosFeePercent / 100, twoKeyChainSpendAmount));
                                                   return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                                 return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {

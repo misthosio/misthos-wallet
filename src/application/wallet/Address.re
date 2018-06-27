@@ -168,16 +168,19 @@ let make =
        );
   open Script;
   let witnessScript =
-    sequence |> Js.Option.isSome ?
+    switch (sequence) {
+    | Some(sequence) =>
       MultisigWithSequence.encode(
         nCoSigners,
         keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
-        sequence |> Js.Option.getExn,
-      ) :
+        sequence,
+      )
+    | None =>
       Multisig.Output.encode(
         nCoSigners,
         keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
-      );
+      )
+    };
   let redeemScript =
     WitnessScriptHash.Output.encode(Crypto.sha256FromBuffer(witnessScript));
   let outputScript = ScriptHash.Output.encode(Crypto.hash160(redeemScript));
@@ -193,7 +196,7 @@ let make =
     witnessScript: Utils.bufToHex(witnessScript),
     redeemScript: Utils.bufToHex(redeemScript),
     displayAddress,
-    sequence: None,
+    sequence,
   };
 };
 

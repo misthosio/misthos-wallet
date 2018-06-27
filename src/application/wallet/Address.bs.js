@@ -223,10 +223,9 @@ function make(coordinates, param) {
                 }), List.map((function (chain) {
                       return CustodianKeyChain.hdNode(chain[1]);
                     }), custodianKeyChains))));
-  var match = Js_option.isSome(sequence);
-  var witnessScript = match ? MultisigWithSequence.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
+  var witnessScript = sequence ? MultisigWithSequence.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
                     return prim.getPublicKeyBuffer();
-                  }), keys)), Js_option.getExn(sequence)) : BitcoinjsLib.script.multisig.output.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
+                  }), keys)), sequence[0]) : BitcoinjsLib.script.multisig.output.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
                     return prim.getPublicKeyBuffer();
                   }), keys)));
   var redeemScript = BitcoinjsLib.script.witnessScriptHash.output.encode(BitcoinjsLib.crypto.sha256(witnessScript));
@@ -239,7 +238,7 @@ function make(coordinates, param) {
           /* witnessScript */Utils.bufToHex(witnessScript),
           /* redeemScript */Utils.bufToHex(redeemScript),
           /* displayAddress */displayAddress,
-          /* sequence : None */0
+          /* sequence */sequence
         ];
 }
 
