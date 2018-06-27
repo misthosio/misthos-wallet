@@ -15,7 +15,7 @@ function constructState(log) {
 }
 
 describe("AddressCollector", (function () {
-        return Fixtures.withCached(/* None */0, "AddressCollector", "collects addresses", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "AddressCollector", "collects addresses", (function () {
                       return Fixtures.threeUserSessionsArray;
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);

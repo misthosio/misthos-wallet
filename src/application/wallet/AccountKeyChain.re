@@ -44,7 +44,8 @@ let make = (accountIdx, custodianKeyChains) => {
     identifier: Identifier.make(nCoSigners, custodianKeyChains),
     custodianKeyChains,
     nCoSigners,
-    sequence: nCoSigners > 1 ? Some(defaultSequence) : None,
+    sequence: None,
+    /* sequence: nCoSigners > 1 ? Some(defaultSequence) : None, */
   };
 };
 

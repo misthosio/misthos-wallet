@@ -21,7 +21,7 @@ var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollec
 Helpers.enableHttpRequests(/* () */0);
 
 describe("Wallet_integration", (function () {
-        return Fixtures.withCached(/* None */0, "Wallet_integration", "integration", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "Wallet_integration", "integration", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -213,7 +213,7 @@ describe("Wallet_integration", (function () {
                                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
                                                                       $$event[/* data */6][/* payoutTx */1],
                                                                       /* [] */0
-                                                                    ], /* Regtest */0))
+                                                                    ]))
                                                           ]);
                                               } else {
                                                 throw PayoutTransaction.NotEnoughFunds;
@@ -261,7 +261,7 @@ describe("Wallet_integration", (function () {
                                                         payoutTx,
                                                         /* [] */0
                                                       ]
-                                                    ], /* Regtest */0))
+                                                    ]))
                                           ]);
                                     } else {
                                       throw PayoutTransaction.NotEnoughFunds;

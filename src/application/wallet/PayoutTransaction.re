@@ -549,126 +549,25 @@ let max =
   };
 };
 
-let rec findSignatures = (allSigs, needed, foundSigIdxs, foundSigs, network) =>
-  switch (needed, allSigs) {
-  | (0, _)
-  | (_, []) => foundSigs
-  | (_, [None, ...otherSigs]) =>
-    findSignatures(otherSigs, needed, foundSigIdxs, foundSigs, network)
-  | (_, [Some(signatures), ...otherSigs]) =>
-    try (
-      {
-        let foundSig =
-          signatures
-          |> Array.mapi((i, sigBuf) => (i, sigBuf))
-          |> Array.to_list
-          |> List.find(((i, signature)) =>
-               Js.Nullable.test(signature) == false
-               && foundSigIdxs
-               |> List.mem(i) == false
-             );
-        let foundSigs = [foundSig, ...foundSigs];
-        if (needed == 1) {
-          foundSigs;
-        } else {
-          findSignatures(
-            allSigs,
-            needed - 1,
-            [fst(foundSig), ...foundSigIdxs],
-            foundSigs,
-            network,
-          );
-        };
-      }
-    ) {
-    | Not_found =>
-      findSignatures(otherSigs, needed, foundSigIdxs, foundSigs, network)
-    }
-  };
-
-let finalize = (signedTransactions, network) => {
+let finalize = signedTransactions => {
+  open Belt;
   let signedTransactions =
     signedTransactions
-    |. Belt.List.sortU((. {txHex: hexA}, {txHex: hexB}) =>
-         compare(hexA, hexB)
-       );
-  switch (signedTransactions) {
-  | [{txHex, usedInputs}, ...moreSignedTransactions] =>
-    let txB =
-      B.TxBuilder.fromTransactionWithNetwork(
-        txHex |> B.Transaction.fromHex,
-        network |> Network.bitcoinNetwork,
-      );
-    let inputs = txB##inputs;
-    let otherInputs =
-      moreSignedTransactions
-      |> List.map(({txHex}: t) =>
-           B.TxBuilder.fromTransactionWithNetwork(
-             txHex |> B.Transaction.fromHex,
-             network |> Network.bitcoinNetwork,
-           )##inputs
-         );
-    usedInputs
-    |> Array.iteri((inputIdx, {nCoSigners}: input) => {
-         let testInput = inputs[inputIdx];
-         inputs[inputIdx] = (
-           switch (testInput##signatures |> Js.Nullable.toOption) {
-           | Some(_) => inputs[inputIdx]
-           | None =>
-             let inputs =
-               try (
-                 otherInputs
-                 |> List.find(ins => {
-                      let input = ins[inputIdx];
-                      input##signatures
-                      |> Js.Nullable.toOption
-                      |> Js.Option.isSome;
-                    })
-               ) {
-               | Not_found => raise(NoSignaturesForInput)
-               };
-             inputs[inputIdx];
-           }
-         );
-         let input = inputs[inputIdx];
-         let signatures =
-           input##signatures |> Js.Nullable.toOption |> Js.Option.getExn;
-         let existing =
-           signatures
-           |> Array.mapi((i, sigBuf) =>
-                switch (sigBuf |> Js.Nullable.toOption) {
-                | Some(_) => Some(i)
-                | None => None
-                }
-              )
-           |> Array.to_list
-           |> List.filter(Js.Option.isSome)
-           |> List.map(i => Js.Option.getExn(i));
-         let total =
-           findSignatures(
-             otherInputs
-             |> List.map(ins => {
-                  let input = ins[inputIdx];
-                  input##signatures |> Js.Nullable.toOption;
-                }),
-             nCoSigners - (existing |> List.length),
-             existing,
-             [],
-             network,
-           )
-           |> List.fold_left(
-                (res, (sigIdx, signature)) => {
-                  signatures[sigIdx] = signature;
-                  res + 1;
-                },
-                existing |> List.length,
-              );
-         if (total != nCoSigners) {
-           raise(NotEnoughSignatures);
-         };
-       });
-    txB |> B.TxBuilder.build;
-  | _ => %assert
-         "finalize"
+    |. List.sortU((. {txHex: hexA}, {txHex: hexB}) => compare(hexA, hexB));
+  let wrappers =
+    signedTransactions |. List.mapU((. {txHex}) => txHex |> TxWrapper.make);
+  let res =
+    switch (wrappers |> List.head, wrappers |> List.tail) {
+    | (Some(head), Some(rest)) =>
+      rest |. List.reduceU(head, (. tx, other) => TxWrapper.merge(tx, other))
+    | (Some(head), _) => head
+    | _ => %assert
+           "finalize"
+    };
+  switch (
+    res |> TxWrapper.finalize((signedTransactions |> List.headExn).usedInputs)
+  ) {
+  | Ok(tx) => tx
+  | NotEnoughSignatures => raise(NotEnoughSignatures)
   };
 };

@@ -67,12 +67,11 @@ var defaultCoSignerList = /* array */[
 
 function make$1(accountIdx, custodianKeyChains) {
   var nCoSigners = Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains));
-  var match = nCoSigners > 1;
   return /* record */[
           /* accountIdx */accountIdx,
           /* identifier */make(nCoSigners, custodianKeyChains),
           /* nCoSigners */nCoSigners,
-          /* sequence */match ? /* Some */[12672] : /* None */0,
+          /* sequence : None */0,
           /* custodianKeyChains */custodianKeyChains
         ];
 }

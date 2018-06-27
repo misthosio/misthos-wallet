@@ -147,10 +147,7 @@ let () =
                          |> Wallet.apply(PayoutProposed(event));
                        all2((
                          processId |> resolve,
-                         PayoutTransaction.finalize(
-                           [data.payoutTx],
-                           Network.Regtest,
-                         )
+                         PayoutTransaction.finalize([data.payoutTx])
                          |> Helpers.broadcastTransaction,
                        ));
                      }
@@ -231,10 +228,7 @@ let () =
                       twoKeyChainWallet^
                       |> Wallet.apply(PayoutProposed(event)),
                     ),
-                    PayoutTransaction.finalize(
-                      [data.payoutTx, payoutTx],
-                      Network.Regtest,
-                    )
+                    PayoutTransaction.finalize([data.payoutTx, payoutTx])
                     |> Helpers.broadcastTransaction,
                   ));
                 }

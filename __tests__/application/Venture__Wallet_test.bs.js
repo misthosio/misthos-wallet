@@ -6,7 +6,7 @@ var Generators = require("../helpers/Generators.bs.js");
 var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
 
 describe("Venture__Wallet", (function () {
-        return Fixtures.withCached(/* None */0, "Venture__Wallet", "nextIncomeAddress", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "Venture__Wallet", "nextIncomeAddress", (function () {
                       return Fixtures.threeUserSessionsArray;
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);

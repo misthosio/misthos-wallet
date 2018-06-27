@@ -1,6 +1,6 @@
 type t = Node.buffer;
 
-[@bs.new] external makeWithSize : int => t = "Buffer";
+[@bs.val] external makeWithSize : int => t = "Buffer.alloc";
 
 [@bs.val]
 external fromStringWithEncoding : (Js.String.t, ~encoding: Js.String.t) => t =
@@ -17,4 +17,4 @@ external toStringWithEncoding : Js.String.t => Js.String.t = "toString";
 external byteLength : (Js.String.t, ~encoding: Js.String.t) => int =
   "Buffer.byteLength";
 
-[@bs.send] external length : t => int = "";
+[@bs.get] external length : t => int = "";

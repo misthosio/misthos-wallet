@@ -13,7 +13,6 @@ var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var TxWrapper = require("./TxWrapper.bs.js");
-var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
@@ -412,117 +411,27 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
   }
 }
 
-function findSignatures(_allSigs, needed, foundSigIdxs, foundSigs, network) {
-  while(true) {
-    var allSigs = _allSigs;
-    if (needed !== 0 && allSigs) {
-      var match = allSigs[0];
-      if (match) {
-        try {
-          var foundSig = List.find((function (param) {
-                  if ((param[1] == null) === false) {
-                    return List.mem(param[0], foundSigIdxs) === false;
-                  } else {
-                    return false;
-                  }
-                }), $$Array.to_list($$Array.mapi((function (i, sigBuf) {
-                          return /* tuple */[
-                                  i,
-                                  sigBuf
-                                ];
-                        }), match[0])));
-          var foundSigs$1 = /* :: */[
-            foundSig,
-            foundSigs
-          ];
-          if (needed === 1) {
-            return foundSigs$1;
-          } else {
-            return findSignatures(allSigs, needed - 1 | 0, /* :: */[
-                        foundSig[0],
-                        foundSigIdxs
-                      ], foundSigs$1, network);
-          }
-        }
-        catch (exn){
-          if (exn === Caml_builtin_exceptions.not_found) {
-            _allSigs = allSigs[1];
-            continue ;
-          } else {
-            throw exn;
-          }
-        }
-      } else {
-        _allSigs = allSigs[1];
-        continue ;
-      }
-    } else {
-      return foundSigs;
-    }
-  };
-}
-
-function finalize(signedTransactions, network) {
+function finalize(signedTransactions) {
   var signedTransactions$1 = Belt_List.sortU(signedTransactions, (function (param, param$1) {
           return Caml_primitive.caml_string_compare(param[/* txHex */0], param$1[/* txHex */0]);
         }));
-  if (signedTransactions$1) {
-    var match = signedTransactions$1[0];
-    var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(match[/* txHex */0]), Network.bitcoinNetwork(network));
-    var inputs = txB.inputs;
-    var otherInputs = List.map((function (param) {
-            return BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]), Network.bitcoinNetwork(network)).inputs;
-          }), signedTransactions$1[1]);
-    $$Array.iteri((function (inputIdx, param) {
-            var nCoSigners = param[/* nCoSigners */4];
-            var testInput = Caml_array.caml_array_get(inputs, inputIdx);
-            var match = testInput.signatures;
-            var tmp;
-            if (match == null) {
-              var inputs$1;
-              try {
-                inputs$1 = List.find((function (ins) {
-                        var input = Caml_array.caml_array_get(ins, inputIdx);
-                        return Js_option.isSome(Js_primitive.null_undefined_to_opt(input.signatures));
-                      }), otherInputs);
-              }
-              catch (exn){
-                if (exn === Caml_builtin_exceptions.not_found) {
-                  throw NoSignaturesForInput;
-                } else {
-                  throw exn;
-                }
-              }
-              tmp = Caml_array.caml_array_get(inputs$1, inputIdx);
-            } else {
-              tmp = Caml_array.caml_array_get(inputs, inputIdx);
-            }
-            Caml_array.caml_array_set(inputs, inputIdx, tmp);
-            var input = Caml_array.caml_array_get(inputs, inputIdx);
-            var signatures = Js_option.getExn(Js_primitive.null_undefined_to_opt(input.signatures));
-            var existing = List.map(Js_option.getExn, List.filter(Js_option.isSome)($$Array.to_list($$Array.mapi((function (i, sigBuf) {
-                                if (sigBuf == null) {
-                                  return /* None */0;
-                                } else {
-                                  return /* Some */[i];
-                                }
-                              }), signatures))));
-            var total = List.fold_left((function (res, param) {
-                    Caml_array.caml_array_set(signatures, param[0], param[1]);
-                    return res + 1 | 0;
-                  }), List.length(existing), findSignatures(List.map((function (ins) {
-                            var input = Caml_array.caml_array_get(ins, inputIdx);
-                            return Js_primitive.null_undefined_to_opt(input.signatures);
-                          }), otherInputs), nCoSigners - List.length(existing) | 0, existing, /* [] */0, network));
-            if (total !== nCoSigners) {
-              throw NotEnoughSignatures;
-            } else {
-              return 0;
-            }
-          }), match[/* usedInputs */1]);
-    return txB.build();
+  var wrappers = Belt_List.mapU(signedTransactions$1, (function (param) {
+          return TxWrapper.make(param[/* txHex */0]);
+        }));
+  var match = Belt_List.head(wrappers);
+  var match$1 = Belt_List.tail(wrappers);
+  var res;
+  if (match) {
+    var head = match[0];
+    res = match$1 ? Belt_List.reduceU(match$1[0], head, TxWrapper.merge) : head;
   } else {
-    return Js_exn.raiseError("finalize");
+    res = Js_exn.raiseError("finalize");
+  }
+  var match$2 = TxWrapper.finalize(Belt_List.headExn(signedTransactions$1)[/* usedInputs */1], res);
+  if (match$2) {
+    return match$2[0];
+  } else {
+    throw NotEnoughSignatures;
   }
 }
 

@@ -90,3 +90,67 @@ let sign =
      );
   {tx, inputs: extractInputs(tx)};
 };
+
+let getWitnessBuf = (idx, tx) => {
+  let ins = tx##ins;
+  let witnessScript = (ins |. Array.getExn(idx))##witness;
+  witnessScript |. Array.getExn((witnessScript |> Array.length) - 1);
+};
+
+let merge = ({tx, inputs}, {inputs: otherInputs}) => {
+  inputs
+  |. Array.forEachWithIndexU((. idx, {signatures}) => {
+       let otherSigs = (otherInputs |. Array.getExn(idx)).signatures;
+       let signatures =
+         Array.reduceReverse2U(signatures, otherSigs, [], (. res, sigA, sigB) =>
+           [sigA |> B.Script.isCanonicalSignature ? sigA : sigB, ...res]
+         )
+         |> List.toArray;
+       let witnessBuf = tx |> getWitnessBuf(idx);
+       tx
+       |. B.Transaction.setWitness(
+            idx,
+            Array.concatMany([|
+              [|BufferExt.makeWithSize(0)|],
+              signatures,
+              [|witnessBuf|],
+            |]),
+          );
+     });
+  {tx, inputs: extractInputs(tx)};
+};
+
+type finalizeResult =
+  | Ok(B.Transaction.t)
+  | NotEnoughSignatures;
+exception NotEnoughSignatures;
+let finalize = (usedInputs, {tx, inputs}) =>
+  try (
+    {
+      inputs
+      |. Array.forEachWithIndexU((. idx, {signatures}) => {
+           let nCoSigners =
+             (usedInputs |. Array.getExn(idx): Network.txInput).nCoSigners;
+           let signatures =
+             signatures
+             |. Array.keep(B.Script.isCanonicalSignature)
+             |. Array.slice(~offset=0, ~len=nCoSigners);
+           if (signatures |> Array.length < nCoSigners) {
+             raise(NotEnoughSignatures);
+           };
+           let witnessBuf = tx |> getWitnessBuf(idx);
+           tx
+           |. B.Transaction.setWitness(
+                idx,
+                Array.concatMany([|
+                  [|BufferExt.makeWithSize(0)|],
+                  signatures,
+                  [|witnessBuf|],
+                |]),
+              );
+         });
+      Ok(tx);
+    }
+  ) {
+  | NotEnoughSignatures => NotEnoughSignatures
+  };

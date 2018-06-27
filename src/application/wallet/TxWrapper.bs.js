@@ -3,8 +3,10 @@
 
 var BTC = require("./BTC.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
+var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
 
 function extractInputs(tx) {
   return Belt_Array.map(tx.ins, (function (input) {
@@ -52,7 +54,7 @@ function sign(idx, keyPair, nCoSigners, redeemScript, witnessValue, witnessScrip
           0
         ], (function (param, sig_) {
             var idx = param[1];
-            if (sig_.length() === 0) {
+            if (sig_.length === 0) {
               return /* tuple */[
                       idx,
                       idx + 1 | 0
@@ -75,11 +77,11 @@ function sign(idx, keyPair, nCoSigners, redeemScript, witnessValue, witnessScrip
           }));
   } else {
     signatures = Belt_Array.concat(Belt_Array.makeByU(nCoSigners - 1 | 0, (function () {
-                return new Buffer(0);
+                return Buffer.alloc(0);
               })), /* array */[signature]);
   }
   tx.setWitness(idx, Belt_Array.concatMany(/* array */[
-            /* array */[new Buffer(0)],
+            /* array */[Buffer.alloc(0)],
             signatures,
             /* array */[witnessBuf]
           ]));
@@ -89,6 +91,70 @@ function sign(idx, keyPair, nCoSigners, redeemScript, witnessValue, witnessScrip
         ];
 }
 
+function getWitnessBuf(idx, tx) {
+  var ins = tx.ins;
+  var witnessScript = Belt_Array.getExn(ins, idx).witness;
+  return Belt_Array.getExn(witnessScript, witnessScript.length - 1 | 0);
+}
+
+function merge(param, param$1) {
+  var otherInputs = param$1[/* inputs */1];
+  var tx = param[/* tx */0];
+  Belt_Array.forEachWithIndexU(param[/* inputs */1], (function (idx, param) {
+          var otherSigs = Belt_Array.getExn(otherInputs, idx)[/* signatures */0];
+          var signatures = Belt_List.toArray(Belt_Array.reduceReverse2U(param[/* signatures */0], otherSigs, /* [] */0, (function (res, sigA, sigB) {
+                      var match = BitcoinjsLib.script.isCanonicalSignature(sigA);
+                      return /* :: */[
+                              match ? sigA : sigB,
+                              res
+                            ];
+                    })));
+          var witnessBuf = getWitnessBuf(idx, tx);
+          tx.setWitness(idx, Belt_Array.concatMany(/* array */[
+                    /* array */[Buffer.alloc(0)],
+                    signatures,
+                    /* array */[witnessBuf]
+                  ]));
+          return /* () */0;
+        }));
+  return /* record */[
+          /* tx */tx,
+          /* inputs */extractInputs(tx)
+        ];
+}
+
+var NotEnoughSignatures = Caml_exceptions.create("TxWrapper.NotEnoughSignatures");
+
+function finalize(usedInputs, param) {
+  var tx = param[/* tx */0];
+  try {
+    Belt_Array.forEachWithIndexU(param[/* inputs */1], (function (idx, param) {
+            var nCoSigners = Belt_Array.getExn(usedInputs, idx)[/* nCoSigners */4];
+            var signatures = Belt_Array.slice(Belt_Array.keep(param[/* signatures */0], (function (prim) {
+                        return BitcoinjsLib.script.isCanonicalSignature(prim);
+                      })), 0, nCoSigners);
+            if (signatures.length < nCoSigners) {
+              throw NotEnoughSignatures;
+            }
+            var witnessBuf = getWitnessBuf(idx, tx);
+            tx.setWitness(idx, Belt_Array.concatMany(/* array */[
+                      /* array */[Buffer.alloc(0)],
+                      signatures,
+                      /* array */[witnessBuf]
+                    ]));
+            return /* () */0;
+          }));
+    return /* Ok */[tx];
+  }
+  catch (exn){
+    if (exn === NotEnoughSignatures) {
+      return /* NotEnoughSignatures */0;
+    } else {
+      throw exn;
+    }
+  }
+}
+
 var B = 0;
 
 exports.B = B;
@@ -96,4 +162,8 @@ exports.extractInputs = extractInputs;
 exports.make = make;
 exports.needsSigning = needsSigning;
 exports.sign = sign;
+exports.getWitnessBuf = getWitnessBuf;
+exports.merge = merge;
+exports.NotEnoughSignatures = NotEnoughSignatures;
+exports.finalize = finalize;
 /* BTC Not a pure module */

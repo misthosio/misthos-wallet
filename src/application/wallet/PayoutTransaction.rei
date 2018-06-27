@@ -67,7 +67,7 @@ let signPayout:
   ) =>
   signResult;
 
-let finalize: (list(t), Network.t) => Bitcoin.Transaction.t;
+let finalize: list(t) => Bitcoin.Transaction.t;
 
 let encode: t => Js.Json.t;
 
