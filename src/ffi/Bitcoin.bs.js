@@ -18,6 +18,8 @@ var Networks = /* module */[/* all */all];
 
 var Address = /* module */[];
 
+var Transaction = /* module */[];
+
 var ECSignature = /* module */[];
 
 function makeRandomWithNetwork(network) {
@@ -42,8 +44,6 @@ function fromBase58(base58) {
 }
 
 var HDNode = /* module */[/* fromBase58 */fromBase58];
-
-var Transaction = /* module */[];
 
 var TxBuilder = /* module */[];
 
@@ -79,10 +79,10 @@ exports.BigInteger = BigInteger;
 exports.Crypto = Crypto;
 exports.Networks = Networks;
 exports.Address = Address;
+exports.Transaction = Transaction;
 exports.ECSignature = ECSignature;
 exports.ECPair = ECPair;
 exports.HDNode = HDNode;
-exports.Transaction = Transaction;
 exports.TxBuilder = TxBuilder;
 exports.Ops = Ops;
 exports.Script = Script;

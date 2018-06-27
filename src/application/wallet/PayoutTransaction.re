@@ -158,6 +158,7 @@ let signPayout =
       ~payoutTx as payout: t,
       ~network: Network.t,
     ) => {
+  let txW = ref(TxWrapper.make(payout.txHex));
   let txB =
     B.TxBuilder.fromTransactionWithNetwork(
       B.Transaction.fromHex(payout.txHex),
@@ -166,32 +167,18 @@ let signPayout =
   let signed =
     payout.usedInputs
     |> Array.mapi((idx, input: input) => {
-         let inputs = txB##inputs;
-         let txBInput = inputs[idx];
-         let needsSigning =
-           switch (txBInput##signatures |> Js.Nullable.toOption) {
-           | Some(signatures) =>
-             signatures
-             |> Array.to_list
-             |> List.filter(s =>
-                  s |> Js.Nullable.toOption |> Js.Option.isSome
-                )
-             |> List.length < input.nCoSigners
-           | None => true
-           };
+         let needsSigning = txW^ |> TxWrapper.needsSigning(idx);
          if (needsSigning) {
            try (
              {
+               let accountKeyChain =
+                 accountKeyChains
+                 |> AccountKeyChain.Collection.lookup(
+                      input.coordinates |> Address.Coordinates.accountIdx,
+                      input.coordinates |> Address.Coordinates.keyChainIdent,
+                    );
                let custodianPubChain =
-                 (
-                   accountKeyChains
-                   |> AccountKeyChain.Collection.lookup(
-                        input.coordinates |> Address.Coordinates.accountIdx,
-                        input.coordinates |> Address.Coordinates.keyChainIdent,
-                      )
-                 ).
-                   custodianKeyChains
-                 |> List.assoc(userId);
+                 accountKeyChain.custodianKeyChains |> List.assoc(userId);
                let custodianKeyChain =
                  CustodianKeyChain.make(
                    ~ventureId,
@@ -215,6 +202,29 @@ let signPayout =
                     );
                let address: Address.t =
                  accountKeyChains |> Address.find(input.coordinates);
+               /* tx */
+               /* |. B.Transaction.setInputScript( */
+               /*      idx, */
+               /*      address.redeemScript |> Utils.bufFromHex, */
+               /*    ); */
+               /* let signatureHash = */
+               /*   tx */
+               /*   |. B.Transaction.hashForWitnessV0( */
+               /*        idx, */
+               /*        address.witnessScript |> Utils.bufFromHex, */
+               /*        input.value |> BTC.toSatoshisFloat, */
+               /*        B.Transaction.sighashAll, */
+               /*      ); */
+               txW :=
+                 txW^
+                 |> TxWrapper.sign(
+                      idx,
+                      keyPair,
+                      accountKeyChain.nCoSigners,
+                      ~redeemScript=address.redeemScript,
+                      ~witnessValue=input.value,
+                      ~witnessScript=address.witnessScript,
+                    );
                txB
                |> B.TxBuilder.signSegwit(
                     idx,
@@ -351,7 +361,19 @@ let build =
     mandatoryInputs
     |> Belt.Set.toList
     |> List.map((i: input) =>
-         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
+         (
+           switch (i.sequence) {
+           | Some(sequence) =>
+             txB
+             |> B.TxBuilder.addInputWithSequence(
+                  i.txId,
+                  i.txOutputN,
+                  sequence,
+                )
+           | None => txB |> B.TxBuilder.addInput(i.txId, i.txOutputN)
+           },
+           i,
+         )
        );
   let outTotalWithoutFee =
     destinations
@@ -434,7 +456,19 @@ let build =
                     Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
                   ),
                [
-                 (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),
+                 (
+                   switch (i.sequence) {
+                   | Some(sequence) =>
+                     txB
+                     |> B.TxBuilder.addInputWithSequence(
+                          i.txId,
+                          i.txOutputN,
+                          sequence,
+                        )
+                   | None => txB |> B.TxBuilder.addInput(i.txId, i.txOutputN)
+                   },
+                   i,
+                 ),
                  ...usedInputs,
                ],
              ),

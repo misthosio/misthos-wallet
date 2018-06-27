@@ -12,6 +12,7 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
+var TxWrapper = require("./TxWrapper.bs.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -167,23 +168,21 @@ function getSignedExn(result) {
 }
 
 function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, network) {
+  var txW = [TxWrapper.make(payout[/* txHex */0])];
   var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(payout[/* txHex */0]), Network.bitcoinNetwork(network));
   var signed = $$Array.mapi((function (idx, input) {
-          var inputs = txB.inputs;
-          var txBInput = Caml_array.caml_array_get(inputs, idx);
-          var match = txBInput.signatures;
-          var needsSigning = (match == null) ? true : List.length(List.filter((function (s) {
-                          return Js_option.isSome((s == null) ? /* None */0 : [s]);
-                        }))($$Array.to_list(match))) < input[/* nCoSigners */4];
+          var needsSigning = TxWrapper.needsSigning(idx, txW[0]);
           if (needsSigning) {
             try {
-              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */4]);
+              var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains);
+              var custodianPubChain = List.assoc(userId, accountKeyChain[/* custodianKeyChains */4]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
               var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
               var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
               var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
+              txW[0] = TxWrapper.sign(idx, keyPair, accountKeyChain[/* nCoSigners */2], address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], txW[0]);
               txB.sign(idx, keyPair, Utils.bufFromHex(address[/* redeemScript */4]), null, BTC.toSatoshisFloat(input[/* value */3]), Utils.bufFromHex(address[/* witnessScript */3]));
               return true;
             }
@@ -295,8 +294,9 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   txB.setVersion(2);
   var usedInputs = List.map((function (i) {
+          var match = i[/* sequence */7];
           return /* tuple */[
-                  txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
+                  match ? txB.addInput(i[/* txId */0], i[/* txOutputN */1], match[0]) : txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                   i
                 ];
         }), Belt_Set.toList(mandatoryInputs$1));
@@ -338,12 +338,13 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
     var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
     if (match[1]) {
       var match$1 = List.fold_left((function (param, i) {
+              var match = i[/* sequence */7];
               return /* tuple */[
                       param[0].plus(i[/* value */3]),
                       param[1].plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
                       /* :: */[
                         /* tuple */[
-                          txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
+                          match ? txB.addInput(i[/* txId */0], i[/* txOutputN */1], match[0]) : txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                           i
                         ],
                         param[2]

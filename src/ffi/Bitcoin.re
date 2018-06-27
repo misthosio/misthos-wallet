@@ -30,11 +30,47 @@ module Address = {
   external fromOutputScript : (Node.buffer, Networks.t) => string = "";
 };
 
+module Transaction = {
+  type in_ = {
+    .
+    "index": int,
+    "witness": array(Node.buffer),
+  };
+  type out = {
+    .
+    "value": float,
+    "script": Node.buffer,
+  };
+  type t = {
+    .
+    "outs": array(out),
+    "ins": array(in_),
+  };
+  [@bs.send] external toBuffer : t => Node.buffer = "";
+  [@bs.send] external toHex : t => string = "";
+  [@bs.send] external virtualSize : t => float = "";
+  [@bs.send] external getId : t => string = "";
+  [@bs.send] external setInputScript : (t, int, Node.buffer) => unit = "";
+  [@bs.send] external setWitness : (t, int, array(Node.buffer)) => unit = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
+  external fromHex : string => t = "";
+  type sighashType;
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
+  external sighashAll : sighashType = "SIGHASH_ALL";
+  [@bs.send]
+  external hashForWitnessV0 :
+    (t, int, Node.buffer, float, sighashType) => Node.buffer =
+    "";
+};
+
 module ECSignature = {
   type t;
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECSignature"]
   external fromDER : Node.buffer => t = "";
   [@bs.send] external toDER : t => Node.buffer = "";
+  [@bs.send]
+  external toScriptSignature : (t, Transaction.sighashType) => Node.buffer =
+    "";
 };
 
 module ECPair = {
@@ -86,29 +122,6 @@ module HDNode = {
   [@bs.send] external toBase58 : t => string = "";
 };
 
-module Transaction = {
-  type out = {
-    .
-    "value": float,
-    "script": Node.buffer,
-  };
-  type t = {. "outs": array(out)};
-  [@bs.send] external toBuffer : t => Node.buffer = "";
-  [@bs.send] external toHex : t => string = "";
-  [@bs.send] external virtualSize : t => float = "";
-  [@bs.send] external getId : t => string = "";
-  [@bs.send] external setInputScript : (t, int, Node.buffer) => unit = "";
-  [@bs.send] external setWitness : (t, int, array(Node.buffer)) => unit = "";
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
-  external fromHex : string => t = "";
-  type sighashType;
-  [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
-  external sighashAll : sighashType = "SIGHASH_ALL";
-  [@bs.send]
-  external hashForWitnessV0 : (t, int, Node.buffer, float, sighashType) => unit =
-    "";
-};
-
 module TxBuilder = {
   type signature = Js.Nullable.t(Node.buffer);
   type input = {. "signatures": Js.Nullable.t(array(signature))};
@@ -150,6 +163,8 @@ module Ops = {
 };
 
 module Script = {
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
+  external isCanonicalSignature : Node.buffer => bool = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
   external compile : array(Ops.t) => Node.buffer = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "script"]
