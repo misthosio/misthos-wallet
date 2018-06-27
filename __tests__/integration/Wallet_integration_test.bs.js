@@ -21,7 +21,7 @@ var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollec
 Helpers.enableHttpRequests(/* () */0);
 
 describe("Wallet_integration", (function () {
-        return Fixtures.withCached(/* Some */[false], /* Some */[false], "Wallet_integration", "integration", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "Wallet_integration", "integration", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);

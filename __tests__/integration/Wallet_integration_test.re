@@ -15,8 +15,6 @@ open WalletHelpers;
 let () =
   describe("Wallet_integration", () =>
     F.withCached(
-      ~load=false,
-      ~persist=false,
       ~scope="Wallet_integration",
       "integration",
       () => G.withUserSessions(3),
