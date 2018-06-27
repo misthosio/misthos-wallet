@@ -3,7 +3,6 @@ open Event;
 open PrimitiveTypes;
 
 type state = {
-  network: Network.t,
   ventureId,
   accountKeyChains: AccountKeyChain.Collection.t,
   payoutTx: option(PayoutTransaction.t),
@@ -21,11 +20,7 @@ let make =
     |> EventLog.reduce(
          (state, {event}) =>
            switch (event) {
-           | VentureCreated({ventureId, network}) => {
-               ...state,
-               ventureId,
-               network,
-             }
+           | VentureCreated({ventureId}) => {...state, ventureId}
            | AccountKeyChainIdentified(
                ({keyChain}: AccountKeyChainIdentified.t),
              ) => {
@@ -50,7 +45,6 @@ let make =
            | _ => state
            },
          {
-           network: Network.Regtest,
            ventureId: VentureId.fromString(""),
            accountKeyChains: AccountKeyChain.Collection.empty,
            payoutTx: None,
@@ -66,7 +60,6 @@ let make =
           ~masterKeyChain,
           ~accountKeyChains=state.accountKeyChains,
           ~payoutTx=state.payoutTx |> Js.Option.getExn,
-          ~network=state.network,
         )
       ) {
       | Signed(payoutTx) =>

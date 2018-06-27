@@ -23,68 +23,62 @@ function make(param, log) {
   var payoutProcess = param[/* processId */0];
   var match = Curry._3(EventLog.reduce, (function (param, param$1) {
           var $$event = param$1[/* event */0];
-          var network = param[3];
           var systemIssuer = param[2];
           var txs = param[1];
           var broadcast = param[0];
-          var exit = 0;
           switch ($$event.tag | 0) {
             case 0 : 
-                var match = $$event[0];
                 return /* tuple */[
                         broadcast,
                         txs,
-                        match[/* systemIssuer */5],
-                        match[/* network */6]
+                        $$event[0][/* systemIssuer */5]
                       ];
             case 32 : 
-                var match$1 = $$event[0];
-                if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
+                var match = $$event[0];
+                if (PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], payoutProcess)) {
                   return /* tuple */[
                           broadcast,
                           /* :: */[
-                            match$1[/* payoutTx */2],
+                            match[/* payoutTx */2],
                             txs
                           ],
-                          systemIssuer,
-                          network
+                          systemIssuer
                         ];
                 } else {
-                  exit = 1;
+                  return /* tuple */[
+                          broadcast,
+                          txs,
+                          systemIssuer
+                        ];
                 }
-                break;
             case 33 : 
                 if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], payoutProcess)) {
                   return /* tuple */[
                           false,
                           txs,
-                          systemIssuer,
-                          network
+                          systemIssuer
                         ];
                 } else {
-                  exit = 1;
+                  return /* tuple */[
+                          broadcast,
+                          txs,
+                          systemIssuer
+                        ];
                 }
-                break;
             default:
-              exit = 1;
+              return /* tuple */[
+                      broadcast,
+                      txs,
+                      systemIssuer
+                    ];
           }
-          if (exit === 1) {
-            return /* tuple */[
-                    broadcast,
-                    txs,
-                    systemIssuer,
-                    network
-                  ];
-          }
-          
         }), /* tuple */[
         true,
         /* :: */[
           payoutTx,
           /* [] */0
         ],
-        BitcoinjsLib.ECPair.makeRandom(),
-        /* Regtest */0
+        BitcoinjsLib.ECPair.makeRandom()
       ], log);
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
@@ -143,7 +137,7 @@ function make(param, log) {
         ]);
     var env_init = function (env$1) {
       var self = CamlinternalOO.create_object_opt(0, $$class);
-      self[finalTransaction] = [env$1[1] ? /* Some */[PayoutTransaction.finalize(env$1[2], env$1[3])] : /* None */0];
+      self[finalTransaction] = [env$1[1] ? /* Some */[PayoutTransaction.finalize(env$1[2])] : /* None */0];
       self[delivered] = [false];
       self[env] = env$1[0];
       return self;
@@ -160,8 +154,7 @@ function make(param, log) {
                 match[2]
               ],
               match[0],
-              match[1],
-              match[3]
+              match[1]
             ]);
 }
 

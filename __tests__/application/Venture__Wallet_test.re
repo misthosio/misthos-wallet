@@ -56,15 +56,15 @@ let () =
         |> constructState
         |> testNextIncomeAddress(
              user3,
-             "2NDjVoZySTzZFrd5BSPmioBktfcQ4cpMhcJ",
+             "2MtBbL8QZx3vKj8E51yjNxZ2VM7hTqT8M9F",
            )
         |> testNextIncomeAddress(
              user2,
-             "2N4e6xA7wsrpPy2xZDXYDxzEuXoU8L9e8MN",
+             "2N5NLNeBc52TSyKnUxGZb2V1QsjaeFdfYcD",
            )
         |> testNextIncomeAddress(
              user3,
-             "2N4wMyq6jmWTmPA5XTfXhWdZYA7EtzGm6ao",
+             "2NBgMc8ud9vUxsLuDLmgtwSju7wFs3uFqiN",
            )
         |> ignore;
       },

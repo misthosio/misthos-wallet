@@ -7,15 +7,31 @@ let () = {
   describe("inputCost", () => {
     test("1 cosigner", () =>
       expect(
-        TransactionFee.inputCost(1, 2, oneSatPerByte) |> BTC.toSatoshisFloat,
+        TransactionFee.inputCost(false, 1, 2, oneSatPerByte)
+        |> BTC.toSatoshisFloat,
       )
       |> toEqual(113.)
     );
+    test("1 cosigner with dms", () =>
+      expect(
+        TransactionFee.inputCost(true, 1, 2, oneSatPerByte)
+        |> BTC.toSatoshisFloat,
+      )
+      |> toEqual(116.)
+    );
     test("2 cosigners", () =>
       expect(
-        TransactionFee.inputCost(2, 3, oneSatPerByte) |> BTC.toSatoshisFloat,
+        TransactionFee.inputCost(false, 2, 3, oneSatPerByte)
+        |> BTC.toSatoshisFloat,
       )
       |> toEqual(140.)
+    );
+    test("2 cosigner with dms", () =>
+      expect(
+        TransactionFee.inputCost(true, 2, 3, oneSatPerByte)
+        |> BTC.toSatoshisFloat,
+      )
+      |> toEqual(143.)
     );
   });
   describe("outputCost", () => {

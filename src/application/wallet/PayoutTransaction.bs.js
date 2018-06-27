@@ -12,7 +12,7 @@ var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
-var Caml_array = require("bs-platform/lib/js/caml_array.js");
+var TxWrapper = require("./TxWrapper.bs.js");
 var Caml_int64 = require("bs-platform/lib/js/caml_int64.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
@@ -111,7 +111,8 @@ function txInputForChangeAddress(txId, network, param) {
                         /* value */match[1],
                         /* nCoSigners */address[/* nCoSigners */0],
                         /* nPubKeys */address[/* nPubKeys */1],
-                        /* coordinates */address[/* coordinates */2]
+                        /* coordinates */address[/* coordinates */2],
+                        /* sequence */address[/* sequence */6]
                       ];
               }), param[/* changeAddress */3]);
 }
@@ -165,25 +166,21 @@ function getSignedExn(result) {
   }
 }
 
-function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, network) {
-  var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(payout[/* txHex */0]), Network.bitcoinNetwork(network));
+function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout) {
+  var txW = [TxWrapper.make(payout[/* txHex */0])];
   var signed = $$Array.mapi((function (idx, input) {
-          var inputs = txB.inputs;
-          var txBInput = Caml_array.caml_array_get(inputs, idx);
-          var match = txBInput.signatures;
-          var needsSigning = (match == null) ? true : List.length(List.filter((function (s) {
-                          return Js_option.isSome((s == null) ? /* None */0 : [s]);
-                        }))($$Array.to_list(match))) < input[/* nCoSigners */4];
+          var needsSigning = TxWrapper.needsSigning(idx, txW[0]);
           if (needsSigning) {
             try {
-              var custodianPubChain = List.assoc(userId, AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains)[/* custodianKeyChains */3]);
+              var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), accountKeyChains);
+              var custodianPubChain = List.assoc(userId, accountKeyChain[/* custodianKeyChains */4]);
               var custodianKeyChain = CustodianKeyChain.make(ventureId, CustodianKeyChain.accountIdx(custodianPubChain), CustodianKeyChain.keyChainIdx(custodianPubChain), masterKeyChain);
               var coSignerIdx = Address.Coordinates[/* coSignerIdx */5](input[/* coordinates */6]);
               var chainIdx = Address.Coordinates[/* chainIdx */6](input[/* coordinates */6]);
               var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
-              txB.sign(idx, keyPair, Utils.bufFromHex(address[/* redeemScript */4]), null, BTC.toSatoshisFloat(input[/* value */3]), Utils.bufFromHex(address[/* witnessScript */3]));
+              txW[0] = TxWrapper.sign(idx, keyPair, List.length(accountKeyChain[/* custodianKeyChains */4]), address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], txW[0]);
               return true;
             }
             catch (exn){
@@ -202,7 +199,7 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
                 }))));
   if (match) {
     return /* Signed */[/* record */[
-              /* txHex */txB.buildIncomplete().toHex(),
+              /* txHex */txW[0][/* tx */0].toHex(),
               /* usedInputs */payout[/* usedInputs */1],
               /* misthosFeeAddress */payout[/* misthosFeeAddress */2],
               /* changeAddress */payout[/* changeAddress */3]
@@ -219,7 +216,7 @@ function findInput(_inputs, ammountMissing, fee) {
       var rest = inputs[1];
       var i = inputs[0];
       if (rest) {
-        var match = i[/* value */3].gte(ammountMissing.plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], fee)));
+        var match = i[/* value */3].gte(ammountMissing.plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* nCoSigners */4], i[/* nPubKeys */5], fee)));
         if (match) {
           return /* Some */[i];
         } else {
@@ -247,7 +244,7 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
         i,
         addedInputs
       ];
-      var ammountMissing$1 = ammountMissing.plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], fee)).minus(i[/* value */3]);
+      var ammountMissing$1 = ammountMissing.plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* nCoSigners */4], i[/* nPubKeys */5], fee)).minus(i[/* value */3]);
       if (BTC.zero.gte(ammountMissing$1)) {
         return /* tuple */[
                 addedInputs$1,
@@ -273,7 +270,7 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
 }
 
 function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, network, txBuilder) {
-  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
+  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(Js_option.isSome(changeAddress[/* sequence */6]), changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
     var currentFee$1 = currentFee.plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network)));
     txBuilder.addOutput(changeAddress[/* displayAddress */5], BTC.toSatoshisFloat(totalInputs.minus(outTotal).minus(currentFee$1)));
     return true;
@@ -292,6 +289,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
                       return TransactionFee.canPayForItself(satsPerByte, param);
                     })), mandatoryInputs$1)));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
+  txB.setVersion(2);
   var usedInputs = List.map((function (i) {
           return /* tuple */[
                   txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
@@ -338,7 +336,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
       var match$1 = List.fold_left((function (param, i) {
               return /* tuple */[
                       param[0].plus(i[/* value */3]),
-                      param[1].plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
+                      param[1].plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
                       /* :: */[
                         /* tuple */[
                           txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
@@ -409,117 +407,27 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
   }
 }
 
-function findSignatures(_allSigs, needed, foundSigIdxs, foundSigs, network) {
-  while(true) {
-    var allSigs = _allSigs;
-    if (needed !== 0 && allSigs) {
-      var match = allSigs[0];
-      if (match) {
-        try {
-          var foundSig = List.find((function (param) {
-                  if ((param[1] == null) === false) {
-                    return List.mem(param[0], foundSigIdxs) === false;
-                  } else {
-                    return false;
-                  }
-                }), $$Array.to_list($$Array.mapi((function (i, sigBuf) {
-                          return /* tuple */[
-                                  i,
-                                  sigBuf
-                                ];
-                        }), match[0])));
-          var foundSigs$1 = /* :: */[
-            foundSig,
-            foundSigs
-          ];
-          if (needed === 1) {
-            return foundSigs$1;
-          } else {
-            return findSignatures(allSigs, needed - 1 | 0, /* :: */[
-                        foundSig[0],
-                        foundSigIdxs
-                      ], foundSigs$1, network);
-          }
-        }
-        catch (exn){
-          if (exn === Caml_builtin_exceptions.not_found) {
-            _allSigs = allSigs[1];
-            continue ;
-          } else {
-            throw exn;
-          }
-        }
-      } else {
-        _allSigs = allSigs[1];
-        continue ;
-      }
-    } else {
-      return foundSigs;
-    }
-  };
-}
-
-function finalize(signedTransactions, network) {
+function finalize(signedTransactions) {
   var signedTransactions$1 = Belt_List.sortU(signedTransactions, (function (param, param$1) {
           return Caml_primitive.caml_string_compare(param[/* txHex */0], param$1[/* txHex */0]);
         }));
-  if (signedTransactions$1) {
-    var match = signedTransactions$1[0];
-    var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(match[/* txHex */0]), Network.bitcoinNetwork(network));
-    var inputs = txB.inputs;
-    var otherInputs = List.map((function (param) {
-            return BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(param[/* txHex */0]), Network.bitcoinNetwork(network)).inputs;
-          }), signedTransactions$1[1]);
-    $$Array.iteri((function (inputIdx, param) {
-            var nCoSigners = param[/* nCoSigners */4];
-            var testInput = Caml_array.caml_array_get(inputs, inputIdx);
-            var match = testInput.signatures;
-            var tmp;
-            if (match == null) {
-              var inputs$1;
-              try {
-                inputs$1 = List.find((function (ins) {
-                        var input = Caml_array.caml_array_get(ins, inputIdx);
-                        return Js_option.isSome(Js_primitive.null_undefined_to_opt(input.signatures));
-                      }), otherInputs);
-              }
-              catch (exn){
-                if (exn === Caml_builtin_exceptions.not_found) {
-                  throw NoSignaturesForInput;
-                } else {
-                  throw exn;
-                }
-              }
-              tmp = Caml_array.caml_array_get(inputs$1, inputIdx);
-            } else {
-              tmp = Caml_array.caml_array_get(inputs, inputIdx);
-            }
-            Caml_array.caml_array_set(inputs, inputIdx, tmp);
-            var input = Caml_array.caml_array_get(inputs, inputIdx);
-            var signatures = Js_option.getExn(Js_primitive.null_undefined_to_opt(input.signatures));
-            var existing = List.map(Js_option.getExn, List.filter(Js_option.isSome)($$Array.to_list($$Array.mapi((function (i, sigBuf) {
-                                if (sigBuf == null) {
-                                  return /* None */0;
-                                } else {
-                                  return /* Some */[i];
-                                }
-                              }), signatures))));
-            var total = List.fold_left((function (res, param) {
-                    Caml_array.caml_array_set(signatures, param[0], param[1]);
-                    return res + 1 | 0;
-                  }), List.length(existing), findSignatures(List.map((function (ins) {
-                            var input = Caml_array.caml_array_get(ins, inputIdx);
-                            return Js_primitive.null_undefined_to_opt(input.signatures);
-                          }), otherInputs), nCoSigners - List.length(existing) | 0, existing, /* [] */0, network));
-            if (total !== nCoSigners) {
-              throw NotEnoughSignatures;
-            } else {
-              return 0;
-            }
-          }), match[/* usedInputs */1]);
-    return txB.build();
+  var wrappers = Belt_List.mapU(signedTransactions$1, (function (param) {
+          return TxWrapper.make(param[/* txHex */0]);
+        }));
+  var match = Belt_List.head(wrappers);
+  var match$1 = Belt_List.tail(wrappers);
+  var res;
+  if (match) {
+    var head = match[0];
+    res = match$1 ? Belt_List.reduceU(match$1[0], head, TxWrapper.merge) : head;
   } else {
-    return Js_exn.raiseError("finalize");
+    res = Js_exn.raiseError("finalize");
+  }
+  var match$2 = TxWrapper.finalize(Belt_List.headExn(signedTransactions$1)[/* usedInputs */1], res);
+  if (match$2) {
+    return match$2[0];
+  } else {
+    throw NotEnoughSignatures;
   }
 }
 

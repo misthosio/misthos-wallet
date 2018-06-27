@@ -24,35 +24,31 @@ function make(param, param$1, log) {
           var $$event = param[/* event */0];
           switch ($$event.tag | 0) {
             case 0 : 
-                var match = $$event[0];
                 return /* record */[
-                        /* network */match[/* network */6],
-                        /* ventureId */match[/* ventureId */0],
-                        /* accountKeyChains */state[/* accountKeyChains */2],
-                        /* payoutTx */state[/* payoutTx */3],
-                        /* complete */state[/* complete */4]
+                        /* ventureId */$$event[0][/* ventureId */0],
+                        /* accountKeyChains */state[/* accountKeyChains */1],
+                        /* payoutTx */state[/* payoutTx */2],
+                        /* complete */state[/* complete */3]
                       ];
             case 26 : 
-                var match$1 = $$event[0];
-                if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
+                var match = $$event[0];
+                if (PrimitiveTypes.ProcessId[/* eq */5](match[/* processId */0], payoutProcess)) {
                   return /* record */[
-                          /* network */state[/* network */0],
-                          /* ventureId */state[/* ventureId */1],
-                          /* accountKeyChains */state[/* accountKeyChains */2],
-                          /* payoutTx : Some */[match$1[/* data */6][/* payoutTx */1]],
-                          /* complete */PrimitiveTypes.UserId[/* eq */5](match$1[/* proposerId */4], userId)
+                          /* ventureId */state[/* ventureId */0],
+                          /* accountKeyChains */state[/* accountKeyChains */1],
+                          /* payoutTx : Some */[match[/* data */6][/* payoutTx */1]],
+                          /* complete */PrimitiveTypes.UserId[/* eq */5](match[/* proposerId */4], userId)
                         ];
                 } else {
                   return state;
                 }
             case 32 : 
-                var match$2 = $$event[0];
-                if (PrimitiveTypes.UserId[/* eq */5](match$2[/* custodianId */1], userId) && PrimitiveTypes.ProcessId[/* eq */5](match$2[/* processId */0], payoutProcess)) {
+                var match$1 = $$event[0];
+                if (PrimitiveTypes.UserId[/* eq */5](match$1[/* custodianId */1], userId) && PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], payoutProcess)) {
                   return /* record */[
-                          /* network */state[/* network */0],
-                          /* ventureId */state[/* ventureId */1],
-                          /* accountKeyChains */state[/* accountKeyChains */2],
-                          /* payoutTx */state[/* payoutTx */3],
+                          /* ventureId */state[/* ventureId */0],
+                          /* accountKeyChains */state[/* accountKeyChains */1],
+                          /* payoutTx */state[/* payoutTx */2],
                           /* complete */true
                         ];
                 } else {
@@ -60,25 +56,23 @@ function make(param, param$1, log) {
                 }
             case 38 : 
                 return /* record */[
-                        /* network */state[/* network */0],
-                        /* ventureId */state[/* ventureId */1],
-                        /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* accountKeyChains */2]),
-                        /* payoutTx */state[/* payoutTx */3],
-                        /* complete */state[/* complete */4]
+                        /* ventureId */state[/* ventureId */0],
+                        /* accountKeyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* accountKeyChains */1]),
+                        /* payoutTx */state[/* payoutTx */2],
+                        /* complete */state[/* complete */3]
                       ];
             default:
               return state;
           }
         }), /* record */[
-        /* network : Regtest */0,
         /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
         /* accountKeyChains */AccountKeyChain.Collection[/* empty */0],
         /* payoutTx : None */0,
         /* complete */false
       ], log);
   var signEvent;
-  if (PrimitiveTypes.UserId[/* eq */5](param$1[/* supporterId */1], userId) && state[/* complete */4] === false) {
-    var match = PayoutTransaction.signPayout(state[/* ventureId */1], userId, param[/* masterKeyChain */4], state[/* accountKeyChains */2], Js_option.getExn(state[/* payoutTx */3]), state[/* network */0]);
+  if (PrimitiveTypes.UserId[/* eq */5](param$1[/* supporterId */1], userId) && state[/* complete */3] === false) {
+    var match = PayoutTransaction.signPayout(state[/* ventureId */0], userId, param[/* masterKeyChain */4], state[/* accountKeyChains */1], Js_option.getExn(state[/* payoutTx */2]));
     signEvent = match ? /* Some */[/* tuple */[
           param[/* issuerKeyPair */2],
           /* PayoutSigned */Block.__(32, [Curry._3(Event.Payout[/* Signed */9][/* make */0], payoutProcess, userId, match[0])])
