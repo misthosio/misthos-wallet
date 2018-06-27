@@ -214,6 +214,98 @@ var faq = /* array */[
   /* record */[
     /* q */"What policies are there within Misthos?\n        Can I change or modify these policies?",
     /* a : array */[/* S */Block.__(0, ["There are three default policies specified within Misthos. These are\n         hard-coded in the software and users do not have the option to change\n         them."])]
+  ],
+  /* record */[
+    /* q */"What is the Policy for Payout Endorsements",
+    /* a : array */[/* S */Block.__(0, ["Any Partner within a Venture can propose a payout. For a payout to be\n         successfully submitted, it requires N-of-N endorsements i.e all\n         Partners within a Venture need to unanimously endorse every payout."])]
+  ],
+  /* record */[
+    /* q */"What is the Policy for Adding Partners",
+    /* a : array */[/* S */Block.__(0, ["Any Partner within a Venture can propose the addition of a new Partner.\n         For the proposal to be successful, it requires N-of-N endorsements i.e\n         all Partners within a Venture need to unanimously endorse the proposal."])]
+  ],
+  /* record */[
+    /* q */"What is the Policy for Removing Partners",
+    /* a : array */[/* S */Block.__(0, ["Any Partner within a Venture can propose the removal of another\n         Partner. For the removal to be successful, this proposal requires\n         N-1-of-N endorsements. E.g If a Venture has four Partners, then three\n         Partners have to endorse the proposed removal."])]
+  ],
+  /* record */[
+    /* q */"Where can I see the status of a payout?",
+    /* a : array */[/* E */Block.__(1, [/* array */[
+            ViewCommon.text("All payouts are shown in the transactions history and clicking on\n          the payout shows its status. A payout goes through the following\n          states:"),
+            React.createElement("ul", undefined, React.createElement("li", undefined, React.createElement("b", undefined, ViewCommon.text("Pending: ")), ViewCommon.text("These are payouts that are proposed but are still pending some\n                 endorsements.")), React.createElement("li", undefined, React.createElement("b", undefined, ViewCommon.text("Submitted(Unconfirmed): ")), ViewCommon.text("These are payouts that have received all endorsements and\n                 submitted to the Bitcoin network.")), React.createElement("li", undefined, React.createElement("b", undefined, ViewCommon.text("Confirmed:")), ViewCommon.text("These payouts are confirmed on the Bitcoin network.")))
+          ]])]
+  ],
+  /* record */[
+    /* q */"How long does it take for a payout to be confirmed?",
+    /* a : array */[
+      /* S */Block.__(0, ["Within Misthos, the payout process only takes the time for all\n         Partners to endorse the payout. Once all endorsements are received,\n         then the payout is submitted as a transaction to the Bitcoin network.\n         This is shown as an unconfirmed payout in the transactions history."]),
+      /* S */Block.__(0, ["Under normal network conditions, transactions submitted to the Bitcoin\n         network by Misthos should be confirmed within the next 60 minutes.\n         Due to variance in the time it takes for a block to be mined on the\n         Bitcoin blockchain can vary. "]),
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("Click "),
+            React.createElement("a", {
+                  href: "https://bitcoin.org/en/faq#why-do-i-have-to-wait-10-minutes"
+                }, ViewCommon.text("here")),
+            ViewCommon.text(" for more information")
+          ]])
+    ]
+  ],
+  /* record */[
+    /* q */"What happens if a Partner rejects a payout?",
+    /* a : array */[/* S */Block.__(0, ["The current endorsement policy requires all Partners to unanimously\n         endorse every payout for it to be submitted. If any Partner rejects a\n         payout, then the payout is cancelled and will not be submitted."])]
+  ],
+  /* record */[
+    /* q */"What happens if a Partner leaves without endorsing a payout?",
+    /* a : array */[/* S */Block.__(0, ["If an existing Partner leaves and there are pending payouts within the\n         system, then the remaining Partners have to remove the leaving partner.\n         Otherwise the pending payouts will be stuck and will never be submitted."])]
+  ],
+  /* record */[
+    /* q */"Can a payout be cancelled or reversed within Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["Yes. Once a payout is proposed by a Partner, any of the remaining\n         Partners can chose to reject the payout to cancel it."]),
+      /* S */Block.__(0, ["Once all the Partners are received, then the payout is automatically\n         submitted to the Bitcoin network and cannot be cancelled or reversed."])
+    ]
+  ],
+  /* record */[
+    /* q */"How can I remove a Partner within Misthos?",
+    /* a : array */[
+      /* S */Block.__(0, ["In order to remove a Partner, then one of the remaining Partners have\n         to submit a Partner removal proposal and this proposal needs to be\n         endorsed by enough Partners."]),
+      /* S */Block.__(0, ["The Partner removal policy requires N-1 of N endorsements. E.g if a\n         Venture has four Partners, then in order to remove a Partner, then one\n         of remaining three Partners have to propose the removal of the fourth\n         Partner and this proposal needs to be endorsed by the other three\n         Partners."])
+    ]
+  ],
+  /* record */[
+    /* q */"How can I leave a Venture within Misthos?\n          Can I still have access to a Venture once I leave it?",
+    /* a : array */[
+      /* S */Block.__(0, ["To leave a Venture, either you or another Partner needs to propose\n         your removal. This proposal then needs to be endorsed by the remaining\n         Partners for the removal to be successful."]),
+      /* S */Block.__(0, ["Once a Partner leaves a Venture, they will only have read-only access\n         to the state it was when the Partner left. The read-only access will be\n         available via the Venture link."])
+    ]
+  ],
+  /* record */[
+    /* q */"Can I come back to a Venture?",
+    /* a : array */[/* S */Block.__(0, ["Yes, Any of the active Partners can propose and invite you back into\n         the Venture."])]
+  ],
+  /* record */[
+    /* q */"Does Misthos have visibility/ access to my Ventures and my wallet account?",
+    /* a : array */[
+      /* S */Block.__(0, ["No. When you create a Venture within Misthos you connect it to your\n         Blockstack ID. By using a Blockstack ID you own the private key and\n         control all the data within your Venture. This private key never leaves\n         your device and is meant to stay on your laptop/phone. As long as no\n         one gets access to your private key, no one has access to your Ventures\n         and your wallet account. When you use Blockstack, by design, your\n         private keys are never sent to any remote servers."]),
+      /* E */Block.__(1, [React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Misthos is an interface and you are using this interface to\n               interact/collaborate with other people on the Blockchain.")), React.createElement("li", undefined, ViewCommon.text("Misthos does not have access to your private keys and has no\n               visibility/access to your Venture and the financial transactions.")))])
+    ]
+  ],
+  /* record */[
+    /* q */"Where is my Venture data stored and how do I control who accesses it?",
+    /* a : array */[
+      /* S */Block.__(0, ["Using the Blockstack ID, you control where your data is stored (you\n         could run your own server or use your own cloud storage (Dropbox,\n         Amazon S3) and keep backups across all). You then use those places as\n         locations pointed to by the URLs in your Blockstack ID's zone file."]),
+      /* E */Block.__(1, [/* array */[
+            ViewCommon.text("You can find out more details on the Blockstack "),
+            React.createElement("a", {
+                  href: "https://blockstack.org/faq"
+                }, ViewCommon.text("FAQ"))
+          ]])
+    ]
+  ],
+  /* record */[
+    /* q */"Can Misthos recover my private key or reverse/ refund my transactions?",
+    /* a : array */[/* E */Block.__(1, [/* array */[
+            ViewCommon.text("No. Misthos cannot:"),
+            React.createElement("ul", undefined, React.createElement("li", undefined, ViewCommon.text("Recover or change your private key.")), React.createElement("li", undefined, ViewCommon.text("Recover or reset your Blockstack password.")), React.createElement("li", undefined, ViewCommon.text("Access your Venture or your funds.")), React.createElement("li", undefined, ViewCommon.text("Reverse, cancel, or refund transactions.")), React.createElement("li", undefined, ViewCommon.text("Freeze accounts.")))
+          ]])]
   ]
 ];
 

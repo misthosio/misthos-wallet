@@ -584,4 +584,242 @@ let faq = [|
       ),
     |],
   },
+  {
+    q: "What is the Policy for Payout Endorsements",
+    a: [|
+      S(
+        {|Any Partner within a Venture can propose a payout. For a payout to be
+         successfully submitted, it requires N-of-N endorsements i.e all
+         Partners within a Venture need to unanimously endorse every payout.|},
+      ),
+    |],
+  },
+  {
+    q: "What is the Policy for Adding Partners",
+    a: [|
+      S(
+        {|Any Partner within a Venture can propose the addition of a new Partner.
+         For the proposal to be successful, it requires N-of-N endorsements i.e
+         all Partners within a Venture need to unanimously endorse the proposal.|},
+      ),
+    |],
+  },
+  {
+    q: "What is the Policy for Removing Partners",
+    a: [|
+      S(
+        {|Any Partner within a Venture can propose the removal of another
+         Partner. For the removal to be successful, this proposal requires
+         N-1-of-N endorsements. E.g If a Venture has four Partners, then three
+         Partners have to endorse the proposed removal.|},
+      ),
+    |],
+  },
+  {
+    q: "Where can I see the status of a payout?",
+    a: [|
+      E(
+        [|
+          {|All payouts are shown in the transactions history and clicking on
+          the payout shows its status. A payout goes through the following
+          states:|}
+          |> text,
+          <ul>
+            <li>
+              <b> ("Pending: " |> text) </b>
+              (
+                {|These are payouts that are proposed but are still pending some
+                 endorsements.|}
+                |> text
+              )
+            </li>
+            <li>
+              <b> ("Submitted(Unconfirmed): " |> text) </b>
+              (
+                {|These are payouts that have received all endorsements and
+                 submitted to the Bitcoin network.|}
+                |> text
+              )
+            </li>
+            <li>
+              <b> ("Confirmed:" |> text) </b>
+              ({|These payouts are confirmed on the Bitcoin network.|} |> text)
+            </li>
+          </ul>,
+        |]
+        |> ReasonReact.array,
+      ),
+    |],
+  },
+  {
+    q: "How long does it take for a payout to be confirmed?",
+    a: [|
+      S(
+        {|Within Misthos, the payout process only takes the time for all
+         Partners to endorse the payout. Once all endorsements are received,
+         then the payout is submitted as a transaction to the Bitcoin network.
+         This is shown as an unconfirmed payout in the transactions history.|},
+      ),
+      S(
+        {|Under normal network conditions, transactions submitted to the Bitcoin
+         network by Misthos should be confirmed within the next 60 minutes.
+         Due to variance in the time it takes for a block to be mined on the
+         Bitcoin blockchain can vary. |},
+      ),
+      E(
+        [|
+          "Click " |> text,
+          <a
+            href="https://bitcoin.org/en/faq#why-do-i-have-to-wait-10-minutes">
+            ("here" |> text)
+          </a>,
+          " for more information" |> text,
+        |]
+        |> ReasonReact.array,
+      ),
+    |],
+  },
+  {
+    q: "What happens if a Partner rejects a payout?",
+    a: [|
+      S(
+        {|The current endorsement policy requires all Partners to unanimously
+         endorse every payout for it to be submitted. If any Partner rejects a
+         payout, then the payout is cancelled and will not be submitted.|},
+      ),
+    |],
+  },
+  {
+    q: "What happens if a Partner leaves without endorsing a payout?",
+    a: [|
+      S(
+        {|If an existing Partner leaves and there are pending payouts within the
+         system, then the remaining Partners have to remove the leaving partner.
+         Otherwise the pending payouts will be stuck and will never be submitted.|},
+      ),
+    |],
+  },
+  {
+    q: "Can a payout be cancelled or reversed within Misthos?",
+    a: [|
+      S(
+        {|Yes. Once a payout is proposed by a Partner, any of the remaining
+         Partners can chose to reject the payout to cancel it.|},
+      ),
+      S(
+        {|Once all the Partners are received, then the payout is automatically
+         submitted to the Bitcoin network and cannot be cancelled or reversed.|},
+      ),
+    |],
+  },
+  {
+    q: "How can I remove a Partner within Misthos?",
+    a: [|
+      S(
+        {|In order to remove a Partner, then one of the remaining Partners have
+         to submit a Partner removal proposal and this proposal needs to be
+         endorsed by enough Partners.|},
+      ),
+      S(
+        {|The Partner removal policy requires N-1 of N endorsements. E.g if a
+         Venture has four Partners, then in order to remove a Partner, then one
+         of remaining three Partners have to propose the removal of the fourth
+         Partner and this proposal needs to be endorsed by the other three
+         Partners.|},
+      ),
+    |],
+  },
+  {
+    q: {|How can I leave a Venture within Misthos?
+          Can I still have access to a Venture once I leave it?|},
+    a: [|
+      S(
+        {|To leave a Venture, either you or another Partner needs to propose
+         your removal. This proposal then needs to be endorsed by the remaining
+         Partners for the removal to be successful.|},
+      ),
+      S(
+        {|Once a Partner leaves a Venture, they will only have read-only access
+         to the state it was when the Partner left. The read-only access will be
+         available via the Venture link.|},
+      ),
+    |],
+  },
+  {
+    q: "Can I come back to a Venture?",
+    a: [|
+      S(
+        {|Yes, Any of the active Partners can propose and invite you back into
+         the Venture.|},
+      ),
+    |],
+  },
+  {
+    q: "Does Misthos have visibility/ access to my Ventures and my wallet account?",
+    a: [|
+      S(
+        {|No. When you create a Venture within Misthos you connect it to your
+         Blockstack ID. By using a Blockstack ID you own the private key and
+         control all the data within your Venture. This private key never leaves
+         your device and is meant to stay on your laptop/phone. As long as no
+         one gets access to your private key, no one has access to your Ventures
+         and your wallet account. When you use Blockstack, by design, your
+         private keys are never sent to any remote servers.|},
+      ),
+      E(
+        <ul>
+          <li>
+            (
+              {|Misthos is an interface and you are using this interface to
+               interact/collaborate with other people on the Blockchain.|}
+              |> text
+            )
+          </li>
+          <li>
+            (
+              {|Misthos does not have access to your private keys and has no
+               visibility/access to your Venture and the financial transactions.|}
+              |> text
+            )
+          </li>
+        </ul>,
+      ),
+    |],
+  },
+  {
+    q: "Where is my Venture data stored and how do I control who accesses it?",
+    a: [|
+      S(
+        {|Using the Blockstack ID, you control where your data is stored (you
+         could run your own server or use your own cloud storage (Dropbox,
+         Amazon S3) and keep backups across all). You then use those places as
+         locations pointed to by the URLs in your Blockstack ID's zone file.|},
+      ),
+      E(
+        [|
+          "You can find out more details on the Blockstack " |> text,
+          <a href="https://blockstack.org/faq"> ("FAQ" |> text) </a>,
+        |]
+        |> ReasonReact.array,
+      ),
+    |],
+  },
+  {
+    q: "Can Misthos recover my private key or reverse/ refund my transactions?",
+    a: [|
+      E(
+        [|
+          {|No. Misthos cannot:|} |> text,
+          <ul>
+            <li> ({|Recover or change your private key.|} |> text) </li>
+            <li> ({|Recover or reset your Blockstack password.|} |> text) </li>
+            <li> ({|Access your Venture or your funds.|} |> text) </li>
+            <li> ({|Reverse, cancel, or refund transactions.|} |> text) </li>
+            <li> ({|Freeze accounts.|} |> text) </li>
+          </ul>,
+        |]
+        |> ReasonReact.array,
+      ),
+    |],
+  },
 |];
