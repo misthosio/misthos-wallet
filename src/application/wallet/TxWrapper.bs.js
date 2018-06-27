@@ -39,47 +39,43 @@ function needsSigning(idx, param) {
   }
 }
 
-function sign(idx, keyPair, nCoSigners, redeemScript, witnessValue, witnessScript, param) {
+function pubKeyIndex(witnessBuf, nCustodians, pubKey) {
+  var chunks = BitcoinjsLib.script.decompile(witnessBuf);
+  var pubKeys = Belt_Array.slice(chunks, (chunks.length - 2 | 0) - nCustodians | 0, nCustodians);
+  return Belt_Array.reduceU(pubKeys, /* tuple */[
+                -1,
+                0
+              ], (function (param, key) {
+                  var idx = param[1];
+                  var match = Buffer.compare(key, pubKey) === 0;
+                  if (match) {
+                    return /* tuple */[
+                            idx,
+                            idx + 1 | 0
+                          ];
+                  } else {
+                    return /* tuple */[
+                            param[0],
+                            idx + 1 | 0
+                          ];
+                  }
+                }))[0];
+}
+
+function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScript, param) {
   var tx = param[/* tx */0];
   var witnessBuf = Utils.bufFromHex(witnessScript);
-  tx.setInputScript(idx, Utils.bufFromHex(redeemScript));
+  tx.setInputScript(idx, BitcoinjsLib.script.compile(/* array */[Utils.bufFromHex(redeemScript)]));
   var signatureHash = tx.hashForWitnessV0(idx, witnessBuf, BTC.toSatoshisFloat(witnessValue), BitcoinjsLib.Transaction.SIGHASH_ALL);
   var signature = keyPair.sign(signatureHash).toScriptSignature(BitcoinjsLib.Transaction.SIGHASH_ALL);
+  var pubKey = keyPair.getPublicKeyBuffer();
+  var insert = pubKeyIndex(witnessBuf, nCustodians, pubKey);
   var input = Belt_Array.getExn(param[/* inputs */1], idx);
   var sigs = input[/* signatures */0];
-  var signatures;
-  if (sigs.length !== 0) {
-    var match = Belt_Array.reduceU(sigs, /* tuple */[
-          -1,
-          0
-        ], (function (param, sig_) {
-            var idx = param[1];
-            if (sig_.length === 0) {
-              return /* tuple */[
-                      idx,
-                      idx + 1 | 0
-                    ];
-            } else {
-              return /* tuple */[
-                      param[0],
-                      idx + 1 | 0
-                    ];
-            }
+  var signatures = sigs.length !== 0 ? sigs : Belt_Array.makeByU(nCustodians, (function () {
+            return Buffer.alloc(0);
           }));
-    var insert = match[0];
-    signatures = Belt_Array.mapWithIndexU(sigs, (function (idx, sig_) {
-            var match = idx === insert;
-            if (match) {
-              return signature;
-            } else {
-              return sig_;
-            }
-          }));
-  } else {
-    signatures = Belt_Array.concat(Belt_Array.makeByU(nCoSigners - 1 | 0, (function () {
-                return Buffer.alloc(0);
-              })), /* array */[signature]);
-  }
+  Belt_Array.set(signatures, insert, signature);
   tx.setWitness(idx, Belt_Array.concatMany(/* array */[
             /* array */[Buffer.alloc(0)],
             signatures,
@@ -161,6 +157,7 @@ exports.B = B;
 exports.extractInputs = extractInputs;
 exports.make = make;
 exports.needsSigning = needsSigning;
+exports.pubKeyIndex = pubKeyIndex;
 exports.sign = sign;
 exports.getWitnessBuf = getWitnessBuf;
 exports.merge = merge;

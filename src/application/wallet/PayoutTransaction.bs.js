@@ -166,9 +166,8 @@ function getSignedExn(result) {
   }
 }
 
-function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout, network) {
+function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout) {
   var txW = [TxWrapper.make(payout[/* txHex */0])];
-  var txB = BitcoinjsLib.TransactionBuilder.fromTransaction(BitcoinjsLib.Transaction.fromHex(payout[/* txHex */0]), Network.bitcoinNetwork(network));
   var signed = $$Array.mapi((function (idx, input) {
           var needsSigning = TxWrapper.needsSigning(idx, txW[0]);
           if (needsSigning) {
@@ -181,8 +180,7 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
               var addressIdx = Address.Coordinates[/* addressIdx */7](input[/* coordinates */6]);
               var keyPair = CustodianKeyChain.getSigningKey(coSignerIdx, chainIdx, addressIdx, custodianKeyChain);
               var address = Address.find(input[/* coordinates */6], accountKeyChains);
-              txW[0] = TxWrapper.sign(idx, keyPair, accountKeyChain[/* nCoSigners */2], address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], txW[0]);
-              txB.sign(idx, keyPair, Utils.bufFromHex(address[/* redeemScript */4]), null, BTC.toSatoshisFloat(input[/* value */3]), Utils.bufFromHex(address[/* witnessScript */3]));
+              txW[0] = TxWrapper.sign(idx, keyPair, List.length(accountKeyChain[/* custodianKeyChains */4]), address[/* redeemScript */4], input[/* value */3], address[/* witnessScript */3], txW[0]);
               return true;
             }
             catch (exn){
@@ -201,7 +199,7 @@ function signPayout(ventureId, userId, masterKeyChain, accountKeyChains, payout,
                 }))));
   if (match) {
     return /* Signed */[/* record */[
-              /* txHex */txB.buildIncomplete().toHex(),
+              /* txHex */txW[0][/* tx */0].toHex(),
               /* usedInputs */payout[/* usedInputs */1],
               /* misthosFeeAddress */payout[/* misthosFeeAddress */2],
               /* changeAddress */payout[/* changeAddress */3]

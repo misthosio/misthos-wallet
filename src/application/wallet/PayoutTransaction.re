@@ -156,14 +156,8 @@ let signPayout =
       ~masterKeyChain: B.HDNode.t,
       ~accountKeyChains: AccountKeyChain.Collection.t,
       ~payoutTx as payout: t,
-      ~network: Network.t,
     ) => {
   let txW = ref(TxWrapper.make(payout.txHex));
-  let txB =
-    B.TxBuilder.fromTransactionWithNetwork(
-      B.Transaction.fromHex(payout.txHex),
-      network |> Network.bitcoinNetwork,
-    );
   let signed =
     payout.usedInputs
     |> Array.mapi((idx, input: input) => {
@@ -202,37 +196,17 @@ let signPayout =
                     );
                let address: Address.t =
                  accountKeyChains |> Address.find(input.coordinates);
-               /* tx */
-               /* |. B.Transaction.setInputScript( */
-               /*      idx, */
-               /*      address.redeemScript |> Utils.bufFromHex, */
-               /*    ); */
-               /* let signatureHash = */
-               /*   tx */
-               /*   |. B.Transaction.hashForWitnessV0( */
-               /*        idx, */
-               /*        address.witnessScript |> Utils.bufFromHex, */
-               /*        input.value |> BTC.toSatoshisFloat, */
-               /*        B.Transaction.sighashAll, */
-               /*      ); */
                txW :=
                  txW^
                  |> TxWrapper.sign(
                       idx,
                       keyPair,
-                      accountKeyChain.nCoSigners,
+                      ~nCustodians=
+                        accountKeyChain.custodianKeyChains |> List.length,
                       ~redeemScript=address.redeemScript,
                       ~witnessValue=input.value,
                       ~witnessScript=address.witnessScript,
                     );
-               txB
-               |> B.TxBuilder.signSegwit(
-                    idx,
-                    keyPair,
-                    ~redeemScript=address.redeemScript |> Utils.bufFromHex,
-                    ~witnessValue=input.value |> BTC.toSatoshisFloat,
-                    ~witnessScript=address.witnessScript |> Utils.bufFromHex,
-                  );
                true;
              }
            ) {
@@ -243,11 +217,7 @@ let signPayout =
          };
        });
   signed |> Js.Array.find(s => s) |> Js.Option.isSome ?
-    Signed({
-      ...payout,
-      txHex: txB |> B.TxBuilder.buildIncomplete |> B.Transaction.toHex,
-    }) :
-    NotSigned;
+    Signed({...payout, txHex: txW^.tx |> B.Transaction.toHex}) : NotSigned;
 };
 
 let rec findInput = (inputs, ammountMissing, fee) =>

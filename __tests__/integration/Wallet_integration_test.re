@@ -15,6 +15,8 @@ open WalletHelpers;
 let () =
   describe("Wallet_integration", () =>
     F.withCached(
+      ~load=false,
+      ~persist=false,
       ~scope="Wallet_integration",
       "integration",
       () => G.withUserSessions(3),
@@ -78,6 +80,7 @@ let () =
           |> BTC.minus(oneKeyChainSpendAmount)
           |> BTC.minus(oneKeyChainExpectedFee);
         let twoKeyChainSpendAmount = BTC.fromSatoshis(25000L);
+
         beforeAllPromise(~timeout=40000, () =>
           Js.Promise.(
             Helpers.faucet([
@@ -220,7 +223,6 @@ let () =
                         wallet.walletInfoCollector
                         |> WalletInfoCollector.accountKeyChains,
                       ~payoutTx=data.payoutTx,
-                      ~network=Network.Regtest,
                     )
                     |> PayoutTransaction.getSignedExn;
                   Js.Promise.all2((

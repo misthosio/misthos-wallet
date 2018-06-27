@@ -32,18 +32,39 @@ let needsSigning = (idx, {inputs}) => {
   };
 };
 
+let pubKeyIndex = (witnessBuf, nCustodians, pubKey) => {
+  let chunks = witnessBuf |> B.Script.decompile;
+  let pubKeys =
+    chunks
+    |. Array.slice(
+         ~offset=(chunks |> Array.length) - 2 - nCustodians,
+         ~len=nCustodians,
+       );
+  let (idx, _) =
+    pubKeys
+    |. Array.reduceU(((-1), 0), (. (res, idx), key) =>
+         BufferExt.compare(key, pubKey) == 0 ?
+           (idx, idx + 1) : (res, idx + 1)
+       );
+  idx;
+};
+
 let sign =
     (
       idx,
       keyPair,
-      nCoSigners,
+      ~nCustodians,
       ~redeemScript,
       ~witnessValue,
       ~witnessScript,
       {tx, inputs},
     ) => {
   let witnessBuf = witnessScript |> Utils.bufFromHex;
-  tx |. B.Transaction.setInputScript(idx, redeemScript |> Utils.bufFromHex);
+  tx
+  |. B.Transaction.setInputScript(
+       idx,
+       B.Script.compile([|redeemScript |> Utils.bufFromHex|]),
+     );
   let signatureHash =
     tx
     |. B.Transaction.hashForWitnessV0(
@@ -56,29 +77,15 @@ let sign =
     keyPair
     |> B.ECPair.sign(signatureHash)
     |. B.ECSignature.toScriptSignature(B.Transaction.sighashAll);
+  let pubKey = keyPair |> B.ECPair.getPublicKeyBuffer;
+  let insert = pubKey |> pubKeyIndex(witnessBuf, nCustodians);
   let input = inputs |. Array.getExn(idx);
   let signatures =
     switch (input.signatures) {
-    | [||] =>
-      Array.concat(
-        Array.makeByU(nCoSigners - 1, (. _) => BufferExt.makeWithSize(0)),
-        [|signature|],
-      )
-    | sigs =>
-      let (insert, _) =
-        sigs
-        |. Array.reduceU(((-1), 0), (. (res, idx), sig_) =>
-             if (sig_ |> BufferExt.length == 0) {
-               (idx, idx + 1);
-             } else {
-               (res, idx + 1);
-             }
-           );
-      sigs
-      |. Array.mapWithIndexU((. idx, sig_) =>
-           idx == insert ? signature : sig_
-         );
+    | [||] => Array.makeByU(nCustodians, (. _) => BufferExt.makeWithSize(0))
+    | sigs => sigs
     };
+  signatures |. Array.set(insert, signature) |> ignore;
   tx
   |. B.Transaction.setWitness(
        idx,

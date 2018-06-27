@@ -62,8 +62,7 @@ let signPayout:
     ~userId: userId,
     ~masterKeyChain: Bitcoin.HDNode.t,
     ~accountKeyChains: AccountKeyChain.Collection.t,
-    ~payoutTx: t,
-    ~network: Network.t
+    ~payoutTx: t
   ) =>
   signResult;
 

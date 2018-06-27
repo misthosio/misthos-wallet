@@ -2,6 +2,8 @@ type t = Node.buffer;
 
 [@bs.val] external makeWithSize : int => t = "Buffer.alloc";
 
+[@bs.val] external compare : (t, t) => int = "Buffer.compare";
+
 [@bs.val]
 external fromStringWithEncoding : (Js.String.t, ~encoding: Js.String.t) => t =
   "Buffer.from";
