@@ -101,6 +101,12 @@ module Transaction = {
   [@bs.send] external setWitness : (t, int, array(Node.buffer)) => unit = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
   external fromHex : string => t = "";
+  type sighashType;
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
+  external sighashAll : sighashType = "SIGHASH_ALL";
+  [@bs.send]
+  external hashForWitnessV0 : (t, int, Node.buffer, float, sighashType) => unit =
+    "";
 };
 
 module TxBuilder = {
