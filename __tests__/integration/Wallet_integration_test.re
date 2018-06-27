@@ -225,6 +225,10 @@ let () =
                       ~payoutTx=data.payoutTx,
                     )
                     |> PayoutTransaction.getSignedExn;
+                  let tx =
+                    PayoutTransaction.finalize([data.payoutTx, payoutTx]);
+                  Js.log2("finalized:", tx |> Bitcoin.Transaction.toHex);
+                  Js.log(Helpers.displayTx(tx |> Bitcoin.Transaction.toHex));
                   Js.Promise.all2((
                     resolve(
                       twoKeyChainWallet^

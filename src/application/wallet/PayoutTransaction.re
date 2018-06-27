@@ -228,7 +228,14 @@ let rec findInput = (inputs, ammountMissing, fee) =>
     i.value
     |> BTC.gte(
          ammountMissing
-         |> BTC.plus(Fee.inputCost(i.nCoSigners, i.nPubKeys, fee)),
+         |> BTC.plus(
+              Fee.inputCost(
+                i.sequence |> Js.Option.isSome,
+                i.nCoSigners,
+                i.nPubKeys,
+                fee,
+              ),
+            ),
        ) ?
       Some(i) : findInput(rest, ammountMissing, fee)
   };
@@ -239,7 +246,14 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
     let addedInputs = [i, ...addedInputs];
     let ammountMissing =
       ammountMissing
-      |> BTC.plus(Fee.inputCost(i.nCoSigners, i.nPubKeys, fee))
+      |> BTC.plus(
+           Fee.inputCost(
+             i.sequence |> Js.Option.isSome,
+             i.nCoSigners,
+             i.nPubKeys,
+             fee,
+           ),
+         )
       |> BTC.minus(i.value);
     if (BTC.zero |> BTC.gte(ammountMissing)) {
       (addedInputs, true);
@@ -277,6 +291,7 @@ let addChangeOutput =
               )
            |> BTC.plus(
                 Fee.minChange(
+                  changeAddress.sequence |> Js.Option.isSome,
                   changeAddress.nCoSigners,
                   changeAddress.nPubKeys,
                   fee,
@@ -411,7 +426,12 @@ let build =
                inV |> BTC.plus(i.value),
                feeV
                |> BTC.plus(
-                    Fee.inputCost(i.nCoSigners, i.nPubKeys, satsPerByte),
+                    Fee.inputCost(
+                      i.sequence |> Js.Option.isSome,
+                      i.nCoSigners,
+                      i.nPubKeys,
+                      satsPerByte,
+                    ),
                   ),
                [
                  (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i),

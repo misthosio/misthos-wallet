@@ -216,7 +216,7 @@ function findInput(_inputs, ammountMissing, fee) {
       var rest = inputs[1];
       var i = inputs[0];
       if (rest) {
-        var match = i[/* value */3].gte(ammountMissing.plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], fee)));
+        var match = i[/* value */3].gte(ammountMissing.plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* nCoSigners */4], i[/* nPubKeys */5], fee)));
         if (match) {
           return /* Some */[i];
         } else {
@@ -244,7 +244,7 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
         i,
         addedInputs
       ];
-      var ammountMissing$1 = ammountMissing.plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], fee)).minus(i[/* value */3]);
+      var ammountMissing$1 = ammountMissing.plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* nCoSigners */4], i[/* nPubKeys */5], fee)).minus(i[/* value */3]);
       if (BTC.zero.gte(ammountMissing$1)) {
         return /* tuple */[
                 addedInputs$1,
@@ -270,7 +270,7 @@ function findInputs(_inputs, _ammountMissing, fee, _addedInputs) {
 }
 
 function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, network, txBuilder) {
-  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
+  if (totalInputs.gte(outTotal.plus(currentFee).plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network))).plus(TransactionFee.minChange(Js_option.isSome(changeAddress[/* sequence */6]), changeAddress[/* nCoSigners */0], changeAddress[/* nPubKeys */1], fee)))) {
     var currentFee$1 = currentFee.plus(TransactionFee.outputCost(changeAddress[/* displayAddress */5], fee, Network.bitcoinNetwork(network)));
     txBuilder.addOutput(changeAddress[/* displayAddress */5], BTC.toSatoshisFloat(totalInputs.minus(outTotal).minus(currentFee$1)));
     return true;
@@ -336,7 +336,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
       var match$1 = List.fold_left((function (param, i) {
               return /* tuple */[
                       param[0].plus(i[/* value */3]),
-                      param[1].plus(TransactionFee.inputCost(i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
+                      param[1].plus(TransactionFee.inputCost(Js_option.isSome(i[/* sequence */7]), i[/* nCoSigners */4], i[/* nPubKeys */5], satsPerByte)),
                       /* :: */[
                         /* tuple */[
                           txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
