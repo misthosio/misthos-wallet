@@ -4,7 +4,7 @@
 var Js_dict = require("bs-platform/lib/js/js_dict.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 
-function pruneNullKeys(json) {
+function pruneNullFields(json) {
   if (typeof json === "object" && !Array.isArray(json) && json !== null) {
     return Js_dict.fromArray(Belt_Array.keepMapU(Js_dict.entries(json), (function (param) {
                       var v = param[1];
@@ -14,16 +14,16 @@ function pruneNullKeys(json) {
                       } else {
                         return /* Some */[/* tuple */[
                                   param[0],
-                                  v
+                                  pruneNullFields(v)
                                 ]];
                       }
                     })));
   } else if (Array.isArray(json)) {
-    return Belt_Array.map(json, pruneNullKeys);
+    return Belt_Array.map(json, pruneNullFields);
   } else {
     return json;
   }
 }
 
-exports.pruneNullKeys = pruneNullKeys;
+exports.pruneNullFields = pruneNullFields;
 /* Js_dict Not a pure module */

@@ -28,12 +28,12 @@ function encode(a, b) {
             ]);
 }
 
-describe("HashHelper.pruneNullKeys", (function () {
+describe("HashHelper.pruneNullFields", (function () {
         Jest.test("Prunes null values", (function () {
-                return Jest.Expect[/* toEqual */12]("{\"b\":[\"bla\"]}", Jest.Expect[/* expect */0](Json.stringify(HashHelper.pruneNullKeys(encode(/* None */0, /* Some */["bla"])))));
+                return Jest.Expect[/* toEqual */12]("{\"b\":[\"bla\"]}", Jest.Expect[/* expect */0](Json.stringify(HashHelper.pruneNullFields(encode(/* None */0, /* Some */["bla"])))));
               }));
         return Jest.test("Does not change arrays", (function () {
-                      return Jest.Expect[/* toEqual */12]("{\"a\":1,\"b\":[null]}", Jest.Expect[/* expect */0](Json.stringify(HashHelper.pruneNullKeys(encode(/* Some */[1], /* None */0)))));
+                      return Jest.Expect[/* toEqual */12]("{\"a\":1,\"b\":[null]}", Jest.Expect[/* expect */0](Json.stringify(HashHelper.pruneNullFields(encode(/* Some */[1], /* None */0)))));
                     }));
       }));
 
