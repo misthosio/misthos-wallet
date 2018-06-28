@@ -32,22 +32,24 @@ let findCurrentUsers =
     UserId.emptySet,
   );
 
-let run = (scenarioName, scenarioTest) =>
+let run = (~skipIntegrity=false, scenarioName, scenarioTest) =>
   describe(
     scenarioName,
     () => {
       let loadedLog = loadScenario(scenarioName);
-      test(
-        "Integrity of "
-        ++ string_of_int(loadedLog |> EventLog.length)
-        ++ " items is intact",
-        () => {
-          let newItems =
-            EventLog.findNewItems(~other=loadedLog, EventLog.make());
-          Expect.expect(newItems |> Array.length)
-          |> Expect.toEqual(loadedLog |> EventLog.length);
-        },
-      );
+      if (! skipIntegrity) {
+        test(
+          "Integrity of "
+          ++ string_of_int(loadedLog |> EventLog.length)
+          ++ " items is intact",
+          () => {
+            let newItems =
+              EventLog.findNewItems(~other=loadedLog, EventLog.make());
+            Expect.expect(newItems |> Array.length)
+            |> Expect.toEqual(loadedLog |> EventLog.length);
+          },
+        );
+      };
       let (venture, _newItems) =
         loadedLog |> Venture.reconstruct(scenarioSession);
       scenarioTest(venture);

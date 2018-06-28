@@ -43,13 +43,16 @@ var findCurrentUsers = Curry._2(EventLog.reduce, (function (users, item) {
         }
       }), PrimitiveTypes.UserId[/* emptySet */9]);
 
-function run(scenarioName, scenarioTest) {
+function run($staropt$star, scenarioName, scenarioTest) {
+  var skipIntegrity = $staropt$star ? $staropt$star[0] : false;
   describe(scenarioName, (function () {
           var loadedLog = loadScenario(scenarioName);
-          Jest.test("Integrity of " + (String(Curry._1(EventLog.length, loadedLog)) + " items is intact"), (function () {
-                  var newItems = Curry._2(EventLog.findNewItems, loadedLog, Curry._1(EventLog.make, /* () */0));
-                  return Jest.Expect[/* toEqual */12](Curry._1(EventLog.length, loadedLog), Jest.Expect[/* expect */0](newItems.length));
-                }));
+          if (!skipIntegrity) {
+            Jest.test("Integrity of " + (String(Curry._1(EventLog.length, loadedLog)) + " items is intact"), (function () {
+                    var newItems = Curry._2(EventLog.findNewItems, loadedLog, Curry._1(EventLog.make, /* () */0));
+                    return Jest.Expect[/* toEqual */12](Curry._1(EventLog.length, loadedLog), Jest.Expect[/* expect */0](newItems.length));
+                  }));
+          }
           var match = Venture.reconstruct(scenarioSession, loadedLog);
           return Curry._1(scenarioTest, match[0]);
         }));
