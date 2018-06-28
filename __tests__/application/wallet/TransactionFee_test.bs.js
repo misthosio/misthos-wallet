@@ -13,10 +13,16 @@ var oneSatPerByte = BTC.fromSatoshis(/* int64 */[
 
 describe("inputCost", (function () {
         Jest.test("1 cosigner", (function () {
-                return Jest.Expect[/* toEqual */12](113, Jest.Expect[/* expect */0](BTC.toSatoshisFloat(TransactionFee.inputCost(1, 2, oneSatPerByte))));
+                return Jest.Expect[/* toEqual */12](113, Jest.Expect[/* expect */0](BTC.toSatoshisFloat(TransactionFee.inputCost(false, 1, 2, oneSatPerByte))));
               }));
-        return Jest.test("2 cosigners", (function () {
-                      return Jest.Expect[/* toEqual */12](140, Jest.Expect[/* expect */0](BTC.toSatoshisFloat(TransactionFee.inputCost(2, 3, oneSatPerByte))));
+        Jest.test("1 cosigner with dms", (function () {
+                return Jest.Expect[/* toEqual */12](116, Jest.Expect[/* expect */0](BTC.toSatoshisFloat(TransactionFee.inputCost(true, 1, 2, oneSatPerByte))));
+              }));
+        Jest.test("2 cosigners", (function () {
+                return Jest.Expect[/* toEqual */12](140, Jest.Expect[/* expect */0](BTC.toSatoshisFloat(TransactionFee.inputCost(false, 2, 3, oneSatPerByte))));
+              }));
+        return Jest.test("2 cosigner with dms", (function () {
+                      return Jest.Expect[/* toEqual */12](143, Jest.Expect[/* expect */0](BTC.toSatoshisFloat(TransactionFee.inputCost(true, 2, 3, oneSatPerByte))));
                     }));
       }));
 

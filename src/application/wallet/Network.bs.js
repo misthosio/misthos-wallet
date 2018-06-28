@@ -64,49 +64,56 @@ function inputMap() {
 }
 
 function encodeInput(input) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "txId",
-                input[/* txId */0]
-              ],
-              /* :: */[
-                /* tuple */[
-                  "txOutputN",
-                  input[/* txOutputN */1]
-                ],
-                /* :: */[
+  var match = input[/* sequence */7];
+  return Json_encode.object_(Belt_List.concat(/* :: */[
                   /* tuple */[
-                    "address",
-                    input[/* address */2]
+                    "txId",
+                    input[/* txId */0]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "value",
-                      BTC.encode(input[/* value */3])
+                      "txOutputN",
+                      input[/* txOutputN */1]
                     ],
                     /* :: */[
                       /* tuple */[
-                        "nCoSigners",
-                        input[/* nCoSigners */4]
+                        "address",
+                        input[/* address */2]
                       ],
                       /* :: */[
                         /* tuple */[
-                          "nPubKeys",
-                          input[/* nPubKeys */5]
+                          "value",
+                          BTC.encode(input[/* value */3])
                         ],
                         /* :: */[
                           /* tuple */[
-                            "coordinates",
-                            Address.Coordinates[/* encode */9](input[/* coordinates */6])
+                            "nCoSigners",
+                            input[/* nCoSigners */4]
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "nPubKeys",
+                              input[/* nPubKeys */5]
+                            ],
+                            /* :: */[
+                              /* tuple */[
+                                "coordinates",
+                                Address.Coordinates[/* encode */9](input[/* coordinates */6])
+                              ],
+                              /* [] */0
+                            ]
+                          ]
                         ]
                       ]
                     ]
                   ]
-                ]
-              ]
-            ]);
+                ], match ? /* :: */[
+                    /* tuple */[
+                      "sequence",
+                      match[0]
+                    ],
+                    /* [] */0
+                  ] : /* [] */0));
 }
 
 function decodeInput(raw) {
@@ -117,7 +124,10 @@ function decodeInput(raw) {
           /* value */Json_decode.field("value", BTC.decode, raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
           /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw),
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw)
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
+          /* sequence */Json_decode.optional((function (param) {
+                  return Json_decode.field("sequence", Json_decode.$$int, param);
+                }), raw)
         ];
 }
 
@@ -136,7 +146,8 @@ function Make(Client) {
                                             /* value */param[/* amount */3],
                                             /* nCoSigners */a[/* nCoSigners */0],
                                             /* nPubKeys */a[/* nPubKeys */1],
-                                            /* coordinates */a[/* coordinates */2]
+                                            /* coordinates */a[/* coordinates */2],
+                                            /* sequence */a[/* sequence */6]
                                           ];
                                   })));
                 }));
@@ -172,7 +183,8 @@ function transactionInputs(addresses) {
                                           /* value */param[/* amount */3],
                                           /* nCoSigners */a[/* nCoSigners */0],
                                           /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2]
+                                          /* coordinates */a[/* coordinates */2],
+                                          /* sequence */a[/* sequence */6]
                                         ];
                                 })));
               }));
@@ -205,7 +217,8 @@ function transactionInputs$1(addresses) {
                                           /* value */param[/* amount */3],
                                           /* nCoSigners */a[/* nCoSigners */0],
                                           /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2]
+                                          /* coordinates */a[/* coordinates */2],
+                                          /* sequence */a[/* sequence */6]
                                         ];
                                 })));
               }));
@@ -238,7 +251,8 @@ function transactionInputs$2(addresses) {
                                           /* value */param[/* amount */3],
                                           /* nCoSigners */a[/* nCoSigners */0],
                                           /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2]
+                                          /* coordinates */a[/* coordinates */2],
+                                          /* sequence */a[/* sequence */6]
                                         ];
                                 })));
               }));

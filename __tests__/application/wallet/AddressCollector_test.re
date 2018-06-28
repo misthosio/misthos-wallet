@@ -59,6 +59,7 @@ let () =
                  witnessScript: "51210309995c255526c59ac6a6563832a838fbb9917305d84d3c11393e575238b4e9aa51ae",
                  redeemScript: "0020f9a067ba831974aef9e6e8363e437d2660ca5120ab23c0c1acf32aa1605894c8",
                  displayAddress: "2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ",
+                 sequence: None,
                }: Address.t,
              )
         ),

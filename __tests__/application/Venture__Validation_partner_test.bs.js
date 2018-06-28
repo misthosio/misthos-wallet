@@ -9,7 +9,7 @@ var ValidationHelpers = require("../helpers/ValidationHelpers.bs.js");
 var Venture__Validation = require("../../src/application/Venture__Validation.bs.js");
 
 describe("PartnerProposal", (function () {
-        Fixtures.withCached(/* None */0, "PartnerProposal", "when proposing another partner", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerProposal", "when proposing another partner", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -24,7 +24,7 @@ describe("PartnerProposal", (function () {
                                         return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
                                       })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "PartnerProposal", "when the prospect is already a partner", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerProposal", "when the prospect is already a partner", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -50,7 +50,7 @@ describe("PartnerProposal", (function () {
                                         return Curry._6(func, param, param$1, param$2, param$3, user1, user1);
                                       })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "PartnerProposal", "when proposing a partner that was removed", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerProposal", "when proposing a partner that was removed", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -72,7 +72,7 @@ describe("PartnerProposal", (function () {
                                         return Curry._6(func, param, param$1, param$2, param$3, user1, user2);
                                       })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
-        return Fixtures.withCached(/* None */0, "PartnerProposal", "when the partner was removed but the proposal doesn't show it", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "PartnerProposal", "when the partner was removed but the proposal doesn't show it", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -107,7 +107,7 @@ describe("PartnerProposal", (function () {
       }));
 
 describe("PartnerRemovalProposal", (function () {
-        Fixtures.withCached(/* None */0, "PartnerRemovalProposal", "when proposing another partner", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerRemovalProposal", "when proposing another partner", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -121,7 +121,7 @@ describe("PartnerRemovalProposal", (function () {
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRemovalProposed */19](match[0], match[1], log)), /* Ok */0);
               }));
         describe("validatePartnerRemovalData", (function () {
-                Fixtures.withCached(/* None */0, "PartnerRemovalProposal", "when the prospect is not a partner", (function () {
+                Fixtures.withCached(/* None */0, /* None */0, "PartnerRemovalProposal", "when the prospect is not a partner", (function () {
                         return Generators.withUserSessions(2);
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
@@ -135,7 +135,7 @@ describe("PartnerRemovalProposal", (function () {
                                     /* lastPartnerProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0)
                                   ], /* BadData */["Partner with Id '" + (PrimitiveTypes.UserId[/* toString */0](user2[/* userId */0]) + "' doesn't exist")]);
                       }));
-                return Fixtures.withCached(/* None */0, "PartnerRemovalProposal", "when lastPartnerProcess doesn't match", (function () {
+                return Fixtures.withCached(/* None */0, /* None */0, "PartnerRemovalProposal", "when lastPartnerProcess doesn't match", (function () {
                               return Generators.withUserSessions(2);
                             }), (function (sessions) {
                               var match = Generators.twoUserSessionsFromArray(sessions);
@@ -156,7 +156,7 @@ describe("PartnerRemovalProposal", (function () {
       }));
 
 describe("PartnerPubKeyAdded", (function () {
-        Fixtures.withCached(/* None */0, "PartnerPubKeyAdded", "when everything is okay", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerPubKeyAdded", "when everything is okay", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -170,7 +170,7 @@ describe("PartnerPubKeyAdded", (function () {
                 var user2 = match[1];
                 return ValidationHelpers.testValidationResult(/* Some */[user2[/* userId */0]], ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerPubKeyAdded */20](user2)(log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "PartnerPubKeyAdded", "when the partner submits an event", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerPubKeyAdded", "when the partner submits an event", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -189,7 +189,7 @@ describe("PartnerPubKeyAdded", (function () {
                                         return Curry._6(func, param, param$1, param$2, param$3, user2, user3);
                                       })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "PartnerPubKeyAdded", "when syncing from another user", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerPubKeyAdded", "when syncing from another user", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -202,7 +202,7 @@ describe("PartnerPubKeyAdded", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 return ValidationHelpers.testValidationResult(/* Some */[match[0][/* userId */0]], ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerPubKeyAdded */20](match[1])(log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, "PartnerPubKeyAdded", "when the partner hasn't been accepted", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "PartnerPubKeyAdded", "when the partner hasn't been accepted", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -220,7 +220,7 @@ describe("PartnerPubKeyAdded", (function () {
                 var user2 = match[1];
                 return ValidationHelpers.testValidationResult(/* Some */[user2[/* userId */0]], ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerPubKeyAdded */20](user2)(log)), /* InvalidIssuer */2);
               }));
-        return Fixtures.withCached(/* None */0, "PartnerPubKeyAdded", "when the pub key is already known", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "PartnerPubKeyAdded", "when the pub key is already known", (function () {
                       return Generators.withUserSessions(2);
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);

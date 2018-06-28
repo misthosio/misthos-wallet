@@ -109,7 +109,15 @@ let writeFixture = (fileName, sessions, log) =>
 let basePath = "__tests__/fixtures/";
 
 let withCached =
-    (~load=true, ~scope, description, sessionsGenerator, generator, testBody) => {
+    (
+      ~load=true,
+      ~persist=true,
+      ~scope,
+      description,
+      sessionsGenerator,
+      generator,
+      testBody,
+    ) => {
   let replacedName = description |> Js.String.replaceByRe([%re "/ /g"], "_");
   let cacheFileName = basePath ++ scope ++ "-" ++ replacedName;
   let (sessions, log, cached) =
@@ -123,7 +131,7 @@ let withCached =
       let sessions = sessionsGenerator();
       (sessions, generator(sessions), false);
     };
-  if (cached == false) {
+  if (cached == false && persist) {
     writeFixture(cacheFileName, sessions, log |> Generators.Log.eventLog);
   };
   Jest.describe(description, () =>

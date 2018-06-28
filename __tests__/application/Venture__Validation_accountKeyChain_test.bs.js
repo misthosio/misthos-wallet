@@ -11,7 +11,7 @@ var ValidationHelpers = require("../helpers/ValidationHelpers.bs.js");
 var Venture__Validation = require("../../src/application/Venture__Validation.bs.js");
 
 describe(" AccountKeyChainIdentified", (function () {
-        Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "when everything is fine", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainIdentified", "when everything is fine", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -23,7 +23,7 @@ describe(" AccountKeyChainIdentified", (function () {
               }), (function (_, log) {
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainIdentified */39](log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "when the account doesn't exist", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainIdentified", "when the account doesn't exist", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -41,10 +41,11 @@ describe(" AccountKeyChainIdentified", (function () {
                               /* accountIdx */WalletTypes.AccountIndex[/* fromInt */1](1),
                               /* identifier */init[/* identifier */1],
                               /* nCoSigners */init[/* nCoSigners */2],
-                              /* custodianKeyChains */init[/* custodianKeyChains */3]
+                              /* sequence */init[/* sequence */3],
+                              /* custodianKeyChains */init[/* custodianKeyChains */4]
                             ]], /* BadData */["Account doesn't exist"]);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "when the AccountKeyChain is inconsistent", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainIdentified", "when the AccountKeyChain is inconsistent", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -62,10 +63,11 @@ describe(" AccountKeyChainIdentified", (function () {
                               /* accountIdx */init[/* accountIdx */0],
                               /* identifier */"",
                               /* nCoSigners */init[/* nCoSigners */2],
-                              /* custodianKeyChains */init[/* custodianKeyChains */3]
+                              /* sequence */init[/* sequence */3],
+                              /* custodianKeyChains */init[/* custodianKeyChains */4]
                             ]], /* BadData */["Inconsistent AccountKeyChain"]);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "with an old custodian", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainIdentified", "with an old custodian", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -110,7 +112,7 @@ describe(" AccountKeyChainIdentified", (function () {
                                   ]
                                 ])], /* BadData */["Custodians aren't current"]);
               }));
-        return Fixtures.withCached(/* None */0, "AccountKeyChainIdentified", "when a CustodianKeyChain is unknown", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainIdentified", "when a CustodianKeyChain is unknown", (function () {
                       return Generators.withUserSessions(2);
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
@@ -135,7 +137,7 @@ describe(" AccountKeyChainIdentified", (function () {
       }));
 
 describe("AccountKeyChainActivated", (function () {
-        Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when everything is fine", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainActivated", "when everything is fine", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -148,7 +150,7 @@ describe("AccountKeyChainActivated", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, match[0], log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "after a partner removal", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainActivated", "after a partner removal", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -174,7 +176,7 @@ describe("AccountKeyChainActivated", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withAccountKeyChainActivated */40](/* Some */[1], match[0], log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the account doesn't exist", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainActivated", "when the account doesn't exist", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -196,7 +198,7 @@ describe("AccountKeyChainActivated", (function () {
                             /* sequence */activated[/* sequence */3]
                           ], /* BadData */["Account doesn't exist"]);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the issuer doesn't match", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainActivated", "when the issuer doesn't match", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -216,7 +218,7 @@ describe("AccountKeyChainActivated", (function () {
                               return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
                             }), ValidationHelpers.constructState(/* None */0, log), activated, /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the issuer is not a custodian", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainActivated", "when the issuer is not a custodian", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -236,7 +238,7 @@ describe("AccountKeyChainActivated", (function () {
                               return ValidationHelpers.withIssuer(user2, Venture__Validation.validateAccountKeyChainActivated, param, param$1);
                             }), ValidationHelpers.constructState(/* None */0, log), activated, /* BadData */["Not a custodian"]);
               }));
-        Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the identifier is unknown", (function () {
+        Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainActivated", "when the identifier is unknown", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -258,7 +260,7 @@ describe("AccountKeyChainActivated", (function () {
                             /* sequence */activated[/* sequence */3]
                           ], /* BadData */["Unknown AccountKeyChain identifier"]);
               }));
-        return Fixtures.withCached(/* None */0, "AccountKeyChainActivated", "when the sequence is not in order", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "AccountKeyChainActivated", "when the sequence is not in order", (function () {
                       return Generators.withUserSessions(2);
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
