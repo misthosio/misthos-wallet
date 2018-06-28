@@ -5,6 +5,7 @@ let component = ReasonReact.statelessComponent("Grid");
 type variant =
   | V1
   | V2
+  | V3
   | V4;
 
 module Styles = {
@@ -31,6 +32,13 @@ module Styles = {
               ". area3 . area4 ."
            |}
           ++ (warning ? {|" . warning warning warning ."|} : "")
+        | V3 =>
+          {|
+           ". title1 . title2 ."
+           ". area3 . area4 ."
+           ". area5 area5 area5 ."
+           |}
+          ++ (warning ? {|" . warning warning warning ."|} : "")
         | V1 =>
           {|
               ". title1 ."
@@ -43,6 +51,7 @@ module Styles = {
         "gridTemplateColumns",
         switch (variant) {
         | V4
+        | V3
         | V2 => "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]"
         | V1 => "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"
         },
@@ -53,6 +62,9 @@ module Styles = {
         | V4 =>
           (warning ? "[wBegin] min-content [wEnd] " : "")
           ++ "min-content [tBegin] min-content [tEnd] auto"
+        | V3 =>
+          "[tBegin] min-content [tEnd] auto min-content"
+          ++ (warning ? " [wBegin] min-content [wEnd]" : "")
         | V2
         | V1 =>
           "[tBegin] min-content [tEnd] auto"
@@ -117,17 +129,19 @@ let make =
       ~area2=?,
       ~area3=?,
       ~area4=?,
+      ~area5=?,
       ~warning=?,
       _children,
     ) => {
   ...component,
   render: _self => {
     let variant =
-      switch (area1, area3, area4) {
-      | (Some(_), Some(_), Some(_)) => V4
-      | (None, Some(_), Some(_)) => V2
-      | (None, Some(_), None) => V1
-      | (_, _, _) => V4
+      switch (area1, area3, area4, area5) {
+      | (Some(_), Some(_), Some(_), _) => V4
+      | (None, Some(_), Some(_), None) => V2
+      | (None, Some(_), Some(_), Some(_)) => V3
+      | (None, Some(_), None, None) => V1
+      | (_, _, _, _) => V4
       };
     <div className=(Styles.grid(variant, warning))>
       (
@@ -146,6 +160,7 @@ let make =
           (title2, "title2", Styles.title),
           (area3, "area3", ""),
           (area4, "area4", ""),
+          (area5, "area5", ""),
         |]
         |> Array.map(((item, area, className)) =>
              switch (item) {

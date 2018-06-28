@@ -29,7 +29,7 @@ function make(index, _) {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, VentureList.make(/* None */0, index, /* array */[]))])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("CREATE A NEW VENTURE")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Set up a new Venture with yourself as the initial Partner. You can add and remove Partners once the Venture is created.")])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function (param) {
                                                 return Router.clickToRoute(/* CreateVenture */1, param);
-                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Create a Venture")])))], /* None */0, /* array */[]));
+                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Create a Venture")])))], /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

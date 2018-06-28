@@ -73,17 +73,6 @@ let make =
         };
       <StatusChip label status />;
     };
-    let transactionId =
-      switch (txId) {
-      | Some(txId) =>
-        <div>
-          <MTypography variant=`Title>
-            ("Transaction ID" |> text)
-          </MTypography>
-          <MTypography variant=`Body2> (txId |> text) </MTypography>
-        </div>
-      | None => ReasonReact.null
-      };
     <Grid
       title1=("Payout Details" |> text)
       area3={
@@ -149,7 +138,6 @@ let make =
               </div>
             )
           </ScrollList>
-          transactionId
         </div>
       }
       area4={
@@ -182,6 +170,18 @@ let make =
           )
         </div>
       }
+      area5=(
+        switch (txId) {
+        | Some(txId) =>
+          <div>
+            <MTypography variant=`Title>
+              ("Transaction ID" |> text)
+            </MTypography>
+            <MTypography variant=`Body2> (txId |> text) </MTypography>
+          </div>
+        | None => <MTypography variant=`Body1> PolicyText.payout </MTypography>
+        }
+      )
     />;
   },
 };

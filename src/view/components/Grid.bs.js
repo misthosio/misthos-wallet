@@ -28,6 +28,11 @@ function grid(variant, warning) {
         );
         break;
     case 2 : 
+        tmp = "\n           \". title1 . title2 .\"\n           \". area3 . area4 .\"\n           \". area5 area5 area5 .\"\n           " + (
+          warning$1 ? "\" . warning warning warning .\"" : ""
+        );
+        break;
+    case 3 : 
         tmp = (
           warning$1 ? "\" . warning warning warning .\"" : ""
         ) + "\n              \". area1 . area2 .\"\n              \". title1 . title2 .\"\n              \". area3 . area4 .\"\n              ";
@@ -43,9 +48,13 @@ function grid(variant, warning) {
                   /* :: */[
                     Css.unsafe("gridTemplateColumns", variant !== 0 ? "[begin] minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) minmax(368px, 4fr) minmax(24px, 1fr) [end]" : "[begin] minmax(24px, 1fr) minmax(368px, 9fr) minmax(24px, 1fr) [end]"),
                     /* :: */[
-                      Css.unsafe("gridTemplateRows", variant >= 2 ? (
-                              warning$1 ? "[wBegin] min-content [wEnd] " : ""
-                            ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
+                      Css.unsafe("gridTemplateRows", variant !== 2 ? (
+                              variant >= 3 ? (
+                                  warning$1 ? "[wBegin] min-content [wEnd] " : ""
+                                ) + "min-content [tBegin] min-content [tEnd] auto" : "[tBegin] min-content [tEnd] auto" + (
+                                  warning$1 ? " [wBegin] min-content [wEnd]" : ""
+                                )
+                            ) : "[tBegin] min-content [tEnd] auto min-content" + (
                               warning$1 ? " [wBegin] min-content [wEnd]" : ""
                             )),
                       /* :: */[
@@ -180,7 +189,7 @@ var Styles = /* module */[
   /* titleBg */titleBg
 ];
 
-function make(title1, title2, area1, area2, area3, area4, warning$1, _) {
+function make(title1, title2, area1, area2, area3, area4, area5, warning$1, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -192,8 +201,12 @@ function make(title1, title2, area1, area2, area3, area4, warning$1, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var variant = area1 || !area3 ? /* V4 */2 : (
-                  area4 ? /* V2 */1 : /* V1 */0
+              var variant = area1 || !area3 ? /* V4 */3 : (
+                  area4 ? (
+                      area5 ? /* V3 */2 : /* V2 */1
+                    ) : (
+                      area5 ? /* V4 */3 : /* V1 */0
+                    )
                 );
               return React.createElement("div", {
                           className: grid(variant, warning$1)
@@ -248,6 +261,11 @@ function make(title1, title2, area1, area2, area3, area4, warning$1, _) {
                               /* tuple */[
                                 area4,
                                 "area4",
+                                ""
+                              ],
+                              /* tuple */[
+                                area5,
+                                "area5",
                                 ""
                               ]
                             ]));

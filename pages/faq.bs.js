@@ -72,7 +72,7 @@ function make() {
                                                                                                 }
                                                                                               }), item[/* a */1])]))
                                                                             ]));
-                                                            }), FaqText.faq)])))], /* None */0, /* None */0, /* array */[])),
+                                                            }), FaqText.faq)])))], /* None */0, /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),

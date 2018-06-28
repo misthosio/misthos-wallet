@@ -11,6 +11,7 @@ var React = require("react");
 var Colors = require("./Colors.bs.js");
 var Voters = require("./components/Voters.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
+var PolicyText = require("./text/PolicyText.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -130,7 +131,6 @@ function make(viewData, commands, cmdStatus, _) {
                 ];
               }
               var payoutStatus = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$2[1], match$2[0], /* array */[]));
-              var transactionId = txId ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(txId[0])]))) : null;
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Payout Details")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[date ? ViewCommon.text("Payout completed on " + date[0].toDateString()) : ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match[/* proposedBy */2]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
@@ -151,7 +151,7 @@ function make(viewData, commands, cmdStatus, _) {
                                             React.createElement("div", {
                                                   className: total
                                                 }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Body2 */-904051920], /* None */0, /* None */0, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* Some */[total], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                          ])), transactionId)], /* Some */[React.createElement("div", {
+                                          ])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, Voters.make(match[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", match[/* canVote */3], (function () {
                                               return Curry._1(commands[/* endorsePayout */8], processId);
@@ -159,7 +159,7 @@ function make(viewData, commands, cmdStatus, _) {
                                               return Curry._1(commands[/* rejectPayout */9], processId);
                                             }), (function () {
                                               return Curry._1(commands[/* reset */0], /* () */0);
-                                            }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */1]) > 0 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_SnackbarContent.make(/* None */0, /* None */0, /* Some */[ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])) : null)], /* None */0, /* array */[]));
+                                            }), cmdStatus, /* array */[])), Belt_Set.size(viewData[/* collidesWith */1]) > 0 ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_SnackbarContent.make(/* None */0, /* None */0, /* Some */[ViewCommon.text("\n                   This Proposal is reusing inputs reserved by another payout.\n                   We recommend that you coordinate with your Partners\n                   to only endorse one Proposal and reject the other one.\n                   ")], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])) : null)], /* Some */[txId ? React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(txId[0])]))) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[PolicyText.payout]))], /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

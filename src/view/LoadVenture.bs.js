@@ -20,7 +20,7 @@ function make(cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Loading Venture")], /* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* LoadVenture */2, /* array */[]))], /* None */0, /* None */0, /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Loading Venture")], /* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* LoadVenture */2, /* array */[]))], /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

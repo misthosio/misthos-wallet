@@ -15,6 +15,7 @@ var MInput = require("./components/MInput.bs.js");
 var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var PolicyText = require("./text/PolicyText.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var Environment = require("../web/Environment.bs.js");
@@ -300,7 +301,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                   return Curry._1(send, /* Freeze */3);
                                                 })], /* Some */[(function () {
                                                   return Curry._1(send, /* Reset */4);
-                                                })], match[/* canSubmitProposal */5], /* None */0, cmdStatus, /* array */[])))], warning, /* array */[]));
+                                                })], match[/* canSubmitProposal */5], /* None */0, cmdStatus, /* array */[])))], /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[PolicyText.payout]))], warning, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

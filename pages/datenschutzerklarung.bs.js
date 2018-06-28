@@ -148,7 +148,7 @@ function make() {
                                                       subheading(DatenschutzText.section24Heading),
                                                       wrapWithDiv(DatenschutzText.section24),
                                                       wrapWithDiv(DatenschutzText.section25)
-                                                    ])))], /* None */0, /* None */0, /* array */[])),
+                                                    ])))], /* None */0, /* None */0, /* None */0, /* array */[])),
                               ReasonReact.element(/* None */0, /* None */0, Footer.make(/* array */[]))
                             ]));
             }),

@@ -81,7 +81,7 @@ function make(viewData, commands, cmdStatus, _) {
                                             statusChip
                                           ])))], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */3], match$1[0], match$1[1], (function () {
                                               return Curry._1(commands[/* reset */0], /* () */0);
-                                            }), cmdStatus, /* array */[])))], /* None */0, /* array */[]));
+                                            }), cmdStatus, /* array */[])))], /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

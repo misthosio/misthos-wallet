@@ -41,7 +41,7 @@ function make(onCreateVenture, cmdStatus, _) {
                                                 return Curry._1(send, /* ChangeNewVenture */[ViewCommon.extractString(e)]);
                                               })], /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                 return Curry._1(send, /* CreateVenture */0);
-                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("create venture")])), ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* CreateVenture */0, /* array */[])))], /* Some */[ReasonReact.element(/* None */0, /* None */0, VentureInfoBox.make(/* array */[]))], /* None */0, /* array */[]));
+                                              })], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("create venture")])), ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* CreateVenture */0, /* array */[])))], /* Some */[ReasonReact.element(/* None */0, /* None */0, VentureInfoBox.make(/* array */[]))], /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[

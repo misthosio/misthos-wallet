@@ -117,7 +117,7 @@ function make(viewData, _) {
                                   }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[payouts])),
                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[transactions]))
-                                          ])))], warning, /* array */[]));
+                                          ])))], /* None */0, warning, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
