@@ -16,7 +16,9 @@ let loadScenario = scenarioName =>
     |> Json.parseOrRaise
     |> EventLog.decode
   ) {
-  | _ => raise(CouldNotLoadScenario)
+  | err =>
+    Js.log(err);
+    raise(CouldNotLoadScenario);
   };
 
 let findCurrentUsers =
@@ -30,18 +32,26 @@ let findCurrentUsers =
     UserId.emptySet,
   );
 
-let run = (scenarioName, test) =>
+let run = (~skipIntegrity=false, scenarioName, scenarioTest) =>
   describe(
     scenarioName,
     () => {
+      let loadedLog = loadScenario(scenarioName);
+      if (! skipIntegrity) {
+        test(
+          "Integrity of "
+          ++ string_of_int(loadedLog |> EventLog.length)
+          ++ " items is intact",
+          () => {
+            let newItems =
+              EventLog.findNewItems(~other=loadedLog, EventLog.make());
+            Expect.expect(newItems |> Array.length)
+            |> Expect.toEqual(loadedLog |> EventLog.length);
+          },
+        );
+      };
       let (venture, _newItems) =
-        loadScenario(scenarioName) |> Venture.reconstruct(scenarioSession);
-      let eventLog = venture |> Venture.getEventLog;
-      let currentUsers = eventLog |> findCurrentUsers;
-      test(
-        venture
-        |> Venture.getEventLog
-        |> ViewModel.init(currentUsers |> Set.toArray |. Array.getExn(0)),
-      );
+        loadedLog |> Venture.reconstruct(scenarioSession);
+      scenarioTest(venture);
     },
   );

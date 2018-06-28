@@ -97,18 +97,21 @@ function merge(param, param$1) {
   var otherInputs = param$1[/* inputs */1];
   var tx = param[/* tx */0];
   Belt_Array.forEachWithIndexU(param[/* inputs */1], (function (idx, param) {
+          var signatures = param[/* signatures */0];
           var otherSigs = Belt_Array.getExn(otherInputs, idx)[/* signatures */0];
-          var signatures = Belt_List.toArray(Belt_Array.reduceReverse2U(param[/* signatures */0], otherSigs, /* [] */0, (function (res, sigA, sigB) {
-                      var match = BitcoinjsLib.script.isCanonicalSignature(sigA);
-                      return /* :: */[
-                              match ? sigA : sigB,
-                              res
-                            ];
-                    })));
+          var signatures$1 = signatures.length !== 0 ? (
+              otherSigs.length !== 0 ? Belt_List.toArray(Belt_Array.reduceReverse2U(signatures, otherSigs, /* [] */0, (function (res, sigA, sigB) {
+                            var match = BitcoinjsLib.script.isCanonicalSignature(sigA);
+                            return /* :: */[
+                                    match ? sigA : sigB,
+                                    res
+                                  ];
+                          }))) : signatures
+            ) : otherSigs;
           var witnessBuf = getWitnessBuf(idx, tx);
           tx.setWitness(idx, Belt_Array.concatMany(/* array */[
                     /* array */[Buffer.alloc(0)],
-                    signatures,
+                    signatures$1,
                     /* array */[witnessBuf]
                   ]));
           return /* () */0;

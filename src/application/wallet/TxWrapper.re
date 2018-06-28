@@ -109,10 +109,16 @@ let merge = ({tx, inputs}, {inputs: otherInputs}) => {
   |. Array.forEachWithIndexU((. idx, {signatures}) => {
        let otherSigs = (otherInputs |. Array.getExn(idx)).signatures;
        let signatures =
-         Array.reduceReverse2U(signatures, otherSigs, [], (. res, sigA, sigB) =>
-           [sigA |> B.Script.isCanonicalSignature ? sigA : sigB, ...res]
-         )
-         |> List.toArray;
+         switch (signatures, otherSigs) {
+         | ([||], _) => otherSigs
+         | (_, [||]) => signatures
+         | _ =>
+           Array.reduceReverse2U(
+             signatures, otherSigs, [], (. res, sigA, sigB) =>
+             [sigA |> B.Script.isCanonicalSignature ? sigA : sigB, ...res]
+           )
+           |> List.toArray
+         };
        let witnessBuf = tx |> getWitnessBuf(idx);
        tx
        |. B.Transaction.setWitness(

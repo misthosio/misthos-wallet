@@ -1,35 +1,19 @@
-open Jest;
+open Belt;
 
+open Jest;
 open Expect;
 
 let () =
-  Scenarios.run("income-summary", viewModel => {
-    let createPayoutModal = viewModel |> ViewModel.createPayoutModal;
-    test("Balance is correct", () => {
-      let balance = createPayoutModal.balance;
-      expect(balance.currentSpendable)
-      |> toEqual(BTC.fromSatoshis(50756770L));
-    });
-    test("Network fee is set", () => {
-      let viewData = createPayoutModal;
-      let createPayoutModalState: CreatePayoutModal.state = {
-        frozen: false,
-        fee: BTC.fromSatoshis(100L),
-        viewData,
-        canSubmitProposal: false,
-        destinations: [],
-        addressValid: true,
-        summary: viewData.initialSummary,
-        inputDestination: "",
-        inputAmount: BTC.zero,
-        inputs: {
-          recipientAddress: "",
-          btcAmount: "2MvTochgBg25bYVyJwaX6nWM1AThbmaoUHA",
+  Scenarios.run("three-person-payout", venture =>
+    test("Last event is PayoutFinalized", () => {
+      let items = venture |> Venture.getEventLog |> EventLog.items;
+      let lastEvent = (items |. Array.getExn(48)).event;
+      expect(
+        switch (lastEvent) {
+        | Event.PayoutFinalized(_) => true
+        | _ => false
         },
-      };
-      let updatedState =
-        CreatePayoutModal.updateState(createPayoutModalState);
-      expect(updatedState.summary.networkFee)
-      |> toEqual(BTC.fromSatoshis(184650L));
-    });
-  });
+      )
+      |> toEqual(true);
+    })
+  );
