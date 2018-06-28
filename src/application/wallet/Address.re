@@ -110,22 +110,15 @@ type t = {
 
 let encode = address =>
   Json.Encode.(
-    object_(
-      Belt.List.concat(
-        [
-          ("nCoSigners", int(address.nCoSigners)),
-          ("nPubKeys", int(address.nPubKeys)),
-          ("coordinates", Coordinates.encode(address.coordinates)),
-          ("witnessScript", string(address.witnessScript)),
-          ("redeemScript", string(address.redeemScript)),
-          ("displayAddress", string(address.displayAddress)),
-        ],
-        switch (address.sequence) {
-        | None => []
-        | Some(sequence) => [("sequence", int(sequence))]
-        },
-      ),
-    )
+    object_([
+      ("nCoSigners", int(address.nCoSigners)),
+      ("nPubKeys", int(address.nPubKeys)),
+      ("coordinates", Coordinates.encode(address.coordinates)),
+      ("witnessScript", string(address.witnessScript)),
+      ("redeemScript", string(address.redeemScript)),
+      ("displayAddress", string(address.displayAddress)),
+      ("sequence", nullable(int, address.sequence)),
+    ])
   );
 
 let decode = raw =>

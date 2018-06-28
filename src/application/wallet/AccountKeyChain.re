@@ -79,26 +79,19 @@ module Collection = {
 
 let encode = keyChain =>
   Json.Encode.(
-    object_(
-      Belt.List.concat(
-        [
-          (
-            "custodianKeyChains",
-            list(
-              pair(UserId.encode, CustodianKeyChain.encode),
-              keyChain.custodianKeyChains,
-            ),
-          ),
-          ("nCoSigners", int(keyChain.nCoSigners)),
-          ("accountIdx", AccountIndex.encode(keyChain.accountIdx)),
-          ("identifier", Identifier.encode(keyChain.identifier)),
-        ],
-        switch (keyChain.sequence) {
-        | None => []
-        | Some(sequence) => [("sequence", int(sequence))]
-        },
+    object_([
+      (
+        "custodianKeyChains",
+        list(
+          pair(UserId.encode, CustodianKeyChain.encode),
+          keyChain.custodianKeyChains,
+        ),
       ),
-    )
+      ("nCoSigners", int(keyChain.nCoSigners)),
+      ("accountIdx", AccountIndex.encode(keyChain.accountIdx)),
+      ("identifier", Identifier.encode(keyChain.identifier)),
+      ("sequence", nullable(int, keyChain.sequence)),
+    ])
   );
 
 let decode = raw =>

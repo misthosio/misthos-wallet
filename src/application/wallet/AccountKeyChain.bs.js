@@ -6,7 +6,6 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -121,40 +120,41 @@ var Collection = /* module */[
 
 function encode$1(keyChain) {
   var partial_arg = PrimitiveTypes.UserId[/* encode */2];
-  var match = keyChain[/* sequence */3];
-  return Json_encode.object_(Belt_List.concat(/* :: */[
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "custodianKeyChains",
+                Json_encode.list((function (param) {
+                        return Json_encode.pair(partial_arg, CustodianKeyChain.encode, param);
+                      }), keyChain[/* custodianKeyChains */4])
+              ],
+              /* :: */[
+                /* tuple */[
+                  "nCoSigners",
+                  keyChain[/* nCoSigners */2]
+                ],
+                /* :: */[
                   /* tuple */[
-                    "custodianKeyChains",
-                    Json_encode.list((function (param) {
-                            return Json_encode.pair(partial_arg, CustodianKeyChain.encode, param);
-                          }), keyChain[/* custodianKeyChains */4])
+                    "accountIdx",
+                    WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
                   ],
                   /* :: */[
                     /* tuple */[
-                      "nCoSigners",
-                      keyChain[/* nCoSigners */2]
+                      "identifier",
+                      keyChain[/* identifier */1]
                     ],
                     /* :: */[
                       /* tuple */[
-                        "accountIdx",
-                        WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
+                        "sequence",
+                        Json_encode.nullable((function (prim) {
+                                return prim;
+                              }), keyChain[/* sequence */3])
                       ],
-                      /* :: */[
-                        /* tuple */[
-                          "identifier",
-                          keyChain[/* identifier */1]
-                        ],
-                        /* [] */0
-                      ]
+                      /* [] */0
                     ]
                   ]
-                ], match ? /* :: */[
-                    /* tuple */[
-                      "sequence",
-                      match[0]
-                    ],
-                    /* [] */0
-                  ] : /* [] */0));
+                ]
+              ]
+            ]);
 }
 
 function decode(raw) {

@@ -64,56 +64,57 @@ function inputMap() {
 }
 
 function encodeInput(input) {
-  var match = input[/* sequence */7];
-  return Json_encode.object_(Belt_List.concat(/* :: */[
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "txId",
+                input[/* txId */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "txOutputN",
+                  input[/* txOutputN */1]
+                ],
+                /* :: */[
                   /* tuple */[
-                    "txId",
-                    input[/* txId */0]
+                    "address",
+                    input[/* address */2]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "txOutputN",
-                      input[/* txOutputN */1]
+                      "value",
+                      BTC.encode(input[/* value */3])
                     ],
                     /* :: */[
                       /* tuple */[
-                        "address",
-                        input[/* address */2]
+                        "nCoSigners",
+                        input[/* nCoSigners */4]
                       ],
                       /* :: */[
                         /* tuple */[
-                          "value",
-                          BTC.encode(input[/* value */3])
+                          "nPubKeys",
+                          input[/* nPubKeys */5]
                         ],
                         /* :: */[
                           /* tuple */[
-                            "nCoSigners",
-                            input[/* nCoSigners */4]
+                            "coordinates",
+                            Address.Coordinates[/* encode */9](input[/* coordinates */6])
                           ],
                           /* :: */[
                             /* tuple */[
-                              "nPubKeys",
-                              input[/* nPubKeys */5]
+                              "sequence",
+                              Json_encode.nullable((function (prim) {
+                                      return prim;
+                                    }), input[/* sequence */7])
                             ],
-                            /* :: */[
-                              /* tuple */[
-                                "coordinates",
-                                Address.Coordinates[/* encode */9](input[/* coordinates */6])
-                              ],
-                              /* [] */0
-                            ]
+                            /* [] */0
                           ]
                         ]
                       ]
                     ]
                   ]
-                ], match ? /* :: */[
-                    /* tuple */[
-                      "sequence",
-                      match[0]
-                    ],
-                    /* [] */0
-                  ] : /* [] */0));
+                ]
+              ]
+            ]);
 }
 
 function decodeInput(raw) {

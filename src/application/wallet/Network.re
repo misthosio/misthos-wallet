@@ -60,23 +60,16 @@ let inputMap = () => Belt.Map.make(~id=(module TxInputCmp));
 
 let encodeInput = input =>
   Json.Encode.(
-    object_(
-      Belt.List.concat(
-        [
-          ("txId", string(input.txId)),
-          ("txOutputN", int(input.txOutputN)),
-          ("address", string(input.address)),
-          ("value", BTC.encode(input.value)),
-          ("nCoSigners", int(input.nCoSigners)),
-          ("nPubKeys", int(input.nPubKeys)),
-          ("coordinates", Address.Coordinates.encode(input.coordinates)),
-        ],
-        switch (input.sequence) {
-        | None => []
-        | Some(sequence) => [("sequence", int(sequence))]
-        },
-      ),
-    )
+    object_([
+      ("txId", string(input.txId)),
+      ("txOutputN", int(input.txOutputN)),
+      ("address", string(input.address)),
+      ("value", BTC.encode(input.value)),
+      ("nCoSigners", int(input.nCoSigners)),
+      ("nPubKeys", int(input.nPubKeys)),
+      ("coordinates", Address.Coordinates.encode(input.coordinates)),
+      ("sequence", nullable(int, input.sequence)),
+    ])
   );
 
 let decodeInput = raw =>

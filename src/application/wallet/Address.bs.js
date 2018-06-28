@@ -4,7 +4,6 @@
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Utils = require("../../utils/Utils.bs.js");
-var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
@@ -150,50 +149,51 @@ var Coordinates = /* module */[
 ];
 
 function encode$1(address) {
-  var match = address[/* sequence */6];
-  return Json_encode.object_(Belt_List.concat(/* :: */[
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "nCoSigners",
+                address[/* nCoSigners */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "nPubKeys",
+                  address[/* nPubKeys */1]
+                ],
+                /* :: */[
                   /* tuple */[
-                    "nCoSigners",
-                    address[/* nCoSigners */0]
+                    "coordinates",
+                    encode(address[/* coordinates */2])
                   ],
                   /* :: */[
                     /* tuple */[
-                      "nPubKeys",
-                      address[/* nPubKeys */1]
+                      "witnessScript",
+                      address[/* witnessScript */3]
                     ],
                     /* :: */[
                       /* tuple */[
-                        "coordinates",
-                        encode(address[/* coordinates */2])
+                        "redeemScript",
+                        address[/* redeemScript */4]
                       ],
                       /* :: */[
                         /* tuple */[
-                          "witnessScript",
-                          address[/* witnessScript */3]
+                          "displayAddress",
+                          address[/* displayAddress */5]
                         ],
                         /* :: */[
                           /* tuple */[
-                            "redeemScript",
-                            address[/* redeemScript */4]
+                            "sequence",
+                            Json_encode.nullable((function (prim) {
+                                    return prim;
+                                  }), address[/* sequence */6])
                           ],
-                          /* :: */[
-                            /* tuple */[
-                              "displayAddress",
-                              address[/* displayAddress */5]
-                            ],
-                            /* [] */0
-                          ]
+                          /* [] */0
                         ]
                       ]
                     ]
                   ]
-                ], match ? /* :: */[
-                    /* tuple */[
-                      "sequence",
-                      match[0]
-                    ],
-                    /* [] */0
-                  ] : /* [] */0));
+                ]
+              ]
+            ]);
 }
 
 function decode$1(raw) {
