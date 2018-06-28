@@ -15,7 +15,7 @@ let constructState = log =>
        WalletInfoCollector.make(),
      );
 
-let () =
+let () = {
   describe("WalletInfoCollector", () =>
     F.withCached(
       ~scope="WalletInfoCollector",
@@ -65,3 +65,41 @@ let () =
       },
     )
   );
+  describe("WalletInfoCollector-addressInfo", () =>
+    F.withCached(
+      ~scope="WalletInfoCollector-addressInfo",
+      "classifies addresses",
+      () => F.threeUserSessionsArray,
+      sessions => {
+        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        L.(
+          F.createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withCustodian(user2, ~supporters=[user1, user2])
+          |> withCustodianKeyChain(user2)
+          |> withPartner(user3, ~supporters=[user1, user2])
+          |> withCustodian(user3, ~supporters=[user1, user2, user3])
+          |> withCustodianKeyChain(user3)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withIncomeAddressExposed(user1)
+          |> withCustodianRemoved(user2, ~supporters=[user1, user3])
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withIncomeAddressExposed(user1)
+        );
+      },
+      (_sessions, log) => {
+        let info = log |> constructState;
+        test("collects address infos", () =>
+          expect(info |> WalletInfoCollector.addressInfos |> List.length)
+          |> toEqual(2)
+        );
+      },
+    )
+  );
+};
