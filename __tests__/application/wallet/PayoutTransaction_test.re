@@ -23,6 +23,7 @@ let () =
               ChainIndex.externalChain,
               AddressIndex.first,
             ),
+            sequence: None,
           }: Network.txInput
         ),
         (
@@ -40,6 +41,7 @@ let () =
               ChainIndex.externalChain,
               AddressIndex.first |> AddressIndex.next,
             ),
+            sequence: None,
           }: Network.txInput
         ),
       |]
@@ -57,6 +59,7 @@ let () =
       witnessScript: "51210358ebee38e86598266dc351dfec81c0bd98e3a90a4e93bff72003569f2b02d13351ae",
       redeemScript: "002027fa0596838478a59b5c0512acf480fdba510cd320def9e3d9e9d27a13b7e72f",
       displayAddress: "2N3gWQwj2RrHaw7rWmbr1vKkzBnutSMp2LE",
+      sequence: None,
     };
     test("uses as many inputs as necessary", () => {
       let payoutTx =

@@ -13,40 +13,32 @@ let make =
       }: Payout.Accepted.t,
       log,
     ) => {
-  let (needsFinalizing, signedTxs, systemIssuer, network) =
+  let (needsFinalizing, signedTxs, systemIssuer) =
     log
     |> EventLog.reduce(
-         ((broadcast, txs, systemIssuer, network), {event}) =>
+         ((broadcast, txs, systemIssuer), {event}) =>
            switch (event) {
-           | VentureCreated({systemIssuer, network}) => (
-               broadcast,
-               txs,
-               systemIssuer,
-               network,
-             )
+           | VentureCreated({systemIssuer}) => (broadcast, txs, systemIssuer)
            | PayoutSigned({processId, payoutTx})
                when ProcessId.eq(processId, payoutProcess) => (
                broadcast,
                [payoutTx, ...txs],
                systemIssuer,
-               network,
              )
            | PayoutFinalized({processId})
                when ProcessId.eq(processId, payoutProcess) => (
                false,
                txs,
                systemIssuer,
-               network,
              )
-           | _ => (broadcast, txs, systemIssuer, network)
+           | _ => (broadcast, txs, systemIssuer)
            },
-         (true, [payoutTx], Bitcoin.ECPair.makeRandom(), Network.Regtest),
+         (true, [payoutTx], Bitcoin.ECPair.makeRandom()),
        );
   let process = {
     val finalTransaction =
       ref(
-        needsFinalizing ?
-          Some(PayoutTransaction.finalize(signedTxs, network)) : None,
+        needsFinalizing ? Some(PayoutTransaction.finalize(signedTxs)) : None,
       );
     val delivered = ref(false);
     pub receive = ({event}: EventLog.item) => {

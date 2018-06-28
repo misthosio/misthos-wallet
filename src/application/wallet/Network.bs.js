@@ -99,7 +99,15 @@ function encodeInput(input) {
                             "coordinates",
                             Address.Coordinates[/* encode */9](input[/* coordinates */6])
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "sequence",
+                              Json_encode.nullable((function (prim) {
+                                      return prim;
+                                    }), input[/* sequence */7])
+                            ],
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]
@@ -117,7 +125,10 @@ function decodeInput(raw) {
           /* value */Json_decode.field("value", BTC.decode, raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
           /* nPubKeys */Json_decode.field("nPubKeys", Json_decode.$$int, raw),
-          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw)
+          /* coordinates */Json_decode.field("coordinates", Address.Coordinates[/* decode */10], raw),
+          /* sequence */Json_decode.optional((function (param) {
+                  return Json_decode.field("sequence", Json_decode.$$int, param);
+                }), raw)
         ];
 }
 
@@ -136,7 +147,8 @@ function Make(Client) {
                                             /* value */param[/* amount */3],
                                             /* nCoSigners */a[/* nCoSigners */0],
                                             /* nPubKeys */a[/* nPubKeys */1],
-                                            /* coordinates */a[/* coordinates */2]
+                                            /* coordinates */a[/* coordinates */2],
+                                            /* sequence */a[/* sequence */6]
                                           ];
                                   })));
                 }));
@@ -172,7 +184,8 @@ function transactionInputs(addresses) {
                                           /* value */param[/* amount */3],
                                           /* nCoSigners */a[/* nCoSigners */0],
                                           /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2]
+                                          /* coordinates */a[/* coordinates */2],
+                                          /* sequence */a[/* sequence */6]
                                         ];
                                 })));
               }));
@@ -205,7 +218,8 @@ function transactionInputs$1(addresses) {
                                           /* value */param[/* amount */3],
                                           /* nCoSigners */a[/* nCoSigners */0],
                                           /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2]
+                                          /* coordinates */a[/* coordinates */2],
+                                          /* sequence */a[/* sequence */6]
                                         ];
                                 })));
               }));
@@ -238,7 +252,8 @@ function transactionInputs$2(addresses) {
                                           /* value */param[/* amount */3],
                                           /* nCoSigners */a[/* nCoSigners */0],
                                           /* nPubKeys */a[/* nPubKeys */1],
-                                          /* coordinates */a[/* coordinates */2]
+                                          /* coordinates */a[/* coordinates */2],
+                                          /* sequence */a[/* sequence */6]
                                         ];
                                 })));
               }));

@@ -13,6 +13,7 @@ var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var CustodianKeyChain = require("./CustodianKeyChain.bs.js");
+var MultisigWithSequence = require("./MultisigWithSequence.bs.js");
 
 function next(coSigner, usedCoordinates, chainIdx, param) {
   var identifier = param[/* identifier */1];
@@ -31,7 +32,7 @@ function next(coSigner, usedCoordinates, chainIdx, param) {
                                       chain[0],
                                       CustodianKeyChain.hdNode(chain[1])
                                     ];
-                            }), param[/* custodianKeyChains */3]))))));
+                            }), param[/* custodianKeyChains */4]))))));
   var addressIdx = List.fold_left((function (res, param) {
           var addressIdx = param[4];
           if (WalletTypes.AccountIndex[/* eq */7](accountIdx, param[0]) && AccountKeyChain.Identifier[/* eq */4](identifier, param[1]) && WalletTypes.CoSignerIndex[/* eq */7](coSignerIdx, param[2]) && WalletTypes.ChainIndex[/* eq */7](chainIdx, param[3])) {
@@ -178,7 +179,15 @@ function encode$1(address) {
                           "displayAddress",
                           address[/* displayAddress */5]
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "sequence",
+                            Json_encode.nullable((function (prim) {
+                                    return prim;
+                                  }), address[/* sequence */6])
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -194,12 +203,16 @@ function decode$1(raw) {
           /* coordinates */Json_decode.field("coordinates", decode, raw),
           /* witnessScript */Json_decode.field("witnessScript", Json_decode.string, raw),
           /* redeemScript */Json_decode.field("redeemScript", Json_decode.string, raw),
-          /* displayAddress */Json_decode.field("displayAddress", Json_decode.string, raw)
+          /* displayAddress */Json_decode.field("displayAddress", Json_decode.string, raw),
+          /* sequence */Json_decode.optional((function (param) {
+                  return Json_decode.field("sequence", Json_decode.$$int, param);
+                }), raw)
         ];
 }
 
 function make(coordinates, param) {
-  var custodianKeyChains = param[/* custodianKeyChains */3];
+  var custodianKeyChains = param[/* custodianKeyChains */4];
+  var sequence = param[/* sequence */3];
   var nCoSigners = param[/* nCoSigners */2];
   var keys = List.sort((function (pairA, pairB) {
           return Caml_primitive.caml_string_compare(Utils.bufToHex(pairA.getPublicKeyBuffer()), Utils.bufToHex(pairB.getPublicKeyBuffer()));
@@ -210,9 +223,11 @@ function make(coordinates, param) {
                 }), List.map((function (chain) {
                       return CustodianKeyChain.hdNode(chain[1]);
                     }), custodianKeyChains))));
-  var witnessScript = BitcoinjsLib.script.multisig.output.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
-                  return prim.getPublicKeyBuffer();
-                }), keys)));
+  var witnessScript = sequence ? MultisigWithSequence.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
+                    return prim.getPublicKeyBuffer();
+                  }), keys)), sequence[0]) : BitcoinjsLib.script.multisig.output.encode(nCoSigners, $$Array.of_list(List.map((function (prim) {
+                    return prim.getPublicKeyBuffer();
+                  }), keys)));
   var redeemScript = BitcoinjsLib.script.witnessScriptHash.output.encode(BitcoinjsLib.crypto.sha256(witnessScript));
   var outputScript = BitcoinjsLib.script.scriptHash.output.encode(BitcoinjsLib.crypto.hash160(redeemScript));
   var displayAddress = BitcoinjsLib.address.fromOutputScript(outputScript, List.hd(keys).getNetwork());
@@ -222,7 +237,8 @@ function make(coordinates, param) {
           /* coordinates */coordinates,
           /* witnessScript */Utils.bufToHex(witnessScript),
           /* redeemScript */Utils.bufToHex(redeemScript),
-          /* displayAddress */displayAddress
+          /* displayAddress */displayAddress,
+          /* sequence */sequence
         ];
 }
 

@@ -62,12 +62,11 @@ let signPayout:
     ~userId: userId,
     ~masterKeyChain: Bitcoin.HDNode.t,
     ~accountKeyChains: AccountKeyChain.Collection.t,
-    ~payoutTx: t,
-    ~network: Network.t
+    ~payoutTx: t
   ) =>
   signResult;
 
-let finalize: (list(t), Network.t) => Bitcoin.Transaction.t;
+let finalize: list(t) => Bitcoin.Transaction.t;
 
 let encode: t => Js.Json.t;
 

@@ -30,6 +30,7 @@ type txInput = {
   nCoSigners: int,
   nPubKeys: int,
   coordinates: Address.Coordinates.t,
+  sequence: option(int),
 };
 
 module TxInputCmp =
@@ -67,6 +68,7 @@ let encodeInput = input =>
       ("nCoSigners", int(input.nCoSigners)),
       ("nPubKeys", int(input.nPubKeys)),
       ("coordinates", Address.Coordinates.encode(input.coordinates)),
+      ("sequence", nullable(int, input.sequence)),
     ])
   );
 
@@ -79,6 +81,7 @@ let decodeInput = raw =>
     nCoSigners: raw |> field("nCoSigners", int),
     nPubKeys: raw |> field("nPubKeys", int),
     coordinates: raw |> field("coordinates", Address.Coordinates.decode),
+    sequence: raw |> optional(field("sequence", int)),
   };
 
 module Make = (Client: NetworkClient) => {
@@ -104,6 +107,7 @@ module Make = (Client: NetworkClient) => {
                     nPubKeys: a.nPubKeys,
                     value: amount,
                     coordinates: a.coordinates,
+                    sequence: a.sequence,
                   };
                 })
              |> resolve

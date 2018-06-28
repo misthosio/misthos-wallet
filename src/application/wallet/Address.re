@@ -105,6 +105,7 @@ type t = {
   witnessScript: string,
   redeemScript: string,
   displayAddress: string,
+  sequence: option(int),
 };
 
 let encode = address =>
@@ -116,6 +117,7 @@ let encode = address =>
       ("witnessScript", string(address.witnessScript)),
       ("redeemScript", string(address.redeemScript)),
       ("displayAddress", string(address.displayAddress)),
+      ("sequence", nullable(int, address.sequence)),
     ])
   );
 
@@ -127,9 +129,14 @@ let decode = raw =>
     witnessScript: raw |> field("witnessScript", string),
     redeemScript: raw |> field("redeemScript", string),
     displayAddress: raw |> field("displayAddress", string),
+    sequence: raw |> optional(field("sequence", int)),
   };
 
-let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) => {
+let make =
+    (
+      coordinates,
+      {custodianKeyChains, nCoSigners, sequence}: AccountKeyChain.t,
+    ) => {
   let keys =
     custodianKeyChains
     |> List.map(chain => chain |> snd |> CustodianKeyChain.hdNode)
@@ -154,10 +161,19 @@ let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) =>
        );
   open Script;
   let witnessScript =
-    Multisig.Output.encode(
-      nCoSigners,
-      keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
-    );
+    switch (sequence) {
+    | Some(sequence) =>
+      MultisigWithSequence.encode(
+        nCoSigners,
+        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
+        sequence,
+      )
+    | None =>
+      Multisig.Output.encode(
+        nCoSigners,
+        keys |> List.map(ECPair.getPublicKeyBuffer) |> Array.of_list,
+      )
+    };
   let redeemScript =
     WitnessScriptHash.Output.encode(Crypto.sha256FromBuffer(witnessScript));
   let outputScript = ScriptHash.Output.encode(Crypto.hash160(redeemScript));
@@ -173,6 +189,7 @@ let make = (coordinates, {custodianKeyChains, nCoSigners}: AccountKeyChain.t) =>
     witnessScript: Utils.bufToHex(witnessScript),
     redeemScript: Utils.bufToHex(redeemScript),
     displayAddress,
+    sequence,
   };
 };
 

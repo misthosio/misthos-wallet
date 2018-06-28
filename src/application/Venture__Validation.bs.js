@@ -780,7 +780,7 @@ function validateCustodianKeyChainUpdated(param, state, issuerId) {
 
 function validateAccountKeyChainIdentified(param, state, _) {
   var keyChain = param[/* keyChain */0];
-  var custodianKeyChains = keyChain[/* custodianKeyChains */3];
+  var custodianKeyChains = keyChain[/* custodianKeyChains */4];
   var accountIdx = keyChain[/* accountIdx */0];
   var match = AccountKeyChain.isConsistent(keyChain) === false;
   if (match) {
