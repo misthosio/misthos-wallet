@@ -78,7 +78,6 @@ let () =
           |> BTC.minus(oneKeyChainSpendAmount)
           |> BTC.minus(oneKeyChainExpectedFee);
         let twoKeyChainSpendAmount = BTC.fromSatoshis(25000L);
-
         beforeAllPromise(~timeout=40000, () =>
           Js.Promise.(
             Helpers.faucet([
@@ -148,7 +147,10 @@ let () =
                          |> Wallet.apply(PayoutProposed(event));
                        all2((
                          processId |> resolve,
-                         PayoutTransaction.finalize([data.payoutTx])
+                         PayoutTransaction.finalize(
+                           [data.payoutTx],
+                           Network.Regtest,
+                         )
                          |> Helpers.broadcastTransaction,
                        ));
                      }
@@ -221,6 +223,7 @@ let () =
                         wallet.walletInfoCollector
                         |> WalletInfoCollector.accountKeyChains,
                       ~payoutTx=data.payoutTx,
+                      ~network=Network.Regtest,
                     )
                     |> PayoutTransaction.getSignedExn;
                   Js.Promise.all2((
@@ -228,7 +231,10 @@ let () =
                       twoKeyChainWallet^
                       |> Wallet.apply(PayoutProposed(event)),
                     ),
-                    PayoutTransaction.finalize([data.payoutTx, payoutTx])
+                    PayoutTransaction.finalize(
+                      [data.payoutTx, payoutTx],
+                      Network.Regtest,
+                    )
                     |> Helpers.broadcastTransaction,
                   ));
                 }
@@ -237,7 +243,7 @@ let () =
             )
             |> then_(((wallet, _broadcastResult)) => {
                  let expectedFee =
-                   BTC.fromSatoshis(5870L)
+                   BTC.fromSatoshis(5810L)
                    |> BTC.plus(
                         twoKeyChainSpendAmount
                         |> BTC.timesRounded(misthosFeePercent /. 100.),

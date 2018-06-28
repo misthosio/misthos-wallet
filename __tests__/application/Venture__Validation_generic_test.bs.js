@@ -26,7 +26,7 @@ describe("CreateVenture", (function () {
       }));
 
 describe("Any proposal type", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Any proposal type", "when submitting the identical proposal twice", (function () {
+        Fixtures.withCached(/* None */0, "Any proposal type", "when submitting the identical proposal twice", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -39,7 +39,7 @@ describe("Any proposal type", (function () {
               }), (function (_, log) {
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](log), /* Ignore */1);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any proposal type", "when the supporter is a non-partner", (function () {
+        Fixtures.withCached(/* None */0, "Any proposal type", "when the supporter is a non-partner", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -54,7 +54,7 @@ describe("Any proposal type", (function () {
                                         return Curry._6(func, param, param$1, param$2, param$3, user2, user3);
                                       })(/* None */0, /* None */0, /* None */0, /* None */0), log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any proposal type", "when the supporter is not the signer", (function () {
+        Fixtures.withCached(/* None */0, "Any proposal type", "when the supporter is not the signer", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -70,7 +70,7 @@ describe("Any proposal type", (function () {
                                         return Curry._6(func, param, param$1, arg, param$2, user2, user3);
                                       })(/* None */0, /* None */0, /* None */0), log)), /* InvalidIssuer */2);
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Any proposal type", "when the same proposal was already made by another partner", (function () {
+        return Fixtures.withCached(/* None */0, "Any proposal type", "when the same proposal was already made by another partner", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -95,7 +95,7 @@ describe("Any proposal type", (function () {
       }));
 
 describe("Any rejection type", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Any rejection type", "when the process is unknown", (function () {
+        Fixtures.withCached(/* None */0, "Any rejection type", "when the process is unknown", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -113,7 +113,7 @@ describe("Any rejection type", (function () {
                 var user2 = match[1];
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* appendEvent */7](user2[/* issuerKeyPair */2], Event.makePartnerRejected(PrimitiveTypes.ProcessId[/* make */10](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any rejection type", "when the rejector is not a partner", (function () {
+        Fixtures.withCached(/* None */0, "Any rejection type", "when the rejector is not a partner", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -131,7 +131,7 @@ describe("Any rejection type", (function () {
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRejected */14](/* None */0, match[2], proposal)(log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any rejection type", "when the rejector is not the signer", (function () {
+        Fixtures.withCached(/* None */0, "Any rejection type", "when the rejector is not the signer", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -149,7 +149,7 @@ describe("Any rejection type", (function () {
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRejected */14](/* Some */[match[0][/* issuerKeyPair */2]], match[1], proposal)(log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any rejection type", "when the rejection has already been submitted", (function () {
+        Fixtures.withCached(/* None */0, "Any rejection type", "when the rejection has already been submitted", (function () {
                 return Generators.withUserSessions(4);
               }), (function (sessions) {
                 var match = Generators.fourUserSessionsFromArray(sessions);
@@ -175,7 +175,7 @@ describe("Any rejection type", (function () {
                 var log$1 = Generators.Log[/* withPartnerRejected */14](/* None */0, match[1], proposal)(log);
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log$1), Generators.Log[/* lastItem */4](log$1), /* Ignore */1);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any rejection type", "when the rejector has already endorsed", (function () {
+        Fixtures.withCached(/* None */0, "Any rejection type", "when the rejector has already endorsed", (function () {
                 return Generators.withUserSessions(4);
               }), (function (sessions) {
                 var match = Generators.fourUserSessionsFromArray(sessions);
@@ -202,7 +202,7 @@ describe("Any rejection type", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, user2, proposal)(log);
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log$1), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerRejected */14](/* None */0, user2, proposal)(log$1)), /* AlreadyVoted */5);
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Any rejection type", "when the rejection is fine", (function () {
+        return Fixtures.withCached(/* None */0, "Any rejection type", "when the rejection is fine", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -223,7 +223,7 @@ describe("Any rejection type", (function () {
       }));
 
 describe("Any endorsement type", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Any endorsement type", "when the process is unknown", (function () {
+        Fixtures.withCached(/* None */0, "Any endorsement type", "when the process is unknown", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -241,7 +241,7 @@ describe("Any endorsement type", (function () {
                 var user2 = match[1];
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* appendEvent */7](user2[/* issuerKeyPair */2], Event.makePartnerEndorsed(PrimitiveTypes.ProcessId[/* make */10](/* () */0), user2[/* userId */0]), log)), /* UnknownProcessId */3);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any endorsement type", "when the supporter is not a partner", (function () {
+        Fixtures.withCached(/* None */0, "Any endorsement type", "when the supporter is not a partner", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -259,7 +259,7 @@ describe("Any endorsement type", (function () {
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[2], proposal)(log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any endorsement type", "when the supporter is not the signer", (function () {
+        Fixtures.withCached(/* None */0, "Any endorsement type", "when the supporter is not the signer", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -277,7 +277,7 @@ describe("Any endorsement type", (function () {
                 var proposal = Event.getPartnerProposedExn(Generators.Log[/* lastEvent */5](log));
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerEndorsed */13](/* Some */[match[0][/* issuerKeyPair */2]], match[1], proposal)(log)), /* InvalidIssuer */2);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any endorsement type", "when the endorsement has already been submitted", (function () {
+        Fixtures.withCached(/* None */0, "Any endorsement type", "when the endorsement has already been submitted", (function () {
                 return Generators.withUserSessions(4);
               }), (function (sessions) {
                 var match = Generators.fourUserSessionsFromArray(sessions);
@@ -303,7 +303,7 @@ describe("Any endorsement type", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[1], proposal)(log);
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log$1), Generators.Log[/* lastItem */4](log$1), /* Ignore */1);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any endorsement type", "when the supporter has already rejected", (function () {
+        Fixtures.withCached(/* None */0, "Any endorsement type", "when the supporter has already rejected", (function () {
                 return Generators.withUserSessions(4);
               }), (function (sessions) {
                 var match = Generators.fourUserSessionsFromArray(sessions);
@@ -330,7 +330,7 @@ describe("Any endorsement type", (function () {
                 var log$1 = Generators.Log[/* withPartnerRejected */14](/* None */0, user2, proposal)(log);
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log$1), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerEndorsed */13](/* None */0, user2, proposal)(log$1)), /* AlreadyVoted */5);
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Any endorsement type", "when the endorsement is fine", (function () {
+        return Fixtures.withCached(/* None */0, "Any endorsement type", "when the endorsement is fine", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -351,7 +351,7 @@ describe("Any endorsement type", (function () {
       }));
 
 describe("Any acceptance type", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Any acceptance type", "when everything is fine", (function () {
+        Fixtures.withCached(/* None */0, "Any acceptance type", "when everything is fine", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -370,7 +370,7 @@ describe("Any acceptance type", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[1], proposal)(Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log));
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log$1), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerAccepted */15](proposal)(log$1)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any acceptance type", "New partners don't effect eligiblity", (function () {
+        Fixtures.withCached(/* None */0, "Any acceptance type", "New partners don't effect eligiblity", (function () {
                 return Generators.withUserSessions(4);
               }), (function (sessions) {
                 var match = Generators.fourUserSessionsFromArray(sessions);
@@ -397,7 +397,7 @@ describe("Any acceptance type", (function () {
                         ], Generators.Log[/* withPartnerEndorsed */13](/* None */0, user1, proposal)(log)));
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log$1), Generators.Log[/* lastItem */4](Generators.Log[/* withPartnerAccepted */15](proposal)(log$1)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Any acceptance type", "when the data is wrong", (function () {
+        Fixtures.withCached(/* None */0, "Any acceptance type", "when the data is wrong", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -426,7 +426,7 @@ describe("Any acceptance type", (function () {
                                         ]
                                       ]]), log$1)), /* BadData */["Data doesn't match proposal"]);
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Any acceptance type", "when the policy is not fullfilled", (function () {
+        return Fixtures.withCached(/* None */0, "Any acceptance type", "when the policy is not fullfilled", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);

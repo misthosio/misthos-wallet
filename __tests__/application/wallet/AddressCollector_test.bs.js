@@ -15,7 +15,7 @@ function constructState(log) {
 }
 
 describe("AddressCollector", (function () {
-        return Fixtures.withCached(/* None */0, /* None */0, "AddressCollector", "collects addresses", (function () {
+        return Fixtures.withCached(/* None */0, "AddressCollector", "collects addresses", (function () {
                       return Fixtures.threeUserSessionsArray;
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);
@@ -38,8 +38,7 @@ describe("AddressCollector", (function () {
                                                 ],
                                                 /* witnessScript */"51210309995c255526c59ac6a6563832a838fbb9917305d84d3c11393e575238b4e9aa51ae",
                                                 /* redeemScript */"0020f9a067ba831974aef9e6e8363e437d2660ca5120ab23c0c1acf32aa1605894c8",
-                                                /* displayAddress */"2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ",
-                                                /* sequence : None */0
+                                                /* displayAddress */"2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ"
                                               ], Jest.Expect[/* expect */0](Belt_MapString.getExn(constructState(log)[/* exposedAddresses */2], "2N7bomZmWhymdGttGbZZRYZ5QBS2TLnoMMJ")));
                                   }));
                     }));

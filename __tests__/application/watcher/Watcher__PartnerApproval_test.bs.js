@@ -11,7 +11,7 @@ var WatcherHelpers = require("../../helpers/WatcherHelpers.bs.js");
 var Watcher__PartnerApproval = require("../../../src/application/watcher/Watcher__PartnerApproval.bs.js");
 
 describe("Watcher__PartnerApproval", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Will approve the creator", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "Will approve the creator", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -33,7 +33,7 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 1 partner and a proposal", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "With 1 partner and a proposal", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -56,7 +56,7 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Completes when the partner is accepted", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "Completes when the partner is accepted", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -75,7 +75,7 @@ describe("Watcher__PartnerApproval", (function () {
                 Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */4](log$2));
                 return WatcherHelpers.testWatcherHasCompleted(watcher);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 2 users and a proposal", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "With 2 users and a proposal", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -94,7 +94,7 @@ describe("Watcher__PartnerApproval", (function () {
                 var log$1 = Generators.Log[/* withPartnerEndorsed */13](/* None */0, match[0], proposal)(log);
                 return WatcherHelpers.testWatcherHasNoEventPending(Watcher__PartnerApproval.make(proposal, Generators.Log[/* eventLog */6](log$1)));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 2 users and a proposal and endorsement", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "With 2 users and a proposal and endorsement", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -120,7 +120,7 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "With 2 users and a removal and a proposal", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "With 2 users and a removal and a proposal", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -150,7 +150,7 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Process gets denied when it has been rejected", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "Process gets denied when it has been rejected", (function () {
                 return Generators.withUserSessions(3);
               }), (function (sessions) {
                 var match = Generators.threeUserSessionsFromArray(sessions);
@@ -176,7 +176,7 @@ describe("Watcher__PartnerApproval", (function () {
                               }
                             }));
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Watcher__PartnerApproval", "Completes when the partner is denied", (function () {
+        return Fixtures.withCached(/* None */0, "Watcher__PartnerApproval", "Completes when the partner is denied", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);

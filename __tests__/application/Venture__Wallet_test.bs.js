@@ -6,7 +6,7 @@ var Generators = require("../helpers/Generators.bs.js");
 var WalletHelpers = require("../helpers/WalletHelpers.bs.js");
 
 describe("Venture__Wallet", (function () {
-        return Fixtures.withCached(/* None */0, /* None */0, "Venture__Wallet", "nextIncomeAddress", (function () {
+        return Fixtures.withCached(/* None */0, "Venture__Wallet", "nextIncomeAddress", (function () {
                       return Fixtures.threeUserSessionsArray;
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -47,7 +47,7 @@ describe("Venture__Wallet", (function () {
                                                       /* [] */0
                                                     ]
                                                   ], log)))))));
-                      WalletHelpers.testNextIncomeAddress(user3, "2NBgMc8ud9vUxsLuDLmgtwSju7wFs3uFqiN", WalletHelpers.testNextIncomeAddress(user2, "2N5NLNeBc52TSyKnUxGZb2V1QsjaeFdfYcD", WalletHelpers.testNextIncomeAddress(user3, "2MtBbL8QZx3vKj8E51yjNxZ2VM7hTqT8M9F", WalletHelpers.constructState(log$1))));
+                      WalletHelpers.testNextIncomeAddress(user3, "2N4wMyq6jmWTmPA5XTfXhWdZYA7EtzGm6ao", WalletHelpers.testNextIncomeAddress(user2, "2N4e6xA7wsrpPy2xZDXYDxzEuXoU8L9e8MN", WalletHelpers.testNextIncomeAddress(user3, "2NDjVoZySTzZFrd5BSPmioBktfcQ4cpMhcJ", WalletHelpers.constructState(log$1))));
                       return /* () */0;
                     }));
       }));

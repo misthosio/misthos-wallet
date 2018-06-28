@@ -10,7 +10,7 @@ var ValidationHelpers = require("../helpers/ValidationHelpers.bs.js");
 var Venture__Validation = require("../../src/application/Venture__Validation.bs.js");
 
 describe("CustodianProposed", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when proposing a custodian", (function () {
+        Fixtures.withCached(/* None */0, "CustodianProposed", "when proposing a custodian", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -26,7 +26,7 @@ describe("CustodianProposed", (function () {
                 var match = Generators.twoUserSessionsFromArray(sessions);
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */28](match[0], match[1], log)), /* Ok */0);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when proposing a custodian after removal", (function () {
+        Fixtures.withCached(/* None */0, "CustodianProposed", "when proposing a custodian after removal", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -56,7 +56,7 @@ describe("CustodianProposed", (function () {
                 return ValidationHelpers.testValidationResult(/* None */0, ValidationHelpers.constructState(/* None */0, log), Generators.Log[/* lastItem */4](Generators.Log[/* withCustodianProposed */28](match[0], match[1], log)), /* Ok */0);
               }));
         describe("validateCustodianData", (function () {
-                Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when the custodian is not a partner", (function () {
+                Fixtures.withCached(/* None */0, "CustodianProposed", "when the custodian is not a partner", (function () {
                         return Generators.withUserSessions(3);
                       }), (function (sessions) {
                         var match = Generators.threeUserSessionsFromArray(sessions);
@@ -75,7 +75,7 @@ describe("CustodianProposed", (function () {
                                     /* accountIdx */WalletTypes.AccountIndex[/* default */9]
                                   ], /* BadData */["Partner approval process doesn't match user id"]);
                       }));
-                Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when the partner approval process reference is wrong", (function () {
+                Fixtures.withCached(/* None */0, "CustodianProposed", "when the partner approval process reference is wrong", (function () {
                         return Generators.withUserSessions(2);
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
@@ -93,7 +93,7 @@ describe("CustodianProposed", (function () {
                                     /* accountIdx */WalletTypes.AccountIndex[/* default */9]
                                   ], /* BadData */["partner approval process doesn't exist"]);
                       }));
-                Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when the account doesn't exist", (function () {
+                Fixtures.withCached(/* None */0, "CustodianProposed", "when the account doesn't exist", (function () {
                         return Generators.withUserSessions(2);
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
@@ -109,7 +109,7 @@ describe("CustodianProposed", (function () {
                                     /* accountIdx */WalletTypes.AccountIndex[/* default */9]
                                   ], /* BadData */["account doesn't exist"]);
                       }));
-                return Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when lastCustodianRemovalProcess doesn't match", (function () {
+                return Fixtures.withCached(/* None */0, "CustodianProposed", "when lastCustodianRemovalProcess doesn't match", (function () {
                               return Generators.withUserSessions(2);
                             }), (function (sessions) {
                               var match = Generators.twoUserSessionsFromArray(sessions);

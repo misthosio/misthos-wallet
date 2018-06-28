@@ -15,7 +15,7 @@ function constructState(log) {
 }
 
 describe("WalletInfoCollector", (function () {
-        return Fixtures.withCached(/* None */0, /* None */0, "WalletInfoCollector", "oldInputs", (function () {
+        return Fixtures.withCached(/* None */0, "WalletInfoCollector", "oldInputs", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);

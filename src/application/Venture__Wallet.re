@@ -89,6 +89,7 @@ let preparePayoutTx =
             ~accountKeyChains=
               walletInfoCollector |> WalletInfoCollector.accountKeyChains,
             ~payoutTx,
+            ~network=walletInfoCollector |> WalletInfoCollector.network,
           )
         ) {
         | Signed(payout) => payout

@@ -21,7 +21,7 @@ var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollec
 Helpers.enableHttpRequests(/* () */0);
 
 describe("Wallet_integration", (function () {
-        return Fixtures.withCached(/* None */0, /* None */0, "Wallet_integration", "integration", (function () {
+        return Fixtures.withCached(/* None */0, "Wallet_integration", "integration", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -213,7 +213,7 @@ describe("Wallet_integration", (function () {
                                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
                                                                       $$event[/* data */6][/* payoutTx */1],
                                                                       /* [] */0
-                                                                    ]))
+                                                                    ], /* Regtest */0))
                                                           ]);
                                               } else {
                                                 throw PayoutTransaction.NotEnoughFunds;
@@ -252,7 +252,7 @@ describe("Wallet_integration", (function () {
                                     if (param) {
                                       var $$event = param[0];
                                       var data = $$event[/* data */6];
-                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1]));
+                                      var payoutTx = PayoutTransaction.getSignedExn(PayoutTransaction.signPayout(ventureId, user2[/* userId */0], user2[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(wallet$2[/* walletInfoCollector */3]), data[/* payoutTx */1], /* Regtest */0));
                                       tmp = Promise.all(/* tuple */[
                                             Promise.resolve(Venture__Wallet.apply(/* PayoutProposed */Block.__(26, [$$event]), twoKeyChainWallet[0])),
                                             Helpers.broadcastTransaction(PayoutTransaction.finalize(/* :: */[
@@ -261,7 +261,7 @@ describe("Wallet_integration", (function () {
                                                         payoutTx,
                                                         /* [] */0
                                                       ]
-                                                    ]))
+                                                    ], /* Regtest */0))
                                           ]);
                                     } else {
                                       throw PayoutTransaction.NotEnoughFunds;
@@ -269,7 +269,7 @@ describe("Wallet_integration", (function () {
                                     return tmp.then((function (param) {
                                                   var expectedFee = BTC.fromSatoshis(/* int64 */[
                                                           /* hi */0,
-                                                          /* lo */5870
+                                                          /* lo */5810
                                                         ]).plus(BTC.timesRounded(PayoutTransaction.misthosFeePercent / 100, twoKeyChainSpendAmount));
                                                   return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                                 return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {

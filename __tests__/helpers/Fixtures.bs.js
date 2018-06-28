@@ -135,9 +135,8 @@ function writeFixture(fileName, sessions, log) {
 
 var basePath = "__tests__/fixtures/";
 
-function withCached($staropt$star, $staropt$star$1, scope, description, sessionsGenerator, generator, testBody) {
+function withCached($staropt$star, scope, description, sessionsGenerator, generator, testBody) {
   var load = $staropt$star ? $staropt$star[0] : true;
-  var persist = $staropt$star$1 ? $staropt$star$1[0] : true;
   var replacedName = description.replace((/ /g), "_");
   var cacheFileName = basePath + (scope + ("-" + replacedName));
   var match = loadFixture(cacheFileName);
@@ -163,7 +162,7 @@ function withCached($staropt$star, $staropt$star$1, scope, description, sessions
   }
   var log = match$1[1];
   var sessions$1 = match$1[0];
-  if (match$1[2] === false && persist) {
+  if (match$1[2] === false) {
     writeFixture(cacheFileName, sessions$1, Generators.Log[/* eventLog */6](log));
   }
   describe(description, (function () {

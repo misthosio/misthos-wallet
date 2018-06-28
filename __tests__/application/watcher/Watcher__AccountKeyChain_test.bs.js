@@ -16,7 +16,7 @@ function keyChainEq(keyChainA, keyChainB) {
 }
 
 describe("Watcher__AccountKeyChain", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Identifies a key chain when a custodian key chain changes", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__AccountKeyChain", "Identifies a key chain when a custodian key chain changes", (function () {
                 return Fixtures.threeUserSessionsArray;
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -44,7 +44,7 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Identifies a key chain when a partner is removed", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__AccountKeyChain", "Identifies a key chain when a partner is removed", (function () {
                 return Fixtures.threeUserSessionsArray;
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -79,7 +79,7 @@ describe("Watcher__AccountKeyChain", (function () {
                               if (param.tag === 38) {
                                 var match = param[0][/* keyChain */0];
                                 if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */1] === "84ba3d5f75b50fc70cdebf3b637c31c81d820519a68fd997025296ba765f2dc5") {
-                                  return List.length(match[/* custodianKeyChains */4]) === 1;
+                                  return List.length(match[/* custodianKeyChains */3]) === 1;
                                 } else {
                                   return false;
                                 }
@@ -88,7 +88,7 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Activates a key chain when a custodian key chain changes", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__AccountKeyChain", "Activates a key chain when a custodian key chain changes", (function () {
                 return Fixtures.threeUserSessionsArray;
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -116,7 +116,7 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Is idle when the key chain has been activated", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__AccountKeyChain", "Is idle when the key chain has been activated", (function () {
                 return Fixtures.threeUserSessionsArray;
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -132,7 +132,7 @@ describe("Watcher__AccountKeyChain", (function () {
                                 ], log))));
                 return WatcherHelpers.testWatcherHasNoEventPending(Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1)));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Activates a key chain when a custodian is removed", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__AccountKeyChain", "Activates a key chain when a custodian is removed", (function () {
                 return Fixtures.threeUserSessionsArray;
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -173,7 +173,7 @@ describe("Watcher__AccountKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Is idle when the partner is removed", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__AccountKeyChain", "Is idle when the partner is removed", (function () {
                 return Fixtures.threeUserSessionsArray;
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -202,7 +202,7 @@ describe("Watcher__AccountKeyChain", (function () {
                                                 ], log))))))));
                 return WatcherHelpers.testWatcherHasNoEventPending(Watcher__AccountKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1)));
               }));
-        return Fixtures.withCached(/* None */0, /* None */0, "Watcher__AccountKeyChain", "Is idle when the custodian is removed", (function () {
+        return Fixtures.withCached(/* None */0, "Watcher__AccountKeyChain", "Is idle when the custodian is removed", (function () {
                       return Fixtures.threeUserSessionsArray;
                     }), (function (sessions) {
                       var match = Generators.twoUserSessionsFromArray(sessions);

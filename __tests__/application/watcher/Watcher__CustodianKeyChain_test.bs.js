@@ -16,7 +16,7 @@ function keyChainEq(keyChainA, keyChainB) {
 }
 
 describe("Watcher__CustodianKeyChain", (function () {
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "Will create the initial keychain", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "Will create the initial keychain", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -43,7 +43,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "Is idle when the keychain has been updated", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "Is idle when the keychain has been updated", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -61,7 +61,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                 Caml_oo_curry.js2(710435299, 1, watcher, Generators.Log[/* lastItem */4](log$1));
                 return WatcherHelpers.testWatcherHasNoEventPending(watcher);
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "Will update the keychain when a partner is removed", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "Will update the keychain when a partner is removed", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -96,7 +96,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                               }
                             }));
               }));
-        Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "Keeps increasing the index accross multiple removals", (function () {
+        Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "Keeps increasing the index accross multiple removals", (function () {
                 return Generators.withUserSessions(2);
               }), (function (sessions) {
                 var match = Generators.twoUserSessionsFromArray(sessions);
@@ -140,7 +140,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                             }));
               }));
         describe("Completion", (function () {
-                Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "when the custodian is a different user", (function () {
+                Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the custodian is a different user", (function () {
                         return Generators.withUserSessions(2);
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
@@ -169,7 +169,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                             ], log);
                         return WatcherHelpers.testWatcherHasCompleted(Watcher__CustodianKeyChain.make(user1, acceptance, Generators.Log[/* eventLog */6](log$1)));
                       }));
-                Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "when the custodian is removed", (function () {
+                Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the custodian is removed", (function () {
                         return Generators.withUserSessions(2);
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
@@ -198,7 +198,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                             ], log);
                         return WatcherHelpers.testWatcherHasCompleted(Watcher__CustodianKeyChain.make(user2, acceptance, Generators.Log[/* eventLog */6](log$1)));
                       }));
-                Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "when the partner is removed", (function () {
+                Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the partner is removed", (function () {
                         return Generators.withUserSessions(2);
                       }), (function (sessions) {
                         var match = Generators.twoUserSessionsFromArray(sessions);
@@ -227,7 +227,7 @@ describe("Watcher__CustodianKeyChain", (function () {
                             ], log);
                         return WatcherHelpers.testWatcherHasCompleted(Watcher__CustodianKeyChain.make(user2, acceptance, Generators.Log[/* eventLog */6](log$1)));
                       }));
-                return Fixtures.withCached(/* None */0, /* None */0, "Watcher__CustodianKeyChain", "when the partner has no pubkey", (function () {
+                return Fixtures.withCached(/* None */0, "Watcher__CustodianKeyChain", "when the partner has no pubkey", (function () {
                               return Generators.withUserSessions(2);
                             }), (function (sessions) {
                               var match = Generators.twoUserSessionsFromArray(sessions);

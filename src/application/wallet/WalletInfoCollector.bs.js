@@ -87,15 +87,13 @@ function fakeChangeAddress(accountIdx, userId, collector) {
   var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, collector[/* keyChains */3]);
   var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(collector[/* exposedCoordinates */6]);
   var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
-  var match = accountKeyChain[/* nCoSigners */2] > 1;
   return /* record */[
           /* nCoSigners */accountKeyChain[/* nCoSigners */2],
-          /* nPubKeys */Belt_List.length(accountKeyChain[/* custodianKeyChains */4]),
+          /* nPubKeys */Belt_List.length(accountKeyChain[/* custodianKeyChains */3]),
           /* coordinates */nextChangeCoordinates,
           /* witnessScript */"",
           /* redeemScript */"",
-          /* displayAddress */Network.exampleOfLongestAddress(collector[/* network */0]),
-          /* sequence */match ? /* Some */[1] : /* None */0
+          /* displayAddress */Network.exampleOfLongestAddress(collector[/* network */0])
         ];
 }
 
@@ -287,9 +285,8 @@ function apply($$event, state) {
                       /* address */match$4[/* address */0],
                       /* value */match$4[/* amount */4],
                       /* nCoSigners */keyChain[/* nCoSigners */2],
-                      /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */4]),
-                      /* coordinates */coordinates,
-                      /* sequence */keyChain[/* sequence */3]
+                      /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */3]),
+                      /* coordinates */coordinates
                     ]),
                 /* reserved */state[/* reserved */2],
                 /* keyChains */state[/* keyChains */3],

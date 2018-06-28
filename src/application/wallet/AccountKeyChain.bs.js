@@ -6,7 +6,6 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -67,18 +66,16 @@ var defaultCoSignerList = /* array */[
 
 function make$1(accountIdx, custodianKeyChains) {
   var nCoSigners = Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains));
-  var match = nCoSigners > 1;
   return /* record */[
           /* accountIdx */accountIdx,
           /* identifier */make(nCoSigners, custodianKeyChains),
           /* nCoSigners */nCoSigners,
-          /* sequence */match ? /* Some */[12672] : /* None */0,
           /* custodianKeyChains */custodianKeyChains
         ];
 }
 
 function isConsistent(param) {
-  var custodianKeyChains = param[/* custodianKeyChains */4];
+  var custodianKeyChains = param[/* custodianKeyChains */3];
   var nCoSigners = param[/* nCoSigners */2];
   if (nCoSigners === Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains))) {
     return Caml_obj.caml_equal(make(nCoSigners, custodianKeyChains), param[/* identifier */1]);
@@ -90,7 +87,7 @@ function isConsistent(param) {
 function custodians(param) {
   return Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], $$Array.of_list(List.map((function (prim) {
                         return prim[0];
-                      }), param[/* custodianKeyChains */4])));
+                      }), param[/* custodianKeyChains */3])));
 }
 
 function add(keyChain, collection) {
@@ -121,40 +118,33 @@ var Collection = /* module */[
 
 function encode$1(keyChain) {
   var partial_arg = PrimitiveTypes.UserId[/* encode */2];
-  var match = keyChain[/* sequence */3];
-  return Json_encode.object_(Belt_List.concat(/* :: */[
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "custodianKeyChains",
+                Json_encode.list((function (param) {
+                        return Json_encode.pair(partial_arg, CustodianKeyChain.encode, param);
+                      }), keyChain[/* custodianKeyChains */3])
+              ],
+              /* :: */[
+                /* tuple */[
+                  "nCoSigners",
+                  keyChain[/* nCoSigners */2]
+                ],
+                /* :: */[
                   /* tuple */[
-                    "custodianKeyChains",
-                    Json_encode.list((function (param) {
-                            return Json_encode.pair(partial_arg, CustodianKeyChain.encode, param);
-                          }), keyChain[/* custodianKeyChains */4])
+                    "accountIdx",
+                    WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
                   ],
                   /* :: */[
                     /* tuple */[
-                      "nCoSigners",
-                      keyChain[/* nCoSigners */2]
-                    ],
-                    /* :: */[
-                      /* tuple */[
-                        "accountIdx",
-                        WalletTypes.AccountIndex[/* encode */4](keyChain[/* accountIdx */0])
-                      ],
-                      /* :: */[
-                        /* tuple */[
-                          "identifier",
-                          keyChain[/* identifier */1]
-                        ],
-                        /* [] */0
-                      ]
-                    ]
-                  ]
-                ], match ? /* :: */[
-                    /* tuple */[
-                      "sequence",
-                      match[0]
+                      "identifier",
+                      keyChain[/* identifier */1]
                     ],
                     /* [] */0
-                  ] : /* [] */0));
+                  ]
+                ]
+              ]
+            ]);
 }
 
 function decode(raw) {
@@ -166,20 +156,14 @@ function decode(raw) {
           /* accountIdx */Json_decode.field("accountIdx", WalletTypes.AccountIndex[/* decode */5], raw),
           /* identifier */Json_decode.field("identifier", Json_decode.string, raw),
           /* nCoSigners */Json_decode.field("nCoSigners", Json_decode.$$int, raw),
-          /* sequence */Json_decode.optional((function (param) {
-                  return Json_decode.field("sequence", Json_decode.$$int, param);
-                }), raw),
           /* custodianKeyChains */Json_decode.field("custodianKeyChains", (function (param) {
                   return Json_decode.list(partial_arg$1, param);
                 }), raw)
         ];
 }
 
-var defaultSequence = 12672;
-
 exports.Identifier = Identifier;
 exports.defaultCoSignerList = defaultCoSignerList;
-exports.defaultSequence = defaultSequence;
 exports.make = make$1;
 exports.isConsistent = isConsistent;
 exports.custodians = custodians;
