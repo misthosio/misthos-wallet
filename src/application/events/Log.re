@@ -17,11 +17,14 @@ module Make = (Event: Encodable) => {
   let makeItemHash = (issuerPubKey, event) => {
     let issuerPubKeyHash = issuerPubKey |> Bitcoin.Crypto.sha256;
     let eventHash =
-      event |> Event.encode |> Json.stringify |> Bitcoin.Crypto.sha256;
+      event
+      |> Event.encode
+      |> HashHelper.pruneNullFields
+      |> JsonStable.stringify
+      |> Bitcoin.Crypto.sha256;
     [|issuerPubKeyHash, eventHash|]
     |> BufferExt.concat
-    |> BufferExt.toString
-    |> Bitcoin.Crypto.sha256;
+    |> Bitcoin.Crypto.sha256FromBuffer;
   };
   let items = log => log;
   let makeItem = (issuerKeyPair, event) => {

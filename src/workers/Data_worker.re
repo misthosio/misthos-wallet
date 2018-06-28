@@ -43,8 +43,8 @@ let handleMsg = (venturesPromise, doWork, msg) =>
            logMessage("Handling 'SessionStarted'");
            items |> WorkerLocalStorage.setBlockstackItems;
            Venture.Index.load()
-           |> then_(index =>
-                index
+           |> then_(({ventures}: Venture.Index.t) =>
+                ventures
                 |. List.reduce(
                      resolve(VentureId.makeMap()),
                      (p, {id}: Venture.Index.item) =>

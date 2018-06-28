@@ -47,8 +47,8 @@ function handleMsg(venturesPromise, doWork, msg) {
                         var storagePrefix$1 = msg[1];
                         logMessage("Handling 'SessionStarted'");
                         WorkerLocalStorage.setBlockstackItems(msg[0]);
-                        return Venture.Index[/* load */0](/* () */0).then((function (index) {
-                                      return Belt_List.reduce(index, Promise.resolve(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0)), (function (p, param) {
+                        return Venture.Index[/* load */0](/* () */0).then((function (param) {
+                                      return Belt_List.reduce(param[/* ventures */0], Promise.resolve(PrimitiveTypes.VentureId[/* makeMap */8](/* () */0)), (function (p, param) {
                                                       var id = param[/* id */0];
                                                       return p.then((function (ventures) {
                                                                     return WorkerUtils.loadVenture(id).then((function (venture) {

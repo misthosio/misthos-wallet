@@ -390,8 +390,8 @@ function handleMessage(param) {
       case 0 : 
           logMessage("Handling 'SessionStarted'");
           WorkerLocalStorage.setBlockstackItems(param[0]);
-          return Venture.Index[/* load */0](/* () */0).then((function (index) {
-                        return Belt_List.reduce(index, Promise.resolve(/* () */0), (function (p, param) {
+          return Venture.Index[/* load */0](/* () */0).then((function (param) {
+                        return Belt_List.reduce(param[/* ventures */0], Promise.resolve(/* () */0), (function (p, param) {
                                       var id = param[/* id */0];
                                       return p.then((function () {
                                                     return persistVenture(id);

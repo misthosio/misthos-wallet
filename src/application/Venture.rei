@@ -7,7 +7,10 @@ module Index: {
     id: ventureId,
     name: string,
   };
-  type t = list(item);
+  type t = {
+    ventures: list(item),
+    breakingChange: bool,
+  };
   let load: unit => Js.Promise.t(t);
   let encode: t => Js.Json.t;
   let decode: Js.Json.t => t;

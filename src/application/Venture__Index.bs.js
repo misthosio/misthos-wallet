@@ -8,6 +8,13 @@ var Json_decode = require("bs-json/src/Json_decode.js");
 var Json_encode = require("bs-json/src/Json_encode.js");
 var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 
+function makeIndex(breakingChange) {
+  return /* record */[
+          /* ventures : [] */0,
+          /* breakingChange */breakingChange
+        ];
+}
+
 function item(item$1) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
@@ -24,12 +31,29 @@ function item(item$1) {
             ]);
 }
 
-function index(param) {
+function ventures(param) {
   return Json_encode.list(item, param);
+}
+
+function index(index$1) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "ventures",
+                Json_encode.list(item, index$1[/* ventures */0])
+              ],
+              /* :: */[
+                /* tuple */[
+                  "breakingChange",
+                  Json_encode.bool(index$1[/* breakingChange */1])
+                ],
+                /* [] */0
+              ]
+            ]);
 }
 
 var Encode = /* module */[
   /* item */item,
+  /* ventures */ventures,
   /* index */index
 ];
 
@@ -40,38 +64,78 @@ function item$1(json) {
         ];
 }
 
-function index$1(param) {
+function ventures$1(param) {
   return Json_decode.list(item$1, param);
+}
+
+function index$1(json) {
+  return /* record */[
+          /* ventures */Json_decode.field("ventures", ventures$1, json),
+          /* breakingChange */Json_decode.field("breakingChange", Json_decode.bool, json)
+        ];
 }
 
 var Decode = /* module */[
   /* item */item$1,
+  /* ventures */ventures$1,
   /* index */index$1
 ];
 
 var indexPath = "index.json";
 
-function persist(index) {
-  return Blockstack.putFile(indexPath, Json.stringify(Json_encode.list(item, index))).then((function () {
-                return Promise.resolve(index);
+function persist(index$2) {
+  return Blockstack.putFile(indexPath, Json.stringify(index(index$2))).then((function () {
+                return Promise.resolve(index$2);
               }));
+}
+
+function persistOld(index) {
+  return Blockstack.putFile("indexV0.json", Json.stringify(Json_encode.list(item, index)));
 }
 
 function load() {
   return Blockstack.getFile(indexPath).then((function (nullVentures) {
                 if (nullVentures == null) {
-                  return persist(/* [] */0);
+                  return persist(/* record */[
+                              /* ventures : [] */0,
+                              /* breakingChange */false
+                            ]);
                 } else {
-                  var param = Json.parseOrRaise(nullVentures);
-                  return Promise.resolve(Json_decode.list(item$1, param));
+                  var parsedIndex = Json.parseOrRaise(nullVentures);
+                  try {
+                    return Promise.resolve(index$1(parsedIndex));
+                  }
+                  catch (exn){
+                    try {
+                      var oldIndex = Json_decode.list(item$1, parsedIndex);
+                      if (List.length(oldIndex) > 0) {
+                        persistOld(oldIndex);
+                        return persist(/* record */[
+                                    /* ventures : [] */0,
+                                    /* breakingChange */true
+                                  ]);
+                      } else {
+                        return persist(/* record */[
+                                    /* ventures : [] */0,
+                                    /* breakingChange */false
+                                  ]);
+                      }
+                    }
+                    catch (exn$1){
+                      return persist(/* record */[
+                                  /* ventures : [] */0,
+                                  /* breakingChange */false
+                                ]);
+                    }
+                  }
                 }
               }));
 }
 
-function itemPresent(ventureId, index) {
+function itemPresent(ventureId, param) {
   return List.exists((function (item) {
                 return PrimitiveTypes.VentureId[/* eq */5](item[/* id */0], ventureId);
-              }), index);
+              }), param[/* ventures */0]);
 }
 
 function add(id, name) {
@@ -79,12 +143,15 @@ function add(id, name) {
                 if (itemPresent(id, index)) {
                   return Promise.resolve(index);
                 } else {
-                  return persist(/* :: */[
-                              /* record */[
-                                /* id */id,
-                                /* name */name
+                  return persist(/* record */[
+                              /* ventures : :: */[
+                                /* record */[
+                                  /* id */id,
+                                  /* name */name
+                                ],
+                                index[/* ventures */0]
                               ],
-                              index
+                              /* breakingChange */false
                             ]);
                 }
               }));
@@ -94,12 +161,14 @@ var encode = index;
 
 var decode = index$1;
 
+exports.makeIndex = makeIndex;
 exports.Encode = Encode;
 exports.Decode = Decode;
 exports.encode = encode;
 exports.decode = decode;
 exports.indexPath = indexPath;
 exports.persist = persist;
+exports.persistOld = persistOld;
 exports.load = load;
 exports.itemPresent = itemPresent;
 exports.add = add;

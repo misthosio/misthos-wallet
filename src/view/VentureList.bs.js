@@ -5,6 +5,7 @@ var Css = require("bs-css/src/Css.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
 var Router = require("./Router.bs.js");
@@ -50,10 +51,20 @@ function make(selected, index, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
+              var ventures = Utils.mapOption((function (param) {
+                      return param[/* ventures */0];
+                    }), index);
+              var breakingChange = Utils.mapOption((function (param) {
+                      return param[/* breakingChange */1];
+                    }), index);
+              var breakingNotification = breakingChange && breakingChange[0] ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[Css.style(/* :: */[
+                                Css.color(Colors.error),
+                                /* [] */0
+                              ])], /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("In preparation for our mainnet launch it has been necessary to make a breaking change. As a result your testnet ventures are no longer accessible. We will garuantee backwards compatibility following our public release on mainnet.")])) : null;
               var ventureList;
-              if (index) {
-                var index$1 = index[0];
-                ventureList = index$1 ? $$Array.of_list(List.map((function (param) {
+              if (ventures) {
+                var ventures$1 = ventures[0];
+                ventureList = ventures$1 ? $$Array.of_list(List.map((function (param) {
                               var id = param[/* id */0];
                               var ids = PrimitiveTypes.VentureId[/* toString */0](id);
                               var partial_arg = /* Venture */Block.__(0, [
@@ -72,11 +83,14 @@ function make(selected, index, _) {
                                                 })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[link + (" " + (
                                                                       match ? linkSelected : ""
                                                                     ))], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))]));
-                            }), index$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.")]));
+                            }), ventures$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.")]));
               } else {
                 ventureList = ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
               }
-              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ventureList])));
+              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[
+                                  breakingNotification,
+                                  ventureList
+                                ])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
