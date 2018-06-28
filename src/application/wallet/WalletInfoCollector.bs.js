@@ -16,6 +16,10 @@ var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var PayoutTransaction = require("./PayoutTransaction.bs.js");
 
+function addressInfos(param) {
+  return param[/* addressInfos */7];
+}
+
 function collidingProcesses(processId, param) {
   var reserved = param[/* reserved */2];
   var inputs = Js_option.getWithDefault(/* array */[], Utils.mapOption((function (param) {
@@ -107,7 +111,8 @@ function make() {
           /* keyChains */AccountKeyChain.Collection[/* empty */0],
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* activatedKeyChain : [] */0,
-          /* exposedCoordinates : [] */0
+          /* exposedCoordinates : [] */0,
+          /* addressInfos : [] */0
         ];
 }
 
@@ -135,7 +140,8 @@ function apply($$event, state) {
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 15 : 
         return /* record */[
@@ -151,7 +157,8 @@ function apply($$event, state) {
                   ],
                   state[/* activatedKeyChain */5]
                 ],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 26 : 
         var match = $$event[0];
@@ -172,7 +179,8 @@ function apply($$event, state) {
                 /* exposedCoordinates */changeAddress ? /* :: */[
                     changeAddress[0][/* coordinates */2],
                     state[/* exposedCoordinates */6]
-                  ] : state[/* exposedCoordinates */6]
+                  ] : state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 30 : 
         var processId$1 = $$event[0][/* processId */0];
@@ -185,7 +193,8 @@ function apply($$event, state) {
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 31 : 
         var processId$2 = $$event[0][/* processId */0];
@@ -198,7 +207,8 @@ function apply($$event, state) {
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 34 : 
         var match$1 = $$event[0];
@@ -213,7 +223,8 @@ function apply($$event, state) {
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 36 : 
         var processId$4 = $$event[0][/* processId */0];
@@ -226,7 +237,8 @@ function apply($$event, state) {
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 38 : 
         return /* record */[
@@ -236,7 +248,8 @@ function apply($$event, state) {
                 /* keyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* keyChains */3]),
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 39 : 
         var match$3 = $$event[0];
@@ -260,9 +273,15 @@ function apply($$event, state) {
                   ],
                   Belt_List.removeAssoc(state[/* activatedKeyChain */5], accountIdx, WalletTypes.AccountIndex[/* eq */7])
                 ],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     case 40 : 
+        var match$4 = $$event[0][/* address */1];
+        var coordinates = match$4[/* coordinates */2];
+        var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3])[/* custodianKeyChains */4], (function (prim) {
+                        return prim[0];
+                      }))));
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -271,31 +290,43 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates : :: */[
-                  $$event[0][/* address */1][/* coordinates */2],
+                  coordinates,
                   state[/* exposedCoordinates */6]
+                ],
+                /* addressInfos : :: */[
+                  /* record */[
+                    /* addressType : Income */0,
+                    /* custodians */custodians,
+                    /* address */match$4[/* displayAddress */5],
+                    /* nCoSigners */match$4[/* nCoSigners */0],
+                    /* balance */BTC.zero,
+                    /* addressStatus : Accessible */0
+                  ],
+                  state[/* addressInfos */7]
                 ]
               ];
     case 41 : 
-        var match$4 = $$event[0];
-        var coordinates = match$4[/* coordinates */1];
-        var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3]);
+        var match$5 = $$event[0];
+        var coordinates$1 = match$5[/* coordinates */1];
+        var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates$1), Address.Coordinates[/* keyChainIdent */4](coordinates$1), state[/* keyChains */3]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */Belt_Set.add(state[/* unused */1], /* record */[
-                      /* txId */match$4[/* txId */2],
-                      /* txOutputN */match$4[/* txOutputN */3],
-                      /* address */match$4[/* address */0],
-                      /* value */match$4[/* amount */4],
+                      /* txId */match$5[/* txId */2],
+                      /* txOutputN */match$5[/* txOutputN */3],
+                      /* address */match$5[/* address */0],
+                      /* value */match$5[/* amount */4],
                       /* nCoSigners */keyChain[/* nCoSigners */2],
                       /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */4]),
-                      /* coordinates */coordinates,
+                      /* coordinates */coordinates$1,
                       /* sequence */keyChain[/* sequence */3]
                     ]),
                 /* reserved */state[/* reserved */2],
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6]
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */state[/* addressInfos */7]
               ];
     default:
       return state;
@@ -303,6 +334,7 @@ function apply($$event, state) {
 }
 
 exports.make = make;
+exports.addressInfos = addressInfos;
 exports.collidingProcesses = collidingProcesses;
 exports.exposedCoordinates = exposedCoordinates;
 exports.accountKeyChains = accountKeyChains;

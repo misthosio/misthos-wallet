@@ -8,6 +8,24 @@ open Event;
 
 open Address;
 
+type addressStatus =
+  | Accessible
+  | AtRisk
+  | OutdatedCustodians;
+
+type addressType =
+  | Income
+  | Change;
+
+type addressInfo = {
+  addressType,
+  custodians: UserId.set,
+  address: string,
+  nCoSigners: int,
+  balance: BTC.t,
+  addressStatus,
+};
+
 type t = {
   network: Network.t,
   unused: Network.inputSet,
@@ -17,7 +35,10 @@ type t = {
   activatedKeyChain:
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
   exposedCoordinates: list(Address.Coordinates.t),
+  addressInfos: list(addressInfo),
 };
+
+let addressInfos = ({addressInfos}) => addressInfos;
 
 let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
   let inputs =
@@ -127,6 +148,7 @@ let make = () => {
   payoutProcesses: ProcessId.makeMap(),
   activatedKeyChain: [],
   exposedCoordinates: [],
+  addressInfos: [],
 };
 
 let removeInputsFromReserved = (processId, inputs, reserved) =>
@@ -174,10 +196,38 @@ let apply = (event, state) =>
            |. List.removeAssoc(accountIdx, AccountIndex.eq),
       ],
     }
-  | IncomeAddressExposed(({address: {coordinates}}: IncomeAddressExposed.t)) => {
+  | IncomeAddressExposed(
+      (
+        {address: {coordinates, displayAddress, nCoSigners}}: IncomeAddressExposed.t
+      ),
+    ) =>
+    let custodians =
+      (
+        state.keyChains
+        |> AccountKeyChain.Collection.lookup(
+             coordinates |> Address.Coordinates.accountIdx,
+             coordinates |> Address.Coordinates.keyChainIdent,
+           )
+      ).
+        custodianKeyChains
+      |. List.map(fst)
+      |> List.toArray
+      |> Set.mergeMany(UserId.emptySet);
+    {
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
-    }
+      addressInfos: [
+        {
+          address: displayAddress,
+          addressStatus: Accessible,
+          addressType: Income,
+          balance: BTC.zero,
+          nCoSigners,
+          custodians,
+        },
+        ...state.addressInfos,
+      ],
+    };
   | IncomeDetected({address, txId, txOutputN, amount, coordinates}) =>
     let keyChain =
       state.keyChains

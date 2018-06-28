@@ -2,9 +2,28 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+type addressStatus =
+  | Accessible
+  | AtRisk
+  | OutdatedCustodians;
+type addressType =
+  | Income
+  | Change;
+
+type addressInfo = {
+  addressType,
+  custodians: UserId.set,
+  address: string,
+  nCoSigners: int,
+  balance: BTC.t,
+  addressStatus,
+};
+
 type t;
 
 let make: unit => t;
+
+let addressInfos: t => list(addressInfo);
 
 let collidingProcesses: (processId, t) => ProcessId.set;
 
