@@ -306,7 +306,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
   if (network >= 2) {
     outTotal = outTotalWithoutFee;
   } else {
-    var misthosFee = BTC.timesRounded(1.49 / 100, outTotalWithoutFee);
+    var misthosFee = BTC.timesRounded(1.5 / 100, outTotalWithoutFee);
     txB.addOutput(misthosFeeAddress, BTC.toSatoshisFloat(misthosFee));
     outTotal = outTotalWithoutFee.plus(misthosFee);
   }
@@ -402,8 +402,8 @@ function max(allInputs, targetDestination, destinations, satsPerByte, network) {
   if (network >= 2) {
     return rest;
   } else {
-    var totalOutMisthosFee = BTC.timesRounded(1.49 / 100, totalOutValue);
-    return BTC.dividedByRounded(1 + 1.49 / 100, rest.minus(totalOutMisthosFee));
+    var totalOutMisthosFee = BTC.timesRounded(1.5 / 100, totalOutValue);
+    return BTC.dividedByRounded(1 + 1.5 / 100, rest.minus(totalOutMisthosFee));
   }
 }
 
@@ -431,7 +431,7 @@ function finalize(signedTransactions) {
   }
 }
 
-var misthosFeePercent = 1.49;
+var misthosFeePercent = 1.5;
 
 exports.NotEnoughFunds = NotEnoughFunds;
 exports.NotEnoughSignatures = NotEnoughSignatures;

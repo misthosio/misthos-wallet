@@ -277,11 +277,11 @@ describe("build", (function () {
                                         ]),
                                     /* misthosFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */216
+                                          /* lo */217
                                         ]),
                                     /* networkFee */BTC.fromSatoshis(/* int64 */[
                                           /* hi */0,
-                                          /* lo */320
+                                          /* lo */319
                                         ])
                                   ], Jest.Expect[/* expect */0](summary));
                       }));
