@@ -13,8 +13,29 @@ module Styles = {
 let make = (~selected=?, ~index, _children) => {
   ...component,
   render: _self => {
+    let ventures =
+      index |> Utils.mapOption(({ventures}: Venture.Index.t) => ventures);
+    let breakingChange =
+      index
+      |> Utils.mapOption(({breakingChange}: Venture.Index.t) =>
+           breakingChange
+         );
+    let breakingNotification =
+      switch (breakingChange) {
+      | Some(true) =>
+        <MTypography
+          variant=`Body2
+          gutterBottom=true
+          className=(Css.style([Css.color(Colors.error)]))>
+          (
+            {js|In preparation for our mainnet launch it has been necessary to make a breaking change. As a result your testnet ventures are no longer accessible. We will garuantee backwards compatibility following our public release on mainnet.|js}
+            |> text
+          )
+        </MTypography>
+      | _ => ReasonReact.null
+      };
     let ventureList =
-      switch (index) {
+      switch (ventures) {
       | None => <Spinner text="loading index" />
       | Some([]) =>
         <MTypography variant=`Body2>
@@ -23,10 +44,10 @@ let make = (~selected=?, ~index, _children) => {
             |> text
           )
         </MTypography>
-      | Some(index) =>
+      | Some(ventures) =>
         ReasonReact.array(
           Array.of_list(
-            index
+            ventures
             |> List.map(
                  Venture.Index.(
                    ({name, id}) => {
@@ -64,6 +85,7 @@ let make = (~selected=?, ~index, _children) => {
       };
     <div>
       <MaterialUi.List dense=true disablePadding=true>
+        breakingNotification
         ventureList
       </MaterialUi.List>
     </div>;

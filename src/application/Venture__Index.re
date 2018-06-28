@@ -5,7 +5,11 @@ type item = {
   name: string,
 };
 
-type t = list(item);
+type t = {
+  ventures: list(item),
+  breakingChange: bool,
+};
+let makeIndex = breakingChange => {ventures: [], breakingChange};
 
 module Encode = {
   let item = item =>
@@ -15,7 +19,15 @@ module Encode = {
         ("id", VentureId.encode(item.id)),
       ])
     );
-  let index = Json.Encode.list(item);
+  let ventures = Json.Encode.list(item);
+
+  let index = index =>
+    Json.Encode.(
+      object_([
+        ("ventures", ventures(index.ventures)),
+        ("breakingChange", bool(index.breakingChange)),
+      ])
+    );
 };
 
 module Decode = {
@@ -24,7 +36,12 @@ module Decode = {
       name: json |> field("name", string),
       id: json |> field("id", VentureId.decode),
     };
-  let index = Json.Decode.list(item);
+  let ventures = Json.Decode.list(item);
+  let index = json =>
+    Json.Decode.{
+      ventures: json |> field("ventures", ventures),
+      breakingChange: json |> field("breakingChange", bool),
+    };
 };
 
 let encode = Encode.index;
@@ -42,19 +59,42 @@ let persist = index =>
     |> then_(() => resolve(index))
   );
 
+let persistOld = index =>
+  Blockstack.putFileEncrypted(
+    "indexV0.json",
+    Encode.ventures(index) |> Json.stringify,
+  );
+
 let load = () =>
   Js.Promise.(
     Blockstack.getFileDecrypted(indexPath)
     |> then_(nullVentures =>
          switch (Js.Nullable.toOption(nullVentures)) {
-         | None => persist([])
-         | Some(index) => resolve(index |> Json.parseOrRaise |> Decode.index)
+         | None => persist(makeIndex(false))
+         | Some(index) =>
+           let parsedIndex = index |> Json.parseOrRaise;
+           try (parsedIndex |> Decode.index |> resolve) {
+           | _ =>
+             try (
+               {
+                 let oldIndex = Decode.ventures(parsedIndex);
+                 if (oldIndex |> List.length > 0) {
+                   persistOld(oldIndex) |> ignore;
+                   makeIndex(true) |> persist;
+                 } else {
+                   makeIndex(false) |> persist;
+                 };
+               }
+             ) {
+             | _ => makeIndex(false) |> persist
+             }
+           };
          }
        )
   );
 
-let itemPresent = (ventureId, index) =>
-  index |> List.exists(item => VentureId.eq(item.id, ventureId));
+let itemPresent = (ventureId, {ventures}) =>
+  ventures |> List.exists(item => VentureId.eq(item.id, ventureId));
 
 let add = (~ventureId as id, ~ventureName as name) =>
   Js.Promise.(
@@ -63,7 +103,11 @@ let add = (~ventureId as id, ~ventureName as name) =>
          if (index |> itemPresent(id)) {
            index |> resolve;
          } else {
-           [{id, name}, ...index] |> persist;
+           {
+             breakingChange: false,
+             ventures: [{id, name}, ...index.ventures],
+           }
+           |> persist;
          }
        )
   );
