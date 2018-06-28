@@ -54,7 +54,7 @@ function run($staropt$star, scenarioName, scenarioTest) {
                   }));
           }
           var match = Venture.reconstruct(scenarioSession, loadedLog);
-          return Curry._1(scenarioTest, match[0]);
+          return Curry._2(scenarioTest, match[0], match[1]);
         }));
   return /* () */0;
 }

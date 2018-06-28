@@ -4,10 +4,9 @@ open Jest;
 open Expect;
 
 let () =
-  Scenarios.run("three-person-payout", venture =>
+  Scenarios.run("three-person-payout", (_venture, newItems) =>
     test("Last event is PayoutFinalized", () => {
-      let items = venture |> Venture.getEventLog |> EventLog.items;
-      let lastEvent = (items |. Array.getExn(48)).event;
+      let lastEvent = (newItems |. Array.getExn(1)).event;
       expect(
         switch (lastEvent) {
         | Event.PayoutFinalized(_) => true

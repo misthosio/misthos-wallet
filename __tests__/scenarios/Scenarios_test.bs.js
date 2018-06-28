@@ -2,16 +2,12 @@
 'use strict';
 
 var Jest = require("@glennsl/bs-jest/src/jest.js");
-var Curry = require("bs-platform/lib/js/curry.js");
-var Venture = require("../../src/application/Venture.bs.js");
-var EventLog = require("../../src/application/events/EventLog.bs.js");
 var Scenarios = require("../helpers/Scenarios.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 
-Scenarios.run(/* None */0, "three-person-payout", (function (venture) {
+Scenarios.run(/* None */0, "three-person-payout", (function (_, newItems) {
         return Jest.test("Last event is PayoutFinalized", (function () {
-                      var items = Curry._1(EventLog.items, Venture.getEventLog(venture));
-                      var lastEvent = Belt_Array.getExn(items, 48)[/* event */0];
+                      var lastEvent = Belt_Array.getExn(newItems, 1)[/* event */0];
                       var tmp;
                       tmp = lastEvent.tag === 33 ? true : false;
                       return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](tmp));

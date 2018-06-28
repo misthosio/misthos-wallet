@@ -50,8 +50,8 @@ let run = (~skipIntegrity=false, scenarioName, scenarioTest) =>
           },
         );
       };
-      let (venture, _newItems) =
+      let (venture, newItems) =
         loadedLog |> Venture.reconstruct(scenarioSession);
-      scenarioTest(venture);
+      scenarioTest(venture, newItems);
     },
   );
