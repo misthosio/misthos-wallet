@@ -35,11 +35,12 @@ type t = {
   activatedKeyChain:
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
   exposedCoordinates: list(Address.Coordinates.t),
-  addressInfos: list(addressInfo),
+  addressInfos: AccountIndex.map(list(addressInfo)),
   currentCustodians: UserId.set,
 };
 
-let addressInfos = ({addressInfos}) => addressInfos;
+let addressInfos = (accountIdx, {addressInfos}) =>
+  addressInfos |. Map.get(accountIdx) |> Js.Option.getWithDefault([]);
 
 let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
   let inputs =
@@ -149,7 +150,7 @@ let make = () => {
   payoutProcesses: ProcessId.makeMap(),
   activatedKeyChain: [],
   exposedCoordinates: [],
-  addressInfos: [],
+  addressInfos: AccountIndex.makeMap(),
   currentCustodians: UserId.emptySet,
 };
 
@@ -203,11 +204,12 @@ let apply = (event, state) =>
         {address: {coordinates, displayAddress, nCoSigners}}: IncomeAddressExposed.t
       ),
     ) =>
+    let accountIdx = coordinates |> Address.Coordinates.accountIdx;
     let custodians =
       (
         state.keyChains
         |> AccountKeyChain.Collection.lookup(
-             coordinates |> Address.Coordinates.accountIdx,
+             accountIdx,
              coordinates |> Address.Coordinates.keyChainIdent,
            )
       ).
@@ -218,17 +220,25 @@ let apply = (event, state) =>
     {
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
-      addressInfos: [
-        {
-          address: displayAddress,
-          addressStatus: Accessible,
-          addressType: Income,
-          balance: BTC.zero,
-          nCoSigners,
-          custodians,
-        },
-        ...state.addressInfos,
-      ],
+      addressInfos:
+        state.addressInfos
+        |. Map.updateU(
+             accountIdx,
+             (. infos) => {
+               let infos = infos |> Js.Option.getWithDefault([]);
+               Some([
+                 {
+                   address: displayAddress,
+                   addressStatus: Accessible,
+                   addressType: Income,
+                   balance: BTC.zero,
+                   nCoSigners,
+                   custodians,
+                 },
+                 ...infos,
+               ]);
+             },
+           ),
     };
   | IncomeDetected({address, txId, txOutputN, amount, coordinates}) =>
     let keyChain =
