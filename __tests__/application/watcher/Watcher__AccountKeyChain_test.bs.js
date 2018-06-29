@@ -34,7 +34,7 @@ describe("Watcher__AccountKeyChain", (function () {
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainIdentified", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
                               if (param.tag === 38) {
                                 var match = param[0][/* keyChain */0];
-                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9])) {
+                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */11])) {
                                   return match[/* identifier */1] === "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30";
                                 } else {
                                   return false;
@@ -78,7 +78,7 @@ describe("Watcher__AccountKeyChain", (function () {
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainIdentified", watcher, Generators.Log[/* systemIssuer */3](log$1), (function (param) {
                               if (param.tag === 38) {
                                 var match = param[0][/* keyChain */0];
-                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */1] === "84ba3d5f75b50fc70cdebf3b637c31c81d820519a68fd997025296ba765f2dc5") {
+                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */11]) && match[/* identifier */1] === "84ba3d5f75b50fc70cdebf3b637c31c81d820519a68fd997025296ba765f2dc5") {
                                   return List.length(match[/* custodianKeyChains */4]) === 1;
                                 } else {
                                   return false;
@@ -106,7 +106,7 @@ describe("Watcher__AccountKeyChain", (function () {
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainActivated", watcher, user1[/* issuerKeyPair */2], (function (param) {
                               if (param.tag === 39) {
                                 var match = param[0];
-                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */2] === "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30") {
+                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */11]) && match[/* identifier */2] === "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30") {
                                   return match[/* sequence */3] === 0;
                                 } else {
                                   return false;
@@ -163,7 +163,7 @@ describe("Watcher__AccountKeyChain", (function () {
                 return WatcherHelpers.testWatcherHasEventPending("AccountKeyChainActivated", watcher, user1[/* issuerKeyPair */2], (function (param) {
                               if (param.tag === 39) {
                                 var match = param[0];
-                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) && match[/* identifier */2] === "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30") {
+                                if (WalletTypes.AccountIndex[/* eq */7](match[/* accountIdx */0], WalletTypes.AccountIndex[/* default */11]) && match[/* identifier */2] === "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30") {
                                   return match[/* sequence */3] === 1;
                                 } else {
                                   return false;

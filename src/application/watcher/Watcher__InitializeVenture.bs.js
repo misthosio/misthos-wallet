@@ -76,7 +76,7 @@ function make(param, param$1, log) {
                   case 2 : 
                       if ($$event.tag === 12) {
                         var $$event$2 = $$event[0];
-                        tmp = WalletTypes.AccountIndex[/* eq */7]($$event$2[/* data */6][/* accountIdx */0], WalletTypes.AccountIndex[/* default */9]) ? /* EndorseAccountCreation */Block.__(3, [
+                        tmp = WalletTypes.AccountIndex[/* eq */7]($$event$2[/* data */6][/* accountIdx */0], WalletTypes.AccountIndex[/* default */11]) ? /* EndorseAccountCreation */Block.__(3, [
                               $$event$2[/* processId */0],
                               match[0]
                             ]) : self$1[state][0];
@@ -131,7 +131,7 @@ function make(param, param$1, log) {
                   case 2 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeAccountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */9], env$1[3])
+                          Event.makeAccountCreationProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), env$1[1], defaultAccountName, WalletTypes.AccountIndex[/* default */11], env$1[3])
                         ]];
                       break;
                   case 3 : 
@@ -143,7 +143,7 @@ function make(param, param$1, log) {
                   case 5 : 
                       tmp$1 = /* Some */[/* tuple */[
                           env$1[0],
-                          Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), /* None */0, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */9], env$1[3])
+                          Event.makeCustodianProposed(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[env$1[1]]), /* None */0, match$1[0], env$1[1], WalletTypes.AccountIndex[/* default */11], env$1[3])
                         ]];
                       break;
                   case 6 : 

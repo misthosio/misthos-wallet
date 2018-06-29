@@ -28,7 +28,7 @@ describe("build", (function () {
                   WalletTypes.AccountIndex[/* first */2],
                   "identifier",
                   WalletTypes.CoSignerIndex[/* first */2],
-                  WalletTypes.ChainIndex[/* externalChain */9],
+                  WalletTypes.ChainIndex[/* externalChain */11],
                   WalletTypes.AddressIndex[/* first */2]
                 ],
                 /* sequence : None */0
@@ -47,7 +47,7 @@ describe("build", (function () {
                   WalletTypes.AccountIndex[/* first */2],
                   "identifier",
                   WalletTypes.CoSignerIndex[/* first */2],
-                  WalletTypes.ChainIndex[/* externalChain */9],
+                  WalletTypes.ChainIndex[/* externalChain */11],
                   WalletTypes.AddressIndex[/* next */3](WalletTypes.AddressIndex[/* first */2])
                 ],
                 /* sequence : None */0
@@ -57,7 +57,7 @@ describe("build", (function () {
           WalletTypes.AccountIndex[/* first */2],
           "identifier",
           WalletTypes.CoSignerIndex[/* first */2],
-          WalletTypes.ChainIndex[/* externalChain */9],
+          WalletTypes.ChainIndex[/* externalChain */11],
           WalletTypes.AddressIndex[/* first */2]
         ];
         var changeAddress = /* record */[
