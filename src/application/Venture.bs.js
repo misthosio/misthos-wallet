@@ -525,7 +525,7 @@ function exec$3(prospectId, venture) {
                     })).then((function (prospectPubKey) {
                     var partnerProposed = Event.getPartnerProposedExn(Event.makePartnerProposed(prospectPubKey, Venture__State.currentPartners(state), session[/* userId */0], prospectId, Venture__State.lastRemovalOfPartner(prospectId, state), Venture__State.currentPolicy(Event.Partner[/* processName */1], state), /* () */0));
                     if (Venture__State.isPartnerProposalUnique(partnerProposed, state)) {
-                      var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
+                      var custodianProposal = Event.getCustodianProposedExn(Event.makeCustodianProposed(Venture__State.currentPartners(state), Venture__State.lastRemovalOfCustodian(prospectId, state), partnerProposed, session[/* userId */0], WalletTypes.AccountIndex[/* default */11], Venture__State.currentPolicy(Event.Custodian[/* processName */1], state)));
                       return persist(/* None */0, applyMany(/* None */0, venture)(/* :: */[
                                         /* PartnerProposed */Block.__(1, [partnerProposed]),
                                         /* :: */[
@@ -619,7 +619,7 @@ function exec$6(partnerId, venture) {
     var match = Venture__State.custodianAcceptedFor(partnerId, state);
     var param;
     if (match) {
-      var custodianRemoval = Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */9], Venture__State.currentPolicy(Event.Custodian[/* Removal */9][/* processName */1], state)));
+      var custodianRemoval = Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(Venture__State.currentPartners(state), match[0], session[/* userId */0], WalletTypes.AccountIndex[/* default */11], Venture__State.currentPolicy(Event.Custodian[/* Removal */9][/* processName */1], state)));
       param = applyMany(/* None */0, venture)(/* :: */[
             /* CustodianRemovalProposed */Block.__(21, [custodianRemoval]),
             /* :: */[

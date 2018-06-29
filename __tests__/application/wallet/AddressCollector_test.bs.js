@@ -33,7 +33,7 @@ describe("AddressCollector", (function () {
                                                   WalletTypes.AccountIndex[/* fromInt */1](0),
                                                   "8974ad69910afdca42d4c7c08c094c8d2a9d454d0f02b5b101eb7abd30a06d30",
                                                   WalletTypes.CoSignerIndex[/* fromInt */1](0),
-                                                  WalletTypes.ChainIndex[/* externalChain */9],
+                                                  WalletTypes.ChainIndex[/* externalChain */11],
                                                   WalletTypes.AddressIndex[/* fromInt */1](0)
                                                 ],
                                                 /* witnessScript */"51210309995c255526c59ac6a6563832a838fbb9917305d84d3c11393e575238b4e9aa51ae",

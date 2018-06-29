@@ -78,8 +78,8 @@ function fromViewModelState$2(param) {
   ];
   var network = WalletInfoCollector.network(walletInfoCollector);
   var allInputs = WalletInfoCollector.unusedInputs(walletInfoCollector);
-  var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
-  var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
+  var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */11], localUser, walletInfoCollector);
+  var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], localUser, walletInfoCollector);
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),
           /* balance */balance,

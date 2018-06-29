@@ -97,11 +97,11 @@ function fourUserSessions() {
 }
 
 function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
-  var accountIdx = $staropt$star ? $staropt$star[0] : WalletTypes.AccountIndex[/* default */9];
+  var accountIdx = $staropt$star ? $staropt$star[0] : WalletTypes.AccountIndex[/* default */11];
   return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
 }
 
-var partial_arg = WalletTypes.AccountIndex[/* default */9];
+var partial_arg = WalletTypes.AccountIndex[/* default */11];
 
 function accountKeyChainFrom(param) {
   return AccountKeyChain.make(partial_arg, param);
@@ -155,7 +155,7 @@ function partnerRemovalEndorsed(supporter, param) {
 var partnerRemovalAccepted = Event.Partner[/* Removal */9][/* Accepted */6][/* fromProposal */0];
 
 function accountCreationProposed(eligibleWhenProposing, param) {
-  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
+  return Event.getAccountCreationProposedExn(Event.makeAccountCreationProposed(eligibleWhenProposing, param[/* userId */0], "test", WalletTypes.AccountIndex[/* default */11], Policy.unanimous));
 }
 
 function accountCreationEndorsed(supporter, param) {
@@ -165,7 +165,7 @@ function accountCreationEndorsed(supporter, param) {
 var accountCreationAccepted = Event.AccountCreation[/* Accepted */6][/* fromProposal */0];
 
 function custodianProposed(eligibleWhenProposing, lastCustodianRemovalAccepted, param, partnerProposal) {
-  return Event.getCustodianProposedExn(Event.makeCustodianProposed(eligibleWhenProposing, lastCustodianRemovalAccepted, partnerProposal, param[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimous));
+  return Event.getCustodianProposedExn(Event.makeCustodianProposed(eligibleWhenProposing, lastCustodianRemovalAccepted, partnerProposal, param[/* userId */0], WalletTypes.AccountIndex[/* default */11], Policy.unanimous));
 }
 
 function custodianEndorsed(supporter, param) {
@@ -181,7 +181,7 @@ var custodianAccepted = Event.Custodian[/* Accepted */6][/* fromProposal */0];
 var custodianDenied = Event.Custodian[/* Denied */7][/* fromProposal */0];
 
 function custodianRemovalProposed(eligibleWhenProposing, custodianAccepted, proposerSession) {
-  return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(eligibleWhenProposing, custodianAccepted, proposerSession[/* userId */0], WalletTypes.AccountIndex[/* default */9], Policy.unanimousMinusOne));
+  return Event.getCustodianRemovalProposedExn(Event.makeCustodianRemovalProposed(eligibleWhenProposing, custodianAccepted, proposerSession[/* userId */0], WalletTypes.AccountIndex[/* default */11], Policy.unanimousMinusOne));
 }
 
 function custodianRemovalEndorsed(supporter, param) {
@@ -196,7 +196,7 @@ var accountKeyChainIdentified = Event.AccountKeyChainIdentified[/* make */0];
 
 function accountKeyChainActivated($staropt$star, custodian, identifier) {
   var sequence = $staropt$star ? $staropt$star[0] : 0;
-  return Event.AccountKeyChainActivated[/* make */0](WalletTypes.AccountIndex[/* default */9], custodian[/* userId */0], identifier, sequence);
+  return Event.AccountKeyChainActivated[/* make */0](WalletTypes.AccountIndex[/* default */11], custodian[/* userId */0], identifier, sequence);
 }
 
 var incomeAddressExposed = Event.IncomeAddressExposed[/* make */0];
