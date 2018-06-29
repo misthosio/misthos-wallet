@@ -775,10 +775,7 @@ let validate =
   if (knownItems |. ItemsSet.has(hash)) {
     Ignore;
   } else {
-    Js.log2(
-      "validating item:",
-      item |> EventLog.encodeItem |> Json.stringify,
-    );
+    Js.log2("validating item:", item |> EventLog.encodeItem);
     switch (
       event,
       Event.isSystemEvent(event),
