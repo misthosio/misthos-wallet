@@ -61,7 +61,7 @@ function applyInternal($staropt$star, partnerId, issuer, $$event, oldLog, param)
         exit = 1;
       } else {
         logMessage("Appended event to log:");
-        logMessage(Json.stringify(Event.encode($$event)));
+        logMessage(Json.stringify(Curry._1(EventLog.encodeItem, item)));
         var validation$1 = Venture__Validation.apply(item, validation);
         var state$1 = Venture__State.apply($$event, state);
         var wallet$1 = Venture__Wallet.apply($$event, wallet);
