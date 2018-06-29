@@ -8,7 +8,6 @@ var Utils = require("../utils/Utils.bs.js");
 var Address = require("./wallet/Address.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var EventLog = require("./events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
@@ -1080,13 +1079,12 @@ function validateEvent(param) {
   }
 }
 
-function validate(originId, state, item) {
-  var issuerPubKey = item[/* issuerPubKey */2];
-  var $$event = item[/* event */0];
-  if (Belt_SetString.has(state[/* knownItems */6], item[/* hash */1])) {
+function validate(originId, state, param) {
+  var issuerPubKey = param[/* issuerPubKey */2];
+  var $$event = param[/* event */0];
+  if (Belt_SetString.has(state[/* knownItems */6], param[/* hash */1])) {
     return /* Ignore */1;
   } else {
-    console.log("validating item:", Curry._1(EventLog.encodeItem, item));
     var match = Event.isSystemEvent($$event);
     var match$1 = List.mem_assoc(issuerPubKey, state[/* currentPartnerPubKeys */8]);
     var exit = 0;

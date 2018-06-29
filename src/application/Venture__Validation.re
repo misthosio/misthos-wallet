@@ -770,12 +770,11 @@ let validate =
     (
       ~partnerId as originId=?,
       {knownItems} as state,
-      {hash, event, issuerPubKey} as item: EventLog.item,
+      {hash, event, issuerPubKey}: EventLog.item,
     ) =>
   if (knownItems |. ItemsSet.has(hash)) {
     Ignore;
   } else {
-    Js.log2("validating item:", item |> EventLog.encodeItem);
     switch (
       event,
       Event.isSystemEvent(event),
