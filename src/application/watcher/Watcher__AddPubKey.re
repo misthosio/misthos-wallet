@@ -10,7 +10,7 @@ type state = {
 let make =
     (
       {userId, issuerKeyPair}: SessionData.t,
-      {data: {id, pubKey}}: Partner.Accepted.t,
+      {processId, data: {id, pubKey}}: Partner.Accepted.t,
       log,
     ) => {
   let process = {
@@ -35,6 +35,11 @@ let make =
       state :=
         (
           switch (event) {
+          | PartnerRemovalAccepted({data: {lastPartnerProcess}})
+              when ProcessId.eq(lastPartnerProcess, processId) => {
+              completed: true,
+              pendingEvent: None,
+            }
           | PartnerPubKeyAdded({partnerId}) when UserId.eq(partnerId, id) => {
               completed: true,
               pendingEvent: None,

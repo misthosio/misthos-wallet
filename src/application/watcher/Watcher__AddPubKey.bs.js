@@ -39,12 +39,25 @@ function make(param, param$1, log) {
     CamlinternalOO.set_methods($$class, /* array */[
           receive,
           (function (self$1, param) {
+              var env$1 = self$1[env];
               var $$event = param[/* event */0];
               var tmp;
-              tmp = $$event.tag === 6 && PrimitiveTypes.UserId[/* eq */5]($$event[0][/* partnerId */0], self$1[env][0]) ? /* record */[
-                  /* pendingEvent : None */0,
-                  /* completed */true
-                ] : self$1[state][0];
+              switch ($$event.tag | 0) {
+                case 6 : 
+                    tmp = PrimitiveTypes.UserId[/* eq */5]($$event[0][/* partnerId */0], env$1[1]) ? /* record */[
+                        /* pendingEvent : None */0,
+                        /* completed */true
+                      ] : self$1[state][0];
+                    break;
+                case 10 : 
+                    tmp = PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* data */2][/* lastPartnerProcess */1], env$1[0]) ? /* record */[
+                        /* pendingEvent : None */0,
+                        /* completed */true
+                      ] : self$1[state][0];
+                    break;
+                default:
+                  tmp = self$1[state][0];
+              }
               self$1[state][0] = tmp;
               return /* () */0;
             }),
@@ -73,7 +86,10 @@ function make(param, param$1, log) {
     CamlinternalOO.init_class($$class);
     class_tables[0] = env_init;
   }
-  var envs_000 = [id];
+  var envs_000 = [
+    param$1[/* processId */0],
+    id
+  ];
   var envs_001 = param[/* userId */0];
   var envs_002 = param[/* issuerKeyPair */2];
   var envs_004 = match[/* pubKey */2];
