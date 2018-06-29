@@ -112,7 +112,8 @@ function make() {
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* activatedKeyChain : [] */0,
           /* exposedCoordinates : [] */0,
-          /* addressInfos : [] */0
+          /* addressInfos : [] */0,
+          /* currentCustodians */PrimitiveTypes.UserId[/* emptySet */9]
         ];
 }
 
@@ -141,7 +142,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 15 : 
         return /* record */[
@@ -158,7 +160,8 @@ function apply($$event, state) {
                   state[/* activatedKeyChain */5]
                 ],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 26 : 
         var match = $$event[0];
@@ -180,7 +183,8 @@ function apply($$event, state) {
                     changeAddress[0][/* coordinates */2],
                     state[/* exposedCoordinates */6]
                   ] : state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 30 : 
         var processId$1 = $$event[0][/* processId */0];
@@ -194,7 +198,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 31 : 
         var processId$2 = $$event[0][/* processId */0];
@@ -208,7 +213,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 34 : 
         var match$1 = $$event[0];
@@ -224,7 +230,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 36 : 
         var processId$4 = $$event[0][/* processId */0];
@@ -238,7 +245,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 38 : 
         return /* record */[
@@ -249,7 +257,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 39 : 
         var match$3 = $$event[0];
@@ -274,7 +283,8 @@ function apply($$event, state) {
                   Belt_List.removeAssoc(state[/* activatedKeyChain */5], accountIdx, WalletTypes.AccountIndex[/* eq */7])
                 ],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 40 : 
         var match$4 = $$event[0][/* address */1];
@@ -303,7 +313,8 @@ function apply($$event, state) {
                     /* addressStatus : Accessible */0
                   ],
                   state[/* addressInfos */7]
-                ]
+                ],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 41 : 
         var match$5 = $$event[0];
@@ -326,7 +337,8 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain */state[/* activatedKeyChain */5],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7]
+                /* addressInfos */state[/* addressInfos */7],
+                /* currentCustodians */state[/* currentCustodians */8]
               ];
     default:
       return state;
