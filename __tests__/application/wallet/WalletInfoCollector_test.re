@@ -4,6 +4,7 @@ open Expect;
 
 open Belt;
 
+open PrimitiveTypes;
 open WalletTypes;
 
 open WalletHelpers;
@@ -78,6 +79,9 @@ let () = {
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
           |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withIncomeAddressExposed(user1)
           |> withPartner(user2, ~supporters=[user1])
           |> withCustodian(user2, ~supporters=[user1, user2])
           |> withCustodianKeyChain(user2)
@@ -93,12 +97,45 @@ let () = {
           |> withIncomeAddressExposed(user1)
         );
       },
-      (_sessions, log) => {
-        let info = log |> constructState;
-        test("collects address infos", () =>
-          expect(info |> WalletInfoCollector.addressInfos |> List.length)
-          |> toEqual(2)
-        );
+      (sessions, log) => {
+        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        let info = log |> constructState |> WalletInfoCollector.addressInfos;
+        let [lastInfo, secondInfo, firstInfo] = info;
+        Skip.describe("AddressInfo of first address", () => {
+          test("Custodians are correct", () =>
+            expect(
+              firstInfo.custodians
+              |> Set.eq(Set.mergeMany(UserId.emptySet, [|user1.userId|])),
+            )
+            |> toEqual(true)
+          );
+          test("addressType, addressStatus, balance are correct", () => {
+            open WalletInfoCollector;
+            let {addressType, addressStatus, balance} = firstInfo;
+            expect((addressType, addressStatus, balance))
+            |> toEqual((Income, OutdatedCustodians, BTC.zero));
+          });
+        });
+        describe("AddressInfo of last address", () => {
+          test("Custodians are correct", () =>
+            expect(
+              lastInfo.custodians
+              |> Set.eq(
+                   Set.mergeMany(
+                     UserId.emptySet,
+                     [|user1.userId, user3.userId|],
+                   ),
+                 ),
+            )
+            |> toEqual(true)
+          );
+          test("addressType, addressStatus, balance are correct", () => {
+            open WalletInfoCollector;
+            let {addressType, addressStatus, balance} = lastInfo;
+            expect((addressType, addressStatus, balance))
+            |> toEqual((Income, Accessible, BTC.zero));
+          });
+        });
       },
     )
   );

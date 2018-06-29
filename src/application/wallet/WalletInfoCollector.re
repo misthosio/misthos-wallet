@@ -36,6 +36,7 @@ type t = {
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
   exposedCoordinates: list(Address.Coordinates.t),
   addressInfos: list(addressInfo),
+  currentCustodians: UserId.set,
 };
 
 let addressInfos = ({addressInfos}) => addressInfos;
@@ -149,6 +150,7 @@ let make = () => {
   activatedKeyChain: [],
   exposedCoordinates: [],
   addressInfos: [],
+  currentCustodians: UserId.emptySet,
 };
 
 let removeInputsFromReserved = (processId, inputs, reserved) =>
