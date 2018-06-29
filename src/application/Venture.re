@@ -49,7 +49,7 @@ let applyInternal =
   switch (item |> Validation.validate(~partnerId, validation)) {
   | Ok =>
     logMessage("Appended event to log:");
-    logMessage(Event.encode(event) |> Json.stringify);
+    logMessage(EventLog.encodeItem(item) |> Json.stringify);
     let validation = validation |> Validation.apply(item);
     let state = state |> State.apply(event);
     let wallet = wallet |> Wallet.apply(event);
