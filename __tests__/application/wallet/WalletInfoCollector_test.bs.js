@@ -96,7 +96,7 @@ describe("WalletInfoCollector-addressInfo", (function () {
                       var match = Generators.threeUserSessionsFromArray(sessions);
                       var user3 = match[2];
                       var user1 = match[0];
-                      var info = WalletInfoCollector.addressInfos(constructState(log));
+                      var info = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], constructState(log));
                       var exit = 0;
                       if (info) {
                         var match$1 = info[1];
@@ -155,7 +155,7 @@ describe("WalletInfoCollector-addressInfo", (function () {
                               Caml_builtin_exceptions.match_failure,
                               [
                                 "WalletInfoCollector_test.re",
-                                103,
+                                106,
                                 12
                               ]
                             ];

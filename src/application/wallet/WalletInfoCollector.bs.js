@@ -16,8 +16,8 @@ var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var PayoutTransaction = require("./PayoutTransaction.bs.js");
 
-function addressInfos(param) {
-  return param[/* addressInfos */7];
+function addressInfos(accountIdx, param) {
+  return Js_option.getWithDefault(/* [] */0, Belt_Map.get(param[/* addressInfos */7], accountIdx));
 }
 
 function collidingProcesses(processId, param) {
@@ -112,7 +112,7 @@ function make() {
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* activatedKeyChain : [] */0,
           /* exposedCoordinates : [] */0,
-          /* addressInfos : [] */0,
+          /* addressInfos */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
           /* currentCustodians */PrimitiveTypes.UserId[/* emptySet */9]
         ];
 }
@@ -288,8 +288,11 @@ function apply($$event, state) {
               ];
     case 40 : 
         var match$4 = $$event[0][/* address */1];
+        var displayAddress = match$4[/* displayAddress */5];
         var coordinates = match$4[/* coordinates */2];
-        var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates), Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3])[/* custodianKeyChains */4], (function (prim) {
+        var nCoSigners = match$4[/* nCoSigners */0];
+        var accountIdx$1 = Address.Coordinates[/* accountIdx */3](coordinates);
+        var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$1, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3])[/* custodianKeyChains */4], (function (prim) {
                         return prim[0];
                       }))));
         return /* record */[
@@ -303,17 +306,20 @@ function apply($$event, state) {
                   coordinates,
                   state[/* exposedCoordinates */6]
                 ],
-                /* addressInfos : :: */[
-                  /* record */[
-                    /* addressType : Income */0,
-                    /* custodians */custodians,
-                    /* address */match$4[/* displayAddress */5],
-                    /* nCoSigners */match$4[/* nCoSigners */0],
-                    /* balance */BTC.zero,
-                    /* addressStatus : Accessible */0
-                  ],
-                  state[/* addressInfos */7]
-                ],
+                /* addressInfos */Belt_Map.updateU(state[/* addressInfos */7], accountIdx$1, (function (infos) {
+                        var infos$1 = Js_option.getWithDefault(/* [] */0, infos);
+                        return /* Some */[/* :: */[
+                                  /* record */[
+                                    /* addressType : Income */0,
+                                    /* custodians */custodians,
+                                    /* address */displayAddress,
+                                    /* nCoSigners */nCoSigners,
+                                    /* balance */BTC.zero,
+                                    /* addressStatus : Accessible */0
+                                  ],
+                                  infos$1
+                                ]];
+                      })),
                 /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 41 : 

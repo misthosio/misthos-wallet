@@ -23,7 +23,7 @@ type t;
 
 let make: unit => t;
 
-let addressInfos: t => list(addressInfo);
+let addressInfos: (accountIdx, t) => list(addressInfo);
 
 let collidingProcesses: (processId, t) => ProcessId.set;
 

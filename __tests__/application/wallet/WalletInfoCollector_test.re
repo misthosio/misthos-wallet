@@ -99,7 +99,10 @@ let () = {
       },
       (sessions, log) => {
         let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
-        let info = log |> constructState |> WalletInfoCollector.addressInfos;
+        let info =
+          log
+          |> constructState
+          |> WalletInfoCollector.addressInfos(AccountIndex.default);
         let [lastInfo, secondInfo, firstInfo] = info;
         Skip.describe("AddressInfo of first address", () => {
           test("Custodians are correct", () =>
