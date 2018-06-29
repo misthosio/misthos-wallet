@@ -54,6 +54,10 @@ let make =
           when ProcessId.eq(abortedProcess, processId) =>
         result := None;
         completed := true;
+      | PayoutDenied({processId: abortedProcess})
+          when ProcessId.eq(abortedProcess, processId) =>
+        result := None;
+        completed := true;
       | _ => ()
       };
     };

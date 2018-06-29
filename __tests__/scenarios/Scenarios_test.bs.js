@@ -6,6 +6,9 @@ var Scenarios = require("../helpers/Scenarios.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 
 Scenarios.run(/* None */0, "three-person-payout", (function (_, newItems) {
+        Jest.test("There are 2 new Items", (function () {
+                return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](newItems.length));
+              }));
         return Jest.test("Payout is finalized", (function () {
                       var lastEvent = Belt_Array.getExn(newItems, 1)[/* event */0];
                       var tmp;
@@ -15,6 +18,9 @@ Scenarios.run(/* None */0, "three-person-payout", (function (_, newItems) {
       }));
 
 Scenarios.run(/* Some */[true], "four-person-payout", (function (_, newItems) {
+        Jest.test("There are 2 new Items", (function () {
+                return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](newItems.length));
+              }));
         return Jest.test("Payout is finalized", (function () {
                       var lastEvent = Belt_Array.getExn(newItems, 1)[/* event */0];
                       var tmp;

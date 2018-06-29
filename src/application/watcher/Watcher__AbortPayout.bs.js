@@ -80,6 +80,7 @@ function make(proposal, log) {
                       return /* () */0;
                     }
                 case 30 : 
+                case 31 : 
                 case 34 : 
                 case 36 : 
                     exit = 1;
