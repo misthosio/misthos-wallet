@@ -101,10 +101,12 @@ let sign =
 let getWitnessBuf = (idx, tx) => {
   let ins = tx##ins;
   let witnessScript = (ins |. Array.getExn(idx))##witness;
-  witnessScript |. Array.getExn((witnessScript |> Array.length) - 1);
+  try (witnessScript |. Array.getExn((witnessScript |> Array.length) - 1)) {
+  | _ => BufferExt.makeWithSize(0)
+  };
 };
 
-let merge = ({tx, inputs}, {inputs: otherInputs}) => {
+let merge = ({tx, inputs}, {tx: otherTx, inputs: otherInputs}) => {
   inputs
   |. Array.forEachWithIndexU((. idx, {signatures}) => {
        let otherSigs = (otherInputs |. Array.getExn(idx)).signatures;
@@ -119,16 +121,32 @@ let merge = ({tx, inputs}, {inputs: otherInputs}) => {
            )
            |> List.toArray
          };
-       let witnessBuf = tx |> getWitnessBuf(idx);
-       tx
-       |. B.Transaction.setWitness(
-            idx,
-            Array.concatMany([|
-              [|BufferExt.makeWithSize(0)|],
-              signatures,
-              [|witnessBuf|],
-            |]),
-          );
+       switch (tx |> getWitnessBuf(idx), otherTx |> getWitnessBuf(idx)) {
+       | (buf, _) when buf |> BufferExt.length != 0 =>
+         tx
+         |. B.Transaction.setWitness(
+              idx,
+              Array.concatMany([|
+                [|BufferExt.makeWithSize(0)|],
+                signatures,
+                [|buf|],
+              |]),
+            )
+       | (_, buf) when buf |> BufferExt.length != 0 =>
+         let txInputs = otherTx##ins;
+         let txIn = txInputs |. Array.getExn(idx);
+         tx |. B.Transaction.setInputScript(idx, txIn##script);
+         tx
+         |. B.Transaction.setWitness(
+              idx,
+              Array.concatMany([|
+                [|BufferExt.makeWithSize(0)|],
+                signatures,
+                [|buf|],
+              |]),
+            );
+       | _ => ()
+       };
      });
   {tx, inputs: extractInputs(tx)};
 };

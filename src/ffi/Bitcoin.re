@@ -35,6 +35,7 @@ module Transaction = {
     .
     "index": int,
     "witness": array(Node.buffer),
+    "script": Node.buffer,
   };
   type out = {
     .
