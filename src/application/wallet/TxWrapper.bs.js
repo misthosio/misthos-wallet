@@ -90,11 +90,17 @@ function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScri
 function getWitnessBuf(idx, tx) {
   var ins = tx.ins;
   var witnessScript = Belt_Array.getExn(ins, idx).witness;
-  return Belt_Array.getExn(witnessScript, witnessScript.length - 1 | 0);
+  try {
+    return Belt_Array.getExn(witnessScript, witnessScript.length - 1 | 0);
+  }
+  catch (exn){
+    return Buffer.alloc(0);
+  }
 }
 
 function merge(param, param$1) {
   var otherInputs = param$1[/* inputs */1];
+  var otherTx = param$1[/* tx */0];
   var tx = param[/* tx */0];
   Belt_Array.forEachWithIndexU(param[/* inputs */1], (function (idx, param) {
           var signatures = param[/* signatures */0];
@@ -108,13 +114,28 @@ function merge(param, param$1) {
                                   ];
                           }))) : signatures
             ) : otherSigs;
-          var witnessBuf = getWitnessBuf(idx, tx);
-          tx.setWitness(idx, Belt_Array.concatMany(/* array */[
-                    /* array */[Buffer.alloc(0)],
-                    signatures$1,
-                    /* array */[witnessBuf]
-                  ]));
-          return /* () */0;
+          var match = getWitnessBuf(idx, tx);
+          var match$1 = getWitnessBuf(idx, otherTx);
+          if (match.length !== 0) {
+            tx.setWitness(idx, Belt_Array.concatMany(/* array */[
+                      /* array */[Buffer.alloc(0)],
+                      signatures$1,
+                      /* array */[match]
+                    ]));
+            return /* () */0;
+          } else if (match$1.length !== 0) {
+            var txInputs = otherTx.ins;
+            var txIn = Belt_Array.getExn(txInputs, idx);
+            tx.setInputScript(idx, txIn.script);
+            tx.setWitness(idx, Belt_Array.concatMany(/* array */[
+                      /* array */[Buffer.alloc(0)],
+                      signatures$1,
+                      /* array */[match$1]
+                    ]));
+            return /* () */0;
+          } else {
+            return /* () */0;
+          }
         }));
   return /* record */[
           /* tx */tx,
