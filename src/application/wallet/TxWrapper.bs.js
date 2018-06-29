@@ -4,6 +4,7 @@
 var BTC = require("./BTC.bs.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -90,12 +91,7 @@ function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScri
 function getWitnessBuf(idx, tx) {
   var ins = tx.ins;
   var witnessScript = Belt_Array.getExn(ins, idx).witness;
-  try {
-    return Belt_Array.getExn(witnessScript, witnessScript.length - 1 | 0);
-  }
-  catch (exn){
-    return Buffer.alloc(0);
-  }
+  return Js_option.getWithDefault(Buffer.alloc(0), Belt_Array.get(witnessScript, witnessScript.length - 1 | 0));
 }
 
 function merge(param, param$1) {

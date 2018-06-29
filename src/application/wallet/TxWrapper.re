@@ -101,9 +101,9 @@ let sign =
 let getWitnessBuf = (idx, tx) => {
   let ins = tx##ins;
   let witnessScript = (ins |. Array.getExn(idx))##witness;
-  try (witnessScript |. Array.getExn((witnessScript |> Array.length) - 1)) {
-  | _ => BufferExt.makeWithSize(0)
-  };
+  witnessScript
+  |. Array.get((witnessScript |> Array.length) - 1)
+  |> Js.Option.getWithDefault(BufferExt.makeWithSize(0));
 };
 
 let merge = ({tx, inputs}, {tx: otherTx, inputs: otherInputs}) => {
