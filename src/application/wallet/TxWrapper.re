@@ -101,9 +101,7 @@ let sign =
 let getWitnessBuf = (idx, tx) => {
   let ins = tx##ins;
   let witnessScript = (ins |. Array.getExn(idx))##witness;
-  witnessScript
-  |. Array.get((witnessScript |> Array.length) - 1)
-  |> Js.Option.getWithDefault(BufferExt.makeWithSize(0));
+  witnessScript |. Array.get((witnessScript |> Array.length) - 1);
 };
 
 let merge = ({tx, inputs}, {tx: otherTx, inputs: otherInputs}) => {
@@ -122,7 +120,7 @@ let merge = ({tx, inputs}, {tx: otherTx, inputs: otherInputs}) => {
            |> List.toArray
          };
        switch (tx |> getWitnessBuf(idx), otherTx |> getWitnessBuf(idx)) {
-       | (buf, _) when buf |> BufferExt.length != 0 =>
+       | (Some(buf), _) =>
          tx
          |. B.Transaction.setWitness(
               idx,
@@ -132,7 +130,7 @@ let merge = ({tx, inputs}, {tx: otherTx, inputs: otherInputs}) => {
                 [|buf|],
               |]),
             )
-       | (_, buf) when buf |> BufferExt.length != 0 =>
+       | (_, Some(buf)) =>
          let txInputs = otherTx##ins;
          let txIn = txInputs |. Array.getExn(idx);
          tx |. B.Transaction.setInputScript(idx, txIn##script);
@@ -169,7 +167,7 @@ let finalize = (usedInputs, {tx, inputs}) =>
            if (signatures |> Array.length < nCoSigners) {
              raise(NotEnoughSignatures);
            };
-           let witnessBuf = tx |> getWitnessBuf(idx);
+           let witnessBuf = tx |> getWitnessBuf(idx) |> Js.Option.getExn;
            tx
            |. B.Transaction.setWitness(
                 idx,

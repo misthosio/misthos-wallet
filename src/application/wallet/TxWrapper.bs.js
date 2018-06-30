@@ -91,7 +91,7 @@ function sign(idx, keyPair, nCustodians, redeemScript, witnessValue, witnessScri
 function getWitnessBuf(idx, tx) {
   var ins = tx.ins;
   var witnessScript = Belt_Array.getExn(ins, idx).witness;
-  return Js_option.getWithDefault(Buffer.alloc(0), Belt_Array.get(witnessScript, witnessScript.length - 1 | 0));
+  return Belt_Array.get(witnessScript, witnessScript.length - 1 | 0);
 }
 
 function merge(param, param$1) {
@@ -112,21 +112,21 @@ function merge(param, param$1) {
             ) : otherSigs;
           var match = getWitnessBuf(idx, tx);
           var match$1 = getWitnessBuf(idx, otherTx);
-          if (match.length !== 0) {
+          if (match) {
             tx.setWitness(idx, Belt_Array.concatMany(/* array */[
                       /* array */[Buffer.alloc(0)],
                       signatures$1,
-                      /* array */[match]
+                      /* array */[match[0]]
                     ]));
             return /* () */0;
-          } else if (match$1.length !== 0) {
+          } else if (match$1) {
             var txInputs = otherTx.ins;
             var txIn = Belt_Array.getExn(txInputs, idx);
             tx.setInputScript(idx, txIn.script);
             tx.setWitness(idx, Belt_Array.concatMany(/* array */[
                       /* array */[Buffer.alloc(0)],
                       signatures$1,
-                      /* array */[match$1]
+                      /* array */[match$1[0]]
                     ]));
             return /* () */0;
           } else {
@@ -152,7 +152,7 @@ function finalize(usedInputs, param) {
             if (signatures.length < nCoSigners) {
               throw NotEnoughSignatures;
             }
-            var witnessBuf = getWitnessBuf(idx, tx);
+            var witnessBuf = Js_option.getExn(getWitnessBuf(idx, tx));
             tx.setWitness(idx, Belt_Array.concatMany(/* array */[
                       /* array */[Buffer.alloc(0)],
                       signatures,
