@@ -70,11 +70,12 @@ let () = {
     F.withCached(
       ~scope="WalletInfoCollector-addressInfo",
       "classifies addresses",
-      () => F.threeUserSessionsArray,
+      () => G.withUserSessions(5),
       sessions => {
-        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        let (user1, user2, user3, user4, user5) =
+          G.fiveUserSessionsFromArray(sessions);
         L.(
-          F.createVenture(user1)
+          createVenture(user1)
           |> withFirstPartner(user1)
           |> withAccount(~supporter=user1)
           |> withCustodian(user1, ~supporters=[user1])
@@ -85,60 +86,93 @@ let () = {
           |> withPartner(user2, ~supporters=[user1])
           |> withCustodian(user2, ~supporters=[user1, user2])
           |> withCustodianKeyChain(user2)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withIncomeAddressExposed(user1)
           |> withPartner(user3, ~supporters=[user1, user2])
           |> withCustodian(user3, ~supporters=[user1, user2, user3])
           |> withCustodianKeyChain(user3)
           |> withAccountKeyChainIdentified
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
-          |> withCustodianRemoved(user2, ~supporters=[user1, user3])
+          |> withCustodianRemoved(user1, ~supporters=[user2, user3])
+          |> withCustodianKeyChain(~keyChainIdx=1, user2)
           |> withAccountKeyChainIdentified
-          |> withAccountKeyChainActivated(user1)
-          |> withIncomeAddressExposed(user1)
+          |> withAccountKeyChainActivated(user2)
+          |> withIncomeAddressExposed(user2)
+          |> withCustodianRemoved(user3, ~supporters=[user2])
+          |> withCustodianKeyChain(~keyChainIdx=2, user2)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user2)
+          |> withIncomeAddressExposed(user2)
+          |> withPartner(user4, ~supporters=[user2])
+          |> withCustodian(user4, ~supporters=[user2, user4])
+          |> withCustodianKeyChain(user4)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user2)
+          |> withIncomeAddressExposed(user2)
+          |> withPartner(user5, ~supporters=[user2])
+          |> withCustodian(user5, ~supporters=[user2, user4, user4])
+          |> withCustodianKeyChain(user5)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user2)
+          |> withIncomeAddressExposed(user2)
         );
       },
       (sessions, log) => {
-        let (user1, user2, user3) = G.threeUserSessionsFromArray(sessions);
+        let testInfo =
+            (
+              custodians,
+              type_,
+              status,
+              expectedBalance,
+              info: WalletInfoCollector.addressInfo,
+            ) =>
+          describe(
+            "AddressInfo of address " ++ info.address,
+            () => {
+              test("Custodians are correct", () =>
+                expect(
+                  info.custodians
+                  |> Set.eq(
+                       Set.mergeMany(
+                         UserId.emptySet,
+                         custodians
+                         |. Array.mapU((. u: SessionData.t) => u.userId),
+                       ),
+                     ),
+                )
+                |> toEqual(true)
+              );
+              test("addressType, addressStatus, balance are correct", () => {
+                open WalletInfoCollector;
+                let {addressType, addressStatus, balance} = info;
+                expect((addressType, addressStatus, balance))
+                |> toEqual((type_, status, expectedBalance));
+              });
+            },
+          );
+        let (user1, user2, user3, user4, user5) =
+          G.fiveUserSessionsFromArray(sessions);
         let info =
           log
           |> constructState
           |> WalletInfoCollector.addressInfos(AccountIndex.default);
-        let [lastInfo, secondInfo, firstInfo] = info;
-        Skip.describe("AddressInfo of first address", () => {
-          test("Custodians are correct", () =>
-            expect(
-              firstInfo.custodians
-              |> Set.eq(Set.mergeMany(UserId.emptySet, [|user1.userId|])),
-            )
-            |> toEqual(true)
-          );
-          test("addressType, addressStatus, balance are correct", () => {
-            open WalletInfoCollector;
-            let {addressType, addressStatus, balance} = firstInfo;
-            expect((addressType, addressStatus, balance))
-            |> toEqual((Income, OutdatedCustodians, BTC.zero));
-          });
-        });
-        describe("AddressInfo of last address", () => {
-          test("Custodians are correct", () =>
-            expect(
-              lastInfo.custodians
-              |> Set.eq(
-                   Set.mergeMany(
-                     UserId.emptySet,
-                     [|user1.userId, user3.userId|],
-                   ),
-                 ),
-            )
-            |> toEqual(true)
-          );
-          test("addressType, addressStatus, balance are correct", () => {
-            open WalletInfoCollector;
-            let {addressType, addressStatus, balance} = lastInfo;
-            expect((addressType, addressStatus, balance))
-            |> toEqual((Income, Accessible, BTC.zero));
-          });
-        });
+        switch (info) {
+        | [info0, info1, info2, info3, info4, info5, info6] =>
+          info0
+          |> testInfo([|user2, user4, user5|], Income, Accessible, BTC.zero);
+          info1
+          |> testInfo([|user2, user4|], Income, OutdatedCustodians, BTC.zero);
+          info2 |> testInfo([|user2|], Income, AtRisk, BTC.zero);
+          info3 |> testInfo([|user2, user3|], Income, AtRisk, BTC.zero);
+          info4
+          |> testInfo([|user1, user2, user3|], Income, Locked, BTC.zero);
+          info5 |> testInfo([|user1, user2|], Income, AtRisk, BTC.zero);
+          info6 |> testInfo([|user1|], Income, Inaccessible, BTC.zero);
+        | _ => %assert
+               "WalletInfoCollector_test"
+        };
       },
     )
   );

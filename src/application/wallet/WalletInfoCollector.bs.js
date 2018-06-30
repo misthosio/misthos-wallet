@@ -113,7 +113,7 @@ function make() {
           /* activatedKeyChain : [] */0,
           /* exposedCoordinates : [] */0,
           /* addressInfos */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
-          /* currentCustodians */PrimitiveTypes.UserId[/* emptySet */9]
+          /* currentCustodians */WalletTypes.AccountIndex[/* makeMap */10](/* () */0)
         ];
 }
 
@@ -128,6 +128,41 @@ function removeInputsFromReserved(processId, inputs, reserved) {
                                 return /* Some */[processes$1];
                               }
                             }));
+              }));
+}
+
+function determinAddressStatus(currentCustodians, addressCustodians, nCoSigners) {
+  if (Belt_Set.eq(addressCustodians, currentCustodians)) {
+    return /* Accessible */0;
+  } else {
+    var intersection = Belt_Set.intersect(currentCustodians, addressCustodians);
+    var nIntersect = Belt_Set.size(intersection);
+    if (nIntersect === 0) {
+      return /* Inaccessible */4;
+    } else if (nIntersect < nCoSigners) {
+      return /* Locked */3;
+    } else if (Belt_Set.eq(addressCustodians, intersection) && !(Belt_Set.size(addressCustodians) === 1 && Belt_Set.size(currentCustodians) > 1)) {
+      return /* OutdatedCustodians */2;
+    } else {
+      return /* AtRisk */1;
+    }
+  }
+}
+
+function updateAddressInfos(accountIdx, currentCustodians, infos) {
+  var custodians = Js_option.getWithDefault(PrimitiveTypes.UserId[/* emptySet */9], Belt_Map.get(currentCustodians, accountIdx));
+  return Belt_Map.updateU(infos, accountIdx, (function (infos) {
+                var infos$1 = Js_option.getWithDefault(/* [] */0, infos);
+                return /* Some */[Belt_List.mapU(infos$1, (function (info) {
+                                return /* record */[
+                                        /* addressType */info[/* addressType */0],
+                                        /* custodians */info[/* custodians */1],
+                                        /* address */info[/* address */2],
+                                        /* nCoSigners */info[/* nCoSigners */3],
+                                        /* balance */info[/* balance */4],
+                                        /* addressStatus */determinAddressStatus(custodians, info[/* custodians */1], info[/* nCoSigners */3])
+                                      ];
+                              }))];
               }));
 }
 
@@ -163,11 +198,47 @@ function apply($$event, state) {
                 /* addressInfos */state[/* addressInfos */7],
                 /* currentCustodians */state[/* currentCustodians */8]
               ];
+    case 19 : 
+        var match = $$event[0][/* data */2];
+        var accountIdx = match[/* accountIdx */3];
+        var partnerId = match[/* partnerId */0];
+        var currentCustodians = Belt_Map.updateU(state[/* currentCustodians */8], accountIdx, (function (custodians) {
+                return /* Some */[Belt_Set.add(Js_option.getWithDefault(PrimitiveTypes.UserId[/* emptySet */9], custodians), partnerId)];
+              }));
+        return /* record */[
+                /* network */state[/* network */0],
+                /* unused */state[/* unused */1],
+                /* reserved */state[/* reserved */2],
+                /* keyChains */state[/* keyChains */3],
+                /* payoutProcesses */state[/* payoutProcesses */4],
+                /* activatedKeyChain */state[/* activatedKeyChain */5],
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */updateAddressInfos(accountIdx, currentCustodians, state[/* addressInfos */7]),
+                /* currentCustodians */currentCustodians
+              ];
+    case 24 : 
+        var match$1 = $$event[0][/* data */2];
+        var accountIdx$1 = match$1[/* accountIdx */1];
+        var custodianId = match$1[/* custodianId */0];
+        var currentCustodians$1 = Belt_Map.updateU(state[/* currentCustodians */8], accountIdx$1, (function (custodians) {
+                return /* Some */[Belt_Set.remove(Js_option.getWithDefault(PrimitiveTypes.UserId[/* emptySet */9], custodians), custodianId)];
+              }));
+        return /* record */[
+                /* network */state[/* network */0],
+                /* unused */state[/* unused */1],
+                /* reserved */state[/* reserved */2],
+                /* keyChains */state[/* keyChains */3],
+                /* payoutProcesses */state[/* payoutProcesses */4],
+                /* activatedKeyChain */state[/* activatedKeyChain */5],
+                /* exposedCoordinates */state[/* exposedCoordinates */6],
+                /* addressInfos */updateAddressInfos(accountIdx$1, currentCustodians$1, state[/* addressInfos */7]),
+                /* currentCustodians */currentCustodians$1
+              ];
     case 26 : 
-        var match = $$event[0];
-        var payoutTx = match[/* data */6][/* payoutTx */1];
+        var match$2 = $$event[0];
+        var payoutTx = match$2[/* data */6][/* payoutTx */1];
         var changeAddress = payoutTx[/* changeAddress */3];
-        var processId = match[/* processId */0];
+        var processId = match$2[/* processId */0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -217,14 +288,14 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 34 : 
-        var match$1 = $$event[0];
-        var processId$3 = match$1[/* processId */0];
+        var match$3 = $$event[0];
+        var processId$3 = match$3[/* processId */0];
         var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$3);
         var reserved$2 = removeInputsFromReserved(processId$3, payoutTx$3[/* usedInputs */1], state[/* reserved */2]);
-        var match$2 = PayoutTransaction.txInputForChangeAddress(match$1[/* txId */1], state[/* network */0], payoutTx$3);
+        var match$4 = PayoutTransaction.txInputForChangeAddress(match$3[/* txId */1], state[/* network */0], payoutTx$3);
         return /* record */[
                 /* network */state[/* network */0],
-                /* unused */Belt_Set.removeMany(match$2 ? Belt_Set.add(state[/* unused */1], match$2[0]) : state[/* unused */1], payoutTx$3[/* usedInputs */1]),
+                /* unused */Belt_Set.removeMany(match$4 ? Belt_Set.add(state[/* unused */1], match$4[0]) : state[/* unused */1], payoutTx$3[/* usedInputs */1]),
                 /* reserved */reserved$2,
                 /* keyChains */state[/* keyChains */3],
                 /* payoutProcesses */state[/* payoutProcesses */4],
@@ -261,8 +332,8 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 39 : 
-        var match$3 = $$event[0];
-        var accountIdx = match$3[/* accountIdx */0];
+        var match$5 = $$event[0];
+        var accountIdx$2 = match$5[/* accountIdx */0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
@@ -271,28 +342,28 @@ function apply($$event, state) {
                 /* payoutProcesses */state[/* payoutProcesses */4],
                 /* activatedKeyChain : :: */[
                   /* tuple */[
-                    accountIdx,
+                    accountIdx$2,
                     /* :: */[
                       /* tuple */[
-                        match$3[/* custodianId */1],
-                        match$3[/* identifier */2]
+                        match$5[/* custodianId */1],
+                        match$5[/* identifier */2]
                       ],
-                      Js_option.getExn(Belt_List.getAssoc(state[/* activatedKeyChain */5], accountIdx, WalletTypes.AccountIndex[/* eq */7]))
+                      Js_option.getExn(Belt_List.getAssoc(state[/* activatedKeyChain */5], accountIdx$2, WalletTypes.AccountIndex[/* eq */7]))
                     ]
                   ],
-                  Belt_List.removeAssoc(state[/* activatedKeyChain */5], accountIdx, WalletTypes.AccountIndex[/* eq */7])
+                  Belt_List.removeAssoc(state[/* activatedKeyChain */5], accountIdx$2, WalletTypes.AccountIndex[/* eq */7])
                 ],
                 /* exposedCoordinates */state[/* exposedCoordinates */6],
                 /* addressInfos */state[/* addressInfos */7],
                 /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 40 : 
-        var match$4 = $$event[0][/* address */1];
-        var displayAddress = match$4[/* displayAddress */5];
-        var coordinates = match$4[/* coordinates */2];
-        var nCoSigners = match$4[/* nCoSigners */0];
-        var accountIdx$1 = Address.Coordinates[/* accountIdx */3](coordinates);
-        var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$1, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3])[/* custodianKeyChains */4], (function (prim) {
+        var match$6 = $$event[0][/* address */1];
+        var displayAddress = match$6[/* displayAddress */5];
+        var coordinates = match$6[/* coordinates */2];
+        var nCoSigners = match$6[/* nCoSigners */0];
+        var accountIdx$3 = Address.Coordinates[/* accountIdx */3](coordinates);
+        var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$3, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3])[/* custodianKeyChains */4], (function (prim) {
                         return prim[0];
                       }))));
         return /* record */[
@@ -306,7 +377,7 @@ function apply($$event, state) {
                   coordinates,
                   state[/* exposedCoordinates */6]
                 ],
-                /* addressInfos */Belt_Map.updateU(state[/* addressInfos */7], accountIdx$1, (function (infos) {
+                /* addressInfos */Belt_Map.updateU(state[/* addressInfos */7], accountIdx$3, (function (infos) {
                         var infos$1 = Js_option.getWithDefault(/* [] */0, infos);
                         return /* Some */[/* :: */[
                                   /* record */[
@@ -315,7 +386,7 @@ function apply($$event, state) {
                                     /* address */displayAddress,
                                     /* nCoSigners */nCoSigners,
                                     /* balance */BTC.zero,
-                                    /* addressStatus : Accessible */0
+                                    /* addressStatus */determinAddressStatus(Belt_Map.getExn(state[/* currentCustodians */8], accountIdx$3), custodians, nCoSigners)
                                   ],
                                   infos$1
                                 ]];
@@ -323,16 +394,16 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */8]
               ];
     case 41 : 
-        var match$5 = $$event[0];
-        var coordinates$1 = match$5[/* coordinates */1];
+        var match$7 = $$event[0];
+        var coordinates$1 = match$7[/* coordinates */1];
         var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](coordinates$1), Address.Coordinates[/* keyChainIdent */4](coordinates$1), state[/* keyChains */3]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */Belt_Set.add(state[/* unused */1], /* record */[
-                      /* txId */match$5[/* txId */2],
-                      /* txOutputN */match$5[/* txOutputN */3],
-                      /* address */match$5[/* address */0],
-                      /* value */match$5[/* amount */4],
+                      /* txId */match$7[/* txId */2],
+                      /* txOutputN */match$7[/* txOutputN */3],
+                      /* address */match$7[/* address */0],
+                      /* value */match$7[/* amount */4],
                       /* nCoSigners */keyChain[/* nCoSigners */2],
                       /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */4]),
                       /* coordinates */coordinates$1,

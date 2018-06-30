@@ -5,7 +5,9 @@ open WalletTypes;
 type addressStatus =
   | Accessible
   | AtRisk
-  | OutdatedCustodians;
+  | OutdatedCustodians
+  | Locked
+  | Inaccessible;
 type addressType =
   | Income
   | Change;
