@@ -3,13 +3,14 @@
 
 var BTC = require("../../../src/application/wallet/BTC.bs.js");
 var Jest = require("@glennsl/bs-jest/src/jest.js");
+var Js_exn = require("bs-platform/lib/js/js_exn.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Fixtures = require("../../helpers/Fixtures.bs.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Generators = require("../../helpers/Generators.bs.js");
 var WalletTypes = require("../../../src/application/wallet/WalletTypes.bs.js");
 var PrimitiveTypes = require("../../../src/application/PrimitiveTypes.bs.js");
 var WalletInfoCollector = require("../../../src/application/wallet/WalletInfoCollector.bs.js");
-var Caml_builtin_exceptions = require("bs-platform/lib/js/caml_builtin_exceptions.js");
 
 function constructState(log) {
   return Generators.Log[/* reduce */1]((function (s, param) {
@@ -52,115 +53,158 @@ describe("WalletInfoCollector", (function () {
 
 describe("WalletInfoCollector-addressInfo", (function () {
         return Fixtures.withCached(/* None */0, /* None */0, "WalletInfoCollector-addressInfo", "classifies addresses", (function () {
-                      return Fixtures.threeUserSessionsArray;
+                      return Generators.withUserSessions(5);
                     }), (function (sessions) {
-                      var match = Generators.threeUserSessionsFromArray(sessions);
+                      var match = Generators.fiveUserSessionsFromArray(sessions);
+                      var user5 = match[4];
+                      var user4 = match[3];
                       var user3 = match[2];
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianRemoved */37](user2, /* :: */[
-                                              user1,
-                                              /* :: */[
-                                                user3,
-                                                /* [] */0
-                                              ]
-                                            ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
-                                                                  user1,
-                                                                  /* :: */[
-                                                                    user2,
-                                                                    /* :: */[
-                                                                      user3,
-                                                                      /* [] */0
-                                                                    ]
-                                                                  ]
-                                                                ], Generators.Log[/* withPartner */17](/* None */0, user3, /* :: */[
-                                                                      user1,
-                                                                      /* :: */[
-                                                                        user2,
-                                                                        /* [] */0
-                                                                      ]
-                                                                    ], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
-                                                                              user1,
-                                                                              /* :: */[
-                                                                                user2,
-                                                                                /* [] */0
-                                                                              ]
-                                                                            ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
-                                                                                  user1,
-                                                                                  /* [] */0
-                                                                                ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
-                                                                                                      user1,
-                                                                                                      /* [] */0
-                                                                                                    ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Fixtures.createVenture(user1)))))))))))))))))))));
+                      return Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user5, Generators.Log[/* withCustodian */33](user5, /* :: */[
+                                                  user2,
+                                                  /* :: */[
+                                                    user4,
+                                                    /* :: */[
+                                                      user4,
+                                                      /* [] */0
+                                                    ]
+                                                  ]
+                                                ], Generators.Log[/* withPartner */17](/* None */0, user5, /* :: */[
+                                                      user2,
+                                                      /* [] */0
+                                                    ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user4, Generators.Log[/* withCustodian */33](user4, /* :: */[
+                                                                          user2,
+                                                                          /* :: */[
+                                                                            user4,
+                                                                            /* [] */0
+                                                                          ]
+                                                                        ], Generators.Log[/* withPartner */17](/* None */0, user4, /* :: */[
+                                                                              user2,
+                                                                              /* [] */0
+                                                                            ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* Some */[2], /* None */0, user2, Generators.Log[/* withCustodianRemoved */37](user3, /* :: */[
+                                                                                                  user2,
+                                                                                                  /* [] */0
+                                                                                                ], Generators.Log[/* withIncomeAddressExposed */41](user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* Some */[1], /* None */0, user2, Generators.Log[/* withCustodianRemoved */37](user1, /* :: */[
+                                                                                                                      user2,
+                                                                                                                      /* :: */[
+                                                                                                                        user3,
+                                                                                                                        /* [] */0
+                                                                                                                      ]
+                                                                                                                    ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
+                                                                                                                                          user1,
+                                                                                                                                          /* :: */[
+                                                                                                                                            user2,
+                                                                                                                                            /* :: */[
+                                                                                                                                              user3,
+                                                                                                                                              /* [] */0
+                                                                                                                                            ]
+                                                                                                                                          ]
+                                                                                                                                        ], Generators.Log[/* withPartner */17](/* None */0, user3, /* :: */[
+                                                                                                                                              user1,
+                                                                                                                                              /* :: */[
+                                                                                                                                                user2,
+                                                                                                                                                /* [] */0
+                                                                                                                                              ]
+                                                                                                                                            ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                                                                                                                                                                  user1,
+                                                                                                                                                                  /* :: */[
+                                                                                                                                                                    user2,
+                                                                                                                                                                    /* [] */0
+                                                                                                                                                                  ]
+                                                                                                                                                                ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
+                                                                                                                                                                      user1,
+                                                                                                                                                                      /* [] */0
+                                                                                                                                                                    ], Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                                                                                                                                                                                          user1,
+                                                                                                                                                                                          /* [] */0
+                                                                                                                                                                                        ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))))))))))))))))))))))))))))))))))))));
                     }), (function (sessions, log) {
-                      var match = Generators.threeUserSessionsFromArray(sessions);
+                      var testInfo = function (custodians, type_, status, expectedBalance, info) {
+                        describe("AddressInfo of address " + info[/* address */2], (function () {
+                                Jest.test("Custodians are correct", (function () {
+                                        return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](Belt_Set.eq(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_Array.mapU(custodians, (function (u) {
+                                                                      return u[/* userId */0];
+                                                                    }))), info[/* custodians */1])));
+                                      }));
+                                return Jest.test("addressType, addressStatus, balance are correct", (function () {
+                                              return Jest.Expect[/* toEqual */12](/* tuple */[
+                                                          type_,
+                                                          status,
+                                                          expectedBalance
+                                                        ], Jest.Expect[/* expect */0](/* tuple */[
+                                                              info[/* addressType */0],
+                                                              info[/* addressStatus */5],
+                                                              info[/* balance */4]
+                                                            ]));
+                                            }));
+                              }));
+                        return /* () */0;
+                      };
+                      var match = Generators.fiveUserSessionsFromArray(sessions);
+                      var user4 = match[3];
                       var user3 = match[2];
+                      var user2 = match[1];
                       var user1 = match[0];
                       var info = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], constructState(log));
-                      var exit = 0;
                       if (info) {
                         var match$1 = info[1];
                         if (match$1) {
                           var match$2 = match$1[1];
-                          if (match$2 && !match$2[1]) {
-                            var firstInfo = match$2[0];
-                            var lastInfo = info[0];
-                            describe.skip("AddressInfo of first address", (function () {
-                                    Jest.test("Custodians are correct", (function () {
-                                            return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](Belt_Set.eq(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[user1[/* userId */0]]), firstInfo[/* custodians */1])));
-                                          }));
-                                    return Jest.test("addressType, addressStatus, balance are correct", (function () {
-                                                  return Jest.Expect[/* toEqual */12](/* tuple */[
-                                                              /* Income */0,
-                                                              /* OutdatedCustodians */2,
-                                                              BTC.zero
-                                                            ], Jest.Expect[/* expect */0](/* tuple */[
-                                                                  firstInfo[/* addressType */0],
-                                                                  firstInfo[/* addressStatus */5],
-                                                                  firstInfo[/* balance */4]
-                                                                ]));
-                                                }));
-                                  }));
-                            describe("AddressInfo of last address", (function () {
-                                    Jest.test("Custodians are correct", (function () {
-                                            return Jest.Expect[/* toEqual */12](true, Jest.Expect[/* expect */0](Belt_Set.eq(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
-                                                                    user1[/* userId */0],
-                                                                    user3[/* userId */0]
-                                                                  ]), lastInfo[/* custodians */1])));
-                                          }));
-                                    return Jest.test("addressType, addressStatus, balance are correct", (function () {
-                                                  return Jest.Expect[/* toEqual */12](/* tuple */[
-                                                              /* Income */0,
-                                                              /* Accessible */0,
-                                                              BTC.zero
-                                                            ], Jest.Expect[/* expect */0](/* tuple */[
-                                                                  lastInfo[/* addressType */0],
-                                                                  lastInfo[/* addressStatus */5],
-                                                                  lastInfo[/* balance */4]
-                                                                ]));
-                                                }));
-                                  }));
-                            return /* () */0;
+                          if (match$2) {
+                            var match$3 = match$2[1];
+                            if (match$3) {
+                              var match$4 = match$3[1];
+                              if (match$4) {
+                                var match$5 = match$4[1];
+                                if (match$5) {
+                                  var match$6 = match$5[1];
+                                  if (match$6 && !match$6[1]) {
+                                    testInfo(/* array */[
+                                          user2,
+                                          user4,
+                                          match[4]
+                                        ], /* Income */0, /* Accessible */0, BTC.zero, info[0]);
+                                    testInfo(/* array */[
+                                          user2,
+                                          user4
+                                        ], /* Income */0, /* OutdatedCustodians */2, BTC.zero, match$1[0]);
+                                    testInfo(/* array */[user2], /* Income */0, /* AtRisk */1, BTC.zero, match$2[0]);
+                                    testInfo(/* array */[
+                                          user2,
+                                          user3
+                                        ], /* Income */0, /* AtRisk */1, BTC.zero, match$3[0]);
+                                    testInfo(/* array */[
+                                          user1,
+                                          user2,
+                                          user3
+                                        ], /* Income */0, /* Locked */3, BTC.zero, match$4[0]);
+                                    testInfo(/* array */[
+                                          user1,
+                                          user2
+                                        ], /* Income */0, /* AtRisk */1, BTC.zero, match$5[0]);
+                                    return testInfo(/* array */[user1], /* Income */0, /* Inaccessible */4, BTC.zero, match$6[0]);
+                                  } else {
+                                    return Js_exn.raiseError("WalletInfoCollector_test");
+                                  }
+                                } else {
+                                  return Js_exn.raiseError("WalletInfoCollector_test");
+                                }
+                              } else {
+                                return Js_exn.raiseError("WalletInfoCollector_test");
+                              }
+                            } else {
+                              return Js_exn.raiseError("WalletInfoCollector_test");
+                            }
                           } else {
-                            exit = 1;
+                            return Js_exn.raiseError("WalletInfoCollector_test");
                           }
                         } else {
-                          exit = 1;
+                          return Js_exn.raiseError("WalletInfoCollector_test");
                         }
                       } else {
-                        exit = 1;
+                        return Js_exn.raiseError("WalletInfoCollector_test");
                       }
-                      if (exit === 1) {
-                        throw [
-                              Caml_builtin_exceptions.match_failure,
-                              [
-                                "WalletInfoCollector_test.re",
-                                106,
-                                12
-                              ]
-                            ];
-                      }
-                      
                     }));
       }));
 

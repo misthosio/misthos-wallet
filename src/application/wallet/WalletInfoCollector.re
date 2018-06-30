@@ -11,7 +11,9 @@ open Address;
 type addressStatus =
   | Accessible
   | AtRisk
-  | OutdatedCustodians;
+  | OutdatedCustodians
+  | Locked
+  | Inaccessible;
 
 type addressType =
   | Income
@@ -36,7 +38,7 @@ type t = {
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
   exposedCoordinates: list(Address.Coordinates.t),
   addressInfos: AccountIndex.map(list(addressInfo)),
-  currentCustodians: UserId.set,
+  currentCustodians: AccountIndex.map(UserId.set),
 };
 
 let addressInfos = (accountIdx, {addressInfos}) =>
@@ -151,7 +153,7 @@ let make = () => {
   activatedKeyChain: [],
   exposedCoordinates: [],
   addressInfos: AccountIndex.makeMap(),
-  currentCustodians: UserId.emptySet,
+  currentCustodians: AccountIndex.makeMap(),
 };
 
 let removeInputsFromReserved = (processId, inputs, reserved) =>
@@ -170,9 +172,92 @@ let removeInputsFromReserved = (processId, inputs, reserved) =>
           )
      );
 
+let determinAddressStatus = (currentCustodians, addressCustodians, nCoSigners) =>
+  if (currentCustodians |> Set.eq(addressCustodians)) {
+    Accessible;
+  } else {
+    let intersection = addressCustodians |> Set.intersect(currentCustodians);
+    let nIntersect = intersection |> Set.size;
+    if (nIntersect == 0) {
+      Inaccessible;
+    } else if (nIntersect < nCoSigners) {
+      Locked;
+    } else if (intersection |> Set.eq(addressCustodians)) {
+      if (addressCustodians
+          |> Set.size == 1
+          && currentCustodians
+          |> Set.size > 1) {
+        AtRisk;
+      } else {
+        OutdatedCustodians;
+      };
+    } else {
+      AtRisk;
+    };
+  };
+let updateAddressInfos = (accountIdx, currentCustodians, infos) => {
+  let custodians =
+    currentCustodians
+    |. Map.get(accountIdx)
+    |> Js.Option.getWithDefault(UserId.emptySet);
+
+  infos
+  |. Map.updateU(
+       accountIdx,
+       (. infos) => {
+         let infos = infos |> Js.Option.getWithDefault([]);
+         infos
+         |. List.mapU((. info) =>
+              {
+                ...info,
+                addressStatus:
+                  determinAddressStatus(
+                    custodians,
+                    info.custodians,
+                    info.nCoSigners,
+                  ),
+              }
+            )
+         |. Some;
+       },
+     );
+};
+
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
+  | CustodianAccepted({data: {accountIdx, partnerId}}) =>
+    let currentCustodians =
+      state.currentCustodians
+      |. Map.updateU(accountIdx, (. custodians) =>
+           Some(
+             custodians
+             |> Js.Option.getWithDefault(UserId.emptySet)
+             |. Set.add(partnerId),
+           )
+         );
+    {
+      ...state,
+      currentCustodians,
+      addressInfos:
+        updateAddressInfos(accountIdx, currentCustodians, state.addressInfos),
+    };
+  | CustodianRemovalAccepted({data: {accountIdx, custodianId}}) =>
+    let currentCustodians =
+      state.currentCustodians
+      |. Map.updateU(accountIdx, (. custodians) =>
+           Some(
+             custodians
+             |> Js.Option.getWithDefault(UserId.emptySet)
+             |. Set.remove(custodianId),
+           )
+         );
+    {
+      ...state,
+      currentCustodians,
+      addressInfos:
+        updateAddressInfos(accountIdx, currentCustodians, state.addressInfos),
+    };
   | AccountCreationAccepted(
       ({data: {accountIdx}}: AccountCreation.Accepted.t),
     ) => {
@@ -229,7 +314,12 @@ let apply = (event, state) =>
                Some([
                  {
                    address: displayAddress,
-                   addressStatus: Accessible,
+                   addressStatus:
+                     determinAddressStatus(
+                       state.currentCustodians |. Map.getExn(accountIdx),
+                       custodians,
+                       nCoSigners,
+                     ),
                    addressType: Income,
                    balance: BTC.zero,
                    nCoSigners,
