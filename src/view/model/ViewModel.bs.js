@@ -71,13 +71,13 @@ function fromViewModelState$2(param) {
   var walletInfoCollector = param[/* walletInfoCollector */9];
   var localUser = param[/* localUser */0];
   var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
-  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(walletInfoCollector).minus(reserved);
+  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
     balance_000,
     /* reserved */reserved
   ];
   var network = WalletInfoCollector.network(walletInfoCollector);
-  var allInputs = WalletInfoCollector.unusedInputs(walletInfoCollector);
+  var allInputs = WalletInfoCollector.unusedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */11], localUser, walletInfoCollector);
   var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], localUser, walletInfoCollector);
   return /* record */[
@@ -135,7 +135,7 @@ function fromViewModelState$5(param) {
   var transactionCollector = param[/* transactionCollector */7];
   var partnersCollector = param[/* partnersCollector */6];
   var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
-  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(walletInfoCollector).minus(reserved);
+  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
     balance_000,
     /* reserved */reserved

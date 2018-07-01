@@ -12,7 +12,7 @@ type addressStatus =
   | Accessible
   | AtRisk
   | OutdatedCustodians
-  | Locked
+  | TemporarilyInaccessible
   | Inaccessible;
 
 type addressType =
@@ -30,7 +30,7 @@ type addressInfo = {
 
 type t = {
   network: Network.t,
-  unused: Network.inputSet,
+  unused: AccountIndex.map(Network.inputSet),
   reserved: Network.inputMap(ProcessId.set),
   keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
@@ -59,8 +59,9 @@ let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
   |. Set.remove(processId);
 };
 
-let totalUnusedBTC = ({unused}) =>
+let totalUnusedBTC = (accountIdx, {unused}) =>
   unused
+  |. Map.getExn(accountIdx)
   |. Set.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
        res |> BTC.plus(value)
      );
@@ -88,9 +89,9 @@ let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 
 let accountKeyChains = ({keyChains}) => keyChains;
 
-let unusedInputs = ({unused, reserved}) =>
+let unusedInputs = (accountIdx, {unused, reserved}) =>
   Set.diff(
-    unused,
+    unused |. Map.getExn(accountIdx),
     reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
   );
 
@@ -102,7 +103,7 @@ let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) => {
   let currentKeyChainIdents =
     keyChains |> AccountKeyChain.Collection.withCustodians(custodians);
   collector
-  |. unusedInputs
+  |> unusedInputs(accountIdx)
   |. Belt.Set.keepU((. i: Network.txInput) =>
        i.coordinates
        |> Coordinates.keyChainIdent
@@ -146,7 +147,7 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
 
 let make = () => {
   network: Regtest,
-  unused: Network.inputSet(),
+  unused: AccountIndex.makeMap(),
   reserved: Network.inputMap(),
   keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
@@ -181,7 +182,7 @@ let determinAddressStatus = (currentCustodians, addressCustodians, nCoSigners) =
     if (nIntersect == 0) {
       Inaccessible;
     } else if (nIntersect < nCoSigners) {
-      Locked;
+      TemporarilyInaccessible;
     } else if (intersection |> Set.eq(addressCustodians)) {
       if (addressCustodians
           |> Set.size == 1
@@ -331,26 +332,37 @@ let apply = (event, state) =>
            ),
     };
   | IncomeDetected({address, txId, txOutputN, amount, coordinates}) =>
+    let accountIdx = coordinates |> Address.Coordinates.accountIdx;
     let keyChain =
       state.keyChains
       |> AccountKeyChain.Collection.lookup(
-           coordinates |> Address.Coordinates.accountIdx,
+           accountIdx,
            coordinates |> Address.Coordinates.keyChainIdent,
          );
     {
       ...state,
       unused:
         state.unused
-        |. Set.add({
-             txId,
-             txOutputN,
-             address,
-             value: amount,
-             coordinates,
-             nCoSigners: keyChain.nCoSigners,
-             nPubKeys: keyChain.custodianKeyChains |> List.length,
-             sequence: keyChain.sequence,
-           }),
+        |. Map.updateU(
+             accountIdx,
+             (. unused) => {
+               let unused =
+                 unused |> Js.Option.getWithDefault(Network.inputSet());
+               Some(
+                 unused
+                 |. Set.add({
+                      txId,
+                      txOutputN,
+                      address,
+                      value: amount,
+                      coordinates,
+                      nCoSigners: keyChain.nCoSigners,
+                      nPubKeys: keyChain.custodianKeyChains |> List.length,
+                      sequence: keyChain.sequence,
+                    }),
+               );
+             },
+           ),
     };
   | PayoutProposed({
       data: {payoutTx: {usedInputs, changeAddress} as payoutTx},
@@ -402,6 +414,9 @@ let apply = (event, state) =>
   | PayoutBroadcast({processId, txId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
+    let accountIdx =
+      (payoutTx.usedInputs |. Array.getExn(0)).coordinates
+      |> Address.Coordinates.accountIdx;
     let reserved =
       removeInputsFromReserved(
         processId,
@@ -412,16 +427,28 @@ let apply = (event, state) =>
       ...state,
       reserved,
       unused:
-        (
-          switch (
-            payoutTx
-            |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
-          ) {
-          | Some(input) => state.unused |. Set.add(input)
-          | None => state.unused
-          }
-        )
-        |. Set.removeMany(payoutTx.usedInputs),
+        state.unused
+        |. Map.updateU(
+             accountIdx,
+             (. unused) => {
+               let unused =
+                 unused |> Js.Option.getWithDefault(Network.inputSet());
+               (
+                 switch (
+                   payoutTx
+                   |> PayoutTransaction.txInputForChangeAddress(
+                        ~txId,
+                        state.network,
+                      )
+                 ) {
+                 | Some(input) => unused |. Set.add(input)
+                 | None => unused
+                 }
+               )
+               |. Set.removeMany(payoutTx.usedInputs)
+               |. Some;
+             },
+           ),
     };
   | PayoutBroadcastFailed({processId}) =>
     let payoutTx: PayoutTransaction.t =

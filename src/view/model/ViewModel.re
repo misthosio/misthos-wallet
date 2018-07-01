@@ -87,11 +87,13 @@ module CreatePayoutView = {
       reserved,
       currentSpendable:
         walletInfoCollector
-        |> WalletInfoCollector.totalUnusedBTC
+        |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
         |> BTC.minus(reserved),
     };
     let network = walletInfoCollector |> WalletInfoCollector.network;
-    let allInputs = walletInfoCollector |> WalletInfoCollector.unusedInputs;
+    let allInputs =
+      walletInfoCollector
+      |> WalletInfoCollector.unusedInputs(AccountIndex.default);
     let mandatoryInputs =
       walletInfoCollector
       |> WalletInfoCollector.nonReservedOldInputs(
@@ -225,7 +227,7 @@ module SelectedVentureView = {
       reserved,
       currentSpendable:
         walletInfoCollector
-        |> WalletInfoCollector.totalUnusedBTC
+        |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
         |> BTC.minus(reserved),
     };
     {
