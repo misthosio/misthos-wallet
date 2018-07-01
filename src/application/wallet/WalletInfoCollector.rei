@@ -6,7 +6,7 @@ type addressStatus =
   | Accessible
   | AtRisk
   | OutdatedCustodians
-  | Locked
+  | TemporarilyInaccessible
   | Inaccessible;
 type addressType =
   | Income
@@ -37,7 +37,7 @@ let network: t => Network.t;
 
 let apply: (Event.t, t) => t;
 
-let totalUnusedBTC: t => BTC.t;
+let totalUnusedBTC: (accountIdx, t) => BTC.t;
 
 let totalReservedBTC: t => BTC.t;
 
@@ -48,7 +48,7 @@ let currentKeyChain: (accountIdx, userId, t) => AccountKeyChain.t;
 
 let nonReservedOldInputs: (accountIdx, userId, t) => Network.inputSet;
 
-let unusedInputs: t => Network.inputSet;
+let unusedInputs: (accountIdx, t) => Network.inputSet;
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
 let fakeChangeAddress: (accountIdx, userId, t) => Address.t;

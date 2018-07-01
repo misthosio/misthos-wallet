@@ -167,7 +167,12 @@ let () = {
           info2 |> testInfo([|user2|], Income, AtRisk, BTC.zero);
           info3 |> testInfo([|user2, user3|], Income, AtRisk, BTC.zero);
           info4
-          |> testInfo([|user1, user2, user3|], Income, Locked, BTC.zero);
+          |> testInfo(
+               [|user1, user2, user3|],
+               Income,
+               TemporarilyInaccessible,
+               BTC.zero,
+             );
           info5 |> testInfo([|user1, user2|], Income, AtRisk, BTC.zero);
           info6 |> testInfo([|user1|], Income, Inaccessible, BTC.zero);
         | _ => %assert

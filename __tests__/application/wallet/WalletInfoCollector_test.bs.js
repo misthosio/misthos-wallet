@@ -178,7 +178,7 @@ describe("WalletInfoCollector-addressInfo", (function () {
                                           user1,
                                           user2,
                                           user3
-                                        ], /* Income */0, /* Locked */3, BTC.zero, match$4[0]);
+                                        ], /* Income */0, /* TemporarilyInaccessible */3, BTC.zero, match$4[0]);
                                     testInfo(/* array */[
                                           user1,
                                           user2
