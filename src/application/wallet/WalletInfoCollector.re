@@ -30,10 +30,12 @@ type addressInfo = {
 type t = {
   network: Network.t,
   unused: AccountIndex.map(Network.inputSet),
-  spendable: AccountIndex.map(Map.String.t(Network.inputSet)),
-  oldSpendable: AccountIndex.map(Map.String.t(Network.inputSet)),
+  spendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
+  oldSpendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
   unlocked: AccountIndex.map(Network.inputSet),
-  temporarilyInaccessible: AccountIndex.map(Map.String.t(Network.inputSet)),
+  temporarilyInaccessible:
+    AccountIndex.map(Map.String.t(list(Network.txInput))),
+  inaccessible: AccountIndex.map(Map.String.t(list(Network.txInput))),
   reserved: Network.inputMap(ProcessId.set),
   keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
@@ -164,6 +166,7 @@ let make = () => {
   oldSpendable: AccountIndex.makeMap(),
   unlocked: AccountIndex.makeMap(),
   temporarilyInaccessible: AccountIndex.makeMap(),
+  inaccessible: AccountIndex.makeMap(),
   reserved: Network.inputMap(),
   keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
@@ -240,6 +243,46 @@ let updateAddressInfos = (accountIdx, currentCustodians, infos) => {
      );
 };
 
+let addInputToUtxoMap = (accountIdx, input: Network.txInput, inputMap) =>
+  inputMap
+  |. Map.updateU(
+       accountIdx,
+       (. map) => {
+         let map = map |> Js.Option.getWithDefault(Map.String.empty);
+         map
+         |. Map.String.updateU(
+              input.address,
+              (. set) => {
+                let set = set |> Js.Option.getWithDefault([]);
+                [input, ...set] |. Some;
+              },
+            )
+         |. Some;
+       },
+     );
+let addTxInput = (addressStatus, accountIdx, input, state) =>
+  switch (addressStatus) {
+  | Accessible => {
+      ...state,
+      spendable: state.spendable |> addInputToUtxoMap(accountIdx, input),
+    }
+  | AtRisk
+  | OutdatedCustodians => {
+      ...state,
+      oldSpendable:
+        state.oldSpendable |> addInputToUtxoMap(accountIdx, input),
+    }
+  | TemporarilyInaccessible => {
+      ...state,
+      temporarilyInaccessible:
+        state.temporarilyInaccessible |> addInputToUtxoMap(accountIdx, input),
+    }
+  | Inaccessible => {
+      ...state,
+      inaccessible:
+        state.inaccessible |> addInputToUtxoMap(accountIdx, input),
+    }
+  };
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
@@ -356,6 +399,17 @@ let apply = (event, state) =>
            accountIdx,
            coordinates |> Address.Coordinates.keyChainIdent,
          );
+    let input: Network.txInput = {
+      txId,
+      txOutputN,
+      address,
+      value: amount,
+      coordinates,
+      nCoSigners: keyChain.nCoSigners,
+      nPubKeys: keyChain.custodianKeyChains |> List.length,
+      sequence: keyChain.sequence,
+    };
+    let state = addTxInput(addressStatus, accountIdx, input, state);
     {
       ...state,
       unused:
@@ -440,6 +494,36 @@ let apply = (event, state) =>
         payoutTx.usedInputs,
         state.reserved,
       );
+    let state =
+      switch (
+        payoutTx
+        |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
+      ) {
+      | Some(changeInput) =>
+        let custodians =
+          (
+            state.keyChains
+            |> AccountKeyChain.Collection.lookup(
+                 accountIdx,
+                 changeInput.coordinates |> Address.Coordinates.keyChainIdent,
+               )
+          ).
+            custodianKeyChains
+          |. List.map(fst)
+          |> List.toArray
+          |> Set.mergeMany(UserId.emptySet);
+        state
+        |> addTxInput(
+             determinAddressStatus(
+               state.currentCustodians |. Map.getExn(accountIdx),
+               custodians,
+               changeInput.nCoSigners,
+             ),
+             accountIdx,
+             changeInput,
+           );
+      | None => state
+      };
     {
       ...state,
       reserved,
