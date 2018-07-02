@@ -1,5 +1,6 @@
 open Belt;
 include ViewCommon;
+open PrimitiveTypes;
 
 module ViewData = ViewModel.AddressesView;
 
@@ -10,10 +11,36 @@ let statusToString =
   | WalletInfoCollector.OutdatedCustodians => "OutdatedCustodians"
   | WalletInfoCollector.TemporarilyInaccessible => "TemporarilyInaccessible"
   | WalletInfoCollector.Inaccessible => "Inaccessible";
+let addressTypeToString =
+  fun
+  | WalletInfoCollector.Income => "Income"
+  | WalletInfoCollector.Change => "Change";
 
 let component = ReasonReact.statelessComponent("AddressesModal");
 
-let renderExpandedInfo = _expandedInfo => <div> ("expanded" |> text) </div>;
+let renderExpandedInfo = (info: ViewData.addressDetails) =>
+  <div>
+    (
+      (
+        (
+          string_of_int(info.nCoSigners)
+          ++ "-"
+          ++ string_of_int(info.nCustodians)
+          ++ "; ["
+          |. Set.reduceU(info.custodians, _, (. res, c) =>
+               res ++ UserId.toString(c) ++ ", "
+             )
+        )
+        ++ "] ["
+        |. List.reduceU(info.currentUtxos, _, (. res, input: Network.txInput) =>
+             res ++ (input.value |> BTC.format) ++ ", "
+           )
+      )
+      ++ "] "
+      ++ addressTypeToString(info.addressType)
+      |> text
+    )
+  </div>;
 
 let make = (~viewData: ViewData.t, _children) => {
   ...component,

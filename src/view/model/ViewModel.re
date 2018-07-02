@@ -63,7 +63,12 @@ module AddressesView = {
       addressType: addressInfos.addressType,
       addressStatus: addressInfos.addressStatus,
       transferedIncome: [],
-      currentUtxos: [],
+      currentUtxos:
+        WalletInfoCollector.inputsFor(
+          AccountIndex.default,
+          addressInfos,
+          walletInfoCollector,
+        ),
     },
   };
 };
