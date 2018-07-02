@@ -18,6 +18,7 @@ type addressInfo = {
   address: string,
   nCoSigners: int,
   addressStatus,
+  balance: BTC.t,
 };
 
 type t;

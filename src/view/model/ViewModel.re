@@ -35,12 +35,37 @@ let captureResponse = (correlationId, response, state) => {
 let lastResponse = ({lastResponse}) => lastResponse;
 
 module AddressesView = {
+  type addressType = WalletInfoCollector.addressType;
   type addressStatus = WalletInfoCollector.addressStatus;
   type addressInfo = WalletInfoCollector.addressInfo;
-  type t = list(addressInfo);
-  let fromViewModelState = ({walletInfoCollector}) =>
-    walletInfoCollector
-    |> WalletInfoCollector.addressInfos(AccountIndex.default);
+  type txInput = Network.txInput;
+  type addressDetails = {
+    custodians: UserId.set,
+    nCoSigners: int,
+    nCustodians: int,
+    addressType,
+    addressStatus,
+    transferedIncome: list(txInput),
+    currentUtxos: list(txInput),
+  };
+  type t = {
+    infos: list(addressInfo),
+    addressDetails: addressInfo => addressDetails,
+  };
+  let fromViewModelState = ({walletInfoCollector}) => {
+    infos:
+      walletInfoCollector
+      |> WalletInfoCollector.addressInfos(AccountIndex.default),
+    addressDetails: addressInfos => {
+      custodians: addressInfos.custodians,
+      nCustodians: addressInfos.custodians |> Belt.Set.size,
+      nCoSigners: addressInfos.nCoSigners,
+      addressType: addressInfos.addressType,
+      addressStatus: addressInfos.addressStatus,
+      transferedIncome: [],
+      currentUtxos: [],
+    },
+  };
 };
 let viewAddressesModal = AddressesView.fromViewModelState;
 
