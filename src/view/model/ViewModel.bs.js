@@ -47,6 +47,12 @@ function lastResponse(param) {
 }
 
 function fromViewModelState(param) {
+  return WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */9]);
+}
+
+var AddressesView = /* module */[/* fromViewModelState */fromViewModelState];
+
+function fromViewModelState$1(param) {
   var localUser = param[/* localUser */0];
   return /* record */[
           /* ventureName */param[/* ventureName */3],
@@ -59,15 +65,15 @@ function fromViewModelState(param) {
         ];
 }
 
-var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState];
+var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
-function fromViewModelState$1(userId, param) {
+function fromViewModelState$2(userId, param) {
   return ViewModel__PartnersCollector.getProspect(userId, param[/* partnersCollector */6]);
 }
 
-var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$1];
+var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$2];
 
-function fromViewModelState$2(param) {
+function fromViewModelState$3(param) {
   var walletInfoCollector = param[/* walletInfoCollector */9];
   var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
   var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
@@ -109,9 +115,9 @@ function fromViewModelState$2(param) {
         ];
 }
 
-var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$2];
+var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
 
-function fromViewModelState$3(processId, param) {
+function fromViewModelState$4(processId, param) {
   var walletInfoCollector = param[/* walletInfoCollector */9];
   return Utils.mapOption((function (payout) {
                 return /* record */[
@@ -121,15 +127,15 @@ function fromViewModelState$3(processId, param) {
               }), ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]));
 }
 
-var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
+var ViewPayoutView = /* module */[/* fromViewModelState */fromViewModelState$4];
 
-function fromViewModelState$4(txId, param) {
+function fromViewModelState$5(txId, param) {
   return ViewModel__TxDetailsCollector.getIncome(txId, param[/* txDetailsCollector */8]);
 }
 
-var ViewIncomeView = /* module */[/* fromViewModelState */fromViewModelState$4];
+var ViewIncomeView = /* module */[/* fromViewModelState */fromViewModelState$5];
 
-function fromViewModelState$5(param) {
+function fromViewModelState$6(param) {
   var walletInfoCollector = param[/* walletInfoCollector */9];
   var transactionCollector = param[/* transactionCollector */7];
   var partnersCollector = param[/* partnersCollector */6];
@@ -152,7 +158,7 @@ function fromViewModelState$5(param) {
         ];
 }
 
-var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$5];
+var SelectedVentureView = /* module */[/* fromViewModelState */fromViewModelState$6];
 
 function make(localUser) {
   return /* record */[
@@ -238,17 +244,19 @@ var TransactionCollector = 0;
 
 var TxDetailsCollector = 0;
 
-var managePartnersModal = fromViewModelState;
+var viewAddressesModal = fromViewModelState;
 
-var viewPartnerModal = fromViewModelState$1;
+var managePartnersModal = fromViewModelState$1;
 
-var createPayoutModal = fromViewModelState$2;
+var viewPartnerModal = fromViewModelState$2;
 
-var viewPayoutModal = fromViewModelState$3;
+var createPayoutModal = fromViewModelState$3;
 
-var viewIncomeModal = fromViewModelState$4;
+var viewPayoutModal = fromViewModelState$4;
 
-var selectedVenture = fromViewModelState$5;
+var viewIncomeModal = fromViewModelState$5;
+
+var selectedVenture = fromViewModelState$6;
 
 exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
@@ -257,6 +265,8 @@ exports.TxDetailsCollector = TxDetailsCollector;
 exports.readOnly = readOnly;
 exports.captureResponse = captureResponse;
 exports.lastResponse = lastResponse;
+exports.AddressesView = AddressesView;
+exports.viewAddressesModal = viewAddressesModal;
 exports.ManagePartnersView = ManagePartnersView;
 exports.managePartnersModal = managePartnersModal;
 exports.ViewPartnerView = ViewPartnerView;
