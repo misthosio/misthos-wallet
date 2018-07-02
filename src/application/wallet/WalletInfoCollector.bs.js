@@ -17,14 +17,20 @@ var AccountKeyChain = require("./AccountKeyChain.bs.js");
 var PayoutTransaction = require("./PayoutTransaction.bs.js");
 
 function addressInfos(accountIdx, param) {
-  return Js_option.getWithDefault(/* [] */0, Belt_Map.get(param[/* addressInfos */7], accountIdx));
+  return Js_option.getWithDefault(/* [] */0, Belt_Map.get(param[/* addressInfos */11], accountIdx));
+}
+
+function addressInfoFor(accountIdx, findAddress, collector) {
+  return Js_option.getExn(Belt_List.getByU(addressInfos(accountIdx, collector), (function (param) {
+                    return param[/* address */2] === findAddress;
+                  })));
 }
 
 function collidingProcesses(processId, param) {
-  var reserved = param[/* reserved */2];
+  var reserved = param[/* reserved */6];
   var inputs = Js_option.getWithDefault(/* array */[], Utils.mapOption((function (param) {
               return param[/* usedInputs */1];
-            }), Belt_Map.get(param[/* payoutProcesses */4], processId)));
+            }), Belt_Map.get(param[/* payoutProcesses */8], processId)));
   return Belt_Set.remove(Belt_Array.reduceU(inputs, PrimitiveTypes.ProcessId[/* emptySet */9], (function (res, input) {
                     return Belt_Set.union(Belt_Map.getWithDefault(reserved, input, PrimitiveTypes.ProcessId[/* emptySet */9]), res);
                   })), processId);
@@ -37,39 +43,43 @@ function totalUnusedBTC(accountIdx, param) {
 }
 
 function totalReservedBTC(param) {
-  return Belt_Array.reduceU(Belt_Map.keysToArray(param[/* reserved */2]), BTC.zero, (function (res, param) {
+  return Belt_Array.reduceU(Belt_Map.keysToArray(param[/* reserved */6]), BTC.zero, (function (res, param) {
                 return res.plus(param[/* value */3]);
               }));
 }
 
 function currentKeyChainIdent(accountIdx, userId, param) {
-  return Js_option.getExn(Belt_List.getAssoc(Js_option.getExn(Belt_List.getAssoc(param[/* activatedKeyChain */5], accountIdx, WalletTypes.AccountIndex[/* eq */7])), userId, PrimitiveTypes.UserId[/* eq */5]));
+  return Js_option.getExn(Belt_List.getAssoc(Js_option.getExn(Belt_List.getAssoc(param[/* activatedKeyChain */9], accountIdx, WalletTypes.AccountIndex[/* eq */7])), userId, PrimitiveTypes.UserId[/* eq */5]));
 }
 
 function currentKeyChain(accountIdx, userId, state) {
   var currentIdent = currentKeyChainIdent(accountIdx, userId, state);
-  return AccountKeyChain.Collection[/* lookup */2](accountIdx, currentIdent, state[/* keyChains */3]);
+  return AccountKeyChain.Collection[/* lookup */2](accountIdx, currentIdent, state[/* keyChains */7]);
 }
 
 function exposedCoordinates(param) {
-  return param[/* exposedCoordinates */6];
+  return param[/* exposedCoordinates */10];
 }
 
 function accountKeyChains(param) {
-  return param[/* keyChains */3];
+  return param[/* keyChains */7];
 }
 
-function unusedInputs(accountIdx, param) {
-  return Belt_Set.diff(Belt_Map.getExn(param[/* unused */1], accountIdx), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */2])));
+function spendableInputs(accountIdx, param) {
+  return Belt_Set.diff(Belt_Map.getExn(param[/* unused */1], accountIdx), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */6])));
+}
+
+function unlockedInputs(accountIdx, param) {
+  return Belt_Map.getExn(param[/* unlocked */4], accountIdx);
 }
 
 function nonReservedOldInputs(accountIdx, userId, collector) {
-  var keyChains = collector[/* keyChains */3];
+  var keyChains = collector[/* keyChains */7];
   var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
   var currentKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, keyChains);
   var custodians = AccountKeyChain.custodians(currentKeyChain);
   var currentKeyChainIdents = AccountKeyChain.Collection[/* withCustodians */3](custodians, keyChains);
-  return Belt_Set.keepU(unusedInputs(accountIdx, collector), (function (i) {
+  return Belt_Set.keepU(spendableInputs(accountIdx, collector), (function (i) {
                 return Belt_SetString.has(currentKeyChainIdents, Address.Coordinates[/* keyChainIdent */4](i[/* coordinates */6])) === false;
               }));
 }
@@ -80,16 +90,16 @@ function network(param) {
 
 function nextChangeAddress(accountIdx, userId, collector) {
   var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
-  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, collector[/* keyChains */3]);
-  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(collector[/* exposedCoordinates */6]);
+  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, collector[/* keyChains */7]);
+  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(collector[/* exposedCoordinates */10]);
   var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
-  return Address.find(nextChangeCoordinates, collector[/* keyChains */3]);
+  return Address.find(nextChangeCoordinates, collector[/* keyChains */7]);
 }
 
 function fakeChangeAddress(accountIdx, userId, collector) {
   var keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
-  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, collector[/* keyChains */3]);
-  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(collector[/* exposedCoordinates */6]);
+  var accountKeyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx, keyChainIdent, collector[/* keyChains */7]);
+  var coordinates = Address.Coordinates[/* allForAccount */8](accountIdx)(collector[/* exposedCoordinates */10]);
   var nextChangeCoordinates = Address.Coordinates[/* nextInternal */1](userId, coordinates, accountKeyChain);
   var match = accountKeyChain[/* nCoSigners */2] > 1;
   return /* record */[
@@ -107,6 +117,10 @@ function make() {
   return /* record */[
           /* network : Regtest */0,
           /* unused */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
+          /* spendable */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
+          /* oldSpendable */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
+          /* unlocked */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
+          /* temporarilyInaccessible */WalletTypes.AccountIndex[/* makeMap */10](/* () */0),
           /* reserved */Network.inputMap(/* () */0),
           /* keyChains */AccountKeyChain.Collection[/* empty */0],
           /* payoutProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
@@ -159,7 +173,6 @@ function updateAddressInfos(accountIdx, currentCustodians, infos) {
                                         /* custodians */info[/* custodians */1],
                                         /* address */info[/* address */2],
                                         /* nCoSigners */info[/* nCoSigners */3],
-                                        /* balance */info[/* balance */4],
                                         /* addressStatus */determinAddressStatus(custodians, info[/* custodians */1], info[/* nCoSigners */3])
                                       ];
                               }))];
@@ -172,66 +185,82 @@ function apply($$event, state) {
         return /* record */[
                 /* network */$$event[0][/* network */6],
                 /* unused */state[/* unused */1],
-                /* reserved */state[/* reserved */2],
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 15 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */state[/* reserved */2],
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
                 /* activatedKeyChain : :: */[
                   /* tuple */[
                     $$event[0][/* data */2][/* accountIdx */0],
                     /* [] */0
                   ],
-                  state[/* activatedKeyChain */5]
+                  state[/* activatedKeyChain */9]
                 ],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 19 : 
         var match = $$event[0][/* data */2];
         var accountIdx = match[/* accountIdx */3];
         var partnerId = match[/* partnerId */0];
-        var currentCustodians = Belt_Map.updateU(state[/* currentCustodians */8], accountIdx, (function (custodians) {
+        var currentCustodians = Belt_Map.updateU(state[/* currentCustodians */12], accountIdx, (function (custodians) {
                 return /* Some */[Belt_Set.add(Js_option.getWithDefault(PrimitiveTypes.UserId[/* emptySet */9], custodians), partnerId)];
               }));
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */state[/* reserved */2],
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */updateAddressInfos(accountIdx, currentCustodians, state[/* addressInfos */7]),
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */updateAddressInfos(accountIdx, currentCustodians, state[/* addressInfos */11]),
                 /* currentCustodians */currentCustodians
               ];
     case 24 : 
         var match$1 = $$event[0][/* data */2];
         var accountIdx$1 = match$1[/* accountIdx */1];
         var custodianId = match$1[/* custodianId */0];
-        var currentCustodians$1 = Belt_Map.updateU(state[/* currentCustodians */8], accountIdx$1, (function (custodians) {
+        var currentCustodians$1 = Belt_Map.updateU(state[/* currentCustodians */12], accountIdx$1, (function (custodians) {
                 return /* Some */[Belt_Set.remove(Js_option.getWithDefault(PrimitiveTypes.UserId[/* emptySet */9], custodians), custodianId)];
               }));
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */state[/* reserved */2],
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */updateAddressInfos(accountIdx$1, currentCustodians$1, state[/* addressInfos */7]),
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */updateAddressInfos(accountIdx$1, currentCustodians$1, state[/* addressInfos */11]),
                 /* currentCustodians */currentCustodians$1
               ];
     case 26 : 
@@ -242,58 +271,70 @@ function apply($$event, state) {
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */Belt_Array.reduceU(payoutTx[/* usedInputs */1], state[/* reserved */2], (function (lookup, input) {
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */Belt_Array.reduceU(payoutTx[/* usedInputs */1], state[/* reserved */6], (function (lookup, input) {
                         return Belt_Map.updateU(lookup, input, (function (processes) {
                                       return /* Some */[Belt_Set.add(Js_option.getWithDefault(PrimitiveTypes.ProcessId[/* emptySet */9], processes), processId)];
                                     }));
                       })),
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */4], processId, payoutTx),
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */Belt_Map.set(state[/* payoutProcesses */8], processId, payoutTx),
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
                 /* exposedCoordinates */changeAddress ? /* :: */[
                     changeAddress[0][/* coordinates */2],
-                    state[/* exposedCoordinates */6]
-                  ] : state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                    state[/* exposedCoordinates */10]
+                  ] : state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 30 : 
         var processId$1 = $$event[0][/* processId */0];
-        var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$1);
-        var reserved = removeInputsFromReserved(processId$1, payoutTx$1[/* usedInputs */1], state[/* reserved */2]);
+        var payoutTx$1 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$1);
+        var reserved = removeInputsFromReserved(processId$1, payoutTx$1[/* usedInputs */1], state[/* reserved */6]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
                 /* reserved */reserved,
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 31 : 
         var processId$2 = $$event[0][/* processId */0];
-        var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$2);
-        var reserved$1 = removeInputsFromReserved(processId$2, payoutTx$2[/* usedInputs */1], state[/* reserved */2]);
+        var payoutTx$2 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$2);
+        var reserved$1 = removeInputsFromReserved(processId$2, payoutTx$2[/* usedInputs */1], state[/* reserved */6]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
                 /* reserved */reserved$1,
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 34 : 
         var match$3 = $$event[0];
         var txId = match$3[/* txId */1];
         var processId$3 = match$3[/* processId */0];
-        var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$3);
+        var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$3);
         var accountIdx$2 = Address.Coordinates[/* accountIdx */3](Belt_Array.getExn(payoutTx$3[/* usedInputs */1], 0)[/* coordinates */6]);
-        var reserved$2 = removeInputsFromReserved(processId$3, payoutTx$3[/* usedInputs */1], state[/* reserved */2]);
+        var reserved$2 = removeInputsFromReserved(processId$3, payoutTx$3[/* usedInputs */1], state[/* reserved */6]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */Belt_Map.updateU(state[/* unused */1], accountIdx$2, (function (unused) {
@@ -301,40 +342,52 @@ function apply($$event, state) {
                         var match = PayoutTransaction.txInputForChangeAddress(txId, state[/* network */0], payoutTx$3);
                         return /* Some */[Belt_Set.removeMany(match ? Belt_Set.add(unused$1, match[0]) : unused$1, payoutTx$3[/* usedInputs */1])];
                       })),
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
                 /* reserved */reserved$2,
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 36 : 
         var processId$4 = $$event[0][/* processId */0];
-        var payoutTx$4 = Belt_Map.getExn(state[/* payoutProcesses */4], processId$4);
-        var reserved$3 = removeInputsFromReserved(processId$4, payoutTx$4[/* usedInputs */1], state[/* reserved */2]);
+        var payoutTx$4 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$4);
+        var reserved$3 = removeInputsFromReserved(processId$4, payoutTx$4[/* usedInputs */1], state[/* reserved */6]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
                 /* reserved */reserved$3,
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 38 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */state[/* reserved */2],
-                /* keyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* keyChains */3]),
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], state[/* keyChains */7]),
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 39 : 
         var match$4 = $$event[0];
@@ -342,9 +395,13 @@ function apply($$event, state) {
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */state[/* reserved */2],
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
                 /* activatedKeyChain : :: */[
                   /* tuple */[
                     accountIdx$3,
@@ -353,14 +410,14 @@ function apply($$event, state) {
                         match$4[/* custodianId */1],
                         match$4[/* identifier */2]
                       ],
-                      Js_option.getExn(Belt_List.getAssoc(state[/* activatedKeyChain */5], accountIdx$3, WalletTypes.AccountIndex[/* eq */7]))
+                      Js_option.getExn(Belt_List.getAssoc(state[/* activatedKeyChain */9], accountIdx$3, WalletTypes.AccountIndex[/* eq */7]))
                     ]
                   ],
-                  Belt_List.removeAssoc(state[/* activatedKeyChain */5], accountIdx$3, WalletTypes.AccountIndex[/* eq */7])
+                  Belt_List.removeAssoc(state[/* activatedKeyChain */9], accountIdx$3, WalletTypes.AccountIndex[/* eq */7])
                 ],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 40 : 
         var match$5 = $$event[0][/* address */1];
@@ -368,21 +425,25 @@ function apply($$event, state) {
         var coordinates = match$5[/* coordinates */2];
         var nCoSigners = match$5[/* nCoSigners */0];
         var accountIdx$4 = Address.Coordinates[/* accountIdx */3](coordinates);
-        var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$4, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */3])[/* custodianKeyChains */4], (function (prim) {
+        var custodians = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$4, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */7])[/* custodianKeyChains */4], (function (prim) {
                         return prim[0];
                       }))));
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */state[/* unused */1],
-                /* reserved */state[/* reserved */2],
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
                 /* exposedCoordinates : :: */[
                   coordinates,
-                  state[/* exposedCoordinates */6]
+                  state[/* exposedCoordinates */10]
                 ],
-                /* addressInfos */Belt_Map.updateU(state[/* addressInfos */7], accountIdx$4, (function (infos) {
+                /* addressInfos */Belt_Map.updateU(state[/* addressInfos */11], accountIdx$4, (function (infos) {
                         var infos$1 = Js_option.getWithDefault(/* [] */0, infos);
                         return /* Some */[/* :: */[
                                   /* record */[
@@ -390,13 +451,12 @@ function apply($$event, state) {
                                     /* custodians */custodians,
                                     /* address */displayAddress,
                                     /* nCoSigners */nCoSigners,
-                                    /* balance */BTC.zero,
-                                    /* addressStatus */determinAddressStatus(Belt_Map.getExn(state[/* currentCustodians */8], accountIdx$4), custodians, nCoSigners)
+                                    /* addressStatus */determinAddressStatus(Belt_Map.getExn(state[/* currentCustodians */12], accountIdx$4), custodians, nCoSigners)
                                   ],
                                   infos$1
                                 ]];
                       })),
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 41 : 
         var match$6 = $$event[0];
@@ -406,7 +466,8 @@ function apply($$event, state) {
         var coordinates$1 = match$6[/* coordinates */1];
         var address = match$6[/* address */0];
         var accountIdx$5 = Address.Coordinates[/* accountIdx */3](coordinates$1);
-        var keyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx$5, Address.Coordinates[/* keyChainIdent */4](coordinates$1), state[/* keyChains */3]);
+        addressInfoFor(accountIdx$5, address, state)[/* addressStatus */4];
+        var keyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx$5, Address.Coordinates[/* keyChainIdent */4](coordinates$1), state[/* keyChains */7]);
         return /* record */[
                 /* network */state[/* network */0],
                 /* unused */Belt_Map.updateU(state[/* unused */1], accountIdx$5, (function (unused) {
@@ -422,13 +483,17 @@ function apply($$event, state) {
                                       /* sequence */keyChain[/* sequence */3]
                                     ])];
                       })),
-                /* reserved */state[/* reserved */2],
-                /* keyChains */state[/* keyChains */3],
-                /* payoutProcesses */state[/* payoutProcesses */4],
-                /* activatedKeyChain */state[/* activatedKeyChain */5],
-                /* exposedCoordinates */state[/* exposedCoordinates */6],
-                /* addressInfos */state[/* addressInfos */7],
-                /* currentCustodians */state[/* currentCustodians */8]
+                /* spendable */state[/* spendable */2],
+                /* oldSpendable */state[/* oldSpendable */3],
+                /* unlocked */state[/* unlocked */4],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     default:
       return state;
@@ -447,7 +512,8 @@ exports.totalReservedBTC = totalReservedBTC;
 exports.currentKeyChainIdent = currentKeyChainIdent;
 exports.currentKeyChain = currentKeyChain;
 exports.nonReservedOldInputs = nonReservedOldInputs;
-exports.unusedInputs = unusedInputs;
+exports.unlockedInputs = unlockedInputs;
+exports.spendableInputs = spendableInputs;
 exports.nextChangeAddress = nextChangeAddress;
 exports.fakeChangeAddress = fakeChangeAddress;
 /* BTC Not a pure module */

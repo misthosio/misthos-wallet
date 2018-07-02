@@ -17,7 +17,6 @@ type addressInfo = {
   custodians: UserId.set,
   address: string,
   nCoSigners: int,
-  balance: BTC.t,
   addressStatus,
 };
 
@@ -48,7 +47,9 @@ let currentKeyChain: (accountIdx, userId, t) => AccountKeyChain.t;
 
 let nonReservedOldInputs: (accountIdx, userId, t) => Network.inputSet;
 
-let unusedInputs: (accountIdx, t) => Network.inputSet;
+let unlockedInputs: (accountIdx, t) => Network.inputSet;
+
+let spendableInputs: (accountIdx, t) => Network.inputSet;
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
 let fakeChangeAddress: (accountIdx, userId, t) => Address.t;
