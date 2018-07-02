@@ -93,7 +93,7 @@ module CreatePayoutView = {
     let network = walletInfoCollector |> WalletInfoCollector.network;
     let allInputs =
       walletInfoCollector
-      |> WalletInfoCollector.unusedInputs(AccountIndex.default);
+      |> WalletInfoCollector.spendableInputs(AccountIndex.default);
     let mandatoryInputs =
       walletInfoCollector
       |> WalletInfoCollector.nonReservedOldInputs(

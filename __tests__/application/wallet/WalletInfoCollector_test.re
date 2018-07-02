@@ -121,13 +121,7 @@ let () = {
       },
       (sessions, log) => {
         let testInfo =
-            (
-              custodians,
-              type_,
-              status,
-              expectedBalance,
-              info: WalletInfoCollector.addressInfo,
-            ) =>
+            (custodians, type_, status, info: WalletInfoCollector.addressInfo) =>
           describe(
             "AddressInfo of address " ++ info.address,
             () => {
@@ -144,11 +138,11 @@ let () = {
                 )
                 |> toEqual(true)
               );
-              test("addressType, addressStatus, balance are correct", () => {
+              test("addressType, addressStatus are correct", () => {
                 open WalletInfoCollector;
-                let {addressType, addressStatus, balance} = info;
-                expect((addressType, addressStatus, balance))
-                |> toEqual((type_, status, expectedBalance));
+                let {addressType, addressStatus} = info;
+                expect((addressType, addressStatus))
+                |> toEqual((type_, status));
               });
             },
           );
@@ -160,21 +154,18 @@ let () = {
           |> WalletInfoCollector.addressInfos(AccountIndex.default);
         switch (info) {
         | [info0, info1, info2, info3, info4, info5, info6] =>
-          info0
-          |> testInfo([|user2, user4, user5|], Income, Accessible, BTC.zero);
-          info1
-          |> testInfo([|user2, user4|], Income, OutdatedCustodians, BTC.zero);
-          info2 |> testInfo([|user2|], Income, AtRisk, BTC.zero);
-          info3 |> testInfo([|user2, user3|], Income, AtRisk, BTC.zero);
+          info0 |> testInfo([|user2, user4, user5|], Income, Accessible);
+          info1 |> testInfo([|user2, user4|], Income, OutdatedCustodians);
+          info2 |> testInfo([|user2|], Income, AtRisk);
+          info3 |> testInfo([|user2, user3|], Income, AtRisk);
           info4
           |> testInfo(
                [|user1, user2, user3|],
                Income,
                TemporarilyInaccessible,
-               BTC.zero,
              );
-          info5 |> testInfo([|user1, user2|], Income, AtRisk, BTC.zero);
-          info6 |> testInfo([|user1|], Income, Inaccessible, BTC.zero);
+          info5 |> testInfo([|user1, user2|], Income, AtRisk);
+          info6 |> testInfo([|user1|], Income, Inaccessible);
         | _ => %assert
                "WalletInfoCollector_test"
         };

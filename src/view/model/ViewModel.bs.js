@@ -77,7 +77,7 @@ function fromViewModelState$2(param) {
     /* reserved */reserved
   ];
   var network = WalletInfoCollector.network(walletInfoCollector);
-  var allInputs = WalletInfoCollector.unusedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
+  var allInputs = WalletInfoCollector.spendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */11], localUser, walletInfoCollector);
   var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], localUser, walletInfoCollector);
   return /* record */[

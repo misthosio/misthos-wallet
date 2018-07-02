@@ -74,7 +74,7 @@ let preparePayoutTx =
             |> WalletInfoCollector.nonReservedOldInputs(accountIdx, userId),
           ~allInputs=
             walletInfoCollector
-            |> WalletInfoCollector.unusedInputs(accountIdx),
+            |> WalletInfoCollector.spendableInputs(accountIdx),
           ~destinations,
           ~satsPerByte,
           ~changeAddress=

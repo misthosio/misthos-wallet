@@ -24,13 +24,16 @@ type addressInfo = {
   custodians: UserId.set,
   address: string,
   nCoSigners: int,
-  balance: BTC.t,
   addressStatus,
 };
 
 type t = {
   network: Network.t,
   unused: AccountIndex.map(Network.inputSet),
+  spendable: AccountIndex.map(Map.String.t(Network.inputSet)),
+  oldSpendable: AccountIndex.map(Map.String.t(Network.inputSet)),
+  unlocked: AccountIndex.map(Network.inputSet),
+  temporarilyInaccessible: AccountIndex.map(Map.String.t(Network.inputSet)),
   reserved: Network.inputMap(ProcessId.set),
   keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
@@ -43,6 +46,12 @@ type t = {
 
 let addressInfos = (accountIdx, {addressInfos}) =>
   addressInfos |. Map.get(accountIdx) |> Js.Option.getWithDefault([]);
+
+let addressInfoFor = (accountIdx, findAddress, collector) =>
+  collector
+  |> addressInfos(accountIdx)
+  |. List.getByU((. {address}) => address == findAddress)
+  |> Js.Option.getExn;
 
 let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
   let inputs =
@@ -89,11 +98,14 @@ let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 
 let accountKeyChains = ({keyChains}) => keyChains;
 
-let unusedInputs = (accountIdx, {unused, reserved}) =>
+let spendableInputs = (accountIdx, {unused, reserved}) =>
   Set.diff(
     unused |. Map.getExn(accountIdx),
     reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
   );
+
+let unlockedInputs = (accountIdx, {unlocked}) =>
+  unlocked |. Map.getExn(accountIdx);
 
 let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) => {
   let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
@@ -103,7 +115,7 @@ let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) => {
   let currentKeyChainIdents =
     keyChains |> AccountKeyChain.Collection.withCustodians(custodians);
   collector
-  |> unusedInputs(accountIdx)
+  |> spendableInputs(accountIdx)
   |. Belt.Set.keepU((. i: Network.txInput) =>
        i.coordinates
        |> Coordinates.keyChainIdent
@@ -148,6 +160,10 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
 let make = () => {
   network: Regtest,
   unused: AccountIndex.makeMap(),
+  spendable: AccountIndex.makeMap(),
+  oldSpendable: AccountIndex.makeMap(),
+  unlocked: AccountIndex.makeMap(),
+  temporarilyInaccessible: AccountIndex.makeMap(),
   reserved: Network.inputMap(),
   keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
@@ -322,7 +338,6 @@ let apply = (event, state) =>
                        nCoSigners,
                      ),
                    addressType: Income,
-                   balance: BTC.zero,
                    nCoSigners,
                    custodians,
                  },
@@ -333,6 +348,8 @@ let apply = (event, state) =>
     };
   | IncomeDetected({address, txId, txOutputN, amount, coordinates}) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;
+    let addressStatus =
+      (state |> addressInfoFor(accountIdx, address)).addressStatus;
     let keyChain =
       state.keyChains
       |> AccountKeyChain.Collection.lookup(
