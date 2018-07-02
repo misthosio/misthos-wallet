@@ -175,7 +175,7 @@ let bitcoinNetwork =
   | Testnet => Testnet.network
   | Mainnet => Mainnet.network;
 
-let testnetIncomeAddress = "2NFVbpmvyZPQ3Bb4KZkB9v7NuHfhdFMa4Ci";
+let testnetIncomeAddress = "2NBgC6cseDPmBtxjgPGugHP1PjVtQJyfbpd";
 
 let incomeAddress =
   fun
