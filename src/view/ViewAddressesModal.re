@@ -13,28 +13,36 @@ let statusToString =
 
 let component = ReasonReact.statelessComponent("AddressesModal");
 
-let renderExpandedInfo = expandedInfo => <div> ("expanded" |> text) </div>;
+let renderExpandedInfo = _expandedInfo => <div> ("expanded" |> text) </div>;
+
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
   render: _ => {
     let infos =
       viewData.infos
-      |. List.mapU((. info: ViewData.addressInfo) => {
-           let expandedInfo = viewData.addressDetails(info);
-           <li>
-             <div>
-               (
-                 info.address
-                 ++ " "
-                 ++ (info.balance |> BTC.format)
-                 ++ " "
-                 ++ statusToString(info.addressStatus)
-                 |> text
-               )
-             </div>
-             (expandedInfo |> renderExpandedInfo)
-           </li>;
-         })
+      |. List.keepMapU((. info: ViewData.addressInfo) =>
+           if (info.addressType == WalletInfoCollector.Income
+               || info.balance
+               |> BTC.gt(BTC.zero)) {
+             let expandedInfo = viewData.addressDetails(info);
+             <li>
+               <div>
+                 (
+                   info.address
+                   ++ " "
+                   ++ (info.balance |> BTC.format)
+                   ++ " "
+                   ++ statusToString(info.addressStatus)
+                   |> text
+                 )
+               </div>
+               (expandedInfo |> renderExpandedInfo)
+             </li>
+             |. Some;
+           } else {
+             None;
+           }
+         )
       |> List.toArray
       |> ReasonReact.array;
     <div> <ul> infos </ul> </div>;
