@@ -37,7 +37,7 @@ function collidingProcesses(processId, param) {
 }
 
 function totalUnusedBTC(accountIdx, param) {
-  return Belt_Set.reduceU(Belt_Map.getExn(param[/* unused */1], accountIdx), BTC.zero, (function (res, param) {
+  return Belt_Set.reduceU(Belt_Map.getWithDefault(param[/* unused */1], accountIdx, Network.inputSet(/* () */0)), BTC.zero, (function (res, param) {
                 return res.plus(param[/* value */3]);
               }));
 }
@@ -66,21 +66,19 @@ function accountKeyChains(param) {
 }
 
 function currentSpendableInputs(accountIdx, param) {
-  var match = Belt_Map.get(param[/* spendable */2], accountIdx);
-  return Belt_Set.diff(match ? Belt_MapString.reduceU(match[0], Network.inputSet(/* () */0), (function (res, _, inputs) {
-                      return Belt_Set.mergeMany(res, Belt_List.toArray(inputs));
-                    })) : Network.inputSet(/* () */0), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */7])));
+  return Belt_Set.diff(Belt_MapString.reduceU(Belt_Map.getWithDefault(param[/* spendable */2], accountIdx, Belt_MapString.empty), Network.inputSet(/* () */0), (function (res, _, inputs) {
+                    return Belt_Set.mergeMany(res, Belt_List.toArray(inputs));
+                  })), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */7])));
 }
 
 function unlockedInputs(accountIdx, param) {
-  return Belt_Map.getExn(param[/* unlocked */4], accountIdx);
+  return Belt_Map.getWithDefault(param[/* unlocked */4], accountIdx, Network.inputSet(/* () */0));
 }
 
 function oldSpendableInputs(accountIdx, param) {
-  var match = Belt_Map.get(param[/* oldSpendable */3], accountIdx);
-  return Belt_Set.diff(match ? Belt_MapString.reduceU(match[0], Network.inputSet(/* () */0), (function (res, _, inputs) {
-                      return Belt_Set.mergeMany(res, Belt_List.toArray(inputs));
-                    })) : Network.inputSet(/* () */0), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */7])));
+  return Belt_Set.diff(Belt_MapString.reduceU(Belt_Map.getWithDefault(param[/* oldSpendable */3], accountIdx, Belt_MapString.empty), Network.inputSet(/* () */0), (function (res, _, inputs) {
+                    return Belt_Set.mergeMany(res, Belt_List.toArray(inputs));
+                  })), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(param[/* reserved */7])));
 }
 
 function network(param) {
@@ -149,7 +147,7 @@ function removeAddressFrom(accountIdx, address, status, state) {
   var exit = 0;
   switch (status) {
     case 0 : 
-        var accountSpendable = Js_option.getWithDefault(Belt_MapString.empty, Belt_Map.get(state[/* spendable */2], accountIdx));
+        var accountSpendable = Belt_Map.getWithDefault(state[/* spendable */2], accountIdx, Belt_MapString.empty);
         var inputs = Belt_MapString.get(accountSpendable, address);
         return /* tuple */[
                 inputs,
@@ -175,7 +173,7 @@ function removeAddressFrom(accountIdx, address, status, state) {
         exit = 1;
         break;
     case 3 : 
-        var accountTemporarilyInaccessible = Js_option.getWithDefault(Belt_MapString.empty, Belt_Map.get(state[/* temporarilyInaccessible */5], accountIdx));
+        var accountTemporarilyInaccessible = Belt_Map.getWithDefault(state[/* temporarilyInaccessible */5], accountIdx, Belt_MapString.empty);
         var inputs$1 = Belt_MapString.get(accountTemporarilyInaccessible, address);
         return /* tuple */[
                 inputs$1,
@@ -197,7 +195,7 @@ function removeAddressFrom(accountIdx, address, status, state) {
                 ]
               ];
     case 4 : 
-        var accountInaccessible = Js_option.getWithDefault(Belt_MapString.empty, Belt_Map.get(state[/* temporarilyInaccessible */5], accountIdx));
+        var accountInaccessible = Belt_Map.getWithDefault(state[/* temporarilyInaccessible */5], accountIdx, Belt_MapString.empty);
         var inputs$2 = Belt_MapString.get(accountInaccessible, address);
         return /* tuple */[
                 inputs$2,
@@ -221,7 +219,7 @@ function removeAddressFrom(accountIdx, address, status, state) {
     
   }
   if (exit === 1) {
-    var accountOldSpendable = Js_option.getWithDefault(Belt_MapString.empty, Belt_Map.get(state[/* oldSpendable */3], accountIdx));
+    var accountOldSpendable = Belt_Map.getWithDefault(state[/* oldSpendable */3], accountIdx, Belt_MapString.empty);
     var inputs$3 = Belt_MapString.get(accountOldSpendable, address);
     return /* tuple */[
             inputs$3,
@@ -265,7 +263,7 @@ function determinAddressStatus(currentCustodians, addressCustodians, nCoSigners)
 }
 
 function updateAddressInfos(accountIdx, currentCustodians, state) {
-  var custodians = Js_option.getWithDefault(PrimitiveTypes.UserId[/* emptySet */9], Belt_Map.get(currentCustodians, accountIdx));
+  var custodians = Belt_Map.getWithDefault(currentCustodians, accountIdx, PrimitiveTypes.UserId[/* emptySet */9]);
   var updates = [/* [] */0];
   var state_000 = /* network */state[/* network */0];
   var state_001 = /* unused */state[/* unused */1];

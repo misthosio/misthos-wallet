@@ -72,7 +72,7 @@ let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
 
 let totalUnusedBTC = (accountIdx, {unused}) =>
   unused
-  |. Map.getExn(accountIdx)
+  |. Map.getWithDefault(accountIdx, Network.inputSet())
   |. Set.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
        res |> BTC.plus(value)
      );
@@ -101,34 +101,24 @@ let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 let accountKeyChains = ({keyChains}) => keyChains;
 
 let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
-  (
-    switch (spendable |. Map.get(accountIdx)) {
-    | None => Network.inputSet()
-    | Some(map) =>
-      map
-      |. Map.String.reduceU(Network.inputSet(), (. res, _, inputs) =>
-           res |. Set.mergeMany(inputs |> List.toArray)
-         )
-    }
-  )
+  spendable
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.reduceU(Network.inputSet(), (. res, _, inputs) =>
+       res |. Set.mergeMany(inputs |> List.toArray)
+     )
   |. Set.diff(
        reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
      );
 
 let unlockedInputs = (accountIdx, {unlocked}) =>
-  unlocked |. Map.getExn(accountIdx);
+  unlocked |. Map.getWithDefault(accountIdx, Network.inputSet());
 
 let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
-  (
-    switch (oldSpendable |. Map.get(accountIdx)) {
-    | None => Network.inputSet()
-    | Some(map) =>
-      map
-      |. Map.String.reduceU(Network.inputSet(), (. res, _, inputs) =>
-           res |. Set.mergeMany(inputs |> List.toArray)
-         )
-    }
-  )
+  oldSpendable
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.reduceU(Network.inputSet(), (. res, _, inputs) =>
+       res |. Set.mergeMany(inputs |> List.toArray)
+     )
   |. Set.diff(
        reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
      );
@@ -204,9 +194,7 @@ let removeAddressFrom = (accountIdx, address, status, state) =>
   switch (status) {
   | Accessible =>
     let accountSpendable =
-      state.spendable
-      |. Map.get(accountIdx)
-      |> Js.Option.getWithDefault(Map.String.empty);
+      state.spendable |. Map.getWithDefault(accountIdx, Map.String.empty);
     let inputs = accountSpendable |. Map.String.get(address);
     (
       inputs,
@@ -223,9 +211,7 @@ let removeAddressFrom = (accountIdx, address, status, state) =>
   | AtRisk
   | OutdatedCustodians =>
     let accountOldSpendable =
-      state.oldSpendable
-      |. Map.get(accountIdx)
-      |> Js.Option.getWithDefault(Map.String.empty);
+      state.oldSpendable |. Map.getWithDefault(accountIdx, Map.String.empty);
 
     let inputs = accountOldSpendable |. Map.String.get(address);
     (
@@ -243,8 +229,7 @@ let removeAddressFrom = (accountIdx, address, status, state) =>
   | TemporarilyInaccessible =>
     let accountTemporarilyInaccessible =
       state.temporarilyInaccessible
-      |. Map.get(accountIdx)
-      |> Js.Option.getWithDefault(Map.String.empty);
+      |. Map.getWithDefault(accountIdx, Map.String.empty);
     let inputs = accountTemporarilyInaccessible |. Map.String.get(address);
     (
       inputs,
@@ -261,8 +246,7 @@ let removeAddressFrom = (accountIdx, address, status, state) =>
   | Inaccessible =>
     let accountInaccessible =
       state.temporarilyInaccessible
-      |. Map.get(accountIdx)
-      |> Js.Option.getWithDefault(Map.String.empty);
+      |. Map.getWithDefault(accountIdx, Map.String.empty);
     let inputs = accountInaccessible |. Map.String.get(address);
     (
       inputs,
@@ -363,9 +347,7 @@ let determinAddressStatus = (currentCustodians, addressCustodians, nCoSigners) =
   };
 let updateAddressInfos = (accountIdx, currentCustodians, state) => {
   let custodians =
-    currentCustodians
-    |. Map.get(accountIdx)
-    |> Js.Option.getWithDefault(UserId.emptySet);
+    currentCustodians |. Map.getWithDefault(accountIdx, UserId.emptySet);
   let updates = ref([]);
   let state = {
     ...state,
