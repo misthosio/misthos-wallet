@@ -4,9 +4,11 @@
 var BTC = require("../application/wallet/BTC.bs.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 
 function statusToString(param) {
   switch (param) {
@@ -24,10 +26,26 @@ function statusToString(param) {
   }
 }
 
+function addressTypeToString(param) {
+  if (param) {
+    return "Change";
+  } else {
+    return "Income";
+  }
+}
+
 var component = ReasonReact.statelessComponent("AddressesModal");
 
-function renderExpandedInfo() {
-  return React.createElement("div", undefined, ViewCommon.text("expanded"));
+function renderExpandedInfo(info) {
+  var __x = String(info[/* nCoSigners */1]) + ("-" + (String(info[/* nCustodians */2]) + "; ["));
+  var __x$1 = Belt_Set.reduceU(info[/* custodians */0], __x, (function (res, c) {
+          return res + (PrimitiveTypes.UserId[/* toString */0](c) + ", ");
+        })) + "] [";
+  return React.createElement("div", undefined, ViewCommon.text(Belt_List.reduceU(info[/* currentUtxos */6], __x$1, (function (res, input) {
+                        return res + (BTC.format(input[/* value */3]) + ", ");
+                      })) + ("] " + (
+                    info[/* addressType */3] ? "Change" : "Income"
+                  ))));
 }
 
 function make(viewData, _) {
@@ -70,6 +88,7 @@ exports.text = text;
 exports.extractString = extractString;
 exports.ViewData = ViewData;
 exports.statusToString = statusToString;
+exports.addressTypeToString = addressTypeToString;
 exports.component = component;
 exports.renderExpandedInfo = renderExpandedInfo;
 exports.make = make;

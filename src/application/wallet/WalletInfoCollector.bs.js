@@ -28,10 +28,9 @@ function addressInfoFor(accountIdx, findAddress, collector) {
 
 function collidingProcesses(processId, param) {
   var reserved = param[/* reserved */7];
-  var inputs = Js_option.getWithDefault(/* array */[], Utils.mapOption((function (param) {
-              return param[/* usedInputs */1];
-            }), Belt_Map.get(param[/* payoutProcesses */9], processId)));
-  return Belt_Set.remove(Belt_Array.reduceU(inputs, PrimitiveTypes.ProcessId[/* emptySet */9], (function (res, input) {
+  return Belt_Set.remove(Belt_Array.reduceU(Js_option.getWithDefault(/* array */[], Utils.mapOption((function (param) {
+                            return param[/* usedInputs */1];
+                          }), Belt_Map.get(param[/* payoutProcesses */9], processId))), PrimitiveTypes.ProcessId[/* emptySet */9], (function (res, input) {
                     return Belt_Set.union(Belt_Map.getWithDefault(reserved, input, PrimitiveTypes.ProcessId[/* emptySet */9]), res);
                   })), processId);
 }
@@ -61,6 +60,28 @@ function exposedCoordinates(param) {
 
 function accountKeyChains(param) {
   return param[/* keyChains */8];
+}
+
+function inputsFor(accountIdx, info, state) {
+  var match = info[/* addressStatus */4];
+  var tmp;
+  switch (match) {
+    case 0 : 
+        tmp = state[/* spendable */2];
+        break;
+    case 1 : 
+    case 2 : 
+        tmp = state[/* oldSpendable */3];
+        break;
+    case 3 : 
+        tmp = state[/* temporarilyInaccessible */5];
+        break;
+    case 4 : 
+        tmp = state[/* inaccessible */6];
+        break;
+    
+  }
+  return Belt_MapString.getWithDefault(Belt_Map.getWithDefault(tmp, accountIdx, Belt_MapString.empty), info[/* address */2], /* [] */0);
 }
 
 function currentSpendableInputs(accountIdx, param) {
@@ -1030,6 +1051,7 @@ exports.currentKeyChain = currentKeyChain;
 exports.currentSpendableInputs = currentSpendableInputs;
 exports.oldSpendableInputs = oldSpendableInputs;
 exports.unlockedInputs = unlockedInputs;
+exports.inputsFor = inputsFor;
 exports.nextChangeAddress = nextChangeAddress;
 exports.fakeChangeAddress = fakeChangeAddress;
 /* BTC Not a pure module */

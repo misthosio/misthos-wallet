@@ -56,20 +56,17 @@ let addressInfoFor = (accountIdx, findAddress, collector) =>
   |. List.getByU((. {address}) => address == findAddress)
   |> Js.Option.getExn;
 
-let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
-  let inputs =
-    payoutProcesses
-    |. Map.get(processId)
-    |> Utils.mapOption(({usedInputs}: PayoutTransaction.t) => usedInputs)
-    |> Js.Option.getWithDefault([||]);
-  inputs
+let collidingProcesses = (processId, {reserved, payoutProcesses}) =>
+  payoutProcesses
+  |. Map.get(processId)
+  |> Utils.mapOption(({usedInputs}: PayoutTransaction.t) => usedInputs)
+  |> Js.Option.getWithDefault([||])
   |. Array.reduceU(ProcessId.emptySet, (. res, input) =>
        reserved
        |. Map.getWithDefault(input, ProcessId.emptySet)
        |. Set.union(res)
      )
   |. Set.remove(processId);
-};
 
 let totalUnusedBTC = (accountIdx, {totalUnusedBalance}) =>
   totalUnusedBalance |. Map.getWithDefault(accountIdx, BTC.zero);
@@ -96,6 +93,19 @@ let currentKeyChain = (accountIdx, userId, {keyChains} as state) => {
 let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 
 let accountKeyChains = ({keyChains}) => keyChains;
+
+let inputsFor = (accountIdx, info, state) =>
+  (
+    switch (info.addressStatus) {
+    | Accessible => state.spendable
+    | AtRisk
+    | OutdatedCustodians => state.oldSpendable
+    | TemporarilyInaccessible => state.temporarilyInaccessible
+    | Inaccessible => state.inaccessible
+    }
+  )
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.getWithDefault(info.address, []);
 
 let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
   spendable

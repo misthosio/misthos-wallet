@@ -48,8 +48,9 @@ function lastResponse(param) {
 }
 
 function fromViewModelState(param) {
+  var walletInfoCollector = param[/* walletInfoCollector */9];
   return /* record */[
-          /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */9]),
+          /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector),
           /* addressDetails */(function (addressInfos) {
               return /* record */[
                       /* custodians */addressInfos[/* custodians */1],
@@ -58,7 +59,7 @@ function fromViewModelState(param) {
                       /* addressType */addressInfos[/* addressType */0],
                       /* addressStatus */addressInfos[/* addressStatus */4],
                       /* transferedIncome : [] */0,
-                      /* currentUtxos : [] */0
+                      /* currentUtxos */WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfos, walletInfoCollector)
                     ];
             })
         ];
