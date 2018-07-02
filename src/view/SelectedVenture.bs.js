@@ -99,7 +99,7 @@ function make(viewData, _) {
                                         ])
                                   }, ReasonReact.element(/* None */0, /* None */0, MFabButton.make(/* Aqua */0, /* Venture */Block.__(0, [
                                               viewData[/* ventureId */0],
-                                              /* Receive */4
+                                              /* Receive */5
                                             ]), /* array */[ViewCommon.text("RECEIVE")])), React.createElement("div", {
                                         className: Css.style(/* :: */[
                                               Css.width(Css.px(Theme.space(8))),

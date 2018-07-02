@@ -29,6 +29,7 @@ var ViewIncomeModal = require("./ViewIncomeModal.bs.js");
 var ViewPayoutModal = require("./ViewPayoutModal.bs.js");
 var ViewPartnerModal = require("./ViewPartnerModal.bs.js");
 var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
+var ViewAddressesModal = require("./ViewAddressesModal.bs.js");
 var ManagePartnersModal = require("./ManagePartnersModal.bs.js");
 
 var component = ReasonReact.statelessComponent("App");
@@ -106,6 +107,17 @@ function make(session, updateSession, _) {
           case 3 : 
               return /* None */0;
           case 4 : 
+              if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
+                return /* None */0;
+              } else {
+                return /* Some */[/* tuple */[
+                          ReasonReact.element(/* None */0, /* None */0, ViewAddressesModal.make(ViewModel.viewAddressesModal(selectedVenture[1]), /* array */[])),
+                          (function (param) {
+                              return onCloseModal(selected, param);
+                            })
+                        ]];
+              }
+          case 5 : 
               if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                 return /* None */0;
               } else {

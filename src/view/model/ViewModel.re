@@ -34,6 +34,16 @@ let captureResponse = (correlationId, response, state) => {
 
 let lastResponse = ({lastResponse}) => lastResponse;
 
+module AddressesView = {
+  type addressStatus = WalletInfoCollector.addressStatus;
+  type addressInfo = WalletInfoCollector.addressInfo;
+  type t = list(addressInfo);
+  let fromViewModelState = ({walletInfoCollector}) =>
+    walletInfoCollector
+    |> WalletInfoCollector.addressInfos(AccountIndex.default);
+};
+let viewAddressesModal = AddressesView.fromViewModelState;
+
 module ManagePartnersView = {
   type partner = PartnersCollector.partner;
   type t = {
