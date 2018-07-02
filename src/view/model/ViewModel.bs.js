@@ -9,6 +9,7 @@ var Utils = require("../../utils/Utils.bs.js");
 var Policy = require("../../application/Policy.bs.js");
 var Router = require("../Router.bs.js");
 var Network = require("../../application/wallet/Network.bs.js");
+var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../application/events/EventLog.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
@@ -47,7 +48,20 @@ function lastResponse(param) {
 }
 
 function fromViewModelState(param) {
-  return WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */9]);
+  return /* record */[
+          /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], param[/* walletInfoCollector */9]),
+          /* addressDetails */(function (addressInfos) {
+              return /* record */[
+                      /* custodians */addressInfos[/* custodians */1],
+                      /* nCoSigners */addressInfos[/* nCoSigners */3],
+                      /* nCustodians */Belt_Set.size(addressInfos[/* custodians */1]),
+                      /* addressType */addressInfos[/* addressType */0],
+                      /* addressStatus */addressInfos[/* addressStatus */4],
+                      /* transferedIncome : [] */0,
+                      /* currentUtxos : [] */0
+                    ];
+            })
+        ];
 }
 
 var AddressesView = /* module */[/* fromViewModelState */fromViewModelState];
