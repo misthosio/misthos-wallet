@@ -42,9 +42,13 @@ function make(viewData, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var infos = Belt_List.toArray(Belt_List.mapU(viewData[/* infos */0], (function (info) {
-                          var expandedInfo = Curry._1(viewData[/* addressDetails */1], info);
-                          return React.createElement("li", undefined, React.createElement("div", undefined, ViewCommon.text(info[/* address */2] + (" " + (BTC.format(info[/* balance */5]) + (" " + statusToString(info[/* addressStatus */4])))))), renderExpandedInfo(expandedInfo));
+              var infos = Belt_List.toArray(Belt_List.keepMapU(viewData[/* infos */0], (function (info) {
+                          if (info[/* addressType */0] === /* Income */0 || info[/* balance */5].gt(BTC.zero)) {
+                            var expandedInfo = Curry._1(viewData[/* addressDetails */1], info);
+                            return /* Some */[React.createElement("li", undefined, React.createElement("div", undefined, ViewCommon.text(info[/* address */2] + (" " + (BTC.format(info[/* balance */5]) + (" " + statusToString(info[/* addressStatus */4])))))), renderExpandedInfo(expandedInfo))];
+                          } else {
+                            return /* None */0;
+                          }
                         })));
               return React.createElement("div", undefined, React.createElement("ul", undefined, infos));
             }),
