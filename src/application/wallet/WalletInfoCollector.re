@@ -512,18 +512,91 @@ let apply = (event, state) =>
           |. List.map(fst)
           |> List.toArray
           |> Set.mergeMany(UserId.emptySet);
-        state
-        |> addTxInput(
-             determinAddressStatus(
-               state.currentCustodians |. Map.getExn(accountIdx),
-               custodians,
-               changeInput.nCoSigners,
-             ),
-             accountIdx,
-             changeInput,
-           );
+        let addressStatus =
+          determinAddressStatus(
+            state.currentCustodians |. Map.getExn(accountIdx),
+            custodians,
+            changeInput.nCoSigners,
+          );
+        let state = {
+          ...state,
+          addressInfos:
+            state.addressInfos
+            |. Map.updateU(
+                 accountIdx,
+                 (. infos) => {
+                   let infos = infos |> Js.Option.getWithDefault([]);
+                   Some([
+                     {
+                       address: changeInput.address,
+                       addressStatus,
+                       addressType: Change,
+                       nCoSigners: changeInput.nCoSigners,
+                       custodians,
+                     },
+                     ...infos,
+                   ]);
+                 },
+               ),
+        };
+        state |> addTxInput(addressStatus, accountIdx, changeInput);
       | None => state
       };
+    let removeInputFromUtxoMap =
+        (accountIdx, input: Network.txInput, inputMap) =>
+      inputMap
+      |. Map.updateU(
+           accountIdx,
+           (. map) => {
+             let map = map |> Js.Option.getWithDefault(Map.String.empty);
+             map
+             |. Map.String.updateU(
+                  input.address,
+                  (. list_) => {
+                    let list_ = list_ |> Js.Option.getWithDefault([]);
+                    let res =
+                      list_
+                      |. List.keepU((. in_) =>
+                           Network.TxInputCmp.compareInputs(. in_, input) != 0
+                         );
+                    res |. List.length > 0 ? Some(res) : None;
+                  },
+                )
+             |. Some;
+           },
+         );
+    let removeInput = (accountIdx, input: Network.txInput, state) => {
+      let info = state |> addressInfoFor(accountIdx, input.address);
+      switch (info.addressStatus) {
+      | Accessible => {
+          ...state,
+          spendable:
+            state.spendable |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      | AtRisk
+      | OutdatedCustodians => {
+          ...state,
+          oldSpendable:
+            state.oldSpendable |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      | TemporarilyInaccessible => {
+          ...state,
+          temporarilyInaccessible:
+            state.temporarilyInaccessible
+            |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      | Inaccessible => {
+          ...state,
+          inaccessible:
+            state.inaccessible |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      };
+    };
+    let state =
+      payoutTx.usedInputs
+      |. Array.reduceU(state, (. state, input: Network.txInput) =>
+           state |> removeInput(accountIdx, input)
+         );
     {
       ...state,
       reserved,

@@ -44,7 +44,7 @@ function decode(raw) {
   }
 }
 
-function cmp(param, param$1) {
+function compareInputs(param, param$1) {
   var c = Caml_primitive.caml_string_compare(param[/* txId */0], param$1[/* txId */0]);
   if (c !== 0) {
     return c;
@@ -53,14 +53,21 @@ function cmp(param, param$1) {
   }
 }
 
-var TxInputCmp = Belt_Id.MakeComparableU(/* module */[/* cmp */cmp]);
+var include = Belt_Id.MakeComparableU(/* module */[/* cmp */compareInputs]);
+
+var cmp = include[0];
+
+var TxInputCmp = /* module */[
+  /* compareInputs */compareInputs,
+  /* cmp */cmp
+];
 
 function inputSet() {
-  return Belt_Set.make(TxInputCmp);
+  return Belt_Set.make([cmp]);
 }
 
 function inputMap() {
-  return Belt_Map.make(TxInputCmp);
+  return Belt_Map.make([cmp]);
 }
 
 function encodeInput(input) {
@@ -355,4 +362,4 @@ exports.bitcoinNetwork = bitcoinNetwork;
 exports.testnetIncomeAddress = testnetIncomeAddress;
 exports.incomeAddress = incomeAddress;
 exports.exampleOfLongestAddress = exampleOfLongestAddress;
-/* TxInputCmp Not a pure module */
+/* include Not a pure module */

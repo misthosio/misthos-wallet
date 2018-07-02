@@ -11,8 +11,9 @@ var WalletTypes = require("../../../src/application/wallet/WalletTypes.bs.js");
 var PayoutTransaction = require("../../../src/application/wallet/PayoutTransaction.bs.js");
 
 describe("build", (function () {
+        var arg = [Network.TxInputCmp[1]];
         var inputs = (function (param) {
-              return Belt_Set.fromArray(param, Network.TxInputCmp);
+              return Belt_Set.fromArray(param, arg);
             })(/* array */[
               /* record */[
                 /* txId */"d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
