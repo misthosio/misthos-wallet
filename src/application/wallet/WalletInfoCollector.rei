@@ -45,11 +45,10 @@ let currentKeyChainIdent:
 
 let currentKeyChain: (accountIdx, userId, t) => AccountKeyChain.t;
 
-let nonReservedOldInputs: (accountIdx, userId, t) => Network.inputSet;
+let currentSpendableInputs: (accountIdx, t) => Network.inputSet;
+let oldSpendableInputs: (accountIdx, t) => Network.inputSet;
 
 let unlockedInputs: (accountIdx, t) => Network.inputSet;
-
-let spendableInputs: (accountIdx, t) => Network.inputSet;
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
 let fakeChangeAddress: (accountIdx, userId, t) => Address.t;

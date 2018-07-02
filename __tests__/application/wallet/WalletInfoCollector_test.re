@@ -33,32 +33,29 @@ let () = {
           |> withAccountKeyChainIdentified
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
+          |> withIncomeDetected(~incomeAddress=0)
           |> withPartner(user2, ~supporters=[user1])
           |> withCustodian(user2, ~supporters=[user1, user2])
           |> withCustodianKeyChain(user2)
           |> withAccountKeyChainIdentified
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
+          |> withIncomeDetected(~incomeAddress=1)
+          |> withCustodianRemoved(user2, ~supporters=[user1])
           |> withPartnerRemoved(user2, ~supporters=[user1])
           |> withCustodianKeyChain(~keyChainIdx=1, user1)
           |> withAccountKeyChainIdentified
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
-          |> withIncomeDetected(~incomeAddress=0)
-          |> withIncomeDetected(~incomeAddress=1)
           |> withIncomeDetected(~incomeAddress=2)
         );
       },
-      (sessions, log) => {
-        let (user1, _user2) = G.twoUserSessionsFromArray(sessions);
+      (_sessions, log) => {
         let info = log |> constructState;
         test("1 input is old", () =>
           expect(
             info
-            |> WalletInfoCollector.nonReservedOldInputs(
-                 AccountIndex.default,
-                 user1.userId,
-               )
+            |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default)
             |> Set.size,
           )
           |> toEqual(1)

@@ -93,13 +93,10 @@ module CreatePayoutView = {
     let network = walletInfoCollector |> WalletInfoCollector.network;
     let allInputs =
       walletInfoCollector
-      |> WalletInfoCollector.spendableInputs(AccountIndex.default);
+      |> WalletInfoCollector.currentSpendableInputs(AccountIndex.default);
     let mandatoryInputs =
       walletInfoCollector
-      |> WalletInfoCollector.nonReservedOldInputs(
-           AccountIndex.default,
-           localUser,
-         );
+      |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default);
     let changeAddress =
       walletInfoCollector
       |> WalletInfoCollector.fakeChangeAddress(
