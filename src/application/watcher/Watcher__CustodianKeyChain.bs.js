@@ -210,7 +210,7 @@ function make(param, param$1, log) {
           /* pendingEvent : None */0,
           /* selfRemoved */false,
           /* pubKeyPresent */false,
-          /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* first */8]
+          /* nextKeyChainIdx */WalletTypes.CustodianKeyChainIndex[/* first */10]
         ]];
       self[env] = env$1;
       return self;

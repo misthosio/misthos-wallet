@@ -71,8 +71,10 @@ let preparePayoutTx =
         PayoutTransaction.build(
           ~mandatoryInputs=
             walletInfoCollector
-            |> WalletInfoCollector.nonReservedOldInputs(accountIdx, userId),
-          ~allInputs=walletInfoCollector |> WalletInfoCollector.unusedInputs,
+            |> WalletInfoCollector.oldSpendableInputs(accountIdx),
+          ~allInputs=
+            walletInfoCollector
+            |> WalletInfoCollector.currentSpendableInputs(accountIdx),
           ~destinations,
           ~satsPerByte,
           ~changeAddress=

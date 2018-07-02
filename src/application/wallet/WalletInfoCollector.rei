@@ -2,9 +2,29 @@ open PrimitiveTypes;
 
 open WalletTypes;
 
+type addressStatus =
+  | Accessible
+  | AtRisk
+  | OutdatedCustodians
+  | TemporarilyInaccessible
+  | Inaccessible;
+type addressType =
+  | Income
+  | Change;
+
+type addressInfo = {
+  addressType,
+  custodians: UserId.set,
+  address: string,
+  nCoSigners: int,
+  addressStatus,
+};
+
 type t;
 
 let make: unit => t;
+
+let addressInfos: (accountIdx, t) => list(addressInfo);
 
 let collidingProcesses: (processId, t) => ProcessId.set;
 
@@ -16,7 +36,7 @@ let network: t => Network.t;
 
 let apply: (Event.t, t) => t;
 
-let totalUnusedBTC: t => BTC.t;
+let totalUnusedBTC: (accountIdx, t) => BTC.t;
 
 let totalReservedBTC: t => BTC.t;
 
@@ -25,9 +45,10 @@ let currentKeyChainIdent:
 
 let currentKeyChain: (accountIdx, userId, t) => AccountKeyChain.t;
 
-let nonReservedOldInputs: (accountIdx, userId, t) => Network.inputSet;
+let currentSpendableInputs: (accountIdx, t) => Network.inputSet;
+let oldSpendableInputs: (accountIdx, t) => Network.inputSet;
 
-let unusedInputs: t => Network.inputSet;
+let unlockedInputs: (accountIdx, t) => Network.inputSet;
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
 let fakeChangeAddress: (accountIdx, userId, t) => Address.t;

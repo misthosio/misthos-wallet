@@ -56,11 +56,11 @@ function next(coSigner, usedCoordinates, chainIdx, param) {
 }
 
 function nextInternal(user, usedCoordinates, accountKeyChain) {
-  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* internalChain */10], accountKeyChain);
+  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* internalChain */12], accountKeyChain);
 }
 
 function nextExternal(user, usedCoordinates, accountKeyChain) {
-  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* externalChain */9], accountKeyChain);
+  return next(user, usedCoordinates, WalletTypes.ChainIndex[/* externalChain */11], accountKeyChain);
 }
 
 function accountIdx(param) {

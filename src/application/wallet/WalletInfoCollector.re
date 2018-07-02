@@ -8,16 +8,52 @@ open Event;
 
 open Address;
 
+type addressStatus =
+  | Accessible
+  | AtRisk
+  | OutdatedCustodians
+  | TemporarilyInaccessible
+  | Inaccessible;
+
+type addressType =
+  | Income
+  | Change;
+
+type addressInfo = {
+  addressType,
+  custodians: UserId.set,
+  address: string,
+  nCoSigners: int,
+  addressStatus,
+};
+
 type t = {
   network: Network.t,
-  unused: Network.inputSet,
+  unused: AccountIndex.map(Network.inputSet),
+  spendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
+  oldSpendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
+  unlocked: AccountIndex.map(Network.inputSet),
+  temporarilyInaccessible:
+    AccountIndex.map(Map.String.t(list(Network.txInput))),
+  inaccessible: AccountIndex.map(Map.String.t(list(Network.txInput))),
   reserved: Network.inputMap(ProcessId.set),
   keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
   activatedKeyChain:
     list((accountIdx, list((userId, AccountKeyChain.Identifier.t)))),
   exposedCoordinates: list(Address.Coordinates.t),
+  addressInfos: AccountIndex.map(list(addressInfo)),
+  currentCustodians: AccountIndex.map(UserId.set),
 };
+
+let addressInfos = (accountIdx, {addressInfos}) =>
+  addressInfos |. Map.get(accountIdx) |> Js.Option.getWithDefault([]);
+
+let addressInfoFor = (accountIdx, findAddress, collector) =>
+  collector
+  |> addressInfos(accountIdx)
+  |. List.getByU((. {address}) => address == findAddress)
+  |> Js.Option.getExn;
 
 let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
   let inputs =
@@ -34,8 +70,9 @@ let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
   |. Set.remove(processId);
 };
 
-let totalUnusedBTC = ({unused}) =>
+let totalUnusedBTC = (accountIdx, {unused}) =>
   unused
+  |. Map.getWithDefault(accountIdx, Network.inputSet())
   |. Set.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
        res |> BTC.plus(value)
      );
@@ -63,27 +100,28 @@ let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 
 let accountKeyChains = ({keyChains}) => keyChains;
 
-let unusedInputs = ({unused, reserved}) =>
-  Set.diff(
-    unused,
-    reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
-  );
-
-let nonReservedOldInputs = (accountIdx, userId, {keyChains} as collector) => {
-  let keyChainIdent = currentKeyChainIdent(accountIdx, userId, collector);
-  let currentKeyChain =
-    keyChains |> AccountKeyChain.Collection.lookup(accountIdx, keyChainIdent);
-  let custodians = currentKeyChain |> AccountKeyChain.custodians;
-  let currentKeyChainIdents =
-    keyChains |> AccountKeyChain.Collection.withCustodians(custodians);
-  collector
-  |. unusedInputs
-  |. Belt.Set.keepU((. i: Network.txInput) =>
-       i.coordinates
-       |> Coordinates.keyChainIdent
-       |> Set.String.has(currentKeyChainIdents) == false
+let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
+  spendable
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.reduceU(Network.inputSet(), (. res, _, inputs) =>
+       res |. Set.mergeMany(inputs |> List.toArray)
+     )
+  |. Set.diff(
+       reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
      );
-};
+
+let unlockedInputs = (accountIdx, {unlocked}) =>
+  unlocked |. Map.getWithDefault(accountIdx, Network.inputSet());
+
+let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
+  oldSpendable
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.reduceU(Network.inputSet(), (. res, _, inputs) =>
+       res |. Set.mergeMany(inputs |> List.toArray)
+     )
+  |. Set.diff(
+       reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
+     );
 
 let network = ({network}) => network;
 
@@ -121,12 +159,19 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
 
 let make = () => {
   network: Regtest,
-  unused: Network.inputSet(),
+  unused: AccountIndex.makeMap(),
+  spendable: AccountIndex.makeMap(),
+  oldSpendable: AccountIndex.makeMap(),
+  unlocked: AccountIndex.makeMap(),
+  temporarilyInaccessible: AccountIndex.makeMap(),
+  inaccessible: AccountIndex.makeMap(),
   reserved: Network.inputMap(),
   keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
   activatedKeyChain: [],
   exposedCoordinates: [],
+  addressInfos: AccountIndex.makeMap(),
+  currentCustodians: AccountIndex.makeMap(),
 };
 
 let removeInputsFromReserved = (processId, inputs, reserved) =>
@@ -145,9 +190,267 @@ let removeInputsFromReserved = (processId, inputs, reserved) =>
           )
      );
 
+let removeAddressFrom = (accountIdx, address, status, state) =>
+  switch (status) {
+  | Accessible =>
+    let accountSpendable =
+      state.spendable |. Map.getWithDefault(accountIdx, Map.String.empty);
+    let inputs = accountSpendable |. Map.String.get(address);
+    (
+      inputs,
+      {
+        ...state,
+        spendable:
+          state.spendable
+          |. Map.set(
+               accountIdx,
+               accountSpendable |. Map.String.remove(address),
+             ),
+      },
+    );
+  | AtRisk
+  | OutdatedCustodians =>
+    let accountOldSpendable =
+      state.oldSpendable |. Map.getWithDefault(accountIdx, Map.String.empty);
+
+    let inputs = accountOldSpendable |. Map.String.get(address);
+    (
+      inputs,
+      {
+        ...state,
+        oldSpendable:
+          state.oldSpendable
+          |. Map.set(
+               accountIdx,
+               accountOldSpendable |. Map.String.remove(address),
+             ),
+      },
+    );
+  | TemporarilyInaccessible =>
+    let accountTemporarilyInaccessible =
+      state.temporarilyInaccessible
+      |. Map.getWithDefault(accountIdx, Map.String.empty);
+    let inputs = accountTemporarilyInaccessible |. Map.String.get(address);
+    (
+      inputs,
+      {
+        ...state,
+        temporarilyInaccessible:
+          state.temporarilyInaccessible
+          |. Map.set(
+               accountIdx,
+               accountTemporarilyInaccessible |. Map.String.remove(address),
+             ),
+      },
+    );
+  | Inaccessible =>
+    let accountInaccessible =
+      state.temporarilyInaccessible
+      |. Map.getWithDefault(accountIdx, Map.String.empty);
+    let inputs = accountInaccessible |. Map.String.get(address);
+    (
+      inputs,
+      {
+        ...state,
+        temporarilyInaccessible:
+          state.temporarilyInaccessible
+          |. Map.set(
+               accountIdx,
+               accountInaccessible |. Map.String.remove(address),
+             ),
+      },
+    );
+  };
+let addInputsTo = (accountIdx, address, status, inputs, state) =>
+  switch (status) {
+  | Accessible => {
+      ...state,
+      spendable:
+        state.spendable
+        |. Map.updateU(
+             accountIdx,
+             (. map) => {
+               let map = map |> Js.Option.getWithDefault(Map.String.empty);
+               map |. Map.String.set(address, inputs) |. Some;
+             },
+           ),
+    }
+  | AtRisk
+  | OutdatedCustodians => {
+      ...state,
+      oldSpendable:
+        state.oldSpendable
+        |. Map.updateU(
+             accountIdx,
+             (. map) => {
+               let map = map |> Js.Option.getWithDefault(Map.String.empty);
+               map |. Map.String.set(address, inputs) |. Some;
+             },
+           ),
+    }
+  | TemporarilyInaccessible => {
+      ...state,
+      temporarilyInaccessible:
+        state.temporarilyInaccessible
+        |. Map.updateU(
+             accountIdx,
+             (. map) => {
+               let map = map |> Js.Option.getWithDefault(Map.String.empty);
+               map |. Map.String.set(address, inputs) |. Some;
+             },
+           ),
+    }
+  | Inaccessible => {
+      ...state,
+      inaccessible:
+        state.inaccessible
+        |. Map.updateU(
+             accountIdx,
+             (. map) => {
+               let map = map |> Js.Option.getWithDefault(Map.String.empty);
+               map |. Map.String.set(address, inputs) |. Some;
+             },
+           ),
+    }
+  };
+let moveTxInputs = (accountIdx, address, oldStatus, newStatus, state) => {
+  let (inputs, state) =
+    removeAddressFrom(accountIdx, address, oldStatus, state);
+  switch (inputs) {
+  | Some(inputs) =>
+    addInputsTo(accountIdx, address, newStatus, inputs, state)
+  | None => state
+  };
+};
+let determinAddressStatus = (currentCustodians, addressCustodians, nCoSigners) =>
+  if (currentCustodians |> Set.eq(addressCustodians)) {
+    Accessible;
+  } else {
+    let intersection = addressCustodians |> Set.intersect(currentCustodians);
+    let nIntersect = intersection |> Set.size;
+    if (nIntersect == 0) {
+      Inaccessible;
+    } else if (nIntersect < nCoSigners) {
+      TemporarilyInaccessible;
+    } else if (intersection |> Set.eq(addressCustodians)) {
+      if (addressCustodians
+          |> Set.size == 1
+          && currentCustodians
+          |> Set.size > 1) {
+        AtRisk;
+      } else {
+        OutdatedCustodians;
+      };
+    } else {
+      AtRisk;
+    };
+  };
+let updateAddressInfos = (accountIdx, currentCustodians, state) => {
+  let custodians =
+    currentCustodians |. Map.getWithDefault(accountIdx, UserId.emptySet);
+  let updates = ref([]);
+  let state = {
+    ...state,
+    addressInfos:
+      state.addressInfos
+      |. Map.updateU(
+           accountIdx,
+           (. infos) => {
+             let infos = infos |> Js.Option.getWithDefault([]);
+             infos
+             |. List.mapU((. info) => {
+                  let newStatus =
+                    determinAddressStatus(
+                      custodians,
+                      info.custodians,
+                      info.nCoSigners,
+                    );
+                  if (newStatus != info.addressStatus) {
+                    updates :=
+                      [
+                        (info.address, newStatus, info.addressStatus),
+                        ...updates^,
+                      ];
+                  };
+                  {...info, addressStatus: newStatus};
+                })
+             |. Some;
+           },
+         ),
+  };
+  updates^
+  |. List.reduceU(state, (. state, (address, newStatus, oldStatus)) =>
+       state |> moveTxInputs(accountIdx, address, newStatus, oldStatus)
+     );
+};
+
+let addInputToUtxoMap = (accountIdx, input: Network.txInput, inputMap) =>
+  inputMap
+  |. Map.updateU(
+       accountIdx,
+       (. map) => {
+         let map = map |> Js.Option.getWithDefault(Map.String.empty);
+         map
+         |. Map.String.updateU(
+              input.address,
+              (. set) => {
+                let set = set |> Js.Option.getWithDefault([]);
+                [input, ...set] |. Some;
+              },
+            )
+         |. Some;
+       },
+     );
+let addTxInput = (addressStatus, accountIdx, input, state) =>
+  switch (addressStatus) {
+  | Accessible => {
+      ...state,
+      spendable: state.spendable |> addInputToUtxoMap(accountIdx, input),
+    }
+  | AtRisk
+  | OutdatedCustodians => {
+      ...state,
+      oldSpendable:
+        state.oldSpendable |> addInputToUtxoMap(accountIdx, input),
+    }
+  | TemporarilyInaccessible => {
+      ...state,
+      temporarilyInaccessible:
+        state.temporarilyInaccessible |> addInputToUtxoMap(accountIdx, input),
+    }
+  | Inaccessible => {
+      ...state,
+      inaccessible:
+        state.inaccessible |> addInputToUtxoMap(accountIdx, input),
+    }
+  };
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
+  | CustodianAccepted({data: {accountIdx, partnerId}}) =>
+    let currentCustodians =
+      state.currentCustodians
+      |. Map.updateU(accountIdx, (. custodians) =>
+           Some(
+             custodians
+             |> Js.Option.getWithDefault(UserId.emptySet)
+             |. Set.add(partnerId),
+           )
+         );
+    {...state, currentCustodians}
+    |> updateAddressInfos(accountIdx, currentCustodians);
+  | CustodianRemovalAccepted({data: {accountIdx, custodianId}}) =>
+    let currentCustodians =
+      state.currentCustodians
+      |. Map.updateU(accountIdx, (. custodians) =>
+           Some(
+             custodians
+             |> Js.Option.getWithDefault(UserId.emptySet)
+             |. Set.remove(custodianId),
+           )
+         );
+    {...state, currentCustodians}
+    |> updateAddressInfos(accountIdx, currentCustodians);
   | AccountCreationAccepted(
       ({data: {accountIdx}}: AccountCreation.Accepted.t),
     ) => {
@@ -174,31 +477,96 @@ let apply = (event, state) =>
            |. List.removeAssoc(accountIdx, AccountIndex.eq),
       ],
     }
-  | IncomeAddressExposed(({address: {coordinates}}: IncomeAddressExposed.t)) => {
+  | IncomeAddressExposed(
+      (
+        {address: {coordinates, displayAddress, nCoSigners}}: IncomeAddressExposed.t
+      ),
+    ) =>
+    let accountIdx = coordinates |> Address.Coordinates.accountIdx;
+    let custodians =
+      (
+        state.keyChains
+        |> AccountKeyChain.Collection.lookup(
+             accountIdx,
+             coordinates |> Address.Coordinates.keyChainIdent,
+           )
+      ).
+        custodianKeyChains
+      |. List.map(fst)
+      |> List.toArray
+      |> Set.mergeMany(UserId.emptySet);
+    {
       ...state,
       exposedCoordinates: [coordinates, ...state.exposedCoordinates],
-    }
+      addressInfos:
+        state.addressInfos
+        |. Map.updateU(
+             accountIdx,
+             (. infos) => {
+               let infos = infos |> Js.Option.getWithDefault([]);
+               Some([
+                 {
+                   address: displayAddress,
+                   addressStatus:
+                     determinAddressStatus(
+                       state.currentCustodians |. Map.getExn(accountIdx),
+                       custodians,
+                       nCoSigners,
+                     ),
+                   addressType: Income,
+                   nCoSigners,
+                   custodians,
+                 },
+                 ...infos,
+               ]);
+             },
+           ),
+    };
   | IncomeDetected({address, txId, txOutputN, amount, coordinates}) =>
+    let accountIdx = coordinates |> Address.Coordinates.accountIdx;
+    let addressStatus =
+      (state |> addressInfoFor(accountIdx, address)).addressStatus;
     let keyChain =
       state.keyChains
       |> AccountKeyChain.Collection.lookup(
-           coordinates |> Address.Coordinates.accountIdx,
+           accountIdx,
            coordinates |> Address.Coordinates.keyChainIdent,
          );
+    let input: Network.txInput = {
+      txId,
+      txOutputN,
+      address,
+      value: amount,
+      coordinates,
+      nCoSigners: keyChain.nCoSigners,
+      nPubKeys: keyChain.custodianKeyChains |> List.length,
+      sequence: keyChain.sequence,
+    };
+    let state = addTxInput(addressStatus, accountIdx, input, state);
     {
       ...state,
       unused:
         state.unused
-        |. Set.add({
-             txId,
-             txOutputN,
-             address,
-             value: amount,
-             coordinates,
-             nCoSigners: keyChain.nCoSigners,
-             nPubKeys: keyChain.custodianKeyChains |> List.length,
-             sequence: keyChain.sequence,
-           }),
+        |. Map.updateU(
+             accountIdx,
+             (. unused) => {
+               let unused =
+                 unused |> Js.Option.getWithDefault(Network.inputSet());
+               Some(
+                 unused
+                 |. Set.add({
+                      txId,
+                      txOutputN,
+                      address,
+                      value: amount,
+                      coordinates,
+                      nCoSigners: keyChain.nCoSigners,
+                      nPubKeys: keyChain.custodianKeyChains |> List.length,
+                      sequence: keyChain.sequence,
+                    }),
+               );
+             },
+           ),
     };
   | PayoutProposed({
       data: {payoutTx: {usedInputs, changeAddress} as payoutTx},
@@ -250,26 +618,144 @@ let apply = (event, state) =>
   | PayoutBroadcast({processId, txId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
+    let accountIdx =
+      (payoutTx.usedInputs |. Array.getExn(0)).coordinates
+      |> Address.Coordinates.accountIdx;
     let reserved =
       removeInputsFromReserved(
         processId,
         payoutTx.usedInputs,
         state.reserved,
       );
+    let state =
+      switch (
+        payoutTx
+        |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
+      ) {
+      | Some(changeInput) =>
+        let custodians =
+          (
+            state.keyChains
+            |> AccountKeyChain.Collection.lookup(
+                 accountIdx,
+                 changeInput.coordinates |> Address.Coordinates.keyChainIdent,
+               )
+          ).
+            custodianKeyChains
+          |. List.map(fst)
+          |> List.toArray
+          |> Set.mergeMany(UserId.emptySet);
+        let addressStatus =
+          determinAddressStatus(
+            state.currentCustodians |. Map.getExn(accountIdx),
+            custodians,
+            changeInput.nCoSigners,
+          );
+        let state = {
+          ...state,
+          addressInfos:
+            state.addressInfos
+            |. Map.updateU(
+                 accountIdx,
+                 (. infos) => {
+                   let infos = infos |> Js.Option.getWithDefault([]);
+                   Some([
+                     {
+                       address: changeInput.address,
+                       addressStatus,
+                       addressType: Change,
+                       nCoSigners: changeInput.nCoSigners,
+                       custodians,
+                     },
+                     ...infos,
+                   ]);
+                 },
+               ),
+        };
+        state |> addTxInput(addressStatus, accountIdx, changeInput);
+      | None => state
+      };
+    let removeInputFromUtxoMap =
+        (accountIdx, input: Network.txInput, inputMap) =>
+      inputMap
+      |. Map.updateU(
+           accountIdx,
+           (. map) => {
+             let map = map |> Js.Option.getWithDefault(Map.String.empty);
+             map
+             |. Map.String.updateU(
+                  input.address,
+                  (. list_) => {
+                    let list_ = list_ |> Js.Option.getWithDefault([]);
+                    let res =
+                      list_
+                      |. List.keepU((. in_) =>
+                           Network.TxInputCmp.compareInputs(. in_, input) != 0
+                         );
+                    res |. List.length > 0 ? Some(res) : None;
+                  },
+                )
+             |. Some;
+           },
+         );
+    let removeInput = (accountIdx, input: Network.txInput, state) => {
+      let info = state |> addressInfoFor(accountIdx, input.address);
+      switch (info.addressStatus) {
+      | Accessible => {
+          ...state,
+          spendable:
+            state.spendable |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      | AtRisk
+      | OutdatedCustodians => {
+          ...state,
+          oldSpendable:
+            state.oldSpendable |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      | TemporarilyInaccessible => {
+          ...state,
+          temporarilyInaccessible:
+            state.temporarilyInaccessible
+            |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      | Inaccessible => {
+          ...state,
+          inaccessible:
+            state.inaccessible |> removeInputFromUtxoMap(accountIdx, input),
+        }
+      };
+    };
+    let state =
+      payoutTx.usedInputs
+      |. Array.reduceU(state, (. state, input: Network.txInput) =>
+           state |> removeInput(accountIdx, input)
+         );
     {
       ...state,
       reserved,
       unused:
-        (
-          switch (
-            payoutTx
-            |> PayoutTransaction.txInputForChangeAddress(~txId, state.network)
-          ) {
-          | Some(input) => state.unused |. Set.add(input)
-          | None => state.unused
-          }
-        )
-        |. Set.removeMany(payoutTx.usedInputs),
+        state.unused
+        |. Map.updateU(
+             accountIdx,
+             (. unused) => {
+               let unused =
+                 unused |> Js.Option.getWithDefault(Network.inputSet());
+               (
+                 switch (
+                   payoutTx
+                   |> PayoutTransaction.txInputForChangeAddress(
+                        ~txId,
+                        state.network,
+                      )
+                 ) {
+                 | Some(input) => unused |. Set.add(input)
+                 | None => unused
+                 }
+               )
+               |. Set.removeMany(payoutTx.usedInputs)
+               |. Some;
+             },
+           ),
     };
   | PayoutBroadcastFailed({processId}) =>
     let payoutTx: PayoutTransaction.t =

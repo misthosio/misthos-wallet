@@ -72,7 +72,7 @@ describe("CustodianProposed", (function () {
                                     /* partnerId */match[2][/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
                                     /* lastCustodianRemovalProcess : None */0,
-                                    /* accountIdx */WalletTypes.AccountIndex[/* default */9]
+                                    /* accountIdx */WalletTypes.AccountIndex[/* default */11]
                                   ], /* BadData */["Partner approval process doesn't match user id"]);
                       }));
                 Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when the partner approval process reference is wrong", (function () {
@@ -90,7 +90,7 @@ describe("CustodianProposed", (function () {
                                     /* partnerId */match[1][/* userId */0],
                                     /* partnerApprovalProcess */PrimitiveTypes.ProcessId[/* make */10](/* () */0),
                                     /* lastCustodianRemovalProcess : None */0,
-                                    /* accountIdx */WalletTypes.AccountIndex[/* default */9]
+                                    /* accountIdx */WalletTypes.AccountIndex[/* default */11]
                                   ], /* BadData */["partner approval process doesn't exist"]);
                       }));
                 Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when the account doesn't exist", (function () {
@@ -106,7 +106,7 @@ describe("CustodianProposed", (function () {
                                     /* partnerId */match[0][/* userId */0],
                                     /* partnerApprovalProcess */partnerApproval[/* processId */0],
                                     /* lastCustodianRemovalProcess : None */0,
-                                    /* accountIdx */WalletTypes.AccountIndex[/* default */9]
+                                    /* accountIdx */WalletTypes.AccountIndex[/* default */11]
                                   ], /* BadData */["account doesn't exist"]);
                       }));
                 return Fixtures.withCached(/* None */0, /* None */0, "CustodianProposed", "when lastCustodianRemovalProcess doesn't match", (function () {
@@ -140,7 +140,7 @@ describe("CustodianProposed", (function () {
                                           /* partnerId */user2[/* userId */0],
                                           /* partnerApprovalProcess */partnerApproval[/* processId */0],
                                           /* lastCustodianRemovalProcess : None */0,
-                                          /* accountIdx */WalletTypes.AccountIndex[/* default */9]
+                                          /* accountIdx */WalletTypes.AccountIndex[/* default */11]
                                         ], /* BadData */["Last removal doesn't match"]);
                             }));
               }));

@@ -362,7 +362,7 @@ function make(viewData, commands, cmdStatus, _) {
                                 ],
                                 state[/* destinations */1]
                               ] : state[/* destinations */1];
-                            Curry._3(commands[/* proposePayout */7], WalletTypes.AccountIndex[/* default */9], destinations, state[/* fee */7]);
+                            Curry._3(commands[/* proposePayout */7], WalletTypes.AccountIndex[/* default */11], destinations, state[/* fee */7]);
                             return /* NoUpdate */0;
                         case 3 : 
                             return /* Update */Block.__(0, [/* record */[

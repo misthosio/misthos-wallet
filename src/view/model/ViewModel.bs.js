@@ -69,17 +69,16 @@ var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$1]
 
 function fromViewModelState$2(param) {
   var walletInfoCollector = param[/* walletInfoCollector */9];
-  var localUser = param[/* localUser */0];
   var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
-  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(walletInfoCollector).minus(reserved);
+  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
     balance_000,
     /* reserved */reserved
   ];
   var network = WalletInfoCollector.network(walletInfoCollector);
-  var allInputs = WalletInfoCollector.unusedInputs(walletInfoCollector);
-  var mandatoryInputs = WalletInfoCollector.nonReservedOldInputs(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
-  var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */9], localUser, walletInfoCollector);
+  var allInputs = WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
+  var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
+  var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], param[/* localUser */0], walletInfoCollector);
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),
           /* balance */balance,
@@ -135,7 +134,7 @@ function fromViewModelState$5(param) {
   var transactionCollector = param[/* transactionCollector */7];
   var partnersCollector = param[/* partnersCollector */6];
   var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
-  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(walletInfoCollector).minus(reserved);
+  var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
     balance_000,
     /* reserved */reserved

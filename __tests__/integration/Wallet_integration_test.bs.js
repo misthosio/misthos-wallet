@@ -45,7 +45,7 @@ describe("Wallet_integration", (function () {
                       var user3 = match[2];
                       var user2 = match[1];
                       var user1 = match[0];
-                      var accountIdx = WalletTypes.AccountIndex[/* default */9];
+                      var accountIdx = WalletTypes.AccountIndex[/* default */11];
                       var ventureId = Generators.Log[/* ventureId */2](log);
                       var wallet = WalletHelpers.constructState(log);
                       var match$1 = WalletHelpers.collectNextTwoAddresses(user1, /* tuple */[

@@ -11,8 +11,9 @@ var WalletTypes = require("../../../src/application/wallet/WalletTypes.bs.js");
 var PayoutTransaction = require("../../../src/application/wallet/PayoutTransaction.bs.js");
 
 describe("build", (function () {
+        var arg = [Network.TxInputCmp[1]];
         var inputs = (function (param) {
-              return Belt_Set.fromArray(param, Network.TxInputCmp);
+              return Belt_Set.fromArray(param, arg);
             })(/* array */[
               /* record */[
                 /* txId */"d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
@@ -28,7 +29,7 @@ describe("build", (function () {
                   WalletTypes.AccountIndex[/* first */2],
                   "identifier",
                   WalletTypes.CoSignerIndex[/* first */2],
-                  WalletTypes.ChainIndex[/* externalChain */9],
+                  WalletTypes.ChainIndex[/* externalChain */11],
                   WalletTypes.AddressIndex[/* first */2]
                 ],
                 /* sequence : None */0
@@ -47,7 +48,7 @@ describe("build", (function () {
                   WalletTypes.AccountIndex[/* first */2],
                   "identifier",
                   WalletTypes.CoSignerIndex[/* first */2],
-                  WalletTypes.ChainIndex[/* externalChain */9],
+                  WalletTypes.ChainIndex[/* externalChain */11],
                   WalletTypes.AddressIndex[/* next */3](WalletTypes.AddressIndex[/* first */2])
                 ],
                 /* sequence : None */0
@@ -57,7 +58,7 @@ describe("build", (function () {
           WalletTypes.AccountIndex[/* first */2],
           "identifier",
           WalletTypes.CoSignerIndex[/* first */2],
-          WalletTypes.ChainIndex[/* externalChain */9],
+          WalletTypes.ChainIndex[/* externalChain */11],
           WalletTypes.AddressIndex[/* first */2]
         ];
         var changeAddress = /* record */[

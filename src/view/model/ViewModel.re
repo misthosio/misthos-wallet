@@ -87,17 +87,16 @@ module CreatePayoutView = {
       reserved,
       currentSpendable:
         walletInfoCollector
-        |> WalletInfoCollector.totalUnusedBTC
+        |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
         |> BTC.minus(reserved),
     };
     let network = walletInfoCollector |> WalletInfoCollector.network;
-    let allInputs = walletInfoCollector |> WalletInfoCollector.unusedInputs;
+    let allInputs =
+      walletInfoCollector
+      |> WalletInfoCollector.currentSpendableInputs(AccountIndex.default);
     let mandatoryInputs =
       walletInfoCollector
-      |> WalletInfoCollector.nonReservedOldInputs(
-           AccountIndex.default,
-           localUser,
-         );
+      |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default);
     let changeAddress =
       walletInfoCollector
       |> WalletInfoCollector.fakeChangeAddress(
@@ -225,7 +224,7 @@ module SelectedVentureView = {
       reserved,
       currentSpendable:
         walletInfoCollector
-        |> WalletInfoCollector.totalUnusedBTC
+        |> WalletInfoCollector.totalUnusedBTC(AccountIndex.default)
         |> BTC.minus(reserved),
     };
     {
