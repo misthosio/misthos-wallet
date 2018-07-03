@@ -26,7 +26,7 @@ type t;
 let make: unit => t;
 
 let addressInfos: (accountIdx, t) => list(addressInfo);
-let collidingProcesses: (processId, t) => ProcessId.set;
+let collidingProcesses: (accountIdx, processId, t) => ProcessId.set;
 
 let exposedCoordinates: t => list(Address.Coordinates.t);
 
@@ -38,7 +38,7 @@ let apply: (Event.t, t) => t;
 
 let totalUnusedBTC: (accountIdx, t) => BTC.t;
 
-let totalReservedBTC: t => BTC.t;
+let totalReservedBTC: (accountIdx, t) => BTC.t;
 
 let currentKeyChainIdent:
   (accountIdx, userId, t) => AccountKeyChain.Identifier.t;

@@ -97,7 +97,7 @@ var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$2]
 
 function fromViewModelState$3(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
-  var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
+  var reserved = WalletInfoCollector.totalReservedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
     balance_000,
@@ -145,7 +145,7 @@ function fromViewModelState$4(processId, param) {
   return Utils.mapOption((function (payout) {
                 return /* record */[
                         /* payout */payout,
-                        /* collidesWith */WalletInfoCollector.collidingProcesses(processId, walletInfoCollector)
+                        /* collidesWith */WalletInfoCollector.collidingProcesses(WalletTypes.AccountIndex[/* default */11], processId, walletInfoCollector)
                       ];
               }), ViewModel__TxDetailsCollector.getPayout(processId, param[/* txDetailsCollector */8]));
 }
@@ -162,7 +162,7 @@ function fromViewModelState$6(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var transactionCollector = param[/* transactionCollector */7];
   var partnersCollector = param[/* partnersCollector */6];
-  var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
+  var reserved = WalletInfoCollector.totalReservedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
     balance_000,

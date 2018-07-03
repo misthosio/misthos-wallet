@@ -129,7 +129,9 @@ module CreatePayoutView = {
   };
   let fromViewModelState =
       ({ventureId, localUser, ventureName, walletInfoCollector}) => {
-    let reserved = walletInfoCollector |> WalletInfoCollector.totalReservedBTC;
+    let reserved =
+      walletInfoCollector
+      |> WalletInfoCollector.totalReservedBTC(AccountIndex.default);
     let balance = {
       reserved,
       currentSpendable:
@@ -218,7 +220,10 @@ module ViewPayoutView = {
            payout,
            collidesWith:
              walletInfoCollector
-             |> WalletInfoCollector.collidingProcesses(processId),
+             |> WalletInfoCollector.collidingProcesses(
+                  AccountIndex.default,
+                  processId,
+                ),
          }
        );
 };
@@ -267,7 +272,9 @@ module SelectedVentureView = {
           walletInfoCollector,
         },
       ) => {
-    let reserved = walletInfoCollector |> WalletInfoCollector.totalReservedBTC;
+    let reserved =
+      walletInfoCollector
+      |> WalletInfoCollector.totalReservedBTC(AccountIndex.default);
     let balance = {
       reserved,
       currentSpendable:
