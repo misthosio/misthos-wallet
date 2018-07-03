@@ -186,6 +186,12 @@ let make = (~session, ~updateSession, _children) => {
       <BlankScreen text="Waiting for Blockstack session" />
     | (
         LoggedIn(_),
+        Venture(_, HiddenOutputLog),
+        VentureLoaded(ventureId, _, _),
+      ) =>
+      <LogOutput ventureId />
+    | (
+        LoggedIn(_),
         Venture(_, _) | Home | JoinVenture(_),
         VentureLoaded(_ventureId, venture, _),
       ) =>

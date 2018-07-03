@@ -8,6 +8,7 @@ module Config = {
     | Partner(processId)
     | Payout(processId)
     | Income(string)
+    | HiddenOutputLog
     | Addresses
     | Receive;
   type route =
@@ -30,6 +31,8 @@ module Config = {
       )
     | ["ventures", id, "partners"] =>
       Venture(id |> VentureId.fromString, ManagePartners)
+    | ["ventures", id, "hidden"] =>
+      Venture(id |> VentureId.fromString, HiddenOutputLog)
     | ["ventures", id, "payouts", "new"] =>
       Venture(id |> VentureId.fromString, CreatePayout)
     | ["ventures", id, "payouts", processId] =>
@@ -55,6 +58,8 @@ module Config = {
       "/ventures/" ++ (id |> VentureId.toString) ++ "/addresses"
     | Venture(id, ManagePartners) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/partners"
+    | Venture(id, HiddenOutputLog) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/hidden"
     | Venture(id, Partner(processId)) =>
       "/ventures/"
       ++ (id |> VentureId.toString)
