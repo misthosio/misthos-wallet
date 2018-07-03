@@ -18,6 +18,7 @@ type addressInfo = {
   address: string,
   nCoSigners: int,
   addressStatus,
+  balance: BTC.t,
 };
 
 type t;
@@ -25,7 +26,6 @@ type t;
 let make: unit => t;
 
 let addressInfos: (accountIdx, t) => list(addressInfo);
-
 let collidingProcesses: (processId, t) => ProcessId.set;
 
 let exposedCoordinates: t => list(Address.Coordinates.t);
@@ -49,6 +49,8 @@ let currentSpendableInputs: (accountIdx, t) => Network.inputSet;
 let oldSpendableInputs: (accountIdx, t) => Network.inputSet;
 
 let unlockedInputs: (accountIdx, t) => Network.inputSet;
+
+let inputsFor: (accountIdx, addressInfo, t) => list(Network.txInput);
 
 let nextChangeAddress: (accountIdx, userId, t) => Address.t;
 let fakeChangeAddress: (accountIdx, userId, t) => Address.t;

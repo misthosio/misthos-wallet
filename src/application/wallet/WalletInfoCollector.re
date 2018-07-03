@@ -25,11 +25,12 @@ type addressInfo = {
   address: string,
   nCoSigners: int,
   addressStatus,
+  balance: BTC.t,
 };
 
 type t = {
   network: Network.t,
-  unused: AccountIndex.map(Network.inputSet),
+  totalUnusedBalance: AccountIndex.map(BTC.t),
   spendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
   oldSpendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
   unlocked: AccountIndex.map(Network.inputSet),
@@ -55,27 +56,20 @@ let addressInfoFor = (accountIdx, findAddress, collector) =>
   |. List.getByU((. {address}) => address == findAddress)
   |> Js.Option.getExn;
 
-let collidingProcesses = (processId, {reserved, payoutProcesses}) => {
-  let inputs =
-    payoutProcesses
-    |. Map.get(processId)
-    |> Utils.mapOption(({usedInputs}: PayoutTransaction.t) => usedInputs)
-    |> Js.Option.getWithDefault([||]);
-  inputs
+let collidingProcesses = (processId, {reserved, payoutProcesses}) =>
+  payoutProcesses
+  |. Map.get(processId)
+  |> Utils.mapOption(({usedInputs}: PayoutTransaction.t) => usedInputs)
+  |> Js.Option.getWithDefault([||])
   |. Array.reduceU(ProcessId.emptySet, (. res, input) =>
        reserved
        |. Map.getWithDefault(input, ProcessId.emptySet)
        |. Set.union(res)
      )
   |. Set.remove(processId);
-};
 
-let totalUnusedBTC = (accountIdx, {unused}) =>
-  unused
-  |. Map.getWithDefault(accountIdx, Network.inputSet())
-  |. Set.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
-       res |> BTC.plus(value)
-     );
+let totalUnusedBTC = (accountIdx, {totalUnusedBalance}) =>
+  totalUnusedBalance |. Map.getWithDefault(accountIdx, BTC.zero);
 
 let totalReservedBTC = ({reserved}) =>
   reserved
@@ -99,6 +93,19 @@ let currentKeyChain = (accountIdx, userId, {keyChains} as state) => {
 let exposedCoordinates = ({exposedCoordinates}) => exposedCoordinates;
 
 let accountKeyChains = ({keyChains}) => keyChains;
+
+let inputsFor = (accountIdx, info, state) =>
+  (
+    switch (info.addressStatus) {
+    | Accessible => state.spendable
+    | AtRisk
+    | OutdatedCustodians => state.oldSpendable
+    | TemporarilyInaccessible => state.temporarilyInaccessible
+    | Inaccessible => state.inaccessible
+    }
+  )
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.getWithDefault(info.address, []);
 
 let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
   spendable
@@ -159,7 +166,7 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
 
 let make = () => {
   network: Regtest,
-  unused: AccountIndex.makeMap(),
+  totalUnusedBalance: AccountIndex.makeMap(),
   spendable: AccountIndex.makeMap(),
   oldSpendable: AccountIndex.makeMap(),
   unlocked: AccountIndex.makeMap(),
@@ -313,7 +320,7 @@ let addInputsTo = (accountIdx, address, status, inputs, state) =>
            ),
     }
   };
-let moveTxInputs = (accountIdx, address, oldStatus, newStatus, state) => {
+let moveTxInputs = (accountIdx, address, newStatus, oldStatus, state) => {
   let (inputs, state) =
     removeAddressFrom(accountIdx, address, oldStatus, state);
   switch (inputs) {
@@ -424,6 +431,30 @@ let addTxInput = (addressStatus, accountIdx, input, state) =>
         state.inaccessible |> addInputToUtxoMap(accountIdx, input),
     }
   };
+
+let addToBalance = (accountIdx, address, amount, state) => {
+  ...state,
+  totalUnusedBalance:
+    state.totalUnusedBalance
+    |. Map.updateU(accountIdx, (. balance) =>
+         balance
+         |> Js.Option.getWithDefault(BTC.zero)
+         |> BTC.plus(amount)
+         |. Some
+       ),
+  addressInfos:
+    state.addressInfos
+    |. Map.updateU(accountIdx, (. infos) =>
+         infos
+         |> Js.Option.getWithDefault([])
+         |. List.mapU((. info) =>
+              info.address == address ?
+                {...info, balance: info.balance |> BTC.plus(amount)} : info
+            )
+         |. Some
+       ),
+};
+
 let apply = (event, state) =>
   switch (event) {
   | VentureCreated({network}) => {...state, network}
@@ -516,6 +547,7 @@ let apply = (event, state) =>
                    addressType: Income,
                    nCoSigners,
                    custodians,
+                   balance: BTC.zero,
                  },
                  ...infos,
                ]);
@@ -542,32 +574,9 @@ let apply = (event, state) =>
       nPubKeys: keyChain.custodianKeyChains |> List.length,
       sequence: keyChain.sequence,
     };
-    let state = addTxInput(addressStatus, accountIdx, input, state);
-    {
-      ...state,
-      unused:
-        state.unused
-        |. Map.updateU(
-             accountIdx,
-             (. unused) => {
-               let unused =
-                 unused |> Js.Option.getWithDefault(Network.inputSet());
-               Some(
-                 unused
-                 |. Set.add({
-                      txId,
-                      txOutputN,
-                      address,
-                      value: amount,
-                      coordinates,
-                      nCoSigners: keyChain.nCoSigners,
-                      nPubKeys: keyChain.custodianKeyChains |> List.length,
-                      sequence: keyChain.sequence,
-                    }),
-               );
-             },
-           ),
-    };
+    state
+    |> addTxInput(addressStatus, accountIdx, input)
+    |> addToBalance(accountIdx, address, amount);
   | PayoutProposed({
       data: {payoutTx: {usedInputs, changeAddress} as payoutTx},
       processId,
@@ -651,7 +660,7 @@ let apply = (event, state) =>
             custodians,
             changeInput.nCoSigners,
           );
-        let state = {
+        {
           ...state,
           addressInfos:
             state.addressInfos
@@ -666,13 +675,15 @@ let apply = (event, state) =>
                        addressType: Change,
                        nCoSigners: changeInput.nCoSigners,
                        custodians,
+                       balance: BTC.zero,
                      },
                      ...infos,
                    ]);
                  },
                ),
-        };
-        state |> addTxInput(addressStatus, accountIdx, changeInput);
+        }
+        |> addTxInput(addressStatus, accountIdx, changeInput)
+        |> addToBalance(accountIdx, changeInput.address, changeInput.value);
       | None => state
       };
     let removeInputFromUtxoMap =
@@ -725,37 +736,19 @@ let apply = (event, state) =>
         }
       };
     };
-    let state =
-      payoutTx.usedInputs
-      |. Array.reduceU(state, (. state, input: Network.txInput) =>
-           state |> removeInput(accountIdx, input)
-         );
     {
-      ...state,
-      reserved,
-      unused:
-        state.unused
-        |. Map.updateU(
-             accountIdx,
-             (. unused) => {
-               let unused =
-                 unused |> Js.Option.getWithDefault(Network.inputSet());
-               (
-                 switch (
-                   payoutTx
-                   |> PayoutTransaction.txInputForChangeAddress(
-                        ~txId,
-                        state.network,
-                      )
-                 ) {
-                 | Some(input) => unused |. Set.add(input)
-                 | None => unused
-                 }
-               )
-               |. Set.removeMany(payoutTx.usedInputs)
-               |. Some;
-             },
+      ...
+        payoutTx.usedInputs
+        |. Array.reduceU(state, (. state, input: Network.txInput) =>
+             state
+             |> removeInput(accountIdx, input)
+             |> addToBalance(
+                  accountIdx,
+                  input.address,
+                  input.value |> BTC.timesRounded(-1.),
+                )
            ),
+      reserved,
     };
   | PayoutBroadcastFailed({processId}) =>
     let payoutTx: PayoutTransaction.t =
