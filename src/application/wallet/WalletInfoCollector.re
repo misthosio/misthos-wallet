@@ -30,7 +30,6 @@ type addressInfo = {
 
 type t = {
   network: Network.t,
-  totalUnusedBalance: AccountIndex.map(BTC.t),
   spendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
   oldSpendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
   unlocked: AccountIndex.map(Network.inputSet),
@@ -68,8 +67,24 @@ let collidingProcesses = (processId, {reserved, payoutProcesses}) =>
      )
   |. Set.remove(processId);
 
-let totalUnusedBTC = (accountIdx, {totalUnusedBalance}) =>
-  totalUnusedBalance |. Map.getWithDefault(accountIdx, BTC.zero);
+let totalUnusedBTC = (accountIdx, {spendable, oldSpendable}) =>
+  spendable
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.reduceU(BTC.zero, (. res, _, inputs: list(Network.txInput)) =>
+       inputs
+       |. List.reduceU(res, (. res, {value}: Network.txInput) =>
+            res |> BTC.plus(value)
+          )
+     )
+  |. Map.String.reduceU(
+       oldSpendable |. Map.getWithDefault(accountIdx, Map.String.empty),
+       _,
+       (. res, _, inputs: list(Network.txInput)) =>
+       inputs
+       |. List.reduceU(res, (. res, {value}: Network.txInput) =>
+            res |> BTC.plus(value)
+          )
+     );
 
 let totalReservedBTC = ({reserved}) =>
   reserved
@@ -166,7 +181,6 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
 
 let make = () => {
   network: Regtest,
-  totalUnusedBalance: AccountIndex.makeMap(),
   spendable: AccountIndex.makeMap(),
   oldSpendable: AccountIndex.makeMap(),
   unlocked: AccountIndex.makeMap(),
@@ -427,14 +441,6 @@ let addTxInput = (addressStatus, accountIdx, input, state) =>
 
 let addToBalance = (accountIdx, address, amount, state) => {
   ...state,
-  totalUnusedBalance:
-    state.totalUnusedBalance
-    |. Map.updateU(accountIdx, (. balance) =>
-         balance
-         |> Js.Option.getWithDefault(BTC.zero)
-         |> BTC.plus(amount)
-         |. Some
-       ),
   addressInfos:
     state.addressInfos
     |. Map.updateU(accountIdx, (. infos) =>
@@ -685,21 +691,23 @@ let apply = (event, state) =>
       |. Map.updateU(
            accountIdx,
            (. map) => {
-             let map = map |> Js.Option.getWithDefault(Map.String.empty);
-             map
-             |. Map.String.updateU(
-                  input.address,
-                  (. list_) => {
-                    let list_ = list_ |> Js.Option.getWithDefault([]);
-                    let res =
-                      list_
-                      |. List.keepU((. in_) =>
-                           Network.TxInputCmp.compareInputs(. in_, input) != 0
-                         );
-                    res |. List.length > 0 ? Some(res) : None;
-                  },
-                )
-             |. Some;
+             let map =
+               map
+               |> Js.Option.getWithDefault(Map.String.empty)
+               |. Map.String.updateU(
+                    input.address,
+                    (. list_) => {
+                      let list_ = list_ |> Js.Option.getWithDefault([]);
+                      let res =
+                        list_
+                        |. List.keepU((. in_) =>
+                             Network.TxInputCmp.compareInputs(. in_, input)
+                             != 0
+                           );
+                      res |. List.length > 0 ? Some(res) : None;
+                    },
+                  );
+             map |. Map.String.size > 0 ? Some(map) : None;
            },
          );
     let removeInput = (accountIdx, input: Network.txInput, state) => {
