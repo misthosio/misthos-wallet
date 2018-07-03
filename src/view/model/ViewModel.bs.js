@@ -19,6 +19,7 @@ var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.j
 var WalletInfoCollector = require("../../application/wallet/WalletInfoCollector.bs.js");
 var ViewModel__PartnersCollector = require("./ViewModel__PartnersCollector.bs.js");
 var ViewModel__TxDetailsCollector = require("./ViewModel__TxDetailsCollector.bs.js");
+var ViewModel__OldTxInputCollector = require("./ViewModel__OldTxInputCollector.bs.js");
 var ViewModel__TransactionCollector = require("./ViewModel__TransactionCollector.bs.js");
 
 function readOnly(param) {
@@ -39,7 +40,8 @@ function captureResponse(correlationId, response, state) {
           /* partnersCollector */state[/* partnersCollector */6],
           /* transactionCollector */state[/* transactionCollector */7],
           /* txDetailsCollector */state[/* txDetailsCollector */8],
-          /* walletInfoCollector */state[/* walletInfoCollector */9]
+          /* oldInputCollector */state[/* oldInputCollector */9],
+          /* walletInfoCollector */state[/* walletInfoCollector */10]
         ];
 }
 
@@ -48,18 +50,19 @@ function lastResponse(param) {
 }
 
 function fromViewModelState(param) {
-  var walletInfoCollector = param[/* walletInfoCollector */9];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
+  var oldInputCollector = param[/* oldInputCollector */9];
   return /* record */[
           /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector),
-          /* addressDetails */(function (addressInfos) {
+          /* addressDetails */(function (addressInfo) {
               return /* record */[
-                      /* custodians */addressInfos[/* custodians */1],
-                      /* nCoSigners */addressInfos[/* nCoSigners */3],
-                      /* nCustodians */Belt_Set.size(addressInfos[/* custodians */1]),
-                      /* addressType */addressInfos[/* addressType */0],
-                      /* addressStatus */addressInfos[/* addressStatus */4],
-                      /* transferedIncome : [] */0,
-                      /* currentUtxos */WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfos, walletInfoCollector)
+                      /* custodians */addressInfo[/* custodians */1],
+                      /* nCoSigners */addressInfo[/* nCoSigners */3],
+                      /* nCustodians */Belt_Set.size(addressInfo[/* custodians */1]),
+                      /* addressType */addressInfo[/* addressType */0],
+                      /* addressStatus */addressInfo[/* addressStatus */4],
+                      /* currentUtxos */WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector),
+                      /* spentInputs */ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector)
                     ];
             })
         ];
@@ -89,7 +92,7 @@ function fromViewModelState$2(userId, param) {
 var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$2];
 
 function fromViewModelState$3(param) {
-  var walletInfoCollector = param[/* walletInfoCollector */9];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
   var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
   var balance_000 = /* currentSpendable */WalletInfoCollector.totalUnusedBTC(WalletTypes.AccountIndex[/* default */11], walletInfoCollector).minus(reserved);
   var balance = /* record */[
@@ -133,7 +136,7 @@ function fromViewModelState$3(param) {
 var CreatePayoutView = /* module */[/* fromViewModelState */fromViewModelState$3];
 
 function fromViewModelState$4(processId, param) {
-  var walletInfoCollector = param[/* walletInfoCollector */9];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
   return Utils.mapOption((function (payout) {
                 return /* record */[
                         /* payout */payout,
@@ -151,7 +154,7 @@ function fromViewModelState$5(txId, param) {
 var ViewIncomeView = /* module */[/* fromViewModelState */fromViewModelState$5];
 
 function fromViewModelState$6(param) {
-  var walletInfoCollector = param[/* walletInfoCollector */9];
+  var walletInfoCollector = param[/* walletInfoCollector */10];
   var transactionCollector = param[/* transactionCollector */7];
   var partnersCollector = param[/* partnersCollector */6];
   var reserved = WalletInfoCollector.totalReservedBTC(walletInfoCollector);
@@ -186,6 +189,7 @@ function make(localUser) {
           /* partnersCollector */ViewModel__PartnersCollector.make(localUser),
           /* transactionCollector */ViewModel__TransactionCollector.make(/* () */0),
           /* txDetailsCollector */ViewModel__TxDetailsCollector.make(localUser),
+          /* oldInputCollector */ViewModel__OldTxInputCollector.make(/* () */0),
           /* walletInfoCollector */WalletInfoCollector.make(/* () */0)
         ];
 }
@@ -206,7 +210,8 @@ function apply(param, state) {
     var state_006 = /* partnersCollector */ViewModel__PartnersCollector.apply($$event, state[/* partnersCollector */6]);
     var state_007 = /* transactionCollector */ViewModel__TransactionCollector.apply($$event, state[/* transactionCollector */7]);
     var state_008 = /* txDetailsCollector */ViewModel__TxDetailsCollector.apply($$event, state[/* txDetailsCollector */8]);
-    var state_009 = /* walletInfoCollector */WalletInfoCollector.apply($$event, state[/* walletInfoCollector */9]);
+    var state_009 = /* oldInputCollector */ViewModel__OldTxInputCollector.apply($$event, state[/* oldInputCollector */9]);
+    var state_010 = /* walletInfoCollector */WalletInfoCollector.apply($$event, state[/* walletInfoCollector */10]);
     var state$1 = /* record */[
       state_000,
       state_001,
@@ -217,7 +222,8 @@ function apply(param, state) {
       state_006,
       state_007,
       state_008,
-      state_009
+      state_009,
+      state_010
     ];
     if ($$event.tag) {
       return state$1;
@@ -233,7 +239,8 @@ function apply(param, state) {
               state_006,
               state_007,
               state_008,
-              state_009
+              state_009,
+              state_010
             ];
     }
   }
@@ -259,6 +266,8 @@ var TransactionCollector = 0;
 
 var TxDetailsCollector = 0;
 
+var OldInputCollector = 0;
+
 var viewAddressesModal = fromViewModelState;
 
 var managePartnersModal = fromViewModelState$1;
@@ -277,6 +286,7 @@ exports.ItemsSet = ItemsSet;
 exports.PartnersCollector = PartnersCollector;
 exports.TransactionCollector = TransactionCollector;
 exports.TxDetailsCollector = TxDetailsCollector;
+exports.OldInputCollector = OldInputCollector;
 exports.readOnly = readOnly;
 exports.captureResponse = captureResponse;
 exports.lastResponse = lastResponse;

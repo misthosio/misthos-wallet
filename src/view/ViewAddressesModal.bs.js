@@ -41,7 +41,7 @@ function renderExpandedInfo(info) {
   var __x$1 = Belt_Set.reduceU(info[/* custodians */0], __x, (function (res, c) {
           return res + (PrimitiveTypes.UserId[/* toString */0](c) + ", ");
         })) + "] [";
-  return React.createElement("div", undefined, ViewCommon.text(Belt_List.reduceU(info[/* currentUtxos */6], __x$1, (function (res, input) {
+  return React.createElement("div", undefined, ViewCommon.text(Belt_List.reduceU(Belt_List.concat(info[/* currentUtxos */5], info[/* spentInputs */6]), __x$1, (function (res, input) {
                         return res + (BTC.format(input[/* value */3]) + ", ");
                       })) + ("] " + (
                     info[/* addressType */3] ? "Change" : "Income"
