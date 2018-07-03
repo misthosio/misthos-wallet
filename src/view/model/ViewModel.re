@@ -50,16 +50,19 @@ module AddressesView = {
     addressStatus,
     currentUtxos: list(txInput),
     spentInputs: list(txInput),
+    isPartner: UserId.t => bool,
   };
   type t = {
     infos: list(addressInfo),
     addressDetails: addressInfo => addressDetails,
   };
-  let fromViewModelState = ({walletInfoCollector, oldInputCollector}) => {
+  let fromViewModelState =
+      ({walletInfoCollector, oldInputCollector, partnersCollector}) => {
     infos:
       walletInfoCollector
       |> WalletInfoCollector.addressInfos(AccountIndex.default),
     addressDetails: addressInfo => {
+      isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
       custodians: addressInfo.custodians,
       nCustodians: addressInfo.custodians |> Belt.Set.size,
       nCoSigners: addressInfo.nCoSigners,
