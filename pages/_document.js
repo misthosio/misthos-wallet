@@ -44,7 +44,7 @@ class MyDocument extends Document {
           <meta name="msapplication-TileColor" content="#ffffff" />
           <meta name="theme-color" content="#ffffff" />
           <link
-            href="https://fonts.googleapis.com/css?family=Oswald:600,700|Source+Sans+Pro:300,600"
+            href="https://fonts.googleapis.com/css?family=Oswald:600,700|Source+Sans+Pro:300,400,600"
             rel="stylesheet"
           />
           <title>Misthos - A multisig Bitcoin wallet for businesses</title>
