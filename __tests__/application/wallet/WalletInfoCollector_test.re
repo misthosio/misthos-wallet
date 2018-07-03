@@ -17,52 +17,6 @@ let constructState = log =>
      );
 
 let () = {
-  describe("WalletInfoCollector", () =>
-    F.withCached(
-      ~scope="WalletInfoCollector",
-      "oldInputs",
-      () => G.withUserSessions(3),
-      sessions => {
-        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
-        L.(
-          createVenture(user1)
-          |> withFirstPartner(user1)
-          |> withAccount(~supporter=user1)
-          |> withCustodian(user1, ~supporters=[user1])
-          |> withCustodianKeyChain(user1)
-          |> withAccountKeyChainIdentified
-          |> withAccountKeyChainActivated(user1)
-          |> withIncomeAddressExposed(user1)
-          |> withIncomeDetected(~incomeAddress=0)
-          |> withPartner(user2, ~supporters=[user1])
-          |> withCustodian(user2, ~supporters=[user1, user2])
-          |> withCustodianKeyChain(user2)
-          |> withAccountKeyChainIdentified
-          |> withAccountKeyChainActivated(user1)
-          |> withIncomeAddressExposed(user1)
-          |> withIncomeDetected(~incomeAddress=1)
-          |> withCustodianRemoved(user2, ~supporters=[user1])
-          |> withPartnerRemoved(user2, ~supporters=[user1])
-          |> withCustodianKeyChain(~keyChainIdx=1, user1)
-          |> withAccountKeyChainIdentified
-          |> withAccountKeyChainActivated(user1)
-          |> withIncomeAddressExposed(user1)
-          |> withIncomeDetected(~incomeAddress=2)
-        );
-      },
-      (_sessions, log) => {
-        let info = log |> constructState;
-        test("1 input is old", () =>
-          expect(
-            info
-            |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default)
-            |> Set.size,
-          )
-          |> toEqual(1)
-        );
-      },
-    )
-  );
   describe("WalletInfoCollector-addressInfo", () =>
     F.withCached(
       ~scope="WalletInfoCollector-addressInfo",
@@ -166,6 +120,64 @@ let () = {
         | _ => %assert
                "WalletInfoCollector_test"
         };
+      },
+    )
+  );
+  describe("WalletInfoCollector", () =>
+    F.withCached(
+      ~scope="WalletInfoCollector",
+      "oldInputs",
+      () => G.withUserSessions(3),
+      sessions => {
+        let (user1, user2) = G.twoUserSessionsFromArray(sessions);
+        L.(
+          createVenture(user1)
+          |> withFirstPartner(user1)
+          |> withAccount(~supporter=user1)
+          |> withCustodian(user1, ~supporters=[user1])
+          |> withCustodianKeyChain(user1)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withIncomeAddressExposed(user1)
+          |> withIncomeDetected(~incomeAddress=0)
+          |> withPartner(user2, ~supporters=[user1])
+          |> withCustodian(user2, ~supporters=[user1, user2])
+          |> withCustodianKeyChain(user2)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withIncomeAddressExposed(user1)
+          |> withIncomeDetected(~incomeAddress=1)
+          |> withIncomeDetected(~incomeAddress=1)
+          |> withIncomeDetected(~incomeAddress=1)
+          |> withCustodianRemoved(user2, ~supporters=[user1])
+          |> withPartnerRemoved(user2, ~supporters=[user1])
+          |> withCustodianKeyChain(~keyChainIdx=1, user1)
+          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainActivated(user1)
+          |> withIncomeAddressExposed(user1)
+          |> withIncomeDetected(~incomeAddress=2)
+        );
+      },
+      (_sessions, log) => {
+        let info = log |> constructState;
+        test("3 inputs are old", () =>
+          expect(
+            info
+            |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default)
+            |> Set.size,
+          )
+          |> toEqual(3)
+        );
+        test("2 inputs are current", () =>
+          expect(
+            info
+            |> WalletInfoCollector.currentSpendableInputs(
+                 AccountIndex.default,
+               )
+            |> Set.size,
+          )
+          |> toEqual(2)
+        );
       },
     )
   );
