@@ -9,6 +9,7 @@ var Footer = require("./Footer.bs.js");
 var Layout = require("./Layout.bs.js");
 var Router = require("./Router.bs.js");
 var Receive = require("./Receive.bs.js");
+var LogOutput = require("./LogOutput.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
@@ -54,8 +55,6 @@ function make(session, updateSession, _) {
       var selected = currentRoute[0];
       if (typeof match === "number") {
         switch (match) {
-          case 0 : 
-              return /* None */0;
           case 1 : 
               if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                 return /* None */0;
@@ -103,7 +102,10 @@ function make(session, updateSession, _) {
                           ]];
                 }
               }
+          case 0 : 
           case 3 : 
+              return /* None */0;
+          case 4 : 
               if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
                 return /* None */0;
               } else {
@@ -243,8 +245,15 @@ function make(session, updateSession, _) {
               break;
           
         }
-      } else {
+      } else if (currentRoute.tag) {
         exit$3 = 4;
+      } else {
+        var match = currentRoute[1];
+        if (typeof match === "number" && !(match !== 3 || typeof selectedVenture === "number" || selectedVenture.tag !== 3)) {
+          return ReasonReact.element(/* None */0, /* None */0, LogOutput.make(selectedVenture[0], /* array */[]));
+        } else {
+          exit$3 = 4;
+        }
       }
       if (exit$3 === 4) {
         if (typeof selectedVenture === "number" || selectedVenture.tag !== 3) {
