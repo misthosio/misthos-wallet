@@ -28,9 +28,9 @@ function statusToString(param) {
 
 function addressTypeToString(param) {
   if (param) {
-    return "Change";
+    return "Income (exposed by - " + (PrimitiveTypes.UserId[/* toString */0](param[0]) + ")");
   } else {
-    return "Income";
+    return "Change";
   }
 }
 
@@ -47,9 +47,7 @@ function make(viewData, _) {
           })) + "] [";
     return React.createElement("div", undefined, ViewCommon.text(Belt_List.reduceU(Belt_List.concat(info[/* currentUtxos */5], info[/* spentInputs */6]), __x$1, (function (res, input) {
                           return res + (BTC.format(input[/* value */3]) + ", ");
-                        })) + ("] " + (
-                      info[/* addressType */3] ? "Change" : "Income"
-                    ))));
+                        })) + ("] " + addressTypeToString(info[/* addressType */3]))));
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -63,7 +61,7 @@ function make(viewData, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var infos = Belt_List.toArray(Belt_List.keepMapU(viewData[/* infos */0], (function (info) {
-                          if (info[/* addressType */0] === /* Income */0 || info[/* balance */5].gt(BTC.zero)) {
+                          if (info[/* addressType */0] !== /* Change */0 || info[/* balance */5].gt(BTC.zero)) {
                             var expandedInfo = Curry._1(viewData[/* addressDetails */1], info);
                             return /* Some */[React.createElement("li", undefined, React.createElement("div", undefined, ViewCommon.text(info[/* address */2] + (" " + (BTC.format(info[/* balance */5]) + (" " + statusToString(info[/* addressStatus */4])))))), renderExpandedInfo(expandedInfo))];
                           } else {

@@ -13,7 +13,8 @@ let statusToString =
   | WalletInfoCollector.Inaccessible => "Inaccessible";
 let addressTypeToString =
   fun
-  | WalletInfoCollector.Income => "Income"
+  | WalletInfoCollector.Income(id) =>
+    "Income (exposed by - " ++ UserId.toString(id) ++ ")"
   | WalletInfoCollector.Change => "Change";
 
 let component = ReasonReact.statelessComponent("AddressesModal");
@@ -54,7 +55,7 @@ let make = (~viewData: ViewData.t, _children) => {
       let infos =
         viewData.infos
         |. List.keepMapU((. info: ViewData.addressInfo) =>
-             if (info.addressType == WalletInfoCollector.Income
+             if (info.addressType != WalletInfoCollector.Change
                  || info.balance
                  |> BTC.gt(BTC.zero)) {
                let expandedInfo = viewData.addressDetails(info);

@@ -9,7 +9,7 @@ type addressStatus =
   | TemporarilyInaccessible
   | Inaccessible;
 type addressType =
-  | Income
+  | Income(userId)
   | Change;
 
 type addressInfo = {

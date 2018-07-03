@@ -128,26 +128,26 @@ describe("WalletInfoCollector-addressInfo", (function () {
                                           user2,
                                           user4,
                                           match[4]
-                                        ], /* Income */0, /* Accessible */0, info[0]);
+                                        ], /* Income */[user2[/* userId */0]], /* Accessible */0, info[0]);
                                     testInfo(/* array */[
                                           user2,
                                           user4
-                                        ], /* Income */0, /* OutdatedCustodians */2, match$1[0]);
-                                    testInfo(/* array */[user2], /* Income */0, /* AtRisk */1, match$2[0]);
+                                        ], /* Income */[user2[/* userId */0]], /* OutdatedCustodians */2, match$1[0]);
+                                    testInfo(/* array */[user2], /* Income */[user2[/* userId */0]], /* AtRisk */1, match$2[0]);
                                     testInfo(/* array */[
                                           user2,
                                           user3
-                                        ], /* Income */0, /* AtRisk */1, match$3[0]);
+                                        ], /* Income */[user2[/* userId */0]], /* AtRisk */1, match$3[0]);
                                     testInfo(/* array */[
                                           user1,
                                           user2,
                                           user3
-                                        ], /* Income */0, /* TemporarilyInaccessible */3, match$4[0]);
+                                        ], /* Income */[user1[/* userId */0]], /* TemporarilyInaccessible */3, match$4[0]);
                                     testInfo(/* array */[
                                           user1,
                                           user2
-                                        ], /* Income */0, /* AtRisk */1, match$5[0]);
-                                    return testInfo(/* array */[user1], /* Income */0, /* Inaccessible */4, match$6[0]);
+                                        ], /* Income */[user1[/* userId */0]], /* AtRisk */1, match$5[0]);
+                                    return testInfo(/* array */[user1], /* Income */[user1[/* userId */0]], /* Inaccessible */4, match$6[0]);
                                   } else {
                                     return Js_exn.raiseError("WalletInfoCollector_test");
                                   }

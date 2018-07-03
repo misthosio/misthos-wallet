@@ -16,7 +16,7 @@ type addressStatus =
   | Inaccessible;
 
 type addressType =
-  | Income
+  | Income(userId)
   | Change;
 
 type addressInfo = {
@@ -526,7 +526,7 @@ let apply = (event, state) =>
     }
   | IncomeAddressExposed(
       (
-        {address: {coordinates, displayAddress, nCoSigners}}: Income.AddressExposed.t
+        {partnerId, address: {coordinates, displayAddress, nCoSigners}}: Income.AddressExposed.t
       ),
     ) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;
@@ -560,7 +560,7 @@ let apply = (event, state) =>
                        custodians,
                        nCoSigners,
                      ),
-                   addressType: Income,
+                   addressType: Income(partnerId),
                    nCoSigners,
                    custodians,
                    balance: BTC.zero,

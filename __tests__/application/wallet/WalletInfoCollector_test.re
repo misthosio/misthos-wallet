@@ -105,18 +105,28 @@ let () = {
           |> WalletInfoCollector.addressInfos(AccountIndex.default);
         switch (info) {
         | [info0, info1, info2, info3, info4, info5, info6] =>
-          info0 |> testInfo([|user2, user4, user5|], Income, Accessible);
-          info1 |> testInfo([|user2, user4|], Income, OutdatedCustodians);
-          info2 |> testInfo([|user2|], Income, AtRisk);
-          info3 |> testInfo([|user2, user3|], Income, AtRisk);
+          info0
+          |> testInfo(
+               [|user2, user4, user5|],
+               Income(user2.userId),
+               Accessible,
+             );
+          info1
+          |> testInfo(
+               [|user2, user4|],
+               Income(user2.userId),
+               OutdatedCustodians,
+             );
+          info2 |> testInfo([|user2|], Income(user2.userId), AtRisk);
+          info3 |> testInfo([|user2, user3|], Income(user2.userId), AtRisk);
           info4
           |> testInfo(
                [|user1, user2, user3|],
-               Income,
+               Income(user1.userId),
                TemporarilyInaccessible,
              );
-          info5 |> testInfo([|user1, user2|], Income, AtRisk);
-          info6 |> testInfo([|user1|], Income, Inaccessible);
+          info5 |> testInfo([|user1, user2|], Income(user1.userId), AtRisk);
+          info6 |> testInfo([|user1|], Income(user1.userId), Inaccessible);
         | _ => %assert
                "WalletInfoCollector_test"
         };

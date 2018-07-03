@@ -759,7 +759,7 @@ function apply($$event, state) {
                             var infos$1 = Js_option.getWithDefault(/* [] */0, infos);
                             return /* Some */[/* :: */[
                                       /* record */[
-                                        /* addressType : Change */1,
+                                        /* addressType : Change */0,
                                         /* custodians */custodians,
                                         /* address */changeInput[/* address */2],
                                         /* nCoSigners */changeInput[/* nCoSigners */4],
@@ -959,10 +959,12 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 40 : 
-        var match$6 = $$event[0][/* address */1];
-        var displayAddress = match$6[/* displayAddress */5];
-        var coordinates = match$6[/* coordinates */2];
-        var nCoSigners = match$6[/* nCoSigners */0];
+        var match$6 = $$event[0];
+        var match$7 = match$6[/* address */1];
+        var displayAddress = match$7[/* displayAddress */5];
+        var coordinates = match$7[/* coordinates */2];
+        var nCoSigners = match$7[/* nCoSigners */0];
+        var partnerId$1 = match$6[/* partnerId */0];
         var accountIdx$8 = Address.Coordinates[/* accountIdx */3](coordinates);
         var custodians$1 = Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(AccountKeyChain.Collection[/* lookup */2](accountIdx$8, Address.Coordinates[/* keyChainIdent */4](coordinates), state[/* keyChains */7])[/* custodianKeyChains */4], (function (prim) {
                         return prim[0];
@@ -986,7 +988,7 @@ function apply($$event, state) {
                         var infos$1 = Js_option.getWithDefault(/* [] */0, infos);
                         return /* Some */[/* :: */[
                                   /* record */[
-                                    /* addressType : Income */0,
+                                    /* addressType : Income */[partnerId$1],
                                     /* custodians */custodians$1,
                                     /* address */displayAddress,
                                     /* nCoSigners */nCoSigners,
@@ -999,15 +1001,15 @@ function apply($$event, state) {
                 /* currentCustodians */state[/* currentCustodians */12]
               ];
     case 41 : 
-        var match$7 = $$event[0];
-        var amount = match$7[/* amount */4];
-        var coordinates$1 = match$7[/* coordinates */1];
-        var address = match$7[/* address */0];
+        var match$8 = $$event[0];
+        var amount = match$8[/* amount */4];
+        var coordinates$1 = match$8[/* coordinates */1];
+        var address = match$8[/* address */0];
         var accountIdx$9 = Address.Coordinates[/* accountIdx */3](coordinates$1);
         var addressStatus$1 = addressInfoFor(accountIdx$9, address, state)[/* addressStatus */4];
         var keyChain = AccountKeyChain.Collection[/* lookup */2](accountIdx$9, Address.Coordinates[/* keyChainIdent */4](coordinates$1), state[/* keyChains */7]);
-        var input_000 = /* txId */match$7[/* txId */2];
-        var input_001 = /* txOutputN */match$7[/* txOutputN */3];
+        var input_000 = /* txId */match$8[/* txId */2];
+        var input_001 = /* txOutputN */match$8[/* txOutputN */3];
         var input_004 = /* nCoSigners */keyChain[/* nCoSigners */2];
         var input_005 = /* nPubKeys */Belt_List.length(keyChain[/* custodianKeyChains */4]);
         var input_007 = /* sequence */keyChain[/* sequence */3];
