@@ -339,17 +339,10 @@ let determinAddressStatus = (currentCustodians, addressCustodians, nCoSigners) =
       Inaccessible;
     } else if (nIntersect < nCoSigners) {
       TemporarilyInaccessible;
-    } else if (intersection |> Set.eq(addressCustodians)) {
-      if (addressCustodians
-          |> Set.size == 1
-          && currentCustodians
-          |> Set.size > 1) {
-        AtRisk;
-      } else {
-        OutdatedCustodians;
-      };
-    } else {
+    } else if (nIntersect == nCoSigners) {
       AtRisk;
+    } else {
+      OutdatedCustodians;
     };
   };
 let updateAddressInfos = (accountIdx, currentCustodians, state) => {

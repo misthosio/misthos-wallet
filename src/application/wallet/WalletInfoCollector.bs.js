@@ -273,10 +273,10 @@ function determinAddressStatus(currentCustodians, addressCustodians, nCoSigners)
       return /* Inaccessible */4;
     } else if (nIntersect < nCoSigners) {
       return /* TemporarilyInaccessible */3;
-    } else if (Belt_Set.eq(addressCustodians, intersection) && !(Belt_Set.size(addressCustodians) === 1 && Belt_Set.size(currentCustodians) > 1)) {
-      return /* OutdatedCustodians */2;
-    } else {
+    } else if (nIntersect === nCoSigners) {
       return /* AtRisk */1;
+    } else {
+      return /* OutdatedCustodians */2;
     }
   }
 }
