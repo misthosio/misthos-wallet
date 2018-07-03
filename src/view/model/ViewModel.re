@@ -138,12 +138,13 @@ module CreatePayoutView = {
         |> BTC.minus(reserved),
     };
     let network = walletInfoCollector |> WalletInfoCollector.network;
-    let allInputs =
+    let optionalInputs =
       walletInfoCollector
       |> WalletInfoCollector.currentSpendableInputs(AccountIndex.default);
     let mandatoryInputs =
       walletInfoCollector
       |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default);
+    let allInputs = optionalInputs |. Belt.Set.union(mandatoryInputs);
     let changeAddress =
       walletInfoCollector
       |> WalletInfoCollector.fakeChangeAddress(
@@ -186,7 +187,7 @@ module CreatePayoutView = {
       summary: (destinations, fee) =>
         PayoutTransaction.build(
           ~mandatoryInputs,
-          ~allInputs,
+          ~optionalInputs,
           ~destinations,
           ~satsPerByte=fee,
           ~changeAddress,

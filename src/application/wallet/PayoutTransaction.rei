@@ -31,8 +31,8 @@ let txInputForChangeAddress: (~txId: string, Network.t, t) => option(input);
 
 let build:
   (
+    ~optionalInputs: Network.inputSet,
     ~mandatoryInputs: Network.inputSet,
-    ~allInputs: Network.inputSet,
     ~destinations: list((string, BTC.t)),
     ~satsPerByte: BTC.t,
     ~changeAddress: Address.t,

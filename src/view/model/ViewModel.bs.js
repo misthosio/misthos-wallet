@@ -104,8 +104,9 @@ function fromViewModelState$3(param) {
     /* reserved */reserved
   ];
   var network = WalletInfoCollector.network(walletInfoCollector);
-  var allInputs = WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
+  var optionalInputs = WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
+  var allInputs = Belt_Set.union(optionalInputs, mandatoryInputs);
   var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], param[/* localUser */0], walletInfoCollector);
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),
@@ -132,7 +133,7 @@ function fromViewModelState$3(param) {
               return PayoutTransaction.max(allInputs, targetDestination, destinations, fee, network);
             }),
           /* summary */(function (destinations, fee) {
-              return PayoutTransaction.summary(network, PayoutTransaction.build(mandatoryInputs, allInputs, destinations, fee, changeAddress, network));
+              return PayoutTransaction.summary(network, PayoutTransaction.build(optionalInputs, mandatoryInputs, destinations, fee, changeAddress, network));
             })
         ];
 }
