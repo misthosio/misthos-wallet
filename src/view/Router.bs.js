@@ -30,6 +30,15 @@ function routeFromUrl(url) {
               var match$2 = match$1[1];
               if (match$2) {
                 switch (match$2[0]) {
+                  case "addresses" : 
+                      if (match$2[1]) {
+                        return /* Home */0;
+                      } else {
+                        return /* Venture */Block.__(0, [
+                                  PrimitiveTypes.VentureId[/* fromString */1](id),
+                                  /* Addresses */4
+                                ]);
+                      }
                   case "hidden" : 
                       if (match$2[1]) {
                         return /* Home */0;
@@ -106,7 +115,7 @@ function routeFromUrl(url) {
                       } else {
                         return /* Venture */Block.__(0, [
                                   PrimitiveTypes.VentureId[/* fromString */1](id),
-                                  /* Receive */4
+                                  /* Receive */5
                                 ]);
                       }
                   default:
@@ -159,6 +168,8 @@ function routeToUrl(route) {
         case 3 : 
             return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/hidden");
         case 4 : 
+            return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/addresses");
+        case 5 : 
             return "/ventures/" + (PrimitiveTypes.VentureId[/* toString */0](id) + "/receive");
         
       }

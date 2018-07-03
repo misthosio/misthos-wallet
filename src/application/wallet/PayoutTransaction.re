@@ -323,8 +323,8 @@ let addChangeOutput =
 
 let build =
     (
+      ~optionalInputs,
       ~mandatoryInputs,
-      ~allInputs,
       ~destinations,
       ~satsPerByte,
       ~changeAddress: Address.t,
@@ -332,10 +332,9 @@ let build =
     ) => {
   let mandatoryInputs =
     mandatoryInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
-  let allInputs =
-    allInputs
+  let optionalInputs =
+    optionalInputs
     |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
-    |. Belt.Set.diff(mandatoryInputs)
     |> Belt.Set.toList
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
@@ -413,7 +412,7 @@ let build =
   } else {
     let (inputs, success) =
       findInputs(
-        allInputs,
+        optionalInputs,
         outTotal |> BTC.plus(currentFee) |> BTC.minus(currentInputValue),
         satsPerByte,
         [],

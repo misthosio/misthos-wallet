@@ -10,6 +10,7 @@ var Venture = require("../../src/application/Venture.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../src/application/events/EventLog.bs.js");
 var Fixtures = require("./Fixtures.bs.js");
+var ViewModel = require("../../src/view/model/ViewModel.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var PrimitiveTypes = require("../../src/application/PrimitiveTypes.bs.js");
 var Caml_exceptions = require("bs-platform/lib/js/caml_exceptions.js");
@@ -44,10 +45,10 @@ var findCurrentUsers = Curry._2(EventLog.reduce, (function (users, item) {
       }), PrimitiveTypes.UserId[/* emptySet */9]);
 
 function run($staropt$star, scenarioName, scenarioTest) {
-  var skipIntegrity = $staropt$star ? $staropt$star[0] : false;
+  var checkIntegrity = $staropt$star ? $staropt$star[0] : false;
   describe(scenarioName, (function () {
           var loadedLog = loadScenario(scenarioName);
-          if (!skipIntegrity) {
+          if (!checkIntegrity) {
             Jest.test("Integrity of " + (String(Curry._1(EventLog.length, loadedLog)) + " items is intact"), (function () {
                     var newItems = Curry._2(EventLog.findNewItems, loadedLog, Curry._1(EventLog.make, /* () */0));
                     return Jest.Expect[/* toEqual */12](Curry._1(EventLog.length, loadedLog), Jest.Expect[/* expect */0](newItems.length));
@@ -59,10 +60,20 @@ function run($staropt$star, scenarioName, scenarioTest) {
   return /* () */0;
 }
 
+function runWithView(scenarioName, scenarioTest) {
+  describe(scenarioName, (function () {
+          var loadedLog = loadScenario(scenarioName);
+          var match = Venture.reconstruct(scenarioSession, loadedLog);
+          return Curry._1(scenarioTest, Curry._1(ViewModel.init(PrimitiveTypes.UserId[/* fromString */1]("misthosio.id")), Venture.getEventLog(match[0])));
+        }));
+  return /* () */0;
+}
+
 exports.CouldNotLoadScenario = CouldNotLoadScenario;
 exports.basePath = basePath;
 exports.scenarioSession = scenarioSession;
 exports.loadScenario = loadScenario;
 exports.findCurrentUsers = findCurrentUsers;
 exports.run = run;
+exports.runWithView = runWithView;
 /* scenarioSession Not a pure module */

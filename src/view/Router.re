@@ -9,6 +9,7 @@ module Config = {
     | Payout(processId)
     | Income(string)
     | HiddenOutputLog
+    | Addresses
     | Receive;
   type route =
     | Home
@@ -20,6 +21,9 @@ module Config = {
     switch (url.path) {
     | ["ventures", "new"] => CreateVenture
     | ["ventures", id] => Venture(id |> VentureId.fromString, None)
+    | ["ventures", id, "addresses"] =>
+      Venture(id |> VentureId.fromString, Addresses)
+
     | ["ventures", id, "partners", processId] =>
       Venture(
         id |> VentureId.fromString,
@@ -50,6 +54,8 @@ module Config = {
     switch (route) {
     | CreateVenture => "/ventures/new"
     | Venture(id, None) => "/ventures/" ++ (id |> VentureId.toString)
+    | Venture(id, Addresses) =>
+      "/ventures/" ++ (id |> VentureId.toString) ++ "/addresses"
     | Venture(id, ManagePartners) =>
       "/ventures/" ++ (id |> VentureId.toString) ++ "/partners"
     | Venture(id, HiddenOutputLog) =>

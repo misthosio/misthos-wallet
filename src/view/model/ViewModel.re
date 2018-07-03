@@ -10,6 +10,8 @@ module TransactionCollector = ViewModel__TransactionCollector;
 
 module TxDetailsCollector = ViewModel__TxDetailsCollector;
 
+module OldInputCollector = ViewModel__OldTxInputCollector;
+
 type t = {
   localUser: userId,
   ventureId,
@@ -21,6 +23,7 @@ type t = {
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
   txDetailsCollector: TxDetailsCollector.t,
+  oldInputCollector: OldInputCollector.t,
   walletInfoCollector: WalletInfoCollector.t,
 };
 
@@ -33,6 +36,50 @@ let captureResponse = (correlationId, response, state) => {
 };
 
 let lastResponse = ({lastResponse}) => lastResponse;
+
+module AddressesView = {
+  type addressType = WalletInfoCollector.addressType;
+  type addressStatus = WalletInfoCollector.addressStatus;
+  type addressInfo = WalletInfoCollector.addressInfo;
+  type txInput = Network.txInput;
+  type addressDetails = {
+    custodians: UserId.set,
+    nCoSigners: int,
+    nCustodians: int,
+    addressType,
+    addressStatus,
+    currentUtxos: list(txInput),
+    spentInputs: list(txInput),
+    isPartner: UserId.t => bool,
+  };
+  type t = {
+    infos: list(addressInfo),
+    addressDetails: addressInfo => addressDetails,
+  };
+  let fromViewModelState =
+      ({walletInfoCollector, oldInputCollector, partnersCollector}) => {
+    infos:
+      walletInfoCollector
+      |> WalletInfoCollector.addressInfos(AccountIndex.default),
+    addressDetails: addressInfo => {
+      isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
+      custodians: addressInfo.custodians,
+      nCustodians: addressInfo.custodians |> Belt.Set.size,
+      nCoSigners: addressInfo.nCoSigners,
+      addressType: addressInfo.addressType,
+      addressStatus: addressInfo.addressStatus,
+      currentUtxos:
+        WalletInfoCollector.inputsFor(
+          AccountIndex.default,
+          addressInfo,
+          walletInfoCollector,
+        ),
+      spentInputs:
+        oldInputCollector |> OldInputCollector.inputsFor(addressInfo.address),
+    },
+  };
+};
+let viewAddressesModal = AddressesView.fromViewModelState;
 
 module ManagePartnersView = {
   type partner = PartnersCollector.partner;
@@ -82,7 +129,9 @@ module CreatePayoutView = {
   };
   let fromViewModelState =
       ({ventureId, localUser, ventureName, walletInfoCollector}) => {
-    let reserved = walletInfoCollector |> WalletInfoCollector.totalReservedBTC;
+    let reserved =
+      walletInfoCollector
+      |> WalletInfoCollector.totalReservedBTC(AccountIndex.default);
     let balance = {
       reserved,
       currentSpendable:
@@ -91,12 +140,13 @@ module CreatePayoutView = {
         |> BTC.minus(reserved),
     };
     let network = walletInfoCollector |> WalletInfoCollector.network;
-    let allInputs =
+    let optionalInputs =
       walletInfoCollector
       |> WalletInfoCollector.currentSpendableInputs(AccountIndex.default);
     let mandatoryInputs =
       walletInfoCollector
       |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default);
+    let allInputs = optionalInputs |. Belt.Set.union(mandatoryInputs);
     let changeAddress =
       walletInfoCollector
       |> WalletInfoCollector.fakeChangeAddress(
@@ -139,7 +189,7 @@ module CreatePayoutView = {
       summary: (destinations, fee) =>
         PayoutTransaction.build(
           ~mandatoryInputs,
-          ~allInputs,
+          ~optionalInputs,
           ~destinations,
           ~satsPerByte=fee,
           ~changeAddress,
@@ -170,7 +220,10 @@ module ViewPayoutView = {
            payout,
            collidesWith:
              walletInfoCollector
-             |> WalletInfoCollector.collidingProcesses(processId),
+             |> WalletInfoCollector.collidingProcesses(
+                  AccountIndex.default,
+                  processId,
+                ),
          }
        );
 };
@@ -219,7 +272,9 @@ module SelectedVentureView = {
           walletInfoCollector,
         },
       ) => {
-    let reserved = walletInfoCollector |> WalletInfoCollector.totalReservedBTC;
+    let reserved =
+      walletInfoCollector
+      |> WalletInfoCollector.totalReservedBTC(AccountIndex.default);
     let balance = {
       reserved,
       currentSpendable:
@@ -256,6 +311,7 @@ let make = localUser => {
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
   txDetailsCollector: TxDetailsCollector.make(localUser),
+  oldInputCollector: OldInputCollector.make(),
   walletInfoCollector: WalletInfoCollector.make(),
 };
 
@@ -273,6 +329,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.txDetailsCollector |> TxDetailsCollector.apply(event),
       walletInfoCollector:
         state.walletInfoCollector |> WalletInfoCollector.apply(event),
+      oldInputCollector:
+        state.oldInputCollector |> OldInputCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {

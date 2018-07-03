@@ -24,6 +24,17 @@ let make = (~session, ~updateSession, _children) => {
     | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _, _) => None
     | (
         LoggedIn(_),
+        Venture(selected, Addresses),
+        VentureLoaded(_, venture, _),
+      ) =>
+      Some((
+        <ViewAddressesModal
+          viewData=(venture |> ViewModel.viewAddressesModal)
+        />,
+        onCloseModal(selected),
+      ))
+    | (
+        LoggedIn(_),
         Venture(selected, ManagePartners),
         VentureLoaded(_, venture, commands),
       ) =>

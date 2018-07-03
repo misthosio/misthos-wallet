@@ -30,14 +30,13 @@ type addressInfo = {
 
 type t = {
   network: Network.t,
-  totalUnusedBalance: AccountIndex.map(BTC.t),
   spendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
   oldSpendable: AccountIndex.map(Map.String.t(list(Network.txInput))),
   unlocked: AccountIndex.map(Network.inputSet),
   temporarilyInaccessible:
     AccountIndex.map(Map.String.t(list(Network.txInput))),
   inaccessible: AccountIndex.map(Map.String.t(list(Network.txInput))),
-  reserved: Network.inputMap(ProcessId.set),
+  reserved: AccountIndex.map(Network.inputMap(ProcessId.set)),
   keyChains: AccountKeyChain.Collection.t,
   payoutProcesses: ProcessId.map(PayoutTransaction.t),
   activatedKeyChain:
@@ -56,23 +55,41 @@ let addressInfoFor = (accountIdx, findAddress, collector) =>
   |. List.getByU((. {address}) => address == findAddress)
   |> Js.Option.getExn;
 
-let collidingProcesses = (processId, {reserved, payoutProcesses}) =>
+let collidingProcesses = (accountIdx, processId, {reserved, payoutProcesses}) =>
   payoutProcesses
   |. Map.get(processId)
   |> Utils.mapOption(({usedInputs}: PayoutTransaction.t) => usedInputs)
   |> Js.Option.getWithDefault([||])
   |. Array.reduceU(ProcessId.emptySet, (. res, input) =>
        reserved
+       |. Map.getWithDefault(accountIdx, Network.inputMap())
        |. Map.getWithDefault(input, ProcessId.emptySet)
        |. Set.union(res)
      )
   |. Set.remove(processId);
 
-let totalUnusedBTC = (accountIdx, {totalUnusedBalance}) =>
-  totalUnusedBalance |. Map.getWithDefault(accountIdx, BTC.zero);
+let totalUnusedBTC = (accountIdx, {spendable, oldSpendable}) =>
+  spendable
+  |. Map.getWithDefault(accountIdx, Map.String.empty)
+  |. Map.String.reduceU(BTC.zero, (. res, _, inputs: list(Network.txInput)) =>
+       inputs
+       |. List.reduceU(res, (. res, {value}: Network.txInput) =>
+            res |> BTC.plus(value)
+          )
+     )
+  |. Map.String.reduceU(
+       oldSpendable |. Map.getWithDefault(accountIdx, Map.String.empty),
+       _,
+       (. res, _, inputs: list(Network.txInput)) =>
+       inputs
+       |. List.reduceU(res, (. res, {value}: Network.txInput) =>
+            res |> BTC.plus(value)
+          )
+     );
 
-let totalReservedBTC = ({reserved}) =>
+let totalReservedBTC = (accountIdx, {reserved}) =>
   reserved
+  |. Map.getWithDefault(accountIdx, Network.inputMap())
   |. Map.keysToArray
   |. Array.reduceU(BTC.zero, (. res, {value}: Network.txInput) =>
        res |> BTC.plus(value)
@@ -114,7 +131,10 @@ let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
        res |. Set.mergeMany(inputs |> List.toArray)
      )
   |. Set.diff(
-       reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
+       reserved
+       |. Map.getWithDefault(accountIdx, Network.inputMap())
+       |> Map.keysToArray
+       |> Set.mergeMany(Network.inputSet()),
      );
 
 let unlockedInputs = (accountIdx, {unlocked}) =>
@@ -127,7 +147,10 @@ let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
        res |. Set.mergeMany(inputs |> List.toArray)
      )
   |. Set.diff(
-       reserved |> Map.keysToArray |> Set.mergeMany(Network.inputSet()),
+       reserved
+       |. Map.getWithDefault(accountIdx, Network.inputMap())
+       |> Map.keysToArray
+       |> Set.mergeMany(Network.inputSet()),
      );
 
 let network = ({network}) => network;
@@ -166,13 +189,12 @@ let fakeChangeAddress = (accountIdx, userId, collector) => {
 
 let make = () => {
   network: Regtest,
-  totalUnusedBalance: AccountIndex.makeMap(),
   spendable: AccountIndex.makeMap(),
   oldSpendable: AccountIndex.makeMap(),
   unlocked: AccountIndex.makeMap(),
   temporarilyInaccessible: AccountIndex.makeMap(),
   inaccessible: AccountIndex.makeMap(),
-  reserved: Network.inputMap(),
+  reserved: AccountIndex.makeMap(),
   keyChains: AccountKeyChain.Collection.empty,
   payoutProcesses: ProcessId.makeMap(),
   activatedKeyChain: [],
@@ -181,20 +203,29 @@ let make = () => {
   currentCustodians: AccountIndex.makeMap(),
 };
 
-let removeInputsFromReserved = (processId, inputs, reserved) =>
-  inputs
-  |. Array.reduceU(reserved, (. lookup, input) =>
-       lookup
-       |. Map.updateU(
-            input,
-            (. processes) => {
-              let processes =
-                processes
-                |> Js.Option.getWithDefault(ProcessId.emptySet)
-                |. Set.remove(processId);
-              processes |. Set.isEmpty ? None : Some(processes);
-            },
-          )
+let removeInputsFromReserved = (accountIdx, processId, inputs, reserved) =>
+  reserved
+  |. Map.updateU(
+       accountIdx,
+       (. reserved) => {
+         let reserved =
+           reserved |> Js.Option.getWithDefault(Network.inputMap());
+         inputs
+         |. Array.reduceU(reserved, (. lookup, input) =>
+              lookup
+              |. Map.updateU(
+                   input,
+                   (. processes) => {
+                     let processes =
+                       processes
+                       |> Js.Option.getWithDefault(ProcessId.emptySet)
+                       |. Set.remove(processId);
+                     processes |. Set.isEmpty ? None : Some(processes);
+                   },
+                 )
+            )
+         |. Some;
+       },
      );
 
 let removeAddressFrom = (accountIdx, address, status, state) =>
@@ -339,17 +370,10 @@ let determinAddressStatus = (currentCustodians, addressCustodians, nCoSigners) =
       Inaccessible;
     } else if (nIntersect < nCoSigners) {
       TemporarilyInaccessible;
-    } else if (intersection |> Set.eq(addressCustodians)) {
-      if (addressCustodians
-          |> Set.size == 1
-          && currentCustodians
-          |> Set.size > 1) {
-        AtRisk;
-      } else {
-        OutdatedCustodians;
-      };
-    } else {
+    } else if (nIntersect == nCoSigners) {
       AtRisk;
+    } else {
+      OutdatedCustodians;
     };
   };
 let updateAddressInfos = (accountIdx, currentCustodians, state) => {
@@ -434,14 +458,6 @@ let addTxInput = (addressStatus, accountIdx, input, state) =>
 
 let addToBalance = (accountIdx, address, amount, state) => {
   ...state,
-  totalUnusedBalance:
-    state.totalUnusedBalance
-    |. Map.updateU(accountIdx, (. balance) =>
-         balance
-         |> Js.Option.getWithDefault(BTC.zero)
-         |> BTC.plus(amount)
-         |. Some
-       ),
   addressInfos:
     state.addressInfos
     |. Map.updateU(accountIdx, (. infos) =>
@@ -580,19 +596,32 @@ let apply = (event, state) =>
   | PayoutProposed({
       data: {payoutTx: {usedInputs, changeAddress} as payoutTx},
       processId,
-    }) => {
+    }) =>
+    let accountIdx =
+      (usedInputs |. Array.getExn(0)).coordinates
+      |> Address.Coordinates.accountIdx;
+    {
       ...state,
       reserved:
-        usedInputs
-        |. Array.reduceU(state.reserved, (. lookup, input) =>
-             lookup
-             |. Map.updateU(input, (. processes) =>
-                  Some(
-                    processes
-                    |> Js.Option.getWithDefault(ProcessId.emptySet)
-                    |. Set.add(processId),
+        state.reserved
+        |. Map.updateU(
+             accountIdx,
+             (. reserved) => {
+               let reserved =
+                 reserved |> Js.Option.getWithDefault(Network.inputMap());
+               usedInputs
+               |. Array.reduceU(reserved, (. lookup, input) =>
+                    lookup
+                    |. Map.updateU(input, (. processes) =>
+                         Some(
+                           processes
+                           |> Js.Option.getWithDefault(ProcessId.emptySet)
+                           |. Set.add(processId),
+                         )
+                       )
                   )
-                )
+               |. Some;
+             },
            ),
       payoutProcesses: state.payoutProcesses |. Map.set(processId, payoutTx),
       exposedCoordinates:
@@ -603,12 +632,16 @@ let apply = (event, state) =>
             ...state.exposedCoordinates,
           ]
         },
-    }
+    };
   | PayoutDenied({processId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
+    let accountIdx =
+      (payoutTx.usedInputs |. Array.getExn(0)).coordinates
+      |> Address.Coordinates.accountIdx;
     let reserved =
       removeInputsFromReserved(
+        accountIdx,
         processId,
         payoutTx.usedInputs,
         state.reserved,
@@ -617,8 +650,12 @@ let apply = (event, state) =>
   | PayoutAborted({processId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
+    let accountIdx =
+      (payoutTx.usedInputs |. Array.getExn(0)).coordinates
+      |> Address.Coordinates.accountIdx;
     let reserved =
       removeInputsFromReserved(
+        accountIdx,
         processId,
         payoutTx.usedInputs,
         state.reserved,
@@ -632,6 +669,7 @@ let apply = (event, state) =>
       |> Address.Coordinates.accountIdx;
     let reserved =
       removeInputsFromReserved(
+        accountIdx,
         processId,
         payoutTx.usedInputs,
         state.reserved,
@@ -692,21 +730,23 @@ let apply = (event, state) =>
       |. Map.updateU(
            accountIdx,
            (. map) => {
-             let map = map |> Js.Option.getWithDefault(Map.String.empty);
-             map
-             |. Map.String.updateU(
-                  input.address,
-                  (. list_) => {
-                    let list_ = list_ |> Js.Option.getWithDefault([]);
-                    let res =
-                      list_
-                      |. List.keepU((. in_) =>
-                           Network.TxInputCmp.compareInputs(. in_, input) != 0
-                         );
-                    res |. List.length > 0 ? Some(res) : None;
-                  },
-                )
-             |. Some;
+             let map =
+               map
+               |> Js.Option.getWithDefault(Map.String.empty)
+               |. Map.String.updateU(
+                    input.address,
+                    (. list_) => {
+                      let list_ = list_ |> Js.Option.getWithDefault([]);
+                      let res =
+                        list_
+                        |. List.keepU((. in_) =>
+                             Network.TxInputCmp.compareInputs(. in_, input)
+                             != 0
+                           );
+                      res |. List.length > 0 ? Some(res) : None;
+                    },
+                  );
+             map |. Map.String.size > 0 ? Some(map) : None;
            },
          );
     let removeInput = (accountIdx, input: Network.txInput, state) => {
@@ -753,8 +793,12 @@ let apply = (event, state) =>
   | PayoutBroadcastFailed({processId}) =>
     let payoutTx: PayoutTransaction.t =
       state.payoutProcesses |. Map.getExn(processId);
+    let accountIdx =
+      (payoutTx.usedInputs |. Array.getExn(0)).coordinates
+      |> Address.Coordinates.accountIdx;
     let reserved =
       removeInputsFromReserved(
+        accountIdx,
         processId,
         payoutTx.usedInputs,
         state.reserved,
