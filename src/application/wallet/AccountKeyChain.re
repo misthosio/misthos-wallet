@@ -67,14 +67,6 @@ module Collection = {
     collection |. Map.String.set(identifier, keyChain);
   let lookup = (_accountIdx, identifier, keyChains: t) =>
     keyChains |. Map.String.getExn(identifier);
-  let withCustodians = (testCustodians, collection) =>
-    collection
-    |> Map.String.valuesToArray
-    |. Array.keepMapU((. keyChain) =>
-         testCustodians |> Set.eq(keyChain |> custodians) ?
-           Some(keyChain.identifier) : None
-       )
-    |> Set.String.fromArray;
 };
 
 let encode = keyChain =>
