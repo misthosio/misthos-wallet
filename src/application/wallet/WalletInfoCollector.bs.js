@@ -340,8 +340,8 @@ function updateAddressInfos(accountIdx, currentCustodians, state) {
   return Belt_List.reduceU(updates[0], state$1, (function (state, param) {
                 var accountIdx$1 = accountIdx;
                 var address = param[0];
-                var oldStatus = param[1];
-                var newStatus = param[2];
+                var newStatus = param[1];
+                var oldStatus = param[2];
                 var state$1 = state;
                 var match = removeAddressFrom(accountIdx$1, address, oldStatus, state$1);
                 var state$2 = match[1];

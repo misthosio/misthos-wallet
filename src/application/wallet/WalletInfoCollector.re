@@ -320,7 +320,7 @@ let addInputsTo = (accountIdx, address, status, inputs, state) =>
            ),
     }
   };
-let moveTxInputs = (accountIdx, address, oldStatus, newStatus, state) => {
+let moveTxInputs = (accountIdx, address, newStatus, oldStatus, state) => {
   let (inputs, state) =
     removeAddressFrom(accountIdx, address, oldStatus, state);
   switch (inputs) {
