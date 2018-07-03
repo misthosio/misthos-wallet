@@ -24,7 +24,7 @@ type incoming =
       ventureId,
       list(Event.Payout.Broadcast.t),
       list(Event.Payout.BroadcastFailed.t),
-      list(Event.IncomeDetected.t),
+      list(Event.Income.Detected.t),
       list(Event.Transaction.Confirmed.t),
     )
   | SyncTabs(ventureId, array(EventLog.item));
@@ -289,7 +289,7 @@ let encodeIncoming =
           "broadcastFailures",
           list(Event.Payout.BroadcastFailed.encode, broadcastFailures),
         ),
-        ("incomeEvents", list(Event.IncomeDetected.encode, incomeEvents)),
+        ("incomeEvents", list(Event.Income.Detected.encode, incomeEvents)),
         (
           "transactionConfirmations",
           list(Event.Transaction.Confirmed.encode, confs),
@@ -389,7 +389,7 @@ let decodeIncoming = raw => {
     let incomeEvents =
       raw
       |> Json.Decode.(
-           field("incomeEvents", list(Event.IncomeDetected.decode))
+           field("incomeEvents", list(Event.Income.Detected.decode))
          );
     let confs =
       raw

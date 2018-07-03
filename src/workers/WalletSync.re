@@ -122,7 +122,7 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
          let events =
            utxos
            |. List.mapU((. utxo: Network.txInput) =>
-                Event.IncomeDetected.make(
+                Event.Income.Detected.make(
                   ~address=utxo.address,
                   ~coordinates=utxo.coordinates,
                   ~txId=utxo.txId,

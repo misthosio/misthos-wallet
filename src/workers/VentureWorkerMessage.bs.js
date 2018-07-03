@@ -548,7 +548,7 @@ function encodeIncoming(param) {
                           /* :: */[
                             /* tuple */[
                               "incomeEvents",
-                              Json_encode.list(Event.IncomeDetected[/* encode */1], param[3])
+                              Json_encode.list(Event.Income[/* Detected */1][/* encode */1], param[3])
                             ],
                             /* :: */[
                               /* tuple */[
@@ -710,7 +710,7 @@ function decodeIncoming(raw) {
         var broadcastFailures = Json_decode.field("broadcastFailures", (function (param) {
                 return Json_decode.list(partial_arg$1, param);
               }), raw);
-        var partial_arg$2 = Event.IncomeDetected[/* decode */2];
+        var partial_arg$2 = Event.Income[/* Detected */1][/* decode */2];
         var incomeEvents = Json_decode.field("incomeEvents", (function (param) {
                 return Json_decode.list(partial_arg$2, param);
               }), raw);

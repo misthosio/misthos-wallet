@@ -526,7 +526,7 @@ let apply = (event, state) =>
     }
   | IncomeAddressExposed(
       (
-        {address: {coordinates, displayAddress, nCoSigners}}: IncomeAddressExposed.t
+        {address: {coordinates, displayAddress, nCoSigners}}: Income.AddressExposed.t
       ),
     ) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;

@@ -604,7 +604,7 @@ let validateAccountKeyChainActivated =
 
 let validateIncomeAddressExposed =
     (
-      {address: {coordinates, displayAddress}}: IncomeAddressExposed.t,
+      {address: {coordinates, displayAddress}}: Income.AddressExposed.t,
       {accountKeyChains},
       _issuerId,
     ) =>

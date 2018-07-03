@@ -264,9 +264,9 @@ module Event = {
       ~identifier,
       ~sequence,
     );
-  let incomeAddressExposed = AppEvent.IncomeAddressExposed.make;
+  let incomeAddressExposed = AppEvent.Income.AddressExposed.make;
   let incomeDetected = (~address, ~coordinates) =>
-    AppEvent.IncomeDetected.make(
+    AppEvent.Income.Detected.make(
       ~address,
       ~coordinates,
       ~txOutputN=0,

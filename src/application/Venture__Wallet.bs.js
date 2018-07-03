@@ -46,7 +46,7 @@ function exposeNextIncomeAddress(userId, accountIdx, param) {
   var walletInfoCollector = param[/* walletInfoCollector */3];
   var accountKeyChain = WalletInfoCollector.currentKeyChain(accountIdx, userId, walletInfoCollector);
   var coordinates = Address.Coordinates[/* nextExternal */2](userId, WalletInfoCollector.exposedCoordinates(walletInfoCollector), accountKeyChain);
-  return Event.IncomeAddressExposed[/* make */0](userId, Address.make(coordinates, accountKeyChain));
+  return Curry._2(Event.Income[/* AddressExposed */0][/* make */0], userId, Address.make(coordinates, accountKeyChain));
 }
 
 function preparePayoutTx(eligibleWhenProposing, param, accountIdx, destinations, satsPerByte, param$1) {

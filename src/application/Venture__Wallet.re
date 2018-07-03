@@ -46,7 +46,7 @@ let exposeNextIncomeAddress = (userId, accountIdx, {walletInfoCollector}) => {
       walletInfoCollector |> WalletInfoCollector.exposedCoordinates,
       accountKeyChain,
     );
-  IncomeAddressExposed.make(
+  Income.AddressExposed.make(
     ~partnerId=userId,
     ~address=Address.make(coordinates, accountKeyChain),
   );

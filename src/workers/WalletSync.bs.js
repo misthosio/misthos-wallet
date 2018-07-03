@@ -140,7 +140,7 @@ function detectIncomeFromVenture(ventureId, eventLog) {
                 broadcastPayouts(transactions);
                 var utxos = filterUTXOs(transactions[/* knownIncomeTxs */3], param[0]);
                 var events = Belt_List.mapU(utxos, (function (utxo) {
-                        return Event.IncomeDetected[/* make */0](utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
+                        return Curry._5(Event.Income[/* Detected */1][/* make */0], utxo[/* txOutputN */1], utxo[/* coordinates */6], utxo[/* address */2], utxo[/* txId */0], utxo[/* value */3]);
                       }));
                 var match = Belt_List.keepMapU(param[1], (function (param) {
                         var unixTime = param[/* unixTime */2];

@@ -415,61 +415,62 @@ module AccountKeyChainActivated = {
     };
 };
 
-module IncomeAddressExposed = {
-  type t = {
-    partnerId: userId,
-    address: Address.t,
-  };
-  let make = (~partnerId, ~address) => {partnerId, address};
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("IncomeAddressExposed")),
-        ("partnerId", UserId.encode(event.partnerId)),
-        ("address", Address.encode(event.address)),
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      partnerId: raw |> field("partnerId", UserId.decode),
-      address: raw |> field("address", Address.decode),
+module Income = {
+  module AddressExposed = {
+    type t = {
+      partnerId: userId,
+      address: Address.t,
     };
-};
-
-module IncomeDetected = {
-  type t = {
-    address: string,
-    coordinates: Address.Coordinates.t,
-    txId: string,
-    txOutputN: int,
-    amount: BTC.t,
+    let make = (~partnerId, ~address) => {partnerId, address};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("IncomeAddressExposed")),
+          ("partnerId", UserId.encode(event.partnerId)),
+          ("address", Address.encode(event.address)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        partnerId: raw |> field("partnerId", UserId.decode),
+        address: raw |> field("address", Address.decode),
+      };
   };
-  let make = (~txOutputN, ~coordinates, ~address, ~txId, ~amount) => {
-    coordinates,
-    address,
-    txId,
-    txOutputN,
-    amount,
-  };
-  let encode = event =>
-    Json.Encode.(
-      object_([
-        ("type", string("IncomeDetected")),
-        ("address", string(event.address)),
-        ("txId", string(event.txId)),
-        ("txOutputN", int(event.txOutputN)),
-        ("coordinates", Address.Coordinates.encode(event.coordinates)),
-        ("amount", BTC.encode(event.amount)),
-      ])
-    );
-  let decode = raw =>
-    Json.Decode.{
-      address: raw |> field("address", string),
-      txId: raw |> field("txId", string),
-      amount: raw |> field("amount", BTC.decode),
-      txOutputN: raw |> field("txOutputN", int),
-      coordinates: raw |> field("coordinates", Address.Coordinates.decode),
+  module Detected = {
+    type t = {
+      address: string,
+      coordinates: Address.Coordinates.t,
+      txId: string,
+      txOutputN: int,
+      amount: BTC.t,
     };
+    let make = (~txOutputN, ~coordinates, ~address, ~txId, ~amount) => {
+      coordinates,
+      address,
+      txId,
+      txOutputN,
+      amount,
+    };
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("IncomeDetected")),
+          ("address", string(event.address)),
+          ("txId", string(event.txId)),
+          ("txOutputN", int(event.txOutputN)),
+          ("coordinates", Address.Coordinates.encode(event.coordinates)),
+          ("amount", BTC.encode(event.amount)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        address: raw |> field("address", string),
+        txId: raw |> field("txId", string),
+        amount: raw |> field("amount", BTC.decode),
+        txOutputN: raw |> field("txOutputN", int),
+        coordinates: raw |> field("coordinates", Address.Coordinates.decode),
+      };
+  };
 };
 
 module Transaction = {
@@ -543,8 +544,8 @@ type t =
   | CustodianKeyChainUpdated(CustodianKeyChainUpdated.t)
   | AccountKeyChainIdentified(AccountKeyChainIdentified.t)
   | AccountKeyChainActivated(AccountKeyChainActivated.t)
-  | IncomeAddressExposed(IncomeAddressExposed.t)
-  | IncomeDetected(IncomeDetected.t)
+  | IncomeAddressExposed(Income.AddressExposed.t)
+  | IncomeDetected(Income.Detected.t)
   | TransactionConfirmed(Transaction.Confirmed.t);
 
 exception BadData(string);
@@ -772,8 +773,8 @@ let encode =
   | AccountKeyChainIdentified(event) =>
     AccountKeyChainIdentified.encode(event)
   | AccountKeyChainActivated(event) => AccountKeyChainActivated.encode(event)
-  | IncomeAddressExposed(event) => IncomeAddressExposed.encode(event)
-  | IncomeDetected(event) => IncomeDetected.encode(event)
+  | IncomeAddressExposed(event) => Income.AddressExposed.encode(event)
+  | IncomeDetected(event) => Income.Detected.encode(event)
   | TransactionConfirmed(event) => Transaction.Confirmed.encode(event);
 
 let isSystemEvent =
@@ -865,8 +866,8 @@ let decode = raw => {
   | "AccountKeyChainActivated" =>
     AccountKeyChainActivated(AccountKeyChainActivated.decode(raw))
   | "IncomeAddressExposed" =>
-    IncomeAddressExposed(IncomeAddressExposed.decode(raw))
-  | "IncomeDetected" => IncomeDetected(IncomeDetected.decode(raw))
+    IncomeAddressExposed(Income.AddressExposed.decode(raw))
+  | "IncomeDetected" => IncomeDetected(Income.Detected.decode(raw))
   | "TransactionConfirmed" =>
     TransactionConfirmed(Transaction.Confirmed.decode(raw))
   | _ => raise(UnknownEvent(raw))

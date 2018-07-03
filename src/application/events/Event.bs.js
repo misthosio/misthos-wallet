@@ -928,7 +928,7 @@ function decode$16(raw) {
         ];
 }
 
-var IncomeAddressExposed = /* module */[
+var AddressExposed = /* module */[
   /* make */make$10,
   /* encode */encode$16,
   /* decode */decode$16
@@ -994,10 +994,15 @@ function decode$17(raw) {
         ];
 }
 
-var IncomeDetected = /* module */[
+var Detected = /* module */[
   /* make */make$11,
   /* encode */encode$17,
   /* decode */decode$17
+];
+
+var Income = /* module */[
+  /* AddressExposed */AddressExposed,
+  /* Detected */Detected
 ];
 
 function make$12(txId, blockHeight, unixTime) {
@@ -1599,8 +1604,7 @@ exports.Payout = Payout;
 exports.CustodianKeyChainUpdated = CustodianKeyChainUpdated;
 exports.AccountKeyChainIdentified = AccountKeyChainIdentified;
 exports.AccountKeyChainActivated = AccountKeyChainActivated;
-exports.IncomeAddressExposed = IncomeAddressExposed;
-exports.IncomeDetected = IncomeDetected;
+exports.Income = Income;
 exports.Transaction = Transaction;
 exports.BadData = BadData;
 exports.makePartnerProposed = makePartnerProposed;

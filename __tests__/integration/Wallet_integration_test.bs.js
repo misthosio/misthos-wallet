@@ -180,7 +180,7 @@ describe("Wallet_integration", (function () {
                                               ];
                                               List.iter((function (param) {
                                                       var address = param[/* address */2];
-                                                      var incomeEvent = Event.IncomeDetected[/* make */0](param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, param[/* txId */0], param[/* amount */3]);
+                                                      var incomeEvent = Curry._5(Event.Income[/* Detected */1][/* make */0], param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, param[/* txId */0], param[/* amount */3]);
                                                       var match = List.mem_assoc(address, walletOneAddresses);
                                                       if (match) {
                                                         oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(41, [incomeEvent]), oneKeyChainWallet[0]);

@@ -209,10 +209,10 @@ function accountKeyChainActivated($staropt$star, custodian, identifier) {
   return Event.AccountKeyChainActivated[/* make */0](WalletTypes.AccountIndex[/* default */11], custodian[/* userId */0], identifier, sequence);
 }
 
-var incomeAddressExposed = Event.IncomeAddressExposed[/* make */0];
+var incomeAddressExposed = Event.Income[/* AddressExposed */0][/* make */0];
 
 function incomeDetected(address, coordinates) {
-  return Event.IncomeDetected[/* make */0](0, coordinates, address, V4(), BTC.fromSatoshis(/* int64 */[
+  return Curry._5(Event.Income[/* Detected */1][/* make */0], 0, coordinates, address, V4(), BTC.fromSatoshis(/* int64 */[
                   /* hi */0,
                   /* lo */10000000
                 ]));

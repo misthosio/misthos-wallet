@@ -101,7 +101,7 @@ let () =
                  utxos
                  |> List.iter(({address, txId, txOutputN, amount}: utxo) => {
                       let incomeEvent =
-                        IncomeDetected.make(
+                        Income.Detected.make(
                           ~txOutputN,
                           ~address,
                           ~txId,
