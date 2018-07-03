@@ -52,6 +52,7 @@ function lastResponse(param) {
 function fromViewModelState(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var oldInputCollector = param[/* oldInputCollector */9];
+  var partnersCollector = param[/* partnersCollector */6];
   return /* record */[
           /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector),
           /* addressDetails */(function (addressInfo) {
@@ -62,7 +63,10 @@ function fromViewModelState(param) {
                       /* addressType */addressInfo[/* addressType */0],
                       /* addressStatus */addressInfo[/* addressStatus */4],
                       /* currentUtxos */WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector),
-                      /* spentInputs */ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector)
+                      /* spentInputs */ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector),
+                      /* isPartner */(function (id) {
+                          return ViewModel__PartnersCollector.isPartner(id, partnersCollector);
+                        })
                     ];
             })
         ];

@@ -36,19 +36,21 @@ function addressTypeToString(param) {
 
 var component = ReasonReact.statelessComponent("AddressesModal");
 
-function renderExpandedInfo(info) {
-  var __x = String(info[/* nCoSigners */1]) + ("-" + (String(info[/* nCustodians */2]) + "; ["));
-  var __x$1 = Belt_Set.reduceU(info[/* custodians */0], __x, (function (res, c) {
-          return res + (PrimitiveTypes.UserId[/* toString */0](c) + ", ");
-        })) + "] [";
-  return React.createElement("div", undefined, ViewCommon.text(Belt_List.reduceU(Belt_List.concat(info[/* currentUtxos */5], info[/* spentInputs */6]), __x$1, (function (res, input) {
-                        return res + (BTC.format(input[/* value */3]) + ", ");
-                      })) + ("] " + (
-                    info[/* addressType */3] ? "Change" : "Income"
-                  ))));
-}
-
 function make(viewData, _) {
+  var renderExpandedInfo = function (info) {
+    var __x = String(info[/* nCoSigners */1]) + ("-" + (String(info[/* nCustodians */2]) + "; ["));
+    var __x$1 = Belt_Set.reduceU(info[/* custodians */0], __x, (function (res, c) {
+            var match = Curry._1(info[/* isPartner */7], c);
+            return res + (PrimitiveTypes.UserId[/* toString */0](c) + ((
+                        match ? "" : " - Ex-Partner"
+                      ) + ", "));
+          })) + "] [";
+    return React.createElement("div", undefined, ViewCommon.text(Belt_List.reduceU(Belt_List.concat(info[/* currentUtxos */5], info[/* spentInputs */6]), __x$1, (function (res, input) {
+                          return res + (BTC.format(input[/* value */3]) + ", ");
+                        })) + ("] " + (
+                      info[/* addressType */3] ? "Change" : "Income"
+                    ))));
+  };
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -90,6 +92,5 @@ exports.ViewData = ViewData;
 exports.statusToString = statusToString;
 exports.addressTypeToString = addressTypeToString;
 exports.component = component;
-exports.renderExpandedInfo = renderExpandedInfo;
 exports.make = make;
 /* component Not a pure module */
