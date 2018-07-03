@@ -279,15 +279,15 @@ function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, 
   }
 }
 
-function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddress, network) {
+function build(optionalInputs, mandatoryInputs, destinations, satsPerByte, changeAddress, network) {
   var mandatoryInputs$1 = Belt_Set.keep(mandatoryInputs, (function (param) {
           return TransactionFee.canPayForItself(satsPerByte, param);
         }));
-  var allInputs$1 = List.sort((function (i1, i2) {
+  var optionalInputs$1 = List.sort((function (i1, i2) {
           return i1[/* value */3].comparedTo(i2[/* value */3]);
-        }), Belt_Set.toList(Belt_Set.diff(Belt_Set.keep(allInputs, (function (param) {
-                      return TransactionFee.canPayForItself(satsPerByte, param);
-                    })), mandatoryInputs$1)));
+        }), Belt_Set.toList(Belt_Set.keep(optionalInputs, (function (param) {
+                  return TransactionFee.canPayForItself(satsPerByte, param);
+                }))));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   txB.setVersion(2);
   var usedInputs = List.map((function (i) {
@@ -331,7 +331,7 @@ function build(mandatoryInputs, allInputs, destinations, satsPerByte, changeAddr
             /* changeAddress */withChange ? /* Some */[changeAddress] : /* None */0
           ];
   } else {
-    var match = findInputs(allInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
+    var match = findInputs(optionalInputs$1, outTotal.plus(currentFee).minus(currentInputValue), satsPerByte, /* [] */0);
     if (match[1]) {
       var match$1 = List.fold_left((function (param, i) {
               return /* tuple */[
