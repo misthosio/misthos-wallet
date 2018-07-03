@@ -32,12 +32,12 @@ let findCurrentUsers =
     UserId.emptySet,
   );
 
-let run = (~skipIntegrity=false, scenarioName, scenarioTest) =>
+let run = (~checkIntegrity=false, scenarioName, scenarioTest) =>
   describe(
     scenarioName,
     () => {
       let loadedLog = loadScenario(scenarioName);
-      if (! skipIntegrity) {
+      if (! checkIntegrity) {
         test(
           "Integrity of "
           ++ string_of_int(loadedLog |> EventLog.length)
@@ -53,5 +53,17 @@ let run = (~skipIntegrity=false, scenarioName, scenarioTest) =>
       let (venture, newItems) =
         loadedLog |> Venture.reconstruct(scenarioSession);
       scenarioTest(venture, newItems);
+    },
+  );
+let runWithView = (scenarioName, scenarioTest) =>
+  describe(
+    scenarioName,
+    () => {
+      let loadedLog = loadScenario(scenarioName);
+      let (venture, _) = loadedLog |> Venture.reconstruct(scenarioSession);
+      venture
+      |> Venture.getEventLog
+      |> ViewModel.init(UserId.fromString("misthosio.id"))
+      |> scenarioTest;
     },
   );
