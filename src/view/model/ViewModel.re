@@ -10,6 +10,8 @@ module TransactionCollector = ViewModel__TransactionCollector;
 
 module TxDetailsCollector = ViewModel__TxDetailsCollector;
 
+module OldInputCollector = ViewModel__OldTxInputCollector;
+
 type t = {
   localUser: userId,
   ventureId,
@@ -21,6 +23,7 @@ type t = {
   partnersCollector: PartnersCollector.t,
   transactionCollector: TransactionCollector.t,
   txDetailsCollector: TxDetailsCollector.t,
+  oldInputCollector: OldInputCollector.t,
   walletInfoCollector: WalletInfoCollector.t,
 };
 
@@ -45,30 +48,31 @@ module AddressesView = {
     nCustodians: int,
     addressType,
     addressStatus,
-    transferedIncome: list(txInput),
     currentUtxos: list(txInput),
+    spentInputs: list(txInput),
   };
   type t = {
     infos: list(addressInfo),
     addressDetails: addressInfo => addressDetails,
   };
-  let fromViewModelState = ({walletInfoCollector}) => {
+  let fromViewModelState = ({walletInfoCollector, oldInputCollector}) => {
     infos:
       walletInfoCollector
       |> WalletInfoCollector.addressInfos(AccountIndex.default),
-    addressDetails: addressInfos => {
-      custodians: addressInfos.custodians,
-      nCustodians: addressInfos.custodians |> Belt.Set.size,
-      nCoSigners: addressInfos.nCoSigners,
-      addressType: addressInfos.addressType,
-      addressStatus: addressInfos.addressStatus,
-      transferedIncome: [],
+    addressDetails: addressInfo => {
+      custodians: addressInfo.custodians,
+      nCustodians: addressInfo.custodians |> Belt.Set.size,
+      nCoSigners: addressInfo.nCoSigners,
+      addressType: addressInfo.addressType,
+      addressStatus: addressInfo.addressStatus,
       currentUtxos:
         WalletInfoCollector.inputsFor(
           AccountIndex.default,
-          addressInfos,
+          addressInfo,
           walletInfoCollector,
         ),
+      spentInputs:
+        oldInputCollector |> OldInputCollector.inputsFor(addressInfo.address),
     },
   };
 };
@@ -296,6 +300,7 @@ let make = localUser => {
   partnersCollector: PartnersCollector.make(localUser),
   transactionCollector: TransactionCollector.make(),
   txDetailsCollector: TxDetailsCollector.make(localUser),
+  oldInputCollector: OldInputCollector.make(),
   walletInfoCollector: WalletInfoCollector.make(),
 };
 
@@ -313,6 +318,8 @@ let apply = ({event, hash}: EventLog.item, {processedItems} as state) =>
         state.txDetailsCollector |> TxDetailsCollector.apply(event),
       walletInfoCollector:
         state.walletInfoCollector |> WalletInfoCollector.apply(event),
+      oldInputCollector:
+        state.oldInputCollector |> OldInputCollector.apply(event),
       processedItems: processedItems |. ItemsSet.add(hash),
     };
     switch (event) {

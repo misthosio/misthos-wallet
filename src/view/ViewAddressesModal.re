@@ -32,7 +32,10 @@ let renderExpandedInfo = (info: ViewData.addressDetails) =>
              )
         )
         ++ "] ["
-        |. List.reduceU(info.currentUtxos, _, (. res, input: Network.txInput) =>
+        |. List.reduceU(
+             List.concat(info.currentUtxos, info.spentInputs),
+             _,
+             (. res, input: Network.txInput) =>
              res ++ (input.value |> BTC.format) ++ ", "
            )
       )
