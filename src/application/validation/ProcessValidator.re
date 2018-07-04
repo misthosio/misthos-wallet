@@ -222,6 +222,7 @@ let update = (event, {currentPartners, processes} as state) => {
     | AccountKeyChainActivated(_)
     | IncomeAddressExposed(_)
     | IncomeDetected(_)
+    | IncomeUnlocked(_)
     | TransactionConfirmed(_) => state
     };
   {
