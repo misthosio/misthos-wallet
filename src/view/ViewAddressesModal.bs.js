@@ -109,8 +109,8 @@ function make(viewData, _) {
                                               var match = Curry._1(details$1[/* isPartner */7], partnerId);
                                               var status = match ? /* None */0 : /* Some */[ViewCommon.text(" - Ex-Partner")];
                                               return ReasonReact.element(/* None */0, /* None */0, Partner.make(partnerId, /* None */0, /* None */0, status, /* None */0, /* array */[]));
-                                            }))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), Belt_Array.map(Belt_List.toArray(Belt_List.concat(details$1[/* currentUtxos */5], details$1[/* spentInputs */6])), (function (input) {
-                                    return ViewCommon.text(BTC.format(input[/* value */3]));
+                                            }))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), Belt_Array.map(Belt_List.toArray(Belt_List.concat(details$1[/* currentUtxos */5], details$1[/* spentInputs */6])), (function (income) {
+                                    return ViewCommon.text(BTC.format(income[/* amount */3]));
                                   }))))]));
   };
   return /* record */[

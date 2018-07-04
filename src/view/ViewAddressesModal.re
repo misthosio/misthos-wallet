@@ -94,8 +94,8 @@ let make = (~viewData: ViewData.t, _children) => {
               Array.map(
                 Belt.List.concat(details.currentUtxos, details.spentInputs)
                 |> Belt.List.toArray,
-                (input: Network.txInput) =>
-                input.value |> BTC.format |> text
+                (income: ViewData.income) =>
+                income.amount |> BTC.format |> text
               )
               |> ReasonReact.array
             )

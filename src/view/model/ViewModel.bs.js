@@ -11,6 +11,8 @@ var Router = require("../Router.bs.js");
 var Network = require("../../application/wallet/Network.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../application/events/EventLog.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -52,6 +54,7 @@ function lastResponse(param) {
 function fromViewModelState(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var oldInputCollector = param[/* oldInputCollector */9];
+  var txDetailsCollector = param[/* txDetailsCollector */8];
   var partnersCollector = param[/* partnersCollector */6];
   return /* record */[
           /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector),
@@ -62,8 +65,12 @@ function fromViewModelState(param) {
                       /* nCustodians */Belt_Set.size(addressInfo[/* custodians */1]),
                       /* addressType */addressInfo[/* addressType */0],
                       /* addressStatus */addressInfo[/* addressStatus */4],
-                      /* currentUtxos */WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector),
-                      /* spentInputs */ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector),
+                      /* currentUtxos */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
+                              return Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(param[/* txId */0], txDetailsCollector));
+                            })),
+                      /* spentInputs */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
+                              return Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(param[/* txId */0], txDetailsCollector));
+                            })),
                       /* isPartner */(function (id) {
                           return ViewModel__PartnersCollector.isPartner(id, partnersCollector);
                         })

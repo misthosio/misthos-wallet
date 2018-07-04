@@ -41,15 +41,15 @@ module AddressesView = {
   type addressType = WalletInfoCollector.addressType;
   type addressStatus = WalletInfoCollector.addressStatus;
   type addressInfo = WalletInfoCollector.addressInfo;
-  type txInput = Network.txInput;
+  type income = TxDetailsCollector.income;
   type addressDetails = {
     custodians: UserId.set,
     nCoSigners: int,
     nCustodians: int,
     addressType,
     addressStatus,
-    currentUtxos: list(txInput),
-    spentInputs: list(txInput),
+    currentUtxos: list(income),
+    spentInputs: list(income),
     isPartner: UserId.t => bool,
   };
   type t = {
@@ -57,7 +57,14 @@ module AddressesView = {
     addressDetails: addressInfo => addressDetails,
   };
   let fromViewModelState =
-      ({walletInfoCollector, oldInputCollector, partnersCollector}) => {
+      (
+        {
+          walletInfoCollector,
+          oldInputCollector,
+          partnersCollector,
+          txDetailsCollector,
+        },
+      ) => {
     infos:
       walletInfoCollector
       |> WalletInfoCollector.addressInfos(AccountIndex.default),
@@ -73,9 +80,20 @@ module AddressesView = {
           AccountIndex.default,
           addressInfo,
           walletInfoCollector,
-        ),
+        )
+        |. Belt.List.mapU((. {txId}: Network.txInput) =>
+             txDetailsCollector
+             |> TxDetailsCollector.getIncome(txId)
+             |> Js.Option.getExn
+           ),
       spentInputs:
-        oldInputCollector |> OldInputCollector.inputsFor(addressInfo.address),
+        oldInputCollector
+        |> OldInputCollector.inputsFor(addressInfo.address)
+        |. Belt.List.mapU((. {txId}: Network.txInput) =>
+             txDetailsCollector
+             |> TxDetailsCollector.getIncome(txId)
+             |> Js.Option.getExn
+           ),
     },
   };
 };
