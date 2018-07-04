@@ -89,6 +89,7 @@ let decodeInput = raw =>
 module Make = (Client: NetworkClient) => {
   let network = Client.network;
   let transactionInfo = Client.getTransactionInfo;
+  let currentBlockHeight = Client.getCurrentBlockHeight;
   let transactionInputs = addresses =>
     Belt.(
       Js.Promise.(
@@ -164,6 +165,12 @@ let transactionInfo =
   | Regtest => Regtest.transactionInfo
   | Testnet => Testnet.transactionInfo
   | Mainnet => Mainnet.transactionInfo;
+
+let currentBlockHeight =
+  fun
+  | Regtest => Regtest.currentBlockHeight
+  | Testnet => Testnet.currentBlockHeight
+  | Mainnet => Mainnet.currentBlockHeight;
 
 let broadcastTransaction =
   fun

@@ -109,6 +109,14 @@ function oldSpendableInputs(accountIdx, param) {
                   })), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(Belt_Map.getWithDefault(param[/* reserved */6], accountIdx, Network.inputMap(/* () */0)))));
 }
 
+function temporarilyInaccessibleInputs(param) {
+  return Belt_Array.reduceU(Belt_Map.valuesToArray(param[/* temporarilyInaccessible */4]), Network.inputSet(/* () */0), (function (res, map) {
+                return Belt_MapString.reduceU(map, res, (function (res, _, inputs) {
+                              return Belt_Set.mergeMany(res, Belt_List.toArray(inputs));
+                            }));
+              }));
+}
+
 function network(param) {
   return param[/* network */0];
 }
@@ -1042,6 +1050,7 @@ exports.currentKeyChainIdent = currentKeyChainIdent;
 exports.currentKeyChain = currentKeyChain;
 exports.currentSpendableInputs = currentSpendableInputs;
 exports.oldSpendableInputs = oldSpendableInputs;
+exports.temporarilyInaccessibleInputs = temporarilyInaccessibleInputs;
 exports.unlockedInputs = unlockedInputs;
 exports.inputsFor = inputsFor;
 exports.nextChangeAddress = nextChangeAddress;

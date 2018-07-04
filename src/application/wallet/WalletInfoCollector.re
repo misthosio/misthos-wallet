@@ -152,6 +152,15 @@ let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
        |> Map.keysToArray
        |> Set.mergeMany(Network.inputSet()),
      );
+let temporarilyInaccessibleInputs = ({temporarilyInaccessible}) =>
+  temporarilyInaccessible
+  |. Map.valuesToArray
+  |. Array.reduceU(Network.inputSet(), (. res, map) =>
+       map
+       |. Map.String.reduceU(res, (. res, _, inputs) =>
+            res |. Set.mergeMany(inputs |> List.toArray)
+          )
+     );
 
 let network = ({network}) => network;
 

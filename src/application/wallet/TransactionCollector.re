@@ -9,7 +9,7 @@ type t = {
   ventureId,
   transactionsOfInterest: Set.String.t,
   knownIncomeTxs: Set.String.t,
-  confirmedTransactions: Set.String.t,
+  confirmedTransactions: Map.String.t(float),
   notYetBroadcastPayouts: ProcessId.map(Payout.Finalized.t),
 };
 
@@ -18,7 +18,7 @@ let make = () => {
   ventureId: VentureId.fromString(""),
   transactionsOfInterest: Set.String.empty,
   knownIncomeTxs: Set.String.empty,
-  confirmedTransactions: Set.String.empty,
+  confirmedTransactions: Map.String.empty,
   notYetBroadcastPayouts: ProcessId.makeMap(),
 };
 
@@ -48,10 +48,10 @@ let apply = (event, state) =>
       notYetBroadcastPayouts:
         state.notYetBroadcastPayouts |. Map.remove(processId),
     }
-  | TransactionConfirmed({txId}) => {
+  | TransactionConfirmed({txId, blockHeight}) => {
       ...state,
       confirmedTransactions:
-        state.confirmedTransactions |. Set.String.add(txId),
+        state.confirmedTransactions |. Map.String.set(txId, blockHeight),
     }
   | _ => state
   };

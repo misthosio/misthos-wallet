@@ -2,6 +2,7 @@
 'use strict';
 
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
 
@@ -11,7 +12,7 @@ function make() {
           /* ventureId */PrimitiveTypes.VentureId[/* fromString */1](""),
           /* transactionsOfInterest */Belt_SetString.empty,
           /* knownIncomeTxs */Belt_SetString.empty,
-          /* confirmedTransactions */Belt_SetString.empty,
+          /* confirmedTransactions */Belt_MapString.empty,
           /* notYetBroadcastPayouts */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0)
         ];
 }
@@ -68,12 +69,13 @@ function apply($$event, state) {
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
     case 43 : 
+        var match$2 = $$event[0];
         return /* record */[
                 /* network */state[/* network */0],
                 /* ventureId */state[/* ventureId */1],
                 /* transactionsOfInterest */state[/* transactionsOfInterest */2],
                 /* knownIncomeTxs */state[/* knownIncomeTxs */3],
-                /* confirmedTransactions */Belt_SetString.add(state[/* confirmedTransactions */4], $$event[0][/* txId */0]),
+                /* confirmedTransactions */Belt_MapString.set(state[/* confirmedTransactions */4], match$2[/* txId */0], match$2[/* blockHeight */1]),
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
     default:

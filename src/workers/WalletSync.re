@@ -14,6 +14,35 @@ let logMessage = WorkerUtils.logMessage(logLabel);
 
 let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
+let notifyOfUnlockedInputs =
+    (
+      ventureId,
+      blockHeight,
+      {confirmedTransactions}: TransactionCollector.t,
+      walletInfo,
+    ) =>
+  switch (
+    walletInfo
+    |> WalletInfoCollector.temporarilyInaccessibleInputs
+    |. Set.reduceU(
+         [], (. res, {txId, txOutputN, address, sequence}: Network.txInput) =>
+         switch (sequence, confirmedTransactions |. Map.String.get(txId)) {
+         | (Some(sequence), Some(txBlock))
+             when blockHeight > sequence + int_of_float(txBlock) => [
+             Event.Income.Unlocked.make(~address, ~txId, ~txOutputN),
+             ...res,
+           ]
+         | _ => res
+         }
+       )
+  ) {
+  | [] => ()
+  | events =>
+    postMessage(
+      VentureWorkerMessage.SyncWallet(ventureId, [], [], [], events, []),
+    )
+  };
+
 let broadcastPayouts =
     ({ventureId, network, notYetBroadcastPayouts}: TransactionCollector.t) =>
   Js.Promise.(
@@ -89,16 +118,25 @@ let make = () => {
 
 let scanTransactions = ({addresses, transactions} as collector) =>
   Js.Promise.(
-    addresses.exposedAddresses
-    |> Network.transactionInputs(addresses.network)
-    |> then_(utxos =>
+    all2((
+      addresses.exposedAddresses
+      |> Network.transactionInputs(addresses.network),
+      Network.currentBlockHeight(addresses.network, ()),
+    ))
+    |> then_(((utxos, blockHeight)) =>
          utxos
          |. List.mapU((. {txId}: Network.txInput) => txId)
          |> List.toArray
          |> Set.String.mergeMany(transactions.transactionsOfInterest)
-         |> Set.String.diff(_, transactions.confirmedTransactions)
+         |. Set.String.diff(
+              transactions.confirmedTransactions
+              |> Map.String.keysToArray
+              |> Set.String.mergeMany(Set.String.empty),
+            )
          |> Network.transactionInfo(addresses.network)
-         |> then_(txInfos => (utxos, txInfos, collector) |> resolve)
+         |> then_(txInfos =>
+              (utxos, txInfos, blockHeight, collector) |> resolve
+            )
        )
   );
 
@@ -129,7 +167,9 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
     eventLog
     |> collectData
     |> scanTransactions
-    |> then_(((utxos, txInfos, {transactions})) => {
+    |> then_(((utxos, txInfos, blockHeight, {transactions, walletInfo})) => {
+         walletInfo
+         |> notifyOfUnlockedInputs(ventureId, blockHeight, transactions);
          transactions |> broadcastPayouts;
          let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
