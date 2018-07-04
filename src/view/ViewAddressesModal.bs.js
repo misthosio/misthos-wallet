@@ -50,7 +50,7 @@ var component = ReasonReact.statelessComponent("AddressesModal");
 var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        Css.unsafe("gridTemplateColumns", "[begin] 5fr 1fr min-content [end]"),
+        Css.unsafe("gridTemplateColumns", "[begin] 2fr 1fr 1fr min-content [end]"),
         /* [] */0
       ]
     ]);
@@ -102,14 +102,14 @@ var Styles = /* module */[
 ];
 
 function make(viewData, _) {
-  var renderExpandedInfo = function (info) {
+  var renderExpandedInfo = function (info, details$1) {
     return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Collapse.make(/* Some */[details], /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("div", {
                           className: detailsGrid
-                        }, React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Custodians")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("This is a " + (String(info[/* nCoSigners */1]) + ("-of-" + (String(info[/* nCustodians */2]) + " address with the following custodians:"))))])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Belt_Array.map(Belt_Set.toArray(info[/* custodians */0]), (function (partnerId) {
-                                              var match = Curry._1(info[/* isPartner */7], partnerId);
+                        }, React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Custodians")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("This is a " + (String(details$1[/* nCoSigners */1]) + ("-of-" + (String(details$1[/* nCustodians */2]) + " address with the following custodians:"))))])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Belt_Array.map(Belt_Set.toArray(details$1[/* custodians */0]), (function (partnerId) {
+                                              var match = Curry._1(details$1[/* isPartner */7], partnerId);
                                               var status = match ? /* None */0 : /* Some */[ViewCommon.text(" - Ex-Partner")];
                                               return ReasonReact.element(/* None */0, /* None */0, Partner.make(partnerId, /* None */0, /* None */0, status, /* None */0, /* array */[]));
-                                            }))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS BALANCE: TODO")])), Belt_Array.map(Belt_List.toArray(Belt_List.concat(info[/* currentUtxos */5], info[/* spentInputs */6])), (function (input) {
+                                            }))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), Belt_Array.map(Belt_List.toArray(Belt_List.concat(details$1[/* currentUtxos */5], details$1[/* spentInputs */6])), (function (input) {
                                     return ViewCommon.text(BTC.format(input[/* value */3]));
                                   }))))]));
   };
@@ -126,12 +126,13 @@ function make(viewData, _) {
           /* render */(function () {
               var infos = Belt_List.toArray(Belt_List.keepMapU(viewData[/* infos */0], (function (info) {
                           if (info[/* addressType */0] !== /* Change */0 || info[/* balance */5].gt(BTC.zero)) {
-                            var expandedInfo = Curry._1(viewData[/* addressDetails */1], info);
+                            var details = Curry._1(viewData[/* addressDetails */1], info);
                             return /* Some */[/* array */[
                                       ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[summary], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(info[/* address */2])])),
+                                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[summary], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(addressTypeToString(info[/* addressType */0]))])),
                                       ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[summary], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(statusToString(info[/* addressStatus */4]))])),
                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.chevronDown])),
-                                      renderExpandedInfo(expandedInfo)
+                                      renderExpandedInfo(info, details)
                                     ]];
                           } else {
                             return /* None */0;
@@ -141,7 +142,7 @@ function make(viewData, _) {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[React.createElement("div", {
                                                   className: grid
-                                                }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[header], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("WALLET ADDRESS")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[header], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("STATUS")])), React.createElement("span", {
+                                                }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[header], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("WALLET ADDRESS")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[header], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS TYPE")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[header], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("STATUS")])), React.createElement("span", {
                                                       className: header
                                                     }), infos)])))], /* None */0, /* None */0, /* None */0, /* array */[]));
             }),

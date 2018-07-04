@@ -24,7 +24,7 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      unsafe("gridTemplateColumns", "[begin] 5fr 1fr min-content [end]"),
+      unsafe("gridTemplateColumns", "[begin] 2fr 1fr 1fr min-content [end]"),
     ]);
   let header =
     style([
@@ -49,7 +49,8 @@ module Styles = {
 };
 
 let make = (~viewData: ViewData.t, _children) => {
-  let renderExpandedInfo = (info: ViewData.addressDetails) =>
+  let renderExpandedInfo =
+      (info: ViewData.addressInfo, details: ViewData.addressDetails) =>
     MaterialUi.(
       <Collapse className=Styles.details in_=true>
         <div className=Styles.detailsGrid>
@@ -57,12 +58,12 @@ let make = (~viewData: ViewData.t, _children) => {
             <MTypography gutterBottom=true variant=`Title>
               ("Custodians" |> text)
             </MTypography>
-            <MTypography gutterBottom=true variant=`Body1>
+            <MTypography gutterBottom=true variant=`Body2>
               (
                 "This is a "
-                ++ string_of_int(info.nCoSigners)
+                ++ string_of_int(details.nCoSigners)
                 ++ "-of-"
-                ++ string_of_int(info.nCustodians)
+                ++ string_of_int(details.nCustodians)
                 ++ " address with the following custodians:"
                 |> text
               )
@@ -70,10 +71,10 @@ let make = (~viewData: ViewData.t, _children) => {
             <List>
               (
                 Array.map(
-                  info.custodians |> Set.toArray,
+                  details.custodians |> Set.toArray,
                   (partnerId: UserId.t) => {
                     let status =
-                      partnerId |> info.isPartner ?
+                      partnerId |> details.isPartner ?
                         None : Some(" - Ex-Partner" |> text);
                     <Partner partnerId ?status />;
                   },
@@ -86,12 +87,12 @@ let make = (~viewData: ViewData.t, _children) => {
             <MTypography gutterBottom=true variant=`Title>
               ("OVERVIEW" |> text)
             </MTypography>
-            <MTypography gutterBottom=true variant=`Body1>
-              ("ADDRESS BALANCE: TODO" |> text)
+            <MTypography gutterBottom=true variant=`Body2>
+              ("ADDRESS BALANCE: " ++ (info.balance |> BTC.format) |> text)
             </MTypography>
             (
               Array.map(
-                Belt.List.concat(info.currentUtxos, info.spentInputs)
+                Belt.List.concat(details.currentUtxos, details.spentInputs)
                 |> Belt.List.toArray,
                 (input: Network.txInput) =>
                 input.value |> BTC.format |> text
@@ -111,10 +112,13 @@ let make = (~viewData: ViewData.t, _children) => {
              if (info.addressType != WalletInfoCollector.Change
                  || info.balance
                  |> BTC.gt(BTC.zero)) {
-               let expandedInfo = viewData.addressDetails(info);
+               let details = viewData.addressDetails(info);
                [|
                  <MTypography className=Styles.summary variant=`Body2>
                    (info.address |> text)
+                 </MTypography>,
+                 <MTypography className=Styles.summary variant=`Body2>
+                   (info.addressType |> addressTypeToString |> text)
                  </MTypography>,
                  <MTypography className=Styles.summary variant=`Body2>
                    (statusToString(info.addressStatus) |> text)
@@ -122,7 +126,7 @@ let make = (~viewData: ViewData.t, _children) => {
                  <MaterialUi.IconButton>
                    Icons.chevronDown
                  </MaterialUi.IconButton>,
-                 expandedInfo |> renderExpandedInfo,
+                 renderExpandedInfo(info, details),
                |]
                |> ReasonReact.array
                |. Some;
@@ -140,6 +144,9 @@ let make = (~viewData: ViewData.t, _children) => {
               <div className=Styles.grid>
                 <MTypography className=Styles.header variant=`Body2>
                   ("WALLET ADDRESS" |> text)
+                </MTypography>
+                <MTypography className=Styles.header variant=`Body2>
+                  ("ADDRESS TYPE" |> text)
                 </MTypography>
                 <MTypography className=Styles.header variant=`Body2>
                   ("STATUS" |> text)
