@@ -76,7 +76,7 @@ function make(viewData, _) {
                                         ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */5][/* userId */0]) + "'"))), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](prospect[/* proposedBy */2]))], /* array */[]));
                     }), viewData[/* prospects */4]);
               var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
-                              return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* None */0, /* None */0, /* array */[]));
+                              return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]));
                             }), viewData[/* partners */3])));
               var payouts = $$Array.of_list(List.map((function (param) {
                           var processId = param[/* processId */0];

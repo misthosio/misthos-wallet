@@ -85,14 +85,8 @@ let make = (~viewData: ViewData.t, _children) => {
         </MTypography>
         <MaterialUi.List>
           (
-            Array.map(
-              details.custodians |> Set.toArray,
-              (partnerId: UserId.t) => {
-                let status =
-                  partnerId |> details.isPartner ?
-                    None : Some(" - Ex-Partner" |> text);
-                <Partner partnerId ?status />;
-              },
+            Array.map(details.custodians |> Set.toArray, (partnerId: UserId.t) =>
+              <Partner partnerId ex=(partnerId |> details.isPartner |> (!)) />
             )
             |> ReasonReact.array
           )

@@ -298,7 +298,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                                             return Curry._1(send, /* SelectRemovePartner */Block.__(3, [partner[/* userId */0]]));
                                                           })], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))], /* None */0, /* Some */[(function () {
                                                   return Curry._1(send, /* SelectRemovePartner */Block.__(3, [partner[/* userId */0]]));
-                                                })], /* array */[]))];
+                                                })], /* None */0, /* array */[]))];
                           } else {
                             return /* None */0;
                           }
