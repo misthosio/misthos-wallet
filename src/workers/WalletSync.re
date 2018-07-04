@@ -76,9 +76,18 @@ let broadcastPayouts =
          |> catchAndLogError
        )
   );
+type collector = {
+  addresses: AddressCollector.t,
+  transactions: TransactionCollector.t,
+  walletInfo: WalletInfoCollector.t,
+};
+let make = () => {
+  addresses: AddressCollector.make(),
+  transactions: TransactionCollector.make(),
+  walletInfo: WalletInfoCollector.make(),
+};
 
-let scanTransactions =
-    ((addresses: AddressCollector.t, transactions: TransactionCollector.t)) =>
+let scanTransactions = ({addresses, transactions} as collector) =>
   Js.Promise.(
     addresses.exposedAddresses
     |> Network.transactionInputs(addresses.network)
@@ -89,18 +98,19 @@ let scanTransactions =
          |> Set.String.mergeMany(transactions.transactionsOfInterest)
          |> Set.String.diff(_, transactions.confirmedTransactions)
          |> Network.transactionInfo(addresses.network)
-         |> then_(txInfos => (utxos, txInfos, transactions) |> resolve)
+         |> then_(txInfos => (utxos, txInfos, collector) |> resolve)
        )
   );
 
-let findAddressesAndTxIds = log =>
+let collectData = log =>
   log
   |> EventLog.reduce(
-       ((addresses, transactions), {event}: EventLog.item) => (
-         addresses |> AddressCollector.apply(event),
-         transactions |> TransactionCollector.apply(event),
-       ),
-       (AddressCollector.make(), TransactionCollector.make()),
+       ({addresses, transactions, walletInfo}, {event}: EventLog.item) => {
+         addresses: addresses |> AddressCollector.apply(event),
+         transactions: transactions |> TransactionCollector.apply(event),
+         walletInfo: walletInfo |> WalletInfoCollector.apply(event),
+       },
+       make(),
      );
 
 let filterUTXOs = (knownTxs, utxos) =>
@@ -117,9 +127,9 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
   );
   Js.Promise.(
     eventLog
-    |> findAddressesAndTxIds
+    |> collectData
     |> scanTransactions
-    |> then_(((utxos, txInfos, transactions: TransactionCollector.t)) => {
+    |> then_(((utxos, txInfos, {transactions})) => {
          transactions |> broadcastPayouts;
          let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =

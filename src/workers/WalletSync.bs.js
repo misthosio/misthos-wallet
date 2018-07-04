@@ -14,6 +14,7 @@ var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var AddressCollector = require("../application/wallet/AddressCollector.bs.js");
+var WalletInfoCollector = require("../application/wallet/WalletInfoCollector.bs.js");
 var TransactionCollector = require("../application/wallet/TransactionCollector.bs.js");
 var VentureWorkerMessage = require("./VentureWorkerMessage.bs.js");
 
@@ -95,9 +96,17 @@ function broadcastPayouts(param) {
               }));
 }
 
-function scanTransactions(param) {
-  var transactions = param[1];
-  var addresses = param[0];
+function make() {
+  return /* record */[
+          /* addresses */AddressCollector.make(/* () */0),
+          /* transactions */TransactionCollector.make(/* () */0),
+          /* walletInfo */WalletInfoCollector.make(/* () */0)
+        ];
+}
+
+function scanTransactions(collector) {
+  var transactions = collector[/* transactions */1];
+  var addresses = collector[/* addresses */0];
   return Network.transactionInputs(addresses[/* network */0])(addresses[/* exposedAddresses */2]).then((function (utxos) {
                 var __x = Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */2], Belt_List.toArray(Belt_List.mapU(utxos, (function (param) {
                                 return param[/* txId */0];
@@ -106,23 +115,21 @@ function scanTransactions(param) {
                               return Promise.resolve(/* tuple */[
                                           utxos,
                                           txInfos,
-                                          transactions
+                                          collector
                                         ]);
                             }));
               }));
 }
 
-function findAddressesAndTxIds(log) {
+function collectData(log) {
   return Curry._3(EventLog.reduce, (function (param, param$1) {
                 var $$event = param$1[/* event */0];
-                return /* tuple */[
-                        AddressCollector.apply($$event, param[0]),
-                        TransactionCollector.apply($$event, param[1])
+                return /* record */[
+                        /* addresses */AddressCollector.apply($$event, param[/* addresses */0]),
+                        /* transactions */TransactionCollector.apply($$event, param[/* transactions */1]),
+                        /* walletInfo */WalletInfoCollector.apply($$event, param[/* walletInfo */2])
                       ];
-              }), /* tuple */[
-              AddressCollector.make(/* () */0),
-              TransactionCollector.make(/* () */0)
-            ], log);
+              }), make(/* () */0), log);
 }
 
 function filterUTXOs(knownTxs, utxos) {
@@ -138,8 +145,8 @@ function filterUTXOs(knownTxs, utxos) {
 
 function detectIncomeFromVenture(ventureId, eventLog) {
   logMessage("Sychronizing wallet state for venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
-  return scanTransactions(findAddressesAndTxIds(eventLog)).then((function (param) {
-                var transactions = param[2];
+  return scanTransactions(collectData(eventLog)).then((function (param) {
+                var transactions = param[2][/* transactions */1];
                 broadcastPayouts(transactions);
                 var utxos = filterUTXOs(transactions[/* knownIncomeTxs */3], param[0]);
                 var events = Belt_List.mapU(utxos, (function (utxo) {
@@ -186,8 +193,9 @@ exports.logLabel = logLabel;
 exports.logMessage = logMessage;
 exports.catchAndLogError = catchAndLogError;
 exports.broadcastPayouts = broadcastPayouts;
+exports.make = make;
 exports.scanTransactions = scanTransactions;
-exports.findAddressesAndTxIds = findAddressesAndTxIds;
+exports.collectData = collectData;
 exports.filterUTXOs = filterUTXOs;
 exports.detectIncomeFromVenture = detectIncomeFromVenture;
 exports.syncWallets = syncWallets;
