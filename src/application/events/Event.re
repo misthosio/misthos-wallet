@@ -471,6 +471,29 @@ module Income = {
         coordinates: raw |> field("coordinates", Address.Coordinates.decode),
       };
   };
+  module Unlocked = {
+    type t = {
+      address: string,
+      txId: string,
+      txOutputN: int,
+    };
+    let make = (~address, ~txOutputN, ~txId) => {address, txId, txOutputN};
+    let encode = event =>
+      Json.Encode.(
+        object_([
+          ("type", string("IncomeUnlocked")),
+          ("address", string(event.address)),
+          ("txId", string(event.txId)),
+          ("txOutputN", int(event.txOutputN)),
+        ])
+      );
+    let decode = raw =>
+      Json.Decode.{
+        address: raw |> field("address", string),
+        txId: raw |> field("txId", string),
+        txOutputN: raw |> field("txOutputN", int),
+      };
+  };
 };
 
 module Transaction = {
@@ -546,6 +569,7 @@ type t =
   | AccountKeyChainActivated(AccountKeyChainActivated.t)
   | IncomeAddressExposed(Income.AddressExposed.t)
   | IncomeDetected(Income.Detected.t)
+  | IncomeUnlocked(Income.Unlocked.t)
   | TransactionConfirmed(Transaction.Confirmed.t);
 
 exception BadData(string);
@@ -775,6 +799,7 @@ let encode =
   | AccountKeyChainActivated(event) => AccountKeyChainActivated.encode(event)
   | IncomeAddressExposed(event) => Income.AddressExposed.encode(event)
   | IncomeDetected(event) => Income.Detected.encode(event)
+  | IncomeUnlocked(event) => Income.Unlocked.encode(event)
   | TransactionConfirmed(event) => Transaction.Confirmed.encode(event);
 
 let isSystemEvent =
@@ -793,6 +818,7 @@ let isSystemEvent =
   | PayoutAborted(_)
   | AccountKeyChainIdentified(_)
   | IncomeDetected(_)
+  | IncomeUnlocked(_)
   | TransactionConfirmed(_)
   | PayoutFinalized(_)
   | PayoutBroadcast(_)
@@ -868,6 +894,7 @@ let decode = raw => {
   | "IncomeAddressExposed" =>
     IncomeAddressExposed(Income.AddressExposed.decode(raw))
   | "IncomeDetected" => IncomeDetected(Income.Detected.decode(raw))
+  | "IncomeUnlocked" => IncomeUnlocked(Income.Unlocked.decode(raw))
   | "TransactionConfirmed" =>
     TransactionConfirmed(Transaction.Confirmed.decode(raw))
   | _ => raise(UnknownEvent(raw))

@@ -67,7 +67,7 @@ function apply($$event, state) {
                 /* confirmedTransactions */state[/* confirmedTransactions */4],
                 /* notYetBroadcastPayouts */state[/* notYetBroadcastPayouts */5]
               ];
-    case 42 : 
+    case 43 : 
         return /* record */[
                 /* network */state[/* network */0],
                 /* ventureId */state[/* ventureId */1],

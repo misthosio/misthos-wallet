@@ -552,10 +552,16 @@ function encodeIncoming(param) {
                             ],
                             /* :: */[
                               /* tuple */[
-                                "transactionConfirmations",
-                                Json_encode.list(Event.Transaction[/* Confirmed */0][/* encode */1], param[4])
+                                "unlockEvents",
+                                Json_encode.list(Event.Income[/* Unlocked */2][/* encode */1], param[4])
                               ],
-                              /* [] */0
+                              /* :: */[
+                                /* tuple */[
+                                  "transactionConfirmations",
+                                  Json_encode.list(Event.Transaction[/* Confirmed */0][/* encode */1], param[5])
+                                ],
+                                /* [] */0
+                              ]
                             ]
                           ]
                         ]
@@ -714,15 +720,20 @@ function decodeIncoming(raw) {
         var incomeEvents = Json_decode.field("incomeEvents", (function (param) {
                 return Json_decode.list(partial_arg$2, param);
               }), raw);
-        var partial_arg$3 = Event.Transaction[/* Confirmed */0][/* decode */2];
-        var confs = Json_decode.field("transactionConfirmations", (function (param) {
+        var partial_arg$3 = Event.Income[/* Unlocked */2][/* decode */2];
+        var unlockEvents = Json_decode.field("unlockEvents", (function (param) {
                 return Json_decode.list(partial_arg$3, param);
+              }), raw);
+        var partial_arg$4 = Event.Transaction[/* Confirmed */0][/* decode */2];
+        var confs = Json_decode.field("transactionConfirmations", (function (param) {
+                return Json_decode.list(partial_arg$4, param);
               }), raw);
         return /* SyncWallet */Block.__(15, [
                   ventureId$14,
                   broadcasts,
                   broadcastFailures,
                   incomeEvents,
+                  unlockEvents,
                   confs
                 ]);
     case "UpdateSession" : 

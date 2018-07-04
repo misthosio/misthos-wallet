@@ -1000,12 +1000,63 @@ var Detected = /* module */[
   /* decode */decode$17
 ];
 
-var Income = /* module */[
-  /* AddressExposed */AddressExposed,
-  /* Detected */Detected
+function make$12(address, txOutputN, txId) {
+  return /* record */[
+          /* address */address,
+          /* txId */txId,
+          /* txOutputN */txOutputN
+        ];
+}
+
+function encode$18($$event) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "type",
+                "IncomeUnlocked"
+              ],
+              /* :: */[
+                /* tuple */[
+                  "address",
+                  $$event[/* address */0]
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "txId",
+                    $$event[/* txId */1]
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "txOutputN",
+                      $$event[/* txOutputN */2]
+                    ],
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function decode$18(raw) {
+  return /* record */[
+          /* address */Json_decode.field("address", Json_decode.string, raw),
+          /* txId */Json_decode.field("txId", Json_decode.string, raw),
+          /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw)
+        ];
+}
+
+var Unlocked = /* module */[
+  /* make */make$12,
+  /* encode */encode$18,
+  /* decode */decode$18
 ];
 
-function make$12(txId, blockHeight, unixTime) {
+var Income = /* module */[
+  /* AddressExposed */AddressExposed,
+  /* Detected */Detected,
+  /* Unlocked */Unlocked
+];
+
+function make$13(txId, blockHeight, unixTime) {
   return /* record */[
           /* txId */txId,
           /* blockHeight */blockHeight,
@@ -1013,7 +1064,7 @@ function make$12(txId, blockHeight, unixTime) {
         ];
 }
 
-function encode$18($$event) {
+function encode$19($$event) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "type",
@@ -1041,7 +1092,7 @@ function encode$18($$event) {
             ]);
 }
 
-function decode$18(raw) {
+function decode$19(raw) {
   return /* record */[
           /* txId */Json_decode.field("txId", Json_decode.string, raw),
           /* blockHeight */Json_decode.field("blockHeight", Utils.decodeFloat, raw),
@@ -1050,9 +1101,9 @@ function decode$18(raw) {
 }
 
 var Confirmed = /* module */[
-  /* make */make$12,
-  /* encode */encode$18,
-  /* decode */decode$18
+  /* make */make$13,
+  /* encode */encode$19,
+  /* decode */decode$19
 ];
 
 var Transaction = /* module */[/* Confirmed */Confirmed];
@@ -1162,7 +1213,7 @@ function makePayoutRejected(processId, rejectorId) {
   return /* PayoutRejected */Block.__(27, [Curry._2(Rejected$5[/* make */0], processId, rejectorId)]);
 }
 
-function encode$19(param) {
+function encode$20(param) {
   switch (param.tag | 0) {
     case 0 : 
         return encode(param[0]);
@@ -1250,6 +1301,8 @@ function encode$19(param) {
         return encode$17(param[0]);
     case 42 : 
         return encode$18(param[0]);
+    case 43 : 
+        return encode$19(param[0]);
     
   }
 }
@@ -1275,6 +1328,7 @@ function isSystemEvent(param) {
     case 38 : 
     case 41 : 
     case 42 : 
+    case 43 : 
         return true;
     default:
       return false;
@@ -1283,7 +1337,7 @@ function isSystemEvent(param) {
 
 var UnknownEvent = Caml_exceptions.create("Event.UnknownEvent");
 
-function decode$19(raw) {
+function decode$20(raw) {
   var type_ = Json_decode.field("type", Json_decode.string, raw);
   switch (type_) {
     case "AccountCreationAccepted" : 
@@ -1324,6 +1378,8 @@ function decode$19(raw) {
         return /* IncomeAddressExposed */Block.__(40, [decode$16(raw)]);
     case "IncomeDetected" : 
         return /* IncomeDetected */Block.__(41, [decode$17(raw)]);
+    case "IncomeUnlocked" : 
+        return /* IncomeUnlocked */Block.__(42, [decode$18(raw)]);
     case "PartnerAccepted" : 
         return /* PartnerAccepted */Block.__(4, [Curry._1(Accepted[/* decode */2], raw)]);
     case "PartnerDenied" : 
@@ -1369,7 +1425,7 @@ function decode$19(raw) {
     case "PayoutSigned" : 
         return /* PayoutSigned */Block.__(32, [decode$8(raw)]);
     case "TransactionConfirmed" : 
-        return /* TransactionConfirmed */Block.__(42, [decode$18(raw)]);
+        return /* TransactionConfirmed */Block.__(43, [decode$19(raw)]);
     case "VentureCreated" : 
         return /* VentureCreated */Block.__(0, [decode(raw)]);
     default:
@@ -1622,10 +1678,10 @@ exports.makeCustodianEndorsed = makeCustodianEndorsed;
 exports.makeCustodianRemovalEndorsed = makeCustodianRemovalEndorsed;
 exports.makePayoutEndorsed = makePayoutEndorsed;
 exports.makePayoutRejected = makePayoutRejected;
-exports.encode = encode$19;
+exports.encode = encode$20;
 exports.isSystemEvent = isSystemEvent;
 exports.UnknownEvent = UnknownEvent;
-exports.decode = decode$19;
+exports.decode = decode$20;
 exports.getIncomeAddressExposedExn = getIncomeAddressExposedExn;
 exports.getAccountKeyChainIdentifiedExn = getAccountKeyChainIdentifiedExn;
 exports.getAccountKeyChainActivatedExn = getAccountKeyChainActivatedExn;

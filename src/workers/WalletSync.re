@@ -34,6 +34,7 @@ let broadcastPayouts =
                       [],
                       [],
                       [],
+                      [],
                     ),
                   )
                 | WalletTypes.AlreadyInBlockchain =>
@@ -41,6 +42,7 @@ let broadcastPayouts =
                     VentureWorkerMessage.SyncWallet(
                       ventureId,
                       [Event.Payout.Broadcast.make(~processId, ~txId)],
+                      [],
                       [],
                       [],
                       [],
@@ -61,6 +63,7 @@ let broadcastPayouts =
                           ~errorMessage,
                         ),
                       ],
+                      [],
                       [],
                       [],
                     ),
@@ -157,6 +160,7 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
                  [],
                  [],
                  events,
+                 [],
                  confs,
                ),
              )

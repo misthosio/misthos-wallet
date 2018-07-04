@@ -474,7 +474,7 @@ function exec$1(partnerId, newItems, venture) {
 
 var SynchronizeLogs = /* module */[/* exec */exec$1];
 
-function exec$2(broadcasts, broadcastFailures, incomeEvents, txConfs, venture) {
+function exec$2(broadcasts, broadcastFailures, incomeEvents, unlockedEvents, txConfs, venture) {
   logMessage("Synchronizing wallet");
   var __x = List.fold_left((function (param, $$event) {
           return apply(/* Some */[true], /* Some */[param[1]], /* IncomeDetected */Block.__(41, [$$event]), param[0]);
@@ -483,14 +483,17 @@ function exec$2(broadcasts, broadcastFailures, incomeEvents, txConfs, venture) {
         /* array */[]
       ], incomeEvents);
   var __x$1 = List.fold_left((function (param, $$event) {
-          return apply(/* Some */[true], /* Some */[param[1]], /* PayoutBroadcast */Block.__(34, [$$event]), param[0]);
-        }), __x, broadcasts);
+          return apply(/* Some */[true], /* Some */[param[1]], /* IncomeUnlocked */Block.__(42, [$$event]), param[0]);
+        }), __x, unlockedEvents);
   var __x$2 = List.fold_left((function (param, $$event) {
+          return apply(/* Some */[true], /* Some */[param[1]], /* PayoutBroadcast */Block.__(34, [$$event]), param[0]);
+        }), __x$1, broadcasts);
+  var __x$3 = List.fold_left((function (param, $$event) {
           return apply(/* Some */[true], /* Some */[param[1]], /* PayoutBroadcastFailed */Block.__(36, [$$event]), param[0]);
-        }), __x$1, broadcastFailures);
+        }), __x$2, broadcastFailures);
   return persist(/* None */0, List.fold_left((function (param, $$event) {
-                      return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(42, [$$event]), param[0]);
-                    }), __x$2, txConfs)).then((function (param) {
+                      return apply(/* Some */[true], /* Some */[param[1]], /* TransactionConfirmed */Block.__(43, [$$event]), param[0]);
+                    }), __x$3, txConfs)).then((function (param) {
                 if (param.tag) {
                   return Promise.resolve(/* CouldNotPersist */Block.__(1, [param[0]]));
                 } else {
