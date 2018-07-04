@@ -66,10 +66,24 @@ function fromViewModelState(param) {
                       /* addressType */addressInfo[/* addressType */0],
                       /* addressStatus */addressInfo[/* addressStatus */4],
                       /* unspentIncome */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
-                              return Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(param[/* txId */0], txDetailsCollector));
+                              var txId = param[/* txId */0];
+                              var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
+                              return /* record */[
+                                      /* status */match[/* status */0],
+                                      /* date */match[/* date */1],
+                                      /* txId */txId,
+                                      /* amount */param[/* value */3]
+                                    ];
                             })),
                       /* spentIncome */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
-                              return Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(param[/* txId */0], txDetailsCollector));
+                              var txId = param[/* txId */0];
+                              var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
+                              return /* record */[
+                                      /* status */match[/* status */0],
+                                      /* date */match[/* date */1],
+                                      /* txId */txId,
+                                      /* amount */param[/* value */3]
+                                    ];
                             })),
                       /* isPartner */(function (id) {
                           return ViewModel__PartnersCollector.isPartner(id, partnersCollector);
