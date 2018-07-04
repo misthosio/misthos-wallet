@@ -4,6 +4,11 @@ open PrimitiveTypes;
 
 module ViewData = ViewModel.AddressesView;
 
+type state = {expandedAddress: option(ViewData.addressInfo)};
+
+type action =
+  | ToggleAddress(ViewData.addressInfo);
+
 let statusToString =
   fun
   | WalletInfoCollector.Accessible => "Accessible"
@@ -17,10 +22,18 @@ let addressTypeToString =
     "Income (exposed by - " ++ UserId.toString(id) ++ ")"
   | WalletInfoCollector.Change => "Change";
 
-let component = ReasonReact.statelessComponent("AddressesModal");
+let component = ReasonReact.reducerComponent("AddressesModal");
 
 module Styles = {
   open Css;
+  let chevron = rotate =>
+    style([
+      unsafe(
+        "transition",
+        "transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+      ),
+      transform(rotateZ(deg(rotate ? 180 : 0))),
+    ]);
   let grid =
     style([
       display(grid),
@@ -37,75 +50,85 @@ module Styles = {
     style([
       unsafe("gridColumn", "begin / end"),
       borderBottom(px(1), `solid, hex("979797")),
-      paddingBottom(px(Theme.space(5))),
     ]);
   let detailsGrid =
     style([
       display(Css.grid),
       gridGap(px(Theme.space(3))),
       unsafe("gridTemplateColumns", "[begin] 1fr 1fr [end]"),
-      padding2(~v=px(0), ~h=px(Theme.space(3))),
+      padding4(
+        ~right=px(Theme.space(3)),
+        ~left=px(Theme.space(3)),
+        ~top=px(Theme.space(4)),
+        ~bottom=px(Theme.space(5)),
+      ),
     ]);
 };
 
 let make = (~viewData: ViewData.t, _children) => {
   let renderExpandedInfo =
       (info: ViewData.addressInfo, details: ViewData.addressDetails) =>
-    MaterialUi.(
-      <Collapse className=Styles.details in_=true>
-        <div className=Styles.detailsGrid>
-          <div>
-            <MTypography gutterBottom=true variant=`Title>
-              ("Custodians" |> text)
-            </MTypography>
-            <MTypography gutterBottom=true variant=`Body2>
-              (
-                "This is a "
-                ++ string_of_int(details.nCoSigners)
-                ++ "-of-"
-                ++ string_of_int(details.nCustodians)
-                ++ " address with the following custodians:"
-                |> text
-              )
-            </MTypography>
-            <List>
-              (
-                Array.map(
-                  details.custodians |> Set.toArray,
-                  (partnerId: UserId.t) => {
-                    let status =
-                      partnerId |> details.isPartner ?
-                        None : Some(" - Ex-Partner" |> text);
-                    <Partner partnerId ?status />;
-                  },
-                )
-                |> ReasonReact.array
-              )
-            </List>
-          </div>
-          <div>
-            <MTypography gutterBottom=true variant=`Title>
-              ("OVERVIEW" |> text)
-            </MTypography>
-            <MTypography gutterBottom=true variant=`Body2>
-              ("ADDRESS BALANCE: " ++ (info.balance |> BTC.format) |> text)
-            </MTypography>
-            (
-              Array.map(
-                Belt.List.concat(details.unspentIncome, details.spentIncome)
-                |> Belt.List.toArray,
-                (income: ViewData.income) =>
-                income.amount |> BTC.format |> text
-              )
-              |> ReasonReact.array
+    <div className=Styles.detailsGrid>
+      <div>
+        <MTypography gutterBottom=true variant=`Title>
+          ("Custodians" |> text)
+        </MTypography>
+        <MTypography gutterBottom=true variant=`Body2>
+          (
+            "This is a "
+            ++ string_of_int(details.nCoSigners)
+            ++ "-of-"
+            ++ string_of_int(details.nCustodians)
+            ++ " address with the following custodians:"
+            |> text
+          )
+        </MTypography>
+        <MaterialUi.List>
+          (
+            Array.map(
+              details.custodians |> Set.toArray,
+              (partnerId: UserId.t) => {
+                let status =
+                  partnerId |> details.isPartner ?
+                    None : Some(" - Ex-Partner" |> text);
+                <Partner partnerId ?status />;
+              },
             )
-          </div>
-        </div>
-      </Collapse>
-    );
+            |> ReasonReact.array
+          )
+        </MaterialUi.List>
+      </div>
+      <div>
+        <MTypography gutterBottom=true variant=`Title>
+          ("OVERVIEW" |> text)
+        </MTypography>
+        <MTypography gutterBottom=true variant=`Body2>
+          ("ADDRESS BALANCE: " ++ (info.balance |> BTC.format) |> text)
+        </MTypography>
+        (
+          Array.map(
+            Belt.List.concat(details.unspentIncome, details.spentIncome)
+            |> Belt.List.toArray,
+            (income: ViewData.income) =>
+            income.amount |> BTC.format |> text
+          )
+          |> ReasonReact.array
+        )
+      </div>
+    </div>;
+
   {
     ...component,
-    render: _ => {
+    initialState: () => {expandedAddress: None},
+    reducer: (action, {expandedAddress}) =>
+      switch (action) {
+      | ToggleAddress(address) =>
+        ReasonReact.Update({
+          expandedAddress:
+            expandedAddress == Some(address) ? None : Some(address),
+        })
+      },
+    render: ({send, state}) => {
       let infos =
         viewData.infos
         |. List.keepMapU((. info: ViewData.addressInfo) =>
@@ -113,6 +136,7 @@ let make = (~viewData: ViewData.t, _children) => {
                  || info.balance
                  |> BTC.gt(BTC.zero)) {
                let details = viewData.addressDetails(info);
+               let expand = state.expandedAddress == Some(info);
                [|
                  <MTypography className=Styles.summary variant=`Body2>
                    (info.address |> text)
@@ -123,10 +147,14 @@ let make = (~viewData: ViewData.t, _children) => {
                  <MTypography className=Styles.summary variant=`Body2>
                    (statusToString(info.addressStatus) |> text)
                  </MTypography>,
-                 <MaterialUi.IconButton>
+                 <MaterialUi.IconButton
+                   className=(Styles.chevron(expand))
+                   onClick=(_e => send(ToggleAddress(info)))>
                    Icons.chevronDown
                  </MaterialUi.IconButton>,
-                 renderExpandedInfo(info, details),
+                 <MaterialUi.Collapse className=Styles.details in_=expand>
+                   (renderExpandedInfo(info, details))
+                 </MaterialUi.Collapse>,
                |]
                |> ReasonReact.array
                |. Some;
