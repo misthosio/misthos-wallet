@@ -96,10 +96,32 @@ function make(viewData, _) {
                           return ReasonReact.element(/* Some */[key], /* None */0, MDivider.make(/* array */[]));
                         }), Belt_List.concatMany(/* array */[
                             List.mapi((function (iter, tx) {
-                                    return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(tx, /* array */[]));
+                                    var match = tx[/* txType */0];
+                                    var match$1 = match ? /* tuple */[
+                                        /* Payout */1,
+                                        "unconfirmed payout"
+                                      ] : /* tuple */[
+                                        /* Income */0,
+                                        "unconfirmed income"
+                                      ];
+                                    var partial_arg = tx[/* detailsLink */5];
+                                    return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* Some */[(function (param) {
+                                                        return Router.clickToRoute(partial_arg, param);
+                                                      })], /* array */[]));
                                   }), unconfirmed),
                             List.mapi((function (iter, tx) {
-                                    return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(tx, /* array */[]));
+                                    var match = tx[/* txType */0];
+                                    var match$1 = match ? /* tuple */[
+                                        /* Payout */1,
+                                        "payout"
+                                      ] : /* tuple */[
+                                        /* Income */0,
+                                        "income"
+                                      ];
+                                    var partial_arg = tx[/* detailsLink */5];
+                                    return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* Some */[(function (param) {
+                                                        return Router.clickToRoute(partial_arg, param);
+                                                      })], /* array */[]));
                                   }), confirmed)
                           ])));
               var partial_arg_000 = viewData[/* ventureId */0];

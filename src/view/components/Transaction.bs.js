@@ -4,10 +4,8 @@
 var BTC = require("../../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
-var Utils = require("../../utils/Utils.bs.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
-var Router = require("../Router.bs.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -48,7 +46,7 @@ var Styles = /* module */[
   /* amount */amount
 ];
 
-function make(tx, _) {
+function make(txType, primary, amount$1, date, onClick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -60,32 +58,12 @@ function make(tx, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var afmt = function (amount) {
-                return ViewCommon.text(BTC.format(amount) + " BTC");
-              };
-              var dfmt = function (param) {
-                return Utils.mapOption((function (date) {
-                              return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(date.toDateString())]));
-                            }), param);
-              };
-              var match = tx[/* status */1];
-              var match$1 = tx[/* txType */0];
-              var primary = match ? (
-                  match$1 ? ViewCommon.text("UNCONFIRMED PAYOUT") : ViewCommon.text("UNCONFIRMED INCOME")
-                ) : (
-                  match$1 ? ViewCommon.text("PAYOUT") : ViewCommon.text("INCOME")
-                );
-              var secondary = dfmt(tx[/* date */4]);
-              var amount$1 = afmt(tx[/* amount */3]);
-              var partial_arg = tx[/* detailsLink */5];
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
-                                  return Router.clickToRoute(partial_arg, param);
-                                })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                  primary,
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                  ViewCommon.text(primary),
                                                   React.createElement("span", {
-                                                        className: amount(tx[/* txType */0])
-                                                      }, amount$1)
-                                                ]))], /* None */0, secondary, /* None */0, /* Some */[/* :: */[
+                                                        className: amount(txType)
+                                                      }, ViewCommon.text(BTC.format(amount$1) + " BTC"))
+                                                ]))], /* None */0, /* Some */[date ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(date[0].toDateString())])) : null], /* None */0, /* Some */[/* :: */[
                                           /* Root */Block.__(0, [root]),
                                           /* [] */0
                                         ]], /* None */0, /* array */[]))]));
@@ -102,11 +80,8 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
-var ViewData = 0;
-
 exports.text = text;
 exports.extractString = extractString;
-exports.ViewData = ViewData;
 exports.component = component;
 exports.Styles = Styles;
 exports.make = make;

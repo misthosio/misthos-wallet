@@ -99,15 +99,27 @@ let make = (~viewData: ViewData.t, _children) => {
         <MTypography gutterBottom=true variant=`Body2>
           ("ADDRESS BALANCE: " ++ (info.balance |> BTC.format) |> text)
         </MTypography>
-        (
-          Array.map(
-            Belt.List.concat(details.unspentIncome, details.spentIncome)
-            |> Belt.List.toArray,
-            (income: ViewData.income) =>
-            income.amount |> BTC.format |> text
+        <MaterialUi.List>
+          (
+            List.concat(details.unspentIncome, details.spentIncome)
+            |. List.mapWithIndex((iter, tx: ViewData.income) => {
+                 let (txType, primary) =
+                   switch (tx.status) {
+                   | _ => (Transaction.Income, "income")
+                   };
+                 <Transaction
+                   key=(iter |> string_of_int)
+                   txType
+                   primary
+                   amount=tx.amount
+                   date=tx.date
+                 />;
+               })
+            |> Utils.intersperse(key => <MDivider key />)
+            |> List.toArray
+            |> ReasonReact.array
           )
-          |> ReasonReact.array
-        )
+        </MaterialUi.List>
       </div>
     </div>;
 

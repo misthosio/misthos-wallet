@@ -8,16 +8,19 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
+var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Partner = require("./components/Partner.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
+var MDivider = require("./components/MDivider.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ScrollList = require("./components/ScrollList.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var Transaction = require("./components/Transaction.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Collapse = require("@jsiebern/bs-material-ui/src/MaterialUi_Collapse.bs.js");
@@ -117,9 +120,11 @@ function make(viewData, _) {
                 className: detailsGrid
               }, React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("Custodians")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("This is a " + (String(details[/* nCoSigners */1]) + ("-of-" + (String(details[/* nCustodians */2]) + " address with the following custodians:"))))])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Belt_Array.map(Belt_Set.toArray(details[/* custodians */0]), (function (partnerId) {
                                     return ReasonReact.element(/* None */0, /* None */0, Partner.make(partnerId, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[!Curry._1(details[/* isPartner */7], partnerId)], /* array */[]));
-                                  }))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), Belt_Array.map(Belt_List.toArray(Belt_List.concat(details[/* unspentIncome */5], details[/* spentIncome */6])), (function (income) {
-                          return ViewCommon.text(BTC.format(income[/* amount */3]));
-                        }))));
+                                  }))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Belt_List.toArray(Utils.intersperse((function (key) {
+                                        return ReasonReact.element(/* Some */[key], /* None */0, MDivider.make(/* array */[]));
+                                      }), Belt_List.mapWithIndex(Belt_List.concat(details[/* unspentIncome */5], details[/* spentIncome */6]), (function (iter, tx) {
+                                            return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(/* Income */0, "income", tx[/* amount */3], tx[/* date */1], /* None */0, /* array */[]));
+                                          }))))]))));
   };
   return /* record */[
           /* debugName */component[/* debugName */0],

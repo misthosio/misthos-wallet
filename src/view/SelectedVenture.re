@@ -113,16 +113,37 @@ let make = (~viewData: ViewData.t, _children) => {
             let confirmed = viewData.confirmedTxs;
             Belt.List.concatMany([|
               unconfirmed
-              |> List.mapi((iter, tx: ViewData.txData) =>
-                   <Transaction tx key=(iter |> string_of_int) />
-                 ),
-              confirmed
-              |> List.mapi((iter, tx: ViewData.txData) =>
+              |> List.mapi((iter, tx: ViewData.txData) => {
+                   let (txType, primary) =
+                     switch (tx.txType) {
+                     | Payout => (Transaction.Payout, "unconfirmed payout")
+                     | Income => (Transaction.Income, "unconfirmed income")
+                     };
                    <Transaction
-                     tx
+                     txType
+                     primary
+                     amount=tx.amount
+                     date=tx.date
+                     onClick=(Router.clickToRoute(tx.detailsLink))
+                     key=(iter |> string_of_int)
+                   />;
+                 }),
+              confirmed
+              |> List.mapi((iter, tx: ViewData.txData) => {
+                   let (txType, primary) =
+                     switch (tx.txType) {
+                     | Payout => (Transaction.Payout, "payout")
+                     | Income => (Transaction.Income, "income")
+                     };
+                   <Transaction
+                     txType
+                     primary
+                     amount=tx.amount
+                     date=tx.date
+                     onClick=(Router.clickToRoute(tx.detailsLink))
                      key=(string_of_int(iter + List.length(unconfirmed)))
-                   />
-                 ),
+                   />;
+                 }),
             |])
             |> Utils.intersperse(key => <MDivider key />);
           },
