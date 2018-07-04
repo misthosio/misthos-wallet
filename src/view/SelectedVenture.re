@@ -6,6 +6,16 @@ open PrimitiveTypes;
 
 let component = ReasonReact.statelessComponent("SelectedVenture");
 
+module Styles = {
+  open Css;
+  let addressesButtonIcon =
+    style([
+      marginTop(px(Theme.space(2) * (-1))),
+      marginBottom(px(Theme.space(1) * (-1))),
+      transform(rotate(deg(90))),
+    ]);
+};
+
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
   render: _ => {
@@ -126,6 +136,13 @@ let make = (~viewData: ViewData.t, _children) => {
         <div>
           <MTypography gutterTop=true variant=`Title>
             (viewData.ventureName |> text)
+            <MaterialUi.IconButton
+              className=Styles.addressesButtonIcon
+              onClick=(
+                Router.clickToRoute(Venture(viewData.ventureId, Addresses))
+              )>
+              Icons.arrowUpCircle
+            </MaterialUi.IconButton>
           </MTypography>
           <Balance
             currentSpendable=viewData.balance.currentSpendable
