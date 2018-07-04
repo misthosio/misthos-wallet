@@ -184,6 +184,9 @@ function make(config, network) {
   var getTransactionInfo = function () {
     return Promise.resolve(/* [] */0);
   };
+  var getCurrentBlockHeight = function () {
+    return Promise.resolve(1);
+  };
   var broadcastTransaction$1 = function (param) {
     return broadcastTransaction(config, param);
   };
@@ -191,6 +194,7 @@ function make(config, network) {
           /* network */network,
           /* getUTXOs */getUTXOs$1,
           /* getTransactionInfo */getTransactionInfo,
+          /* getCurrentBlockHeight */getCurrentBlockHeight,
           /* broadcastTransaction */broadcastTransaction$1
         ];
 }

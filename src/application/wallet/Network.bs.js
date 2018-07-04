@@ -160,7 +160,7 @@ function Make(Client) {
                                   })));
                 }));
   };
-  var broadcastTransaction = Client[/* broadcastTransaction */3];
+  var broadcastTransaction = Client[/* broadcastTransaction */4];
   return /* module */[
           /* network */network,
           /* transactionInfo */transactionInfo,
@@ -198,7 +198,7 @@ function transactionInputs(addresses) {
               }));
 }
 
-var broadcastTransaction = Client[/* broadcastTransaction */3];
+var broadcastTransaction = Client[/* broadcastTransaction */4];
 
 var Regtest = /* module */[
   /* network */network,
@@ -232,7 +232,7 @@ function transactionInputs$1(addresses) {
               }));
 }
 
-var broadcastTransaction$1 = Client$1[/* broadcastTransaction */3];
+var broadcastTransaction$1 = Client$1[/* broadcastTransaction */4];
 
 var Testnet = /* module */[
   /* network */network$1,
@@ -266,7 +266,7 @@ function transactionInputs$2(addresses) {
               }));
 }
 
-var broadcastTransaction$2 = Client$2[/* broadcastTransaction */3];
+var broadcastTransaction$2 = Client$2[/* broadcastTransaction */4];
 
 var Mainnet = /* module */[
   /* network */network$2,

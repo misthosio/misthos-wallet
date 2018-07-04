@@ -131,11 +131,34 @@ let broadcastTransaction = (config, transaction) => {
   );
 };
 
+let getCurrentBlockHeight = (config, ()) =>
+  Js.Promise.(
+    Fetch.fetch(
+      "https://"
+      ++ config.subdomain
+      ++ ".smartbit.com.au/v1/blockchain/blocks?sort=height",
+    )
+    |> then_(Fetch.Response.json)
+    |> then_(res => {
+         let height =
+           Json.Decode.(
+             res
+             |> field(
+                  "blocks",
+                  array(block => block |> field("height", int)),
+                )
+             |. Belt.Array.getExn(0)
+           );
+         height |> resolve;
+       })
+  );
+
 let make = (config, network) : (module WalletTypes.NetworkClient) =>
   (module
    {
      let network = network;
      let getUTXOs = getUTXOs(config);
      let getTransactionInfo = getTransactionInfo(config);
+     let getCurrentBlockHeight = getCurrentBlockHeight(config);
      let broadcastTransaction = broadcastTransaction(config);
    });
