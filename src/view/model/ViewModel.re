@@ -48,8 +48,8 @@ module AddressesView = {
     nCustodians: int,
     addressType,
     addressStatus,
-    currentUtxos: list(income),
-    spentInputs: list(income),
+    unspentIncome: list(income),
+    spentIncome: list(income),
     isPartner: UserId.t => bool,
   };
   type t = {
@@ -75,7 +75,7 @@ module AddressesView = {
       nCoSigners: addressInfo.nCoSigners,
       addressType: addressInfo.addressType,
       addressStatus: addressInfo.addressStatus,
-      currentUtxos:
+      unspentIncome:
         WalletInfoCollector.inputsFor(
           AccountIndex.default,
           addressInfo,
@@ -86,7 +86,7 @@ module AddressesView = {
              |> TxDetailsCollector.getIncome(txId)
              |> Js.Option.getExn
            ),
-      spentInputs:
+      spentIncome:
         oldInputCollector
         |> OldInputCollector.inputsFor(addressInfo.address)
         |. Belt.List.mapU((. {txId}: Network.txInput) =>

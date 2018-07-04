@@ -65,10 +65,10 @@ function fromViewModelState(param) {
                       /* nCustodians */Belt_Set.size(addressInfo[/* custodians */1]),
                       /* addressType */addressInfo[/* addressType */0],
                       /* addressStatus */addressInfo[/* addressStatus */4],
-                      /* currentUtxos */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
+                      /* unspentIncome */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
                               return Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(param[/* txId */0], txDetailsCollector));
                             })),
-                      /* spentInputs */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
+                      /* spentIncome */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
                               return Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(param[/* txId */0], txDetailsCollector));
                             })),
                       /* isPartner */(function (id) {

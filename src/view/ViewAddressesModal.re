@@ -92,7 +92,7 @@ let make = (~viewData: ViewData.t, _children) => {
             </MTypography>
             (
               Array.map(
-                Belt.List.concat(details.currentUtxos, details.spentInputs)
+                Belt.List.concat(details.unspentIncome, details.spentIncome)
                 |> Belt.List.toArray,
                 (income: ViewData.income) =>
                 income.amount |> BTC.format |> text
