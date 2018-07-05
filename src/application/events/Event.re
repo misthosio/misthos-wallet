@@ -472,27 +472,17 @@ module Income = {
       };
   };
   module Unlocked = {
-    type t = {
-      address: string,
-      txId: string,
-      txOutputN: int,
-    };
-    let make = (~address, ~txOutputN, ~txId) => {address, txId, txOutputN};
+    type t = {input: Network.txInput};
+    let make = (~input) => {input: input};
     let encode = event =>
       Json.Encode.(
         object_([
           ("type", string("IncomeUnlocked")),
-          ("address", string(event.address)),
-          ("txId", string(event.txId)),
-          ("txOutputN", int(event.txOutputN)),
+          ("input", Network.encodeInput(event.input)),
         ])
       );
     let decode = raw =>
-      Json.Decode.{
-        address: raw |> field("address", string),
-        txId: raw |> field("txId", string),
-        txOutputN: raw |> field("txOutputN", int),
-      };
+      Json.Decode.{input: raw |> field("input", Network.decodeInput)};
   };
 };
 

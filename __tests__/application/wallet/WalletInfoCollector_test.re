@@ -150,12 +150,14 @@ let () = {
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
           |> withIncomeDetected(~incomeAddress=0)
+          |> withIncomeDetected(~incomeAddress=0)
           |> withPartner(user2, ~supporters=[user1])
           |> withCustodian(user2, ~supporters=[user1, user2])
           |> withCustodianKeyChain(user2)
           |> withAccountKeyChainIdentified
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
+          |> withIncomeDetected(~incomeAddress=1)
           |> withIncomeDetected(~incomeAddress=1)
           |> withIncomeDetected(~incomeAddress=1)
           |> withIncomeDetected(~incomeAddress=1)
@@ -166,19 +168,28 @@ let () = {
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
           |> withIncomeDetected(~incomeAddress=2)
+          |> withIncomeUnlocked(~income=0)
         );
       },
       (_sessions, log) => {
         let info = log |> constructState;
-        test("3 inputs are old", () =>
+        test("1 input is unlocked", () =>
+          expect(
+            info
+            |> WalletInfoCollector.unlockedInputs(AccountIndex.default)
+            |> Set.size,
+          )
+          |> toEqual(1)
+        );
+        test("4 inputs are old", () =>
           expect(
             info
             |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default)
             |> Set.size,
           )
-          |> toEqual(3)
+          |> toEqual(4)
         );
-        test("2 inputs are current", () =>
+        test("3 inputs are current", () =>
           expect(
             info
             |> WalletInfoCollector.currentSpendableInputs(

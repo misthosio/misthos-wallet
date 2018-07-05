@@ -1000,12 +1000,8 @@ var Detected = /* module */[
   /* decode */decode$17
 ];
 
-function make$12(address, txOutputN, txId) {
-  return /* record */[
-          /* address */address,
-          /* txId */txId,
-          /* txOutputN */txOutputN
-        ];
+function make$12(input) {
+  return /* record */[/* input */input];
 }
 
 function encode$18($$event) {
@@ -1016,32 +1012,16 @@ function encode$18($$event) {
               ],
               /* :: */[
                 /* tuple */[
-                  "address",
-                  $$event[/* address */0]
+                  "input",
+                  Network.encodeInput($$event[/* input */0])
                 ],
-                /* :: */[
-                  /* tuple */[
-                    "txId",
-                    $$event[/* txId */1]
-                  ],
-                  /* :: */[
-                    /* tuple */[
-                      "txOutputN",
-                      $$event[/* txOutputN */2]
-                    ],
-                    /* [] */0
-                  ]
-                ]
+                /* [] */0
               ]
             ]);
 }
 
 function decode$18(raw) {
-  return /* record */[
-          /* address */Json_decode.field("address", Json_decode.string, raw),
-          /* txId */Json_decode.field("txId", Json_decode.string, raw),
-          /* txOutputN */Json_decode.field("txOutputN", Json_decode.$$int, raw)
-        ];
+  return /* record */[/* input */Json_decode.field("input", Network.decodeInput, raw)];
 }
 
 var Unlocked = /* module */[

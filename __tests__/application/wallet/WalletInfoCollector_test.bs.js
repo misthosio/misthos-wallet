@@ -179,31 +179,34 @@ describe("WalletInfoCollector", (function () {
                       var match = Generators.twoUserSessionsFromArray(sessions);
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withIncomeDetected */42](2, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
-                                                      user1,
-                                                      /* [] */0
-                                                    ], Generators.Log[/* withCustodianRemoved */37](user2, /* :: */[
+                      return Generators.Log[/* withIncomeUnlocked */43](0, Generators.Log[/* withIncomeDetected */42](2, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* Some */[1], /* None */0, user1, Generators.Log[/* withPartnerRemoved */23](user2, /* :: */[
                                                           user1,
                                                           /* [] */0
-                                                        ], Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
-                                                                                          user1,
-                                                                                          /* :: */[
-                                                                                            user2,
-                                                                                            /* [] */0
-                                                                                          ]
-                                                                                        ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
-                                                                                              user1,
-                                                                                              /* [] */0
-                                                                                            ], Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
-                                                                                                                      user1,
-                                                                                                                      /* [] */0
-                                                                                                                    ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1)))))))))))))))))))))))));
+                                                        ], Generators.Log[/* withCustodianRemoved */37](user2, /* :: */[
+                                                              user1,
+                                                              /* [] */0
+                                                            ], Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeDetected */42](1, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                                                                                                  user1,
+                                                                                                  /* :: */[
+                                                                                                    user2,
+                                                                                                    /* [] */0
+                                                                                                  ]
+                                                                                                ], Generators.Log[/* withPartner */17](/* None */0, user2, /* :: */[
+                                                                                                      user1,
+                                                                                                      /* [] */0
+                                                                                                    ], Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeDetected */42](0, Generators.Log[/* withIncomeAddressExposed */41](user1, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user1, /* :: */[
+                                                                                                                                  user1,
+                                                                                                                                  /* [] */0
+                                                                                                                                ], Generators.Log[/* withAccount */27](user1, Generators.Log[/* withFirstPartner */18](user1)(Generators.Log[/* createVenture */11](user1))))))))))))))))))))))))))));
                     }), (function (_, log) {
                       var info = constructState(log);
-                      Jest.test("3 inputs are old", (function () {
-                              return Jest.Expect[/* toEqual */12](3, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
+                      Jest.test("1 input is unlocked", (function () {
+                              return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], info))));
                             }));
-                      return Jest.test("2 inputs are current", (function () {
+                      Jest.test("4 inputs are old", (function () {
+                              return Jest.Expect[/* toEqual */12](4, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
+                            }));
+                      return Jest.test("3 inputs are current", (function () {
                                     return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
                                   }));
                     }));

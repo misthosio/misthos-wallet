@@ -48,7 +48,6 @@ let currentKeyChain: (accountIdx, userId, t) => AccountKeyChain.t;
 let currentSpendableInputs: (accountIdx, t) => Network.inputSet;
 let oldSpendableInputs: (accountIdx, t) => Network.inputSet;
 let temporarilyInaccessibleInputs: t => Network.inputSet;
-
 let unlockedInputs: (accountIdx, t) => Network.inputSet;
 
 let inputsFor: (accountIdx, addressInfo, t) => list(Network.txInput);

@@ -581,6 +581,108 @@ function addToBalance(accountIdx, address, amount, state) {
         ];
 }
 
+function removeInputFromUtxoMap(accountIdx, input, inputMap) {
+  return Belt_Map.updateU(inputMap, accountIdx, (function (map) {
+                var map$1 = Belt_MapString.updateU(Js_option.getWithDefault(Belt_MapString.empty, map), input[/* address */2], (function (list_) {
+                        var list_$1 = Js_option.getWithDefault(/* [] */0, list_);
+                        var res = Belt_List.keepU(list_$1, (function (in_) {
+                                return Network.TxInputCmp[/* compareInputs */0](in_, input) !== 0;
+                              }));
+                        var match = Belt_List.length(res) > 0;
+                        if (match) {
+                          return /* Some */[res];
+                        } else {
+                          return /* None */0;
+                        }
+                      }));
+                var match = Belt_MapString.size(map$1) > 0;
+                if (match) {
+                  return /* Some */[map$1];
+                } else {
+                  return /* None */0;
+                }
+              }));
+}
+
+function removeInput(accountIdx, input, state) {
+  var info = addressInfoFor(accountIdx, input[/* address */2], state);
+  var match = info[/* addressStatus */4];
+  var exit = 0;
+  switch (match) {
+    case 0 : 
+        return /* record */[
+                /* network */state[/* network */0],
+                /* spendable */removeInputFromUtxoMap(accountIdx, input, state[/* spendable */1]),
+                /* oldSpendable */state[/* oldSpendable */2],
+                /* unlocked */state[/* unlocked */3],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+                /* inaccessible */state[/* inaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
+              ];
+    case 1 : 
+    case 2 : 
+        exit = 1;
+        break;
+    case 3 : 
+        return /* record */[
+                /* network */state[/* network */0],
+                /* spendable */state[/* spendable */1],
+                /* oldSpendable */state[/* oldSpendable */2],
+                /* unlocked */state[/* unlocked */3],
+                /* temporarilyInaccessible */removeInputFromUtxoMap(accountIdx, input, state[/* temporarilyInaccessible */4]),
+                /* inaccessible */state[/* inaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
+              ];
+    case 4 : 
+        return /* record */[
+                /* network */state[/* network */0],
+                /* spendable */state[/* spendable */1],
+                /* oldSpendable */state[/* oldSpendable */2],
+                /* unlocked */state[/* unlocked */3],
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+                /* inaccessible */removeInputFromUtxoMap(accountIdx, input, state[/* inaccessible */5]),
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
+              ];
+    
+  }
+  if (exit === 1) {
+    return /* record */[
+            /* network */state[/* network */0],
+            /* spendable */state[/* spendable */1],
+            /* oldSpendable */removeInputFromUtxoMap(accountIdx, input, state[/* oldSpendable */2]),
+            /* unlocked */state[/* unlocked */3],
+            /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+            /* inaccessible */state[/* inaccessible */5],
+            /* reserved */state[/* reserved */6],
+            /* keyChains */state[/* keyChains */7],
+            /* payoutProcesses */state[/* payoutProcesses */8],
+            /* activatedKeyChain */state[/* activatedKeyChain */9],
+            /* exposedCoordinates */state[/* exposedCoordinates */10],
+            /* addressInfos */state[/* addressInfos */11],
+            /* currentCustodians */state[/* currentCustodians */12]
+          ];
+  }
+  
+}
+
 function apply($$event, state) {
   switch ($$event.tag | 0) {
     case 0 : 
@@ -782,106 +884,6 @@ function apply($$event, state) {
         } else {
           state$1 = state;
         }
-        var removeInputFromUtxoMap = function (accountIdx, input, inputMap) {
-          return Belt_Map.updateU(inputMap, accountIdx, (function (map) {
-                        var map$1 = Belt_MapString.updateU(Js_option.getWithDefault(Belt_MapString.empty, map), input[/* address */2], (function (list_) {
-                                var list_$1 = Js_option.getWithDefault(/* [] */0, list_);
-                                var res = Belt_List.keepU(list_$1, (function (in_) {
-                                        return Network.TxInputCmp[/* compareInputs */0](in_, input) !== 0;
-                                      }));
-                                var match = Belt_List.length(res) > 0;
-                                if (match) {
-                                  return /* Some */[res];
-                                } else {
-                                  return /* None */0;
-                                }
-                              }));
-                        var match = Belt_MapString.size(map$1) > 0;
-                        if (match) {
-                          return /* Some */[map$1];
-                        } else {
-                          return /* None */0;
-                        }
-                      }));
-        };
-        var removeInput = function (accountIdx, input, state) {
-          var info = addressInfoFor(accountIdx, input[/* address */2], state);
-          var match = info[/* addressStatus */4];
-          var exit = 0;
-          switch (match) {
-            case 0 : 
-                return /* record */[
-                        /* network */state[/* network */0],
-                        /* spendable */removeInputFromUtxoMap(accountIdx, input, state[/* spendable */1]),
-                        /* oldSpendable */state[/* oldSpendable */2],
-                        /* unlocked */state[/* unlocked */3],
-                        /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
-                        /* inaccessible */state[/* inaccessible */5],
-                        /* reserved */state[/* reserved */6],
-                        /* keyChains */state[/* keyChains */7],
-                        /* payoutProcesses */state[/* payoutProcesses */8],
-                        /* activatedKeyChain */state[/* activatedKeyChain */9],
-                        /* exposedCoordinates */state[/* exposedCoordinates */10],
-                        /* addressInfos */state[/* addressInfos */11],
-                        /* currentCustodians */state[/* currentCustodians */12]
-                      ];
-            case 1 : 
-            case 2 : 
-                exit = 1;
-                break;
-            case 3 : 
-                return /* record */[
-                        /* network */state[/* network */0],
-                        /* spendable */state[/* spendable */1],
-                        /* oldSpendable */state[/* oldSpendable */2],
-                        /* unlocked */state[/* unlocked */3],
-                        /* temporarilyInaccessible */removeInputFromUtxoMap(accountIdx, input, state[/* temporarilyInaccessible */4]),
-                        /* inaccessible */state[/* inaccessible */5],
-                        /* reserved */state[/* reserved */6],
-                        /* keyChains */state[/* keyChains */7],
-                        /* payoutProcesses */state[/* payoutProcesses */8],
-                        /* activatedKeyChain */state[/* activatedKeyChain */9],
-                        /* exposedCoordinates */state[/* exposedCoordinates */10],
-                        /* addressInfos */state[/* addressInfos */11],
-                        /* currentCustodians */state[/* currentCustodians */12]
-                      ];
-            case 4 : 
-                return /* record */[
-                        /* network */state[/* network */0],
-                        /* spendable */state[/* spendable */1],
-                        /* oldSpendable */state[/* oldSpendable */2],
-                        /* unlocked */state[/* unlocked */3],
-                        /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
-                        /* inaccessible */removeInputFromUtxoMap(accountIdx, input, state[/* inaccessible */5]),
-                        /* reserved */state[/* reserved */6],
-                        /* keyChains */state[/* keyChains */7],
-                        /* payoutProcesses */state[/* payoutProcesses */8],
-                        /* activatedKeyChain */state[/* activatedKeyChain */9],
-                        /* exposedCoordinates */state[/* exposedCoordinates */10],
-                        /* addressInfos */state[/* addressInfos */11],
-                        /* currentCustodians */state[/* currentCustodians */12]
-                      ];
-            
-          }
-          if (exit === 1) {
-            return /* record */[
-                    /* network */state[/* network */0],
-                    /* spendable */state[/* spendable */1],
-                    /* oldSpendable */removeInputFromUtxoMap(accountIdx, input, state[/* oldSpendable */2]),
-                    /* unlocked */state[/* unlocked */3],
-                    /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
-                    /* inaccessible */state[/* inaccessible */5],
-                    /* reserved */state[/* reserved */6],
-                    /* keyChains */state[/* keyChains */7],
-                    /* payoutProcesses */state[/* payoutProcesses */8],
-                    /* activatedKeyChain */state[/* activatedKeyChain */9],
-                    /* exposedCoordinates */state[/* exposedCoordinates */10],
-                    /* addressInfos */state[/* addressInfos */11],
-                    /* currentCustodians */state[/* currentCustodians */12]
-                  ];
-          }
-          
-        };
         var init = Belt_Array.reduceU(payoutTx$3[/* usedInputs */1], state$1, (function (state, input) {
                 return addToBalance(accountIdx$5, input[/* address */2], BTC.timesRounded(-1, input[/* value */3]), removeInput(accountIdx$5, input, state));
               }));
@@ -1032,6 +1034,27 @@ function apply($$event, state) {
           input_007
         ];
         return addToBalance(accountIdx$9, address, amount, addTxInput(addressStatus$1, accountIdx$9, input, state));
+    case 42 : 
+        var input$1 = $$event[0][/* input */0];
+        var accountIdx$10 = Address.Coordinates[/* accountIdx */3](input$1[/* coordinates */6]);
+        var init$1 = removeInput(accountIdx$10, input$1, state);
+        return /* record */[
+                /* network */init$1[/* network */0],
+                /* spendable */init$1[/* spendable */1],
+                /* oldSpendable */init$1[/* oldSpendable */2],
+                /* unlocked */Belt_Map.updateU(state[/* unlocked */3], accountIdx$10, (function (inputs) {
+                        return /* Some */[Belt_Set.add(Js_option.getWithDefault(Network.inputSet(/* () */0), inputs), input$1)];
+                      })),
+                /* temporarilyInaccessible */init$1[/* temporarilyInaccessible */4],
+                /* inaccessible */init$1[/* inaccessible */5],
+                /* reserved */init$1[/* reserved */6],
+                /* keyChains */init$1[/* keyChains */7],
+                /* payoutProcesses */init$1[/* payoutProcesses */8],
+                /* activatedKeyChain */init$1[/* activatedKeyChain */9],
+                /* exposedCoordinates */init$1[/* exposedCoordinates */10],
+                /* addressInfos */init$1[/* addressInfos */11],
+                /* currentCustodians */init$1[/* currentCustodians */12]
+              ];
     default:
       return state;
   }

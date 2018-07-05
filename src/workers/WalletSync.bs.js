@@ -40,13 +40,12 @@ function catchAndLogError(param) {
 
 function notifyOfUnlockedInputs(ventureId, blockHeight, param, walletInfo) {
   var confirmedTransactions = param[/* confirmedTransactions */4];
-  var events = Belt_Set.reduceU(WalletInfoCollector.temporarilyInaccessibleInputs(walletInfo), /* [] */0, (function (res, param) {
-          var sequence = param[/* sequence */7];
-          var txId = param[/* txId */0];
-          var match = Belt_MapString.get(confirmedTransactions, txId);
+  var events = Belt_Set.reduceU(WalletInfoCollector.temporarilyInaccessibleInputs(walletInfo), /* [] */0, (function (res, input) {
+          var sequence = input[/* sequence */7];
+          var match = Belt_MapString.get(confirmedTransactions, input[/* txId */0]);
           if (sequence && match && blockHeight > (sequence[0] + (match[0] | 0) | 0)) {
             return /* :: */[
-                    Curry._3(Event.Income[/* Unlocked */2][/* make */0], param[/* address */2], param[/* txOutputN */1], txId),
+                    Curry._1(Event.Income[/* Unlocked */2][/* make */0], input),
                     res
                   ];
           } else {

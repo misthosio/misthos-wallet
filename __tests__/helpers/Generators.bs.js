@@ -218,6 +218,8 @@ function incomeDetected(address, coordinates) {
                 ]));
 }
 
+var incomeUnlocked = Event.Income[/* Unlocked */2][/* make */0];
+
 var Event$1 = /* module */[
   /* createVenture */createVenture,
   /* partnerProposed */partnerProposed,
@@ -244,7 +246,8 @@ var Event$1 = /* module */[
   /* accountKeyChainIdentified */accountKeyChainIdentified,
   /* accountKeyChainActivated */accountKeyChainActivated,
   /* incomeAddressExposed */incomeAddressExposed,
-  /* incomeDetected */incomeDetected
+  /* incomeDetected */incomeDetected,
+  /* incomeUnlocked */incomeUnlocked
 ];
 
 function eligiblePartners(param) {
@@ -822,6 +825,51 @@ function withIncomeDetected(incomeAddress, l) {
   return appendSystemEvent(/* IncomeDetected */Block.__(41, [Js_option.getExn(match[0])]), l);
 }
 
+function withIncomeUnlocked(income, l) {
+  var match = Curry._3(EventLog.reduce, (function (param, param$1) {
+          var $$event = param$1[/* event */0];
+          var counter = param[1];
+          var res = param[0];
+          if ($$event.tag === 41) {
+            if (counter > 0) {
+              return /* tuple */[
+                      /* None */0,
+                      counter - 1 | 0
+                    ];
+            } else if (counter !== 0) {
+              return /* tuple */[
+                      res,
+                      counter
+                    ];
+            } else {
+              var match = $$event[0];
+              return /* tuple */[
+                      /* Some */[Curry._1(incomeUnlocked, /* record */[
+                              /* txId */match[/* txId */2],
+                              /* txOutputN */match[/* txOutputN */3],
+                              /* address */match[/* address */0],
+                              /* value */match[/* amount */4],
+                              /* nCoSigners */0,
+                              /* nPubKeys */0,
+                              /* coordinates */match[/* coordinates */1],
+                              /* sequence : None */0
+                            ])],
+                      -1
+                    ];
+            }
+          } else {
+            return /* tuple */[
+                    res,
+                    counter
+                  ];
+          }
+        }), /* tuple */[
+        /* None */0,
+        income
+      ], l[/* log */3]);
+  return appendSystemEvent(/* IncomeUnlocked */Block.__(42, [Js_option.getExn(match[0])]), l);
+}
+
 var Log = /* module */[
   /* eligiblePartners */eligiblePartners,
   /* reduce */reduce,
@@ -865,7 +913,8 @@ var Log = /* module */[
   /* withAccountKeyChainIdentified */withAccountKeyChainIdentified,
   /* withAccountKeyChainActivated */withAccountKeyChainActivated,
   /* withIncomeAddressExposed */withIncomeAddressExposed,
-  /* withIncomeDetected */withIncomeDetected
+  /* withIncomeDetected */withIncomeDetected,
+  /* withIncomeUnlocked */withIncomeUnlocked
 ];
 
 var AppEvent = 0;
