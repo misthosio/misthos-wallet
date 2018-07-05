@@ -653,8 +653,46 @@ let apply = (event, state) =>
     |> addToBalance(accountIdx, address, amount);
   | IncomeUnlocked({input}) =>
     let accountIdx = input.coordinates |> Address.Coordinates.accountIdx;
+    let addressStatus =
+      (state |> addressInfoFor(accountIdx, input.address)).addressStatus;
+    let updateInput = (input: Network.txInput, utxoMap) =>
+      utxoMap
+      |. Map.updateU(accountIdx, (. inputs) =>
+           inputs
+           |> Js.Option.getWithDefault(Map.String.empty)
+           |. Map.String.updateU(input.address, (. inputs) =>
+                inputs
+                |> Js.Option.getWithDefault([])
+                |. List.mapU((. in_) =>
+                     Network.TxInputCmp.compareInputs(. in_, input) == 0 ?
+                       input : in_
+                   )
+                |. Some
+              )
+           |. Some
+         );
     {
-      ...state,
+      ...
+        switch (addressStatus) {
+        | Accessible => {
+            ...state,
+            spendable: state.spendable |> updateInput(input),
+          }
+        | AtRisk
+        | OutdatedCustodians => {
+            ...state,
+            oldSpendable: state.oldSpendable |> updateInput(input),
+          }
+        | TemporarilyInaccessible => {
+            ...state,
+            temporarilyInaccessible:
+              state.temporarilyInaccessible |> updateInput(input),
+          }
+        | Inaccessible => {
+            ...state,
+            inaccessible: state.inaccessible |> updateInput(input),
+          }
+        },
       unlocked:
         state.unlocked
         |. Map.updateU(accountIdx, (. inputs) =>
