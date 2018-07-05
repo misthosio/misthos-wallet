@@ -24,7 +24,8 @@ type incoming =
       ventureId,
       list(Event.Payout.Broadcast.t),
       list(Event.Payout.BroadcastFailed.t),
-      list(Event.IncomeDetected.t),
+      list(Event.Income.Detected.t),
+      list(Event.Income.Unlocked.t),
       list(Event.Transaction.Confirmed.t),
     )
   | SyncTabs(ventureId, array(EventLog.item));
@@ -279,7 +280,14 @@ let encodeIncoming =
         ("partnerId", UserId.encode(partnerId)),
       ])
     )
-  | SyncWallet(ventureId, broadcasts, broadcastFailures, incomeEvents, confs) =>
+  | SyncWallet(
+      ventureId,
+      broadcasts,
+      broadcastFailures,
+      incomeEvents,
+      unlockEvents,
+      confs,
+    ) =>
     Json.Encode.(
       object_([
         ("type", string("SyncWallet")),
@@ -289,7 +297,8 @@ let encodeIncoming =
           "broadcastFailures",
           list(Event.Payout.BroadcastFailed.encode, broadcastFailures),
         ),
-        ("incomeEvents", list(Event.IncomeDetected.encode, incomeEvents)),
+        ("incomeEvents", list(Event.Income.Detected.encode, incomeEvents)),
+        ("unlockEvents", list(Event.Income.Unlocked.encode, unlockEvents)),
         (
           "transactionConfirmations",
           list(Event.Transaction.Confirmed.encode, confs),
@@ -389,7 +398,12 @@ let decodeIncoming = raw => {
     let incomeEvents =
       raw
       |> Json.Decode.(
-           field("incomeEvents", list(Event.IncomeDetected.decode))
+           field("incomeEvents", list(Event.Income.Detected.decode))
+         );
+    let unlockEvents =
+      raw
+      |> Json.Decode.(
+           field("unlockEvents", list(Event.Income.Unlocked.decode))
          );
     let confs =
       raw
@@ -399,7 +413,14 @@ let decodeIncoming = raw => {
              list(Event.Transaction.Confirmed.decode),
            )
          );
-    SyncWallet(ventureId, broadcasts, broadcastFailures, incomeEvents, confs);
+    SyncWallet(
+      ventureId,
+      broadcasts,
+      broadcastFailures,
+      incomeEvents,
+      unlockEvents,
+      confs,
+    );
   | "NewItemsDetected" =>
     let ventureId = raw |> Json.Decode.field("ventureId", VentureId.decode);
     let items =

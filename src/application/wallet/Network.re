@@ -31,6 +31,7 @@ type txInput = {
   nPubKeys: int,
   coordinates: Address.Coordinates.t,
   sequence: option(int),
+  unlocked: bool,
 };
 
 module TxInputCmp = {
@@ -71,6 +72,7 @@ let encodeInput = input =>
       ("nPubKeys", int(input.nPubKeys)),
       ("coordinates", Address.Coordinates.encode(input.coordinates)),
       ("sequence", nullable(int, input.sequence)),
+      ("unlocked", nullable(bool, input.unlocked ? Some(true) : None)),
     ])
   );
 
@@ -84,11 +86,13 @@ let decodeInput = raw =>
     nPubKeys: raw |> field("nPubKeys", int),
     coordinates: raw |> field("coordinates", Address.Coordinates.decode),
     sequence: raw |> optional(field("sequence", int)),
+    unlocked: raw |> optional(field("unlocked", bool)) |> Js.Option.isSome,
   };
 
 module Make = (Client: NetworkClient) => {
   let network = Client.network;
   let transactionInfo = Client.getTransactionInfo;
+  let currentBlockHeight = Client.getCurrentBlockHeight;
   let transactionInputs = addresses =>
     Belt.(
       Js.Promise.(
@@ -110,6 +114,7 @@ module Make = (Client: NetworkClient) => {
                     value: amount,
                     coordinates: a.coordinates,
                     sequence: a.sequence,
+                    unlocked: false,
                   };
                 })
              |> resolve
@@ -136,8 +141,8 @@ module Regtest =
 module Testnet =
   Make(
     (
-      val SmartbitClient.make(
-            SmartbitClient.testnetConfig,
+      val BlockchainInfoClient.make(
+            BlockchainInfoClient.testnetConfig,
             Bitcoin.Networks.testnet,
           )
     ),
@@ -146,8 +151,8 @@ module Testnet =
 module Mainnet =
   Make(
     (
-      val SmartbitClient.make(
-            SmartbitClient.mainnetConfig,
+      val BlockchainInfoClient.make(
+            BlockchainInfoClient.mainnetConfig,
             Bitcoin.Networks.bitcoin,
           )
     ),
@@ -164,6 +169,12 @@ let transactionInfo =
   | Regtest => Regtest.transactionInfo
   | Testnet => Testnet.transactionInfo
   | Mainnet => Mainnet.transactionInfo;
+
+let currentBlockHeight =
+  fun
+  | Regtest => Regtest.currentBlockHeight
+  | Testnet => Testnet.currentBlockHeight
+  | Mainnet => Mainnet.currentBlockHeight;
 
 let broadcastTransaction =
   fun

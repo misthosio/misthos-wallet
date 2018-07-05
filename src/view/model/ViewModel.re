@@ -41,15 +41,22 @@ module AddressesView = {
   type addressType = WalletInfoCollector.addressType;
   type addressStatus = WalletInfoCollector.addressStatus;
   type addressInfo = WalletInfoCollector.addressInfo;
-  type txInput = Network.txInput;
+  type incomeStatus = TxDetailsCollector.incomeStatus;
+  type income = {
+    status: incomeStatus,
+    unlocked: bool,
+    date: option(Js.Date.t),
+    txId: string,
+    amount: BTC.t,
+  };
   type addressDetails = {
     custodians: UserId.set,
     nCoSigners: int,
     nCustodians: int,
     addressType,
     addressStatus,
-    currentUtxos: list(txInput),
-    spentInputs: list(txInput),
+    unspentIncome: list(income),
+    spentIncome: list(income),
     isPartner: UserId.t => bool,
   };
   type t = {
@@ -57,7 +64,14 @@ module AddressesView = {
     addressDetails: addressInfo => addressDetails,
   };
   let fromViewModelState =
-      ({walletInfoCollector, oldInputCollector, partnersCollector}) => {
+      (
+        {
+          walletInfoCollector,
+          oldInputCollector,
+          partnersCollector,
+          txDetailsCollector,
+        },
+      ) => {
     infos:
       walletInfoCollector
       |> WalletInfoCollector.addressInfos(AccountIndex.default),
@@ -68,14 +82,29 @@ module AddressesView = {
       nCoSigners: addressInfo.nCoSigners,
       addressType: addressInfo.addressType,
       addressStatus: addressInfo.addressStatus,
-      currentUtxos:
+      unspentIncome:
         WalletInfoCollector.inputsFor(
           AccountIndex.default,
           addressInfo,
           walletInfoCollector,
-        ),
-      spentInputs:
-        oldInputCollector |> OldInputCollector.inputsFor(addressInfo.address),
+        )
+        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+             let {status, date}: TxDetailsCollector.income =
+               txDetailsCollector
+               |> TxDetailsCollector.getIncome(txId)
+               |> Js.Option.getExn;
+             {txId, amount: value, status, date, unlocked};
+           }),
+      spentIncome:
+        oldInputCollector
+        |> OldInputCollector.inputsFor(addressInfo.address)
+        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+             let {status, date}: TxDetailsCollector.income =
+               txDetailsCollector
+               |> TxDetailsCollector.getIncome(txId)
+               |> Js.Option.getExn;
+             {txId, amount: value, status, date, unlocked};
+           }),
     },
   };
 };
@@ -146,6 +175,9 @@ module CreatePayoutView = {
     let mandatoryInputs =
       walletInfoCollector
       |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default);
+    let unlockedInputs =
+      walletInfoCollector
+      |> WalletInfoCollector.unlockedInputs(AccountIndex.default);
     let allInputs = optionalInputs |. Belt.Set.union(mandatoryInputs);
     let changeAddress =
       walletInfoCollector
@@ -189,6 +221,7 @@ module CreatePayoutView = {
       summary: (destinations, fee) =>
         PayoutTransaction.build(
           ~mandatoryInputs,
+          ~unlockedInputs,
           ~optionalInputs,
           ~destinations,
           ~satsPerByte=fee,

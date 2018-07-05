@@ -90,7 +90,8 @@ module Cmd: {
       (
         list(Event.Payout.Broadcast.t),
         list(Event.Payout.BroadcastFailed.t),
-        list(Event.IncomeDetected.t),
+        list(Event.Income.Detected.t),
+        list(Event.Income.Unlocked.t),
         list(Event.Transaction.Confirmed.t),
         t
       ) =>

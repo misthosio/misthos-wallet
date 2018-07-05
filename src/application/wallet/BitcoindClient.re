@@ -148,5 +148,6 @@ let make = (config, network) : (module WalletTypes.NetworkClient) =>
      let network = network;
      let getUTXOs = getUTXOs(config);
      let getTransactionInfo = _ => Js.Promise.resolve([]);
+     let getCurrentBlockHeight = () => Js.Promise.resolve(1);
      let broadcastTransaction = broadcastTransaction(config);
    });

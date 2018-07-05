@@ -16,7 +16,7 @@ type addressStatus =
   | Inaccessible;
 
 type addressType =
-  | Income
+  | Income(userId)
   | Change;
 
 type addressInfo = {
@@ -136,7 +136,6 @@ let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
        |> Map.keysToArray
        |> Set.mergeMany(Network.inputSet()),
      );
-
 let unlockedInputs = (accountIdx, {unlocked}) =>
   unlocked |. Map.getWithDefault(accountIdx, Network.inputSet());
 
@@ -151,6 +150,27 @@ let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
        |. Map.getWithDefault(accountIdx, Network.inputMap())
        |> Map.keysToArray
        |> Set.mergeMany(Network.inputSet()),
+     );
+let allUnspentInputs = ({oldSpendable, spendable, temporarilyInaccessible}) =>
+  temporarilyInaccessible
+  |. Map.valuesToArray
+  |. Array.reduceU(Network.inputSet(), (. res, map) =>
+       map
+       |. Map.String.reduceU(res, (. res, _, inputs) =>
+            res |. Set.mergeMany(inputs |> List.toArray)
+          )
+     )
+  |. Array.reduceU(oldSpendable |> Map.valuesToArray, _, (. res, map) =>
+       map
+       |. Map.String.reduceU(res, (. res, _, inputs) =>
+            res |. Set.mergeMany(inputs |> List.toArray)
+          )
+     )
+  |. Array.reduceU(spendable |> Map.valuesToArray, _, (. res, map) =>
+       map
+       |. Map.String.reduceU(res, (. res, _, inputs) =>
+            res |. Set.mergeMany(inputs |> List.toArray)
+          )
      );
 
 let network = ({network}) => network;
@@ -470,6 +490,55 @@ let addToBalance = (accountIdx, address, amount, state) => {
          |. Some
        ),
 };
+let removeInputFromUtxoMap = (accountIdx, input: Network.txInput, inputMap) =>
+  inputMap
+  |. Map.updateU(
+       accountIdx,
+       (. map) => {
+         let map =
+           map
+           |> Js.Option.getWithDefault(Map.String.empty)
+           |. Map.String.updateU(
+                input.address,
+                (. list_) => {
+                  let list_ = list_ |> Js.Option.getWithDefault([]);
+                  let res =
+                    list_
+                    |. List.keepU((. in_) =>
+                         Network.TxInputCmp.compareInputs(. in_, input) != 0
+                       );
+                  res |. List.length > 0 ? Some(res) : None;
+                },
+              );
+         map |. Map.String.size > 0 ? Some(map) : None;
+       },
+     );
+let removeInput = (accountIdx, input: Network.txInput, state) => {
+  let info = state |> addressInfoFor(accountIdx, input.address);
+  switch (info.addressStatus) {
+  | Accessible => {
+      ...state,
+      spendable: state.spendable |> removeInputFromUtxoMap(accountIdx, input),
+    }
+  | AtRisk
+  | OutdatedCustodians => {
+      ...state,
+      oldSpendable:
+        state.oldSpendable |> removeInputFromUtxoMap(accountIdx, input),
+    }
+  | TemporarilyInaccessible => {
+      ...state,
+      temporarilyInaccessible:
+        state.temporarilyInaccessible
+        |> removeInputFromUtxoMap(accountIdx, input),
+    }
+  | Inaccessible => {
+      ...state,
+      inaccessible:
+        state.inaccessible |> removeInputFromUtxoMap(accountIdx, input),
+    }
+  };
+};
 
 let apply = (event, state) =>
   switch (event) {
@@ -526,7 +595,7 @@ let apply = (event, state) =>
     }
   | IncomeAddressExposed(
       (
-        {address: {coordinates, displayAddress, nCoSigners}}: IncomeAddressExposed.t
+        {partnerId, address: {coordinates, displayAddress, nCoSigners}}: Income.AddressExposed.t
       ),
     ) =>
     let accountIdx = coordinates |> Address.Coordinates.accountIdx;
@@ -560,7 +629,7 @@ let apply = (event, state) =>
                        custodians,
                        nCoSigners,
                      ),
-                   addressType: Income,
+                   addressType: Income(partnerId),
                    nCoSigners,
                    custodians,
                    balance: BTC.zero,
@@ -589,10 +658,62 @@ let apply = (event, state) =>
       nCoSigners: keyChain.nCoSigners,
       nPubKeys: keyChain.custodianKeyChains |> List.length,
       sequence: keyChain.sequence,
+      unlocked: false,
     };
     state
     |> addTxInput(addressStatus, accountIdx, input)
     |> addToBalance(accountIdx, address, amount);
+  | IncomeUnlocked({input}) =>
+    let accountIdx = input.coordinates |> Address.Coordinates.accountIdx;
+    let addressStatus =
+      (state |> addressInfoFor(accountIdx, input.address)).addressStatus;
+    let updateInput = (input: Network.txInput, utxoMap) =>
+      utxoMap
+      |. Map.updateU(accountIdx, (. inputs) =>
+           inputs
+           |> Js.Option.getWithDefault(Map.String.empty)
+           |. Map.String.updateU(input.address, (. inputs) =>
+                inputs
+                |> Js.Option.getWithDefault([])
+                |. List.mapU((. in_) =>
+                     Network.TxInputCmp.compareInputs(. in_, input) == 0 ?
+                       input : in_
+                   )
+                |. Some
+              )
+           |. Some
+         );
+    {
+      ...
+        switch (addressStatus) {
+        | Accessible => {
+            ...state,
+            spendable: state.spendable |> updateInput(input),
+          }
+        | AtRisk
+        | OutdatedCustodians => {
+            ...state,
+            oldSpendable: state.oldSpendable |> updateInput(input),
+          }
+        | TemporarilyInaccessible => {
+            ...state,
+            temporarilyInaccessible:
+              state.temporarilyInaccessible |> updateInput(input),
+          }
+        | Inaccessible => {
+            ...state,
+            inaccessible: state.inaccessible |> updateInput(input),
+          }
+        },
+      unlocked:
+        state.unlocked
+        |. Map.updateU(accountIdx, (. inputs) =>
+             inputs
+             |> Js.Option.getWithDefault(Network.inputSet())
+             |. Set.add(input)
+             |. Some
+           ),
+    };
   | PayoutProposed({
       data: {payoutTx: {usedInputs, changeAddress} as payoutTx},
       processId,
@@ -674,6 +795,17 @@ let apply = (event, state) =>
         payoutTx.usedInputs,
         state.reserved,
       );
+    let unlocked =
+      state.unlocked
+      |. Map.updateU(accountIdx, (. unlockedInputs) =>
+           switch (unlockedInputs) {
+           | Some(unlockedInputs) =>
+             let unlockedInputs =
+               payoutTx.usedInputs |. Array.reduce(unlockedInputs, Set.remove);
+             unlockedInputs |. Set.size == 0 ? None : Some(unlockedInputs);
+           | None => None
+           }
+         );
     let state =
       switch (
         payoutTx
@@ -724,58 +856,6 @@ let apply = (event, state) =>
         |> addToBalance(accountIdx, changeInput.address, changeInput.value);
       | None => state
       };
-    let removeInputFromUtxoMap =
-        (accountIdx, input: Network.txInput, inputMap) =>
-      inputMap
-      |. Map.updateU(
-           accountIdx,
-           (. map) => {
-             let map =
-               map
-               |> Js.Option.getWithDefault(Map.String.empty)
-               |. Map.String.updateU(
-                    input.address,
-                    (. list_) => {
-                      let list_ = list_ |> Js.Option.getWithDefault([]);
-                      let res =
-                        list_
-                        |. List.keepU((. in_) =>
-                             Network.TxInputCmp.compareInputs(. in_, input)
-                             != 0
-                           );
-                      res |. List.length > 0 ? Some(res) : None;
-                    },
-                  );
-             map |. Map.String.size > 0 ? Some(map) : None;
-           },
-         );
-    let removeInput = (accountIdx, input: Network.txInput, state) => {
-      let info = state |> addressInfoFor(accountIdx, input.address);
-      switch (info.addressStatus) {
-      | Accessible => {
-          ...state,
-          spendable:
-            state.spendable |> removeInputFromUtxoMap(accountIdx, input),
-        }
-      | AtRisk
-      | OutdatedCustodians => {
-          ...state,
-          oldSpendable:
-            state.oldSpendable |> removeInputFromUtxoMap(accountIdx, input),
-        }
-      | TemporarilyInaccessible => {
-          ...state,
-          temporarilyInaccessible:
-            state.temporarilyInaccessible
-            |> removeInputFromUtxoMap(accountIdx, input),
-        }
-      | Inaccessible => {
-          ...state,
-          inaccessible:
-            state.inaccessible |> removeInputFromUtxoMap(accountIdx, input),
-        }
-      };
-    };
     {
       ...
         payoutTx.usedInputs
@@ -789,6 +869,7 @@ let apply = (event, state) =>
                 )
            ),
       reserved,
+      unlocked,
     };
   | PayoutBroadcastFailed({processId}) =>
     let payoutTx: PayoutTransaction.t =

@@ -105,18 +105,28 @@ let () = {
           |> WalletInfoCollector.addressInfos(AccountIndex.default);
         switch (info) {
         | [info0, info1, info2, info3, info4, info5, info6] =>
-          info0 |> testInfo([|user2, user4, user5|], Income, Accessible);
-          info1 |> testInfo([|user2, user4|], Income, OutdatedCustodians);
-          info2 |> testInfo([|user2|], Income, AtRisk);
-          info3 |> testInfo([|user2, user3|], Income, AtRisk);
+          info0
+          |> testInfo(
+               [|user2, user4, user5|],
+               Income(user2.userId),
+               Accessible,
+             );
+          info1
+          |> testInfo(
+               [|user2, user4|],
+               Income(user2.userId),
+               OutdatedCustodians,
+             );
+          info2 |> testInfo([|user2|], Income(user2.userId), AtRisk);
+          info3 |> testInfo([|user2, user3|], Income(user2.userId), AtRisk);
           info4
           |> testInfo(
                [|user1, user2, user3|],
-               Income,
+               Income(user1.userId),
                TemporarilyInaccessible,
              );
-          info5 |> testInfo([|user1, user2|], Income, AtRisk);
-          info6 |> testInfo([|user1|], Income, Inaccessible);
+          info5 |> testInfo([|user1, user2|], Income(user1.userId), AtRisk);
+          info6 |> testInfo([|user1|], Income(user1.userId), Inaccessible);
         | _ => %assert
                "WalletInfoCollector_test"
         };
@@ -140,12 +150,14 @@ let () = {
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
           |> withIncomeDetected(~incomeAddress=0)
+          |> withIncomeDetected(~incomeAddress=0)
           |> withPartner(user2, ~supporters=[user1])
           |> withCustodian(user2, ~supporters=[user1, user2])
           |> withCustodianKeyChain(user2)
           |> withAccountKeyChainIdentified
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
+          |> withIncomeDetected(~incomeAddress=1)
           |> withIncomeDetected(~incomeAddress=1)
           |> withIncomeDetected(~incomeAddress=1)
           |> withIncomeDetected(~incomeAddress=1)
@@ -156,19 +168,40 @@ let () = {
           |> withAccountKeyChainActivated(user1)
           |> withIncomeAddressExposed(user1)
           |> withIncomeDetected(~incomeAddress=2)
+          |> withIncomeUnlocked(~income=0)
         );
       },
       (_sessions, log) => {
         let info = log |> constructState;
-        test("3 inputs are old", () =>
+        test("1 input is unlocked", () =>
+          expect(
+            info
+            |> WalletInfoCollector.unlockedInputs(AccountIndex.default)
+            |> Set.size,
+          )
+          |> toEqual(1)
+        );
+        test("1 current input is unlocked", () =>
+          expect(
+            info
+            |> WalletInfoCollector.currentSpendableInputs(
+                 AccountIndex.default,
+               )
+            |. Set.reduceU(0, (. res, {unlocked}: Network.txInput) =>
+                 res + (unlocked ? 1 : 0)
+               ),
+          )
+          |> toEqual(1)
+        );
+        test("4 inputs are old", () =>
           expect(
             info
             |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default)
             |> Set.size,
           )
-          |> toEqual(3)
+          |> toEqual(4)
         );
-        test("2 inputs are current", () =>
+        test("3 inputs are current", () =>
           expect(
             info
             |> WalletInfoCollector.currentSpendableInputs(
@@ -176,7 +209,7 @@ let () = {
                )
             |> Set.size,
           )
-          |> toEqual(2)
+          |> toEqual(3)
         );
       },
     )

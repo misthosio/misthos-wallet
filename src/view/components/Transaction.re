@@ -1,10 +1,10 @@
 include ViewCommon;
 
-module ViewData = ViewModel.SelectedVentureView;
-
 let component = ReasonReact.statelessComponent("Transaction");
 
-[@bs.module] external avatar : string = "../../assets/img/avatar-bg.svg";
+type txType =
+  | Income
+  | Payout;
 
 module Styles = {
   open Css;
@@ -15,7 +15,7 @@ module Styles = {
       minWidth(px(0)),
       firstChild([paddingLeft(px(16))]),
     ]);
-  let amount = (inOut: ViewData.txType) =>
+  let amount = (inOut: txType) =>
     style([
       color(
         switch (inOut) {
@@ -27,43 +27,39 @@ module Styles = {
     ]);
 };
 
-let make = (~tx: ViewData.txData, _children) => {
+let make =
+    (
+      ~txType: txType,
+      ~primary: string,
+      ~amount: BTC.t,
+      ~date: option(Js.Date.t),
+      ~onClick=?,
+      _children,
+    ) => {
   ...component,
-  render: _self => {
-    let afmt = amount => BTC.format(amount) ++ " BTC" |> text;
-    let dfmt =
-      Utils.mapOption(date =>
-        <MTypography variant=`Body1>
-          (Js.Date.toDateString(date) |> text)
-        </MTypography>
-      );
-    let (primary, secondary, amount) = (
-      switch (tx.status, tx.txType) {
-      | (Unconfirmed, Payout) => text("UNCONFIRMED PAYOUT")
-      | (Unconfirmed, Income) => text("UNCONFIRMED INCOME")
-      | (Confirmed, Payout) => text("PAYOUT")
-      | (Confirmed, Income) => text("INCOME")
-      },
-      dfmt(tx.date),
-      afmt(tx.amount),
-    );
+  render: _self =>
     MaterialUi.(
-      <ListItem
-        dense=true
-        disableGutters=true
-        button=true
-        onClick=(Router.clickToRoute(tx.detailsLink))>
+      <ListItem dense=true disableGutters=true button=true ?onClick>
         <ListItemText
           classes=[Root(Styles.root)]
           primary={
             <MTypography variant=`Body2>
-              primary
-              <span className=(Styles.amount(tx.txType))> amount </span>
+              (primary |> String.uppercase |> text)
+              <span className=(Styles.amount(txType))>
+                (BTC.format(amount) ++ " BTC" |> text)
+              </span>
             </MTypography>
           }
-          ?secondary
+          secondary=(
+            switch (date) {
+            | Some(date) =>
+              <MTypography variant=`Body1>
+                (Js.Date.toDateString(date) |> text)
+              </MTypography>
+            | None => ReasonReact.null
+            }
+          )
         />
       </ListItem>
-    );
-  },
+    ),
 };

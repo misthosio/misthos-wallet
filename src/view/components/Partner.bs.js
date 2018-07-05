@@ -8,6 +8,7 @@ var Theme = require("../Theme.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
+var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var MaterialUi_Avatar = require("@jsiebern/bs-material-ui/src/MaterialUi_Avatar.bs.js");
@@ -48,48 +49,55 @@ var avatar = Css.style(/* :: */[
       ]
     ]);
 
-var primary = Css.style(/* :: */[
-      Css.fontFamily(Theme.oswald),
-      /* :: */[
-        Css.fontSize(Css.px(16)),
-        /* :: */[
-          Css.fontWeight(600),
-          /* :: */[
-            Css.unsafe("letterSpacing", "0.7px"),
-            /* :: */[
-              Css.textTransform(Css.uppercase),
+function primary(ex) {
+  return Css.style(/* :: */[
+              Css.fontFamily(Theme.oswald),
               /* :: */[
-                Css.whiteSpace(Css.nowrap),
+                Css.fontSize(Css.px(16)),
                 /* :: */[
-                  Css.overflow(Css.hidden),
+                  Css.fontWeight(600),
                   /* :: */[
-                    Css.textOverflow(Css.ellipsis),
-                    /* [] */0
+                    Css.unsafe("letterSpacing", "0.7px"),
+                    /* :: */[
+                      Css.textTransform(Css.uppercase),
+                      /* :: */[
+                        Css.whiteSpace(Css.nowrap),
+                        /* :: */[
+                          Css.overflow(Css.hidden),
+                          /* :: */[
+                            Css.textOverflow(Css.ellipsis),
+                            /* :: */[
+                              Css.color(ex ? Css.rgba(0, 0, 0, 0.2) : /* currentColor */292050538),
+                              /* [] */0
+                            ]
+                          ]
+                        ]
+                      ]
+                    ]
                   ]
                 ]
               ]
-            ]
-          ]
-        ]
-      ]
-    ]);
+            ]);
+}
 
-var secondary = Css.style(/* :: */[
-      Css.fontFamily(Theme.sourceSansPro),
-      /* :: */[
-        Css.fontSize(Css.px(16)),
-        /* :: */[
-          Css.fontWeight(300),
-          /* :: */[
-            Css.unsafe("letterSpacing", "0.5px"),
-            /* :: */[
-              Css.color(Css.rgba(0, 0, 0, 0.87)),
-              /* [] */0
-            ]
-          ]
-        ]
-      ]
-    ]);
+function secondary(ex) {
+  return Css.style(/* :: */[
+              Css.fontFamily(Theme.sourceSansPro),
+              /* :: */[
+                Css.fontSize(Css.px(16)),
+                /* :: */[
+                  Css.fontWeight(300),
+                  /* :: */[
+                    Css.unsafe("letterSpacing", "0.5px"),
+                    /* :: */[
+                      Css.color(ex ? Css.rgba(0, 0, 0, 0.2) : Css.rgba(0, 0, 0, 0.87)),
+                      /* [] */0
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
 
 function secondaryAction(status) {
   if (status) {
@@ -105,15 +113,28 @@ function secondaryAction(status) {
   }
 }
 
+var exPartnerStatus = Css.style(/* :: */[
+      Css.fontSize(Css.px(12)),
+      /* :: */[
+        Css.color(Css.rgba(0, 0, 0, 0.87)),
+        /* [] */0
+      ]
+    ]);
+
+var exPartnerPrimary = Css.style(/* [] */0);
+
 var Styles = /* module */[
   /* lenght */lenght,
   /* avatar */avatar,
   /* primary */primary,
   /* secondary */secondary,
-  /* secondaryAction */secondaryAction
+  /* secondaryAction */secondaryAction,
+  /* exPartnerStatus */exPartnerStatus,
+  /* exPartnerPrimary */exPartnerPrimary
 ];
 
-function make(partnerId, name, button, status, onClick, _) {
+function make(partnerId, name, button, status, onClick, $staropt$star, _) {
+  var ex = $staropt$star ? $staropt$star[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -133,21 +154,31 @@ function make(partnerId, name, button, status, onClick, _) {
                   ViewCommon.text(userId),
                   /* None */0
                 ];
+              var tmp;
+              var exit = 0;
+              if (button || status || ex) {
+                exit = 1;
+              } else {
+                tmp = null;
+              }
+              if (exit === 1) {
+                tmp = ex ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[exPartnerStatus], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("EX-PARTNER")])) : (
+                    button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[status[0]]))
+                  );
+              }
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
                                 /* SecondaryAction */Block.__(9, [secondaryAction(status)]),
                                 /* [] */0
                               ]], /* None */0, /* array */[
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_Avatar.make(/* None */0, /* None */0, /* Some */[avatar], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text($$String.uppercase($$String.make(1, Caml_string.get(userId, 0))))])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[match[0]], /* None */0, match[1], /* None */0, /* Some */[/* :: */[
-                                          /* Primary */Block.__(3, [primary]),
+                                          /* Primary */Block.__(3, [primary(ex)]),
                                           /* :: */[
-                                            /* Secondary */Block.__(4, [secondary]),
+                                            /* Secondary */Block.__(4, [secondary(ex)]),
                                             /* [] */0
                                           ]
                                         ]], /* None */0, /* array */[])),
-                              button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : (
-                                  status ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[status[0]])) : null
-                                )
+                              tmp
                             ]));
             }),
           /* initialState */component[/* initialState */10],

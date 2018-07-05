@@ -14,6 +14,39 @@ let logMessage = WorkerUtils.logMessage(logLabel);
 
 let catchAndLogError = WorkerUtils.catchAndLogError(logLabel);
 
+let notifyOfUnlockedInputs =
+    (
+      ventureId,
+      blockHeight,
+      {confirmedTransactions}: TransactionCollector.t,
+      walletInfo,
+    ) =>
+  switch (
+    walletInfo
+    |> WalletInfoCollector.allUnspentInputs
+    |. Set.reduceU(
+         [], (. res, {txId, sequence, unlocked} as input: Network.txInput) =>
+         switch (
+           unlocked,
+           sequence,
+           confirmedTransactions |. Map.String.get(txId),
+         ) {
+         | (false, Some(sequence), Some(txBlock))
+             when blockHeight > sequence + int_of_float(txBlock) => [
+             Event.Income.Unlocked.make(~input={...input, unlocked: true}),
+             ...res,
+           ]
+         | _ => res
+         }
+       )
+  ) {
+  | [] => ()
+  | events =>
+    postMessage(
+      VentureWorkerMessage.SyncWallet(ventureId, [], [], [], events, []),
+    )
+  };
+
 let broadcastPayouts =
     ({ventureId, network, notYetBroadcastPayouts}: TransactionCollector.t) =>
   Js.Promise.(
@@ -34,6 +67,7 @@ let broadcastPayouts =
                       [],
                       [],
                       [],
+                      [],
                     ),
                   )
                 | WalletTypes.AlreadyInBlockchain =>
@@ -41,6 +75,7 @@ let broadcastPayouts =
                     VentureWorkerMessage.SyncWallet(
                       ventureId,
                       [Event.Payout.Broadcast.make(~processId, ~txId)],
+                      [],
                       [],
                       [],
                       [],
@@ -63,6 +98,7 @@ let broadcastPayouts =
                       ],
                       [],
                       [],
+                      [],
                     ),
                   );
                 | WalletTypes.FetchError(_error) => ()
@@ -73,31 +109,50 @@ let broadcastPayouts =
          |> catchAndLogError
        )
   );
+type collector = {
+  addresses: AddressCollector.t,
+  transactions: TransactionCollector.t,
+  walletInfo: WalletInfoCollector.t,
+};
+let make = () => {
+  addresses: AddressCollector.make(),
+  transactions: TransactionCollector.make(),
+  walletInfo: WalletInfoCollector.make(),
+};
 
-let scanTransactions =
-    ((addresses: AddressCollector.t, transactions: TransactionCollector.t)) =>
+let scanTransactions = ({addresses, transactions} as collector) =>
   Js.Promise.(
-    addresses.exposedAddresses
-    |> Network.transactionInputs(addresses.network)
-    |> then_(utxos =>
+    all2((
+      addresses.exposedAddresses
+      |> Network.transactionInputs(addresses.network),
+      Network.currentBlockHeight(addresses.network, ()),
+    ))
+    |> then_(((utxos, blockHeight)) =>
          utxos
          |. List.mapU((. {txId}: Network.txInput) => txId)
          |> List.toArray
          |> Set.String.mergeMany(transactions.transactionsOfInterest)
-         |> Set.String.diff(_, transactions.confirmedTransactions)
+         |. Set.String.diff(
+              transactions.confirmedTransactions
+              |> Map.String.keysToArray
+              |> Set.String.mergeMany(Set.String.empty),
+            )
          |> Network.transactionInfo(addresses.network)
-         |> then_(txInfos => (utxos, txInfos, transactions) |> resolve)
+         |> then_(txInfos =>
+              (utxos, txInfos, blockHeight, collector) |> resolve
+            )
        )
   );
 
-let findAddressesAndTxIds = log =>
+let collectData = log =>
   log
   |> EventLog.reduce(
-       ((addresses, transactions), {event}: EventLog.item) => (
-         addresses |> AddressCollector.apply(event),
-         transactions |> TransactionCollector.apply(event),
-       ),
-       (AddressCollector.make(), TransactionCollector.make()),
+       ({addresses, transactions, walletInfo}, {event}: EventLog.item) => {
+         addresses: addresses |> AddressCollector.apply(event),
+         transactions: transactions |> TransactionCollector.apply(event),
+         walletInfo: walletInfo |> WalletInfoCollector.apply(event),
+       },
+       make(),
      );
 
 let filterUTXOs = (knownTxs, utxos) =>
@@ -114,15 +169,17 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
   );
   Js.Promise.(
     eventLog
-    |> findAddressesAndTxIds
+    |> collectData
     |> scanTransactions
-    |> then_(((utxos, txInfos, transactions: TransactionCollector.t)) => {
+    |> then_(((utxos, txInfos, blockHeight, {transactions, walletInfo})) => {
+         walletInfo
+         |> notifyOfUnlockedInputs(ventureId, blockHeight, transactions);
          transactions |> broadcastPayouts;
          let utxos = utxos |> filterUTXOs(transactions.knownIncomeTxs);
          let events =
            utxos
            |. List.mapU((. utxo: Network.txInput) =>
-                Event.IncomeDetected.make(
+                Event.Income.Detected.make(
                   ~address=utxo.address,
                   ~coordinates=utxo.coordinates,
                   ~txId=utxo.txId,
@@ -157,6 +214,7 @@ let detectIncomeFromVenture = (ventureId, eventLog) => {
                  [],
                  [],
                  events,
+                 [],
                  confs,
                ),
              )

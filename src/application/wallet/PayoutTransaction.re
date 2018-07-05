@@ -117,6 +117,7 @@ let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
          address: address.displayAddress,
          coordinates: address.coordinates,
          sequence: address.sequence,
+         unlocked: false,
        };
      });
 
@@ -230,7 +231,8 @@ let rec findInput = (inputs, ammountMissing, fee) =>
          ammountMissing
          |> BTC.plus(
               Fee.inputCost(
-                i.sequence |> Js.Option.isSome,
+                ~withDms=i.sequence |> Js.Option.isSome,
+                ~unlocked=i.unlocked,
                 i.nCoSigners,
                 i.nPubKeys,
                 fee,
@@ -248,7 +250,8 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
       ammountMissing
       |> BTC.plus(
            Fee.inputCost(
-             i.sequence |> Js.Option.isSome,
+             ~withDms=i.sequence |> Js.Option.isSome,
+             ~unlocked=i.unlocked,
              i.nCoSigners,
              i.nPubKeys,
              fee,
@@ -291,7 +294,8 @@ let addChangeOutput =
               )
            |> BTC.plus(
                 Fee.minChange(
-                  changeAddress.sequence |> Js.Option.isSome,
+                  ~withDms=changeAddress.sequence |> Js.Option.isSome,
+                  ~unlocked=false,
                   changeAddress.nCoSigners,
                   changeAddress.nPubKeys,
                   fee,
@@ -325,16 +329,22 @@ let build =
     (
       ~optionalInputs,
       ~mandatoryInputs,
+      ~unlockedInputs,
       ~destinations,
       ~satsPerByte,
       ~changeAddress: Address.t,
       ~network,
     ) => {
+  let unlockedInputs =
+    unlockedInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
   let mandatoryInputs =
-    mandatoryInputs |. Belt.Set.keep(Fee.canPayForItself(satsPerByte));
+    mandatoryInputs
+    |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
+    |. Belt.Set.union(unlockedInputs);
   let optionalInputs =
     optionalInputs
     |. Belt.Set.keep(Fee.canPayForItself(satsPerByte))
+    |. Belt.Set.diff(unlockedInputs)
     |> Belt.Set.toList
     |> List.sort((i1: Network.txInput, i2: Network.txInput) =>
          i1.value |> BTC.comparedTo(i2.value)
@@ -345,7 +355,17 @@ let build =
     mandatoryInputs
     |> Belt.Set.toList
     |> List.map((i: input) =>
-         (txB |> B.TxBuilder.addInput(i.txId, i.txOutputN), i)
+         (
+           i.unlocked ?
+             txB
+             |> B.TxBuilder.addInputWithSequence(
+                  i.txId,
+                  i.txOutputN,
+                  i.sequence |> Js.Option.getExn,
+                ) :
+             txB |> B.TxBuilder.addInput(i.txId, i.txOutputN),
+           i,
+         )
        );
   let outTotalWithoutFee =
     destinations
@@ -426,7 +446,8 @@ let build =
                feeV
                |> BTC.plus(
                     Fee.inputCost(
-                      i.sequence |> Js.Option.isSome,
+                      ~withDms=i.sequence |> Js.Option.isSome,
+                      ~unlocked=i.unlocked,
                       i.nCoSigners,
                       i.nPubKeys,
                       satsPerByte,

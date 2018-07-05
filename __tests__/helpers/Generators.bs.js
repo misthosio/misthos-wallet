@@ -111,16 +111,19 @@ function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
   return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
 }
 
-var partial_arg = WalletTypes.AccountIndex[/* default */11];
-
-function accountKeyChainFrom(param) {
-  return AccountKeyChain.make(partial_arg, param);
+function accountKeyChainFrom($staropt$star) {
+  var sequence = $staropt$star ? $staropt$star[0] : AccountKeyChain.defaultSequence;
+  var partial_arg = WalletTypes.AccountIndex[/* default */11];
+  var partial_arg$1 = /* Some */[sequence];
+  return (function (param) {
+      return AccountKeyChain.make(partial_arg$1, partial_arg, param);
+    });
 }
 
 function accountKeyChain($staropt$star, $staropt$star$1, users) {
   var ventureId = $staropt$star ? $staropt$star[0] : PrimitiveTypes.VentureId[/* fromString */1]("test");
   var keyChainIdx = $staropt$star$1 ? $staropt$star$1[0] : 0;
-  return accountKeyChainFrom(List.map((function (user) {
+  return accountKeyChainFrom(/* None */0)(List.map((function (user) {
                     return /* tuple */[
                             user[/* userId */0],
                             custodianKeyChain(/* None */0, ventureId, keyChainIdx, user)
@@ -209,14 +212,16 @@ function accountKeyChainActivated($staropt$star, custodian, identifier) {
   return Event.AccountKeyChainActivated[/* make */0](WalletTypes.AccountIndex[/* default */11], custodian[/* userId */0], identifier, sequence);
 }
 
-var incomeAddressExposed = Event.IncomeAddressExposed[/* make */0];
+var incomeAddressExposed = Event.Income[/* AddressExposed */0][/* make */0];
 
 function incomeDetected(address, coordinates) {
-  return Event.IncomeDetected[/* make */0](0, coordinates, address, V4(), BTC.fromSatoshis(/* int64 */[
+  return Curry._5(Event.Income[/* Detected */1][/* make */0], 0, coordinates, address, V4(), BTC.fromSatoshis(/* int64 */[
                   /* hi */0,
                   /* lo */10000000
                 ]));
 }
+
+var incomeUnlocked = Event.Income[/* Unlocked */2][/* make */0];
 
 var Event$1 = /* module */[
   /* createVenture */createVenture,
@@ -244,7 +249,8 @@ var Event$1 = /* module */[
   /* accountKeyChainIdentified */accountKeyChainIdentified,
   /* accountKeyChainActivated */accountKeyChainActivated,
   /* incomeAddressExposed */incomeAddressExposed,
-  /* incomeDetected */incomeDetected
+  /* incomeDetected */incomeDetected,
+  /* incomeUnlocked */incomeUnlocked
 ];
 
 function eligiblePartners(param) {
@@ -669,7 +675,8 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
   return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(37, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
 }
 
-function withAccountKeyChainIdentified(l) {
+function withAccountKeyChainIdentified($staropt$star, l) {
+  var sequence = $staropt$star ? $staropt$star[0] : AccountKeyChain.defaultSequence;
   var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           switch ($$event.tag | 0) {
@@ -709,7 +716,7 @@ function withAccountKeyChainIdentified(l) {
               return res;
           }
         }), /* [] */0, l[/* log */3]);
-  var accountKeyChain = accountKeyChainFrom(keyChains);
+  var accountKeyChain = accountKeyChainFrom(/* Some */[sequence])(keyChains);
   return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(38, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
 }
 
@@ -822,6 +829,52 @@ function withIncomeDetected(incomeAddress, l) {
   return appendSystemEvent(/* IncomeDetected */Block.__(41, [Js_option.getExn(match[0])]), l);
 }
 
+function withIncomeUnlocked(income, l) {
+  var match = Curry._3(EventLog.reduce, (function (param, param$1) {
+          var $$event = param$1[/* event */0];
+          var counter = param[1];
+          var res = param[0];
+          if ($$event.tag === 41) {
+            if (counter > 0) {
+              return /* tuple */[
+                      /* None */0,
+                      counter - 1 | 0
+                    ];
+            } else if (counter !== 0) {
+              return /* tuple */[
+                      res,
+                      counter
+                    ];
+            } else {
+              var match = $$event[0];
+              return /* tuple */[
+                      /* Some */[Curry._1(incomeUnlocked, /* record */[
+                              /* txId */match[/* txId */2],
+                              /* txOutputN */match[/* txOutputN */3],
+                              /* address */match[/* address */0],
+                              /* value */match[/* amount */4],
+                              /* nCoSigners */0,
+                              /* nPubKeys */0,
+                              /* coordinates */match[/* coordinates */1],
+                              /* sequence : None */0,
+                              /* unlocked */true
+                            ])],
+                      -1
+                    ];
+            }
+          } else {
+            return /* tuple */[
+                    res,
+                    counter
+                  ];
+          }
+        }), /* tuple */[
+        /* None */0,
+        income
+      ], l[/* log */3]);
+  return appendSystemEvent(/* IncomeUnlocked */Block.__(42, [Js_option.getExn(match[0])]), l);
+}
+
 var Log = /* module */[
   /* eligiblePartners */eligiblePartners,
   /* reduce */reduce,
@@ -865,7 +918,8 @@ var Log = /* module */[
   /* withAccountKeyChainIdentified */withAccountKeyChainIdentified,
   /* withAccountKeyChainActivated */withAccountKeyChainActivated,
   /* withIncomeAddressExposed */withIncomeAddressExposed,
-  /* withIncomeDetected */withIncomeDetected
+  /* withIncomeDetected */withIncomeDetected,
+  /* withIncomeUnlocked */withIncomeUnlocked
 ];
 
 var AppEvent = 0;

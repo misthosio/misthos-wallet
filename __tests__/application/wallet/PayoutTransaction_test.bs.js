@@ -32,7 +32,8 @@ describe("build", (function () {
                   WalletTypes.ChainIndex[/* externalChain */11],
                   WalletTypes.AddressIndex[/* first */2]
                 ],
-                /* sequence : None */0
+                /* sequence : None */0,
+                /* unlocked */false
               ],
               /* record */[
                 /* txId */"d66c39a24f63d80c13e44cf1ce562618d1d0d92675118aa331e5367a7ddb9de7",
@@ -51,7 +52,8 @@ describe("build", (function () {
                   WalletTypes.ChainIndex[/* externalChain */11],
                   WalletTypes.AddressIndex[/* next */3](WalletTypes.AddressIndex[/* first */2])
                 ],
-                /* sequence : None */0
+                /* sequence : None */0,
+                /* unlocked */false
               ]
             ]);
         var changeAddress_002 = /* coordinates : tuple */[
@@ -71,7 +73,7 @@ describe("build", (function () {
           /* sequence : None */0
         ];
         Jest.test("uses as many inputs as necessary", (function () {
-                var payoutTx = PayoutTransaction.build(inputs, Network.inputSet(/* () */0), /* :: */[
+                var payoutTx = PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -94,7 +96,7 @@ describe("build", (function () {
                               ]));
               }));
         Jest.test("uses smallest possible input", (function () {
-                var payoutTx = PayoutTransaction.build(inputs, Network.inputSet(/* () */0), /* :: */[
+                var payoutTx = PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -117,7 +119,7 @@ describe("build", (function () {
                               ]));
               }));
         Jest.test("doesn't use change address if not worth it", (function () {
-                var payoutTx = PayoutTransaction.build(inputs, Network.inputSet(/* () */0), /* :: */[
+                var payoutTx = PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -144,7 +146,7 @@ describe("build", (function () {
                             return input[/* txOutputN */1] !== 1;
                           })), Belt_Set.keepU(inputs, (function (input) {
                             return input[/* txOutputN */1] === 1;
-                          })), /* :: */[
+                          })), Network.inputSet(/* () */0), /* :: */[
                       /* tuple */[
                         "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                         BTC.fromSatoshis(/* int64 */[
@@ -168,7 +170,7 @@ describe("build", (function () {
               }));
         Jest.test("raises when there aren't enough funds", (function () {
                 return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function () {
-                                  return PayoutTransaction.build(inputs, Network.inputSet(/* () */0), /* :: */[
+                                  return PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                                               /* tuple */[
                                                 "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                                 BTC.fromSatoshis(/* int64 */[
@@ -184,7 +186,7 @@ describe("build", (function () {
                                 }), /* () */0));
               }));
         Jest.test("summary", (function () {
-                var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(inputs, Network.inputSet(/* () */0), /* :: */[
+                var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                           /* tuple */[
                             "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                             BTC.fromSatoshis(/* int64 */[
@@ -243,7 +245,7 @@ describe("build", (function () {
                           /* lo */1
                         ]), /* Regtest */0);
                 Jest.test("sending max amount works", (function () {
-                        var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(inputs, Network.inputSet(/* () */0), /* :: */[
+                        var summary = PayoutTransaction.summary(/* Regtest */0, PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                                   /* tuple */[
                                     "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                     outMax
@@ -290,7 +292,7 @@ describe("build", (function () {
                       }));
                 return Jest.test("Spending more than max will throw an exception", (function () {
                               return Jest.Expect[/* toThrow */18](Jest.Expect[/* expectFn */1]((function () {
-                                                return PayoutTransaction.build(inputs, Network.inputSet(/* () */0), /* :: */[
+                                                return PayoutTransaction.build(inputs, Network.inputSet(/* () */0), Network.inputSet(/* () */0), /* :: */[
                                                             /* tuple */[
                                                               "mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU",
                                                               outMax.plus(BTC.fromSatoshis(/* int64 */[

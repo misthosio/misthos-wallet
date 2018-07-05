@@ -62,9 +62,9 @@ let rec fetchAll = (link, decoder, collector) =>
   );
 
 let getUTXOs = (config, addresses) =>
-  if (addresses |> Belt.List.length == 0) {
-    Js.Promise.resolve([]);
-  } else {
+  switch (addresses) {
+  | [] => Js.Promise.resolve([])
+  | addresses =>
     fetchAll(
       Some(
         "https://"
@@ -75,7 +75,7 @@ let getUTXOs = (config, addresses) =>
       ),
       decodeUTXOs,
       [],
-    );
+    )
   };
 
 let getTransactionInfo = (config, transactions) =>
@@ -87,7 +87,7 @@ let getTransactionInfo = (config, transactions) =>
         "https://"
         ++ config.subdomain
         ++ ".smartbit.com.au/v1/blockchain/tx/"
-        ++ Belt.Set.String.reduce(transactions, "", (res, a) =>
+        ++ Belt.Set.String.reduceU(transactions, "", (. res, a) =>
              a ++ "," ++ res
            ),
       ),
@@ -131,11 +131,34 @@ let broadcastTransaction = (config, transaction) => {
   );
 };
 
+let getCurrentBlockHeight = (config, ()) =>
+  Js.Promise.(
+    Fetch.fetch(
+      "https://"
+      ++ config.subdomain
+      ++ ".smartbit.com.au/v1/blockchain/blocks?sort=height",
+    )
+    |> then_(Fetch.Response.json)
+    |> then_(res => {
+         let height =
+           Json.Decode.(
+             res
+             |> field(
+                  "blocks",
+                  array(block => block |> field("height", int)),
+                )
+             |. Belt.Array.getExn(0)
+           );
+         height |> resolve;
+       })
+  );
+
 let make = (config, network) : (module WalletTypes.NetworkClient) =>
   (module
    {
      let network = network;
      let getUTXOs = getUTXOs(config);
      let getTransactionInfo = getTransactionInfo(config);
+     let getCurrentBlockHeight = getCurrentBlockHeight(config);
      let broadcastTransaction = broadcastTransaction(config);
    });

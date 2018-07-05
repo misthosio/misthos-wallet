@@ -6,6 +6,16 @@ open PrimitiveTypes;
 
 let component = ReasonReact.statelessComponent("SelectedVenture");
 
+module Styles = {
+  open Css;
+  let addressesButtonIcon =
+    style([
+      marginTop(px(Theme.space(2) * (-1))),
+      marginBottom(px(Theme.space(1) * (-1))),
+      transform(rotate(deg(90))),
+    ]);
+};
+
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
   render: _ => {
@@ -103,16 +113,37 @@ let make = (~viewData: ViewData.t, _children) => {
             let confirmed = viewData.confirmedTxs;
             Belt.List.concatMany([|
               unconfirmed
-              |> List.mapi((iter, tx: ViewData.txData) =>
-                   <Transaction tx key=(iter |> string_of_int) />
-                 ),
-              confirmed
-              |> List.mapi((iter, tx: ViewData.txData) =>
+              |> List.mapi((iter, tx: ViewData.txData) => {
+                   let (txType, primary) =
+                     switch (tx.txType) {
+                     | Payout => (Transaction.Payout, "unconfirmed payout")
+                     | Income => (Transaction.Income, "unconfirmed income")
+                     };
                    <Transaction
-                     tx
+                     txType
+                     primary
+                     amount=tx.amount
+                     date=tx.date
+                     onClick=(Router.clickToRoute(tx.detailsLink))
+                     key=(iter |> string_of_int)
+                   />;
+                 }),
+              confirmed
+              |> List.mapi((iter, tx: ViewData.txData) => {
+                   let (txType, primary) =
+                     switch (tx.txType) {
+                     | Payout => (Transaction.Payout, "payout")
+                     | Income => (Transaction.Income, "income")
+                     };
+                   <Transaction
+                     txType
+                     primary
+                     amount=tx.amount
+                     date=tx.date
+                     onClick=(Router.clickToRoute(tx.detailsLink))
                      key=(string_of_int(iter + List.length(unconfirmed)))
-                   />
-                 ),
+                   />;
+                 }),
             |])
             |> Utils.intersperse(key => <MDivider key />);
           },
@@ -126,6 +157,13 @@ let make = (~viewData: ViewData.t, _children) => {
         <div>
           <MTypography gutterTop=true variant=`Title>
             (viewData.ventureName |> text)
+            <MaterialUi.IconButton
+              className=Styles.addressesButtonIcon
+              onClick=(
+                Router.clickToRoute(Venture(viewData.ventureId, Addresses))
+              )>
+              Icons.arrowUpCircle
+            </MaterialUi.IconButton>
           </MTypography>
           <Balance
             currentSpendable=viewData.balance.currentSpendable

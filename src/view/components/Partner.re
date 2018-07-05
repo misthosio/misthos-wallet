@@ -17,7 +17,7 @@ module Styles = {
       lineHeight(1.0),
       fontWeight(600),
     ]);
-  let primary =
+  let primary = ex =>
     style([
       fontFamily(Theme.oswald),
       fontSize(px(16)),
@@ -27,24 +27,36 @@ module Styles = {
       whiteSpace(nowrap),
       overflow(hidden),
       textOverflow(ellipsis),
+      color(ex ? rgba(0, 0, 0, 0.2) : `currentColor),
     ]);
-  let secondary =
+  let secondary = ex =>
     style([
       fontFamily(Theme.sourceSansPro),
       fontSize(px(16)),
       fontWeight(300),
       unsafe("letterSpacing", "0.5px"),
-      color(rgba(0, 0, 0, 0.87)),
+      color(ex ? rgba(0, 0, 0, 0.2) : rgba(0, 0, 0, 0.87)),
     ]);
   let secondaryAction = status =>
     switch (status) {
     | Some(_) => style([paddingRight(px(Theme.space(12)))])
     | None => style([paddingRight(px(Theme.space(4)))])
     };
+  let exPartnerStatus =
+    style([fontSize(px(12)), color(rgba(0, 0, 0, 0.87))]);
+  let exPartnerPrimary = style([]);
 };
 
 let make =
-    (~partnerId: userId, ~name=?, ~button=?, ~status=?, ~onClick=?, _children) => {
+    (
+      ~partnerId: userId,
+      ~name=?,
+      ~button=?,
+      ~status=?,
+      ~onClick=?,
+      ~ex=false,
+      _children,
+    ) => {
   ...component,
   render: _self => {
     let userId = partnerId |> UserId.toString;
@@ -62,16 +74,23 @@ let make =
           (userId.[0] |> String.make(1) |> String.uppercase |> text)
         </Avatar>
         <ListItemText
-          classes=[Primary(Styles.primary), Secondary(Styles.secondary)]
+          classes=[
+            Primary(Styles.primary(ex)),
+            Secondary(Styles.secondary(ex)),
+          ]
           primary
           ?secondary
         />
         (
-          switch (button, status) {
-          | (None, None) => ReasonReact.null
-          | (Some(action), _) =>
+          switch (button, status, ex) {
+          | (None, None, false) => ReasonReact.null
+          | (_, _, true) =>
+            <MTypography variant=`Body2 className=Styles.exPartnerStatus>
+              ("EX-PARTNER" |> text)
+            </MTypography>
+          | (Some(action), _, _) =>
             <ListItemSecondaryAction> action </ListItemSecondaryAction>
-          | (_, Some(action)) =>
+          | (_, Some(action), _) =>
             <ListItemSecondaryAction> action </ListItemSecondaryAction>
           }
         )

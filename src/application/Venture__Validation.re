@@ -263,6 +263,7 @@ let apply = ({hash, event}: EventLog.item, state) => {
   | PartnerRemovalDenied(_)
   | CustodianDenied(_)
   | CustodianRemovalDenied(_)
+  | IncomeUnlocked(_)
   | PayoutDenied(_) => state
   };
 };
@@ -604,7 +605,7 @@ let validateAccountKeyChainActivated =
 
 let validateIncomeAddressExposed =
     (
-      {address: {coordinates, displayAddress}}: IncomeAddressExposed.t,
+      {address: {coordinates, displayAddress}}: Income.AddressExposed.t,
       {accountKeyChains},
       _issuerId,
     ) =>
@@ -757,6 +758,7 @@ let validateEvent =
     validateAccountKeyChainActivated(update)
   | IncomeAddressExposed(event) => validateIncomeAddressExposed(event)
   | IncomeDetected(_) => ((_state, _pubKey) => Ok)
+  | IncomeUnlocked(_) => ((_state, _pubKey) => Ok)
   | TransactionConfirmed(_) => ((_state, _pubKey) => Ok)
   | PartnerPubKeyAdded(_) => ((_state, _pubKey) => Ok)
   | PayoutSigned(_) => ((_state, _pubKey) => Ok)

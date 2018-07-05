@@ -6,7 +6,7 @@ var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
-var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -76,12 +76,12 @@ function fetchAll(link, decoder, collector) {
 }
 
 function getUTXOs(config, addresses) {
-  if (Belt_List.length(addresses) === 0) {
-    return Promise.resolve(/* [] */0);
-  } else {
+  if (addresses) {
     return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/address/" + (List.fold_left((function (res, a) {
                               return a + ("," + res);
                             }), "", addresses) + "/unspent?limit=1000")))], decodeUTXOs, /* [] */0);
+  } else {
+    return Promise.resolve(/* [] */0);
   }
 }
 
@@ -89,7 +89,7 @@ function getTransactionInfo(config, transactions) {
   if (Belt_SetString.isEmpty(transactions)) {
     return Promise.resolve(/* [] */0);
   } else {
-    return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/tx/" + Belt_SetString.reduce(transactions, "", (function (res, a) {
+    return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/tx/" + Belt_SetString.reduceU(transactions, "", (function (res, a) {
                             return a + ("," + res);
                           }))))], decodeTransactions, /* [] */0);
   }
@@ -118,12 +118,27 @@ function broadcastTransaction(config, transaction) {
               }));
 }
 
+function getCurrentBlockHeight(config, _) {
+  return fetch("https://" + (config[/* subdomain */0] + ".smartbit.com.au/v1/blockchain/blocks?sort=height")).then((function (prim) {
+                  return prim.json();
+                })).then((function (res) {
+                return Promise.resolve(Belt_Array.getExn(Json_decode.field("blocks", (function (param) {
+                                      return Json_decode.array((function (block) {
+                                                    return Json_decode.field("height", Json_decode.$$int, block);
+                                                  }), param);
+                                    }), res), 0));
+              }));
+}
+
 function make(config, network) {
   var getUTXOs$1 = function (param) {
     return getUTXOs(config, param);
   };
   var getTransactionInfo$1 = function (param) {
     return getTransactionInfo(config, param);
+  };
+  var getCurrentBlockHeight$1 = function (param) {
+    return getCurrentBlockHeight(config, param);
   };
   var broadcastTransaction$1 = function (param) {
     return broadcastTransaction(config, param);
@@ -132,6 +147,7 @@ function make(config, network) {
           /* network */network,
           /* getUTXOs */getUTXOs$1,
           /* getTransactionInfo */getTransactionInfo$1,
+          /* getCurrentBlockHeight */getCurrentBlockHeight$1,
           /* broadcastTransaction */broadcastTransaction$1
         ];
 }
@@ -154,5 +170,6 @@ exports.fetchAll = fetchAll;
 exports.getUTXOs = getUTXOs;
 exports.getTransactionInfo = getTransactionInfo;
 exports.broadcastTransaction = broadcastTransaction;
+exports.getCurrentBlockHeight = getCurrentBlockHeight;
 exports.make = make;
 /* BTC Not a pure module */

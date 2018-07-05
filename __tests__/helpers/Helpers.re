@@ -45,14 +45,18 @@ exception FaucetEmpty;
 
 let getUTXOs = BitcoindClient.getUTXOs(bitcoindConfig);
 
+let genBlocks = n =>
+  Node.Child_process.execSync(
+    "bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate "
+    ++ string_of_int(n),
+    Node.Child_process.option(~encoding="utf8", ()),
+  )
+  |> ignore;
+
 let broadcastTransaction = tx =>
   BitcoindClient.broadcastTransaction(bitcoindConfig, tx)
   |> Js.Promise.then_(result => {
-       Node.Child_process.execSync(
-         "bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate 2",
-         Node.Child_process.option(~encoding="utf8", ()),
-       )
-       |> ignore;
+       genBlocks(2);
        switch (result) {
        | WalletTypes.Ok(txId) => txId |> Js.Promise.resolve
        | result =>

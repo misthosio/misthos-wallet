@@ -46,7 +46,7 @@ let exposeNextIncomeAddress = (userId, accountIdx, {walletInfoCollector}) => {
       walletInfoCollector |> WalletInfoCollector.exposedCoordinates,
       accountKeyChain,
     );
-  IncomeAddressExposed.make(
+  Income.AddressExposed.make(
     ~partnerId=userId,
     ~address=Address.make(coordinates, accountKeyChain),
   );
@@ -75,6 +75,9 @@ let preparePayoutTx =
           ~mandatoryInputs=
             walletInfoCollector
             |> WalletInfoCollector.oldSpendableInputs(accountIdx),
+          ~unlockedInputs=
+            walletInfoCollector
+            |> WalletInfoCollector.unlockedInputs(accountIdx),
           ~destinations,
           ~satsPerByte,
           ~changeAddress=

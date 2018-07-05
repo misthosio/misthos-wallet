@@ -37,14 +37,14 @@ type t = {
 let defaultCoSignerList = [|0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8|];
 let defaultSequence = 6 * 24 * 88;
 
-let make = (accountIdx, custodianKeyChains) => {
+let make = (~sequence=defaultSequence, accountIdx, custodianKeyChains) => {
   let nCoSigners = defaultCoSignerList[custodianKeyChains |> List.length];
   {
     accountIdx,
     identifier: Identifier.make(nCoSigners, custodianKeyChains),
     custodianKeyChains,
     nCoSigners,
-    sequence: nCoSigners > 1 ? Some(defaultSequence) : None,
+    sequence: nCoSigners > 1 ? Some(sequence) : None,
   };
 };
 

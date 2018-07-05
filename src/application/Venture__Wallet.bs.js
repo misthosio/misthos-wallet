@@ -46,14 +46,14 @@ function exposeNextIncomeAddress(userId, accountIdx, param) {
   var walletInfoCollector = param[/* walletInfoCollector */3];
   var accountKeyChain = WalletInfoCollector.currentKeyChain(accountIdx, userId, walletInfoCollector);
   var coordinates = Address.Coordinates[/* nextExternal */2](userId, WalletInfoCollector.exposedCoordinates(walletInfoCollector), accountKeyChain);
-  return Event.IncomeAddressExposed[/* make */0](userId, Address.make(coordinates, accountKeyChain));
+  return Curry._2(Event.Income[/* AddressExposed */0][/* make */0], userId, Address.make(coordinates, accountKeyChain));
 }
 
 function preparePayoutTx(eligibleWhenProposing, param, accountIdx, destinations, satsPerByte, param$1) {
   var walletInfoCollector = param$1[/* walletInfoCollector */3];
   var userId = param[/* userId */0];
   try {
-    var payoutTx = PayoutTransaction.build(WalletInfoCollector.currentSpendableInputs(accountIdx, walletInfoCollector), WalletInfoCollector.oldSpendableInputs(accountIdx, walletInfoCollector), destinations, satsPerByte, WalletInfoCollector.nextChangeAddress(accountIdx, userId, walletInfoCollector), WalletInfoCollector.network(walletInfoCollector));
+    var payoutTx = PayoutTransaction.build(WalletInfoCollector.currentSpendableInputs(accountIdx, walletInfoCollector), WalletInfoCollector.oldSpendableInputs(accountIdx, walletInfoCollector), WalletInfoCollector.unlockedInputs(accountIdx, walletInfoCollector), destinations, satsPerByte, WalletInfoCollector.nextChangeAddress(accountIdx, userId, walletInfoCollector), WalletInfoCollector.network(walletInfoCollector));
     var match = PayoutTransaction.signPayout(param$1[/* ventureId */0], userId, param[/* masterKeyChain */4], WalletInfoCollector.accountKeyChains(walletInfoCollector), payoutTx);
     var payoutTx$1 = match ? match[0] : payoutTx;
     return /* Ok */[Curry._6(Event.Payout[/* Proposed */3][/* make */0], /* None */0, /* None */0, eligibleWhenProposing, userId, param$1[/* payoutPolicy */2], /* record */[

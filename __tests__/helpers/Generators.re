@@ -91,7 +91,8 @@ let custodianKeyChain =
   )
   |> CustodianKeyChain.toPublicKeyChain;
 
-let accountKeyChainFrom = AccountKeyChain.make(AccountIndex.default);
+let accountKeyChainFrom = (~sequence=AccountKeyChain.defaultSequence) =>
+  AccountKeyChain.make(~sequence, AccountIndex.default);
 
 let accountKeyChain =
     (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
@@ -264,15 +265,16 @@ module Event = {
       ~identifier,
       ~sequence,
     );
-  let incomeAddressExposed = AppEvent.IncomeAddressExposed.make;
+  let incomeAddressExposed = AppEvent.Income.AddressExposed.make;
   let incomeDetected = (~address, ~coordinates) =>
-    AppEvent.IncomeDetected.make(
+    AppEvent.Income.Detected.make(
       ~address,
       ~coordinates,
       ~txOutputN=0,
       ~txId=Uuid.v4(),
       ~amount=BTC.fromSatoshis(10000000L),
     );
+  let incomeUnlocked = AppEvent.Income.Unlocked.make;
 };
 
 module Log = {
@@ -678,7 +680,8 @@ module Log = {
          ),
        );
   };
-  let withAccountKeyChainIdentified = ({log} as l) => {
+  let withAccountKeyChainIdentified =
+      (~sequence=AccountKeyChain.defaultSequence, {log} as l) => {
     let keyChains =
       log
       |> EventLog.reduce(
@@ -700,7 +703,7 @@ module Log = {
              },
            [],
          );
-    let accountKeyChain = accountKeyChainFrom(keyChains);
+    let accountKeyChain = accountKeyChainFrom(~sequence, keyChains);
     l
     |> appendSystemEvent(
          AccountKeyChainIdentified(
@@ -797,5 +800,49 @@ module Log = {
          );
     l
     |> appendSystemEvent(IncomeDetected(incomeDetected |> Js.Option.getExn));
+  };
+  let withIncomeUnlocked = (~income, {log} as l) => {
+    let (incomeUnlocked, _) =
+      log
+      |> EventLog.reduce(
+           ((res, counter), {event}) =>
+             switch (counter, event) {
+             | (counter, IncomeDetected(_)) when counter > 0 => (
+                 None,
+                 counter - 1,
+               )
+             | (
+                 0,
+                 IncomeDetected({
+                   address,
+                   txId,
+                   txOutputN,
+                   coordinates,
+                   amount,
+                 }),
+               ) => (
+                 Some(
+                   Event.incomeUnlocked(
+                     ~input={
+                       address,
+                       txId,
+                       txOutputN,
+                       coordinates,
+                       value: amount,
+                       sequence: None,
+                       unlocked: true,
+                       nCoSigners: 0,
+                       nPubKeys: 0,
+                     },
+                   ),
+                 ),
+                 (-1),
+               )
+             | _ => (res, counter)
+             },
+           (None, income),
+         );
+    l
+    |> appendSystemEvent(IncomeUnlocked(incomeUnlocked |> Js.Option.getExn));
   };
 };

@@ -1071,6 +1071,10 @@ function validateEvent(param) {
         return (function (_, _$1) {
             return /* Ok */0;
           });
+    case 43 : 
+        return (function (_, _$1) {
+            return /* Ok */0;
+          });
     default:
       var partial_arg$15 = param[0];
       return (function (param, param$1) {

@@ -560,12 +560,12 @@ function exposeIncomeAddress(ventureId, accountIdx) {
     });
 }
 
-function syncWallet(ventureId, broadcasts, broadcastFailures, income, confs) {
+function syncWallet(ventureId, broadcasts, broadcastFailures, income, unlocked, confs) {
   logMessage("Handling 'SynchWallet'");
   var partial_arg = /* Load */Block.__(1, [ventureId]);
   return (function (param, param$1) {
       return withVenture(/* None */0, partial_arg, (function (correlationId, venture) {
-                    return Curry._5(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], broadcasts, broadcastFailures, income, confs, venture).then((function (param) {
+                    return Curry._6(Venture.Cmd[/* SynchronizeWallet */2][/* exec */0], broadcasts, broadcastFailures, income, unlocked, confs, venture).then((function (param) {
                                   if (param.tag) {
                                     return Promise.resolve(venture);
                                   } else {
@@ -682,7 +682,7 @@ function handleMessage(param) {
     case 14 : 
         return newItemsDetected(param[0], param[1], param[2]);
     case 15 : 
-        return syncWallet(param[0], param[1], param[2], param[3], param[4]);
+        return syncWallet(param[0], param[1], param[2], param[3], param[4], param[5]);
     case 16 : 
         return syncTabs(param[0], param[1]);
     

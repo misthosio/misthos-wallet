@@ -34,6 +34,7 @@ module Transaction = {
   type in_ = {
     .
     "index": int,
+    "sequence": int,
     "witness": array(Node.buffer),
     "script": Node.buffer,
   };
@@ -55,6 +56,8 @@ module Transaction = {
   [@bs.send] external setWitness : (t, int, array(Node.buffer)) => unit = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
   external fromHex : string => t = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
+  external defaultSequence : int = "DEFAULT_SEQUENCE";
   type sighashType;
   [@bs.module "bitcoinjs-lib"] [@bs.scope "Transaction"]
   external sighashAll : sighashType = "SIGHASH_ALL";

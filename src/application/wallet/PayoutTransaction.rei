@@ -33,6 +33,7 @@ let build:
   (
     ~optionalInputs: Network.inputSet,
     ~mandatoryInputs: Network.inputSet,
+    ~unlockedInputs: Network.inputSet,
     ~destinations: list((string, BTC.t)),
     ~satsPerByte: BTC.t,
     ~changeAddress: Address.t,

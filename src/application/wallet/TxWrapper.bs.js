@@ -16,7 +16,10 @@ function extractInputs(tx) {
                 var witness$1 = (function (param) {
                       return Belt_Array.slice(param, 1, arg);
                     })(witness);
-                return /* record */[/* signatures */witness$1];
+                return /* record */[
+                        /* signatures */witness$1,
+                        /* sequence */input.sequence
+                      ];
               }));
 }
 
@@ -145,7 +148,8 @@ function finalize(usedInputs, param) {
   var tx = param[/* tx */0];
   try {
     Belt_Array.forEachWithIndexU(param[/* inputs */1], (function (idx, param) {
-            var nCoSigners = Belt_Array.getExn(usedInputs, idx)[/* nCoSigners */4];
+            var match = param[/* sequence */1] !== BitcoinjsLib.Transaction.DEFAULT_SEQUENCE;
+            var nCoSigners = match ? 1 : Belt_Array.getExn(usedInputs, idx)[/* nCoSigners */4];
             var signatures = Belt_Array.slice(Belt_Array.keep(param[/* signatures */0], (function (prim) {
                         return BitcoinjsLib.script.isCanonicalSignature(prim);
                       })), 0, nCoSigners);

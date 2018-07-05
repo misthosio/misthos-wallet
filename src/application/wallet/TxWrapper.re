@@ -2,7 +2,10 @@ open Belt;
 
 module B = Bitcoin;
 
-type input = {signatures: array(Node.buffer)};
+type input = {
+  signatures: array(Node.buffer),
+  sequence: int,
+};
 type t = {
   tx: B.Transaction.t,
   inputs: array(input),
@@ -14,7 +17,7 @@ let extractInputs = tx =>
        let witness = input##witness;
        let witness =
          witness |> Array.slice(~offset=1, ~len=(witness |> Array.length) - 2);
-       {signatures: witness};
+       {signatures: witness, sequence: input##sequence};
      });
 
 let make = hex => {
@@ -157,9 +160,11 @@ let finalize = (usedInputs, {tx, inputs}) =>
   try (
     {
       inputs
-      |. Array.forEachWithIndexU((. idx, {signatures}) => {
+      |. Array.forEachWithIndexU((. idx, {signatures, sequence}) => {
            let nCoSigners =
-             (usedInputs |. Array.getExn(idx): Network.txInput).nCoSigners;
+             sequence != B.Transaction.defaultSequence ?
+               1 :
+               (usedInputs |. Array.getExn(idx): Network.txInput).nCoSigners;
            let signatures =
              signatures
              |. Array.keep(B.Script.isCanonicalSignature)

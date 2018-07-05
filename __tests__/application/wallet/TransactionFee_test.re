@@ -7,31 +7,55 @@ let () = {
   describe("inputCost", () => {
     test("1 cosigner", () =>
       expect(
-        TransactionFee.inputCost(false, 1, 2, oneSatPerByte)
+        TransactionFee.inputCost(
+          ~withDms=false,
+          ~unlocked=false,
+          1,
+          2,
+          oneSatPerByte,
+        )
         |> BTC.toSatoshisFloat,
       )
       |> toEqual(113.)
     );
-    test("1 cosigner with dms", () =>
-      expect(
-        TransactionFee.inputCost(true, 1, 2, oneSatPerByte)
-        |> BTC.toSatoshisFloat,
-      )
-      |> toEqual(116.)
-    );
     test("2 cosigners", () =>
       expect(
-        TransactionFee.inputCost(false, 2, 3, oneSatPerByte)
+        TransactionFee.inputCost(
+          ~withDms=false,
+          ~unlocked=false,
+          2,
+          3,
+          oneSatPerByte,
+        )
         |> BTC.toSatoshisFloat,
       )
       |> toEqual(140.)
     );
     test("2 cosigner with dms", () =>
       expect(
-        TransactionFee.inputCost(true, 2, 3, oneSatPerByte)
+        TransactionFee.inputCost(
+          ~withDms=true,
+          ~unlocked=false,
+          2,
+          3,
+          oneSatPerByte,
+        )
         |> BTC.toSatoshisFloat,
       )
       |> toEqual(143.)
+    );
+    test("2 cosigner unlocked", () =>
+      expect(
+        TransactionFee.inputCost(
+          ~withDms=true,
+          ~unlocked=true,
+          2,
+          3,
+          oneSatPerByte,
+        )
+        |> BTC.toSatoshisFloat,
+      )
+      |> toEqual(125.)
     );
   });
   describe("outputCost", () => {

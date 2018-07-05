@@ -9,7 +9,7 @@ type addressStatus =
   | TemporarilyInaccessible
   | Inaccessible;
 type addressType =
-  | Income
+  | Income(userId)
   | Change;
 
 type addressInfo = {
@@ -47,8 +47,9 @@ let currentKeyChain: (accountIdx, userId, t) => AccountKeyChain.t;
 
 let currentSpendableInputs: (accountIdx, t) => Network.inputSet;
 let oldSpendableInputs: (accountIdx, t) => Network.inputSet;
-
 let unlockedInputs: (accountIdx, t) => Network.inputSet;
+
+let allUnspentInputs: t => Network.inputSet;
 
 let inputsFor: (accountIdx, addressInfo, t) => list(Network.txInput);
 

@@ -8,13 +8,18 @@ var SmartbitClient = require("../../../src/application/wallet/SmartbitClient.bs.
 
 Helpers.enableHttpRequests(/* () */0);
 
-describe("getUTXOs", (function () {
-        return Jest.testPromise(/* Some */[50000], "get stuff", (function () {
-                      return SmartbitClient.getUTXOs(/* record */[/* subdomain */"api"], /* :: */[
-                                    "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
-                                    /* [] */0
-                                  ]).then((function (res) {
-                                    return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](500, Jest.Expect[/* expect */0](List.length(res))));
+describe("SmartbitClient", (function () {
+        Jest.testPromise(/* Some */[50000], "getUTXOs", (function () {
+                return SmartbitClient.getUTXOs(/* record */[/* subdomain */"api"], /* :: */[
+                              "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+                              /* [] */0
+                            ]).then((function (res) {
+                              return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](500, Jest.Expect[/* expect */0](List.length(res))));
+                            }));
+              }));
+        return Jest.testPromise(/* Some */[50000], "blockheight", (function () {
+                      return SmartbitClient.getCurrentBlockHeight(/* record */[/* subdomain */"api"], /* () */0).then((function (res) {
+                                    return Promise.resolve(Jest.Expect[/* toBeGreaterThan */5](530440, Jest.Expect[/* expect */0](res)));
                                   }));
                     }));
       }));

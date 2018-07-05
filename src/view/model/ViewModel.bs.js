@@ -11,6 +11,8 @@ var Router = require("../Router.bs.js");
 var Network = require("../../application/wallet/Network.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../application/events/EventLog.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -52,6 +54,7 @@ function lastResponse(param) {
 function fromViewModelState(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   var oldInputCollector = param[/* oldInputCollector */9];
+  var txDetailsCollector = param[/* txDetailsCollector */8];
   var partnersCollector = param[/* partnersCollector */6];
   return /* record */[
           /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector),
@@ -62,8 +65,28 @@ function fromViewModelState(param) {
                       /* nCustodians */Belt_Set.size(addressInfo[/* custodians */1]),
                       /* addressType */addressInfo[/* addressType */0],
                       /* addressStatus */addressInfo[/* addressStatus */4],
-                      /* currentUtxos */WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector),
-                      /* spentInputs */ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector),
+                      /* unspentIncome */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
+                              var txId = param[/* txId */0];
+                              var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
+                              return /* record */[
+                                      /* status */match[/* status */0],
+                                      /* unlocked */param[/* unlocked */8],
+                                      /* date */match[/* date */1],
+                                      /* txId */txId,
+                                      /* amount */param[/* value */3]
+                                    ];
+                            })),
+                      /* spentIncome */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
+                              var txId = param[/* txId */0];
+                              var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
+                              return /* record */[
+                                      /* status */match[/* status */0],
+                                      /* unlocked */param[/* unlocked */8],
+                                      /* date */match[/* date */1],
+                                      /* txId */txId,
+                                      /* amount */param[/* value */3]
+                                    ];
+                            })),
                       /* isPartner */(function (id) {
                           return ViewModel__PartnersCollector.isPartner(id, partnersCollector);
                         })
@@ -106,6 +129,7 @@ function fromViewModelState$3(param) {
   var network = WalletInfoCollector.network(walletInfoCollector);
   var optionalInputs = WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
+  var unlockedInputs = WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var allInputs = Belt_Set.union(optionalInputs, mandatoryInputs);
   var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], param[/* localUser */0], walletInfoCollector);
   return /* record */[
@@ -133,7 +157,7 @@ function fromViewModelState$3(param) {
               return PayoutTransaction.max(allInputs, targetDestination, destinations, fee, network);
             }),
           /* summary */(function (destinations, fee) {
-              return PayoutTransaction.summary(network, PayoutTransaction.build(optionalInputs, mandatoryInputs, destinations, fee, changeAddress, network));
+              return PayoutTransaction.summary(network, PayoutTransaction.build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, fee, changeAddress, network));
             })
         ];
 }

@@ -144,7 +144,7 @@ function apply($$event, state) {
                 /* network */state[/* network */4],
                 /* txDates */state[/* txDates */5]
               ];
-    case 42 : 
+    case 43 : 
         return mapConfirmation($$event[0], state);
     default:
       return state;
