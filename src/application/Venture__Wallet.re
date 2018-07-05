@@ -75,6 +75,9 @@ let preparePayoutTx =
           ~mandatoryInputs=
             walletInfoCollector
             |> WalletInfoCollector.oldSpendableInputs(accountIdx),
+          ~unlockedInputs=
+            walletInfoCollector
+            |> WalletInfoCollector.unlockedInputs(accountIdx),
           ~destinations,
           ~satsPerByte,
           ~changeAddress=

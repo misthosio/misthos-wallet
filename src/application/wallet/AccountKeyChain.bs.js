@@ -62,14 +62,15 @@ var defaultCoSignerList = /* array */[
   8
 ];
 
-function make$1(accountIdx, custodianKeyChains) {
+function make$1($staropt$star, accountIdx, custodianKeyChains) {
+  var sequence = $staropt$star ? $staropt$star[0] : 12672;
   var nCoSigners = Caml_array.caml_array_get(defaultCoSignerList, List.length(custodianKeyChains));
   var match = nCoSigners > 1;
   return /* record */[
           /* accountIdx */accountIdx,
           /* identifier */make(nCoSigners, custodianKeyChains),
           /* nCoSigners */nCoSigners,
-          /* sequence */match ? /* Some */[12672] : /* None */0,
+          /* sequence */match ? /* Some */[sequence] : /* None */0,
           /* custodianKeyChains */custodianKeyChains
         ];
 }

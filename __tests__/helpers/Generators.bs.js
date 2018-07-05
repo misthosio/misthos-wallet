@@ -111,16 +111,19 @@ function custodianKeyChain($staropt$star, ventureId, keyChainIdx, param) {
   return CustodianKeyChain.toPublicKeyChain(CustodianKeyChain.make(ventureId, accountIdx, WalletTypes.CustodianKeyChainIndex[/* fromInt */1](keyChainIdx), param[/* masterKeyChain */4]));
 }
 
-var partial_arg = WalletTypes.AccountIndex[/* default */11];
-
-function accountKeyChainFrom(param) {
-  return AccountKeyChain.make(partial_arg, param);
+function accountKeyChainFrom($staropt$star) {
+  var sequence = $staropt$star ? $staropt$star[0] : AccountKeyChain.defaultSequence;
+  var partial_arg = WalletTypes.AccountIndex[/* default */11];
+  var partial_arg$1 = /* Some */[sequence];
+  return (function (param) {
+      return AccountKeyChain.make(partial_arg$1, partial_arg, param);
+    });
 }
 
 function accountKeyChain($staropt$star, $staropt$star$1, users) {
   var ventureId = $staropt$star ? $staropt$star[0] : PrimitiveTypes.VentureId[/* fromString */1]("test");
   var keyChainIdx = $staropt$star$1 ? $staropt$star$1[0] : 0;
-  return accountKeyChainFrom(List.map((function (user) {
+  return accountKeyChainFrom(/* None */0)(List.map((function (user) {
                     return /* tuple */[
                             user[/* userId */0],
                             custodianKeyChain(/* None */0, ventureId, keyChainIdx, user)
@@ -672,7 +675,8 @@ function withCustodianKeyChain($staropt$star, issuer, custodian, l) {
   return appendEvent(issuerKeyPair, /* CustodianKeyChainUpdated */Block.__(37, [Curry._3(custodianKeyChainUpdated, List.assoc(custodian[/* userId */0], custodianProcesses), custodian[/* userId */0], keyChain)]), l);
 }
 
-function withAccountKeyChainIdentified(l) {
+function withAccountKeyChainIdentified($staropt$star, l) {
+  var sequence = $staropt$star ? $staropt$star[0] : AccountKeyChain.defaultSequence;
   var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
           var $$event = param[/* event */0];
           switch ($$event.tag | 0) {
@@ -712,7 +716,7 @@ function withAccountKeyChainIdentified(l) {
               return res;
           }
         }), /* [] */0, l[/* log */3]);
-  var accountKeyChain = accountKeyChainFrom(keyChains);
+  var accountKeyChain = accountKeyChainFrom(/* Some */[sequence])(keyChains);
   return appendSystemEvent(/* AccountKeyChainIdentified */Block.__(38, [Curry._1(accountKeyChainIdentified, accountKeyChain)]), l);
 }
 

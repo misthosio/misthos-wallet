@@ -66,11 +66,16 @@ function getUTXOs(param) {
   return BitcoindClient.getUTXOs(bitcoindConfig, param);
 }
 
+function genBlocks(n) {
+  Child_process.execSync("bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate " + String(n), {
+        encoding: "utf8"
+      });
+  return /* () */0;
+}
+
 function broadcastTransaction(tx) {
   return BitcoindClient.broadcastTransaction(bitcoindConfig, tx).then((function (result) {
-                Child_process.execSync("bitcoin-cli -regtest -rpcuser=bitcoin -rpcpassword=bitcoin -rpcport=18322 generate 2", {
-                      encoding: "utf8"
-                    });
+                genBlocks(2);
                 if (typeof result === "number") {
                   console.log(result);
                   return Js_exn.raiseError("helper transaction failed");
@@ -230,6 +235,7 @@ exports.defaultFee = defaultFee;
 exports.selectUTXOs = selectUTXOs;
 exports.FaucetEmpty = FaucetEmpty;
 exports.getUTXOs = getUTXOs;
+exports.genBlocks = genBlocks;
 exports.broadcastTransaction = broadcastTransaction;
 exports.fundAddress = fundAddress;
 exports.faucet = faucet;

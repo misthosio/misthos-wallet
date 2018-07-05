@@ -68,6 +68,7 @@ let () =
         PayoutTransaction.build(
           ~optionalInputs=inputs,
           ~mandatoryInputs=Network.inputSet(),
+          ~unlockedInputs=Network.inputSet(),
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(10000L)),
           ],
@@ -83,6 +84,7 @@ let () =
       let payoutTx =
         PayoutTransaction.build(
           ~mandatoryInputs=Network.inputSet(),
+          ~unlockedInputs=Network.inputSet(),
           ~optionalInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(4000L)),
@@ -99,6 +101,7 @@ let () =
       let payoutTx =
         PayoutTransaction.build(
           ~mandatoryInputs=Network.inputSet(),
+          ~unlockedInputs=Network.inputSet(),
           ~optionalInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9700L)),
@@ -119,6 +122,7 @@ let () =
             |. Belt.Set.keepU((. input: Network.txInput) =>
                  input.txOutputN == 1
                ),
+          ~unlockedInputs=Network.inputSet(),
           ~optionalInputs=
             inputs
             |. Belt.Set.keepU((. input: Network.txInput) =>
@@ -140,6 +144,7 @@ let () =
         () =>
           PayoutTransaction.build(
             ~mandatoryInputs=Network.inputSet(),
+            ~unlockedInputs=Network.inputSet(),
             ~optionalInputs=inputs,
             ~destinations=[
               (
@@ -159,6 +164,7 @@ let () =
       let summary =
         PayoutTransaction.build(
           ~mandatoryInputs=Network.inputSet(),
+          ~unlockedInputs=Network.inputSet(),
           ~optionalInputs=inputs,
           ~destinations=[
             ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", BTC.fromSatoshis(9800L)),
@@ -200,6 +206,7 @@ let () =
         let summary =
           PayoutTransaction.build(
             ~mandatoryInputs=Network.inputSet(),
+            ~unlockedInputs=Network.inputSet(),
             ~optionalInputs=inputs,
             ~destinations=[
               ("mgWUuj1J1N882jmqFxtDepEC73Rr22E9GU", outMax),
@@ -232,6 +239,7 @@ let () =
           () =>
             PayoutTransaction.build(
               ~mandatoryInputs=Network.inputSet(),
+              ~unlockedInputs=Network.inputSet(),
               ~optionalInputs=inputs,
               ~destinations=[
                 (

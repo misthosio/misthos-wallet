@@ -21,13 +21,13 @@ var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollec
 Helpers.enableHttpRequests(/* () */0);
 
 describe("Wallet_integration", (function () {
-        return Fixtures.withCached(/* Some */[false], /* Some */[false], "Wallet_integration", "integration", (function () {
+        return Fixtures.withCached(/* None */0, /* None */0, "Wallet_integration", "integration", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
                       var user2 = match[1];
                       var user1 = match[0];
-                      return Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user2, /* :: */[
+                      return Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* Some */[4], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user2, Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user1, Generators.Log[/* withCustodian */33](user2, /* :: */[
                                                       user1,
                                                       /* :: */[
                                                         user2,
@@ -56,7 +56,7 @@ describe("Wallet_integration", (function () {
                       var match$3 = match$1[0];
                       var address2 = match$3[1];
                       var address1 = match$3[0];
-                      var log$1 = Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
+                      var log$1 = Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user3, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user2, Generators.Log[/* withAccountKeyChainActivated */40](/* None */0, user1, Generators.Log[/* withAccountKeyChainIdentified */39](/* Some */[4], Generators.Log[/* withCustodianKeyChain */38](/* None */0, /* None */0, user3, Generators.Log[/* withCustodian */33](user3, /* :: */[
                                                 user1,
                                                 /* :: */[
                                                   user2,
@@ -252,6 +252,7 @@ describe("Wallet_integration", (function () {
                                           }));
                             }));
                       return Jest.testPromise(/* Some */[80000], "2 of 3 wallet", (function () {
+                                    Helpers.genBlocks(4);
                                     var param = Venture__Wallet.preparePayoutTx(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[
                                               user1[/* userId */0],
                                               user2[/* userId */0],
@@ -287,7 +288,7 @@ describe("Wallet_integration", (function () {
                                     return tmp.then((function (param) {
                                                   var expectedFee = BTC.fromSatoshis(/* int64 */[
                                                           /* hi */0,
-                                                          /* lo */5870
+                                                          /* lo */5687
                                                         ]).plus(BTC.timesRounded(PayoutTransaction.misthosFeePercent / 100, twoKeyChainSpendAmount));
                                                   return Helpers.getUTXOs(WalletHelpers.getExposedAddresses(param[0])).then((function (utxos) {
                                                                 return Promise.resolve(Jest.Expect[/* toEqual */12](twoKeyChainWalletTotal.minus(twoKeyChainSpendAmount).minus(expectedFee), Jest.Expect[/* expect */0](List.fold_left((function (total, utxo) {
@@ -299,4 +300,7 @@ describe("Wallet_integration", (function () {
                     }));
       }));
 
+var testSequence = 4;
+
+exports.testSequence = testSequence;
 /*  Not a pure module */

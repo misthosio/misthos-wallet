@@ -280,20 +280,24 @@ function addChangeOutput(totalInputs, outTotal, currentFee, changeAddress, fee, 
   }
 }
 
-function build(optionalInputs, mandatoryInputs, destinations, satsPerByte, changeAddress, network) {
-  var mandatoryInputs$1 = Belt_Set.keep(mandatoryInputs, (function (param) {
+function build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, satsPerByte, changeAddress, network) {
+  var unlockedInputs$1 = Belt_Set.keep(unlockedInputs, (function (param) {
           return TransactionFee.canPayForItself(satsPerByte, param);
         }));
+  var mandatoryInputs$1 = Belt_Set.union(Belt_Set.keep(mandatoryInputs, (function (param) {
+              return TransactionFee.canPayForItself(satsPerByte, param);
+            })), unlockedInputs$1);
   var optionalInputs$1 = List.sort((function (i1, i2) {
           return i1[/* value */3].comparedTo(i2[/* value */3]);
-        }), Belt_Set.toList(Belt_Set.keep(optionalInputs, (function (param) {
-                  return TransactionFee.canPayForItself(satsPerByte, param);
-                }))));
+        }), Belt_Set.toList(Belt_Set.diff(Belt_Set.keep(optionalInputs, (function (param) {
+                      return TransactionFee.canPayForItself(satsPerByte, param);
+                    })), unlockedInputs$1)));
   var txB = new BitcoinjsLib.TransactionBuilder(Network.bitcoinNetwork(network));
   txB.setVersion(2);
   var usedInputs = List.map((function (i) {
+          var match = i[/* unlocked */8];
           return /* tuple */[
-                  txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
+                  match ? txB.addInput(i[/* txId */0], i[/* txOutputN */1], Js_option.getExn(i[/* sequence */7])) : txB.addInput(i[/* txId */0], i[/* txOutputN */1]),
                   i
                 ];
         }), Belt_Set.toList(mandatoryInputs$1));

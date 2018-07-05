@@ -12,11 +12,11 @@ open Event;
 
 open WalletHelpers;
 
+let testSequence = 4;
+
 let () =
   describe("Wallet_integration", () =>
     F.withCached(
-      ~load=false,
-      ~persist=false,
       ~scope="Wallet_integration",
       "integration",
       () => G.withUserSessions(3),
@@ -31,7 +31,7 @@ let () =
           |> withCustodian(user2, ~supporters=[user1, user2])
           |> withCustodianKeyChain(user1)
           |> withCustodianKeyChain(user2)
-          |> withAccountKeyChainIdentified
+          |> withAccountKeyChainIdentified(~sequence=testSequence)
           |> withAccountKeyChainActivated(user1)
           |> withAccountKeyChainActivated(user2)
         );
@@ -49,7 +49,7 @@ let () =
             |> withPartner(user3, ~supporters=[user1, user2])
             |> withCustodian(user3, ~supporters=[user1, user2])
             |> withCustodianKeyChain(user3)
-            |> withAccountKeyChainIdentified
+            |> withAccountKeyChainIdentified(~sequence=testSequence)
             |> withAccountKeyChainActivated(user1)
             |> withAccountKeyChainActivated(user2)
             |> withAccountKeyChainActivated(user3)
@@ -221,71 +221,76 @@ let () =
                )
           )
         );
-        testPromise(~timeout=80000, "2 of 3 wallet", () =>
-          Js.Promise.(
-            twoKeyChainWallet^
-            |> Wallet.preparePayoutTx(
-                 ~eligibleWhenProposing=
-                   [|user1.userId, user2.userId, user3.userId|]
-                   |> Belt.Set.mergeMany(UserId.emptySet),
-                 user1,
-                 accountIdx,
-                 [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
-                 BTC.fromSatoshis(10L),
-               )
-            |> (
-              fun
-              | Wallet.Ok(({data} as event: Event.Payout.Proposed.t)) => {
-                  let payoutTx =
-                    PayoutTransaction.signPayout(
-                      ~ventureId,
-                      ~userId=user2.userId,
-                      ~masterKeyChain=user2.masterKeyChain,
-                      ~accountKeyChains=
-                        wallet.walletInfoCollector
-                        |> WalletInfoCollector.accountKeyChains,
-                      ~payoutTx=data.payoutTx,
-                    )
-                    |> PayoutTransaction.getSignedExn;
-                  Js.Promise.all2((
-                    resolve(
-                      twoKeyChainWallet^
-                      |> Wallet.apply(PayoutProposed(event)),
-                    ),
-                    PayoutTransaction.finalize([data.payoutTx, payoutTx])
-                    |> Helpers.broadcastTransaction,
-                  ));
-                }
-              | Wallet.NotEnoughFunds =>
-                raise(PayoutTransaction.NotEnoughFunds)
-            )
-            |> then_(((wallet, _broadcastResult)) => {
-                 let expectedFee =
-                   BTC.fromSatoshis(5870L)
-                   |> BTC.plus(
-                        twoKeyChainSpendAmount
-                        |> BTC.timesRounded(misthosFeePercent /. 100.),
+        testPromise(
+          ~timeout=80000,
+          "2 of 3 wallet",
+          () => {
+            Helpers.genBlocks(testSequence);
+            Js.Promise.(
+              twoKeyChainWallet^
+              |> Wallet.preparePayoutTx(
+                   ~eligibleWhenProposing=
+                     [|user1.userId, user2.userId, user3.userId|]
+                     |> Belt.Set.mergeMany(UserId.emptySet),
+                   user1,
+                   accountIdx,
+                   [(Helpers.faucetAddress, twoKeyChainSpendAmount)],
+                   BTC.fromSatoshis(10L),
+                 )
+              |> (
+                fun
+                | Wallet.Ok(({data} as event: Event.Payout.Proposed.t)) => {
+                    let payoutTx =
+                      PayoutTransaction.signPayout(
+                        ~ventureId,
+                        ~userId=user2.userId,
+                        ~masterKeyChain=user2.masterKeyChain,
+                        ~accountKeyChains=
+                          wallet.walletInfoCollector
+                          |> WalletInfoCollector.accountKeyChains,
+                        ~payoutTx=data.payoutTx,
+                      )
+                      |> PayoutTransaction.getSignedExn;
+                    Js.Promise.all2((
+                      resolve(
+                        twoKeyChainWallet^
+                        |> Wallet.apply(PayoutProposed(event)),
+                      ),
+                      PayoutTransaction.finalize([data.payoutTx, payoutTx])
+                      |> Helpers.broadcastTransaction,
+                    ));
+                  }
+                | Wallet.NotEnoughFunds =>
+                  raise(PayoutTransaction.NotEnoughFunds)
+              )
+              |> then_(((wallet, _broadcastResult)) => {
+                   let expectedFee =
+                     BTC.fromSatoshis(5687L)
+                     |> BTC.plus(
+                          twoKeyChainSpendAmount
+                          |> BTC.timesRounded(misthosFeePercent /. 100.),
+                        );
+                   wallet
+                   |> WalletHelpers.getExposedAddresses
+                   |> Helpers.getUTXOs
+                   |> then_(utxos =>
+                        utxos
+                        |> List.fold_left(
+                             (total, utxo: WalletTypes.utxo) =>
+                               total |> BTC.plus(utxo.amount),
+                             BTC.zero,
+                           )
+                        |> expect
+                        |> toEqual(
+                             twoKeyChainWalletTotal
+                             |> BTC.minus(twoKeyChainSpendAmount)
+                             |> BTC.minus(expectedFee),
+                           )
+                        |> resolve
                       );
-                 wallet
-                 |> WalletHelpers.getExposedAddresses
-                 |> Helpers.getUTXOs
-                 |> then_(utxos =>
-                      utxos
-                      |> List.fold_left(
-                           (total, utxo: WalletTypes.utxo) =>
-                             total |> BTC.plus(utxo.amount),
-                           BTC.zero,
-                         )
-                      |> expect
-                      |> toEqual(
-                           twoKeyChainWalletTotal
-                           |> BTC.minus(twoKeyChainSpendAmount)
-                           |> BTC.minus(expectedFee),
-                         )
-                      |> resolve
-                    );
-               })
-          )
+                 })
+            );
+          },
         );
       },
     )

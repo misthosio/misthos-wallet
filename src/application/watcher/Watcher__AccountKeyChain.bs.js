@@ -27,7 +27,7 @@ function make(param, param$1, log) {
   var issuerKeyPair = param[/* issuerKeyPair */2];
   var localUserId = param[/* userId */0];
   var identifiedEvent = function (keyChains, state) {
-    var $$event = Event.AccountKeyChainIdentified[/* make */0](AccountKeyChain.make(accountIdx, keyChains));
+    var $$event = Event.AccountKeyChainIdentified[/* make */0](AccountKeyChain.make(/* None */0, accountIdx, keyChains));
     var identifier = $$event[/* keyChain */0][/* identifier */1];
     var match = List.mem_assoc(identifier, state[/* identifiedKeyChains */2]);
     if (match) {

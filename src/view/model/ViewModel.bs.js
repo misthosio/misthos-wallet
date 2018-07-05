@@ -129,6 +129,7 @@ function fromViewModelState$3(param) {
   var network = WalletInfoCollector.network(walletInfoCollector);
   var optionalInputs = WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
+  var unlockedInputs = WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var allInputs = Belt_Set.union(optionalInputs, mandatoryInputs);
   var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], param[/* localUser */0], walletInfoCollector);
   return /* record */[
@@ -156,7 +157,7 @@ function fromViewModelState$3(param) {
               return PayoutTransaction.max(allInputs, targetDestination, destinations, fee, network);
             }),
           /* summary */(function (destinations, fee) {
-              return PayoutTransaction.summary(network, PayoutTransaction.build(optionalInputs, mandatoryInputs, destinations, fee, changeAddress, network));
+              return PayoutTransaction.summary(network, PayoutTransaction.build(optionalInputs, mandatoryInputs, unlockedInputs, destinations, fee, changeAddress, network));
             })
         ];
 }

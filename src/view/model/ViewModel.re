@@ -175,6 +175,9 @@ module CreatePayoutView = {
     let mandatoryInputs =
       walletInfoCollector
       |> WalletInfoCollector.oldSpendableInputs(AccountIndex.default);
+    let unlockedInputs =
+      walletInfoCollector
+      |> WalletInfoCollector.unlockedInputs(AccountIndex.default);
     let allInputs = optionalInputs |. Belt.Set.union(mandatoryInputs);
     let changeAddress =
       walletInfoCollector
@@ -218,6 +221,7 @@ module CreatePayoutView = {
       summary: (destinations, fee) =>
         PayoutTransaction.build(
           ~mandatoryInputs,
+          ~unlockedInputs,
           ~optionalInputs,
           ~destinations,
           ~satsPerByte=fee,

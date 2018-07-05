@@ -23,10 +23,15 @@ let notifyOfUnlockedInputs =
     ) =>
   switch (
     walletInfo
-    |> WalletInfoCollector.temporarilyInaccessibleInputs
-    |. Set.reduceU([], (. res, {txId, sequence} as input: Network.txInput) =>
-         switch (sequence, confirmedTransactions |. Map.String.get(txId)) {
-         | (Some(sequence), Some(txBlock))
+    |> WalletInfoCollector.allInputs
+    |. Set.reduceU(
+         [], (. res, {txId, sequence, unlocked} as input: Network.txInput) =>
+         switch (
+           unlocked,
+           sequence,
+           confirmedTransactions |. Map.String.get(txId),
+         ) {
+         | (false, Some(sequence), Some(txBlock))
              when blockHeight > sequence + int_of_float(txBlock) => [
              Event.Income.Unlocked.make(~input={...input, unlocked: true}),
              ...res,

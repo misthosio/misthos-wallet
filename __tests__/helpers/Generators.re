@@ -91,7 +91,8 @@ let custodianKeyChain =
   )
   |> CustodianKeyChain.toPublicKeyChain;
 
-let accountKeyChainFrom = AccountKeyChain.make(AccountIndex.default);
+let accountKeyChainFrom = (~sequence=AccountKeyChain.defaultSequence) =>
+  AccountKeyChain.make(~sequence, AccountIndex.default);
 
 let accountKeyChain =
     (~ventureId=VentureId.fromString("test"), ~keyChainIdx=0, users) =>
@@ -679,7 +680,8 @@ module Log = {
          ),
        );
   };
-  let withAccountKeyChainIdentified = ({log} as l) => {
+  let withAccountKeyChainIdentified =
+      (~sequence=AccountKeyChain.defaultSequence, {log} as l) => {
     let keyChains =
       log
       |> EventLog.reduce(
@@ -701,7 +703,7 @@ module Log = {
              },
            [],
          );
-    let accountKeyChain = accountKeyChainFrom(keyChains);
+    let accountKeyChain = accountKeyChainFrom(~sequence, keyChains);
     l
     |> appendSystemEvent(
          AccountKeyChainIdentified(
