@@ -231,7 +231,8 @@ let rec findInput = (inputs, ammountMissing, fee) =>
          ammountMissing
          |> BTC.plus(
               Fee.inputCost(
-                i.sequence |> Js.Option.isSome,
+                ~withDms=i.sequence |> Js.Option.isSome,
+                ~unlocked=i.unlocked,
                 i.nCoSigners,
                 i.nPubKeys,
                 fee,
@@ -249,7 +250,8 @@ let rec findInputs = (inputs, ammountMissing, fee, addedInputs) =>
       ammountMissing
       |> BTC.plus(
            Fee.inputCost(
-             i.sequence |> Js.Option.isSome,
+             ~withDms=i.sequence |> Js.Option.isSome,
+             ~unlocked=i.unlocked,
              i.nCoSigners,
              i.nPubKeys,
              fee,
@@ -292,7 +294,8 @@ let addChangeOutput =
               )
            |> BTC.plus(
                 Fee.minChange(
-                  changeAddress.sequence |> Js.Option.isSome,
+                  ~withDms=changeAddress.sequence |> Js.Option.isSome,
+                  ~unlocked=false,
                   changeAddress.nCoSigners,
                   changeAddress.nPubKeys,
                   fee,
@@ -427,7 +430,8 @@ let build =
                feeV
                |> BTC.plus(
                     Fee.inputCost(
-                      i.sequence |> Js.Option.isSome,
+                      ~withDms=i.sequence |> Js.Option.isSome,
+                      ~unlocked=i.unlocked,
                       i.nCoSigners,
                       i.nPubKeys,
                       satsPerByte,

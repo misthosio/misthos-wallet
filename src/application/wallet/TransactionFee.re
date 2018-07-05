@@ -37,7 +37,7 @@ let stackSizeOfMultisigSequenceScript = 15;
 
 let lockTime = 4 * 4;
 
-let estimateInputWeight = (withDms, nCoSigners, nPubKeys) =>
+let estimateInputWeight = (~withDms, ~unlocked, nCoSigners, nPubKeys) =>
   previousOutputHash
   + previousOutputIndex
   + scriptLength
@@ -45,7 +45,7 @@ let estimateInputWeight = (withDms, nCoSigners, nPubKeys) =>
   + sequence
   + numOfStackItems
   + stackSizeOfItem
-  + nCoSigners
+  + (unlocked ? 1 : nCoSigners)
   * (stackSizeOfItem + stackSizeOfSignature)
   + stackSizeOfItem
   + nPubKeys
@@ -72,8 +72,8 @@ let cost = (fee, weight) => fee |> BTC.timesFloat(weight |> weightToVSize);
 let outputCost = (address, fee, network) =>
   outputWeight(address, network) |> cost(fee);
 
-let inputCost = (withDms, nCoSigners, nPubKeys, fee) =>
-  estimateInputWeight(withDms, nCoSigners, nPubKeys) |> cost(fee);
+let inputCost = (~withDms, ~unlocked, nCoSigners, nPubKeys, fee) =>
+  estimateInputWeight(~withDms, ~unlocked, nCoSigners, nPubKeys) |> cost(fee);
 
 let minChange = inputCost;
 
@@ -83,7 +83,8 @@ let canPayForItself = (fee, input: Network.txInput) =>
        fee
        |> BTC.timesFloat(
             estimateInputWeight(
-              input.sequence |> Js.Option.isSome,
+              ~withDms=input.sequence |> Js.Option.isSome,
+              ~unlocked=input.unlocked,
               input.nCoSigners,
               input.nPubKeys,
             )
@@ -105,7 +106,8 @@ let estimate = (outputs, inputs, fee, network) =>
               (t, i: Network.txInput) =>
                 t
                 + estimateInputWeight(
-                    i.sequence |> Js.Option.isSome,
+                    ~withDms=i.sequence |> Js.Option.isSome,
+                    ~unlocked=i.unlocked,
                     i.nCoSigners,
                     i.nPubKeys,
                   ),
