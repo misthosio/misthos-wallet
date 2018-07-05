@@ -9,13 +9,11 @@ var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
 var Router = require("./Router.bs.js");
 var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
-var MDivider = require("./components/MDivider.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var MFabButton = require("./components/MFabButton.bs.js");
@@ -93,38 +91,36 @@ function make(viewData, _) {
                         }), viewData[/* payoutsPendingApproval */7]));
               var unconfirmed = viewData[/* unconfirmedTxs */5];
               var confirmed = viewData[/* confirmedTxs */6];
-              var transactions = $$Array.of_list(Utils.intersperse((function (key) {
-                          return ReasonReact.element(key, undefined, MDivider.make(/* array */[]));
-                        }), Belt_List.concatMany(/* array */[
-                            List.mapi((function (iter, tx) {
-                                    var match = tx[/* txType */0];
-                                    var match$1 = match ? /* tuple */[
-                                        /* Payout */1,
-                                        "unconfirmed payout"
-                                      ] : /* tuple */[
-                                        /* Income */0,
-                                        "unconfirmed income"
-                                      ];
-                                    var partial_arg = tx[/* detailsLink */5];
-                                    return ReasonReact.element(String(iter), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], (function (param) {
-                                                      return Router.clickToRoute(partial_arg, param);
-                                                    }), /* array */[]));
-                                  }), unconfirmed),
-                            List.mapi((function (iter, tx) {
-                                    var match = tx[/* txType */0];
-                                    var match$1 = match ? /* tuple */[
-                                        /* Payout */1,
-                                        "payout"
-                                      ] : /* tuple */[
-                                        /* Income */0,
-                                        "income"
-                                      ];
-                                    var partial_arg = tx[/* detailsLink */5];
-                                    return ReasonReact.element(String(iter + List.length(unconfirmed) | 0), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], (function (param) {
-                                                      return Router.clickToRoute(partial_arg, param);
-                                                    }), /* array */[]));
-                                  }), confirmed)
-                          ])));
+              var transactions = $$Array.of_list(Belt_List.concatMany(/* array */[
+                        List.mapi((function (iter, tx) {
+                                var match = tx[/* txType */0];
+                                var match$1 = match ? /* tuple */[
+                                    /* Payout */1,
+                                    "unconfirmed payout"
+                                  ] : /* tuple */[
+                                    /* Income */0,
+                                    "unconfirmed income"
+                                  ];
+                                var partial_arg = tx[/* detailsLink */5];
+                                return ReasonReact.element(String(iter), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], (function (param) {
+                                                  return Router.clickToRoute(partial_arg, param);
+                                                }), /* array */[]));
+                              }), unconfirmed),
+                        List.mapi((function (iter, tx) {
+                                var match = tx[/* txType */0];
+                                var match$1 = match ? /* tuple */[
+                                    /* Payout */1,
+                                    "payout"
+                                  ] : /* tuple */[
+                                    /* Income */0,
+                                    "income"
+                                  ];
+                                var partial_arg = tx[/* detailsLink */5];
+                                return ReasonReact.element(String(iter + List.length(unconfirmed) | 0), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], (function (param) {
+                                                  return Router.clickToRoute(partial_arg, param);
+                                                }), /* array */[]));
+                              }), confirmed)
+                      ]));
               var partial_arg_000 = viewData[/* ventureId */0];
               var partial_arg = /* Venture */Block.__(0, [
                   partial_arg_000,

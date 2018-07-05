@@ -16,10 +16,10 @@ let statusToString =
   | WalletInfoCollector.OutdatedCustodians => "OutdatedCustodians"
   | WalletInfoCollector.TemporarilyInaccessible => "TemporarilyInaccessible"
   | WalletInfoCollector.Inaccessible => "Inaccessible";
+
 let addressTypeToString =
   fun
-  | WalletInfoCollector.Income(id) =>
-    "Income (exposed by - " ++ UserId.toString(id) ++ ")"
+  | WalletInfoCollector.Income(_) => "Income"
   | WalletInfoCollector.Change => "Change";
 
 let component = ReasonReact.reducerComponent("AddressesModal");
@@ -115,7 +115,33 @@ let make = (~viewData: ViewData.t, _children) => {
                    date=tx.date
                  />;
                })
-            |> Utils.intersperse(key => <MDivider key />)
+            |. List.concat(
+                 details.addressType
+                 |> (
+                   fun
+                   | WalletInfoCollector.Income(id) => [
+                       <MaterialUi.ListItem
+                         disableGutters=true
+                         divider=true
+                         classes=[Divider(Transaction.Styles.divider)]>
+                         <MaterialUi.ListItemText
+                           classes=[Root(Transaction.Styles.root)]
+                           primary={
+                             <MTypography variant=`Body2>
+                               (
+                                 "address exposed by "
+                                 ++ UserId.toString(id)
+                                 |> String.uppercase
+                                 |> text
+                               )
+                             </MTypography>
+                           }
+                         />
+                       </MaterialUi.ListItem>,
+                     ]
+                   | _ => []
+                 ),
+               )
             |> List.toArray
             |> ReasonReact.array
           )
@@ -148,7 +174,12 @@ let make = (~viewData: ViewData.t, _children) => {
                    (info.address |> text)
                  </MTypography>,
                  <MTypography className=Styles.summary variant=`Body2>
-                   (info.addressType |> addressTypeToString |> text)
+                   (
+                     info.addressType
+                     |> addressTypeToString
+                     |> String.uppercase
+                     |> text
+                   )
                  </MTypography>,
                  <MTypography className=Styles.summary variant=`Body2>
                    (statusToString(info.addressStatus) |> text)

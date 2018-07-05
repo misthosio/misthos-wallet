@@ -15,6 +15,7 @@ module Styles = {
       minWidth(px(0)),
       firstChild([paddingLeft(px(16))]),
     ]);
+  let divider = style([borderBottom(px(1), `solid, hex("979797"))]);
   let amount = (inOut: txType) =>
     style([
       color(
@@ -39,7 +40,13 @@ let make =
   ...component,
   render: _self =>
     MaterialUi.(
-      <ListItem dense=true disableGutters=true button=true ?onClick>
+      <ListItem
+        classes=[Divider(Styles.divider)]
+        dense=true
+        disableGutters=true
+        button=(onClick != None)
+        ?onClick
+        divider=true>
         <ListItemText
           classes=[Root(Styles.root)]
           primary={

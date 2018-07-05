@@ -8,12 +8,11 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
-var Utils = require("../utils/Utils.bs.js");
 var React = require("react");
+var $$String = require("bs-platform/lib/js/string.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
-var MDivider = require("./components/MDivider.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ScrollList = require("./components/ScrollList.bs.js");
@@ -25,7 +24,9 @@ var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Collapse = require("@jsiebern/bs-material-ui/src/MaterialUi_Collapse.bs.js");
+var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
+var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js");
 
 function statusToString(param) {
   switch (param) {
@@ -45,7 +46,7 @@ function statusToString(param) {
 
 function addressTypeToString(param) {
   if (param) {
-    return "Income (exposed by - " + (PrimitiveTypes.UserId[/* toString */0](param[0]) + ")");
+    return "Income";
   } else {
     return "Change";
   }
@@ -117,15 +118,23 @@ var Styles = /* module */[
 
 function make(viewData, _) {
   var renderExpandedInfo = function (info, details) {
+    var param = details[/* addressType */3];
     return React.createElement("div", {
                 className: detailsGrid
               }, React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Custodians")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("This is a " + (String(details[/* nCoSigners */1]) + ("-of-" + (String(details[/* nCustodians */2]) + " address with the following custodians:"))))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_Array.map(Belt_Set.toArray(details[/* custodians */0]), (function (partnerId) {
                                     return ReasonReact.element(undefined, undefined, Partner.make(partnerId, undefined, undefined, undefined, undefined, !Curry._1(details[/* isPartner */7], partnerId), /* array */[]));
-                                  }))]))), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_List.toArray(Utils.intersperse((function (key) {
-                                        return ReasonReact.element(key, undefined, MDivider.make(/* array */[]));
-                                      }), Belt_List.mapWithIndex(Belt_List.concat(details[/* unspentIncome */5], details[/* spentIncome */6]), (function (iter, tx) {
+                                  }))]))), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_List.toArray(Belt_List.concat(Belt_List.mapWithIndex(Belt_List.concat(details[/* unspentIncome */5], details[/* spentIncome */6]), (function (iter, tx) {
                                             return ReasonReact.element(String(iter), undefined, Transaction.make(/* Income */0, "income", tx[/* amount */4], tx[/* date */2], undefined, /* array */[]));
-                                          }))))]))));
+                                          })), param ? /* :: */[
+                                        ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, true, true, undefined, undefined, undefined, undefined, /* :: */[
+                                                  /* Divider */Block.__(6, [Transaction.Styles[/* divider */1]]),
+                                                  /* [] */0
+                                                ], undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text($$String.uppercase("address exposed by " + PrimitiveTypes.UserId[/* toString */0](param[0])))]))), undefined, undefined, undefined, /* :: */[
+                                                            /* Root */Block.__(0, [Transaction.Styles[/* root */0]]),
+                                                            /* [] */0
+                                                          ], undefined, /* array */[]))])),
+                                        /* [] */0
+                                      ] : /* [] */0))]))));
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -146,7 +155,7 @@ function make(viewData, _) {
                             var expand = Caml_obj.caml_equal(state[/* expandedAddress */0], info);
                             return /* array */[
                                     ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text(info[/* address */2])])),
-                                    ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text(addressTypeToString(info[/* addressType */0]))])),
+                                    ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text($$String.uppercase(addressTypeToString(info[/* addressType */0])))])),
                                     ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text(statusToString(info[/* addressStatus */4]))])),
                                     ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(chevron(expand), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                 return Curry._1(send, /* ToggleAddress */[info]);

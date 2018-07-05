@@ -57,17 +57,3 @@ let andThen = fn =>
 let encodeFloat = Json.Encode.float;
 
 let decodeFloat = Json.Decode.float;
-
-let intersperse = (fn, items) =>
-  items
-  |> List.mapi((i, item) =>
-       [item, fn(string_of_int(i + List.length(items)))]
-     )
-  |> List.flatten
-  |> List.rev
-  |> (
-    fun
-    | [] => []
-    | [_, ...rest] => rest
-  )
-  |> List.rev;

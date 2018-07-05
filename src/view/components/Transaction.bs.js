@@ -33,6 +33,11 @@ var root = Css.style(/* :: */[
       ]
     ]);
 
+var divider = Css.style(/* :: */[
+      Css.borderBottom(Css.px(1), /* solid */12956715, Css.hex("979797")),
+      /* [] */0
+    ]);
+
 function amount(inOut) {
   return Css.style(/* :: */[
               Css.color(inOut ? Colors.strongPink : Colors.misthosTeal),
@@ -45,6 +50,7 @@ function amount(inOut) {
 
 var Styles = /* module */[
   /* root */root,
+  /* divider */divider,
   /* amount */amount
 ];
 
@@ -60,7 +66,10 @@ function make(txType, primary, amount$1, date, onClick, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(true, undefined, undefined, undefined, undefined, true, undefined, true, undefined, undefined, undefined, undefined, onClick, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(onClick !== undefined, undefined, undefined, undefined, undefined, true, undefined, true, true, undefined, undefined, undefined, onClick, /* :: */[
+                              /* Divider */Block.__(6, [divider]),
+                              /* [] */0
+                            ], undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[
                                                     ViewCommon.text($$String.uppercase(primary)),
                                                     React.createElement("span", {
                                                           className: amount(txType)

@@ -144,8 +144,7 @@ let make = (~viewData: ViewData.t, _children) => {
                      key=(string_of_int(iter + List.length(unconfirmed)))
                    />;
                  }),
-            |])
-            |> Utils.intersperse(key => <MDivider key />);
+            |]);
           },
         ),
       );
