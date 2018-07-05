@@ -543,16 +543,17 @@ let finalize = signedTransactions => {
   let wrappers =
     signedTransactions |. List.mapU((. {txHex}) => txHex |> TxWrapper.make);
   let res =
-    switch (wrappers |> List.head, wrappers |> List.tail) {
-    | (Some(head), Some(rest)) =>
-      rest |. List.reduceU(head, (. tx, other) => TxWrapper.merge(tx, other))
-    | (Some(head), _) => head
-    | _ => %assert
-           "finalize"
-    };
-  switch (
-    res |> TxWrapper.finalize((signedTransactions |> List.headExn).usedInputs)
-  ) {
+    (
+      switch (wrappers |> List.head, wrappers |> List.tail) {
+      | (Some(head), Some(rest)) =>
+        rest |. List.reduce(head, TxWrapper.merge)
+      | (Some(head), _) => head
+      | _ => %assert
+             "finalize"
+      }
+    )
+    |> TxWrapper.finalize((signedTransactions |> List.headExn).usedInputs);
+  switch (res) {
   | Ok(tx) => tx
   | NotEnoughSignatures => raise(NotEnoughSignatures)
   };

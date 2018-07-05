@@ -421,16 +421,16 @@ function finalize(signedTransactions) {
         }));
   var match = Belt_List.head(wrappers);
   var match$1 = Belt_List.tail(wrappers);
-  var res;
+  var tmp;
   if (match) {
     var head = match[0];
-    res = match$1 ? Belt_List.reduceU(match$1[0], head, TxWrapper.merge) : head;
+    tmp = match$1 ? Belt_List.reduce(match$1[0], head, TxWrapper.merge) : head;
   } else {
-    res = Js_exn.raiseError("finalize");
+    tmp = Js_exn.raiseError("finalize");
   }
-  var match$2 = TxWrapper.finalize(Belt_List.headExn(signedTransactions$1)[/* usedInputs */1], res);
-  if (match$2) {
-    return match$2[0];
+  var res = TxWrapper.finalize(Belt_List.headExn(signedTransactions$1)[/* usedInputs */1], tmp);
+  if (res) {
+    return res[0];
   } else {
     throw NotEnoughSignatures;
   }
