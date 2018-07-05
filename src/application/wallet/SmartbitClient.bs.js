@@ -6,7 +6,6 @@ var List = require("bs-platform/lib/js/list.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
-var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_array = require("bs-platform/lib/js/caml_array.js");
 var Json_decode = require("bs-json/src/Json_decode.js");
@@ -77,12 +76,12 @@ function fetchAll(link, decoder, collector) {
 }
 
 function getUTXOs(config, addresses) {
-  if (Belt_List.length(addresses) === 0) {
-    return Promise.resolve(/* [] */0);
-  } else {
+  if (addresses) {
     return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/address/" + (List.fold_left((function (res, a) {
                               return a + ("," + res);
                             }), "", addresses) + "/unspent?limit=1000")))], decodeUTXOs, /* [] */0);
+  } else {
+    return Promise.resolve(/* [] */0);
   }
 }
 
@@ -90,7 +89,7 @@ function getTransactionInfo(config, transactions) {
   if (Belt_SetString.isEmpty(transactions)) {
     return Promise.resolve(/* [] */0);
   } else {
-    return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/tx/" + Belt_SetString.reduce(transactions, "", (function (res, a) {
+    return fetchAll(/* Some */["https://" + (config[/* subdomain */0] + (".smartbit.com.au/v1/blockchain/tx/" + Belt_SetString.reduceU(transactions, "", (function (res, a) {
                             return a + ("," + res);
                           }))))], decodeTransactions, /* [] */0);
   }

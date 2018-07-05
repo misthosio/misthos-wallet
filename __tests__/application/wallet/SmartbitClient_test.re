@@ -5,8 +5,8 @@ open Jest;
 open Expect;
 
 let () =
-  describe("getUTXOs", () => {
-    testPromise(~timeout=50000, "get stuff", () =>
+  describe("SmartbitClient", () => {
+    testPromise(~timeout=50000, "getUTXOs", () =>
       Js.Promise.(
         SmartbitClient.getUTXOs(
           {subdomain: "api"},

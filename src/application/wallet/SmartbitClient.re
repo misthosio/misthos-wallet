@@ -62,9 +62,9 @@ let rec fetchAll = (link, decoder, collector) =>
   );
 
 let getUTXOs = (config, addresses) =>
-  if (addresses |> Belt.List.length == 0) {
-    Js.Promise.resolve([]);
-  } else {
+  switch (addresses) {
+  | [] => Js.Promise.resolve([])
+  | addresses =>
     fetchAll(
       Some(
         "https://"
@@ -75,7 +75,7 @@ let getUTXOs = (config, addresses) =>
       ),
       decodeUTXOs,
       [],
-    );
+    )
   };
 
 let getTransactionInfo = (config, transactions) =>
@@ -87,7 +87,7 @@ let getTransactionInfo = (config, transactions) =>
         "https://"
         ++ config.subdomain
         ++ ".smartbit.com.au/v1/blockchain/tx/"
-        ++ Belt.Set.String.reduce(transactions, "", (res, a) =>
+        ++ Belt.Set.String.reduceU(transactions, "", (. res, a) =>
              a ++ "," ++ res
            ),
       ),

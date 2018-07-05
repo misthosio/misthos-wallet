@@ -8,8 +8,8 @@ var SmartbitClient = require("../../../src/application/wallet/SmartbitClient.bs.
 
 Helpers.enableHttpRequests(/* () */0);
 
-describe("getUTXOs", (function () {
-        Jest.testPromise(/* Some */[50000], "get stuff", (function () {
+describe("SmartbitClient", (function () {
+        Jest.testPromise(/* Some */[50000], "getUTXOs", (function () {
                 return SmartbitClient.getUTXOs(/* record */[/* subdomain */"api"], /* :: */[
                               "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
                               /* [] */0
