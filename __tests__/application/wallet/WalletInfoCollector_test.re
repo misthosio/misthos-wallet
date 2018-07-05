@@ -181,6 +181,18 @@ let () = {
           )
           |> toEqual(1)
         );
+        test("1 current input is unlocked", () =>
+          expect(
+            info
+            |> WalletInfoCollector.currentSpendableInputs(
+                 AccountIndex.default,
+               )
+            |. Set.reduceU(0, (. res, {unlocked}: Network.txInput) =>
+                 res + (unlocked ? 1 : 0)
+               ),
+          )
+          |> toEqual(1)
+        );
         test("4 inputs are old", () =>
           expect(
             info

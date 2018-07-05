@@ -203,6 +203,13 @@ describe("WalletInfoCollector", (function () {
                       Jest.test("1 input is unlocked", (function () {
                               return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], info))));
                             }));
+                      Jest.test("1 current input is unlocked", (function () {
+                              return Jest.Expect[/* toEqual */12](1, Jest.Expect[/* expect */0](Belt_Set.reduceU(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info), 0, (function (res, param) {
+                                                    return res + (
+                                                            param[/* unlocked */8] ? 1 : 0
+                                                          ) | 0;
+                                                  }))));
+                            }));
                       Jest.test("4 inputs are old", (function () {
                               return Jest.Expect[/* toEqual */12](4, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
                             }));
