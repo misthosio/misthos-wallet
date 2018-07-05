@@ -16,7 +16,7 @@ var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var BitcoindClient = require("./BitcoindClient.bs.js");
 var Caml_primitive = require("bs-platform/lib/js/caml_primitive.js");
-var SmartbitClient = require("./SmartbitClient.bs.js");
+var BlockchainInfoClient = require("./BlockchainInfoClient.bs.js");
 
 function encode(param) {
   switch (param) {
@@ -212,7 +212,7 @@ var Regtest = /* module */[
   /* broadcastTransaction */broadcastTransaction
 ];
 
-var Client$1 = SmartbitClient.make(SmartbitClient.testnetConfig, BitcoinjsLib.networks.testnet);
+var Client$1 = BlockchainInfoClient.make(BlockchainInfoClient.testnetConfig, BitcoinjsLib.networks.testnet);
 
 var network$1 = Client$1[/* network */0];
 
@@ -249,7 +249,7 @@ var Testnet = /* module */[
   /* broadcastTransaction */broadcastTransaction$1
 ];
 
-var Client$2 = SmartbitClient.make(SmartbitClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
+var Client$2 = BlockchainInfoClient.make(BlockchainInfoClient.mainnetConfig, BitcoinjsLib.networks.bitcoin);
 
 var network$2 = Client$2[/* network */0];
 

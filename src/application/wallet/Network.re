@@ -137,8 +137,8 @@ module Regtest =
 module Testnet =
   Make(
     (
-      val SmartbitClient.make(
-            SmartbitClient.testnetConfig,
+      val BlockchainInfoClient.make(
+            BlockchainInfoClient.testnetConfig,
             Bitcoin.Networks.testnet,
           )
     ),
@@ -147,8 +147,8 @@ module Testnet =
 module Mainnet =
   Make(
     (
-      val SmartbitClient.make(
-            SmartbitClient.mainnetConfig,
+      val BlockchainInfoClient.make(
+            BlockchainInfoClient.mainnetConfig,
             Bitcoin.Networks.bitcoin,
           )
     ),
