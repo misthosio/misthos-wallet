@@ -9,6 +9,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
+var Colors = require("./Colors.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
@@ -28,20 +29,55 @@ var MaterialUi_ListItem = require("@jsiebern/bs-material-ui/src/MaterialUi_ListI
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js");
 
+function statusToColor(param) {
+  switch (param) {
+    case 0 : 
+        return Colors.success;
+    case 2 : 
+    case 3 : 
+    case 4 : 
+    case 5 : 
+        return Colors.error;
+    case 1 : 
+    case 6 : 
+    case 7 : 
+        return Colors.warning;
+    
+  }
+}
+
 function statusToString(param) {
   switch (param) {
     case 0 : 
         return "Accessible";
     case 1 : 
-        return "AtRisk";
+        return "At Risk";
     case 2 : 
-        return "OutdatedCustodians";
+        return "Outdated Custodians";
     case 3 : 
-        return "TemporarilyInaccessible";
+        return "Temporarily Inaccessible";
     case 4 : 
-        return "Inaccessible";
+        return "Permanently Inaccessible";
+    case 5 : 
+        return "Partially Unlocked";
+    case 6 : 
+        return "Unlocked";
+    case 7 : 
+        return "Old Address";
     
   }
+}
+
+function statusToLable($staropt$star, status) {
+  var className = $staropt$star !== undefined ? $staropt$star : "";
+  return ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, Css.style(/* :: */[
+                      Css.color(statusToColor(status)),
+                      /* [] */0
+                    ]) + (" " + className), undefined, undefined, undefined, /* array */[ViewCommon.text($$String.uppercase(statusToString(status)))]));
+}
+
+function calcStatus(status, _, _$1) {
+  return status;
 }
 
 function addressTypeToString(param) {
@@ -156,7 +192,9 @@ function make(viewData, _) {
                             return /* array */[
                                     ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text(info[/* address */2])])),
                                     ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text($$String.uppercase(addressTypeToString(info[/* addressType */0])))])),
-                                    ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text(statusToString(info[/* addressStatus */4]))])),
+                                    statusToLable(summary, calcStatus(info[/* addressStatus */4], info[/* balance */5], Belt_List.map(details$1[/* unspentIncome */5], (function (i) {
+                                                    return i[/* unlocked */1];
+                                                  })))),
                                     ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(chevron(expand), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                 return Curry._1(send, /* ToggleAddress */[info]);
                                               }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.chevronDown])),
@@ -196,7 +234,10 @@ var ViewData = 0;
 exports.text = text;
 exports.extractString = extractString;
 exports.ViewData = ViewData;
+exports.statusToColor = statusToColor;
 exports.statusToString = statusToString;
+exports.statusToLable = statusToLable;
+exports.calcStatus = calcStatus;
 exports.addressTypeToString = addressTypeToString;
 exports.component = component;
 exports.Styles = Styles;

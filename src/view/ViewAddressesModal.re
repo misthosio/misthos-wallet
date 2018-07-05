@@ -9,13 +9,58 @@ type state = {expandedAddress: option(ViewData.addressInfo)};
 type action =
   | ToggleAddress(ViewData.addressInfo);
 
+type status =
+  | Accessible
+  | AtRisk
+  | OutdatedCustodians
+  | TemporarilyInaccessible
+  | PermanentlyInaccessible
+  | PartiallyUnlocked
+  | Unlocked
+  | OldAddress;
+
+let statusToColor =
+  fun
+  | Accessible => Colors.success
+  | AtRisk
+  | Unlocked
+  | OldAddress => Colors.warning
+  | OutdatedCustodians
+  | PartiallyUnlocked
+  | TemporarilyInaccessible
+  | PermanentlyInaccessible => Colors.error;
+
 let statusToString =
   fun
-  | WalletInfoCollector.Accessible => "Accessible"
-  | WalletInfoCollector.AtRisk => "AtRisk"
-  | WalletInfoCollector.OutdatedCustodians => "OutdatedCustodians"
-  | WalletInfoCollector.TemporarilyInaccessible => "TemporarilyInaccessible"
-  | WalletInfoCollector.Inaccessible => "Inaccessible";
+  | Accessible => "Accessible"
+  | AtRisk => "At Risk"
+  | Unlocked => "Unlocked"
+  | OldAddress => "Old Address"
+  | OutdatedCustodians => "Outdated Custodians"
+  | PartiallyUnlocked => "Partially Unlocked"
+  | TemporarilyInaccessible => "Temporarily Inaccessible"
+  | PermanentlyInaccessible => "Permanently Inaccessible";
+
+let statusToLable = (~className="", status) =>
+  <MTypography
+    className=(
+      Css.(style([color(statusToColor(status))])) ++ " " ++ className
+    )
+    variant=`Body2>
+    (status |> statusToString |> String.uppercase |> text)
+  </MTypography>;
+
+let calcStatus =
+    (status: ViewData.addressStatus, balance, unlocked: list(bool)) =>
+  /* List.some(unlocked, (== true)) */
+  switch (status, balance, unlocked) {
+  /* | (_, _, true) => Unlocked */
+  | (Accessible, _, _) => Accessible
+  | (AtRisk, _, _) => AtRisk
+  | (OutdatedCustodians, _, _) => OutdatedCustodians
+  | (TemporarilyInaccessible, _, _) => TemporarilyInaccessible
+  | (Inaccessible, _, _) => PermanentlyInaccessible
+  };
 
 let addressTypeToString =
   fun
@@ -181,9 +226,12 @@ let make = (~viewData: ViewData.t, _children) => {
                      |> text
                    )
                  </MTypography>,
-                 <MTypography className=Styles.summary variant=`Body2>
-                   (statusToString(info.addressStatus) |> text)
-                 </MTypography>,
+                 calcStatus(
+                   info.addressStatus,
+                   info.balance,
+                   List.map(details.unspentIncome, i => i.unlocked),
+                 )
+                 |> statusToLable(~className=Styles.summary),
                  <MaterialUi.IconButton
                    className=(Styles.chevron(expand))
                    onClick=(_e => send(ToggleAddress(info)))>

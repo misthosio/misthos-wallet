@@ -19,6 +19,10 @@ var uSucces = "33d321";
 
 var success = Css.hex(uSucces);
 
+var uWarning = "f5a623";
+
+var warning = Css.hex(uWarning);
+
 var uError = "d0021b";
 
 var error = Css.hex(uError);
@@ -125,6 +129,8 @@ exports.uWhite = uWhite;
 exports.white = white;
 exports.uSucces = uSucces;
 exports.success = success;
+exports.uWarning = uWarning;
+exports.warning = warning;
 exports.uError = uError;
 exports.error = error;
 exports.uRobinsEgg = uRobinsEgg;
