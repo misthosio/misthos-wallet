@@ -151,21 +151,7 @@ let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
        |> Map.keysToArray
        |> Set.mergeMany(Network.inputSet()),
      );
-let temporarilyInaccessibleInputs =
-    (accountIdx, {reserved, temporarilyInaccessible}) =>
-  temporarilyInaccessible
-  |. Map.getWithDefault(accountIdx, Map.String.empty)
-  |. Map.String.reduceU(Network.inputSet(), (. res, _, inputs) =>
-       res |. Set.mergeMany(inputs |> List.toArray)
-     )
-  |. Set.diff(
-       reserved
-       |. Map.getWithDefault(accountIdx, Network.inputMap())
-       |> Map.keysToArray
-       |> Set.mergeMany(Network.inputSet()),
-     );
-
-let allInputs = ({oldSpendable, spendable, temporarilyInaccessible}) =>
+let allUnspentInputs = ({oldSpendable, spendable, temporarilyInaccessible}) =>
   temporarilyInaccessible
   |. Map.valuesToArray
   |. Array.reduceU(Network.inputSet(), (. res, map) =>

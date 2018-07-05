@@ -40,7 +40,7 @@ function catchAndLogError(param) {
 
 function notifyOfUnlockedInputs(ventureId, blockHeight, param, walletInfo) {
   var confirmedTransactions = param[/* confirmedTransactions */4];
-  var events = Belt_Set.reduceU(WalletInfoCollector.allInputs(walletInfo), /* [] */0, (function (res, input) {
+  var events = Belt_Set.reduceU(WalletInfoCollector.allUnspentInputs(walletInfo), /* [] */0, (function (res, input) {
           var sequence = input[/* sequence */7];
           var match = Belt_MapString.get(confirmedTransactions, input[/* txId */0]);
           if (input[/* unlocked */8] || !(sequence && match && blockHeight > (sequence[0] + (match[0] | 0) | 0))) {

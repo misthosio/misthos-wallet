@@ -109,13 +109,7 @@ function oldSpendableInputs(accountIdx, param) {
                   })), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(Belt_Map.getWithDefault(param[/* reserved */6], accountIdx, Network.inputMap(/* () */0)))));
 }
 
-function temporarilyInaccessibleInputs(accountIdx, param) {
-  return Belt_Set.diff(Belt_MapString.reduceU(Belt_Map.getWithDefault(param[/* temporarilyInaccessible */4], accountIdx, Belt_MapString.empty), Network.inputSet(/* () */0), (function (res, _, inputs) {
-                    return Belt_Set.mergeMany(res, Belt_List.toArray(inputs));
-                  })), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(Belt_Map.getWithDefault(param[/* reserved */6], accountIdx, Network.inputMap(/* () */0)))));
-}
-
-function allInputs(param) {
+function allUnspentInputs(param) {
   var __x = Belt_Array.reduceU(Belt_Map.valuesToArray(param[/* temporarilyInaccessible */4]), Network.inputSet(/* () */0), (function (res, map) {
           return Belt_MapString.reduceU(map, res, (function (res, _, inputs) {
                         return Belt_Set.mergeMany(res, Belt_List.toArray(inputs));
@@ -1194,9 +1188,8 @@ exports.currentKeyChainIdent = currentKeyChainIdent;
 exports.currentKeyChain = currentKeyChain;
 exports.currentSpendableInputs = currentSpendableInputs;
 exports.oldSpendableInputs = oldSpendableInputs;
-exports.temporarilyInaccessibleInputs = temporarilyInaccessibleInputs;
 exports.unlockedInputs = unlockedInputs;
-exports.allInputs = allInputs;
+exports.allUnspentInputs = allUnspentInputs;
 exports.inputsFor = inputsFor;
 exports.nextChangeAddress = nextChangeAddress;
 exports.fakeChangeAddress = fakeChangeAddress;

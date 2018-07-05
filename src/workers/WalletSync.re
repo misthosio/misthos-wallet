@@ -23,7 +23,7 @@ let notifyOfUnlockedInputs =
     ) =>
   switch (
     walletInfo
-    |> WalletInfoCollector.allInputs
+    |> WalletInfoCollector.allUnspentInputs
     |. Set.reduceU(
          [], (. res, {txId, sequence, unlocked} as input: Network.txInput) =>
          switch (
