@@ -21,7 +21,7 @@ var WalletInfoCollector = require("../../src/application/wallet/WalletInfoCollec
 Helpers.enableHttpRequests(/* () */0);
 
 describe("Wallet_integration", (function () {
-        return Fixtures.withCached(/* None */0, /* None */0, "Wallet_integration", "integration", (function () {
+        return Fixtures.withCached(/* Some */[false], /* Some */[false], "Wallet_integration", "integration", (function () {
                       return Generators.withUserSessions(3);
                     }), (function (sessions) {
                       var match = Generators.threeUserSessionsFromArray(sessions);
@@ -179,8 +179,11 @@ describe("Wallet_integration", (function () {
                                                 walletTwoAddresses_001
                                               ];
                                               List.iter((function (param) {
+                                                      var amount = param[/* amount */3];
                                                       var address = param[/* address */2];
-                                                      var incomeEvent = Curry._5(Event.Income[/* Detected */1][/* make */0], param[/* txOutputN */1], List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, param[/* txId */0], param[/* amount */3]);
+                                                      var txOutputN = param[/* txOutputN */1];
+                                                      var txId = param[/* txId */0];
+                                                      var incomeEvent = Curry._5(Event.Income[/* Detected */1][/* make */0], txOutputN, List.assoc(address, walletTwoAddresses)[/* address */1][/* coordinates */2], address, txId, amount);
                                                       var match = List.mem_assoc(address, walletOneAddresses);
                                                       if (match) {
                                                         oneKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(41, [incomeEvent]), oneKeyChainWallet[0]);
@@ -188,7 +191,22 @@ describe("Wallet_integration", (function () {
                                                         return /* () */0;
                                                       } else {
                                                         twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeDetected */Block.__(41, [incomeEvent]), twoKeyChainWallet[0]);
-                                                        return /* () */0;
+                                                        if (address === address3[/* address */1][/* displayAddress */5]) {
+                                                          twoKeyChainWallet[0] = Venture__Wallet.apply(/* IncomeUnlocked */Block.__(42, [Curry._1(Event.Income[/* Unlocked */2][/* make */0], /* record */[
+                                                                        /* txId */txId,
+                                                                        /* txOutputN */txOutputN,
+                                                                        /* address */address,
+                                                                        /* value */amount,
+                                                                        /* nCoSigners */address3[/* address */1][/* nCoSigners */0],
+                                                                        /* nPubKeys */address3[/* address */1][/* nPubKeys */1],
+                                                                        /* coordinates */address3[/* address */1][/* coordinates */2],
+                                                                        /* sequence */address3[/* address */1][/* sequence */6],
+                                                                        /* unlocked */true
+                                                                      ])]), twoKeyChainWallet[0]);
+                                                          return /* () */0;
+                                                        } else {
+                                                          return 0;
+                                                        }
                                                       }
                                                     }), utxos);
                                               var param = Venture__Wallet.preparePayoutTx(Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], /* array */[

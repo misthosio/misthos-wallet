@@ -45,7 +45,17 @@ function notifyOfUnlockedInputs(ventureId, blockHeight, param, walletInfo) {
           var match = Belt_MapString.get(confirmedTransactions, input[/* txId */0]);
           if (sequence && match && blockHeight > (sequence[0] + (match[0] | 0) | 0)) {
             return /* :: */[
-                    Curry._1(Event.Income[/* Unlocked */2][/* make */0], input),
+                    Curry._1(Event.Income[/* Unlocked */2][/* make */0], /* record */[
+                          /* txId */input[/* txId */0],
+                          /* txOutputN */input[/* txOutputN */1],
+                          /* address */input[/* address */2],
+                          /* value */input[/* value */3],
+                          /* nCoSigners */input[/* nCoSigners */4],
+                          /* nPubKeys */input[/* nPubKeys */5],
+                          /* coordinates */input[/* coordinates */6],
+                          /* sequence */input[/* sequence */7],
+                          /* unlocked */true
+                        ]),
                     res
                   ];
           } else {

@@ -828,6 +828,7 @@ module Log = {
                        coordinates,
                        value: amount,
                        sequence: None,
+                       unlocked: true,
                        nCoSigners: 0,
                        nPubKeys: 0,
                      },

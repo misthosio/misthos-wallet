@@ -88,33 +88,22 @@ module AddressesView = {
           addressInfo,
           walletInfoCollector,
         )
-        |. Belt.List.mapU((. {address, txId, value}: Network.txInput) => {
+        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
              let {status, date}: TxDetailsCollector.income =
                txDetailsCollector
                |> TxDetailsCollector.getIncome(txId)
                |> Js.Option.getExn;
-             {
-               txId,
-               amount: value,
-               status,
-               date,
-               unlocked:
-                 switch (status) {
-                 | Unlocked(addresses) =>
-                   addresses |. Belt.Set.String.has(address)
-                 | _ => false
-                 },
-             };
+             {txId, amount: value, status, date, unlocked};
            }),
       spentIncome:
         oldInputCollector
         |> OldInputCollector.inputsFor(addressInfo.address)
-        |. Belt.List.mapU((. {txId, value}: Network.txInput) => {
+        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
              let {status, date}: TxDetailsCollector.income =
                txDetailsCollector
                |> TxDetailsCollector.getIncome(txId)
                |> Js.Option.getExn;
-             {txId, amount: value, status, date, unlocked: false};
+             {txId, amount: value, status, date, unlocked};
            }),
     },
   };

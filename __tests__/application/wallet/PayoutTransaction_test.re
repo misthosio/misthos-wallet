@@ -24,6 +24,7 @@ let () =
               AddressIndex.first,
             ),
             sequence: None,
+            unlocked: false,
           }: Network.txInput
         ),
         (
@@ -42,6 +43,7 @@ let () =
               AddressIndex.first |> AddressIndex.next,
             ),
             sequence: None,
+            unlocked: false,
           }: Network.txInput
         ),
       |]

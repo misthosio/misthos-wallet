@@ -28,7 +28,7 @@ let notifyOfUnlockedInputs =
          switch (sequence, confirmedTransactions |. Map.String.get(txId)) {
          | (Some(sequence), Some(txBlock))
              when blockHeight > sequence + int_of_float(txBlock) => [
-             Event.Income.Unlocked.make(~input),
+             Event.Income.Unlocked.make(~input={...input, unlocked: true}),
              ...res,
            ]
          | _ => res

@@ -15,6 +15,8 @@ open WalletHelpers;
 let () =
   describe("Wallet_integration", () =>
     F.withCached(
+      ~load=false,
+      ~persist=false,
       ~scope="Wallet_integration",
       "integration",
       () => G.withUserSessions(3),
@@ -122,7 +124,29 @@ let () =
                       | _ =>
                         twoKeyChainWallet :=
                           twoKeyChainWallet^
-                          |> Wallet.apply(IncomeDetected(incomeEvent))
+                          |> Wallet.apply(IncomeDetected(incomeEvent));
+                        if (address == address3.address.displayAddress) {
+                          twoKeyChainWallet :=
+                            twoKeyChainWallet^
+                            |> Wallet.apply(
+                                 IncomeUnlocked(
+                                   Income.Unlocked.make(
+                                     ~input={
+                                       txId,
+                                       txOutputN,
+                                       address,
+                                       value: amount,
+                                       nCoSigners: address3.address.nCoSigners,
+                                       nPubKeys: address3.address.nPubKeys,
+                                       sequence: address3.address.sequence,
+                                       coordinates:
+                                         address3.address.coordinates,
+                                       unlocked: true,
+                                     },
+                                   ),
+                                 ),
+                               );
+                        };
                       };
                     });
                  oneKeyChainWallet^

@@ -112,7 +112,8 @@ function txInputForChangeAddress(txId, network, param) {
                         /* nCoSigners */address[/* nCoSigners */0],
                         /* nPubKeys */address[/* nPubKeys */1],
                         /* coordinates */address[/* coordinates */2],
-                        /* sequence */address[/* sequence */6]
+                        /* sequence */address[/* sequence */6],
+                        /* unlocked */false
                       ];
               }), param[/* changeAddress */3]);
 }

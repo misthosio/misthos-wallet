@@ -31,6 +31,7 @@ type txInput = {
   nPubKeys: int,
   coordinates: Address.Coordinates.t,
   sequence: option(int),
+  unlocked: bool,
 };
 
 module TxInputCmp = {
@@ -71,6 +72,7 @@ let encodeInput = input =>
       ("nPubKeys", int(input.nPubKeys)),
       ("coordinates", Address.Coordinates.encode(input.coordinates)),
       ("sequence", nullable(int, input.sequence)),
+      ("unlocked", nullable(bool, input.unlocked ? Some(true) : None)),
     ])
   );
 
@@ -84,6 +86,7 @@ let decodeInput = raw =>
     nPubKeys: raw |> field("nPubKeys", int),
     coordinates: raw |> field("coordinates", Address.Coordinates.decode),
     sequence: raw |> optional(field("sequence", int)),
+    unlocked: raw |> optional(field("unlocked", bool)) |> Js.Option.isSome,
   };
 
 module Make = (Client: NetworkClient) => {
@@ -111,6 +114,7 @@ module Make = (Client: NetworkClient) => {
                     value: amount,
                     coordinates: a.coordinates,
                     sequence: a.sequence,
+                    unlocked: false,
                   };
                 })
              |> resolve

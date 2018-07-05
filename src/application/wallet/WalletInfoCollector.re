@@ -646,6 +646,7 @@ let apply = (event, state) =>
       nCoSigners: keyChain.nCoSigners,
       nPubKeys: keyChain.custodianKeyChains |> List.length,
       sequence: keyChain.sequence,
+      unlocked: false,
     };
     state
     |> addTxInput(addressStatus, accountIdx, input)

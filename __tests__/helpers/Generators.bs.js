@@ -852,7 +852,8 @@ function withIncomeUnlocked(income, l) {
                               /* nCoSigners */0,
                               /* nPubKeys */0,
                               /* coordinates */match[/* coordinates */1],
-                              /* sequence : None */0
+                              /* sequence : None */0,
+                              /* unlocked */true
                             ])],
                       -1
                     ];

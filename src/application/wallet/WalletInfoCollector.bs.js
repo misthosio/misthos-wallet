@@ -1044,7 +1044,8 @@ function apply($$event, state) {
           input_004,
           input_005,
           /* coordinates */coordinates$1,
-          input_007
+          input_007,
+          /* unlocked */false
         ];
         return addToBalance(accountIdx$9, address, amount, addTxInput(addressStatus$1, accountIdx$9, input, state));
     case 42 : 

@@ -117,6 +117,7 @@ let txInputForChangeAddress = (~txId, network, {changeAddress, txHex}) =>
          address: address.displayAddress,
          coordinates: address.coordinates,
          sequence: address.sequence,
+         unlocked: false,
        };
      });
 
