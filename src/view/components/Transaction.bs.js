@@ -6,6 +6,7 @@ var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var React = require("react");
 var Colors = require("../Colors.bs.js");
+var $$String = require("bs-platform/lib/js/string.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var MTypography = require("./MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
@@ -59,7 +60,7 @@ function make(txType, primary, amount$1, date, onClick, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                                  ViewCommon.text(primary),
+                                                  ViewCommon.text($$String.uppercase(primary)),
                                                   React.createElement("span", {
                                                         className: amount(txType)
                                                       }, ViewCommon.text(BTC.format(amount$1) + " BTC"))

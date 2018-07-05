@@ -44,7 +44,7 @@ let make =
           classes=[Root(Styles.root)]
           primary={
             <MTypography variant=`Body2>
-              (primary |> text)
+              (primary |> String.uppercase |> text)
               <span className=(Styles.amount(txType))>
                 (BTC.format(amount) ++ " BTC" |> text)
               </span>
