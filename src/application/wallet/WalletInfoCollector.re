@@ -744,6 +744,17 @@ let apply = (event, state) =>
         payoutTx.usedInputs,
         state.reserved,
       );
+    let unlocked =
+      state.unlocked
+      |. Map.updateU(accountIdx, (. unlockedInputs) =>
+           switch (unlockedInputs) {
+           | Some(unlockedInputs) =>
+             let unlockedInputs =
+               payoutTx.usedInputs |. Array.reduce(unlockedInputs, Set.remove);
+             unlockedInputs |. Set.size == 0 ? None : Some(unlockedInputs);
+           | None => None
+           }
+         );
     let state =
       switch (
         payoutTx
@@ -807,6 +818,7 @@ let apply = (event, state) =>
                 )
            ),
       reserved,
+      unlocked,
     };
   | PayoutBroadcastFailed({processId}) =>
     let payoutTx: PayoutTransaction.t =

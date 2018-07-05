@@ -845,6 +845,19 @@ function apply($$event, state) {
         var payoutTx$3 = Belt_Map.getExn(state[/* payoutProcesses */8], processId$3);
         var accountIdx$5 = Address.Coordinates[/* accountIdx */3](Belt_Array.getExn(payoutTx$3[/* usedInputs */1], 0)[/* coordinates */6]);
         var reserved$2 = removeInputsFromReserved(accountIdx$5, processId$3, payoutTx$3[/* usedInputs */1], state[/* reserved */6]);
+        var unlocked = Belt_Map.updateU(state[/* unlocked */3], accountIdx$5, (function (unlockedInputs) {
+                if (unlockedInputs) {
+                  var unlockedInputs$1 = Belt_Array.reduce(payoutTx$3[/* usedInputs */1], unlockedInputs[0], Belt_Set.remove);
+                  var match = Belt_Set.size(unlockedInputs$1) === 0;
+                  if (match) {
+                    return /* None */0;
+                  } else {
+                    return /* Some */[unlockedInputs$1];
+                  }
+                } else {
+                  return /* None */0;
+                }
+              }));
         var match$4 = PayoutTransaction.txInputForChangeAddress(match$3[/* txId */1], state[/* network */0], payoutTx$3);
         var state$1;
         if (match$4) {
@@ -891,7 +904,7 @@ function apply($$event, state) {
                 /* network */init[/* network */0],
                 /* spendable */init[/* spendable */1],
                 /* oldSpendable */init[/* oldSpendable */2],
-                /* unlocked */init[/* unlocked */3],
+                /* unlocked */unlocked,
                 /* temporarilyInaccessible */init[/* temporarilyInaccessible */4],
                 /* inaccessible */init[/* inaccessible */5],
                 /* reserved */reserved$2,
