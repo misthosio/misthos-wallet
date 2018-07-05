@@ -68,8 +68,10 @@ function fromViewModelState(param) {
                       /* unspentIncome */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
                               var txId = param[/* txId */0];
                               var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
+                              var status = match[/* status */0];
                               return /* record */[
-                                      /* status */match[/* status */0],
+                                      /* status */status,
+                                      /* unlocked */typeof status === "number" ? false : Belt_SetString.has(status[0], param[/* address */2]),
                                       /* date */match[/* date */1],
                                       /* txId */txId,
                                       /* amount */param[/* value */3]
@@ -80,6 +82,7 @@ function fromViewModelState(param) {
                               var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
                               return /* record */[
                                       /* status */match[/* status */0],
+                                      /* unlocked */false,
                                       /* date */match[/* date */1],
                                       /* txId */txId,
                                       /* amount */param[/* value */3]

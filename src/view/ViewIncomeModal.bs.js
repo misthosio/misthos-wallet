@@ -29,12 +29,17 @@ function make(viewData, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = status ? /* tuple */[
+              var match = typeof status === "number" ? (
+                  status !== 0 ? /* tuple */[
+                      "Confirmed",
+                      /* Success */2
+                    ] : /* tuple */[
+                      "Unconfirmed",
+                      /* Pending */0
+                    ]
+                ) : /* tuple */[
                   "Confirmed",
                   /* Success */2
-                ] : /* tuple */[
-                  "Unconfirmed",
-                  /* Pending */0
                 ];
               var txStatus = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match[1], match[0], /* array */[]));
               var addresses$1 = Belt_SetString.reduce(addresses, "", (function (res, address) {

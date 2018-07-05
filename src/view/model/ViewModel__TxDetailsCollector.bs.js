@@ -206,11 +206,33 @@ function apply($$event, state) {
                         }
                       }))
               ];
+    case 42 : 
+        var match$3 = $$event[0][/* input */0];
+        var address$1 = match$3[/* address */2];
+        return /* record */[
+                /* network */state[/* network */0],
+                /* localUser */state[/* localUser */1],
+                /* payouts */state[/* payouts */2],
+                /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
+                /* txDates */state[/* txDates */4],
+                /* income */Belt_MapString.update(state[/* income */5], match$3[/* txId */0], (function (param) {
+                        return Utils.mapOption((function (income) {
+                                      var match = income[/* status */0];
+                                      return /* record */[
+                                              /* status : Unlocked */[Belt_SetString.add(typeof match === "number" ? Belt_SetString.empty : match[0], address$1)],
+                                              /* date */income[/* date */1],
+                                              /* txId */income[/* txId */2],
+                                              /* amount */income[/* amount */3],
+                                              /* addresses */income[/* addresses */4]
+                                            ];
+                                    }), param);
+                      }))
+              ];
     case 43 : 
-        var match$3 = $$event[0];
-        var txId$2 = match$3[/* txId */0];
+        var match$4 = $$event[0];
+        var txId$2 = match$4[/* txId */0];
         var processId$1 = Belt_MapString.get(state[/* txIdToProcessIdMap */3], txId$2);
-        var txDate$2 = new Date(match$3[/* unixTime */2] * 1000);
+        var txDate$2 = new Date(match$4[/* unixTime */2] * 1000);
         return /* record */[
                 /* network */state[/* network */0],
                 /* localUser */state[/* localUser */1],

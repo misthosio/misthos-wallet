@@ -123,7 +123,7 @@ function make(viewData, _) {
                                   }))]))), React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Belt_List.toArray(Utils.intersperse((function (key) {
                                         return ReasonReact.element(/* Some */[key], /* None */0, MDivider.make(/* array */[]));
                                       }), Belt_List.mapWithIndex(Belt_List.concat(details[/* unspentIncome */5], details[/* spentIncome */6]), (function (iter, tx) {
-                                            return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(/* Income */0, "income", tx[/* amount */3], tx[/* date */1], /* None */0, /* array */[]));
+                                            return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(/* Income */0, "income", tx[/* amount */4], tx[/* date */2], /* None */0, /* array */[]));
                                           }))))]))));
   };
   return /* record */[

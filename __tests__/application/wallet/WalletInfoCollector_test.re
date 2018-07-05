@@ -197,7 +197,7 @@ let () = {
                )
             |> Set.size,
           )
-          |> toEqual(2)
+          |> toEqual(3)
         );
       },
     )

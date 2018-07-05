@@ -14,6 +14,7 @@ let make = (~viewData: ViewData.t, _children) => {
         let (label, status: StatusChip.status) =
           switch (status) {
           | Unconfirmed => ("Unconfirmed", Pending)
+          | Unlocked(_)
           | Confirmed => ("Confirmed", Success)
           };
         <StatusChip label status />;

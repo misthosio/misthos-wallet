@@ -24,7 +24,8 @@ type payoutProcess = ProcessCollector.process(data);
 
 type incomeStatus =
   | Unconfirmed
-  | Confirmed;
+  | Confirmed
+  | Unlocked(Set.String.t);
 
 type income = {
   status: incomeStatus,
@@ -164,6 +165,29 @@ let apply = (event, state) =>
              )
         },
     };
+  | IncomeUnlocked({input: {txId, address}}) => {
+      ...state,
+      income:
+        state.income
+        |. Map.String.update(
+             txId,
+             Utils.mapOption(income =>
+               {
+                 ...income,
+                 status:
+                   Unlocked(
+                     (
+                       switch (income.status) {
+                       | Unlocked(addresses) => addresses
+                       | _ => Set.String.empty
+                       }
+                     )
+                     |. Set.String.add(address),
+                   ),
+               }
+             ),
+           ),
+    }
   | PayoutBroadcastFailed({processId, errorMessage}) => {
       ...state,
       payouts:

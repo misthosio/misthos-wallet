@@ -207,7 +207,7 @@ describe("WalletInfoCollector", (function () {
                               return Jest.Expect[/* toEqual */12](4, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
                             }));
                       return Jest.test("3 inputs are current", (function () {
-                                    return Jest.Expect[/* toEqual */12](2, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
+                                    return Jest.Expect[/* toEqual */12](3, Jest.Expect[/* expect */0](Belt_Set.size(WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], info))));
                                   }));
                     }));
       }));

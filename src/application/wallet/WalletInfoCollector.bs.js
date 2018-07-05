@@ -1037,23 +1037,22 @@ function apply($$event, state) {
     case 42 : 
         var input$1 = $$event[0][/* input */0];
         var accountIdx$10 = Address.Coordinates[/* accountIdx */3](input$1[/* coordinates */6]);
-        var init$1 = removeInput(accountIdx$10, input$1, state);
         return /* record */[
-                /* network */init$1[/* network */0],
-                /* spendable */init$1[/* spendable */1],
-                /* oldSpendable */init$1[/* oldSpendable */2],
+                /* network */state[/* network */0],
+                /* spendable */state[/* spendable */1],
+                /* oldSpendable */state[/* oldSpendable */2],
                 /* unlocked */Belt_Map.updateU(state[/* unlocked */3], accountIdx$10, (function (inputs) {
                         return /* Some */[Belt_Set.add(Js_option.getWithDefault(Network.inputSet(/* () */0), inputs), input$1)];
                       })),
-                /* temporarilyInaccessible */init$1[/* temporarilyInaccessible */4],
-                /* inaccessible */init$1[/* inaccessible */5],
-                /* reserved */init$1[/* reserved */6],
-                /* keyChains */init$1[/* keyChains */7],
-                /* payoutProcesses */init$1[/* payoutProcesses */8],
-                /* activatedKeyChain */init$1[/* activatedKeyChain */9],
-                /* exposedCoordinates */init$1[/* exposedCoordinates */10],
-                /* addressInfos */init$1[/* addressInfos */11],
-                /* currentCustodians */init$1[/* currentCustodians */12]
+                /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+                /* inaccessible */state[/* inaccessible */5],
+                /* reserved */state[/* reserved */6],
+                /* keyChains */state[/* keyChains */7],
+                /* payoutProcesses */state[/* payoutProcesses */8],
+                /* activatedKeyChain */state[/* activatedKeyChain */9],
+                /* exposedCoordinates */state[/* exposedCoordinates */10],
+                /* addressInfos */state[/* addressInfos */11],
+                /* currentCustodians */state[/* currentCustodians */12]
               ];
     default:
       return state;

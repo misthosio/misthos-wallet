@@ -653,7 +653,7 @@ let apply = (event, state) =>
   | IncomeUnlocked({input}) =>
     let accountIdx = input.coordinates |> Address.Coordinates.accountIdx;
     {
-      ...state |> removeInput(accountIdx, input),
+      ...state,
       unlocked:
         state.unlocked
         |. Map.updateU(accountIdx, (. inputs) =>
