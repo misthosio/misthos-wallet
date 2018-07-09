@@ -41,8 +41,11 @@ var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
 
+var partnerRemovalRisk = "ALERT: This user is currently critical to access certain funds. By removing this user, you accept that these funds will become temporarily or permanently inaccessible. Are you sure you want to endorse this removal?";
+
 exports.text = text;
 exports.extractString = extractString;
 exports.testnet = testnet;
 exports.atRiskFunds = atRiskFunds;
+exports.partnerRemovalRisk = partnerRemovalRisk;
 /* testnet Not a pure module */

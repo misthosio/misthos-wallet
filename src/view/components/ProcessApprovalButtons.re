@@ -32,6 +32,7 @@ module Styles = {
 let make =
     (
       ~endorseText,
+      ~alertText=?,
       ~rejectText,
       ~canVote,
       ~onEndorse,
@@ -81,7 +82,7 @@ let make =
           |]
         | (_, ConfirmEndorse, _) => [|
             <MTypography className=Styles.inlineConfirm variant=`Body2>
-              (endorseText |> text)
+              (alertText |> Js.Option.getWithDefault(endorseText) |> text)
               <MButton variant=Flat onClick=(_e => send(ConfirmEndorse))>
                 (text("yes"))
               </MButton>

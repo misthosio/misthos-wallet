@@ -5,6 +5,7 @@ var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var MButton = require("./MButton.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var MTypography = require("./MTypography.bs.js");
@@ -31,7 +32,7 @@ var Styles = /* module */[
   /* inlineConfirm */inlineConfirm
 ];
 
-function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, cmdStatus, _) {
+function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, onCancel, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -65,7 +66,7 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                     break;
                 case 1 : 
                     tmp = /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, /* array */[
-                                ViewCommon.text(endorseText),
+                                ViewCommon.text(Js_option.getWithDefault(endorseText, alertText)),
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* ConfirmEndorse */2);
                                           }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("yes")])),

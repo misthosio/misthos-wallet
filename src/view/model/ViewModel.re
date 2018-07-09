@@ -129,32 +129,95 @@ module AddressesView = {
 let viewAddressesModal = AddressesView.fromViewModelState;
 
 module ManagePartnersView = {
+  open Belt;
   type partner = PartnersCollector.partner;
   type t = {
     ventureName: string,
     localUser: UserId.t,
     partners: list(partner),
+    alertPartners: UserId.set,
     joinVentureUrl: string,
   };
   let fromViewModelState =
-      ({ventureName, ventureId, localUser, partnersCollector}) => {
-    localUser,
-    ventureName,
-    partners: partnersCollector.partners,
-    joinVentureUrl:
-      Location.origin
-      ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
+      (
+        {
+          ventureName,
+          ventureId,
+          localUser,
+          partnersCollector,
+          walletInfoCollector,
+        },
+      ) => {
+    let infos =
+      walletInfoCollector
+      |> WalletInfoCollector.addressInfos(AccountIndex.default);
+
+    {
+      localUser,
+      alertPartners:
+        infos
+        |. Belt.List.reduceU(
+             UserId.emptySet,
+             (.
+               res,
+               {addressStatus, custodians, balance}: WalletInfoCollector.addressInfo,
+             ) =>
+             switch (addressStatus, balance) {
+             | (AtRisk, balance)
+             | (TemporarilyInaccessible, balance)
+                 when balance |> BTC.gt(BTC.zero) =>
+               res |. Set.union(custodians)
+             | _ => res
+             }
+           ),
+      ventureName,
+      partners: partnersCollector.partners,
+      joinVentureUrl:
+        Location.origin
+        ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
+    };
   };
 };
 
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 module ViewPartnerView = {
+  open Belt;
   type voteStatus = ProcessCollector.voteStatus;
   type voter = ProcessCollector.voter;
-  type t = PartnersCollector.partnerProcess;
-  let fromViewModelState = (userId, {partnersCollector}) =>
-    partnersCollector |> PartnersCollector.getProspect(userId);
+  type partnerProcess = PartnersCollector.partnerProcess;
+  type t = {
+    partnerProcess,
+    atRiskWarning: bool,
+  };
+  let fromViewModelState = (userId, {partnersCollector, walletInfoCollector}) =>
+    partnersCollector
+    |> PartnersCollector.getProspect(userId)
+    |> Utils.mapOption(partnerProcess =>
+         {
+           partnerProcess,
+           atRiskWarning:
+             switch (partnerProcess.data.processType) {
+             | Removal =>
+               walletInfoCollector
+               |> WalletInfoCollector.addressInfos(AccountIndex.default)
+               |. Belt.List.reduceU(
+                    false,
+                    (.
+                      res,
+                      {addressStatus, custodians}: WalletInfoCollector.addressInfo,
+                    ) =>
+                    switch (addressStatus) {
+                    | TemporarilyInaccessible
+                    | AtRisk =>
+                      res || custodians |. Set.has(partnerProcess.data.userId)
+                    | _ => res
+                    }
+                  )
+             | Addition => false
+             },
+         }
+       );
 };
 
 let viewPartnerModal = ViewPartnerView.fromViewModelState;

@@ -30,3 +30,5 @@ let atRiskFunds = ventureId => {
   |]
   |> ReasonReact.array;
 };
+
+let partnerRemovalRisk = "ALERT: This user is currently critical to access certain funds. By removing this user, you accept that these funds will become temporarily or permanently inaccessible. Are you sure you want to endorse this removal?";

@@ -21,13 +21,13 @@ let component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
 module Styles = {
   open Css;
-  let gray = style([color(rgba(0, 0, 0, 0.38))]);
   let inlineConfirm = style([display(`flex), alignItems(`baseline)]);
 };
 
 let make =
     (
       ~proposeText,
+      ~alertText=?,
       ~onSubmit,
       ~onPropose=?,
       ~onCancel=?,
@@ -66,7 +66,7 @@ let make =
         switch (state, cmdStatus) {
         | (ConfirmProposal, _) => [|
             <MTypography className=Styles.inlineConfirm variant=`Body2>
-              (proposeText |> text)
+              (alertText |> Js.Option.getWithDefault(proposeText) |> text)
               <MButton variant=Flat onClick=(_e => send(ConfirmProposal))>
                 (text("yes"))
               </MButton>

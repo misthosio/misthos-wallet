@@ -6,6 +6,7 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Utils = require("../../utils/Utils.bs.js");
 var MButton = require("./MButton.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var MTypography = require("./MTypography.bs.js");
@@ -13,11 +14,6 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var CommandExecutor = require("./CommandExecutor.bs.js");
 
 var component = ReasonReact.reducerComponent("ProcessApprovalButtons");
-
-var gray = Css.style(/* :: */[
-      Css.color(Css.rgba(0, 0, 0, 0.38)),
-      /* [] */0
-    ]);
 
 var inlineConfirm = Css.style(/* :: */[
       Css.display(/* flex */-1010954439),
@@ -27,12 +23,9 @@ var inlineConfirm = Css.style(/* :: */[
       ]
     ]);
 
-var Styles = /* module */[
-  /* gray */gray,
-  /* inlineConfirm */inlineConfirm
-];
+var Styles = /* module */[/* inlineConfirm */inlineConfirm];
 
-function make(proposeText, onSubmit, onPropose, onCancel, canSubmitProposal, $staropt$star, cmdStatus, _) {
+function make(proposeText, alertText, onSubmit, onPropose, onCancel, canSubmitProposal, $staropt$star, cmdStatus, _) {
   var withConfirmation = $staropt$star !== undefined ? $staropt$star : true;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -61,7 +54,7 @@ function make(proposeText, onSubmit, onPropose, onCancel, canSubmitProposal, $st
                     break;
                 case 1 : 
                     tmp = /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, /* array */[
-                                ViewCommon.text(proposeText),
+                                ViewCommon.text(Js_option.getWithDefault(proposeText, alertText)),
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* ConfirmProposal */2);
                                           }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("yes")])),

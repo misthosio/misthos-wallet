@@ -154,7 +154,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                   }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, total, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
                                             ])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
-                                    }, ReasonReact.element(undefined, undefined, Voters.make(match[/* voters */4], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", "Reject Payout", match[/* canVote */3], (function () {
+                                    }, ReasonReact.element(undefined, undefined, Voters.make(match[/* voters */4], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Payout", undefined, "Reject Payout", match[/* canVote */3], (function () {
                                                 return Curry._1(commands[/* endorsePayout */8], processId);
                                               }), (function () {
                                                 return Curry._1(commands[/* rejectPayout */9], processId);
