@@ -76,29 +76,7 @@ module Styles = {
     ]);
   };
   let area = area => style([unsafe("gridArea", area), minHeight(px(0))]);
-  let warning =
-    style([
-      fontFamily(Theme.sourceSansPro),
-      fontSize(px(14)),
-      fontWeight(700),
-      color(Colors.white),
-      textTransform(uppercase),
-      padding2(~h=px(0), ~v=px(Theme.space(1))),
-      selector(
-        "> a",
-        [
-          color(Colors.white),
-          unsafe("textDecorationColor", Colors.uWhite),
-          hover([color(Colors.misthosTeal)]),
-        ],
-      ),
-    ]);
-  let warningBg =
-    style([
-      unsafe("gridColumn", "begin / end"),
-      unsafe("gridRow", "wBegin / wEnd"),
-      unsafe("background", Colors.uGradientOrange),
-    ]);
+
   let title =
     style([
       fontFamily(Theme.oswald),
@@ -118,6 +96,12 @@ module Styles = {
       unsafe("borderImageSlice", "1"),
       unsafe("borderImageSource", Colors.uGradient),
       unsafe("borderWidth", "0px 0px 4px 0px"),
+    ]);
+
+  let warningBg =
+    style([
+      unsafe("gridColumn", "begin / end"),
+      unsafe("gridRow", "wBegin / wEnd"),
     ]);
 };
 
@@ -146,14 +130,20 @@ let make =
     <div className=(Styles.grid(variant, warning))>
       (
         switch (warning) {
-        | Some(_) => <div className=Styles.warningBg key="warningBg" />
+        | Some(_) =>
+          <div
+            className=(
+              WarningBanner.Styles.warningBg ++ " " ++ Styles.warningBg
+            )
+            key="warningBg"
+          />
         | None => ReasonReact.null
         }
       )
       <div className=Styles.titleBg key="titleBg" />
       (
         [|
-          (warning, "warning", Styles.warning),
+          (warning, "warning", WarningBanner.Styles.warning(~inline=false)),
           (area1, "area1", ""),
           (area2, "area2", ""),
           (title1, "title1", Styles.title),

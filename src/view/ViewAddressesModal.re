@@ -93,10 +93,14 @@ module Styles = {
       display(grid),
       unsafe("gridTemplateColumns", "[begin] 1fr 1fr 1fr min-content [end]"),
     ]);
-  let header =
+  let header = warning =>
     style([
       borderBottom(px(1), `solid, hex("979797")),
       padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3))),
+      position(sticky),
+      zIndex(1),
+      top(px(warning ? Theme.space(4) : 0)),
+      backgroundColor(Colors.white),
     ]);
   let summary =
     style([padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3)))]);
@@ -280,24 +284,28 @@ let make = (~viewData: ViewData.t, _children) => {
         |> ReasonReact.array;
       let warning =
         viewData.atRiskWarning ?
-          Some(WarningsText.atRiskFunds(viewData.ventureId)) : None;
+          <WarningBanner key="warning">
+            ...(viewData.ventureId |> WarningsText.atRiskFunds)
+          </WarningBanner> :
+          ReasonReact.null;
+      let className = Styles.header(viewData.atRiskWarning);
       <Grid
-        ?warning
         title1=("Wallet Address History" |> text)
         area3={
           <div className=ScrollList.containerStyles>
             <ScrollList>
+              warning
               <div className=Styles.grid>
-                <MTypography className=Styles.header variant=`Body2>
+                <MTypography className variant=`Body2>
                   ("WALLET ADDRESS" |> text)
                 </MTypography>
-                <MTypography className=Styles.header variant=`Body2>
+                <MTypography className variant=`Body2>
                   ("ADDRESS TYPE" |> text)
                 </MTypography>
-                <MTypography className=Styles.header variant=`Body2>
+                <MTypography className variant=`Body2>
                   ("STATUS" |> text)
                 </MTypography>
-                <span className=Styles.header />
+                <span className />
                 infos
               </div>
             </ScrollList>

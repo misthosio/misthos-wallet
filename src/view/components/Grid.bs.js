@@ -8,6 +8,7 @@ var React = require("react");
 var Colors = require("../Colors.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
+var WarningBanner = require("./WarningBanner.bs.js");
 
 var component = ReasonReact.statelessComponent("Grid");
 
@@ -88,52 +89,6 @@ function area(area$1) {
             ]);
 }
 
-var warning = Css.style(/* :: */[
-      Css.fontFamily(Theme.sourceSansPro),
-      /* :: */[
-        Css.fontSize(Css.px(14)),
-        /* :: */[
-          Css.fontWeight(700),
-          /* :: */[
-            Css.color(Colors.white),
-            /* :: */[
-              Css.textTransform(Css.uppercase),
-              /* :: */[
-                Css.padding2(Css.px(Theme.space(1)), Css.px(0)),
-                /* :: */[
-                  Css.selector("> a", /* :: */[
-                        Css.color(Colors.white),
-                        /* :: */[
-                          Css.unsafe("textDecorationColor", Colors.uWhite),
-                          /* :: */[
-                            Css.hover(/* :: */[
-                                  Css.color(Colors.misthosTeal),
-                                  /* [] */0
-                                ]),
-                            /* [] */0
-                          ]
-                        ]
-                      ]),
-                  /* [] */0
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
-    ]);
-
-var warningBg = Css.style(/* :: */[
-      Css.unsafe("gridColumn", "begin / end"),
-      /* :: */[
-        Css.unsafe("gridRow", "wBegin / wEnd"),
-        /* :: */[
-          Css.unsafe("background", Colors.uGradientOrange),
-          /* [] */0
-        ]
-      ]
-    ]);
-
 var title = Css.style(/* :: */[
       Css.fontFamily(Theme.oswald),
       /* :: */[
@@ -180,17 +135,24 @@ var titleBg = Css.style(/* :: */[
       ]
     ]);
 
+var warningBg = Css.style(/* :: */[
+      Css.unsafe("gridColumn", "begin / end"),
+      /* :: */[
+        Css.unsafe("gridRow", "wBegin / wEnd"),
+        /* [] */0
+      ]
+    ]);
+
 var Styles = /* module */[
   /* gap */gap,
   /* grid */grid,
   /* area */area,
-  /* warning */warning,
-  /* warningBg */warningBg,
   /* title */title,
-  /* titleBg */titleBg
+  /* titleBg */titleBg,
+  /* warningBg */warningBg
 ];
 
-function make(title1, title2, area1, area2, area3, area4, area5, warning$1, _) {
+function make(title1, title2, area1, area2, area3, area4, area5, warning, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -210,10 +172,10 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning$1, _) {
                     )
                 );
               return React.createElement("div", {
-                          className: grid(variant, warning$1)
-                        }, warning$1 !== undefined ? React.createElement("div", {
+                          className: grid(variant, warning)
+                        }, warning !== undefined ? React.createElement("div", {
                                 key: "warningBg",
-                                className: warningBg
+                                className: WarningBanner.Styles[/* warningBg */1] + (" " + warningBg)
                               }) : null, React.createElement("div", {
                               key: "titleBg",
                               className: titleBg
@@ -230,9 +192,9 @@ function make(title1, title2, area1, area2, area3, area4, area5, warning$1, _) {
                                 }
                               }), /* array */[
                               /* tuple */[
-                                warning$1,
+                                warning,
                                 "warning",
-                                warning
+                                WarningBanner.Styles[/* warning */0](false)
                               ],
                               /* tuple */[
                                 area1,

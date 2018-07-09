@@ -23,6 +23,7 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Transaction = require("./components/Transaction.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
 var WarningsText = require("./text/WarningsText.bs.js");
+var WarningBanner = require("./components/WarningBanner.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Collapse = require("@jsiebern/bs-material-ui/src/MaterialUi_Collapse.bs.js");
@@ -142,13 +143,27 @@ var grid = Css.style(/* :: */[
       ]
     ]);
 
-var header = Css.style(/* :: */[
-      Css.borderBottom(Css.px(1), /* solid */12956715, Css.hex("979797")),
-      /* :: */[
-        Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
-        /* [] */0
-      ]
-    ]);
+function header(warning) {
+  return Css.style(/* :: */[
+              Css.borderBottom(Css.px(1), /* solid */12956715, Css.hex("979797")),
+              /* :: */[
+                Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
+                /* :: */[
+                  Css.position(Css.sticky),
+                  /* :: */[
+                    Css.zIndex(1),
+                    /* :: */[
+                      Css.top(Css.px(warning ? Theme.space(4) : 0)),
+                      /* :: */[
+                        Css.backgroundColor(Colors.white),
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
 
 var summary = Css.style(/* :: */[
       Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
@@ -247,14 +262,18 @@ function make(viewData, _) {
                           
                         })));
               var match = viewData[/* atRiskWarning */2];
-              var warning = match ? Js_primitive.some(WarningsText.atRiskFunds(viewData[/* ventureId */1])) : undefined;
+              var warning = match ? ReasonReact.element("warning", undefined, WarningBanner.make(WarningsText.atRiskFunds(viewData[/* ventureId */1]))) : null;
+              var className = header(viewData[/* atRiskWarning */2]);
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Wallet Address History")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
-                                    }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[React.createElement("div", {
+                                    }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
+                                              warning,
+                                              React.createElement("div", {
                                                     className: grid
-                                                  }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, header, undefined, undefined, undefined, /* array */[ViewCommon.text("WALLET ADDRESS")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, header, undefined, undefined, undefined, /* array */[ViewCommon.text("ADDRESS TYPE")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, header, undefined, undefined, undefined, /* array */[ViewCommon.text("STATUS")])), React.createElement("span", {
-                                                        className: header
-                                                      }), infos)])))), undefined, undefined, warning, /* array */[]));
+                                                  }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, className, undefined, undefined, undefined, /* array */[ViewCommon.text("WALLET ADDRESS")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, className, undefined, undefined, undefined, /* array */[ViewCommon.text("ADDRESS TYPE")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, className, undefined, undefined, undefined, /* array */[ViewCommon.text("STATUS")])), React.createElement("span", {
+                                                        className: className
+                                                      }), infos)
+                                            ])))), undefined, undefined, undefined, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* expandedAddress */undefined];
