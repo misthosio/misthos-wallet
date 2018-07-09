@@ -611,6 +611,10 @@
   dependencies:
     jest "^22.0.4"
 
+"@glennsl/bs-json@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@glennsl/bs-json/-/bs-json-2.0.0.tgz#e621aac1e94d49bc12bf493b67c01c39e61a6415"
+
 "@jsiebern/bs-material-ui@0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@jsiebern/bs-material-ui/-/bs-material-ui-0.3.1.tgz#e4b9a08b6d1746c69d3ffadc70c46340646d72a0"
@@ -1976,13 +1980,9 @@ bs-fetch@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/bs-fetch/-/bs-fetch-0.3.0.tgz#60c64457359d0c7e0798d5a04db8987d16c4f8f3"
 
-bs-json@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/bs-json/-/bs-json-1.0.1.tgz#0e25ed5ba7164ab131e494669b755da9844cc37e"
-
-bs-platform@3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-3.1.5.tgz#fb34ee4702bc9163848d5537096c4f31ebaeed40"
+bs-platform@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-4.0.0.tgz#4190460550414eecff92f1e2bbaf4d9c557b60af"
 
 bs-webapi@0.10.0:
   version "0.10.0"
