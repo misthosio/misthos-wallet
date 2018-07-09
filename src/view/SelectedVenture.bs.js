@@ -43,7 +43,18 @@ var addressesButtonIcon = Css.style(/* :: */[
       ]
     ]);
 
-var Styles = /* module */[/* addressesButtonIcon */addressesButtonIcon];
+var atRiskAddressButtonIcon = Css.style(/* :: */[
+      Css.marginTop(Css.px(Caml_int32.imul(Theme.space(2), -1))),
+      /* :: */[
+        Css.marginBottom(Css.px(Caml_int32.imul(Theme.space(1), -1))),
+        /* [] */0
+      ]
+    ]);
+
+var Styles = /* module */[
+  /* addressesButtonIcon */addressesButtonIcon,
+  /* atRiskAddressButtonIcon */atRiskAddressButtonIcon
+];
 
 function make(viewData, _) {
   return /* record */[
@@ -73,10 +84,10 @@ function make(viewData, _) {
                                       }), ViewCommon.text((
                                           match$1 ? "Addition" : "Removal"
                                         ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */5][/* userId */0]) + "'"))), Js_primitive.some(ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](prospect[/* proposedBy */2]))), /* array */[]));
-                    }), viewData[/* prospects */4]);
+                    }), viewData[/* prospects */5]);
               var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
                               return ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0]), undefined, Partner.make(partner[/* userId */0], partner[/* name */1], undefined, undefined, undefined, undefined, /* array */[]));
-                            }), viewData[/* partners */3])));
+                            }), viewData[/* partners */4])));
               var payouts = $$Array.of_list(List.map((function (param) {
                           var processId = param[/* processId */0];
                           var partial_arg_000 = viewData[/* ventureId */0];
@@ -88,9 +99,9 @@ function make(viewData, _) {
                           return ReasonReact.element(PrimitiveTypes.ProcessId[/* toString */0](processId), undefined, AlertListItem.make(/* ArrowUp */2, (function (param) {
                                             return Router.clickToRoute(partial_arg, param);
                                           }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */1][/* spentWithFees */2]) + " BTC")), Js_primitive.some(ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))), /* array */[]));
-                        }), viewData[/* payoutsPendingApproval */7]));
-              var unconfirmed = viewData[/* unconfirmedTxs */5];
-              var confirmed = viewData[/* confirmedTxs */6];
+                        }), viewData[/* payoutsPendingApproval */8]));
+              var unconfirmed = viewData[/* unconfirmedTxs */6];
+              var confirmed = viewData[/* confirmedTxs */7];
               var transactions = $$Array.of_list(Belt_List.concatMany(/* array */[
                         List.mapi((function (iter, tx) {
                                 var match = tx[/* txType */0];
@@ -121,23 +132,25 @@ function make(viewData, _) {
                                                 }), /* array */[]));
                               }), confirmed)
                       ]));
+              var match$1 = viewData[/* atRiskWarning */1];
               var partial_arg_000 = viewData[/* ventureId */0];
               var partial_arg = /* Venture */Block.__(0, [
                   partial_arg_000,
                   /* Addresses */4
                 ]);
-              var match$1 = viewData[/* readOnly */2];
+              var match$2 = viewData[/* atRiskWarning */1];
+              var match$3 = viewData[/* readOnly */3];
               var partial_arg_000$1 = viewData[/* ventureId */0];
               var partial_arg$1 = /* Venture */Block.__(0, [
                   partial_arg_000$1,
                   /* ManagePartners */1
                 ]);
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Partners")), Js_primitive.some(ViewCommon.text("Transactions")), Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, true, undefined, /* array */[
-                                              ViewCommon.text(viewData[/* ventureName */1]),
-                                              ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(addressesButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
+                                              ViewCommon.text(viewData[/* ventureName */2]),
+                                              ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(match$1 ? atRiskAddressButtonIcon : addressesButtonIcon, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (param) {
                                                           return Router.clickToRoute(partial_arg, param);
-                                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Icons.arrowUpCircle]))
-                                            ])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */8][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */8][/* reserved */1]), /* array */[])))), Js_primitive.some(React.createElement("div", {
+                                                        }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[match$2 ? Icons.alert : Icons.arrowUpCircle]))
+                                            ])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */9][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */9][/* reserved */1]), /* array */[])))), Js_primitive.some(React.createElement("div", {
                                       className: Css.style(/* :: */[
                                             Css.display(/* flex */-1010954439),
                                             /* [] */0
@@ -155,7 +168,7 @@ function make(viewData, _) {
                                                 /* CreatePayout */2
                                               ]), /* array */[ViewCommon.text("PAY OUT")])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
-                                    }, match$1 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, true, undefined, undefined, undefined, /* array */[partners]))])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function (param) {
+                                    }, match$3 ? React.createElement("b", undefined, ViewCommon.text("YOU HAVE BEEN REMOVED FROM THIS VENTURE; VENTURE IS IN READ ONLY")) : null, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, true, undefined, undefined, undefined, /* array */[partners]))])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function (param) {
                                                 return Router.clickToRoute(partial_arg$1, param);
                                               }), undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Add or Remove Partners")])))), Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles

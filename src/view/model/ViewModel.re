@@ -302,6 +302,7 @@ module SelectedVentureView = {
   };
   type t = {
     ventureId,
+    atRiskWarning: bool,
     ventureName: string,
     readOnly: bool,
     partners: list(partner),
@@ -338,6 +339,20 @@ module SelectedVentureView = {
       ventureName,
       readOnly:
         partnersCollector |> PartnersCollector.isPartner(localUser) == false,
+      atRiskWarning:
+        walletInfoCollector
+        |> WalletInfoCollector.addressInfos(AccountIndex.default)
+        |. Belt.List.reduceU(
+             false,
+             (.
+               res,
+               {addressStatus, balance}: WalletInfoCollector.addressInfo,
+             ) =>
+             switch (addressStatus) {
+             | AtRisk => res || balance |> BTC.gt(BTC.zero)
+             | _ => res
+             }
+           ),
       partners: partnersCollector.partners,
       prospects:
         partnersCollector |> PartnersCollector.prospectsPendingApproval,

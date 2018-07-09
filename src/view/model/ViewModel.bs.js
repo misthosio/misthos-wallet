@@ -205,6 +205,15 @@ function fromViewModelState$6(param) {
   ];
   return /* record */[
           /* ventureId */param[/* ventureId */1],
+          /* atRiskWarning */Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
+                  if (param[/* addressStatus */4] !== 1) {
+                    return res;
+                  } else if (res) {
+                    return true;
+                  } else {
+                    return param[/* balance */5].gt(BTC.zero);
+                  }
+                })),
           /* ventureName */param[/* ventureName */3],
           /* readOnly */ViewModel__PartnersCollector.isPartner(param[/* localUser */0], partnersCollector) === false,
           /* partners */partnersCollector[/* partners */1],
