@@ -187,19 +187,28 @@ var Styles = /* module */[
 ];
 
 function make(viewData, _) {
+  var renderTx = function (addressStatus, txList, txType) {
+    return Belt_List.mapWithIndex(txList, (function (iter, tx) {
+                  var match = tx[/* status */0];
+                  var primary = match ? (
+                      txType ? "payout" : "income"
+                    ) : (
+                      txType ? "unconfirmed payout" : "unconfirmed income"
+                    );
+                  var label = statusToLabel(Css.style(/* :: */[
+                            Css.$$float(/* right */-379319332),
+                            /* [] */0
+                          ]), calcTransactionStatus(addressStatus, tx[/* unlocked */1]));
+                  return ReasonReact.element(String(iter), undefined, Transaction.make(txType, primary, tx[/* amount */4], tx[/* date */2], Js_primitive.some(label), undefined, /* array */[]));
+                }));
+  };
   var renderExpandedInfo = function (info, details) {
     var param = details[/* addressType */3];
     return React.createElement("div", {
                 className: detailsGrid
               }, React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Custodians")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("This is a " + (String(details[/* nCoSigners */1]) + ("-of-" + (String(details[/* nCustodians */2]) + " address with the following custodians:"))))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_Array.map(Belt_Set.toArray(details[/* custodians */0]), (function (partnerId) {
                                     return ReasonReact.element(undefined, undefined, Partner.make(partnerId, undefined, undefined, undefined, undefined, !Curry._1(details[/* isPartner */7], partnerId), /* array */[]));
-                                  }))]))), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_List.toArray(Belt_List.concat(Belt_List.mapWithIndex(Belt_List.concat(details[/* unspentIncome */5], details[/* spentIncome */6]), (function (iter, tx) {
-                                            var label = statusToLabel(Css.style(/* :: */[
-                                                      Css.$$float(/* right */-379319332),
-                                                      /* [] */0
-                                                    ]), calcTransactionStatus(details[/* addressStatus */4], tx[/* unlocked */1]));
-                                            return ReasonReact.element(String(iter), undefined, Transaction.make(/* Income */0, "income", tx[/* amount */4], tx[/* date */2], Js_primitive.some(label), undefined, /* array */[]));
-                                          })), param ? /* :: */[
+                                  }))]))), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_List.toArray(Belt_List.concat(Belt_List.concat(renderTx(details[/* addressStatus */4], details[/* unspentIncome */5], /* Income */0), renderTx(details[/* addressStatus */4], details[/* spentIncome */6], /* Payout */1)), param ? /* :: */[
                                         ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, true, true, undefined, undefined, undefined, undefined, /* :: */[
                                                   /* Divider */Block.__(6, [Transaction.Styles[/* divider */1]]),
                                                   /* [] */0

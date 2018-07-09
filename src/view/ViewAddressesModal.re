@@ -120,6 +120,30 @@ module Styles = {
 };
 
 let make = (~viewData: ViewData.t, _children) => {
+  let renderTx = (addressStatus, txList: list(ViewData.income), txType) =>
+    List.mapWithIndex(
+      txList,
+      (iter, tx: ViewData.income) => {
+        let primary =
+          switch (tx.status, txType) {
+          | (Unconfirmed, Transaction.Income) => "unconfirmed income"
+          | (Confirmed, Transaction.Income) => "income"
+          | (Unconfirmed, Transaction.Payout) => "unconfirmed payout"
+          | (Confirmed, Transaction.Payout) => "payout"
+          };
+        let label =
+          calcTransactionStatus(addressStatus, tx.unlocked)
+          |> statusToLabel(~className=Css.(style([Css.float(`right)])));
+        <Transaction
+          key=(iter |> string_of_int)
+          txType
+          primary
+          amount=tx.amount
+          date=tx.date
+          label
+        />;
+      },
+    );
   let renderExpandedInfo =
       (info: ViewData.addressInfo, details: ViewData.addressDetails) =>
     <div className=Styles.detailsGrid>
@@ -155,26 +179,18 @@ let make = (~viewData: ViewData.t, _children) => {
         </MTypography>
         <MaterialUi.List>
           (
-            List.concat(details.unspentIncome, details.spentIncome)
-            |. List.mapWithIndex((iter, tx: ViewData.income) => {
-                 let (txType, primary) =
-                   switch (tx.status) {
-                   | _ => (Transaction.Income, "income")
-                   };
-                 let label =
-                   calcTransactionStatus(details.addressStatus, tx.unlocked)
-                   |> statusToLabel(
-                        ~className=Css.(style([Css.float(`right)])),
-                      );
-                 <Transaction
-                   key=(iter |> string_of_int)
-                   txType
-                   primary
-                   amount=tx.amount
-                   date=tx.date
-                   label
-                 />;
-               })
+            List.concat(
+              renderTx(
+                details.addressStatus,
+                details.unspentIncome,
+                Transaction.Income,
+              ),
+              renderTx(
+                details.addressStatus,
+                details.spentIncome,
+                Transaction.Payout,
+              ),
+            )
             |. List.concat(
                  details.addressType
                  |> (
