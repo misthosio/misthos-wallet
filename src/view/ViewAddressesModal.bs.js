@@ -33,13 +33,13 @@ var MaterialUi_ListItemText = require("@jsiebern/bs-material-ui/src/MaterialUi_L
 function statusToColor(param) {
   switch (param) {
     case 0 : 
+    case 1 : 
         return Colors.success;
-    case 2 : 
     case 3 : 
     case 4 : 
     case 5 : 
         return Colors.error;
-    case 1 : 
+    case 2 : 
     case 6 : 
     case 7 : 
         return Colors.warning;
@@ -50,11 +50,11 @@ function statusToColor(param) {
 function statusToString(param) {
   switch (param) {
     case 0 : 
-        return "Accessible";
+        return "";
     case 1 : 
-        return "At Risk";
+        return "Accessible";
     case 2 : 
-        return "Outdated Custodians";
+        return "At Risk";
     case 3 : 
         return "Temporarily Inaccessible";
     case 4 : 
@@ -69,16 +69,49 @@ function statusToString(param) {
   }
 }
 
-function statusToLable($staropt$star, status) {
+function statusToLabel($staropt$star, status) {
   var className = $staropt$star !== undefined ? $staropt$star : "";
-  return ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, Css.style(/* :: */[
-                      Css.color(statusToColor(status)),
-                      /* [] */0
-                    ]) + (" " + className), undefined, undefined, undefined, /* array */[ViewCommon.text($$String.uppercase(statusToString(status)))]));
+  var match = status === /* None */0;
+  if (match) {
+    return null;
+  } else {
+    return ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, Css.style(/* :: */[
+                        Css.color(statusToColor(status)),
+                        /* [] */0
+                      ]) + (" " + className), undefined, undefined, undefined, /* array */[ViewCommon.text($$String.uppercase(statusToString(status)))]));
+  }
 }
 
-function calcStatus(status, _, _$1) {
-  return status;
+function calcAddressStatus(status, unlocked) {
+  switch (status) {
+    case 0 : 
+        return /* Accessible */1;
+    case 1 : 
+        return /* AtRisk */2;
+    case 2 : 
+        return /* OldAddress */7;
+    case 3 : 
+        if (Belt_List.some(unlocked, (function (b) {
+                  return b;
+                }))) {
+          return /* PartiallyUnlocked */5;
+        } else {
+          return /* TemporarilyInaccessible */3;
+        }
+    case 4 : 
+        return /* PermanentlyInaccessible */4;
+    
+  }
+}
+
+function calcTransactionStatus(status, unlocked) {
+  if (status !== 3) {
+    return /* None */0;
+  } else if (unlocked) {
+    return /* Unlocked */6;
+  } else {
+    return /* TemporarilyInaccessible */3;
+  }
 }
 
 function addressTypeToString(param) {
@@ -161,7 +194,11 @@ function make(viewData, _) {
               }, React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Custodians")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("This is a " + (String(details[/* nCoSigners */1]) + ("-of-" + (String(details[/* nCustodians */2]) + " address with the following custodians:"))))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_Array.map(Belt_Set.toArray(details[/* custodians */0]), (function (partnerId) {
                                     return ReasonReact.element(undefined, undefined, Partner.make(partnerId, undefined, undefined, undefined, undefined, !Curry._1(details[/* isPartner */7], partnerId), /* array */[]));
                                   }))]))), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("OVERVIEW")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("ADDRESS BALANCE: " + BTC.format(info[/* balance */5]))])), ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[Belt_List.toArray(Belt_List.concat(Belt_List.mapWithIndex(Belt_List.concat(details[/* unspentIncome */5], details[/* spentIncome */6]), (function (iter, tx) {
-                                            return ReasonReact.element(String(iter), undefined, Transaction.make(/* Income */0, "income", tx[/* amount */4], tx[/* date */2], undefined, /* array */[]));
+                                            var label = statusToLabel(Css.style(/* :: */[
+                                                      Css.$$float(/* right */-379319332),
+                                                      /* [] */0
+                                                    ]), calcTransactionStatus(details[/* addressStatus */4], tx[/* unlocked */1]));
+                                            return ReasonReact.element(String(iter), undefined, Transaction.make(/* Income */0, "income", tx[/* amount */4], tx[/* date */2], Js_primitive.some(label), undefined, /* array */[]));
                                           })), param ? /* :: */[
                                         ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, true, true, undefined, undefined, undefined, undefined, /* :: */[
                                                   /* Divider */Block.__(6, [Transaction.Styles[/* divider */1]]),
@@ -193,7 +230,7 @@ function make(viewData, _) {
                             return /* array */[
                                     ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text(info[/* address */2])])),
                                     ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text($$String.uppercase(addressTypeToString(info[/* addressType */0])))])),
-                                    statusToLable(summary, calcStatus(info[/* addressStatus */4], info[/* balance */5], Belt_List.map(details$1[/* unspentIncome */5], (function (i) {
+                                    statusToLabel(summary, calcAddressStatus(info[/* addressStatus */4], Belt_List.map(details$1[/* unspentIncome */5], (function (i) {
                                                     return i[/* unlocked */1];
                                                   })))),
                                     ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(chevron(expand), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
@@ -239,8 +276,9 @@ exports.extractString = extractString;
 exports.ViewData = ViewData;
 exports.statusToColor = statusToColor;
 exports.statusToString = statusToString;
-exports.statusToLable = statusToLable;
-exports.calcStatus = calcStatus;
+exports.statusToLabel = statusToLabel;
+exports.calcAddressStatus = calcAddressStatus;
+exports.calcTransactionStatus = calcTransactionStatus;
 exports.addressTypeToString = addressTypeToString;
 exports.component = component;
 exports.Styles = Styles;

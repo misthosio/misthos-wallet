@@ -48,13 +48,19 @@ function amount(inOut) {
             ]);
 }
 
+var label = Css.style(/* :: */[
+      Css.$$float(/* right */-379319332),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* root */root,
   /* divider */divider,
-  /* amount */amount
+  /* amount */amount,
+  /* label */label
 ];
 
-function make(txType, primary, amount$1, date, onClick, _) {
+function make(txType, primary, amount$1, date, label, onClick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -74,7 +80,10 @@ function make(txType, primary, amount$1, date, onClick, _) {
                                                     React.createElement("span", {
                                                           className: amount(txType)
                                                         }, ViewCommon.text(BTC.format(amount$1) + " BTC"))
-                                                  ]))), undefined, Js_primitive.some(date !== undefined ? ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(Js_primitive.valFromOption(date).toDateString())])) : null), undefined, /* :: */[
+                                                  ]))), undefined, Js_primitive.some(date !== undefined ? ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, /* array */[
+                                                      ViewCommon.text(Js_primitive.valFromOption(date).toDateString()),
+                                                      label !== undefined ? Js_primitive.valFromOption(label) : null
+                                                    ])) : null), undefined, /* :: */[
                                         /* Root */Block.__(0, [root]),
                                         /* [] */0
                                       ], undefined, /* array */[]))]));

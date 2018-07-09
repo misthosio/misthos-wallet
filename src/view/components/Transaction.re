@@ -26,6 +26,7 @@ module Styles = {
       ),
       Css.float(`right),
     ]);
+  let label = style([Css.float(`right)]);
 };
 
 let make =
@@ -34,6 +35,7 @@ let make =
       ~primary: string,
       ~amount: BTC.t,
       ~date: option(Js.Date.t),
+      ~label=?,
       ~onClick=?,
       _children,
     ) => {
@@ -62,6 +64,12 @@ let make =
             | Some(date) =>
               <MTypography variant=`Body1>
                 (Js.Date.toDateString(date) |> text)
+                (
+                  switch (label) {
+                  | Some(label) => label
+                  | None => ReasonReact.null
+                  }
+                )
               </MTypography>
             | None => ReasonReact.null
             }

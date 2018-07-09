@@ -113,7 +113,7 @@ function make(viewData, _) {
                                     "unconfirmed income"
                                   ];
                                 var partial_arg = tx[/* detailsLink */5];
-                                return ReasonReact.element(String(iter), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], (function (param) {
+                                return ReasonReact.element(String(iter), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], undefined, (function (param) {
                                                   return Router.clickToRoute(partial_arg, param);
                                                 }), /* array */[]));
                               }), unconfirmed),
@@ -127,7 +127,7 @@ function make(viewData, _) {
                                     "income"
                                   ];
                                 var partial_arg = tx[/* detailsLink */5];
-                                return ReasonReact.element(String(iter + List.length(unconfirmed) | 0), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], (function (param) {
+                                return ReasonReact.element(String(iter + List.length(unconfirmed) | 0), undefined, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], undefined, (function (param) {
                                                   return Router.clickToRoute(partial_arg, param);
                                                 }), /* array */[]));
                               }), confirmed)

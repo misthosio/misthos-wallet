@@ -10,9 +10,9 @@ type action =
   | ToggleAddress(ViewData.addressInfo);
 
 type status =
+  | None
   | Accessible
   | AtRisk
-  | OutdatedCustodians
   | TemporarilyInaccessible
   | PermanentlyInaccessible
   | PartiallyUnlocked
@@ -21,45 +21,54 @@ type status =
 
 let statusToColor =
   fun
+  | None
   | Accessible => Colors.success
   | AtRisk
   | Unlocked
   | OldAddress => Colors.warning
-  | OutdatedCustodians
   | PartiallyUnlocked
   | TemporarilyInaccessible
   | PermanentlyInaccessible => Colors.error;
 
 let statusToString =
   fun
+  | None => ""
   | Accessible => "Accessible"
   | AtRisk => "At Risk"
   | Unlocked => "Unlocked"
   | OldAddress => "Old Address"
-  | OutdatedCustodians => "Outdated Custodians"
   | PartiallyUnlocked => "Partially Unlocked"
   | TemporarilyInaccessible => "Temporarily Inaccessible"
   | PermanentlyInaccessible => "Permanently Inaccessible";
 
-let statusToLable = (~className="", status) =>
-  <MTypography
-    className=(
-      Css.(style([color(statusToColor(status))])) ++ " " ++ className
-    )
-    variant=`Body2>
-    (status |> statusToString |> String.uppercase |> text)
-  </MTypography>;
+let statusToLabel = (~className="", status) =>
+  status == None ?
+    ReasonReact.null :
+    <MTypography
+      className=(
+        Css.(style([color(statusToColor(status))])) ++ " " ++ className
+      )
+      variant=`Body2>
+      (status |> statusToString |> String.uppercase |> text)
+    </MTypography>;
 
-let calcStatus =
-    (status: ViewData.addressStatus, balance, unlocked: list(bool)) =>
-  /* List.some(unlocked, (== true)) */
-  switch (status, balance, unlocked) {
-  /* | (_, _, true) => Unlocked */
-  | (Accessible, _, _) => Accessible
-  | (AtRisk, _, _) => AtRisk
-  | (OutdatedCustodians, _, _) => OutdatedCustodians
-  | (TemporarilyInaccessible, _, _) => TemporarilyInaccessible
-  | (Inaccessible, _, _) => PermanentlyInaccessible
+let calcAddressStatus =
+    (status: ViewData.addressStatus, unlocked: list(bool)) =>
+  switch (status, unlocked) {
+  | (Accessible, _) => Accessible
+  | (AtRisk, _) => AtRisk
+  | (OutdatedCustodians, _) => OldAddress
+  | (TemporarilyInaccessible, unlocked) when unlocked |. List.some(b => b) =>
+    PartiallyUnlocked
+  | (TemporarilyInaccessible, _) => TemporarilyInaccessible
+  | (Inaccessible, _) => PermanentlyInaccessible
+  };
+
+let calcTransactionStatus = (status: ViewData.addressStatus, unlocked: bool) =>
+  switch (status, unlocked) {
+  | (TemporarilyInaccessible, true) => Unlocked
+  | (TemporarilyInaccessible, false) => TemporarilyInaccessible
+  | (_, _) => None
   };
 
 let addressTypeToString =
@@ -152,12 +161,18 @@ let make = (~viewData: ViewData.t, _children) => {
                    switch (tx.status) {
                    | _ => (Transaction.Income, "income")
                    };
+                 let label =
+                   calcTransactionStatus(details.addressStatus, tx.unlocked)
+                   |> statusToLabel(
+                        ~className=Css.(style([Css.float(`right)])),
+                      );
                  <Transaction
                    key=(iter |> string_of_int)
                    txType
                    primary
                    amount=tx.amount
                    date=tx.date
+                   label
                  />;
                })
             |. List.concat(
@@ -226,12 +241,11 @@ let make = (~viewData: ViewData.t, _children) => {
                      |> text
                    )
                  </MTypography>,
-                 calcStatus(
+                 calcAddressStatus(
                    info.addressStatus,
-                   info.balance,
                    List.map(details.unspentIncome, i => i.unlocked),
                  )
-                 |> statusToLable(~className=Styles.summary),
+                 |> statusToLabel(~className=Styles.summary),
                  <MaterialUi.IconButton
                    className=(Styles.chevron(expand))
                    onClick=(_e => send(ToggleAddress(info)))>
