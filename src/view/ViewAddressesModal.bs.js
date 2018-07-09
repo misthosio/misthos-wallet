@@ -137,7 +137,7 @@ function chevron(rotate) {
 var grid = Css.style(/* :: */[
       Css.display(Css.grid),
       /* :: */[
-        Css.unsafe("gridTemplateColumns", "[begin] 2fr 1fr 1fr min-content [end]"),
+        Css.unsafe("gridTemplateColumns", "[begin] 1fr 1fr 1fr min-content [end]"),
         /* [] */0
       ]
     ]);

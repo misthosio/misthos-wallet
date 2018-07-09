@@ -91,7 +91,7 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      unsafe("gridTemplateColumns", "[begin] 2fr 1fr 1fr min-content [end]"),
+      unsafe("gridTemplateColumns", "[begin] 1fr 1fr 1fr min-content [end]"),
     ]);
   let header =
     style([
@@ -120,7 +120,8 @@ module Styles = {
 };
 
 let make = (~viewData: ViewData.t, _children) => {
-  let renderTx = (addressStatus, txList: list(ViewData.income), txTypeString) =>
+  let renderTx =
+      (addressStatus, txList: list(ViewData.income), txTypeString: string) =>
     List.mapWithIndex(
       txList,
       (iter, tx: ViewData.income) => {
