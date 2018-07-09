@@ -22,6 +22,7 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Transaction = require("./components/Transaction.bs.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
+var WarningsText = require("./text/WarningsText.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_Collapse = require("@jsiebern/bs-material-ui/src/MaterialUi_Collapse.bs.js");
@@ -187,7 +188,7 @@ function make(viewData, _) {
               var state = param[/* state */1];
               var infos = Belt_List.toArray(Belt_List.keepMapU(viewData[/* infos */0], (function (info) {
                           if (info[/* addressType */0] !== /* Change */0 || info[/* balance */5].gt(BTC.zero)) {
-                            var details$1 = Curry._1(viewData[/* addressDetails */1], info);
+                            var details$1 = Curry._1(viewData[/* addressDetails */3], info);
                             var expand = Caml_obj.caml_equal(state[/* expandedAddress */0], info);
                             return /* array */[
                                     ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, summary, undefined, undefined, undefined, /* array */[ViewCommon.text(info[/* address */2])])),
@@ -203,13 +204,15 @@ function make(viewData, _) {
                           }
                           
                         })));
+              var match = viewData[/* atRiskWarning */2];
+              var warning = match ? Js_primitive.some(WarningsText.atRiskFunds(viewData[/* ventureId */1])) : undefined;
               return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Wallet Address History")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", {
                                       className: ScrollList.containerStyles
                                     }, ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[React.createElement("div", {
                                                     className: grid
                                                   }, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, header, undefined, undefined, undefined, /* array */[ViewCommon.text("WALLET ADDRESS")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, header, undefined, undefined, undefined, /* array */[ViewCommon.text("ADDRESS TYPE")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, header, undefined, undefined, undefined, /* array */[ViewCommon.text("STATUS")])), React.createElement("span", {
                                                         className: header
-                                                      }), infos)])))), undefined, undefined, undefined, /* array */[]));
+                                                      }), infos)])))), undefined, undefined, warning, /* array */[]));
             }),
           /* initialState */(function () {
               return /* record */[/* expandedAddress */undefined];

@@ -38,6 +38,7 @@ let captureResponse = (correlationId, response, state) => {
 let lastResponse = ({lastResponse}) => lastResponse;
 
 module AddressesView = {
+  open Belt;
   type addressType = WalletInfoCollector.addressType;
   type addressStatus = WalletInfoCollector.addressStatus;
   type addressInfo = WalletInfoCollector.addressInfo;
@@ -61,6 +62,8 @@ module AddressesView = {
   };
   type t = {
     infos: list(addressInfo),
+    ventureId,
+    atRiskWarning: bool,
     addressDetails: addressInfo => addressDetails,
   };
   let fromViewModelState =
@@ -70,42 +73,57 @@ module AddressesView = {
           oldInputCollector,
           partnersCollector,
           txDetailsCollector,
+          ventureId,
         },
       ) => {
-    infos:
+    let infos =
       walletInfoCollector
-      |> WalletInfoCollector.addressInfos(AccountIndex.default),
-    addressDetails: addressInfo => {
-      isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
-      custodians: addressInfo.custodians,
-      nCustodians: addressInfo.custodians |> Belt.Set.size,
-      nCoSigners: addressInfo.nCoSigners,
-      addressType: addressInfo.addressType,
-      addressStatus: addressInfo.addressStatus,
-      unspentIncome:
-        WalletInfoCollector.inputsFor(
-          AccountIndex.default,
-          addressInfo,
-          walletInfoCollector,
-        )
-        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-             let {status, date}: TxDetailsCollector.income =
-               txDetailsCollector
-               |> TxDetailsCollector.getIncome(txId)
-               |> Js.Option.getExn;
-             {txId, amount: value, status, date, unlocked};
-           }),
-      spentIncome:
-        oldInputCollector
-        |> OldInputCollector.inputsFor(addressInfo.address)
-        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-             let {status, date}: TxDetailsCollector.income =
-               txDetailsCollector
-               |> TxDetailsCollector.getIncome(txId)
-               |> Js.Option.getExn;
-             {txId, amount: value, status, date, unlocked};
-           }),
-    },
+      |> WalletInfoCollector.addressInfos(AccountIndex.default);
+
+    {
+      infos,
+      ventureId,
+      atRiskWarning:
+        infos
+        |. List.reduceU(
+             false, (. res, {addressStatus, balance}: addressInfo) =>
+             switch (addressStatus) {
+             | AtRisk => res || balance |> BTC.gt(BTC.zero)
+             | _ => res
+             }
+           ),
+      addressDetails: addressInfo => {
+        isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
+        custodians: addressInfo.custodians,
+        nCustodians: addressInfo.custodians |> Belt.Set.size,
+        nCoSigners: addressInfo.nCoSigners,
+        addressType: addressInfo.addressType,
+        addressStatus: addressInfo.addressStatus,
+        unspentIncome:
+          WalletInfoCollector.inputsFor(
+            AccountIndex.default,
+            addressInfo,
+            walletInfoCollector,
+          )
+          |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+               let {status, date}: TxDetailsCollector.income =
+                 txDetailsCollector
+                 |> TxDetailsCollector.getIncome(txId)
+                 |> Js.Option.getExn;
+               {txId, amount: value, status, date, unlocked};
+             }),
+        spentIncome:
+          oldInputCollector
+          |> OldInputCollector.inputsFor(addressInfo.address)
+          |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+               let {status, date}: TxDetailsCollector.income =
+                 txDetailsCollector
+                 |> TxDetailsCollector.getIncome(txId)
+                 |> Js.Option.getExn;
+               {txId, amount: value, status, date, unlocked};
+             }),
+      },
+    };
   };
 };
 let viewAddressesModal = AddressesView.fromViewModelState;

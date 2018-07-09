@@ -56,8 +56,19 @@ function fromViewModelState(param) {
   var oldInputCollector = param[/* oldInputCollector */9];
   var txDetailsCollector = param[/* txDetailsCollector */8];
   var partnersCollector = param[/* partnersCollector */6];
+  var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   return /* record */[
-          /* infos */WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector),
+          /* infos */infos,
+          /* ventureId */param[/* ventureId */1],
+          /* atRiskWarning */Belt_List.reduceU(infos, false, (function (res, param) {
+                  if (param[/* addressStatus */4] !== 1) {
+                    return res;
+                  } else if (res) {
+                    return true;
+                  } else {
+                    return param[/* balance */5].gt(BTC.zero);
+                  }
+                })),
           /* addressDetails */(function (addressInfo) {
               return /* record */[
                       /* custodians */addressInfo[/* custodians */1],

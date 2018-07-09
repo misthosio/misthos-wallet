@@ -249,7 +249,11 @@ let make = (~viewData: ViewData.t, _children) => {
            )
         |> List.toArray
         |> ReasonReact.array;
+      let warning =
+        viewData.atRiskWarning ?
+          Some(WarningsText.atRiskFunds(viewData.ventureId)) : None;
       <Grid
+        ?warning
         title1=("Wallet Address History" |> text)
         area3={
           <div className=ScrollList.containerStyles>
