@@ -259,7 +259,10 @@ module CreatePayoutView = {
     let unlockedInputs =
       walletInfoCollector
       |> WalletInfoCollector.unlockedInputs(AccountIndex.default);
-    let allInputs = optionalInputs |. Belt.Set.union(mandatoryInputs);
+    let allInputs =
+      optionalInputs
+      |. Belt.Set.union(mandatoryInputs)
+      |. Belt.Set.union(unlockedInputs);
     let changeAddress =
       walletInfoCollector
       |> WalletInfoCollector.fakeChangeAddress(

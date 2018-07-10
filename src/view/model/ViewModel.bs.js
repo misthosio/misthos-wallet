@@ -182,7 +182,7 @@ function fromViewModelState$3(param) {
   var optionalInputs = WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var unlockedInputs = WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
-  var allInputs = Belt_Set.union(optionalInputs, mandatoryInputs);
+  var allInputs = Belt_Set.union(Belt_Set.union(optionalInputs, mandatoryInputs), unlockedInputs);
   var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], param[/* localUser */0], walletInfoCollector);
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),
