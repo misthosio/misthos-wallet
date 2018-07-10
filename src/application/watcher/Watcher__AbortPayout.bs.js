@@ -4,14 +4,19 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../events/Event.bs.js");
+var Address = require("../wallet/Address.bs.js");
 var Network = require("../wallet/Network.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../events/EventLog.bs.js");
+var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var TxWrapper = require("../wallet/TxWrapper.bs.js");
+var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Caml_oo_curry = require("bs-platform/lib/js/caml_oo_curry.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var CamlinternalOO = require("bs-platform/lib/js/camlinternalOO.js");
 var PrimitiveTypes = require("../PrimitiveTypes.bs.js");
+var AccountKeyChain = require("../wallet/AccountKeyChain.bs.js");
 
 var class_tables = [
   0,
@@ -20,7 +25,35 @@ var class_tables = [
 ];
 
 function make(proposal, log) {
-  var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), proposal[/* data */6][/* payoutTx */1][/* usedInputs */1]);
+  var match = proposal[/* data */6][/* payoutTx */1];
+  var usedInputs = match[/* usedInputs */1];
+  var inputs = Belt_Set.mergeMany(Network.inputSet(/* () */0), usedInputs);
+  var txWrapper = TxWrapper.make(match[/* txHex */0]);
+  var keyChains = Curry._3(EventLog.reduce, (function (res, param) {
+          var $$event = param[/* event */0];
+          if ($$event.tag === 38) {
+            return AccountKeyChain.Collection[/* add */1]($$event[0][/* keyChain */0], res);
+          } else {
+            return res;
+          }
+        }), AccountKeyChain.Collection[/* empty */0], log);
+  var requiredSigs = /* record */[/* contents */Network.inputMap(/* () */0)];
+  Belt_Array.forEachWithIndexU(usedInputs, (function (idx, input) {
+          var keyChain = AccountKeyChain.Collection[/* lookup */2](Address.Coordinates[/* accountIdx */3](input[/* coordinates */6]), Address.Coordinates[/* keyChainIdent */4](input[/* coordinates */6]), keyChains);
+          var match = Belt_Array.getExn(txWrapper[/* inputs */1], idx)[/* sequence */1] !== BitcoinjsLib.Transaction.DEFAULT_SEQUENCE;
+          requiredSigs[0] = Belt_Map.set(requiredSigs[0], input, /* record */[
+                /* custodians */Belt_Set.mergeMany(PrimitiveTypes.UserId[/* emptySet */9], Belt_List.toArray(Belt_List.map(keyChain[/* custodianKeyChains */4], (function (prim) {
+                                return prim[0];
+                              })))),
+                /* requiredCoSigners */match ? 1 : keyChain[/* nCoSigners */2]
+              ]);
+          return /* () */0;
+        }));
+  var anyInputNotSignable = function (currentCustodians) {
+    return Belt_Array.someU(Belt_Map.valuesToArray(requiredSigs[0]), (function (param) {
+                  return Belt_Set.size(Belt_Set.intersect(currentCustodians, param[/* custodians */0])) < param[/* requiredCoSigners */1];
+                }));
+  };
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",
@@ -36,7 +69,8 @@ function make(proposal, log) {
           "payoutProcesses",
           "completed",
           "result",
-          "systemIssuer"
+          "systemIssuer",
+          "custodians"
         ]);
     var receive = ids[0];
     var processCompleted = ids[1];
@@ -45,6 +79,7 @@ function make(proposal, log) {
     var completed = ids[4];
     var result = ids[5];
     var systemIssuer = ids[6];
+    var custodians = ids[7];
     CamlinternalOO.set_methods($$class, /* array */[
           receive,
           (function (self$1, param) {
@@ -55,10 +90,16 @@ function make(proposal, log) {
                 case 0 : 
                     self$1[systemIssuer][0] = $$event[0][/* systemIssuer */5];
                     return /* () */0;
+                case 19 : 
+                    self$1[custodians][0] = Belt_Set.add(self$1[custodians][0], $$event[0][/* data */2][/* partnerId */0]);
+                    return /* () */0;
+                case 24 : 
+                    self$1[custodians][0] = Belt_Set.remove(self$1[custodians][0], $$event[0][/* data */2][/* custodianId */0]);
+                    return /* () */0;
                 case 29 : 
                     var match = $$event[0];
                     var acceptedProcess = match[/* processId */0];
-                    if (PrimitiveTypes.ProcessId[/* neq */6](env$1[0], acceptedProcess)) {
+                    if (PrimitiveTypes.ProcessId[/* neq */6](env$1[2], acceptedProcess)) {
                       self$1[payoutProcesses][0] = Belt_Map.set(self$1[payoutProcesses][0], acceptedProcess, Belt_Set.mergeMany(Network.inputSet(/* () */0), match[/* data */2][/* payoutTx */1][/* usedInputs */1]));
                       return /* () */0;
                     } else {
@@ -66,12 +107,12 @@ function make(proposal, log) {
                     }
                 case 33 : 
                     var broadcastProcess = $$event[0][/* processId */0];
-                    if (PrimitiveTypes.ProcessId[/* neq */6](broadcastProcess, env$1[0])) {
+                    if (PrimitiveTypes.ProcessId[/* neq */6](broadcastProcess, env$1[2])) {
                       var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], broadcastProcess);
-                      if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, env$1[2])) > 0) {
+                      if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, env$1[3])) > 0) {
                         self$1[result][0] = /* tuple */[
                           self$1[systemIssuer][0],
-                          /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[1])])
+                          /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[0])])
                         ];
                       }
                       self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
@@ -89,7 +130,7 @@ function make(proposal, log) {
                   return /* () */0;
               }
               if (exit === 1) {
-                if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[0])) {
+                if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[2])) {
                   self$1[result][0] = undefined;
                   self$1[completed][0] = true;
                   return /* () */0;
@@ -105,7 +146,16 @@ function make(proposal, log) {
             }),
           pendingEvent,
           (function (self$1, _) {
-              return self$1[result][0];
+              var env$1 = self$1[env];
+              var match = Curry._1(env$1[1], self$1[custodians][0]);
+              if (match) {
+                return /* tuple */[
+                        self$1[systemIssuer][0],
+                        /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[0])])
+                      ];
+              } else {
+                return self$1[result][0];
+              }
             })
         ]);
     var env_init = function (env$1) {
@@ -114,16 +164,18 @@ function make(proposal, log) {
       self[completed] = /* record */[/* contents */false];
       self[result] = /* record */[/* contents */undefined];
       self[systemIssuer] = /* record */[/* contents */BitcoinjsLib.ECPair.makeRandom()];
+      self[custodians] = /* record */[/* contents */PrimitiveTypes.UserId[/* emptySet */9]];
       self[env] = env$1;
       return self;
     };
     CamlinternalOO.init_class($$class);
     class_tables[0] = env_init;
   }
-  var envs_000 = proposal[/* processId */0];
+  var envs_002 = proposal[/* processId */0];
   var envs = [
-    envs_000,
     proposal,
+    anyInputNotSignable,
+    envs_002,
     inputs
   ];
   var $$process = Curry._1(class_tables[0], envs);
