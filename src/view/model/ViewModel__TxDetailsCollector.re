@@ -55,6 +55,12 @@ let make = localUser => {
 let getPayout = (processId, {payouts}) => payouts |. Map.get(processId);
 let getIncome = (txId, {income}) => income |. Map.String.get(txId);
 
+let getDateAndStatus = (txId, {txDates}) =>
+  switch (txDates |. Map.String.get(txId)) {
+  | Some(date) => (Some(date), Confirmed)
+  | _ => (None, Unconfirmed)
+  };
+
 let payoutsPendingApproval = ({payouts}) =>
   payouts
   |. Map.valuesToArray
@@ -179,6 +185,7 @@ let apply = (event, state) =>
            ),
     }
   | IncomeDetected({address, txId, amount}) =>
+    Js.log2("income detected", txId);
     let txDate = state.txDates |. Map.String.get(txId);
     {
       ...state,

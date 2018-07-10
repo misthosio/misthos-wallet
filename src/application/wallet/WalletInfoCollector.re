@@ -68,24 +68,36 @@ let collidingProcesses = (accountIdx, processId, {reserved, payoutProcesses}) =>
      )
   |. Set.remove(processId);
 
-let totalUnusedBTC = (accountIdx, {spendable, oldSpendable}) =>
-  spendable
-  |. Map.getWithDefault(accountIdx, Map.String.empty)
-  |. Map.String.reduceU(BTC.zero, (. res, _, inputs: list(Network.txInput)) =>
-       inputs
-       |. List.reduceU(res, (. res, {value}: Network.txInput) =>
-            res |> BTC.plus(value)
-          )
-     )
-  |. Map.String.reduceU(
-       oldSpendable |. Map.getWithDefault(accountIdx, Map.String.empty),
-       _,
-       (. res, _, inputs: list(Network.txInput)) =>
-       inputs
-       |. List.reduceU(res, (. res, {value}: Network.txInput) =>
-            res |> BTC.plus(value)
-          )
+let totalUnusedBTC = (accountIdx, {spendable, oldSpendable, unlocked}) => {
+  let (usedInputs, result) =
+    spendable
+    |. Map.getWithDefault(accountIdx, Map.String.empty)
+    |. Map.String.reduceU(
+         (Network.inputSet(), BTC.zero),
+         (. res, _, inputs: list(Network.txInput)) =>
+         inputs
+         |. List.reduceU(
+              res, (. (inputSet, res), {value} as input: Network.txInput) =>
+              (inputSet |. Set.add(input), res |> BTC.plus(value))
+            )
+       )
+    |. Map.String.reduceU(
+         oldSpendable |. Map.getWithDefault(accountIdx, Map.String.empty),
+         _,
+         (. res, _, inputs: list(Network.txInput)) =>
+         inputs
+         |. List.reduceU(
+              res, (. (inputSet, res), {value} as input: Network.txInput) =>
+              (inputSet |. Set.add(input), res |> BTC.plus(value))
+            )
+       );
+  unlocked
+  |. Map.getWithDefault(accountIdx, Network.inputSet())
+  |. Set.diff(usedInputs)
+  |. Set.reduceU(result, (. res, {value}: Network.txInput) =>
+       res |> BTC.plus(value)
      );
+};
 
 let totalReservedBTC = (accountIdx, {reserved}) =>
   reserved
@@ -136,8 +148,13 @@ let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
        |> Map.keysToArray
        |> Set.mergeMany(Network.inputSet()),
      );
-let unlockedInputs = (accountIdx, {unlocked}) =>
-  unlocked |. Map.getWithDefault(accountIdx, Network.inputSet());
+let unlockedInputs = (accountIdx, {unlocked} as collector) =>
+  unlocked
+  |. Map.getWithDefault(accountIdx, Network.inputSet())
+  |. Set.keepU((. {address}: Network.txInput) =>
+       addressInfoFor(accountIdx, address, collector).addressStatus
+       != Inaccessible
+     );
 
 let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
   oldSpendable

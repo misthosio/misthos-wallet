@@ -12,7 +12,6 @@ var Network = require("../../application/wallet/Network.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var Js_option = require("bs-platform/lib/js/js_option.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -56,6 +55,7 @@ function fromViewModelState(param) {
   var oldInputCollector = param[/* oldInputCollector */9];
   var txDetailsCollector = param[/* txDetailsCollector */8];
   var partnersCollector = param[/* partnersCollector */6];
+  console.log("AddressDetails.fromViewModelState");
   var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   return /* record */[
           /* infos */infos,
@@ -78,22 +78,22 @@ function fromViewModelState(param) {
                       /* addressStatus */addressInfo[/* addressStatus */4],
                       /* unspentIncome */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
                               var txId = param[/* txId */0];
-                              var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
+                              var match = ViewModel__TxDetailsCollector.getDateAndStatus(txId, txDetailsCollector);
                               return /* record */[
-                                      /* status */match[/* status */0],
+                                      /* status */match[1],
                                       /* unlocked */param[/* unlocked */8],
-                                      /* date */match[/* date */1],
+                                      /* date */match[0],
                                       /* txId */txId,
                                       /* amount */param[/* value */3]
                                     ];
                             })),
                       /* spentIncome */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
                               var txId = param[/* txId */0];
-                              var match = Js_option.getExn(ViewModel__TxDetailsCollector.getIncome(txId, txDetailsCollector));
+                              var match = ViewModel__TxDetailsCollector.getDateAndStatus(txId, txDetailsCollector);
                               return /* record */[
-                                      /* status */match[/* status */0],
+                                      /* status */match[1],
                                       /* unlocked */param[/* unlocked */8],
-                                      /* date */match[/* date */1],
+                                      /* date */match[0],
                                       /* txId */txId,
                                       /* amount */param[/* value */3]
                                     ];
@@ -182,7 +182,7 @@ function fromViewModelState$3(param) {
   var optionalInputs = WalletInfoCollector.currentSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var mandatoryInputs = WalletInfoCollector.oldSpendableInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   var unlockedInputs = WalletInfoCollector.unlockedInputs(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
-  var allInputs = Belt_Set.union(optionalInputs, mandatoryInputs);
+  var allInputs = Belt_Set.union(Belt_Set.union(optionalInputs, mandatoryInputs), unlockedInputs);
   var changeAddress = WalletInfoCollector.fakeChangeAddress(WalletTypes.AccountIndex[/* default */11], param[/* localUser */0], walletInfoCollector);
   return /* record */[
           /* allowCreation */balance_000.gt(BTC.zero),

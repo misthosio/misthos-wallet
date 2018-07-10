@@ -30,6 +30,21 @@ function getIncome(txId, param) {
   return Belt_MapString.get(param[/* income */5], txId);
 }
 
+function getDateAndStatus(txId, param) {
+  var match = Belt_MapString.get(param[/* txDates */4], txId);
+  if (match !== undefined) {
+    return /* tuple */[
+            Js_primitive.some(Js_primitive.valFromOption(match)),
+            /* Confirmed */1
+          ];
+  } else {
+    return /* tuple */[
+            undefined,
+            /* Unconfirmed */0
+          ];
+  }
+}
+
 function payoutsPendingApproval(param) {
   return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* payouts */2])), (function (payout) {
                 var match = payout[/* status */1];
@@ -178,6 +193,7 @@ function apply($$event, state) {
         var amount = match$2[/* amount */4];
         var txId$1 = match$2[/* txId */2];
         var address = match$2[/* address */0];
+        console.log("income detected", txId$1);
         var txDate$1 = Belt_MapString.get(state[/* txDates */4], txId$1);
         return /* record */[
                 /* network */state[/* network */0],
@@ -245,6 +261,7 @@ function apply($$event, state) {
 exports.make = make;
 exports.getPayout = getPayout;
 exports.getIncome = getIncome;
+exports.getDateAndStatus = getDateAndStatus;
 exports.payoutsPendingApproval = payoutsPendingApproval;
 exports.apply = apply;
 /* Utils Not a pure module */

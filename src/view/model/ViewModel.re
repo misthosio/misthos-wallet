@@ -76,6 +76,7 @@ module AddressesView = {
           ventureId,
         },
       ) => {
+    Js.log("AddressDetails.fromViewModelState");
     let infos =
       walletInfoCollector
       |> WalletInfoCollector.addressInfos(AccountIndex.default);
@@ -106,20 +107,18 @@ module AddressesView = {
             walletInfoCollector,
           )
           |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-               let {status, date}: TxDetailsCollector.income =
+               let (date, status) =
                  txDetailsCollector
-                 |> TxDetailsCollector.getIncome(txId)
-                 |> Js.Option.getExn;
+                 |> TxDetailsCollector.getDateAndStatus(txId);
                {txId, amount: value, status, date, unlocked};
              }),
         spentIncome:
           oldInputCollector
           |> OldInputCollector.inputsFor(addressInfo.address)
           |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-               let {status, date}: TxDetailsCollector.income =
+               let (date, status) =
                  txDetailsCollector
-                 |> TxDetailsCollector.getIncome(txId)
-                 |> Js.Option.getExn;
+                 |> TxDetailsCollector.getDateAndStatus(txId);
                {txId, amount: value, status, date, unlocked};
              }),
       },
@@ -259,7 +258,10 @@ module CreatePayoutView = {
     let unlockedInputs =
       walletInfoCollector
       |> WalletInfoCollector.unlockedInputs(AccountIndex.default);
-    let allInputs = optionalInputs |. Belt.Set.union(mandatoryInputs);
+    let allInputs =
+      optionalInputs
+      |. Belt.Set.union(mandatoryInputs)
+      |. Belt.Set.union(unlockedInputs);
     let changeAddress =
       walletInfoCollector
       |> WalletInfoCollector.fakeChangeAddress(
