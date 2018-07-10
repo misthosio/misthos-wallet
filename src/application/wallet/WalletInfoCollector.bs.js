@@ -256,7 +256,7 @@ function removeAddressFrom(accountIdx, address, status, state) {
                 ]
               ];
     case 4 : 
-        var accountInaccessible = Belt_Map.getWithDefault(state[/* temporarilyInaccessible */4], accountIdx, Belt_MapString.empty);
+        var accountInaccessible = Belt_Map.getWithDefault(state[/* inaccessible */5], accountIdx, Belt_MapString.empty);
         var inputs$2 = Belt_MapString.get(accountInaccessible, address);
         return /* tuple */[
                 inputs$2,
@@ -265,8 +265,8 @@ function removeAddressFrom(accountIdx, address, status, state) {
                   /* spendable */state[/* spendable */1],
                   /* oldSpendable */state[/* oldSpendable */2],
                   /* unlocked */state[/* unlocked */3],
-                  /* temporarilyInaccessible */Belt_Map.set(state[/* temporarilyInaccessible */4], accountIdx, Belt_MapString.remove(accountInaccessible, address)),
-                  /* inaccessible */state[/* inaccessible */5],
+                  /* temporarilyInaccessible */state[/* temporarilyInaccessible */4],
+                  /* inaccessible */Belt_Map.set(state[/* inaccessible */5], accountIdx, Belt_MapString.remove(accountInaccessible, address)),
                   /* reserved */state[/* reserved */6],
                   /* keyChains */state[/* keyChains */7],
                   /* payoutProcesses */state[/* payoutProcesses */8],

@@ -320,15 +320,14 @@ let removeAddressFrom = (accountIdx, address, status, state) =>
     );
   | Inaccessible =>
     let accountInaccessible =
-      state.temporarilyInaccessible
-      |. Map.getWithDefault(accountIdx, Map.String.empty);
+      state.inaccessible |. Map.getWithDefault(accountIdx, Map.String.empty);
     let inputs = accountInaccessible |. Map.String.get(address);
     (
       inputs,
       {
         ...state,
-        temporarilyInaccessible:
-          state.temporarilyInaccessible
+        inaccessible:
+          state.inaccessible
           |. Map.set(
                accountIdx,
                accountInaccessible |. Map.String.remove(address),

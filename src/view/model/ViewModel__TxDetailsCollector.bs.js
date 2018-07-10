@@ -193,7 +193,6 @@ function apply($$event, state) {
         var amount = match$2[/* amount */4];
         var txId$1 = match$2[/* txId */2];
         var address = match$2[/* address */0];
-        console.log("income detected", txId$1);
         var txDate$1 = Belt_MapString.get(state[/* txDates */4], txId$1);
         return /* record */[
                 /* network */state[/* network */0],
