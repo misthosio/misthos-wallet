@@ -334,77 +334,67 @@ let make =
     <Grid
       ?warning
       title1=("Propose A Payout" |> text)
-      area3=(
-              if (viewData.allowCreation == false) {
-                <div>
-                  <MTypography variant=`Title>
-                    (viewData.ventureName |> text)
-                  </MTypography>
-                  <Balance
-                    currentSpendable=viewData.balance.currentSpendable
-                    reserved=viewData.balance.reserved
-                  />
-                </div>;
-              } else {
-                <div className=ScrollList.containerStyles>
-                  <MTypography variant=`Title>
-                    (viewData.ventureName |> text)
-                  </MTypography>
-                  <ScrollList>
-                    <Balance
-                      currentSpendable=viewData.balance.currentSpendable
-                      reserved=viewData.balance.reserved
-                    />
-                    <MTypography variant=`Title>
-                      (text("Enter Recipient Details"))
-                    </MTypography>
-                    {
-                      let error = addressValid ? None : Some("Address is BAD");
-                      <MInput
-                        placeholder="Recipient Address"
-                        value=(`String(inputs.recipientAddress))
-                        onChange=(
-                          e =>
-                            send(ChangeRecipientAddress(extractString(e)))
-                        )
-                        autoFocus=false
-                        fullWidth=true
-                        ?error
-                      />;
-                    }
-                    <MInput
-                      placeholder="BTC amount"
-                      value=(`String(inputs.btcAmount))
-                      onChange=(
-                        e => send(ChangeBTCAmount(extractString(e)))
-                      )
-                      autoFocus=false
-                      fullWidth=true
-                      ensuring=true
-                      endAdornment=MaterialUi.(
-                                     <InputAdornment position=`End>
-                                       <MButton
-                                         gutterTop=false
-                                         className=Styles.maxButton
-                                         size=`Small
-                                         variant=Flat
-                                         onClick=(_e => send(EnterMax))>
-                                         (text("Max"))
-                                       </MButton>
-                                     </InputAdornment>
-                                   )
-                    />
-                  </ScrollList>
-                  <MButton
-                    size=`Small
-                    variant=Flat
-                    fullWidth=true
-                    onClick=(_e => send(AddToSummary))>
-                    (text("Add Another Recipient"))
-                  </MButton>
-                </div>;
-              }
+      area3={
+        <div>
+          <MTypography gutterBottom=true variant=`Title>
+            ("ADD A RECIPIENT" |> text)
+          </MTypography>
+          <MTypography variant=`Body2>
+            (
+              "AVAILABLE BALANCE: "
+              ++ (viewData.balance.currentSpendable |> BTC.format)
+              ++ " BTC"
+              |> text
             )
+          </MTypography>
+          (
+            if (viewData.allowCreation == true) {
+              let error = addressValid ? None : Some("Address is BAD");
+              <div>
+                <MInput
+                  placeholder="Recipient Address"
+                  value=(`String(inputs.recipientAddress))
+                  onChange=(
+                    e => send(ChangeRecipientAddress(extractString(e)))
+                  )
+                  autoFocus=false
+                  fullWidth=true
+                  ?error
+                />
+                <MInput
+                  placeholder="BTC amount"
+                  value=(`String(inputs.btcAmount))
+                  onChange=(e => send(ChangeBTCAmount(extractString(e))))
+                  autoFocus=false
+                  fullWidth=true
+                  ensuring=true
+                  endAdornment=MaterialUi.(
+                                 <InputAdornment position=`End>
+                                   <MButton
+                                     gutterTop=false
+                                     className=Styles.maxButton
+                                     size=`Small
+                                     variant=Flat
+                                     onClick=(_e => send(EnterMax))>
+                                     (text("Max"))
+                                   </MButton>
+                                 </InputAdornment>
+                               )
+                />
+                <MButton
+                  size=`Small
+                  variant=Flat
+                  fullWidth=true
+                  onClick=(_e => send(AddToSummary))>
+                  (text("+ Add Another Recipient"))
+                </MButton>
+              </div>;
+            } else {
+              ReasonReact.null;
+            }
+          )
+        </div>
+      }
       area4=(
               if (viewData.allowCreation == false) {
                 <div>

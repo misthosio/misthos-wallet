@@ -12,7 +12,6 @@ var Icons = require("./Icons.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
 var MInput = require("./components/MInput.bs.js");
-var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var PolicyText = require("./text/PolicyText.bs.js");
@@ -252,34 +251,27 @@ function make(viewData, commands, cmdStatus, _) {
                           }), match[/* destinations */1])
                   ]);
               var tmp;
-              if (viewData[/* allowCreation */0] === false) {
-                tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */1][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */1][/* reserved */1]), /* array */[])));
-              } else {
+              if (viewData[/* allowCreation */0] === true) {
                 var error = match[/* addressValid */4] ? undefined : "Address is BAD";
-                tmp = React.createElement("div", {
-                      className: ScrollList.containerStyles
-                    }, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(viewData[/* ventureName */3])])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
-                              ReasonReact.element(undefined, undefined, Balance.make(viewData[/* balance */1][/* currentSpendable */0], Js_primitive.some(viewData[/* balance */1][/* reserved */1]), /* array */[])),
-                              ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Enter Recipient Details")])),
-                              ReasonReact.element(undefined, undefined, MInput.make("Recipient Address", /* `String */[
-                                        -976970511,
-                                        inputs[/* recipientAddress */0]
-                                      ], (function (e) {
-                                          return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
-                                        }), false, true, undefined, error, undefined, undefined, undefined, undefined, /* array */[])),
-                              ReasonReact.element(undefined, undefined, MInput.make("BTC amount", /* `String */[
-                                        -976970511,
-                                        inputs[/* btcAmount */1]
-                                      ], (function (e) {
-                                          return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
-                                        }), false, true, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_InputAdornment.make(undefined, undefined, undefined, /* End */3455931, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
-                                                                return Curry._1(send, /* EnterMax */0);
-                                                              }), /* Small */311976103, undefined, /* Flat */0, maxButton, false, undefined, undefined, undefined, /* array */[ViewCommon.text("Max")]))]))), undefined, undefined, undefined, undefined, true, /* array */[]))
-                            ])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MInput.make("Recipient Address", /* `String */[
+                              -976970511,
+                              inputs[/* recipientAddress */0]
+                            ], (function (e) {
+                                return Curry._1(send, /* ChangeRecipientAddress */Block.__(0, [ViewCommon.extractString(e)]));
+                              }), false, true, undefined, error, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, MInput.make("BTC amount", /* `String */[
+                              -976970511,
+                              inputs[/* btcAmount */1]
+                            ], (function (e) {
+                                return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
+                              }), false, true, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_InputAdornment.make(undefined, undefined, undefined, /* End */3455931, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
+                                                      return Curry._1(send, /* EnterMax */0);
+                                                    }), /* Small */311976103, undefined, /* Flat */0, maxButton, false, undefined, undefined, undefined, /* array */[ViewCommon.text("Max")]))]))), undefined, undefined, undefined, undefined, true, /* array */[])), ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                 return Curry._1(send, /* AddToSummary */1);
-                              }), /* Small */311976103, true, /* Flat */0, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Add Another Recipient")])));
+                              }), /* Small */311976103, true, /* Flat */0, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("+ Add Another Recipient")])));
+              } else {
+                tmp = null;
               }
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Propose A Payout")), undefined, undefined, undefined, Js_primitive.some(tmp), Js_primitive.some(viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("You cannot create a Payout without an unreserved balance.")]))) : React.createElement("div", {
+              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Propose A Payout")), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, true, undefined, undefined, /* array */[ViewCommon.text("ADD A RECIPIENT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("AVAILABLE BALANCE: " + (BTC.format(viewData[/* balance */1][/* currentSpendable */0]) + " BTC"))])), tmp)), Js_primitive.some(viewData[/* allowCreation */0] === false ? React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("You cannot create a Payout without an unreserved balance.")]))) : React.createElement("div", {
                                         className: ScrollList.containerStyles
                                       }, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Summary")])), ReasonReact.element(undefined, undefined, ScrollList.make(/* array */[
                                                 ReasonReact.element(undefined, undefined, MaterialUi_Table.make(undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TableBody.make(undefined, undefined, /* array */[
