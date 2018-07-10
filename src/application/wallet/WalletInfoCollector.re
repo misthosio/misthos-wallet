@@ -148,8 +148,13 @@ let currentSpendableInputs = (accountIdx, {reserved, spendable}) =>
        |> Map.keysToArray
        |> Set.mergeMany(Network.inputSet()),
      );
-let unlockedInputs = (accountIdx, {unlocked}) =>
-  unlocked |. Map.getWithDefault(accountIdx, Network.inputSet());
+let unlockedInputs = (accountIdx, {unlocked} as collector) =>
+  unlocked
+  |. Map.getWithDefault(accountIdx, Network.inputSet())
+  |. Set.keepU((. {address}: Network.txInput) =>
+       addressInfoFor(accountIdx, address, collector).addressStatus
+       != Inaccessible
+     );
 
 let oldSpendableInputs = (accountIdx, {reserved, oldSpendable}) =>
   oldSpendable

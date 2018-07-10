@@ -112,8 +112,10 @@ function currentSpendableInputs(accountIdx, param) {
                   })), Belt_Set.mergeMany(Network.inputSet(/* () */0), Belt_Map.keysToArray(Belt_Map.getWithDefault(param[/* reserved */6], accountIdx, Network.inputMap(/* () */0)))));
 }
 
-function unlockedInputs(accountIdx, param) {
-  return Belt_Map.getWithDefault(param[/* unlocked */3], accountIdx, Network.inputSet(/* () */0));
+function unlockedInputs(accountIdx, collector) {
+  return Belt_Set.keepU(Belt_Map.getWithDefault(collector[/* unlocked */3], accountIdx, Network.inputSet(/* () */0)), (function (param) {
+                return addressInfoFor(accountIdx, param[/* address */2], collector)[/* addressStatus */4] !== /* Inaccessible */4;
+              }));
 }
 
 function oldSpendableInputs(accountIdx, param) {
