@@ -9,17 +9,71 @@ type state = {expandedAddress: option(ViewData.addressInfo)};
 type action =
   | ToggleAddress(ViewData.addressInfo);
 
+type status =
+  | None
+  | Accessible
+  | AtRisk
+  | TemporarilyInaccessible
+  | PermanentlyInaccessible
+  | PartiallyUnlocked
+  | Unlocked
+  | OldAddress;
+
+let statusToColor =
+  fun
+  | None
+  | Accessible => Colors.success
+  | AtRisk
+  | Unlocked
+  | OldAddress => Colors.warning
+  | PartiallyUnlocked
+  | TemporarilyInaccessible
+  | PermanentlyInaccessible => Colors.error;
+
 let statusToString =
   fun
-  | WalletInfoCollector.Accessible => "Accessible"
-  | WalletInfoCollector.AtRisk => "AtRisk"
-  | WalletInfoCollector.OutdatedCustodians => "OutdatedCustodians"
-  | WalletInfoCollector.TemporarilyInaccessible => "TemporarilyInaccessible"
-  | WalletInfoCollector.Inaccessible => "Inaccessible";
+  | None => ""
+  | Accessible => "Accessible"
+  | AtRisk => "At Risk"
+  | Unlocked => "Unlocked"
+  | OldAddress => "Old Address"
+  | PartiallyUnlocked => "Partially Unlocked"
+  | TemporarilyInaccessible => "Temporarily Inaccessible"
+  | PermanentlyInaccessible => "Permanently Inaccessible";
+
+let statusToLabel = (~className="", status) =>
+  status == None ?
+    ReasonReact.null :
+    <MTypography
+      className=(
+        Css.(style([color(statusToColor(status))])) ++ " " ++ className
+      )
+      variant=`Body2>
+      (status |> statusToString |> String.uppercase |> text)
+    </MTypography>;
+
+let calcAddressStatus =
+    (status: ViewData.addressStatus, unlocked: list(bool)) =>
+  switch (status, unlocked) {
+  | (Accessible, _) => Accessible
+  | (AtRisk, _) => AtRisk
+  | (OutdatedCustodians, _) => OldAddress
+  | (TemporarilyInaccessible, unlocked) when unlocked |. List.some(b => b) =>
+    PartiallyUnlocked
+  | (TemporarilyInaccessible, _) => TemporarilyInaccessible
+  | (Inaccessible, _) => PermanentlyInaccessible
+  };
+
+let calcTransactionStatus = (status: ViewData.addressStatus, unlocked: bool) =>
+  switch (status, unlocked) {
+  | (TemporarilyInaccessible, true) => Unlocked
+  | (TemporarilyInaccessible, false) => TemporarilyInaccessible
+  | (_, _) => None
+  };
+
 let addressTypeToString =
   fun
-  | WalletInfoCollector.Income(id) =>
-    "Income (exposed by - " ++ UserId.toString(id) ++ ")"
+  | WalletInfoCollector.Income(_) => "Income"
   | WalletInfoCollector.Change => "Change";
 
 let component = ReasonReact.reducerComponent("AddressesModal");
@@ -37,12 +91,16 @@ module Styles = {
   let grid =
     style([
       display(grid),
-      unsafe("gridTemplateColumns", "[begin] 2fr 1fr 1fr min-content [end]"),
+      unsafe("gridTemplateColumns", "[begin] 1fr 1fr 1fr min-content [end]"),
     ]);
-  let header =
+  let header = warning =>
     style([
       borderBottom(px(1), `solid, hex("979797")),
       padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3))),
+      position(sticky),
+      zIndex(1),
+      top(px(warning ? Theme.space(4) : 0)),
+      backgroundColor(Colors.white),
     ]);
   let summary =
     style([padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3)))]);
@@ -66,6 +124,29 @@ module Styles = {
 };
 
 let make = (~viewData: ViewData.t, _children) => {
+  let renderTx =
+      (addressStatus, txList: list(ViewData.income), txTypeString: string) =>
+    List.mapWithIndex(
+      txList,
+      (iter, tx: ViewData.income) => {
+        let primary =
+          switch (tx.status) {
+          | Unconfirmed => "unconfirmed " ++ txTypeString
+          | Confirmed => txTypeString
+          };
+        let label =
+          calcTransactionStatus(addressStatus, tx.unlocked)
+          |> statusToLabel(~className=Css.(style([Css.float(`right)])));
+        <Transaction
+          key=(iter |> string_of_int)
+          txType=Income
+          primary
+          amount=tx.amount
+          date=tx.date
+          label
+        />;
+      },
+    );
   let renderExpandedInfo =
       (info: ViewData.addressInfo, details: ViewData.addressDetails) =>
     <div className=Styles.detailsGrid>
@@ -101,21 +182,45 @@ let make = (~viewData: ViewData.t, _children) => {
         </MTypography>
         <MaterialUi.List>
           (
-            List.concat(details.unspentIncome, details.spentIncome)
-            |. List.mapWithIndex((iter, tx: ViewData.income) => {
-                 let (txType, primary) =
-                   switch (tx.status) {
-                   | _ => (Transaction.Income, "income")
-                   };
-                 <Transaction
-                   key=(iter |> string_of_int)
-                   txType
-                   primary
-                   amount=tx.amount
-                   date=tx.date
-                 />;
-               })
-            |> Utils.intersperse(key => <MDivider key />)
+            List.concat(
+              renderTx(
+                details.addressStatus,
+                details.unspentIncome,
+                "income",
+              ),
+              renderTx(
+                details.addressStatus,
+                details.spentIncome,
+                "income - transferred",
+              ),
+            )
+            |. List.concat(
+                 details.addressType
+                 |> (
+                   fun
+                   | WalletInfoCollector.Income(id) => [
+                       <MaterialUi.ListItem
+                         disableGutters=true
+                         divider=true
+                         classes=[Divider(Transaction.Styles.divider)]>
+                         <MaterialUi.ListItemText
+                           classes=[Root(Transaction.Styles.root)]
+                           primary={
+                             <MTypography variant=`Body2>
+                               (
+                                 "address exposed by "
+                                 ++ UserId.toString(id)
+                                 |> String.uppercase
+                                 |> text
+                               )
+                             </MTypography>
+                           }
+                         />
+                       </MaterialUi.ListItem>,
+                     ]
+                   | _ => []
+                 ),
+               )
             |> List.toArray
             |> ReasonReact.array
           )
@@ -148,11 +253,18 @@ let make = (~viewData: ViewData.t, _children) => {
                    (info.address |> text)
                  </MTypography>,
                  <MTypography className=Styles.summary variant=`Body2>
-                   (info.addressType |> addressTypeToString |> text)
+                   (
+                     info.addressType
+                     |> addressTypeToString
+                     |> String.uppercase
+                     |> text
+                   )
                  </MTypography>,
-                 <MTypography className=Styles.summary variant=`Body2>
-                   (statusToString(info.addressStatus) |> text)
-                 </MTypography>,
+                 calcAddressStatus(
+                   info.addressStatus,
+                   List.map(details.unspentIncome, i => i.unlocked),
+                 )
+                 |> statusToLabel(~className=Styles.summary),
                  <MaterialUi.IconButton
                    className=(Styles.chevron(expand))
                    onClick=(_e => send(ToggleAddress(info)))>
@@ -170,22 +282,30 @@ let make = (~viewData: ViewData.t, _children) => {
            )
         |> List.toArray
         |> ReasonReact.array;
+      let warning =
+        viewData.atRiskWarning ?
+          <WarningBanner key="warning">
+            ...(viewData.ventureId |> WarningsText.atRiskFunds)
+          </WarningBanner> :
+          ReasonReact.null;
+      let className = Styles.header(viewData.atRiskWarning);
       <Grid
         title1=("Wallet Address History" |> text)
         area3={
           <div className=ScrollList.containerStyles>
             <ScrollList>
+              warning
               <div className=Styles.grid>
-                <MTypography className=Styles.header variant=`Body2>
+                <MTypography className variant=`Body2>
                   ("WALLET ADDRESS" |> text)
                 </MTypography>
-                <MTypography className=Styles.header variant=`Body2>
+                <MTypography className variant=`Body2>
                   ("ADDRESS TYPE" |> text)
                 </MTypography>
-                <MTypography className=Styles.header variant=`Body2>
+                <MTypography className variant=`Body2>
                   ("STATUS" |> text)
                 </MTypography>
-                <span className=Styles.header />
+                <span className />
                 infos
               </div>
             </ScrollList>

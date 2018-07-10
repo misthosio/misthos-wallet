@@ -33,6 +33,11 @@ var root = Css.style(/* :: */[
       ]
     ]);
 
+var divider = Css.style(/* :: */[
+      Css.borderBottom(Css.px(1), /* solid */12956715, Css.hex("979797")),
+      /* [] */0
+    ]);
+
 function amount(inOut) {
   return Css.style(/* :: */[
               Css.color(inOut ? Colors.strongPink : Colors.misthosTeal),
@@ -43,12 +48,19 @@ function amount(inOut) {
             ]);
 }
 
+var label = Css.style(/* :: */[
+      Css.$$float(/* right */-379319332),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* root */root,
-  /* amount */amount
+  /* divider */divider,
+  /* amount */amount,
+  /* label */label
 ];
 
-function make(txType, primary, amount$1, date, onClick, _) {
+function make(txType, primary, amount$1, date, label, onClick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -60,12 +72,18 @@ function make(txType, primary, amount$1, date, onClick, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(true, undefined, undefined, undefined, undefined, true, undefined, true, undefined, undefined, undefined, undefined, onClick, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[
+              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(onClick !== undefined, undefined, undefined, undefined, undefined, true, undefined, true, true, undefined, undefined, undefined, onClick, /* :: */[
+                              /* Divider */Block.__(6, [divider]),
+                              /* [] */0
+                            ], undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[
                                                     ViewCommon.text($$String.uppercase(primary)),
                                                     React.createElement("span", {
                                                           className: amount(txType)
                                                         }, ViewCommon.text(BTC.format(amount$1) + " BTC"))
-                                                  ]))), undefined, Js_primitive.some(date !== undefined ? ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(Js_primitive.valFromOption(date).toDateString())])) : null), undefined, /* :: */[
+                                                  ]))), undefined, Js_primitive.some(date !== undefined ? ReasonReact.element(undefined, undefined, MTypography.make(/* Body1 */-904051921, undefined, undefined, undefined, undefined, /* array */[
+                                                      ViewCommon.text(Js_primitive.valFromOption(date).toDateString()),
+                                                      label !== undefined ? Js_primitive.valFromOption(label) : null
+                                                    ])) : null), undefined, /* :: */[
                                         /* Root */Block.__(0, [root]),
                                         /* [] */0
                                       ], undefined, /* array */[]))]));

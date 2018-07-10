@@ -296,7 +296,7 @@ function make(viewData, commands, cmdStatus, _) {
                                                 React.createElement("div", {
                                                       className: spaceBetween(/* baseline */287825029) + (" " + total)
                                                     }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Body2 */-904051920, undefined, undefined, /* array */[ViewCommon.text("TOTAL PAYOUT")])), ReasonReact.element(undefined, undefined, MTypography.make(/* Subheading */148169314, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text(BTC.format(summary[/* spentWithFees */2]) + " BTC")])))
-                                              ])), ReasonReact.element(undefined, undefined, ProposeButton.make("Propose Payout", (function () {
+                                              ])), ReasonReact.element(undefined, undefined, ProposeButton.make("Propose Payout", undefined, (function () {
                                                   return Curry._1(send, /* ProposePayout */2);
                                                 }), (function () {
                                                   return Curry._1(send, /* Freeze */3);

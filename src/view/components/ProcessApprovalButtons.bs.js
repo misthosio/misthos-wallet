@@ -4,7 +4,10 @@
 var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
+var React = require("react");
+var Colors = require("../Colors.bs.js");
 var MButton = require("./MButton.bs.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var MTypography = require("./MTypography.bs.js");
@@ -26,12 +29,18 @@ var inlineConfirm = Css.style(/* :: */[
       ]
     ]);
 
+var warning = Css.style(/* :: */[
+      Css.color(Colors.error),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* gray */gray,
-  /* inlineConfirm */inlineConfirm
+  /* inlineConfirm */inlineConfirm,
+  /* warning */warning
 ];
 
-function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, cmdStatus, _) {
+function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, onCancel, cmdStatus, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -64,7 +73,9 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                     }
                     break;
                 case 1 : 
-                    tmp = /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, /* array */[
+                    tmp = /* array */[
+                      ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, warning, undefined, undefined, undefined, /* array */[ViewCommon.text(Js_option.getWithDefault("", alertText))])),
+                      ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, /* array */[
                                 ViewCommon.text(endorseText),
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* ConfirmEndorse */2);
@@ -72,17 +83,18 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* Cancel */0);
                                           }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("No")]))
-                              ]))];
+                              ]))
+                    ];
                     break;
                 case 3 : 
                     tmp = /* array */[ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, inlineConfirm, undefined, undefined, undefined, /* array */[
                                 ViewCommon.text(rejectText),
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* ConfirmReject */4);
-                                          }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("yes")])),
+                                          }), undefined, undefined, /* Flat */0, undefined, false, undefined, undefined, undefined, /* array */[ViewCommon.text("yes")])),
                                 ReasonReact.element(undefined, undefined, MButton.make(undefined, (function () {
                                             return Curry._1(send, /* Cancel */0);
-                                          }), undefined, undefined, /* Flat */0, undefined, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("No")]))
+                                          }), undefined, undefined, /* Flat */0, undefined, false, undefined, undefined, undefined, /* array */[ViewCommon.text("No")]))
                               ]))];
                     break;
                 case 2 : 
@@ -139,7 +151,7 @@ function make(endorseText, rejectText, canVote, onEndorse, onReject, onCancel, c
                     break;
                 
               }
-              return Belt_Array.concatMany(/* array */[tmp]);
+              return React.createElement("div", undefined, Belt_Array.concatMany(/* array */[tmp]));
             }),
           /* initialState */(function () {
               return /* record */[

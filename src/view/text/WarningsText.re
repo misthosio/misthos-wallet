@@ -1,4 +1,5 @@
 include ViewCommon;
+
 let testnet =
   [|
     "Warning! This is the testnet version of Misthos.  Get Testnet coins "
@@ -15,3 +16,19 @@ let testnet =
     "." |> text,
   |]
   |> ReasonReact.array;
+
+let atRiskFunds = ventureId => {
+  let route = Router.Config.(Venture(ventureId, CreatePayout));
+  [|
+    "Some of your addresses contain at-risk funds. Please " |> text,
+    <a
+      href=(route |> Router.Config.routeToUrl)
+      onClick=(Router.clickToRoute(route))>
+      ("Make a payout" |> text)
+    </a>,
+    " To avoid your funds becoming inaccessible." |> text,
+  |]
+  |> ReasonReact.array;
+};
+
+let partnerRemovalRisk = "ALERT: This user is currently critical to access certain funds. By removing this user, you accept that these funds will become temporarily or permanently inaccessible. Are you sure you want to endorse this removal?";

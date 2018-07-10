@@ -16,6 +16,10 @@ let uSucces = "33d321";
 
 let success = hex(uSucces);
 
+let uWarning = "f5a623";
+
+let warning = hex(uWarning);
+
 let uError = "d0021b";
 
 let error = hex(uError);

@@ -13,6 +13,7 @@ type inputs = {
 
 type state = {
   viewData: ViewData.t,
+  alertText: option(string),
   canSubmitProposal: bool,
   removeInputFrozen: bool,
   inputs,
@@ -203,6 +204,7 @@ let make =
     ) => {
   ...component,
   initialState: () => {
+    alertText: None,
     inputs: {
       removePartnerId: None,
       prospectId: "",
@@ -220,7 +222,7 @@ let make =
       clipboard => clipboard |> Clipboard.destroy,
     ),
   ],
-  reducer: (action, state) =>
+  reducer: (action, {viewData} as state) =>
     switch (action) {
     | UpdateSuggestions(query, suggestions) =>
       let suggestions = addSuggestions(state.suggestions, query, suggestions);
@@ -268,6 +270,7 @@ let make =
       |> ignore;
       ReasonReact.Update({
         ...state,
+        alertText: None,
         inputs: {
           ...state.inputs,
           removePartnerId: None,
@@ -285,6 +288,9 @@ let make =
               ...state.inputs,
               removePartnerId: Some(partner),
             },
+            alertText:
+              viewData.alertPartners |. Belt.Set.has(partner) ?
+                WarningsText.partnerRemovalRisk |. Some : None,
           },
           (_ => removePartnerCmds.reset()),
         )
@@ -308,7 +314,13 @@ let make =
         (_ => proposePartnerCmds.reset()),
       )
     },
-  render: ({send, state: {canSubmitProposal, viewData, inputs} as state}) => {
+  render:
+    (
+      {
+        send,
+        state: {alertText, canSubmitProposal, viewData, inputs} as state,
+      },
+    ) => {
     let activeStep =
       switch (proposeCmdStatus) {
       | Success(_) => 1
@@ -546,6 +558,7 @@ let make =
             onCancel=(() => send(ResetRemoval))
             canSubmitProposal=(inputs.removePartnerId |> Js.Option.isSome)
             proposeText="Propose Partner Removal"
+            ?alertText
             cmdStatus=removeCmdStatus
           />
         </div>

@@ -11,6 +11,7 @@ var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Js_primitive = require("bs-platform/lib/js/js_primitive.js");
+var WarningsText = require("./text/WarningsText.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var ProcessApprovalButtons = require("./components/ProcessApprovalButtons.bs.js");
 
@@ -28,11 +29,12 @@ function make(viewData, commands, cmdStatus, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = viewData[/* data */5];
-              var processType = match[/* processType */1];
-              var userId = match[/* userId */0];
-              var processId = viewData[/* processId */0];
-              var match$1 = processType ? /* tuple */[
+              var match = viewData[/* partnerProcess */0];
+              var match$1 = match[/* data */5];
+              var processType = match$1[/* processType */1];
+              var userId = match$1[/* userId */0];
+              var processId = match[/* processId */0];
+              var match$2 = processType ? /* tuple */[
                   (function () {
                       return Curry._1(commands[/* endorsePartner */2], processId);
                     }),
@@ -48,39 +50,41 @@ function make(viewData, commands, cmdStatus, _) {
                     })
                 ];
               var processTypeString = processType ? "Addition" : "Removal";
-              var match$2;
-              switch (viewData[/* status */1]) {
+              var match$3;
+              switch (match[/* status */1]) {
                 case 0 : 
-                    match$2 = /* tuple */[
+                    match$3 = /* tuple */[
                       "Pending Approval",
                       /* Pending */0
                     ];
                     break;
                 case 1 : 
-                    match$2 = /* tuple */[
+                    match$3 = /* tuple */[
                       "Accepted",
                       /* Success */2
                     ];
                     break;
                 case 2 : 
-                    match$2 = /* tuple */[
+                    match$3 = /* tuple */[
                       "Denied",
                       /* Failure */1
                     ];
                     break;
                 case 3 : 
-                    match$2 = /* tuple */[
+                    match$3 = /* tuple */[
                       "Aborted",
                       /* Failure */1
                     ];
                     break;
                 
               }
-              var statusChip = ReasonReact.element(undefined, undefined, StatusChip.make(match$2[1], match$2[0], /* array */[]));
-              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Proposed Partner " + processTypeString)), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](userId), undefined, Partner.make(userId, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](viewData[/* proposedBy */2]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[
+              var statusChip = ReasonReact.element(undefined, undefined, StatusChip.make(match$3[1], match$3[0], /* array */[]));
+              var match$4 = viewData[/* atRiskWarning */1];
+              var alertText = match$4 ? WarningsText.partnerRemovalRisk : undefined;
+              return ReasonReact.element(undefined, undefined, Grid.make(Js_primitive.some(ViewCommon.text("Proposed Partner " + processTypeString)), undefined, undefined, undefined, Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MTypography.make(/* Title */594052472, undefined, undefined, undefined, undefined, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(PrimitiveTypes.UserId[/* toString */0](userId), undefined, Partner.make(userId, undefined, undefined, undefined, undefined, undefined, /* array */[])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, true, undefined, undefined, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match[/* proposedBy */2]))])), ReasonReact.element(undefined, undefined, MTypography.make(/* Body2 */-904051920, undefined, undefined, undefined, undefined, /* array */[
                                               ViewCommon.text("Status: "),
                                               statusChip
-                                            ])))), Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, Voters.make(viewData[/* voters */4], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, "Reject Partner " + processTypeString, viewData[/* canVote */3], match$1[0], match$1[1], (function () {
+                                            ])))), Js_primitive.some(React.createElement("div", undefined, ReasonReact.element(undefined, undefined, Voters.make(match[/* voters */4], /* array */[])), ReasonReact.element(undefined, undefined, ProcessApprovalButtons.make("Endorse Partner " + processTypeString, alertText, "Reject Partner " + processTypeString, match[/* canVote */3], match$2[0], match$2[1], (function () {
                                                 return Curry._1(commands[/* reset */0], /* () */0);
                                               }), cmdStatus, /* array */[])))), undefined, undefined, /* array */[]));
             }),

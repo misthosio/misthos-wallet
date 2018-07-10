@@ -33,7 +33,8 @@ let make =
       canVote,
       status,
       data: {userId, processType},
-    }: ViewData.t = viewData;
+    }: ViewData.partnerProcess =
+      viewData.partnerProcess;
     let (onEndorse, onReject) =
       switch (processType) {
       | Addition => (
@@ -60,6 +61,8 @@ let make =
         };
       <StatusChip status label />;
     };
+    let alertText =
+      viewData.atRiskWarning ? WarningsText.partnerRemovalRisk |. Some : None;
     <Grid
       title1=("Proposed Partner " ++ processTypeString |> text)
       area3={
@@ -83,6 +86,7 @@ let make =
           <ProcessApprovalButtons
             endorseText=("Endorse Partner " ++ processTypeString)
             rejectText=("Reject Partner " ++ processTypeString)
+            ?alertText
             canVote
             onEndorse
             onReject

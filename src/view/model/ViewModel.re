@@ -38,6 +38,7 @@ let captureResponse = (correlationId, response, state) => {
 let lastResponse = ({lastResponse}) => lastResponse;
 
 module AddressesView = {
+  open Belt;
   type addressType = WalletInfoCollector.addressType;
   type addressStatus = WalletInfoCollector.addressStatus;
   type addressInfo = WalletInfoCollector.addressInfo;
@@ -61,6 +62,8 @@ module AddressesView = {
   };
   type t = {
     infos: list(addressInfo),
+    ventureId,
+    atRiskWarning: bool,
     addressDetails: addressInfo => addressDetails,
   };
   let fromViewModelState =
@@ -70,73 +73,151 @@ module AddressesView = {
           oldInputCollector,
           partnersCollector,
           txDetailsCollector,
+          ventureId,
         },
       ) => {
-    infos:
+    let infos =
       walletInfoCollector
-      |> WalletInfoCollector.addressInfos(AccountIndex.default),
-    addressDetails: addressInfo => {
-      isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
-      custodians: addressInfo.custodians,
-      nCustodians: addressInfo.custodians |> Belt.Set.size,
-      nCoSigners: addressInfo.nCoSigners,
-      addressType: addressInfo.addressType,
-      addressStatus: addressInfo.addressStatus,
-      unspentIncome:
-        WalletInfoCollector.inputsFor(
-          AccountIndex.default,
-          addressInfo,
-          walletInfoCollector,
-        )
-        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-             let {status, date}: TxDetailsCollector.income =
-               txDetailsCollector
-               |> TxDetailsCollector.getIncome(txId)
-               |> Js.Option.getExn;
-             {txId, amount: value, status, date, unlocked};
-           }),
-      spentIncome:
-        oldInputCollector
-        |> OldInputCollector.inputsFor(addressInfo.address)
-        |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
-             let {status, date}: TxDetailsCollector.income =
-               txDetailsCollector
-               |> TxDetailsCollector.getIncome(txId)
-               |> Js.Option.getExn;
-             {txId, amount: value, status, date, unlocked};
-           }),
-    },
+      |> WalletInfoCollector.addressInfos(AccountIndex.default);
+
+    {
+      infos,
+      ventureId,
+      atRiskWarning:
+        infos
+        |. List.reduceU(
+             false, (. res, {addressStatus, balance}: addressInfo) =>
+             switch (addressStatus) {
+             | AtRisk => res || balance |> BTC.gt(BTC.zero)
+             | _ => res
+             }
+           ),
+      addressDetails: addressInfo => {
+        isPartner: id => partnersCollector |> PartnersCollector.isPartner(id),
+        custodians: addressInfo.custodians,
+        nCustodians: addressInfo.custodians |> Belt.Set.size,
+        nCoSigners: addressInfo.nCoSigners,
+        addressType: addressInfo.addressType,
+        addressStatus: addressInfo.addressStatus,
+        unspentIncome:
+          WalletInfoCollector.inputsFor(
+            AccountIndex.default,
+            addressInfo,
+            walletInfoCollector,
+          )
+          |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+               let {status, date}: TxDetailsCollector.income =
+                 txDetailsCollector
+                 |> TxDetailsCollector.getIncome(txId)
+                 |> Js.Option.getExn;
+               {txId, amount: value, status, date, unlocked};
+             }),
+        spentIncome:
+          oldInputCollector
+          |> OldInputCollector.inputsFor(addressInfo.address)
+          |. Belt.List.mapU((. {txId, value, unlocked}: Network.txInput) => {
+               let {status, date}: TxDetailsCollector.income =
+                 txDetailsCollector
+                 |> TxDetailsCollector.getIncome(txId)
+                 |> Js.Option.getExn;
+               {txId, amount: value, status, date, unlocked};
+             }),
+      },
+    };
   };
 };
 let viewAddressesModal = AddressesView.fromViewModelState;
 
 module ManagePartnersView = {
+  open Belt;
   type partner = PartnersCollector.partner;
   type t = {
     ventureName: string,
     localUser: UserId.t,
     partners: list(partner),
+    alertPartners: UserId.set,
     joinVentureUrl: string,
   };
   let fromViewModelState =
-      ({ventureName, ventureId, localUser, partnersCollector}) => {
-    localUser,
-    ventureName,
-    partners: partnersCollector.partners,
-    joinVentureUrl:
-      Location.origin
-      ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
+      (
+        {
+          ventureName,
+          ventureId,
+          localUser,
+          partnersCollector,
+          walletInfoCollector,
+        },
+      ) => {
+    let infos =
+      walletInfoCollector
+      |> WalletInfoCollector.addressInfos(AccountIndex.default);
+
+    {
+      localUser,
+      alertPartners:
+        infos
+        |. Belt.List.reduceU(
+             UserId.emptySet,
+             (.
+               res,
+               {addressStatus, custodians, balance}: WalletInfoCollector.addressInfo,
+             ) =>
+             switch (addressStatus, balance) {
+             | (AtRisk, balance)
+             | (TemporarilyInaccessible, balance)
+                 when balance |> BTC.gt(BTC.zero) =>
+               res |. Set.union(custodians)
+             | _ => res
+             }
+           ),
+      ventureName,
+      partners: partnersCollector.partners,
+      joinVentureUrl:
+        Location.origin
+        ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
+    };
   };
 };
 
 let managePartnersModal = ManagePartnersView.fromViewModelState;
 
 module ViewPartnerView = {
+  open Belt;
   type voteStatus = ProcessCollector.voteStatus;
   type voter = ProcessCollector.voter;
-  type t = PartnersCollector.partnerProcess;
-  let fromViewModelState = (userId, {partnersCollector}) =>
-    partnersCollector |> PartnersCollector.getProspect(userId);
+  type partnerProcess = PartnersCollector.partnerProcess;
+  type t = {
+    partnerProcess,
+    atRiskWarning: bool,
+  };
+  let fromViewModelState = (userId, {partnersCollector, walletInfoCollector}) =>
+    partnersCollector
+    |> PartnersCollector.getProspect(userId)
+    |> Utils.mapOption(partnerProcess =>
+         {
+           partnerProcess,
+           atRiskWarning:
+             switch (partnerProcess.data.processType) {
+             | Removal =>
+               walletInfoCollector
+               |> WalletInfoCollector.addressInfos(AccountIndex.default)
+               |. Belt.List.reduceU(
+                    false,
+                    (.
+                      res,
+                      {addressStatus, custodians}: WalletInfoCollector.addressInfo,
+                    ) =>
+                    switch (addressStatus) {
+                    | TemporarilyInaccessible
+                    | AtRisk =>
+                      res || custodians |. Set.has(partnerProcess.data.userId)
+                    | _ => res
+                    }
+                  )
+             | Addition => false
+             },
+         }
+       );
 };
 
 let viewPartnerModal = ViewPartnerView.fromViewModelState;
@@ -284,6 +365,7 @@ module SelectedVentureView = {
   };
   type t = {
     ventureId,
+    atRiskWarning: bool,
     ventureName: string,
     readOnly: bool,
     partners: list(partner),
@@ -320,6 +402,20 @@ module SelectedVentureView = {
       ventureName,
       readOnly:
         partnersCollector |> PartnersCollector.isPartner(localUser) == false,
+      atRiskWarning:
+        walletInfoCollector
+        |> WalletInfoCollector.addressInfos(AccountIndex.default)
+        |. Belt.List.reduceU(
+             false,
+             (.
+               res,
+               {addressStatus, balance}: WalletInfoCollector.addressInfo,
+             ) =>
+             switch (addressStatus) {
+             | AtRisk => res || balance |> BTC.gt(BTC.zero)
+             | _ => res
+             }
+           ),
       partners: partnersCollector.partners,
       prospects:
         partnersCollector |> PartnersCollector.prospectsPendingApproval,

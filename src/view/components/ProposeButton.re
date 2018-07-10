@@ -21,13 +21,14 @@ let component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
 module Styles = {
   open Css;
-  let gray = style([color(rgba(0, 0, 0, 0.38))]);
   let inlineConfirm = style([display(`flex), alignItems(`baseline)]);
+  let warning = style([color(Colors.error)]);
 };
 
 let make =
     (
       ~proposeText,
+      ~alertText=?,
       ~onSubmit,
       ~onPropose=?,
       ~onCancel=?,
@@ -61,31 +62,42 @@ let make =
       )
     },
   render: ({send, state: {buttonState: state, cmdStatus}}) =>
-    ReasonReact.array(
-      Array.concatMany([|
-        switch (state, cmdStatus) {
-        | (ConfirmProposal, _) => [|
-            <MTypography className=Styles.inlineConfirm variant=`Body2>
-              (proposeText |> text)
-              <MButton variant=Flat onClick=(_e => send(ConfirmProposal))>
-                (text("yes"))
-              </MButton>
-              <MButton variant=Flat onClick=(_e => send(Cancel))>
-                (text("No"))
-              </MButton>
-            </MTypography>,
-          |]
-        | (_, Error(_) | Idle)
-        | (NoDecision, _) => [|
-            <MButton fullWidth=true onClick=(_e => send(Propose))>
-              (text(proposeText))
-            </MButton>,
-            <CommandExecutor.Status cmdStatus action=Proposal />,
-          |]
-        | (ProposalSubmited, _) => [|
-            <CommandExecutor.Status cmdStatus action=Proposal />,
-          |]
-        },
-      |]),
-    ),
+    <div>
+      (
+        ReasonReact.array(
+          Array.concatMany([|
+            switch (state, cmdStatus) {
+            | (ConfirmProposal, _) => [|
+                <MTypography className=Styles.warning variant=`Body2>
+                  (alertText |> Js.Option.getWithDefault("") |> text)
+                </MTypography>,
+                <MTypography className=Styles.inlineConfirm variant=`Body2>
+                  (proposeText |> text)
+                  <MButton
+                    gutterTop=false
+                    variant=Flat
+                    onClick=(_e => send(ConfirmProposal))>
+                    (text("yes"))
+                  </MButton>
+                  <MButton
+                    gutterTop=false variant=Flat onClick=(_e => send(Cancel))>
+                    (text("No"))
+                  </MButton>
+                </MTypography>,
+              |]
+            | (_, Error(_) | Idle)
+            | (NoDecision, _) => [|
+                <MButton fullWidth=true onClick=(_e => send(Propose))>
+                  (text(proposeText))
+                </MButton>,
+                <CommandExecutor.Status cmdStatus action=Proposal />,
+              |]
+            | (ProposalSubmited, _) => [|
+                <CommandExecutor.Status cmdStatus action=Proposal />,
+              |]
+            },
+          |]),
+        )
+      )
+    </div>,
 };
