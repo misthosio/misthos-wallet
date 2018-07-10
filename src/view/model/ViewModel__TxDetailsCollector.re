@@ -185,7 +185,6 @@ let apply = (event, state) =>
            ),
     }
   | IncomeDetected({address, txId, amount}) =>
-    Js.log2("income detected", txId);
     let txDate = state.txDates |. Map.String.get(txId);
     {
       ...state,
