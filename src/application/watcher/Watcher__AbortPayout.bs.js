@@ -70,7 +70,8 @@ function make(proposal, log) {
           "completed",
           "result",
           "systemIssuer",
-          "custodians"
+          "custodians",
+          "alreadySigned"
         ]);
     var receive = ids[0];
     var processCompleted = ids[1];
@@ -80,6 +81,7 @@ function make(proposal, log) {
     var result = ids[5];
     var systemIssuer = ids[6];
     var custodians = ids[7];
+    var alreadySigned = ids[8];
     CamlinternalOO.set_methods($$class, /* array */[
           receive,
           (function (self$1, param) {
@@ -101,6 +103,14 @@ function make(proposal, log) {
                     var acceptedProcess = match[/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](env$1[2], acceptedProcess)) {
                       self$1[payoutProcesses][0] = Belt_Map.set(self$1[payoutProcesses][0], acceptedProcess, Belt_Set.mergeMany(Network.inputSet(/* () */0), match[/* data */2][/* payoutTx */1][/* usedInputs */1]));
+                      return /* () */0;
+                    } else {
+                      return /* () */0;
+                    }
+                case 32 : 
+                    var match$1 = $$event[0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], env$1[2])) {
+                      self$1[alreadySigned][0] = Belt_Set.add(self$1[alreadySigned][0], match$1[/* custodianId */1]);
                       return /* () */0;
                     } else {
                       return /* () */0;
@@ -147,7 +157,7 @@ function make(proposal, log) {
           pendingEvent,
           (function (self$1, _) {
               var env$1 = self$1[env];
-              var match = Curry._1(env$1[1], self$1[custodians][0]);
+              var match = Curry._1(env$1[1], Belt_Set.union(self$1[custodians][0], self$1[alreadySigned][0]));
               if (match) {
                 return /* tuple */[
                         self$1[systemIssuer][0],
@@ -165,6 +175,7 @@ function make(proposal, log) {
       self[result] = /* record */[/* contents */undefined];
       self[systemIssuer] = /* record */[/* contents */BitcoinjsLib.ECPair.makeRandom()];
       self[custodians] = /* record */[/* contents */PrimitiveTypes.UserId[/* emptySet */9]];
+      self[alreadySigned] = /* record */[/* contents */PrimitiveTypes.UserId[/* emptySet */9]];
       self[env] = env$1;
       return self;
     };

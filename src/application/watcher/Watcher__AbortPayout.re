@@ -67,6 +67,7 @@ let make =
     val result = ref(None);
     val systemIssuer = ref(Bitcoin.ECPair.makeRandom());
     val custodians = ref(UserId.emptySet);
+    val alreadySigned = ref(UserId.emptySet);
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
       switch (event) {
@@ -75,6 +76,9 @@ let make =
         custodians := custodians^ |. Set.add(partnerId)
       | CustodianRemovalAccepted({data: {custodianId}}) =>
         custodians := custodians^ |. Set.remove(custodianId)
+      | PayoutSigned({processId: signedProcess, custodianId})
+          when ProcessId.eq(signedProcess, processId) =>
+        alreadySigned := alreadySigned^ |. Set.add(custodianId)
       | PayoutAccepted({
           processId: acceptedProcess,
           data: {payoutTx: {usedInputs}},
@@ -119,7 +123,7 @@ let make =
     };
     pub processCompleted = () => completed^;
     pub pendingEvent = () =>
-      custodians^ |> anyInputNotSignable ?
+      custodians^ |. Set.union(alreadySigned^) |> anyInputNotSignable ?
         Some((
           systemIssuer^,
           PayoutAborted(Payout.Aborted.fromProposal(proposal)),
