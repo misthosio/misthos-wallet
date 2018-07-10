@@ -71,11 +71,6 @@ let calcTransactionStatus = (status: ViewData.addressStatus, unlocked: bool) =>
   | (_, _) => None
   };
 
-let addressTypeToString =
-  fun
-  | WalletInfoCollector.Income(_) => "Income"
-  | WalletInfoCollector.Change => "Change";
-
 let component = ReasonReact.reducerComponent("AddressesModal");
 
 module Styles = {
@@ -121,6 +116,8 @@ module Styles = {
         ~bottom=px(Theme.space(5)),
       ),
     ]);
+  let changeAddress =
+    style([color(rgba(0, 0, 0, 0.5)), textTransform(uppercase)]);
 };
 
 let make = (~viewData: ViewData.t, _children) => {
@@ -147,8 +144,7 @@ let make = (~viewData: ViewData.t, _children) => {
         />;
       },
     );
-  let renderExpandedInfo =
-      (info: ViewData.addressInfo, details: ViewData.addressDetails) =>
+  let renderExpandedInfo = (details: ViewData.addressDetails) =>
     <div className=Styles.detailsGrid>
       <div>
         <MTypography gutterBottom=true variant=`Title>
@@ -176,9 +172,6 @@ let make = (~viewData: ViewData.t, _children) => {
       <div>
         <MTypography gutterBottom=true variant=`Title>
           ("OVERVIEW" |> text)
-        </MTypography>
-        <MTypography gutterBottom=true variant=`Body2>
-          ("ADDRESS BALANCE: " ++ (info.balance |> BTC.format) |> text)
         </MTypography>
         <MaterialUi.List>
           (
@@ -250,15 +243,18 @@ let make = (~viewData: ViewData.t, _children) => {
                let expand = state.expandedAddress == Some(info);
                [|
                  <MTypography className=Styles.summary variant=`Body2>
-                   (info.address |> text)
+                   (
+                     switch (info.addressType) {
+                     | WalletInfoCollector.Income(_) => info.address |> text
+                     | WalletInfoCollector.Change =>
+                       <span className=Styles.changeAddress>
+                         ("(hidden change address)" |> text)
+                       </span>
+                     }
+                   )
                  </MTypography>,
                  <MTypography className=Styles.summary variant=`Body2>
-                   (
-                     info.addressType
-                     |> addressTypeToString
-                     |> String.uppercase
-                     |> text
-                   )
+                   ((info.balance |> BTC.format) ++ " BTC" |> text)
                  </MTypography>,
                  calcAddressStatus(
                    info.addressStatus,
@@ -271,7 +267,7 @@ let make = (~viewData: ViewData.t, _children) => {
                    Icons.chevronDown
                  </MaterialUi.IconButton>,
                  <MaterialUi.Collapse className=Styles.details in_=expand>
-                   (renderExpandedInfo(info, details))
+                   (renderExpandedInfo(details))
                  </MaterialUi.Collapse>,
                |]
                |> ReasonReact.array
@@ -300,7 +296,7 @@ let make = (~viewData: ViewData.t, _children) => {
                   ("WALLET ADDRESS" |> text)
                 </MTypography>
                 <MTypography className variant=`Body2>
-                  ("ADDRESS TYPE" |> text)
+                  ("ADDRESS BALANCE" |> text)
                 </MTypography>
                 <MTypography className variant=`Body2>
                   ("STATUS" |> text)
