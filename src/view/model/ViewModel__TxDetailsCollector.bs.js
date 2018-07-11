@@ -10,6 +10,14 @@ var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var ProcessCollector = require("./ProcessCollector.bs.js");
 var PayoutTransaction = require("../../application/wallet/PayoutTransaction.bs.js");
 
+function getExplorerLink(network, txId) {
+  if (network >= 2) {
+    return "https://www.blockchain.com/en/btc/tx/" + txId;
+  } else {
+    return "https://testnet.blockchain.info/tx/" + txId;
+  }
+}
+
 function make(localUser) {
   return /* record */[
           /* network : Regtest */0,
@@ -208,15 +216,17 @@ function apply($$event, state) {
                           var income = param[0];
                           return /* Some */[/* record */[
                                     /* status */income[/* status */0],
-                                    /* date */income[/* date */1],
-                                    /* txId */income[/* txId */2],
-                                    /* amount */income[/* amount */3].plus(amount),
-                                    /* addresses */Belt_SetString.add(income[/* addresses */4], address)
+                                    /* explorerLink */income[/* explorerLink */1],
+                                    /* date */income[/* date */2],
+                                    /* txId */income[/* txId */3],
+                                    /* amount */income[/* amount */4].plus(amount),
+                                    /* addresses */Belt_SetString.add(income[/* addresses */5], address)
                                   ]];
                         } else {
                           var match = Js_option.isSome(txDate$1);
                           return /* Some */[/* record */[
                                     /* status */match ? /* Confirmed */1 : /* Unconfirmed */0,
+                                    /* explorerLink */getExplorerLink(state[/* network */0], txId$1),
                                     /* date */txDate$1,
                                     /* txId */txId$1,
                                     /* amount */amount,
@@ -247,10 +257,11 @@ function apply($$event, state) {
                         return Utils.mapOption((function (income) {
                                       return /* record */[
                                               /* status : Confirmed */1,
+                                              /* explorerLink */income[/* explorerLink */1],
                                               /* date : Some */[txDate$2],
-                                              /* txId */income[/* txId */2],
-                                              /* amount */income[/* amount */3],
-                                              /* addresses */income[/* addresses */4]
+                                              /* txId */income[/* txId */3],
+                                              /* amount */income[/* amount */4],
+                                              /* addresses */income[/* addresses */5]
                                             ];
                                     }), param);
                       }))
@@ -260,6 +271,7 @@ function apply($$event, state) {
   }
 }
 
+exports.getExplorerLink = getExplorerLink;
 exports.make = make;
 exports.getPayout = getPayout;
 exports.getIncome = getIncome;

@@ -4,6 +4,12 @@ open PrimitiveTypes;
 
 open Event;
 
+let getExplorerLink = (network, txId) =>
+  switch (network) {
+  | Network.Mainnet => "https://www.blockchain.com/en/btc/tx/" ++ txId
+  | _ => "https://testnet.blockchain.info/tx/" ++ txId
+  };
+
 type payoutStatus =
   | PendingApproval
   | Accepted
@@ -28,6 +34,7 @@ type incomeStatus =
 
 type income = {
   status: incomeStatus,
+  explorerLink: string,
   date: option(Js.Date.t),
   txId: string,
   amount: BTC.t,
@@ -203,6 +210,7 @@ let apply = (event, state) =>
                })
              | None =>
                Some({
+                 explorerLink: getExplorerLink(state.network, txId),
                  date: txDate,
                  status: txDate |> Js.Option.isSome ? Confirmed : Unconfirmed,
                  txId,

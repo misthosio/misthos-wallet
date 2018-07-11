@@ -13,10 +13,10 @@ var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 var component = ReasonReact.statelessComponent("ViewIncomeModal");
 
 function make(viewData, _) {
-  var addresses = viewData[/* addresses */4];
-  var amount = viewData[/* amount */3];
-  var txId = viewData[/* txId */2];
-  var date = viewData[/* date */1];
+  var addresses = viewData[/* addresses */5];
+  var amount = viewData[/* amount */4];
+  var txId = viewData[/* txId */3];
+  var date = viewData[/* date */2];
   var status = viewData[/* status */0];
   return /* record */[
           /* debugName */component[/* debugName */0],
