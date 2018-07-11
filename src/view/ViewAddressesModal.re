@@ -146,7 +146,12 @@ let make = (~viewData: ViewData.t, _children) => {
         />;
       },
     );
-  let renderExpandedInfo = (details: ViewData.addressDetails) =>
+  let renderExpandedInfo = (details: ViewData.addressDetails) => {
+    let txLabel =
+      switch (details.addressType) {
+      | Income(_) => "income"
+      | Change => "change"
+      };
     <div className=Styles.detailsGrid>
       <div>
         <MTypography gutterBottom=true variant=`Title>
@@ -178,15 +183,11 @@ let make = (~viewData: ViewData.t, _children) => {
         <MaterialUi.List>
           (
             List.concat(
-              renderTx(
-                details.addressStatus,
-                details.unspentIncome,
-                "income",
-              ),
+              renderTx(details.addressStatus, details.unspentIncome, txLabel),
               renderTx(
                 details.addressStatus,
                 details.spentIncome,
-                "income - transferred",
+                txLabel ++ " - transferred",
               ),
             )
             |. List.concat(
@@ -222,6 +223,7 @@ let make = (~viewData: ViewData.t, _children) => {
         </MaterialUi.List>
       </div>
     </div>;
+  };
 
   {
     ...component,
