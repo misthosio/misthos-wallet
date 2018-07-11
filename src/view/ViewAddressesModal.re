@@ -53,10 +53,11 @@ let statusToLabel = (~className="", status) =>
     </MTypography>;
 
 let calcAddressStatus =
-    (status: ViewData.addressStatus, unlocked: list(bool)) =>
+    (status: ViewData.addressStatus, balance: BTC.t, unlocked: list(bool)) =>
   switch (status, unlocked) {
   | (Accessible, _) => Accessible
-  | (AtRisk, _) => AtRisk
+  | (AtRisk, _) when balance |> BTC.gt(BTC.zero) => AtRisk
+  | (AtRisk, _) => OldAddress
   | (OutdatedCustodians, _) => OldAddress
   | (TemporarilyInaccessible, unlocked) when unlocked |. List.some(b => b) =>
     PartiallyUnlocked
@@ -258,6 +259,7 @@ let make = (~viewData: ViewData.t, _children) => {
                  </MTypography>,
                  calcAddressStatus(
                    info.addressStatus,
+                   info.balance,
                    List.map(details.unspentIncome, i => i.unlocked),
                  )
                  |> statusToLabel(~className=Styles.summary),

@@ -82,12 +82,16 @@ function statusToLabel($staropt$star, status) {
   }
 }
 
-function calcAddressStatus(status, unlocked) {
+function calcAddressStatus(status, balance, unlocked) {
   switch (status) {
     case 0 : 
         return /* Accessible */1;
     case 1 : 
-        return /* AtRisk */2;
+        if (balance.gt(BTC.zero)) {
+          return /* AtRisk */2;
+        } else {
+          return /* OldAddress */7;
+        }
     case 2 : 
         return /* OldAddress */7;
     case 3 : 
@@ -253,7 +257,7 @@ function make(viewData, _) {
                                                         className: changeAddress
                                                       }, ViewCommon.text("(hidden change address)"))])),
                                       ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[summary], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(info[/* balance */5]) + " BTC")])),
-                                      statusToLabel(/* Some */[summary], calcAddressStatus(info[/* addressStatus */4], Belt_List.map(details$1[/* unspentIncome */5], (function (i) {
+                                      statusToLabel(/* Some */[summary], calcAddressStatus(info[/* addressStatus */4], info[/* balance */5], Belt_List.map(details$1[/* unspentIncome */5], (function (i) {
                                                       return i[/* unlocked */1];
                                                     })))),
                                       ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[chevron(expand)], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function () {
