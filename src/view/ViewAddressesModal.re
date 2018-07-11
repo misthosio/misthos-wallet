@@ -141,6 +141,7 @@ let make = (~viewData: ViewData.t, _children) => {
           primary
           amount=tx.amount
           date=tx.date
+          onClick=(Router.clickToRoute(tx.detailsLink))
           label
         />;
       },

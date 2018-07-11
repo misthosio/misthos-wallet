@@ -49,6 +49,7 @@ module AddressesView = {
     date: option(Js.Date.t),
     txId: string,
     amount: BTC.t,
+    detailsLink: Router.Config.route,
   };
   type addressDetails = {
     custodians: UserId.set,
@@ -110,7 +111,19 @@ module AddressesView = {
                let (date, status) =
                  txDetailsCollector
                  |> TxDetailsCollector.getDateAndStatus(txId);
-               {txId, amount: value, status, date, unlocked};
+               let detailsLink: Router.Config.route =
+                 switch (addressInfo.addressType) {
+                 | Income(_) => Venture(ventureId, Income(txId))
+                 | Change =>
+                   Venture(
+                     ventureId,
+                     Payout(
+                       txDetailsCollector
+                       |> TxDetailsCollector.getProcessIdForTx(txId),
+                     ),
+                   )
+                 };
+               {txId, amount: value, status, date, unlocked, detailsLink};
              }),
         spentIncome:
           oldInputCollector
@@ -119,7 +132,19 @@ module AddressesView = {
                let (date, status) =
                  txDetailsCollector
                  |> TxDetailsCollector.getDateAndStatus(txId);
-               {txId, amount: value, status, date, unlocked};
+               let detailsLink: Router.Config.route =
+                 switch (addressInfo.addressType) {
+                 | Income(_) => Venture(ventureId, Income(txId))
+                 | Change =>
+                   Venture(
+                     ventureId,
+                     Payout(
+                       txDetailsCollector
+                       |> TxDetailsCollector.getProcessIdForTx(txId),
+                     ),
+                   )
+                 };
+               {txId, amount: value, status, date, unlocked, detailsLink};
              }),
       },
     };

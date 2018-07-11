@@ -55,11 +55,12 @@ function fromViewModelState(param) {
   var oldInputCollector = param[/* oldInputCollector */9];
   var txDetailsCollector = param[/* txDetailsCollector */8];
   var partnersCollector = param[/* partnersCollector */6];
+  var ventureId = param[/* ventureId */1];
   console.log("AddressDetails.fromViewModelState");
   var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   return /* record */[
           /* infos */infos,
-          /* ventureId */param[/* ventureId */1],
+          /* ventureId */ventureId,
           /* atRiskWarning */Belt_List.reduceU(infos, false, (function (res, param) {
                   if (param[/* addressStatus */4] !== 1) {
                     return res;
@@ -79,23 +80,41 @@ function fromViewModelState(param) {
                       /* unspentIncome */Belt_List.mapU(WalletInfoCollector.inputsFor(WalletTypes.AccountIndex[/* default */11], addressInfo, walletInfoCollector), (function (param) {
                               var txId = param[/* txId */0];
                               var match = ViewModel__TxDetailsCollector.getDateAndStatus(txId, txDetailsCollector);
+                              var match$1 = addressInfo[/* addressType */0];
+                              var detailsLink = match$1 ? /* Venture */Block.__(0, [
+                                    ventureId,
+                                    /* Income */Block.__(2, [txId])
+                                  ]) : /* Venture */Block.__(0, [
+                                    ventureId,
+                                    /* Payout */Block.__(1, [ViewModel__TxDetailsCollector.getProcessIdForTx(txId, txDetailsCollector)])
+                                  ]);
                               return /* record */[
                                       /* status */match[1],
                                       /* unlocked */param[/* unlocked */8],
                                       /* date */match[0],
                                       /* txId */txId,
-                                      /* amount */param[/* value */3]
+                                      /* amount */param[/* value */3],
+                                      /* detailsLink */detailsLink
                                     ];
                             })),
                       /* spentIncome */Belt_List.mapU(ViewModel__OldTxInputCollector.inputsFor(addressInfo[/* address */2], oldInputCollector), (function (param) {
                               var txId = param[/* txId */0];
                               var match = ViewModel__TxDetailsCollector.getDateAndStatus(txId, txDetailsCollector);
+                              var match$1 = addressInfo[/* addressType */0];
+                              var detailsLink = match$1 ? /* Venture */Block.__(0, [
+                                    ventureId,
+                                    /* Income */Block.__(2, [txId])
+                                  ]) : /* Venture */Block.__(0, [
+                                    ventureId,
+                                    /* Payout */Block.__(1, [ViewModel__TxDetailsCollector.getProcessIdForTx(txId, txDetailsCollector)])
+                                  ]);
                               return /* record */[
                                       /* status */match[1],
                                       /* unlocked */param[/* unlocked */8],
                                       /* date */match[0],
                                       /* txId */txId,
-                                      /* amount */param[/* value */3]
+                                      /* amount */param[/* value */3],
+                                      /* detailsLink */detailsLink
                                     ];
                             })),
                       /* isPartner */(function (id) {

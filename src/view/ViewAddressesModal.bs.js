@@ -10,6 +10,7 @@ var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
 var Colors = require("./Colors.bs.js");
+var Router = require("./Router.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
@@ -214,7 +215,10 @@ function make(viewData, _) {
                               Css.$$float(/* right */-379319332),
                               /* [] */0
                             ])], calcTransactionStatus(addressStatus, tx[/* unlocked */1]));
-                  return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(/* Income */0, primary, tx[/* amount */4], tx[/* date */2], /* Some */[label], /* None */0, /* array */[]));
+                  var partial_arg = tx[/* detailsLink */5];
+                  return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(/* Income */0, primary, tx[/* amount */4], tx[/* date */2], /* Some */[label], /* Some */[(function (param) {
+                                      return Router.clickToRoute(partial_arg, param);
+                                    })], /* array */[]));
                 }));
   };
   var renderExpandedInfo = function (details) {

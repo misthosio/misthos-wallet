@@ -61,6 +61,8 @@ let getDateAndStatus = (txId, {txDates}) =>
   | _ => (None, Unconfirmed)
   };
 
+let getProcessIdForTx = (txId, {txIdToProcessIdMap}) =>
+  txIdToProcessIdMap |. Map.String.getExn(txId);
 let payoutsPendingApproval = ({payouts}) =>
   payouts
   |. Map.valuesToArray

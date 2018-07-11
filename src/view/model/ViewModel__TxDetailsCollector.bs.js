@@ -44,6 +44,10 @@ function getDateAndStatus(txId, param) {
   }
 }
 
+function getProcessIdForTx(txId, param) {
+  return Belt_MapString.getExn(param[/* txIdToProcessIdMap */3], txId);
+}
+
 function payoutsPendingApproval(param) {
   return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* payouts */2])), (function (payout) {
                 var match = payout[/* status */1];
@@ -260,6 +264,7 @@ exports.make = make;
 exports.getPayout = getPayout;
 exports.getIncome = getIncome;
 exports.getDateAndStatus = getDateAndStatus;
+exports.getProcessIdForTx = getProcessIdForTx;
 exports.payoutsPendingApproval = payoutsPendingApproval;
 exports.apply = apply;
 /* Utils Not a pure module */
