@@ -9,6 +9,7 @@ var Footer = require("./Footer.bs.js");
 var Layout = require("./Layout.bs.js");
 var Router = require("./Router.bs.js");
 var Receive = require("./Receive.bs.js");
+var TACText = require("./text/TACText.bs.js");
 var LogOutput = require("./LogOutput.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
@@ -22,6 +23,7 @@ var VentureStore = require("./VentureStore.bs.js");
 var NamelessLogin = require("./NamelessLogin.bs.js");
 var NotFoundModal = require("./NotFoundModal.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
+var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
@@ -31,6 +33,7 @@ var ViewPartnerModal = require("./ViewPartnerModal.bs.js");
 var CreatePayoutModal = require("./CreatePayoutModal.bs.js");
 var ViewAddressesModal = require("./ViewAddressesModal.bs.js");
 var ManagePartnersModal = require("./ManagePartnersModal.bs.js");
+var TermsAndConditionsModal = require("./TermsAndConditionsModal.bs.js");
 
 var component = ReasonReact.statelessComponent("App");
 
@@ -49,7 +52,16 @@ function make(session, updateSession, _) {
   };
   var mobileEnabled = typeof session === "number" ? session === 2 : false;
   var modal = function (selectedVenture, currentRoute) {
-    if (typeof session === "number" || typeof currentRoute === "number" || currentRoute.tag) {
+    if (typeof session === "number") {
+      return /* None */0;
+    } else if (Belt_MapString.has(session[1][/* termsAndConditions */1], TACText.hash) === false) {
+      return /* Some */[/* tuple */[
+                ReasonReact.element(/* None */0, /* None */0, TermsAndConditionsModal.make(/* array */[])),
+                (function () {
+                    return /* () */0;
+                  })
+              ]];
+    } else if (typeof currentRoute === "number" || currentRoute.tag) {
       return /* None */0;
     } else {
       var match = currentRoute[1];

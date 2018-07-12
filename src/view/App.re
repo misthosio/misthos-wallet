@@ -1,3 +1,5 @@
+open Belt;
+
 include ViewCommon;
 
 open Session;
@@ -22,6 +24,10 @@ let make = (~session, ~updateSession, _children) => {
       ) =>
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _, _) => None
+    | (LoggedIn(_, userInfo), _, _)
+        when
+          userInfo.termsAndConditions |. Map.String.has(TACText.hash) == false =>
+      Some((<TermsAndConditionsModal />, (_ => ())))
     | (
         LoggedIn(_),
         Venture(selected, Addresses),
