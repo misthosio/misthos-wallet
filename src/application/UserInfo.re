@@ -1,4 +1,5 @@
 open Belt;
+open PrimitiveTypes;
 
 module Public = {
   type t = {
@@ -94,9 +95,12 @@ module Private = {
     );
 };
 
-let getOrInit = (~appPubKey) =>
+let getOrInit = (~appPubKey, userId) =>
   Js.Promise.(
-    all2((Private.read(), Public.read()))
+    all2((
+      Private.read(),
+      Public.read(~blockstackId=userId |> UserId.toString),
+    ))
     |> then_(
          fun
          | (Private.Ok(info), Public.Ok(public)) =>

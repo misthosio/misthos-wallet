@@ -12,6 +12,7 @@ var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var Json_encode = require("@glennsl/bs-json/src/Json_encode.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
+var PrimitiveTypes = require("./PrimitiveTypes.bs.js");
 
 var infoFileName = "public.json";
 
@@ -103,10 +104,10 @@ function read$1() {
               }));
 }
 
-function getOrInit(appPubKey) {
+function getOrInit(appPubKey, userId) {
   return Promise.all(/* tuple */[
                 read$1(/* () */0),
-                read(/* () */0)
+                read(PrimitiveTypes.UserId[/* toString */0](userId))
               ]).then((function (param) {
                 var match = param[0];
                 var exit = 0;

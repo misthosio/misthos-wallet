@@ -13,7 +13,7 @@ var KeysJs = require("blockstack/lib/keys.js");
 
 function initMasterKey(sessionData) {
   var appPubKey = Utils.publicKeyFromKeyPair(sessionData[/* issuerKeyPair */2]);
-  return UserInfo.getOrInit(appPubKey).then((function (param) {
+  return UserInfo.getOrInit(appPubKey, sessionData[/* userId */0]).then((function (param) {
                 return Promise.resolve(/* tuple */[
                             /* record */[
                               /* userId */sessionData[/* userId */0],

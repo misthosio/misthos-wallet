@@ -8,7 +8,7 @@ type t =
 let initMasterKey = (sessionData: SessionData.t) => {
   let appPubKey = sessionData.issuerKeyPair |> Utils.publicKeyFromKeyPair;
   Js.Promise.(
-    UserInfo.getOrInit(~appPubKey)
+    UserInfo.getOrInit(~appPubKey, sessionData.userId)
     |> then_((({chainCode}: UserInfo.Private.t, userInfo)) =>
          (
            {
