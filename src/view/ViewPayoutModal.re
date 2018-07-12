@@ -18,6 +18,8 @@ module Styles = {
       bottom(px(0)),
     ]);
   let noBorder = style([borderColor(`transparent)]);
+  let link =
+    style([color(Colors.black), hover([color(Colors.misthosTeal)])]);
 };
 
 let make =
@@ -34,7 +36,7 @@ let make =
       processId,
       voters,
       canVote,
-      data: {summary, payoutStatus: status, txId, date},
+      data: {explorerLink, summary, payoutStatus: status, txId, date},
     }: ViewData.payout =
       viewData.payout;
     let destinationList =
@@ -171,15 +173,19 @@ let make =
         </div>
       }
       area5=(
-        switch (txId) {
-        | Some(txId) =>
+        switch (txId, explorerLink) {
+        | (Some(txId), Some(explorerLink)) =>
           <div>
             <MTypography variant=`Title>
               ("Transaction ID" |> text)
             </MTypography>
-            <MTypography variant=`Body2> (txId |> text) </MTypography>
+            <MTypography variant=`Body2>
+              <a className=Styles.link href=explorerLink target="_blank">
+                (txId |> text)
+              </a>
+            </MTypography>
           </div>
-        | None => <MTypography variant=`Body1> PolicyText.payout </MTypography>
+        | _ => <MTypography variant=`Body1> PolicyText.payout </MTypography>
         }
       )
     />;

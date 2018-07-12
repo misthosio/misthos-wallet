@@ -82,6 +82,7 @@ function apply($$event, state) {
                         return /* record */[
                                 /* payoutStatus : PendingApproval */0,
                                 /* summary */PayoutTransaction.summary(state[/* network */0], data[/* payoutTx */1]),
+                                /* explorerLink : None */0,
                                 /* txId : None */0,
                                 /* date : None */0
                               ];
@@ -117,8 +118,9 @@ function apply($$event, state) {
                         return /* record */[
                                 /* payoutStatus : Accepted */1,
                                 /* summary */data[/* summary */1],
-                                /* txId */data[/* txId */2],
-                                /* date */data[/* date */3]
+                                /* explorerLink */data[/* explorerLink */2],
+                                /* txId */data[/* txId */3],
+                                /* date */data[/* date */4]
                               ];
                       }), ProcessCollector.addAcceptance(accepted, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -134,8 +136,9 @@ function apply($$event, state) {
                         return /* record */[
                                 /* payoutStatus : Aborted */3,
                                 /* summary */data[/* summary */1],
-                                /* txId */data[/* txId */2],
-                                /* date */data[/* date */3]
+                                /* explorerLink */data[/* explorerLink */2],
+                                /* txId */data[/* txId */3],
+                                /* date */data[/* date */4]
                               ];
                       }), ProcessCollector.addAbort(abort, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -151,8 +154,9 @@ function apply($$event, state) {
                         return /* record */[
                                 /* payoutStatus : Denied */2,
                                 /* summary */data[/* summary */1],
-                                /* txId */data[/* txId */2],
-                                /* date */data[/* date */3]
+                                /* explorerLink */data[/* explorerLink */2],
+                                /* txId */data[/* txId */3],
+                                /* date */data[/* date */4]
                               ];
                       }), ProcessCollector.addDenial(denial, state[/* payouts */2])),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -172,6 +176,7 @@ function apply($$event, state) {
                         return /* record */[
                                 /* payoutStatus */match ? /* Confirmed */5 : /* Unconfirmed */4,
                                 /* summary */data[/* summary */1],
+                                /* explorerLink : Some */[getExplorerLink(state[/* network */0], txId)],
                                 /* txId : Some */[txId],
                                 /* date */txDate
                               ];
@@ -191,8 +196,9 @@ function apply($$event, state) {
                         return /* record */[
                                 /* payoutStatus */match ? /* Failed */[errorMessage] : data[/* payoutStatus */0],
                                 /* summary */data[/* summary */1],
-                                /* txId */data[/* txId */2],
-                                /* date */data[/* date */3]
+                                /* explorerLink */data[/* explorerLink */2],
+                                /* txId */data[/* txId */3],
+                                /* date */data[/* date */4]
                               ];
                       }), state[/* payouts */2]),
                 /* txIdToProcessIdMap */state[/* txIdToProcessIdMap */3],
@@ -247,7 +253,8 @@ function apply($$event, state) {
                           return /* record */[
                                   /* payoutStatus : Confirmed */5,
                                   /* summary */data[/* summary */1],
-                                  /* txId */data[/* txId */2],
+                                  /* explorerLink */data[/* explorerLink */2],
+                                  /* txId */data[/* txId */3],
                                   /* date : Some */[txDate$2]
                                 ];
                         }), state[/* payouts */2]) : state[/* payouts */2],

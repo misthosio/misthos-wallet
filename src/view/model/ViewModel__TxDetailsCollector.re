@@ -22,6 +22,7 @@ type payoutStatus =
 type data = {
   payoutStatus,
   summary: PayoutTransaction.summary,
+  explorerLink: option(string),
   txId: option(string),
   date: option(Js.Date.t),
 };
@@ -90,6 +91,7 @@ let apply = (event, state) =>
         state.payouts
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
              {
+               explorerLink: None,
                txId: None,
                date: None,
                payoutStatus: PendingApproval,
@@ -148,6 +150,7 @@ let apply = (event, state) =>
         |> ProcessCollector.updateData(processId, data =>
              {
                ...data,
+               explorerLink: Some(getExplorerLink(state.network, txId)),
                txId: Some(txId),
                payoutStatus:
                  txDate |> Js.Option.isSome ? Confirmed : Unconfirmed,
