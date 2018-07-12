@@ -45,7 +45,7 @@ let loadVentureAndIndex =
       ventureId,
       Pending(ventureWorker^ |> VentureWorkerClient.load(~ventureId)),
     )
-  | (LoggedIn(_sessionData), JoinVenture(ventureId, userId), _) =>
+  | (LoggedIn(_sessionData, _), JoinVenture(ventureId, userId), _) =>
     JoiningVenture(
       ventureId,
       Pending(
@@ -143,7 +143,7 @@ let make = (~currentRoute, ~session: Session.t, children) => {
   },
   reducer: (action, state) =>
     switch (state.session) {
-    | LoggedIn(sessionData) =>
+    | LoggedIn(sessionData, _) =>
       switch (action) {
       | CreateVenture(name) =>
         let createCmdId =

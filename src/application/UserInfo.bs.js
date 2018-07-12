@@ -46,10 +46,13 @@ function decode(raw) {
 }
 
 function persist(appPubKey) {
-  return Blockstack$1.putFile(infoFileName, Json.stringify(encode(/* record */[
-                      /* appPubKey */appPubKey,
-                      /* termsAndConditions */Belt_MapString.empty
-                    ])), ( {"encrypt": false} ));
+  var res = /* record */[
+    /* appPubKey */appPubKey,
+    /* termsAndConditions */Belt_MapString.empty
+  ];
+  return Blockstack$1.putFile(infoFileName, Json.stringify(encode(res)), ( {"encrypt": false} )).then((function () {
+                return Promise.resolve(res);
+              }));
 }
 
 function read(username) {
@@ -81,6 +84,12 @@ function decode$1(raw) {
   return /* record */[/* chainCode */Utils.bufFromHex(Json_decode.field("chainCode", Json_decode.string, raw))];
 }
 
+function persist$1(chainCode) {
+  return Blockstack$1.putFile(infoFileName$1, Json.stringify(encode$1(/* record */[/* chainCode */chainCode]))).then((function () {
+                return Promise.resolve(/* record */[/* chainCode */chainCode]);
+              }));
+}
+
 function read$1() {
   return Blockstack$1.getFile(infoFileName$1).then((function (nullFile) {
                   if (nullFile == null) {
@@ -95,17 +104,36 @@ function read$1() {
 }
 
 function getOrInit(appPubKey) {
-  return read$1(/* () */0).then((function (param) {
-                if (param) {
-                  return Promise.resolve(param[0]);
+  return Promise.all(/* tuple */[
+                read$1(/* () */0),
+                read(/* () */0)
+              ]).then((function (param) {
+                var match = param[0];
+                var exit = 0;
+                if (match) {
+                  var match$1 = param[1];
+                  if (match$1) {
+                    return Promise.resolve(/* tuple */[
+                                match[0],
+                                match$1[0]
+                              ]);
+                  } else {
+                    exit = 1;
+                  }
                 } else {
-                  return persist(appPubKey).then((function () {
-                                var chainCode = Utils.bufFromHex($$String.sub(appPubKey, 0, 64));
-                                return Blockstack$1.putFile(infoFileName$1, Json.stringify(encode$1(/* record */[/* chainCode */chainCode]))).then((function () {
-                                              return Promise.resolve(/* record */[/* chainCode */chainCode]);
+                  exit = 1;
+                }
+                if (exit === 1) {
+                  return persist(appPubKey).then((function (pub) {
+                                return persist$1(Utils.bufFromHex($$String.sub(appPubKey, 0, 64))).then((function (priv) {
+                                              return Promise.resolve(/* tuple */[
+                                                          priv,
+                                                          pub
+                                                        ]);
                                             }));
                               }));
                 }
+                
               }));
 }
 

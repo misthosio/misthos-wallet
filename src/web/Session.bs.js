@@ -14,13 +14,16 @@ var KeysJs = require("blockstack/lib/keys.js");
 function initMasterKey(sessionData) {
   var appPubKey = Utils.publicKeyFromKeyPair(sessionData[/* issuerKeyPair */2]);
   return UserInfo.getOrInit(appPubKey).then((function (param) {
-                return Promise.resolve(/* record */[
-                            /* userId */sessionData[/* userId */0],
-                            /* appPrivateKey */sessionData[/* appPrivateKey */1],
-                            /* issuerKeyPair */sessionData[/* issuerKeyPair */2],
-                            /* storagePrefix */sessionData[/* storagePrefix */3],
-                            /* masterKeyChain */new BitcoinjsLib.HDNode(sessionData[/* issuerKeyPair */2], param[/* chainCode */0]),
-                            /* network */sessionData[/* network */5]
+                return Promise.resolve(/* tuple */[
+                            /* record */[
+                              /* userId */sessionData[/* userId */0],
+                              /* appPrivateKey */sessionData[/* appPrivateKey */1],
+                              /* issuerKeyPair */sessionData[/* issuerKeyPair */2],
+                              /* storagePrefix */sessionData[/* storagePrefix */3],
+                              /* masterKeyChain */new BitcoinjsLib.HDNode(sessionData[/* issuerKeyPair */2], param[0][/* chainCode */0]),
+                              /* network */sessionData[/* network */5]
+                            ],
+                            param[1]
                           ]);
               }));
 }
@@ -34,8 +37,11 @@ function completeLogIn() {
   return Blockstack.handlePendingSignIn().then((function (userData) {
                 var match = SessionData.fromUserData(userData, environment[/* network */5]);
                 if (match) {
-                  return initMasterKey(match[0]).then((function (session) {
-                                return Promise.resolve(/* LoggedIn */[session]);
+                  return initMasterKey(match[0]).then((function (param) {
+                                return Promise.resolve(/* LoggedIn */[
+                                            param[0],
+                                            param[1]
+                                          ]);
                               }));
                 } else {
                   return Promise.resolve(/* NamelessLogin */3);
@@ -51,8 +57,11 @@ function getCurrentSession() {
     } else {
       var match$1 = SessionData.fromUserData(match, Environment.get(/* () */0)[/* network */5]);
       if (match$1) {
-        return initMasterKey(match$1[0]).then((function (session) {
-                      return Promise.resolve(/* LoggedIn */[session]);
+        return initMasterKey(match$1[0]).then((function (param) {
+                      return Promise.resolve(/* LoggedIn */[
+                                  param[0],
+                                  param[1]
+                                ]);
                     }));
       } else {
         return Promise.resolve(/* NamelessLogin */3);

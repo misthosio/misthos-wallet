@@ -3,18 +3,21 @@ type t =
   | LoginPending
   | NotLoggedIn
   | NamelessLogin
-  | LoggedIn(SessionData.t);
+  | LoggedIn(SessionData.t, UserInfo.Public.t);
 
 let initMasterKey = (sessionData: SessionData.t) => {
   let appPubKey = sessionData.issuerKeyPair |> Utils.publicKeyFromKeyPair;
   Js.Promise.(
     UserInfo.getOrInit(~appPubKey)
-    |> then_(({chainCode}: UserInfo.Private.t) =>
-         {
-           ...sessionData,
-           masterKeyChain:
-             Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode),
-         }
+    |> then_((({chainCode}: UserInfo.Private.t, userInfo)) =>
+         (
+           {
+             ...sessionData,
+             masterKeyChain:
+               Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode),
+           },
+           userInfo,
+         )
          |> resolve
        )
   );
@@ -35,7 +38,9 @@ let completeLogIn = () => {
          | None => resolve(NamelessLogin)
          | Some(sessionData) =>
            initMasterKey(sessionData)
-           |> then_(session => LoggedIn(session) |> resolve)
+           |> then_(((session, userInfo)) =>
+                LoggedIn(session, userInfo) |> resolve
+              )
          }
        )
   );
@@ -51,7 +56,9 @@ let getCurrentSession = () =>
         | None => NamelessLogin |> resolve
         | Some(sessionData) =>
           initMasterKey(sessionData)
-          |> then_(session => LoggedIn(session) |> resolve)
+          |> then_(((session, userInfo)) =>
+               LoggedIn(session, userInfo) |> resolve
+             )
         }
       };
     } else if (Blockstack.isSignInPending()) {

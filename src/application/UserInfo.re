@@ -29,12 +29,14 @@ module Public = {
         |> Js.Dict.entries
         |> Map.String.fromArray,
     };
-  let persist = (~appPubKey) =>
+  let persist = (~appPubKey) => {
+    let res = {appPubKey, termsAndConditions: Map.String.empty};
     Blockstack.putFileNotEncrypted(
       infoFileName,
-      encode({appPubKey, termsAndConditions: Map.String.empty})
-      |> Json.stringify,
-    );
+      encode(res) |> Json.stringify,
+    )
+    |> Js.Promise.(then_(_ => res |> resolve));
+  };
   type readResult =
     | NotFound
     | Ok(t);
@@ -94,17 +96,19 @@ module Private = {
 
 let getOrInit = (~appPubKey) =>
   Js.Promise.(
-    Private.read()
+    all2((Private.read(), Public.read()))
     |> then_(
          fun
-         | Private.Ok(info) => info |> resolve
-         | Private.NotFound =>
+         | (Private.Ok(info), Public.Ok(public)) =>
+           (info, public) |> resolve
+         | _ =>
            Public.persist(~appPubKey)
-           |> then_(_result =>
+           |> then_(pub_ =>
                 Private.persist(
                   ~chainCode=
                     appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
                 )
+                |> then_(priv => (priv, pub_) |> resolve)
               ),
        )
   );

@@ -270,7 +270,7 @@ module Handle = {
         Session.getCurrentSession()
         |> then_(
              fun
-             | Session.LoggedIn(data) => Some(data) |> resolve
+             | Session.LoggedIn(data, _) => Some(data) |> resolve
              | _ => None |> resolve,
            )
       );

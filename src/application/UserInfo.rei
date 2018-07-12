@@ -14,4 +14,4 @@ module Public: {
 module Private: {type t = {chainCode: Node.buffer};};
 
 let storagePrefix: (~appPubKey: string) => string;
-let getOrInit: (~appPubKey: string) => Js.Promise.t(Private.t);
+let getOrInit: (~appPubKey: string) => Js.Promise.t((Private.t, Public.t));

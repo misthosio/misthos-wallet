@@ -165,9 +165,9 @@ let make = (~session, ~updateSession, _children) => {
     switch (session, currentRoute) {
     | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _) => None
     | (_, TypographyStack) => None
-    | (LoggedIn(_data), Home | CreateVenture) =>
+    | (LoggedIn(_data, _), Home | CreateVenture) =>
       Some(<Drawer onSignOut index />)
-    | (LoggedIn(_data), Venture(selected, _) | JoinVenture(selected, _)) =>
+    | (LoggedIn(_data, _), Venture(selected, _) | JoinVenture(selected, _)) =>
       Some(<Drawer onSignOut selected index />)
     };
   let body =
