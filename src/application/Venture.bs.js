@@ -518,7 +518,7 @@ function exec$3(prospectId, venture) {
     return Promise.resolve(/* MaxPartnersReached */0);
   } else {
     return Blockstack$1.lookupProfile(PrimitiveTypes.UserId[/* toString */0](prospectId)).then((function () {
-                        return UserInfo.Public[/* read */4](prospectId);
+                        return UserInfo.Public[/* read */0](prospectId);
                       })).then((function (param) {
                       if (param) {
                         return Promise.resolve(/* Some */[param[0][/* appPubKey */0]]);

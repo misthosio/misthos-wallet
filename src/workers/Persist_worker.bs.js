@@ -312,7 +312,7 @@ function removeVentureFromMissingKeys(ventureId) {
 setInterval((function () {
         Belt_MapString.reduceU(missingKeys[0], Promise.resolve(/* () */0), (function (promise, key, param) {
                 var f = param[1];
-                return UserInfo.Public[/* read */4](param[0]).then((function (param) {
+                return UserInfo.Public[/* read */0](param[0]).then((function (param) {
                               if (param) {
                                 if (Belt_MapString.has(missingKeys[0], key)) {
                                   logMessage("Missing key has been found");
@@ -350,7 +350,7 @@ function persist(ventureId, eventLog, param) {
                   if (pubKey) {
                     return persistLogAndSummary(pubKey[0], promise);
                   } else {
-                    return UserInfo.Public[/* read */4](id).then((function (param) {
+                    return UserInfo.Public[/* read */0](id).then((function (param) {
                                   if (param) {
                                     return persistLogAndSummary(param[0][/* appPubKey */0], promise);
                                   } else {

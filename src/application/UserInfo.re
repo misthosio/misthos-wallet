@@ -1,14 +1,39 @@
+open Belt;
+
 module Public = {
-  type t = {appPubKey: string};
+  type t = {
+    appPubKey: string,
+    termsAndConditions: Map.String.t(string),
+  };
   let infoFileName = "public.json";
   let encode = data =>
-    Json.Encode.(object_([("appPubKey", string(data.appPubKey))]));
+    Json.Encode.(
+      object_([
+        ("appPubKey", string(data.appPubKey)),
+        (
+          "termsAndConditions",
+          data.termsAndConditions
+          |. Map.String.toArray
+          |. Array.mapU((. (k, v)) => (k, v |> string))
+          |> Js.Dict.fromArray
+          |> dict,
+        ),
+      ])
+    );
   let decode = raw =>
-    Json.Decode.{appPubKey: raw |> field("appPubKey", string)};
+    Json.Decode.{
+      appPubKey: raw |> field("appPubKey", string),
+      termsAndConditions:
+        raw
+        |> field("termsAndConditions", dict(string))
+        |> Js.Dict.entries
+        |> Map.String.fromArray,
+    };
   let persist = (~appPubKey) =>
     Blockstack.putFileNotEncrypted(
       infoFileName,
-      encode({appPubKey: appPubKey}) |> Json.stringify,
+      encode({appPubKey, termsAndConditions: Map.String.empty})
+      |> Json.stringify,
     );
   type readResult =
     | NotFound
