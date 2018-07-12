@@ -2,13 +2,28 @@
 'use strict';
 
 var BTC = require("../application/wallet/BTC.bs.js");
+var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
 var React = require("react");
+var Colors = require("./Colors.bs.js");
 var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
+
+var link = Css.style(/* :: */[
+      Css.color(Colors.black),
+      /* :: */[
+        Css.hover(/* :: */[
+              Css.color(Colors.misthosTeal),
+              /* [] */0
+            ]),
+        /* [] */0
+      ]
+    ]);
+
+var Styles = /* module */[/* link */link];
 
 var component = ReasonReact.statelessComponent("ViewIncomeModal");
 
@@ -17,6 +32,7 @@ function make(viewData, _) {
   var amount = viewData[/* amount */4];
   var txId = viewData[/* txId */3];
   var date = viewData[/* date */2];
+  var explorerLink = viewData[/* explorerLink */1];
   var status = viewData[/* status */0];
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -44,7 +60,11 @@ function make(viewData, _) {
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Income Transaction Details")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[date ? ViewCommon.text("Transaction confirmed on " + (date[0].toDateString() + " ")) : null])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text("Status: "),
                                             txStatus
-                                          ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Income Amount")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(amount) + " BTC")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Income Address")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(addresses$2)])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(txId)])))], /* None */0, /* None */0, /* None */0, /* array */[]));
+                                          ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Income Amount")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(BTC.format(amount) + " BTC")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Income Address")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(addresses$2)])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* Some */[true], /* None */0, /* array */[ViewCommon.text("Transaction ID")])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[React.createElement("a", {
+                                                  className: link,
+                                                  href: explorerLink,
+                                                  target: "_blank"
+                                                }, ViewCommon.text(txId))])))], /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
@@ -63,6 +83,7 @@ var ViewData = 0;
 exports.text = text;
 exports.extractString = extractString;
 exports.ViewData = ViewData;
+exports.Styles = Styles;
 exports.component = component;
 exports.make = make;
-/* component Not a pure module */
+/* link Not a pure module */

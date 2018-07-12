@@ -3,10 +3,16 @@ include ViewCommon;
 
 module ViewData = ViewModel.ViewIncomeView;
 
+module Styles = {
+  open Css;
+  let link =
+    style([color(Colors.black), hover([color(Colors.misthosTeal)])]);
+};
+
 let component = ReasonReact.statelessComponent("ViewIncomeModal");
 
 let make = (~viewData: ViewData.t, _children) => {
-  let {date, status, txId, amount, addresses}: ViewData.t = viewData;
+  let {explorerLink, date, status, txId, amount, addresses}: ViewData.t = viewData;
   {
     ...component,
     render: _self => {
@@ -57,7 +63,11 @@ let make = (~viewData: ViewData.t, _children) => {
             <MTypography variant=`Title gutterTop=true>
               ("Transaction ID" |> text)
             </MTypography>
-            <MTypography variant=`Body2> (txId |> text) </MTypography>
+            <MTypography variant=`Body2>
+              <a className=Styles.link href=explorerLink target="_blank">
+                (txId |> text)
+              </a>
+            </MTypography>
           </div>
         }
       />;
