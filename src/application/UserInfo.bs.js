@@ -46,7 +46,7 @@ function decode(raw) {
         ];
 }
 
-function persist(appPubKey) {
+function init(appPubKey) {
   var res = /* record */[
     /* appPubKey */appPubKey,
     /* termsAndConditions */Belt_MapString.empty
@@ -73,6 +73,13 @@ function hasSignedTAC(tacHash, userInfo) {
   return Belt_MapString.has(userInfo[/* termsAndConditions */1], tacHash);
 }
 
+function signTAC(_, _$1, userInfo) {
+  var info = userInfo;
+  return Blockstack$1.putFile(infoFileName, Json.stringify(encode(info)), ( {"encrypt": false} )).then((function () {
+                return Promise.resolve(info);
+              }));
+}
+
 var infoFileName$1 = "private.json";
 
 function encode$1(data) {
@@ -89,7 +96,7 @@ function decode$1(raw) {
   return /* record */[/* chainCode */Utils.bufFromHex(Json_decode.field("chainCode", Json_decode.string, raw))];
 }
 
-function persist$1(chainCode) {
+function persist(chainCode) {
   return Blockstack$1.putFile(infoFileName$1, Json.stringify(encode$1(/* record */[/* chainCode */chainCode]))).then((function () {
                 return Promise.resolve(/* record */[/* chainCode */chainCode]);
               }));
@@ -129,8 +136,8 @@ function getOrInit(appPubKey, userId) {
                   exit = 1;
                 }
                 if (exit === 1) {
-                  return persist(appPubKey).then((function (pub) {
-                                return persist$1(Utils.bufFromHex($$String.sub(appPubKey, 0, 64))).then((function (priv) {
+                  return init(appPubKey).then((function (pub) {
+                                return persist(Utils.bufFromHex($$String.sub(appPubKey, 0, 64))).then((function (priv) {
                                               return Promise.resolve(/* tuple */[
                                                           priv,
                                                           pub
@@ -152,6 +159,7 @@ var Private = [];
 
 exports.Public = Public;
 exports.hasSignedTAC = hasSignedTAC;
+exports.signTAC = signTAC;
 exports.Private = Private;
 exports.storagePrefix = storagePrefix;
 exports.getOrInit = getOrInit;

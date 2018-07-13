@@ -13,6 +13,7 @@ module Public: {
 };
 
 let hasSignedTAC: (string, Public.t) => bool;
+let signTAC: (string, string, Public.t) => Js.Promise.t(Public.t);
 
 module Private: {type t = {chainCode: Node.buffer};};
 

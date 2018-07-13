@@ -30,7 +30,7 @@ module Public = {
         |> Js.Dict.entries
         |> Map.String.fromArray,
     };
-  let persist = (~appPubKey) => {
+  let init = (~appPubKey) => {
     let res = {appPubKey, termsAndConditions: Map.String.empty};
     Blockstack.putFileNotEncrypted(
       infoFileName,
@@ -38,6 +38,12 @@ module Public = {
     )
     |> Js.Promise.(then_(_ => res |> resolve));
   };
+  let persist = info =>
+    Blockstack.putFileNotEncrypted(
+      infoFileName,
+      encode(info) |> Json.stringify,
+    )
+    |> Js.Promise.(then_(_ => info |> resolve));
   type readResult =
     | NotFound
     | Ok(t);
@@ -59,6 +65,7 @@ module Public = {
 
 let hasSignedTAC = (tacHash, userInfo: Public.t) =>
   userInfo.termsAndConditions |. Map.String.has(tacHash);
+let signTAC = (tacHash, privateKey, userInfo) => Public.persist(userInfo);
 
 module Private = {
   type t = {chainCode: Node.buffer};
@@ -109,7 +116,7 @@ let getOrInit = (~appPubKey, userId) =>
          | (Private.Ok(info), Public.Ok(public)) =>
            (info, public) |> resolve
          | _ =>
-           Public.persist(~appPubKey)
+           Public.init(~appPubKey)
            |> then_(pub_ =>
                 Private.persist(
                   ~chainCode=

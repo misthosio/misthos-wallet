@@ -4,6 +4,7 @@
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Session = require("../web/Session.bs.js");
+var UserInfo = require("../application/UserInfo.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.reducerComponent("SessionStore");
@@ -17,7 +18,7 @@ function make(children) {
           /* didMount */(function (param) {
               var send = param[/* send */3];
               Session.getCurrentSession(/* () */0).then((function (session) {
-                      return Promise.resolve(Curry._1(send, /* UpdateSession */[session]));
+                      return Promise.resolve(Curry._1(send, /* UpdateSession */Block.__(0, [session])));
                     }));
               return /* () */0;
             }),
@@ -26,20 +27,40 @@ function make(children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return Curry._3(children, param[/* state */1][/* session */0], param[/* send */3], (function () {
-                            return /* () */0;
+              var send = param[/* send */3];
+              return Curry._3(children, param[/* state */1][/* session */0], send, (function (hash) {
+                            return Curry._1(send, /* SignTAC */Block.__(1, [hash]));
                           }));
             }),
           /* initialState */(function () {
               return /* record */[/* session : Unknown */0];
             }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */(function (action, _) {
+          /* reducer */(function (action, state) {
               if (typeof action === "number") {
-                if (action !== 0) {
-                  return /* Update */Block.__(0, [/* record */[/* session */Session.signOut(/* () */0)]]);
-                } else {
+                if (action === 0) {
                   return /* Update */Block.__(0, [/* record */[/* session */Session.signIn(/* () */0)]]);
+                } else {
+                  return /* Update */Block.__(0, [/* record */[/* session */Session.signOut(/* () */0)]]);
+                }
+              } else if (action.tag) {
+                var hash = action[0];
+                var match = state[/* session */0];
+                if (typeof match === "number") {
+                  return /* NoUpdate */0;
+                } else {
+                  var userInfo = match[1];
+                  var session = match[0];
+                  return /* SideEffects */Block.__(1, [(function (param) {
+                                var send = param[/* send */3];
+                                UserInfo.signTAC(hash, session[/* appPrivateKey */1], userInfo).then((function (userInfo) {
+                                        return Promise.resolve(Curry._1(send, /* UpdateSession */Block.__(0, [/* LoggedIn */[
+                                                            session,
+                                                            userInfo
+                                                          ]])));
+                                      }));
+                                return /* () */0;
+                              })]);
                 }
               } else {
                 return /* Update */Block.__(0, [/* record */[/* session */action[0]]]);
