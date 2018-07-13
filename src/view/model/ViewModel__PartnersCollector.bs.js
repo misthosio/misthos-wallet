@@ -3,6 +3,7 @@
 
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var ProcessCollector = require("./ProcessCollector.bs.js");
 
@@ -37,13 +38,15 @@ function apply($$event, state) {
                 /* partnerPolicy */$$event[0][/* metaPolicy */4]
               ];
     case 1 : 
+        var proposal = $$event[0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* prospects */ProcessCollector.addProposal(state[/* localUser */0], $$event[0], (function (data) {
+                /* prospects */ProcessCollector.addProposal(state[/* localUser */0], proposal, (function (data) {
                         return /* record */[
                                 /* userId */data[/* id */1],
-                                /* processType : Addition */1
+                                /* processType : Addition */1,
+                                /* encryptionPubKeyKnown */Js_option.isSome(proposal[/* data */6][/* pubKey */2])
                               ];
                       }), state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
@@ -57,7 +60,9 @@ function apply($$event, state) {
                   /* record */[
                     /* userId */data[/* id */1],
                     /* name : None */0,
-                    /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0])
+                    /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0]),
+                    /* encryptionPubKeyKnown */Js_option.isSome(data[/* pubKey */2]),
+                    /* submittedXPub */false
                   ],
                   Belt_List.keepU(state[/* partners */1], (function (param) {
                           return PrimitiveTypes.UserId[/* neq */6](param[/* userId */0], data[/* id */1]);
@@ -67,25 +72,28 @@ function apply($$event, state) {
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 7 : 
-        var proposal = $$event[0];
+        var proposal$1 = $$event[0];
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */Belt_List.map(state[/* partners */1], (function (p) {
-                        var match = PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], proposal[/* data */6][/* id */0]);
+                        var match = PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], proposal$1[/* data */6][/* id */0]);
                         if (match) {
                           return /* record */[
                                   /* userId */p[/* userId */0],
                                   /* name */p[/* name */1],
-                                  /* canProposeRemoval */false
+                                  /* canProposeRemoval */false,
+                                  /* encryptionPubKeyKnown */p[/* encryptionPubKeyKnown */3],
+                                  /* submittedXPub */p[/* submittedXPub */4]
                                 ];
                         } else {
                           return p;
                         }
                       })),
-                /* prospects */ProcessCollector.addProposal(state[/* localUser */0], proposal, (function (data) {
+                /* prospects */ProcessCollector.addProposal(state[/* localUser */0], proposal$1, (function (data) {
                         return /* record */[
                                 /* userId */data[/* id */0],
-                                /* processType : Removal */0
+                                /* processType : Removal */0,
+                                /* encryptionPubKeyKnown */false
                               ];
                       }), state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
@@ -113,6 +121,22 @@ function apply($$event, state) {
     case 11 : 
         exit = 3;
         break;
+    case 37 : 
+        var custodianId = $$event[0][/* custodianId */1];
+        return /* record */[
+                /* localUser */state[/* localUser */0],
+                /* partners */Belt_List.mapU(state[/* partners */1], (function (partner) {
+                        return /* record */[
+                                /* userId */partner[/* userId */0],
+                                /* name */partner[/* name */1],
+                                /* canProposeRemoval */partner[/* canProposeRemoval */2],
+                                /* encryptionPubKeyKnown */partner[/* encryptionPubKeyKnown */3],
+                                /* submittedXPub */partner[/* submittedXPub */4] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId)
+                              ];
+                      })),
+                /* prospects */state[/* prospects */2],
+                /* partnerPolicy */state[/* partnerPolicy */3]
+              ];
     default:
       return state;
   }

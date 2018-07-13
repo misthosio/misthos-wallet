@@ -6,6 +6,8 @@ type partner = {
   userId,
   name: option(string),
   canProposeRemoval: bool,
+  encryptionPubKeyKnown: bool,
+  submittedXPub: bool,
 };
 
 type processType =
@@ -15,6 +17,7 @@ type processType =
 type data = {
   userId,
   processType,
+  encryptionPubKeyKnown: bool,
 };
 
 type partnerProcess = ProcessCollector.process(data);
@@ -50,12 +53,29 @@ let make = localUser => {
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({metaPolicy}) => {...state, partnerPolicy: metaPolicy}
+  | CustodianKeyChainUpdated({custodianId}) => {
+      ...state,
+      partners:
+        state.partners
+        |. List.mapU((. partner: partner) =>
+             {
+               ...partner,
+               submittedXPub:
+                 partner.submittedXPub
+                 || UserId.eq(partner.userId, custodianId),
+             }
+           ),
+    }
   | PartnerProposed(proposal) => {
       ...state,
       prospects:
         state.prospects
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
-             {userId: data.id, processType: Addition}
+             {
+               userId: data.id,
+               processType: Addition,
+               encryptionPubKeyKnown: proposal.data.pubKey |> Js.Option.isSome,
+             }
            ),
     }
   | PartnerRejected(rejection) => {
@@ -77,6 +97,8 @@ let apply = (event: Event.t, state) =>
           userId: data.id,
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
+          encryptionPubKeyKnown: data.pubKey |> Js.Option.isSome,
+          submittedXPub: false,
         },
         ...state.partners
            |. List.keepU((. {userId}: partner) =>
@@ -101,7 +123,11 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
-             {userId: data.id, processType: Removal}
+             {
+               userId: data.id,
+               processType: Removal,
+               encryptionPubKeyKnown: false,
+             }
            ),
     }
   | PartnerRemovalRejected(rejection) => {
