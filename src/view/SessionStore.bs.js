@@ -53,7 +53,7 @@ function make(children) {
                   var session = match[0];
                   return /* SideEffects */Block.__(1, [(function (param) {
                                 var send = param[/* send */3];
-                                UserInfo.signTAC(hash, session[/* appPrivateKey */1], userInfo).then((function (userInfo) {
+                                UserInfo.signTAC(hash, session[/* appPrivateKey */1], session[/* network */5], userInfo).then((function (userInfo) {
                                         return Promise.resolve(Curry._1(send, /* UpdateSession */Block.__(0, [/* LoggedIn */[
                                                             session,
                                                             userInfo

@@ -5,6 +5,7 @@ var Json = require("@glennsl/bs-json/src/Json.bs.js");
 var Utils = require("../utils/Utils.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var Js_dict = require("bs-platform/lib/js/js_dict.js");
+var Network = require("./wallet/Network.bs.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
 var Blockstack$1 = require("blockstack");
@@ -70,11 +71,22 @@ function read(username) {
 }
 
 function hasSignedTAC(tacHash, userInfo) {
-  return Belt_MapString.has(userInfo[/* termsAndConditions */1], tacHash);
+  var match = Belt_MapString.get(userInfo[/* termsAndConditions */1], tacHash);
+  if (match) {
+    var signature = BitcoinjsLib.ECSignature.fromDER(Utils.bufFromHex(match[0]));
+    return Utils.keyFromPublicKey(userInfo[/* appPubKey */0]).verify(Utils.bufFromHex(tacHash), signature);
+  } else {
+    return false;
+  }
 }
 
-function signTAC(_, _$1, userInfo) {
-  var info = userInfo;
+function signTAC(tacHash, privateKey, network, userInfo) {
+  var keyPair = Utils.keyPairFromPrivateKey(Network.bitcoinNetwork(network), privateKey);
+  var signature = Utils.bufToHex(keyPair.sign(Utils.bufFromHex(tacHash)).toDER());
+  var info = /* record */[
+    /* appPubKey */userInfo[/* appPubKey */0],
+    /* termsAndConditions */Belt_MapString.set(userInfo[/* termsAndConditions */1], tacHash, signature)
+  ];
   return Blockstack$1.putFile(infoFileName, Json.stringify(encode(info)), ( {"encrypt": false} )).then((function () {
                 return Promise.resolve(info);
               }));

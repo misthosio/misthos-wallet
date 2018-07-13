@@ -64,8 +64,33 @@ module Public = {
 };
 
 let hasSignedTAC = (tacHash, userInfo: Public.t) =>
-  userInfo.termsAndConditions |. Map.String.has(tacHash);
-let signTAC = (tacHash, privateKey, userInfo) => Public.persist(userInfo);
+  switch (userInfo.termsAndConditions |. Map.String.get(tacHash)) {
+  | Some(signature) =>
+    let signature =
+      Bitcoin.ECSignature.fromDER(signature |> Utils.bufFromHex);
+    Utils.keyFromPublicKey(userInfo.appPubKey)
+    |> Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature);
+  | _ => false
+  };
+
+let signTAC = (tacHash, privateKey, network, userInfo: Public.t) => {
+  let keyPair =
+    Utils.keyPairFromPrivateKey(
+      network |> Network.bitcoinNetwork,
+      privateKey,
+    );
+  let signature =
+    keyPair
+    |> Bitcoin.ECPair.sign(tacHash |> Utils.bufFromHex)
+    |> Bitcoin.ECSignature.toDER
+    |> Utils.bufToHex;
+  {
+    ...userInfo,
+    termsAndConditions:
+      userInfo.termsAndConditions |. Map.String.set(tacHash, signature),
+  }
+  |> Public.persist;
+};
 
 module Private = {
   type t = {chainCode: Node.buffer};

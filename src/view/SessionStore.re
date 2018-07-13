@@ -29,7 +29,12 @@ let make = children => {
           (
             ({send}) =>
               Js.Promise.(
-                UserInfo.signTAC(hash, session.appPrivateKey, userInfo)
+                UserInfo.signTAC(
+                  hash,
+                  session.appPrivateKey,
+                  session.network,
+                  userInfo,
+                )
                 |> then_(userInfo =>
                      send(UpdateSession(LoggedIn(session, userInfo)))
                      |> resolve
