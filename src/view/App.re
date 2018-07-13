@@ -1,12 +1,10 @@
-open Belt;
-
 include ViewCommon;
 
 open Session;
 
 let component = ReasonReact.statelessComponent("App");
 
-let make = (~session, ~updateSession, _children) => {
+let make = (~session, ~updateSession, ~signTAC, _children) => {
   let onSignIn = _e => updateSession(SessionStore.SignIn);
   let onSignOut = _e => updateSession(SessionStore.SignOut);
   let onCloseModal = (ventureId, _e) =>
@@ -25,9 +23,8 @@ let make = (~session, ~updateSession, _children) => {
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _, _) => None
     | (LoggedIn(_, userInfo), _, _)
-        when
-          userInfo.termsAndConditions |. Map.String.has(TACText.hash) == false =>
-      Some((<TermsAndConditionsModal />, (_ => ())))
+        when userInfo |> UserInfo.hasSignedTAC(TACText.hash) == false =>
+      Some((<TermsAndConditionsModal signTAC />, (_ => ())))
     | (
         LoggedIn(_),
         Venture(selected, Addresses),

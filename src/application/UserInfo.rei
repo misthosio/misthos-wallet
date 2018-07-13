@@ -11,6 +11,9 @@ module Public: {
     | Ok(t);
   let read: (~blockstackId: userId) => Js.Promise.t(readResult);
 };
+
+let hasSignedTAC: (string, Public.t) => bool;
+
 module Private: {type t = {chainCode: Node.buffer};};
 
 let storagePrefix: (~appPubKey: string) => string;

@@ -23,5 +23,5 @@ let make = children => {
     | SignOut => ReasonReact.Update({session: Session.signOut()})
     },
   render: ({state, send}) =>
-    children(~session=state.session, ~updateSession=send),
+    children(~session=state.session, ~updateSession=send, ~signTAC=_ => ()),
 };

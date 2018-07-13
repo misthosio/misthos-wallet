@@ -26,7 +26,9 @@ function make(children) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
-              return Curry._2(children, param[/* state */1][/* session */0], param[/* send */3]);
+              return Curry._3(children, param[/* state */1][/* session */0], param[/* send */3], (function () {
+                            return /* () */0;
+                          }));
             }),
           /* initialState */(function () {
               return /* record */[/* session : Unknown */0];

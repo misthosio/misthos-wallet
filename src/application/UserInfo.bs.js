@@ -69,6 +69,10 @@ function read(username) {
               }));
 }
 
+function hasSignedTAC(tacHash, userInfo) {
+  return Belt_MapString.has(userInfo[/* termsAndConditions */1], tacHash);
+}
+
 var infoFileName$1 = "private.json";
 
 function encode$1(data) {
@@ -147,6 +151,7 @@ var Public = [read];
 var Private = [];
 
 exports.Public = Public;
+exports.hasSignedTAC = hasSignedTAC;
 exports.Private = Private;
 exports.storagePrefix = storagePrefix;
 exports.getOrInit = getOrInit;

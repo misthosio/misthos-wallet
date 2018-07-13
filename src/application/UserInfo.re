@@ -57,6 +57,9 @@ module Public = {
     );
 };
 
+let hasSignedTAC = (tacHash, userInfo: Public.t) =>
+  userInfo.termsAndConditions |. Map.String.has(tacHash);
+
 module Private = {
   type t = {chainCode: Node.buffer};
   let infoFileName = "private.json";

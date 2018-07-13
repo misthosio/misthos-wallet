@@ -6,10 +6,12 @@ ReactDOMRe.renderToElementWithId(
   <JssProvider>
     <SessionStore>
       ...(
-           (~session, ~updateSession) =>
+           (~session, ~updateSession, ~signTAC) =>
              MaterialUi.(
                <MuiThemeProvider theme=(`ObjectGeneric(theme))>
-                 <CssBaseline> <App session updateSession /> </CssBaseline>
+                 <CssBaseline>
+                   <App session updateSession signTAC />
+                 </CssBaseline>
                </MuiThemeProvider>
              )
          )

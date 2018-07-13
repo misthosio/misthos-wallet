@@ -10,6 +10,7 @@ var Layout = require("./Layout.bs.js");
 var Router = require("./Router.bs.js");
 var Receive = require("./Receive.bs.js");
 var TACText = require("./text/TACText.bs.js");
+var UserInfo = require("../application/UserInfo.bs.js");
 var LogOutput = require("./LogOutput.bs.js");
 var ViewModel = require("./model/ViewModel.bs.js");
 var PublicHome = require("./PublicHome.bs.js");
@@ -23,7 +24,6 @@ var VentureStore = require("./VentureStore.bs.js");
 var NamelessLogin = require("./NamelessLogin.bs.js");
 var NotFoundModal = require("./NotFoundModal.bs.js");
 var VentureCreate = require("./VentureCreate.bs.js");
-var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var CommandExecutor = require("./components/CommandExecutor.bs.js");
 var SelectedVenture = require("./SelectedVenture.bs.js");
 var TypographyStack = require("./TypographyStack.bs.js");
@@ -37,7 +37,7 @@ var TermsAndConditionsModal = require("./TermsAndConditionsModal.bs.js");
 
 var component = ReasonReact.statelessComponent("App");
 
-function make(session, updateSession, _) {
+function make(session, updateSession, signTAC, _) {
   var onSignIn = function () {
     return Curry._1(updateSession, /* SignIn */0);
   };
@@ -54,9 +54,9 @@ function make(session, updateSession, _) {
   var modal = function (selectedVenture, currentRoute) {
     if (typeof session === "number") {
       return /* None */0;
-    } else if (Belt_MapString.has(session[1][/* termsAndConditions */1], TACText.hash) === false) {
+    } else if (UserInfo.hasSignedTAC(TACText.hash, session[1]) === false) {
       return /* Some */[/* tuple */[
-                ReasonReact.element(/* None */0, /* None */0, TermsAndConditionsModal.make(/* array */[])),
+                ReasonReact.element(/* None */0, /* None */0, TermsAndConditionsModal.make(signTAC, /* array */[])),
                 (function () {
                     return /* () */0;
                   })
