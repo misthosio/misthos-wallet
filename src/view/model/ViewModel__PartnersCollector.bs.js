@@ -71,6 +71,22 @@ function apply($$event, state) {
                 /* prospects */ProcessCollector.addAcceptance(acceptance, state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
+    case 6 : 
+        var partnerId = $$event[0][/* partnerId */0];
+        return /* record */[
+                /* localUser */state[/* localUser */0],
+                /* partners */Belt_List.mapU(state[/* partners */1], (function (partner) {
+                        return /* record */[
+                                /* userId */partner[/* userId */0],
+                                /* name */partner[/* name */1],
+                                /* canProposeRemoval */partner[/* canProposeRemoval */2],
+                                /* encryptionPubKeyKnown */partner[/* encryptionPubKeyKnown */3] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], partnerId),
+                                /* submittedXPub */partner[/* submittedXPub */4]
+                              ];
+                      })),
+                /* prospects */state[/* prospects */2],
+                /* partnerPolicy */state[/* partnerPolicy */3]
+              ];
     case 7 : 
         var proposal$1 = $$event[0];
         return /* record */[

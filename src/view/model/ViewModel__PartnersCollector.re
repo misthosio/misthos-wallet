@@ -108,6 +108,19 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects |> ProcessCollector.addAcceptance(acceptance),
     }
+  | PartnerPubKeyAdded({partnerId}) => {
+      ...state,
+      partners:
+        state.partners
+        |. List.mapU((. partner: partner) =>
+             {
+               ...partner,
+               encryptionPubKeyKnown:
+                 partner.encryptionPubKeyKnown
+                 || UserId.eq(partner.userId, partnerId),
+             }
+           ),
+    }
   | PartnerDenied(denial) => {
       ...state,
       prospects: state.prospects |> ProcessCollector.addDenial(denial),
