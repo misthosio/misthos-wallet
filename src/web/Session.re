@@ -3,7 +3,8 @@ type t =
   | LoginPending
   | NotLoggedIn
   | NamelessLogin
-  | LoggedIn(SessionData.t, UserInfo.Public.t);
+  | MustAggreeToTAC(SessionData.t, UserInfo.Public.t)
+  | LoggedIn(SessionData.t);
 
 let initMasterKey = (sessionData: SessionData.t) => {
   let appPubKey = sessionData.issuerKeyPair |> Utils.publicKeyFromKeyPair;
@@ -39,7 +40,9 @@ let completeLogIn = () => {
          | Some(sessionData) =>
            initMasterKey(sessionData)
            |> then_(((session, userInfo)) =>
-                LoggedIn(session, userInfo) |> resolve
+                UserInfo.hasSignedTAC(TACText.hash, userInfo) ?
+                  LoggedIn(session) |> resolve :
+                  MustAggreeToTAC(session, userInfo) |> resolve
               )
          }
        )
@@ -57,7 +60,9 @@ let getCurrentSession = () =>
         | Some(sessionData) =>
           initMasterKey(sessionData)
           |> then_(((session, userInfo)) =>
-               LoggedIn(session, userInfo) |> resolve
+               UserInfo.hasSignedTAC(TACText.hash, userInfo) ?
+                 LoggedIn(session) |> resolve :
+                 MustAggreeToTAC(session, userInfo) |> resolve
              )
         }
       };

@@ -22,8 +22,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
       ) =>
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _, _) => None
-    | (LoggedIn(_, userInfo), _, _)
-        when userInfo |> UserInfo.hasSignedTAC(TACText.hash) == false =>
+    | (MustAggreeToTAC(_, _), _, _) =>
       Some((<TermsAndConditionsModal signTAC />, (_ => ())))
     | (
         LoggedIn(_),
@@ -166,11 +165,16 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
-    | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _) => None
+    | (
+        NotLoggedIn | MustAggreeToTAC(_, _) | LoginPending | NamelessLogin |
+        Unknown,
+        _,
+      ) =>
+      None
     | (_, TypographyStack) => None
-    | (LoggedIn(_data, _), Home | CreateVenture) =>
+    | (LoggedIn(_data), Home | CreateVenture) =>
       Some(<Drawer onSignOut index />)
-    | (LoggedIn(_data, _), Venture(selected, _) | JoinVenture(selected, _)) =>
+    | (LoggedIn(_data), Venture(selected, _) | JoinVenture(selected, _)) =>
       Some(<Drawer onSignOut selected index />)
     };
   let body =
@@ -187,6 +191,8 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
     | (NamelessLogin, _, _) => <NamelessLogin />
     | (LoginPending, _, _) =>
       <BlankScreen text="Waiting for Blockstack session" />
+    | (MustAggreeToTAC(_, _), _, _) =>
+      <BlankScreen text="Terms and Conditions" />
     | (
         LoggedIn(_),
         Venture(_, HiddenOutputLog),

@@ -6,7 +6,7 @@ var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 
 var terms = /* array */[/* record */[
-    /* heading */"dummy",
+    /* heading */"aloha",
     /* paragraphs : array */["dummy"]
   ]];
 

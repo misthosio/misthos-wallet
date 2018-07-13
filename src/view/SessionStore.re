@@ -2,7 +2,7 @@ type action =
   | UpdateSession(Session.t)
   | SignIn
   | SignOut
-  | SignTAC(string);
+  | SignTAC;
 
 type state = {session: Session.t};
 
@@ -22,22 +22,21 @@ let make = children => {
     | UpdateSession(session) => ReasonReact.Update({session: session})
     | SignIn => ReasonReact.Update({session: Session.signIn()})
     | SignOut => ReasonReact.Update({session: Session.signOut()})
-    | SignTAC(hash) =>
+    | SignTAC =>
       switch (state.session) {
-      | LoggedIn(session, userInfo) =>
+      | MustAggreeToTAC(session, userInfo) =>
         ReasonReact.SideEffects(
           (
             ({send}) =>
               Js.Promise.(
                 UserInfo.signTAC(
-                  hash,
+                  TACText.hash,
                   session.appPrivateKey,
                   session.network,
                   userInfo,
                 )
-                |> then_(userInfo =>
-                     send(UpdateSession(LoggedIn(session, userInfo)))
-                     |> resolve
+                |> then_(_ =>
+                     send(UpdateSession(LoggedIn(session))) |> resolve
                    )
                 |> ignore
               )
@@ -47,7 +46,7 @@ let make = children => {
       }
     },
   render: ({state, send}) =>
-    children(~session=state.session, ~updateSession=send, ~signTAC=hash =>
-      send(SignTAC(hash))
+    children(~session=state.session, ~updateSession=send, ~signTAC=_ =>
+      send(SignTAC)
     ),
 };

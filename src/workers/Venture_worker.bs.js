@@ -264,7 +264,7 @@ function updateSession(items, correlationId, state) {
   logMessage("Handling 'UpdateSession'");
   WorkerLocalStorage.setBlockstackItems(items);
   var sessionThread = Session.getCurrentSession(/* () */0).then((function (param) {
-          if (typeof param === "number") {
+          if (typeof param === "number" || param.tag !== 1) {
             return Promise.resolve(/* None */0);
           } else {
             return Promise.resolve(/* Some */[param[0]]);

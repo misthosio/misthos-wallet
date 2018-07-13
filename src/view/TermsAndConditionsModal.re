@@ -5,7 +5,7 @@ let component = ReasonReact.statelessComponent("ViewIncomeModal");
 let make = (~signTAC, _children) => {
   let onAggree = event => {
     ReactEventRe.Synthetic.preventDefault(event);
-    signTAC(TACText.hash);
+    signTAC();
   };
   {
     ...component,

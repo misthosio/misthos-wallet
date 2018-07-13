@@ -20,7 +20,7 @@ function loadVentureAndIndex(session, currentRoute, param) {
   if (Caml_obj.caml_notequal(param[/* session */2], session)) {
     VentureWorkerClient.updateSession(ventureWorker[0]);
   }
-  if (typeof session === "number" || typeof currentRoute === "number") {
+  if (typeof session === "number" || !(session.tag === 1 && typeof currentRoute !== "number")) {
     return /* None */0;
   } else if (currentRoute.tag) {
     var ventureId = currentRoute[0];
@@ -131,13 +131,9 @@ function make(currentRoute, session, children) {
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               var match = state[/* session */2];
-              if (typeof match === "number") {
-                if (action.tag === 3) {
-                  var msg = action[0];
-                  Curry._2(PersistWorkerClient.postMessage, state[/* persistWorker */4][0], msg);
-                  Curry._2(DataWorkerClient.postMessage, state[/* dataWorker */3][0], msg);
-                }
-                return /* NoUpdate */0;
+              var exit = 0;
+              if (typeof match === "number" || match.tag !== 1) {
+                exit = 1;
               } else {
                 var sessionData = match[0];
                 switch (action.tag | 0) {
@@ -152,14 +148,14 @@ function make(currentRoute, session, children) {
                                   /* ventureWorker */state[/* ventureWorker */5]
                                 ]]);
                   case 1 : 
-                      var msg$1 = action[0];
-                      if (typeof msg$1 === "number") {
+                      var msg = action[0];
+                      if (typeof msg === "number") {
                         return /* NoUpdate */0;
                       } else {
-                        switch (msg$1.tag | 0) {
+                        switch (msg.tag | 0) {
                           case 2 : 
                               return /* Update */Block.__(0, [/* record */[
-                                          /* index : Some */[msg$1[0]],
+                                          /* index : Some */[msg[0]],
                                           /* selectedVenture */state[/* selectedVenture */1],
                                           /* session */state[/* session */2],
                                           /* dataWorker */state[/* dataWorker */3],
@@ -167,8 +163,8 @@ function make(currentRoute, session, children) {
                                           /* ventureWorker */state[/* ventureWorker */5]
                                         ]]);
                           case 5 : 
-                              var newItems = msg$1[1];
-                              var ventureId = msg$1[0];
+                              var newItems = msg[1];
+                              var ventureId = msg[0];
                               Curry._2(VentureWorkerClient.postMessage, state[/* ventureWorker */5][0], /* SyncTabs */Block.__(16, [
                                       ventureId,
                                       newItems
@@ -198,18 +194,18 @@ function make(currentRoute, session, children) {
                       Curry._2(VentureWorkerClient.postMessage, state[/* ventureWorker */5][0], action[0]);
                       return /* NoUpdate */0;
                   case 3 : 
-                      var msg$2 = action[0];
-                      Curry._2(PersistWorkerClient.postMessage, state[/* persistWorker */4][0], msg$2);
-                      Curry._2(DataWorkerClient.postMessage, state[/* dataWorker */3][0], msg$2);
+                      var msg$1 = action[0];
+                      Curry._2(PersistWorkerClient.postMessage, state[/* persistWorker */4][0], msg$1);
+                      Curry._2(DataWorkerClient.postMessage, state[/* dataWorker */3][0], msg$1);
                       var match$2 = state[/* selectedVenture */1];
-                      if (typeof msg$2 === "number") {
+                      if (typeof msg$1 === "number") {
                         return /* NoUpdate */0;
                       } else {
-                        switch (msg$2.tag | 0) {
+                        switch (msg$1.tag | 0) {
                           case 2 : 
-                              updateOtherTabs(msg$2);
+                              updateOtherTabs(msg$1);
                               return /* Update */Block.__(0, [/* record */[
-                                          /* index : Some */[msg$2[0]],
+                                          /* index : Some */[msg$1[0]],
                                           /* selectedVenture */state[/* selectedVenture */1],
                                           /* session */state[/* session */2],
                                           /* dataWorker */state[/* dataWorker */3],
@@ -217,8 +213,8 @@ function make(currentRoute, session, children) {
                                           /* ventureWorker */state[/* ventureWorker */5]
                                         ]]);
                           case 3 : 
-                              var log = msg$2[1];
-                              var ventureId$1 = msg$2[0];
+                              var log = msg$1[1];
+                              var ventureId$1 = msg$1[0];
                               if (typeof match$2 === "number") {
                                 return /* NoUpdate */0;
                               } else {
@@ -270,13 +266,13 @@ function make(currentRoute, session, children) {
                                 }
                               }
                           case 4 : 
-                              var ventureId$2 = msg$2[0];
+                              var ventureId$2 = msg$1[0];
                               return /* UpdateWithSideEffects */Block.__(2, [
                                         /* record */[
                                           /* index */state[/* index */0],
                                           /* selectedVenture : VentureLoaded */Block.__(3, [
                                               ventureId$2,
-                                              Curry._1(ViewModel.init(sessionData[/* userId */0]), msg$2[1]),
+                                              Curry._1(ViewModel.init(sessionData[/* userId */0]), msg$1[1]),
                                               VentureWorkerClient.Cmd[/* make */0](state[/* ventureWorker */5][0], ventureId$2)
                                             ]),
                                           /* session */state[/* session */2],
@@ -295,14 +291,14 @@ function make(currentRoute, session, children) {
                               if (typeof match$2 === "number" || match$2.tag !== 3) {
                                 return /* NoUpdate */0;
                               } else {
-                                var ventureId$3 = msg$2[0];
+                                var ventureId$3 = msg$1[0];
                                 if (PrimitiveTypes.VentureId[/* eq */5](ventureId$3, match$2[0])) {
-                                  updateOtherTabs(msg$2);
+                                  updateOtherTabs(msg$1);
                                   return /* Update */Block.__(0, [/* record */[
                                               /* index */state[/* index */0],
                                               /* selectedVenture : VentureLoaded */Block.__(3, [
                                                   ventureId$3,
-                                                  ViewModel.applyAll(msg$2[1], match$2[1]),
+                                                  ViewModel.applyAll(msg$1[1], match$2[1]),
                                                   match$2[2]
                                                 ]),
                                               /* session */state[/* session */2],
@@ -315,8 +311,8 @@ function make(currentRoute, session, children) {
                                 }
                               }
                           case 6 : 
-                              var response = msg$2[2];
-                              var correlationId = msg$2[1];
+                              var response = msg$1[2];
+                              var correlationId = msg$1[1];
                               if (typeof match$2 === "number") {
                                 return /* NoUpdate */0;
                               } else {
@@ -377,7 +373,7 @@ function make(currentRoute, session, children) {
                                       }
                                   case 3 : 
                                       var loadedId = match$2[0];
-                                      if (PrimitiveTypes.VentureId[/* eq */5](msg$2[0], loadedId)) {
+                                      if (PrimitiveTypes.VentureId[/* eq */5](msg$1[0], loadedId)) {
                                         return /* Update */Block.__(0, [/* record */[
                                                     /* index */state[/* index */0],
                                                     /* selectedVenture : VentureLoaded */Block.__(3, [
@@ -403,6 +399,15 @@ function make(currentRoute, session, children) {
                   
                 }
               }
+              if (exit === 1) {
+                if (action.tag === 3) {
+                  var msg$2 = action[0];
+                  Curry._2(PersistWorkerClient.postMessage, state[/* persistWorker */4][0], msg$2);
+                  Curry._2(DataWorkerClient.postMessage, state[/* dataWorker */3][0], msg$2);
+                }
+                return /* NoUpdate */0;
+              }
+              
             }),
           /* subscriptions */(function (param) {
               var send = param[/* send */3];

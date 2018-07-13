@@ -370,7 +370,7 @@ function persist(ventureId, eventLog, param) {
 function persistVenture(ventureId) {
   logMessage("Persisting venture '" + (PrimitiveTypes.VentureId[/* toString */0](ventureId) + "'"));
   return Session.getCurrentSession(/* () */0).then((function (param) {
-                if (typeof param === "number") {
+                if (typeof param === "number" || param.tag !== 1) {
                   return Promise.resolve(/* () */0);
                 } else {
                   return WorkerUtils.loadVenture(ventureId).then((function (eventLog) {

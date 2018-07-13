@@ -4,7 +4,6 @@
 var Curry = require("bs-platform/lib/js/curry.js");
 var React = require("react");
 var MButton = require("./components/MButton.bs.js");
-var TACText = require("./text/TACText.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 
@@ -13,7 +12,7 @@ var component = ReasonReact.statelessComponent("ViewIncomeModal");
 function make(signTAC, _) {
   var onAggree = function ($$event) {
     $$event.preventDefault();
-    return Curry._1(signTAC, TACText.hash);
+    return Curry._1(signTAC, /* () */0);
   };
   return /* record */[
           /* debugName */component[/* debugName */0],

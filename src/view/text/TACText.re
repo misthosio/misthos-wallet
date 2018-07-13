@@ -7,7 +7,7 @@ type t = {
   paragraphs: array(string),
 };
 
-let terms = [|{heading: "dummy", paragraphs: [|"dummy"|]}|];
+let terms = [|{heading: "aloha", paragraphs: [|"dummy"|]}|];
 
 let hash =
   terms
