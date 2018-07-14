@@ -78,7 +78,11 @@ module ECSignature = {
 };
 
 module ECPair = {
-  type t;
+  type t = {
+    .
+    "compressed": bool,
+    "__Q": ECurve.Point.t,
+  };
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external makeRandom : unit => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
@@ -88,6 +92,9 @@ module ECPair = {
     makeRandomWithOptions({"network": network});
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromPublicKeyBuffer : Node.buffer => t = "";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
+  external fromPublicKeyBufferWithNetwork : (Node.buffer, Networks.t) => t =
+    "fromPublicKeyBuffer";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
   external fromWIF : string => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "ECPair"]
@@ -111,9 +118,15 @@ module ECPair = {
 };
 
 module HDNode = {
-  type t = {. "keyPair": ECPair.t};
+  type t = {
+    .
+    "keyPair": ECPair.t,
+    "chainCode": Node.buffer,
+  };
   [@bs.module "bitcoinjs-lib"] [@bs.new]
   external make : (ECPair.t, Node.buffer) => t = "HDNode";
+  [@bs.module "bitcoinjs-lib"] [@bs.scope "HDNode"]
+  external fromSeedBuffer : (Node.buffer, Networks.t) => t = "";
   [@bs.module "bitcoinjs-lib"] [@bs.scope "HDNode"]
   external fromBase58WithNetworks : (string, array(Networks.t)) => t =
     "fromBase58";
