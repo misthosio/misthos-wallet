@@ -116,7 +116,7 @@ function message(variant, message$1) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[Css.style(/* :: */[
                         Css.color(color),
                         /* [] */0
-                      ])], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(message$1)]));
+                      ])], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(message$1)]));
 }
 
 var component$1 = ReasonReact.statelessComponent("CommandStatus");
@@ -161,7 +161,7 @@ function make$1(cmdStatus, action, _) {
                         
                       }
                       return /* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(tmp)])),
+                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(tmp)])),
                               ReasonReact.element(/* None */0, /* None */0, MaterialUi_LinearProgress.make(/* Some */[Css.style(/* :: */[
                                               Css.marginTop(Css.px(Theme.space(1))),
                                               /* [] */0

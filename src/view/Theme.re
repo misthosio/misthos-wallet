@@ -13,12 +13,12 @@ let spacingBase = 8;
 
 let space = factor => factor * spacingBase;
 
-let theme = (~dark=true, _) =>
+let theme = (~dark=false, _) =>
   createMuiTheme({
     "palette": {
       "type": dark ? "dark" : "light",
       "primary": {
-        "light": "#757ce8",
+        "light": "#" ++ Colors.uWhite,
         "main": "#" ++ Colors.uMisthosTeal,
         "dark": "#002884",
         "contrastText": "#" ++ Colors.uBlack,
@@ -34,6 +34,7 @@ let theme = (~dark=true, _) =>
       },
       "background": {
         "default": "#" ++ Colors.uWhite,
+        "paper": "#" ++ Colors.uWhite,
       },
     },
     "typography": {

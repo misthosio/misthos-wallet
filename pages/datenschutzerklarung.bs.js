@@ -22,22 +22,22 @@ function line(data) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
                     -976970511,
                     "span"
-                  ]], /* array */[ViewCommon.text(data)]));
+                  ]], /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
 function paragraph(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
 function wrapWithDiv(data) {
   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* Some */[/* `String */[
                     -976970511,
                     "div"
-                  ]], /* array */[data]));
+                  ]], /* None */0, /* array */[data]));
 }
 
 function subheading(data) {
-  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* array */[ViewCommon.text(data)]));
+  return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text(data)]));
 }
 
 var environment = Environment.get(/* () */0);
@@ -63,12 +63,12 @@ function make() {
                                             }, ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[
                                                       paragraph(DatenschutzText.section1),
                                                       subheading(DatenschutzText.section2Heading),
-                                                      React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                      React.createElement("div", undefined, line("Justin Carter"), line("Misthos"), line("Dolziger Str. 15"), line("D10247 Berlin"), line("Deutschland"), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                     ViewCommon.text("Email: "),
                                                                     React.createElement("a", {
                                                                           href: "mailto:Contact@misthos.io"
                                                                         }, ViewCommon.text("contact@misthos.io"))
-                                                                  ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                                  ])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                                     ViewCommon.text("Link zum Impressum: "),
                                                                     React.createElement("a", {
                                                                           href: environment[/* webDomain */3] + "/impressum",

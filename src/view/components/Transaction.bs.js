@@ -74,12 +74,12 @@ function make(txType, primary, amount$1, date, label, onClick, _) {
               return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[onClick !== /* None */0], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
                                 /* Divider */Block.__(6, [divider]),
                                 /* [] */0
-                              ]], /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                              ]], /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                   ViewCommon.text($$String.uppercase(primary)),
                                                   React.createElement("span", {
                                                         className: amount(txType)
                                                       }, ViewCommon.text(BTC.format(amount$1) + " BTC"))
-                                                ]))], /* None */0, /* Some */[date ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                                ]))], /* None */0, /* Some */[date ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                                     ViewCommon.text(date[0].toDateString()),
                                                     label ? label[0] : null
                                                   ])) : null], /* None */0, /* Some */[/* :: */[

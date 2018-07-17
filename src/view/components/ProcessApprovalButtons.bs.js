@@ -74,8 +74,8 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
                     break;
                 case 1 : 
                     tmp = /* array */[
-                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[warning], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(Js_option.getWithDefault("", alertText))])),
-                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* array */[
+                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[warning], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(Js_option.getWithDefault("", alertText))])),
+                      ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                 ViewCommon.text(endorseText),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ConfirmEndorse */2);
@@ -87,7 +87,7 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
                     ];
                     break;
                 case 3 : 
-                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* array */[
+                    tmp = /* array */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                 ViewCommon.text(rejectText),
                                 ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                               return Curry._1(send, /* ConfirmReject */4);
@@ -112,7 +112,7 @@ function make(endorseText, alertText, rejectText, canVote, onEndorse, onReject, 
                         if (state >= 4) {
                           tmp = /* array */[
                             ReasonReact.element(/* None */0, /* None */0, CommandExecutor.Status[/* make */2](cmdStatus, /* Endorsement */4, /* array */[])),
-                            ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                            ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[inlineConfirm], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                     return Curry._1(send, /* Cancel */0);
                                                   })], /* None */0, /* None */0, /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Try Again")]))]))
                           ];

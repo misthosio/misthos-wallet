@@ -2,7 +2,6 @@
 'use strict';
 
 var Css = require("bs-css/src/Css.js");
-var Block = require("bs-platform/lib/js/block.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
@@ -14,6 +13,7 @@ var MTypography = require("./components/MTypography.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
 var MaterialUi_Input = require("@jsiebern/bs-material-ui/src/MaterialUi_Input.bs.js");
 var MaterialUi_Button = require("@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js");
+var MaterialUi_MuiThemeProvider = require("@jsiebern/bs-material-ui/src/MaterialUi_MuiThemeProvider.bs.js");
 
 var component = ReasonReact.statelessComponent("Footer");
 
@@ -133,36 +133,6 @@ var link = Css.style(/* :: */[
       ]
     ]);
 
-var inputRoot = Css.style(/* :: */[
-      Css.color(Colors.white),
-      /* :: */[
-        Css.fontSize(Css.px(14)),
-        /* [] */0
-      ]
-    ]);
-
-var inputUnderline = Css.style(/* :: */[
-      Css.before(/* :: */[
-            Css.backgroundColor(Colors.white),
-            /* [] */0
-          ]),
-      /* :: */[
-        Css.hover(/* :: */[
-              Css.before(/* :: */[
-                    Css.important(Css.backgroundColor(Colors.white)),
-                    /* [] */0
-                  ]),
-              /* [] */0
-            ]),
-        /* [] */0
-      ]
-    ]);
-
-var button = Css.style(/* :: */[
-      Css.color(Colors.white),
-      /* [] */0
-    ]);
-
 var social = Css.style(/* :: */[
       Css.marginTop(Css.px(Theme.space(4))),
       /* [] */0
@@ -173,11 +143,6 @@ var socialIcon = Css.style(/* :: */[
       /* [] */0
     ]);
 
-var title = Css.style(/* :: */[
-      Css.color(Colors.white),
-      /* [] */0
-    ]);
-
 var Styles = /* module */[
   /* grid */grid,
   /* area */area,
@@ -185,12 +150,8 @@ var Styles = /* module */[
   /* logo */logo,
   /* notice */notice,
   /* link */link,
-  /* inputRoot */inputRoot,
-  /* inputUnderline */inputUnderline,
-  /* button */button,
   /* social */social,
-  /* socialIcon */socialIcon,
-  /* title */title
+  /* socialIcon */socialIcon
 ];
 
 function make() {
@@ -206,58 +167,55 @@ function make() {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               var environment = Environment.get(/* () */0);
-              return React.createElement("div", {
-                          className: grid
-                        }, React.createElement("div", {
-                              className: bg
-                            }), React.createElement("div", {
-                              className: area("footer1")
-                            }, React.createElement("a", {
-                                  className: logo,
-                                  href: environment[/* webDomain */3] + "/"
-                                }, Icons.misthosWordMark)), React.createElement("div", {
-                              className: area("footer2")
-                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* None */0, /* array */[ViewCommon.text("Company")])), React.createElement("a", {
-                                  className: link,
-                                  href: environment[/* webDomain */3] + "/faq"
-                                }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
-                                  className: link,
-                                  href: "mailto:contact@misthos.io"
-                                }, ViewCommon.text("Contact us")), React.createElement("a", {
-                                  className: link,
-                                  href: "mailto:jobs@misthos.io"
-                                }, ViewCommon.text("Jobs")), React.createElement("a", {
-                                  className: link,
-                                  href: environment[/* webDomain */3] + "/datenschutzerklarung"
-                                }, ViewCommon.text("Datenschutzerklärung")), React.createElement("a", {
-                                  className: link,
-                                  href: environment[/* webDomain */3] + "/impressum"
-                                }, ViewCommon.text("Impressum"))), React.createElement("div", {
-                              className: area("footer3")
-                            }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[title], /* Some */[true], /* Some */[true], /* None */0, /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
-                                  action: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53",
-                                  method: "post",
-                                  target: "_blank"
-                                }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["EMAIL"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["Email Address"], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["email"], /* None */0, /* Some */[/* :: */[
-                                            /* Root */Block.__(0, [inputRoot]),
-                                            /* :: */[
-                                              /* Underline */Block.__(4, [inputUnderline]),
-                                              /* [] */0
-                                            ]
-                                          ]], /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Small */311976103], /* Some */["submit"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Sign Up")])), React.createElement("div", {
-                                      className: social
-                                    }, React.createElement("a", {
-                                          className: socialIcon,
-                                          href: "https://twitter.com/misthosio"
-                                        }, Icons.twitter), React.createElement("a", {
-                                          className: socialIcon,
-                                          href: "https://www.linkedin.com/company/misthos-io"
-                                        }, Icons.linkedin), React.createElement("a", {
-                                          className: socialIcon,
-                                          href: "https://medium.com/@misthosio"
-                                        }, Icons.medium)))), React.createElement("div", {
-                              className: notice
-                            }, ViewCommon.text("© Misthos 2018. All rights reserved.")));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_MuiThemeProvider.make(/* None */0, /* None */0, /* `ObjectGeneric */[
+                              -317959944,
+                              Theme.toJsUnsafe(Theme.theme(/* Some */[true], /* () */0))
+                            ], /* array */[React.createElement("div", {
+                                    className: grid
+                                  }, React.createElement("div", {
+                                        className: bg
+                                      }), React.createElement("div", {
+                                        className: area("footer1")
+                                      }, React.createElement("a", {
+                                            className: logo,
+                                            href: environment[/* webDomain */3] + "/"
+                                          }, Icons.misthosWordMark)), React.createElement("div", {
+                                        className: area("footer2")
+                                      }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* Some */[/* TextSecondary */-507693849], /* array */[ViewCommon.text("Company")])), React.createElement("a", {
+                                            className: link,
+                                            href: environment[/* webDomain */3] + "/faq"
+                                          }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
+                                            className: link,
+                                            href: "mailto:contact@misthos.io"
+                                          }, ViewCommon.text("Contact us")), React.createElement("a", {
+                                            className: link,
+                                            href: "mailto:jobs@misthos.io"
+                                          }, ViewCommon.text("Jobs")), React.createElement("a", {
+                                            className: link,
+                                            href: environment[/* webDomain */3] + "/datenschutzerklarung"
+                                          }, ViewCommon.text("Datenschutzerklärung")), React.createElement("a", {
+                                            className: link,
+                                            href: environment[/* webDomain */3] + "/impressum"
+                                          }, ViewCommon.text("Impressum"))), React.createElement("div", {
+                                        className: area("footer3")
+                                      }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* Some */[/* TextSecondary */-507693849], /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
+                                            action: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53",
+                                            method: "post",
+                                            target: "_blank"
+                                          }, ReasonReact.element(/* None */0, /* None */0, MaterialUi_Input.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["EMAIL"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["Email Address"], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["email"], /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["submit"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Sign Up")])), React.createElement("div", {
+                                                className: social
+                                              }, React.createElement("a", {
+                                                    className: socialIcon,
+                                                    href: "https://twitter.com/misthosio"
+                                                  }, Icons.twitter), React.createElement("a", {
+                                                    className: socialIcon,
+                                                    href: "https://www.linkedin.com/company/misthos-io"
+                                                  }, Icons.linkedin), React.createElement("a", {
+                                                    className: socialIcon,
+                                                    href: "https://medium.com/@misthosio"
+                                                  }, Icons.medium)))), React.createElement("div", {
+                                        className: notice
+                                      }, ViewCommon.text("© Misthos 2018. All rights reserved.")))]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
