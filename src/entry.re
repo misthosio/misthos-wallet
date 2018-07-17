@@ -1,6 +1,6 @@
 [%bs.raw {|window.blockstack = require('blockstack')|}];
 
-let theme = Theme.theme |> Theme.toJsUnsafe;
+let theme = Theme.theme() |> Theme.toJsUnsafe;
 
 ReactDOMRe.renderToElementWithId(
   <JssProvider>

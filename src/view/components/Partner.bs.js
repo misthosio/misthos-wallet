@@ -162,7 +162,7 @@ function make(partnerId, name, button, status, onClick, $staropt$star, _) {
                 tmp = null;
               }
               if (exit === 1) {
-                tmp = ex ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[exPartnerStatus], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("EX-PARTNER")])) : (
+                tmp = ex ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[exPartnerStatus], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("EX-PARTNER")])) : (
                     button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[status[0]]))
                   );
               }

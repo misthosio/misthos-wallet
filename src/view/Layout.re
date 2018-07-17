@@ -58,7 +58,7 @@ let make =
     | CloseDrawer => ReasonReact.Update({drawerOpen: false})
     },
   render: ({send, state}) => {
-    let theme = Theme.theme |> Theme.toJsUnsafe;
+    let theme = Theme.theme() |> Theme.toJsUnsafe;
     let modalContainer =
       MaterialUi.(
         modal

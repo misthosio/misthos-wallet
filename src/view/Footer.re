@@ -96,106 +96,89 @@ module Styles = {
       textTransform(uppercase),
     ]);
 
-  let inputRoot = style([color(Colors.white), fontSize(px(14))]);
-  let inputUnderline =
-    style([
-      before([backgroundColor(Colors.white)]),
-      hover([before([important(backgroundColor(Colors.white))])]),
-    ]);
-
-  let button = style([color(Colors.white)]);
-
   let social = style([marginTop(px(Theme.space(4)))]);
   let socialIcon = style([marginRight(px(Theme.space(2)))]);
-
-  let title = style([color(Colors.white)]);
 };
 
 let make = _children => {
   ...component,
   render: _self => {
     let environment = Environment.get();
-    <div className=Styles.grid>
-      <div className=Styles.bg />
-      <div className=(Styles.area("footer1"))>
-        <a className=Styles.logo href=(environment.webDomain ++ "/")>
-          Icons.misthosWordMark
-        </a>
+    <MaterialUi.MuiThemeProvider
+      theme=(`ObjectGeneric(Theme.theme(~dark=true, ()) |> Theme.toJsUnsafe))>
+      <div className=Styles.grid>
+        <div className=Styles.bg />
+        <div className=(Styles.area("footer1"))>
+          <a className=Styles.logo href=(environment.webDomain ++ "/")>
+            Icons.misthosWordMark
+          </a>
+        </div>
+        <div className=(Styles.area("footer2"))>
+          <MTypography
+            gutterTop=true
+            gutterBottom=true
+            color=`TextSecondary
+            variant=`Title>
+            ("Company" |> text)
+          </MTypography>
+          <a className=Styles.link href=(environment.webDomain ++ "/faq")>
+            ("Frequently Asked Questions" |> text)
+          </a>
+          <a className=Styles.link href="mailto:contact@misthos.io">
+            ("Contact us" |> text)
+          </a>
+          <a className=Styles.link href="mailto:jobs@misthos.io">
+            ("Jobs" |> text)
+          </a>
+          <a
+            className=Styles.link
+            href=(environment.webDomain ++ "/datenschutzerklarung")>
+            ({js|Datenschutzerklärung|js} |> text)
+          </a>
+          <a
+            className=Styles.link href=(environment.webDomain ++ "/impressum")>
+            ("Impressum" |> text)
+          </a>
+        </div>
+        <div className=(Styles.area("footer3"))>
+          <MTypography
+            gutterTop=true
+            gutterBottom=true
+            color=`TextSecondary
+            variant=`Title>
+            ("Stay Connected" |> text)
+          </MTypography>
+          MaterialUi.(
+            <form
+              action="https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53"
+              method="post"
+              target="_blank">
+              <Input type_="email" placeholder="Email Address" name="EMAIL" />
+              <Button type_="submit"> ("Sign Up" |> text) </Button>
+              <div className=Styles.social>
+                <a
+                  className=Styles.socialIcon
+                  href="https://twitter.com/misthosio">
+                  Icons.twitter
+                </a>
+                <a
+                  className=Styles.socialIcon
+                  href="https://www.linkedin.com/company/misthos-io">
+                  Icons.linkedin
+                </a>
+                <a
+                  className=Styles.socialIcon
+                  href="https://medium.com/@misthosio">
+                  Icons.medium
+                </a>
+              </div>
+            </form>
+          )
+        </div>
+        <div className=Styles.notice>
+          ({js|© Misthos 2018. All rights reserved.|js} |> text)
+        </div>
       </div>
-      <div className=(Styles.area("footer2"))>
-        <MTypography
-          gutterTop=true
-          gutterBottom=true
-          className=Styles.title
-          variant=`Title>
-          ("Company" |> text)
-        </MTypography>
-        <a className=Styles.link href=(environment.webDomain ++ "/faq")>
-          ("Frequently Asked Questions" |> text)
-        </a>
-        <a className=Styles.link href="mailto:contact@misthos.io">
-          ("Contact us" |> text)
-        </a>
-        <a className=Styles.link href="mailto:jobs@misthos.io">
-          ("Jobs" |> text)
-        </a>
-        <a
-          className=Styles.link
-          href=(environment.webDomain ++ "/datenschutzerklarung")>
-          ({js|Datenschutzerklärung|js} |> text)
-        </a>
-        <a className=Styles.link href=(environment.webDomain ++ "/impressum")>
-          ("Impressum" |> text)
-        </a>
-      </div>
-      <div className=(Styles.area("footer3"))>
-        <MTypography
-          gutterTop=true
-          gutterBottom=true
-          className=Styles.title
-          variant=`Title>
-          ("Stay Connected" |> text)
-        </MTypography>
-        MaterialUi.(
-          <form
-            action="https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53"
-            method="post"
-            target="_blank">
-            <Input
-              classes=[
-                Root(Styles.inputRoot),
-                Underline(Styles.inputUnderline),
-              ]
-              type_="email"
-              placeholder="Email Address"
-              name="EMAIL"
-            />
-            <Button size=`Small className=Styles.button type_="submit">
-              ("Sign Up" |> text)
-            </Button>
-            <div className=Styles.social>
-              <a
-                className=Styles.socialIcon
-                href="https://twitter.com/misthosio">
-                Icons.twitter
-              </a>
-              <a
-                className=Styles.socialIcon
-                href="https://www.linkedin.com/company/misthos-io">
-                Icons.linkedin
-              </a>
-              <a
-                className=Styles.socialIcon
-                href="https://medium.com/@misthosio">
-                Icons.medium
-              </a>
-            </div>
-          </form>
-        )
-      </div>
-      <div className=Styles.notice>
-        ({js|© Misthos 2018. All rights reserved.|js} |> text)
-      </div>
-    </div>;
+    </MaterialUi.MuiThemeProvider>;
   },
 };

@@ -179,7 +179,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (param) {
               var send = param[/* send */3];
-              var theme = Theme.toJsUnsafe(Theme.theme);
+              var theme = Theme.toJsUnsafe(Theme.theme(/* None */0, /* () */0));
               var modalContainer = Js_option.getWithDefault(null, Utils.mapOption((function (param) {
                           var onClose = param[1];
                           var inner = React.cloneElement(ReasonReact.element(/* None */0, /* None */0, MaterialUi_Paper.make(/* Some */[modal], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
