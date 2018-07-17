@@ -17,7 +17,7 @@ function margin(top) {
 
 var Styles = /* module */[/* margin */margin];
 
-function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, component, children) {
+function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, component, color, children) {
   var className = $staropt$star ? $staropt$star[0] : "";
   var gutterBottom = $staropt$star$1 ? $staropt$star$1[0] : false;
   var gutterTop = $staropt$star$2 ? $staropt$star$2[0] : false;
@@ -37,7 +37,7 @@ function make(variant, $staropt$star, $staropt$star$1, $staropt$star$2, componen
                 ) : (
                   gutterTop ? margin(4) : margin(0)
                 );
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[style + (" " + className)], /* None */0, component, /* Some */[gutterBottom], /* None */0, /* None */0, /* None */0, /* Some */[variant], /* None */0, /* None */0, /* array */[children]));
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Typography.make(/* None */0, /* Some */[style + (" " + className)], color, component, /* Some */[gutterBottom], /* None */0, /* None */0, /* None */0, /* Some */[variant], /* None */0, /* None */0, /* array */[children]));
             }),
           /* initialState */statelessComponent[/* initialState */10],
           /* retainedProps */statelessComponent[/* retainedProps */11],

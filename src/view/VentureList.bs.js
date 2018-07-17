@@ -60,7 +60,7 @@ function make(selected, index, _) {
               var breakingNotification = breakingChange && breakingChange[0] ? ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* Some */[Css.style(/* :: */[
                                 Css.color(Colors.error),
                                 /* [] */0
-                              ])], /* Some */[true], /* None */0, /* None */0, /* array */[ViewCommon.text("In preparation for our mainnet launch it has been necessary to make a breaking change. As a result your testnet ventures are no longer accessible. We will garuantee backwards compatibility following our public release on mainnet.")])) : null;
+                              ])], /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("In preparation for our mainnet launch it has been necessary to make a breaking change. As a result your testnet ventures are no longer accessible. We will garuantee backwards compatibility following our public release on mainnet.")])) : null;
               var ventureList;
               if (ventures) {
                 var ventures$1 = ventures[0];
@@ -82,8 +82,8 @@ function make(selected, index, _) {
                                                   return Router.clickToRoute(partial_arg, param);
                                                 })], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemText.make(/* None */0, /* None */0, /* None */0, /* Some */[ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* Some */[link + (" " + (
                                                                       match ? linkSelected : ""
-                                                                    ))], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))]));
-                            }), ventures$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.")]));
+                                                                    ))], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(param[/* name */1])]))], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]))]));
+                            }), ventures$1)) : ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("You are not part of any Ventures yet. Create a new Venture, or join an existing Venture if you have an invite link from a Partner.")]));
               } else {
                 ventureList = ReasonReact.element(/* None */0, /* None */0, Spinner.make("loading index", /* None */0, /* array */[]));
               }

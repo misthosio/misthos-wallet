@@ -12,6 +12,7 @@ let make =
       ~gutterBottom=false,
       ~gutterTop=false,
       ~component=?,
+      ~color=?,
       children,
     ) => {
   ...statelessComponent,
@@ -23,7 +24,11 @@ let make =
       | (_, _) => Styles.margin(0)
       };
     <MaterialUi.Typography
-      ?component className=(style ++ " " ++ className) variant gutterBottom>
+      ?component
+      ?color
+      className=(style ++ " " ++ className)
+      variant
+      gutterBottom>
       children
     </MaterialUi.Typography>;
   },

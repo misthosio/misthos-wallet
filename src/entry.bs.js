@@ -12,7 +12,7 @@ var MaterialUi_MuiThemeProvider = require("@jsiebern/bs-material-ui/src/Material
 
 ((window.blockstack = require('blockstack')));
 
-var theme = Theme.toJsUnsafe(Theme.theme);
+var theme = Theme.toJsUnsafe(Theme.theme(/* None */0, /* () */0));
 
 ReactDOMRe.renderToElementWithId(ReasonReact.element(/* None */0, /* None */0, JssProvider.make(/* array */[ReasonReact.element(/* None */0, /* None */0, SessionStore.make((function (session, updateSession, signTAC) {
                           return ReasonReact.element(/* None */0, /* None */0, MaterialUi_MuiThemeProvider.make(/* None */0, /* None */0, /* `ObjectGeneric */[
