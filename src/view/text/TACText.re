@@ -50,7 +50,7 @@ let terms = [|
         {|Misthos is a decentralised app for collaborative management of
           finances.|},
         {|Using Misthos a team of collaborating individuals can collectively
-          manage and distribute their Bitcoin.~|},
+          manage and distribute their Bitcoin.|},
         {|Within Misthos, users create Ventures and dynamically add and remove
           Partners who are the custodians of a multisig Bitcoin wallet.|},
       |]),
@@ -149,7 +149,7 @@ let terms = [|
       |]),
   },
   {
-    heading: "Misthos Transaction Fee",
+    heading: "Misthos Fee",
     body:
       L([|
         {|We do charge a transaction and handling fee for the use of our
