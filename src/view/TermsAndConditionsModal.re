@@ -20,7 +20,7 @@ let make = (~signTAC, _children) => {
                 TACText.terms
                 |. Array.map(section =>
                      [|
-                       <MTypography variant=`Title>
+                       <MTypography variant=`Subheading>
                          (section.heading |> text)
                        </MTypography>,
                        switch (section.body) {

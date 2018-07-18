@@ -42,7 +42,7 @@ function make(signTAC, _) {
                                                                   return ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(p)]));
                                                                 }));
                                                         return /* array */[
-                                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(section[/* heading */0])])),
+                                                                ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Subheading */148169314, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(section[/* heading */0])])),
                                                                 tmp
                                                               ];
                                                       })))])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[onAggree], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("I agree to the terms of Use")])))], /* None */0, /* None */0, /* None */0, /* array */[]));

@@ -33,7 +33,7 @@ var terms = /* array */[
     /* heading */"What is Misthos?",
     /* body : L */Block.__(1, [/* array */[
           "Misthos is a decentralised app for collaborative management of\n          finances.",
-          "Using Misthos a team of collaborating individuals can collectively\n          manage and distribute their Bitcoin.~",
+          "Using Misthos a team of collaborating individuals can collectively\n          manage and distribute their Bitcoin.",
           "Within Misthos, users create Ventures and dynamically add and remove\n          Partners who are the custodians of a multisig Bitcoin wallet."
         ]])
   ],
@@ -79,7 +79,7 @@ var terms = /* array */[
         ]])
   ],
   /* record */[
-    /* heading */"Misthos Transaction Fee",
+    /* heading */"Misthos Fee",
     /* body : L */Block.__(1, [/* array */["We do charge a transaction and handling fee for the use of our\n         interface whenever you make a payout. Receiving income is not\n         charged."]])
   ]
 ];
