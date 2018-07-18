@@ -1,15 +1,49 @@
+open Belt;
+open PrimitiveTypes;
+
 module Public = {
-  type t = {appPubKey: string};
+  type t = {
+    appPubKey: string,
+    termsAndConditions: Map.String.t(string),
+  };
   let infoFileName = "public.json";
   let encode = data =>
-    Json.Encode.(object_([("appPubKey", string(data.appPubKey))]));
+    Json.Encode.(
+      object_([
+        ("appPubKey", string(data.appPubKey)),
+        (
+          "termsAndConditions",
+          data.termsAndConditions
+          |. Map.String.toArray
+          |. Array.mapU((. (k, v)) => (k, v |> string))
+          |> Js.Dict.fromArray
+          |> dict,
+        ),
+      ])
+    );
   let decode = raw =>
-    Json.Decode.{appPubKey: raw |> field("appPubKey", string)};
-  let persist = (~appPubKey) =>
+    Json.Decode.{
+      appPubKey: raw |> field("appPubKey", string),
+      termsAndConditions:
+        raw
+        |> field("termsAndConditions", dict(string))
+        |> Js.Dict.entries
+        |> Map.String.fromArray,
+    };
+  let init = (~appPubKey) => {
+    let res = {appPubKey, termsAndConditions: Map.String.empty};
     Blockstack.putFileNotEncrypted(
       infoFileName,
-      encode({appPubKey: appPubKey}) |> Json.stringify,
-    );
+      encode(res) |> Json.stringify,
+    )
+    |> Js.Promise.(then_(_ => res |> resolve));
+  };
+  let persist = info =>
+    Blockstack.putFileNotEncrypted(
+      infoFileName,
+      encode(info) |> Json.stringify,
+    )
+    |> Js.Promise.(then_(_ => info |> resolve));
   type readResult =
     | NotFound
     | Ok(t);
@@ -27,6 +61,35 @@ module Public = {
            resolve(NotFound);
          })
     );
+};
+
+let hasSignedTAC = (tacHash, userInfo: Public.t) =>
+  switch (userInfo.termsAndConditions |. Map.String.get(tacHash)) {
+  | Some(signature) =>
+    let signature =
+      Bitcoin.ECSignature.fromDER(signature |> Utils.bufFromHex);
+    Utils.keyFromPublicKey(userInfo.appPubKey)
+    |> Bitcoin.ECPair.verify(tacHash |> Utils.bufFromHex, signature);
+  | _ => false
+  };
+
+let signTAC = (tacHash, privateKey, network, userInfo: Public.t) => {
+  let keyPair =
+    Utils.keyPairFromPrivateKey(
+      network |> Network.bitcoinNetwork,
+      privateKey,
+    );
+  let signature =
+    keyPair
+    |> Bitcoin.ECPair.sign(tacHash |> Utils.bufFromHex)
+    |> Bitcoin.ECSignature.toDER
+    |> Utils.bufToHex;
+  {
+    ...userInfo,
+    termsAndConditions:
+      userInfo.termsAndConditions |. Map.String.set(tacHash, signature),
+  }
+  |> Public.persist;
 };
 
 module Private = {
@@ -67,19 +130,24 @@ module Private = {
     );
 };
 
-let getOrInit = (~appPubKey) =>
+let getOrInit = (~appPubKey, userId) =>
   Js.Promise.(
-    Private.read()
+    all2((
+      Private.read(),
+      Public.read(~blockstackId=userId |> UserId.toString),
+    ))
     |> then_(
          fun
-         | Private.Ok(info) => info |> resolve
-         | Private.NotFound =>
-           Public.persist(~appPubKey)
-           |> then_(_result =>
+         | (Private.Ok(info), Public.Ok(public)) =>
+           (info, public) |> resolve
+         | _ =>
+           Public.init(~appPubKey)
+           |> then_(pub_ =>
                 Private.persist(
                   ~chainCode=
                     appPubKey |. String.sub(0, 64) |> Utils.bufFromHex,
                 )
+                |> then_(priv => (priv, pub_) |> resolve)
               ),
        )
   );

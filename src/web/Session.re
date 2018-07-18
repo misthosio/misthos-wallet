@@ -3,18 +3,22 @@ type t =
   | LoginPending
   | NotLoggedIn
   | NamelessLogin
+  | MustAggreeToTAC(SessionData.t, UserInfo.Public.t)
   | LoggedIn(SessionData.t);
 
 let initMasterKey = (sessionData: SessionData.t) => {
   let appPubKey = sessionData.issuerKeyPair |> Utils.publicKeyFromKeyPair;
   Js.Promise.(
-    UserInfo.getOrInit(~appPubKey)
-    |> then_(({chainCode}: UserInfo.Private.t) =>
-         {
-           ...sessionData,
-           masterKeyChain:
-             Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode),
-         }
+    UserInfo.getOrInit(~appPubKey, sessionData.userId)
+    |> then_((({chainCode}: UserInfo.Private.t, userInfo)) =>
+         (
+           {
+             ...sessionData,
+             masterKeyChain:
+               Bitcoin.HDNode.make(sessionData.issuerKeyPair, chainCode),
+           },
+           userInfo,
+         )
          |> resolve
        )
   );
@@ -35,7 +39,11 @@ let completeLogIn = () => {
          | None => resolve(NamelessLogin)
          | Some(sessionData) =>
            initMasterKey(sessionData)
-           |> then_(session => LoggedIn(session) |> resolve)
+           |> then_(((session, userInfo)) =>
+                UserInfo.hasSignedTAC(TACText.hash, userInfo) ?
+                  LoggedIn(session) |> resolve :
+                  MustAggreeToTAC(session, userInfo) |> resolve
+              )
          }
        )
   );
@@ -51,7 +59,11 @@ let getCurrentSession = () =>
         | None => NamelessLogin |> resolve
         | Some(sessionData) =>
           initMasterKey(sessionData)
-          |> then_(session => LoggedIn(session) |> resolve)
+          |> then_(((session, userInfo)) =>
+               UserInfo.hasSignedTAC(TACText.hash, userInfo) ?
+                 LoggedIn(session) |> resolve :
+                 MustAggreeToTAC(session, userInfo) |> resolve
+             )
         }
       };
     } else if (Blockstack.isSignInPending()) {

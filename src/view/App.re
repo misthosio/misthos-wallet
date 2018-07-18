@@ -4,7 +4,7 @@ open Session;
 
 let component = ReasonReact.statelessComponent("App");
 
-let make = (~session, ~updateSession, _children) => {
+let make = (~session, ~updateSession, ~signTAC, _children) => {
   let onSignIn = _e => updateSession(SessionStore.SignIn);
   let onSignOut = _e => updateSession(SessionStore.SignOut);
   let onCloseModal = (ventureId, _e) =>
@@ -22,6 +22,8 @@ let make = (~session, ~updateSession, _children) => {
       ) =>
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _, _) => None
+    | (MustAggreeToTAC(_, _), _, _) =>
+      Some((<TermsAndConditionsModal signTAC />, (_ => ())))
     | (
         LoggedIn(_),
         Venture(selected, Addresses),
@@ -163,7 +165,12 @@ let make = (~session, ~updateSession, _children) => {
     };
   let drawer = (index, currentRoute: Router.Config.route) =>
     switch (session, currentRoute) {
-    | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _) => None
+    | (
+        NotLoggedIn | MustAggreeToTAC(_, _) | LoginPending | NamelessLogin |
+        Unknown,
+        _,
+      ) =>
+      None
     | (_, TypographyStack) => None
     | (LoggedIn(_data), Home | CreateVenture) =>
       Some(<Drawer onSignOut index />)
@@ -184,6 +191,8 @@ let make = (~session, ~updateSession, _children) => {
     | (NamelessLogin, _, _) => <NamelessLogin />
     | (LoginPending, _, _) =>
       <BlankScreen text="Waiting for Blockstack session" />
+    | (MustAggreeToTAC(_, _), _, _) =>
+      <BlankScreen text="Terms and Conditions" />
     | (
         LoggedIn(_),
         Venture(_, HiddenOutputLog),

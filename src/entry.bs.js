@@ -14,11 +14,11 @@ var MaterialUi_MuiThemeProvider = require("@jsiebern/bs-material-ui/src/Material
 
 var theme = Theme.toJsUnsafe(Theme.theme(/* None */0, /* () */0));
 
-ReactDOMRe.renderToElementWithId(ReasonReact.element(/* None */0, /* None */0, JssProvider.make(/* array */[ReasonReact.element(/* None */0, /* None */0, SessionStore.make((function (session, updateSession) {
+ReactDOMRe.renderToElementWithId(ReasonReact.element(/* None */0, /* None */0, JssProvider.make(/* array */[ReasonReact.element(/* None */0, /* None */0, SessionStore.make((function (session, updateSession, signTAC) {
                           return ReasonReact.element(/* None */0, /* None */0, MaterialUi_MuiThemeProvider.make(/* None */0, /* None */0, /* `ObjectGeneric */[
                                           -317959944,
                                           theme
-                                        ], /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_CssBaseline.make(/* array */[ReasonReact.element(/* None */0, /* None */0, App.make(session, updateSession, /* array */[]))]))]));
+                                        ], /* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_CssBaseline.make(/* array */[ReasonReact.element(/* None */0, /* None */0, App.make(session, updateSession, signTAC, /* array */[]))]))]));
                         })))])), "root");
 
 exports.theme = theme;
