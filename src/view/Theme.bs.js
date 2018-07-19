@@ -18,19 +18,14 @@ function theme($staropt$star, _) {
               palette: {
                 type: dark ? "dark" : "light",
                 primary: {
-                  light: "#" + Colors.uWhite,
-                  main: "#" + Colors.uMisthosTeal,
-                  dark: "#002884",
-                  contrastText: "#" + Colors.uBlack
-                },
-                secondary: {
-                  light: "#ff7961",
-                  main: "#" + Colors.uDeepAqua,
-                  dark: "#ba000d",
-                  contrastText: "#" + Colors.uWhite
+                  main: dark ? "#" + Colors.uWhite : "#" + Colors.uMisthosTeal,
+                  contrastText: dark ? "#" + Colors.uWhite : "#" + Colors.uBlack
                 },
                 text: {
-                  secondary: "#" + Colors.uWhite
+                  primary: dark ? "#" + Colors.uWhite : "#" + Colors.uBlack,
+                  secondary: dark ? "#" + Colors.uWhite : "#" + Colors.uBlack,
+                  disabled: dark ? "#" + Colors.uWhite : "#" + Colors.uBlack,
+                  hint: dark ? "#" + Colors.uWhite : "rgba(0, 0, 0, 0.87)"
                 },
                 background: {
                   default: "#" + Colors.uWhite,
@@ -43,28 +38,24 @@ function theme($staropt$star, _) {
                   fontFamily: oswald,
                   textTransform: "uppercase",
                   fontSize: "124px",
-                  color: "#000000",
                   letterSpacing: "0px",
                   fontWeight: 700,
                   lineHeight: "112px"
                 },
                 display3: {
                   fontSize: "92px",
-                  color: "#000000",
                   letterSpacing: "0.5px",
                   fontWeight: 600,
                   lineHeight: "92px"
                 },
                 display2: {
                   fontSize: "92px",
-                  color: "#000000",
                   letterSpacing: "0.5px",
                   fontWeight: 300,
                   lineHeight: "92px"
                 },
                 display1: {
                   fontSize: "22px",
-                  color: "#000000",
                   letterSpacing: "0.5px",
                   fontWeight: 300,
                   lineHeight: "24px"
@@ -73,7 +64,6 @@ function theme($staropt$star, _) {
                   fontFamily: oswald,
                   textTransform: "uppercase",
                   fontSize: "30px",
-                  color: "#ffffff",
                   letterSpacing: "0px",
                   fontWeight: 700,
                   lineHeight: "30px"
@@ -82,35 +72,30 @@ function theme($staropt$star, _) {
                   fontFamily: oswald,
                   textTransform: "uppercase",
                   fontSize: "26px",
-                  color: "#000000",
                   letterSpacing: "0px",
                   fontWeight: 600,
                   lineHeight: "32px"
                 },
                 subheading: {
                   fontSize: "30px",
-                  color: "#000000",
                   letterSpacing: "0.5px",
                   fontWeight: 600,
                   lineHeight: "normal"
                 },
                 body2: {
                   fontSize: "14px",
-                  color: "#000000",
                   letterSpacing: "0.5px",
                   fontWeight: 400,
                   lineHeight: "19px"
                 },
                 body1: {
                   fontSize: "14px",
-                  color: "#000000",
                   letterSpacing: "0.5px",
                   fontWeight: 300,
                   lineHeight: "19px"
                 },
                 caption: {
                   fontSize: "12px",
-                  color: "#000000",
                   letterSpacing: "0.5px",
                   fontWeight: 400,
                   lineHeight: "16px"
@@ -119,7 +104,6 @@ function theme($staropt$star, _) {
                   fontFamily: oswald,
                   textTransform: "uppercase",
                   fontSize: "16px",
-                  color: "#000000",
                   letterSpacing: "0.7px",
                   fontWeight: 700,
                   lineHeight: "24px"

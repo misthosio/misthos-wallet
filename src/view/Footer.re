@@ -115,10 +115,7 @@ let make = _children => {
         </div>
         <div className=(Styles.area("footer2"))>
           <MTypography
-            gutterTop=true
-            gutterBottom=true
-            color=`TextSecondary
-            variant=`Title>
+            gutterTop=true gutterBottom=true color=`Primary variant=`Title>
             ("Company" |> text)
           </MTypography>
           <a className=Styles.link href=(environment.webDomain ++ "/faq")>
@@ -142,10 +139,7 @@ let make = _children => {
         </div>
         <div className=(Styles.area("footer3"))>
           <MTypography
-            gutterTop=true
-            gutterBottom=true
-            color=`TextSecondary
-            variant=`Title>
+            gutterTop=true gutterBottom=true color=`Primary variant=`Title>
             ("Stay Connected" |> text)
           </MTypography>
           MaterialUi.(

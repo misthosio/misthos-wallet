@@ -181,7 +181,7 @@ function make() {
                                             href: environment[/* webDomain */3] + "/"
                                           }, Icons.misthosWordMark)), React.createElement("div", {
                                         className: area("footer2")
-                                      }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* Some */[/* TextSecondary */-507693849], /* array */[ViewCommon.text("Company")])), React.createElement("a", {
+                                      }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* Some */[/* Primary */-791844958], /* array */[ViewCommon.text("Company")])), React.createElement("a", {
                                             className: link,
                                             href: environment[/* webDomain */3] + "/faq"
                                           }, ViewCommon.text("Frequently Asked Questions")), React.createElement("a", {
@@ -198,7 +198,7 @@ function make() {
                                             href: environment[/* webDomain */3] + "/impressum"
                                           }, ViewCommon.text("Impressum"))), React.createElement("div", {
                                         className: area("footer3")
-                                      }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* Some */[/* TextSecondary */-507693849], /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
+                                      }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* Some */[true], /* Some */[true], /* None */0, /* Some */[/* Primary */-791844958], /* array */[ViewCommon.text("Stay Connected")])), React.createElement("form", {
                                             action: "https://misthos.us17.list-manage.com/subscribe/post?u=1696fffacc1f8609ca14818f3&id=e0d336cc53",
                                             method: "post",
                                             target: "_blank"
