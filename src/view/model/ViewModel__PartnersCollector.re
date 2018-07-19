@@ -6,7 +6,7 @@ type partner = {
   userId,
   name: option(string),
   canProposeRemoval: bool,
-  encryptionPubKeyKnown: bool,
+  encryptionPubKeyKnown: Js.Promise.t(bool),
   submittedXPub: bool,
 };
 
@@ -17,7 +17,7 @@ type processType =
 type data = {
   userId,
   processType,
-  encryptionPubKeyKnown: bool,
+  encryptionPubKeyKnown: Js.Promise.t(bool),
 };
 
 type partnerProcess = ProcessCollector.process(data);
@@ -74,7 +74,8 @@ let apply = (event: Event.t, state) =>
              {
                userId: data.id,
                processType: Addition,
-               encryptionPubKeyKnown: proposal.data.pubKey |> Js.Option.isSome,
+               encryptionPubKeyKnown:
+                 Js.Promise.resolve(proposal.data.pubKey |> Js.Option.isSome),
              }
            ),
     }
@@ -97,7 +98,8 @@ let apply = (event: Event.t, state) =>
           userId: data.id,
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
-          encryptionPubKeyKnown: data.pubKey |> Js.Option.isSome,
+          encryptionPubKeyKnown:
+            Js.Promise.resolve(data.pubKey |> Js.Option.isSome),
           submittedXPub: false,
         },
         ...state.partners
@@ -116,8 +118,14 @@ let apply = (event: Event.t, state) =>
              {
                ...partner,
                encryptionPubKeyKnown:
-                 partner.encryptionPubKeyKnown
-                 || UserId.eq(partner.userId, partnerId),
+                 Js.Promise.(
+                   partner.encryptionPubKeyKnown
+                   |> then_(known =>
+                        resolve(
+                          known || UserId.eq(partner.userId, partnerId),
+                        )
+                      )
+                 ),
              }
            ),
     }
@@ -139,7 +147,7 @@ let apply = (event: Event.t, state) =>
              {
                userId: data.id,
                processType: Removal,
-               encryptionPubKeyKnown: false,
+               encryptionPubKeyKnown: Js.Promise.resolve(false),
              }
            ),
     }

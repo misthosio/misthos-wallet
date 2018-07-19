@@ -46,7 +46,7 @@ function apply($$event, state) {
                         return /* record */[
                                 /* userId */data[/* id */1],
                                 /* processType : Addition */1,
-                                /* encryptionPubKeyKnown */Js_option.isSome(proposal[/* data */6][/* pubKey */2])
+                                /* encryptionPubKeyKnown */Promise.resolve(Js_option.isSome(proposal[/* data */6][/* pubKey */2]))
                               ];
                       }), state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
@@ -61,7 +61,7 @@ function apply($$event, state) {
                     /* userId */data[/* id */1],
                     /* name : None */0,
                     /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0]),
-                    /* encryptionPubKeyKnown */Js_option.isSome(data[/* pubKey */2]),
+                    /* encryptionPubKeyKnown */Promise.resolve(Js_option.isSome(data[/* pubKey */2])),
                     /* submittedXPub */false
                   ],
                   Belt_List.keepU(state[/* partners */1], (function (param) {
@@ -80,7 +80,9 @@ function apply($$event, state) {
                                 /* userId */partner[/* userId */0],
                                 /* name */partner[/* name */1],
                                 /* canProposeRemoval */partner[/* canProposeRemoval */2],
-                                /* encryptionPubKeyKnown */partner[/* encryptionPubKeyKnown */3] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], partnerId),
+                                /* encryptionPubKeyKnown */partner[/* encryptionPubKeyKnown */3].then((function (known) {
+                                        return Promise.resolve(known || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], partnerId));
+                                      })),
                                 /* submittedXPub */partner[/* submittedXPub */4]
                               ];
                       })),
@@ -109,7 +111,7 @@ function apply($$event, state) {
                         return /* record */[
                                 /* userId */data[/* id */0],
                                 /* processType : Removal */0,
-                                /* encryptionPubKeyKnown */false
+                                /* encryptionPubKeyKnown */Promise.resolve(false)
                               ];
                       }), state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
