@@ -187,7 +187,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                                                   React.createElement("div", {
                                                         className: flex_
                                                       }),
-                                                  ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.close]))
+                                                  onClose ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* None */0, /* Some */[/* Inherit */-72987685], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose[0]], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.close])) : null
                                                 ])),
                                         React.createElement("div", {
                                               className: modalContent
@@ -195,7 +195,7 @@ function make(header$1, drawer$1, modal$1, $staropt$star, children) {
                                       ])), {
                                 id: "modal"
                               });
-                          return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Modal.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[onClose], /* None */0, /* None */0, /* None */0, true, /* None */0, /* None */0, /* array */[inner]));
+                          return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Modal.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClose, /* None */0, /* None */0, /* None */0, true, /* None */0, /* None */0, /* array */[inner]));
                         }), modal$1));
               var match = header$1 ? /* tuple */[
                   React.createElement("div", {

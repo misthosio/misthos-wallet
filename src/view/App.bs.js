@@ -76,9 +76,9 @@ function make(session, updateSession, signTAC, _) {
                                                             return ReasonReact.element(/* None */0, /* None */0, ManagePartnersModal.make(ViewModel.managePartnersModal(venture), proposePartnerCmds, proposeCmdStatus, removePartnerCmds, removeCmdStatus, /* array */[]));
                                                           })));
                                         }))),
-                              (function (param) {
-                                  return onCloseModal(selected, param);
-                                })
+                              /* Some */[(function (param) {
+                                    return onCloseModal(selected, param);
+                                  })]
                             ]];
                   }
                 }
@@ -101,9 +101,9 @@ function make(session, updateSession, signTAC, _) {
                                           })], (function (commands, cmdStatus) {
                                           return ReasonReact.element(/* None */0, /* None */0, CreatePayoutModal.make(ViewModel.createPayoutModal(venture$1), commands, cmdStatus, /* array */[]));
                                         }))),
-                              (function (param) {
-                                  return onCloseModal(selected, param);
-                                })
+                              /* Some */[(function (param) {
+                                    return onCloseModal(selected, param);
+                                  })]
                             ]];
                   }
                 }
@@ -116,9 +116,9 @@ function make(session, updateSession, signTAC, _) {
                 } else {
                   return /* Some */[/* tuple */[
                             ReasonReact.element(/* None */0, /* None */0, ViewAddressesModal.make(ViewModel.viewAddressesModal(selectedVenture[1]), /* array */[])),
-                            (function (param) {
-                                return onCloseModal(selected, param);
-                              })
+                            /* Some */[(function (param) {
+                                  return onCloseModal(selected, param);
+                                })]
                           ]];
                 }
             case 5 : 
@@ -131,9 +131,9 @@ function make(session, updateSession, signTAC, _) {
                   } else {
                     return /* Some */[/* tuple */[
                               ReasonReact.element(/* None */0, /* None */0, Receive.make(selectedVenture[2], /* array */[])),
-                              (function (param) {
-                                  return onCloseModal(selected, param);
-                                })
+                              /* Some */[(function (param) {
+                                    return onCloseModal(selected, param);
+                                  })]
                             ]];
                   }
                 }
@@ -162,9 +162,9 @@ function make(session, updateSession, signTAC, _) {
                     }
                     return /* Some */[/* tuple */[
                               tmp,
-                              (function (param) {
-                                  return onCloseModal(selected, param);
-                                })
+                              /* Some */[(function (param) {
+                                    return onCloseModal(selected, param);
+                                  })]
                             ]];
                   }
                 }
@@ -189,9 +189,9 @@ function make(session, updateSession, signTAC, _) {
                     }
                     return /* Some */[/* tuple */[
                               tmp$1,
-                              (function (param) {
-                                  return onCloseModal(selected, param);
-                                })
+                              /* Some */[(function (param) {
+                                    return onCloseModal(selected, param);
+                                  })]
                             ]];
                   }
                 }
@@ -207,9 +207,9 @@ function make(session, updateSession, signTAC, _) {
                     var match$9 = ViewModel.viewIncomeModal(match[0], venture$4);
                     return /* Some */[/* tuple */[
                               match$9 ? ReasonReact.element(/* None */0, /* None */0, ViewIncomeModal.make(match$9[0], /* array */[])) : ReasonReact.element(/* None */0, /* None */0, NotFoundModal.make(/* Income */1, /* array */[])),
-                              (function (param) {
-                                  return onCloseModal(selected, param);
-                                })
+                              /* Some */[(function (param) {
+                                    return onCloseModal(selected, param);
+                                  })]
                             ]];
                   }
                 }
@@ -220,9 +220,7 @@ function make(session, updateSession, signTAC, _) {
     } else {
       return /* Some */[/* tuple */[
                 ReasonReact.element(/* None */0, /* None */0, TermsAndConditionsModal.make(signTAC, /* array */[])),
-                (function () {
-                    return /* () */0;
-                  })
+                /* None */0
               ]];
     }
   };

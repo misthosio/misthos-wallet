@@ -145,7 +145,7 @@ let terms = [|
         {|Any Partner within a Venture can propose the removal of another
           Partner. For the removal to be successful, this proposal requires
           N-1-of-N endorsements. E.g If a Venture has four Partners, then three
-          Partners have to endorse the proposed removal.|},
+          Partners have to endorse the proposed removal..|},
       |]),
   },
   {

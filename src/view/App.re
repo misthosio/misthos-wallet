@@ -23,7 +23,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
     switch (session, currentRoute, selectedVenture) {
     | (NotLoggedIn | LoginPending | NamelessLogin | Unknown, _, _) => None
     | (MustAggreeToTAC(_, _), _, _) =>
-      Some((<TermsAndConditionsModal signTAC />, (_ => ())))
+      Some((<TermsAndConditionsModal signTAC />, None))
     | (
         LoggedIn(_),
         Venture(selected, Addresses),
@@ -33,7 +33,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
         <ViewAddressesModal
           viewData=(venture |> ViewModel.viewAddressesModal)
         />,
-        onCloseModal(selected),
+        Some(onCloseModal(selected)),
       ))
     | (
         LoggedIn(_),
@@ -70,7 +70,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
                    </CommandExecutor>
                )
           </CommandExecutor>,
-          onCloseModal(selected),
+          Some(onCloseModal(selected)),
         ))
     | (
         LoggedIn(_),
@@ -91,7 +91,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
             </CommandExecutor>
           | None => <NotFoundModal resource=NotFoundModal.Partner />
           },
-          onCloseModal(selected),
+          Some(onCloseModal(selected)),
         ))
     | (
         LoggedIn(_),
@@ -99,7 +99,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
         VentureLoaded(_, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
-        None : Some((<Receive commands />, onCloseModal(selected)))
+        None : Some((<Receive commands />, Some(onCloseModal(selected))))
     | (
         LoggedIn(_),
         Venture(selected, CreatePayout),
@@ -124,7 +124,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
                    />
                )
           </CommandExecutor>,
-          onCloseModal(selected),
+          Some(onCloseModal(selected)),
         ))
     | (
         LoggedIn(_),
@@ -145,7 +145,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
             </CommandExecutor>
           | None => <NotFoundModal resource=NotFoundModal.Payout />
           },
-          onCloseModal(selected),
+          Some(onCloseModal(selected)),
         ))
     | (
         LoggedIn(_),
@@ -159,7 +159,7 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
           | Some(viewData) => <ViewIncomeModal viewData />
           | None => <NotFoundModal resource=NotFoundModal.Income />
           },
-          onCloseModal(selected),
+          Some(onCloseModal(selected)),
         ))
     | (LoggedIn(_), _, _) => None
     };

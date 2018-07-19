@@ -63,23 +63,32 @@ let make =
       MaterialUi.(
         modal
         |> Utils.mapOption(((modal, onClose)) => {
+             let onBackdropClick = onClose;
              /* We need to add the id #modal to the focused element for the clipboard to work */
              /* in the Receive modal */
+
              let inner =
                ReasonReact.cloneElement(
                  <Paper className=Styles.modal>
                    <Toolbar>
                      <div className=Styles.flex_ />
-                     <IconButton color=`Inherit onClick=onClose>
-                       Icons.close
-                     </IconButton>
+                     (
+                       switch (onClose) {
+                       | Some(onClose) =>
+                         <IconButton color=`Inherit onClick=onClose>
+                           Icons.close
+                         </IconButton>
+
+                       | None => ReasonReact.null
+                       }
+                     )
                    </Toolbar>
                    <div className=Styles.modalContent> modal </div>
                  </Paper>,
                  ~props={"id": "modal"},
                  [||],
                );
-             <Modal open_=true onBackdropClick=onClose> inner </Modal>;
+             <Modal open_=true ?onBackdropClick> inner </Modal>;
            })
         |> Js.Option.getWithDefault(ReasonReact.null)
       );

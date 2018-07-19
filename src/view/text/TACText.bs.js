@@ -75,7 +75,7 @@ var terms = /* array */[
     /* heading */"Adding and Removing Partners within the Multisig Wallet",
     /* body : L */Block.__(1, [/* array */[
           "Any Partner within a Venture can propose the addition of a new\n          Partner. For the proposal to be successful, it requires N-of-N\n          endorsements i.e all Partner within a Venture need to unanimously\n          endorse the proposal.",
-          "Any Partner within a Venture can propose the removal of another\n          Partner. For the removal to be successful, this proposal requires\n          N-1-of-N endorsements. E.g If a Venture has four Partners, then three\n          Partners have to endorse the proposed removal."
+          "Any Partner within a Venture can propose the removal of another\n          Partner. For the removal to be successful, this proposal requires\n          N-1-of-N endorsements. E.g If a Venture has four Partners, then three\n          Partners have to endorse the proposed removal.."
         ]])
   ],
   /* record */[
