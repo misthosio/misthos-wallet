@@ -7,6 +7,7 @@ var Grid = require("./components/Grid.bs.js");
 var List = require("bs-platform/lib/js/list.js");
 var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
@@ -15,9 +16,11 @@ var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var MFabButton = require("./components/MFabButton.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
+var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -29,7 +32,7 @@ var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
 
-var component = ReasonReact.statelessComponent("SelectedVenture");
+var component = ReasonReact.reducerComponent("SelectedVenture");
 
 var addressesButtonIcon = Css.style(/* :: */[
       Css.marginTop(Css.px(Caml_int32.imul(Theme.space(2), -1))),
@@ -61,15 +64,42 @@ function make(viewData, _) {
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
-          /* didMount */component[/* didMount */4],
+          /* didMount */(function (param) {
+              var send = param[/* send */3];
+              return List.iter((function (p) {
+                            p[/* encryptionPubKeyKnown */3].then((function (known) {
+                                    return Promise.resolve(Curry._1(send, /* SetEncryptionPubKeyKnown */[
+                                                    p[/* userId */0],
+                                                    known
+                                                  ]));
+                                  }));
+                            return /* () */0;
+                          }), List.filter((function (p) {
+                                  return p[/* submittedXPub */4] === false;
+                                }))(viewData[/* partners */4]));
+            }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function () {
+          /* render */(function (param) {
+              var state = param[/* state */1];
               var match = Environment.get(/* () */0)[/* network */5];
               var warning = match !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
-              var prospects = List.map((function (prospect) {
+              var getPartnerStatusChip = function (endorsed, submittedXPub, encryptionPubKeyKnown) {
+                if (endorsed) {
+                  if (submittedXPub) {
+                    return null;
+                  } else if (encryptionPubKeyKnown) {
+                    return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
+                  } else {
+                    return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
+                  }
+                } else {
+                  return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "PENDING", /* array */[]));
+                }
+              };
+              var alerts = List.map((function (prospect) {
                       var match = prospect[/* data */5][/* processType */1];
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* processId */0]]);
@@ -84,9 +114,17 @@ function make(viewData, _) {
                                           match$1 ? "Addition" : "Removal"
                                         ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */5][/* userId */0]) + "'"))), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](prospect[/* proposedBy */2]))], /* array */[]));
                     }), viewData[/* prospects */5]);
-              var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
-                              return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]));
-                            }), viewData[/* partners */4])));
+              var prospects = List.map((function (partner) {
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, false)], /* None */0, /* None */0, /* array */[]));
+                    }), viewData[/* prospects */5]);
+              var currentPartners = List.map((function (partner) {
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* submittedXPub */4], Js_option.getWithDefault(false, List.assoc(partner[/* userId */0], state)))], /* None */0, /* None */0, /* array */[]));
+                    }), viewData[/* partners */4]);
+              var partners = $$Array.of_list(Belt_List.concatMany(/* array */[
+                        alerts,
+                        prospects,
+                        currentPartners
+                      ]));
               var payouts = $$Array.of_list(List.map((function (param) {
                           var processId = param[/* processId */0];
                           var partial_arg_000 = viewData[/* ventureId */0];
@@ -176,9 +214,31 @@ function make(viewData, _) {
                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[transactions]))
                                           ])))], /* None */0, warning, /* array */[]));
             }),
-          /* initialState */component[/* initialState */10],
+          /* initialState */(function () {
+              return List.map((function (p) {
+                            return /* tuple */[
+                                    p[/* userId */0],
+                                    /* None */0
+                                  ];
+                          }), viewData[/* partners */4]);
+            }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
+          /* reducer */(function (action, state) {
+              var userId = action[0];
+              return /* Update */Block.__(0, [List.concat(/* :: */[
+                              List.remove_assoc(userId, state),
+                              /* :: */[
+                                /* :: */[
+                                  /* tuple */[
+                                    userId,
+                                    /* Some */[action[1]]
+                                  ],
+                                  /* [] */0
+                                ],
+                                /* [] */0
+                              ]
+                            ])]);
+            }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];

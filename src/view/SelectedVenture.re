@@ -4,7 +4,12 @@ module ViewData = ViewModel.SelectedVentureView;
 
 open PrimitiveTypes;
 
-let component = ReasonReact.statelessComponent("SelectedVenture");
+type state = list((userId, option(bool)));
+
+type action =
+  | SetEncryptionPubKeyKnown(userId, bool);
+
+let component = ReasonReact.reducerComponent("SelectedVenture");
 
 module Styles = {
   open Css;
@@ -23,14 +28,47 @@ module Styles = {
 
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
-  render: _ => {
+  initialState: () =>
+    viewData.partners |> List.map((p: ViewData.partner) => (p.userId, None)),
+  reducer: (action, state: state) =>
+    switch (action) {
+    | SetEncryptionPubKeyKnown(userId, known) =>
+      ReasonReact.Update(
+        List.concat([
+          List.remove_assoc(userId, state),
+          [(userId, Some(known))],
+        ]),
+      )
+    },
+  didMount: ({send}) =>
+    viewData.partners
+    |> List.filter((p: ViewData.partner) => p.submittedXPub == false)
+    |> List.iter((p: ViewData.partner) =>
+         Js.Promise.(
+           p.encryptionPubKeyKnown
+           |> then_(known =>
+                send(SetEncryptionPubKeyKnown(p.userId, known)) |> resolve
+              )
+         )
+         |> ignore
+       ),
+  render: ({state}) => {
     let warning =
       switch (Environment.get().network) {
       | Testnet => Some(WarningsText.testnet)
       | _ => None
       };
-
-    let prospects =
+    let getPartnerStatusChip =
+        (~endorsed: bool, ~submittedXPub: bool, ~encryptionPubKeyKnown: bool) =>
+      switch (endorsed, submittedXPub, encryptionPubKeyKnown) {
+      | (false, _, _) => <StatusChip status=Pending label="PENDING" />
+      | (true, false, false) =>
+        <StatusChip status=Pending label="SIGN IN REQUIRED" />
+      | (true, false, true) =>
+        <StatusChip status=Pending label="SYNC REQUIRED" />
+      | (true, true, _) => ReasonReact.null
+      };
+    let alerts =
       viewData.prospects
       |> List.map((prospect: ViewData.prospect) =>
            <AlertListItem
@@ -64,20 +102,36 @@ let make = (~viewData: ViewData.t, _children) => {
              )
            />
          );
+    let prospects =
+      viewData.prospects
+      |> List.map((partner: ViewData.prospect) =>
+           <Partner
+             key=(partner.data.userId |> UserId.toString)
+             partnerId=partner.data.userId
+             status=(getPartnerStatusChip(false, false, false))
+           />
+         );
+    let currentPartners =
+      viewData.partners
+      |> List.map((partner: ViewData.partner) =>
+           <Partner
+             key=(partner.userId |> UserId.toString)
+             partnerId=partner.userId
+             name=?partner.name
+             status=(
+               getPartnerStatusChip(
+                 true,
+                 partner.submittedXPub,
+                 List.assoc(partner.userId, state)
+                 |> Js.Option.getWithDefault(false),
+               )
+             )
+           />
+         );
     let partners =
       ReasonReact.array(
         Array.of_list(
-          Belt.List.concat(
-            prospects,
-            viewData.partners
-            |> List.map((partner: ViewData.partner) =>
-                 <Partner
-                   key=(partner.userId |> UserId.toString)
-                   partnerId=partner.userId
-                   name=?partner.name
-                 />
-               ),
-          ),
+          Belt.List.concatMany([|alerts, prospects, currentPartners|]),
         ),
       );
     let payouts =
