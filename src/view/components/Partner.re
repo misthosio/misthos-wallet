@@ -70,6 +70,7 @@ let make =
         dense=true
         classes=[SecondaryAction(Styles.secondaryAction(status))]
         disableGutters=true
+        button=(onClick != None)
         ?onClick>
         <Avatar className=Styles.avatar>
           (userId.[0] |> String.make(1) |> String.uppercase |> text)
