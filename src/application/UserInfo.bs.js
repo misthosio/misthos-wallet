@@ -41,9 +41,11 @@ function encode(data) {
 function decode(raw) {
   return /* record */[
           /* appPubKey */Json_decode.field("appPubKey", Json_decode.string, raw),
-          /* termsAndConditions */Belt_MapString.fromArray(Js_dict.entries(Json_decode.field("termsAndConditions", (function (param) {
-                          return Json_decode.dict(Json_decode.string, param);
-                        }), raw)))
+          /* termsAndConditions */Json_decode.withDefault(Belt_MapString.empty, (function (raw) {
+                  return Belt_MapString.fromArray(Js_dict.entries(Json_decode.field("termsAndConditions", (function (param) {
+                                        return Json_decode.dict(Json_decode.string, param);
+                                      }), raw)));
+                }), raw)
         ];
 }
 
