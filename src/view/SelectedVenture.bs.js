@@ -11,6 +11,7 @@ var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
+var Colors = require("./Colors.bs.js");
 var Router = require("./Router.bs.js");
 var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
@@ -31,6 +32,7 @@ var AlertListItem = require("./components/AlertListItem.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
+var MaterialUi_ListSubheader = require("@jsiebern/bs-material-ui/src/MaterialUi_ListSubheader.bs.js");
 
 var component = ReasonReact.reducerComponent("SelectedVenture");
 
@@ -53,9 +55,15 @@ var atRiskAddressButtonIcon = Css.style(/* :: */[
       ]
     ]);
 
+var stickyHeader = Css.style(/* :: */[
+      Css.backgroundColor(Colors.white),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* addressesButtonIcon */addressesButtonIcon,
-  /* atRiskAddressButtonIcon */atRiskAddressButtonIcon
+  /* atRiskAddressButtonIcon */atRiskAddressButtonIcon,
+  /* stickyHeader */stickyHeader
 ];
 
 function make(viewData, _) {
@@ -120,9 +128,18 @@ function make(viewData, _) {
               var currentPartners = List.map((function (partner) {
                       return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* submittedXPub */4], Js_option.getWithDefault(false, List.assoc(partner[/* userId */0], state)))], /* None */0, /* None */0, /* array */[]));
                     }), viewData[/* partners */4]);
+              var stickyHeader$1 = function (header) {
+                return /* :: */[
+                        ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListSubheader.make(/* Some */[stickyHeader], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(header)])),
+                        /* [] */0
+                      ];
+              };
+              var showHeaders = List.length(prospects) !== 0;
               var partners = $$Array.of_list(Belt_List.concatMany(/* array */[
                         alerts,
+                        showHeaders ? stickyHeader$1("Pending Approval") : /* [] */0,
                         prospects,
+                        showHeaders ? stickyHeader$1("Current") : /* [] */0,
                         currentPartners
                       ]));
               var payouts = $$Array.of_list(List.map((function (param) {

@@ -24,6 +24,7 @@ module Styles = {
       marginTop(px(Theme.space(2) * (-1))),
       marginBottom(px(Theme.space(1) * (-1))),
     ]);
+  let stickyHeader = style([backgroundColor(Colors.white)]);
 };
 
 let make = (~viewData: ViewData.t, _children) => {
@@ -108,7 +109,13 @@ let make = (~viewData: ViewData.t, _children) => {
            <Partner
              key=(partner.data.userId |> UserId.toString)
              partnerId=partner.data.userId
-             status=(getPartnerStatusChip(false, false, false))
+             status=(
+               getPartnerStatusChip(
+                 ~endorsed=false,
+                 ~submittedXPub=false,
+                 ~encryptionPubKeyKnown=false,
+               )
+             )
            />
          );
     let currentPartners =
@@ -120,20 +127,36 @@ let make = (~viewData: ViewData.t, _children) => {
              name=?partner.name
              status=(
                getPartnerStatusChip(
-                 true,
-                 partner.submittedXPub,
-                 List.assoc(partner.userId, state)
-                 |> Js.Option.getWithDefault(false),
+                 ~endorsed=true,
+                 ~submittedXPub=partner.submittedXPub,
+                 ~encryptionPubKeyKnown=
+                   List.assoc(partner.userId, state)
+                   |> Js.Option.getWithDefault(false),
                )
              )
            />
          );
-    let partners =
+    let stickyHeader = header => [
+      MaterialUi.(
+        <ListSubheader className=Styles.stickyHeader>
+          (header |> text)
+        </ListSubheader>
+      ),
+    ];
+    let partners = {
+      let showHeaders = List.length(prospects) != 0;
       ReasonReact.array(
         Array.of_list(
-          Belt.List.concatMany([|alerts, prospects, currentPartners|]),
+          Belt.List.concatMany([|
+            alerts,
+            showHeaders ? stickyHeader("Pending Approval") : [],
+            prospects,
+            showHeaders ? stickyHeader("Current") : [],
+            currentPartners,
+          |]),
         ),
       );
+    };
     let payouts =
       ReasonReact.array(
         Array.of_list(
