@@ -1,10 +1,17 @@
+open Belt;
+
 include ViewCommon;
 
 module ViewData = ViewModel.SelectedVentureView;
 
 open PrimitiveTypes;
 
-let component = ReasonReact.statelessComponent("SelectedVenture");
+type state = list((userId, option(bool)));
+
+type action =
+  | SetHasLoggedIn(userId, bool);
+
+let component = ReasonReact.reducerComponent("SelectedVenture");
 
 module Styles = {
   open Css;
@@ -19,20 +26,73 @@ module Styles = {
       marginTop(px(Theme.space(2) * (-1))),
       marginBottom(px(Theme.space(1) * (-1))),
     ]);
+  let stickyHeader = style([backgroundColor(Colors.white)]);
 };
 
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
-  render: _ => {
+  initialState: () =>
+    viewData.partners |. List.map((p: ViewData.partner) => (p.userId, None)),
+  willReceiveProps: ({state, send}) =>
+    viewData.partners
+    |. List.map((p: ViewData.partner) =>
+         (
+           p.userId,
+           switch (state |. List.getAssoc(p.userId, UserId.eq)) {
+           | None =>
+             Js.Promise.(
+               p.hasLoggedIn
+               |> then_(known =>
+                    send(SetHasLoggedIn(p.userId, known)) |> resolve
+                  )
+             )
+             |> ignore;
+             None;
+           | Some(a) => a
+           },
+         )
+       ),
+  reducer: (action, state: state) =>
+    switch (action) {
+    | SetHasLoggedIn(userId, known) =>
+      ReasonReact.Update(
+        List.concat(
+          List.removeAssoc(state, userId, UserId.eq),
+          [(userId, Some(known))],
+        ),
+      )
+    },
+  didMount: ({send}) =>
+    viewData.partners
+    |. List.keep((p: ViewData.partner) => p.joinedWallet == false)
+    |. List.forEach((p: ViewData.partner) =>
+         Js.Promise.(
+           p.hasLoggedIn
+           |> then_(known =>
+                send(SetHasLoggedIn(p.userId, known)) |> resolve
+              )
+         )
+         |> ignore
+       ),
+  render: ({state}) => {
     let warning =
       switch (Environment.get().network) {
       | Testnet => Some(WarningsText.testnet)
       | _ => None
       };
-
-    let prospects =
+    let getPartnerStatusChip =
+        (~endorsed: bool, ~joinedWallet: bool, ~hasLoggedIn: option(bool)) =>
+      switch (endorsed, joinedWallet, hasLoggedIn) {
+      | (false, _, _) => <StatusChip status=Pending label="PENDING" />
+      | (true, false, Some(false)) =>
+        <StatusChip status=Pending label="SIGN IN REQUIRED" />
+      | (true, false, _) =>
+        <StatusChip status=Pending label="SYNC REQUIRED" />
+      | (true, true, _) => ReasonReact.null
+      };
+    let alerts =
       viewData.prospects
-      |> List.map((prospect: ViewData.prospect) =>
+      |. List.map((prospect: ViewData.prospect) =>
            <AlertListItem
              icon=(
                switch (prospect.data.processType) {
@@ -64,27 +124,66 @@ let make = (~viewData: ViewData.t, _children) => {
              )
            />
          );
-    let partners =
+    let prospects =
+      viewData.prospects
+      |. List.map((partner: ViewData.prospect) =>
+           <Partner
+             key=(partner.data.userId |> UserId.toString)
+             partnerId=partner.data.userId
+             status=(
+               getPartnerStatusChip(
+                 ~endorsed=false,
+                 ~joinedWallet=false,
+                 ~hasLoggedIn=Some(false),
+               )
+             )
+           />
+         );
+    let currentPartners =
+      viewData.partners
+      |. List.map((partner: ViewData.partner) =>
+           <Partner
+             key=(partner.userId |> UserId.toString)
+             partnerId=partner.userId
+             name=?partner.name
+             status=(
+               getPartnerStatusChip(
+                 ~endorsed=true,
+                 ~joinedWallet=partner.joinedWallet,
+                 ~hasLoggedIn=
+                   state
+                   |. List.getAssoc(partner.userId, UserId.eq)
+                   |> Js.Option.getExn,
+               )
+             )
+           />
+         );
+    let stickyHeader = header => [
+      MaterialUi.(
+        <ListSubheader className=Styles.stickyHeader>
+          (header |> text)
+        </ListSubheader>
+      ),
+    ];
+    let partners = {
+      let showHeaders = List.length(prospects) != 0;
       ReasonReact.array(
-        Array.of_list(
-          Belt.List.concat(
+        List.toArray(
+          List.concatMany([|
+            alerts,
+            showHeaders ? stickyHeader("Pending Approval") : [],
             prospects,
-            viewData.partners
-            |> List.map((partner: ViewData.partner) =>
-                 <Partner
-                   key=(partner.userId |> UserId.toString)
-                   partnerId=partner.userId
-                   name=?partner.name
-                 />
-               ),
-          ),
+            showHeaders ? stickyHeader("Current") : [],
+            currentPartners,
+          |]),
         ),
       );
+    };
     let payouts =
       ReasonReact.array(
-        Array.of_list(
+        List.toArray(
           viewData.payoutsPendingApproval
-          |> List.map(
+          |. List.map(
                (
                  {proposedBy, processId, data: {summary}}: ViewData.payoutProcess,
                ) =>
@@ -112,13 +211,13 @@ let make = (~viewData: ViewData.t, _children) => {
       );
     let transactions =
       ReasonReact.array(
-        Array.of_list(
+        List.toArray(
           {
             let unconfirmed = viewData.unconfirmedTxs;
             let confirmed = viewData.confirmedTxs;
-            Belt.List.concatMany([|
+            List.concatMany([|
               unconfirmed
-              |> List.mapi((iter, tx: ViewData.txData) => {
+              |. List.mapWithIndex((iter, tx: ViewData.txData) => {
                    let (txType, primary) =
                      switch (tx.txType) {
                      | Payout => (Transaction.Payout, "unconfirmed payout")
@@ -134,7 +233,7 @@ let make = (~viewData: ViewData.t, _children) => {
                    />;
                  }),
               confirmed
-              |> List.mapi((iter, tx: ViewData.txData) => {
+              |. List.mapWithIndex((iter, tx: ViewData.txData) => {
                    let (txType, primary) =
                      switch (tx.txType) {
                      | Payout => (Transaction.Payout, "payout")
@@ -220,14 +319,16 @@ let make = (~viewData: ViewData.t, _children) => {
           </MButton>
         </div>
       }
-      area4=MaterialUi.(
-              <div className=ScrollList.containerStyles>
-                <ScrollList>
-                  <List disablePadding=true> payouts </List>
-                  <List disablePadding=true> transactions </List>
-                </ScrollList>
-              </div>
-            )
+      area4={
+        <div className=ScrollList.containerStyles>
+          <ScrollList>
+            <MaterialUi.List disablePadding=true> payouts </MaterialUi.List>
+            <MaterialUi.List disablePadding=true>
+              transactions
+            </MaterialUi.List>
+          </ScrollList>
+        </div>
+      }
     />;
   },
 };

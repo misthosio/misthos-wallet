@@ -6,6 +6,8 @@ type partner = {
   userId,
   name: option(string),
   canProposeRemoval: bool,
+  hasLoggedIn: Js.Promise.t(bool),
+  joinedWallet: bool,
 };
 
 type processType =
@@ -15,6 +17,7 @@ type processType =
 type data = {
   userId,
   processType,
+  hasLoggedIn: Js.Promise.t(bool),
 };
 
 type partnerProcess = ProcessCollector.process(data);
@@ -40,6 +43,22 @@ let prospectsPendingApproval = ({prospects}) =>
        }
      );
 
+let hasUserLoggedIn = (pubKey, userId) =>
+  Js.Promise.(
+    switch (pubKey) {
+    | Some(_) => true |> resolve
+    | None =>
+      UserInfo.Public.(
+        read(~blockstackId=userId)
+        |> then_(
+             fun
+             | NotFound => false |> resolve
+             | _ => true |> resolve,
+           )
+      )
+    }
+  );
+
 let make = localUser => {
   localUser,
   partners: [],
@@ -50,12 +69,30 @@ let make = localUser => {
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({metaPolicy}) => {...state, partnerPolicy: metaPolicy}
+  | CustodianKeyChainUpdated({custodianId}) => {
+      ...state,
+      partners:
+        state.partners
+        |. List.mapU((. partner: partner) =>
+             {
+               ...partner,
+               joinedWallet:
+                 partner.joinedWallet
+                 || UserId.eq(partner.userId, custodianId),
+             }
+           ),
+    }
   | PartnerProposed(proposal) => {
       ...state,
       prospects:
         state.prospects
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
-             {userId: data.id, processType: Addition}
+             {
+               userId: data.id,
+               processType: Addition,
+               hasLoggedIn:
+                 hasUserLoggedIn(proposal.data.pubKey, proposal.data.id),
+             }
            ),
     }
   | PartnerRejected(rejection) => {
@@ -77,6 +114,8 @@ let apply = (event: Event.t, state) =>
           userId: data.id,
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
+          hasLoggedIn: hasUserLoggedIn(data.pubKey, data.id),
+          joinedWallet: false,
         },
         ...state.partners
            |. List.keepU((. {userId}: partner) =>
@@ -85,6 +124,25 @@ let apply = (event: Event.t, state) =>
       ],
       prospects:
         state.prospects |> ProcessCollector.addAcceptance(acceptance),
+    }
+  | PartnerPubKeyAdded({partnerId}) => {
+      ...state,
+      partners:
+        state.partners
+        |. List.mapU((. partner: partner) =>
+             {
+               ...partner,
+               hasLoggedIn:
+                 Js.Promise.(
+                   partner.hasLoggedIn
+                   |> then_(known =>
+                        resolve(
+                          known || UserId.eq(partner.userId, partnerId),
+                        )
+                      )
+                 ),
+             }
+           ),
     }
   | PartnerDenied(denial) => {
       ...state,
@@ -101,7 +159,19 @@ let apply = (event: Event.t, state) =>
       prospects:
         state.prospects
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
-             {userId: data.id, processType: Removal}
+             {
+               userId: data.id,
+               processType: Removal,
+               hasLoggedIn:
+                 (
+                   state.partners
+                   |. List.getByU((. p: partner) =>
+                        UserId.eq(p.userId, data.id)
+                      )
+                   |> Js.Option.getExn
+                 ).
+                   hasLoggedIn,
+             }
            ),
     }
   | PartnerRemovalRejected(rejection) => {

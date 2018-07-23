@@ -26,9 +26,11 @@ module Public = {
       appPubKey: raw |> field("appPubKey", string),
       termsAndConditions:
         raw
-        |> field("termsAndConditions", dict(string))
-        |> Js.Dict.entries
-        |> Map.String.fromArray,
+        |> withDefault(Map.String.empty, raw =>
+             field("termsAndConditions", dict(string), raw)
+             |> Js.Dict.entries
+             |> Map.String.fromArray
+           ),
     };
   let init = (~appPubKey) => {
     let res = {appPubKey, termsAndConditions: Map.String.empty};

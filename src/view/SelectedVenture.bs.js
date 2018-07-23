@@ -4,20 +4,22 @@
 var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
-var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
+var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
 var Theme = require("./Theme.bs.js");
 var React = require("react");
+var Colors = require("./Colors.bs.js");
 var Router = require("./Router.bs.js");
 var Balance = require("./components/Balance.bs.js");
 var MButton = require("./components/MButton.bs.js");
 var Partner = require("./components/Partner.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Js_option = require("bs-platform/lib/js/js_option.js");
 var Caml_int32 = require("bs-platform/lib/js/caml_int32.js");
 var MFabButton = require("./components/MFabButton.bs.js");
 var ScrollList = require("./components/ScrollList.bs.js");
+var StatusChip = require("./components/StatusChip.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var Environment = require("../web/Environment.bs.js");
 var MTypography = require("./components/MTypography.bs.js");
@@ -28,8 +30,9 @@ var AlertListItem = require("./components/AlertListItem.bs.js");
 var PrimitiveTypes = require("../application/PrimitiveTypes.bs.js");
 var MaterialUi_List = require("@jsiebern/bs-material-ui/src/MaterialUi_List.bs.js");
 var MaterialUi_IconButton = require("@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js");
+var MaterialUi_ListSubheader = require("@jsiebern/bs-material-ui/src/MaterialUi_ListSubheader.bs.js");
 
-var component = ReasonReact.statelessComponent("SelectedVenture");
+var component = ReasonReact.reducerComponent("SelectedVenture");
 
 var addressesButtonIcon = Css.style(/* :: */[
       Css.marginTop(Css.px(Caml_int32.imul(Theme.space(2), -1))),
@@ -50,9 +53,15 @@ var atRiskAddressButtonIcon = Css.style(/* :: */[
       ]
     ]);
 
+var stickyHeader = Css.style(/* :: */[
+      Css.backgroundColor(Colors.white),
+      /* [] */0
+    ]);
+
 var Styles = /* module */[
   /* addressesButtonIcon */addressesButtonIcon,
-  /* atRiskAddressButtonIcon */atRiskAddressButtonIcon
+  /* atRiskAddressButtonIcon */atRiskAddressButtonIcon,
+  /* stickyHeader */stickyHeader
 ];
 
 function make(viewData, _) {
@@ -60,16 +69,65 @@ function make(viewData, _) {
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */component[/* willReceiveProps */3],
-          /* didMount */component[/* didMount */4],
+          /* willReceiveProps */(function (param) {
+              var send = param[/* send */3];
+              var state = param[/* state */1];
+              return Belt_List.map(viewData[/* partners */4], (function (p) {
+                            var match = Belt_List.getAssoc(state, p[/* userId */0], PrimitiveTypes.UserId[/* eq */5]);
+                            return /* tuple */[
+                                    p[/* userId */0],
+                                    match ? match[0] : (p[/* hasLoggedIn */3].then((function (known) {
+                                                return Promise.resolve(Curry._1(send, /* SetHasLoggedIn */[
+                                                                p[/* userId */0],
+                                                                known
+                                                              ]));
+                                              })), /* None */0)
+                                  ];
+                          }));
+            }),
+          /* didMount */(function (param) {
+              var send = param[/* send */3];
+              return Belt_List.forEach(Belt_List.keep(viewData[/* partners */4], (function (p) {
+                                return p[/* joinedWallet */4] === false;
+                              })), (function (p) {
+                            p[/* hasLoggedIn */3].then((function (known) {
+                                    return Promise.resolve(Curry._1(send, /* SetHasLoggedIn */[
+                                                    p[/* userId */0],
+                                                    known
+                                                  ]));
+                                  }));
+                            return /* () */0;
+                          }));
+            }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function () {
+          /* render */(function (param) {
+              var state = param[/* state */1];
               var match = Environment.get(/* () */0)[/* network */5];
               var warning = match !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
-              var prospects = List.map((function (prospect) {
+              var getPartnerStatusChip = function (endorsed, joinedWallet, hasLoggedIn) {
+                if (endorsed) {
+                  if (joinedWallet) {
+                    return null;
+                  } else {
+                    var exit = 0;
+                    if (hasLoggedIn && !hasLoggedIn[0]) {
+                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
+                    } else {
+                      exit = 1;
+                    }
+                    if (exit === 1) {
+                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
+                    }
+                    
+                  }
+                } else {
+                  return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "PENDING", /* array */[]));
+                }
+              };
+              var alerts = Belt_List.map(viewData[/* prospects */5], (function (prospect) {
                       var match = prospect[/* data */5][/* processType */1];
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* processId */0]]);
@@ -83,11 +141,28 @@ function make(viewData, _) {
                                       }), ViewCommon.text((
                                           match$1 ? "Addition" : "Removal"
                                         ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */5][/* userId */0]) + "'"))), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](prospect[/* proposedBy */2]))], /* array */[]));
-                    }), viewData[/* prospects */5]);
-              var partners = $$Array.of_list(Belt_List.concat(prospects, List.map((function (partner) {
-                              return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[]));
-                            }), viewData[/* partners */4])));
-              var payouts = $$Array.of_list(List.map((function (param) {
+                    }));
+              var prospects = Belt_List.map(viewData[/* prospects */5], (function (partner) {
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, /* Some */[false])], /* None */0, /* None */0, /* array */[]));
+                    }));
+              var currentPartners = Belt_List.map(viewData[/* partners */4], (function (partner) {
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Js_option.getExn(Belt_List.getAssoc(state, partner[/* userId */0], PrimitiveTypes.UserId[/* eq */5])))], /* None */0, /* None */0, /* array */[]));
+                    }));
+              var stickyHeader$1 = function (header) {
+                return /* :: */[
+                        ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListSubheader.make(/* Some */[stickyHeader], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(header)])),
+                        /* [] */0
+                      ];
+              };
+              var showHeaders = Belt_List.length(prospects) !== 0;
+              var partners = Belt_List.toArray(Belt_List.concatMany(/* array */[
+                        alerts,
+                        showHeaders ? stickyHeader$1("Pending Approval") : /* [] */0,
+                        prospects,
+                        showHeaders ? stickyHeader$1("Current") : /* [] */0,
+                        currentPartners
+                      ]));
+              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingApproval */8], (function (param) {
                           var processId = param[/* processId */0];
                           var partial_arg_000 = viewData[/* ventureId */0];
                           var partial_arg_001 = /* Payout */Block.__(1, [processId]);
@@ -98,11 +173,11 @@ function make(viewData, _) {
                           return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](processId)], /* None */0, AlertListItem.make(/* ArrowUp */2, (function (param) {
                                             return Router.clickToRoute(partial_arg, param);
                                           }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */1][/* spentWithFees */2]) + " BTC")), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))], /* array */[]));
-                        }), viewData[/* payoutsPendingApproval */8]));
+                        })));
               var unconfirmed = viewData[/* unconfirmedTxs */6];
               var confirmed = viewData[/* confirmedTxs */7];
-              var transactions = $$Array.of_list(Belt_List.concatMany(/* array */[
-                        List.mapi((function (iter, tx) {
+              var transactions = Belt_List.toArray(Belt_List.concatMany(/* array */[
+                        Belt_List.mapWithIndex(unconfirmed, (function (iter, tx) {
                                 var match = tx[/* txType */0];
                                 var match$1 = match ? /* tuple */[
                                     /* Payout */1,
@@ -115,8 +190,8 @@ function make(viewData, _) {
                                 return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* None */0, /* Some */[(function (param) {
                                                     return Router.clickToRoute(partial_arg, param);
                                                   })], /* array */[]));
-                              }), unconfirmed),
-                        List.mapi((function (iter, tx) {
+                              })),
+                        Belt_List.mapWithIndex(confirmed, (function (iter, tx) {
                                 var match = tx[/* txType */0];
                                 var match$1 = match ? /* tuple */[
                                     /* Payout */1,
@@ -126,10 +201,10 @@ function make(viewData, _) {
                                     "income"
                                   ];
                                 var partial_arg = tx[/* detailsLink */5];
-                                return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* None */0, /* Some */[(function (param) {
+                                return ReasonReact.element(/* Some */[String(iter + Belt_List.length(unconfirmed) | 0)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* None */0, /* Some */[(function (param) {
                                                     return Router.clickToRoute(partial_arg, param);
                                                   })], /* array */[]));
-                              }), confirmed)
+                              }))
                       ]));
               var match$1 = viewData[/* atRiskWarning */1];
               var partial_arg_000 = viewData[/* ventureId */0];
@@ -176,9 +251,25 @@ function make(viewData, _) {
                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[transactions]))
                                           ])))], /* None */0, warning, /* array */[]));
             }),
-          /* initialState */component[/* initialState */10],
+          /* initialState */(function () {
+              return Belt_List.map(viewData[/* partners */4], (function (p) {
+                            return /* tuple */[
+                                    p[/* userId */0],
+                                    /* None */0
+                                  ];
+                          }));
+            }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
+          /* reducer */(function (action, state) {
+              var userId = action[0];
+              return /* Update */Block.__(0, [Belt_List.concat(Belt_List.removeAssoc(state, userId, PrimitiveTypes.UserId[/* eq */5]), /* :: */[
+                              /* tuple */[
+                                userId,
+                                /* Some */[action[1]]
+                              ],
+                              /* [] */0
+                            ])]);
+            }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
