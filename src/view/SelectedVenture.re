@@ -258,7 +258,7 @@ let make = (~viewData: ViewData.t, _children) => {
       title2=("Transactions" |> text)
       area1={
         <div>
-          <MTypography gutterTop=true variant=`Title>
+          <MTypography variant=`Title>
             (viewData.ventureName |> text)
             <MaterialUi.IconButton
               className=(

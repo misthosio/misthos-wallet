@@ -8,8 +8,6 @@ module Styles = {
   open Css;
   let button = (variant: variant) =>
     style([
-      marginTop(px(Theme.space(3))),
-      marginBottom(px(Theme.space(3))),
       width(px(Theme.space(19))),
       height(px(Theme.space(19))),
       borderRadius(px(Theme.space(19))),

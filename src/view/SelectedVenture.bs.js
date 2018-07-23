@@ -219,7 +219,7 @@ function make(viewData, _) {
                   partial_arg_000$1,
                   /* ManagePartners */1
                 ]);
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Partners")], /* Some */[ViewCommon.text("Transactions")], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* array */[
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Partners")], /* Some */[ViewCommon.text("Transactions")], /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text(viewData[/* ventureName */2]),
                                             ReasonReact.element(/* None */0, /* None */0, MaterialUi_IconButton.make(/* Some */[match$1 ? atRiskAddressButtonIcon : addressesButtonIcon], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (param) {
                                                           return Router.clickToRoute(partial_arg, param);

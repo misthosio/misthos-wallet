@@ -67,6 +67,7 @@ let make =
       };
     MaterialUi.(
       <ListItem
+        dense=true
         classes=[SecondaryAction(Styles.secondaryAction(status))]
         disableGutters=true
         ?onClick>
