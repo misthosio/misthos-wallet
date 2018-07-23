@@ -56,7 +56,6 @@ function fromViewModelState(param) {
   var txDetailsCollector = param[/* txDetailsCollector */8];
   var partnersCollector = param[/* partnersCollector */6];
   var ventureId = param[/* ventureId */1];
-  console.log("AddressDetails.fromViewModelState");
   var infos = WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector);
   return /* record */[
           /* infos */infos,

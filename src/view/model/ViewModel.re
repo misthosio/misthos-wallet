@@ -77,7 +77,6 @@ module AddressesView = {
           ventureId,
         },
       ) => {
-    Js.log("AddressDetails.fromViewModelState");
     let infos =
       walletInfoCollector
       |> WalletInfoCollector.addressInfos(AccountIndex.default);
