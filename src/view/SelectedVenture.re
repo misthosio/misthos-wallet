@@ -6,7 +6,10 @@ module ViewData = ViewModel.SelectedVentureView;
 
 open PrimitiveTypes;
 
-type state = list((userId, option(bool)));
+type state = {
+  viewData: ViewData.t,
+  loggedInStatus: UserId.map(bool),
+};
 
 type action =
   | SetHasLoggedIn(userId, bool);
@@ -29,52 +32,34 @@ module Styles = {
   let stickyHeader = style([backgroundColor(Colors.white)]);
 };
 
+let updateLoggedInStatus = (partners, send) =>
+  partners
+  |. List.keep((p: ViewData.partner) => p.joinedWallet == false)
+  |. List.forEach((p: ViewData.partner) =>
+       Js.Promise.(
+         p.hasLoggedIn
+         |> then_(known => send(SetHasLoggedIn(p.userId, known)) |> resolve)
+       )
+       |> ignore
+     );
+
 let make = (~viewData: ViewData.t, _children) => {
   ...component,
-  initialState: () =>
-    viewData.partners |. List.map((p: ViewData.partner) => (p.userId, None)),
-  willReceiveProps: ({state, send}) =>
-    viewData.partners
-    |. List.map((p: ViewData.partner) =>
-         (
-           p.userId,
-           switch (state |. List.getAssoc(p.userId, UserId.eq)) {
-           | None =>
-             Js.Promise.(
-               p.hasLoggedIn
-               |> then_(known =>
-                    send(SetHasLoggedIn(p.userId, known)) |> resolve
-                  )
-             )
-             |> ignore;
-             None;
-           | Some(a) => a
-           },
-         )
-       ),
-  reducer: (action, state: state) =>
+  initialState: () => {viewData, loggedInStatus: UserId.makeMap()},
+  willReceiveProps: ({state, send}) => {
+    updateLoggedInStatus(viewData.partners, send);
+    {viewData, loggedInStatus: state.loggedInStatus};
+  },
+  reducer: (action, state) =>
     switch (action) {
     | SetHasLoggedIn(userId, known) =>
-      ReasonReact.Update(
-        List.concat(
-          List.removeAssoc(state, userId, UserId.eq),
-          [(userId, Some(known))],
-        ),
-      )
+      ReasonReact.Update({
+        ...state,
+        loggedInStatus: state.loggedInStatus |. Map.set(userId, known),
+      })
     },
-  didMount: ({send}) =>
-    viewData.partners
-    |. List.keep((p: ViewData.partner) => p.joinedWallet == false)
-    |. List.forEach((p: ViewData.partner) =>
-         Js.Promise.(
-           p.hasLoggedIn
-           |> then_(known =>
-                send(SetHasLoggedIn(p.userId, known)) |> resolve
-              )
-         )
-         |> ignore
-       ),
-  render: ({state}) => {
+  didMount: ({send}) => updateLoggedInStatus(viewData.partners, send),
+  render: ({state: {viewData, loggedInStatus}}) => {
     let warning =
       switch (Environment.get().network) {
       | Testnet => Some(WarningsText.testnet)
@@ -137,7 +122,7 @@ let make = (~viewData: ViewData.t, _children) => {
       viewData.prospects
       |. List.map((partner: ViewData.prospect) =>
            <Partner
-             key=(partner.data.userId |> UserId.toString)
+             key=(UserId.toString(partner.data.userId) ++ "-prospect")
              partnerId=partner.data.userId
              onClick=(
                Router.clickToRoute(
@@ -164,10 +149,7 @@ let make = (~viewData: ViewData.t, _children) => {
                getPartnerStatusChip(
                  ~endorsed=true,
                  ~joinedWallet=partner.joinedWallet,
-                 ~hasLoggedIn=
-                   state
-                   |. List.getAssoc(partner.userId, UserId.eq)
-                   |> Js.Option.getExn,
+                 ~hasLoggedIn=loggedInStatus |. Map.get(partner.userId),
                )
              )
            />
