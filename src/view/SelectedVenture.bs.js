@@ -111,10 +111,17 @@ function make(viewData, _) {
                 if (endorsed) {
                   if (joinedWallet) {
                     return null;
-                  } else if (hasLoggedIn) {
-                    return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
                   } else {
-                    return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
+                    var exit = 0;
+                    if (hasLoggedIn && !hasLoggedIn[0]) {
+                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
+                    } else {
+                      exit = 1;
+                    }
+                    if (exit === 1) {
+                      return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
+                    }
+                    
                   }
                 } else {
                   return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "PENDING", /* array */[]));
@@ -136,10 +143,10 @@ function make(viewData, _) {
                                         ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */5][/* userId */0]) + "'"))), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](prospect[/* proposedBy */2]))], /* array */[]));
                     }));
               var prospects = Belt_List.map(viewData[/* prospects */5], (function (partner) {
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, false)], /* None */0, /* None */0, /* array */[]));
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, /* Some */[false])], /* None */0, /* None */0, /* array */[]));
                     }));
               var currentPartners = Belt_List.map(viewData[/* partners */4], (function (partner) {
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Js_option.getWithDefault(false, Js_option.getExn(Belt_List.getAssoc(state, partner[/* userId */0], PrimitiveTypes.UserId[/* eq */5]))))], /* None */0, /* None */0, /* array */[]));
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Js_option.getExn(Belt_List.getAssoc(state, partner[/* userId */0], PrimitiveTypes.UserId[/* eq */5])))], /* None */0, /* None */0, /* array */[]));
                     }));
               var stickyHeader$1 = function (header) {
                 return /* :: */[

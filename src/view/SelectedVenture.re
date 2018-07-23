@@ -81,12 +81,12 @@ let make = (~viewData: ViewData.t, _children) => {
       | _ => None
       };
     let getPartnerStatusChip =
-        (~endorsed: bool, ~joinedWallet: bool, ~hasLoggedIn: bool) =>
+        (~endorsed: bool, ~joinedWallet: bool, ~hasLoggedIn: option(bool)) =>
       switch (endorsed, joinedWallet, hasLoggedIn) {
       | (false, _, _) => <StatusChip status=Pending label="PENDING" />
-      | (true, false, false) =>
+      | (true, false, Some(false)) =>
         <StatusChip status=Pending label="SIGN IN REQUIRED" />
-      | (true, false, true) =>
+      | (true, false, _) =>
         <StatusChip status=Pending label="SYNC REQUIRED" />
       | (true, true, _) => ReasonReact.null
       };
@@ -134,7 +134,7 @@ let make = (~viewData: ViewData.t, _children) => {
                getPartnerStatusChip(
                  ~endorsed=false,
                  ~joinedWallet=false,
-                 ~hasLoggedIn=false,
+                 ~hasLoggedIn=Some(false),
                )
              )
            />
@@ -153,8 +153,7 @@ let make = (~viewData: ViewData.t, _children) => {
                  ~hasLoggedIn=
                    state
                    |. List.getAssoc(partner.userId, UserId.eq)
-                   |> Js.Option.getExn
-                   |> Js.Option.getWithDefault(false),
+                   |> Js.Option.getExn,
                )
              )
            />
