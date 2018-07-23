@@ -24,7 +24,7 @@ let make = (~resource, _children) => {
             text(
               "The "
               ++ resourceText
-              ++ " was not found. Perhaps it hasn't been synced yet",
+              ++ " was not found. Perhaps the data hasn't been synced yet",
             )
           )
         </div>
