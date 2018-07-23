@@ -41,7 +41,7 @@
     "raf": "3.4.0",
     "reason-react": "0.4.2",
     "uglifyjs-webpack-plugin": "1.2.7",
-    "webpack": "4.16.1",
+    "webpack": "4.16.2",
     "webpack-cli": "3.1.0",
     "webpack-dev-server": "3.1.5",
     "whatwg-fetch": "2.0.4",
