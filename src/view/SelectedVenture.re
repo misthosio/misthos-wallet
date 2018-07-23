@@ -92,37 +92,46 @@ let make = (~viewData: ViewData.t, _children) => {
       };
     let alerts =
       viewData.prospects
-      |. List.map((prospect: ViewData.prospect) =>
-           <AlertListItem
-             icon=(
-               switch (prospect.data.processType) {
-               | Removal => Minus
-               | Addition => Plus
-               }
-             )
-             onClick=(
-               Router.clickToRoute(
-                 Venture(viewData.ventureId, Partner(prospect.processId)),
-               )
-             )
-             key=(prospect.processId |> ProcessId.toString)
-             primary=(
-               text(
-                 (
+      |. List.keepMap((prospect: ViewData.prospect) =>
+           prospect.canVote ?
+             Some(
+               <AlertListItem
+                 icon=(
                    switch (prospect.data.processType) {
-                   | Removal => "Removal"
-                   | Addition => "Addition"
+                   | Removal => Minus
+                   | Addition => Plus
                    }
                  )
-                 ++ " of '"
-                 ++ UserId.toString(prospect.data.userId)
-                 ++ "'",
-               )
-             )
-             secondary=(
-               text("proposed by " ++ UserId.toString(prospect.proposedBy))
-             )
-           />
+                 onClick=(
+                   Router.clickToRoute(
+                     Venture(
+                       viewData.ventureId,
+                       Partner(prospect.processId),
+                     ),
+                   )
+                 )
+                 key=(prospect.processId |> ProcessId.toString)
+                 primary=(
+                   text(
+                     (
+                       switch (prospect.data.processType) {
+                       | Removal => "Removal"
+                       | Addition => "Addition"
+                       }
+                     )
+                     ++ " of '"
+                     ++ UserId.toString(prospect.data.userId)
+                     ++ "'",
+                   )
+                 )
+                 secondary=(
+                   text(
+                     "proposed by " ++ UserId.toString(prospect.proposedBy),
+                   )
+                 )
+               />,
+             ) :
+             None
          );
     let prospects =
       viewData.prospects
