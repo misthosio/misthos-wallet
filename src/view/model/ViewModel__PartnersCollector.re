@@ -6,8 +6,8 @@ type partner = {
   userId,
   name: option(string),
   canProposeRemoval: bool,
-  encryptionPubKeyKnown: Js.Promise.t(bool),
-  submittedXPub: bool,
+  hasLoggedIn: Js.Promise.t(bool),
+  joinedWallet: bool,
 };
 
 type processType =
@@ -17,7 +17,7 @@ type processType =
 type data = {
   userId,
   processType,
-  encryptionPubKeyKnown: Js.Promise.t(bool),
+  hasLoggedIn: Js.Promise.t(bool),
 };
 
 type partnerProcess = ProcessCollector.process(data);
@@ -43,6 +43,22 @@ let prospectsPendingApproval = ({prospects}) =>
        }
      );
 
+let hasUserLoggedIn = (pubKey, userId) =>
+  Js.Promise.(
+    switch (pubKey) {
+    | Some(_) => true |> resolve
+    | None =>
+      UserInfo.Public.(
+        read(~blockstackId=userId)
+        |> then_(
+             fun
+             | NotFound => false |> resolve
+             | _ => true |> resolve,
+           )
+      )
+    }
+  );
+
 let make = localUser => {
   localUser,
   partners: [],
@@ -60,8 +76,8 @@ let apply = (event: Event.t, state) =>
         |. List.mapU((. partner: partner) =>
              {
                ...partner,
-               submittedXPub:
-                 partner.submittedXPub
+               joinedWallet:
+                 partner.joinedWallet
                  || UserId.eq(partner.userId, custodianId),
              }
            ),
@@ -74,8 +90,8 @@ let apply = (event: Event.t, state) =>
              {
                userId: data.id,
                processType: Addition,
-               encryptionPubKeyKnown:
-                 Js.Promise.resolve(proposal.data.pubKey |> Js.Option.isSome),
+               hasLoggedIn:
+                 hasUserLoggedIn(proposal.data.pubKey, proposal.data.id),
              }
            ),
     }
@@ -98,9 +114,8 @@ let apply = (event: Event.t, state) =>
           userId: data.id,
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
-          encryptionPubKeyKnown:
-            Js.Promise.resolve(data.pubKey |> Js.Option.isSome),
-          submittedXPub: false,
+          hasLoggedIn: hasUserLoggedIn(data.pubKey, data.id),
+          joinedWallet: false,
         },
         ...state.partners
            |. List.keepU((. {userId}: partner) =>
@@ -117,9 +132,9 @@ let apply = (event: Event.t, state) =>
         |. List.mapU((. partner: partner) =>
              {
                ...partner,
-               encryptionPubKeyKnown:
+               hasLoggedIn:
                  Js.Promise.(
-                   partner.encryptionPubKeyKnown
+                   partner.hasLoggedIn
                    |> then_(known =>
                         resolve(
                           known || UserId.eq(partner.userId, partnerId),
@@ -147,7 +162,15 @@ let apply = (event: Event.t, state) =>
              {
                userId: data.id,
                processType: Removal,
-               encryptionPubKeyKnown: Js.Promise.resolve(false),
+               hasLoggedIn:
+                 (
+                   state.partners
+                   |. List.getByU((. p: partner) =>
+                        UserId.eq(p.userId, data.id)
+                      )
+                   |> Js.Option.getExn
+                 ).
+                   hasLoggedIn,
              }
            ),
     }

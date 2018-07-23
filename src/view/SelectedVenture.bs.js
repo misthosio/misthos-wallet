@@ -75,15 +75,15 @@ function make(viewData, _) {
           /* didMount */(function (param) {
               var send = param[/* send */3];
               return List.iter((function (p) {
-                            p[/* encryptionPubKeyKnown */3].then((function (known) {
-                                    return Promise.resolve(Curry._1(send, /* SetEncryptionPubKeyKnown */[
+                            p[/* hasLoggedIn */3].then((function (known) {
+                                    return Promise.resolve(Curry._1(send, /* SetHasLoggedIn */[
                                                     p[/* userId */0],
                                                     known
                                                   ]));
                                   }));
                             return /* () */0;
                           }), List.filter((function (p) {
-                                  return p[/* submittedXPub */4] === false;
+                                  return p[/* joinedWallet */4] === false;
                                 }))(viewData[/* partners */4]));
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -94,11 +94,11 @@ function make(viewData, _) {
               var state = param[/* state */1];
               var match = Environment.get(/* () */0)[/* network */5];
               var warning = match !== 1 ? /* None */0 : /* Some */[WarningsText.testnet];
-              var getPartnerStatusChip = function (endorsed, submittedXPub, encryptionPubKeyKnown) {
+              var getPartnerStatusChip = function (endorsed, joinedWallet, hasLoggedIn) {
                 if (endorsed) {
-                  if (submittedXPub) {
+                  if (joinedWallet) {
                     return null;
-                  } else if (encryptionPubKeyKnown) {
+                  } else if (hasLoggedIn) {
                     return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SYNC REQUIRED", /* array */[]));
                   } else {
                     return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "SIGN IN REQUIRED", /* array */[]));
@@ -126,7 +126,7 @@ function make(viewData, _) {
                       return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, false)], /* None */0, /* None */0, /* array */[]));
                     }), viewData[/* prospects */5]);
               var currentPartners = List.map((function (partner) {
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* submittedXPub */4], Js_option.getWithDefault(false, List.assoc(partner[/* userId */0], state)))], /* None */0, /* None */0, /* array */[]));
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Js_option.getWithDefault(false, List.assoc(partner[/* userId */0], state)))], /* None */0, /* None */0, /* array */[]));
                     }), viewData[/* partners */4]);
               var stickyHeader$1 = function (header) {
                 return /* :: */[

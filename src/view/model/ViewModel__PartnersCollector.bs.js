@@ -2,6 +2,7 @@
 'use strict';
 
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
+var UserInfo = require("../../application/UserInfo.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
@@ -16,6 +17,20 @@ function prospectsPendingApproval(param) {
                 var match = prospect[/* status */1];
                 return match === 0;
               }));
+}
+
+function hasUserLoggedIn(pubKey, userId) {
+  if (pubKey) {
+    return Promise.resolve(true);
+  } else {
+    return UserInfo.Public[/* read */0](userId).then((function (param) {
+                  if (param) {
+                    return Promise.resolve(true);
+                  } else {
+                    return Promise.resolve(false);
+                  }
+                }));
+  }
 }
 
 function make(localUser) {
@@ -46,7 +61,7 @@ function apply($$event, state) {
                         return /* record */[
                                 /* userId */data[/* id */1],
                                 /* processType : Addition */1,
-                                /* encryptionPubKeyKnown */Promise.resolve(Js_option.isSome(proposal[/* data */6][/* pubKey */2]))
+                                /* hasLoggedIn */hasUserLoggedIn(proposal[/* data */6][/* pubKey */2], proposal[/* data */6][/* id */1])
                               ];
                       }), state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
@@ -61,8 +76,8 @@ function apply($$event, state) {
                     /* userId */data[/* id */1],
                     /* name : None */0,
                     /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0]),
-                    /* encryptionPubKeyKnown */Promise.resolve(Js_option.isSome(data[/* pubKey */2])),
-                    /* submittedXPub */false
+                    /* hasLoggedIn */hasUserLoggedIn(data[/* pubKey */2], data[/* id */1]),
+                    /* joinedWallet */false
                   ],
                   Belt_List.keepU(state[/* partners */1], (function (param) {
                           return PrimitiveTypes.UserId[/* neq */6](param[/* userId */0], data[/* id */1]);
@@ -80,10 +95,10 @@ function apply($$event, state) {
                                 /* userId */partner[/* userId */0],
                                 /* name */partner[/* name */1],
                                 /* canProposeRemoval */partner[/* canProposeRemoval */2],
-                                /* encryptionPubKeyKnown */partner[/* encryptionPubKeyKnown */3].then((function (known) {
+                                /* hasLoggedIn */partner[/* hasLoggedIn */3].then((function (known) {
                                         return Promise.resolve(known || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], partnerId));
                                       })),
-                                /* submittedXPub */partner[/* submittedXPub */4]
+                                /* joinedWallet */partner[/* joinedWallet */4]
                               ];
                       })),
                 /* prospects */state[/* prospects */2],
@@ -100,8 +115,8 @@ function apply($$event, state) {
                                   /* userId */p[/* userId */0],
                                   /* name */p[/* name */1],
                                   /* canProposeRemoval */false,
-                                  /* encryptionPubKeyKnown */p[/* encryptionPubKeyKnown */3],
-                                  /* submittedXPub */p[/* submittedXPub */4]
+                                  /* hasLoggedIn */p[/* hasLoggedIn */3],
+                                  /* joinedWallet */p[/* joinedWallet */4]
                                 ];
                         } else {
                           return p;
@@ -111,7 +126,9 @@ function apply($$event, state) {
                         return /* record */[
                                 /* userId */data[/* id */0],
                                 /* processType : Removal */0,
-                                /* encryptionPubKeyKnown */Promise.resolve(false)
+                                /* hasLoggedIn */Js_option.getExn(Belt_List.getByU(state[/* partners */1], (function (p) {
+                                              return PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], data[/* id */0]);
+                                            })))[/* hasLoggedIn */3]
                               ];
                       }), state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
@@ -148,8 +165,8 @@ function apply($$event, state) {
                                 /* userId */partner[/* userId */0],
                                 /* name */partner[/* name */1],
                                 /* canProposeRemoval */partner[/* canProposeRemoval */2],
-                                /* encryptionPubKeyKnown */partner[/* encryptionPubKeyKnown */3],
-                                /* submittedXPub */partner[/* submittedXPub */4] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId)
+                                /* hasLoggedIn */partner[/* hasLoggedIn */3],
+                                /* joinedWallet */partner[/* joinedWallet */4] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId)
                               ];
                       })),
                 /* prospects */state[/* prospects */2],
@@ -192,7 +209,8 @@ function isPartner(id, param) {
 
 exports.getProspect = getProspect;
 exports.prospectsPendingApproval = prospectsPendingApproval;
+exports.hasUserLoggedIn = hasUserLoggedIn;
 exports.make = make;
 exports.apply = apply;
 exports.isPartner = isPartner;
-/* PrimitiveTypes Not a pure module */
+/* UserInfo Not a pure module */

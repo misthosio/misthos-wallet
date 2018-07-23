@@ -7,7 +7,7 @@ open PrimitiveTypes;
 type state = list((userId, option(bool)));
 
 type action =
-  | SetEncryptionPubKeyKnown(userId, bool);
+  | SetHasLoggedIn(userId, bool);
 
 let component = ReasonReact.reducerComponent("SelectedVenture");
 
@@ -33,7 +33,7 @@ let make = (~viewData: ViewData.t, _children) => {
     viewData.partners |> List.map((p: ViewData.partner) => (p.userId, None)),
   reducer: (action, state: state) =>
     switch (action) {
-    | SetEncryptionPubKeyKnown(userId, known) =>
+    | SetHasLoggedIn(userId, known) =>
       ReasonReact.Update(
         List.concat([
           List.remove_assoc(userId, state),
@@ -43,12 +43,12 @@ let make = (~viewData: ViewData.t, _children) => {
     },
   didMount: ({send}) =>
     viewData.partners
-    |> List.filter((p: ViewData.partner) => p.submittedXPub == false)
+    |> List.filter((p: ViewData.partner) => p.joinedWallet == false)
     |> List.iter((p: ViewData.partner) =>
          Js.Promise.(
-           p.encryptionPubKeyKnown
+           p.hasLoggedIn
            |> then_(known =>
-                send(SetEncryptionPubKeyKnown(p.userId, known)) |> resolve
+                send(SetHasLoggedIn(p.userId, known)) |> resolve
               )
          )
          |> ignore
@@ -60,8 +60,8 @@ let make = (~viewData: ViewData.t, _children) => {
       | _ => None
       };
     let getPartnerStatusChip =
-        (~endorsed: bool, ~submittedXPub: bool, ~encryptionPubKeyKnown: bool) =>
-      switch (endorsed, submittedXPub, encryptionPubKeyKnown) {
+        (~endorsed: bool, ~joinedWallet: bool, ~hasLoggedIn: bool) =>
+      switch (endorsed, joinedWallet, hasLoggedIn) {
       | (false, _, _) => <StatusChip status=Pending label="PENDING" />
       | (true, false, false) =>
         <StatusChip status=Pending label="SIGN IN REQUIRED" />
@@ -112,8 +112,8 @@ let make = (~viewData: ViewData.t, _children) => {
              status=(
                getPartnerStatusChip(
                  ~endorsed=false,
-                 ~submittedXPub=false,
-                 ~encryptionPubKeyKnown=false,
+                 ~joinedWallet=false,
+                 ~hasLoggedIn=false,
                )
              )
            />
@@ -128,8 +128,8 @@ let make = (~viewData: ViewData.t, _children) => {
              status=(
                getPartnerStatusChip(
                  ~endorsed=true,
-                 ~submittedXPub=partner.submittedXPub,
-                 ~encryptionPubKeyKnown=
+                 ~joinedWallet=partner.joinedWallet,
+                 ~hasLoggedIn=
                    List.assoc(partner.userId, state)
                    |> Js.Option.getWithDefault(false),
                )
