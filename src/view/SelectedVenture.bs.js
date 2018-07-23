@@ -4,8 +4,6 @@
 var BTC = require("../application/wallet/BTC.bs.js");
 var Css = require("bs-css/src/Css.js");
 var Grid = require("./components/Grid.bs.js");
-var List = require("bs-platform/lib/js/list.js");
-var $$Array = require("bs-platform/lib/js/array.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Icons = require("./Icons.bs.js");
@@ -71,10 +69,27 @@ function make(viewData, _) {
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */component[/* willReceiveProps */3],
+          /* willReceiveProps */(function (param) {
+              var send = param[/* send */3];
+              var state = param[/* state */1];
+              return Belt_List.map(viewData[/* partners */4], (function (p) {
+                            var match = Belt_List.getAssoc(state, p[/* userId */0], PrimitiveTypes.UserId[/* eq */5]);
+                            return /* tuple */[
+                                    p[/* userId */0],
+                                    match ? match[0] : (p[/* hasLoggedIn */3].then((function (known) {
+                                                return Promise.resolve(Curry._1(send, /* SetHasLoggedIn */[
+                                                                p[/* userId */0],
+                                                                known
+                                                              ]));
+                                              })), /* None */0)
+                                  ];
+                          }));
+            }),
           /* didMount */(function (param) {
               var send = param[/* send */3];
-              return List.iter((function (p) {
+              return Belt_List.forEach(Belt_List.keep(viewData[/* partners */4], (function (p) {
+                                return p[/* joinedWallet */4] === false;
+                              })), (function (p) {
                             p[/* hasLoggedIn */3].then((function (known) {
                                     return Promise.resolve(Curry._1(send, /* SetHasLoggedIn */[
                                                     p[/* userId */0],
@@ -82,9 +97,7 @@ function make(viewData, _) {
                                                   ]));
                                   }));
                             return /* () */0;
-                          }), List.filter((function (p) {
-                                  return p[/* joinedWallet */4] === false;
-                                }))(viewData[/* partners */4]));
+                          }));
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
@@ -107,7 +120,7 @@ function make(viewData, _) {
                   return ReasonReact.element(/* None */0, /* None */0, StatusChip.make(/* Pending */0, "PENDING", /* array */[]));
                 }
               };
-              var alerts = List.map((function (prospect) {
+              var alerts = Belt_List.map(viewData[/* prospects */5], (function (prospect) {
                       var match = prospect[/* data */5][/* processType */1];
                       var partial_arg_000 = viewData[/* ventureId */0];
                       var partial_arg_001 = /* Partner */Block.__(0, [prospect[/* processId */0]]);
@@ -121,28 +134,28 @@ function make(viewData, _) {
                                       }), ViewCommon.text((
                                           match$1 ? "Addition" : "Removal"
                                         ) + (" of '" + (PrimitiveTypes.UserId[/* toString */0](prospect[/* data */5][/* userId */0]) + "'"))), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](prospect[/* proposedBy */2]))], /* array */[]));
-                    }), viewData[/* prospects */5]);
-              var prospects = List.map((function (partner) {
+                    }));
+              var prospects = Belt_List.map(viewData[/* prospects */5], (function (partner) {
                       return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, false)], /* None */0, /* None */0, /* array */[]));
-                    }), viewData[/* prospects */5]);
-              var currentPartners = List.map((function (partner) {
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Js_option.getWithDefault(false, List.assoc(partner[/* userId */0], state)))], /* None */0, /* None */0, /* array */[]));
-                    }), viewData[/* partners */4]);
+                    }));
+              var currentPartners = Belt_List.map(viewData[/* partners */4], (function (partner) {
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Js_option.getWithDefault(false, Js_option.getExn(Belt_List.getAssoc(state, partner[/* userId */0], PrimitiveTypes.UserId[/* eq */5]))))], /* None */0, /* None */0, /* array */[]));
+                    }));
               var stickyHeader$1 = function (header) {
                 return /* :: */[
                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListSubheader.make(/* Some */[stickyHeader], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(header)])),
                         /* [] */0
                       ];
               };
-              var showHeaders = List.length(prospects) !== 0;
-              var partners = $$Array.of_list(Belt_List.concatMany(/* array */[
+              var showHeaders = Belt_List.length(prospects) !== 0;
+              var partners = Belt_List.toArray(Belt_List.concatMany(/* array */[
                         alerts,
                         showHeaders ? stickyHeader$1("Pending Approval") : /* [] */0,
                         prospects,
                         showHeaders ? stickyHeader$1("Current") : /* [] */0,
                         currentPartners
                       ]));
-              var payouts = $$Array.of_list(List.map((function (param) {
+              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingApproval */8], (function (param) {
                           var processId = param[/* processId */0];
                           var partial_arg_000 = viewData[/* ventureId */0];
                           var partial_arg_001 = /* Payout */Block.__(1, [processId]);
@@ -153,11 +166,11 @@ function make(viewData, _) {
                           return ReasonReact.element(/* Some */[PrimitiveTypes.ProcessId[/* toString */0](processId)], /* None */0, AlertListItem.make(/* ArrowUp */2, (function (param) {
                                             return Router.clickToRoute(partial_arg, param);
                                           }), ViewCommon.text("Payout of " + (BTC.format(param[/* data */5][/* summary */1][/* spentWithFees */2]) + " BTC")), /* Some */[ViewCommon.text("proposed by " + PrimitiveTypes.UserId[/* toString */0](param[/* proposedBy */2]))], /* array */[]));
-                        }), viewData[/* payoutsPendingApproval */8]));
+                        })));
               var unconfirmed = viewData[/* unconfirmedTxs */6];
               var confirmed = viewData[/* confirmedTxs */7];
-              var transactions = $$Array.of_list(Belt_List.concatMany(/* array */[
-                        List.mapi((function (iter, tx) {
+              var transactions = Belt_List.toArray(Belt_List.concatMany(/* array */[
+                        Belt_List.mapWithIndex(unconfirmed, (function (iter, tx) {
                                 var match = tx[/* txType */0];
                                 var match$1 = match ? /* tuple */[
                                     /* Payout */1,
@@ -170,8 +183,8 @@ function make(viewData, _) {
                                 return ReasonReact.element(/* Some */[String(iter)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* None */0, /* Some */[(function (param) {
                                                     return Router.clickToRoute(partial_arg, param);
                                                   })], /* array */[]));
-                              }), unconfirmed),
-                        List.mapi((function (iter, tx) {
+                              })),
+                        Belt_List.mapWithIndex(confirmed, (function (iter, tx) {
                                 var match = tx[/* txType */0];
                                 var match$1 = match ? /* tuple */[
                                     /* Payout */1,
@@ -181,10 +194,10 @@ function make(viewData, _) {
                                     "income"
                                   ];
                                 var partial_arg = tx[/* detailsLink */5];
-                                return ReasonReact.element(/* Some */[String(iter + List.length(unconfirmed) | 0)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* None */0, /* Some */[(function (param) {
+                                return ReasonReact.element(/* Some */[String(iter + Belt_List.length(unconfirmed) | 0)], /* None */0, Transaction.make(match$1[0], match$1[1], tx[/* amount */3], tx[/* date */4], /* None */0, /* Some */[(function (param) {
                                                     return Router.clickToRoute(partial_arg, param);
                                                   })], /* array */[]));
-                              }), confirmed)
+                              }))
                       ]));
               var match$1 = viewData[/* atRiskWarning */1];
               var partial_arg_000 = viewData[/* ventureId */0];
@@ -232,28 +245,22 @@ function make(viewData, _) {
                                           ])))], /* None */0, warning, /* array */[]));
             }),
           /* initialState */(function () {
-              return List.map((function (p) {
+              return Belt_List.map(viewData[/* partners */4], (function (p) {
                             return /* tuple */[
                                     p[/* userId */0],
                                     /* None */0
                                   ];
-                          }), viewData[/* partners */4]);
+                          }));
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               var userId = action[0];
-              return /* Update */Block.__(0, [List.concat(/* :: */[
-                              List.remove_assoc(userId, state),
-                              /* :: */[
-                                /* :: */[
-                                  /* tuple */[
-                                    userId,
-                                    /* Some */[action[1]]
-                                  ],
-                                  /* [] */0
-                                ],
-                                /* [] */0
-                              ]
+              return /* Update */Block.__(0, [Belt_List.concat(Belt_List.removeAssoc(state, userId, PrimitiveTypes.UserId[/* eq */5]), /* :: */[
+                              /* tuple */[
+                                userId,
+                                /* Some */[action[1]]
+                              ],
+                              /* [] */0
                             ])]);
             }),
           /* subscriptions */component[/* subscriptions */13],
