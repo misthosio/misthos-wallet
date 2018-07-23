@@ -29,7 +29,6 @@ module Styles = {
       marginTop(px(Theme.space(2) * (-1))),
       marginBottom(px(Theme.space(1) * (-1))),
     ]);
-  let stickyHeader = style([backgroundColor(Colors.white)]);
 };
 
 let updateLoggedInStatus = (partners, send) =>
@@ -154,12 +153,8 @@ let make = (~viewData: ViewData.t, _children) => {
              )
            />
          );
-    let stickyHeader = header => [
-      MaterialUi.(
-        <ListSubheader className=Styles.stickyHeader>
-          (header |> text)
-        </ListSubheader>
-      ),
+    let stickyHeader = (~first=false, header) => [
+      <MListSubheader first> (header |> text) </MListSubheader>,
     ];
     let partners = {
       let showHeaders = List.length(prospects) != 0;
@@ -167,7 +162,7 @@ let make = (~viewData: ViewData.t, _children) => {
         List.toArray(
           List.concatMany([|
             alerts,
-            showHeaders ? stickyHeader("Pending Approval") : [],
+            showHeaders ? stickyHeader(~first=true, "Pending Approval") : [],
             prospects,
             showHeaders ? stickyHeader("Current") : [],
             currentPartners,
