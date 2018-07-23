@@ -166,7 +166,7 @@ function make(partnerId, name, button, status, onClick, $staropt$star, _) {
                     button ? ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[button[0]])) : ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItemSecondaryAction.make(/* None */0, /* None */0, /* None */0, /* array */[status[0]]))
                   );
               }
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
+              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_ListItem.make(/* Some */[onClick !== /* None */0], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* Some */[/* :: */[
                                 /* SecondaryAction */Block.__(9, [secondaryAction(status)]),
                                 /* [] */0
                               ]], /* None */0, /* array */[

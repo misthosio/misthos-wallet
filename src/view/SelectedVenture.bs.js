@@ -148,7 +148,15 @@ function make(viewData, _) {
                       }
                     }));
               var prospects = Belt_List.map(viewData[/* prospects */5], (function (partner) {
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, /* Some */[false])], /* None */0, /* None */0, /* array */[]));
+                      var partial_arg_000 = viewData[/* ventureId */0];
+                      var partial_arg_001 = /* Partner */Block.__(0, [partner[/* processId */0]]);
+                      var partial_arg = /* Venture */Block.__(0, [
+                          partial_arg_000,
+                          partial_arg_001
+                        ]);
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* data */5][/* userId */0])], /* None */0, Partner.make(partner[/* data */5][/* userId */0], /* None */0, /* None */0, /* Some */[getPartnerStatusChip(false, false, /* Some */[false])], /* Some */[(function (param) {
+                                          return Router.clickToRoute(partial_arg, param);
+                                        })], /* None */0, /* array */[]));
                     }));
               var currentPartners = Belt_List.map(viewData[/* partners */4], (function (partner) {
                       return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Js_option.getExn(Belt_List.getAssoc(state, partner[/* userId */0], PrimitiveTypes.UserId[/* eq */5])))], /* None */0, /* None */0, /* array */[]));
