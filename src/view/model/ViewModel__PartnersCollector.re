@@ -19,6 +19,7 @@ type data = {
   userId,
   processType,
   hasLoggedIn: Js.Promise.t(bool),
+  joinedWallet: bool,
 };
 
 type partnerProcess = ProcessCollector.process(data);
@@ -70,7 +71,14 @@ let make = localUser => {
 let apply = (event: Event.t, state) =>
   switch (event) {
   | VentureCreated({metaPolicy}) => {...state, partnerPolicy: metaPolicy}
-  | CustodianKeyChainUpdated({custodianId}) => {
+  | CustodianKeyChainUpdated({custodianId}) =>
+    let partner =
+      state.partners
+      |. List.getByU((. partner: partner) =>
+           UserId.eq(partner.userId, custodianId)
+         )
+      |> Js.Option.getExn;
+    {
       ...state,
       partners:
         state.partners
@@ -82,7 +90,12 @@ let apply = (event: Event.t, state) =>
                  || UserId.eq(partner.userId, custodianId),
              }
            ),
-    }
+      prospects:
+        state.prospects
+        |> ProcessCollector.updateData(partner.processId, data =>
+             {...data, joinedWallet: true}
+           ),
+    };
   | PartnerProposed(proposal) => {
       ...state,
       prospects:
@@ -90,6 +103,7 @@ let apply = (event: Event.t, state) =>
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
              {
                userId: data.id,
+               joinedWallet: false,
                processType: Addition,
                hasLoggedIn:
                  hasUserLoggedIn(proposal.data.pubKey, proposal.data.id),
@@ -150,7 +164,14 @@ let apply = (event: Event.t, state) =>
       ...state,
       prospects: state.prospects |> ProcessCollector.addDenial(denial),
     }
-  | PartnerRemovalProposed(proposal) => {
+  | PartnerRemovalProposed(proposal) =>
+    let partner =
+      state.partners
+      |. List.getByU((. p: partner) =>
+           UserId.eq(p.userId, proposal.data.id)
+         )
+      |> Js.Option.getExn;
+    {
       ...state,
       partners:
         state.partners
@@ -164,18 +185,11 @@ let apply = (event: Event.t, state) =>
              {
                userId: data.id,
                processType: Removal,
-               hasLoggedIn:
-                 (
-                   state.partners
-                   |. List.getByU((. p: partner) =>
-                        UserId.eq(p.userId, data.id)
-                      )
-                   |> Js.Option.getExn
-                 ).
-                   hasLoggedIn,
+               joinedWallet: partner.joinedWallet,
+               hasLoggedIn: partner.hasLoggedIn,
              }
            ),
-    }
+    };
   | PartnerRemovalRejected(rejection) => {
       ...state,
       prospects:
