@@ -1,5 +1,3 @@
-[%bs.raw {| require('formdata-polyfill') |}];
-
 type t = Fetch.formData;
 
 [@bs.new] external make : unit => t = "FormData";
