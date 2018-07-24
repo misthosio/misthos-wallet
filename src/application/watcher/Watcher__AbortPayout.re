@@ -61,6 +61,15 @@ let make =
          |. Set.intersect(custodians)
          |. Set.size < requiredCoSigners
        );
+  let getResult = (systemIssuer, broadcastInputs, inputs) =>
+    if (Set.intersect(broadcastInputs, inputs) |. Set.size > 0) {
+      Some((
+        systemIssuer,
+        PayoutAborted(Payout.Aborted.fromProposal(proposal)),
+      ));
+    } else {
+      None;
+    };
   let process = {
     val payoutProcesses = ref(ProcessId.makeMap());
     val completed = ref(false);
@@ -68,6 +77,7 @@ let make =
     val systemIssuer = ref(Bitcoin.ECPair.makeRandom());
     val custodians = ref(UserId.emptySet);
     val alreadySigned = ref(UserId.emptySet);
+    val collidingProcesses = ref(ProcessId.emptySet);
     pub receive = ({event}: EventLog.item) => {
       let _ignoreThisWarning = this;
       switch (event) {
@@ -94,12 +104,12 @@ let make =
           when ProcessId.neq(broadcastProcess, processId) =>
         let broadcastInputs =
           payoutProcesses^ |. Map.getExn(broadcastProcess);
-        if (Set.intersect(broadcastInputs, inputs) |. Set.size > 0) {
-          result :=
-            Some((
-              systemIssuer^,
-              PayoutAborted(Payout.Aborted.fromProposal(proposal)),
-            ));
+        switch (getResult(systemIssuer^, broadcastInputs, inputs)) {
+        | Some(actualResult) =>
+          result := Some(actualResult);
+          collidingProcesses :=
+            collidingProcesses^ |. Set.add(broadcastProcess);
+        | _ => ()
         };
         payoutProcesses := payoutProcesses^ |. Map.remove(broadcastProcess);
       | PayoutBroadcast({processId: broadcastProcess})
@@ -110,14 +120,60 @@ let make =
           when ProcessId.eq(broadcastProcess, processId) =>
         result := None;
         completed := true;
+      | PayoutBroadcastFailed({processId}) =>
+        payoutProcesses := payoutProcesses^ |. Map.remove(processId);
+        if (collidingProcesses^ |. Set.has(processId)) {
+          collidingProcesses := collidingProcesses^ |. Set.remove(processId);
+          result := None;
+          collidingProcesses^
+          |. Set.forEachU((. collidingProcessId) => {
+               let broadcastInputs =
+                 payoutProcesses^ |. Map.getExn(collidingProcessId);
+               switch (getResult(systemIssuer^, broadcastInputs, inputs)) {
+               | Some(actualResult) => result := Some(actualResult)
+               | _ => ()
+               };
+             });
+        };
       | PayoutAborted({processId: abortedProcess})
           when ProcessId.eq(abortedProcess, processId) =>
         result := None;
         completed := true;
+      | PayoutAborted({processId}) =>
+        payoutProcesses := payoutProcesses^ |. Map.remove(processId);
+        if (collidingProcesses^ |. Set.has(processId)) {
+          collidingProcesses := collidingProcesses^ |. Set.remove(processId);
+          result := None;
+          collidingProcesses^
+          |. Set.forEachU((. collidingProcessId) => {
+               let broadcastInputs =
+                 payoutProcesses^ |. Map.getExn(collidingProcessId);
+               switch (getResult(systemIssuer^, broadcastInputs, inputs)) {
+               | Some(actualResult) => result := Some(actualResult)
+               | _ => ()
+               };
+             });
+        };
+
       | PayoutDenied({processId: abortedProcess})
           when ProcessId.eq(abortedProcess, processId) =>
         result := None;
         completed := true;
+      | PayoutDenied({processId}) =>
+        payoutProcesses := payoutProcesses^ |. Map.remove(processId);
+        if (collidingProcesses^ |. Set.has(processId)) {
+          collidingProcesses := collidingProcesses^ |. Set.remove(processId);
+          result := None;
+          collidingProcesses^
+          |. Set.forEachU((. collidingProcessId) => {
+               let broadcastInputs =
+                 payoutProcesses^ |. Map.getExn(collidingProcessId);
+               switch (getResult(systemIssuer^, broadcastInputs, inputs)) {
+               | Some(actualResult) => result := Some(actualResult)
+               | _ => ()
+               };
+             });
+        };
       | _ => ()
       };
     };

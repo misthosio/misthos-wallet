@@ -54,6 +54,16 @@ function make(proposal, log) {
                   return Belt_Set.size(Belt_Set.intersect(currentCustodians, param[/* custodians */0])) < param[/* requiredCoSigners */1];
                 }));
   };
+  var getResult = function (systemIssuer, broadcastInputs, inputs) {
+    if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, inputs)) > 0) {
+      return /* Some */[/* tuple */[
+                systemIssuer,
+                /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], proposal)])
+              ]];
+    } else {
+      return /* None */0;
+    }
+  };
   if (!class_tables[0]) {
     var $$class = CamlinternalOO.create_table([
           "processCompleted",
@@ -71,7 +81,8 @@ function make(proposal, log) {
           "result",
           "systemIssuer",
           "custodians",
-          "alreadySigned"
+          "alreadySigned",
+          "collidingProcesses"
         ]);
     var receive = ids[0];
     var processCompleted = ids[1];
@@ -82,12 +93,12 @@ function make(proposal, log) {
     var systemIssuer = ids[6];
     var custodians = ids[7];
     var alreadySigned = ids[8];
+    var collidingProcesses = ids[9];
     CamlinternalOO.set_methods($$class, /* array */[
           receive,
           (function (self$1, param) {
               var env$1 = self$1[env];
               var $$event = param[/* event */0];
-              var exit = 0;
               switch ($$event.tag | 0) {
                 case 0 : 
                     self$1[systemIssuer][0] = $$event[0][/* systemIssuer */5];
@@ -107,6 +118,56 @@ function make(proposal, log) {
                     } else {
                       return /* () */0;
                     }
+                case 30 : 
+                    var abortedProcess = $$event[0][/* processId */0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](abortedProcess, env$1[2])) {
+                      self$1[result][0] = /* None */0;
+                      self$1[completed][0] = true;
+                      return /* () */0;
+                    } else {
+                      self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], abortedProcess);
+                      if (Belt_Set.has(self$1[collidingProcesses][0], abortedProcess)) {
+                        self$1[collidingProcesses][0] = Belt_Set.remove(self$1[collidingProcesses][0], abortedProcess);
+                        self$1[result][0] = /* None */0;
+                        return Belt_Set.forEachU(self$1[collidingProcesses][0], (function (collidingProcessId) {
+                                      var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], collidingProcessId);
+                                      var match = Curry._3(env$1[4], self$1[systemIssuer][0], broadcastInputs, env$1[3]);
+                                      if (match) {
+                                        self$1[result][0] = /* Some */[match[0]];
+                                        return /* () */0;
+                                      } else {
+                                        return /* () */0;
+                                      }
+                                    }));
+                      } else {
+                        return 0;
+                      }
+                    }
+                case 31 : 
+                    var abortedProcess$1 = $$event[0][/* processId */0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](abortedProcess$1, env$1[2])) {
+                      self$1[result][0] = /* None */0;
+                      self$1[completed][0] = true;
+                      return /* () */0;
+                    } else {
+                      self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], abortedProcess$1);
+                      if (Belt_Set.has(self$1[collidingProcesses][0], abortedProcess$1)) {
+                        self$1[collidingProcesses][0] = Belt_Set.remove(self$1[collidingProcesses][0], abortedProcess$1);
+                        self$1[result][0] = /* None */0;
+                        return Belt_Set.forEachU(self$1[collidingProcesses][0], (function (collidingProcessId) {
+                                      var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], collidingProcessId);
+                                      var match = Curry._3(env$1[4], self$1[systemIssuer][0], broadcastInputs, env$1[3]);
+                                      if (match) {
+                                        self$1[result][0] = /* Some */[match[0]];
+                                        return /* () */0;
+                                      } else {
+                                        return /* () */0;
+                                      }
+                                    }));
+                      } else {
+                        return 0;
+                      }
+                    }
                 case 32 : 
                     var match$1 = $$event[0];
                     if (PrimitiveTypes.ProcessId[/* eq */5](match$1[/* processId */0], env$1[2])) {
@@ -119,36 +180,52 @@ function make(proposal, log) {
                     var broadcastProcess = $$event[0][/* processId */0];
                     if (PrimitiveTypes.ProcessId[/* neq */6](broadcastProcess, env$1[2])) {
                       var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], broadcastProcess);
-                      if (Belt_Set.size(Belt_Set.intersect(broadcastInputs, env$1[3])) > 0) {
-                        self$1[result][0] = /* Some */[/* tuple */[
-                            self$1[systemIssuer][0],
-                            /* PayoutAborted */Block.__(30, [Curry._1(Event.Payout[/* Aborted */8][/* fromProposal */0], env$1[0])])
-                          ]];
+                      var match$2 = Curry._3(env$1[4], self$1[systemIssuer][0], broadcastInputs, env$1[3]);
+                      if (match$2) {
+                        self$1[result][0] = /* Some */[match$2[0]];
+                        self$1[collidingProcesses][0] = Belt_Set.add(self$1[collidingProcesses][0], broadcastProcess);
                       }
                       self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess);
                       return /* () */0;
                     } else {
                       return /* () */0;
                     }
-                case 30 : 
-                case 31 : 
                 case 34 : 
+                    if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[2])) {
+                      self$1[result][0] = /* None */0;
+                      self$1[completed][0] = true;
+                      return /* () */0;
+                    } else {
+                      return /* () */0;
+                    }
                 case 36 : 
-                    exit = 1;
-                    break;
+                    var broadcastProcess$1 = $$event[0][/* processId */0];
+                    if (PrimitiveTypes.ProcessId[/* eq */5](broadcastProcess$1, env$1[2])) {
+                      self$1[result][0] = /* None */0;
+                      self$1[completed][0] = true;
+                      return /* () */0;
+                    } else {
+                      self$1[payoutProcesses][0] = Belt_Map.remove(self$1[payoutProcesses][0], broadcastProcess$1);
+                      if (Belt_Set.has(self$1[collidingProcesses][0], broadcastProcess$1)) {
+                        self$1[collidingProcesses][0] = Belt_Set.remove(self$1[collidingProcesses][0], broadcastProcess$1);
+                        self$1[result][0] = /* None */0;
+                        return Belt_Set.forEachU(self$1[collidingProcesses][0], (function (collidingProcessId) {
+                                      var broadcastInputs = Belt_Map.getExn(self$1[payoutProcesses][0], collidingProcessId);
+                                      var match = Curry._3(env$1[4], self$1[systemIssuer][0], broadcastInputs, env$1[3]);
+                                      if (match) {
+                                        self$1[result][0] = /* Some */[match[0]];
+                                        return /* () */0;
+                                      } else {
+                                        return /* () */0;
+                                      }
+                                    }));
+                      } else {
+                        return 0;
+                      }
+                    }
                 default:
                   return /* () */0;
               }
-              if (exit === 1) {
-                if (PrimitiveTypes.ProcessId[/* eq */5]($$event[0][/* processId */0], env$1[2])) {
-                  self$1[result][0] = /* None */0;
-                  self$1[completed][0] = true;
-                  return /* () */0;
-                } else {
-                  return /* () */0;
-                }
-              }
-              
             }),
           processCompleted,
           (function (self$1, _) {
@@ -176,6 +253,7 @@ function make(proposal, log) {
       self[systemIssuer] = [BitcoinjsLib.ECPair.makeRandom()];
       self[custodians] = [PrimitiveTypes.UserId[/* emptySet */9]];
       self[alreadySigned] = [PrimitiveTypes.UserId[/* emptySet */9]];
+      self[collidingProcesses] = [PrimitiveTypes.ProcessId[/* emptySet */9]];
       self[env] = env$1;
       return self;
     };
@@ -187,7 +265,8 @@ function make(proposal, log) {
     proposal,
     anyInputNotSignable,
     envs_002,
-    inputs
+    inputs,
+    getResult
   ];
   var $$process = Curry._1(class_tables[0], envs);
   Curry._3(EventLog.reduce, (function (_, item) {
