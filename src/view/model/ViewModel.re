@@ -398,7 +398,7 @@ module SelectedVentureView = {
     prospects: list(prospect),
     unconfirmedTxs: list(txData),
     confirmedTxs: list(txData),
-    payoutsPendingApproval: list(payoutProcess),
+    payoutsPendingBroadcast: list(payoutProcess),
     balance,
   };
   let fromViewModelState =
@@ -445,8 +445,8 @@ module SelectedVentureView = {
       partners: partnersCollector.partners,
       prospects:
         partnersCollector |> PartnersCollector.prospectsPendingApproval,
-      payoutsPendingApproval:
-        txDetailsCollector |> TxDetailsCollector.payoutsPendingApproval,
+      payoutsPendingBroadcast:
+        txDetailsCollector |> TxDetailsCollector.payoutsPendingBroadcast,
       confirmedTxs: transactionCollector.confirmedTxs,
       unconfirmedTxs: transactionCollector.unconfirmedTxs,
       balance,

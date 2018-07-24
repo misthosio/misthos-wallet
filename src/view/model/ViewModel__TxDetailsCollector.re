@@ -71,12 +71,13 @@ let getDateAndStatus = (txId, {txDates}) =>
 
 let getProcessIdForTx = (txId, {txIdToProcessIdMap}) =>
   txIdToProcessIdMap |. Map.String.getExn(txId);
-let payoutsPendingApproval = ({payouts}) =>
+let payoutsPendingBroadcast = ({payouts}) =>
   payouts
   |. Map.valuesToArray
   |> List.fromArray
   |. List.keepU((. payout: payoutProcess) =>
-       switch (payout.status) {
+       switch (payout.data.payoutStatus) {
+       | Accepted
        | PendingApproval => true
        | _ => false
        }

@@ -279,7 +279,7 @@ function fromViewModelState$6(param) {
           /* prospects */ViewModel__PartnersCollector.prospectsPendingApproval(partnersCollector),
           /* unconfirmedTxs */transactionCollector[/* unconfirmedTxs */2],
           /* confirmedTxs */transactionCollector[/* confirmedTxs */3],
-          /* payoutsPendingApproval */ViewModel__TxDetailsCollector.payoutsPendingApproval(param[/* txDetailsCollector */8]),
+          /* payoutsPendingBroadcast */ViewModel__TxDetailsCollector.payoutsPendingBroadcast(param[/* txDetailsCollector */8]),
           /* balance */balance
         ];
 }

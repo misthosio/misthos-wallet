@@ -178,7 +178,7 @@ let make = (~viewData: ViewData.t, _children) => {
     let payouts =
       ReasonReact.array(
         List.toArray(
-          viewData.payoutsPendingApproval
+          viewData.payoutsPendingBroadcast
           |. List.map(
                (
                  {proposedBy, processId, data: {summary}}: ViewData.payoutProcess,

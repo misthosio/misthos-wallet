@@ -173,7 +173,7 @@ function make(viewData, _) {
                         showHeaders ? stickyHeader(/* None */0, "Current") : /* [] */0,
                         currentPartners
                       ]));
-              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingApproval */8], (function (param) {
+              var payouts = Belt_List.toArray(Belt_List.map(viewData[/* payoutsPendingBroadcast */8], (function (param) {
                           var processId = param[/* processId */0];
                           var partial_arg_000 = viewData[/* ventureId */0];
                           var partial_arg_001 = /* Payout */Block.__(1, [processId]);

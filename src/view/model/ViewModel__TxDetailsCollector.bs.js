@@ -56,10 +56,14 @@ function getProcessIdForTx(txId, param) {
   return Belt_MapString.getExn(param[/* txIdToProcessIdMap */3], txId);
 }
 
-function payoutsPendingApproval(param) {
+function payoutsPendingBroadcast(param) {
   return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* payouts */2])), (function (payout) {
-                var match = payout[/* status */1];
-                return match === 0;
+                var match = payout[/* data */5][/* payoutStatus */0];
+                if (typeof match === "number") {
+                  return match < 2;
+                } else {
+                  return false;
+                }
               }));
 }
 
@@ -284,6 +288,6 @@ exports.getPayout = getPayout;
 exports.getIncome = getIncome;
 exports.getDateAndStatus = getDateAndStatus;
 exports.getProcessIdForTx = getProcessIdForTx;
-exports.payoutsPendingApproval = payoutsPendingApproval;
+exports.payoutsPendingBroadcast = payoutsPendingBroadcast;
 exports.apply = apply;
 /* Utils Not a pure module */
