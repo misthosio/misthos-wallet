@@ -213,9 +213,10 @@ module ViewPartnerView = {
     partnerProcess,
     atRiskWarning: bool,
   };
-  let fromViewModelState = (userId, {partnersCollector, walletInfoCollector}) =>
+  let fromViewModelState =
+      (processId, {partnersCollector, walletInfoCollector}) =>
     partnersCollector
-    |> PartnersCollector.getProspect(userId)
+    |> PartnersCollector.getPartnerProcess(processId)
     |> Utils.mapOption(partnerProcess =>
          {
            partnerProcess,

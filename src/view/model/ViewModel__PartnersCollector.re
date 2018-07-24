@@ -27,15 +27,15 @@ type partnerProcess = ProcessCollector.process(data);
 type t = {
   localUser: userId,
   partners: list(partner),
-  prospects: ProcessCollector.collection(data),
+  partnerProcesses: ProcessCollector.collection(data),
   partnerPolicy: Policy.t,
 };
 
-let getProspect = (processId, {prospects}) =>
-  prospects |. Map.get(processId);
+let getPartnerProcess = (processId, {partnerProcesses}) =>
+  partnerProcesses |. Map.get(processId);
 
-let prospectsPendingApproval = ({prospects}) =>
-  prospects
+let prospectsPendingApproval = ({partnerProcesses}) =>
+  partnerProcesses
   |. Map.valuesToArray
   |> List.fromArray
   |. List.keepU((. prospect: partnerProcess) =>
@@ -64,7 +64,7 @@ let hasUserLoggedIn = (pubKey, userId) =>
 let make = localUser => {
   localUser,
   partners: [],
-  prospects: ProcessId.makeMap(),
+  partnerProcesses: ProcessId.makeMap(),
   partnerPolicy: Policy.Unanimous,
 };
 
@@ -90,16 +90,16 @@ let apply = (event: Event.t, state) =>
                  || UserId.eq(partner.userId, custodianId),
              }
            ),
-      prospects:
-        state.prospects
+      partnerProcesses:
+        state.partnerProcesses
         |> ProcessCollector.updateData(partner.processId, data =>
              {...data, joinedWallet: true}
            ),
     };
   | PartnerProposed(proposal) => {
       ...state,
-      prospects:
-        state.prospects
+      partnerProcesses:
+        state.partnerProcesses
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
              {
                userId: data.id,
@@ -112,14 +112,14 @@ let apply = (event: Event.t, state) =>
     }
   | PartnerRejected(rejection) => {
       ...state,
-      prospects:
-        state.prospects
+      partnerProcesses:
+        state.partnerProcesses
         |> ProcessCollector.addRejection(state.localUser, rejection),
     }
   | PartnerEndorsed(endorsement) => {
       ...state,
-      prospects:
-        state.prospects
+      partnerProcesses:
+        state.partnerProcesses
         |> ProcessCollector.addEndorsement(state.localUser, endorsement),
     }
   | PartnerAccepted({processId, data} as acceptance) => {
@@ -138,8 +138,8 @@ let apply = (event: Event.t, state) =>
                 UserId.neq(userId, data.id)
               ),
       ],
-      prospects:
-        state.prospects |> ProcessCollector.addAcceptance(acceptance),
+      partnerProcesses:
+        state.partnerProcesses |> ProcessCollector.addAcceptance(acceptance),
     }
   | PartnerPubKeyAdded({partnerId}) => {
       ...state,
@@ -162,7 +162,8 @@ let apply = (event: Event.t, state) =>
     }
   | PartnerDenied(denial) => {
       ...state,
-      prospects: state.prospects |> ProcessCollector.addDenial(denial),
+      partnerProcesses:
+        state.partnerProcesses |> ProcessCollector.addDenial(denial),
     }
   | PartnerRemovalProposed(proposal) =>
     let partner =
@@ -179,8 +180,8 @@ let apply = (event: Event.t, state) =>
              UserId.eq(p.userId, proposal.data.id) ?
                {...p, canProposeRemoval: false} : p
            ),
-      prospects:
-        state.prospects
+      partnerProcesses:
+        state.partnerProcesses
         |> ProcessCollector.addProposal(state.localUser, proposal, data =>
              {
                userId: data.id,
@@ -192,26 +193,27 @@ let apply = (event: Event.t, state) =>
     };
   | PartnerRemovalRejected(rejection) => {
       ...state,
-      prospects:
-        state.prospects
+      partnerProcesses:
+        state.partnerProcesses
         |> ProcessCollector.addRejection(state.localUser, rejection),
     }
   | PartnerRemovalEndorsed(endorsement) => {
       ...state,
-      prospects:
-        state.prospects
+      partnerProcesses:
+        state.partnerProcesses
         |> ProcessCollector.addEndorsement(state.localUser, endorsement),
     }
   | PartnerRemovalAccepted({data: {id}} as acceptance) => {
       ...state,
       partners:
         state.partners |. List.keep((p: partner) => UserId.neq(p.userId, id)),
-      prospects:
-        state.prospects |> ProcessCollector.addAcceptance(acceptance),
+      partnerProcesses:
+        state.partnerProcesses |> ProcessCollector.addAcceptance(acceptance),
     }
   | PartnerRemovalDenied(denial) => {
       ...state,
-      prospects: state.prospects |> ProcessCollector.addDenial(denial),
+      partnerProcesses:
+        state.partnerProcesses |> ProcessCollector.addDenial(denial),
     }
   | _ => state
   };

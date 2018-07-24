@@ -159,7 +159,7 @@ function fromViewModelState$1(param) {
 
 var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
-function fromViewModelState$2(userId, param) {
+function fromViewModelState$2(processId, param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
   return Utils.mapOption((function (partnerProcess) {
                 var match = partnerProcess[/* data */5][/* processType */1];
@@ -183,7 +183,7 @@ function fromViewModelState$2(userId, param) {
                                   
                                 }))
                       ];
-              }), ViewModel__PartnersCollector.getProspect(userId, param[/* partnersCollector */6]));
+              }), ViewModel__PartnersCollector.getPartnerProcess(processId, param[/* partnersCollector */6]));
 }
 
 var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$2];
