@@ -33,7 +33,7 @@ function make(resource, _) {
                     break;
                 
               }
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text(resourceText + " not found")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ViewCommon.text("The " + (resourceText + " was not found. Perhaps the data hasn't been synced yet")))], /* None */0, /* None */0, /* None */0, /* array */[]));
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text(resourceText + " not found")], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ViewCommon.text("The " + (resourceText + " was not found. Perhaps the data hasn't been synced yet.")))], /* None */0, /* None */0, /* None */0, /* array */[]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
