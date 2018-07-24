@@ -74,6 +74,7 @@ function apply($$event, state) {
                 /* partners : :: */[
                   /* record */[
                     /* userId */data[/* id */1],
+                    /* processId */acceptance[/* processId */0],
                     /* name : None */0,
                     /* canProposeRemoval */PrimitiveTypes.UserId[/* neq */6](data[/* id */1], state[/* localUser */0]),
                     /* hasLoggedIn */hasUserLoggedIn(data[/* pubKey */2], data[/* id */1]),
@@ -93,12 +94,13 @@ function apply($$event, state) {
                 /* partners */Belt_List.mapU(state[/* partners */1], (function (partner) {
                         return /* record */[
                                 /* userId */partner[/* userId */0],
-                                /* name */partner[/* name */1],
-                                /* canProposeRemoval */partner[/* canProposeRemoval */2],
-                                /* hasLoggedIn */partner[/* hasLoggedIn */3].then((function (known) {
+                                /* processId */partner[/* processId */1],
+                                /* name */partner[/* name */2],
+                                /* canProposeRemoval */partner[/* canProposeRemoval */3],
+                                /* hasLoggedIn */partner[/* hasLoggedIn */4].then((function (known) {
                                         return Promise.resolve(known || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], partnerId));
                                       })),
-                                /* joinedWallet */partner[/* joinedWallet */4]
+                                /* joinedWallet */partner[/* joinedWallet */5]
                               ];
                       })),
                 /* prospects */state[/* prospects */2],
@@ -113,10 +115,11 @@ function apply($$event, state) {
                         if (match) {
                           return /* record */[
                                   /* userId */p[/* userId */0],
-                                  /* name */p[/* name */1],
+                                  /* processId */p[/* processId */1],
+                                  /* name */p[/* name */2],
                                   /* canProposeRemoval */false,
-                                  /* hasLoggedIn */p[/* hasLoggedIn */3],
-                                  /* joinedWallet */p[/* joinedWallet */4]
+                                  /* hasLoggedIn */p[/* hasLoggedIn */4],
+                                  /* joinedWallet */p[/* joinedWallet */5]
                                 ];
                         } else {
                           return p;
@@ -128,7 +131,7 @@ function apply($$event, state) {
                                 /* processType : Removal */0,
                                 /* hasLoggedIn */Js_option.getExn(Belt_List.getByU(state[/* partners */1], (function (p) {
                                               return PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], data[/* id */0]);
-                                            })))[/* hasLoggedIn */3]
+                                            })))[/* hasLoggedIn */4]
                               ];
                       }), state[/* prospects */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
@@ -163,10 +166,11 @@ function apply($$event, state) {
                 /* partners */Belt_List.mapU(state[/* partners */1], (function (partner) {
                         return /* record */[
                                 /* userId */partner[/* userId */0],
-                                /* name */partner[/* name */1],
-                                /* canProposeRemoval */partner[/* canProposeRemoval */2],
-                                /* hasLoggedIn */partner[/* hasLoggedIn */3],
-                                /* joinedWallet */partner[/* joinedWallet */4] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId)
+                                /* processId */partner[/* processId */1],
+                                /* name */partner[/* name */2],
+                                /* canProposeRemoval */partner[/* canProposeRemoval */3],
+                                /* hasLoggedIn */partner[/* hasLoggedIn */4],
+                                /* joinedWallet */partner[/* joinedWallet */5] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId)
                               ];
                       })),
                 /* prospects */state[/* prospects */2],

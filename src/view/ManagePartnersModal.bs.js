@@ -292,9 +292,9 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var activeStep;
               activeStep = typeof proposeCmdStatus === "number" || proposeCmdStatus.tag !== 2 ? 0 : 1;
               var partners = $$Array.of_list(Belt_List.keepMapU(viewData[/* partners */2], (function (partner) {
-                          var match = partner[/* canProposeRemoval */2];
+                          var match = partner[/* canProposeRemoval */3];
                           if (match) {
-                            return /* Some */[ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Radio.make(/* Some */[/* `Bool */[
+                            return /* Some */[ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */2], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_Radio.make(/* Some */[/* `Bool */[
                                                           737456202,
                                                           Caml_obj.caml_equal(inputs[/* removePartnerId */1], /* Some */[partner[/* userId */0]])
                                                         ]], /* None */0, /* Some */[/* Primary */-791844958], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[(function (_, _$1) {

@@ -144,6 +144,11 @@ let make = (~viewData: ViewData.t, _children) => {
              key=(partner.userId |> UserId.toString)
              partnerId=partner.userId
              name=?partner.name
+             onClick=(
+               Router.clickToRoute(
+                 Venture(viewData.ventureId, Partner(partner.processId)),
+               )
+             )
              status=(
                getPartnerStatusChip(
                  ~endorsed=true,

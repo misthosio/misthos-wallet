@@ -4,6 +4,7 @@ open PrimitiveTypes;
 
 type partner = {
   userId,
+  processId,
   name: option(string),
   canProposeRemoval: bool,
   hasLoggedIn: Js.Promise.t(bool),
@@ -107,11 +108,12 @@ let apply = (event: Event.t, state) =>
         state.prospects
         |> ProcessCollector.addEndorsement(state.localUser, endorsement),
     }
-  | PartnerAccepted({data} as acceptance) => {
+  | PartnerAccepted({processId, data} as acceptance) => {
       ...state,
       partners: [
         {
           userId: data.id,
+          processId,
           name: None,
           canProposeRemoval: UserId.neq(data.id, state.localUser),
           hasLoggedIn: hasUserLoggedIn(data.pubKey, data.id),

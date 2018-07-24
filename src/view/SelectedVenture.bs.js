@@ -59,9 +59,9 @@ var Styles = /* module */[
 
 function updateLoggedInStatus(partners, send) {
   return Belt_List.forEach(Belt_List.keep(partners, (function (p) {
-                    return p[/* joinedWallet */4] === false;
+                    return p[/* joinedWallet */5] === false;
                   })), (function (p) {
-                p[/* hasLoggedIn */3].then((function (known) {
+                p[/* hasLoggedIn */4].then((function (known) {
                         return Promise.resolve(Curry._1(send, /* SetHasLoggedIn */[
                                         p[/* userId */0],
                                         known
@@ -148,7 +148,15 @@ function make(viewData, _) {
                                         })], /* None */0, /* array */[]));
                     }));
               var currentPartners = Belt_List.map(viewData[/* partners */4], (function (partner) {
-                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */1], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */4], Belt_Map.get(loggedInStatus, partner[/* userId */0]))], /* None */0, /* None */0, /* array */[]));
+                      var partial_arg_000 = viewData[/* ventureId */0];
+                      var partial_arg_001 = /* Partner */Block.__(0, [partner[/* processId */1]]);
+                      var partial_arg = /* Venture */Block.__(0, [
+                          partial_arg_000,
+                          partial_arg_001
+                        ]);
+                      return ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](partner[/* userId */0])], /* None */0, Partner.make(partner[/* userId */0], partner[/* name */2], /* None */0, /* Some */[getPartnerStatusChip(true, partner[/* joinedWallet */5], Belt_Map.get(loggedInStatus, partner[/* userId */0]))], /* Some */[(function (param) {
+                                          return Router.clickToRoute(partial_arg, param);
+                                        })], /* None */0, /* array */[]));
                     }));
               var stickyHeader = function ($staropt$star, header) {
                 var first = $staropt$star ? $staropt$star[0] : false;
