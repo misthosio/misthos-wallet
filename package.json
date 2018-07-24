@@ -16,7 +16,7 @@
     "bs-fetch": "0.3.0",
     "bs-webapi": "0.10.0",
     "clipboard": "2.0.1",
-    "formdata-polyfill": "^3.0.11",
+    "formdata-polyfill": "3.0.11",
     "json-stable-stringify": "1.0.1",
     "material-ui": "1.0.0-beta.47",
     "react": "16.4.1",
