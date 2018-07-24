@@ -6,10 +6,11 @@ var Block = require("bs-platform/lib/js/block.js");
 var Fetch = require("bs-fetch/src/Fetch.js");
 var Utils = require("../../utils/Utils.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var FormData = require("form-data");
 var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
+
+(( require('formdata-polyfill') ));
 
 var testnetConfig_001 = /* network */BitcoinjsLib.networks.testnet;
 
@@ -139,4 +140,4 @@ exports.getTransactionInfo = getTransactionInfo;
 exports.getCurrentBlockHeight = getCurrentBlockHeight;
 exports.broadcastTransaction = broadcastTransaction;
 exports.make = make;
-/* testnetConfig Not a pure module */
+/*  Not a pure module */

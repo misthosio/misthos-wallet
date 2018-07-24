@@ -1,4 +1,4 @@
 type t = Fetch.formData;
 
-[@bs.module] [@bs.new] external make : unit => t = "form-data";
+[@bs.new] external make : unit => t = "FormData";
 [@bs.send] external append : (t, string, string) => unit = "";

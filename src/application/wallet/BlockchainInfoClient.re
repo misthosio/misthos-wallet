@@ -1,3 +1,5 @@
+[%bs.raw {| require('formdata-polyfill') |}];
+
 open Belt;
 
 type config = {

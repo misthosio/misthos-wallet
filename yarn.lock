@@ -3423,13 +3423,17 @@ forever-agent@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
 
-form-data@2.3.2, form-data@~2.3.1:
+form-data@~2.3.1:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.3.2.tgz#4970498be604c20c005d4f5c23aecd21d6b49099"
   dependencies:
     asynckit "^0.4.0"
     combined-stream "1.0.6"
     mime-types "^2.1.12"
+
+formdata-polyfill@^3.0.11:
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/formdata-polyfill/-/formdata-polyfill-3.0.11.tgz#c82b4b4bea3356c0a6752219e54ce1edb2a7fb5b"
 
 forwarded@~0.1.2:
   version "0.1.2"
