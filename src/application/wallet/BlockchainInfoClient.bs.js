@@ -10,8 +10,6 @@ var Json_decode = require("@glennsl/bs-json/src/Json_decode.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
 
-(( require('formdata-polyfill') ));
-
 var testnetConfig_001 = /* network */BitcoinjsLib.networks.testnet;
 
 var testnetConfig = /* record */[
@@ -140,4 +138,4 @@ exports.getTransactionInfo = getTransactionInfo;
 exports.getCurrentBlockHeight = getCurrentBlockHeight;
 exports.broadcastTransaction = broadcastTransaction;
 exports.make = make;
-/*  Not a pure module */
+/* testnetConfig Not a pure module */
