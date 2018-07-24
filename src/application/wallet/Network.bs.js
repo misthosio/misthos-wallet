@@ -366,7 +366,7 @@ var testnetIncomeAddress = "2Mt1spz31MXtY5bVHUAEGtFQcFHrG9gza6k";
 
 function incomeAddress(param) {
   if (param >= 2) {
-    return "3KVvnXV95XQQA7aQMuE9fn1gxnTK3nkZQX";
+    return "3DxDUdPvQwGeZid9SFGwygkufyRWLLUcYQ";
   } else {
     return testnetIncomeAddress;
   }

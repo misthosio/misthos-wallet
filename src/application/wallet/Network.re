@@ -194,7 +194,7 @@ let incomeAddress =
   fun
   | Regtest => testnetIncomeAddress
   | Testnet => testnetIncomeAddress
-  | Mainnet => "3KVvnXV95XQQA7aQMuE9fn1gxnTK3nkZQX";
+  | Mainnet => "3DxDUdPvQwGeZid9SFGwygkufyRWLLUcYQ";
 
 let exampleOfLongestAddress =
   fun
