@@ -89,104 +89,13 @@ let decodeInput = raw =>
     unlocked: raw |> optional(field("unlocked", bool)) |> Js.Option.isSome,
   };
 
-module Make = (Client: NetworkClient) => {
-  let network = Client.network;
-  let transactionInfo = Client.getTransactionInfo;
-  let currentBlockHeight = Client.getCurrentBlockHeight;
-  let transactionInputs = addresses =>
-    Belt.(
-      Js.Promise.(
-        addresses
-        |> Map.String.keysToArray
-        |> List.fromArray
-        |> Client.getUTXOs
-        |> then_(utxos =>
-             utxos
-             |. List.map(({txId, txOutputN, address, amount}: utxo) => {
-                  let a: Address.t =
-                    addresses |. Map.String.get(address) |> Js.Option.getExn;
-                  {
-                    txId,
-                    txOutputN,
-                    address,
-                    nCoSigners: a.nCoSigners,
-                    nPubKeys: a.nPubKeys,
-                    value: amount,
-                    coordinates: a.coordinates,
-                    sequence: a.sequence,
-                    unlocked: false,
-                  };
-                })
-             |> resolve
-           )
-      )
-    );
-  let broadcastTransaction = Client.broadcastTransaction;
-};
-
-module Regtest =
-  Make(
-    (
-      val BitcoindClient.make(
-            {
-              bitcoindUrl: "http://localhost:18322",
-              rpcUser: "bitcoin",
-              rpcPassword: "bitcoin",
-            }: BitcoindClient.config,
-            Bitcoin.Networks.testnet,
-          )
-    ),
-  );
-
-module Testnet =
-  Make(
-    (
-      val BlockchainInfoClient.make(
-            BlockchainInfoClient.testnetConfig,
-            Bitcoin.Networks.testnet,
-          )
-    ),
-  );
-
-module Mainnet =
-  Make(
-    (
-      val BlockchainInfoClient.make(
-            BlockchainInfoClient.mainnetConfig,
-            Bitcoin.Networks.bitcoin,
-          )
-    ),
-  );
-
-let transactionInputs =
-  fun
-  | Regtest => Regtest.transactionInputs
-  | Testnet => Testnet.transactionInputs
-  | Mainnet => Mainnet.transactionInputs;
-
-let transactionInfo =
-  fun
-  | Regtest => Regtest.transactionInfo
-  | Testnet => Testnet.transactionInfo
-  | Mainnet => Mainnet.transactionInfo;
-
-let currentBlockHeight =
-  fun
-  | Regtest => Regtest.currentBlockHeight
-  | Testnet => Testnet.currentBlockHeight
-  | Mainnet => Mainnet.currentBlockHeight;
-
-let broadcastTransaction =
-  fun
-  | Regtest => Regtest.broadcastTransaction
-  | Testnet => Testnet.broadcastTransaction
-  | Mainnet => Mainnet.broadcastTransaction;
-
 let bitcoinNetwork =
   fun
-  | Regtest => Regtest.network
-  | Testnet => Testnet.network
-  | Mainnet => Mainnet.network;
+  | Regtest => Bitcoin.Networks.testnet
+
+  | Testnet => Bitcoin.Networks.testnet
+
+  | Mainnet => Bitcoin.Networks.bitcoin;
 
 let testnetIncomeAddress = "2Mt1spz31MXtY5bVHUAEGtFQcFHrG9gza6k";
 

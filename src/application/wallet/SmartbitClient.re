@@ -153,7 +153,7 @@ let getCurrentBlockHeight = (config, ()) =>
        })
   );
 
-let make = (config, network) : (module WalletTypes.NetworkClient) =>
+let make = (config, network) : (module WalletTypes.NetworkClientInterface) =>
   (module
    {
      let network = network;

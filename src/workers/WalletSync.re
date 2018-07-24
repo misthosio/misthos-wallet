@@ -55,7 +55,7 @@ let broadcastPayouts =
          (. processId, {txId, payoutTx: {txHex}}: Event.Payout.Finalized.t) =>
          txHex
          |> Bitcoin.Transaction.fromHex
-         |> Network.broadcastTransaction(network)
+         |> NetworkClient.broadcastTransaction(network)
          |> then_(result =>
               (
                 switch (result) {
@@ -124,8 +124,8 @@ let scanTransactions = ({addresses, transactions} as collector) =>
   Js.Promise.(
     all2((
       addresses.exposedAddresses
-      |> Network.transactionInputs(addresses.network),
-      Network.currentBlockHeight(addresses.network, ()),
+      |> NetworkClient.transactionInputs(addresses.network),
+      NetworkClient.currentBlockHeight(addresses.network, ()),
     ))
     |> then_(((utxos, blockHeight)) =>
          utxos
@@ -137,7 +137,7 @@ let scanTransactions = ({addresses, transactions} as collector) =>
               |> Map.String.keysToArray
               |> Set.String.mergeMany(Set.String.empty),
             )
-         |> Network.transactionInfo(addresses.network)
+         |> NetworkClient.transactionInfo(addresses.network)
          |> then_(txInfos =>
               (utxos, txInfos, blockHeight, collector) |> resolve
             )

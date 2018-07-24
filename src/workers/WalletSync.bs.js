@@ -5,12 +5,12 @@ var Block = require("bs-platform/lib/js/block.js");
 var Curry = require("bs-platform/lib/js/curry.js");
 var Event = require("../application/events/Event.bs.js");
 var Utils = require("../utils/Utils.bs.js");
-var Network = require("../application/wallet/Network.bs.js");
 var Belt_Map = require("bs-platform/lib/js/belt_Map.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
 var WorkerUtils = require("./WorkerUtils.bs.js");
+var NetworkClient = require("../application/wallet/NetworkClient.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_MapString = require("bs-platform/lib/js/belt_MapString.js");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -81,7 +81,7 @@ function broadcastPayouts(param) {
   var network = param[/* network */0];
   return Belt_Map.forEachU(param[/* notYetBroadcastPayouts */5], (function (processId, param) {
                 var txId = param[/* txId */1];
-                return catchAndLogError(Curry._1(Network.broadcastTransaction(network), BitcoinjsLib.Transaction.fromHex(param[/* payoutTx */2][/* txHex */0])).then((function (result) {
+                return catchAndLogError(Curry._1(NetworkClient.broadcastTransaction(network), BitcoinjsLib.Transaction.fromHex(param[/* payoutTx */2][/* txHex */0])).then((function (result) {
                                   var tmp;
                                   if (typeof result === "number") {
                                     tmp = postMessage$1(/* SyncWallet */Block.__(15, [
@@ -148,12 +148,12 @@ function scanTransactions(collector) {
   var transactions = collector[/* transactions */1];
   var addresses = collector[/* addresses */0];
   return Promise.all(/* tuple */[
-                Network.transactionInputs(addresses[/* network */0])(addresses[/* exposedAddresses */2]),
-                Curry._1(Network.currentBlockHeight(addresses[/* network */0]), /* () */0)
+                NetworkClient.transactionInputs(addresses[/* network */0])(addresses[/* exposedAddresses */2]),
+                Curry._1(NetworkClient.currentBlockHeight(addresses[/* network */0]), /* () */0)
               ]).then((function (param) {
                 var blockHeight = param[1];
                 var utxos = param[0];
-                return Curry._1(Network.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */2], Belt_List.toArray(Belt_List.mapU(utxos, (function (param) {
+                return Curry._1(NetworkClient.transactionInfo(addresses[/* network */0]), Belt_SetString.diff(Belt_SetString.mergeMany(transactions[/* transactionsOfInterest */2], Belt_List.toArray(Belt_List.mapU(utxos, (function (param) {
                                                 return param[/* txId */0];
                                               })))), Belt_SetString.mergeMany(Belt_SetString.empty, Belt_MapString.keysToArray(transactions[/* confirmedTransactions */4])))).then((function (txInfos) {
                               return Promise.resolve(/* tuple */[

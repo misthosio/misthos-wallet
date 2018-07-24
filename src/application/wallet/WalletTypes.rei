@@ -18,7 +18,7 @@ type broadcastResult =
   | Error(string)
   | FetchError(Js.Promise.error);
 
-module type NetworkClient = {
+module type NetworkClientInterface = {
   let network: Bitcoin.Networks.t;
   let getUTXOs: list(string) => Js.Promise.t(list(utxo));
   let getTransactionInfo: Belt.Set.String.t => Js.Promise.t(list(txInfo));
