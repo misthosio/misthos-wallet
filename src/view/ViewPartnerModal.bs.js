@@ -168,7 +168,7 @@ function make(viewData, commands, cmdStatus, _) {
                 case 0 : 
                     onboardingBody = ReasonReact.element(/* None */0, /* None */0, AlertBox.make(/* array */[
                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](userId) + ViewPartnerModalText.AlertBox[/* signInRequired */0])])),
-                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* signInRequired */0](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* webDomain */5])], /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* signInRequired */0](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* webDomain */5])], /* None */0, /* None */0, /* array */[
                                         ViewCommon.text("SEND A SIGN IN REMINDER"),
                                         sendIcon$1
                                       ]))
@@ -191,7 +191,7 @@ function make(viewData, commands, cmdStatus, _) {
                                         ReasonReact.element(/* None */0, /* None */0, MaterialUi_Tooltip.make(/* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */["venter-url-label"], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Bottom */437082891], /* None */0, /* None */0, ViewCommon.text("Copy to Clipboard"), /* None */0, /* None */0, /* array */[copyButton(element, /* Some */[ventureLink], /* () */0)])),
                                         ViewCommon.text(ViewPartnerModalText.AlertBox[/* syncRequiredPart2 */3])
                                       ])),
-                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* syncRequired */1](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* joinVentureUrl */4])], /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* syncRequired */1](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* joinVentureUrl */4])], /* None */0, /* None */0, /* array */[
                                         ViewCommon.text("SHARE THE SYNC URL"),
                                         sendIcon$1
                                       ]))

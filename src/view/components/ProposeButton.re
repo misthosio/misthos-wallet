@@ -87,7 +87,8 @@ let make =
               |]
             | (_, Error(_) | Idle)
             | (NoDecision, _) => [|
-                <MButton fullWidth=true onClick=(_e => send(Propose))>
+                <MButton
+                  fullWidth=true onClick=(_e => send(Propose)) submitBtn=true>
                   (text(proposeText))
                 </MButton>,
                 <CommandExecutor.Status cmdStatus action=Proposal />,

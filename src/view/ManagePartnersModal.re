@@ -308,6 +308,7 @@ let make =
         state: {alertText, canSubmitProposal, viewData, inputs} as state,
       },
     ) => {
+    let onSubmit = () => send(ProposePartner);
     let partners =
       ReasonReact.array(
         Array.of_list(
@@ -348,7 +349,7 @@ let make =
       title1=("Addition Proposal" |> text)
       title2=("Removal Proposal" |> text)
       area3={
-        <div>
+        <form onSubmit=(ignoreEvent(onSubmit))>
           <MTypography variant=`Body2>
             ("Add a Blockstack ID" |> text)
           </MTypography>
@@ -378,13 +379,13 @@ let make =
             }
           />
           <ProposeButton
-            onSubmit=(() => send(ProposePartner))
+            onSubmit
             canSubmitProposal
             withConfirmation=false
             proposeText="Propose partner addition"
             cmdStatus=proposeCmdStatus
           />
-        </div>
+        </form>
       }
       area4={
         <div className=ScrollList.containerStyles>

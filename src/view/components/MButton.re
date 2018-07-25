@@ -46,6 +46,7 @@ let make =
       ~gutterBottom=false,
       ~href=?,
       ~targetBlank=false,
+      ~submitBtn=false,
       children,
     ) => {
   ...component,
@@ -53,18 +54,22 @@ let make =
     let callback = (~props) =>
       ReasonReact.cloneElement(<a target="_blank" />, ~props, [||]);
     let component = targetBlank ? Some(`Callback(callback)) : None;
-    <MaterialUi.Button
-      ?size
-      className=(
-        Styles.button(fullWidth, variant, gutterTop, gutterBottom)
-        ++ " "
-        ++ className
-      )
-      ?color
-      ?href
-      ?component
-      ?onClick>
-      children
-    </MaterialUi.Button>;
+    let button =
+      <MaterialUi.Button
+        ?size
+        className=(
+          Styles.button(fullWidth, variant, gutterTop, gutterBottom)
+          ++ " "
+          ++ className
+        )
+        ?color
+        ?href
+        ?component
+        ?onClick>
+        children
+      </MaterialUi.Button>;
+    submitBtn ?
+      button |. ReasonReact.cloneElement(~props={"type": "submit"}, [||]) :
+      button;
   },
 };

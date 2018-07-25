@@ -74,13 +74,14 @@ function button(fullWidth, variant, gutterTop, gutterBottom) {
 
 var Styles = /* module */[/* button */button];
 
-function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, href, $staropt$star$5, children) {
+function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, href, $staropt$star$5, $staropt$star$6, children) {
   var fullWidth = $staropt$star ? $staropt$star[0] : false;
   var variant = $staropt$star$1 ? $staropt$star$1[0] : /* Outlined */1;
   var className = $staropt$star$2 ? $staropt$star$2[0] : "";
   var gutterTop = $staropt$star$3 ? $staropt$star$3[0] : true;
   var gutterBottom = $staropt$star$4 ? $staropt$star$4[0] : false;
   var targetBlank = $staropt$star$5 ? $staropt$star$5[0] : false;
+  var submitBtn = $staropt$star$6 ? $staropt$star$6[0] : false;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -101,7 +102,14 @@ function make(color, onClick, size, $staropt$star, $staropt$star$1, $staropt$sta
                     -659008027,
                     callback
                   ]] : /* None */0;
-              return ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant, gutterTop, gutterBottom) + (" " + className)], color, component, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, href, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+              var button$1 = ReasonReact.element(/* None */0, /* None */0, MaterialUi_Button.make(/* Some */[button(fullWidth, variant, gutterTop, gutterBottom) + (" " + className)], color, component, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, href, /* None */0, size, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, onClick, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[children]));
+              if (submitBtn) {
+                return React.cloneElement(button$1, {
+                            type: "submit"
+                          });
+              } else {
+                return button$1;
+              }
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

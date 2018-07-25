@@ -264,9 +264,9 @@ function make(viewData, commands, cmdStatus, _) {
                                   return Curry._1(send, /* ChangeBTCAmount */Block.__(1, [ViewCommon.extractString(e)]));
                                 })], /* Some */[false], /* Some */[true], /* Some */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_InputAdornment.make(/* None */0, /* None */0, /* None */0, /* Some */[/* End */3455931], /* None */0, /* None */0, /* array */[ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                                       return Curry._1(send, /* EnterMax */0);
-                                                    })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* Some */[false], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Max")]))]))], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
+                                                    })], /* Some */[/* Small */311976103], /* None */0, /* Some */[/* Flat */0], /* Some */[maxButton], /* Some */[false], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Max")]))]))], /* None */0, /* None */0, /* None */0, /* None */0, /* Some */[true], /* array */[])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* Some */[(function () {
                                   return Curry._1(send, /* AddToSummary */1);
-                                })], /* Some */[/* Small */311976103], /* Some */[true], /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("+ Add Another Recipient")])));
+                                })], /* Some */[/* Small */311976103], /* Some */[true], /* Some */[/* Flat */0], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("+ Add Another Recipient")])));
               } else {
                 tmp = null;
               }

@@ -279,6 +279,9 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
               var send = param[/* send */3];
               var state = param[/* state */1];
               var inputs = state[/* inputs */4];
+              var onSubmit = function () {
+                return Curry._1(send, /* ProposePartner */1);
+              };
               var partners = $$Array.of_list(Belt_List.keepMapU(state[/* viewData */0][/* partners */2], (function (partner) {
                           var match = partner[/* canProposeRemoval */3];
                           if (match) {
@@ -295,7 +298,11 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                           }
                         })));
               var partial_arg = state[/* suggestions */5];
-              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Addition Proposal")], /* Some */[ViewCommon.text("Removal Proposal")], /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Add a Blockstack ID")])), ReasonReact.element(/* None */0, /* None */0, Autosuggest.make({
+              return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Addition Proposal")], /* Some */[ViewCommon.text("Removal Proposal")], /* None */0, /* None */0, /* Some */[React.createElement("form", {
+                                    onSubmit: (function (param) {
+                                        return ViewCommon.ignoreEvent(onSubmit, param);
+                                      })
+                                  }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Add a Blockstack ID")])), ReasonReact.element(/* None */0, /* None */0, Autosuggest.make({
                                             container: autoCompleteContainer,
                                             suggestionsContainerOpen: suggestionsContainerOpen,
                                             suggestion: suggestion,
@@ -313,9 +320,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                                             onChange: (function (_, change) {
                                                 return Curry._1(send, /* ChangeNewPartnerId */Block.__(2, [change.newValue]));
                                               })
-                                          }, /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", /* None */0, (function () {
-                                              return Curry._1(send, /* ProposePartner */1);
-                                            }), /* None */0, /* None */0, state[/* canSubmitProposal */2], /* Some */[false], proposeCmdStatus, /* array */[])))], /* Some */[React.createElement("div", {
+                                          }, /* array */[])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose partner addition", /* None */0, onSubmit, /* None */0, /* None */0, state[/* canSubmitProposal */2], /* Some */[false], proposeCmdStatus, /* array */[])))], /* Some */[React.createElement("div", {
                                     className: ScrollList.containerStyles
                                   }, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("\n               To propose the removal of a Partner from this Venture,\n               select his or her name below and submit your proposal.\n               When enough Partners endorse this proposal, the Partner will be removed.\n               ")])), ReasonReact.element(/* None */0, /* None */0, ScrollList.make(/* array */[ReasonReact.element(/* None */0, /* None */0, MaterialUi_List.make(/* None */0, /* None */0, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[partners]))])), ReasonReact.element(/* None */0, /* None */0, ProposeButton.make("Propose Partner Removal", state[/* alertText */1], (function () {
                                               return Curry._1(send, /* RemovePartner */2);
