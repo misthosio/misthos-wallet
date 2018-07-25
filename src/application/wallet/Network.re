@@ -1,5 +1,3 @@
-open WalletTypes;
-
 type t =
   | Regtest
   | Testnet
