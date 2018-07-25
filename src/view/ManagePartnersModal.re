@@ -268,14 +268,7 @@ let make =
            removePartnerCmds.proposePartnerRemoval(~partnerId)
          )
       |> ignore;
-      ReasonReact.Update({
-        ...state,
-        alertText: None,
-        inputs: {
-          ...state.inputs,
-          removePartnerId: None,
-        },
-      });
+      ReasonReact.Update({...state, alertText: None});
     | SelectRemovePartner(partner) =>
       switch (removeCmdStatus, state.removeInputFrozen) {
       | (Success(_) | Error(_), _)
@@ -321,11 +314,6 @@ let make =
         state: {alertText, canSubmitProposal, viewData, inputs} as state,
       },
     ) => {
-    let activeStep =
-      switch (proposeCmdStatus) {
-      | Success(_) => 1
-      | _ => 0
-      };
     let partners =
       ReasonReact.array(
         Array.of_list(
@@ -361,180 +349,47 @@ let make =
              ),
         ),
       );
-    let icon = index =>
-      <svg width="44" height="44" viewBox="0 0 44 44">
-        <defs>
-          <linearGradient
-            id="a" x1="162.467%" x2="-41.102%" y1="29.557%" y2="66.287%">
-            <stop offset="0%" stopColor="#05CFDB" />
-            <stop offset="100%" stopColor="#02A2B4" />
-          </linearGradient>
-        </defs>
-        <g fill="none" fillRule="evenodd" transform="translate(1 1)">
-          <circle cx="21" cy="21" r="21" stroke="#000" />
-          <circle cx="21" cy="21" r="18" fill="url(#a)" />
-          (
-            if (index < activeStep) {
-              <polyline
-                fill="none"
-                stroke="#000"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                points="16 0 5 11 0 6"
-                transform="translate(12 16)"
-              />;
-            } else {
-              <text
-                className=Styles.stepIconText
-                x="21"
-                y="27"
-                textAnchor="middle">
-                (index + 1 |> string_of_int |> text)
-              </text>;
-            }
-          )
-        </g>
-      </svg>;
-    let copyButton = (~element, ~className="", ()) =>
-      ReasonReact.cloneElement(
-        element,
-        ~props={
-          "data-clipboard-text": viewData.joinVentureUrl,
-          "className": "copy-btn" ++ " " ++ className,
-        },
-        [||],
-      );
 
     <Grid
       title1=("Addition Proposal" |> text)
       title2=("Removal Proposal" |> text)
       area3={
         <div>
-          MaterialUi.(
-            <Stepper
-              className=Styles.stepper
-              orientation=`Vertical
-              activeStep=(`Int(activeStep))>
-              <Step key="enter-id">
-                <StepLabel
-                  classes=[IconContainer(Styles.icon)] icon=(icon(0))>
-                  ("ADD A BLOCKSTACK ID" |> text)
-                </StepLabel>
-                <StepContent className=Styles.autoCompleteContianerOverflow>
-                  <Autosuggest
-                    theme={
-                      "container": Styles.autoCompleteContainer,
-                      "suggestionsContainerOpen": Styles.suggestionsContainerOpen,
-                      "suggestion": Styles.suggestion,
-                      "suggestionsList": Styles.suggestionsList,
-                    }
-                    suggestions=state.displayedSuggestions
-                    getSuggestionValue=(s => s)
-                    onSuggestionsFetchRequested=(
-                      onSuggestionsFetchRequested(send, state.suggestions)
-                    )
-                    shouldRenderSuggestions=(
-                      value => Js.String.trim(value) |> Js.String.length > 2
-                    )
-                    onSuggestionsClearRequested=(() => send(ClearSuggestions))
-                    renderSuggestion
-                    renderInputComponent
-                    renderSuggestionsContainer
-                    inputProps={
-                      "value": inputs.prospectId,
-                      "onChange": (_e, change) =>
-                        send(ChangeNewPartnerId(change##newValue)),
-                    }
-                  />
-                  <ProposeButton
-                    onSubmit=(() => send(ProposePartner))
-                    canSubmitProposal
-                    withConfirmation=false
-                    proposeText="Propose partner addition"
-                    cmdStatus=proposeCmdStatus
-                  />
-                </StepContent>
-              </Step> /* classes=[Root(Styles.stepperContentRoot)] */
-              <Step>
-                <StepLabel
-                  classes=[IconContainer(Styles.icon)] icon=(icon(1))>
-                  ("SHARE THE " |> text)
-                  <Tooltip
-                    id="venter-url-label"
-                    title=("Copy to Clipboard" |> text)
-                    placement=`Bottom>
-                    {
-                      let element =
-                        <a
-                          href=viewData.joinVentureUrl
-                          onClick=ReactEventRe.Synthetic.preventDefault>
-                          ("VENTURE URL" |> text)
-                        </a>;
-                      copyButton(~element, ~className=Styles.ventureLink, ());
-                    }
-                  </Tooltip>
-                </StepLabel>
-                <StepContent>
-                  <MTypography variant=`Body2>
-                    (
-                      {js|
-               Please send the following URL to the proposed Partner so they can access the Venture:
-               |js}
-                      |> text
-                    )
-                  </MTypography>
-                  <MTypography variant=`Body2>
-                    ("Share this Venture via a " |> text)
-                    {
-                      let element =
-                        <a
-                          href=viewData.joinVentureUrl
-                          onClick=ReactEventRe.Synthetic.preventDefault>
-                          ("private share link" |> text)
-                        </a>;
-                      copyButton(~element, ~className=Styles.ventureLink, ());
-                    }
-                    <Tooltip
-                      id="venter-url-copy-btn"
-                      title=("Copy to Clipboard" |> text)
-                      placement=`Bottom>
-                      {
-                        let element =
-                          <MaterialUi.IconButton>
-                            Icons.copy
-                          </MaterialUi.IconButton>;
-                        copyButton(~element, ());
-                      }
-                    </Tooltip>
-                  </MTypography>
-                  <MButton
-                    fullWidth=true
-                    href=(
-                      "mailto:?subject="
-                      ++ LinkEmail.subject(viewData.ventureName)
-                      ++ "&body="
-                      ++ LinkEmail.body(
-                           inputs.prospectId,
-                           viewData.ventureName,
-                           viewData.joinVentureUrl,
-                           viewData.localUser |> UserId.toString,
-                         )
-                    )>
-                    ("Email the link " |> text)
-                  </MButton>
-                  <MButton
-                    gutterTop=false
-                    gutterBottom=true
-                    fullWidth=true
-                    variant=Flat
-                    onClick=(_e => send(AddAnother))>
-                    (text("Propose another Partner"))
-                  </MButton>
-                </StepContent>
-              </Step>
-            </Stepper>
-          )
+          <MTypography variant=`Body2>
+            ("Add a Blockstack ID" |> text)
+          </MTypography>
+          <Autosuggest
+            theme={
+              "container": Styles.autoCompleteContainer,
+              "suggestionsContainerOpen": Styles.suggestionsContainerOpen,
+              "suggestion": Styles.suggestion,
+              "suggestionsList": Styles.suggestionsList,
+            }
+            suggestions=state.displayedSuggestions
+            getSuggestionValue=(s => s)
+            onSuggestionsFetchRequested=(
+              onSuggestionsFetchRequested(send, state.suggestions)
+            )
+            shouldRenderSuggestions=(
+              value => Js.String.trim(value) |> Js.String.length > 2
+            )
+            onSuggestionsClearRequested=(() => send(ClearSuggestions))
+            renderSuggestion
+            renderInputComponent
+            renderSuggestionsContainer
+            inputProps={
+              "value": inputs.prospectId,
+              "onChange": (_e, change) =>
+                send(ChangeNewPartnerId(change##newValue)),
+            }
+          />
+          <ProposeButton
+            onSubmit=(() => send(ProposePartner))
+            canSubmitProposal
+            withConfirmation=false
+            proposeText="Propose partner addition"
+            cmdStatus=proposeCmdStatus
+          />
         </div>
       }
       area4={

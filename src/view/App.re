@@ -38,20 +38,30 @@ let make = (~session, ~updateSession, ~signTAC, _children) => {
     | (
         LoggedIn(_),
         Venture(selected, ManagePartners),
-        VentureLoaded(_, venture, commands),
+        VentureLoaded(ventureId, venture, commands),
       ) =>
       venture |> ViewModel.readOnly ?
         None :
         Some((
           <CommandExecutor
-            commands lastResponse=(venture |> ViewModel.lastResponse)>
+            commands
+            lastResponse=(venture |> ViewModel.lastResponse)
+            onProcessStarted=(
+              processId =>
+                Router.goTo(Venture(ventureId, Partner(processId)))
+            )>
             ...(
                  (
                    ~commands as proposePartnerCmds,
                    ~cmdStatus as proposeCmdStatus,
                  ) =>
                    <CommandExecutor
-                     commands lastResponse=(venture |> ViewModel.lastResponse)>
+                     commands
+                     lastResponse=(venture |> ViewModel.lastResponse)
+                     onProcessStarted=(
+                       processId =>
+                         Router.goTo(Venture(ventureId, Partner(processId)))
+                     )>
                      ...(
                           (
                             ~commands as removePartnerCmds,

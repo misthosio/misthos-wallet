@@ -156,7 +156,7 @@ module Status = {
           "Your submission could not be persisted, probably due to network connectivity."
           |> message(Error)
         | UserIdDoesNotExist =>
-          "Blockstack id does not exist" |> message(Error)
+          "Blockstack id does not exist, or is corrupted" |> message(Error)
         | MaxPartnersReached =>
           "The maximum number of partners we currently support in a venture has been reached"
           |> message(Error)
