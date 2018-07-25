@@ -170,6 +170,7 @@ function fromViewModelState$2(processId, param) {
   return Utils.mapOption((function (partnerProcess) {
                 var match = partnerProcess[/* data */5][/* processType */1];
                 return /* record */[
+                        /* localUser */localUser,
                         /* ventureName */ventureName,
                         /* partnerProcess */partnerProcess,
                         /* atRiskWarning */match ? false : Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
@@ -193,7 +194,7 @@ function fromViewModelState$2(processId, param) {
                                 ventureId,
                                 localUser
                               ])),
-                        /* appDomain */environment[/* appDomain */2]
+                        /* webDomain */environment[/* webDomain */3]
                       ];
               }), ViewModel__PartnersCollector.getPartnerProcess(processId, param[/* partnersCollector */6]));
 }

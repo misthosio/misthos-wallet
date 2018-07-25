@@ -54,14 +54,14 @@ function make(viewData, commands, cmdStatus, _) {
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */(function (param) {
-              updateLoggedInStatus(viewData[/* partnerProcess */1], param[/* send */3]);
+              updateLoggedInStatus(viewData[/* partnerProcess */2], param[/* send */3]);
               return /* record */[
                       /* viewData */viewData,
                       /* loggedInStatus */param[/* state */1][/* loggedInStatus */1]
                     ];
             }),
           /* didMount */(function (param) {
-              return updateLoggedInStatus(viewData[/* partnerProcess */1], param[/* send */3]);
+              return updateLoggedInStatus(viewData[/* partnerProcess */2], param[/* send */3]);
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
@@ -71,7 +71,7 @@ function make(viewData, commands, cmdStatus, _) {
               var match = param[/* state */1];
               var loggedInStatus = match[/* loggedInStatus */1];
               var viewData = match[/* viewData */0];
-              var match$1 = viewData[/* partnerProcess */1];
+              var match$1 = viewData[/* partnerProcess */2];
               var match$2 = match$1[/* data */5];
               var processType = match$2[/* processType */1];
               var userId = match$2[/* userId */0];
@@ -94,7 +94,7 @@ function make(viewData, commands, cmdStatus, _) {
                 ];
               var onboardingState;
               if (processType) {
-                var match$4 = viewData[/* partnerProcess */1][/* data */5][/* joinedWallet */3];
+                var match$4 = viewData[/* partnerProcess */2][/* data */5][/* joinedWallet */3];
                 var exit = 0;
                 if (status !== 1) {
                   if (status !== 0) {
@@ -143,26 +143,26 @@ function make(viewData, commands, cmdStatus, _) {
                 case 0 : 
                     onboardingBody = ReasonReact.element(/* None */0, /* None */0, AlertBox.make(/* array */[
                               ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](userId) + ViewPartnerModalText.AlertBox[/* signInRequired */0])])),
-                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* signInRequired */0](userId, viewData[/* ventureName */0], viewData[/* appDomain */4])], /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* signInRequired */0](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* webDomain */5])], /* None */0, /* array */[
                                         ViewCommon.text("SEND A SIGN IN REMINDER"),
                                         sendIcon$1
                                       ]))
                             ]));
                     break;
                 case 1 : 
-                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */1][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* pendingApproval */2])]));
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* pendingApproval */2])]));
                     break;
                 case 2 : 
                     onboardingBody = ReasonReact.element(/* None */0, /* None */0, AlertBox.make(/* array */[
-                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */1][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* syncRequired */1])])),
-                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* syncRequired */1](userId, viewData[/* ventureName */0], viewData[/* joinVentureUrl */3])], /* None */0, /* array */[
+                              ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* syncRequired */1])])),
+                              ReasonReact.element(/* None */0, /* None */0, MButton.make(/* None */0, /* None */0, /* None */0, /* None */0, /* Some */[/* Flat */0], /* Some */[sendButton], /* Some */[false], /* None */0, /* Some */[ViewPartnerModalText.Email[/* syncRequired */1](userId, viewData[/* localUser */0], viewData[/* ventureName */1], viewData[/* joinVentureUrl */4])], /* None */0, /* array */[
                                         ViewCommon.text("SHARE THE SYNC URL"),
                                         sendIcon$1
                                       ]))
                             ]));
                     break;
                 case 3 : 
-                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */1][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* fullyOnboarded */3])]));
+                    onboardingBody = ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body1 */-904051921, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text(PrimitiveTypes.UserId[/* toString */0](viewData[/* partnerProcess */2][/* data */5][/* userId */0]) + ViewPartnerModalText.AlertBox[/* fullyOnboarded */3])]));
                     break;
                 case 4 : 
                     onboardingBody = null;
@@ -207,7 +207,7 @@ function make(viewData, commands, cmdStatus, _) {
                 
               }
               var statusChip = ReasonReact.element(/* None */0, /* None */0, StatusChip.make(match$5[1], match$5[0], /* array */[]));
-              var match$6 = viewData[/* atRiskWarning */2];
+              var match$6 = viewData[/* atRiskWarning */3];
               var alertText = match$6 ? /* Some */[WarningsText.partnerRemovalRisk] : /* None */0;
               return ReasonReact.element(/* None */0, /* None */0, Grid.make(/* Some */[ViewCommon.text("Proposed Partner " + processTypeString)], /* None */0, /* None */0, /* None */0, /* Some */[React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Title */594052472, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed Partner " + processTypeString)])), ReasonReact.element(/* Some */[PrimitiveTypes.UserId[/* toString */0](userId)], /* None */0, Partner.make(userId, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* array */[ViewCommon.text("Proposed by " + PrimitiveTypes.UserId[/* toString */0](match$1[/* proposedBy */2]))])), ReasonReact.element(/* None */0, /* None */0, MTypography.make(/* Body2 */-904051920, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
                                             ViewCommon.text("Status: "),

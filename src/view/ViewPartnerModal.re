@@ -121,9 +121,10 @@ let make =
             variant=Flat
             href=(
               Text.Email.signInRequired(
+                ~localUser=viewData.localUser,
                 ~userId,
                 ~venture=viewData.ventureName,
-                ~appDomain=viewData.appDomain,
+                ~webDomain=viewData.webDomain,
               )
             )>
             ("SEND A SIGN IN REMINDER" |> text)
@@ -153,6 +154,7 @@ let make =
             variant=Flat
             href=(
               Text.Email.syncRequired(
+                ~localUser=viewData.localUser,
                 ~userId,
                 ~venture=viewData.ventureName,
                 ~joinUrl=viewData.joinVentureUrl,

@@ -210,11 +210,12 @@ module ViewPartnerView = {
   type voter = ProcessCollector.voter;
   type partnerProcess = PartnersCollector.partnerProcess;
   type t = {
+    localUser: userId,
     ventureName: string,
     partnerProcess,
     atRiskWarning: bool,
     joinVentureUrl: string,
-    appDomain: string,
+    webDomain: string,
   };
   let environment = Environment.get();
   let fromViewModelState =
@@ -232,9 +233,10 @@ module ViewPartnerView = {
     |> PartnersCollector.getPartnerProcess(processId)
     |> Utils.mapOption(partnerProcess =>
          {
+           localUser,
            ventureName,
            partnerProcess,
-           appDomain: environment.appDomain,
+           webDomain: environment.webDomain,
            joinVentureUrl:
              environment.appDomain
              ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),

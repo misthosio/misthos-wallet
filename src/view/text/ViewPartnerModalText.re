@@ -1,11 +1,12 @@
 [@bs.val] external encodeURI : string => string = "";
 
 module AlertBox = {
-  let signInRequired = {| has not yet signed into Misthos and is therefore
-                        missing a public key. Please remind them to sign in to
+  let signInRequired = {| has not yet signed into Misthos and therefore
+                        reading their public key (for encrypting data) is
+                        not yet possible. Please remind them to sign in to
                         automatically expose a public key before joining the
                         Venture.|};
-  let syncRequired = {| has been fully endorsed and is ready to sync data with
+  let syncRequired = {| has been accepted and is ready to sync data with
                       the Venture. Please send them the Venture sync URL to
                       complete the process.|};
   let pendingApproval = {| has to be accepted before onboarding can proceed.|};
@@ -13,38 +14,43 @@ module AlertBox = {
 };
 
 module Email = {
-  let signInRequired = (~userId, ~venture, ~appDomain) =>
+  let signInRequired = (~userId, ~localUser, ~venture, ~webDomain) =>
     "mailto:?subject="
-    ++ encodeURI({j|I want to add you to a Misthos Venture: $venture|j})
+    ++ encodeURI({j|I want to add you to a Misthos Venture: "$venture"|j})
     ++ "&body="
     ++ encodeURI(
          {j|Hi $userId,
 
-I want to add you to the $venture Venture on Misthos, a multisig bitcoin wallet to collaboratively handle our income and payouts.
+I want to add you to the "$venture" Venture on Misthos, a multisig bitcoin wallet to collaboratively handle our income and payouts.
 
-Before I can send you the invite, please sign into $appDomain to create your public key. Let me know when you’ve done so, and I can send you the Venture invite link.
+Before I can send you the invite, please sign into $webDomain to expose your public key for data encryption (this will happen automatically when you sign in). Let me know when you’ve done so, and I can send you the Venture invite link.
 
 If you have any questions about Misthos, check out their FAQ.
 
-Thanks!
+Thank you,
+$localUser
+
+www.misthos.io
 |j},
        );
 
-  let syncRequired = (~userId, ~venture, ~joinUrl) =>
+  let syncRequired = (~userId, ~localUser, ~venture, ~joinUrl) =>
     "mailto:?subject="
     ++ encodeURI({j|Misthos Venture Invite: $venture|j})
     ++ "&body="
     ++ encodeURI(
          {j|Hi $userId,
 
-Please join the $venture Venture on Misthos, a multisig bitcoin wallet to collaboratively handle our income and payouts. Use the link below to join the Venture:
+Please join the "$venture" Venture on Misthos, a multisig bitcoin wallet to collaboratively handle our income and payouts. Use the link below to join the Venture:
 
 $joinUrl
 
 If you have any questions about Misthos, check out their FAQ.
 
-Thanks!
+Thank you,
+$localUser
 
+www.misthos.io
 |j},
        );
 };
