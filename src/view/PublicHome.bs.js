@@ -9,6 +9,7 @@ var MButton = require("./components/MButton.bs.js");
 var ViewCommon = require("./ViewCommon.bs.js");
 var BreakPoints = require("./BreakPoints.bs.js");
 var ReasonReact = require("reason-react/src/ReasonReact.js");
+var ContactUsShoutOut = require("./components/ContactUsShoutOut.bs.js");
 var MaterialUi_SvgIcon = require("@jsiebern/bs-material-ui/src/MaterialUi_SvgIcon.bs.js");
 var MaterialUi_Typography = require("@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js");
 
@@ -173,13 +174,15 @@ function make(onSignIn, _) {
                                       React.createElement("br", undefined),
                                       React.createElement("br", undefined),
                                       ViewCommon.text("Use it for projects. Use it for payments.")
-                                    ])), ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* None */0, /* None */0, /* Some */[area("button")], /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
-                                      ReasonReact.element(/* None */0, /* None */0, MaterialUi_SvgIcon.make(/* Some */[Css.style(/* :: */[
-                                                      Css.marginRight(Css.px(16)),
-                                                      /* [] */0
-                                                    ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.blockStack])),
-                                      ViewCommon.text("Sign In with Blockstack")
-                                    ]))));
+                                    ])), React.createElement("div", {
+                                  className: area("button")
+                                }, ReasonReact.element(/* None */0, /* None */0, MButton.make(/* Some */[/* Inherit */-72987685], /* Some */[onSignIn], /* None */0, /* Some */[true], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[
+                                          ReasonReact.element(/* None */0, /* None */0, MaterialUi_SvgIcon.make(/* Some */[Css.style(/* :: */[
+                                                          Css.marginRight(Css.px(16)),
+                                                          /* [] */0
+                                                        ])], /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* None */0, /* array */[Icons.blockStack])),
+                                          ViewCommon.text("Sign In with Blockstack")
+                                        ])), ReasonReact.element(/* None */0, /* None */0, ContactUsShoutOut.make(/* array */[])))));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

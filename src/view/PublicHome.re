@@ -98,13 +98,15 @@ let make = (~onSignIn, _children) => {
             <br />
             ("Use it for projects. Use it for payments." |> text)
           </Typography>
-          <MButton
-            className=(Styles.area("button")) color=`Inherit onClick=onSignIn>
-            <SvgIcon className=Css.(style([marginRight(px(16))]))>
-              Icons.blockStack
-            </SvgIcon>
-            ("Sign In with Blockstack" |> text)
-          </MButton>
+          <div className=(Styles.area("button"))>
+            <MButton color=`Inherit onClick=onSignIn fullWidth=true>
+              <SvgIcon className=Css.(style([marginRight(px(16))]))>
+                Icons.blockStack
+              </SvgIcon>
+              ("Sign In with Blockstack" |> text)
+            </MButton>
+            <ContactUsShoutOut />
+          </div>
         </div>
       </div>
     ),
