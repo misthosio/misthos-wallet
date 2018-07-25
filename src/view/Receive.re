@@ -31,10 +31,7 @@ let make = (~commands: VentureWorkerClient.Cmd.t, _children) => {
   initialState: () => {address: None},
   didMount: ({send}) => send(GetIncomeAddress),
   subscriptions: _ => [
-    Sub(
-      () => Clipboard.make(".copy-btn", "modal"),
-      clipboard => clipboard |> Clipboard.destroy,
-    ),
+    Sub(() => Clipboard.make(".copy-btn", "modal"), Clipboard.destroy),
   ],
   reducer: (action, _state) =>
     switch (action) {

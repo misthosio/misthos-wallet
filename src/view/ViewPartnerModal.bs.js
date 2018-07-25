@@ -271,8 +271,8 @@ function make(viewData, commands, cmdStatus, _) {
                         (function () {
                             return Clipboard.make(".copy-btn", "modal");
                           }),
-                        (function (clipboard) {
-                            clipboard.destroy();
+                        (function (prim) {
+                            prim.destroy();
                             return /* () */0;
                           })
                       ],

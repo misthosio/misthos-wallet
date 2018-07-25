@@ -61,10 +61,7 @@ let make =
     },
   didMount: ({send}) => updateLoggedInStatus(viewData.partnerProcess, send),
   subscriptions: _ => [
-    Sub(
-      () => Clipboard.make(".copy-btn", "modal"),
-      clipboard => clipboard |> Clipboard.destroy,
-    ),
+    Sub(() => Clipboard.make(".copy-btn", "modal"), Clipboard.destroy),
   ],
   render: ({state: {viewData, loggedInStatus}}) => {
     let copyButton = (~element, ~className="", ()) =>

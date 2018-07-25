@@ -216,12 +216,6 @@ let make =
     displayedSuggestions: [||],
   },
   willReceiveProps: ({state}) => {...state, viewData},
-  subscriptions: _ => [
-    Sub(
-      () => Clipboard.make(".copy-btn", "modal"),
-      clipboard => clipboard |> Clipboard.destroy,
-    ),
-  ],
   reducer: (action, {viewData} as state) =>
     switch (action) {
     | UpdateSuggestions(query, suggestions) =>

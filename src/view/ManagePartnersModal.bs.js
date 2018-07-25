@@ -16,7 +16,6 @@ var Partner = require("./components/Partner.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var Caml_obj = require("bs-platform/lib/js/caml_obj.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
-var Clipboard = require("../ffi/Clipboard.bs.js");
 var Js_option = require("bs-platform/lib/js/js_option.js");
 var Belt_Array = require("bs-platform/lib/js/belt_Array.js");
 var Blockstack = require("../ffi/Blockstack.bs.js");
@@ -507,20 +506,7 @@ function make(viewData, proposePartnerCmds, proposeCmdStatus, removePartnerCmds,
                 }
               }
             }),
-          /* subscriptions */(function () {
-              return /* :: */[
-                      /* Sub */[
-                        (function () {
-                            return Clipboard.make(".copy-btn", "modal");
-                          }),
-                        (function (clipboard) {
-                            clipboard.destroy();
-                            return /* () */0;
-                          })
-                      ],
-                      /* [] */0
-                    ];
-            }),
+          /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
 }
