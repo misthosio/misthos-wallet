@@ -23,7 +23,7 @@ var balance = Css.style(/* :: */[
               /* :: */[
                 Css.letterSpacing(Css.px(1)),
                 /* :: */[
-                  Css.unsafe("fill", "rgba(0, 0, 0, 0.87)"),
+                  Css.unsafe("fill", "rgba(0, 0, 0, 1)"),
                   /* [] */0
                 ]
               ]

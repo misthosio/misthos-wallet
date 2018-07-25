@@ -4,6 +4,12 @@ let uDarkGray = "1f2532";
 
 let darkGray = hex(uDarkGray);
 
+let clickableGray = rgba(0, 0, 0, 0.5);
+let grayedOut = rgba(0, 0, 0, 0.2);
+
+let uDevider = "979797";
+let devider = hex(uDevider);
+
 let uBlack = "000000";
 
 let black = hex(uBlack);
@@ -20,7 +26,7 @@ let uWarning = "f5a623";
 
 let warning = hex(uWarning);
 
-let uError = "d0021b";
+let uError = "ff3253";
 
 let error = hex(uError);
 

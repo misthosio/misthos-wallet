@@ -15,7 +15,7 @@ module Styles = {
       minWidth(px(0)),
       firstChild([paddingLeft(px(16))]),
     ]);
-  let divider = style([borderBottom(px(1), `solid, hex("979797"))]);
+  let divider = style([borderBottom(px(1), `solid, Colors.devider)]);
   let amount = (inOut: txType) =>
     style([
       color(

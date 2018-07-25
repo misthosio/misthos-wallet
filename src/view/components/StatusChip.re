@@ -14,7 +14,7 @@ module Styles = {
     style([
       backgroundColor(
         switch (status) {
-        | Neutral => rgba(0, 0, 0, 0.2)
+        | Neutral => Colors.grayedOut
         | Pending => rgba(245, 166, 35, 0.2)
         | Failure => rgba(255, 50, 83, 0.2)
         | Success => rgba(2, 162, 180, 0.2)
@@ -23,8 +23,8 @@ module Styles = {
       color(
         switch (status) {
         | Neutral => hex("7f7f7f")
-        | Pending => hex("f5a623")
-        | Failure => hex("ff3253")
+        | Pending => Colors.warning
+        | Failure => Colors.error
         | Success => Colors.misthosTeal
         },
       ),

@@ -91,7 +91,7 @@ module Styles = {
     ]);
   let header = warning =>
     style([
-      borderBottom(px(1), `solid, hex("979797")),
+      borderBottom(px(1), `solid, Colors.devider),
       padding2(~v=px(Theme.space(2)), ~h=px(Theme.space(3))),
       position(sticky),
       zIndex(1),
@@ -103,7 +103,7 @@ module Styles = {
   let details =
     style([
       unsafe("gridColumn", "begin / end"),
-      borderBottom(px(1), `solid, hex("979797")),
+      borderBottom(px(1), `solid, Colors.devider),
     ]);
   let detailsGrid =
     style([
@@ -118,7 +118,7 @@ module Styles = {
       ),
     ]);
   let changeAddress =
-    style([color(rgba(0, 0, 0, 0.5)), textTransform(uppercase)]);
+    style([color(Colors.grayedOut), textTransform(uppercase)]);
 };
 
 let make = (~viewData: ViewData.t, _children) => {

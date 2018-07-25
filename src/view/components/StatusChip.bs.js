@@ -14,7 +14,7 @@ function chip(status) {
   var tmp;
   switch (status) {
     case 0 : 
-        tmp = Css.rgba(0, 0, 0, 0.2);
+        tmp = Colors.grayedOut;
         break;
     case 1 : 
         tmp = Css.rgba(245, 166, 35, 0.2);
@@ -33,10 +33,10 @@ function chip(status) {
         tmp$1 = Css.hex("7f7f7f");
         break;
     case 1 : 
-        tmp$1 = Css.hex("f5a623");
+        tmp$1 = Colors.warning;
         break;
     case 2 : 
-        tmp$1 = Css.hex("ff3253");
+        tmp$1 = Colors.error;
         break;
     case 3 : 
         tmp$1 = Colors.misthosTeal;

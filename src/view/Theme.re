@@ -25,7 +25,7 @@ let theme = (~dark=false, _) =>
         "primary": dark ? "#" ++ Colors.uWhite : "#" ++ Colors.uBlack,
         "secondary": dark ? "#" ++ Colors.uWhite : "#" ++ Colors.uBlack,
         "disabled": dark ? "#" ++ Colors.uWhite : "#" ++ Colors.uBlack,
-        "hint": dark ? "#" ++ Colors.uWhite : "rgba(0, 0, 0, 0.87)",
+        "hint": dark ? "#" ++ Colors.uWhite : "rgba(0, 0, 0, 1)",
       },
       "background": {
         "default": "#" ++ Colors.uWhite,

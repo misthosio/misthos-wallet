@@ -27,7 +27,7 @@ module Styles = {
       whiteSpace(nowrap),
       overflow(hidden),
       textOverflow(ellipsis),
-      color(ex ? rgba(0, 0, 0, 0.2) : `currentColor),
+      color(ex ? Colors.grayedOut : `currentColor),
     ]);
   let secondary = ex =>
     style([
@@ -35,15 +35,14 @@ module Styles = {
       fontSize(px(16)),
       fontWeight(300),
       unsafe("letterSpacing", "0.5px"),
-      color(ex ? rgba(0, 0, 0, 0.2) : rgba(0, 0, 0, 0.87)),
+      color(ex ? Colors.grayedOut : Colors.black),
     ]);
   let secondaryAction = status =>
     switch (status) {
     | Some(_) => style([paddingRight(px(Theme.space(12)))])
     | None => style([paddingRight(px(Theme.space(4)))])
     };
-  let exPartnerStatus =
-    style([fontSize(px(12)), color(rgba(0, 0, 0, 0.87))]);
+  let exPartnerStatus = style([fontSize(px(12)), color(Colors.black)]);
   let exPartnerPrimary = style([]);
 };
 

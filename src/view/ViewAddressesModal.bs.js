@@ -141,7 +141,7 @@ var grid = Css.style(/* :: */[
 
 function header(warning) {
   return Css.style(/* :: */[
-              Css.borderBottom(Css.px(1), /* solid */12956715, Css.hex("979797")),
+              Css.borderBottom(Css.px(1), /* solid */12956715, Colors.devider),
               /* :: */[
                 Css.padding2(Css.px(Theme.space(2)), Css.px(Theme.space(3))),
                 /* :: */[
@@ -169,7 +169,7 @@ var summary = Css.style(/* :: */[
 var details = Css.style(/* :: */[
       Css.unsafe("gridColumn", "begin / end"),
       /* :: */[
-        Css.borderBottom(Css.px(1), /* solid */12956715, Css.hex("979797")),
+        Css.borderBottom(Css.px(1), /* solid */12956715, Colors.devider),
         /* [] */0
       ]
     ]);
@@ -189,7 +189,7 @@ var detailsGrid = Css.style(/* :: */[
     ]);
 
 var changeAddress = Css.style(/* :: */[
-      Css.color(Css.rgba(0, 0, 0, 0.5)),
+      Css.color(Colors.grayedOut),
       /* :: */[
         Css.textTransform(Css.uppercase),
         /* [] */0

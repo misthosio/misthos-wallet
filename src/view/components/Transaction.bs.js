@@ -33,7 +33,7 @@ var root = Css.style(/* :: */[
     ]);
 
 var divider = Css.style(/* :: */[
-      Css.borderBottom(Css.px(1), /* solid */12956715, Css.hex("979797")),
+      Css.borderBottom(Css.px(1), /* solid */12956715, Colors.devider),
       /* [] */0
     ]);
 

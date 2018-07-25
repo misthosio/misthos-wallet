@@ -7,6 +7,14 @@ var uDarkGray = "1f2532";
 
 var darkGray = Css.hex(uDarkGray);
 
+var clickableGray = Css.rgba(0, 0, 0, 0.5);
+
+var grayedOut = Css.rgba(0, 0, 0, 0.2);
+
+var uDevider = "979797";
+
+var devider = Css.hex(uDevider);
+
 var uBlack = "000000";
 
 var black = Css.hex(uBlack);
@@ -23,7 +31,7 @@ var uWarning = "f5a623";
 
 var warning = Css.hex(uWarning);
 
-var uError = "d0021b";
+var uError = "ff3253";
 
 var error = Css.hex(uError);
 
@@ -123,6 +131,10 @@ var uGradientAquaLight = "linear-gradient(87deg, rgba(89, 247, 240, 0.45), rgba(
 
 exports.uDarkGray = uDarkGray;
 exports.darkGray = darkGray;
+exports.clickableGray = clickableGray;
+exports.grayedOut = grayedOut;
+exports.uDevider = uDevider;
+exports.devider = devider;
 exports.uBlack = uBlack;
 exports.black = black;
 exports.uWhite = uWhite;

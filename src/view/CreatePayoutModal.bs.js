@@ -35,7 +35,7 @@ var MaterialUi_InputAdornment = require("@jsiebern/bs-material-ui/src/MaterialUi
 var component = ReasonReact.reducerComponent("CreatePayout");
 
 var maxButton = Css.style(/* :: */[
-      Css.color(Css.rgba(0, 0, 0, 0.54)),
+      Css.color(Colors.clickableGray),
       /* [] */0
     ]);
 

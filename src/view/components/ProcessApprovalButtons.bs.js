@@ -17,7 +17,7 @@ var CommandExecutor = require("./CommandExecutor.bs.js");
 var component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
 var gray = Css.style(/* :: */[
-      Css.color(Css.rgba(0, 0, 0, 0.38)),
+      Css.color(Colors.clickableGray),
       /* [] */0
     ]);
 

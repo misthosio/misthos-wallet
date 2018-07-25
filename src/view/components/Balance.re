@@ -12,7 +12,7 @@ module Styles = {
       fontStyle(normal),
       lineHeight(1.0),
       letterSpacing(px(1)),
-      unsafe("fill", "rgba(0, 0, 0, 0.87)"),
+      unsafe("fill", "rgba(0, 0, 0, 1)"),
     ]);
   let btc = style([fontWeight(300)]);
   let reserved =

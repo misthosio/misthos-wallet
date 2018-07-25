@@ -5,6 +5,7 @@ var Css = require("bs-css/src/Css.js");
 var Block = require("bs-platform/lib/js/block.js");
 var Icons = require("../Icons.bs.js");
 var Theme = require("../Theme.bs.js");
+var Colors = require("../Colors.bs.js");
 var $$String = require("bs-platform/lib/js/string.js");
 var ViewCommon = require("../ViewCommon.bs.js");
 var Caml_string = require("bs-platform/lib/js/caml_string.js");
@@ -67,7 +68,7 @@ function primary(ex) {
                           /* :: */[
                             Css.textOverflow(Css.ellipsis),
                             /* :: */[
-                              Css.color(ex ? Css.rgba(0, 0, 0, 0.2) : /* currentColor */292050538),
+                              Css.color(ex ? Colors.grayedOut : /* currentColor */292050538),
                               /* [] */0
                             ]
                           ]
@@ -90,7 +91,7 @@ function secondary(ex) {
                   /* :: */[
                     Css.unsafe("letterSpacing", "0.5px"),
                     /* :: */[
-                      Css.color(ex ? Css.rgba(0, 0, 0, 0.2) : Css.rgba(0, 0, 0, 0.87)),
+                      Css.color(ex ? Colors.grayedOut : Colors.black),
                       /* [] */0
                     ]
                   ]
@@ -116,7 +117,7 @@ function secondaryAction(status) {
 var exPartnerStatus = Css.style(/* :: */[
       Css.fontSize(Css.px(12)),
       /* :: */[
-        Css.color(Css.rgba(0, 0, 0, 0.87)),
+        Css.color(Colors.black),
         /* [] */0
       ]
     ]);

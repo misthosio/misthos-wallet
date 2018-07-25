@@ -25,7 +25,7 @@ let component = ReasonReact.reducerComponent("ProcessApprovalButtons");
 
 module Styles = {
   open Css;
-  let gray = style([color(rgba(0, 0, 0, 0.38))]);
+  let gray = style([color(Colors.clickableGray)]);
   let inlineConfirm = style([display(`flex), alignItems(`baseline)]);
   let warning = style([color(Colors.error)]);
 };
