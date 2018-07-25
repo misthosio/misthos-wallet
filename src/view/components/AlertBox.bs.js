@@ -23,7 +23,13 @@ var alert = Css.style(/* :: */[
                 Css.unsafe("borderImageSource", Colors.uGradientOrange),
                 /* :: */[
                   Css.marginBottom(Css.px(Theme.space(1))),
-                  /* [] */0
+                  /* :: */[
+                    Css.display(/* flex */-1010954439),
+                    /* :: */[
+                      Css.flexDirection(Css.column),
+                      /* [] */0
+                    ]
+                  ]
                 ]
               ]
             ]

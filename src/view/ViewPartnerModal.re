@@ -3,6 +3,7 @@ include ViewCommon;
 open PrimitiveTypes;
 
 module ViewData = ViewModel.ViewPartnerView;
+module Text = ViewPartnerModalText;
 
 type state = {
   viewData: ViewData.t,
@@ -20,6 +21,12 @@ type onboardingState =
   | None;
 
 let component = ReasonReact.reducerComponent("ViewPartner");
+
+module Styles = {
+  open Css;
+  let sendIcon = style([marginLeft(px(4)), width(px(Theme.space(2)))]);
+  let sendButton = style([unsafe("alignSelf", "flex-end")]);
+};
 
 let updateLoggedInStatus = (partnerProcess: ViewData.partnerProcess, send) =>
   Js.Promise.(
@@ -95,25 +102,39 @@ let make =
       | FullyOnboarded => <StatusChip status=Success label="ONBOARDED" />
       | None => ReasonReact.null
       };
+
+    let sendIcon = <span className=Styles.sendIcon> Icons.send </span>;
     let onboardingBody =
       switch (onboardingState) {
       | SignInRequired =>
         <AlertBox>
           <MTypography variant=`Body1>
             (
-              (viewData.partnerProcess.data.userId |> UserId.toString)
-              ++ {| has not yet signed into Misthos and is therefore missing a
-                    public key. Please remind them to sign in to automatically
-                    expose a public key before joining the Venture.|}
+              (userId |> UserId.toString)
+              ++ Text.AlertBox.signInRequired
               |> text
             )
           </MTypography>
+          <MButton
+            className=Styles.sendButton
+            gutterTop=false
+            variant=Flat
+            href=(
+              Text.Email.signInRequired(
+                ~userId,
+                ~venture=viewData.ventureName,
+                ~appDomain=viewData.appDomain,
+              )
+            )>
+            ("SEND A SIGN IN REMINDER" |> text)
+            sendIcon
+          </MButton>
         </AlertBox>
       | PendingApproval =>
         <MTypography variant=`Body1>
           (
             (viewData.partnerProcess.data.userId |> UserId.toString)
-            ++ {| has to be fully endorsed before onboarding can proceed.|}
+            ++ Text.AlertBox.pendingApproval
             |> text
           )
         </MTypography>
@@ -122,18 +143,30 @@ let make =
           <MTypography variant=`Body1>
             (
               (viewData.partnerProcess.data.userId |> UserId.toString)
-              ++ {| has been fully endorsed and is ready to sync data with the
-                    Venture. Please send them the Venture sync URL to complete
-                    the process.|}
+              ++ Text.AlertBox.syncRequired
               |> text
             )
           </MTypography>
+          <MButton
+            className=Styles.sendButton
+            gutterTop=false
+            variant=Flat
+            href=(
+              Text.Email.syncRequired(
+                ~userId,
+                ~venture=viewData.ventureName,
+                ~joinUrl=viewData.joinVentureUrl,
+              )
+            )>
+            ("SHARE THE SYNC URL" |> text)
+            sendIcon
+          </MButton>
         </AlertBox>
       | FullyOnboarded =>
         <MTypography variant=`Body1>
           (
             (viewData.partnerProcess.data.userId |> UserId.toString)
-            ++ {| is fully onboarded to this Venture.|}
+            ++ Text.AlertBox.fullyOnboarded
             |> text
           )
         </MTypography>

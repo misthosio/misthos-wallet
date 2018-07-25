@@ -12,6 +12,7 @@ var Network = require("../../application/wallet/Network.bs.js");
 var Belt_Set = require("bs-platform/lib/js/belt_Set.js");
 var EventLog = require("../../application/events/EventLog.bs.js");
 var Belt_List = require("bs-platform/lib/js/belt_List.js");
+var Environment = require("../../web/Environment.bs.js");
 var WalletTypes = require("../../application/wallet/WalletTypes.bs.js");
 var BitcoinjsLib = require("bitcoinjs-lib");
 var Belt_SetString = require("bs-platform/lib/js/belt_SetString.js");
@@ -159,11 +160,17 @@ function fromViewModelState$1(param) {
 
 var ManagePartnersView = /* module */[/* fromViewModelState */fromViewModelState$1];
 
+var environment = Environment.get(/* () */0);
+
 function fromViewModelState$2(processId, param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
+  var ventureName = param[/* ventureName */3];
+  var ventureId = param[/* ventureId */1];
+  var localUser = param[/* localUser */0];
   return Utils.mapOption((function (partnerProcess) {
                 var match = partnerProcess[/* data */5][/* processType */1];
                 return /* record */[
+                        /* ventureName */ventureName,
                         /* partnerProcess */partnerProcess,
                         /* atRiskWarning */match ? false : Belt_List.reduceU(WalletInfoCollector.addressInfos(WalletTypes.AccountIndex[/* default */11], walletInfoCollector), false, (function (res, param) {
                                   var addressStatus = param[/* addressStatus */4];
@@ -181,12 +188,20 @@ function fromViewModelState$2(processId, param) {
                                     }
                                   }
                                   
-                                }))
+                                })),
+                        /* joinVentureUrl */environment[/* appDomain */2] + Router.Config[/* routeToUrl */1](/* JoinVenture */Block.__(1, [
+                                ventureId,
+                                localUser
+                              ])),
+                        /* appDomain */environment[/* appDomain */2]
                       ];
               }), ViewModel__PartnersCollector.getPartnerProcess(processId, param[/* partnersCollector */6]));
 }
 
-var ViewPartnerView = /* module */[/* fromViewModelState */fromViewModelState$2];
+var ViewPartnerView = /* module */[
+  /* environment */environment,
+  /* fromViewModelState */fromViewModelState$2
+];
 
 function fromViewModelState$3(param) {
   var walletInfoCollector = param[/* walletInfoCollector */10];
@@ -416,4 +431,4 @@ exports.make = make;
 exports.apply = apply;
 exports.init = init;
 exports.applyAll = applyAll;
-/* BTC Not a pure module */
+/* environment Not a pure module */

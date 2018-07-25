@@ -18,6 +18,8 @@ module Styles = {
       unsafe("borderImageSlice", "1"),
       unsafe("borderImageSource", Colors.uGradientOrange),
       marginBottom(px(Theme.space(1))),
+      display(`flex),
+      flexDirection(column),
     ]);
 };
 
