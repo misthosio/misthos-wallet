@@ -210,15 +210,36 @@ module ViewPartnerView = {
   type voter = ProcessCollector.voter;
   type partnerProcess = PartnersCollector.partnerProcess;
   type t = {
+    localUser: userId,
+    ventureName: string,
     partnerProcess,
     atRiskWarning: bool,
+    joinVentureUrl: string,
+    webDomain: string,
   };
-  let fromViewModelState = (userId, {partnersCollector, walletInfoCollector}) =>
+  let environment = Environment.get();
+  let fromViewModelState =
+      (
+        processId,
+        {
+          ventureName,
+          ventureId,
+          localUser,
+          partnersCollector,
+          walletInfoCollector,
+        },
+      ) =>
     partnersCollector
-    |> PartnersCollector.getProspect(userId)
+    |> PartnersCollector.getPartnerProcess(processId)
     |> Utils.mapOption(partnerProcess =>
          {
+           localUser,
+           ventureName,
            partnerProcess,
+           webDomain: environment.webDomain,
+           joinVentureUrl:
+             environment.appDomain
+             ++ Router.Config.routeToUrl(JoinVenture(ventureId, localUser)),
            atRiskWarning:
              switch (partnerProcess.data.processType) {
              | Removal =>

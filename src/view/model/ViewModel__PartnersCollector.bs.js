@@ -8,12 +8,12 @@ var Js_option = require("bs-platform/lib/js/js_option.js");
 var PrimitiveTypes = require("../../application/PrimitiveTypes.bs.js");
 var ProcessCollector = require("./ProcessCollector.bs.js");
 
-function getProspect(processId, param) {
-  return Belt_Map.get(param[/* prospects */2], processId);
+function getPartnerProcess(processId, param) {
+  return Belt_Map.get(param[/* partnerProcesses */2], processId);
 }
 
 function prospectsPendingApproval(param) {
-  return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* prospects */2])), (function (prospect) {
+  return Belt_List.keepU(Belt_List.fromArray(Belt_Map.valuesToArray(param[/* partnerProcesses */2])), (function (prospect) {
                 var match = prospect[/* status */1];
                 return match === 0;
               }));
@@ -37,7 +37,7 @@ function make(localUser) {
   return /* record */[
           /* localUser */localUser,
           /* partners : [] */0,
-          /* prospects */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
+          /* partnerProcesses */PrimitiveTypes.ProcessId[/* makeMap */8](/* () */0),
           /* partnerPolicy : Unanimous */0
         ];
 }
@@ -49,7 +49,7 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* prospects */state[/* prospects */2],
+                /* partnerProcesses */state[/* partnerProcesses */2],
                 /* partnerPolicy */$$event[0][/* metaPolicy */4]
               ];
     case 1 : 
@@ -57,13 +57,14 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* prospects */ProcessCollector.addProposal(state[/* localUser */0], proposal, (function (data) {
+                /* partnerProcesses */ProcessCollector.addProposal(state[/* localUser */0], proposal, (function (data) {
                         return /* record */[
                                 /* userId */data[/* id */1],
                                 /* processType : Addition */1,
-                                /* hasLoggedIn */hasUserLoggedIn(proposal[/* data */6][/* pubKey */2], proposal[/* data */6][/* id */1])
+                                /* hasLoggedIn */hasUserLoggedIn(proposal[/* data */6][/* pubKey */2], proposal[/* data */6][/* id */1]),
+                                /* joinedWallet */false
                               ];
-                      }), state[/* prospects */2]),
+                      }), state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 4 : 
@@ -84,7 +85,7 @@ function apply($$event, state) {
                           return PrimitiveTypes.UserId[/* neq */6](param[/* userId */0], data[/* id */1]);
                         }))
                 ],
-                /* prospects */ProcessCollector.addAcceptance(acceptance, state[/* prospects */2]),
+                /* partnerProcesses */ProcessCollector.addAcceptance(acceptance, state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 6 : 
@@ -103,11 +104,14 @@ function apply($$event, state) {
                                 /* joinedWallet */partner[/* joinedWallet */5]
                               ];
                       })),
-                /* prospects */state[/* prospects */2],
+                /* partnerProcesses */state[/* partnerProcesses */2],
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 7 : 
         var proposal$1 = $$event[0];
+        var partner = Js_option.getExn(Belt_List.getByU(state[/* partners */1], (function (p) {
+                    return PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], proposal$1[/* data */6][/* id */0]);
+                  })));
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */Belt_List.map(state[/* partners */1], (function (p) {
@@ -125,15 +129,14 @@ function apply($$event, state) {
                           return p;
                         }
                       })),
-                /* prospects */ProcessCollector.addProposal(state[/* localUser */0], proposal$1, (function (data) {
+                /* partnerProcesses */ProcessCollector.addProposal(state[/* localUser */0], proposal$1, (function (data) {
                         return /* record */[
                                 /* userId */data[/* id */0],
                                 /* processType : Removal */0,
-                                /* hasLoggedIn */Js_option.getExn(Belt_List.getByU(state[/* partners */1], (function (p) {
-                                              return PrimitiveTypes.UserId[/* eq */5](p[/* userId */0], data[/* id */0]);
-                                            })))[/* hasLoggedIn */4]
+                                /* hasLoggedIn */partner[/* hasLoggedIn */4],
+                                /* joinedWallet */partner[/* joinedWallet */5]
                               ];
-                      }), state[/* prospects */2]),
+                      }), state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 2 : 
@@ -152,7 +155,7 @@ function apply($$event, state) {
                 /* partners */Belt_List.keep(state[/* partners */1], (function (p) {
                         return PrimitiveTypes.UserId[/* neq */6](p[/* userId */0], id);
                       })),
-                /* prospects */ProcessCollector.addAcceptance(acceptance$1, state[/* prospects */2]),
+                /* partnerProcesses */ProcessCollector.addAcceptance(acceptance$1, state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 5 : 
@@ -161,6 +164,9 @@ function apply($$event, state) {
         break;
     case 37 : 
         var custodianId = $$event[0][/* custodianId */1];
+        var partner$1 = Js_option.getExn(Belt_List.getByU(state[/* partners */1], (function (partner) {
+                    return PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId);
+                  })));
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */Belt_List.mapU(state[/* partners */1], (function (partner) {
@@ -173,7 +179,14 @@ function apply($$event, state) {
                                 /* joinedWallet */partner[/* joinedWallet */5] || PrimitiveTypes.UserId[/* eq */5](partner[/* userId */0], custodianId)
                               ];
                       })),
-                /* prospects */state[/* prospects */2],
+                /* partnerProcesses */ProcessCollector.updateData(partner$1[/* processId */1], (function (data) {
+                        return /* record */[
+                                /* userId */data[/* userId */0],
+                                /* processType */data[/* processType */1],
+                                /* hasLoggedIn */data[/* hasLoggedIn */2],
+                                /* joinedWallet */true
+                              ];
+                      }), state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     default:
@@ -184,21 +197,21 @@ function apply($$event, state) {
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* prospects */ProcessCollector.addRejection(state[/* localUser */0], $$event[0], state[/* prospects */2]),
+                /* partnerProcesses */ProcessCollector.addRejection(state[/* localUser */0], $$event[0], state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 2 : 
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* prospects */ProcessCollector.addEndorsement(state[/* localUser */0], $$event[0], state[/* prospects */2]),
+                /* partnerProcesses */ProcessCollector.addEndorsement(state[/* localUser */0], $$event[0], state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     case 3 : 
         return /* record */[
                 /* localUser */state[/* localUser */0],
                 /* partners */state[/* partners */1],
-                /* prospects */ProcessCollector.addDenial($$event[0], state[/* prospects */2]),
+                /* partnerProcesses */ProcessCollector.addDenial($$event[0], state[/* partnerProcesses */2]),
                 /* partnerPolicy */state[/* partnerPolicy */3]
               ];
     
@@ -211,7 +224,7 @@ function isPartner(id, param) {
               }));
 }
 
-exports.getProspect = getProspect;
+exports.getPartnerProcess = getPartnerProcess;
 exports.prospectsPendingApproval = prospectsPendingApproval;
 exports.hasUserLoggedIn = hasUserLoggedIn;
 exports.make = make;

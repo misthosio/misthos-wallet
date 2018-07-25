@@ -408,3 +408,21 @@ let alert =
       </g>
     </g>
   </svg>;
+
+let send =
+  <svg version="1.1" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+    <g
+      fill="none"
+      fillRule="evenodd"
+      strokeLinecap="round"
+      strokeLinejoin="round">
+      <g transform="translate(-401 -651)" stroke="#000" strokeWidth="2">
+        <g transform="translate(190 560)">
+          <g transform="translate(212 92)">
+            <path d="m16 0l-8.8 8.8" />
+            <polygon points="16 0 10.4 16 7.2 8.8 0 5.6" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </svg>;

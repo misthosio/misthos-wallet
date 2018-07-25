@@ -165,7 +165,7 @@ function subject(name) {
 }
 
 function body(prospect, ventureName, joinUrl, user) {
-  return encodeURI("Hello " + (String(prospect) + ("\n\n    I have suggested that you should join the Misthos Venture \"" + (String(ventureName) + ("\".\n    Go to the URL bellow to sync with the Venture as soon as you have been accepted.\n\n    " + (String(joinUrl) + ("\n\n    Sincerely,\n    " + (String(user) + "\n\n    www.misthos.io\n  "))))))));
+  return encodeURI("Hello " + (String(prospect) + ("\n\nI have suggested that you should join the Misthos Venture \"" + (String(ventureName) + ("\".\nGo to the URL bellow to sync with the Venture as soon as you have been accepted.\n\n" + (String(joinUrl) + ("\n\nSincerely,\n" + (String(user) + "\n\nwww.misthos.io\n  "))))))));
 }
 
 var LinkEmail = /* module */[

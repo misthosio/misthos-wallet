@@ -80,15 +80,15 @@ module LinkEmail = {
     encodeURI(
       {j|Hello $prospect
 
-    I have suggested that you should join the Misthos Venture "$ventureName".
-    Go to the URL bellow to sync with the Venture as soon as you have been accepted.
+I have suggested that you should join the Misthos Venture "$ventureName".
+Go to the URL bellow to sync with the Venture as soon as you have been accepted.
 
-    $joinUrl
+$joinUrl
 
-    Sincerely,
-    $user
+Sincerely,
+$user
 
-    www.misthos.io
+www.misthos.io
   |j},
     );
 };

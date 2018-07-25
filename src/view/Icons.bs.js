@@ -454,6 +454,29 @@ var alert = React.createElement("svg", {
                       d: "M13,0 C20.1851914,0 26,5.81430078 26,13 C26,20.1851914 20.1856992,26 13,26 C5.81480859,26 0,20.1856992 0,13 C0,5.81480859 5.81430078,0 13,0 Z M13,6.54453516 C13.5609297,6.54453516 14.015625,6.99923047 14.015625,7.56016016 L14.015625,14.1004297 C14.015625,14.6613594 13.5609297,15.1160547 13,15.1160547 C12.4390703,15.1160547 11.984375,14.6613594 11.984375,14.1004297 L11.984375,7.56016016 C11.984375,6.99923047 12.4390703,6.54453516 13,6.54453516 Z M13,20.1852083 C12.2427658,20.1852083 11.6289062,19.5713488 11.6289062,18.8141146 C11.6289062,18.0568804 12.2427658,17.4430208 13,17.4430208 C13.7572342,17.4430208 14.3710938,18.0568804 14.3710938,18.8141146 C14.3710938,19.5713488 13.7572342,20.1852083 13,20.1852083 Z M13,23.96875 C19.0625195,23.96875 23.96875,19.0629258 23.96875,13 C23.96875,6.93748047 19.0629258,2.03125 13,2.03125 C6.93748047,2.03125 2.03125,6.93707422 2.03125,13 C2.03125,19.0625195 6.93707422,23.96875 13,23.96875 Z"
                     })))));
 
+var send = React.createElement("svg", {
+      version: "1.1",
+      viewBox: "0 0 18 18",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, React.createElement("g", {
+          fill: "none",
+          fillRule: "evenodd",
+          strokeLinecap: "round",
+          strokeLinejoin: "round"
+        }, React.createElement("g", {
+              stroke: "#000",
+              strokeWidth: "2",
+              transform: "translate(-401 -651)"
+            }, React.createElement("g", {
+                  transform: "translate(190 560)"
+                }, React.createElement("g", {
+                      transform: "translate(212 92)"
+                    }, React.createElement("path", {
+                          d: "m16 0l-8.8 8.8"
+                        }), React.createElement("polygon", {
+                          points: "16 0 10.4 16 7.2 8.8 0 5.6"
+                        }))))));
+
 var text = ViewCommon.text;
 
 var extractString = ViewCommon.extractString;
@@ -482,4 +505,5 @@ exports.chevronDown = chevronDown;
 exports.arrowDownBig = arrowDownBig;
 exports.avatar = avatar;
 exports.alert = alert;
+exports.send = send;
 /* arrowRight Not a pure module */
