@@ -4,6 +4,8 @@
   {| self.window = { localStorage: self.localStorage , location: { origin: self.origin } } |}
 ];
 
+Raven.initialize();
+
 module Message = VentureWorkerMessage;
 
 type self;
@@ -29,6 +31,7 @@ let postMessage = (~correlationId, msg) =>
 let logMessage = msg => Js.log("[Venture Worker] - " ++ msg);
 
 let logError = error => {
+  Raven.captureException(error);
   Js.Console.error("[Venture Worker] - Encountered an unhandled exception");
   Js.Console.error(error);
 };
